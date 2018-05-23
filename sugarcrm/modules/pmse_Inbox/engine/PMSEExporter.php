@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Exports a record of a table in the database
@@ -45,6 +46,15 @@ class PMSEExporter
      * @access private
      */
     protected $extension;
+
+    /**
+     * list of dependencies for export
+     * @var array
+     */
+    protected $dependencies = [
+        'email_template',
+        'business_rule',
+    ];
 
     /**
      * Set Bean.
@@ -97,6 +107,12 @@ class PMSEExporter
     public function exportProject($id, ServiceBase $api)
     {
         $projectContent = $this->getProject(array('id' => $id));
+
+        // add dependencies when exporting a process definition
+        if ($this->bean instanceof pmse_Project) {
+            $projectContent = $this->addDependencies($projectContent);
+        }
+
         //File Name
         $filename = str_replace(' ', '_', $projectContent['project'][$this->name]) . '.' . $this->extension;
 
@@ -111,21 +127,114 @@ class PMSEExporter
     }
 
     /**
+     * Adds the dependencies like email templates and business rules when exporting
+     * a process definition
+     * @param array $projectContent
+     * @return array
+     */
+    private function addDependencies(array $projectContent)
+    {
+        foreach ($this->dependencies as $dependency) {
+            // get the related email template and business rules ids
+            if ($ids = $this->getDependentElementIds($dependency, $projectContent)) {
+                // now add the content for import
+                $projectContent['dependencies'][$dependency] = $this->getDependentContent($ids, $dependency);
+            }
+        }
+        return $projectContent;
+    }
+
+    /**
+     * Grabs the email template or business rule ids for the associated process definition id
+     * @param string $dependency email_template or business_rule
+     * @param array $projectContent process definition content
+     * @return array element ids array
+     */
+    private function getDependentElementIds(string $dependency, array $projectContent)
+    {
+        $ids = array();
+
+        switch ($dependency) {
+            case 'email_template':
+                $activities = $projectContent['project']['diagram']['events'];
+                foreach ($activities as $activity) {
+                    if ($activity['evn_marker'] == 'MESSAGE' && $activity['evn_behavior'] == 'THROW') {
+                        $ids[$activity['def_evn_criteria']] = $activity['def_evn_criteria'];
+                    }
+                }
+                break;
+            case 'business_rule':
+                $activities = $projectContent['project']['diagram']['activities'];
+                foreach ($activities as $activity) {
+                    if ($activity['act_script_type'] == 'BUSINESS_RULE') {
+                        $ids[$activity['def_act_fields']] = $activity['def_act_fields'];
+                    }
+                }
+                break;
+            default:
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Grabs the content for email template/business rules
+     * @param array $ids email template or business rule ids
+     * @param string $type exporter type
+     * @return array content
+     */
+    public function getDependentContent(array $ids, string $type)
+    {
+        $content = array();
+        foreach ($ids as $value) {
+            // get the exporter type
+            $exporter = $this->getExporter($type);
+            // we don't wanna add metadata again
+            $projectData = $exporter->getProject(array('id' => $value, 'project_only' => true));
+            if (isset($projectData['project'])) {
+                $content[] = $projectData['project'];
+            }
+        }
+        return $content;
+    }
+
+    /**
+     * Gets the exporter for the specified type
+     * @param string $type
+     * @return ProcessManager\PMSE
+     */
+    public function getExporter(string $type)
+    {
+        // because we need to format the exporter name since `_` isn't valid
+        // in case of email templates and business rules
+        return ProcessManager\Factory::getPMSEObject(str_replace('_', '', ucwords($type, '_')) . 'Exporter');
+    }
+
+    /**
      * Method to retrieve a record of the database to export.
      * @param array $args
      * @return array
      */
     public function getProject(array $args)
     {
-        $this->bean->retrieve($args['id']);
+        $this->retrieveBean($args);
 
         if ($this->bean->fetched_row != false) {
-            return array("metadata" => $this->getMetadata(), "project" => $this->bean->fetched_row);
+            if (empty($args['project_only'])) {
+                // send both metadata and project as requested
+                return array('metadata' => $this->getMetadata(), 'project' => $this->bean->fetched_row);
+            }
+            // because import has a specific format and it doesn't want metadata or project
+            return array('project' => $this->bean->fetched_row);
         } else {
-            return array("error" => true);
+            return array('error' => true);
         }
     }
 
+    public function retrieveBean($args)
+    {
+        return $this->bean->retrieve($args['id']);
+    }
     /**
      * Method to retrieve a metadata
      * @return object

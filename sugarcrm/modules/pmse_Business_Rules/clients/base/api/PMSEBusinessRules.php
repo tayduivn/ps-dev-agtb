@@ -107,7 +107,7 @@ class PMSEBusinessRules extends vCardApi
     public function businessRuleDownload($api, $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
-        $emailTemplate = $this->getPMSEBusinessRuleExporter();
+        $businessRule = $this->getPMSEBusinessRuleExporter();
         $requiredFields = array('record', 'module');
         foreach ($requiredFields as $fieldName) {
             if (!array_key_exists($fieldName, $args)) {
@@ -127,7 +127,7 @@ class PMSEBusinessRules extends vCardApi
             throw $sugarApiExceptionNotAuthorized;
         }
 
-        return $emailTemplate->exportProject($args['record'], $api);
+        return $businessRule->exportProject($args['record'], $api);
     }
 
     /*
