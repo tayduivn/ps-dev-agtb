@@ -52,7 +52,7 @@ class AuthenticationController implements LoggerAwareInterface
 	 */
     public function __construct($type = 'IdMSugarAuthenticate')
 	{
-        if ($type == 'IdMSugarAuthenticate'
+        if ((empty($type) || $type == 'IdMSugarAuthenticate')
             && !empty($GLOBALS['system_config']->settings['system_ldap_enabled'])
             && empty($_SESSION['sugar_user'])
         ) {
