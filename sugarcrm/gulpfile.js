@@ -239,6 +239,7 @@ gulp.task('test:unit:php', function(done) {
         .option('--ci', 'Set up CI-specific environment')
         .option('--path <path>', 'Set base output path')
         .option('--coverage', 'Enable code coverage')
+        .option('--file <path>', 'File to execute')
         .parse(process.argv);
 
     var workspace = commander.path || process.env.WORKSPACE || os.tmpdir();
@@ -256,6 +257,10 @@ gulp.task('test:unit:php', function(done) {
     if (commander.coverage) {
         args.push('--coverage-html', path.join(workspace, 'coverage'));
         process.stdout.write('Coverage reports will be generated to: ' + path.join(workspace, 'coverage') + '\n');
+    }
+
+    if (commander.file) {
+        args.push(commander.file);
     }
 
     var phpunitPath = path.join('..', '..', 'vendor', 'bin', 'phpunit');

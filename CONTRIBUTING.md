@@ -458,6 +458,14 @@ without installation.
 
 Paths to output files are explained in the section [Workspace Location](#workspace-location).
 
+##### Running individual tests
+
+You can run an individual test by specifying --file:
+
+```bash
+$ node_modules/gulp/bin/gulp.js test:unit:php --file <path>
+```
+
 ##### Workspace Location
 
 The location where output files are placed is determined in the following way:
