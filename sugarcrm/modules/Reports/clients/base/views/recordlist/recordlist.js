@@ -47,7 +47,7 @@
     scheduleReport: function(model, field) {
         var newModel = app.data.createBean('ReportSchedules');
         newModel.set({
-            report_id : model.get('id'),
+            report_id: model.get('id'),
             report_name: model.get('name')
         });
         app.drawer.open({
