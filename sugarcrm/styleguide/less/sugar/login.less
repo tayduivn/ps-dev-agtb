@@ -165,6 +165,19 @@
   width: 219px;
 }
 
+.marketing-extras {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 400px;
+  height: 422px;
+  direction: ltr;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
 /* NEW SKIN START */
 
 .thumbnail.signup,
@@ -172,6 +185,8 @@
   /* additive */
   border-radius: 0;
   background: @white;
+  position: relative;
+  z-index: @zindexDefault;
 
   form {
     > .help-block,
