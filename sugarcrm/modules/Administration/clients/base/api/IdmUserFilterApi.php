@@ -43,9 +43,11 @@ class IdmUserFilterApi extends FilterApi
      * @throws SugarApiExceptionError
      * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarApiExceptionNotFound
      */
     public function getIdmUsers(ServiceBase $api, array $args, $acl = 'list')
     {
+        $this->ensureMigrationEnabled();
         $this->ensureAdminUser();
 
         $api->action = 'list';
@@ -94,6 +96,16 @@ class IdmUserFilterApi extends FilterApi
             throw new \SugarApiExceptionNotAuthorized(
                 $GLOBALS['app_strings']['EXCEPTION_NOT_AUTHORIZED']
             );
+        }
+    }
+
+    /**
+     * @throws SugarApiExceptionNotFound
+     */
+    private function ensureMigrationEnabled(): void
+    {
+        if (empty($GLOBALS['sugar_config']['idmMigration'])) {
+            throw new SugarApiExceptionNotFound();
         }
     }
 }

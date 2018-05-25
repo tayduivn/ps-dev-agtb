@@ -35,6 +35,11 @@ class IdmUserFilterApiTest extends TestCase
      */
     private $api;
 
+    /**
+     * @var array
+     */
+    private $sugarConfig;
+
 
     /**
      * {@inheritdoc}
@@ -59,6 +64,9 @@ class IdmUserFilterApiTest extends TestCase
 
         $GLOBALS['current_user'] = $this->currentUser;
         $GLOBALS['app_strings'] = ['EXCEPTION_NOT_AUTHORIZED' => 'EXCEPTION_NOT_AUTHORIZED'];
+
+        $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
+        $GLOBALS['sugar_config']['idmMigration'] = true;
     }
 
     /**
@@ -68,8 +76,29 @@ class IdmUserFilterApiTest extends TestCase
     {
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_strings']);
+        $GLOBALS['sugar_config'] = $this->sugarConfig;
 
         parent::tearDown();
+    }
+
+    /**
+     * @expectedException \SugarApiExceptionNotFound
+     * @covers ::getIdmUsers
+     */
+    public function testGetIdmUserApiParameterNotPresentInConfig(): void
+    {
+        unset($GLOBALS['sugar_config']['idmMigration']);
+        $this->api->getIdmUsers($this->apiService, []);
+    }
+
+    /**
+     * @expectedException \SugarApiExceptionNotFound
+     * @covers ::getIdmUsers
+     */
+    public function testGetIdmUserApiParameterIsFalseInConfig(): void
+    {
+        $GLOBALS['sugar_config']['idmMigration'] = false;
+        $this->api->getIdmUsers($this->apiService, []);
     }
 
     /**
