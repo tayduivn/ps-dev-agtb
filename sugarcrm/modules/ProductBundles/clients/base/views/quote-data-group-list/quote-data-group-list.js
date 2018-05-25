@@ -479,6 +479,19 @@
         // if the data has a _module, remove it
         if (!_.isEmpty(prepopulateData)) {
             delete prepopulateData._module;
+
+            if (moduleName === 'Products' && prepopulateData.product_template_id) {
+                const metadataFields = app.metadata.getModule('Products', 'fields');
+
+                // getting the fields from metadata of the module and mapping them to prepopulateData
+                if (metadataFields && metadataFields.product_template_name &&
+                    metadataFields.product_template_name.populate_list) {
+                    _.each(metadataFields.product_template_name.populate_list, function(val, key) {
+                        prepopulateData[val] = prepopulateData[key];
+                    }, this);
+                }
+            }
+
         }
 
         if (prepopulateData && prepopulateData._forcePosition) {

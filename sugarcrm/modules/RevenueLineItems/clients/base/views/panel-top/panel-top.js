@@ -94,6 +94,18 @@
             return;
         }
 
+        if (data.product_template_id) {
+            const metadataFields = app.metadata.getModule('Products', 'fields');
+
+            // getting the fields from metadata of the module and mapping them to data
+            if (metadataFields && metadataFields.product_template_name &&
+                metadataFields.product_template_name.populate_list) {
+                _.each(metadataFields.product_template_name.populate_list, function(val, key) {
+                    data[val] = data[key];
+                }, this);
+            }
+        }
+
         parentModel = this.context.parent.get('model');
         model = this.createLinkModel(parentModel, 'revenuelineitems');
 
