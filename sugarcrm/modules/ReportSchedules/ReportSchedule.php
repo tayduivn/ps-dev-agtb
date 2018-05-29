@@ -56,7 +56,15 @@ class ReportSchedule extends Basic
     {
         $this->schedule_type = 'pro';
         if (!empty($this->date_start)) {
-            $this->next_run = $this->getNextRunDate($this->date_start, 0);
+            if ($this->isUpdate()) {
+                // if either intrval or start date time changes
+                if ($this->time_interval != $this->fetched_row['time_interval']
+                    || $this->date_start != $this->fetched_row['date_start']) {
+                    $this->next_run = $this->getNextRunDate($this->date_start, $this->time_interval);
+                }
+            } else {
+                $this->next_run = $this->getNextRunDate($this->date_start, 0);
+            }
         }
         return parent::save($check_notify);
     }
