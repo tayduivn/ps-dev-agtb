@@ -87,7 +87,7 @@ class TeamSecurityTest extends TestCase
         $this->assertArraySubset($expected, $data);
     }
 
-    public function sugarQuerySelectWithRelatedFieldProvider()
+    public static function sugarQuerySelectWithRelatedFieldProvider()
     {
         $expected = [
             'User #1' => [
@@ -177,9 +177,9 @@ class TeamSecurityTest extends TestCase
 
     /**
      * @test
-     * @dataProvider rowsAndColumnsReportProvider
+     * @dataProvider reportByTwoModulesProvider
      */
-    public function rowsAndColumnsReportByTwoModules($useDenorm, $useWhere, $userName, array $expected)
+    public function reportByTwoModules($useDenorm, $useWhere, $userName, array $expected)
     {
         $definition = [
             'display_columns' => [
@@ -247,7 +247,7 @@ class TeamSecurityTest extends TestCase
         $this->assertArraySubset($expected, $data);
     }
 
-    public static function rowsAndColumnsReportProvider()
+    public static function reportByTwoModulesProvider()
     {
         $expected = [
             'User #1' => [
@@ -265,6 +265,121 @@ class TeamSecurityTest extends TestCase
             'User #3' => [
                 [
                     'opportunities_name' => 'Opportunity #3',
+                ],
+            ],
+        ];
+
+        foreach ($expected as $userName => $data) {
+            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere)) {
+                yield sprintf('%s, %s', $userName, $configName) => [$useDenorm, $useWhere, $userName, $data];
+            }
+        }
+    }
+
+    /**
+     * @test
+     * @dataProvider reportByTwoModulesWithAnOptionalJoinProvider
+     */
+    public function reportByTwoModulesWithAnOptionalJoin($useDenorm, $useWhere, $userName, array $expected)
+    {
+        $definition = [
+            'display_columns' => [
+                [
+                    'name' => 'name',
+                    'table_key' => 'self',
+                ],
+                [
+                    'name' => 'name',
+                    'table_key' => 'Contacts:accounts',
+                ],
+            ],
+            'module' => 'Contacts',
+            'group_defs' => [],
+            'summary_columns' => [],
+            'order_by' => [
+                [
+                    'name' => 'name',
+                    'table_key' => 'self',
+                ],
+            ],
+            'report_type' => 'tabular',
+            'full_table_list' => [
+                'self' => [
+                    'value' => 'Contacts',
+                    'module' => 'Contacts',
+                ],
+                'Contacts:accounts' => [
+                    'parent' => 'self',
+                    'link_def' => [
+                        'name' => 'accounts',
+                        'relationship_name' => 'accounts_contacts',
+                        'link_type' => 'one',
+                        'table_key' => 'Contacts:accounts',
+                    ],
+                    'module' => 'Accounts',
+                    'optional' => true,
+                ],
+                'Contacts:created_by_link' => [
+                    'parent' => 'self',
+                    'link_def' => [
+                        'name' => 'created_by_link',
+                        'relationship_name' => 'contacts_created_by',
+                        'module' => 'Users',
+                        'table_key' => 'Contacts:created_by_link',
+                    ],
+                    'module' => 'Users',
+                ],
+            ],
+            'filters_def' => [
+                'Filter_1' => [
+                    'operator' => 'AND',
+                    [
+                        'name' => 'id',
+                        'table_key' => 'Contacts:created_by_link',
+                        'qualifier_name' => 'is',
+                        'input_name0' => self::$admin->id,
+                    ],
+                ],
+            ],
+        ];
+
+        $data = $this->runReport($definition, $useDenorm, $useWhere, $userName);
+
+        $this->assertCount(count($expected), $data);
+        $this->assertArraySubset($expected, $data);
+    }
+
+    public static function reportByTwoModulesWithAnOptionalJoinProvider()
+    {
+        $expected = [
+            'User #1' => [
+                [
+                    'contacts_last_name' => 'Contact #T1A1',
+                    'l1_name' => 'Account #T1',
+                ], [
+                    'contacts_last_name' => 'Contact #T2A2',
+                    'l1_name' => 'Account #T2',
+                ], [
+                    'contacts_last_name' => 'Contact #T2A3',
+                    'l1_name' => '',
+                ],
+            ],
+            'User #2' => [
+                [
+                    'contacts_last_name' => 'Contact #T2A2',
+                    'l1_name' => 'Account #T2',
+                ], [
+                    'contacts_last_name' => 'Contact #T2A3',
+                    'l1_name' => '',
+                ],
+            ],
+            'User #3' => [
+                [
+                    'contacts_last_name' => 'Contact #T3A2',
+                    'l1_name' => '',
+                ], [
+                    'contacts_last_name' => 'Contact #T3A3',
+                    'l1_name' => 'Account #T3',
                 ],
             ],
         ];

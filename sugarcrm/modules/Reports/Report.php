@@ -818,8 +818,8 @@ class Report
             $this->total_count = $this->execute_count_query();
             $limit = true;
         }
-        $this->execute_query('query', 'result', 'row_count', 'row_start', 'row_end', $limit);
 
+        $this->execute_query('query', 'result', 'row_count', 'row_start', 'row_end', $limit);
     }
 
     function execute_count_query($query_name = 'query')
@@ -1807,10 +1807,11 @@ class Report
                         // End ACL check
                     }
 
-                    $this->from .= $link->getJoin($params);
-
-                    $this->from = $this->addVisibilityFrom($focus, $this->from, $params['join_table_alias']);
-                    $this->where = $this->addVisibilityWhere($focus, $this->where, $params['join_table_alias']);
+                    $this->from .= $this->applyVisibilityToJoin(
+                        $focus,
+                        $link->getJoin($params),
+                        $params['join_table_alias']
+                    );
                 }
                 else
                 {
@@ -1859,6 +1860,46 @@ class Report
                 }
             }
         }
+    }
+
+    /**
+     * Applies related bean visibility to the JOIN expression instead of the query globally
+     * in order to respect the OUTER JOIN behavior
+     *
+     * @param SugarBean $bean
+     * @param string $join
+     * @param string $tableAlias
+     *
+     * @return string
+     * @throws SugarApiException
+     */
+    private function applyVisibilityToJoin(SugarBean $bean, string $join, string $tableAlias) : string
+    {
+        // instead of applying visibility to the query itself, apply it to the target table
+        if (!preg_match(
+            '/(\S+\s+' . preg_quote($tableAlias, '/') . ')\s+ON\b/im',
+            $join,
+            $matches,
+            PREG_OFFSET_CAPTURE
+        )) {
+            $this->handleException('Unable to apply visibility to ' . $tableAlias);
+        }
+
+        [$targetTableWithAlias, $pos] = $matches[1];
+
+        $filteredTargetTable = $this->addVisibilityFrom($bean, $targetTableWithAlias, $tableAlias);
+
+        // on SQL Server, only an expression with more than one table can be surrounded with parentheses
+        if (stripos($filteredTargetTable, 'join') !== false) {
+            $filteredTargetTable = '(' . $filteredTargetTable . ')';
+        }
+
+        $join = substr($join, 0, $pos)
+            . $filteredTargetTable
+            . substr($join, $pos + strlen($targetTableWithAlias));
+        $join = $this->addVisibilityWhere($bean, $join, $tableAlias);
+
+        return $join;
     }
 
     protected function wrapIfNull($field)

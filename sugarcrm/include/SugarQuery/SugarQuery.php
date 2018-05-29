@@ -192,7 +192,7 @@ class SugarQuery
     /**
      * Build the select object
      *
-     * @param array $fields
+     * @param string|string[] $fields,...
      *
      * @return null|SugarQuery_Builder_Select
      */
