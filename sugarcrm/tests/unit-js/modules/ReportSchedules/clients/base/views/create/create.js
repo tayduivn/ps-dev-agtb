@@ -53,4 +53,20 @@ describe('ReportSchedules.Base.Views.Create', function() {
             expect(SugarTest.app.api.call.getCall(0).args[2].requests[0].url).toMatch(url);
         });
     });
+
+    describe('linkCurrentUser()', function() {
+        beforeEach(function() {
+            sandbox.stub(app.user, 'save', function() {});
+            sandbox.stub(app.data, 'createRelatedBean', function() {
+                return app.user;
+            });
+        });
+        afterEach(function() {
+            sinon.sandbox.restore();
+        });
+        it('should link current user', function() {
+            view.linkCurrentUser();
+            expect(app.user.save).toHaveBeenCalledOnce();
+        });
+    });
 });
