@@ -3051,7 +3051,7 @@ class ModuleInstaller{
             'alertAutoCloseDelay' => 2500,
             'serverUrl' => 'rest/v11_1',
             'siteUrl' => '',
-            'unsecureRoutes' => array('login', 'logout', 'error', 'forgotpassword', 'externalAuthError'),
+            'unsecureRoutes' => array('login', 'logout', 'error', 'forgotpassword', 'externalAuthError', 'stsAuthError'),
             'loadCss' => false,
             'themeName' => 'default',
             'clientID' => 'sugar',

@@ -70,7 +70,6 @@ class UsersViewOAuth2Authenticate extends SidecarView
      */
     protected function redirect(): void
     {
-        $sugarConfig = \SugarConfig::getInstance();
-        SugarApplication::redirect($sugarConfig->get('site_url'));
+        SugarApplication::redirect('./#stsAuthError');
     }
 }
