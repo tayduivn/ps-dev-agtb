@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -12,8 +11,8 @@
  */
 
 /**
- * Applies default character set and collation upgrade in MySQL (only)
- * from: utf8:utf8_general_ci  to: utf8mb4:utf8mb4_general_ci
+ * Applies the collation defined in the dbconfigoption.collation configuration -- or the default collation -- to all
+ * database objects for consistency.
  */
 class SugarUpgradeApplyDbCollation extends UpgradeScript
 {
@@ -26,14 +25,13 @@ class SugarUpgradeApplyDbCollation extends UpgradeScript
             return;
         }
 
-        // This upgrade applies to MySQL Only
-        $db = DBManagerFactory::getInstance();
-        if ($db->dbType !== 'mysql') {
+        if (!$this->db->supports('collation')) {
+            $this->log('The database does not support collation');
             return;
         }
 
-        // Upgrade is applied to the Database and all existing tables
-        $collation = 'utf8mb4_general_ci';
-        $db->setCollation($collation);
+        $collation = $this->db->getOption('collation') ?? $this->db->getDefaultCollation();
+        $this->log("Applying the '{$collation}' collation to the database and all existing tables");
+        $this->db->setCollation($collation);
     }
 }

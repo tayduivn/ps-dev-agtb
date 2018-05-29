@@ -367,4 +367,8 @@ $mod_strings = array(
     'LBL_SCAN_903_DESCR' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',
     'LBL_SCAN_904_DESCR' => 'File: %s, Modules: %s',
     'LBL_SCAN_999_DESCR' => 'Unknown failure, please consult support',
+
+    'LBL_SCAN_577_TITLE' => 'Incompatible database collation',
+    'LBL_SCAN_577_LOG' => "Collation '%s' is incompatible with the '%s' charset",
+    'LBL_SCAN_577_DESC' => "Choose a different collation in your locale settings or remove the 'dbconfigoption.collation' configuration to use the default collation.",
 );

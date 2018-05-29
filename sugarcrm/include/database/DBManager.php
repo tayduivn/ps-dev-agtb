@@ -3699,7 +3699,8 @@ abstract class DBManager implements LoggerAwareInterface
     }
 
 	/**
-	 * List of available collation settings
+     * Returns the default collation for the database.
+     *
      * @abstract
 	 * @return string
 	 */

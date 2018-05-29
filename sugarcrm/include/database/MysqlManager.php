@@ -550,10 +550,7 @@ WHERE TABLE_SCHEMA = ?
 		if (!empty($keys))
 			$keys = ",$keys";
 
-        $collation = $this->getOption('collation');
-        if (empty($collation)) {
-            $collation = 'utf8mb4_general_ci';
-        }
+        $collation = $this->getOption('collation') ?? $this->getDefaultCollation();
         $sql = "CREATE TABLE $tablename ($columns $keys) CHARACTER SET utf8mb4 COLLATE $collation";
 
 		if (!empty($engine))
@@ -960,8 +957,7 @@ FROM information_schema.statistics';
 	}
 
 	/**
-	 * List of available collation settings
-	 * @return string
+     * {@inheritdoc}
 	 */
 	public function getDefaultCollation()
 	{
@@ -1255,7 +1251,8 @@ FROM information_schema.statistics';
 	 */
 	public function createDatabase($dbname)
 	{
-        $this->query("CREATE DATABASE `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", true);
+        $collation = $this->getOption('collation') ?? $this->getDefaultCollation();
+        $this->query("CREATE DATABASE `$dbname` CHARACTER SET utf8mb4 COLLATE {$collation}", true);
 	}
 
 	/**

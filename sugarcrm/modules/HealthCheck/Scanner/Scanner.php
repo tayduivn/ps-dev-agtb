@@ -791,6 +791,9 @@ class HealthCheckScanner
         //Now that we have catalogued all the bad files in custom, log them by category.
         $this->updateCustomDirScanStatus();
 
+        // Do this early as it is a show-stopper.
+        $this->checkUtf8mb4CollationCompatibility();
+
         // Check global hooks
         $this->log("Checking global hooks");
         $hook_files = array();
@@ -4823,6 +4826,83 @@ ENDP;
         $class = strtolower($class);
 
         return isset($classes[$class]);
+    }
+
+    /**
+     * The database collation must be compatible with utf8mb4 for MySQL databases.
+     */
+    protected function checkUtf8mb4CollationCompatibility()
+    {
+        $this->log('Checking collation compatibility for the utf8mb4 charset on MySQL');
+
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        if (version_compare($version, '8.1.0', '>=')) {
+            $this->log("This check does not apply to {$version}");
+            return;
+        }
+
+        // This upgrade applies to MySQL only.
+        if ($this->db->dbType !== 'mysql') {
+            $this->log('The database is not MySQL');
+            return;
+        }
+
+        $collation = $this->db->getOption('collation');
+
+        if (empty($collation)) {
+            // The admin has not defined a collation. The default is automatically compatible.
+            $this->log('The default collation is automatically compatible');
+            return;
+        }
+
+        // Is the current collation one of the allowed collations?
+        $allowedCollations = $this->getMySQLAllowedCollations();
+        $this->log('Allowed collations: ' . implode(', ', $allowedCollations));
+
+        if (in_array($collation, $allowedCollations)) {
+            $this->log("Collation '{$collation}' can be used with the utf8mb4 charset");
+            return;
+        }
+
+        // Can the current collation be mapped to one of the allowed collations?
+        $mappedCollation = preg_replace('/^utf8_(.*)$/', 'utf8mb4_${1}', $collation);
+
+        if (in_array($mappedCollation, $allowedCollations)) {
+            $this->log(
+                "Collation '{$mappedCollation}' (mapped from '{$collation}') can be used with the utf8mb4 charset"
+            );
+            return;
+        }
+
+        $this->log("Collation '{$collation}' cannot be used with the utf8mb4 charset");
+        $this->log(
+            "Collation '{$mappedCollation}' (mapped from '{$collation}') cannot be used with the utf8mb4 charset"
+        );
+        $this->updateStatus('incompatibleMysqlCollation', $collation, 'utf8mb4');
+    }
+
+    /**
+     * Lists allowed collations for the "utf8mb4" character set in MySQL databases.
+     *
+     * @return array
+     */
+    protected function getMySQLAllowedCollations()
+    {
+        $collations = [];
+
+        try {
+            $sql = "SHOW COLLATION WHERE Charset='utf8mb4'";
+            $result = $this->db->getConnection()->executeQuery($sql);
+
+            while ($row = $result->fetch()) {
+                $collations[] = $row['Collation'];
+            }
+        } catch (Exception $e) {
+            $this->log('Unable to retrieve the allowed collations: ' . $e->getMessage());
+        }
+
+        return $collations;
     }
 }
 
