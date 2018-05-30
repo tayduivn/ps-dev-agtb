@@ -41,8 +41,6 @@ include("metadata/prospect_lists_prospectsMetaData.php");
 include("metadata/roles_modulesMetaData.php");
 include("metadata/roles_usersMetaData.php");
 include("metadata/acl_role_sets_acl_rolesMetaData.php");
-//include("metadata/project_relationMetaData.php");
-include("metadata/outboundEmailMetaData.php");
 include("metadata/addressBookMetaData.php");
 include("metadata/recordListMetaData.php");
 include("metadata/project_bugsMetaData.php");
@@ -80,11 +78,7 @@ include 'metadata/contacts_dataprivacyMetaData.php';
 include 'metadata/leads_dataprivacyMetaData.php';
 include 'metadata/prospects_dataprivacyMetaData.php';
 include 'metadata/accounts_dataprivacyMetaData.php';
-//BEGIN SUGARCRM flav=ent ONLY
 
-include("metadata/dataset_layoutsMetaData.php");
-include("metadata/dataset_attributesMetaData.php");
-//END SUGARCRM flav=ent ONLY
 //ACL RELATIONSHIPS
 include("metadata/acl_roles_actionsMetaData.php");
 include("metadata/acl_roles_usersMetaData.php");

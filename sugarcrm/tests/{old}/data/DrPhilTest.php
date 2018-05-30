@@ -601,4 +601,19 @@ class DrPhilTest extends TestCase
 
         return $data;
     }
+
+    /**
+     * @test
+     */
+    public function tableDictionaryDoesNotHaveBeanDefinitions()
+    {
+        $dictionary = [];
+        require 'modules/TableDictionary.php';
+
+        $objects = array_map(function (string $module) {
+            return BeanFactory::getObjectName($module);
+        }, self::getValidModules());
+
+        $this->assertEmpty(array_intersect(array_keys($dictionary), $objects));
+    }
 }

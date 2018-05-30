@@ -916,18 +916,20 @@ class VardefManager{
      * @param  $object String name of module Bean.
      * Updates a list of link fields which have relationships to modules with calculated fields
      * that use this module. Needed to cause an update to those modules when this module is updated.
-     * @return bool
      */
-    protected static function updateRelCFModules($module, $object){
+    protected static function updateRelCFModules($module, $object)
+    {
         global $dictionary, $beanList;
-        if (empty($dictionary[$object]) || empty($dictionary[$object]['fields']))
-            return false;
+
+        if (!isset($dictionary[$object]['fields'])) {
+            return;
+        }
 
         $linkFields = self::getLinkFieldsForModule($module, $object);
-        if (empty($linkFields))
-        {
+
+        if (empty($linkFields)) {
             $dictionary[$object]['related_calc_fields'] = array();
-            return false;
+            return;
         }
 
         $linksWithCFs = array();
@@ -937,7 +939,6 @@ class VardefManager{
             $relName = $def['relationship'];
 
             //Start by getting the relation
-            $relDef = false;
             if (!empty($def['module']))
                 $relMod = $def['module'];
             else {
@@ -977,8 +978,6 @@ class VardefManager{
 
         $dictionary[$object]['related_calc_fields'] = array_keys($linksWithCFs);
     }
-
-
 
     /**
      * @static

@@ -75,19 +75,12 @@ class DataSet_Layout extends SugarBean {
         ,"start_axis" => "x"
         );
 
-
-    public function __construct() {
-        global $dictionary;
-        if(isset($this->module_dir) && isset($this->object_name) && !isset($dictionary[$this->object_name])){
-            require('metadata/dataset_layoutsMetaData.php');
-        }
+    public function __construct()
+    {
         parent::__construct();
 
-        $this->disable_row_level_security =true;
-
+        $this->disable_row_level_security = true;
     }
-
-
 
     function get_summary_text()
     {
