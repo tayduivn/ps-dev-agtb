@@ -494,6 +494,7 @@ $report_include_modules['Prospects']='Prospect';
 $report_include_modules['DocumentRevisions'] = 'DocumentRevision';
 $report_include_modules['ProductCategories'] = 'ProductCategory';
 $report_include_modules['ProductTypes'] = 'ProductType';
+$report_include_modules['ProductTemplates'] = 'ProductTemplate';
 $report_include_modules['Contracts']='Contract';
 //add Tracker modules
 
