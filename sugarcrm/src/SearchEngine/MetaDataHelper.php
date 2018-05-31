@@ -228,10 +228,6 @@ class MetaDataHelper
             }
         }
 
-        //Add the module "Tags" when it's not enabled, since the Tag module is globally used
-        if (!in_array("Tags", $list)) {
-            $list[] = "Tags";
-        }
         return $this->setCache($cacheKey, $list);
     }
 

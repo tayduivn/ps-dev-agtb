@@ -225,6 +225,18 @@ class GlobalSearchTest extends TestCase
     }
 
     /**
+     * @covers ::searchTags
+     */
+    public function testSearchTags()
+    {
+        $globalSearch = $this->getGlobalSearchMock(['getUserModules']);
+        $globalSearch->expects($this->any())
+            ->method('getUserModules')
+            ->will($this->returnValue(['Accounts', 'Leads']));
+        $this->assertEmpty($globalSearch->searchTags());
+    }
+
+    /**
      * get Mock object of GlobalSearch
      * @param array|null $methods
      * @return \PHPUnit\Framework\MockObject\MockObject

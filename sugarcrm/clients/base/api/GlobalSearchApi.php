@@ -194,7 +194,9 @@ class GlobalSearchApi extends SugarApi
         // Search the tag module
         if ($this->getTags == true && !empty($this->term)) {
             $resultSet = $globalSearch->searchTags();
-            $response['tags'] = $this->formatTagResults($resultSet);
+            if (!empty($resultSet)) {
+                $response['tags'] = $this->formatTagResults($resultSet);
+            }
         }
         return $response;
     }

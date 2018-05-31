@@ -97,7 +97,8 @@ VardefManager::createVardef(
 $dictionary['Tag']['fields']['assigned_user_id']['full_text_search'] = array();
 $dictionary['Tag']['fields']['created_by']['full_text_search'] = array();
 $dictionary['Tag']['fields']['date_entered']['full_text_search'] = array();
-$dictionary['Tag']['fields']['date_modified']['full_text_search'] = array();
+// don't disable date_modified which will be used as default sorting
+//$dictionary['Tag']['fields']['date_modified']['full_text_search'] = array();
 $dictionary['Tag']['fields']['description']['full_text_search'] = array();
 $dictionary['Tag']['fields']['modified_user_id']['full_text_search'] = array();
 

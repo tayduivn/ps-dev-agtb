@@ -465,7 +465,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected $getTags = array();
 
     /**
-     * @var array the name of the "Tags" Module
+     * @var string the name of the "Tags" Module
      */
     protected $tagModule = 'Tags';
 
@@ -704,6 +704,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      */
     public function searchTags()
     {
+        if (!in_array($this->tagModule, $this->getUserModules())) {
+            // Tags index doesn't, just return null
+            return null;
+        }
+
         //create a module list including the tag module only
         $this->modules = array($this->tagModule);
 

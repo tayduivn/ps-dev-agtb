@@ -37,8 +37,9 @@ class SugarUpgradeRunFTSIndex extends UpgradeScript
         if (version_compare($this->from_version, '7.10', '<')
             || (version_compare($this->from_version, '8.0.0', '<=') && version_compare($esVersion, '6.0', '>='))
         ) {
-            // do fts index if
-            // old sugar version < 7.10 or old sugar version <=8.0 and Elastic version is 6.x
+            // do full elastic index if
+            // old sugar version < 7.10
+            // or old sugar version <=8.0.0 and Elastic version is 6.x
             $this->dropExistingIndex();
             $this->runFTSIndex();
         } elseif (version_compare($this->from_version, '8.0.0', '<')) {
