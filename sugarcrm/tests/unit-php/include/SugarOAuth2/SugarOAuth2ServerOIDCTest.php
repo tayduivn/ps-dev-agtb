@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
@@ -50,6 +51,11 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      * @var AuthProviderBasicManagerBuilder|MockObject
      */
     protected $authProviderBasicBuilder;
+
+    /**
+     * @var AuthProviderApiLoginManagerBuilder | MockObject
+     */
+    protected $authProviderApiLoginBuilder;
 
     /**
      * @var AuthenticationProviderManager|MockObject
@@ -92,7 +98,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      */
     protected $sugarAccessToken = '956fc0c6-eb25-491c-aa19-411bde06e238';
 
-
     /**
      * @inheritdoc
      */
@@ -105,15 +110,18 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                                    ->setMethods([
                                        'getAuthProviderBuilder',
                                        'getAuthProviderBasicBuilder',
+                                       'getAuthProviderApiLoginBuilder',
                                        'genAccessToken',
                                    ])
                                    ->getMock();
 
         $this->authProviderBuilder = $this->createMock(AuthProviderOIDCManagerBuilder::class);
         $this->authProviderBasicBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
+        $this->authProviderApiLoginBuilder = $this->createMock(AuthProviderApiLoginManagerBuilder::class);
         $this->authManager = $this->createMock(AuthenticationProviderManager::class);
         $this->authProviderBuilder->method('buildAuthProviders')->willReturn($this->authManager);
         $this->authProviderBasicBuilder->method('buildAuthProviders')->willReturn($this->authManager);
+        $this->authProviderApiLoginBuilder->method('buildAuthProviders')->willReturn($this->authManager);
         $this->sugarUser = $this->createMock(\User::class);
         $this->sugarUser->id = 'testUserId';
         $this->user = new User();
@@ -306,10 +314,10 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                       ->with($this->inputData['client_id'], $this->inputData['username'], $this->inputData['password'])
                       ->willReturn(['user_id' => 'seed_sally_id', 'scope' => null]);
 
-        $this->oAuth2Server->expects($this->once())->method('getAuthProviderBasicBuilder')->willReturnCallback(
+        $this->oAuth2Server->expects($this->once())->method('getAuthProviderApiLoginBuilder')->willReturnCallback(
             function ($config) {
                 $this->assertInstanceOf(Config::class, $config);
-                return $this->authProviderBasicBuilder;
+                return $this->authProviderApiLoginBuilder;
             }
         );
 
@@ -350,10 +358,10 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                      ->method('unsetRefreshToken')
                      ->with($this->equalTo('testOldRefreshTokenId'));
 
-        $this->oAuth2Server->expects($this->once())->method('getAuthProviderBasicBuilder')->willReturnCallback(
+        $this->oAuth2Server->expects($this->once())->method('getAuthProviderApiLoginBuilder')->willReturnCallback(
             function ($config) {
                 $this->assertInstanceOf(Config::class, $config);
-                return $this->authProviderBasicBuilder;
+                return $this->authProviderApiLoginBuilder;
             }
         );
 

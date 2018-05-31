@@ -12,6 +12,7 @@
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
@@ -209,8 +210,7 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
         $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $user_id);
 
         try {
-            $authManager = $this->getAuthProviderBasicBuilder($idpConfig)->buildAuthProviders();
-
+            $authManager = $this->getAuthProviderApiLoginBuilder($idpConfig)->buildAuthProviders();
             $jwtBearerToken = new JWTBearerToken(Srn\Converter::toString($userSrn), $idmModeConfig['tid']);
             $accessToken = $authManager->authenticate($jwtBearerToken);
 
@@ -242,6 +242,15 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
         } catch (AuthenticationException $e) {
             throw new \SugarApiExceptionNeedLogin($e->getMessage());
         }
+    }
+
+    /**
+     * @param Config $config
+     * @return AuthProviderApiLoginManagerBuilder
+     */
+    protected function getAuthProviderApiLoginBuilder(Config $config): AuthProviderApiLoginManagerBuilder
+    {
+        return new AuthProviderApiLoginManagerBuilder($config);
     }
 
     /**
