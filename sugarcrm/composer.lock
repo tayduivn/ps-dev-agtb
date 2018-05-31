@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "57c36ba9e9be3c9cda818d532d50f751",
+    "content-hash": "892fc7e609a4f86b1a805d1689bb2f6e",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -549,9 +549,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-lexer-v1.0.1-20cd74.tar",
+                "url": "https://satis.sugardev.team/dist/doctrine/lexer/doctrine-lexer-v1.0.1-20cd74.tar",
                 "reference": "d1ec545810553c0f5ed11140a3b5afa74a141459",
-                "shasum": "7eb1523b7c986ca670f590e14f3fa1a85884a955"
+                "shasum": "e67468198814e50fd12773d16a0603ca75b83ed1"
             },
             "require": {
                 "php": ">=5.3.2"
@@ -661,9 +661,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/etechnika-idna-convert-1.0.3-ae3a24.tar",
+                "url": "https://satis.sugardev.team/dist/etechnika/idna-convert/etechnika-idna-convert-1.0.3-ae3a24.tar",
                 "reference": "85e488474269b19630ca4e711061e4aa61ac879a",
-                "shasum": "af77428108e7274c006dc0fa784f31024c49de5d"
+                "shasum": "1576aa47664912b0ca4a5f8f965c3ba7e2cb1f14"
             },
             "require": {
                 "php": ">=5.3.0"
@@ -783,9 +783,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/google-apiclient-1.1.4-b0e5f5.tar",
+                "url": "https://satis.sugardev.team/dist/google/apiclient/google-apiclient-1.1.4-b0e5f5.tar",
                 "reference": "2adb5ba90612858d4add0342eee6b8b9aaca398d",
-                "shasum": "564bfd05c0c142ab194a6d0ee1a1d8f8bb39e85a"
+                "shasum": "a259f33cdc0f404f3abdc0a428e8493223bbf42f"
             },
             "require": {
                 "php": ">=5.2.1"
@@ -1110,6 +1110,57 @@
             "time": "2014-10-12T19:12:31+00:00"
         },
         {
+            "name": "jimdo/prometheus_client_php",
+            "version": "v0.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Jimdo/prometheus_client_php.git",
+                "reference": "331530d69545f4949fcfe738622d5e5df3ae142f"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/jimdo/prometheus_client_php/jimdo-prometheus_client_php-v0.9.1-ef0766.tar",
+                "reference": "331530d69545f4949fcfe738622d5e5df3ae142f",
+                "shasum": "79d512656b711f35c2a4fb124d644ba6c86258f8"
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2",
+                "php": ">=5.6.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.1.0"
+            },
+            "suggest": {
+                "ext-apc": "Required if using APCu.",
+                "ext-redis": "Required if using Redis."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Prometheus\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-0": {
+                    "Test\\Prometheus\\": "tests/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Joscha",
+                    "email": "joscha@schnipseljagd.org"
+                },
+                {
+                    "name": "Jan Brauer",
+                    "email": "jan.brauer@jimdo.com"
+                }
+            ],
+            "time": "2017-11-06T11:00:07+00:00"
+        },
+        {
             "name": "league/oauth2-client",
             "version": "2.2.1",
             "source": {
@@ -1256,9 +1307,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/monolog-monolog-1.22.0-96ac6d.tar",
+                "url": "https://satis.sugardev.team/dist/monolog/monolog/monolog-monolog-1.22.0-96ac6d.tar",
                 "reference": "bad29cb8d18ab0315e6c477751418a82c850d558",
-                "shasum": "422d61407c024453796e31100590e281140f3090"
+                "shasum": "0b3b6598fa90e9847dafae8fb2189d7c91999e40"
             },
             "require": {
                 "php": ">=5.3.0",
@@ -1344,9 +1395,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/moontoast-math-1.1.0-234d74.tar",
+                "url": "https://satis.sugardev.team/dist/moontoast/math/moontoast-math-1.1.0-234d74.tar",
                 "reference": "df98c89b919b71180560c7f5ef266ee1504f60b9",
-                "shasum": "a1ad3d09f2165e0557b173759f9e94ede525c86c"
+                "shasum": "87d67e3d86dc691df2cc18007496e768b9c662e6"
             },
             "require": {
                 "ext-bcmath": "*",
@@ -1493,9 +1544,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/parsecsv-php-parsecsv-0.4.5-c0d74d.tar",
+                "url": "https://satis.sugardev.team/dist/parsecsv/php-parsecsv/parsecsv-php-parsecsv-0.4.5-c0d74d.tar",
                 "reference": "0486a4bf3ef80dfa215f38f865ed8685fbb472c7",
-                "shasum": "79b1cbc63a5a16b8d4ec5bd497200bc2c9ef43d5"
+                "shasum": "a70393aafc84b7a34d32efd8fea964b5bdd4cc7a"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.1.*"
@@ -1528,9 +1579,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpmailer-phpmailer-v5.2.22-f88abd.tar",
+                "url": "https://satis.sugardev.team/dist/phpmailer/phpmailer/phpmailer-phpmailer-v5.2.22-f88abd.tar",
                 "reference": "b18cb98131bd83103ccb26a888fdfe3177b8a663",
-                "shasum": "02b421185876d238c3178836cbfce5b60d9c9cff"
+                "shasum": "d4c9009f624313b2fcd98d57a3288276b3e5780d"
             },
             "require": {
                 "php": ">=5.0.0"
@@ -1778,9 +1829,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/psr-log-1.0.0-e71523.tar",
+                "url": "https://satis.sugardev.team/dist/psr/log/psr-log-1.0.0-e71523.tar",
                 "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
-                "shasum": "e8fd0dc32860b445d52991f2a07999dad372ffa4"
+                "shasum": "f2e3aaf6888915fb48e94d0773b49e3dec5dd220"
             },
             "type": "library",
             "autoload": {
@@ -1862,9 +1913,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/ramsey-uuid-2.9.0-0b3a5a.tar",
+                "url": "https://satis.sugardev.team/dist/ramsey/uuid/ramsey-uuid-2.9.0-0b3a5a.tar",
                 "reference": "b2ef4dd9584268d73f92f752a62bc24cd534dc9a",
-                "shasum": "716c94413900577fc0905acfeb3b8bce161b50c8"
+                "shasum": "ec616724e80f16ae0c7aabaa911483b1a724c8ac"
             },
             "require": {
                 "paragonie/random_compat": "^1.0|^2.0",
@@ -2391,21 +2442,17 @@
         },
         {
             "name": "sugarcrm/identity-provider",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:sugarcrm/IdentityProvider.git",
-                "reference": "03358dc3abe846d5a017d06a9d63650f05797141"
-            },
+            "version": "1.2.0",
             "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sugarcrm/identity-provider/sugarcrm-identity-provider-dev-master-aaf490.tar",
-                "reference": "03358dc3abe846d5a017d06a9d63650f05797141",
-                "shasum": "fed37f8398771387a2e9ed437a2d7dca0152d9a6"
+                "type": "path",
+                "url": "dist/identity-provider",
+                "reference": "feedf0a48e1f298349ff3f155d4e37c13e3de96a",
+                "shasum": null
             },
             "require": {
                 "doctrine/dbal": "~2.2",
                 "etechnika/idna-convert": "1.0.3",
+                "jimdo/prometheus_client_php": "^0.9.1",
                 "league/oauth2-client": "2.2.1",
                 "monolog/monolog": "^1.21",
                 "onelogin/php-saml": "2.11.0",
@@ -2430,12 +2477,14 @@
                 "behat/mink-selenium2-driver": "1.3.1",
                 "behat/soap-extension": "0.1.1",
                 "doctrine/doctrine-migrations-bundle": "~1.1.1",
+                "elkan/behatformatter": "v1.0.*",
                 "friendsofphp/php-cs-fixer": "^2.1",
                 "guzzlehttp/guzzle": "^6.2",
                 "guzzlehttp/psr7": "^1.4",
                 "php-http/curl-client": "^1.7",
                 "phpunit/phpunit": "~5.5",
                 "ramsey/uuid": "2.9.0",
+                "sensiolabs/behat-page-object-extension": "^2.0",
                 "symfony/browser-kit": "^3.2",
                 "symfony/css-selector": "^3.2",
                 "ubirak/rest-api-behat-extension": "^7.0.0"
@@ -2468,8 +2517,7 @@
                 "wiki": "http://support.sugarcrm.com",
                 "forum": "https://community.sugarcrm.com/sugarcrm",
                 "irc": "irc://irc.freenode.org/sugarcrm"
-            },
-            "time": "2018-04-24T10:56:13+00:00"
+            }
         },
         {
             "name": "symfony/asset",
@@ -4202,9 +4250,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/tedivm-jshrink-v1.1.0-06b21e.tar",
+                "url": "https://satis.sugardev.team/dist/tedivm/jshrink/tedivm-jshrink-v1.1.0-06b21e.tar",
                 "reference": "688527a2e854d7935f24f24c7d5eb1b604742bf9",
-                "shasum": "f9bf44528656076247eb8ce7671ed921a2e2299f"
+                "shasum": "eb272f0bbd1d6fbe331b96c5426eef02c0856a47"
             },
             "require": {
                 "php": ">=5.3.0"
@@ -4314,9 +4362,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/vanderlee-php-stable-sort-functions-2.0.2-02e082.tar",
+                "url": "https://satis.sugardev.team/dist/vanderlee/php-stable-sort-functions/vanderlee-php-stable-sort-functions-2.0.2-02e082.tar",
                 "reference": "4ea200455b775f0c6613108974d3332c68156194",
-                "shasum": "09c1e9187e81210a46a7046353faedc2d2c7c0a9"
+                "shasum": "2a926b902128ad16e61519c5371a5f057f0a0140"
             },
             "require": {
                 "php": ">=5.3.0"
@@ -4929,9 +4977,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit-php-text-template-1.2.1-638b73.tar",
+                "url": "https://satis.sugardev.team/dist/phpunit/php-text-template/phpunit-php-text-template-1.2.1-638b73.tar",
                 "reference": "75aefe65c90fa77db317125ac746ed158f136c25",
-                "shasum": "55edf7bef5609c3b0a4e4338ac1fd33faad01ae4"
+                "shasum": "af74327f0a392af89652377be8653698de3e41a7"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -5727,9 +5775,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian-resource-operations-1.0.0-b5a241.tar",
+                "url": "https://satis.sugardev.team/dist/sebastian/resource-operations/sebastian-resource-operations-1.0.0-b5a241.tar",
                 "reference": "eb35907dc618089694b1c2aeef6966e4c897b3c7",
-                "shasum": "8fccb0d1bc411f239dcf05c065899f6b53c70d89"
+                "shasum": "d36e6eff82d27521d733e5c02b64d50ffa5e5f87"
             },
             "require": {
                 "php": ">=5.6.0"
@@ -5768,9 +5816,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian-version-2.0.1-b999a9.tar",
+                "url": "https://satis.sugardev.team/dist/sebastian/version/sebastian-version-2.0.1-b999a9.tar",
                 "reference": "be8fddb7f814c4907bbbe3dcadee2473385d88d0",
-                "shasum": "5dc10667255ac85f6cd8e0205461b93c6d153bd6"
+                "shasum": "bf9f20f28003d5db6562b324b1d95c0acbae5d9f"
             },
             "require": {
                 "php": ">=5.6"
@@ -5902,9 +5950,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "sugarcrm/identity-provider": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

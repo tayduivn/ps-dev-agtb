@@ -113,7 +113,7 @@
         "psr/simple-cache": "^1.0",
         "ramsey/uuid": "2.9.0",
         "ruflin/elastica" : "5.3.0",
-        "sugarcrm/identity-provider": "dev-master",
+        "sugarcrm/identity-provider": "1.2.0",
         "symfony/cache": "v3.4.8",
         "symfony/console": "v3.4.8",
         "symfony/framework-bundle": "v3.4.8",
