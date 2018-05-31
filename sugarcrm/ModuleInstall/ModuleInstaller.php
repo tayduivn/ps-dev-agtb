@@ -226,8 +226,7 @@ class ModuleInstaller{
             sugar_cache_clear($cache_key );
             sugar_cache_reset();
 
-            //clear the unified_search_module.php file
-            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
+            sugar_cache_clear('unified_search_modules');
 
             // Rebuild roles so the ACLs for new modules are fresh immediately
             $this->updateRoles();
@@ -1830,8 +1829,7 @@ class ModuleInstaller{
 
             $this->updateSystemTabs('Restore',$installed_modules);
 
-            //clear the unified_search_module.php file
-            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
+            sugar_cache_clear('unified_search_modules');
 
             // Destroy all metadata caches and rebuild the base metadata. This
             // will cause a small amount of lag on subsequent requests for other
