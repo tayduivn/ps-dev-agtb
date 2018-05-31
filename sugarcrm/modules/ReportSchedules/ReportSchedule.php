@@ -305,7 +305,7 @@ QUERY;
 SELECT
     rs.id,
     rs.report_id,
-    r.assigned_user_id owner_id,
+    r.assigned_user_id owner_id
 FROM
     $this->table_name rs
     INNER JOIN (
