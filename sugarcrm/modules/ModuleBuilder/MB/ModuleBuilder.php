@@ -128,21 +128,6 @@ class ModuleBuilder
     }
 
     /**
-     * Check if it is a custom module
-     * @return bool
-     */
-    public function isCustomModule($module)
-    {
-        $customModules = array();
-        $customFiles = glob('modules/*/*_sugar.php', GLOB_NOSORT);
-        foreach ($customFiles as $customFile) {
-            $moduleName = str_replace('_sugar', '', pathinfo($customFile, PATHINFO_FILENAME));
-            $customModules[] = $moduleName;
-        }
-        return in_array($module, $customModules);
-    }
-
-    /**
      * Function return module name and this aliases
      *
      * @param string $module
