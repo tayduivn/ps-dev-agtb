@@ -41,6 +41,11 @@ class AuthSettingsApiTest extends TestCase
     private $config;
 
     /**
+     * @var Authentication\Lockout | MockObject
+     */
+    private $lockout;
+
+    /**
      * @var array
      */
     private $sugar_config_bak;
@@ -49,7 +54,7 @@ class AuthSettingsApiTest extends TestCase
      * @see testResultAuthSettings
      * @return array
      */
-    public function expectedAuthSettings() : array
+    public function expectedAuthSettings(): array
     {
         $ldapConfig = ['some' => 'ldap', 'config' => 'value'];
         $samlConfig = ['some' => 'saml', 'config' => 'value'];
@@ -87,6 +92,7 @@ class AuthSettingsApiTest extends TestCase
             'lockoutexpirationtime' => '',
             'lockoutexpirationtype' => '1',
             'lockoutexpirationlogin' => '',
+            'LockoutDurationMins' => 0,
         ];
         $localConfExpPassReq = [
             'minimum_length' => $passwordSetting['minpwdlength'],
@@ -121,6 +127,12 @@ class AuthSettingsApiTest extends TestCase
             'attempt' => 100,
         ];
 
+        $loginLockoutDisabled = [
+            'type' => Authentication\Lockout::LOCKOUT_DISABLED,
+            'attempt' => 0,
+            'time' => 0,
+        ];
+
         return [
             'localDisabledExpiration' => [
                 'in' => [
@@ -138,6 +150,7 @@ class AuthSettingsApiTest extends TestCase
                         'password_requirements' => $localConfExpPassReq,
                         'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
+                        'login_lockout' => $loginLockoutDisabled,
                     ],
                 ],
             ],
@@ -159,6 +172,7 @@ class AuthSettingsApiTest extends TestCase
                         'password_requirements' => $localConfExpPassReq,
                         'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirTime,
+                        'login_lockout' => $loginLockoutDisabled,
                     ],
                 ],
             ],
@@ -179,6 +193,65 @@ class AuthSettingsApiTest extends TestCase
                         'password_requirements' => $localConfExpPassReq,
                         'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirAttempt,
+                        'login_lockout' => $loginLockoutDisabled,
+                    ],
+                ],
+            ],
+            'localTimeLockout' => [
+                'in' => [
+                    'ldapConfig' => [],
+                    'samlConfig' => [],
+                    'authenticationClass' => 'IdMSugarAuthenticate',
+                    'passwordSetting' => array_replace(
+                        $passwordSetting,
+                        [
+                            'lockoutexpiration' => Authentication\Lockout::LOCK_TYPE_TIME,
+                            'lockoutexpirationlogin' => 3,
+                            'LockoutDurationMins' => 60,
+                        ]
+                    ),
+                    'adminSettingsMap' => $adminSettingsMap,
+                ],
+                'expected' => [
+                    'enabledProviders' => ['local'],
+                    'local' => [
+                        'password_requirements' => $localConfExpPassReq,
+                        'password_reset_policy' => $localConfExpReset,
+                        'password_expiration' => $localConfExpExpirDisabled,
+                        'login_lockout' => [
+                            'type' => Authentication\Lockout::LOCK_TYPE_TIME,
+                            'attempt' => 3,
+                            'time' => 3600,
+                        ],
+                    ],
+                ],
+            ],
+            'localPermanentLockout' => [
+                'in' => [
+                    'ldapConfig' => [],
+                    'samlConfig' => [],
+                    'authenticationClass' => 'IdMSugarAuthenticate',
+                    'passwordSetting' => array_replace(
+                        $passwordSetting,
+                        [
+                            'lockoutexpiration' => Authentication\Lockout::LOCK_TYPE_PERMANENT,
+                            'lockoutexpirationlogin' => 4,
+                            'LockoutDurationMins' => 2,
+                        ]
+                    ),
+                    'adminSettingsMap' => $adminSettingsMap,
+                ],
+                'expected' => [
+                    'enabledProviders' => ['local'],
+                    'local' => [
+                        'password_requirements' => $localConfExpPassReq,
+                        'password_reset_policy' => $localConfExpReset,
+                        'password_expiration' => $localConfExpExpirDisabled,
+                        'login_lockout' => [
+                            'type' => Authentication\Lockout::LOCK_TYPE_PERMANENT,
+                            'attempt' => 4,
+                            'time' => 120,
+                        ],
                     ],
                 ],
             ],
@@ -196,6 +269,7 @@ class AuthSettingsApiTest extends TestCase
                         'password_requirements' => $localConfExpPassReq,
                         'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
+                        'login_lockout' => $loginLockoutDisabled,
                     ],
                     'ldap' => $ldapConfig,
                 ],
@@ -214,6 +288,7 @@ class AuthSettingsApiTest extends TestCase
                         'password_requirements' => $localConfExpPassReq,
                         'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
+                        'login_lockout' => $loginLockoutDisabled,
                     ],
                     'saml' => $samlConfig,
                 ],
@@ -231,6 +306,9 @@ class AuthSettingsApiTest extends TestCase
     {
         $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(true);
+        $this->lockout->method('getLockType')->willReturn($in['passwordSetting']['lockoutexpiration']);
+        $this->lockout->method('getFailedLoginsCount')->willReturn($in['passwordSetting']['lockoutexpirationlogin']);
+        $this->lockout->method('getLockoutDurationMins')->willReturn($in['passwordSetting']['LockoutDurationMins']);
 
         $this->config->method('getLdapConfig')->willReturn($in['ldapConfig']);
         $this->config->method('getSAMLConfig')->willReturn($in['samlConfig']);
@@ -432,8 +510,10 @@ class AuthSettingsApiTest extends TestCase
         $this->service = $this->createMock(\RestService::class);
         $this->currentUser = $this->createMock(\User::class);
         $this->config = $this->createMock(Authentication\Config::class);
-        $this->api = $this->createPartialMock(\AuthSettingsApi::class, ['getAuthConfig', 'get']);
+        $this->lockout = $this->createMock(Authentication\Lockout::class);
+        $this->api = $this->createPartialMock(\AuthSettingsApi::class, ['getAuthConfig', 'get', 'getLockout']);
         $this->api->method('getAuthConfig')->willReturn($this->config);
+        $this->api->method('getLockout')->willReturn($this->lockout);
         $GLOBALS['current_user'] = $this->currentUser;
         $GLOBALS['app_strings'] = ['EXCEPTION_NOT_AUTHORIZED' => 'EXCEPTION_NOT_AUTHORIZED'];
     }

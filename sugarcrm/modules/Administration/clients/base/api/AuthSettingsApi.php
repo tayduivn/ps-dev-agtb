@@ -142,6 +142,7 @@ class AuthSettingsApi extends SugarApi
     private function getLocalSettings() : array
     {
         $passConfig = $this->getAuthConfig()->get('passwordsetting', []);
+        $lockout = $this->getLockout();
         return [
             'password_requirements' => [
                 'minimum_length' => intval($passConfig['minpwdlength']),
@@ -164,6 +165,11 @@ class AuthSettingsApi extends SugarApi
                 'require_honeypot' => boolval($this->get('honeypot_on', false)),
             ],
             'password_expiration' => $this->getPasswordExpiration($passConfig),
+            'login_lockout' => [
+                'type' => $lockout->getLockType(),
+                'attempt' => (int)$lockout->getFailedLoginsCount(),
+                'time' => $lockout->getLockoutDurationMins() * 60,
+            ],
         ];
     }
 
@@ -198,6 +204,16 @@ class AuthSettingsApi extends SugarApi
                     'attempt' => 0,
                 ];
         }
+    }
+
+    /**
+     * Returns Authentication Lockout
+     *
+     * @return Authentication\Lockout
+     */
+    protected function getLockout(): Authentication\Lockout
+    {
+        return new Authentication\Lockout();
     }
 
     /**
