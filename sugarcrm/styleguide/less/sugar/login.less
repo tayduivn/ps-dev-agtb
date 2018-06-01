@@ -165,19 +165,6 @@
   width: 219px;
 }
 
-.marketing-extras {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 400px;
-  height: 422px;
-  direction: ltr;
-
-  @media (max-width: 1024px) {
-    display: none;
-  }
-}
-
 /* NEW SKIN START */
 
 .thumbnail.signup,
@@ -200,15 +187,27 @@
 /* NEW SKIN END */
 
 .marketing-extras {
-  height: 120px;
-  width: 300px;
-  box-sizing: border-box;
   position: absolute;
-  right: 100px;
-  top: 300px;
+  right: 0;
+  top: 0;
+  width: 400px;
+  height: 422px;
+  direction: ltr;
+  box-sizing: border-box;
+
+  .coffee-cup {
+    position: absolute;
+  }
 
   @media (max-width: 1024px) {
     display: none;
+  }
+
+  .iframe-container {
+    position: relative;
+    top: 300px;
+    width: 300px;
+    height: 120px;
   }
 
   iframe {
@@ -217,10 +216,10 @@
     &:not([src=""]) {
       display: inline;
       background: rgba(240, 242, 244, 0.7);
-      height: ~"calc(100% - 32px)";
-      width: ~"calc(100% - 32px)";
       border: none;
       padding: 16px;
+      width: 268px;
+      height: 88px;
     }
   }
 }

@@ -29,9 +29,10 @@
      */
     fetchMarketingExtras() {
         var config = app.metadata.getConfig();
-        if (config.marketingExtrasEnabled) {
+        this.showMarketingContent = config.marketingExtrasEnabled;
+        if (this.showMarketingContent) {
             var language = app.user.getLanguage();
-            var url = app.api.buildURL('/login/content', null, null, {selected_language: language});
+            var url = app.api.buildURL('login/content', null, null, {selected_language: language});
             app.api.call('read', url, null, {
                 success: _.bind(function(contents) {
                     if (contents && !_.isEmpty(contents.content_url)) {

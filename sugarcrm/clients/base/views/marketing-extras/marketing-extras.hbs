@@ -10,5 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
+{{#if showMarketingContent}}
 <img class="coffee-cup" src="{{buildUrl url='include/images/coffeeCup-sugar-sm.png'}}">
-<iframe src="{{marketingContentUrl}}" scrolling="no"></iframe>
+<div class="iframe-container">
+    <iframe src="{{marketingContentUrl}}" scrolling="no"></iframe>
+</div>
+{{/if}}
