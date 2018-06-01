@@ -107,6 +107,11 @@ class SugarWidgetFieldMultiEnum extends SugarWidgetFieldEnum {
 		{
 			$value = encodeMultienumValue(array($value)); 
 		}
+
+        $mb = new ModuleBuilder();
+        if ($mb->isCustomModule($this->reporter->module)) {
+            $value = encodeMultienumValue(array($value));
+        }
 		return $value;
     }
 
