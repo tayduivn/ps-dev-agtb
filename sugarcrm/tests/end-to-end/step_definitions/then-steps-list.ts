@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 import {thenStepsHelper, Then, stepsHelper} from '@sugarcrm/seedbed';
 import ListView from '../views/list-view';
 import {TableDefinition} from 'cucumber';
+import BaseListView from '../views/baselist-view';
 
 /**
  * Step verifies fields visible on a cached list view for the cached record.

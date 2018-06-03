@@ -128,7 +128,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | RLI_2 | RLI_2 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *     | date_closed | discount_price | quantity | currency_id | discount_amount |
-      | RLI_2 | 12/12/2021  | 84.99          | 50.7     | руб (RUB)   | 84.99           |
+      | RLI_2 | 12/13/2020  | 84.99          | 50.7     | руб (RUB)   | 84.99           |
     When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
 
@@ -137,7 +137,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
       | fieldName   | value           |
       | name        | RLI_2           |
-      | date_closed | 12/12/2021      |
+      | date_closed | 12/13/2020      |
       | likely_case | руб127.49$84.99 |
 
     # 10. Create 'RLI_3' record from RLI subpanel of opportunity record view using EUR currency
@@ -148,7 +148,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | RLI_3 | RLI_3 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *     | date_closed | product_template_name |
-      | RLI_3 | 12/12/2021  | Prod_1                |
+      | RLI_3 | 12/14/2020  | Prod_1                |
     When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
 
@@ -157,7 +157,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
       | fieldName   | value         |
       | name        | RLI_3         |
-      | date_closed | 12/12/2021    |
+      | date_closed | 12/14/2020    |
       | likely_case | €50.00$100.00 |
 
     # 12. Create 'RLI_4' record from RLI subpanel of opportunity record view using RUB currency
@@ -168,7 +168,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | RLI_4 | RLI_4 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *     | date_closed | product_template_name |
-      | RLI_4 | 12/14/2021  | Prod_2                |
+      | RLI_4 | 12/11/2020  | Prod_2                |
     When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
 
@@ -177,7 +177,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
       | fieldName   | value            |
       | name        | RLI_4            |
-      | date_closed | 12/14/2021       |
+      | date_closed | 12/11/2020       |
       | likely_case | руб150.00$100.00 |
 
     # 14. Verify rollup data in Opportunity record view business card
@@ -186,7 +186,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | amount      | $459.99    |
       | best_case   | $459.99    |
       | worst_case  | $459.99    |
-      | date_closed | 12/14/2021 |
+      | date_closed | 12/14/2020 |
 
     # 15. Generate quote and cancel
     When I toggleAll records in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems

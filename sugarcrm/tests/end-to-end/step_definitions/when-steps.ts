@@ -18,6 +18,7 @@ import ListView from '../views/list-view';
 import RliTableRecord from '../views/rli-table';
 import SubpanelLayout from '../layouts/subpanel-layout';
 import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
+import {updateForecastConfig} from "./steps-helper";
 import AlertCmp from '../components/alert-cmp';
 import {updateOpportunityConfig} from './steps-helper';
 import {toggleRecord, parseInputArray, chooseModule, closeAlert} from '../step_definitions/general_bdd';
@@ -78,6 +79,7 @@ When(/^I toggleAll records in (#\S+)$/,
         await view.toggleAll();
     }, {waitForApp: true});
 
+
 /**
  *  Select action from List view Actions dropdown
  *
@@ -109,6 +111,7 @@ When(/^I click on preview button on (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
         let listItem = view.getListItem({id: record.id});
         await listItem.clickPreviewButton();
     }, {waitForApp: true});
+
 
 When(/^I wait for (\d+) seconds$/,
     async function (delay: string): Promise<void> {
@@ -291,6 +294,7 @@ When(/^I set values for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
 
     }, {waitForApp: true});
 
+
 When(/^I click (\S+) field on (#\S+) view$/,
     async function (fieldName, layout: any) {
         let view = layout.type ? layout.defaultView : layout;
@@ -320,11 +324,24 @@ When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/
 
 }, {waitForApp: true});
 
+
 When(/^I dismiss alert$/, async function () {
 
     await this.driver.alertDismiss();
 
 }, {waitForApp: true});
+
+
+
+
+When(/^I configure Forecasts module$/, async function (table: TableDefinition) {
+
+    let data = table.rowsHash();
+
+    await updateForecastConfig(data);
+
+}, {waitForApp: true});
+
 
 /**
  * This step required in personal info drawer of GDPR workflow. This steps selects the fields for erasure in Personal Info drawer

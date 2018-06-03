@@ -17,50 +17,6 @@ import {seedbed} from '@sugarcrm/seedbed';
  * @extends BaseField
  */
 
-export class Detail extends BaseField {
-
-    constructor(options) {
-        super(options);
-
-        this.selectors = this.mergeSelectors({
-            field: {
-                selector: 'div.ellipsis_inline'
-            }
-        });
-    }
-
-    public async getText(selector: string): Promise<string> {
-
-        let value: string | string[] = await this.driver.getText(selector);
-
-        return value.toString().trim();
-
-    }
-}
-
-export class List extends BaseField {
-
-    constructor(options) {
-        super(options);
-
-        this.selectors = this.mergeSelectors({
-            field: {
-                selector: 'div.ellipsis_inline'
-            }
-        });
-
-    }
-
-    public async getText(selector: string): Promise<string> {
-
-        let value: string | string[] = await this.driver.getText(selector);
-
-        return value.toString().trim();
-
-    }
-
-}
-
 export class Edit extends BaseField {
 
     protected itemSelector: String;
@@ -76,7 +32,38 @@ export class Edit extends BaseField {
         });
 
         this.itemSelector = '.select2-result-label=';
+    }
 
+    public async setValue(val: any): Promise<void> {
+
+        await this.driver.click(this.$('field.selector'));
+        await this.driver.waitForApp();
+        await this.driver.click(`${this.itemSelector}${val}`);
+    }
+}
+
+export class Detail extends BaseField {
+
+    protected itemSelector: String;
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div.ellipsis_inline'
+            }
+        });
+
+        this.itemSelector = '.select2-result-label=';
+    }
+
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await this.driver.getText(selector);
+
+        return value.toString().trim();
     }
 
     public async setValue(val: any): Promise<void> {
@@ -86,6 +73,20 @@ export class Edit extends BaseField {
         await this.driver.click(`${this.itemSelector}${val}`);
     }
 
+}
+
+export class List extends BaseField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div.ellipsis_inline'
+            }
+        });
+
+    }
 }
 
 export const Preview = Detail;

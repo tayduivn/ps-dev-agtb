@@ -10,7 +10,7 @@
  */
 
 import BaseView from '../views/base-view';
-import {Then, seedbed} from '@sugarcrm/seedbed';
+import {Then, seedbed, stepsHelper} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
 import RecordsMarkedForErasureDashlet from '../views/records-marked-for-erasure-dashlet';
@@ -189,4 +189,17 @@ Then(/^I verify Audit Log fields in (#AuditLogDrawer) for (#\S+)*$/,
         // Close Audit Log drawer
         await headerButtonClick(recordlayout, 'closebutton');
 
+    }, {waitForApp: true});
+
+/**
+ * Screenshot test comparison for different elements on the page
+ *
+ * @example "I verify that help element from #Footer still looks like footer-help"
+ */
+Then(/^I verify that (\S+) element from (#\S+) still looks like (.*)$/,
+    async function(elementName: string, component: any, fileName: string): Promise<void> {
+        // FIXME AT-146: Use proper typechecking on view
+        let selector = `elements.${elementName}`;
+        let view = component.type ? component.defaultView : component;
+        await stepsHelper.verifyElementByImage(view, fileName, selector);
     }, {waitForApp: true});

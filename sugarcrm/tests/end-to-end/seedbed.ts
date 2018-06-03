@@ -27,6 +27,8 @@ import DashboardLayout from './layouts/dashboard-layout';
 import LeadConversionLayout from "./layouts/lead-conversion-layout";
 import AuditLogDrawerLayout from './layouts/audit-log-drawer-layout';
 import BusinessRulesDesignLayout from './layouts/business-rules-record-layout';
+import ForecastsListLayout from './layouts/forecasts-layout';
+
 
 export default (seedbed: Seedbed) => {
 
@@ -50,6 +52,8 @@ export default (seedbed: Seedbed) => {
     seedbed.addAsyncHandler(seedbed.events.AFTER_INIT, () => {
 
         seedbed.defineComponent(`OpportunityDrawer`, DrawerLayoutOpp, {module: 'Opportunities'});
+
+        seedbed.defineComponent(`Forecasts`, ForecastsListLayout, {module: 'Forecasts'});
 
         /*cache drawers for modules*/
         _.each(seedbed.meta.modules, (module, moduleName) => {
@@ -101,7 +105,6 @@ export default (seedbed: Seedbed) => {
 
                 seedbed.components[`${record.module}List`].ListView.createListItem(record);
             }
-
         }, this);
 
     });

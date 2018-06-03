@@ -10,26 +10,24 @@
  */
 
 import {When} from '@sugarcrm/seedbed';
-import FilterView from '../views/filter-view';
-import ListView from "../views/list-view";
+import ForecastFilterView from "../views/forecast-filter-view";
 
 /**
- * Search for "value" in list view search filter
- *
- * @example "I search for "Account_Search" in #AccountsList:FilterView view"
+ * Add filter in Forecast Sales Rep worksheet
  */
-When(/^I search for "([^"]*)" in (#\S+) view$/,
-    async function(value, view: FilterView) {
-        await view.setSearchField(value);
+When(/^I add "([^"]*)" in (#\S+) view$/,
+    async function(value: string, view: ForecastFilterView) {
+        await view.forecastSearchFilterDropdownCmp.addFilter(value.toLowerCase());
 
         // need to handle setTimeout 400ms in search box
         await this.driver.pause(500);
 
     }, {waitForApp: true});
 
-When(/^I choose for (\w+) in (#\S+) view$/,
-    async function(filterName: string, view: FilterView) {
-
-        await view.selectFilter(filterName);
-
+/**
+ *  Remove filter in Forecast Sales Rep worksheet
+ */
+When(/^I remove "([^"]*)" filter in (#\S+) view$/,
+    async function(value: string, view: ForecastFilterView) {
+        await view.forecastSearchFilterDropdownCmp.removeFilter(value.toLowerCase());
     }, {waitForApp: true});

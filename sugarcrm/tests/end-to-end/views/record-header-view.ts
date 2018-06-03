@@ -54,6 +54,13 @@ export default class RecordHeaderView extends BaseView {
                 'design_pbr':'a[name="design_businessrules"]:not(.hide)',
                 'design_pet':'a[name="design_emailtemplates"]:not(.hide)',
                 'select':'a[name="select_button"]:not(.hide)',
+                'togglesidepanel': '.btn.btn-invisible.sidebar-toggle',
+
+                // Forecasts module controls
+                'commit':'a[name="commit_button"]:not(.hide)',
+                'savedraft':'a[name="save_draft_button"]:not(.hide)',
+                'exportcsv':'a[name="export_button"]:not(.hide)',
+                'settings':'a[name="settings_button"]:not(.hide)',
             },
 
             title: {

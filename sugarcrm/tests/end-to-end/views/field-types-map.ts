@@ -40,6 +40,7 @@ import * as EmailAttachmentsField from '../fields/email-attachments-field';
 import * as FromField from '../fields/from-field';
 import * as HtmleditableTinymceField from '../fields/htmleditable-tinymce-field';
 import * as CommentLogField from '../fields/commentlog-field';
+import * as QuotaPoint from '../fields/quotapoint-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -75,6 +76,9 @@ export const FIELD_TYPES__MAP = {
     'badge-select': BadgeSelectField,
     'email-recipients': EmailRecipientsField,
     'participants': ParticipantsField,
+    'timeperiod': EnumField,
+    'quotapoint': QuotaPoint,
+    'datapoint': QuotaPoint,
     'dashboardtitle': DashboardtitleField,
     'favorite': FavoriteField,
     'email-attachments': EmailAttachmentsField,
@@ -84,4 +88,3 @@ export const FIELD_TYPES__MAP = {
     'pmse_htmleditable_tinymce': HtmleditableTinymceField,
     'commentlog': CommentLogField,
 };
-

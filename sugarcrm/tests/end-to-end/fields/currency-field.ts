@@ -152,10 +152,18 @@ export class Detail extends CurrencyField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'div',
+                input: 'input:not([class *= select2])'
             }
         });
+    }
 
+    public async setValue(val: any): Promise<void> {
+
+        await this.driver.scroll(this.$('field.selector'));
+        await this.driver.click(this.$('field.selector'));
+        await this.driver.setValue(this.$('field.input'), val);
+        await this.driver.execSync('blurActiveElement');
     }
 }
 
@@ -169,10 +177,7 @@ export class List extends CurrencyField {
                 selector: 'div'
             }
         });
-
     }
-
 }
 
 export const Preview = Detail;
-

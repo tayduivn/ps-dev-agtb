@@ -70,6 +70,7 @@ export default class MassupdateView extends BaseView {
      */
     public async performAction(btnName) {
         await this.driver.click(this.$(`filterHeader.` + btnName));
+        await this.driver.waitForApp();
     }
 
     /**

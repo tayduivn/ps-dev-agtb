@@ -8,7 +8,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import {seedbed} from '@sugarcrm/seedbed';
 import {BaseField} from './base-field';
 
 /**
@@ -42,10 +41,16 @@ export class Detail extends DateField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div.ellipsis_inline'
+                selector: 'div.ellipsis_inline',
+                input: 'input',
             }
         });
+    }
 
+    public async setValue(val: any): Promise<void> {
+        await this.driver.click(this.$('field.selector'));
+        await this.driver.setValue(this.$('field.input'), val);
+        await this.driver.execSync('blurActiveElement');
     }
 }
 

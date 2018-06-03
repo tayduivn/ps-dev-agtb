@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {BaseView} from '@sugarcrm/seedbed';
+import BaseView from '../views/base-view';
 import LoginView from '../views/login-view';
 
 /**

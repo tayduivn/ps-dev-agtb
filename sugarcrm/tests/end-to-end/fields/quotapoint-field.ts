@@ -9,29 +9,27 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import BaseView from './base-view';
+import {BaseField} from './base-field';
 
 /**
- * Represents Dashboard view.
- *
- * @class DashboardView
- * @extends BaseView
+ * @class QuotapointField
+ * @extends BaseField
  */
-export default class DashboardView extends BaseView {
+export class QuotapointField extends BaseField {
 
     constructor(options) {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.dashboard',
-            buttons: {
-                newrow: '.add-row.empty',
-                adddashlet: '.add-dashlet .fa.fa-plus'
-            },
-            elements: {
-                InForecastDashlet: '.row-fluid.sortable[name="dashlet_00"]',
-                ForecastBarChart: '.row-fluid.sortable[name="dashlet_01"]',
+            $: '.info[field-name={{name}}]',
+            field: {
+                selector: 'h2'
             }
         });
+    }
+
+    public async getText(selector: string): Promise<string> {
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+        return value.toString().trim();
     }
 }

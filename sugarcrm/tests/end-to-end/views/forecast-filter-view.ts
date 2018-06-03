@@ -9,29 +9,24 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/*
+ Represents Forecasts Filter view PageObject on ForecastListView Layout.
+ */
+
 import BaseView from './base-view';
+import ForecastSearchFilterDropdownCmp from "../components/forecast-search-filter-dropdown-cmp";
 
 /**
- * Represents Dashboard view.
- *
- * @class DashboardView
+ * @class ForecastFilterView
  * @extends BaseView
  */
-export default class DashboardView extends BaseView {
+export default class ForecastFilterView extends BaseView {
+
+    public forecastSearchFilterDropdownCmp: ForecastSearchFilterDropdownCmp;
 
     constructor(options) {
         super(options);
 
-        this.selectors = this.mergeSelectors({
-            $: '.dashboard',
-            buttons: {
-                newrow: '.add-row.empty',
-                adddashlet: '.add-dashlet .fa.fa-plus'
-            },
-            elements: {
-                InForecastDashlet: '.row-fluid.sortable[name="dashlet_00"]',
-                ForecastBarChart: '.row-fluid.sortable[name="dashlet_01"]',
-            }
-        });
+        this.forecastSearchFilterDropdownCmp = this.createComponent<ForecastSearchFilterDropdownCmp>(ForecastSearchFilterDropdownCmp);
     }
 }
