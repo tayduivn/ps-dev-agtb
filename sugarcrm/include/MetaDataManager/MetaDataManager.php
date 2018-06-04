@@ -1275,12 +1275,37 @@ class MetaDataManager implements LoggerAwareInterface
 
         $platforms = array_merge(
             $platforms,
+            self::getPlatformsWithCachesInFilesystem(),
             self::getPlatformsWithCachesInDatabase()
         );
 
         // TODO - Re-Filter the list by known platforms to prevent builds of dead or invalid platforms
         // once unknown platforms are no longer allowed across the board
         return array_unique($platforms);
+    }
+
+    /**
+     * Returns list of platforms that have cached metadata in filesystem cache.
+     *
+     * @return array
+     */
+    protected static function getPlatformsWithCachesInFilesystem()
+    {
+        $platforms = array();
+
+        // Get the listing of files in the cache directory
+        $caches = glob(sugar_cached('api/metadata/') . '*.*');
+        foreach ($caches as $cache) {
+            $file = basename($cache, '.' . pathinfo($cache, PATHINFO_EXTENSION));
+            // If the filename fits the pattern of a metadata cache file get the
+            // platform for the file so long as it isn't base
+            preg_match('/^.*_(.*)_(private|public)/', $file, $m);
+            if (isset($m[1])) {
+                $platforms[$m[1]] = $m[1];
+            }
+        }
+
+        return array_values($platforms);
     }
 
     /**
@@ -1409,6 +1434,16 @@ class MetaDataManager implements LoggerAwareInterface
                 MetaDataFiles::clearModuleClientCache();
             }
 
+            // Wipe out any files from the metadata cache directory
+            $metadataFiles = glob(sugar_cached('api/metadata/').'*');
+            if ( is_array($metadataFiles) ) {
+                foreach ($metadataFiles as $metadataFile) {
+                    // This removes the file and the reference from the map. This does
+                    // NOT save the file map since that would be expensive in a loop
+                    // of many deletes.
+                    unlink($metadataFile);
+                }
+            }
             $cache = new MetaDataCache(DBManagerFactory::getInstance());
             $cache->reset();
 
@@ -3093,10 +3128,11 @@ class MetaDataManager implements LoggerAwareInterface
     public function getStringUrls($ordered = false)
     {
         $languageList = array_keys(get_languages());
+        sugar_mkdir(sugar_cached('api/metadata'), null, true);
 
         $fileList = array();
         foreach ($languageList as $language) {
-            $fileList[$language] = $this->getLangOrderKey($language, $ordered);
+            $fileList[$language] = $this->getLangUrl($language, $ordered);
         }
         $urlList = array();
         foreach ($fileList as $lang => $file) {
@@ -3143,13 +3179,13 @@ class MetaDataManager implements LoggerAwareInterface
     }
 
     /**
-     * Gets a key for a language file based on public/private and order
+     * Gets a url for a language file
      *
      * @param string $language The language to get the file for
      * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string
      */
-    protected function getLangOrderKey($language, $ordered = false)
+    protected function getLangUrl($language, $ordered = false)
     {
         $order_key = $ordered ? "_ordered" : "";
         $public_key = $this->public ? "_public" : "";
@@ -3184,7 +3220,7 @@ class MetaDataManager implements LoggerAwareInterface
         // Do not filter the module list for language file generation
         $modules = $this->getModuleList(false);
 
-        $resp = $this->buildLanguageData($lang, $modules, $ordered);
+        $resp = $this->buildLanguageFile($lang, $modules, $ordered);
         if (empty($hash) || $hash != $resp['hash']) {
             $this->putCachedLanguageHash($lang, $resp['hash'], $ordered);
         }
@@ -3201,7 +3237,7 @@ class MetaDataManager implements LoggerAwareInterface
      */
     protected function getCachedLanguageHash($lang, $ordered = false)
     {
-        $key = $this->getLangOrderKey($lang, $ordered);
+        $key = $this->getLangUrl($lang, $ordered);
 
         return $this->getFromHashCache($key);
     }
@@ -3214,12 +3250,14 @@ class MetaDataManager implements LoggerAwareInterface
      * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return array Array containing the language file contents and the hash for the data
      */
-    protected function buildLanguageData($language, $modules, $ordered = false)
+    protected function buildLanguageFile($language, $modules, $ordered = false)
     {
-        $key = $this->getLangOrderKey($language, $ordered);
-        $data = sugar_cache_retrieve($key);
+        sugar_mkdir(sugar_cached('api/metadata'), null, true);
+        $filePath = $this->getLangUrl($language, $ordered);
+        if (file_exists($filePath)) {
+            // Get the contents of the file so that we can get the hash
+            $data = file_get_contents($filePath);
 
-        if (!empty($data)) {
             // Decode the json and get the hash. The hash should be there but
             // check for it just in case something went wrong somewhere.
             $array = json_decode($data, true);
@@ -3255,50 +3293,9 @@ class MetaDataManager implements LoggerAwareInterface
         }
         $stringData['_hash'] = $this->hashChunk($stringData);
         $data = json_encode($stringData);
-        sugar_cache_put($key, $data);
-
-        // add lang order combination key to cached list.
-        // This list will help in clearing cache entries.
-        $this->cacheLanguageOrderKey($key);
+        sugar_file_put_contents_atomic($filePath, $data);
 
         return array("hash" => $stringData['_hash'], "data" => $data);
-    }
-
-    /**
-     *  Stores language order combination key to cache.
-     *
-     * @param $key language order combination key
-     */
-    protected function cacheLanguageOrderKey($key)
-    {
-        $lang_order_keys = sugar_cache_retrieve('lang_order_keys');
-        // RHS does not matter. Interested only in list of keys.
-        $lang_order_keys[$key] = true;
-        sugar_cache_put('lang_order_keys', $lang_order_keys);
-    }
-
-    /**
-     *  Remove language order combination key from cache.
-     *
-     * @param $key language order combination key
-     */
-    protected function removeLanguageOrderKey($key)
-    {
-        $lang_order_keys = sugar_cache_retrieve('lang_order_keys');
-        if (!empty($lang_order_keys)) {
-            if (isset($lang_order_keys[$key])) {
-                unset($lang_order_keys[$key]);
-                sugar_cache_put('lang_order_keys', $lang_order_keys);
-            }
-        }
-    }
-
-    /**
-     *  Clear whole language order combination key cache.
-     */
-    protected function clearLanguageOrderKeyCache()
-    {
-            sugar_cache_clear('lang_order_keys');
     }
 
     /**
@@ -3351,7 +3348,7 @@ class MetaDataManager implements LoggerAwareInterface
      */
     protected function putCachedLanguageHash($lang, $hash, $ordered = false)
     {
-        $key = $this->getLangOrderKey($lang, $ordered);
+        $key = $this->getLangUrl($lang, $ordered);
         $this->addToHashCache($key, $hash);
     }
 
@@ -3464,20 +3461,19 @@ class MetaDataManager implements LoggerAwareInterface
 
         // Delete language caches and remove from the hash cache
         foreach (array(true, false) as $ordered) {
-            $pattern = $this->getLangOrderKey('(.*)', $ordered);
+            $pattern = $this->getLangUrl('(.*)', $ordered);
             foreach ($hashes as $k => $v) {
                 if (preg_match("#^{$pattern}$#", $k, $m)) {
                     // Add the deleted language to the stack
                     $this->deletedLanguageCaches[] = $m[1];
 
-                    // Remove hash from the cache
+                    // Remove from the cache
                     unset($hashes[$k]);
 
-                    // remove entry from cache
-                    sugar_cache_clear($k);
-
-                    // remove key from the list
-                    $this->removeLanguageOrderKey($k);
+                    // Delete the file
+                    if (is_file($k)) {
+                        unlink($k);
+                    }
 
                     $deleted = true;
                     $this->logger->debug("deleted language cache for " . $m[1]);
@@ -3623,17 +3619,32 @@ class MetaDataManager implements LoggerAwareInterface
      * @return bool True if the file no longer exists or never existed
      */
     protected function clearLanguagesCache() {
+        // Get the hashes array handled first
+        $hashes = array();
+        $path = sugar_cached("api/metadata/hashes.php");
+        @include($path);
 
-        // retrieve lang order keys to iterate over lang order entries
-        $lang_order_keys = sugar_cache_retrieve('lang_order_keys');
-        if (!empty($lang_order_keys)) {
-            foreach ($lang_order_keys as $key => $value) {
-                // clear lang order json data
-                sugar_cache_clear($key);
+        // Track which indexes were deleted
+        $deleted = array();
+        foreach ($hashes as $key => $hash) {
+            // If the index is a .json file path, unset it and delete it
+            if (strpos($key, '.json')) {
+                unset($hashes[$key]);
+                @unlink($key);
+                $deleted[$key] = $key;
             }
+        }
 
-            // remove lang order key list
-            sugar_cache_clear('lang_order_keys');
+        // Now handle files on the file system. This should yield an empty array
+        // but its better to be safe than sorry
+        $files = glob(sugar_cached("api/metadata/*.json"));
+        foreach ($files as $file) {
+            @unlink($file);
+            $deleted[$file] = $file;
+        }
+
+        if ($deleted) {
+            write_array_to_file("hashes", $hashes, $path);
         }
 
         return true;
