@@ -15,21 +15,27 @@
  * Collects information about what endpoints are available in the system
  */
 class ServiceDictionary {
+    public function __construct() {
+        $this->cacheDir = sugar_cached('include/api/');
+    }
 
     /**
      * Clear all API path caches
      */
     public function clearCache() {
-
-        $dictionaryKeyList = sugar_cache_retrieve('service_dictionary_key_list');
-        if (!empty($dictionaryKeyList)) {
-            foreach ($dictionaryKeyList as $key => $value) {
-                sugar_cache_clear($key);
-                unset($dictionaryKeyList[$key]);
-            }
-
-            if (empty($dictionaryKeyList)) {
-                sugar_cache_clear('service_dictionary_key_list');
+        $thedir = $this->cacheDir;
+        if ($current = @opendir($thedir)) {
+            while (false !== ($children = readdir($current))) {
+                $children = trim($children);
+                $fileexists = (is_file($thedir."/". $children)) ? "TRUE" : "FALSE";
+                if ($children != "." && $children != "..") {
+                    if (is_dir($thedir . "/" . $children)) {
+                        $this->clearCache($thedir . "/" . $children, 'php');
+                    }
+                    elseif (is_file($thedir . "/" . $children) && (substr_count($children, 'php'))) {
+                        unlink($thedir . "/" . $children);
+                    }
+                }
             }
         }
     }
@@ -41,14 +47,14 @@ class ServiceDictionary {
      * @return array The data stored in saveDictionaryToStorage()
      */
     protected function loadDictionaryFromStorage($apiType) {
-        $dictionaryKey = 'service_dictionary_' . $apiType;
-        $apiDictionary[$apiType] = sugar_cache_retrieve($dictionaryKey);
-        if (empty($apiDictionary[$apiType]) || inDeveloperMode()) {
+        $dictFile = $this->cacheDir.'ServiceDictionary.'.$apiType.'.php';
+        if ( ! file_exists($dictFile) || inDeveloperMode() ) {
             // No stored service dictionary, I need to build them
             $this->buildAllDictionaries();
-            $apiDictionary[$apiType] = sugar_cache_retrieve($dictionaryKey);
         }
 
+        require($dictFile);
+        
         return $apiDictionary[$apiType];
     }
 
@@ -59,15 +65,12 @@ class ServiceDictionary {
      * @param array $storageData The data that the API needs to store for it's dictionary.
      */
     protected function saveDictionaryToStorage($apiType,$storageData) {
-        $dictionaryKey = 'service_dictionary_' . $apiType;
-        sugar_cache_put($dictionaryKey, $storageData);
-
-        $dictionaryKeyList = sugar_cache_retrieve('service_dictionary_key_list');
-        if (empty($dictionaryKeyList)) {
-            $dictionaryKeyList = array();
+        if ( !is_dir($this->cacheDir) ) {
+            sugar_mkdir($this->cacheDir,null,true);
         }
-        $dictionaryKeyList[$dictionaryKey] = true;
-        sugar_cache_put('service_dictionary_key_list', $dictionaryKeyList);
+
+        sugar_file_put_contents($this->cacheDir.'ServiceDictionary.'.$apiType.'.php','<'."?php\n\$apiDictionary['".$apiType."'] = ".var_export($storageData,true).";\n");
+        
     }
 
     /**
