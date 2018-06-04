@@ -94,7 +94,7 @@ class SugarCronJobs
      */
     protected function markLastRun()
     {
-        if (!sugar_file_put_contents($this->lockfile, time())) {
+        if(!file_put_contents($this->lockfile, time())) {
             $GLOBALS['log']->fatal('Scheduler cannot write PID file.  Please check permissions on '.$this->lockfile);
         }
     }
@@ -108,6 +108,7 @@ class SugarCronJobs
         if($this->min_interval == 0) {
             return true;
         }
+        create_cache_directory($this->lockfile);
         if(!file_exists($this->lockfile)) {
             $this->markLastRun();
             return true;
