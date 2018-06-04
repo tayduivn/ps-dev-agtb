@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 /**
  * SugarRouting class
  *
@@ -20,7 +22,7 @@ class SugarRouting {
 	var $user; // user in focus
 	var $bean; // bean in focus
 	var $rules; // array containing rule sets
-    protected $moduleDir; // module for rule sets
+	var $rulesCache; // path to folder containing rules files
 	var $actions = array( // array containing function names defined in baseActions.php
 		'move_mail',
 		'copy_mail',
@@ -161,7 +163,7 @@ class SugarRouting {
 			$this->rules[] = $newrule;
 		}
 
-        $this->saveRulesToCache();
+		$this->saveRulesToFile();
 	}
 
 	/**
@@ -172,7 +174,7 @@ class SugarRouting {
 			if($rule['id'] == $id) {
 				$rule['active'] = ($status == 'enable') ? true : false;
 				$this->rules[$k] = $rule;
-                $this->saveRulesToCache();
+				$this->saveRulesToFile();
 				return;
 			}
 		}
@@ -196,38 +198,51 @@ class SugarRouting {
 		}
 
 		$this->rules = $newRules;
-        $this->saveRulesToCache();
+		$this->saveRulesToFile();
 	}
-
-    private function getRuleModuleKey($module, $id)
-    {
-        return 'routing_rules_' . $module . '_' . $id;
-    }
 
 	/**
 	 * Takes the values in $this->rules and writes it to the appropriate cache
 	 * file
 	 */
-    protected function saveRulesToCache()
-    {
-        $key = $this->getRuleModuleKey($this->moduleDir, $this->user->id);
-        $GLOBALS['log']->info("SUGARROUTING: Saving rules entry [ {$key} ]");
-        sugar_cache_put($key, $this->rules);
+	function saveRulesToFile() {
+		global $sugar_config;
+
+		$file = $this->rulesCache."/{$this->user->id}.php";
+		$GLOBALS['log']->info("SUGARROUTING: Saving rules file [ {$file} ]");
+		write_array_to_file('routingRules', $this->rules, $file);
 	}
 
 	/**
 	 * Tries to load a rule set based on passed bean
 	 */
 	function loadRules() {
+		global $sugar_config;
 
-        $this->moduleDir = (isset($this->bean->module_dir) && !empty($this->bean->module_dir))
-            ? $this->bean->module_dir : "General";
+		$this->preflightCache();
 
-        $key = $this->getRuleModuleKey($this->moduleDir, $this->user->id);
-        $this->rules = sugar_cache_retrieve($key);
-        if (empty($this->rules)) {
-            $this->rules = array();
+		$file = $this->rulesCache."/{$this->user->id}.php";
+
+		$routingRules = array();
+
+        if (file_exists($file)) {
+            include FileLoader::validateFilePath($file); // force include locally
         }
+
+		$this->rules = $routingRules;
+	}
+
+	/**
+	 * Prepares cache dir for a ruleset.
+	 * Sets $this->rulesCache
+	 */
+	function preflightCache() {
+		$moduleDir = (isset($this->bean->module_dir) && !empty($this->bean->module_dir)) ? $this->bean->module_dir : "General";
+		$this->rulesCache = sugar_cached("routing/{$moduleDir}");
+
+		if(!file_exists($this->rulesCache)) {
+			mkdir_recursive($this->rulesCache);
+		}
 	}
 
 	/**
