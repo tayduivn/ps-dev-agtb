@@ -22,7 +22,6 @@ if(!defined('JSMIN_AS_LIB'))
 
 require_once("include/SugarTheme/cssmin.php");
 require_once('include/utils/sugar_file_utils.php');
-require_once "include/SugarCache/SugarCache.php";
 
 /**
  * Class that provides tools for working with a theme.
@@ -266,9 +265,8 @@ class SugarTheme
             }
         }
         if ( !inDeveloperMode() ) {
-            $pathKey = $this->getThemePathKey();
-            $caches = sugar_cache_retrieve($pathKey);
-            if (!empty($caches)) {
+            if ( sugar_is_file($cachedfile = sugar_cached($this->getFilePath().'/pathCache.php'))) {
+                $caches = unserialize(file_get_contents($cachedfile));
                 if ( isset($caches['jsCache']) )
                     $this->_jsCache       = $caches['jsCache'];
                 if ( isset($caches['cssCache']) )
@@ -278,10 +276,9 @@ class SugarTheme
                 if ( isset($caches['templateCache']) )
                     $this->_templateCache = $caches['templateCache'];
             }
-            $spriteKey = $this->getThemeSpriteKey();
-            $spriteCache = sugar_cache_retrieve($spriteKey);
-            if (!empty($GLOBALS['sugar_config']['use_sprites']) && !empty($spriteCache)) {
-                $this->_spriteCache = $spriteCache;
+            $cachedfile = sugar_cached($this->getFilePath().'/spriteCache.php');
+			if(!empty($GLOBALS['sugar_config']['use_sprites']) && sugar_is_file($cachedfile)) {
+				$this->_spriteCache = unserialize(sugar_file_get_contents($cachedfile));
 			}
         }
         $this->_initialCacheSize = array(
@@ -326,14 +323,13 @@ class SugarTheme
         chdir($dir); // destruct can be called late, and chdir could change
         $cachedir = sugar_cached($this->getFilePath());
         sugar_mkdir($cachedir, 0775, true);
-
-        $pathKey = $this->getThemePathKey();
-        $spriteKey = $this->getThemeSpriteKey();
-
         // clear out the cache on destroy if we are asked to
         if ( $this->_clearCacheOnDestroy ) {
-            sugar_cache_clear($pathKey);
-            sugar_cache_clear($spriteKey);
+
+            if (is_file("$cachedir/pathCache.php"))
+                unlink("$cachedir/pathCache.php");
+			if (is_file("$cachedir/spriteCache.php"))
+				unlink("$cachedir/spriteCache.php");
 
         }
         elseif ( !inDeveloperMode() ) {
@@ -343,31 +339,26 @@ class SugarTheme
                     || count($this->_imageCache) != $this->_initialCacheSize['imageCache']
                     || count($this->_templateCache) != $this->_initialCacheSize['templateCache']
                 ) {
-                $pathList = array(
-                    'jsCache'       => $this->_jsCache,
-                    'cssCache'      => $this->_cssCache,
-                    'imageCache'    => $this->_imageCache,
-                    'templateCache' => $this->_templateCache,
-                );
-
-                sugar_cache_put($pathKey, $pathList);
+                sugar_file_put_contents(
+                    "$cachedir/pathCache.php",
+                    serialize(
+                        array(
+                            'jsCache'       => $this->_jsCache,
+                            'cssCache'      => $this->_cssCache,
+                            'imageCache'    => $this->_imageCache,
+                            'templateCache' => $this->_templateCache,
+                            )
+                        )
+                    );
 
             }
 			if ( count($this->_spriteCache) != $this->_initialCacheSize['spriteCache']) {
-                sugar_cache_put($spriteKey, $this->_spriteCache);
+				sugar_file_put_contents(
+					"$cachedir/spriteCache.php",
+					serialize($this->_spriteCache)
+				);
 			}
         }
-    }
-
-    private function getThemePathKey()
-    {
-        return 'sugar_theme_' . $this->dirName . '_paths';
-    }
-
-
-    private function getThemeSpriteKey()
-    {
-        return 'sugar_theme_' . $this->dirName . '_sprite';
     }
 
     /**
