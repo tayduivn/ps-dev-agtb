@@ -548,8 +548,6 @@ function deleteCache(){
 
 	}
 
-    LanguageManager::clearLanguageCache();
-
 	//Clean jsLanguage from cache
 	$cachedir = sugar_cached('jsLanguage');
 	if(is_dir($cachedir)){

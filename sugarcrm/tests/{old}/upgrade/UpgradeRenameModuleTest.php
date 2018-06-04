@@ -89,7 +89,7 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         $GLOBALS['app_list_strings']['moduleListSingular']['Contacts'] = 'Property Contact';
         $GLOBALS['app_list_strings']['moduleList']['Contacts'] = 'Property Contacts';
 
-        $this->upgrader->setVersions('7.6', 'ent', '7.9', 'ent');
+        $this->upgrader->setVersions('6.7.3', 'ent', '7.1.5', 'ent');
         $script = $this->upgrader->getScript('post', '7_RenameModules');
 
         $changedModuleList = $script->run();
@@ -109,23 +109,23 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
 
     public function testUpgradeRenameWithIntendedDouble() {
         $toWrite = "<?php
-\$app_list_strings['moduleListSingular']['Accounts']='New Account';
-\$app_list_strings['moduleList']['Accounts']='New Accounts';";
+\$app_list_strings['moduleListSingular']['Contacts']='New Contact';
+\$app_list_strings['moduleList']['Contacts']='New Contacts';";
         sugar_file_put_contents($this->globalFilename, $toWrite);
-        $GLOBALS['app_list_strings']['moduleListSingular']['Accounts'] = 'New Account';
-        $GLOBALS['app_list_strings']['moduleList']['Accounts'] = 'New Accounts';
+        $GLOBALS['app_list_strings']['moduleListSingular']['Contacts'] = 'New Contact';
+        $GLOBALS['app_list_strings']['moduleList']['Contacts'] = 'New Contacts';
 
-        $this->upgrader->setVersions('7.6', 'ent', '7.9', 'ent');
+        $this->upgrader->setVersions('6.7.3', 'ent', '7.1.5', 'ent');
         $script = $this->upgrader->getScript('post', '7_RenameModules');
 
         $changedModuleList = $script->run();
         $this->handleChangedModuleList($changedModuleList);
 
         include($this->globalFilename);
-        $mod_strings = return_module_language('en_us', 'Accounts', true);
-        $this->assertEquals($app_list_strings['moduleListSingular']['Accounts'], 'New Account');
-        $this->assertEquals($app_list_strings['moduleList']['Accounts'], 'New Accounts');
-        $this->assertEquals($mod_strings['LBL_NEW_FORM_TITLE'], 'New New Account');
+        $mod_strings = return_module_language('en_us', 'Contacts', true);
+        $this->assertEquals($app_list_strings['moduleListSingular']['Contacts'], 'New Contact');
+        $this->assertEquals($app_list_strings['moduleList']['Contacts'], 'New Contacts');
+        $this->assertEquals($mod_strings['LBL_NEW_FORM_TITLE'], 'New New Contact');
     }
 
     /**
