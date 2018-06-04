@@ -250,7 +250,8 @@ class ModuleBuilderController extends SugarController
             //clear end
             $pm->performInstall($installFile, true);
 
-            sugar_cache_clear('unified_search_modules');
+            //clear the unified_search_module.php file
+            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
 
             //bug 44269 - start
 
