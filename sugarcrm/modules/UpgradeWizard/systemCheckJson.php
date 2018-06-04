@@ -20,9 +20,10 @@ if(ob_get_level() < 1)
 	ob_start();
 ob_implicit_flush(1);
 
-$persistence = sugar_cache_retrieve('upgrade_wizard_persistence');
-if (empty($persistence)) {
-    $persistence = array();
+// load the generated persistence file if found
+$persistence = array();
+if(file_exists($persist = sugar_cached('/modules/UpgradeWizard/_persistence.php'))) {
+	require_once $persist;
 }
 require_once('modules/UpgradeWizard/uw_utils.php');
 
