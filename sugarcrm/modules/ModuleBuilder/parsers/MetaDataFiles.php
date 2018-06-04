@@ -733,37 +733,47 @@ class MetaDataFiles
             $modules = empty($GLOBALS['app_list_strings']['moduleList']) ? array() : array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
 
-        // retrieve key list stored while building cache.
-        $keyList = sugar_cache_retrieve('module_client_cache_key_list');
-        if (empty($keyList)) {
-            return;
+        // Clean up the type
+        if ( empty($type) ) {
+            $type = '*';
+        }
+
+        // Clean up the platforms
+        if (empty($platforms)) {
+            $platforms = array('*');
         }
 
         // Handle it
         foreach ($modules as $module) {
-            $storedPlatforms = $platforms;
-            if (empty($storedPlatforms)) {
-                $storedPlatforms = array_keys($keyList[$module]);
-            }
-            foreach ($storedPlatforms as $platform) {
-                $types = array();
-                if (empty($type)) {
-                    $types = array_keys($keyList[$module][$platform]);
-                } else {
-                    $types[] = $type;
-                }
-                foreach ($types as $typ) {
-                    $key_indices = array_keys($keyList[$module][$platform][$typ]);
-                    foreach ($key_indices as $key_index) {
-                        $key = $keyList[$module][$platform][$typ][$key_index];
-                        sugar_cache_clear($key);
+            // Start at the client dir level
+            $clientDirs = glob(sugar_cached('modules/'.$module.'/clients/'));
+            foreach ($clientDirs as $clientDir) {
+                foreach ($platforms as $platform) {
+                    // Build up to the platform dir level
+                    $platformDirs = glob($clientDir . $platform . '/');
+                    foreach ($platformDirs as $platformDir) {
+                        // Get all of the files in question
+                        $cacheFiles = glob($platformDir . $type . '.php');
+
+                        // Handle nuking the files
+                        foreach ($cacheFiles as $cacheFile) {
+                            unlink($cacheFile);
+                        }
+                        // Build up to the role dir level
+                        $roleDirs = glob($platformDir . '*/');
+                        foreach ($roleDirs as $roleDir) {
+
+                            $cacheFiles = glob($roleDir . $type . '.php');
+
+                            // Handle nuking the files
+                            foreach ($cacheFiles as $cacheFile) {
+                                unlink($cacheFile);
+                            }
+                        }
                     }
-                    unset($keyList[$module][$platform][$typ]);
                 }
             }
         }
-        // store back modified keyList to cache
-        sugar_cache_put('module_client_cache_key_list', $keyList);
     }
 
     /**
@@ -788,18 +798,16 @@ class MetaDataFiles
         // BEGIN SUGARCRM flav=ent ONLY
         $noCache = $noCache || $sc->get('roleBasedViews', false);
         // END SUGARCRM flav=ent ONLY
-
-        $key = self::getModuleClientCacheKey($module, $platforms[0], $type, $context);
-        $clientCache = sugar_cache_retrieve($key);
-
-        if ($noCache || empty($clientCache)) {
+        $clientCache = array();
+        $cacheFile = sugar_cached('modules/' . $module . '/clients/' . $platforms[0] . '/' . $type . '.php');
+        if ($noCache || !file_exists($cacheFile)) {
             $result = self::buildModuleClientCache($platforms, $type, $module, $context, $noCache);
             if ($noCache) {
                 return $result;
-            } else {
-                $clientCache = sugar_cache_retrieve($key);
             }
         }
+        $clientCache[$module][$platforms[0]][$type] = array();
+        require $cacheFile;
 
         return $clientCache[$module][$platforms[0]][$type];
     }
@@ -866,31 +874,18 @@ class MetaDataFiles
             if ($noCache) {
                 return $moduleResults;
             } else {
-                $key = self::getModuleClientCacheKey($module, $platforms[0], $type, $context);
-                sugar_cache_put($key, $moduleResults);
-
-                // Store key in a list to be used for clearing cache.
-                $keyList = sugar_cache_retrieve('module_client_cache_key_list');
-                $keyList[$module][$platforms[0]][$type][] = $key;
-
-                sugar_cache_put('module_client_cache_key_list', $keyList);
+                $basePath = sugar_cached('modules/'.$module.'/clients/'.$platforms[0]);
+                if ($context != null && $context->getHash()) {
+                    $basePath .= '/' . $context->getHash();
+                }
+                sugar_mkdir($basePath,null,true);
+    
+                $output = "<?php\n\$clientCache['".$module."']['".$platforms[0]."']['".$type."'] = ".var_export($moduleResults,true).";\n\n";
+                sugar_file_put_contents_atomic($basePath.'/'.$type.'.php', $output);
             }
         }
     }
 
-    public static function getModuleClientCacheKey(
-        $module,
-        $platform,
-        $type,
-        MetaDataContextInterface $context = null
-    ) {
-        $key = 'client_cache_' . $module . '_' . $platform . '_' . $type;
-        if ($context && $context->getHash()) {
-            $key .= '_' . $context->getHash();
-        }
-
-        return $key;
-    }
 
     /**
      * Get a list of client files:

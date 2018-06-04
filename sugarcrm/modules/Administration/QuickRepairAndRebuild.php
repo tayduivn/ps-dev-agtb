@@ -492,7 +492,9 @@ class RepairAndClear
             return;
         }
 
-        MetaDataFiles::clearModuleClientCache($this->module_list);
+        foreach ($this->module_list as $module_name) {
+            $this->_clearCache(sugar_cached('modules/' . $module_name . '/clients'), '.php');
+        }
     }
 
     /**
