@@ -47,7 +47,9 @@ class SugarUpgradeRemoveData extends UpgradeScript
                 }
             }
             // Need to delete cache of unified search modules.
-            UnifiedSearchAdvanced::clearCache();
+            if (file_exists('custom/modules/unified_search_modules_display.php')) {
+                UnifiedSearchAdvanced::clearCache();
+            }
         }
     }
 }

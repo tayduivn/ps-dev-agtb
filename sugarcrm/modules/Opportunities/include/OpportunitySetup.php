@@ -671,8 +671,16 @@ EOL;
      */
     protected function cleanupUnifiedSearchCache()
     {
-        // since we changed the unified search setting remove the cache
-        UnifiedSearchAdvanced::clearCache();
+        // since we changed the unified search setting remove the cache file
+        $file = sugar_cached('modules/unified_search_modules.php');
+        if (file_exists($file)) {
+            unlink($file);
+        }
+        // remove the unified search display settings
+        $file = 'custom/modules/unified_search_modules_display.php';
+        if (file_exists($file)) {
+            unlink($file);
+        }
     }
 
     /**

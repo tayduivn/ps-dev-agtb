@@ -4013,7 +4013,10 @@ function getSilentUpgradeVar($var){
  */
 function add_unified_search_to_custom_modules_vardefs()
 {
-    UnifiedSearchAdvanced::clearCache();
+	if(file_exists($cachefile = sugar_cached('modules/unified_search_modules.php')))
+	{
+	   unlink($cachefile);
+	}
 
 }
 

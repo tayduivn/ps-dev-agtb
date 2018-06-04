@@ -49,6 +49,13 @@ EOQ;
        fclose( $fh );
     }
 
+	    //Remove the cached unified_search_modules.php file
+	    $this->unified_search_modules_file = $GLOBALS['sugar_config']['cache_dir'] . 'modules/unified_search_modules.php';
+    	if(file_exists($this->unified_search_modules_file))
+		{
+			copy($this->unified_search_modules_file, $this->unified_search_modules_file.'.bak');
+			unlink($this->unified_search_modules_file);
+		}
     }
 
     public function tearDown()
@@ -74,18 +81,13 @@ EOQ;
 	public function testUnifiedSearchAdvancedBuildCache()
 	{
 		$usa = new UnifiedSearchAdvanced();
-        $unified_search_modules= $usa->buildCache();
+		$usa->buildCache();
 
-        $this->assertArrayHasKey(
-            'Bug44030_TestPerson',
-            $unified_search_modules,
-            "Assert that we have the custom module set in unified_search_modules cache."
-        );
-        $this->assertArrayHasKey(
-            'email',
-            $unified_search_modules['Bug44030_TestPerson']['fields'],
-            "Assert that the email field was set for the custom module"
-        );
-    }
+		//Assert we could build the file without problems
+		$this->assertTrue(file_exists($this->unified_search_modules_file), "Assert {$this->unified_search_modules_file} file was created");
 
+	    include($this->unified_search_modules_file);
+	    $this->assertTrue(isset($unified_search_modules['Bug44030_TestPerson']), "Assert that we have the custom module set in unified_search_modules.php file");
+	    $this->assertTrue(isset($unified_search_modules['Bug44030_TestPerson']['fields']['email']), "Assert that the email field was set for the custom module");
+	}
 }

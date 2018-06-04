@@ -30,7 +30,9 @@ class Bug42961Test extends TestCase
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
-        $unified_search_modules = $unifiedSearchAdvanced->buildCache();
+        $unifiedSearchAdvanced->buildCache();
+        $this->assertFileExists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php', 'Here should be cache file with data');
+        include $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php';
         $force_unifiedsearch = 0;
         foreach ($unified_search_modules as $moduleName=>$moduleInformation)
         {

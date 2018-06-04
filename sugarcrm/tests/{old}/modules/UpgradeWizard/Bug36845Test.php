@@ -26,6 +26,19 @@ class Bug36845Test extends TestCase
         global $beanFiles, $beanList;
         require('include/modules.php');
 
+        if(file_exists(sugar_cached('modules/unified_search_modules.php')))
+
+        {
+            $this->has_custom_unified_search_modules = true;
+            copy(sugar_cached('modules/unified_search_modules.php'), sugar_cached('modules/unified_search_modules.php.bak'));
+        }
+
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
+        {
+            $this->has_custom_unified_search_modules_display = true;
+            copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
+        }
+
         if(file_exists($this->module_dir))
         {
            rmdir_recursive($this->module_dir);
@@ -116,6 +129,25 @@ EOQ;
         unset($GLOBALS['beanList']['clabc_Bug36845Test']);
         unset($GLOBALS['beanFiles']['clabc_Bug36845Test']);
 
+        if(file_exists(sugar_cached('modules/unified_search_modules.php')))
+        {
+            unlink(sugar_cached('modules/unified_search_modules.php'));
+        }
+
+        if($this->has_custom_unified_search_modules)
+        {
+            copy(sugar_cached('modules/unified_search_modules.php.bak'), sugar_cached('modules/unified_search_modules.php'));
+            unlink(sugar_cached('modules/unified_search_modules.php.bak'));
+        }
+
+        if($this->has_custom_unified_search_modules_display)
+        {
+            copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
+            unlink('custom/modules/unified_search_modules_display.php.bak');
+        } else {
+            unlink('custom/modules/unified_search_modules_display.php');
+        }
+
         if(file_exists("custom/{$this->module_dir}/metadata"))
         {
             rmdir_recursive("custom/{$this->module_dir}/metadata");
@@ -134,11 +166,10 @@ EOQ;
         require_once('modules/UpgradeWizard/uw_utils.php');
         add_unified_search_to_custom_modules_vardefs();
         $usa = new UnifiedSearchAdvanced();
-        $unified_search_modules = $usa->buildCache();
-        $this->assertTrue(
-            isset($unified_search_modules['clabc_Bug36845Test']),
-            'Assert that the custom module was added to unified_search_modules'
-        );
+        $usa->buildCache();
+        $this->assertTrue(file_exists(sugar_cached('modules/unified_search_modules.php')), 'Assert that we have a unified_search_modules.php file');
+        include(sugar_cached('modules/unified_search_modules.php'));
+        $this->assertTrue(isset($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was added to unified_search_modules.php');
     	$this->assertEquals(false, $unified_search_modules['clabc_Bug36845Test']['default'], 'Assert that the custom module was set to not be searched on by default');
     }
 
@@ -151,32 +182,25 @@ EOQ;
         require_once('modules/UpgradeWizard/uw_utils.php');
         add_unified_search_to_custom_modules_vardefs();
         $usa = new UnifiedSearchAdvanced();
-        $unified_search_modules = $usa->buildCache();
+        $usa->buildCache();
 
-        $this->assertArrayNotHasKey(
-            'clabc_Bug36845Test',
-            $unified_search_modules,
-            'Assert that the custom module was not added to unified_search_modules.'
-        );
-
+        $this->assertTrue(file_exists(sugar_cached('modules/unified_search_modules.php')), 'Assert that we have a unified_search_modules.php file');
+        include(sugar_cached('modules/unified_search_modules.php'));
+        $this->assertTrue(empty($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was not added to unified_search_modules.php');
     }
 
 
     public function test_create_unified_search_modules_display()
     {
-        // clear unified search modules cache
-        UnifiedSearchAdvanced::clearCache();
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
+        {
+            unlink('custom/modules/unified_search_modules_display.php');
+        }
 
         require_once('modules/UpgradeWizard/uw_utils.php');
         $usa = new UnifiedSearchAdvanced();
         $_REQUEST['enabled_modules'] = 'Accounts,Bug36845Test';
         $usa->saveGlobalSearchSettings();
-        $key = 'unified_search_modules_display';
-        $new_unified_search_modules_display = SugarCache::instance()->$key;
-        $this->assertArrayHasKey(
-            'Bug36845Test',
-            $new_unified_search_modules_display,
-            'Assert that unified_search_modules_display has new modules.'
-        );
+        $this->assertTrue(file_exists('custom/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');
     }
 }
