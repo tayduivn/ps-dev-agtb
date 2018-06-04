@@ -3154,7 +3154,7 @@ class MetaDataManager implements LoggerAwareInterface
         $order_key = $ordered ? "_ordered" : "";
         $public_key = $this->public ? "_public" : "";
         $platform = $this->platforms[0];
-        return sugar_cached("api/metadata/lang_{$language}_{$platform}{$public_key}{$order_key}.json");
+        return  sugar_cached("api/metadata/lang_{$language}_{$platform}{$public_key}{$order_key}.json");
     }
 
     /**

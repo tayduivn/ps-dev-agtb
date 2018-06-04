@@ -456,7 +456,7 @@ class RepairAndClear
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARPDFFONT']}</h3>";
         
         $fontManager = new FontManager();
-        $fontManager->clearCachedFile();
+        $fontManager->clearCachedFontList();
     }
 
     /*

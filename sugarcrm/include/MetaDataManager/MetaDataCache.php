@@ -67,21 +67,17 @@ class MetaDataCache implements LoggerAwareInterface
         }
     }
 
-    private function isCacheEnabled()
-    {
-        return (!empty($this->db) && self::$isCacheEnabled);
-    }
-
     public function getKeys()
     {
-        if (!$this->isCacheEnabled()) {
-            return [];
-        }
-
-        return $this->db
+        $ret = array();
+        if (!empty($this->db) && self::$isCacheEnabled) {
+                $ret[] = $this->db
                     ->getConnection()
                     ->executeQuery('SELECT type FROM ' . static::$cacheTable)
                     ->fetchAll(\PDO::FETCH_COLUMN);
+        }
+
+        return $ret;
     }
 
     public function reset()
@@ -133,7 +129,7 @@ class MetaDataCache implements LoggerAwareInterface
     {
         $result = null;
         //During install/setup, this function might get called before the DB is setup.
-        if ($this->isCacheEnabled()) {
+        if (!empty($this->db) && self::$isCacheEnabled) {
             $cacheResult = null;
             $row = $this->getLastModifiedByType($key);
             if (!empty($row['data'])) {
@@ -162,7 +158,7 @@ class MetaDataCache implements LoggerAwareInterface
      */
     protected function storeToCacheTable($key, $data)
     {
-        if ($this->isCacheEnabled()) {
+        if (!empty($this->db) && self::$isCacheEnabled) {
             try {
                 $encoded = base64_encode(gzdeflate(serialize($data)));
             } catch (Exception $e) {
@@ -240,7 +236,7 @@ class MetaDataCache implements LoggerAwareInterface
      */
     protected function removeFromCacheTable($key)
     {
-        if ($this->isCacheEnabled()) {
+        if (self::$isCacheEnabled) {
             $this->db->getConnection()->delete(static::$cacheTable, array('type' => $key));
         }
     }
@@ -263,7 +259,7 @@ class MetaDataCache implements LoggerAwareInterface
     }
 
     public function clearKeysLike($key) {
-        if (!$this->isCacheEnabled()) {
+        if (!self::$isCacheEnabled) {
             return true;
         }
         $qb = $this->db->getConnection()->createQueryBuilder();

@@ -101,13 +101,13 @@ class LanguageManager
 		sugar_cache_put($key,$loaded_mod_strings);
 
         // Maintain list of modules that have lang strings in the cache to use in clearing cache
-        $language_cache_module_list = sugar_cache_retrieve('language_module_list');
+        $language_cache_module_list = sugar_cache_retrieve('language_cache_module_list');
         if (empty($language_cache_module_list)) {
             $language_cache_module_list = array();
         }
 
         $language_cache_module_list[$module][$lang] = $key;
-        sugar_cache_put('language_module_list', $language_cache_module_list);
+        sugar_cache_put('language_cache_module_list', $language_cache_module_list);
     }
 
 	/**
@@ -118,7 +118,7 @@ class LanguageManager
 	 */
     public static function clearLanguageCache($module = '', $lang = '')
     {
-        $language_cache_module_list = sugar_cache_retrieve('language_module_list');
+        $language_cache_module_list = sugar_cache_retrieve('language_cache_module_list');
         if (empty($language_cache_module_list)) {
             return;
         }
@@ -144,12 +144,12 @@ class LanguageManager
                     if (!empty($language_cache_module_list[$module][$clean_lang])) {
                         unset($language_cache_module_list[$module][$clean_lang]);
                     }
-                    $key = "return_mod_lang_{$module}_{$clean_lang}";
+                    $key = "return_mod_lang_{$module}_{$lang}";
                     sugar_cache_clear($key);
                 }
             }
         }
-        sugar_cache_put('language_module_list', $language_cache_module_list);
+        sugar_cache_put('language_cache_module_list', $language_cache_module_list);
 	}
 
     /**
@@ -251,12 +251,14 @@ class LanguageManager
                 $mod_strings = array_map('translated_prefix', $mod_strings);
             }
             return $mod_strings;
-        }
+        } else {
         ////BEGIN SUGARCRM flav=int ONLY
             display_notice('<B> MISSING FIELD_DEFS '
                 . 'modules/'. strtoupper($module)
                 . '/language/'.$lang.'.lang.php </b><BR>');
         //END SUGARCRM flav=int ONLY
+        }
+
     }
 
     /**
