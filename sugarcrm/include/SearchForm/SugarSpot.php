@@ -784,10 +784,10 @@ class SugarSpot
         global $current_user, $current_language, $app_list_strings, $mod_list_strings;
         $current_language = (empty($current_language) ? "en_us" : $current_language);
 
-        $user_action_map_key = $current_language . '_sugar_actions_' . $current_user->id;
-        $action_list = sugar_cache_retrieve($user_action_map_key);
+        $user_action_map_filename = sugar_cached('modules/'. $current_language . '_sugar_actions_' . $current_user->id . ".php");
 
-        if (empty($action_list)) {
+        if (!file_exists($user_action_map_filename))
+        {
             $all_menu_files=findAllFiles("modules",$all_menu_files,false,"Menu.php");
             if (!empty($all_menu_files) and is_array($all_menu_files))
             {
@@ -846,7 +846,10 @@ class SugarSpot
                 }
             }
 
-            sugar_cache_put($user_action_map_key, $action_list);
+            file_put_contents($user_action_map_filename, '<?php $action_list=' . var_export($action_list, true) . '; ?>');
+        }
+        else {
+            require ($user_action_map_filename);
         }
 
         return $action_list;
