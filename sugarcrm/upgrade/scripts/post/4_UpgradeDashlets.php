@@ -23,8 +23,10 @@ class SugarUpgradeUpgradeDashlets extends UpgradeScript
     {
         if (!($this->from_flavor == 'ce' && $this->toFlavor('pro')))
             return;
-
-        $dashletsFiles = DashletManager::getDashletsFiles();
+        $dashletsFiles = array();
+        if (file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
+            require $cachedfile;
+        }
 
         if (file_exists('modules/Home/dashlets.php')) {
             require 'modules/Home/dashlets.php';

@@ -49,7 +49,12 @@ class MySugar{
             return;
         }
 
-        $dashletsFiles = DashletManager::getDashletsFiles();
+		if(!is_file(sugar_cached('dashlets/dashlets.php'))) {
+
+            $dc = new DashletCacheBuilder();
+            $dc->buildCache();
+		}
+		require_once sugar_cached('dashlets/dashlets.php');
 
 		global $current_user;
 
@@ -611,7 +616,13 @@ class MySugar{
 		global $current_user, $sugar_version, $sugar_config, $sugar_flavor, $current_language;
 		global $app_strings, $theme;
 
-        $dashletsFiles = DashletManager::getDashletsFiles();
+		// build dashlet cache file if not found
+		if(!is_file(sugar_cached('dashlets/dashlets.php'))) {
+
+		    $dc = new DashletCacheBuilder();
+		    $dc->buildCache();
+		}
+		require_once sugar_cached('dashlets/dashlets.php');
 
 		$pages = $current_user->getPreference('pages', $this->type);
 		$dashlets = $current_user->getPreference('dashlets', $this->type);

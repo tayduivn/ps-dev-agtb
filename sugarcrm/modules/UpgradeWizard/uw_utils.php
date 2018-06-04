@@ -2618,7 +2618,9 @@ function repairDBForUpgrade($execute=false,$path=''){
  *
  */
 function upgradeDashletsForSalesAndMarketing() {
-    $dashletsFiles = DashletManager::getDashletsFiles();
+	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
+   	   require($cachedfile);
+   	}
 
    	if(file_exists('modules/Home/dashlets.php')) {
    	   require('modules/Home/dashlets.php');
@@ -2895,8 +2897,9 @@ function upgradeUserPreferences() {
         $localization->createInvalidLocaleNameFormatUpgradeNotice();
     }
 
-    $dashletsFiles = DashletManager::getDashletsFiles();
-    if (empty($dashletsFiles) && file_exists('modules/Dashboard/dashlets.php')) {
+	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
+   	   require($cachedfile);
+   	} else if(file_exists('modules/Dashboard/dashlets.php')) {
    	   require('modules/Dashboard/dashlets.php');
    	}
 
@@ -3072,7 +3075,16 @@ function upgradeUserPreferences() {
 	   }
 	}
 
-    DashletManager::updateDashletsFiles($upgradeTrackingDashlets);
+	//Write the entries to cache/dashlets/dashlets.php
+	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
+	   require($cachedfile);
+	   foreach($upgradeTrackingDashlets as $id=>$entry) {
+	   	   if(!isset($dashletsFiles[$id])) {
+	   	   	  $dashletsFiles[$id] = $entry;
+	   	   }
+	   }
+	   write_array_to_file("dashletsFiles", $dashletsFiles, $cachedfile);
+	} //if
 }
 
 
@@ -3483,6 +3495,7 @@ function upgradeModulesForTeam() {
 
 
 	function update_iframe_dashlets(){
+		require_once(sugar_cached('dashlets/dashlets.php'));
 
 		$db = DBManagerFactory::getInstance();
 		$query = "SELECT id, contents, assigned_user_id FROM user_preferences WHERE deleted = 0 AND category = 'Home'";

@@ -13,7 +13,13 @@
 global $current_user, $sugar_version, $sugar_config, $beanFiles;
 
 
-$dashletsFiles = DashletManager::getDashletsFiles();
+// build dashlet cache file if not found
+if(!is_file($cachefile = sugar_cached('dashlets/dashlets.php'))) {
+
+    $dc = new DashletCacheBuilder();
+    $dc->buildCache();
+}
+require_once $cachefile;
 
 foreach(SugarAutoLoader::existingCustom('modules/Home/dashlets.php') as $file) {
     include $file;

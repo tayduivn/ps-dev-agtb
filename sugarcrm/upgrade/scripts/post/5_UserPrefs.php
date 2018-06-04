@@ -51,8 +51,9 @@ class SugarUpgradeUserPrefs extends UpgradeScript
         }
 
         if($this->toFlavor('pro')) {
-            $dashletsFiles = DashletManager::getDashletsFiles();
-            if (empty($dashletsFiles) && file_exists('modules/Dashboard/dashlets.php')) {
+        	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
+   	           require($cachedfile);
+   	        } else if(file_exists('modules/Dashboard/dashlets.php')) {
            	   require('modules/Dashboard/dashlets.php');
    	        }
 
@@ -223,8 +224,16 @@ class SugarUpgradeUserPrefs extends UpgradeScript
         	   }
         	}
 
-            //Write the entries to cache
-            DashletManager::updateDashletsFiles($upgradeTrackingDashlets);
+        	//Write the entries to cache/dashlets/dashlets.php
+        	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
+        	   require($cachedfile);
+        	   foreach($upgradeTrackingDashlets as $id=>$entry) {
+        	   	   if(!isset($dashletsFiles[$id])) {
+        	   	   	  $dashletsFiles[$id] = $entry;
+        	   	   }
+        	   }
+        	   write_array_to_file("dashletsFiles", $dashletsFiles, $cachedfile);
+            } //if
         }
     }
 

@@ -35,7 +35,7 @@ function add_new_iframe_dashlets(){
 	$hasSugarNews = false;
 	$newDashlets = array();
 	$newIds = array();
-    $dashletsFiles = DashletManager::getDashletsFiles();
+	require_once('cache/dashlets/dashlets.php');
     $sugarNewsDashlet = array('className' => 'iFrameDashlet',
 					 'module' => 'iFrames',
 					 'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],

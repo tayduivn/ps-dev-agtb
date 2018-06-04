@@ -127,6 +127,9 @@ function post_install()
 }
 
 function rebuild_dashlets(){
+    if(is_file('cache/dashlets/dashlets.php')) {
+        unlink('cache/dashlets/dashlets.php');
+    }
     require_once('include/Dashlets/DashletCacheBuilder.php');
 
     $dc = new DashletCacheBuilder();

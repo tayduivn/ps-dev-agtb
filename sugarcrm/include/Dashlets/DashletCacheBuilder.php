@@ -32,7 +32,7 @@ class DashletCacheBuilder {
         
         getFiles($dashletFiles, 'modules', '/^.*\/Dashlets\/[^\.]*\.php$/');
         getFiles($dashletFilesCustom, 'custom/modules', '/^.*\/Dashlets\/[^\.]*\.php$/');
-
+        $cacheDir = create_cache_directory('dashlets/');
         $allDashlets = array_merge($dashletFiles, $dashletFilesCustom);
         $dashletFiles = array();
         foreach($allDashlets as $num => $file) {
@@ -56,17 +56,7 @@ class DashletCacheBuilder {
             }
         }
         
-        sugar_cache_put('dashlet_files', $dashletFiles);
-        return $dashletFiles;
+        write_array_to_file('dashletsFiles', $dashletFiles, $cacheDir . 'dashlets.php');
     }
-
-    /**
-     * Clears cache of dashlet_files
-     */
-    public function clearCache()
-    {
-        sugar_cache_clear('dashlet_files');
-    }
-
 }
 ?>
