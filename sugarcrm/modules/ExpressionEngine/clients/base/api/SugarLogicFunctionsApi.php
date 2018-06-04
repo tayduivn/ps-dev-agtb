@@ -47,12 +47,12 @@ class SugarLogicFunctionsApi extends SugarApi
     public function getSugarLogicFunctions(ServiceBase $api, array $args)
     {
         $useDebug = (!shouldResourcesBeMinified() || !empty($args['debug']));
-        $FUNCTION_MAP = sugar_cache_retrieve('expressions_function_map');
+        $phpCacheFile = sugar_cached("Expressions/functionmap.php");
         $jsCacheFile = $useDebug ?
             sugar_cached("Expressions/functions_cache_debug.js") :
             sugar_cached('Expressions/functions_cache.js');
         // @jvink - check with @dwheeler
-        if (empty($FUNCTION_MAP) || !SugarAutoLoader::fileExists($jsCacheFile)) {
+        if (!file_exists($phpCacheFile) || !file_exists($jsCacheFile)) {
             $GLOBALS['updateSilent'] = true;
             include("include/Expressions/updatecache.php");
         }

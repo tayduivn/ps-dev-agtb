@@ -82,13 +82,16 @@ class Parser {
 
         // handle if function is not valid
         if (empty(static::$function_cache)) {
-            $FUNCTION_MAP = sugar_cache_retrieve('expressions_function_map');
-            if (empty($FUNCTION_MAP)) {
+            $cacheFile = sugar_cached('Expressions/functionmap.php');
+            if (!file_exists($cacheFile)) {
                 $GLOBALS['updateSilent'] = true;
                 include("include/Expressions/updatecache.php");
-                $FUNCTION_MAP = sugar_cache_retrieve('expressions_function_map');
             }
 
+            // $FUNCTION_MAP is pulled in from the file.
+            if (empty($FUNCTION_MAP)) {
+                require $cacheFile;
+            }
             static::$function_cache = $FUNCTION_MAP;
         }
 

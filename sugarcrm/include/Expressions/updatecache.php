@@ -62,7 +62,7 @@ function recursiveParse($dir, $silent = false)
         echo "<ul>";
     }
 
-    $function_map = array();
+    $contents = "";
     $js_contents = "";
 
     foreach ($entries as $entry) {
@@ -71,14 +71,12 @@ function recursiveParse($dir, $silent = false)
             continue;
         }
 
-		// parse the sub-directories
-		if ( !is_file($entry) ) {
-			$cont = recursiveParse($dir . "/" . $entry, $silent);
-            if (!empty($cont["function_map"])) {
-                $function_map = array_merge($function_map, $cont["function_map"]);
-            }
-			$js_contents .= $cont["javascript"];
-		}
+        // parse the sub-directories
+        if (!is_file($entry)) {
+            $cont = recursiveParse($dir . "/" . $entry, $silent);
+            $contents      .= $cont["function_map"];
+            $js_contents .= $cont["javascript"];
+        }
 
         // Check for extensions.
         if (!preg_match('/^[0-9a-zA-Z-_]+Expression.php$/', $entry)) {
@@ -184,19 +182,20 @@ $js_contents .= "});\n\n";
                 echo "<li>($alias) $entry<br>";
             }
 
-			$function_map[$alias] = array(
-						'class'	=>	$entry,
-						'src'	=>	$dir. '/'.$entry.'.php',
-			);
-		}
-	}
-	if ($silent === false){
-
-		echo "</ul>";
-	}
+            $contents .= <<<EOQ
+            '$alias' => array(
+                        'class'    =>    '$entry',
+                        'src'    =>    '$dir/$entry.php',
+            ),\n
+EOQ;
+        }
+    }
+    if ($silent === false) {
+        echo "</ul>";
+    }
 
     return array(
-        "function_map" => $function_map,
+        "function_map" => $contents,
         "javascript" => $js_contents,
     );
 }
@@ -209,7 +208,7 @@ function buildCache($outputDir, $silent = false, $minify = true)
 
     if (is_dir("custom/include/Expressions/Expression")) {
         $customContents = recursiveParse("custom/include/Expressions/Expression", $silent);
-        $contents["function_map"] = array_merge($contents["function_map"], $customContents["function_map"]);
+        $contents["function_map"] .= $customContents["function_map"];
         $contents["javascript"] .= $customContents["javascript"];
     }
 
@@ -217,11 +216,22 @@ function buildCache($outputDir, $silent = false, $minify = true)
     require_once "include/Expressions/Actions/ActionFactory.php";
     $contents["javascript"] .= ActionFactory::buildActionCache($silent);
 
-$FUNCTION_MAP = $contents["function_map"];
-sugar_cache_put('expressions_function_map', $FUNCTION_MAP);
-// write the functions cache
-$cache_contents = $contents["javascript"];
 
+    $new_contents = "<?php\n\$FUNCTION_MAP = array(\n";
+    $new_contents .= $contents["function_map"];
+    $new_contents .= ");\n";
+
+
+    create_cache_directory("Expressions/functionmap.php");
+
+    $fmap = sugar_cached("Expressions/functionmap.php");
+// now write the new contents to functionmap.php
+    sugar_file_put_contents($fmap, $new_contents);
+
+// write the functions cache file
+    $cache_contents = $contents["javascript"];
+
+    include $fmap;
 
     $cache_contents .= <<<EOQ
 /**

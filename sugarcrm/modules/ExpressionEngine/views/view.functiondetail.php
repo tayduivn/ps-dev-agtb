@@ -20,12 +20,11 @@ class ViewFunctiondetail extends SugarView
 
  	function display(){
  		global $app_strings, $current_user, $mod_strings, $theme, $beanList, $beanFiles;
-        $FUNCTION_MAP = sugar_cache_retrieve('expressions_function_map');
-        if (empty($FUNCTION_MAP)) {
+ 		if (!is_file($cachefile = sugar_cached('Expressions/functionmap.php'))) {
         	$GLOBALS['updateSilent'] = true;
             include ('include/Expressions/updatecache.php');
-            $FUNCTION_MAP = sugar_cache_retrieve('expressions_function_map');
         }
+ 		include $cachefile;
  		$desc = "";
 		$function = $this->request->getValidInputRequest('function', 'Assert\SugarLogic\FunctionName');
  		if (!empty($function) && !empty($FUNCTION_MAP[$function])){

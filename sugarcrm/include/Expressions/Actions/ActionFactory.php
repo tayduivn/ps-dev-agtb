@@ -22,9 +22,14 @@ class ActionFactory
 
 	static function loadFunctionList()
 	{
-        ActionFactory::$loaded_actions = sugar_cache_retrieve('expressions_actions');
-        if (empty(ActionFactory::$loaded_actions)) {
+	    $cachefile = sugar_cached("Expressions/actions_cache.php");
+		if (!is_file($cachefile))
+		{
 		    ActionFactory::buildActionCache();
+		} else
+		{
+			include $cachefile;
+			ActionFactory::$loaded_actions = $actions;
 		}
 	}
 
@@ -52,7 +57,8 @@ class ActionFactory
 
 		if (empty($actions)) return "";
 
-        sugar_cache_put('expressions_actions', $actions);
+		create_cache_directory("Expressions/actions_cache.php");
+		write_array_to_file('actions', $actions, sugar_cached('Expressions/actions_cache.php'));
 
 		ActionFactory::$loaded_actions = $actions;
 
