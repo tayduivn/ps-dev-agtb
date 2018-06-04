@@ -1095,21 +1095,19 @@ WHERE TABLE_NAME = ?
     /** {@inheritDoc} */
     public function emptyValue($type, $forPrepared = false)
     {
-        $ctype = $this->getColumnType($type);
-
-        if ($ctype == "datetime") {
+        if ($type == 'datetime' || $type == 'datetimecombo') {
             return $forPrepared
                 ? "1970-01-01 00:00:00"
                 : $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
         }
 
-        if ($ctype == "date") {
+        if ($type == 'date') {
             return $forPrepared
                 ? "1970-01-01"
                 : $this->convert($this->quoted("1970-01-01"), "datetime");
         }
 
-        if ($ctype == "time") {
+        if ($type == 'time') {
             return $forPrepared
                 ? "00:00:00"
                 : $this->convert($this->quoted("00:00:00"), "time");
