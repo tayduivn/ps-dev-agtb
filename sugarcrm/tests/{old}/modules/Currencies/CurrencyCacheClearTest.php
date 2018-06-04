@@ -26,6 +26,7 @@ class CurrencyCacheClearTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
 
+        $this->testCacheFile = sugar_cached('api/metadata/metadata_unit_test.php');
         //Turn off caching now() or else date_modified checks are invalid
         TimeDate::getInstance()->allow_cache = false;
         
@@ -36,6 +37,9 @@ class CurrencyCacheClearTest extends TestCase
     public function tearDown()
     {
         $_POST = array();
+        if ( file_exists($this->testCacheFile) ) {
+            @unlink($this->testCacheFile);
+        }
         TimeDate::getInstance()->allow_cache = true;
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
