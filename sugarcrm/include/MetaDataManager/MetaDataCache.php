@@ -21,7 +21,6 @@ use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 class MetaDataCache implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
-    protected $logger;
 
     protected $db;
 
@@ -36,7 +35,6 @@ class MetaDataCache implements LoggerAwareInterface
     public function __construct(DBManager $db)
     {
         $this->db = $db;
-        $this->setLogger(LoggerFactory::getLogger('metadata'));
     }
 
     public function get($key)
@@ -69,15 +67,10 @@ class MetaDataCache implements LoggerAwareInterface
 
     public function getKeys()
     {
-        $ret = array();
-        if (!empty($this->db) && self::$isCacheEnabled) {
-                $ret[] = $this->db
-                    ->getConnection()
-                    ->executeQuery('SELECT type FROM ' . static::$cacheTable)
-                    ->fetchAll(\PDO::FETCH_COLUMN);
-        }
-
-        return $ret;
+        return $this->db
+            ->getConnection()
+            ->executeQuery('SELECT type FROM ' . static::$cacheTable)
+            ->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     public function reset()
@@ -99,26 +92,6 @@ class MetaDataCache implements LoggerAwareInterface
     }
 
     /**
-     *
-     * Enables MetaDataCache
-     *
-     */
-    public static function enableCache()
-    {
-        self::$isCacheEnabled = true;
-    }
-
-    /**
-     *
-     * Disables MetaDataCache
-     *
-     */
-    public static function disableCache()
-    {
-        self::$isCacheEnabled = false;
-    }
-
-    /**
      * Used to cache metadata responses in the database
      *
      * @param String $key key for data stored in the cache table
@@ -129,7 +102,7 @@ class MetaDataCache implements LoggerAwareInterface
     {
         $result = null;
         //During install/setup, this function might get called before the DB is setup.
-        if (!empty($this->db) && self::$isCacheEnabled) {
+        if (!empty($this->db)) {
             $cacheResult = null;
             $row = $this->getLastModifiedByType($key);
             if (!empty($row['data'])) {
@@ -158,7 +131,7 @@ class MetaDataCache implements LoggerAwareInterface
      */
     protected function storeToCacheTable($key, $data)
     {
-        if (!empty($this->db) && self::$isCacheEnabled) {
+        if (!empty($this->db)) {
             try {
                 $encoded = base64_encode(gzdeflate(serialize($data)));
             } catch (Exception $e) {
@@ -259,9 +232,6 @@ class MetaDataCache implements LoggerAwareInterface
     }
 
     public function clearKeysLike($key) {
-        if (!self::$isCacheEnabled) {
-            return true;
-        }
         $qb = $this->db->getConnection()->createQueryBuilder();
         return $qb->delete(static::$cacheTable)
             ->where($qb->expr()->like('type', $qb->createPositionalParameter($key . '%')))

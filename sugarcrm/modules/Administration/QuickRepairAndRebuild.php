@@ -364,11 +364,11 @@ class RepairAndClear
 		if(!empty($this->module_list) && is_array($this->module_list) && !in_array( translate('LBL_ALL_MODULES'),$this->module_list))
 		{
             foreach ($this->module_list as $module_name) {
-                VardefManager::clearVardef($module_name);
+                $this->_clearCache(sugar_cached('modules/' . $module_name), 'vardefs.php');
             }
 		}
 		else
-            VardefManager::clearVardef();
+			$this->_clearCache(sugar_cached('modules/'), 'vardefs.php');
 	}
 
 	public function clearJsFiles()

@@ -75,10 +75,6 @@ $common = 'install/installCommon.js';
 $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 
-//Make sure MetaDataCache is disabled during install as metadata_cache table
-// is created late in the install.
-MetaDataCache::disableCache();
-
 ///////////////////////////////////////////////////////////////////////////////
 ////	INSTALLER LANGUAGE
 function getSupportedInstallLanguages(){
