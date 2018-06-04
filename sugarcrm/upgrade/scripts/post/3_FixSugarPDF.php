@@ -24,7 +24,7 @@ class SugarUpgradeFixSugarPDF extends UpgradeScript
     {
         // clear fontlist cache file first
         $fontManager = new FontManager();
-        $fontManager->clearCachedFontList();
+        $fontManager->clearCachedFile();
 
         if (!version_compare($this->from_version, '7.2.1', '<')) {
             // only needed for upgrades from pre-7.2.1
