@@ -27,7 +27,7 @@
     /**
      * Retrieve marketing extras URL from login content endpoint
      */
-    fetchMarketingExtras() {
+    fetchMarketingExtras: function() {
         var config = app.metadata.getConfig();
         this.showMarketingContent = config.marketingExtrasEnabled;
         if (this.showMarketingContent) {
