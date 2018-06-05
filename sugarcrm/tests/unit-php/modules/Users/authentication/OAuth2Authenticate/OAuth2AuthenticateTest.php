@@ -136,7 +136,7 @@ class OAuth2AuthenticateTest extends TestCase
             'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
         ];
         $expectedQueryData = [
-            'state' => 'generated',
+            'state' => 'base_generated',
             'response_type' => 'code',
             'approval_prompt' => 'auto',
             'redirect_uri' => 'http://test.sugarcrm.local/?module=Users&action=OAuth2CodeExchange',
@@ -154,7 +154,7 @@ class OAuth2AuthenticateTest extends TestCase
                     'offline',
                     'profile',
                 ],
-                'state' => 'generated',
+                'state' => 'base_generated',
                 'tenant_hint' => 'srn:cloud:idp:eu:0000000001:tenant',
             ])->willReturn($expectedUrl);
         $this->assertEquals($expectedUrl, $this->authMock->getLoginUrl());

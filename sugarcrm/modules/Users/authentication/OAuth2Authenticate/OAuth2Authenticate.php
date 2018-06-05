@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBu
 use Sugarcrm\Sugarcrm\IdentityProvider\OAuth2StateRegistry;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 /**
  * Class OAuth2Authenticate
@@ -35,10 +36,14 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
             throw new \RuntimeException('IDM-mode config and URL were not found.');
         }
 
+        $request = InputValidation::getService();
+        $platform = $request->getValidInputGet('platform', null, 'base');
+        $state = $platform . '_' . $this->createState();
+
         return $this->getIdmProvider($idmModeConfig)->getAuthorizationUrl(
             [
                 'scope' => $idmModeConfig['requestedOAuthScopes'],
-                'state' => $this->createState(),
+                'state' => $state,
                 'tenant_hint' => $idmModeConfig['tid'],
             ]
         );

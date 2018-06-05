@@ -34,6 +34,7 @@ class UsersViewOAuth2Authenticate extends SidecarView
         if (!$code || !$scope || !$state) {
             $this->redirect();
         }
+        list($platform, $state) = explode('_', $state);
 
         $stateRegistry = $this->getStateRegistry();
         $isStateRegistered = $stateRegistry->isStateRegistered($state);
@@ -50,6 +51,18 @@ class UsersViewOAuth2Authenticate extends SidecarView
                 'code' => $code,
                 'scope' => $scope,
             ]);
+
+            // Adding the setcookie() here instead of calling $api->setHeader() because
+            // manually adding a cookie header will break 3rd party apps that use cookies
+            setcookie(
+                RestService::DOWNLOAD_COOKIE . '_' . $platform,
+                $this->authorization['download_token'],
+                time() + $this->authorization['refresh_expires_in'],
+                ini_get('session.cookie_path'),
+                ini_get('session.cookie_domain'),
+                ini_get('session.cookie_secure'),
+                true
+            );
         } catch (\Exception $e) {
             $this->redirect();
         }
