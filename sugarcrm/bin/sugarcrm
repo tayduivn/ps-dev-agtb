@@ -21,7 +21,7 @@ if (PHP_SAPI !== 'cli') {
     die('This command can only be invoked from the command line.' . PHP_EOL);
 }
 
-if (!file_exists(__DIR__ . '/../vendor/composer/autoload_classmap.php')) {
+if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
     die('Run "composer install" before using SugarCRM Console' . PHP_EOL);
 }
 
@@ -58,9 +58,7 @@ if (!empty($sugar_config['dbconfig']['db_name'])) {
 
     $mode = CommandRegistry::MODE_INSTANCE;
 } else {
-    define('SUGAR_BASE_DIR', $sugarBaseDir);
-    require_once 'include/utils/autoloader.php';
-    SugarAutoLoader::init(false);
+    require 'vendor/autoload.php';
     $mode = CommandRegistry::MODE_STANDALONE;
 }
 

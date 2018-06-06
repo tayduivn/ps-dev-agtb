@@ -78,6 +78,9 @@
             "**/tests/**",
             "**/Test/**",
             "**/Tests/**"
+        ],
+        "files": [
+            "include/bootstrap.php"
         ]
     },
     "autoload-dev": {

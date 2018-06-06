@@ -68,10 +68,12 @@ class AutoLoaderTests extends TestCase
         file_put_contents(sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE), "<?php\n\$class_map=array('dont'=>'stop');\n\n");
         // Make sure the build class cache creates a new cache file
         SugarAutoLoader::buildClassCache();
-        $class_map = array();
+
+        $class_map = null;
         include sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE);
-        $this->assertTrue(count($class_map) > 1, "Class map is empty");
-        $this->assertTrue(!isset($class_map['dont']), "Class map was not rebuilt");
+
+        $this->assertInternalType('array', $class_map);
+        $this->assertArrayNotHasKey('dont', $class_map, 'Class map was not rebuilt');
 
         // Clear out the class cache file
         file_put_contents(sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE), "<?php\n\$class_map=array('dont'=>'stop');\n\n");
@@ -82,11 +84,13 @@ class AutoLoaderTests extends TestCase
 
         // Make sure the build picks up the custom classes
         SugarAutoLoader::buildClassCache();
-        $class_map = array();
+
+        $class_map = null;
         include sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE);
-        $this->assertTrue(count($class_map) > 1, "Class map is empty #2");
-        $this->assertTrue(!isset($class_map['dont']), "Class map was not rebuilt #2");
-        $this->assertTrue(isset($class_map['voice_of']), "Class map did not pickup custom files");
+
+        $this->assertInternalType('array', $class_map);
+        $this->assertArrayNotHasKey('dont', $class_map, 'Class map was not rebuilt');
+        $this->assertArrayHasKey('voice_of', $class_map, 'Class map did not pickup custom files');
     }
 
     public function testLoadClassMap()
@@ -394,13 +398,13 @@ class AutoLoaderTests extends TestCase
      */
     public function testSrcDirPriority()
     {
-        $this->cleanupFiles = array(
+        SugarTestHelper::setUpFiles();
+        SugarTestHelper::saveFile([
             'OverlapSrc.php',
             'src/OverlapSrc.php',
             'custom/OverlapSrc.php',
             'custom/src/OverlapSrc.php',
-        );
-
+        ]);
 
         /* Stock file test */
 
@@ -447,7 +451,9 @@ class AutoLoaderTests extends TestCase
             $this->getClassPhp('Sugarcrm\\Sugarcrm\\custom', 'OverlapSrc', 'winner_custom')
         );
 
-        SugarAutoLoader::$classMap = array();
+        // make the Composer's autoloader forget that the custom class doesn't exist
+        $composerAutoloader = $this->getComposerAutoLoader();
+        SugarTestReflection::setProtectedValue($composerAutoloader, 'missingClasses', array());
 
         $class = SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\OverlapSrc');
         $this->assertSame(
@@ -479,5 +485,23 @@ class AutoLoaderTests extends TestCase
             $class,
             $id
         );
+    }
+
+    /**
+     * @return Composer\Autoload\ClassLoader|null
+     */
+    private function getComposerAutoLoader()
+    {
+        $autoloaders = spl_autoload_functions();
+        foreach ($autoloaders as $autoloader) {
+            if (is_array($autoloader) && count($autoloader) == 2) {
+                list($object) = $autoloader;
+                if ($object instanceof Composer\Autoload\ClassLoader) {
+                    return $object;
+                }
+            }
+        }
+
+        return null;
     }
 }

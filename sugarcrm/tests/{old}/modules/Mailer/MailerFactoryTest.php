@@ -54,35 +54,41 @@ class MailerFactoryTest extends TestCase
     public function testGetMailerForUser_UsesACustomSendingStrategy_MailConfigurationExists_ReturnsCustomMailer() {
         SugarTestHelper::ensureDir("custom/modules/Mailer");
 
-        $expected = "FooMailer_" . ((int)microtime(true)); // the name of the custom strategy that is expected
+        // the name of the custom strategy that is expected
+        $namespace = SugarAutoLoader::NS_ROOT . 'custom';
+        $class = 'TestMailer';
+        $fqn = $namespace . '\\' . $class;
 
         $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $outboundSmtpEmailConfiguration->setFrom("foo@bar.com", "Foo Bar");
 
         $strategies = array(
-            "smtp" => $expected,
+            "smtp" => $fqn,
         );
 
         MailerFactoryTest_MockMailerFactory::$outboundEmailConfiguration = $outboundSmtpEmailConfiguration;
         MailerFactoryTest_MockMailerFactory::$strategies = $strategies;
 
-        $file = "custom/modules/Mailer/{$expected}.php";
+        $file = "custom/src/{$class}.php";
         SugarTestHelper::saveFile($file);
 
         $customMailer = <<<PHP
 <?php
 
-class {$expected} extends BaseMailer
+namespace {$namespace};
+
+class {$class} extends \BaseMailer
 {
     public function connect() {}
     public function send() {}
 }
 
 PHP;
+        mkdir('custom/src', 0755, true);
         file_put_contents($file, $customMailer);
 
         $actual = MailerFactoryTest_MockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
-        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
+        self::assertInstanceOf($fqn, $actual, "The mailer should have been a {$fqn}");
     }
 
     /**

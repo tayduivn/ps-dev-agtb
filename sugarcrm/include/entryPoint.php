@@ -61,39 +61,13 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 $GLOBALS['starttTime'] = microtime(true);
 
-if (!defined('SUGAR_BASE_DIR')) {
-    define('SUGAR_BASE_DIR', str_replace('\\', '/', realpath(dirname(__FILE__) . '/..')));
-}
-
-if (!defined('SHADOW_INSTANCE_DIR') && extension_loaded('shadow') && ini_get('shadow.enabled')) {
-    $shadowConfig = shadow_get_config();
-    if ($shadowConfig['instance']) {
-        define('SHADOW_INSTANCE_DIR', $shadowConfig['instance']);
-    }
-}
-
-set_include_path(
-    SUGAR_BASE_DIR . PATH_SEPARATOR .
-    SUGAR_BASE_DIR . '/vendor' . PATH_SEPARATOR .
-    get_include_path()
-);
-
 if(empty($GLOBALS['installing']) && !file_exists('config.php'))
 {
 	header('Location: install.php');
 	exit ();
 }
 
-// config|_override.php
-if(is_file('config.php')) {
-    require_once('config.php'); // provides $sugar_config
-}
-
-// load up the config_override.php file.  This is used to provide default user settings
-if(is_file('config_override.php')) {
-    require 'config_override.php';
-}
-
+require __DIR__ . '/../vendor/autoload.php';
 
 if(empty($GLOBALS['installing']) &&empty($sugar_config['dbconfig']['db_name']))
 {
@@ -114,8 +88,6 @@ require_once 'include/utils/db_utils.php';
 require_once 'include/utils/encryption_utils.php';
 
 require_once 'include/SugarCache/SugarCache.php';
-require_once 'include/utils/autoloader.php';
-SugarAutoLoader::init();
 
 if (empty($GLOBALS['installing'])) {
     $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');

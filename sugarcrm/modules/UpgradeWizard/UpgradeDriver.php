@@ -272,7 +272,6 @@ abstract class UpgradeDriver
             SugarAutoLoader::buildCache();
         } else {
             // delete dangerous files manually
-            @unlink("cache/file_map.php");
             @unlink("cache/class_map.php");
         }
     }

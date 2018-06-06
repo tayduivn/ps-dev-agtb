@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'include/utils.php';
+
 /**
  * sugar_mkdir
  * Call this function instead of mkdir to apply preconfigured permission

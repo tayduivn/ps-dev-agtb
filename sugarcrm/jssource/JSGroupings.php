@@ -45,13 +45,13 @@
                             'include/javascript/twitterbootstrap/bootstrap-collapse.js'   => $target,
                             'include/javascript/twitterbootstrap/bootstrap-colorpicker.js' => $target,
                         );
-                        break;
+
                     case 'bootstrap_core':
                         return array(
                             'include/javascript/twitterbootstrap/bootstrap.min.js'       =>   $target,
                             'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
                         );
-                        break;
+
                     case 'jquery_core':
                         return array (
                             'include/javascript/jquery/jquery-min.js'               =>  $target,
@@ -60,6 +60,7 @@
                             'include/javascript/jquery/jquery-migrate.min.js' =>  $target,
                         );
                         break;
+
                     case 'jquery_menus':
                         return array(
                             'include/javascript/jquery/jquery.hoverIntent.js'            =>   $target,
@@ -74,12 +75,10 @@
                             'include/javascript/jquery/jquery.dataTables.customSort.js'  =>   $target,
                             'include/javascript/jquery/jquery.jeditable.js'              =>   $target,
                         );
-                        break;
-                    default:
-                        break;
                 }
             }
         }
+
         $calendarJSFileName = file_exists('custom/include/javascript/calendar.js') ?
             'custom/include/javascript/calendar.js' : 'include/javascript/calendar.js';
         $js_groupings = array(
@@ -510,16 +509,15 @@
             //END SUGARCRM flav=ent ONLY
         );
 
-    /**
-     * Check for custom additions to this code
-     */
+        if (!spl_autoload_functions()) {
+            // This block is required because this file could be called from a non-entrypoint (such as jssource/minify.php).
+            require 'vendor/autoload.php';
+        }
 
-    if(!class_exists('SugarAutoLoader')) {
-        // This block is required because this file could be called from a non-entrypoint (such as jssource/minify.php).
-        require_once('include/utils/autoloader.php');
-        SugarAutoLoader::init();
-    }
-
-    foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
-        require $file;
-    }
+        // check for custom additions to this code
+        foreach (SugarAutoLoader::existing(
+            'custom/jssource/JSGroupings.php',
+            SugarAutoLoader::loadExtension('jsgroupings')
+        ) as $file) {
+            require $file;
+        }

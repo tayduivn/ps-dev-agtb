@@ -438,7 +438,7 @@ class RelateApiTest extends TestCase
 
     public static function aclProvider()
     {
-        SugarAutoLoader::autoload('ACLAction');
+        require_once 'modules/ACLActions/actiondefs.php';
 
         return array(
             // not having permission to view the parent record should cause SugarApiExceptionNotFound
