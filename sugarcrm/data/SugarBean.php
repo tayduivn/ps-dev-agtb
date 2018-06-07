@@ -471,6 +471,12 @@ class SugarBean
      */
     public $createLocaleFormattedName = true;
 
+    /**
+     * data storage for pre-fetched data, data will be stored as name value pair
+     * @var array
+     */
+    public $fetchedFtsData = [];
+
     // FIXME: this will be removed, needed for ensuring BeanFactory is always used
     protected function checkBacktrace()
     {

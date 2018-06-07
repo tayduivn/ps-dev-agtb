@@ -19,6 +19,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\ErasedFieldsHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\ProcessDocumentHandlerInterface;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
@@ -121,6 +122,35 @@ class ErasedFieldsHandlerTest extends TestCase
                 'Accounts',
                 null,
                 ['erased_fields' => null],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::retrieveErasedFields
+     *
+     * @dataProvider providerTestRetrieveErasedFields
+     */
+    public function testRetrieveErasedFields($beanValue, $expected)
+    {
+        $bean = $this->getSugarBeanMock();
+        $bean->erased_fields = $beanValue;
+        $sut = $this->getErasedFieldsHandlerMock();
+        $result = TestReflection::callProtectedMethod($sut, 'retrieveErasedFields', [$bean]);
+        $this->assertSame($expected, $result);
+    }
+
+    public function providerTestRetrieveErasedFields()
+    {
+        return [
+            [
+                ["email_address_array","email_address_caps_array"],
+                '["email_address_array","email_address_caps_array"]',
+            ],
+            // empty value
+            [
+                [],
+                '[]',
             ],
         ];
     }

@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Queue;
 
+use Sugarcrm\Sugarcrm\Dbal\Connection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 
@@ -59,6 +60,13 @@ class QueueManager
     protected $postponeJobTime = 120;
 
     /**
+     * number of beans to batch retrieve related data for elastic document
+     * `$sugar_config['search_engine']['num_of_records_in_batch']`.
+     * @var integer
+     */
+    protected $numOfRecordsToRetrieveFromDBInBatch = 500;
+
+    /**
      * In memory queue for processed queue record ids
      * @var array
      */
@@ -78,6 +86,9 @@ class QueueManager
         }
         if (!empty($config['postpone_job_time'])) {
             $this->maxBulkDeleteThreshold = (int) $config['postpone_job_time'];
+        }
+        if (!empty($config['num_of_records_in_batch'])) {
+            $this->numOfRecordsToRetrieveFromDBInBatch = (int) $config['num_of_records_in_batch'];
         }
 
         $this->container = $container;
@@ -319,6 +330,7 @@ class QueueManager
      * Parse the data from the query.
      * @param $module string the name of the module
      * @param $row array the row returned from Query
+     * @return \SugarBean
      */
     protected function processQueryRow($module, $row)
     {
@@ -326,10 +338,19 @@ class QueueManager
         // Related fields need to be handled separately.
         $bean = $this->getNewBean($module);
         $bean->populateFromRow($bean->convertRow($row));
+        return $bean;
+    }
 
+    /**
+     * do elsstic indexing
+     * @param \SugarBean $bean
+     * @param string $ftsId
+     */
+    protected function indexBean(\SugarBean $bean, string $ftsId)
+    {
         // Index the bean and flag for removal when successful
         if ($this->container->indexer->indexBean($bean, true, true)) {
-            $this->batchDeleteFromQueue($row['fts_id'], $module);
+            $this->batchDeleteFromQueue($ftsId, $bean->getModuleName());
         }
     }
 
@@ -348,14 +369,28 @@ class QueueManager
         $start = time();
         $errorMsg = '';
         $success = true;
-        $processed = 0;
 
         $query = $this->generateQueryModuleFromQueue($this->getNewBean($module));
         $data = $query->execute();
+        $beans = [];
+        $ftsIds = [];
         foreach ($data as $row) {
-            $this->processQueryRow($module, $row);
-            $processed++;
+            // setup erased_fields
+            if (!isset($row['erased_fields'])) {
+                $row['erased_fields'] = null;
+            }
+            $bean = $this->processQueryRow($module, $row);
+            $ftsIds[$bean->id] = $row['fts_id'];
+
+            // init tags and favorites
+            $bean->fetchedFtsData['tags'] = [];
+            $bean->fetchedFtsData['user_favorites'] = [];
+
+            $beans[$bean->id] = $bean;
         }
+
+        // batch retrieve tags, emails, and favorites
+        $processed = $this->batchRetrieveRelatedDataAndIndexBeans($module, $beans, $ftsIds);
 
         // flush ids from queue if any left
         if (!empty($this->deleteFromQueue)) {
@@ -501,7 +536,8 @@ class QueueManager
 
         $sq = new \SugarQuery();
         // disable team security
-        $sq->from($bean, array('add_deleted' => false, 'team_security' => false));
+        // adde erased fields
+        $sq->from($bean, ['add_deleted' => false, 'team_security' => false, 'erased_fields' => true]);
         $sq->select($beanFields);
         $sq->limit($this->maxBulkQueryThreshold);
 
@@ -513,9 +549,139 @@ class QueueManager
             array(self::FTS_QUEUE . '.id', 'fts_id'),
             array(self::FTS_QUEUE . '.processed', 'fts_processed'),
         );
+
         $sq->select($additionalFields);
 
         return $sq;
+    }
+
+    /**
+     * processing beans, to do batch retrieve related data and index beans
+     * @param string $module
+     * @param array $beans
+     * @param array $ftsIds
+     * @return int
+     */
+    protected function batchRetrieveRelatedDataAndIndexBeans(string $module, array $beans, array $ftsIds) : int
+    {
+        $count = count($beans);
+        $start = 0;
+        $processed = 0;
+
+        // break beans into groups for batch processing
+        while ($count > 0) {
+            $slicedBeans = array_slice($beans, $start, $this->numOfRecordsToRetrieveFromDBInBatch, true);
+            if (empty($slicedBeans)) {
+                break;
+            }
+            $count -= $this->numOfRecordsToRetrieveFromDBInBatch;
+            $start += $this->numOfRecordsToRetrieveFromDBInBatch;
+
+            // fill up related data
+            $this->batchRetrieveRelatedData($module, $slicedBeans);
+
+            // index beans
+            foreach ($slicedBeans as $bean) {
+                // processing index
+                $this->indexBean($bean, $ftsIds[$bean->id]);
+                $processed++;
+            }
+        }
+
+        return $processed;
+    }
+
+    /**
+     * batch retrieve related data for beans
+     * @param string $module, module name
+     * @param array $beans
+     * @return array
+     */
+    protected function batchRetrieveRelatedData(string $module, array $beans)
+    {
+        if (empty($beans)) {
+            return $beans;
+        }
+        $this->batchRetrieveEmails($module, $beans);
+        $this->batchRetrieveTags($module, $beans);
+        $this->batchRetrieveFavorites($module, $beans);
+        return $beans;
+    }
+
+    /**
+     * batch retrieve associated emails
+     * @param string $module
+     * @param array $beans
+     * @return array
+     */
+    protected function batchRetrieveEmails(string $module, array $beans)
+    {
+        // do secondary query to get emails
+        $seed = \BeanFactory::newBean($module);
+        $fieldHandler = \SugarFieldHandler::getSugarField('email');
+        $fieldHandler->runSecondaryQuery('email', $seed, $beans);
+        return $beans;
+    }
+
+    /**
+     * batch retrieve associated tag ids
+     * @param string $module
+     * @param array $beans
+     * @return array
+     */
+    protected function batchRetrieveTags(string $module, array $beans)
+    {
+        $ids = array_keys($beans);
+        // do secondary query to retrieve tags
+        if (!empty($ids)) {
+            $query = "SELECT tag_id, bean_id
+            FROM tag_bean_rel
+            WHERE bean_module = ?
+                AND bean_id IN (?)
+                AND deleted = 0";
+            $stmt = $this->db->getConnection()->executeQuery(
+                $query,
+                [$module, $ids],
+                [null, Connection::PARAM_STR_ARRAY]
+            );
+
+            while ($row = $stmt->fetch()) {
+                $id = $row['bean_id'];
+                $beans[$id]->fetchedFtsData['tags'][] = $row['tag_id'];
+            }
+        }
+        return $beans;
+    }
+
+    /**
+     * batch retrieve assigned_user_ids for favorites
+     * @param string $module
+     * @param array $beans
+     * @return array
+     */
+    protected function batchRetrieveFavorites(string $module, array $beans)
+    {
+        $ids = array_keys($beans);
+
+        if (!empty($ids)) {
+            $query = "SELECT assigned_user_id, record_id
+            FROM sugarfavorites 
+            WHERE module = ?  
+               AND record_id IN (?) 
+               AND deleted = 0";
+
+            $stmt = $this->db->getConnection()->executeQuery(
+                $query,
+                [$module, $ids],
+                [null, Connection::PARAM_STR_ARRAY]
+            );
+
+            while ($row = $stmt->fetch()) {
+                $id = $row['record_id'];
+                $beans[$id]->fetchedFtsData['user_favorites'][] = $row['assigned_user_id'];
+            }
+        }
+        return $beans;
     }
 
     /**
