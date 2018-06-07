@@ -212,8 +212,15 @@ $vardefs = array(
 		'team_set_'.strtolower($table_name) => array(
 			'name' => 'idx_'.strtolower($table_name).'_tmst_id',
 			'type' => 'index',
-			'fields' => array('team_set_id')
+            'fields' => array('team_set_id', 'deleted'),
 		),
+// BEGIN SUGARCRM flav=ent ONLY
+        'acl_team_set_'.strtolower($table_name) => array(
+            'name' => 'idx_'.strtolower($table_name).'_acl_tmst_id',
+            'type' => 'index',
+            'fields' => array('acl_team_set_id', 'deleted'),
+        ),
+// END SUGARCRM flav=ent ONLY
 	)
 );
 //BEGIN SUGARCRM flav=ent ONLY
