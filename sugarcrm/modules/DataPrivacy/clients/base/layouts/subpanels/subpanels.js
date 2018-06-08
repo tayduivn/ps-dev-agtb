@@ -23,7 +23,27 @@
 
         // Add the erase action to all subpanel rowactions
         _.each(this._components, function(comp) {
-            var subView = comp.getComponent('subpanel-list');
+            if (!comp.getComponent) {
+                return;
+            }
+            var viewName = 'subpanel-list';
+            if (comp.meta && comp.meta.components) {
+                _.find(comp.meta.components, function(def) {
+                    var name = '';
+                    var prefix = 'subpanel-for';
+                    if (def.view) {
+                        name = _.isObject(def.view) ? def.view.name || def.view.type : def.view;
+                    }
+
+                    if (name === 'subpanel-list' || _.isString(name) && name.substr(0, prefix.length) === prefix) {
+                        viewName = name;
+                        return true;
+                    }
+
+                    return false;
+                });
+            }
+            var subView = comp.getComponent(viewName);
             if (subView && subView.meta && subView.meta.rowactions && subView.meta.rowactions.actions) {
                 subView.meta.rowactions.actions.push({
                     'type': 'dataprivacyerase',
