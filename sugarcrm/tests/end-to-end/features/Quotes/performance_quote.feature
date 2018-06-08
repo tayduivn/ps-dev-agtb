@@ -28,7 +28,7 @@ Feature: Quotes module performance testing
     # 8. Verify amounts in Grand Total header of QLI table
 
   @performance_Copy_Quote
-  Scenario: Quotes > Copy Guote with 50 QLis (7 by 7 + 1 ) > Performance Measure
+  Scenario: Quotes > Copy Quote with 50 QLis (7 by 7 + 1 ) > Performance Measure
     # 1. Generate quote record linked to the account
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
@@ -138,7 +138,7 @@ Feature: Quotes module performance testing
     # 8. Verify amounts in Grand Total header of QLI table
 
   @performance_Copy_Quote
-  Scenario: Quotes > Copy Guote with 50 QLIs (1 by 50 ) > Performance Measure
+  Scenario: Quotes > Copy Quote with 50 QLIs (1 by 50 ) > Performance Measure
     # 1. Generate quote record linked to the account
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
@@ -213,7 +213,7 @@ Feature: Quotes module performance testing
     # 8. Verify amounts in Grand Total header of QLI table
 
   @performance_Copy_Quote
-  Scenario: Quotes > Copy Guote with 50 QLIs (50 groupless) > Performance Measure
+  Scenario: Quotes > Copy Quote with 50 QLIs (50 groupless) > Performance Measure
       # 1. Generate quote record with 50 group-less QLIs
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
@@ -288,7 +288,7 @@ Feature: Quotes module performance testing
     # 8. Verify amounts in Grand Total header of QLI table
 
   @performance_Copy_Quote
-  Scenario: Quotes > Copy Guote with 75 QLIs (5 gr. by 10 qlis + 1 gr by 25 qlis) > Performance Measure
+  Scenario: Quotes > Copy Quote with 75 QLIs (5 gr. by 10 qlis + 1 gr by 25 qlis) > Performance Measure
       # 1. Generate quote record with 75 QLIs  ( 5 group of 10 + 1 group of 25)
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
