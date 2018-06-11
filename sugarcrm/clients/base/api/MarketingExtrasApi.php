@@ -30,7 +30,7 @@ class MarketingExtrasApi extends SugarApi
                 'method' => 'getMarketingExtras',
                 'shortHelp' => 'An API to receive marketing extra URLs',
                 'longHelp' => 'include/api/help/marketing_extras_get_help.html',
-                'minVersion' => '11.1',
+                'minVersion' => '11.2',
                 'noLoginRequired' => true,
             ),
         );
