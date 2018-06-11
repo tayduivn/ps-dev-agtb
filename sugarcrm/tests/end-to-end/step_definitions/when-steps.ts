@@ -82,7 +82,6 @@ When(/^I toggleAll records in (#\S+)$/,
         await view.toggleAll();
     }, {waitForApp: true});
 
-
 /**
  * Select Generate quote or Delete mass update action in the RLI table of Opportunity record view
  *
@@ -104,7 +103,6 @@ When(/^I click on preview button on (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
         let listItem = view.getListItem({id: record.id});
         await listItem.clickPreviewButton();
     }, {waitForApp: true});
-
 
 When(/^I wait for (\d+) seconds$/,
     async function(delay: string): Promise<void> {
@@ -231,7 +229,6 @@ When(/^I provide input for (#\S+) view for (\d+) row$/,
 
     }, {waitForApp: true});
 
-
 /**
  * Click 'Show More', 'Show Less', or 'More Guests' (Meetings and Calls only in case there is more than 5 guests total) button in any layout
  *
@@ -240,7 +237,6 @@ When(/^I provide input for (#\S+) view for (\d+) row$/,
 When(/^I click (show more|show less|more guests) button on (#\S+) view$/, async function(buttonName: string, layout: any) {
     await layout.showMore(buttonName);
 }, {waitForApp: true});
-
 
 /**
  * This step only applicable to Quotes record view which has 4 different sections: Business_Card, Billing_and_Shipping, Quote_Settings, Show_More
@@ -292,7 +288,6 @@ When(/^I set values for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
 
     }, {waitForApp: true});
 
-
 When(/^I click (\S+) field on (#\S+) view$/,
     async function(fieldName, layout: any) {
         let view = layout.type ? layout.defaultView : layout;
@@ -322,13 +317,11 @@ When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/
 
 }, {waitForApp: true});
 
-
 When(/^I dismiss alert$/, async function () {
 
         await this.driver.alertDismiss();
 
     }, {waitForApp: true});
-
 
 /**
  * This step required in personal info drawer of GDPR workflow. This steps selects the fields for erasure in Personal Info drawer

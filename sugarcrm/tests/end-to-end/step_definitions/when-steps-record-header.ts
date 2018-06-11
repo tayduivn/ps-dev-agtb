@@ -14,7 +14,7 @@
 import {TableDefinition} from 'cucumber';
 import {When} from '@sugarcrm/seedbed';
 
-const openMenuAndCheck = async function(layout, needToCheck, data?: TableDefinition) {
+export const openMenuAndCheck = async function(layout, needToCheck, data?: TableDefinition) {
 
     await layout.HeaderView.clickButton('actions');
 

@@ -8,6 +8,7 @@
     "config.php",
     "config_override.php",
     "config_si.php",
+    "features/",
     "include/Expressions/javascript/index.html",
     "include/externalAPI/cmis_repository_wrapper.php",
     "include/fonts",

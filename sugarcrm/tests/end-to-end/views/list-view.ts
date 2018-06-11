@@ -34,7 +34,7 @@ export default class ListView extends BaseListView {
                     allRows : 'tr[name*="{{module}}"]',
                     row : 'tr[name*="{{module}}"]:nth-child({{index}})',
                     },
-                tableRow:'.table.table-striped.dataTable tbody tr',
+                tableRow: '.table.table-striped.dataTable tbody tr',
             });
     }
 

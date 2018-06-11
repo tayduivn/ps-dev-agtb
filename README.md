@@ -5,7 +5,15 @@
 Building Sugar is easy with the use of `make`, you just need to define a few variables and then call `make`.
 
 ### Requirements
-Please make sure that supported versions of [php](https://secure.php.net/), [composer](https://getcomposer.org/), and [Yarn](https://yarnpkg.com) are installed.
+Please make sure that supported versions of [php](https://secure.php.net/), [composer](https://getcomposer.org/), [Node](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com) are installed.
+<br/>Currently recommended master versions are:
+
+| Component | Version |
+| --- | --- |
+| PHP | 7.1 |
+| Composer | latest |
+| Node | 8 |
+| Yarn | latest |
 
 ### Running Make
 

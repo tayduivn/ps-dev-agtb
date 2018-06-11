@@ -19,7 +19,6 @@ var gutil = require('gulp-util');
 var os = require('os');
 var todo = require('gulp-todo');
 var insert = require('gulp-insert');
-const path = require('path');
 const execa = require('execa');
 
 /**
@@ -638,4 +637,71 @@ gulp.task('copy-sucrose', function() {
             'node_modules/d3fc-rebind/LICENSE',
         ])
         .pipe(gulp.dest('include/javascript/d3fc-rebind/'));
+});
+
+gulp.task('bdd:api', function() {
+    const cucumberG = require('gulp-cucumber');
+    commander
+        .option('--url <url>', 'URL of Sugar instance under test')
+        .option('--tags <tags>', 'Tags to run')
+        .parse(process.argv);
+    let url = commander.url;
+    if (!url) {
+        console.log('Instance URL must be specified');
+        return -1;
+    }
+    //Ensure there is always a trailing '/'
+    if (url.substr(-1) !== '/') {
+        url += '/';
+    }
+    let tags;
+    if (commander.tags) {
+        tags = commander.tags + ' and @api';
+    } else {
+        tags = '@api';
+    }
+    process.env.SERVER_CUCUMBER_URL = url;
+    console.log('Running ' + tags + ' tags');
+    return gulp.src('features/*.feature').pipe(cucumberG({
+        'steps': 'tests/api/step_definitions/*.js',
+        'tags': tags
+    }));
+});
+
+gulp.task('bdd:e2e', function() {
+    const exec = require('child_process').exec;
+    commander
+        .option('--url <url>', 'URL of Sugar instance under test')
+        .option('--tags <tags>', 'Tags to run')
+        .parse(process.argv);
+    let url = commander.url;
+    if (!url) {
+        console.log('Instance URL must be specified');
+        return -1;
+    }
+    if (url.substr(-1) !== '/') {
+        url += '/';
+    }
+    let tags = commander.tags || [];
+    let tagStr = '@e2e';
+    if (tags.length > 0) {
+        tagStr = `"${tagStr} and ${tags}"`;
+    }
+    let command = 'node ./tests/end-to-end/node_modules/@sugarcrm/seedbed/bin/seedbed.js ' +
+        `--features ../../features --cfg ./tests/end-to-end/config.js --sp ${url} -u ${url} -t ${tagStr}`;
+    let e2eProcess =  exec(command, {
+        //seedbed can be VERY verbose and needs a huge buffer
+        maxBuffer: 10 * 1024 * 1024
+    });
+    e2eProcess.stdout.on('data', function(data) {
+        console.log(data);
+    });
+    e2eProcess.on('close', function(code, signal) {
+        if (code !== 0) {
+            console.log(`Exiting due to ${signal} code ${code}`);
+        }
+    });
+    e2eProcess.on('error', function(err) {
+        console.log(`Erroring out due to ${err}`);
+    });
 });

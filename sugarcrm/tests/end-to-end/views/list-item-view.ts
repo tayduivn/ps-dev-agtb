@@ -65,7 +65,7 @@ export default class ListItemView extends BaseView {
         let rowSelector = this.$();
 
         return this.driver
-            .execSync('scrollToSelector', [rowSelector])
+           .execSync('scrollToSelector', [rowSelector])
             .click(selector);
     }
 

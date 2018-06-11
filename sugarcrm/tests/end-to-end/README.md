@@ -94,3 +94,7 @@ It's worth noting that even the author of Cucumber -- the functional testing fra
 # Further Reading
 
 Please refer to the [Seedbed Handbook](https://github.com/sugarcrm/Seedbed/wiki/Handbook) for detailed information about writing scenarios as well as step definitions to actually implement Seedbed tests.
+
+# BDD Seedbed Test Information
+
+Read [this Confluence page](https://sugarcrm.atlassian.net/wiki/x/BQBTGQ) for a brief introduction to get you started.

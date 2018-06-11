@@ -12,6 +12,14 @@ var path = require('path');
 
 var temp_folder = path.resolve(__dirname, './tmp');
 
+var featuresPath = './features';
+for (var i in process.argv) {
+    if (process.argv[i] === '--features') {
+        featuresPath = process.argv[Number(i) + 1];
+        break;
+    }
+}
+
 var config = {
 
     temp_folder: temp_folder,
@@ -22,7 +30,7 @@ var config = {
 
     cucumberArguments: [
         {
-            value: path.resolve(__dirname, './features')
+            value: path.resolve(__dirname, featuresPath)
         },
         {
             name: '-r',
@@ -31,17 +39,17 @@ var config = {
     ],
 
     proxy: {
-        cacheEnabled : true,
+        cacheEnabled: true,
 
         // Prepare for proxy plugins refactoring
         pages: {
             index: {
                 url: ['/index.html', '/', ''],
-                load: function (scripts) {
+                load: function(scripts) {
                     scripts = scripts.concat([
                         {
                             id: 'sugar:clientConfig',
-                            content: function (config, clientConfig) {
+                            content: function(config, clientConfig) {
                                 var content = 'SUGAR.App.config = seedbed.utils.deepExtend(SUGAR.App.config, JSON.parse(\'' + JSON.stringify(clientConfig) + '\')); \r\n'
                                     + 'seedbed.sugarOverrideConfig = JSON.parse(\'' + JSON.stringify(clientConfig) + '\'); \r\n';
                                 return content;
@@ -104,12 +112,6 @@ var config = {
     output: {
         resultsFailures: path.resolve(__dirname, './'),
         screenshots: path.resolve(__dirname, './screenshots'),
-    },
-
-    log: {
-        level: 'debug',
-        requests: true,
-        responses: true,
     },
 
     require: [
