@@ -15,6 +15,11 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 class AuthSettingsApi extends SugarApi
 {
     /**
+     * @var \Administration
+     */
+    private $ldapSettings;
+
+    /**
      * @var Authentication\Config
      */
     private $authConfig;
@@ -88,14 +93,13 @@ class AuthSettingsApi extends SugarApi
             'local' => $this->getLocalSettings(),
         ];
 
-        $ldapConfig = $this->getAuthConfig()->getLdapConfig();
-        if (!empty($ldapConfig)) {
+        if (!empty($this->getAuthConfig()->getLdapConfig())) {
             $settings['enabledProviders'][] = 'ldap';
-            $settings['ldap'] = $ldapConfig;
+            $settings['ldap'] = $this->getLdapConfig();
         }
         if ('IdMSAMLAuthenticate' == $this->getAuthConfig()->get('authenticationClass', 'IdMSugarAuthenticate')) {
             $settings['enabledProviders'][] = 'saml';
-            $settings['saml'] = $this->getAuthConfig()->getSAMLConfig();
+            $settings['saml'] = $this->getSAMLConfig();
         }
 
         return $settings;
@@ -133,6 +137,119 @@ class AuthSettingsApi extends SugarApi
         $this->ensureAdminUser();
         $this->getAuthConfig()->setIDMMode(false);
         return $this->getAuthConfig()->getIDMModeConfig();
+    }
+
+    /**
+     * Configuration of LDAP auth provider
+     * @return array
+     */
+    private function getLdapConfig(): array
+    {
+        $config = $this->getAuthConfig()->getLdapConfig();
+        return [
+            'config' => [
+                'auto_create_users' => (bool)$config['autoCreateUser'],
+                'server' => (string)$this->getLdapServer($config),
+                'user_dn' => (string)$config['baseDn'],
+                'user_filter' => (string)$config['filter'],
+                'login_attribute' => (string)$config['uidKey'],
+                'bind_attribute' => (string)$config['entryAttribute'],
+
+                'authentication' => (bool)(($config['searchDn'] ?? '') . ($config['searchPassword'] ?? '')),
+                'authentication_user_dn' => (string)($config['searchDn'] ?? ''),
+                'authentication_password' => (string)($config['searchPassword'] ?? ''),
+
+                'group_membership' => (bool)($config['groupMembership'] ?? false),
+                'group_dn' => (string)$this->getLdapSetting('ldap_group_dn', ''),
+                'group_name' => (string)$this->getLdapSetting('ldap_group_name', ''),
+                'group_attribute' => (string)($config['groupAttribute'] ?? ''),
+                'user_unique_attribute' => (string)($config['userUniqueAttribute'] ?? ''),
+                'include_user_dn' => (bool)($config['includeUserDN'] ?? false),
+            ],
+            'attribute_mapping' => $this->reformatAttributeMapping($config['user']['mapping']),
+        ];
+    }
+
+    /**
+     * @param array $config
+     * @return string
+     */
+    private function getLdapServer(array $config): string
+    {
+        $server = "{$config['adapter_config']['host']}:{$config['adapter_config']['port']}";
+        if ('ssl' === $config['adapter_config']['encryption']) {
+            return "ldaps://{$server}";
+        } else {
+            return $server;
+        }
+    }
+
+    /**
+     * return settings value from mango ldap settings
+     * @param $key
+     * @param null $default
+     * @return mixed
+     */
+    protected function getLdapSetting(string $key, $default = null)
+    {
+        if (!$this->ldapSettings) {
+            $this->ldapSettings = \Administration::getSettings('ldap');
+        }
+        if (isset($this->ldapSettings->settings[$key])) {
+            return trim(htmlspecialchars_decode($this->ldapSettings->settings[$key])) ?: $default;
+        }
+
+        return $default;
+    }
+
+    /**
+     * Configuration of SAML auth provider
+     * @return array
+     */
+    private function getSAMLConfig(): array
+    {
+        $config = $this->getAuthConfig()->getSAMLConfig();
+        $signatureAlgorithmMap = [
+            \XMLSecurityKey::RSA_SHA256 => 'RSA_SHA256',
+            \XMLSecurityKey::RSA_SHA512 => 'RSA_SHA512',
+        ];
+        return [
+            'config' => [
+                'sp_entity_id' => (string)$config['sp']['entityId'],
+                'request_signing_cert' => (string)$config['sp']['x509cert'],
+                'request_signing_pkey' => (string)$config['sp']['privateKey'],
+                'provision_user' => (bool)$config['sp']['provisionUser'],
+                'same_window' => (bool)$this->getAuthConfig()->get('SAML_SAME_WINDOW', false),
+                'idp_entity_id' => (string)$config['idp']['entityId'],
+                'idp_sso_url' => (string)$config['idp']['singleSignOnService']['url'],
+                'idp_slo_url' => (string)$config['idp']['singleLogoutService']['url'],
+                'x509_cert' => (string)$config['idp']['x509cert'],
+                'sign_authn_request' => (bool)$config['security']['authnRequestsSigned'],
+                'sign_logout_request' => (bool)$config['security']['logoutRequestSigned'],
+                'sign_logout_response' => (bool)$config['security']['logoutResponseSigned'],
+                'request_signing_method' => $signatureAlgorithmMap[$config['security']['signatureAlgorithm']],
+                'validate_request_id' => (bool)$config['security']['validateRequestId'],
+            ],
+            'attribute_mapping' => $this->reformatAttributeMapping((array)$config['user_mapping']),
+        ];
+    }
+
+    /**
+     * Reformat Attribute Mapping
+     * @param array $in
+     * @return array
+     */
+    private function reformatAttributeMapping(array $in): array
+    {
+        $out = [];
+        foreach ($in as $source => $destination) {
+            $out[] = [
+                'source' => (string)$source,
+                'destination' => (string)$destination,
+                'overwrite' => true,
+            ];
+        }
+        return $out;
     }
 
     /**

@@ -56,8 +56,108 @@ class AuthSettingsApiTest extends TestCase
      */
     public function expectedAuthSettings(): array
     {
-        $ldapConfig = ['some' => 'ldap', 'config' => 'value'];
-        $samlConfig = ['some' => 'saml', 'config' => 'value'];
+        $ldapBase = [
+            'adapter_config' => [
+                'host' => '127.0.0.1',
+                'port' => '389',
+                'options' => [
+                    'network_timeout' => 60,
+                    'timelimit' => 60,
+                ],
+                'encryption' => 'none',
+            ],
+            'baseDn' => 'baseDn-value',
+            'uidKey' => 'uidKey-value',
+            'filter' => 'filter-value',
+            'entryAttribute' => 'entryAttribute-value',
+            'autoCreateUser' => 0,
+            'user' => [
+                'mapping' => [],
+            ],
+        ];
+        $ldapBaseExpects = [
+            'config' => [
+                'auto_create_users' => false,
+                'server' => '127.0.0.1:389',
+                'user_dn' => 'baseDn-value',
+                'user_filter' => 'filter-value',
+                'login_attribute' => 'uidKey-value',
+                'bind_attribute' => 'entryAttribute-value',
+
+                'authentication' => false,
+                'authentication_user_dn' => '',
+                'authentication_password' => '',
+
+                'group_membership' => false,
+                'group_dn' => '',
+                'group_name' => '',
+                'group_attribute' => '',
+                'user_unique_attribute' => '',
+                'include_user_dn' => false,
+            ],
+            'attribute_mapping' => [],
+        ];
+        $samlConfig = [
+            'strict' => 1,
+            'debug' => 0,
+            'sp' => [
+                'entityId' => 'sp-entityId-value',
+                'assertionConsumerService' => [
+                    'url' => 'http://assertionConsumerService/url',
+                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                ],
+                'singleLogoutService' => [
+                    'url' => 'http://singleLogoutService/url',
+                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+                ],
+                'NameIDFormat' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+                'x509cert' => 'SAML_request_signing_x509-value',
+                'privateKey' => 'SAML_request_signing_pkey-value',
+                'provisionUser' => 0,
+            ],
+
+            'idp' => [
+                'entityId' => 'http://saml-server/simplesaml/saml2/idp/metadata.php',
+                'singleSignOnService' => [
+                    'url' => 'http://singleSignOnService/url',
+                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+                ],
+                'singleLogoutService' => [
+                    'url' => 'http://singleLogoutService/url',
+                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+                ],
+                'x509cert' => 'SAML_X509Cert-value',
+            ],
+
+            'security' => [
+                'authnRequestsSigned' => 1,
+                'logoutRequestSigned' => 0,
+                'logoutResponseSigned' => '1',
+                'signatureAlgorithm' => \XMLSecurityKey::RSA_SHA512,
+                'validateRequestId' => null,
+            ],
+            'user_mapping' => [],
+        ];
+
+        $samlBaseExpects = [
+            'config' => [
+                'sp_entity_id' => 'sp-entityId-value',
+                'request_signing_cert' => 'SAML_request_signing_x509-value',
+                'request_signing_pkey' => 'SAML_request_signing_pkey-value',
+                'provision_user' => false,
+                'same_window' => true,
+                'idp_entity_id' => 'http://saml-server/simplesaml/saml2/idp/metadata.php',
+                'idp_sso_url' => 'http://singleSignOnService/url',
+                'idp_slo_url' => 'http://singleLogoutService/url',
+                'x509_cert' => 'SAML_X509Cert-value',
+                'sign_authn_request' => true,
+                'sign_logout_request' => false,
+                'sign_logout_response' => true,
+                'request_signing_method' => 'RSA_SHA512',
+                'validate_request_id' => false,
+            ],
+            'attribute_mapping' => [],
+        ];
         $adminSettingsMap = [
             'captcha_on' => ['captcha_on', false, true],
             'captcha_public_key' => ['captcha_public_key', '', 'captcha_public_key'],
@@ -137,12 +237,14 @@ class AuthSettingsApiTest extends TestCase
             'localDisabledExpiration' => [
                 'in' => [
                     'ldapConfig' => [],
+                    'ldapSugarConfigMap' => [],
                     'samlConfig' => [],
                     'authenticationClass' => 'IdMSugarAuthenticate',
                     'passwordSetting' => [
                             'userexpiration' => '',
                         ] + $passwordSetting,
                     'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => false,
                 ],
                 'expected' => [
                     'enabledProviders' => ['local'],
@@ -157,6 +259,7 @@ class AuthSettingsApiTest extends TestCase
             'localTimeExpiration' => [
                 'in' => [
                     'ldapConfig' => [],
+                    'ldapSugarConfigMap' => [],
                     'samlConfig' => [],
                     'authenticationClass' => 'IdMSugarAuthenticate',
                     'passwordSetting' => [
@@ -165,6 +268,7 @@ class AuthSettingsApiTest extends TestCase
                             'userexpirationtype' => '7',
                         ] + $passwordSetting,
                     'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => false,
                 ],
                 'expected' => [
                     'enabledProviders' => ['local'],
@@ -179,6 +283,7 @@ class AuthSettingsApiTest extends TestCase
             'localAttemptExpiration' => [
                 'in' => [
                     'ldapConfig' => [],
+                    'ldapSugarConfigMap' => [],
                     'samlConfig' => [],
                     'authenticationClass' => 'IdMSugarAuthenticate',
                     'passwordSetting' => [
@@ -186,6 +291,7 @@ class AuthSettingsApiTest extends TestCase
                             'userexpirationlogin' => '100',
                         ] + $passwordSetting,
                     'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => false,
                 ],
                 'expected' => [
                     'enabledProviders' => ['local'],
@@ -200,6 +306,7 @@ class AuthSettingsApiTest extends TestCase
             'localTimeLockout' => [
                 'in' => [
                     'ldapConfig' => [],
+                    'ldapSugarConfigMap' => [],
                     'samlConfig' => [],
                     'authenticationClass' => 'IdMSugarAuthenticate',
                     'passwordSetting' => array_replace(
@@ -211,6 +318,7 @@ class AuthSettingsApiTest extends TestCase
                         ]
                     ),
                     'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => false,
                 ],
                 'expected' => [
                     'enabledProviders' => ['local'],
@@ -229,6 +337,7 @@ class AuthSettingsApiTest extends TestCase
             'localPermanentLockout' => [
                 'in' => [
                     'ldapConfig' => [],
+                    'ldapSugarConfigMap' => [],
                     'samlConfig' => [],
                     'authenticationClass' => 'IdMSugarAuthenticate',
                     'passwordSetting' => array_replace(
@@ -240,6 +349,7 @@ class AuthSettingsApiTest extends TestCase
                         ]
                     ),
                     'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => false,
                 ],
                 'expected' => [
                     'enabledProviders' => ['local'],
@@ -255,13 +365,18 @@ class AuthSettingsApiTest extends TestCase
                     ],
                 ],
             ],
+
+
+
             'ldap' => [
                 'in' => [
-                    'ldapConfig' => $ldapConfig,
+                    'ldapConfig' => $ldapBase,
+                    'ldapSugarConfigMap' => [],
                     'samlConfig' => [],
                     'authenticationClass' => 'IdMSugarAuthenticate',
                     'passwordSetting' => $passwordSetting,
                     'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => false,
                 ],
                 'expected' => [
                     'enabledProviders' => ['local', 'ldap'],
@@ -271,16 +386,133 @@ class AuthSettingsApiTest extends TestCase
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
-                    'ldap' => $ldapConfig,
+                    'ldap' => $ldapBaseExpects,
                 ],
             ],
-            'saml' => [
+            'ldapSSL' => [
+                'in' => [
+                    'ldapConfig' => array_replace_recursive(
+                        $ldapBase,
+                        [
+                            'adapter_config' => [
+                                'encryption' => 'ssl',
+                            ],
+                        ]
+                    ),
+                    'ldapSugarConfigMap' => [],
+                    'samlConfig' => [],
+                    'authenticationClass' => 'IdMSugarAuthenticate',
+                    'passwordSetting' => $passwordSetting,
+                    'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => false,
+                ],
+                'expected' => [
+                    'enabledProviders' => ['local', 'ldap'],
+                    'local' => [
+                        'password_requirements' => $localConfExpPassReq,
+                        'password_reset_policy' => $localConfExpReset,
+                        'password_expiration' => $localConfExpExpirDisabled,
+                        'login_lockout' => $loginLockoutDisabled,
+                    ],
+                    'ldap' => array_replace_recursive(
+                        $ldapBaseExpects,
+                        [
+                            'config' => [
+                                'server' => 'ldaps://127.0.0.1:389',
+                            ],
+                        ]
+                    ),
+                ],
+            ],
+            'ldapAuth' => [
+                'in' => [
+                    'ldapConfig' => array_replace_recursive(
+                        $ldapBase,
+                        [
+                            'searchDn' => 'authentication_user_dn-value',
+                            'searchPassword' => 'authentication_password-value',
+                        ]
+                    ),
+                    'ldapSugarConfigMap' => [],
+                    'samlConfig' => [],
+                    'authenticationClass' => 'IdMSugarAuthenticate',
+                    'passwordSetting' => $passwordSetting,
+                    'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => false,
+                ],
+                'expected' => [
+                    'enabledProviders' => ['local', 'ldap'],
+                    'local' => [
+                        'password_requirements' => $localConfExpPassReq,
+                        'password_reset_policy' => $localConfExpReset,
+                        'password_expiration' => $localConfExpExpirDisabled,
+                        'login_lockout' => $loginLockoutDisabled,
+                    ],
+                    'ldap' => array_replace_recursive(
+                        $ldapBaseExpects,
+                        [
+                            'config' => [
+                                'authentication' => true,
+                                'authentication_user_dn' => 'authentication_user_dn-value',
+                                'authentication_password' => 'authentication_password-value',
+                            ],
+                        ]
+                    ),
+                ],
+            ],
+            'ldapGroup' => [
+                'in' => [
+                    'ldapConfig' => array_replace_recursive(
+                        $ldapBase,
+                        [
+                            'groupMembership' => true,
+                            'groupAttribute' => 'group_attribute-value',
+                            'userUniqueAttribute' => 'user_unique_attribute-value',
+                            'includeUserDN' => true,
+                        ]
+                    ),
+                    'ldapSugarConfigMap' => [
+                        ['ldap_group_dn', '', 'ldap_group_dn-value'],
+                        ['ldap_group_name', '', 'ldap_group_name-value'],
+                    ],
+                    'samlConfig' => [],
+                    'authenticationClass' => 'IdMSugarAuthenticate',
+                    'passwordSetting' => $passwordSetting,
+                    'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => false,
+                ],
+                'expected' => [
+                    'enabledProviders' => ['local', 'ldap'],
+                    'local' => [
+                        'password_requirements' => $localConfExpPassReq,
+                        'password_reset_policy' => $localConfExpReset,
+                        'password_expiration' => $localConfExpExpirDisabled,
+                        'login_lockout' => $loginLockoutDisabled,
+                    ],
+                    'ldap' => array_replace_recursive(
+                        $ldapBaseExpects,
+                        [
+                            'config' => [
+                                'group_membership' => true,
+                                'group_dn' => 'ldap_group_dn-value',
+                                'group_name' => 'ldap_group_name-value',
+                                'group_attribute' => 'group_attribute-value',
+                                'user_unique_attribute' => 'user_unique_attribute-value',
+                                'include_user_dn' => true,
+                            ],
+                        ]
+                    ),
+                ],
+            ],
+            'saml_sha512' => [
                 'in' => [
                     'ldapConfig' => [],
+                    'ldapSugarConfigMap' => [],
                     'samlConfig' => $samlConfig,
                     'authenticationClass' => 'IdMSAMLAuthenticate',
                     'passwordSetting' => $passwordSetting,
                     'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => true,
                 ],
                 'expected' => [
                     'enabledProviders' => ['local', 'saml'],
@@ -290,19 +522,71 @@ class AuthSettingsApiTest extends TestCase
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
-                    'saml' => $samlConfig,
+                    'saml' => $samlBaseExpects,
+                ],
+            ],
+            'samlSha256AndAttributeMapping' => [
+                'in' => [
+                    'ldapConfig' => [],
+                    'ldapSugarConfigMap' => [],
+                    'samlConfig' => array_replace_recursive(
+                        $samlConfig,
+                        [
+                            'security' => [
+                                'signatureAlgorithm' => \XMLSecurityKey::RSA_SHA256,
+                            ],
+                            'user_mapping' => [
+                                'key-1' => 'val-1',
+                                'key-2' => 'val-2',
+                            ],
+                        ]
+                    ),
+                    'authenticationClass' => 'IdMSAMLAuthenticate',
+                    'passwordSetting' => $passwordSetting,
+                    'adminSettingsMap' => $adminSettingsMap,
+                    'saml_same_window' => true,
+                ],
+                'expected' => [
+                    'enabledProviders' => ['local', 'saml'],
+                    'local' => [
+                        'password_requirements' => $localConfExpPassReq,
+                        'password_reset_policy' => $localConfExpReset,
+                        'password_expiration' => $localConfExpExpirDisabled,
+                        'login_lockout' => $loginLockoutDisabled,
+                    ],
+                    'saml' => array_replace_recursive(
+                        $samlBaseExpects,
+                        [
+                            'config' => [
+                                'request_signing_method' => 'RSA_SHA256',
+                            ],
+                            'attribute_mapping' => [
+                                [
+                                    'source' => 'key-1',
+                                    'destination' => 'val-1',
+                                    'overwrite' => true,
+                                ],
+                                [
+                                    'source' => 'key-2',
+                                    'destination' => 'val-2',
+                                    'overwrite' => true,
+                                ],
+                            ],
+                        ]
+                    ),
                 ],
             ],
         ];
     }
 
     /**
+     * @group ft1
      * @covers ::authSettings
      * @dataProvider expectedAuthSettings
      * @param array $in
      * @param array $expected
      */
-    public function testResultAuthSettings(array $in, array $expected) :void
+    public function testResultAuthSettings(array $in, array $expected): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(true);
@@ -310,17 +594,23 @@ class AuthSettingsApiTest extends TestCase
         $this->lockout->method('getFailedLoginsCount')->willReturn($in['passwordSetting']['lockoutexpirationlogin']);
         $this->lockout->method('getLockoutDurationMins')->willReturn($in['passwordSetting']['LockoutDurationMins']);
 
+        $this->api
+            ->method('getLdapSetting')
+            ->will($this->returnValueMap($in['ldapSugarConfigMap']));
+
         $this->config->method('getLdapConfig')->willReturn($in['ldapConfig']);
         $this->config->method('getSAMLConfig')->willReturn($in['samlConfig']);
         $this->config->method('get')
             ->will($this->returnValueMap([
                 ['passwordsetting', [], $in['passwordSetting']],
                 ['authenticationClass', 'IdMSugarAuthenticate', $in['authenticationClass']],
+                ['SAML_SAME_WINDOW', false, $in['saml_same_window']],
             ]));
         $this->api->method('get')
             ->will($this->returnValueMap($in['adminSettingsMap']));
 
         $result = $this->api->authSettings($this->service, []);
+//        print_r($result);
         $this->assertEquals($expected, $result);
     }
 
@@ -328,7 +618,7 @@ class AuthSettingsApiTest extends TestCase
      * @covers ::authSettings
      * @expectedException \SugarApiExceptionNotAuthorized
      */
-    public function testNoAdminRequest() :void
+    public function testNoAdminRequest(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(false);
@@ -344,7 +634,7 @@ class AuthSettingsApiTest extends TestCase
      * @covers ::authSettings
      * @expectedException \SugarApiExceptionNotAuthorized
      */
-    public function testAuthorizedRequest() :void
+    public function testAuthorizedRequest(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = true;
         unset($GLOBALS['current_user']);
@@ -360,7 +650,7 @@ class AuthSettingsApiTest extends TestCase
      * @covers ::authSettings
      * @expectedException \SugarApiExceptionNotFound
      */
-    public function testAuthSettingsMigrationDisabled() :void
+    public function testAuthSettingsMigrationDisabled(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = false;
         $this->currentUser->method('isAdmin')->willReturn(true);
@@ -368,14 +658,14 @@ class AuthSettingsApiTest extends TestCase
         $this->config->expects($this->never())->method('getLdapConfig');
         $this->config->expects($this->never())->method('getSAMLConfig');
         $this->config->expects($this->never())->method('get');
-        
+
         $this->api->authSettings($this->service, []);
     }
 
     /**
      * @return array
      */
-    public function switchOnIdmModeExceptionDataProvider() : array
+    public function switchOnIdmModeExceptionDataProvider(): array
     {
         return [
             [[]],
@@ -388,7 +678,7 @@ class AuthSettingsApiTest extends TestCase
     /**
      * @covers ::switchOnIdmMode
      */
-    public function testSwitchOnIdmMode() : void
+    public function testSwitchOnIdmMode(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(true);
@@ -407,7 +697,7 @@ class AuthSettingsApiTest extends TestCase
      * @expectedException SugarApiExceptionMissingParameter
      * @dataProvider switchOnIdmModeExceptionDataProvider
      */
-    public function testSwitchOnIdmModeException($args) : void
+    public function testSwitchOnIdmModeException($args): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(true);
@@ -423,7 +713,7 @@ class AuthSettingsApiTest extends TestCase
      * @covers ::switchOnIdmMode
      * @expectedException SugarApiExceptionNotAuthorized
      */
-    public function testSwitchOnIdmModeUnauthorized() : void
+    public function testSwitchOnIdmModeUnauthorized(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(false);
@@ -439,7 +729,7 @@ class AuthSettingsApiTest extends TestCase
      * @covers ::switchOnIdmMode
      * @expectedException SugarApiExceptionNotFound
      */
-    public function testSwitchOnIdmModeMigrationDisabled() : void
+    public function testSwitchOnIdmModeMigrationDisabled(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = false;
         $this->currentUser->method('isAdmin')->willReturn(true);
@@ -454,7 +744,7 @@ class AuthSettingsApiTest extends TestCase
     /**
      * @covers ::switchOffIdmMode
      */
-    public function testSwitchOffIdmMode() : void
+    public function testSwitchOffIdmMode(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(true);
@@ -472,7 +762,7 @@ class AuthSettingsApiTest extends TestCase
      * @covers ::switchOffIdmMode
      * @expectedException SugarApiExceptionNotAuthorized
      */
-    public function testSwitchOffIdmModeUnauthorized() : void
+    public function testSwitchOffIdmModeUnauthorized(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(false);
@@ -488,7 +778,7 @@ class AuthSettingsApiTest extends TestCase
      * @covers ::switchOffIdmMode
      * @expectedException SugarApiExceptionNotFound
      */
-    public function testSwitchOffIdmModeMigrationDisabled() : void
+    public function testSwitchOffIdmModeMigrationDisabled(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = false;
         $this->currentUser->method('isAdmin')->willReturn(true);
@@ -511,7 +801,10 @@ class AuthSettingsApiTest extends TestCase
         $this->currentUser = $this->createMock(\User::class);
         $this->config = $this->createMock(Authentication\Config::class);
         $this->lockout = $this->createMock(Authentication\Lockout::class);
-        $this->api = $this->createPartialMock(\AuthSettingsApi::class, ['getAuthConfig', 'get', 'getLockout']);
+        $this->api = $this->createPartialMock(
+            \AuthSettingsApi::class,
+            ['getAuthConfig', 'get', 'getLockout', 'getLdapSetting']
+        );
         $this->api->method('getAuthConfig')->willReturn($this->config);
         $this->api->method('getLockout')->willReturn($this->lockout);
         $GLOBALS['current_user'] = $this->currentUser;
