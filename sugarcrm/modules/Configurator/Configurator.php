@@ -329,8 +329,11 @@ class Configurator
 	    }
 
         // write out contents to file
-        sugar_file_put_contents_atomic('config_override.php', $override);
-	}
+        $result = sugar_file_put_contents_atomic('config_override.php', $override);
+        if ($result === false) {
+            $GLOBALS['log']->fatal("Unable to write to the config_override.php file. Check the php_errors for detail");
+        }
+    }
 
 	function overrideClearDuplicates($array_name, $key) {
 		if (!empty ($this->override)) {

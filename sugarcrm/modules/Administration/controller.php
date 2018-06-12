@@ -316,8 +316,6 @@ class AdministrationController extends SugarController
         $config = $this->mergeFtsConfig($type, $config);
 
         $cfg = $this->getConfigurator();
-        $cfg->config['full_text_engine'] = '';
-        $cfg->saveConfig();
         $cfg->config['full_text_engine'] = array($type => $config);
         $cfg->handleOverride();
 
