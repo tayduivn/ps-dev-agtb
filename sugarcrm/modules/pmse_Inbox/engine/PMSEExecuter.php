@@ -357,13 +357,25 @@ class PMSEExecuter
         $arguments = array()
     ) {
 
+        $isSendMessageEvent = false;
         $caseBean = BeanFactory::getBean('pmse_Inbox');
         $caseBean->retrieve_by_string_fields(array('cas_id' => $flowData['cas_id']));
         if ($caseBean->cas_status != 'IN PROGRESS') {
-            $fd = BeanFactory::getBean('pmse_BpmFlow', $flowData['id']);
-            $fd->cas_flow_status = $caseBean->cas_status;
-            $fd->save();
-            return true;
+            if ($externalAction == 'RESUME_EXECUTION' &&
+                $arguments['cas_flow_status'] == 'QUEUE' &&
+                $flowData['bpmn_type'] == 'bpmnEvent') {
+                $elementBean = BeanFactory::getBean('pmse_BpmnEvent', $flowData['bpmn_id']);
+                if ($elementBean->evn_marker == 'MESSAGE' &&
+                    $elementBean->evn_behavior == 'THROW') {
+                    $isSendMessageEvent = true;
+                }
+            }
+            if (!$isSendMessageEvent) {
+                $fd = BeanFactory::getBean('pmse_BpmFlow', $flowData['id']);
+                $fd->cas_flow_status = $caseBean->cas_status;
+                $fd->save();
+                return true;
+            }
         }
 
         // Load the bean if the request comes from a RESUME_EXECUTION related origin
@@ -430,6 +442,10 @@ class PMSEExecuter
                 $this->caseFlowHandler->changeCaseStatus($executionData['flow_data']['cas_id'], 'ERROR');
             }
             $routeData = $this->flowRouter->routeFlow($executionData, $flowData, $createThread);
+        }
+
+        if ($isSendMessageEvent) {
+            return true;
         }
 
         if ($externalAction == 'RESUME_EXECUTION'
