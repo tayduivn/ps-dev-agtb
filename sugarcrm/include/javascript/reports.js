@@ -3820,6 +3820,8 @@ SUGAR.reports = function() {
 			var oACDS = myDataSource;
 	        oACDS.queryMatchContains = true; 
 	        var oAutoComp = new YAHOO.widget.AutoComplete("dt_input","dt_ac_container", oACDS);
+            // default is 10
+            oAutoComp.maxResultsDisplayed = 100;
 	        oAutoComp.doBeforeLoadData = function( sQuery , oResponse , oPayload ) {
 	        	SUGAR.reports.myDataTable.initializeTable();
 	        	SUGAR.reports.myDataTable.addRows(oResponse.results);
