@@ -185,7 +185,8 @@ class IndexManager
     }
 
     /**
-     * Create the mappings for given module without re-creating the index.
+     * Create the mappings for given modules without re-creating the indices if exist,
+     * create new indices if don't exist.
      * @param array $modules
      * @return bool
      */
@@ -196,12 +197,12 @@ class IndexManager
             return false;
         }
 
-        //add the mapping without re-creating the index
-        $this->syncIndices($modules, false);
+        // add the mapping without re-creating the indices if indices exist,
+        // create new indices if indices don't exist
+        $this->syncIndices($modules, false, true);
 
         return true;
     }
-
 
     /**
      * *** Zero downtime reindexing with analyzer/mapping changes ***
@@ -258,9 +259,10 @@ class IndexManager
     /**
      * Sync new index settings to Elasticsearch backend
      * @param array $modules List of modules to sync
-     * @param boolean $dropExist
+     * @param boolean $dropExist, force to drop exist index
+     * @param boolean $createNew, create new index if doesn't exist
      */
-    protected function syncIndices(array $modules, $dropExist = false)
+    protected function syncIndices(array $modules, bool $dropExist = false, bool $createNew = false)
     {
         // Get registered providers
         $providerCollection = new ProviderCollection($this->container, $this->getRegisteredProviders());
@@ -282,7 +284,7 @@ class IndexManager
          * indices if any. This will allow for an incremental update when
          * possible.
          */
-        $this->createIndices($indexCollection, $analysisBuilder, $mappingCollection, $dropExist);
+        $this->createIndices($indexCollection, $analysisBuilder, $mappingCollection, $dropExist, $createNew);
     }
 
     /**
@@ -362,11 +364,12 @@ class IndexManager
         IndexCollection $indexCollection,
         AnalysisBuilder $analysisBuilder,
         MappingCollection $mappingCollection,
-        $dropExist = false
+        $dropExist = false,
+        $createNew = false
     ) {
         foreach ($indexCollection as $index) {
 
-            if ($dropExist === true) {
+            if ($dropExist === true || ($createNew === true && !$index->exists())) {
                 $this->createIndex($index, $analysisBuilder, $dropExist);
             }
 
