@@ -370,5 +370,12 @@ $mod_strings = array(
 
     'LBL_SCAN_577_TITLE' => 'Incompatible database collation',
     'LBL_SCAN_577_LOG' => "Collation '%s' is incompatible with the '%s' charset",
-    'LBL_SCAN_577_DESC' => "Choose a different collation in your locale settings or remove the 'dbconfigoption.collation' configuration to use the default collation.",
+    'LBL_SCAN_577_DESCR' => "Choose a different collation in your locale settings or remove the 'dbconfigoption.collation' configuration to use the default collation.",
+
+    'LBL_SCAN_578_TITLE' => 'Unable to remove temporary database table: %s',
+    'LBL_SCAN_578_LOG' => 'Unable to remove temporary database table: %s',
+    'LBL_SCAN_578_DESCR' => 'A temporary table created to safe-check character set conversion failed to be deleted during upgrade and will need to be deleted manually',
+
+    'LBL_SCAN_579_TITLE' => 'Unable to perform character set/collation conversion: (%s) on table: %s',
+    'LBL_SCAN_579_LOG' => 'Unable to perform character set/collation conversion: (%s) on table: %s',
 );

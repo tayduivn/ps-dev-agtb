@@ -598,6 +598,20 @@ class HealthCheckScannerMeta
             'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Incompatible_Mysql_Collation/',
             //@codingStandardsIgnoreEnd
         ),
+        578 => array(
+            'report' => 'cannotRemoveTemporaryTable',
+            'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Cannot_Remove_Temporary_Table/',
+            //@codingStandardsIgnoreEnd
+        ),
+        579 => array(
+            'report' => 'cannotPerformCollationConversionOnTable',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Cannot_Perform_Collation_Conversion_On_Table/',
+            //@codingStandardsIgnoreEnd
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(

@@ -792,7 +792,9 @@ class HealthCheckScanner
         $this->updateCustomDirScanStatus();
 
         // Do this early as it is a show-stopper.
-        $this->checkUtf8mb4CollationCompatibility();
+        $collationTarget = $this->checkUtf8mb4CollationCompatibility();
+
+        $this->verifyUtf8mb4MaximumRowSizeLimit($collationTarget);
 
         // Check global hooks
         $this->log("Checking global hooks");
@@ -4830,10 +4832,72 @@ ENDP;
 
     /**
      * The database collation must be compatible with utf8mb4 for MySQL databases.
+     *
+     * @return string Collation target value if collation conversion is in effect, otherwise the empty string
      */
     protected function checkUtf8mb4CollationCompatibility()
     {
         $this->log('Checking collation compatibility for the utf8mb4 charset on MySQL');
+
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        if (version_compare($version, '8.1.0', '>=')) {
+            $this->log("This check does not apply to {$version}");
+            return '';
+        }
+
+        // This upgrade applies to MySQL only.
+        if ($this->db->dbType !== 'mysql') {
+            $this->log('The database is not MySQL');
+            return '';
+        }
+
+        $collation = $this->db->getOption('collation');
+
+        if (empty($collation)) {
+            // The admin has not defined a collation. The default is automatically compatible.
+            $this->log('The default collation is automatically compatible');
+            return 'utf8mb4_general_ci';
+        }
+
+        // Is the current collation one of the allowed collations?
+        $allowedCollations = $this->getMySQLAllowedCollations();
+        $this->log('Allowed collations: ' . implode(', ', $allowedCollations));
+
+        if (in_array($collation, $allowedCollations)) {
+            $this->log("Collation '{$collation}' can be used with the utf8mb4 charset");
+            return '';
+        }
+
+        // Can the current collation be mapped to one of the allowed collations?
+        $mappedCollation = preg_replace('/^utf8_(.*)$/', 'utf8mb4_${1}', $collation);
+
+        if (in_array($mappedCollation, $allowedCollations)) {
+            $this->log(
+                "Collation '{$mappedCollation}' (mapped from '{$collation}') can be used with the utf8mb4 charset"
+            );
+            return $mappedCollation;
+        }
+
+        $this->log("Collation '{$collation}' cannot be used with the utf8mb4 charset");
+        $this->log(
+            "Collation '{$mappedCollation}' (mapped from '{$collation}') cannot be used with the utf8mb4 charset"
+        );
+        $this->updateStatus('incompatibleMysqlCollation', $collation, 'utf8mb4');
+
+        return '';
+    }
+
+    /**
+     * Each database table must be within the maximum row size allowed by MySQL following utf8mb4 collation conversion.
+     * The collation conversion value is determined by {@link HealthCheckScanner::checkUtf8mb4CollationCompatibility()},
+     * If the targetCollation variable is empty, no collation conversion verification will be performed.
+     *
+     * @param string $collationTarget New collation value, or the empty string if no conversion is in effect.
+     */
+    protected function verifyUtf8mb4MaximumRowSizeLimit($collationTarget)
+    {
+        $this->log('Verify MySQL row size limit for each table in preparation for utf8mb4 charset migration');
 
         list($version, $flavor) = $this->getVersionAndFlavor();
 
@@ -4848,38 +4912,48 @@ ENDP;
             return;
         }
 
-        $collation = $this->db->getOption('collation');
-
-        if (empty($collation)) {
-            // The admin has not defined a collation. The default is automatically compatible.
-            $this->log('The default collation is automatically compatible');
+        // If no character set migration is in effect, there is nothing more to do.
+        if (empty($collationTarget)) {
+            $this->log('No charset migration in effect. Maximum Row Size limit verification not performed');
             return;
         }
 
-        // Is the current collation one of the allowed collations?
-        $allowedCollations = $this->getMySQLAllowedCollations();
-        $this->log('Allowed collations: ' . implode(', ', $allowedCollations));
+        $this->log("Performing maximum row size verification for collation target: {$collationTarget}");
 
-        if (in_array($collation, $allowedCollations)) {
-            $this->log("Collation '{$collation}' can be used with the utf8mb4 charset");
-            return;
+        $conn = DBManagerFactory::getInstance()->getConnection();
+        $stmt = $conn->executeQuery('SHOW TABLES');
+        while ($table = $stmt->fetchColumn()) {
+            $tempTableName = 'temp_table_' . $table;
+            $createResult = $this->db->query("CREATE TABLE {$tempTableName} LIKE {$table}");
+            if ($createResult === false) {
+                $this->log("Failed trying to create temporary table: {$tempTableName}");
+                $this->updateStatus(
+                    'cannotPerformCollationConversionOnTable',
+                    $collationTarget,
+                    $tempTableName
+                );
+                return;  // Can't go any further
+            }
+
+            $success = $this->setTableCollation($tempTableName, 'utf8mb4', $collationTarget);
+            if (!$success) {
+                $this->log(
+                    "Unable to alter table: '{$tempTableName}' " .
+                    "using collation target: {$collationTarget}"
+                );
+                $this->updateStatus(
+                    'cannotPerformCollationConversionOnTable',
+                    $collationTarget,
+                    $table
+                );
+            }
+
+            $dropResult = $this->db->query("DROP TABLE {$tempTableName}");
+            if ($dropResult === false) {
+                $this->log("Failed trying to drop temporary table: {$tempTableName}");
+                $this->updateStatus('cannotRemoveTemporaryTable', $tempTableName);
+            }
         }
-
-        // Can the current collation be mapped to one of the allowed collations?
-        $mappedCollation = preg_replace('/^utf8_(.*)$/', 'utf8mb4_${1}', $collation);
-
-        if (in_array($mappedCollation, $allowedCollations)) {
-            $this->log(
-                "Collation '{$mappedCollation}' (mapped from '{$collation}') can be used with the utf8mb4 charset"
-            );
-            return;
-        }
-
-        $this->log("Collation '{$collation}' cannot be used with the utf8mb4 charset");
-        $this->log(
-            "Collation '{$mappedCollation}' (mapped from '{$collation}') cannot be used with the utf8mb4 charset"
-        );
-        $this->updateStatus('incompatibleMysqlCollation', $collation, 'utf8mb4');
     }
 
     /**
@@ -4903,6 +4977,30 @@ ENDP;
         }
 
         return $collations;
+    }
+
+    /**
+     * Update supplied table to match the specified charset/collation
+     * @param string $table Table collation to be set on
+     * @param string $charset Character set value
+     * @param string $collation Collation value
+     * @return bool $success
+     */
+    protected function setTableCollation($table, $charset, $collation)
+    {
+        try {
+            $success = $this->db->query('ALTER TABLE ' . $table . ' COLLATE ' . $this->db->quoted($collation));
+            if ($success !== false) {
+                $success = $this->db->query(
+                    'ALTER TABLE ' . $table
+                    . ' CONVERT TO CHARACTER SET ' . $this->db->quoted($charset)
+                    . ' COLLATE ' . $this->db->quoted($collation)
+                );
+            }
+            return ($success !== false);
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }
 
