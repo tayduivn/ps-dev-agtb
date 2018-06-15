@@ -5190,7 +5190,7 @@ class SugarBean
      * Processes the list query and return fetched row.
      *
      * Internal function, do not override.
-     * @param string $query select query to be processed.
+     * @param string|array $query Query to be processed represented as a string or as parts
      * @param int $row_offset starting position
      * @param int $limit Optioanl, default -1
      * @param int $max_per_page Optional, default -1
@@ -5200,6 +5200,11 @@ class SugarBean
      */
     function process_list_query($query, $row_offset, $limit= -1, $max_per_page = -1, $where = '')
     {
+        if (is_array($query)) {
+            $queryParts = $query;
+            $query = $query['select'] . $query['from'] . $query['where'] . $query['order_by'];
+        }
+
         global $sugar_config;
         $db = DBManagerFactory::getInstance('listviews');
         /**
@@ -5265,11 +5270,36 @@ class SugarBean
             //FIXME: Bug? we should remove the magic number -99
             //use -99 to return all
             $index = $row_offset;
-            while ($max_per_page == -99 || ($index < $row_offset + $max_per_page))
-            {
-                $row = $db->fetchByAssoc($result);
-                if (empty($row)) break;
 
+        $data = $idIndex = $quotedIds = [];
+
+        while (($max_per_page == -99 || ($index < $row_offset + $max_per_page))
+            && ($row = $db->fetchByAssoc($result)) !== false
+        ) {
+            $id = $row['id'];
+            $data[$index] = $row;
+            $idIndex[$id][] = $index;
+
+            $quotedIds[] = $db->quoted($id);
+
+            $index++;
+        }
+
+        if (count($data) > 0 && isset($queryParts['secondary_select'], $queryParts['secondary_from'])) {
+            $secondaryQuery = $queryParts['secondary_select']
+                . $queryParts['secondary_from']
+                . ' WHERE ' . $this->table_name . '.id IN (' . implode(', ', $quotedIds) . ')';
+
+            $secondaryResult = $this->db->query($secondaryQuery);
+
+            while (($row = $this->db->fetchByAssoc($secondaryResult)) !== false) {
+                foreach ($idIndex[$row['ref_id']] as $index) {
+                    $data[$index] = array_merge($data[$index], $row);
+                }
+            }
+        }
+
+        foreach ($data as $row) {
                 //instantiate a new class each time. This is because php5 passes
                 //by reference by default so if we continually update $this, we will
                 //at the end have a list of all the same objects
@@ -5301,8 +5331,6 @@ class SugarBean
                 }
 
                 $list[] = $temp;
-
-                $index++;
             }
         if (!empty($sugar_config['disable_count_query']) && !empty($limit)) {
             $rows_found = $row_offset + count($list);
