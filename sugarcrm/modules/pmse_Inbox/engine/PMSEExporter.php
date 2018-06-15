@@ -138,7 +138,11 @@ class PMSEExporter
             // get the related email template and business rules ids
             if ($ids = $this->getDependentElementIds($dependency, $projectContent)) {
                 // now add the content for import
-                $projectContent['dependencies'][$dependency] = $this->getDependentContent($ids, $dependency);
+                $dependencyContent = $this->getDependentContent($ids, $dependency);
+                // no point adding dependencies if there isn't any
+                if (!empty($dependencyContent)) {
+                    $projectContent['dependencies'][$dependency] = $dependencyContent;
+                }
             }
         }
         return $projectContent;
@@ -159,7 +163,10 @@ class PMSEExporter
                 $activities = $projectContent['project']['diagram']['events'];
                 foreach ($activities as $activity) {
                     if ($activity['evn_marker'] == 'MESSAGE' && $activity['evn_behavior'] == 'THROW') {
-                        $ids[$activity['def_evn_criteria']] = $activity['def_evn_criteria'];
+                        // we don't wanna add null values
+                        if (!empty($activity['def_evn_criteria'])) {
+                            $ids[$activity['def_evn_criteria']] = $activity['def_evn_criteria'];
+                        }
                     }
                 }
                 break;
@@ -167,7 +174,10 @@ class PMSEExporter
                 $activities = $projectContent['project']['diagram']['activities'];
                 foreach ($activities as $activity) {
                     if ($activity['act_script_type'] == 'BUSINESS_RULE') {
-                        $ids[$activity['def_act_fields']] = $activity['def_act_fields'];
+                        // we don't wanna add null values
+                        if (!empty($activity['def_act_fields'])) {
+                            $ids[$activity['def_act_fields']] = $activity['def_act_fields'];
+                        }
                     }
                 }
                 break;

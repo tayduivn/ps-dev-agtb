@@ -98,6 +98,21 @@ describe('View.Views.Base.pmse_Project.DependencyPickerView', function() {
             expect(view.brCollection.length).toBe(3);
             expect(view.etCollection.length).toBe(2);
         });
+
+        describe('hasDependencies', function() {
+            using('different data values',
+                [
+                    [{dependencies: {}}, false],
+                    [{dependencies: {email_templates: []}}, false],
+                    [data, true]
+                ],
+                function(dataValues, result) {
+                    it('should set hasDependencies properly', function() {
+                        view.processData(dataValues);
+                        expect(view.hasDependencies).toBe(result);
+                    });
+                });
+        });
     });
 
     describe('_updateModels', function() {
@@ -147,12 +162,12 @@ describe('View.Views.Base.pmse_Project.DependencyPickerView', function() {
             expect(toggleAllCheckBoxStub).toHaveBeenCalled();
         });
 
-        it('should add all models when you call _addAllModels', function() {
+        it('should add all models when you call _updateModels', function() {
             view._updateAllModels(true, view.brModel);
             expect(view.massCollection.length).toBe(3);
         });
 
-        it('should add all models when you call _addAllModels', function() {
+        it('should remove all models when you call _updateModels', function() {
             view._updateAllModels(true, view.brModel);
             view._updateAllModels(false, view.brModel);
             expect(view.massCollection.length).toBe(0);

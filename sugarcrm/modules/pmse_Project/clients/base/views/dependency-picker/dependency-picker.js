@@ -91,23 +91,25 @@
     processData: function(data) {
         this._resetCollections();
 
+        this.hasDependencies = false;
+
         // No dependencies so don't do anything
         if (!data || !data.dependencies) {
-            this.hasDependencies = false;
             this.render();
             return;
         }
 
         _.each(data.dependencies, function(defs, type) {
             var collection = this._getCollectionForType(type);
-            if (collection) {
+            // add dependency only when there's a definition
+            if (collection && !_.isEmpty(defs)) {
                 collection.add(defs);
+                this.hasDependencies = true;
             }
         }, this);
 
         this._cleanFieldsForView();
 
-        this.hasDependencies = true;
         this.render();
     },
 
