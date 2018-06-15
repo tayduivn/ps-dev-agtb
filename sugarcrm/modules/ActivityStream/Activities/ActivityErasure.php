@@ -36,15 +36,10 @@ class ActivityErasure
         $this->activitiesUpdated = 0;
         $this->commentsUpdated = 0;
 
-        $success = true;
-
         // Load the DataPrivacy records from the dataPrivacyIds array and set up the erased field information for each
         // object being processed
         $dpRecordsProcessed = $this->initialize($dataPrivacyIds);
-        if ($dpRecordsProcessed === 0) {
-            $GLOBALS['log']->fatal('ActivityErasure Error: No DataPrivacy Erasure Records To Process');
-            $success = false;
-        } else {
+        if ($dpRecordsProcessed > 0) {
             // Scan and fix up erased name references in the comments table to one of the modules being processed
             $this->processComments();
 
@@ -56,7 +51,6 @@ class ActivityErasure
         }
 
         return array(
-            'success' => $success,
             'dpRecordsProcessed' => $dpRecordsProcessed,
             'activitiesUpdated' => $this->activitiesUpdated,
             'commentsUpdated' => $this->commentsUpdated,

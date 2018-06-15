@@ -39,17 +39,6 @@ class ActivityErasureTest extends TestCase
         $this->dp = array();
     }
 
-    public function testEraseActivities_Not_Successful()
-    {
-        $activityErasure = new ActivityErasure();
-        $result = $activityErasure->process([Uuid::uuid1(), Uuid::uuid1()]);
-
-        $this->assertFalse(
-            $result['success'],
-            'Expecting Activity Erasure to return Not Successful : No Valid DP Record Ids'
-        );
-    }
-
     public function testEraseActivities_Successful()
     {
         Activity::enable();
@@ -78,10 +67,6 @@ class ActivityErasureTest extends TestCase
         $activityErasure = new ActivityErasure();
         $result = $activityErasure->process(array($dp->id));
 
-        $this->assertTrue(
-            $result['success'],
-            'Activity erase process was not successful'
-        );
         $this->assertSame(
             0,
             $result['commentsUpdated'],
