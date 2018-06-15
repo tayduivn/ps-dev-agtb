@@ -14,7 +14,7 @@ class SugarUpgradeUpgradeAuthenticationClass extends UpgradeScript
 {
     public $order = 1100;
 
-    public $type = self::UPGRADE_CORE;
+    public $type = self::UPGRADE_CUSTOM;
 
     /**
      *
