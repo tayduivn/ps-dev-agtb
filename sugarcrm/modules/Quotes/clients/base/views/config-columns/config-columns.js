@@ -129,12 +129,41 @@
                     label: fieldLabel,
                     labelModule: fieldLabelModule,
                     widthClass: field.widthClass,
-                    cssClass: field.cssClass
+                    css_class: field.css_class || field.cssClass || ''
                 };
 
                 if (field.name === 'product_template_name') {
                     tmpField.type = 'quote-data-relate';
                 }
+
+                if (field.name === 'discount') {
+                    tmpField.type = 'fieldset';
+                    tmpField.css_class += ' quote-discount-percent';
+                    tmpField.fields = [{
+                        name: 'discount_amount',
+                        label: 'LBL_DISCOUNT_AMOUNT',
+                        type: 'discount',
+                        convertToBase: true,
+                        showTransactionalAmount: true
+                    }, {
+                        name: 'discount-select',
+                        type: 'discount-select',
+                        no_default_action: true,
+                        buttons: [{
+                            name: 'select_discount_amount_button',
+                            type: 'rowaction',
+                            label: 'LBL_DISCOUNT_AMOUNT',
+                            event: 'button:discount_select_change:click'
+                        }, {
+                            name: 'select_discount_percent_button',
+                            type: 'rowaction',
+                            label: 'LBL_DISCOUNT_PERCENT',
+                            event: 'button:discount_select_change:click'
+                        }]
+                    }];
+                }
+
+                debugger;
 
                 // push the fieldDefs to default fields
                 this.defaultFields.push(tmpField);
@@ -236,7 +265,6 @@
         var isNowVisible = newState === 'checked';
         var isUnchecked = newState === 'unchecked';
         var columnChanged = false;
-        var worksheetColumns = this.model.get('worksheet_columns');
         var toggleRelatedFields;
 
         if (!wasVisible && isNowVisible) {

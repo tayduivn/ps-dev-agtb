@@ -331,14 +331,11 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                 expect(field.isRequired).toBeTruthy();
             });
 
-            it('should call changeState when currentStateName is unchecked', function() {
-                field.currentState = {
-                    nextStateIfRequired: 'blah'
-                };
+            it('should call changeState with filled when currentStateName is unchecked', function() {
                 field.currentStateName = 'unchecked';
                 field._onToggleRelatedField(relatedField, true);
 
-                expect(field.changeState).toHaveBeenCalledWith('blah');
+                expect(field.changeState).toHaveBeenCalledWith('filled');
             });
 
             it('should not call changeState when currentStateName is not unchecked', function() {

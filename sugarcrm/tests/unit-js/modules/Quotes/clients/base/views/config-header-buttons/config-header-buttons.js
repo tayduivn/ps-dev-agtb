@@ -48,10 +48,16 @@ describe('Quotes.View.ConfigHeaderButtons', function() {
             }]);
         });
 
-        it('should add description to worksheet_columns_related_fields', function() {
+        it('should add fields to worksheet_columns_related_fields', function() {
             var result = view._getSaveConfigAttributes();
 
-            expect(result.worksheet_columns_related_fields).toEqual(['bbb', 'description']);
+            expect(result.worksheet_columns_related_fields).toEqual([
+                'bbb',
+                'description',
+                'name',
+                'product_template_id',
+                'product_template_name'
+            ]);
         });
     });
 });

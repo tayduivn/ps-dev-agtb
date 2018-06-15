@@ -158,38 +158,63 @@ describe('Quotes.View.ConfigColumns', function() {
                 label: 'LBL_QUANTITY',
                 labelModule: 'Quotes',
                 widthClass: undefined,
-                cssClass: undefined
+                css_class: ''
             }, {
                 name: 'product_template_name',
                 label: 'LBL_ITEM_NAME',
                 labelModule: 'Quotes',
                 widthClass: undefined,
-                cssClass: undefined
+                type: 'quote-data-relate',
+                css_class: ''
             }, {
                 name: 'mft_part_num',
                 label: 'LBL_MFT_PART_NUM',
                 labelModule: 'Quotes',
                 widthClass: undefined,
-                cssClass: undefined
+                css_class: ''
             }, {
                 name: 'discount_price',
                 label: 'LBL_DISCOUNT_PRICE',
                 labelModule: 'Quotes',
                 widthClass: undefined,
-                cssClass: undefined
+                css_class: ''
             }, {
                 name: 'discount',
                 label: 'LBL_DISCOUNT_AMOUNT',
                 labelModule: 'Quotes',
                 widthClass: undefined,
-                cssClass: undefined
+                css_class: ' quote-discount-percent',
+                type: 'fieldset',
+                fields: [{
+                    name: 'discount_amount',
+                    label: 'LBL_DISCOUNT_AMOUNT',
+                    type: 'discount',
+                    convertToBase: true,
+                    showTransactionalAmount: true
+                }, {
+                    name: 'discount-select',
+                    type: 'discount-select',
+                    no_default_action: true,
+                    buttons: [{
+                        name: 'select_discount_amount_button',
+                        type: 'rowaction',
+                        label: 'LBL_DISCOUNT_AMOUNT',
+                        event: 'button:discount_select_change:click'
+                    }, {
+                        name: 'select_discount_percent_button',
+                        type: 'rowaction',
+                        label: 'LBL_DISCOUNT_PERCENT',
+                        event: 'button:discount_select_change:click'
+                    }]
+                }]
             }, {
                 name: 'total_amount',
                 label: 'LBL_LINE_ITEM_TOTAL',
                 labelModule: 'Quotes',
                 widthClass: undefined,
-                cssClass: undefined
-            }]);
+                css_class: ''
+            }
+            ]);
         });
 
         it('should set listHeaderFields', function() {
@@ -379,16 +404,6 @@ describe('Quotes.View.ConfigColumns', function() {
                 });
             });
 
-            it('should set worksheet_columns on the model', function() {
-                var ctBefore = view.model.get('worksheet_columns').length;
-                var ctAfter;
-                view._onConfigFieldChange(testField, 'unchecked', 'checked');
-                ctAfter = view.model.get('worksheet_columns').length;
-
-                expect(view.model.set).toHaveBeenCalledWith('worksheet_columns');
-                expect(ctBefore < ctAfter).toBeTruthy();
-            });
-
             it('should trigger config:<eventViewName>:<fieldName>:related:toggle event on context', function() {
                 view._onConfigFieldChange(testField, 'unchecked', 'checked');
 
@@ -407,34 +422,14 @@ describe('Quotes.View.ConfigColumns', function() {
                 expect(removeColumnHeaderFieldStub).toHaveBeenCalledWith(testField);
             });
 
-            it('should set worksheet_columns on the model', function() {
-                var ctBefore = view.model.get('worksheet_columns').length;
-                var ctAfter;
-                view._onConfigFieldChange(testField, 'checked', 'unchecked');
-                ctAfter = view.model.get('worksheet_columns').length;
-
-                expect(view.model.set).toHaveBeenCalledWith('worksheet_columns');
-                expect(ctAfter < ctBefore).toBeTruthy();
-            });
-
-            it('should not trigger config:<eventViewName>:<fieldName>:related:toggle event on context', function() {
+            it('should trigger config:<eventViewName>:<fieldName>:related:toggle event on context', function() {
                 view._onConfigFieldChange(testField, 'checked', 'unchecked');
 
-                expect(view.context.trigger).not.toHaveBeenCalled();
+                expect(view.context.trigger).toHaveBeenCalled();
             });
         });
 
         describe('when changing field wasVisible = false, isVisible = false, isUnchecked = true', function() {
-            it('should set worksheet_columns on the model', function() {
-                var ctBefore = view.model.get('worksheet_columns').length;
-                var ctAfter;
-                view._onConfigFieldChange(testField, 'filled', 'unchecked');
-                ctAfter = view.model.get('worksheet_columns').length;
-
-                expect(view.model.set).toHaveBeenCalledWith('worksheet_columns');
-                expect(ctAfter == ctBefore).toBeTruthy();
-            });
-
             it('should trigger config:<eventViewName>:<fieldName>:related:toggle event on context', function() {
                 view._onConfigFieldChange(testField, 'filled', 'unchecked');
 
