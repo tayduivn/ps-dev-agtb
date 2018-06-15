@@ -164,6 +164,7 @@ describe('Quotes.View.ConfigColumns', function() {
                 label: 'LBL_ITEM_NAME',
                 labelModule: 'Quotes',
                 widthClass: undefined,
+                required: true,
                 type: 'quote-data-relate',
                 css_class: ''
             }, {

@@ -134,6 +134,7 @@
 
                 if (field.name === 'product_template_name') {
                     tmpField.type = 'quote-data-relate';
+                    tmpField.required = true;
                 }
 
                 if (field.name === 'discount') {
@@ -162,8 +163,6 @@
                         }]
                     }];
                 }
-
-                debugger;
 
                 // push the fieldDefs to default fields
                 this.defaultFields.push(tmpField);

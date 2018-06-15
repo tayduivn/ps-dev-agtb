@@ -42,6 +42,14 @@
             });
         }
 
+        // tweak any worksheet columns fields
+        _.each(saveObj.worksheet_columns, function(col) {
+            if (col.name === 'product_template_name') {
+                // force product_template_name to be required if it exists
+                col.required = true;
+            }
+        }, this);
+
         // make sure related_fields contains description and product name fields
         if (!_.contains(saveObj.worksheet_columns_related_fields, 'description')) {
             saveObj.worksheet_columns_related_fields.push('description');
