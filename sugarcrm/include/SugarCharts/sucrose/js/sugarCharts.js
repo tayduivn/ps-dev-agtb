@@ -30,6 +30,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         chartParams.type = 'saved-report-view';
     }
 
+    if (_.isUndefined(chartParams.stacked)) {
+        chartParams.stacked = (chartGroupType === 'stacked' || chartGroupType === 'basic');
+    }
+
     // update default params from chartConfig and then chartParams
     var params = _.extendOwn({
         allowScroll: false,
