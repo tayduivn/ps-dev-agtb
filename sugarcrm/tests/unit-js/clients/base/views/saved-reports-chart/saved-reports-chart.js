@@ -211,6 +211,52 @@ describe('Base.View.Saved-Reports-Chart', function() {
                     label: ['', 'Education'],
                 }
             },
+            // horizontal grouped bar chart, 2 groupbys
+            {
+                testCase: 'horizontal grouped bar chart, 2 groupbys',
+                chartState: {groupIndex: 0, pointIndex: 0, seriesIndex: 1},
+                chartLabels: {groupLabel: 'Customer', seriesLabel: 'Education'},
+                dashConfig: {chart_type: 'horizontal grouped bar chart'},
+                reportData: {group_defs: [{name: 'account_type'}, {name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                    values: [{label: 'Customer'}, {label: 'Analyst'}]
+                }
+            },
+            // horizontal grouped bar chart, 1 groupby
+            {
+                testCase: 'horizontal grouped bar chart, 1 groupby',
+                chartState: {groupIndex: 1, pointIndex: 1, seriesIndex: 1},
+                chartLabels: {groupLabel: 'Education'},
+                dashConfig: {chart_type: 'horizontal grouped bar chart'},
+                reportData: {group_defs: [{name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                }
+            },
+            // vertical grouped bar chart, 2 groupbys
+            {
+                testCase: 'vertical grouped bar chart, 2 groupbys',
+                chartState: {groupIndex: 0, pointIndex: 0, seriesIndex: 1},
+                chartLabels: {groupLabel: 'Customer', seriesLabel: 'Education'},
+                dashConfig: {chart_type: 'vertical grouped bar chart'},
+                reportData: {group_defs: [{name: 'account_type'}, {name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                    values: [{label: 'Customer'}, {label: 'Analyst'}]
+                }
+            },
+            // vertical grouped bar chart, 1 groupby
+            {
+                testCase: 'vertical grouped bar chart, 1 groupby',
+                chartState: {groupIndex: 1, pointIndex: 1, seriesIndex: 1},
+                chartLabels: {groupLabel: 'Education'},
+                dashConfig: {chart_type: 'vertical grouped bar chart'},
+                reportData: {group_defs: [{name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                }
+            },
             // line chart, 2 groupbys
             {
                 testCase: 'line chart, 2 groupbys',

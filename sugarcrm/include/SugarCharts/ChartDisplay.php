@@ -348,9 +348,23 @@ class ChartDisplay
                     $this->chartType = 'horizontal bar chart';
                 }
                 break;
+            case 'hGBarF':
+                if ($this->isStackable()) {
+                    $this->chartType = 'horizontal grouped bar chart';
+                } else {
+                    $this->chartType = 'horizontal bar chart';
+                }
+                break;
             case 'vBarF':
                 if ($this->isStackable()) {
                     $this->chartType = 'stacked group by chart';
+                } else {
+                    $this->chartType = 'bar chart';
+                }
+                break;
+            case 'vGBarF':
+                if ($this->isStackable()) {
+                    $this->chartType = 'vertical grouped bar chart';
                 } else {
                     $this->chartType = 'bar chart';
                 }

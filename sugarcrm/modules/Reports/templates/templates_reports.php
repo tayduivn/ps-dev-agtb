@@ -979,7 +979,9 @@ function template_reports_chart_options(&$smarty, &$args) {
 	$chart_types = array(
 		'none'=>$mod_strings['LBL_NO_CHART'],
 		'hBarF'=>$mod_strings['LBL_HORIZ_BAR'],
+        'hGBarF'=>$mod_strings['LBL_HORIZ_GBAR'],
 		'vBarF'=>$mod_strings['LBL_VERT_BAR'],
+        'vGBarF'=>$mod_strings['LBL_VERT_GBAR'],
 		'pieF'=>$mod_strings['LBL_PIE'],
 		'funnelF'=>$mod_strings['LBL_FUNNEL'],
 		'lineF'=>$mod_strings['LBL_LINE'],
