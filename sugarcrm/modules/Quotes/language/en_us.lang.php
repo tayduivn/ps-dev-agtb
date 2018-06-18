@@ -273,9 +273,11 @@ $mod_strings = array (
     'LBL_CONFIG_LEGEND_INPUT_UNCHECKED' => 'Available',
     'LBL_CONFIG_LEGEND_INPUT_CHECKED' => 'Displayed',
     'LBL_CONFIG_LEGEND_INPUT_FILLED' => 'Related',
-    'LBL_CONFIG_LEGEND_HELP_TEXT' => 'Related fields will be added automatically if the field is part of a formula ' .
-        'in a displayed field, or if it is a required roll-up field. Double click on any additional fields that ' .
-        'need to be fetched but not displayed.',
+    'LBL_CONFIG_LEGEND_HELP_TEXT' => 'Related fields are used by other fields on the page and will not be visible ' .
+        'to the user. A related field will be added automatically if it is part of a formula in a displayed field, ' .
+        'or if it is a required roll-up field. You may expose a related field to the user by clicking the check ' .
+        'box next to the field in the panel below, but you may not remove a related field unless you remove the ' .
+        'field or fields that use it.',
     'LBL_CONFIG_' => '',
     'LBL_CONFIG_TOOLTIP_FIELD_REQUIRED_BY' => 'This field is required by:',
 );
