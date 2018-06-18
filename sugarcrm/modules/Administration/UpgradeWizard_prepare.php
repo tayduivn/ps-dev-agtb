@@ -147,6 +147,12 @@ if( isset( $manifest['remove_tables']) ){
 if($remove_tables != 'prompt'){
 	$hidden_fields .= "<input type=hidden name=\"remove_tables\" value='".$remove_tables."'>";
 }
+
+if (isset($manifest['uninstall_before_upgrade'])) {
+    $hidden_fields .= "<input type=hidden name=\"uninstall_before_upgrade\" value='"
+        . (int) $manifest['uninstall_before_upgrade'] ."'>";
+}
+
 if(file_exists($readme_file) || !empty($manifest['readme'])){
         $found_readme = true;
    }

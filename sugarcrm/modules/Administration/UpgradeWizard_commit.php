@@ -211,7 +211,7 @@ if ($install_type != "module") {
 	$zip_to_dir = $request->getValidInputRequest('zip_to_dir', null, '.');
 }
 $remove_tables = $request->getValidInputRequest('remove_tables', null, 'true');
-
+$uninstallBeforeUpgrade = $request->getValidInputRequest('uninstall_before_upgrade');
 $overwrite = $request->getValidInputRequest('radio_overwrite');
 $overwrite_files = $overwrite ? ($overwrite != 'do_not_overwrite') : true;
 
@@ -380,7 +380,7 @@ switch( $install_type ){
                 $patch = UW_get_patch_from_request($_REQUEST);
                 $mi->setPatch($patch);
             //here we can determine if this is an upgrade or a new version
-            	if(!empty($previous_version)){
+                if (!empty($previous_version) && $uninstallBeforeUpgrade) {
                     cleanPreviousInstall($id_name, $unzip_dir);
             		$mi->install( "$unzip_dir", true, $previous_version);
                     $shouldClearCache = true;
