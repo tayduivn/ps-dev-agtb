@@ -85,8 +85,7 @@ interface EngineInterface
     public function scheduleIndexing(array $modules = array(), $clearData = false);
 
     /**
-     * Create the mappings for given modules without re-creating the indices if exist,
-     * create new indices if don't exist.
+     * Create the mappings for given module without re-creating the index.
      * @param array $modules
      * @return bool
      */

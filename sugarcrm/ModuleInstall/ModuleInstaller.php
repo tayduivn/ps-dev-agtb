@@ -3564,8 +3564,7 @@ class ModuleInstaller{
             $modules[] = $beanDefs['module'];
         }
         $engine = SearchEngine::getInstance()->getEngine();
-        if (isset($engine) && !empty($modules)) {
-            // create indices if those don't exist and add mappings
+        if (isset($engine) && isset($modules)) {
             $engine->addMappings($modules);
         }
     }
