@@ -11,7 +11,6 @@
  */
 
 use Sugarcrm\Sugarcrm\MetaData\ViewdefManager;
-use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
 class QuotesConfigApi extends ConfigModuleApi
 {
@@ -76,7 +75,7 @@ class QuotesConfigApi extends ConfigModuleApi
         $this->requireArgs($args, array('worksheet_columns', 'worksheet_columns_related_fields'));
         $settings = parent::configSave($api, $args);
         $this->applyConfig();
-                
+
         return $settings;
     }
 
@@ -108,7 +107,7 @@ class QuotesConfigApi extends ConfigModuleApi
      * @param array $fieldDefs The collection of all field definitions
      * @return array The map of all field dependencies
      */
-    protected function getAllFieldDependencies($moduleName, $fieldNames, $fieldDefs)
+    protected function getAllFieldDependencies(string $moduleName, array $fieldNames, array $fieldDefs)
     {
         $retFields = array();
         foreach ($fieldNames as $fieldName) {
@@ -122,9 +121,7 @@ class QuotesConfigApi extends ConfigModuleApi
                     $matches = array_unique($fieldsInFormula);
 
                     foreach ($matches as $lockedField) {
-                        if ($lockedField === 'products' ||
-                            $lockedField === 'product_bundles' ||
-                            $fieldName === $lockedField) {
+                        if ($fieldName === $lockedField) {
                             continue;
                         }
 
@@ -256,21 +253,21 @@ class QuotesConfigApi extends ConfigModuleApi
         ];
 
         $retFields['Quotes'] = array_merge(
-            isset($qFields['Quotes']) ? $qFields['Quotes'] : [],
-            isset($pbFields['Quotes']) ? $pbFields['Quotes'] : [],
-            isset($pFields['Quotes']) ? $pFields['Quotes'] : []
+            $qFields['Quotes'] ?? [],
+            $pbFields['Quotes'] ?? [],
+            $pFields['Quotes'] ?? []
         );
 
         $retFields['ProductBundles'] = array_merge(
-            isset($qFields['ProductBundles']) ? $qFields['ProductBundles'] : [],
-            isset($pbFields['ProductBundles']) ? $pbFields['ProductBundles'] : [],
-            isset($pFields['ProductBundles']) ? $pFields['ProductBundles'] : []
+            $qFields['ProductBundles'] ?? [],
+            $pbFields['ProductBundles'] ?? [],
+            $pFields['ProductBundles'] ?? []
         );
 
         $retFields['Products'] = array_merge(
-            isset($qFields['Products']) ? $qFields['Products'] : [],
-            isset($pbFields['Products']) ? $pbFields['Products'] : [],
-            isset($pFields['Products']) ? $pFields['Products'] : []
+            $qFields['Products'] ?? [],
+            $pbFields['Products'] ?? [],
+            $pFields['Products'] ?? []
         );
 
         return $retFields;
@@ -284,7 +281,7 @@ class QuotesConfigApi extends ConfigModuleApi
      * @param array $fieldDefs The collection of all field definitions
      * @param array $retFields The map of all field dependencies we're returning
      */
-    protected function getDependenciesFromFields($moduleName, $fieldNames, $fieldDefs)
+    protected function getDependenciesFromFields(string $moduleName, array $fieldNames, array $fieldDefs)
     {
         $retFields = array();
         foreach ($fieldNames as $fieldName) {
@@ -311,7 +308,7 @@ class QuotesConfigApi extends ConfigModuleApi
      * @param array $fieldDefs The collection of all field definitions
      * @param array $retFields The map of all field dependencies we're returning
      */
-    protected function parseFieldFormula($moduleName, $fieldDef, $fieldDefs, &$retFields)
+    protected function parseFieldFormula(string $moduleName, array $fieldDef, array $fieldDefs, array &$retFields)
     {
         $matches = array();
         $fieldName = $fieldDef['name'];
@@ -454,7 +451,7 @@ class QuotesConfigApi extends ConfigModuleApi
      * @param array $fieldDefs The collection of all field definitions
      * @param array $retFields The map of all field dependencies we're returning
      */
-    protected function parseFieldRelatedFields($moduleName, $fieldDef, $fieldDefs, &$retFields)
+    protected function parseFieldRelatedFields(string $moduleName, array $fieldDef, array $fieldDefs, array &$retFields)
     {
         $fieldName = $fieldDef['name'];
 
@@ -503,8 +500,7 @@ class QuotesConfigApi extends ConfigModuleApi
         $qlidatagrouplistdef = $viewdefManager->loadViewdef('base', 'Products', 'quote-data-group-list');
 
         //check to see if the key we need to update exists in the loaded viewdef, if not, load the base.
-        $path = array('panels',0,'fields');
-        if (!ArrayFunctions::keyExistsInPath($path, $qlidatagrouplistdef)) {
+        if (!isset($qlidatagrouplistdef['panels'][0]['fields'])) {
             $qlidatagrouplistdef = $viewdefManager->loadViewdef('base', 'Products', 'quote-data-group-list', true);
         }
 
@@ -514,12 +510,11 @@ class QuotesConfigApi extends ConfigModuleApi
         //update quotes c/b/v/record.php name:related_fields, bundles and product_bundle_items with everything added
         //and anything needed for calculating fields -- include any new dependent fields
         //load viewdefs
-        $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record');
+        $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
 
         //check to see if the key we need to update exists in the loaded viewdef, if not, load the base.
-        $path = array('panels',0,'fields',1,'related_fields', 'fields', 0);
-        if (!ArrayFunctions::keyExistsInPath($path, $quoteRecordViewdef)) {
-            $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record');
+        if (!isset($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields']['fields'][0])) {
+            $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
         }
 
         //now that we know the related_fields['fields'] exists, we need to search that array for the array def

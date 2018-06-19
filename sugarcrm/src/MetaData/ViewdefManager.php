@@ -15,8 +15,6 @@
   */
 namespace Sugarcrm\Sugarcrm\MetaData;
 
-use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
-
 class ViewdefManager
 {
     /**
@@ -38,8 +36,7 @@ class ViewdefManager
         $viewdef = $this->loadDef($path['path']);
 
         //make sure the path we want exists in the loaded file
-        $pathToCheck = array($module, $platform, 'view', $view);
-        if (ArrayFunctions::keyExistsInPath($pathToCheck, $viewdef)) {
+        if (isset($viewdef[$module][$platform]['view'][$view])) {
             $returnViewdef = $viewdef[$module][$platform]['view'][$view];
         }
 
