@@ -280,4 +280,5 @@ $mod_strings = array (
         'field or fields that use it.',
     'LBL_CONFIG_' => '',
     'LBL_CONFIG_TOOLTIP_FIELD_REQUIRED_BY' => 'This field is required by:',
+    'LBL_HELP_MORE_INFO' => 'For a complete guide to configuring the Quotes module, please visit the {{{more_info_url}}} Sugar Administrator Guide. {{{more_info_url_close}}}',
 );

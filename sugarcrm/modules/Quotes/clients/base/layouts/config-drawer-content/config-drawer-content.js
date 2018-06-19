@@ -22,15 +22,28 @@
     /**
      * @inheritdoc
      */
+    _initHowTo: function() {
+        var helpUrl = {
+            more_info_url: '<a href="' + app.help.getMoreInfoHelpURL('config', 'QuotesConfig') + '" target="_blank">',
+            more_info_url_close: '</a>',
+        };
+        var viewQuotesObj = app.help.get('Quotes', 'config_opps', helpUrl);
+
+        this.viewQuotesObjTpl = app.template.getLayout(this.name + '.help', this.module)(viewQuotesObj);
+    },
+
+    /**
+     * @inheritdoc
+     */
     _switchHowToData: function(helpId) {
         switch (helpId) {
             case 'config-columns':
             case 'config-summation':
             case 'config-total':
-                this.currentHowToData.title =  app.lang.get('LBL_CONFIG_FIELD_SELECTOR', this.module, {
-                        moduleName: app.lang.get('LBL_MODULE_NAME', this.module)
-                    });
-                this.currentHowToData.text = '';
+                this.currentHowToData.title = app.lang.get('LBL_CONFIG_FIELD_SELECTOR', this.module, {
+                    moduleName: app.lang.get('LBL_MODULE_NAME', this.module),
+                });
+                this.currentHowToData.text = this.viewQuotesObjTpl;
                 break;
         }
     }
