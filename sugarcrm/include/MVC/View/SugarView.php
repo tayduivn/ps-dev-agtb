@@ -536,6 +536,7 @@ EOQ;
         $cal_date_format = $timedate->get_cal_date_format();
         $timereg = $timedate->get_regular_expression($timedate->get_time_format());
         $datereg = $timedate->get_regular_expression($timedate->get_date_format());
+        $dateregrpt = $timedate->get_regular_expression($timedate->get_date_format(), true);
         $date_pos = '';
         foreach ($datereg['positions'] as $type => $pos) {
             if (empty($date_pos)) {
@@ -561,7 +562,8 @@ EOQ;
              "\tvar time_separator = '$time_separator';\n" .
              "\tvar cal_date_format = '$cal_date_format';\n" .
              "\tvar time_offset = $hour_offset;\n" . "\tvar num_grp_sep = '$num_grp_sep';\n" .
-             "\tvar dec_sep = '$dec_sep';\n" . "</script>";
+             "\tvar dec_sep = '$dec_sep';\n" . "\tvar date_reg_format_rpt = '" .
+             addslashes($dateregrpt['format']) . "';\n" . "</script>";
 
         return $the_script;
     }
