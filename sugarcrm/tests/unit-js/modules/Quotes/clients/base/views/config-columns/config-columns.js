@@ -193,7 +193,7 @@ describe('Quotes.View.ConfigColumns', function() {
                     convertToBase: true,
                     showTransactionalAmount: true
                 }, {
-                    name: 'discount-select',
+                    name: 'discount_select',
                     type: 'discount-select',
                     no_default_action: true,
                     buttons: [{
