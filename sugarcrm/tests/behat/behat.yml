@@ -1,0 +1,29 @@
+# behat.yml
+# suite definitions
+#
+default:
+#  autoload:
+#    - %paths.base%/search
+#    - %paths.base%/sfa
+  suites:
+#    search:
+#      paths:
+#        - %paths.base%/../../features
+#      contexts:
+#        - Sugarcrm\SugarcrmTestsBehat\Contexts\Common
+#        - Sugarcrm\SugarcrmTestsBehat\Contexts\Search
+#      filters:
+#        tags: @search
+    sfa:
+      paths:
+        - %paths.base%/../../features
+#      Only requries the basic common context for now.
+      contexts:
+        - Sugarcrm\SugarcrmTestsBehat\Contexts\Common
+      filters:
+        tags: "@Opportunity"
+#    sfa:
+#      paths:
+#        - %paths.base%/../../features/sfa
+#      contexts:
+#

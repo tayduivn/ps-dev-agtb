@@ -8,7 +8,9 @@
 
 @GlobalSearch
 Feature: GlobalSearch
-    As a Sugar user, I need to be able to find records in the system through the use of search terms
+    In order to search terms in sugar
+    As a sugar user
+    I need to be able to find record items matching search terms
 
   Background:
     Given I am logged in
