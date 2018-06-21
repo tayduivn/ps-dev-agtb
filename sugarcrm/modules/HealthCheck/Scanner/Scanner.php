@@ -4921,7 +4921,7 @@ ENDP;
         $this->log("Performing maximum row size verification for collation target: {$collationTarget}");
 
         $conn = DBManagerFactory::getInstance()->getConnection();
-        $stmt = $conn->executeQuery('SHOW TABLES');
+        $stmt = $conn->executeQuery("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'");
         while ($table = $stmt->fetchColumn()) {
             $tempTableName = 'temp_table_' . $table;
             $createResult = $this->db->query("CREATE TABLE {$tempTableName} LIKE {$table}");

@@ -1329,15 +1329,14 @@ FROM information_schema.statistics';
 
         $this->query('ALTER DATABASE ' . $this->connectOptions['db_name']
             . ' DEFAULT COLLATE ' . $this->quoted($collation));
-        $res = $this->query("SHOW TABLES");
+        $res = $this->query("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'");
 
-        while ($row = $this->fetchRow($res)) {
-            foreach ($row as $key => $table) {
-                $this->query('ALTER TABLE ' . $table . ' COLLATE ' . $this->quoted($collation));
-                $this->query('ALTER TABLE ' . $table
-                    . ' CONVERT TO CHARACTER SET ' . $this->quoted($charset)
-                    . ' COLLATE ' . $this->quoted($collation));
-            }
+        while (($row = $this->fetchRow($res)) !== false) {
+            $table = array_values($row)[0];
+            $this->query('ALTER TABLE ' . $table . ' COLLATE ' . $this->quoted($collation));
+            $this->query('ALTER TABLE ' . $table
+                . ' CONVERT TO CHARACTER SET ' . $this->quoted($charset)
+                . ' COLLATE ' . $this->quoted($collation));
         }
     }
 
