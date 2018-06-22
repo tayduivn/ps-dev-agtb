@@ -31,7 +31,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 class IndexPool
 {
     const DEFAULT_STRATEGY = 'static';
-    const SINGLE_MODULE_SYTATEGY = 'single';
+    const SINGLE_MODULE_STRATEGY = 'single';
 
     const MAX_ES_INDEX_NAME = 255;
 
@@ -131,7 +131,7 @@ class IndexPool
             if (version_compare($this->container->client->getVersion(), '6.0', '<')) {
                 $id = self::DEFAULT_STRATEGY;
             } else {
-                $id = self::SINGLE_MODULE_SYTATEGY;
+                $id = self::SINGLE_MODULE_STRATEGY;
             }
         }
 
@@ -216,7 +216,7 @@ class IndexPool
     protected function registerStrategies()
     {
         $this->addStrategy(self::DEFAULT_STRATEGY, StaticStrategy::class);
-        $this->addStrategy(self::SINGLE_MODULE_SYTATEGY, OneModulePerIndexStrategy::class);
+        $this->addStrategy(self::SINGLE_MODULE_STRATEGY, OneModulePerIndexStrategy::class);
     }
 
     /**

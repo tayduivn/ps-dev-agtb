@@ -40,7 +40,7 @@ class IndexPoolTest extends TestCase
 
         $this->assertEquals(2, count($strategies));
         $this->assertEquals($strategies[IndexPool::DEFAULT_STRATEGY], StaticStrategy::class);
-        $this->assertEquals($strategies[IndexPool::SINGLE_MODULE_SYTATEGY], OneModulePerIndexStrategy::class);
+        $this->assertEquals($strategies[IndexPool::SINGLE_MODULE_STRATEGY], OneModulePerIndexStrategy::class);
     }
 
     /**
@@ -130,7 +130,7 @@ class IndexPoolTest extends TestCase
                 'module_has_no_config_for_Es6x',
                 [],
                 '',
-                IndexPool::SINGLE_MODULE_SYTATEGY,
+                IndexPool::SINGLE_MODULE_STRATEGY,
             ],
         ];
     }
