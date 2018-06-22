@@ -48,13 +48,14 @@ WHERE id IN (
 SQL
         );
 
-        // enforce NOT NULL on the key columns which cannot be done via DBManager
+        global $dictionary;
+
+        // enforce NOT NULL on the key columns which cannot be done via DBManager::repairTable()
         foreach (array('team_id', 'team_set_id') as $field) {
-            $this->db->query(sprintf(
-                'ALTER TABLE team_sets_teams MODIFY %s %s NOT NULL',
-                $field,
-                $this->db->getColumnType('id')
-            ));
+            $this->db->alterColumn(
+                'team_sets_teams',
+                $dictionary['team_sets_teams']['fields'][$field]
+            );
         }
     }
 }
