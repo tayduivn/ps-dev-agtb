@@ -17,6 +17,16 @@ use PHPUnit\Framework\TestCase;
  */
 class DefaultDashboardInstallerTest extends TestCase
 {
+    protected function setUp()
+    {
+        \BeanFactory::setBeanClass('Reports', 'ReportMock');
+    }
+
+    protected function tearDown()
+    {
+        \BeanFactory::unsetBeanClass('Reports');
+    }
+
     /**
      * @covers ::buildDashboardsFromFiles
      */
@@ -206,5 +216,98 @@ class DefaultDashboardInstallerTest extends TestCase
         );
 
         $defaultDashboardInstaller->buildDashboardsFromMetadata($testMetadata);
+    }
+
+    /**
+     * Data provider for testSetupSavedReportDashlets
+     */
+    public function setupSavedReportDashletsProvider()
+    {
+        return array(
+            array(
+                array(
+                    'components' => array(
+                        array(
+                            'rows' => array(
+                                array(
+                                    array(
+                                        'view' => array(
+                                            'type' => 'saved-reports-chart',
+                                            'saved_report_key' => 'DEFAULT_REPORT_TITLE_16',
+                                            'chart_type' => 'horizontal group by chart',
+                                        ),
+                                        'width' => 12,
+                                    ),
+                                ),
+                                array(
+                                    array(
+                                        'view' => array(
+                                            'type' => 'opportunity-metrics',
+                                            'label' => 'LBL_DASHLET_OPPORTUNITY_NAME',
+                                        ),
+                                        'width' => 12,
+                                    ),
+                                ),
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                ),
+                array(
+                    'components' => array(
+                        array(
+                            'rows' => array(
+                                array(
+                                    array(
+                                        'view' => array(
+                                            'type' => 'saved-reports-chart',
+                                            'saved_report_key' => 'DEFAULT_REPORT_TITLE_16',
+                                            'chart_type' => 'horizontal group by chart',
+                                            'label' => 'saved report',
+                                            'saved_report' => 'saved report',
+                                            'saved_report_id' => 'report id',
+                                        ),
+                                        'width' => 12,
+                                    ),
+                                ),
+                                array(
+                                    array(
+                                        'view' => array(
+                                            'type' => 'opportunity-metrics',
+                                            'label' => 'LBL_DASHLET_OPPORTUNITY_NAME',
+                                        ),
+                                        'width' => 12,
+                                    ),
+                                ),
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @covers ::setupSavedReportDashlets
+     * @dataProvider setupSavedReportDashletsProvider
+     */
+    public function testSetupSavedReportDashlets($metadata, $expected)
+    {
+        $defaultDashboardInstaller = $this->createPartialMock(
+            'DefaultDashboardInstaller',
+            ['translateSavedReportTitle']
+        );
+        $defaultDashboardInstaller->method('translateSavedReportTitle')->willReturn('saved report');
+        $defaultDashboardInstaller->setupSavedReportDashlets($metadata);
+        $this->assertSame($expected, $metadata);
+    }
+}
+
+class ReportMock
+{
+    public function retrieveReportIdByName($name)
+    {
+        return 'report id';
     }
 }

@@ -41,6 +41,8 @@ class DefaultDashboardInstaller
                         continue;
                     }
 
+                    $this->setupSavedReportDashlets($dashboardContents['metadata']);
+
                     $dashboardProperties = array(
                         'name' => $dashboardContents['name'],
                         'dashboard_module' => $module,
@@ -51,6 +53,51 @@ class DefaultDashboardInstaller
                     );
                     $dashboardBean = $this->getNewDashboardBean();
                     $this->storeDashboard($dashboardBean, $dashboardProperties);
+                }
+            }
+        }
+    }
+
+    protected function translateSavedReportTitle($title)
+    {
+        return translate($title, 'Reports');
+    }
+
+    /**
+     * Adds saved_report_id to metadata for saved report dashlets
+     * @param array $metadata
+     */
+    public function setupSavedReportDashlets(&$metadata)
+    {
+        if (!empty($metadata['components'])) {
+            for ($i = 0; $i < count($metadata['components']); $i++) {
+                if (!empty($metadata['components'][$i]['rows'])) {
+                    for ($j = 0; $j < count($metadata['components'][$i]['rows']); $j++) {
+                        for ($k = 0; $k < count($metadata['components'][$i]['rows'][$j]); $k++) {
+                            if (!empty($metadata['components'][$i]['rows'][$j][$k]['view'])) {
+                                $view = &$metadata['components'][$i]['rows'][$j][$k]['view'];
+                                if (!empty($view['type']) && $view['type'] == 'saved-reports-chart' && empty($view['saved_report_id'])) {
+                                    if (!empty($view['saved_report_key'])) {
+                                        $title = $this->translateSavedReportTitle($view['saved_report_key']);
+                                        if (empty($view['label'])) {
+                                            $view['label'] = $title;
+                                        }
+                                        if (empty($view['saved_report'])) {
+                                            $view['saved_report'] = $title;
+                                        }
+                                        // Assume OOB report names are unique
+                                        $report = BeanFactory::getBean('Reports');
+                                        $view['saved_report_id'] = $report->retrieveReportIdByName($title);
+                                    }
+                                    if (empty($view['saved_report_id'])) {
+                                        // Remove this dashlet because we can't find the report
+                                        installLog("removed invalid report dashlet: " . print_r($metadata['components'][$i]['rows'][$j][$k], true));
+                                        unset($metadata['components'][$i]['rows'][$j][$k]);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
