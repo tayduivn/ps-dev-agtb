@@ -1847,7 +1847,7 @@ class Report
             $this->from .= implode(' ', $join);
         }
 
-        if (!empty($this->report_def['group_defs']) && !empty($this->group_by_arr)) {
+        if (!empty($this->report_def['group_defs'])) {
             $tp_count = 1;
             foreach ($this->report_def['group_defs'] as $id => $group_field) {
                 if (!empty($group_field['qualifier']) && $group_field['qualifier'] == 'fiscalQuarter') {
