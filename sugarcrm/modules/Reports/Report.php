@@ -1853,7 +1853,7 @@ class Report
                 if (!empty($group_field['qualifier']) && $group_field['qualifier'] == 'fiscalQuarter') {
                     $table_alias = $this->getTableFromField($group_field);
                     $field_name = $table_alias . "." . $group_field['name'];
-                    $this->from .= "INNER JOIN timeperiods tp" . $tp_count . " ON (" . $field_name .
+                    $this->from .= " INNER JOIN timeperiods tp" . $tp_count . " ON (" . $field_name .
                         " >= tp" . $tp_count . ".start_date AND " . $field_name . " <= tp" . $tp_count . ".end_date" .
                         " AND tp" . $tp_count . ".type = 'Quarter')\n";
                     $tp_count++;
