@@ -47,6 +47,7 @@ $viewdefs['ReportSchedules']['base']['view']['record'] = array(
                 array(
                     'type' => 'divider',
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
@@ -57,6 +58,7 @@ $viewdefs['ReportSchedules']['base']['view']['record'] = array(
                 array(
                     'type' => 'divider',
                 ),
+                //END SUGARCRM flav=ent ONLY
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
