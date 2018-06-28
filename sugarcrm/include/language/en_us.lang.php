@@ -2753,6 +2753,10 @@ $app_strings = array (
     'EXCEPTION_MISSING_WORKSHEET_COLUMNS' => 'worksheet_columns is not an array',
     'EXCEPTION_MISSING_WORKSHEET_COLUMNS_RELATED_FIELDS' => 'worksheet_columns_related_fields not found in related_fields array',
 
+    //Quotes Summary Columns Config Api Specific exceptions
+    'EXCEPTION_MISSING_SUMMARY_COLUMNS' => 'summary_columns is not an array',
+    'EXCEPTION_MISSING_SUMMARY_COLUMNS_RELATED_FIELDS' => 'summary_columns_related_fields not found in related_fields array',
+
     // Default SugarApiException error messages
     'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
     'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',

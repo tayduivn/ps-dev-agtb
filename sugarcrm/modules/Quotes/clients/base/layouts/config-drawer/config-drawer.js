@@ -71,6 +71,7 @@
         this.context.set({
             dependentFields: data.dependentFields,
             productsFields: data.productsFields,
+            quotesFields: data.quotesFields,
             relatedFields: data.relatedFields
         });
     }

@@ -28,9 +28,11 @@ describe('Quotes.View.ConfigColumns', function() {
 
         meta = {
             label: 'testLabel',
-            panels: [{
-                fields: []
-            }]
+            panels: [
+                {
+                    fields: []
+                }
+            ]
         };
 
         options = {
@@ -44,76 +46,84 @@ describe('Quotes.View.ConfigColumns', function() {
         quotesFieldsMeta = SugarTest.loadFixture('quote-fields', '../tests/modules/Quotes/fixtures');
 
         productQuoteDataGroupListMeta = {
-            panels: [{
-                name: 'products_quote_data_group_list',
-                label: 'LBL_PRODUCTS_QUOTE_DATA_LIST',
-                fields: [{
-                    name: 'line_num',
-                    label: null,
-                    type: 'line-num',
-                    readonly: true
-                }, {
-                    name: 'quantity',
-                    label: 'LBL_QUANTITY',
-                    type: 'float'
-                }, {
-                    name: 'product_template_name',
-                    label: 'LBL_ITEM_NAME',
-                    type: 'quote-data-relate',
-                    required: true
-                }, {
-                    name: 'mft_part_num',
-                    label: 'LBL_MFT_PART_NUM',
-                    type: 'base'
-                }, {
-                    name: 'discount_price',
-                    label: 'LBL_DISCOUNT_PRICE',
-                    type: 'currency',
-                    convertToBase: true,
-                    showTransactionalAmount: true,
-                    related_fields: [
-                        'discount_price',
-                        'currency_id',
-                        'base_rate'
-                    ]
-                }, {
-                    name: 'discount',
-                    label: 'LBL_DISCOUNT_AMOUNT',
-                    type: 'fieldset',
-                    fields: [{
-                        name: 'discount_amount',
-                        label: 'LBL_DISCOUNT_AMOUNT',
-                        type: 'discount',
-                        convertToBase: true,
-                        showTransactionalAmount: true
-                    }, {
-                        name: 'discount_select',
-                        type: 'discount-select',
-                        no_default_actions: true,
-                        buttons: [{
-                            name: 'select_discount_amount_button',
-                            label: 'LBL_DISCOUNT_AMOUNT',
-                            type: 'rowaction',
-                            event: 'button:discount_select_change:click'
+            panels: [
+                {
+                    name: 'products_quote_data_group_list',
+                    label: 'LBL_PRODUCTS_QUOTE_DATA_LIST',
+                    fields: [
+                        {
+                            name: 'line_num',
+                            label: null,
+                            type: 'line-num',
+                            readonly: true
                         }, {
-                            name: 'select_discount_percent_button',
-                            label: 'LBL_DISCOUNT_PERCENT',
-                            type: 'rowaction',
-                            event: 'button:discount_select_change:click'
-                        }]
-                    }]
-                }, {
-                    name: 'total_amount',
-                    label: 'LBL_LINE_ITEM_TOTAL',
-                    type: 'currency',
-                    showTransactionalAmount: true,
-                    related_fields: [
-                        'total_amount',
-                        'currency_id',
-                        'base_rate'
+                            name: 'quantity',
+                            label: 'LBL_QUANTITY',
+                            type: 'float'
+                        }, {
+                            name: 'product_template_name',
+                            label: 'LBL_ITEM_NAME',
+                            type: 'quote-data-relate',
+                            required: true
+                        }, {
+                            name: 'mft_part_num',
+                            label: 'LBL_MFT_PART_NUM',
+                            type: 'base'
+                        }, {
+                            name: 'discount_price',
+                            label: 'LBL_DISCOUNT_PRICE',
+                            type: 'currency',
+                            convertToBase: true,
+                            showTransactionalAmount: true,
+                            related_fields: [
+                                'discount_price',
+                                'currency_id',
+                                'base_rate'
+                            ]
+                        }, {
+                            name: 'discount',
+                            label: 'LBL_DISCOUNT_AMOUNT',
+                            type: 'fieldset',
+                            fields: [
+                                {
+                                    name: 'discount_amount',
+                                    label: 'LBL_DISCOUNT_AMOUNT',
+                                    type: 'discount',
+                                    convertToBase: true,
+                                    showTransactionalAmount: true
+                                }, {
+                                    name: 'discount_select',
+                                    type: 'discount-select',
+                                    no_default_actions: true,
+                                    buttons: [
+                                        {
+                                            name: 'select_discount_amount_button',
+                                            label: 'LBL_DISCOUNT_AMOUNT',
+                                            type: 'rowaction',
+                                            event: 'button:discount_select_change:click'
+                                        }, {
+                                            name: 'select_discount_percent_button',
+                                            label: 'LBL_DISCOUNT_PERCENT',
+                                            type: 'rowaction',
+                                            event: 'button:discount_select_change:click'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }, {
+                            name: 'total_amount',
+                            label: 'LBL_LINE_ITEM_TOTAL',
+                            type: 'currency',
+                            showTransactionalAmount: true,
+                            related_fields: [
+                                'total_amount',
+                                'currency_id',
+                                'base_rate'
+                            ]
+                        }
                     ]
-                }]
-            }]
+                }
+            ]
         };
 
         sinon.collection.stub(app.metadata, 'getModule')
@@ -153,139 +163,150 @@ describe('Quotes.View.ConfigColumns', function() {
         });
 
         it('should set defaultFields', function() {
-            expect(view.defaultFields).toEqual([{
-                name: 'quantity',
-                label: 'LBL_QUANTITY',
-                labelModule: 'Quotes',
-                widthClass: undefined,
-                css_class: ''
-            }, {
-                name: 'product_template_name',
-                label: 'LBL_ITEM_NAME',
-                labelModule: 'Quotes',
-                widthClass: undefined,
-                required: true,
-                type: 'quote-data-relate',
-                css_class: ''
-            }, {
-                name: 'mft_part_num',
-                label: 'LBL_MFT_PART_NUM',
-                labelModule: 'Quotes',
-                widthClass: undefined,
-                css_class: ''
-            }, {
-                name: 'discount_price',
-                label: 'LBL_DISCOUNT_PRICE',
-                labelModule: 'Quotes',
-                widthClass: undefined,
-                css_class: ''
-            }, {
-                name: 'discount',
-                label: 'LBL_DISCOUNT_AMOUNT',
-                labelModule: 'Quotes',
-                widthClass: undefined,
-                css_class: ' quote-discount-percent',
-                type: 'fieldset',
-                fields: [{
-                    name: 'discount_amount',
-                    label: 'LBL_DISCOUNT_AMOUNT',
-                    type: 'discount',
-                    convertToBase: true,
-                    showTransactionalAmount: true
+            expect(view.defaultFields).toEqual([
+                {
+                    name: 'quantity',
+                    label: 'LBL_QUANTITY',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ''
                 }, {
-                    name: 'discount_select',
-                    type: 'discount-select',
-                    no_default_action: true,
-                    buttons: [{
-                        name: 'select_discount_amount_button',
-                        type: 'rowaction',
-                        label: 'LBL_DISCOUNT_AMOUNT',
-                        event: 'button:discount_select_change:click'
-                    }, {
-                        name: 'select_discount_percent_button',
-                        type: 'rowaction',
-                        label: 'LBL_DISCOUNT_PERCENT',
-                        event: 'button:discount_select_change:click'
-                    }]
-                }]
-            }, {
-                name: 'total_amount',
-                label: 'LBL_LINE_ITEM_TOTAL',
-                labelModule: 'Quotes',
-                widthClass: undefined,
-                css_class: ''
-            }
+                    name: 'product_template_name',
+                    label: 'LBL_ITEM_NAME',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    required: true,
+                    type: 'quote-data-relate',
+                    css_class: ''
+                }, {
+                    name: 'mft_part_num',
+                    label: 'LBL_MFT_PART_NUM',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ''
+                }, {
+                    name: 'discount_price',
+                    label: 'LBL_DISCOUNT_PRICE',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ''
+                }, {
+                    name: 'discount',
+                    label: 'LBL_DISCOUNT_AMOUNT',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ' quote-discount-percent',
+                    type: 'fieldset',
+                    fields: [
+                        {
+                            name: 'discount_amount',
+                            label: 'LBL_DISCOUNT_AMOUNT',
+                            type: 'discount',
+                            convertToBase: true,
+                            showTransactionalAmount: true
+                        }, {
+                            name: 'discount_select',
+                            type: 'discount-select',
+                            no_default_action: true,
+                            buttons: [
+                                {
+                                    name: 'select_discount_amount_button',
+                                    type: 'rowaction',
+                                    label: 'LBL_DISCOUNT_AMOUNT',
+                                    event: 'button:discount_select_change:click'
+                                }, {
+                                    name: 'select_discount_percent_button',
+                                    type: 'rowaction',
+                                    label: 'LBL_DISCOUNT_PERCENT',
+                                    event: 'button:discount_select_change:click'
+                                }
+                            ]
+                        }
+                    ]
+                }, {
+                    name: 'total_amount',
+                    label: 'LBL_LINE_ITEM_TOTAL',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ''
+                }
             ]);
         });
 
         it('should set listHeaderFields', function() {
-            expect(view.listHeaderFields).toEqual([{
-                name: 'quantity',
-                label: 'LBL_QUANTITY',
-                type: 'float',
-                labelModule: 'Quotes'
-            }, {
-                name: 'product_template_name',
-                label: 'LBL_ITEM_NAME',
-                type: 'quote-data-relate',
-                required: true,
-                labelModule: 'Quotes'
-            }, {
-                name: 'mft_part_num',
-                label: 'LBL_MFT_PART_NUM',
-                type: 'base',
-                labelModule: 'Quotes'
-            }, {
-                name: 'discount_price',
-                label: 'LBL_DISCOUNT_PRICE',
-                type: 'currency',
-                convertToBase: true,
-                showTransactionalAmount: true,
-                related_fields: [
-                    'discount_price',
-                    'currency_id',
-                    'base_rate'
-                ],
-                labelModule: 'Quotes'
-            }, {
-                name: 'discount',
-                label: 'LBL_DISCOUNT_AMOUNT',
-                type: 'fieldset',
-                fields: [{
-                    name: 'discount_amount',
-                    label: 'LBL_DISCOUNT_AMOUNT',
-                    type: 'discount',
-                    convertToBase: true,
-                    showTransactionalAmount: true
+            expect(view.listHeaderFields).toEqual([
+                {
+                    name: 'quantity',
+                    label: 'LBL_QUANTITY',
+                    type: 'float',
+                    labelModule: 'Quotes'
                 }, {
-                    name: 'discount_select',
-                    type: 'discount-select',
-                    no_default_actions: true,
-                    buttons: [{
-                        name: 'select_discount_amount_button',
-                        label: 'LBL_DISCOUNT_AMOUNT',
-                        type: 'rowaction',
-                        event: 'button:discount_select_change:click'
-                    }, {
-                        name: 'select_discount_percent_button',
-                        label: 'LBL_DISCOUNT_PERCENT',
-                        type: 'rowaction',
-                        event: 'button:discount_select_change:click'
-                    }]
-                }],
-                labelModule: 'Quotes'
-            }, {
-                name: 'total_amount',
-                label: 'LBL_LINE_ITEM_TOTAL',
-                type: 'currency',
-                showTransactionalAmount: true,
-                related_fields: [
-                    'total_amount',
-                    'currency_id',
-                    'base_rate'
-                ],
-                labelModule: 'Quotes'
-            }]);
+                    name: 'product_template_name',
+                    label: 'LBL_ITEM_NAME',
+                    type: 'quote-data-relate',
+                    required: true,
+                    labelModule: 'Quotes'
+                }, {
+                    name: 'mft_part_num',
+                    label: 'LBL_MFT_PART_NUM',
+                    type: 'base',
+                    labelModule: 'Quotes'
+                }, {
+                    name: 'discount_price',
+                    label: 'LBL_DISCOUNT_PRICE',
+                    type: 'currency',
+                    convertToBase: true,
+                    showTransactionalAmount: true,
+                    related_fields: [
+                        'discount_price',
+                        'currency_id',
+                        'base_rate'
+                    ],
+                    labelModule: 'Quotes'
+                }, {
+                    name: 'discount',
+                    label: 'LBL_DISCOUNT_AMOUNT',
+                    type: 'fieldset',
+                    fields: [
+                        {
+                            name: 'discount_amount',
+                            label: 'LBL_DISCOUNT_AMOUNT',
+                            type: 'discount',
+                            convertToBase: true,
+                            showTransactionalAmount: true
+                        }, {
+                            name: 'discount_select',
+                            type: 'discount-select',
+                            no_default_actions: true,
+                            buttons: [
+                                {
+                                    name: 'select_discount_amount_button',
+                                    label: 'LBL_DISCOUNT_AMOUNT',
+                                    type: 'rowaction',
+                                    event: 'button:discount_select_change:click'
+                                }, {
+                                    name: 'select_discount_percent_button',
+                                    label: 'LBL_DISCOUNT_PERCENT',
+                                    type: 'rowaction',
+                                    event: 'button:discount_select_change:click'
+                                }
+                            ]
+                        }
+                    ],
+                    labelModule: 'Quotes'
+                }, {
+                    name: 'total_amount',
+                    label: 'LBL_LINE_ITEM_TOTAL',
+                    type: 'currency',
+                    showTransactionalAmount: true,
+                    related_fields: [
+                        'total_amount',
+                        'currency_id',
+                        'base_rate'
+                    ],
+                    labelModule: 'Quotes'
+                }
+            ]);
         });
 
         it('should set listDefaultFieldNameLabels', function() {
@@ -339,10 +360,6 @@ describe('Quotes.View.ConfigColumns', function() {
                 'subtotal',
                 'total_amount'
             ]);
-        });
-
-        it('should trigger config:fields:change on the context', function() {
-            expect(view.context.trigger).toHaveBeenCalledWith('config:fields:change');
         });
     });
 
@@ -445,9 +462,11 @@ describe('Quotes.View.ConfigColumns', function() {
 
     describe('_getPanelFields()', function() {
         it('should return the productFields array on the context', function() {
-            var fields = [{
-                name: 'aaa'
-            }];
+            var fields = [
+                {
+                    name: 'aaa'
+                }
+            ];
             view.context.set('productsFields', fields);
 
             expect(view._getPanelFields()).toEqual(fields);
@@ -462,11 +481,13 @@ describe('Quotes.View.ConfigColumns', function() {
 
     describe('_customFieldsSorting()', function() {
         it('should use the custom sorting function to sort alphabetically by name', function() {
-            var result = view._customFieldsSorting([{
-                name: 'bbb'
-            }, {
-                name: 'aaa'
-            }]);
+            var result = view._customFieldsSorting([
+                {
+                    name: 'bbb'
+                }, {
+                    name: 'aaa'
+                }
+            ]);
 
             expect(result[0].name).toBe('aaa');
             expect(result[1].name).toBe('bbb');
@@ -500,15 +521,6 @@ describe('Quotes.View.ConfigColumns', function() {
         afterEach(function() {
             setColumnHeaderFieldsStub = null;
             appendStub = null;
-        });
-
-        it('should call app.view.createView for config-list-header-columns', function() {
-            expect(app.view.createView).toHaveBeenCalledWith({
-                context: view.context,
-                type: 'config-list-header-columns',
-                layout: view,
-                model: view.model
-            });
         });
 
         it('should call $ to select .quote-data-list-table element', function() {
@@ -549,34 +561,6 @@ describe('Quotes.View.ConfigColumns', function() {
 
         it('should trigger config:fields:<eventViewName>:reset on the context', function() {
             expect(view.context.trigger).toHaveBeenCalledWith('config:fields:' + view.eventViewName + ':reset');
-        });
-    });
-
-    describe('onConfigPanelShow()', function() {
-        beforeEach(function() {
-            sinon.collection.stub(view.context, 'trigger');
-        });
-
-        it('should trigger config:fields:change on the context if it has fieldDependencies', function() {
-            view.fieldDependencies = true;
-            view.onConfigPanelShow();
-
-            expect(view.context.trigger).toHaveBeenCalledWith(
-                'config:fields:change',
-                view.eventViewName,
-                view.panelFields
-            );
-        });
-
-        it('should not trigger config:fields:change on the context if it does not have fieldDependencies', function() {
-            view.fieldDependencies = false;
-            view.onConfigPanelShow();
-
-            expect(view.context.trigger).not.toHaveBeenCalledWith(
-                'config:fields:change',
-                view.eventViewName,
-                view.panelFields
-            );
         });
     });
 

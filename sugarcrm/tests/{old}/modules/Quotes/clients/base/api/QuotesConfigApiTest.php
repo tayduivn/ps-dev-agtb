@@ -76,10 +76,12 @@ class QuotesConfigApiTest extends TestCase
             'foo' => 'bar',
             'worksheet_columns' => [],
             'worksheet_columns_related_fields' => [],
+            'summary_columns' => [],
+            'summary_columns_related_fields' => [],
         );
 
         $mock = $this->getMockBuilder('\QuotesConfigApi')
-            ->setMethods(array('applyConfig'))
+            ->setMethods(array('applyWorksheetColumnsConfig'))
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -89,7 +91,7 @@ class QuotesConfigApiTest extends TestCase
         $refProp->setValue($mock, true);
 
         $mock->expects($this->once())
-            ->method('applyConfig');
+            ->method('applyWorksheetColumnsConfig');
 
         $config = $mock->configSave($api, $args);
         $this->assertEquals('bar', $config['foo']);
@@ -98,10 +100,10 @@ class QuotesConfigApiTest extends TestCase
     /**
      *
      * @param array $settings
-     * @covers ::applyConfig
+     * @covers ::applyWorksheetColumnsConfig
      * @dataProvider applyConfigProvider
      */
-    public function testApplyConfig($settings, $expectException)
+    public function testApplyWorksheetColumnsConfig($settings, $expectException)
     {
         $quotesViewdef = array();
         $quotesViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'] = array(
@@ -137,7 +139,7 @@ class QuotesConfigApiTest extends TestCase
                 ->method('saveViewdef');
         }
 
-        $mock->applyConfig();
+        $mock->applyWorksheetColumnsConfig();
     }
 
     public function applyConfigProvider()

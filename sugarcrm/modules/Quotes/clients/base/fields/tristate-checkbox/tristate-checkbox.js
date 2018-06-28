@@ -266,11 +266,24 @@
      */
     onCheckboxClicked: function(evt) {
         var nextState = this.isRequired ? this.currentState.nextStateIfRequired : this.currentState.nextState;
+        var summaryColumns = this.view.model.get('summary_columns');
         evt.preventDefault();
 
-        this._onCheckboxClicked(this.currentStateName, nextState);
+        if (this.def.eventViewName === 'summary_columns' && summaryColumns && summaryColumns.length >= 6 &&
+            nextState === 'checked') {
+            app.alert.show('max_summaryColumns_reached', {
+                level: 'warning',
+                messages: app.lang.get('LBL_SUMMARY_WORKSHEET_COLUMNS_MAX_WARNING', this.module),
+                autoclose: true
+            }, this);
 
-        this.changeState(nextState);
+            nextState = 'unchecked';
+            this._onCheckboxClicked(this.currentStateName, nextState);
+            this.changeState(nextState);
+        } else {
+            this._onCheckboxClicked(this.currentStateName, nextState);
+            this.changeState(nextState);
+        }
     },
 
     /**

@@ -38,6 +38,7 @@
     _switchHowToData: function(helpId) {
         switch (helpId) {
             case 'config-columns':
+            case 'config-summary':
             case 'config-summation':
             case 'config-total':
                 this.currentHowToData.title = app.lang.get('LBL_CONFIG_FIELD_SELECTOR', this.module, {

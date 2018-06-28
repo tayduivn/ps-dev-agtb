@@ -62,6 +62,15 @@ class QuotesConfigApi extends ConfigModuleApi
         );
         $quotesConfig['productsFields'] = $parser->getAvailableFields();
 
+        $parser = ParserFactory::getParser(
+            MB_LISTVIEW,
+            'Quotes',
+            null,
+            null,
+            'base'
+        );
+        $quotesConfig['quotesFields'] = $parser->getAvailableFields();
+
         return $quotesConfig;
     }
 
@@ -74,7 +83,8 @@ class QuotesConfigApi extends ConfigModuleApi
     {
         $this->requireArgs($args, array('worksheet_columns', 'worksheet_columns_related_fields'));
         $settings = parent::configSave($api, $args);
-        $this->applyConfig();
+        $this->applyWorksheetColumnsConfig();
+        $this-> applySummaryColumnsConfig();
 
         return $settings;
     }
@@ -88,15 +98,23 @@ class QuotesConfigApi extends ConfigModuleApi
     {
         $fieldVardefs = array(
             'Products' => VardefManager::getFieldDefs('Products'),
+            'Quotes' => VardefManager::getFieldDefs('Quotes'),
         );
 
         $productsFieldNames = array_keys($fieldVardefs['Products']);
+        $quotesFieldNames = array_keys($fieldVardefs['Quotes']);
 
-        return $this->getAllFieldDependencies(
+        $resultArray = array_merge($this->getAllFieldDependencies(
             'Products',
             $productsFieldNames,
             $fieldVardefs
-        );
+        ), $this->getAllFieldDependencies(
+            'Quotes',
+            $quotesFieldNames,
+            $fieldVardefs
+        ));
+
+        return $resultArray;
     }
 
     /**
@@ -481,7 +499,7 @@ class QuotesConfigApi extends ConfigModuleApi
      *
      * @throws SugarApiExceptionInvalidParameter
      */
-    public function applyConfig()
+    public function applyWorksheetColumnsConfig()
     {
         $viewdefManager = $this->getViewdefManager();
         $settings = $this->getSettings();
@@ -527,6 +545,82 @@ class QuotesConfigApi extends ConfigModuleApi
             } else {
                 if (array_key_exists('name', $field) && $field['name'] == 'product_bundle_items' && array_key_exists('fields', $field)) {
                     $quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'][$fieldsIndex]['fields'] = $settings['worksheet_columns_related_fields'];
+                }
+                break;
+            }
+        }
+
+        //do the same as above for bundles when we're ready for that
+
+        //write out new quotes record.php
+        $viewdefManager->saveViewdef($quoteRecordViewdef, 'Quotes', 'base', 'record');
+    }
+
+    /**
+     * Applies the saved Quotes config for Summary columns sheet.
+     * This might be necessary to run independently of the config api for cases like updating the
+     * quote record view in studio -- that would remove any related_fields updates we made here.
+     *
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    public function applySummaryColumnsConfig()
+    {
+        $viewdefManager = $this->getViewdefManager();
+        $settings = $this->getSettings();
+
+        if (!array_key_exists('summary_columns', $settings) || !is_array($settings['summary_columns'])) {
+            throw new \SugarApiExceptionInvalidParameter($GLOBALS['app_strings']['EXCEPTION_MISSING_SUMMARY_COLUMNS']);
+        }
+
+        if (!array_key_exists('summary_columns_related_fields', $settings) ||
+            !is_array($settings['summary_columns_related_fields'])) {
+            throw new \SugarApiExceptionInvalidParameter($GLOBALS['app_strings']['EXCEPTION_MISSING_SUMMARY_COLUMNS_RELATED_FIELDS']);
+        }
+
+        //update products c/b/v/quote-data-grand-totals-header with new fields for summary_columns
+        //load viewdefs
+        $qlidatagrouplistdef = $viewdefManager->loadViewdef('base', 'Quotes', 'quote-data-grand-totals-header');
+
+        //check to see if the key we need to update exists in the loaded viewdef, if not, load the base.
+        if (!isset($qlidatagrouplistdef['panels'][0]['fields'])) {
+            $qlidatagrouplistdef = $viewdefManager->loadViewdef('base', 'Quotes', 'quote-data-grand-totals-header', true);
+        }
+
+        foreach ($settings['summary_columns'] as $key => $summaryField) {
+            if ($summaryField['type'] === 'varchar') {
+                unset($settings['summary_columns'][$key]['type']);
+            }
+
+            if (isset($summaryField['css_class'])) {
+                continue;
+            } else {
+                $settings['summary_columns'][$key]['css_class'] = 'quote-totals-row-item';
+            }
+        }
+
+        $qlidatagrouplistdef['panels'][0]['fields'] = $settings['summary_columns'];
+        $viewdefManager->saveViewdef($qlidatagrouplistdef, 'Quotes', 'base', 'quote-data-grand-totals-header');
+
+        //update quotes c/b/v/record.php name:related_fields, bundles and product_bundle_items with everything added
+        //and anything needed for calculating fields -- include any new dependent fields
+        //load viewdefs
+        $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
+
+        //check to see if the key we need to update exists in the loaded viewdef, if not, load the base.
+        if (!isset($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields']['fields'][0])) {
+            $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
+        }
+
+        //now that we know the related_fields['fields'] exists, we need to search that array for the array def
+        //for the product bundle items
+        $fieldsIndex = 0;
+        foreach ($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'] as $field) {
+            if (!is_array($field)) {
+                $fieldsIndex++;
+                continue;
+            } else {
+                if (array_key_exists('name', $field) && $field['name'] == 'product_bundle_items' && array_key_exists('fields', $field)) {
+                    $quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'][$fieldsIndex]['fields'] = $settings['summary_columns_related_fields'];
                 }
                 break;
             }

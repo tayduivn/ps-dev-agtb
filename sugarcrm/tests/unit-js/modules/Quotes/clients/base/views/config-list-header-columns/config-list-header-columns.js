@@ -49,6 +49,7 @@ describe('Quotes.View.ConfigListHeaderColumns', function() {
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         view = SugarTest.createView('base', 'Quotes', 'config-list-header-columns', meta, context, true);
+        view.options.eventViewName = 'worksheet_columns';
     });
 
     afterEach(function() {
@@ -95,13 +96,13 @@ describe('Quotes.View.ConfigListHeaderColumns', function() {
         it('should set a listener on the view for list:reorder:columns', function() {
             expect(view.on).toHaveBeenCalledWith(
                 'list:reorder:columns',
-                view.onWorksheetColumnsOrderChanged,
+                view.onSheetColumnsOrderChanged,
                 view
             );
         });
     });
 
-    describe('onWorksheetColumnsOrderChanged()', function() {
+    describe('onSheetColumnsOrderChanged()', function() {
         var oldFieldOrder;
         var newFieldOrder;
         var newFieldNameOrder;
@@ -120,7 +121,7 @@ describe('Quotes.View.ConfigListHeaderColumns', function() {
             }];
             newFieldNameOrder = ['bbb', 'aaa'];
             view.model.set('worksheet_columns', oldFieldOrder);
-            view.onWorksheetColumnsOrderChanged({}, newFieldNameOrder);
+            view.onSheetColumnsOrderChanged({}, newFieldNameOrder);
         });
 
         afterEach(function() {

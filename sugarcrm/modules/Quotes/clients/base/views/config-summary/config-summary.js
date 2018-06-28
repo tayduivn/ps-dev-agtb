@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.Quotes.ConfigColumnsView
- * @alias SUGAR.App.view.views.BaseQuotesConfigColumnsView
+ * @class View.Views.Base.Quotes.ConfigSummaryView
+ * @alias SUGAR.App.view.views.BaseQuotesConfigSummaryView
  * @extends View.Views.Base.Quotes.ConfigPanelView
  */
 ({
@@ -30,12 +30,11 @@
      * The default list of field names for the Quotes worksheet columns
      */
     listDefaultFieldNames: [
-        'quantity',
-        'product_template_name',
-        'mft_part_num',
-        'discount_price',
-        'discount',
-        'total_amount'
+        'deal_tot',
+        'new_sub',
+        'tax',
+        'shipping',
+        'total'
     ],
 
     /**
@@ -60,36 +59,27 @@
     listHeaderFields: undefined,
 
     /**
-     * Products Module vardefs
-     */
-    productsFieldMeta: undefined,
-
-    /**
      * @inheritdoc
      */
     initialize: function(options) {
         var namesLen = this.listDefaultFieldNames.length;
+        var quoteGrandTotalHeaderListMeta = app.metadata.getView('Quotes', 'quote-data-grand-totals-header');
         var field;
         var fieldLabels = [];
         var fieldLabel;
         var fieldLabelModule;
-        var productListMeta = app.metadata.getView('Products', 'quote-data-group-list');
         var tmpField;
 
-        this.eventViewName = 'worksheet_columns';
+        this.eventViewName = 'summary_columns';
 
         this._super('initialize', [options]);
 
-        this.productsFieldMeta = app.metadata.getModule('Products', 'fields');
+        this.quotesFieldMeta = app.metadata.getModule('Quotes', 'fields');
 
         this.defaultFields = [];
 
         // pluck all the fields arrays from panels and flatten into one array
-        this.listHeaderFields = _.flatten(_.pluck(productListMeta.panels, 'fields'));
-        // exclude the line_num field
-        this.listHeaderFields = _.reject(this.listHeaderFields, function(field) {
-            return field.name === 'line_num';
-        });
+        this.listHeaderFields = _.flatten(_.pluck(quoteGrandTotalHeaderListMeta.panels, 'fields'));
 
         _.each(this.listHeaderFields, function(field) {
             field.labelModule = this._getFieldLabelModule(field);
@@ -105,7 +95,7 @@
 
             if (!field) {
                 // if the field didn't exist in the group list meta, use the field vardef
-                field = this.productsFieldMeta[this.listDefaultFieldNames[i]];
+                field = this.quotesFieldMeta[this.listDefaultFieldNames[i]];
             }
 
             // use either label (viewdefs) or vname (vardefs)
@@ -113,14 +103,8 @@
                 fieldLabel = field.label || field.vname;
 
                 // check Products strings first
-                fieldLabel = app.lang.get(fieldLabel, 'Products');
-                fieldLabelModule = 'Products';
-
-                if (fieldLabel.indexOf('LBL_') !== -1) {
-                    // if Products label just returned LBL_ string, check Quotes
-                    fieldLabel = app.lang.get(fieldLabel, 'Quotes');
-                    fieldLabelModule = 'Quotes';
-                }
+                fieldLabel = app.lang.get(fieldLabel, 'Quotes');
+                fieldLabelModule = 'Quotes';
 
                 fieldLabels.push(fieldLabel);
 
@@ -132,38 +116,6 @@
                     css_class: field.css_class || field.cssClass || ''
                 };
 
-                if (field.name === 'product_template_name') {
-                    tmpField.type = 'quote-data-relate';
-                    tmpField.required = true;
-                }
-
-                if (field.name === 'discount') {
-                    tmpField.type = 'fieldset';
-                    tmpField.css_class += ' quote-discount-percent';
-                    tmpField.fields = [{
-                        name: 'discount_amount',
-                        label: 'LBL_DISCOUNT_AMOUNT',
-                        type: 'discount',
-                        convertToBase: true,
-                        showTransactionalAmount: true
-                    }, {
-                        name: 'discount_select',
-                        type: 'discount-select',
-                        no_default_action: true,
-                        buttons: [{
-                            name: 'select_discount_amount_button',
-                            type: 'rowaction',
-                            label: 'LBL_DISCOUNT_AMOUNT',
-                            event: 'button:discount_select_change:click'
-                        }, {
-                            name: 'select_discount_percent_button',
-                            type: 'rowaction',
-                            label: 'LBL_DISCOUNT_PERCENT',
-                            event: 'button:discount_select_change:click'
-                        }]
-                    }];
-                }
-
                 // push the fieldDefs to default fields
                 this.defaultFields.push(tmpField);
             }
@@ -171,7 +123,7 @@
 
         this.listDefaultFieldNameLabels = fieldLabels.join(', ');
 
-        this.model.set('worksheet_columns', this.listHeaderFields);
+        this.model.set('summary_columns', this.listHeaderFields);
     },
 
     /**
@@ -182,15 +134,37 @@
      * @private
      */
     _getFieldLabelModule: function(field) {
-        var label = field.label || field.vname;
-        var labelModule = field.labelModule || 'Products';
-        var tmpLabel = app.lang.get(label, labelModule);
+        return field.labelModule || 'Quotes';
+    },
 
-        if (tmpLabel.indexOf('LBL_') !== -1) {
-            labelModule = 'Quotes';
+    /**
+     * @inheritdoc
+     */
+    _getPanelFields: function() {
+        return this.context.get('quotesFields');
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _getPanelFieldsModule: function() {
+        return 'Quotes';
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _customFieldsSorting: function(arr) {
+        return _.sortBy(arr, 'name');
+    },
+
+    /**
+     * @inheritdoc
+     */
+    onConfigPanelShow: function() {
+        if (this.dependentFields) {
+            this.context.trigger('config:fields:change', this.eventViewName, this.panelFields);
         }
-
-        return labelModule;
     },
 
     /**
@@ -207,8 +181,8 @@
 
         this._super('_onDependentFieldsChange', [context, fieldDeps]);
 
-        pFieldDeps = this.dependentFields.Products;
-        pRelatedFields = this.relatedFields.Products;
+        pFieldDeps = this.dependentFields.Quotes;
+        pRelatedFields = this.relatedFields.Quotes;
 
         _.each(this.panelFields, function(field) {
             pDependentField = pFieldDeps[field.name];
@@ -250,13 +224,16 @@
         }, this);
 
         this.model.set(this.eventViewName + '_related_fields', relatedFieldsList);
+
+        // trigger to render the fields on config page load
+        this.context.trigger('config:fields:change', this.eventViewName, this.panelFields);
     },
 
     /**
      * @inheritdoc
      */
     _onConfigFieldChange: function(field, oldState, newState) {
-        var fieldVarDef = this.productsFieldMeta[field.name];
+        var fieldVarDef = this.quotesFieldMeta[field.name];
         var fieldViewDef;
         var wasVisible = oldState === 'checked';
         var isNowVisible = newState === 'checked';
@@ -306,27 +283,6 @@
     /**
      * @inheritdoc
      */
-    _getPanelFields: function() {
-        return this.context.get('productsFields');
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _getPanelFieldsModule: function() {
-        return 'Products';
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _customFieldsSorting: function(arr) {
-        return _.sortBy(arr, 'name');
-    },
-
-    /**
-     * @inheritdoc
-     */
     render: function() {
         this._super('render');
 
@@ -338,29 +294,10 @@
             model: this.model
         });
 
-        this.$('.quote-data-list-table').append(this.listHeaderView.el);
+        this.$('.quote-summary-data-list-table').append(this.listHeaderView.el);
 
         // set the column header fields and render
         this.listHeaderView.setColumnHeaderFields(this.listHeaderFields);
-    },
-
-    /**
-     * Handles the click event when user clicks to Restore Default fields
-     * @param evt
-     */
-    onClickRestoreDefaultsBtn: function(evt) {
-        var fieldList = _.pluck(this.defaultFields, 'name');
-        this.listHeaderView.setColumnHeaderFields(this.defaultFields);
-        this.context.trigger('config:fields:' + this.eventViewName + ':reset', fieldList);
-    },
-
-    /**
-     * @inheritdoc
-     */
-    onConfigPanelShow: function() {
-        if (this.dependentFields) {
-            this.context.trigger('config:fields:change', this.eventViewName, this.panelFields);
-        }
     },
 
     /**
@@ -373,14 +310,13 @@
     },
 
     /**
-     * @inheritdoc
+     * Handles the click event when user clicks to Restore Default fields
+     * @param evt
      */
-    _dispose: function() {
-        if (this.listHeaderView) {
-            this.listHeaderView.dispose();
-            this.listHeaderView = null;
-        }
-
-        this._super('_dispose');
+    onClickRestoreDefaultsBtn: function(evt) {
+        var fieldList = _.pluck(this.defaultFields, 'name');
+        this.listHeaderView.setColumnHeaderFields(this.defaultFields);
+        this.context.trigger('config:fields:' + this.eventViewName + ':reset', fieldList);
     }
+
 })

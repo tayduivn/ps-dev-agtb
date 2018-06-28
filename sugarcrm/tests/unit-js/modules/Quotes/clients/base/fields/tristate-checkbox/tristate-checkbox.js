@@ -486,6 +486,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             field.currentStateName = 'currentStateName';
             sinon.collection.stub(field, '_onCheckboxClicked');
             sinon.collection.stub(field, 'changeState');
+            field.view.model = new Backbone.Model();
         });
 
         afterEach(function() {

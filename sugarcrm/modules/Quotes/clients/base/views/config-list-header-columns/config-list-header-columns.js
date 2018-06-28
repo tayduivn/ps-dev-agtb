@@ -46,7 +46,7 @@
     bindDataChange: function() {
         this._super('bindDataChange');
 
-        this.on('list:reorder:columns', this.onWorksheetColumnsOrderChanged, this);
+        this.on('list:reorder:columns', this.onSheetColumnsOrderChanged, this);
     },
 
     /**
@@ -55,9 +55,9 @@
      * @param {Object} fields The fields object sent from ReorderableColumns plugin
      * @param {Array} newFieldNameOrder The new order of field names
      */
-    onWorksheetColumnsOrderChanged: function(fields, newFieldNameOrder) {
+    onSheetColumnsOrderChanged: function(fields, newFieldNameOrder) {
         var newFieldOrder = [];
-        var headerFields = this.model.get('worksheet_columns');
+        var headerFields = this.model.get(this.options.eventViewName);
 
         _.each(newFieldNameOrder, function(fieldName) {
             newFieldOrder.push(_.find(headerFields, function(field) {
@@ -65,7 +65,7 @@
             }));
         }, this);
 
-        this.model.set('worksheet_columns', newFieldOrder);
+        this.model.set(this.options.eventViewName, newFieldOrder);
     },
 
     /**
@@ -128,7 +128,7 @@
         this.meta.panels = [{
             fields: headerFieldList
         }];
-        this.model.set('worksheet_columns', headerFieldList);
+        this.model.set(this.options.eventViewName, headerFieldList);
 
         this._fields = this.parseFields();
 
@@ -141,11 +141,11 @@
      * @param {Object} field The field defs of the field to add
      */
     addColumnHeaderField: function(field) {
-        var columns = this.model.get('worksheet_columns');
+        var columns = this.model.get(this.options.eventViewName);
         columns.unshift(field);
 
         this.meta.panels[0].fields = columns;
-        this.model.set('worksheet_columns', columns);
+        this.model.set(this.options.eventViewName, columns);
         this._fields = this.parseFields();
 
         this.render();
@@ -163,7 +163,7 @@
         });
         this.meta.panels[0].fields = fields;
 
-        this.model.set('worksheet_columns', fields);
+        this.model.set(this.options.eventViewName, fields);
         this._fields = this.parseFields();
 
         this.render();
