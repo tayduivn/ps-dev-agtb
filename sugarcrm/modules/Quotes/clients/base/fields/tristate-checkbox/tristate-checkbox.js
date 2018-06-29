@@ -209,6 +209,10 @@
             }, this);
 
             if (_.isEmpty(this.dependentFields)) {
+                // Removing related fields that are not required by any displayed fields and is not checked
+                if (this.currentStateName === 'filled') {
+                    this.changeState('unchecked');
+                }
                 this.isRequired = false;
             }
         }
