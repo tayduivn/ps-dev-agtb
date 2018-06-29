@@ -16,6 +16,8 @@
     {"pattern": "tests/unit-js/modules/**/fixtures/*.json", "included": false, "served": true, "watched": false},
 
     "sidecar/minified/sidecar.min.js",
+    "sidecar/lib/sugarlogic/expressions.js",
+    "sidecar/lib/sugarlogic/sidecarExpressionContext.js",
     {"pattern": "sidecar/minified/sidecar.min.js.map", "included": false},
 
     "include/javascript/sugar7/hbs-helpers.js",
