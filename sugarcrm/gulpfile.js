@@ -51,6 +51,16 @@ function splitByCommas(val) {
     return val.split(',');
 }
 
+gulp.task('loadCaches', function(done) {
+
+    var exec = require('child_process').exec;
+    var load_cache = 'php include/Expressions/updatecache.php';
+    var load_cache_process = exec(load_cache);
+    load_cache_process.stdout.on('data', function (data) {
+        console.log(data);
+    });
+});
+
 gulp.task('karma', function(done) {
     var Server = require('karma').Server;
 
@@ -213,6 +223,11 @@ gulp.task('karma', function(done) {
         // or: https://github.com/gulpjs/gulp/issues/587 for more information
         done(exitStatus ? 'There are failing unit tests' : undefined);
     }).start();
+});
+
+
+gulp.task('karmaSugarLogic', ['loadCaches', 'karma'], function() {
+    //task karma sugar
 });
 
 // run the modern PHPUnit tests (i.e. testsunit/, not tests/)
