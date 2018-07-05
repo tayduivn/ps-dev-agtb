@@ -1620,16 +1620,14 @@ SearchableCombobox.prototype.getSelectedText = function () {
 };
 
 SearchableCombobox.prototype._openSearchMore = function() {
-    var that = this, zIndex = $(that.html).closest(".adam-modal").zIndex();
+    var that = this;
     return function () {
         that.controlObject.select2("close");
-        $(that.html).closest(".adam-modal").zIndex(-1);
         App.drawer.open({
                 layout: "selection-list",
                 context: that._searchMore
             },
             _.bind(function (drawerValues) {
-                $(that.html).closest(".adam-modal").zIndex(zIndex);
             if (!_.isUndefined(drawerValues)) {
                 that.setValue({text: drawerValues.value, value: drawerValues.id}, true);
                 that.onChange();

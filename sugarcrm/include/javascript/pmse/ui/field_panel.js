@@ -234,12 +234,6 @@ FieldPanel.prototype._append = function () {
     }
     appendTo = this._getUsableAppendTo();
     siblings = appendTo.children;
-    for (i = 0; i < siblings.length; i += 1) {
-        aux = jQuery(siblings[i]).zIndex();
-        if (aux > zIndex) {
-            zIndex = aux;
-        }
-    }
 
     this.setZOrder(zIndex + 1);
 
