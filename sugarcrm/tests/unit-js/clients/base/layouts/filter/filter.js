@@ -814,7 +814,7 @@ describe('Base.Layout.Filter', function() {
                     params: [moduleName],
                     layoutType: 'record',
                     showingActivities: false,
-                    expected: [moduleName, undefined]
+                    expected: [moduleName, 'all_records']
                 },
                 {
                     params: [moduleName],
