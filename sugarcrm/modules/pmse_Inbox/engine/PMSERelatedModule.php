@@ -38,14 +38,30 @@ class PMSERelatedModule
         ),
     );
 
+    /**
+     * The PMSELogger object
+     * @var PMSELogger
+     */
     private $logger;
 
-    private $relatedRecordApi;
-
+    /**
+     * Constructor. Deprecated, will be removed in a future release.
+     */
     public function __construct()
     {
-        $this->logger = PMSELogger::getInstance();
-        $this->relatedRecordApi = new RelateRecordApi();
+    }
+
+    /**
+     * Gets the logger object when needed
+     * @return PMSELogger
+     */
+    public function getLogger()
+    {
+        if (!isset($this->logger)) {
+            $this->logger = PMSELogger::getInstance();
+        }
+
+        return $this->logger;
     }
 
     protected function getBean($module)
@@ -78,12 +94,12 @@ class PMSERelatedModule
     {
         $fieldName = $linkField;
         if (empty($moduleBean->field_defs[$fieldName])) {
-            $this->logger->warning("Unable to find field {$fieldName}");
+            $this->getLogger()->warning("Unable to find field {$fieldName}");
             return null;
         }
 
         if (!$moduleBean->load_relationship($fieldName)) {
-            $this->logger->warning("Unable to load relationship $fieldName");
+            $this->getLogger()->warning("Unable to load relationship $fieldName");
             return null;
         }
 
@@ -111,12 +127,12 @@ class PMSERelatedModule
     public function getRelatedModuleBeans($moduleBean, $linkField)
     {
         if (empty($moduleBean->field_defs[$linkField])) {
-            $this->logger->warning("Unable to find field {$linkField}");
+            $this->getLogger()->warning("Unable to find field {$linkField}");
             return array();
         }
 
         if (!$moduleBean->load_relationship($linkField)) {
-            $this->logger->warning("Unable to load relationship $linkField");
+            $this->getLogger()->warning("Unable to load relationship $linkField");
             return array();
         }
 
@@ -171,8 +187,9 @@ class PMSERelatedModule
                     $moduleLabel = translate($relatedModule);
                 }
 
+                $relMarker = $relType === 'one' ? '*:1' : '*:M';
                 // Parentheses value
-                $pval = "$moduleLabel (" . trim($label, ':') . ": $link)";
+                $pval = "$moduleLabel [$relMarker] (" . trim($label, ':') . ": $link)";
                 $ret = array(
                     'value' => $link,
                     'text' => $pval,
@@ -245,7 +262,7 @@ class PMSERelatedModule
         // sent through this.
         if (!isset($newBean->field_defs[$field])) {
             $module = $newBean->getModuleName();
-            $this->logger->warning("Field $field not found on bean for module $module");
+            $this->getLogger()->warning("Field $field not found on bean for module $module");
             return null;
         }
 
