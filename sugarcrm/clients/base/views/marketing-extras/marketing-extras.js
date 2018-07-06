@@ -20,8 +20,35 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        this.receiveMessage = this.receiveMessage.bind(this);
+        window.addEventListener('message', this.receiveMessage, false);
         this._super('initialize', [options]);
         this.fetchMarketingExtras();
+    },
+
+    /**
+     * Listen for the marketing frame to post a navigation event on click
+     * Expected format for the event data is a JSON encoded object.
+     * {"marketing_content_navigate":"https://url.navto.com"}
+     *
+     * @param {MessageEvent} event Message event with the location to navigate to.
+     */
+    receiveMessage: function(event) {
+        //First verify the message came from the page we expected
+        if (this.marketingContentUrl.substr(0, event.origin.length) === event.origin) {
+            var data = JSON.parse(event.data);
+            if (data && data.marketing_content_navigate) {
+                window.open(data.marketing_content_navigate, '_blank');
+            }
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    unbind: function() {
+        window.removeEventListener('message', this.receiveMessage, false);
+        this._super('unbind', arguments);
     },
 
     /**
