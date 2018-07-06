@@ -260,7 +260,7 @@ class ChartDisplay
             $total = $total_row['cells'][$total];
 
             if(is_string($total) && !is_numeric($total)) {
-                $total = unformat_number($total, true);
+                $total = unformat_number($total);
             }
             if ($total > 100000) {
                 $do_thousands = true;
