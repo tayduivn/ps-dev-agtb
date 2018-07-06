@@ -119,7 +119,7 @@ describe("image field", function() {
         });
 
         it('should generate an image preview when we select an image', function() {
-            var attrStub = sinon.stub(jQuery, 'attr');
+            var apiStub = sinon.stub(app.api, 'buildFileURL').returns('');
             var $preview = $('<div/>').addClass('image_preview').appendTo(field.$el);
 
             field.model.uploadFile = function() {};
@@ -135,7 +135,9 @@ describe("image field", function() {
             field.selectImage();
 
             expect($preview.children().length).toBeTruthy();
-            attrStub.restore();
+
+            uploadFileStub.restore();
+            apiStub.restore();
         });
 
     });
