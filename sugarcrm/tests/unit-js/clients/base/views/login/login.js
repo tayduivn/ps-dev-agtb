@@ -57,113 +57,6 @@ describe("Login View", function() {
         });
     });
 
-    describe("Browser support", function() {
-
-        var alertStub;
-        var originalBrowser;
-        var currentNavigator = {};
-
-        beforeEach(function() {
-            alertStub = sinon.stub(app.alert, "show");
-            originalBrowser = $.browser;
-        });
-
-        afterEach(function() {
-            $.browser = originalBrowser;
-            alertStub.restore();
-        });
-        //Internet Explorer
-        it("should deem IE8 as an unsupported browser", function() {
-            $.browser = {
-                'version': '8',
-                'msie': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
-        });
-        it("should deem IE9 as a supported browser", function() {
-            $.browser = {
-                'version': '9',
-                'msie': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
-
-        });
-        it("should deem IE10 as a supported browser", function() {
-            $.browser = {
-                'version': '10',
-                'msie': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
-
-        });
-        it("should deem IE11 as a supported browser", function() {
-            $.browser = {
-                'version': '11',
-                'msie': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
-        });
-
-        //Mozilla Firefox
-        it("should deem Firefox 40 as an unsupported browser", function () {
-            $.browser = {
-                'version': '40',
-                'mozilla': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
-        });
-        it("should deem Firefox 41 as a supported browser", function () {
-            $.browser = {
-                'version': '41',
-                'mozilla': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
-        });
-        //Safari
-        it("should deem Safari 6 as an unsupported browser", function() {
-            $.browser = {
-                'version': '536',
-                'safari': true,
-                'webkit': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
-        });
-        it("should deem Safari 7 as a supported browser", function() {
-            $.browser = {
-                'version': '537',
-                'safari': true,
-                'webkit': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
-        });
-        //Chrome
-        it("should deem Chrome 26 as an unsupported browser", function() {
-            $.browser = {
-                'version': '26',
-                'chrome': true,
-                'webkit': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
-        });
-        it("should deem Chrome 27 as an unsupported browser", function() {
-            $.browser = {
-                'version': '27',
-                'chrome': true,
-                'webkit': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
-
-        });
-        it("should deem Chrome 47 as a supported browser", function () {
-            $.browser = {
-                'version': '537.36',
-                'chrome': true,
-                'webkit': true
-            };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
-        });
-    });
-
     describe('handle keypress', function() {
         it('should trigger login if `ENTER` key is pressed', function() {
             sinon.collection.stub(view, 'login');
@@ -352,25 +245,6 @@ describe("Login View", function() {
             view.render();
 
             expect(view.refreshAdditionalComponents).toHaveBeenCalled();
-        });
-
-        it('should only show `unsupported browser` alert if browser is unsupported', function() {
-            sinon.collection.spy(app.alert, 'show');
-            sinon.collection.stub(view, '_isSupportedBrowser', function() {
-                return false;
-            });
-
-            view.render();
-
-            expect(app.alert.show).toHaveBeenCalledWith(view._alertKeys.unsupportedBrowser);
-
-            view._isSupportedBrowser.restore();
-            sinon.collection.stub(view, '_isSupportedBrowser', function() {
-                return true;
-            });
-
-            view.render();
-            expect(app.alert.show.calledOnce).toBeTruthy();
         });
 
         it('should show `admin only` alert if `admin_only` is set in the config', function() {

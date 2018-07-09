@@ -48,7 +48,6 @@
         login: 'login',
         needLogin: 'needs_login_error',
         offsetProblem: 'offset_problem',
-        unsupportedBrowser: 'unsupported_browser',
         loading: 'loading'
     },
 
@@ -186,22 +185,6 @@
         this._super('_render');
 
         this.refreshAdditionalComponents();
-
-        if (!this._isSupportedBrowser()) {
-            var linkLabel = Handlebars.Utils.escapeExpression(app.lang.get('LBL_ALERT_SUPPORTED_PLATFORMS_LINK'));
-            var link = '<a href="http://support.sugarcrm.com/05_Resources/03_Supported_Platforms/">' +  linkLabel + '</a>';
-            var safeLink = new Handlebars.SafeString(link);
-            var label = app.lang.get('TPL_ALERT_BROWSER_SUPPORT', null, {link: safeLink});
-
-            app.alert.show(this._alertKeys.unsupportedBrowser, {
-                level: 'warning',
-                title: '',
-                messages: [
-                    app.lang.get('LBL_ALERT_BROWSER_NOT_SUPPORTED'),
-                    label
-                ]
-            });
-        }
 
         var config = app.metadata.getConfig(),
             level = config.system_status && config.system_status.level;
@@ -365,43 +348,6 @@
         app.$contentEl.show();
     },
 
-    /**
-     * Taken from sugar_3.
-     *
-     * @return {Boolean} `true` if the browser is supported, `false` otherwise.
-     * @private
-     */
-    _isSupportedBrowser: function(currentNavigator) {
-        var supportedBrowsers = {
-            // For Safari & Chrome jQuery.Browser returns the webkit revision
-            // instead of the browser version and it's hard to determine this
-            // number.
-            msie: {min: 9, max: 11}, // IE 9, 10, 11
-            safari: {min: 537}, // Safari 7.1
-            mozilla: {min: 41}, // Firefox 41,42
-            chrome: {min: 47} // Chrome 47
-        };
-
-        var current = parseFloat($.browser.version);
-        currentNavigator = currentNavigator || navigator;
-
-        // For IE11, navigator behaves differently in order to conform to HTML5
-        // standards. This changes the behavior of jQuery.Browser and so IE11
-        // will show up as not supported in the above checks when it should be
-        // supported. The following check rectifies this issue.
-        if ((/Trident\/7\./).test(currentNavigator.userAgent)) {
-            var supported = supportedBrowsers['msie'];
-            return current >= supported.min;
-        } else {
-            for (var b in supportedBrowsers) {
-                if ($.browser[b]) {
-                    var supported = supportedBrowsers[b];
-                    return current >= supported.min;
-                }
-            }
-        }
-    },
-    
     /**
      * Process Login
      */
