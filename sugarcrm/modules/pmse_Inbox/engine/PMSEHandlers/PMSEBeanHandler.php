@@ -223,7 +223,9 @@ class PMSEBeanHandler
                 if (($field_array['value_type']) === 'href_link') {
                     $replace_array[$field_array['original']] = bpminbox_get_href($newBean, $field, $value);
                 } else {
-                    $replace_array[$field_array['original']] = bpminbox_get_display_text($newBean, $field, $value);
+                    $replace_array[$field_array['original']] = $evaluate ?
+                        nl2html(bpminbox_get_display_text($newBean, $field, $value)) :
+                        bpminbox_get_display_text($newBean, $field, $value);
                 }
             }
         }

@@ -490,7 +490,7 @@ class PMSEEmailHandler
                 if (!$textOnly) {
                     if (!empty($templateObject->body_html)) {
                         //set HTMLBody
-                        $htmlBody = from_html($this->getBeanUtils()->mergeBeanInTemplate($bean, $templateObject->body_html));
+                        $htmlBody = from_html($this->getBeanUtils()->mergeBeanInTemplate($bean, $templateObject->body_html, true));
                         $mailObject->setHtmlBody($htmlBody);
                     }
                 }
@@ -502,7 +502,7 @@ class PMSEEmailHandler
             }
 
             if (isset($templateObject->subject)) {
-                $mailObject->setSubject(from_html($this->getBeanUtils()->mergeBeanInTemplate($bean, $templateObject->subject)));
+                $mailObject->setSubject(from_html($this->getBeanUtils()->mergeBeanInTemplate($bean, $templateObject->subject, true)));
             } else {
                 $this->getLogger()->warning('template subject is not defined');
             }
