@@ -95,6 +95,8 @@ class SugarOIDCUserChecker extends UserChecker
             }
             unset($attributes['email']);
         }
+
+        $attributes = $this->getDbMassagedAttributes($attributes, $sugarUser);
         foreach ($attributes as $name => $value) {
             if (isset($sugarUser->$name) && strcasecmp($sugarUser->$name, $value) !== 0) {
                 $sugarUser->$name = $value;
@@ -108,5 +110,23 @@ class SugarOIDCUserChecker extends UserChecker
             $sugarUser->emailAddress->addAddress($email, true);
             $sugarUser->emailAddress->save($sugarUser->id, $sugarUser->module_dir);
         }
+    }
+
+    /**
+     * Get Db massaged attributes for comparison
+     *
+     * @param array $attributes
+     * @param \User $sugarUser
+     * @return array
+     */
+    private function getDbMassagedAttributes(array $attributes, \User $sugarUser): array
+    {
+        $db = $sugarUser->db;
+        $fieldDefs = $sugarUser->getFieldDefinitions('name', array_keys($attributes));
+        array_walk($attributes, function (&$value, $key) use ($db, $fieldDefs) {
+            $value = $db->massageValue($value, $fieldDefs[$key], true);
+        });
+
+        return $attributes;
     }
 }

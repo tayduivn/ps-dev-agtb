@@ -71,37 +71,323 @@ class SugarOIDCUserCheckerTest extends TestCase
 
     /**
      * @covers ::checkPostAuth
+     * @dataProvider checkPostAuthEmailModifiedProvider
+     *
+     * @param $oidc
+     * @param $fieldDefs
+     * @param $old
+     * @param $expected
      */
-    public function testCheckPostAuthWithExistingUser()
+    public function testCheckPostAuthEmailModified($oidc, $fieldDefs, $old, $expected)
     {
         $this->user->expects($this->exactly(2))
             ->method('getAttribute')
             ->withConsecutive([$this->equalTo('oidc_data')], [$this->equalTo('oidc_identify')])
-            ->willReturnOnConsecutiveCalls(
-                ['user_name' => 'test', 'first_name' => 'new_name', 'email' => 'new@test.lh'],
-                ['field' => 'id', 'value' => 'seed_sally_id']
-            );
+            ->willReturnOnConsecutiveCalls($oidc['data'], $oidc['identify']);
+
         $this->localUserProvider->expects($this->once())
-                                ->method('loadUserByField')
-                                ->with('seed_sally_id', 'id')
-                                ->willReturn($this->foundUser);
+            ->method('loadUserByField')
+            ->with($oidc['identify']['value'], $oidc['identify']['field'])
+            ->willReturn($this->foundUser);
         $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
 
-        $this->sugarUser->first_name = 'old_name';
+        $dbManager = $this->getMockBuilder('\DBManager')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $this->sugarUser->db = $dbManager;
+
+        foreach (array_diff_key($old, ['email' => 1]) as $field => $value) {
+            $this->sugarUser->{$field} = $value;
+        }
         $this->emailAddress->expects($this->once())
             ->method('getPrimaryAddress')
             ->with($this->sugarUser)
-            ->willReturn('old@test.lh');
+            ->willReturn($old['email']);
+        $this->sugarUser->expects($this->once())->method('getFieldDefinitions')->willReturn($fieldDefs);
         $this->sugarUser->expects($this->once())->method('save');
 
         $this->emailAddress->expects($this->once())
             ->method('addAddress')
-            ->with($this->equalTo('new@test.lh'), $this->isTrue());
+            ->with($this->equalTo($expected['email']), $this->isTrue());
 
         $this->emailAddress->expects($this->once())->method('save');
 
         $this->user->expects($this->once())->method('setSugarUser')->with($this->sugarUser);
         $this->userChecker->checkPostAuth($this->user);
+
+        foreach (array_diff_key($expected, ['email' => 1]) as $field => $value) {
+            $this->assertEquals($expected[$field], $this->sugarUser->{$field});
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function checkPostAuthEmailModifiedProvider()
+    {
+        return [
+            'existing-user' => [
+                [
+                    'data' => ['user_name' => 'test', 'first_name' => 'new_first_name', 'email' => 'new@test.lh'],
+                    'identify' => ['field' => 'id', 'value' => 'seed_sally_id'],
+                ],
+                [
+                    'user_name' => [
+                        'name' => 'user_name',
+                        'type' => 'username',
+                        'dbType' => 'varchar',
+                        'len' => '60',
+                    ],
+                    'first_name' => [
+                        'name' => 'first_name',
+                        'dbType' => 'varchar',
+                        'type' => 'name',
+                        'len' => '30',
+                    ],
+                ],
+                ['user_name' => 'test', 'first_name' => 'old_first_name', 'email' => 'old@test.lh'],
+                ['user_name' => 'test', 'first_name' => 'new_first_name', 'email' => 'new@test.lh'],
+            ],
+            'long-attribute-value' => [
+                [
+                    'data' => ['user_name' => 'test', 'last_name' => 'longer____than____30____characters', 'email' => 'new@test.lh'],
+                    'identify' => ['field' => 'id', 'value' => 'seed_sally_id'],
+                ],
+                [
+                    'user_name' => [
+                        'name' => 'user_name',
+                        'type' => 'username',
+                        'dbType' => 'varchar',
+                        'len' => '60',
+                    ],
+                    'last_name' => [
+                        'name' => 'last_name',
+                        'dbType' => 'varchar',
+                        'type' => 'name',
+                        'len' => '30',
+                    ],
+                ],
+                ['user_name' => 'test', 'last_name' => 'old_last_name', 'email' => 'old@test.lh'],
+                ['user_name' => 'test', 'last_name' => 'longer____than____30____charac', 'email' => 'new@test.lh'],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     * @dataProvider checkPostAuthEmailNotModifiedProvider
+     *
+     * @param $oidc
+     * @param $fieldDefs
+     * @param $old
+     * @param $expected
+     */
+    public function testCheckPostAuthEmailNotModified($oidc, $fieldDefs, $old, $expected)
+    {
+        $this->user->expects($this->exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([$this->equalTo('oidc_data')], [$this->equalTo('oidc_identify')])
+            ->willReturnOnConsecutiveCalls($oidc['data'], $oidc['identify']);
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->with($oidc['identify']['value'], $oidc['identify']['field'])
+            ->willReturn($this->foundUser);
+        $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
+
+        $dbManager = $this->getMockBuilder('\DBManager')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $this->sugarUser->db = $dbManager;
+
+        foreach ($old as $field => $value) {
+            $this->sugarUser->{$field} = $value;
+        }
+        $this->sugarUser->expects($this->once())->method('getFieldDefinitions')->willReturn($fieldDefs);
+        $this->sugarUser->expects($this->once())->method('save');
+
+        $this->emailAddress->expects($this->once())
+            ->method('getPrimaryAddress')
+            ->with($this->sugarUser)
+            ->willReturn($old['email']);
+        $this->emailAddress->expects($this->never())->method('addAddress');
+        $this->emailAddress->expects($this->never())->method('save');
+
+        $this->user->expects($this->once())->method('setSugarUser')->with($this->sugarUser);
+        $this->userChecker->checkPostAuth($this->user);
+
+        foreach ($expected as $field => $value) {
+            $this->assertEquals($expected[$field], $this->sugarUser->{$field});
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function checkPostAuthEmailNotModifiedProvider()
+    {
+        return [
+            'existing-user' => [
+                [
+                    'data' => ['user_name' => 'test', 'first_name' => 'new_first_name', 'email' => 'old@test.lh'],
+                    'identify' => ['field' => 'id', 'value' => 'seed_sally_id'],
+                ],
+                [
+                    'user_name' => [
+                        'name' => 'user_name',
+                        'type' => 'username',
+                        'dbType' => 'varchar',
+                        'len' => '60',
+                    ],
+                    'first_name' => [
+                        'name' => 'first_name',
+                        'dbType' => 'varchar',
+                        'type' => 'name',
+                        'len' => '30',
+                    ],
+                ],
+                ['user_name' => 'test', 'first_name' => 'old_first_name', 'email' => 'old@test.lh'],
+                ['user_name' => 'test', 'first_name' => 'new_first_name', 'email' => 'old@test.lh'],
+            ],
+            'long-attribute-value' => [
+                [
+                    'data' => ['user_name' => 'test', 'last_name' => 'longer____than____30____characters', 'email' => 'old@test.lh'],
+                    'identify' => ['field' => 'id', 'value' => 'seed_sally_id'],
+                ],
+                [
+                    'user_name' => [
+                        'name' => 'user_name',
+                        'type' => 'username',
+                        'dbType' => 'varchar',
+                        'len' => '60',
+                    ],
+                    'last_name' => [
+                        'name' => 'last_name',
+                        'dbType' => 'varchar',
+                        'type' => 'name',
+                        'len' => '30',
+                    ],
+                ],
+                ['user_name' => 'test', 'last_name' => 'old_last_name', 'email' => 'old@test.lh'],
+                ['user_name' => 'test', 'last_name' => 'longer____than____30____charac', 'email' => 'old@test.lh'],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     * @dataProvider checkPostAuthNotModifiedProvider
+     *
+     * @param $oidc
+     * @param $fieldDefs
+     * @param $old
+     * @param $expected
+     */
+    public function testCheckPostAuthNotModified($oidc, $fieldDefs, $old, $expected)
+    {
+        $this->user->expects($this->exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([$this->equalTo('oidc_data')], [$this->equalTo('oidc_identify')])
+            ->willReturnOnConsecutiveCalls($oidc['data'], $oidc['identify']);
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->with($oidc['identify']['value'], $oidc['identify']['field'])
+            ->willReturn($this->foundUser);
+        $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
+
+        $dbManager = $this->getMockBuilder('\DBManager')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $this->sugarUser->db = $dbManager;
+
+        foreach ($old as $field => $value) {
+            $this->sugarUser->{$field} = $value;
+        }
+        $this->sugarUser->expects($this->once())->method('getFieldDefinitions')->willReturn($fieldDefs);
+        $this->sugarUser->expects($this->never())->method('save');
+
+        $this->user->expects($this->once())->method('setSugarUser')->with($this->sugarUser);
+        $this->userChecker->checkPostAuth($this->user);
+
+        foreach ($expected as $field => $value) {
+            $this->assertEquals($expected[$field], $this->sugarUser->{$field});
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function checkPostAuthNotModifiedProvider()
+    {
+        return [
+            'existing-user' => [
+                [
+                    'data' => ['user_name' => 'test', 'first_name' => 'old_first_name', 'email' => 'old@test.lh'],
+                    'identify' => ['field' => 'id', 'value' => 'seed_sally_id'],
+                ],
+                [
+                    'user_name' => [
+                        'name' => 'user_name',
+                        'type' => 'username',
+                        'dbType' => 'varchar',
+                        'len' => '60',
+                    ],
+                    'first_name' => [
+                        'name' => 'first_name',
+                        'dbType' => 'varchar',
+                        'type' => 'name',
+                        'len' => '30',
+                    ],
+                ],
+                ['user_name' => 'test', 'first_name' => 'old_first_name'],
+                ['user_name' => 'test', 'first_name' => 'old_first_name'],
+            ],
+            'existing-user-no-oidc-email' => [
+                [
+                    'data' => ['user_name' => 'test', 'first_name' => 'old_first_name'],
+                    'identify' => ['field' => 'id', 'value' => 'seed_sally_id'],
+                ],
+                [
+                    'user_name' => [
+                        'name' => 'user_name',
+                        'type' => 'username',
+                        'dbType' => 'varchar',
+                        'len' => '60',
+                    ],
+                    'first_name' => [
+                        'name' => 'first_name',
+                        'dbType' => 'varchar',
+                        'type' => 'name',
+                        'len' => '30',
+                    ],
+                ],
+                ['user_name' => 'test', 'first_name' => 'old_first_name'],
+                ['user_name' => 'test', 'first_name' => 'old_first_name'],
+            ],
+            'long-attribute-value' => [
+                [
+                    'data' => ['user_name' => 'test', 'last_name' => 'longer____than____30____characters', 'email' => 'old@test.lh'],
+                    'identify' => ['field' => 'id', 'value' => 'seed_sally_id'],
+                ],
+                [
+                    'user_name' => [
+                        'name' => 'user_name',
+                        'type' => 'username',
+                        'dbType' => 'varchar',
+                        'len' => '60',
+                    ],
+                    'last_name' => [
+                        'name' => 'last_name',
+                        'dbType' => 'varchar',
+                        'type' => 'name',
+                        'len' => '30',
+                    ],
+                ],
+                ['user_name' => 'test', 'last_name' => 'longer____than____30____charac'],
+                ['user_name' => 'test', 'last_name' => 'longer____than____30____charac'],
+            ],
+        ];
     }
 
     /**
