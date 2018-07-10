@@ -1484,14 +1484,17 @@ TeamUpdaterItem.prototype._queryFunction = function () {
 };
 
 TeamUpdaterItem.prototype._openSearchMore = function (select) {
-    var that = this, $select = jQuery(select);
+    var that = this, zIndex, $select = jQuery(select);
     return function () {
+        zIndex = $(that.html).closest(".adam-modal").get(0).style.zIndex;
         $select.select2("close");
+        $(that.html).closest(".adam-modal").get(0).style.zIndex = -1;
         App.drawer.open({
                 layout: "selection-list",
                 context: {module: "Teams"}
             },
             _.bind(function (drawerValues) {
+                $(that.html).closest(".adam-modal").get(0).style.zIndex = zIndex;
                 if (!_.isUndefined(drawerValues)) {
                     $select.select2("val", drawerValues.id, true);
                 }
@@ -2728,14 +2731,17 @@ SearchUpdaterItem.prototype.getSelectedText = function() {
  * @private
  */
 SearchUpdaterItem.prototype._openSearchMore = function () {
-    var that = this;
+    var that = this, zIndex;
     return function () {
+        zIndex = $(that.html).closest(".adam-modal").get(0).style.zIndex;
         that.select2Control.select2("close");
+        $(that.html).closest(".adam-modal").get(0).style.zIndex = -1;
         App.drawer.open({
                 layout: "selection-list",
                 context: that._searchMore
             },
             _.bind(function (drawerValues) {
+                $(that.html).closest(".adam-modal").get(0).style.zIndex = zIndex;
                 if (!_.isUndefined(drawerValues)) {
                     that.setValue(drawerValues.id, drawerValues.name);
                     that._onChange();

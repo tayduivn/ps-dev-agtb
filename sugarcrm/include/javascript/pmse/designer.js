@@ -176,6 +176,7 @@ function renderProject (prjCode) {
         },
         north__showOverflowOnHover:	true
     });
+    $('#container').get(0).style.zIndex = 1;
 
     $('.ui-layout-north').css('overflow', 'hidden');
 
