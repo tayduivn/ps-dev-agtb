@@ -682,26 +682,26 @@ function apiActualLoadSystemStatus()
     global $sugar_flavor, $db;
 
     checkSystemLicenseStatus();
-    if (!isset($_SESSION['LICENSE_EXPIRES_IN'])) {
-        // BEGIN CE-OD License User Limit Enforcement
-        if (isset($sugar_flavor) &&
-            (!empty($admin->settings['license_enforce_user_limit']))) {
-            $query = "SELECT count(id) as total from users WHERE ".User::getLicensedUsersWhere();
-            $result = $db->query($query, true, "Error filling in user array: ");
-            $row = $db->fetchByAssoc($result);
-            $admin = Administration::getSettings();
-            $license_users = $admin->settings['license_users'];
-            $license_seats_needed = $row['total'] - $license_users;
-            if( $license_seats_needed > 0 ){
-                $_SESSION['EXCEEDS_MAX_USERS'] = 1;
-                return array(
+    $admin = Administration::getSettings();
+
+    if (!empty($admin->settings['license_enforce_user_limit'])) {
+        // BEGIN License User Limit Enforcement
+        $query = "SELECT count(id) as total from users WHERE ".User::getLicensedUsersWhere();
+        $result = $db->query($query, true, "Error filling in user array: ");
+        $row = $db->fetchByAssoc($result);
+
+        $license_users = $admin->settings['license_users'];
+        $license_seats_needed = $row['total'] - $license_users;
+        if ($license_seats_needed > 0) {
+            $_SESSION['license_seats_needed'] = $license_seats_needed;
+            $_SESSION['EXCEEDS_MAX_USERS'] = 1;
+            return array(
                     'level'  =>'admin_only',
-                    'message'=>'WARN_LICENSE_SEATS_MAXED',
-                    'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
-                );
-            }
+                    'message'=>'ERROR_LICENSE_SEATS_MAXED',
+                    'url'    =>'#bwc/index.php?module=Users&action=index',
+            );
         }
-        // END CE-OD License User Limit Enforcement
+        // END License User Limit Enforcement
     }
 
     // Only allow administrators because of altered license issue
