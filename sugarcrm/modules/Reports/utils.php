@@ -46,8 +46,10 @@ class ReportsUtilities
      *
      * @throws MailerException Allows exceptions to bubble up for the caller to report if desired.
      */
-    public function sendNotificationOfDisabledReport($report_id, User $owner = null, array $subscriber = null)
+    public function sendNotificationOfDisabledReport($report_id, User $owner = null, array $subscriber = null, $reportName = '')
     {
+        global $sugar_config;
+
         $recipients = array($owner);
         foreach ($subscriber as $s) {
             $recipients[] = $s;
@@ -62,7 +64,14 @@ class ReportsUtilities
         $mod_strings = return_module_language($this->language, 'Reports');
         $subject = $mod_strings['ERR_REPORT_DEACTIVATED_SUBJECT'];
 
-        $body = string_format($mod_strings['ERR_REPORT_DEACTIVATED'], array($report_id));
+        $report_id = htmlspecialchars($report_id);
+        $reportName = htmlspecialchars($reportName);
+
+        $reportUrl = $sugar_config['site_url'] . '/index.php#bwc/index.php?module=Reports&action=DetailView&record=' . urlencode($report_id);
+        $body = string_format(
+            $mod_strings['ERR_REPORT_DEACTIVATED'],
+            array('<a href="' . $reportUrl . '">' . $reportName . '</a>', $report_id)
+        );
 
         // make sure that the same user doesn't receive the notification twice
         $unique = array();

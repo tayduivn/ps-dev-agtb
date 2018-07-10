@@ -296,7 +296,7 @@ QUERY;
             }
 
             $utils = new ReportsUtilities();
-            $utils->sendNotificationOfDisabledReport($schedule['report_id'], $owner, $subscriber);
+            $utils->sendNotificationOfDisabledReport($schedule['report_id'], $owner, $subscriber, $schedule['name']);
         }
     }
 
@@ -313,6 +313,7 @@ QUERY;
 SELECT
     rs.id,
     rs.report_id,
+    r.name,
     r.assigned_user_id owner_id
 FROM
     $this->table_name rs
