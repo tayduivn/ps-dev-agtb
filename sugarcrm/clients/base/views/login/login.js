@@ -272,8 +272,8 @@
                     };
 
                     app.login(args, null, {
-                        error: _.bind(function() {
-                            this.showSugarLoginForm();
+                        error: _.bind(function(error) {
+                            this.showSugarLoginForm(error);
                         }, this),
                         success: _.bind(function() {
                             app.logger.debug('logged in successfully!');
@@ -310,7 +310,18 @@
      * app login complete callback will be run when _refreshToken = false
      * So to avoid form disappearance after second incorrect login we need to run the same code into to two callbacks
      */
-    showSugarLoginForm: function() {
+    showSugarLoginForm: function(error) {
+        if (error !== undefined && error.code == 'license_seats_needed') {
+            app.alert.show(this._alertKeys.adminOnly, {
+                level: 'error',
+                title: '',
+                messages: [
+                    '',
+                    error.message
+                ]
+            });
+            app.logger.debug('Number of seats exceeded license limit.');
+        }
         app.alert.dismiss(this._alertKeys.login);
         app.api.setExternalLogin(false);
         app.config.externalLoginUrl = undefined;
