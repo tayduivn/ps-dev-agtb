@@ -1632,10 +1632,10 @@ SearchableCombobox.prototype._openSearchMore = function() {
             },
             _.bind(function (drawerValues) {
                 $(self.html).closest('.adam-modal').css('zIndex', zIndex);
-            if (!_.isUndefined(drawerValues)) {
-                self.setValue({text: drawerValues.value, value: drawerValues.id}, true);
-                self.onChange();
-            }
+                if (!_.isUndefined(drawerValues)) {
+                    self.setValue({text: drawerValues.value, value: drawerValues.id}, true);
+                    self.onChange();
+                }
         }, this));
     };
 };

@@ -2738,7 +2738,7 @@ SearchUpdaterItem.prototype._openSearchMore = function () {
     var self = this;
 
     return function () {
-        var zIndex = $(self.html).closest(".adam-modal").css('zIndex');
+        var zIndex = $(self.html).closest('.adam-modal').css('zIndex');
 
         self.select2Control.select2('close');
         $(self.html).closest('.adam-modal').css('zIndex', -1);
