@@ -181,9 +181,5 @@
     // END SUGARCRM flav=ent ONLY
 
     {"pattern": "clients/base/**/*.js", "included": false, "served": true, "watched": true},
-    {"pattern": "modules/**/clients/base/**/*.js", "included": false, "served": true, "watched": true},
-
-    //initialization fles
-    "tests/unit-js/include/Expressions/Expression"
-
+    {"pattern": "modules/**/clients/base/**/*.js", "included": false, "served": true, "watched": true}
 ]
