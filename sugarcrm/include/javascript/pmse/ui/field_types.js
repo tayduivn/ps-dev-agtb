@@ -1620,19 +1620,21 @@ SearchableCombobox.prototype.getSelectedText = function () {
 };
 
 SearchableCombobox.prototype._openSearchMore = function() {
-    var that = this, zIndex = $(that.html).closest(".adam-modal").css('zIndex');
+    var self = this;
+    var zIndex = $(self.html).closest('.adam-modal').css('zIndex');
+
     return function () {
-        that.controlObject.select2("close");
-        $(that.html).closest(".adam-modal").css('zIndex', -1);
+        self.controlObject.select2('close');
+        $(self.html).closest('.adam-modal').css('zIndex', -1);
         App.drawer.open({
-                layout: "selection-list",
-                context: that._searchMore
+                layout: 'selection-list',
+                context: self._searchMore
             },
             _.bind(function (drawerValues) {
-                $(that.html).closest(".adam-modal").css('zIndex', zIndex);
+                $(self.html).closest('.adam-modal').css('zIndex', zIndex);
             if (!_.isUndefined(drawerValues)) {
-                that.setValue({text: drawerValues.value, value: drawerValues.id}, true);
-                that.onChange();
+                self.setValue({text: drawerValues.value, value: drawerValues.id}, true);
+                self.onChange();
             }
         }, this));
     };
