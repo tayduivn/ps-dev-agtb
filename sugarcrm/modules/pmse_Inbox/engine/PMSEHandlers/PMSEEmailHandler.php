@@ -239,9 +239,6 @@ class PMSEEmailHandler
     {
         $res = array();
 
-        $moduleName = $flowData['cas_sugar_module'];
-        $object_id = $flowData['cas_sugar_object_id'];
-
         foreach ($to as $entry) {
             switch (strtoupper($entry->type)) {
                 case 'USER':

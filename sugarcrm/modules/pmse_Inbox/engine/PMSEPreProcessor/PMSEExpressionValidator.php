@@ -138,6 +138,10 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
         // We don't need the entire retrieved bean for this operation...
         $seedBean = BeanFactory::newBean($flowData['cas_sugar_module']);
 
+        if (is_null($seedBean)) {
+            return false;
+        }
+
         // We just need the ID to be able to check relationships
         $seedBean->id = $flowData['cas_sugar_object_id'];
 

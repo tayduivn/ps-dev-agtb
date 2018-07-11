@@ -511,11 +511,13 @@ class PMSECaseFlowHandler
             // There are, so check if we need to add this PD rel to the target bean
             $target = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
 
-            // Get the process definition bean
-            $pd = $this->retrieveBean('pmse_BpmProcessDefinition', $flowData['pro_id']);
+            if (isset($target)) {
+                // Get the process definition bean
+                $pd = $this->retrieveBean('pmse_BpmProcessDefinition', $flowData['pro_id']);
 
-            // Add the bean for relationship now
-            $this->addLockedFields($target, $pd);
+                // Add the bean for relationship now
+                $this->addLockedFields($target, $pd);
+            }
         }
     }
 
@@ -642,7 +644,9 @@ class PMSECaseFlowHandler
             // target bean
             if ($v === $c) {
                 $bean = $this->retrieveBean($row['cas_sugar_module'], $row['cas_sugar_object_id']);
-                $this->deleteLockFieldsFromBean($bean, $row['pro_id']);
+                if (isset($bean)) {
+                    $this->deleteLockFieldsFromBean($bean, $row['pro_id']);
+                }
             }
         }
     }
