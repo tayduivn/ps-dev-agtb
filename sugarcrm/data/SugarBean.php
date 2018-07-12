@@ -2024,14 +2024,14 @@ class SugarBean
     public function eraseAuditRecords(ErasureFieldList $fields, $event_id)
     {
         $tableName = $this->get_audit_table_name();
-        $sql = "UPDATE {$tableName} 
-                SET event_id = ?, 
-                before_value_string = ?, 
-                after_value_string = ?, 
-                before_value_text = ?, 
-                after_value_text = ?, 
-                date_updated = ? 
-                WHERE parent_id = ? 
+        $sql = "UPDATE {$tableName}
+                SET event_id = ?,
+                before_value_string = ?,
+                after_value_string = ?,
+                before_value_text = ?,
+                after_value_text = ?,
+                date_updated = ?
+                WHERE parent_id = ?
                 AND field_name IN (?)";
         return $this->db->getConnection()->executeUpdate(
             $sql,
@@ -6083,6 +6083,30 @@ class SugarBean
     }
 
     /**
+     * Gets the data needed for update query when marking a record deleted
+     * @param string $date The date string of this modification
+     * @param string $userId The ID of the user doing the modification
+     * @return array The array of data needed for an insert
+     */
+    protected function getDeleteUpdateParams(string $date = null, string $userId = null)
+    {
+        // Delete marker is always needed
+        $return['deleted'] = 1;
+
+        // If there was a modified date, use it
+        if ($date) {
+            $return['date_modified'] = $date;
+        }
+
+        // If there was a modify user id, use it
+        if ($userId) {
+            $return['modified_user_id'] = $userId;
+        }
+
+        return $return;
+    }
+
+    /**
      * This function may be overridden in each module.  It marks an item as deleted.
      *
      * If it is not overridden, then marking this type of item is not allowed
@@ -6131,9 +6155,7 @@ class SugarBean
                 $this->db->updateParams(
                     $this->table_name,
                     $this->field_defs,
-                    array('deleted' => 1,
-                          'date_modified' => $date_modified,
-                          'modified_user_id' => $this->modified_user_id),
+                    $this->getDeleteUpdateParams($date_modified, $this->modified_user_id),
                     array('id' => $id)
                 );
                 if ($this->isFavoritesEnabled()) {
@@ -6143,8 +6165,7 @@ class SugarBean
                 $this->db->updateParams(
                     $this->table_name,
                     $this->field_defs,
-                    array('deleted' => 1,
-                          'date_modified' => $date_modified),
+                    $this->getDeleteUpdateParams($date_modified),
                     array('id' => $id)
                 );
                 if ($this->isFavoritesEnabled()) {

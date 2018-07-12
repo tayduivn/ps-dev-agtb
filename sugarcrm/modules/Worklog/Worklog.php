@@ -22,6 +22,33 @@ class Worklog extends Basic
     public $importable = true;
 
     /**
+     * The join table used to get the parent record for an entry
+     * @var string
+     */
+    protected $joinTable = 'worklog_index';
+
+    /**
+     * The column in the join table to match the ID of this entry to in order to
+     * find the parent record of this entry
+     * @var string
+     */
+    protected $joinKey = 'worklog_id';
+
+    /**
+     * The list of fields to select when getting the parent record
+     * @var array
+     */
+    protected $parentFields = [
+        [
+            'field' => 'record_id',
+            'alias' => 'record',
+        ],
+        [
+            'field' => 'module',
+        ],
+    ];
+
+    /**
      * @inheritDoc
      */
     public function bean_implements($interface)
@@ -43,7 +70,7 @@ class Worklog extends Basic
      */
     public function setEntry(string $entry)
     {
-        $this->entry = $this->toDBFormat($entry);
+        $this->entry = $entry;
     }
 
     /**
@@ -66,19 +93,6 @@ class Worklog extends Basic
 
         return true;
     }
-
-    /**
-     * Turns $entry to DB storage format
-     * @param string $entry
-     * @return The formatted $entry
-     * NOTE: Serving as a space for further expansion for different display option,
-     *       returning same string entry now
-     */
-    private function toDBFormat(string $entry)
-    {
-        return $entry;
-    }
-
 
     /**
      * Gets all the worklog for every record id given
@@ -108,5 +122,73 @@ class Worklog extends Basic
         }
 
         return $returnArray;
+    }
+
+    /**
+     * Gets fields for selection from the join table to get a parent record
+     * @return array
+     */
+    private function getParentSelectFields()
+    {
+        // Build a select field list
+        $fields = [];
+        foreach ($this->parentFields as $field) {
+            $add = $field['field'];
+            if (isset($field['alias'])) {
+                $add .= ' ' . $field['alias'];
+            }
+
+            $fields[] = $add;
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Verifies that the necessary elements of the parent data array are found
+     * in an array
+     * @param array $row A row of data as an array, typically from a DB result
+     * @return boolean
+     */
+    private function verifyParentData(array $row)
+    {
+        // If the result to verify is not an array then return false immediately
+        if (!is_array($row)) {
+            return false;
+        }
+
+        // Now loop over the parent fields and if any of them are not in the result
+        // return false
+        foreach ($this->parentFields as $field) {
+            $verify = isset($field['alias']) ? $field['alias'] : $field['field'];
+            if (!isset($row[$verify])) {
+                return false;
+            }
+        }
+
+        // Return true as a default after passing through everything else
+        return true;
+    }
+
+    /**
+     * Retrieves the record id and module of the worklog
+     * @return array The id and module of the parent record if connecting parent
+     *               record exists, otherwise empty array
+     */
+    public function getParentRecord()
+    {
+        $qry = $this->db->getConnection()->createQueryBuilder();
+        $qry->select($this->getParentSelectFields())
+            ->from($this->joinTable)
+            ->where('deleted = 0')
+            ->andWhere(
+                $qry->expr()->eq(
+                    $this->joinKey,
+                    $qry->createPositionalParameter($this->id)
+                )
+            );
+
+        $row = $qry->execute()->fetch();
+        return $this->verifyParentData($row) ? $row : [];
     }
 }

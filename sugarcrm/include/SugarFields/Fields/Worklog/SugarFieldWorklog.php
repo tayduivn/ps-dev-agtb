@@ -30,7 +30,6 @@ class SugarFieldWorklog extends SugarFieldBase
      */
     public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties, array $fieldList = null, ServiceBase $service = null)
     {
-        $timeFormat = new TimeDate();
         $bean->load_relationship('worklog_link');
 
         if (!$bean->worklog_link) {
@@ -39,40 +38,23 @@ class SugarFieldWorklog extends SugarFieldBase
 
         // Although docs of getBeans said to use 'order_by', it is actually 'orderby'
         $msg_beans = $bean->worklog_link->getBeans(array('orderby' => 'date_entered'));
+        $helper = new SugarBeanApiHelper($service);
         foreach ($msg_beans as $msg_bean) {
-            $author_name = $this->getAuthorName($msg_bean->modified_user_id);
+            if (!$msg_bean->created_by_name) {
+                // when something is missing, force reload new bean
+                $msg_bean = BeanFactory::retrieveBean('Worklog', $msg_bean->id, array('use_cache' => false));
+            }
 
-            $data[$fieldName][] = array(
-                'author_name' => $author_name,
-                'author_link' => $author_name == '' ? '' :
-                    '#bwc/index.php?action=DetailView&module=Employees&record=' . $msg_bean->modified_user_id,
-                'date_entered' => $timeFormat->to_display_date_time($msg_bean->date_entered),
-                'entry'=> $this->toDisplayFormat($msg_bean->entry),
-            );
+            // newly created worklog tends to not like to have created_by_link,
+            // forcing everyone to load it
+            $msg_bean->load_relationship('created_by_link');
+
+            if (!$msg_bean->created_by_link) {
+                continue;
+            }
+
+            $data[$fieldName][] = $helper->formatForApi($msg_bean, ['entry', 'created_by', 'date_entered', 'created_by_link', 'created_by_name']);
         }
-    }
-
-    /**
-     * Turns $entry to user display format
-     * @param string $entry
-     * @return The formatted $entry
-     * NOTE: Serving as a space for further expansion for different display option,
-     *       returning same string entry now
-     */
-    private function toDisplayFormat(string $entry)
-    {
-        return $entry;
-    }
-
-    /**
-     * @param string $user_id The id of the user
-     * @return string The full name of the user, in the format what user has setup.
-     *                If the user has been deleted, returns empty string.
-     */
-    private function getAuthorName(string $user_id)
-    {
-        $userBean = BeanFactory::retrieveBean('Users', $user_id);
-        return $userBean && $userBean->id === $user_id ? $userBean->full_name : '';
     }
 
     /**

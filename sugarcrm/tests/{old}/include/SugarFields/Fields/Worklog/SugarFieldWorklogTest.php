@@ -25,6 +25,11 @@ class SugarFieldWorklogTest extends TestCase
      */
     private static $created_worklogs;
 
+    /**
+     * @var RestService
+     */
+    protected $service = null;
+
     public static function setUpBeforeClass()
     {
         self::$worklog_field = new SugarFieldWorklog('worklog');
@@ -34,6 +39,7 @@ class SugarFieldWorklogTest extends TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
+        $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
     public function tearDown()
@@ -73,15 +79,14 @@ class SugarFieldWorklogTest extends TestCase
         $this->recordSaved($parent);
 
         // get data out and check
-        self::$worklog_field->apiFormatField($data, $parent, array(), 'worklog', array());
+        self::$worklog_field->apiFormatField($data, $parent, array(), 'worklog', array(), array(), $this->service);
 
-        $this->assertSame($data['worklog'][0]['author_name'], $GLOBALS['current_user']->full_name);
-        $this->assertSame(
-            $data['worklog'][0]['author_link'],
-            '#bwc/index.php?action=DetailView&module=Employees&record=' . $GLOBALS['current_user']->id
-        );
+        $this->assertArrayHasKey('created_by_name', $data['worklog'][0]);
+        $this->assertSame($data['worklog'][0]['created_by_name'], $GLOBALS['current_user']->full_name);
+        $this->assertSame($data['worklog'][0]['created_by'], $GLOBALS['current_user']->id);
         $this->assertArrayHasKey('date_entered', $data['worklog'][0]);
         $this->assertSame($data['worklog'][0]['entry'], $params['worklog']);
+        $this->arrayHasKey('created_by_link', $data['worklog'][0]);
     }
 
     /**
@@ -118,10 +123,9 @@ class SugarFieldWorklogTest extends TestCase
         $this->recordSaved($parent);
 
         // get data out and check
-        self::$worklog_field->apiFormatField($data, $parent, array(), 'worklog', array());
+        self::$worklog_field->apiFormatField($data, $parent, array(), 'worklog', array(), array(), $this->service);
 
-        $this->assertSame($data['worklog'][0]['author_name'], '');
-        $this->assertSame($data['worklog'][0]['author_link'], '');
+        $this->assertSame($data['worklog'][0]['created_by_name'], '');
         $this->assertArrayHasKey('date_entered', $data['worklog'][0]);
         $this->assertSame($data['worklog'][0]['entry'], $params['worklog']);
     }

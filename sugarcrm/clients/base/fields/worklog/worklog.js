@@ -52,9 +52,7 @@
             return '';
         }
 
-        return _.map(value, function(entry) {
-            return entry;
-        });
+        return value;
     },
 
     /**
@@ -70,7 +68,19 @@
             this.msgs = [];
             // recursively get out all data
             _.each(value, function(msg) {
-                self.msgs.push(msg);
+                var copied = _.clone(msg);
+
+                // to date display format
+                var enteredDate = app.date(msg.date_entered);
+                if (enteredDate.isValid()) {
+                    copied.entered_date = enteredDate.formatUser();
+                }
+
+                if (app.acl.hasAccess('view', 'Users', {acls: copied.created_by_link._acl})) {
+                    copied.href = '#' + app.router.buildRoute('Users', copied.created_by, 'detail');
+                }
+
+                self.msgs.push(copied);
             });
         }
     },

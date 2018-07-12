@@ -22,6 +22,7 @@ class WorklogRelatedModulesUtilities
      */
     public static function getRelatedFields()
     {
+        global $dictionary;
         $fields = array();
         foreach ($GLOBALS['beanList'] as $module => $bean) {
             if ($module === "Worklog") {
@@ -29,10 +30,13 @@ class WorklogRelatedModulesUtilities
             }
 
             $object = BeanFactory::getObjectName($module);
-            $bean = BeanFactory::newBean($module);
+
+            if (empty($dictionary[$object])) {
+                VardefManager::loadVardef($module, $object, false, array('ignore_rel_calc_fields' => true));
+            }
 
             // only add when modules supports worklog
-            if (isset($bean->field_defs['worklog'])) {
+            if (isset($dictionary[$object]['fields']['worklog'])) {
                 $relName = strtolower($module) . "_worklog";
                 $linkField = VardefManager::getLinkFieldForRelationship($module, $object, $relName);
                 if ($linkField) {

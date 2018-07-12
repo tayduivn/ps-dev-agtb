@@ -48,9 +48,8 @@ describe('worklog field', function() {
                 {
                     'msgs': [
                         {
-                            'author_name': 'I\' the author, I authored',
-                            'author_link': 'pretent_Im_a_link',
-                            'date_entered': '2017-90-654 16:36:86',
+                            'created_by_name': 'I\' the author, I authored',
+                            'date_entered': '2018-08-29T22:51:17+00:00',
                             'entry': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' +
                             '\' Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when ' +
                             'an unknown printer took a galley of type and scrambled it to make a type specimen bo' +
@@ -64,9 +63,8 @@ describe('worklog field', function() {
                 {
                     'msgs': [
                         {
-                            'author_name': 'I\' the author, I authored',
-                            'author_link': 'pretent_Im_a_link',
-                            'date_entered': '2017-90-654 16:36:86',
+                            'created_by_name': 'I\' the author, I authored',
+                            'date_entered': '2018-08-29T22:51:17+00:00',
                             'entry': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' +
                             '\' Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when' +
                             '\' an unknown printer took a galley of type and scrambled it to make a type specimen ' +
@@ -76,9 +74,8 @@ describe('worklog field', function() {
                             'h desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
                         },
                         {
-                            'author_name': 'I am another author, and a wizard',
-                            'author_link': 'pretent_Im_a_link',
-                            'date_entered': '8102-70-31 556:445:568',
+                            'created_by_name': 'I am another author, and a wizard',
+                            'date_entered': '2018-08-29T22:51:17+00:00',
                             'entry': 'Ur a wizard Harry.'
                         }
                     ]
@@ -86,9 +83,8 @@ describe('worklog field', function() {
                 {
                     'msgs': [
                         {
-                            'author_name': 'I\' the author, I authored',
-                            'author_link': 'pretent_Im_a_link',
-                            'date_entered': '2017-90-654 16:36:86',
+                            'created_by_name': 'I\' the author, I authored',
+                            'date_entered': '2018-08-29T22:51:17+00:00',
                             'entry': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' +
                             '\' Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when' +
                             '\' an unknown printer took a galley of type and scrambled it to make a type specimen \'' +
@@ -98,15 +94,13 @@ describe('worklog field', function() {
                             'h desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
                         },
                         {
-                            'author_name': 'I am another author, and a wizard',
-                            'author_link': 'pretent_Im_a_link',
-                            'date_entered': '8102-70-31 556:445:568',
+                            'created_by_name': 'I am another author, and a wizard',
+                            'date_entered': '2018-08-29T22:51:17+00:00',
                             'entry': 'Ur a wizard Harry.'
                         },
                         {
-                            'author_name': 'U are a wizard, but I am a lizard',
-                            'author_link': 'pretent_Im_a_link',
-                            'date_entered': '5165-56-546 516:53585:513',
+                            'created_by_name': 'U are a wizard, but I am a lizard',
+                            'date_entered': '2018-08-29T22:51:17+00:00',
                             'entry': 'Lizards are better'
                         }
                     ]
@@ -122,8 +116,7 @@ describe('worklog field', function() {
                     for (var i = 0; i < value.msgs.length; i++) {
                         // the entry should be exactly the same, since worklog.js is not responsible
                         // for formatting
-                        expect(resultValue[i].author_name).toEqual(value.msgs[i].author_name);
-                        expect(resultValue[i].author_link).toEqual(value.msgs[i].author_link);
+                        expect(resultValue[i].created_by_name).toEqual(value.msgs[i].created_by_name);
                         expect(resultValue[i].date_entered).toEqual(value.msgs[i].date_entered);
                         expect(resultValue[i].entry).toEqual(value.msgs[i].entry);
                     }
@@ -140,8 +133,7 @@ describe('worklog field', function() {
                     for (var i = 0; i < value.msgs.length; i++) {
                         // the entry should be exactly the same, since worklog.js is not responsible
                         // for formatting
-                        expect(field.msgs[i].author_name).toEqual(value.msgs[i].author_name);
-                        expect(field.msgs[i].author_link).toEqual(value.msgs[i].author_link);
+                        expect(field.msgs[i].created_by_name).toEqual(value.msgs[i].created_by_name);
                         expect(field.msgs[i].date_entered).toEqual(value.msgs[i].date_entered);
                         expect(field.msgs[i].entry).toEqual(value.msgs[i].entry);
                     }
@@ -168,8 +160,21 @@ describe('worklog field', function() {
     });
 
     describe('Bugs from past', function() {
+        var userDateFormatStub;
+        var userTimeFormatStub;
+        var aclStub;
+
         beforeEach(function() {
             field.tplName = 'detail';
+            userDateFormatStub = sinon.stub(app.date, 'getUserDateFormat', function() { return 'YYMMDD'; });
+            userTimeFormatStub = sinon.stub(app.date, 'getUserTimeFormat', function() { return 'H:m'; });
+            aclStub = sinon.stub(app.acl, 'hasAccess', function() { return true; });
+        });
+
+        afterEach(function() {
+            userDateFormatStub.restore();
+            userTimeFormatStub.restore();
+            aclStub.restore();
         });
 
         using('Go into edit mode then go back to record view will not display all past messages',
@@ -177,28 +182,34 @@ describe('worklog field', function() {
                 {
                     'msgs': [
                         {
-                            'author_name': 'I\' the author, I authored',
-                            'author_link': 'pretent_Im_a_link',
-                            'date_entered': '2017-90-654 16:36:86',
+                            'created_by_name': 'I\' the author, I authored',
+                            'date_entered': '2018-08-29T22:50:17+00:00',
                             'entry': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' +
                             '\' Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when ' +
                             'an unknown printer took a galley of type and scrambled it to make a type specimen bo' +
                             'ok. It has survived not only five centuries, but also the leap into electronic types' +
                             'etting, remaining essentially unchanged. It was popularised in the 1960s with the re' +
                             'lease of Letraset sheets containing Lorem Ipsum passages, and more recently with des' +
-                            'ktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
+                            'ktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+                            'created_by_link': {
+                                '_acl': 'stub'
+                            }
                         },
                         {
-                            'author_name': 'I am another author, and a wizard',
-                            'author_link': 'pretent_Im_a_link',
-                            'date_entered': '8102-70-31 556:445:568',
-                            'entry': 'Ur a wizard Harry.'
+                            'created_by_name': 'I am another author, and a wizard',
+                            'date_entered': '2018-08-29T22:51:17+00:00',
+                            'entry': 'Ur a wizard Harry.',
+                            'created_by_link': {
+                                '_acl': 'stub'
+                            }
                         },
                         {
-                            'author_name': 'U are a wizard, but I am a lizard',
-                            'author_link': 'pretent_Im_a_link',
-                            'date_entered': '5165-56-546 516:53585:513',
-                            'entry': 'Lizards are better'
+                            'created_by_name': 'U are a wizard, but I am a lizard',
+                            'date_entered': '2018-08-29T22:52:17+00:00',
+                            'entry': 'Lizards are better',
+                            'created_by_link': {
+                                '_acl': 'stub'
+                            }
                         }
                     ],
                     'entered': 'Please don\'t kill me, I have a family\''

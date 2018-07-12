@@ -13,10 +13,15 @@
 
 <div class="worklog">
     {{#each msgs}}
-        <div class="msg-div toggle-text" data-name="{{name}}">
-        <span class="ellipsis_inline" title data-placement="bottom" data-fieldname="author_name">
-            <a href="{{author_link}}">{{author_name}}</a> on {{date_entered}}
-        </span>
+        <div class="msg-div toggle-text">
+            <span class="ellipsis_inline" title data-placement="bottom" data-fieldname="author_name">
+                {{#if href}}
+                    <a title="{{created_by_name}}" href="{{href}}">{{created_by_name}}</a>
+                {{else}}
+                    {{created_by_name}}
+                {{/if}}
+                {{entered_date}}
+            </span>
             <div class="msg-content">{{entry}}</div>
 
             <hr />

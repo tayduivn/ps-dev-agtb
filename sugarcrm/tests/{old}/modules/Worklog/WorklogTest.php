@@ -22,6 +22,11 @@ class WorklogTest extends TestCase
      */
     private $bean;
 
+    /**
+     * @var array Stores the id of the created worklog
+     */
+    private static $created_worklogs;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('current_user');
@@ -35,6 +40,25 @@ class WorklogTest extends TestCase
     public function setUp()
     {
         $this->bean = BeanFactory::newBean('Worklog');
+        self::$created_worklogs = array();
+    }
+
+    public function tearDown()
+    {
+        $this->removeWorklog();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+    }
+
+    /**
+     * Removes the worklog in $created_worklogs
+     */
+    public function removeWorklog()
+    {
+        $db = DBManagerFactory::getInstance();
+        $ids = "'" . implode("','", self::$created_worklogs) . "'";
+
+        $db->query("DELETE FROM worklog WHERE id IN ($ids)");
+        $db->query("DELETE FROM worklog_index WHERE worklog_id IN ($ids)");
     }
 
     /**
@@ -146,5 +170,25 @@ class WorklogTest extends TestCase
                 ),
             ),
         );
+    }
+
+    public function testgetParentRecord()
+    {
+        $record = SugarTestMeetingUtilities::createMeeting();
+        $worklog_field = new SugarFieldWorklog('worklog');
+
+        $worklog_field->apiSave($record, array('worklog' => 'watashigakita!!'), 'worklog', array());
+
+        $record->load_relationship('worklog_link');
+        $worklog_beans = $record->worklog_link->getBeans();
+
+        self::$created_worklogs[] = array_keys($worklog_beans)[0];
+
+        $bean = BeanFactory::retrieveBean('Worklog', array_keys($worklog_beans)[0]);
+
+        $actual = $bean->getParentRecord();
+
+        $this->assertEquals($record->id, $actual['record']);
+        $this->assertEquals($record->getModuleName(), $actual['module']);
     }
 }
