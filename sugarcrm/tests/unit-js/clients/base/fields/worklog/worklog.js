@@ -12,10 +12,12 @@
 /**
  * Tests the basic behavior for worklog field
  * */
-describe("worklog field", function() {
-    var app, field, template,
-        module = 'Bugs',
-        fieldName = 'worklog';
+describe('worklog field', function() {
+    var app;
+    var field;
+    var template;
+    var module = 'Bugs';
+    var fieldName = 'worklog';
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -44,50 +46,68 @@ describe("worklog field", function() {
                     'msgs': [] // when no message has been recorded in the past
                 },
                 {
-                    'msgs' : [
+                    'msgs': [
                         {
-                            'author_name' : 'I\' the author, I authored',
-                            'author_link' : 'pretent_Im_a_link',
-                            'date_entered' : '2017-90-654 16:36:86',
-                            'entry' : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+                            'author_name': 'I\' the author, I authored',
+                            'author_link': 'pretent_Im_a_link',
+                            'date_entered': '2017-90-654 16:36:86',
+                            'entry': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' +
+                            '\' Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when ' +
+                            'an unknown printer took a galley of type and scrambled it to make a type specimen bo' +
+                            'ok. It has survived not only five centuries, but also the leap into electronic types' +
+                            'etting, remaining essentially unchanged. It was popularised in the 1960s with the re' +
+                            'lease of Letraset sheets containing Lorem Ipsum passages, and more recently with des' +
+                            'ktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
                         }
                     ]
                 },
                 {
-                    'msgs' : [
+                    'msgs': [
                         {
-                            'author_name' : 'I\' the author, I authored',
-                            'author_link' : 'pretent_Im_a_link',
-                            'date_entered' : '2017-90-654 16:36:86',
-                            'entry' : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+                            'author_name': 'I\' the author, I authored',
+                            'author_link': 'pretent_Im_a_link',
+                            'date_entered': '2017-90-654 16:36:86',
+                            'entry': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' +
+                            '\' Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when' +
+                            '\' an unknown printer took a galley of type and scrambled it to make a type specimen ' +
+                            'book. It has survived not only five centuries, but also the leap into electronic ty' +
+                            'pesetting, remaining essentially unchanged. It was popularised in the 1960s with th' +
+                            'e release of Letraset sheets containing Lorem Ipsum passages, and more recently wit' +
+                            'h desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
                         },
                         {
-                            'author_name' : 'I am another author, and a wizard',
-                            'author_link' : 'pretent_Im_a_link',
-                            'date_entered' : '8102-70-31 556:445:568',
-                            'entry' : "Ur a wizard Harry."
+                            'author_name': 'I am another author, and a wizard',
+                            'author_link': 'pretent_Im_a_link',
+                            'date_entered': '8102-70-31 556:445:568',
+                            'entry': 'Ur a wizard Harry.'
                         }
                     ]
                 },
                 {
-                    'msgs' : [
+                    'msgs': [
                         {
-                            'author_name' : 'I\' the author, I authored',
-                            'author_link' : 'pretent_Im_a_link',
-                            'date_entered' : '2017-90-654 16:36:86',
-                            'entry' : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+                            'author_name': 'I\' the author, I authored',
+                            'author_link': 'pretent_Im_a_link',
+                            'date_entered': '2017-90-654 16:36:86',
+                            'entry': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' +
+                            '\' Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when' +
+                            '\' an unknown printer took a galley of type and scrambled it to make a type specimen \'' +
+                            'book. It has survived not only five centuries, but also the leap into electronic ty' +
+                            'pesetting, remaining essentially unchanged. It was popularised in the 1960s with th' +
+                            'e release of Letraset sheets containing Lorem Ipsum passages, and more recently wit' +
+                            'h desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
                         },
                         {
-                            'author_name' : 'I am another author, and a wizard',
-                            'author_link' : 'pretent_Im_a_link',
-                            'date_entered' : '8102-70-31 556:445:568',
-                            'entry' : "Ur a wizard Harry."
+                            'author_name': 'I am another author, and a wizard',
+                            'author_link': 'pretent_Im_a_link',
+                            'date_entered': '8102-70-31 556:445:568',
+                            'entry': 'Ur a wizard Harry.'
                         },
                         {
-                            'author_name' : 'U are a wizard, but I am a lizard',
-                            'author_link' : 'pretent_Im_a_link',
-                            'date_entered' : '5165-56-546 516:53585:513',
-                            'entry' : "Lizards are better"
+                            'author_name': 'U are a wizard, but I am a lizard',
+                            'author_link': 'pretent_Im_a_link',
+                            'date_entered': '5165-56-546 516:53585:513',
+                            'entry': 'Lizards are better'
                         }
                     ]
                 }
@@ -99,7 +119,7 @@ describe("worklog field", function() {
                     expect(resultValue.length).toEqual(value.msgs.length);
 
                     // the order of each message should remain the same
-                    for(var i = 0; i < value.msgs.length; i++) {
+                    for (var i = 0; i < value.msgs.length; i++) {
                         // the entry should be exactly the same, since worklog.js is not responsible
                         // for formatting
                         expect(resultValue[i].author_name).toEqual(value.msgs[i].author_name);
@@ -108,7 +128,7 @@ describe("worklog field", function() {
                         expect(resultValue[i].entry).toEqual(value.msgs[i].entry);
                     }
                 });
-            }, function (value) {
+            }, function(value) {
                 it('showWorklog() should handle data from showWorklog Correctly', function() {
                     field.model.set(fieldName, value.msgs);
                     field.showWorklog();
@@ -117,7 +137,7 @@ describe("worklog field", function() {
                     expect(field.msgs.length).toEqual(value.msgs.length);
 
                     // the order of each message should remain the same
-                    for(var i = 0; i < value.msgs.length; i++) {
+                    for (var i = 0; i < value.msgs.length; i++) {
                         // the entry should be exactly the same, since worklog.js is not responsible
                         // for formatting
                         expect(field.msgs[i].author_name).toEqual(value.msgs[i].author_name);
@@ -135,12 +155,13 @@ describe("worklog field", function() {
         });
 
         using('unformat()', [
-            "", // nothing
-            "     ", // nothing but spaces
-            "<p>I'm a paragraph, with terms of html</p>",
-            "<scr" + "ipt>console.log('Im vicious')</scr" + "ipt>",
+            '\'\'', // nothing
+            '\'     \'', // nothing but spaces
+            '<p>I\'m a paragraph, with terms of html</p>',
+            '<scr' + 'ipt>console.log(\'Im vicious\')</scr' + 'ipt>',
+            'I\'m a muggle, i don\'t magic',
         ], function(value) {
-            it('should return whatever was entered in the textarea', function () {
+            it('should return whatever was entered in the textarea', function() {
                 expect(field.unformat(value)).toEqual(value);
             });
         });
@@ -154,27 +175,33 @@ describe("worklog field", function() {
         using('Go into edit mode then go back to record view will not display all past messages',
             [
                 {
-                    'msgs' : [
+                    'msgs': [
                         {
-                            'author_name' : 'I\' the author, I authored',
-                            'author_link' : 'pretent_Im_a_link',
-                            'date_entered' : '2017-90-654 16:36:86',
-                            'entry' : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+                            'author_name': 'I\' the author, I authored',
+                            'author_link': 'pretent_Im_a_link',
+                            'date_entered': '2017-90-654 16:36:86',
+                            'entry': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' +
+                            '\' Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when ' +
+                            'an unknown printer took a galley of type and scrambled it to make a type specimen bo' +
+                            'ok. It has survived not only five centuries, but also the leap into electronic types' +
+                            'etting, remaining essentially unchanged. It was popularised in the 1960s with the re' +
+                            'lease of Letraset sheets containing Lorem Ipsum passages, and more recently with des' +
+                            'ktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
                         },
                         {
-                            'author_name' : 'I am another author, and a wizard',
-                            'author_link' : 'pretent_Im_a_link',
-                            'date_entered' : '8102-70-31 556:445:568',
-                            'entry' : "Ur a wizard Harry."
+                            'author_name': 'I am another author, and a wizard',
+                            'author_link': 'pretent_Im_a_link',
+                            'date_entered': '8102-70-31 556:445:568',
+                            'entry': 'Ur a wizard Harry.'
                         },
                         {
-                            'author_name' : 'U are a wizard, but I am a lizard',
-                            'author_link' : 'pretent_Im_a_link',
-                            'date_entered' : '5165-56-546 516:53585:513',
-                            'entry' : "Lizards are better"
+                            'author_name': 'U are a wizard, but I am a lizard',
+                            'author_link': 'pretent_Im_a_link',
+                            'date_entered': '5165-56-546 516:53585:513',
+                            'entry': 'Lizards are better'
                         }
                     ],
-                    'entered' : "Please don't kill me, I have a family"
+                    'entered': 'Please don\'t kill me, I have a family\''
                 }
             ],
             function(value) {
@@ -193,7 +220,7 @@ describe("worklog field", function() {
                     field.render();
 
                     // return to record view without saving
-                    field.tplName = "detail";
+                    field.tplName = 'detail';
                     field.render();
 
                     // the amount of the messages should remain the same
@@ -201,7 +228,8 @@ describe("worklog field", function() {
                 });
             },
             function(value) {
-                it('should still keep entered message after entering, focus on sth ourside of testarea, then come back',
+                it('should still keep entered message after entering, focus on something outside of testarea, then ' +
+                   'come back',
                     function() {
                         // first render the record mode
                         field.model.set(fieldName, value.msgs);
@@ -218,12 +246,12 @@ describe("worklog field", function() {
                         // should read in the value as entered
                         expect(field.value).toEqual(value.entered);
 
-                        // rerender edit mode
+                        // render edit mode
                         field.render();
 
                         // previously entered value should be still there even came back from somewhere else
                         expect(field.value).toEqual(value.entered);
-                });
+                    });
             });
     });
 });

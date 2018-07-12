@@ -12,7 +12,7 @@
 
 $dictionary['worklog_index'] = array(
     'table' => 'worklog_index',
-    'relationship' => array(),
+    'relationships' => array(),
     'fields' => array(
         'id' => array(
             'name' => 'id',
@@ -34,6 +34,12 @@ $dictionary['worklog_index'] = array(
             'type' => 'varchar',
             'len' => 100,
             'required' => false,
+            'readonly' => true,
+        ),
+        'deleted' => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'default' => '0',
         ),
     ),
     'indices' => array(

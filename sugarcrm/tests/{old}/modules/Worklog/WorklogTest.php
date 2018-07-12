@@ -13,11 +13,30 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- *  This test file checks whether Worklog module specified in RPT-784 is
- *  setup correctly
+ * @coversDefaultClass \Worklog
  */
 class WorklogTest extends TestCase
 {
+    /**
+     * @var SugarBean The Worklog SugarBean
+     */
+    private $bean;
+
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('current_user');
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
+
+    public function setUp()
+    {
+        $this->bean = BeanFactory::newBean('Worklog');
+    }
+
     /**
      * Checks whether the fields are there in the bean->field_defs
      * @dataProvider CheckWorklogBeanProvider
@@ -69,6 +88,63 @@ class WorklogTest extends TestCase
             array('id', $columns),
             array('date_entered', $columns),
             array('entry', $columns),
+        );
+    }
+
+    /**
+     * Tests whether setModule works correctly
+     * @param string $module The module to set in worklog
+     * @param bool $setted Whether $module should be set in the bean or not
+     * @dataProvider SetModuleProvider
+     */
+    public function testSetModule(string $module, bool $setted)
+    {
+        $result = $this->bean->setModule($module);
+
+        $this->assertEquals($result, $setted);
+
+        if ($setted) {
+            $this->assertEquals($this->bean->module, $module);
+        }
+    }
+
+    public function SetModuleProvider()
+    {
+        return array(
+            array("Accounts", true,),
+            array("Bugs", true,),
+            array("I would be suprised If I'm a module", false,),
+        );
+    }
+
+    /**
+     * Cases when only the bean has the information about parent module
+     */
+    public function BeanHasModuleProvider()
+    {
+        return array(
+            array(
+                "Meetings",
+                array(
+                    "worklog" => "The is a well grown bean",
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Cases when both bean and $params has info anout parent module
+     */
+    public function ParamsHasModuleProvider()
+    {
+        return array(
+            array(
+                "Bugs",
+                array(
+                    "module" => "Bugs",
+                    "worklog" => "This bean, has a weakness",
+                ),
+            ),
         );
     }
 }

@@ -14,7 +14,7 @@
  * @extends View.Fields.Base.BaseField
  */
 ({
-    fieldTag : 'textarea',
+    fieldTag: 'textarea',
     name: 'worklog',
 
     /**
@@ -36,8 +36,7 @@
     _render: function() {
         this.showWorklog();
 
-        this._super('_render'); // everything showing in the UI should be done before
-                                // this line.
+        this._super('_render'); // everything showing in the UI should be done before this line.
     },
 
     /**
@@ -45,15 +44,15 @@
      * @param value
      */
     format: function(value) {
-        if(_.isString(value)) {
+        if (_.isString(value)) {
             return value;
         }
 
-        if(this.tplName == "edit") {
+        if (this.tplName == 'edit') {
             return '';
         }
 
-        return _.map(value, function (entry) {
+        return _.map(value, function(entry) {
             return entry;
         });
     },
@@ -61,14 +60,14 @@
     /**
      * Builds model for handlebar to show pass worklog messages in record view.
      * */
-    showWorklog: function(){
+    showWorklog: function() {
         var self = this;
         var value = this.getFormattedValue();
 
         if (!_.isString(value)) {
             this.msgs = [];
             // recursively get out all data
-            _.each(value, function (msg) {
+            _.each(value, function(msg) {
                 self.msgs.push(msg);
             });
         }

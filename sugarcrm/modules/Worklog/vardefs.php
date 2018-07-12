@@ -31,6 +31,10 @@ $dictionary['Worklog'] = array(
     'uses' => array(
         'basic',
     ),
+    'load_fields' => array(
+        'class' =>'WorklogRelatedModulesUtilities',
+        'method' => 'getRelatedFields',
+    ),
 );
 
 VardefManager::createVardef("Worklog", "Worklog");
