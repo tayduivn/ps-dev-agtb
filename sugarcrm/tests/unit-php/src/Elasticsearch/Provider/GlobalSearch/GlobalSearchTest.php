@@ -36,7 +36,7 @@ class GlobalSearchTest extends TestCase
     {
         $sut = new GlobalSearch();
         $this->assertInstanceOf('Iterator', $sut->getHandlers());
-        $this->assertCount(8, $sut->getHandlers());
+        $this->assertCount(9, $sut->getHandlers());
     }
 
     /**
@@ -54,6 +54,7 @@ class GlobalSearchTest extends TestCase
             'longtext',
             'htmleditable_tinymce',
             'email',
+            'worklog',
         );
         $sut = new GlobalSearch();
         $this->assertEquals($supported, $sut->getStudioSupportedTypes());

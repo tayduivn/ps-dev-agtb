@@ -25,6 +25,10 @@ $vardefs = array(
                 'listview' => false,
                 'recordview' => true,
             ),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'worklog_link' => array(
             'name' => 'worklog_link',
