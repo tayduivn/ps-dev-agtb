@@ -11,9 +11,9 @@
  */
 --}}
 
-<div class="worklog" class="detail">
+<div class="worklog">
     {{#each msgs}}
-        <div class="msg-div toggle-text">
+        <div class="msg-div toggle-text" data-name="{{name}}">
         <span class="ellipsis_inline" title data-placement="bottom" data-fieldname="author_name">
             <a href="{{author_link}}">{{author_name}}</a> on {{date_entered}}
         </span>
@@ -24,7 +24,7 @@
             <hr />
         </div>
     {{/each}}
-    <div class="new-msg-div">
-        <textarea rows="5">{{value}}</textarea>
+    <div class="new-msg-div edit">
+        <textarea rows="5" name="{{name}}">{{value}}</textarea>
     </div>
 </div>

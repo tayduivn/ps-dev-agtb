@@ -59,6 +59,8 @@
 
     /**
      * Builds model for handlebar to show pass worklog messages in record view.
+     * This should only be called when there is need to render past messages, only
+     * when this.getFormattedValue() returns the data format for message
      * */
     showWorklog: function() {
         var self = this;

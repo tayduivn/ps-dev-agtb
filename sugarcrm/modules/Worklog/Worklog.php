@@ -110,3 +110,4 @@ class Worklog extends Basic
         return $returnArray;
     }
 }
+
