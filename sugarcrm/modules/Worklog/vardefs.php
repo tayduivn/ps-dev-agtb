@@ -26,7 +26,7 @@ $dictionary['Worklog'] = array(
         ),
     ),
     'ignore_templates' => array(
-        'worklog_fields',
+        'worklog',
     ),
     'uses' => array(
         'basic',

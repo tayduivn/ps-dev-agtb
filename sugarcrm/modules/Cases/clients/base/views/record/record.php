@@ -185,6 +185,10 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                     'name' => 'tag',
                     'span' => 12,
                 ),
+                array(
+                    'name' => 'worklog',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

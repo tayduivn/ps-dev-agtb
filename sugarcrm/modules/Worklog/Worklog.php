@@ -18,3 +18,4 @@ class Worklog extends Basic
     public $new_schema = true;
     public $importable = true;
 }
+
