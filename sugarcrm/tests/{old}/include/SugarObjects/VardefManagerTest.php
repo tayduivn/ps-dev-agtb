@@ -147,7 +147,11 @@ class VardefManagerTest extends TestCase
                     //BEGIN SUGARCRM flav=ent ONLY
                     'lockable_fields',
                     //END SUGARCRM flav=ent ONLY
+<<<<<<< HEAD
                     'worklog', // Added for worklog_field
+=======
+                    'worklog', // Added for worklog field
+>>>>>>> 805341abe6... RPT-788: Create Worklog field views
                 ),
             ),
         );
@@ -226,7 +230,11 @@ class VardefManagerTest extends TestCase
                     //BEGIN SUGARCRM flav=ent ONLY
                     'lockable_fields',
                     //END SUGARCRM flav=ent ONLY
+<<<<<<< HEAD
                     'worklog', // Added for worklog_field
+=======
+                    'worklog', // Added for worklog field
+>>>>>>> 805341abe6... RPT-788: Create Worklog field views
                     'assignable',
                     'team_security',
                     'email_address',

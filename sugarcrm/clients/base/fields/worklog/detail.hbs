@@ -1,0 +1,27 @@
+{{!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+--}}
+
+<div class="worklog" class="detail">
+    {{#each msgs}}
+    <div class="msg-div toggle-text">
+        <span class="ellipsis_inline" title data-placement="bottom" data-fieldname="author_name">
+            <a href="{{author_link}}">{{author_name}}</a> on {{date_entered}}
+        </span>
+        <div class="msg-content">
+            {{entry}}
+        </div>
+
+        <hr />
+    </div>
+    {{/each}}
+</div>
