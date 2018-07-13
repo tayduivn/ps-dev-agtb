@@ -202,6 +202,7 @@ $beanList['pmse_BpmProcessDefinition'] = 'pmse_BpmProcessDefinition';
 $beanList['pmse_BpmConfig'] = 'pmse_BpmConfig';
 $beanList['pmse_BpmGroup'] = 'pmse_BpmGroup';
 $beanList['pmse_BpmGroupUser'] = 'pmse_BpmGroupUser';
+$beanList['pmse_EmailMessage'] = 'pmse_EmailMessage';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
 //BEGIN SUGARCRM flav=int ONLY
@@ -369,6 +370,7 @@ $beanFiles['pmse_BpmProcessDefinition'] = 'modules/pmse_Project/pmse_BpmProcessD
 $beanFiles['pmse_BpmConfig'] = 'modules/pmse_Project/pmse_BpmConfig/pmse_BpmConfig.php';
 $beanFiles['pmse_BpmGroup'] = 'modules/pmse_Project/pmse_BpmGroup/pmse_BpmGroup.php';
 $beanFiles['pmse_BpmGroupUser'] = 'modules/pmse_Project/pmse_BpmGroupUser/pmse_BpmGroupUser.php';
+$beanFiles['pmse_EmailMessage'] = 'modules/pmse_Emails_Templates/pmse_EmailMessage/pmse_EmailMessage.php';
 //END SUGARCRM flav=ent ONLY
 
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
@@ -434,6 +436,7 @@ $modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'pmse_BpmConfig',
     'pmse_BpmGroup',
     'pmse_BpmGroupUser',
+    'pmse_EmailMessage',
     //END SUGARCRM flav=ent ONLY
     'ReportSchedules',
     );

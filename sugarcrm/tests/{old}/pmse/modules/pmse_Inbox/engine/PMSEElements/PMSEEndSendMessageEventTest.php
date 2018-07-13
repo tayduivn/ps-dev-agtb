@@ -26,7 +26,7 @@ class PMSEEndSendMessageEventTest extends TestCase
     public function testRun()
     {
         $this->endSendMessageEvent = $this->getMockBuilder('PMSEEndSendMessageEvent')
-            ->setMethods(array('prepareResponse', 'closeCase', 'retrieveDefinitionData', 'countNumberOpenThreads'))
+            ->setMethods(array('prepareResponse', 'closeCase', 'countNumberOpenThreads'))
             ->disableOriginalConstructor()
             ->getMock();
         
@@ -36,7 +36,7 @@ class PMSEEndSendMessageEventTest extends TestCase
 
         $emailHandler = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('processEmailsFromJson', 'sendTemplateEmail'))
+            ->setMethods(['queueEmail'])
             ->getMock();
         
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
@@ -44,10 +44,7 @@ class PMSEEndSendMessageEventTest extends TestCase
             ->getMock();
 
         $emailHandler->expects($this->once())
-            ->method('processEmailsFromJson');
-
-        $emailHandler->expects($this->once())
-            ->method('sendTemplateEmail');
+            ->method('queueEmail');
 
         $bean = new stdClass();
         $this->endSendMessageEvent->setCaseFlowHandler($caseFlowHandlerMock);

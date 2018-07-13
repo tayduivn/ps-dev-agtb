@@ -111,6 +111,7 @@ class PMSEEmailHandlerTest extends TestCase
             ->getMock();
 
         $beanMock = new stdClass();
+        $beanMock->id = 'beanId';
 
         $emailHandlerMock->expects($this->at(0))
             ->method('retrieveBean')
@@ -125,6 +126,7 @@ class PMSEEmailHandlerTest extends TestCase
             ->method('retrieveMailer')
             ->will($this->returnValue($sugarMailerMock));
 
+        $templateMock->id = 'templateId';
         $templateMock->from_name = 'administrator';
         $templateMock->from_address = 'admin@gmail.com';
         $templateMock->body = 'Hello Mr Goodman';
@@ -186,7 +188,8 @@ class PMSEEmailHandlerTest extends TestCase
             ->getMock();
 
         $beanMock = new stdClass();
-        
+        $beanMock->id = 'beanId';
+
         $emailHandlerMock->expects($this->at(0))
             ->method('retrieveBean')
             ->will($this->returnValue($beanMock));
@@ -199,7 +202,8 @@ class PMSEEmailHandlerTest extends TestCase
         $emailHandlerMock->expects($this->once())
             ->method('retrieveMailer')
             ->will($this->returnValue($sugarMailerMock));
-        
+
+        $templateObjectMock->id = 'templateId';
         $templateObjectMock->from_name = 'administrator';
         $templateObjectMock->from_address = 'admin@gmail.com';
         $templateObjectMock->body = '';

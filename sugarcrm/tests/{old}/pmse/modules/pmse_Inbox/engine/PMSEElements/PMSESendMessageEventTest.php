@@ -64,8 +64,18 @@ class PMSESendMessageEventTest extends TestCase
             ->setMethods(array('prepareResponse', 'sendEmail'))
             ->getMock();
 
+        $emailHandler = $this->getMockBuilder('PMSEEmailHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(['queueEmail'])
+            ->getMock();
+
+        $this->sendMessageEvent->setEmailHandler($emailHandler);
+
         $this->sendMessageEvent->expects($this->once())
             ->method('prepareResponse');
+
+        $this->sendMessageEvent->getEmailHandler()->expects($this->once())
+            ->method('queueEmail');
 
         $flowData = array();
         $bean = new stdClass();
@@ -77,7 +87,7 @@ class PMSESendMessageEventTest extends TestCase
     {
         $this->sendMessageEvent = $this->getMockBuilder('PMSESendMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(array('retrieveBean', 'getCachedEmail'))
             ->getMock();
 
         $eventDefinition = $this->getMockBuilder('PMSEEventDefinition')
