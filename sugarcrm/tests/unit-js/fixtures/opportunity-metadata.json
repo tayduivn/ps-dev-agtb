@@ -44,8 +44,26 @@
                     "name": "calls",
                     "type": "link",
                     "relationship": "opportunity_calls"
+                },
+                "best_case": {
+                    "name": "best_case",
+                    "vname": "LBL_BEST",
+                    "dbType": "currency",
+                    "type": "currency",
+                    "len": "26,6",
+                    "validation": {
+                        "type": "range",
+                        "min": 0
+                    },
+                    "audited": true,
+                    "related_fields": [
+                        "currency_id",
+                        "base_rate"
+                    ],
+                    "convertToBase": true,
+                    "showTrans actionalAmount": true,
+                    "precision" :
                 }
-
             },
             "relationships": {
                 "opportunities_contacts": {

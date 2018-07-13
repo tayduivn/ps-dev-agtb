@@ -34,7 +34,7 @@ describe('SumRelatedExpression Function', function () {
             var prods = bundle.getRelatedCollection('products');
             getSLContext(prods).initialize(meta.modules.Products.dependencies || []);
         });
-    }
+    };
 
     var seedServer = function(){
         SugarTest.seedFakeServer();
