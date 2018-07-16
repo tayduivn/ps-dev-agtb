@@ -132,7 +132,7 @@ class SugarThemeTest extends TestCase
         preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS(),$matches);
         $i = 0;
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/yui.css/',$matches[1][$i++]);
-        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery\.ui\.all\.css/',$matches[1][$i++]);
+        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/style.css/',$matches[1][$i++]);
 
@@ -146,7 +146,7 @@ class SugarThemeTest extends TestCase
         preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS('blue','small'),$matches);
         $i = 0;
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/yui.css/',$matches[1][$i++]);
-        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery\.ui\.all\.css/',$matches[1][$i++]);
+        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/style.css/',$matches[1][$i++]);
 
@@ -164,7 +164,7 @@ class SugarThemeTest extends TestCase
         $i = 0;
 
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/yui.css/',$matches[1][$i++]);
-        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery\.ui\.all\.css/',$matches[1][$i++]);
+        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/style.css/',$matches[1][$i++]);
 
@@ -179,7 +179,7 @@ class SugarThemeTest extends TestCase
         $i = 0;
 
         $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/css\/yui.css/',$matches[1][$i++]);
-        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery\.ui\.all\.css/',$matches[1][$i++]);
+        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/css\/style.css/',$matches[1][$i++]);
 
