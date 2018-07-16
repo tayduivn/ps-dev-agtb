@@ -376,6 +376,8 @@ class PMSEExecuter
                 $fd->save();
                 return true;
             }
+        } elseif (BeanFactory::getBean('pmse_BpmProcessDefinition', $flowData['pro_id'])->pro_status != 'ACTIVE') {
+            return true;
         }
 
         // Load the bean if the request comes from a RESUME_EXECUTION related origin
