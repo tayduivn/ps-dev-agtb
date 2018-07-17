@@ -9,5 +9,5 @@
 ## Components
 Downloaded from [https://github.com/jquery/jquery-ui/archive/1.12.1.tar.gz](https://github.com/jquery/jquery-ui/archive/1.12.1.tar.gz "https://github.com/jquery/jquery-ui/archive/1.12.1.tar.gz")
 
-## jquery-ui-all.css
+## jquery.ui.all.css
 This is legacy file, it is left here for backwards compatibility.
