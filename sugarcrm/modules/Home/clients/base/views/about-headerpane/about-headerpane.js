@@ -15,6 +15,7 @@
  */
 ({
     extendsFrom: 'HeaderpaneView',
+
     /**
      * @override
      *
@@ -22,7 +23,23 @@
      */
     _formatTitle: function(title) {
         var serverInfo = app.metadata.getServerInfo();
-        var marketingVersion = serverInfo.marketing_version;
-        return app.lang.get(title, this.module, serverInfo) + ' ' + marketingVersion;
+        return app.lang.get(title, this.module, serverInfo) + this._getMarketingVersion(serverInfo.marketing_version);
+    },
+
+    /**
+     * Gets the marketing version, formatted for presentation on the UI
+     * @param {string} ver The marketing version before formatting
+     * @return {string}
+     */
+    _getMarketingVersion: function(ver) {
+        // Clean it up for sanity
+        ver = ver.trim();
+
+        // If the version has content, wrap it in parens
+        if (ver !== '') {
+            ver = ' (' + ver + ')';
+        }
+
+        return ver;
     }
 })

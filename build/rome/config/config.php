@@ -40,11 +40,11 @@ $config['registry']['dep'] = array('os'=>1, 'od'=>1, 'een' => 1);
 $config['registry']['reg'] = array('zh_cn'=>1);
 $config['registry']['lic'] = array('sub'=>1, 'gpl'=>1);
 $config['sugarVariables'] = array(
-    '@_SUGAR_VERSION'=>'',
-    '@_SUGAR_MAR_VERSION'=>'',
-    '@_SUGAR_FLAV'=>'',
-    '@_SUGAR_BUILD_NUMBER'=>'999',
-    '@_SUGAR_BUILD_TIME'=>date('Y-m-d g:ia'),
+    '@_SUGAR_VERSION' => '',
+    '@_SUGAR_MAR_VERSION' => '',
+    '@_SUGAR_FLAV' => '',
+    '@_SUGAR_BUILD_NUMBER' => '999',
+    '@_SUGAR_BUILD_TIME' => date('Y-m-d g:ia'),
 );
 $config['mergeDirs'] = array('translations'=>'sugarcrm');
 

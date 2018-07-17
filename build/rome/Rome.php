@@ -5,8 +5,10 @@ define('sugarEntry', true);
 
 /**
  * Gets the new Marketing Version Handler object
+ *
+ * This assumes that the builder will always reside next to the sugarcrm codebase
  */
-require_once 'MarketingVersionHandler.php';
+require_once realpath(realpath(dirname(__FILE__)) . '/../../sugarcrm/include/MarketingVersionHandler.php');
 
 class Rome
 {
@@ -200,6 +202,7 @@ class Rome
         $this->setVersion($ver);
         $this->setMarketingVersion($ver);
     }
+
     /**
      *  dynamic generate sugarcrm version
      *

@@ -1,9 +1,20 @@
 <?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 /**
  * Class that handles calculation of, and formatting of, the Sugar Marketing
  * Version string based on the typical version string presented to the builder.
  */
-class MarketingVersionHandler
+final class MarketingVersionHandler
 {
     /**
      * When we cannot figure out the marketing version, just use an empty string
@@ -16,7 +27,7 @@ class MarketingVersionHandler
      * configurable.
      * @var string
      */
-    private $format = "(%s '%02d)";
+    private $format = "%s '%02d";
 
     /**
      * Patters to use for calculating the marketing version, going back to 7.10.x
@@ -77,9 +88,7 @@ class MarketingVersionHandler
     {
         foreach ($this->versionPatterns as $pattern => $actions) {
             if (preg_match("#$pattern#", $version)) {
-                if (method_exists($this, $actions['method'])) {
-                    return $this->{$actions['method']}($actions['args'] ?? $version);
-                }
+                return $this->{$actions['method']}($actions['args'] ?? $version);
             }
         }
 
@@ -93,8 +102,8 @@ class MarketingVersionHandler
      */
     private function getVersionMeta(string $version) : ?array
     {
-        $versions = $this->getVersionData($version);
-        return $versions[$version] ?? null;
+        $versionData = $this->getVersionData($version);
+        return $versionData ?? null;
     }
 
     /**
@@ -112,70 +121,44 @@ class MarketingVersionHandler
     }
 
     /**
-     * Retrieves the full list of versions for a major version value
+     * Retrieves the marketing version metadata for a given version, based on
+     * major/minor pairing
+     * @param string $version
      * @return array
      */
-    private function getVersionData($version) : array
+    private function getVersionData(string $version) : array
     {
-        // Prepare the return
-        $r = [];
+        // Grab the parts of the version, as ints
+        list($major, $minor) = explode('.', $version);
 
-        // Get the major version value from the version stirng
-        $major = (int) substr($version, 0, strpos($version, '.'));
+        // We need integers
+        $major = (int) $major;
+        $minor = (int) $minor;
 
         // Since this scema essentially started full swing with the 8.0 release
         // we should enforce that as a minimum version number for handling this
         if ($major < 8) {
-            return $r;
+            return [];
         }
 
         // Add 10 to it since our pattern is 8.x.x == Season '18 (until Winter)
         $year = $major + 10;
 
-        // Starting with the major octect version to start with, iterate to the
-        // the next major octet version, calculating variants of major.minor.sub
-        // that will correspond to the various seasons and years of the version.
-        for ($i = $major, $m = $i + 1; $i < $m; $i++) {
-            // This loop handles the minor version, which will be 0..3 inclusive
-            for ($j = 0; $j < 4; $j++) {
-                $ver = "$i.$j.0";
-
-                // We rev the year when the minor octet is 3
-                if ($j === 3) {
-                    $year++;
-                }
-
-                // Maintain weirdness of incrementing years wrong,
-                // like for Sugar version 91, which would be in the
-                // year 2101.
-                if ($year > 99) {
-                    $year -= 100;
-                }
-
-                // Save the major.minor value
-                $r[$ver] = [
-                    'season' => $this->seasons[$j],
-                    'year' => $year,
-                ];
-
-                // This handles the sub octet, and we will only need this when the
-                // minor octet is 0, so that our pattern becomes something like...
-                //  - 8.0.0
-                //  - 8.0.1
-                //  - 8.0.2
-                //  - 8.0.3
-                //  - 8.1.0
-                //  - 8.2.0
-                //  - 8.3.0
-                if ($j === 0) {
-                    // Sub octet will be 1..3 inclusive
-                    for ($k = 1; $k < 4; $k++) {
-                        $r["$i.$j.$k"] = $r[$ver];
-                    }
-                }
-            }
+        // We rev the year when the minor octet is 3
+        if ($minor === 3) {
+            $year++;
         }
 
-        return $r;
+        // Maintain weirdness of incrementing years wrong,
+        // like for Sugar version 91, which would be in the
+        // year 2101.
+        if ($year > 99) {
+            $year -= 100;
+        }
+
+        return [
+            'season' => $this->seasons[$minor],
+            'year' => $year,
+        ];
     }
 }
