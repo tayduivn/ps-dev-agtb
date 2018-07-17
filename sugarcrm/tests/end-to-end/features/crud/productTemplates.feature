@@ -14,11 +14,12 @@ Feature: ProductTemplates module verification
     Given I use default account
     Given I launch App
 
-  @list
+  @list @favorites
   Scenario: Products > List View > Preview
     Given ProductTemplates records exist:
       | *name  | discount_price | cost_price | list_price |
       | Prod#1 | 100            | 200        | 300        |
+      | Prod#2 | 150            | 250        | 350        |
     Given I open about view and login
     When I go to "ProductTemplates" url
     Then I should see *Prod#1 in #ProductTemplatesList.ListView
@@ -29,10 +30,21 @@ Feature: ProductTemplates module verification
     Then I should see #Prod#1Preview view
     Then I verify fields on #Prod#1Preview.PreviewView
       | fieldName      | value   |
-      | name           | Prod#1   |
+      | name           | Prod#1  |
       | discount_price | $100.00 |
       | list_price     | $300.00 |
       | cost_price     | $200.00 |
+    # Mark record as favorite based on the record ID in the list view
+    When I toggle favorite for *Prod#1 in #ProductTemplatesList.ListView
+    # Select "My Favorites" Filter
+    When I choose for favorites in #ProductTemplatesList.FilterView view
+    Then I verify number of records in #ProductTemplatesList.ListView is 1
+    # Remove record from favorites
+    When I toggle favorite for *Prod#1 in #ProductTemplatesList.ListView
+    Then I verify number of records in #ProductTemplatesList.ListView is 0
+    # Select "All Records" Filter
+    When I choose for all_records in #ProductTemplatesList.FilterView view
+    Then I verify number of records in #ProductTemplatesList.ListView is 2
 
   @list-search
   Scenario: Product Templates > List View > Filter > Search main input
@@ -187,8 +199,8 @@ Feature: ProductTemplates module verification
       | RecordID | Alex123 |
     When I click show more button on #ProductTemplatesDrawer view
     When I provide input for #ProductTemplatesDrawer.RecordView view
-      | *        |  cost_price | list_price | discount_price | status   | mft_part_num | description          | tax_class   | support_description |
-      | RecordID |  5          | 5          | 5              | In Stock | Part#123.b   | New Product Template | Non-Taxable | Full Support        |
+      | *        | cost_price | list_price | discount_price | status   | mft_part_num | description          | tax_class   | support_description |
+      | RecordID | 5          | 5          | 5              | In Stock | Part#123.b   | New Product Template | Non-Taxable | Full Support        |
     When I provide input for #ProductTemplatesDrawer.RecordView view
       | *        | qty_in_stock | date_available | date_cost_price | type_name | category_name     | support_name  | support_contact | support_term | website     | weight |
       | RecordID | 50           | 10/12/2020     | 11/12/2020      | T y p e 1 | C a t e g o r y 1 | Alex Nisevich | Ruslan Golovach | One year     | www.abc.com | 150    |
@@ -255,3 +267,28 @@ Feature: ProductTemplates module verification
       | Profit Margin :21     | $126.58    |
       | Discount from List:5  | $190.00    |
       | Markup over Cost :6.6 | $106.60    |
+
+  @favorite @SFA-5360
+  Scenario: ProductTemplates > Copy > Copy record from Record View
+    Given  ProductTemplates records exist:
+      | *name | discount_price | cost_price | list_price |
+      | Alex1 | 100            | 100        | 100        |
+      | Alex2 | 100            | 100        | 100        |
+    Given I open about view and login
+    When I go to "ProductTemplates" url
+    When I select *Alex1 in #ProductTemplatesList.ListView
+    When I provide input for #Alex1Record.HeaderView view
+      | my_favorite |
+      | True        |
+    When I go to "ProductTemplates" url
+    When I choose for favorites in #ProductTemplatesList.FilterView view
+    Then I verify number of records in #ProductTemplatesList.ListView is 1
+    # Remove record from favorites
+    When I select *Alex1 in #ProductTemplatesList.ListView
+    When I provide input for #Alex1Record.HeaderView view
+      | my_favorite |
+      | False        |
+    When I go to "ProductTemplates" url
+    Then I verify number of records in #ProductTemplatesList.ListView is 0
+    When I choose for all_records in #ProductTemplatesList.FilterView view
+    Then I verify number of records in #ProductTemplatesList.ListView is 2

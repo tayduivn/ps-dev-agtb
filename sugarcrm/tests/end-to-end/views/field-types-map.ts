@@ -35,6 +35,7 @@ import * as EmailRecipientsField from '../fields/email-recipients';
 import * as BadgeSelectField from '../fields/badge-select-field';
 import * as ParticipantsField from '../fields/participants-field';
 import * as DashboardtitleField from '../fields/dashboardtitle-field';
+import * as FavoriteField from '../fields/favorite-field';
 import * as EmailAttachmentsField from '../fields/email-attachments-field';
 import * as FromField from '../fields/from-field';
 
@@ -73,6 +74,7 @@ export const FIELD_TYPES__MAP = {
     'email-recipients': EmailRecipientsField,
     'participants': ParticipantsField,
     'dashboardtitle': DashboardtitleField,
+    'favorite': FavoriteField,
     'email-attachments': EmailAttachmentsField,
     'from': FromField,
 };

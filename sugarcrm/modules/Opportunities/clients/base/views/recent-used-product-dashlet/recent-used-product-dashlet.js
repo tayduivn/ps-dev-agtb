@@ -8,48 +8,39 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 /**
- * @class View.Views.Base.Quotes.ProductCatalogDashletView
- * @alias SUGAR.App.view.views.QuotesProductCatalogDashletView
- * @extends View.View
+ * @class View.Views.Base.Opportunities.RecentUsedProductDashletView
+ * @alias SUGAR.App.view.views.BaseOpportunitiesRecentUsedProductDashletView
+ * @extends View.Views.Base.Opportunities.RecentUsedProductView
  */
 ({
-
-    extendsFrom: 'QuotesProductCatalogView',
-
-    plugins: [
-        'CanvasDataRenderer',
-        'Dashlet'
-    ],
-
-    /**
-     * Boolean if this is the dashlet config view or not
-     */
-    isConfig: undefined,
+    extendsFrom: 'OpportunitiesRecentUsedProductView',
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
+        this.plugins = _.union(this.plugins || [], ['Tooltip']);
         this._super('initialize', [options]);
-
-        this.isConfig = !!this.meta.config;
     },
 
     /**
+     * Calls the render method in parent class
+     * assign class name to the dashlet component
      * @inheritdoc
      */
-    loadData: function(options) {
-        if (this.isConfig) {
-            return;
+    render: function() {
+        if (!this.meta.config) {
+            this._super('render');
+            this.closestComponent('dashlet-cell').$el.parents().eq(1).addClass('product-catalog-quick-picks');
         }
-        this._super('loadData', [options]);
     },
 
     /**
      * @inheritdoc
      */
-    toggleLoading: function(startLoading, showPhaserLoading) {
+    toggleLoading: function(startLoading) {
         var $el = this.layout.$('i[data-action=loading]');
         if (startLoading) {
             $el.removeClass('fa-cog');

@@ -308,6 +308,14 @@ Feature: Quotes module verification
       | tax       | $0.00        |
       | shipping  | $0.00        |
       | total     | $980.00      |
+    # Verify that created QLI is created assigned (SFA-4763)
+    When I click product_template_name field on #RecordIDQLIRecord view
+    Then I should see #ProductsRecord view
+    When I click show more button on #ProductsRecord view
+    Then I verify fields on #ProductsRecord.RecordView
+      | fieldName          | value         |
+      | assigned_user_name | Administrator |
+
 
 
   @quote @add_new_comment

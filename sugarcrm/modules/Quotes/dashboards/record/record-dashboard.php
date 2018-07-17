@@ -26,6 +26,18 @@ return array(
                     array(
                         array(
                             'view' => array(
+                                'type' => 'recent-used-product-dashlet',
+                                'label' => 'LBL_RECENT_USED_PRODUCT_DASHLET_NAME',
+                            ),
+                            'context' => array(
+                                'module' => 'Opportunities',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' => array(
                                 'type' => 'planned-activities',
                                 'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
                             ),

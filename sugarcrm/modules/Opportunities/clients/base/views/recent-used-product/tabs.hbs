@@ -1,4 +1,4 @@
-<?php
+{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,16 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Quotes']['base']['layout']['create-preview'] = array(
-    'components' => array(
-        array(
-            'view' => 'product-catalog',
-        ),
-        array(
-            'view' => 'recent-used-product',
-            'context' => array(
-                'module' => 'Opportunities',
-            ),
-        ),
-    ),
-);
+--}}
+<div class="dashlet-tabs-row">
+    {{#each this.tabs}}
+        <div class="dashlet-tab{{#eq ../settings.attributes.activeTab @index}} active{{/eq}}">
+            <a data-toggle="tab" data-action="tab-switcher" data-index="{{@index}}">
+                {{str label module}}
+            </a>
+        </div>
+    {{/each}}
+</div>

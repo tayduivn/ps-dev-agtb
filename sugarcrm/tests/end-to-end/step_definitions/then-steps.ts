@@ -46,7 +46,7 @@ Then(/^I verify number of records in (#\S+) is (\d+)$/,
 
         let actualCount = await view.getNumberOfRecords();
         if (actualCount != count) {
-            throw new Error(`Expected rows ` + count + ` Actual rows: ` + actualCount);
+            throw new Error(`Expected rows: ${count}.  Actual rows: ${actualCount}`);
         }
     });
 

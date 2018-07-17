@@ -308,6 +308,10 @@ class Product extends SugarBean
             $this->deal_calc = 0;
         }
 
+        if (!isset($this->assigned_user_id) || empty($this->assigned_user_id)) {
+            $this->assigned_user_id = $GLOBALS['current_user']->id;
+        }
+
         $this->checkQuantity();
 
         $this->calculateDiscountPrice();

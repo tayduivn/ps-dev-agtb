@@ -153,6 +153,7 @@
         delete data.id;
         delete data.date_entered;
         delete data.date_modified;
+        delete data.my_favorite;
 
         // close this drawer first, then trigger event
         app.drawer.close();
