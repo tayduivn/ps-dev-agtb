@@ -54,6 +54,7 @@
     "portal2/proxy.php",
     "service/core/WSDL.tpl",
     "sidecar/docs/",
+    "sidecar/docs-template/layout.tmpl",
     "sidecar/lib/zepto/",
     "sidecar/minified/",
     "sidecar/Makefile",
