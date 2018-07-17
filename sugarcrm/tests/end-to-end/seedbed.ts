@@ -29,7 +29,7 @@ import LeadConversionLayout from "./layouts/lead-conversion-layout";
 
 export default (seedbed: Seedbed) => {
 
-    seedbed.cucumber.addAsyncHandler('Before', async ({ scenario }) => {
+    seedbed.cucumber.addAsyncHandler('Before', async ({scenario}) => {
         seedbed.cachedRecords.clear();
     });
 
@@ -201,6 +201,43 @@ export default (seedbed: Seedbed) => {
 
     });
 
+    seedbed.addAsyncHandler(seedbed.events.REQUEST, (req, res) => {
+
+        // Create seedbed records and views for RLI(s) while creating new Opportunity record through UI
+        if (req.method === 'POST' &&
+            /(\/Opportunities)/.test(req.url) &&
+            req.url.indexOf('duplicateCheck') === -1 &&
+            req.body.revenuelineitems
+        ) {
+            let module = 'RevenueLineItems';
+
+            _.each(req.body.revenuelineitems.create, record => {
+                let ri = _.find(seedbed.cucumber.scenario.recordsInfo, recordInfo => record.name === recordInfo.uid);
+                if (ri) {
+
+                    let recordId = record.id;
+                    ri.recordId = recordId;
+
+                    seedbed.cachedRecords.push(ri.uid, {
+                        input: ri.input,
+                        id: recordId,
+                        module,
+                    });
+
+                    seedbed.defineComponent(`${ri.uid}Preview`, PreviewLayout, {
+                        module,
+                        id: recordId
+                    });
+
+                    seedbed.defineComponent(`${ri.uid}Record`, RecordLayout, {
+                        module,
+                        id: recordId
+                    });
+                }
+            });
+        }
+    });
+
     seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
 
         if (req.method === 'POST' && /(\/opportunity)/.test(req.url)) {
@@ -218,9 +255,7 @@ export default (seedbed: Seedbed) => {
             if (!recordInfo) {
                 seedbed.api.created.push(responseRecord);
             }
-
         }
-
     });
 
     seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {

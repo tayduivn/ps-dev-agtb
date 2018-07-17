@@ -272,42 +272,42 @@ Feature: Opportunities
   @create_opportunity @pr
   Scenario: Opportunities >  Create opportunity with RLIs
     Given Accounts records exist:
-      | name  |
+      | *name |
       | Acc_1 |
     Given I open about view and login
     When I choose Opportunities in modules menu
     When I click Create button on #OpportunitiesList header
     When I provide input for #OpportunitiesDrawer.HeaderView view
-      | *        | name                  |
-      | RecordID | CreateOpportunityTest |
+      | *     | name                  |
+      | Opp_1 | CreateOpportunityTest |
     When I provide input for #OpportunitiesDrawer.RecordView view
-      | *        | account_name |
-      | RecordID | Acc_1        |
+      | *     | account_name |
+      | Opp_1 | Acc_1        |
     # Provide input for the first (default) RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
-      | name | date_closed | best_case | sales_stage   | quantity | likely_case |
-      | RLI1 | 12/12/2020  | 300       | Qualification | 5        | 200         |
+      | *name | date_closed | best_case | sales_stage   | quantity | likely_case |
+      | RLI1  | 12/12/2020  | 300       | Qualification | 5        | 200         |
     # Add second RLI by clicking '+' button on the first row
     When I choose addRLI on #OpportunityDrawer.RLITable view for 1 row
     # Provide input for the second RLI
     When I provide input for #OpportunityDrawer.RLITable view for 2 row
-      | name | date_closed | best_case | sales_stage   | quantity | likely_case |
-      | RLI2 | 12/12/2021  | 500       | Qualification | 10       | 400         |
+      | *name | date_closed | best_case | sales_stage    | quantity | likely_case |
+      | RLI2  | 12/12/2021  | 500       | Needs Analysis | 10       | 400         |
     # Add third RLI by clicking '+' button on the second row
     When I choose addRLI on #OpportunityDrawer.RLITable view for 2 row
     # Provide input for the third RLI
     When I provide input for #OpportunityDrawer.RLITable view for 3 row
-      | name | date_closed | best_case | sales_stage   | quantity | likely_case |
-      | RLI3 | 12/12/2022  | 50        | Qualification | 10       | 40          |
+      | *name | date_closed | best_case | sales_stage       | quantity | likely_case |
+      | RLI3  | 12/12/2022  | 50        | Value Proposition | 10       | 40          |
     # Remove first RLI
     When I choose removeRLI on #OpportunityDrawer.RLITable view for 1 row
     # Save new opportunity
     When I click Save button on #OpportunitiesDrawer header
     When I close alert
     # Verify data
-    When I click on preview button on *RecordID in #OpportunitiesList.ListView
-    Then I should see #RecordIDPreview view
-    Then I verify fields on #RecordIDPreview.PreviewView
+    When I click on preview button on *Opp_1 in #OpportunitiesList.ListView
+    Then I should see #Opp_1Preview view
+    Then I verify fields on #Opp_1Preview.PreviewView
       | fieldName    | value                 |
       | name         | CreateOpportunityTest |
       | best_case    | $550.00               |
@@ -315,3 +315,6 @@ Feature: Opportunities
       | worst_case   | $440.00               |
       | date_closed  | 12/12/2022            |
       | sales_status | In Progress           |
+    When I choose RevenueLineItems in modules menu
+    Then I should see *RLI2 in #RevenueLineItemsList.ListView
+    Then I should see *RLI3 in #RevenueLineItemsList.ListView
