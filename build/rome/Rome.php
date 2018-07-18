@@ -3,12 +3,8 @@ ini_set("max_execution_time", "0");
 ini_set("memory_limit", "600M");
 define('sugarEntry', true);
 
-/**
- * Gets the new Marketing Version Handler object
- *
- * This assumes that the builder will always reside next to the sugarcrm codebase
- */
-require_once realpath(realpath(dirname(__FILE__)) . '/../../sugarcrm/include/MarketingVersionHandler.php');
+// Gets the new Marketing Version Handler object
+require_once 'MarketingVersionHandler.php';
 
 class Rome
 {

@@ -33,7 +33,6 @@ describe('View.Views.Base.Home.AboutHeaderpaneView', function() {
     });
 
     afterEach(function() {
-        sinon.collection.restore();
         view.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -52,9 +51,12 @@ describe('View.Views.Base.Home.AboutHeaderpaneView', function() {
         expect: ' (FooBar)'
     },{
         version: '   ',
-        expect: '',
+        expect: ''
+    },{
+        version: null,
+        expect: ''
     }], function(meta) {
-        iit('should return the expected value', function() {
+        it('should return the expected value', function() {
             var result = view._getMarketingVersion(meta.version);
             expect(result).toBe(meta.expect);
         });

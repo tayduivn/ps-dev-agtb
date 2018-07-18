@@ -2041,6 +2041,25 @@ class MetaDataManager implements LoggerAwareInterface
     }
 
     /**
+     * Gets a value for an instance version variable
+     * @param string $var The string name of the variable to get a value for
+     * @return mixed
+     */
+    protected function getInstanceVersionValue($var)
+    {
+        if (isset($GLOBALS[$var])) {
+            return $GLOBALS[$var];
+        }
+
+        include 'sugar_version.php';
+        if (isset($$var)) {
+            return $$var;
+        }
+
+        return null;
+    }
+
+    /**
      * Gets server information
      *
      * @return array of ServerInfo
@@ -2048,10 +2067,16 @@ class MetaDataManager implements LoggerAwareInterface
     public function getServerInfo()
     {
         $system_config = Administration::getSettings(false, true);
+        $data['flavor'] = $this->getInstanceVersionValue('sugar_flavor');
+        $data['version'] = $this->getInstanceVersionValue('sugar_version');
+        $data['build'] = $this->getInstanceVersionValue('sugar_build');
+        $data['marketing_version'] = $this->getInstanceVersionValue('sugar_mar_version');
+        /*
         $data['flavor'] = $GLOBALS['sugar_flavor'];
         $data['version'] = $GLOBALS['sugar_version'];
         $data['build'] = $GLOBALS['sugar_build'];
         $data['marketing_version'] = $GLOBALS['sugar_mar_version'];
+        */
         // Product Name for Professional edition.
         $data['product_name'] = "SugarCRM Professional";
         //BEGIN SUGARCRM flav=ent ONLY

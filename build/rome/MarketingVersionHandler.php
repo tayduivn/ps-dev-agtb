@@ -17,7 +17,7 @@
 final class MarketingVersionHandler
 {
     /**
-     * When we cannot figure out the marketing version, just use an empty string
+     * When we cannot figure out the marketing version, just use an empty string.
      * @var string
      */
     private $default = '';
@@ -30,19 +30,19 @@ final class MarketingVersionHandler
     private $format = "%s '%02d";
 
     /**
-     * Patters to use for calculating the marketing version, going back to 7.10.x
+     * Patterns to use for calculating the marketing version, going back to 7.10.x.
      * @var array
      */
     private $versionPatterns = [
-        '^7.10.[\d]+.[\d]+$' => [
+        '^7\.10\.[\d]+\.[\d]+$' => [
             'method' => 'getFormattedVersion',
             'args' => ['season' => 'Fall', 'year' => 17],
         ],
-        '^7.11.[\d]+.[\d]+$' => [
+        '^7\.11\.[\d]+\.[\d]+$' => [
             'method' => 'getFormattedVersion',
             'args' => ['season' => 'Winter', 'year' => 18],
         ],
-        '^[\d]{1,2}.[\d]+.[\d]+' => [
+        '^[\d]{1,2}\.[\d]+\.[\d]+' => [
             'method' => 'getCalculatedVersion',
         ],
     ];
@@ -59,8 +59,8 @@ final class MarketingVersionHandler
     ];
 
     /**
-     * Gets the formatted marketing version. Takes in an array of season and year
-     * @param array $args
+     * Gets the formatted marketing version.
+     * @param array $args Takes in an array of season and year
      * @return string
      */
     private function getFormattedVersion(array $args) : string
@@ -96,7 +96,7 @@ final class MarketingVersionHandler
     }
 
     /**
-     * Gets the metadata for a version for use in forming the marketing version
+     * Gets the metadata for a version for use in forming the marketing version.
      * @param string $version
      * @return array|null
      */
@@ -128,14 +128,14 @@ final class MarketingVersionHandler
      */
     private function getVersionData(string $version) : array
     {
-        // Grab the parts of the version, as ints
+        // Grab the parts of the version
         list($major, $minor) = explode('.', $version);
 
         // We need integers
         $major = (int) $major;
         $minor = (int) $minor;
 
-        // Since this scema essentially started full swing with the 8.0 release
+        // Since this scheme essentially started full swing with the 8.0 release
         // we should enforce that as a minimum version number for handling this
         if ($major < 8) {
             return [];
