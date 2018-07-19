@@ -45,6 +45,11 @@ class PMSERelatedModule
     private $logger;
 
     /**
+     * @var PMSEEvaluator
+     */
+    private $evaluator;
+
+    /**
      * Constructor. Deprecated, will be removed in a future release.
      */
     public function __construct()
@@ -118,8 +123,81 @@ class PMSERelatedModule
     }
 
     /**
-     * Gets all related records from the list of related beans.
-     *
+     * Gets the PMSEEvaluator object
+     * @return PMSEEvaluator
+     */
+    private function getEvaluator()
+    {
+        if (empty($this->evaluator)) {
+            $this->evaluator = ProcessManager\Factory::getPMSEObject('PMSEEvaluator');
+        }
+        return $this->evaluator;
+    }
+
+    /**
+     * Gets the related and related related beans for the provided target bean
+     * @param array $beans
+     * @param array $def
+     * @return array
+     */
+    public function getChainedRelationshipBeans(array $beans, $def)
+    {
+        // we don't wanna process if there are no beans
+        // also, no def means no related beans
+        if (empty($beans) || empty($def)) {
+            return $beans;
+        }
+
+        $beansForFilter = [];
+        foreach ($beans as $bean) {
+            $targetBeans = [];
+            $allRelatedBeans = [];
+            if ($bean->getModuleName() === $def->module) {
+                $targetBeans[] = $bean;
+            } else {
+                $allRelatedBeans = array_values($this->getRelatedModuleBeans($bean, $def->module));
+            }
+            $beansForFilter = array_merge($beansForFilter, $targetBeans, $allRelatedBeans);
+        }
+
+        if (!empty($def->filter)) {
+            $beans = $this->filterBeans($beansForFilter, array($def->filter));
+        }
+
+        $def = isset($def->chainedRelationship) ? $def->chainedRelationship : null;
+        return $this->getChainedRelationshipBeans($beans, $def);
+    }
+
+    /**
+     * Filters beans on the given filter
+     * @param SugarBean $beans
+     * @param array $filter definition
+     * @return array of SugarBean
+     */
+    public function filterBeans($beans, $filter)
+    {
+        if (empty($beans) || empty($filter)) {
+            return $beans;
+        }
+
+        $resultBeans = [];
+
+        // gotta convert it into json cz this is what expression evaluator expects
+        $expression = json_encode($filter);
+
+        foreach ($beans as $bean) {
+            // check if the filter meets the criteria
+            if ($this->getEvaluator()->evaluateExpression($expression, $bean, ['useEvaluatedBean' => true])) {
+                // it did, so add it to result array
+                $resultBeans[] = $bean;
+            }
+        }
+
+        return $resultBeans;
+    }
+
+    /**
+     * * Gets all related records from the list of related beans.
      * @param SugarBean $moduleBean The left hand side bean
      * @param string $linkField The link name to get related records from
      * @return array SugarBeans
@@ -137,6 +215,7 @@ class PMSERelatedModule
         }
 
         return $moduleBean->$linkField->getBeans(array('orderby' => 'date_entered DESC'));
+
     }
 
     public function getRelatedModuleName($moduleBeanName, $linkField)

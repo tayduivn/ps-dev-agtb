@@ -169,7 +169,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
     public function parseCriteria($criteriaToken, $params = array())
     {
         $tokenArray = array($criteriaToken->expModule, $criteriaToken->expField, $criteriaToken->expOperator);
-        $criteriaToken->currentValue = $this->parseTokenValue($tokenArray);
+        $criteriaToken->currentValue = $this->parseTokenValue($tokenArray, $params);
         /*
         if (isset($criteriaToken->valType) && $criteriaToken->valType == 'MODULE') {
             $tokenArray = array($criteriaToken->valModule, $criteriaToken->valField, $criteriaToken->expOperator);
@@ -305,7 +305,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
      * @return array of field values, in the case of a currency type it returns a serialized array with the amount and
      * the currency id.
      */
-    public function parseTokenValue($token)
+    public function parseTokenValue($token, $params = [])
     {
         $values = array();
 
@@ -313,7 +313,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
             // This logic is a fairly bad assumption, but works in most cases. The
             // assumption is that a link name won't be in the bean list so try to load
             // a related bean instead.
-            if (!isset($this->beanList[$token[0]])) {
+            if (!isset($this->beanList[$token[0]]) && empty($params['useEvaluatedBean'])) {
                 // Get the related bean instead
                 $beans = $this->getRelatedBean($token[0]);
             } else {

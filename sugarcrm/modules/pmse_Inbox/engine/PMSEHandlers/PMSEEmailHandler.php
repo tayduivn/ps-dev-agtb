@@ -75,17 +75,16 @@ class PMSEEmailHandler
      * @param SugarBean $bean The target bean
      * @param string $module The related module name
      * @return SugarBean
+     * @deprecated Will be removed in a future release
      */
     protected function getProperBean(SugarBean $bean, $module)
     {
         global $beanList;
-
         // Module in this case could be a relationship name, link name or
         // some other value
         if (!isset($beanList[$module])) {
             return $this->getRelatedModuleObject()->getRelatedModule($bean, $module);
         }
-
         // If the module is an actual module, send the original bean back
         return $bean;
     }
@@ -276,18 +275,21 @@ class PMSEEmailHandler
     {
         $res = $users = array();
 
-        // Get the correct bean for this request
-        $bean = $this->getProperBean($bean, $entry->module);
-        switch ($entry->value) {
-            case 'last_modifier':
-                $users[] = $this->getLastModifier($bean);
-                break;
-            case 'record_creator':
-                $users[] = $this->getRecordCreator($bean);
-                break;
-            case 'is_assignee':
-                $users[] = $this->getCurrentAssignee($bean);
-                break;
+        // Get all the related beans
+        $beans = $this->getRelatedModuleObject()->getChainedRelationshipBeans([$bean], $entry);
+
+        foreach ($beans as $b) {
+            switch ($entry->value) {
+                case 'last_modifier':
+                    $users[] = $this->getLastModifier($b);
+                    break;
+                case 'record_creator':
+                    $users[] = $this->getRecordCreator($b);
+                    break;
+                case 'is_assignee':
+                    $users[] = $this->getCurrentAssignee($b);
+                    break;
+            }
         }
         foreach ($users as $user) {
             $res = array_merge($res, $this->getUserEmails($user, $entry));
@@ -397,18 +399,14 @@ class PMSEEmailHandler
         $res = array();
         $field = $entry->value;
 
-        // Get the correct bean for this request
-        $bean = $this->getProperBean($bean, $entry->module);
-        if (!empty($bean) && is_object($bean)) {
-            $value = $bean->$field;
-        } else {
-            $value = '';
-        }
+        $beans = $this->getRelatedModuleObject()->getChainedRelationshipBeans([$bean], $entry);
 
-        $item = new stdClass();
-        $item->name = $value;
-        $item->address = $value;
-        $res[] = $item;
+        foreach ($beans as $b) {
+            $item = new stdClass();
+            $item->name = $b->$field;
+            $item->address = $b->$field;
+            $res[] = $item;
+        }
         return $res;
     }
 
