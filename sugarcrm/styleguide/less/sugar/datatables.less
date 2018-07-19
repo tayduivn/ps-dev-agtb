@@ -1226,6 +1226,9 @@ span.email-has-attachments {
   td {
     /* new variable */
     background: @tableBackground;
+
+    /*  TODO: This shouldn't be required but is a hack to prevent border rendering errors in firefox */
+    border-left: 0 solid;
   }
 
   /* ---------
