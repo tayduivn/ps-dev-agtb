@@ -119,3 +119,28 @@ export class List extends DateField {
 }
 
 export const Preview = Detail;
+
+
+/**
+ *  This provides support for date field type in Summary Bar of QLI Table section of quote record view
+ *
+ *  Note: Adding date field type like `Valid Until` to QLI table header is
+ *  possible through Admin > Quote Configuration > Summary Bar Header Preview
+ */
+export class QLISummaryBarDateField extends DateField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div.quote-totals-row-value'
+            }
+        });
+    }
+
+    public async getText(selector: string): Promise<string> {
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+        return value.toString().trim();
+    }
+}

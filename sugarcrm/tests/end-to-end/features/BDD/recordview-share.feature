@@ -49,11 +49,10 @@ Feature: Record view > Share
 
     # Verify that draft email is created successfully
     Then Emails *Em_1 should have the following values in the preview:
-      | fieldName     | value                                                |
-      | name          | Shared Lead <leadName> <leadName> from <accountName> |
-      | from_collection | Administrator |
-      | to_collection | <accountName>                                        |
-      | parent_name   | <leadName> <leadName>                                |
+      | fieldName       | value                                                |
+      | name            | Shared Lead <leadName> <leadName> from <accountName> |
+      | from_collection | Administrator                                        |
+      | to_collection   | <accountName>                                        |
 
     Examples:
       | leadName | accountName |

@@ -47,6 +47,7 @@ import FindDuplicates from './views/find-duplicates-view';
 import DashableRecordDashletConfig from './views/dashable-record-dashlet-config-view';
 import QuickCreateMenuCmp from './components/quick-create-menu-cmp';
 import ConsoleSettingsConfig from './views/console-settings-view';
+import QuotesConfigDrawerLayout from './layouts/quotes-config-drawer-layout';
 
 
 export default (seedbed: Seedbed) => {
@@ -114,6 +115,7 @@ export default (seedbed: Seedbed) => {
         seedbed.components[`AdminMenuCmp`] = new AdminMenuCmp({});
         seedbed.components[`QuickCreateMenuCmp`] = new QuickCreateMenuCmp({});
         seedbed.components[`UserProfile`] = new UserProfileLayout({module: 'Users'});
+        seedbed.defineComponent(`QuotesConfigDrawer`, QuotesConfigDrawerLayout, {module: 'Dashboards'});
         seedbed.defineComponent(`ActivityStream`, ActivityStreamLayout, {module: 'Activities'});
         seedbed.defineComponent(`KBViewCategoriesDrawer`, KBViewCategoriesDrawer, {module: 'Categories'});
         seedbed.defineComponent(`KBSettingsDrawer`, KBSettingsLayout, {module: 'KBContents'});
