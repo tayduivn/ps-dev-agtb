@@ -391,5 +391,308 @@
                 }
             }
         }
+    },
+    "Quotes": {
+        "modified_by_name": {
+            "type": "relate",
+            "link": "modified_user_link",
+            "readonly": true,
+            "label": "LBL_MODIFIED"
+        },
+        "created_by_name": {
+            "type": "relate",
+            "link": "created_by_link",
+            "readonly": true,
+            "label": "LBL_CREATED"
+        },
+        "description": {
+            "type": "text",
+            "label": "LBL_DESCRIPTION"
+        },
+        "shipper_name": {
+            "type": "relate",
+            "link": "shippers",
+            "label": "LBL_SHIPPING_PROVIDER"
+        },
+        "taxrate_name": {
+            "type": "relate",
+            "link": "taxrates",
+            "label": "LBL_TAXRATE"
+        },
+        "show_line_nums": {
+            "type": "bool",
+            "default": 1,
+            "label": "LBL_SHOW_LINE_NUMS"
+        },
+        "quote_type": {
+            "type": "enum",
+            "label": "LBL_QUOTE_TYPE"
+        },
+        "original_po_date": {
+            "type": "date",
+            "label": "LBL_ORIGINAL_PO_DATE"
+        },
+        "payment_terms": {
+            "type": "enum",
+            "label": "LBL_PAYMENT_TERMS"
+        },
+        "date_quote_closed": {
+            "type": "date",
+            "label": "LBL_DATE_QUOTE_CLOSED"
+        },
+        "date_order_shipped": {
+            "type": "date",
+            "label": "LBL_LIST_DATE_QUOTE_CLOSED"
+        },
+        "order_stage": {
+            "type": "enum",
+            "label": "LBL_ORDER_STAGE"
+        },
+        "purchase_order_num": {
+            "type": "varchar",
+            "label": "LBL_PURCHASE_ORDER_NUM"
+        },
+        "subtotal": {
+            "type": "currency",
+            "related_fields": [
+                "currency_id",
+                "base_rate"
+            ],
+            "label": "LBL_SUBTOTAL"
+        },
+        "subtotal_usdollar": {
+            "type": "currency",
+            "studio": {
+                "wirelesseditview": false,
+                "wirelessdetailview": false,
+                "wirelesslistview": false,
+                "wireless_basic_search": false,
+                "wireless_advanced_search": false,
+                "mobile": false
+            },
+            "related_fields": [
+                "currency_id",
+                "base_rate"
+            ],
+            "label": "LBL_SUBTOTAL_USDOLLAR"
+        },
+        "shipping": {
+            "type": "currency",
+            "related_fields": [
+                "currency_id",
+                "base_rate"
+            ],
+            "default": "0",
+            "label": "LBL_SHIPPING"
+        },
+        "shipping_usdollar": {
+            "type": "currency",
+            "studio": {
+                "wirelesseditview": false,
+                "wirelessdetailview": false,
+                "wirelesslistview": false,
+                "wireless_basic_search": false,
+                "wireless_advanced_search": false,
+                "mobile": false
+            },
+            "related_fields": [
+                "currency_id",
+                "base_rate"
+            ],
+            "label": "LBL_SHIPPING_USDOLLAR"
+        },
+        "discount": {
+            "type": "currency",
+            "default": "0",
+            "related_fields": [
+                "currency_id",
+                "base_rate"
+            ],
+            "label": "LBL_DISCOUNT_TOTAL"
+        },
+        "deal_tot": {
+            "type": "currency",
+            "label": "LBL_DEAL_TOT"
+        },
+        "deal_tot_discount_percentage": {
+            "type": "float",
+            "default": "0",
+            "label": "LBL_DEAL_TOT_PERCENTAGE"
+        },
+        "deal_tot_usdollar": {
+            "type": "currency",
+            "studio": {
+                "wirelesseditview": false,
+                "wirelessdetailview": false,
+                "wirelesslistview": false,
+                "wireless_basic_search": false,
+                "wireless_advanced_search": false,
+                "mobile": false
+            },
+            "label": "LBL_DEAL_TOT_USDOLLAR"
+        },
+        "new_sub": {
+            "type": "currency",
+            "related_fields": [
+                "currency_id",
+                "base_rate"
+            ],
+            "label": "LBL_NEW_SUB"
+        },
+        "new_sub_usdollar": {
+            "type": "currency",
+            "studio": {
+                "wirelesseditview": false,
+                "wirelessdetailview": false,
+                "wirelesslistview": false,
+                "wireless_basic_search": false,
+                "wireless_advanced_search": false,
+                "mobile": false
+            },
+            "related_fields": [
+                "currency_id",
+                "base_rate"
+            ],
+            "label": "LBL_NEW_SUB_USDOLLAR"
+        },
+        "taxable_subtotal": {
+            "type": "currency",
+            "label": "LBL_TAXABLE_SUBTOTAL"
+        },
+        "tax": {
+            "type": "currency",
+            "related_fields": [
+                "currency_id",
+                "base_rate",
+                "taxrate_value",
+                "taxable_subtotal"
+            ],
+            "default": "0",
+            "label": "LBL_TAX"
+        },
+        "tax_usdollar": {
+            "type": "currency",
+            "studio": {
+                "wirelesseditview": false,
+                "wirelessdetailview": false,
+                "wirelesslistview": false,
+                "wireless_basic_search": false,
+                "wireless_advanced_search": false,
+                "mobile": false
+            },
+            "related_fields": [
+                "currency_id",
+                "base_rate"
+            ],
+            "label": "LBL_TAX_USDOLLAR"
+        },
+        "billing_address_street": {
+            "type": "text",
+            "label": "LBL_BILLING_ADDRESS_STREET"
+        },
+        "billing_address_city": {
+            "type": "varchar",
+            "label": "LBL_BILLING_ADDRESS_CITY"
+        },
+        "billing_address_state": {
+            "type": "varchar",
+            "label": "LBL_BILLING_ADDRESS_STATE"
+        },
+        "billing_address_postalcode": {
+            "type": "varchar",
+            "label": "LBL_BILLING_ADDRESS_POSTAL_CODE"
+        },
+        "billing_address_country": {
+            "type": "varchar",
+            "label": "LBL_BILLING_ADDRESS_COUNTRY"
+        },
+        "shipping_address_street": {
+            "type": "text",
+            "label": "LBL_SHIPPING_ADDRESS_STREET"
+        },
+        "shipping_address_city": {
+            "type": "varchar",
+            "label": "LBL_SHIPPING_ADDRESS_CITY"
+        },
+        "shipping_address_state": {
+            "type": "varchar",
+            "label": "LBL_SHIPPING_ADDRESS_STATE"
+        },
+        "shipping_address_postalcode": {
+            "type": "varchar",
+            "label": "LBL_SHIPPING_ADDRESS_POSTAL_CODE"
+        },
+        "shipping_address_country": {
+            "type": "varchar",
+            "label": "LBL_SHIPPING_ADDRESS_COUNTRY"
+        },
+        "shipping_account_name": {
+            "type": "relate",
+            "link": "shipping_accounts",
+            "label": "LBL_SHIPPING_ACCOUNT_NAME"
+        },
+        "shipping_contact_name": {
+            "type": "relate",
+            "link": "shipping_contacts",
+            "label": "LBL_SHIPPING_CONTACT_NAME"
+        },
+        "shipping_contact_id": {
+            "type": "relate",
+            "link": "shipping_contacts",
+            "label": "LBL_SHIPPING_CONTACT_ID"
+        },
+        "billing_contact_name": {
+            "type": "relate",
+            "link": "billing_contacts",
+            "label": "LBL_BILLING_CONTACT_NAME"
+        },
+        "billing_contact_id": {
+            "type": "relate",
+            "link": "billing_contacts",
+            "label": "LBL_BILLING_CONTACT_ID"
+        },
+        "bundles": {
+            "type": "collection",
+            "label": "LBL_PRODUCT_BUNDLES"
+        },
+        "opportunity_name": {
+            "type": "relate",
+            "link": "opportunities",
+            "label": "LBL_OPPORTUNITY_NAME"
+        },
+        "opportunity_id": {
+            "type": "relate",
+            "link": "opportunities",
+            "label": "LBL_OPPORTUNITY_ID"
+        },
+        "tag": {
+            "type": "tag",
+            "link": "tag_link",
+            "studio": {
+                "portal": false,
+                "base": {
+                    "popuplist": false
+                },
+                "mobile": {
+                    "wirelesseditview": true,
+                    "wirelessdetailview": true
+                }
+            },
+            "sortable": false,
+            "label": "LBL_TAGS"
+        },
+        "team_name": {
+            "type": "relate",
+            "link": "team_link",
+            "studio": {
+                "portallistview": false,
+                "portalrecordview": false
+            },
+            "label": "LBL_TEAMS"
+        },
+        "base_rate": {
+            "type": "text",
+            "label": "LBL_CURRENCY_RATE"
+        }
     }
 }

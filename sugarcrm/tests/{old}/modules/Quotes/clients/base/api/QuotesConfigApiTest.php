@@ -78,6 +78,8 @@ class QuotesConfigApiTest extends TestCase
             'worksheet_columns_related_fields' => [],
             'summary_columns' => [],
             'summary_columns_related_fields' => [],
+            'footer_rows' => [],
+            'footer_rows_related_fields' => [],
         );
 
         $mock = $this->getMockBuilder('\QuotesConfigApi')

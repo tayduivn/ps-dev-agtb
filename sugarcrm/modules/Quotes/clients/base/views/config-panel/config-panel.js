@@ -50,6 +50,8 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        this.eventViewName = this._getEventViewName();
+
         this.getPanelFieldNamesList();
     },
 
@@ -64,6 +66,17 @@
     },
 
     /**
+     * Returns the event and view name for this config panel.
+     * Should be overridden by child views.
+     *
+     * @return {string}
+     * @private
+     */
+    _getEventViewName: function() {
+        return 'config_panel';
+    },
+
+    /**
      * Handles when the field dependencies list comes back from the config endpoint.
      * Should be extended in child classes to include anything specific views need to do
      * with the field dependencies list.
@@ -73,8 +86,8 @@
      * @protected
      */
     _onDependentFieldsChange: function(context, fieldDeps) {
-        this.dependentFields = fieldDeps;
-        this.relatedFields = this.context.get('relatedFields');
+        this.dependentFields = _.clone(fieldDeps);
+        this.relatedFields = _.clone(this.context.get('relatedFields'));
         this.panelFields = this._buildPanelFieldsList();
     },
 
@@ -171,14 +184,15 @@
     },
 
     /**
-     * Handles any custom field sorting that child classes might need to do
+     * Handles any custom field sorting that child classes might need to do.
+     * By default, sort by the name field
      *
      * @param {Array} arr The fields array
      * @return {Array}
      * @protected
      */
     _customFieldsSorting: function(arr) {
-        return arr;
+        return _.sortBy(arr, 'name');
     },
 
     /**

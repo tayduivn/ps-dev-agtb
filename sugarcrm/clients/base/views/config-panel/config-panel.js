@@ -71,7 +71,7 @@
         this._super('_render');
 
         // add accordion-group class to wrapper $el div
-        this.$el.addClass('accordion-group');
+        this.$el.addClass(this.name + '-group accordion-group');
 
         // update the title every render
         this.updateTitle();

@@ -305,6 +305,7 @@ $dictionary['Quote'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
+            'default' => '0',
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
@@ -877,6 +878,7 @@ $dictionary['Quote'] = array(
             'source' => 'non-db',
             'rname' => 'id',
             'id_name' => 'id',
+            'vname' => 'LBL_OPPORTUNITY_ID',
             'table' => 'opportunities',
             'module' => 'Opportunities',
             'link' => 'opportunities',

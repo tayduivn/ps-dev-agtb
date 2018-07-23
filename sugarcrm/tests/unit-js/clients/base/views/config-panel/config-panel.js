@@ -70,7 +70,15 @@ describe('Base.View.ConfigPanel', function() {
 
         it('should add the "accordion-group" class to this.$el', function() {
             view._render();
+
             expect(view.$el.hasClass('accordion-group')).toBeTruthy();
+        });
+
+        it('should add the view name + "-group" class to this.$el', function() {
+            view.name = 'config-panel';
+            view._render();
+
+            expect(view.$el.hasClass('config-panel-group')).toBeTruthy();
         });
 
         it('should call updateTitle()', function() {

@@ -9,9 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.Quotes.ConfigSummaryView
- * @alias SUGAR.App.view.views.BaseQuotesConfigSummaryView
- * @extends View.Views.Base.Quotes.ConfigPanelView
+ * @class View.Views.Base.Quotes.ConfigFooterView
+ * @alias SUGAR.App.view.views.BaseQuotesConfigFooterView
+ * @extends View.Views.Base.Quotes.ConfigFooterView
  */
 ({
     /**
@@ -27,10 +27,9 @@
     },
 
     /**
-     * The default list of field names for the Quotes summary columns
+     * The default list of field names for the Quotes worksheet columns
      */
     listDefaultFieldNames: [
-        'deal_tot',
         'new_sub',
         'tax',
         'shipping',
@@ -44,42 +43,56 @@
 
     /**
      * The list header view
-     * @type {View.Views.Base.Quotes.ConfigListHeaderColumnsView}
+     * @type {View.Views.Base.Quotes.ConfigTotalsFooterRowsView}
      */
-    listHeaderView: undefined,
+    footerRowsView: undefined,
 
     /**
      * Contains an array of all the default fields to reset the list header
      */
-    defaultFields: undefined,
+    defaultFields: [{
+        name: 'new_sub',
+        type: 'currency'
+    }, {
+        name: 'tax',
+        type: 'currency',
+        related_fields: ['taxrate_value']
+    }, {
+        name: 'shipping',
+        type: 'quote-footer-currency',
+        css_class: 'quote-footer-currency',
+        default: '0.00'
+    }, {
+        name: 'total',
+        label: 'LBL_LIST_GRAND_TOTAL',
+        type: 'currency',
+        css_class: 'grand-total'
+    }],
 
     /**
      * Contains an array of all the current fields in the list header
      */
-    listHeaderFields: undefined,
+    footerRowFields: undefined,
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
         var namesLen = this.listDefaultFieldNames.length;
-        var quoteGrandTotalHeaderListMeta = app.metadata.getView('Quotes', 'quote-data-grand-totals-header');
+        var quoteGrandTotalFooterListMeta = app.metadata.getView('Quotes', 'quote-data-grand-totals-footer');
         var field;
         var fieldLabels = [];
         var fieldLabel;
         var fieldLabelModule;
-        var tmpField;
 
         this._super('initialize', [options]);
 
         this.quotesFieldMeta = app.metadata.getModule('Quotes', 'fields');
 
-        this.defaultFields = [];
-
         // pluck all the fields arrays from panels and flatten into one array
-        this.listHeaderFields = _.flatten(_.pluck(quoteGrandTotalHeaderListMeta.panels, 'fields'));
+        this.footerRowFields = _.flatten(_.pluck(quoteGrandTotalFooterListMeta.panels, 'fields'));
 
-        _.each(this.listHeaderFields, function(field) {
+        _.each(this.footerRowFields, function(field) {
             field.labelModule = this._getFieldLabelModule(field);
         }, this);
 
@@ -87,7 +100,7 @@
         this.listDefaultFieldNameLabels = [];
         for (var i = 0; i < namesLen; i++) {
             // try to get view defs from the quote-data-group-list meta
-            field = _.find(this.listHeaderFields, function(headerField) {
+            field = _.find(this.footerRowFields, function(headerField) {
                 return this.listDefaultFieldNames[i] === headerField.name;
             }, this);
 
@@ -99,36 +112,20 @@
             // use either label (viewdefs) or vname (vardefs)
             if (field && (field.label || field.vname)) {
                 fieldLabel = field.label || field.vname;
-
-                // check Products strings first
-                fieldLabel = app.lang.get(fieldLabel, 'Quotes');
                 fieldLabelModule = 'Quotes';
 
-                fieldLabels.push(fieldLabel);
-
-                tmpField = {
-                    name: field.name,
-                    label: fieldLabel,
-                    labelModule: fieldLabelModule,
-                    widthClass: field.widthClass,
-                    css_class: field.css_class || field.cssClass || ''
-                };
-
-                // push the fieldDefs to default fields
-                this.defaultFields.push(tmpField);
+                fieldLabels.push(app.lang.get(fieldLabel, fieldLabelModule));
             }
         }
 
         this.listDefaultFieldNameLabels = fieldLabels.join(', ');
-
-        this.model.set(this.eventViewName, this.listHeaderFields);
     },
 
     /**
      * @inheritdoc
      */
     _getEventViewName: function() {
-        return 'summary_columns';
+        return 'footer_rows';
     },
 
     /**
@@ -144,9 +141,20 @@
 
     /**
      * @inheritdoc
+     *
+     * Only return currency type fields from the Quotes module for the Footer view
      */
     _getPanelFields: function() {
-        return this.context.get('quotesFields');
+        var fields = [];
+        _.each(this.context.get('quotesFields'), function(f, key) {
+            if (f.type === 'currency') {
+                fields.push(_.extend({
+                    name: key
+                }, f));
+            }
+        }, this);
+
+        return fields;
     },
 
     /**
@@ -212,19 +220,16 @@
                 }
             }
 
-            tmpField = _.find(this.listHeaderFields, function(headerField) {
+            tmpField = _.find(this.footerRowFields, function(headerField) {
                 return headerField.name === field.name;
             });
             if (tmpField) {
-                // if this panelField exists in listHeaderFields, set to visible
+                // if this panelField exists in footerRowFields, set to visible
                 field.initialState = 'checked';
             }
         }, this);
 
         this.model.set(this.eventViewName + '_related_fields', relatedFieldsList);
-
-        // trigger to render the fields on config page load
-        this.context.trigger('config:fields:change', this.eventViewName, this.panelFields);
     },
 
     /**
@@ -249,14 +254,14 @@
             fieldViewDef.labelModule = this._getFieldLabelModule(field);
 
             // add the column to header fields
-            this.listHeaderView.addColumnHeaderField(fieldViewDef);
+            this.footerRowsView.addFooterRowField(fieldViewDef);
 
             toggleRelatedFields = true;
             columnChanged = true;
         } else if (wasVisible && !isNowVisible) {
             // field was visible, but now is not visible, so remove from columns
             // remove the column from header fields
-            this.listHeaderView.removeColumnHeaderField(fieldVarDef);
+            this.footerRowsView.removeFooterRowField(fieldVarDef);
 
             toggleRelatedFields = false;
             columnChanged = true;
@@ -284,18 +289,18 @@
     render: function() {
         this._super('render');
 
-        this.listHeaderView = app.view.createView({
+        this.footerRowsView = app.view.createView({
             context: this.context,
             eventViewName: this.eventViewName,
-            type: 'config-list-header-columns',
+            type: 'config-totals-footer-rows',
             layout: this,
             model: this.model
         });
 
-        this.$('.quote-summary-data-list-table').append(this.listHeaderView.el);
+        this.$('.quote-footer-rows').append(this.footerRowsView.el);
 
         // set the column header fields and render
-        this.listHeaderView.setColumnHeaderFields(this.listHeaderFields);
+        this.footerRowsView.setFooterRowFields(this.footerRowFields);
     },
 
     /**
@@ -309,11 +314,12 @@
 
     /**
      * Handles the click event when user clicks to Restore Default fields
-     * @param evt
+     *
+     * @param {jQuery.Event} evt The jQuery click event
      */
     onClickRestoreDefaultsBtn: function(evt) {
         var fieldList = _.pluck(this.defaultFields, 'name');
-        this.listHeaderView.setColumnHeaderFields(this.defaultFields);
+        this.footerRowsView.setFooterRowFields(this.defaultFields);
         this.context.trigger('config:fields:' + this.eventViewName + ':reset', fieldList);
     }
 })

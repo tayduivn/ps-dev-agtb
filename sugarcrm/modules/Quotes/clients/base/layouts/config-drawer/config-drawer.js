@@ -68,11 +68,6 @@
      * @param {Object} data The server response
      */
     onConfigSuccess: function(data) {
-        this.context.set({
-            dependentFields: data.dependentFields,
-            productsFields: data.productsFields,
-            quotesFields: data.quotesFields,
-            relatedFields: data.relatedFields
-        });
+        this.context.set(data);
     }
 })

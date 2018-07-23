@@ -319,6 +319,12 @@ describe('Quotes.View.ConfigColumns', function() {
         });
     });
 
+    describe('_getEventViewName()', function() {
+        it('should return worksheet_columns', function() {
+            expect(view._getEventViewName()).toBe('worksheet_columns');
+        });
+    });
+
     describe('_getFieldLabelModule()', function() {
         it('should fallback to Quotes if not found on products', function() {
             expect(view._getFieldLabelModule(productsFieldsMeta.quantity)).toBe('Quotes');
@@ -476,21 +482,6 @@ describe('Quotes.View.ConfigColumns', function() {
     describe('_getPanelFieldsModule()', function() {
         it('should return Products', function() {
             expect(view._getPanelFieldsModule()).toEqual('Products');
-        });
-    });
-
-    describe('_customFieldsSorting()', function() {
-        it('should use the custom sorting function to sort alphabetically by name', function() {
-            var result = view._customFieldsSorting([
-                {
-                    name: 'bbb'
-                }, {
-                    name: 'aaa'
-                }
-            ]);
-
-            expect(result[0].name).toBe('aaa');
-            expect(result[1].name).toBe('bbb');
         });
     });
 

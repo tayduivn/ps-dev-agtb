@@ -132,7 +132,20 @@ describe('Quotes.View.ConfigPanel', function() {
 
     describe('initialize()', function() {
         beforeEach(function() {
+            sinon.collection.spy(view, '_getEventViewName');
             sinon.collection.stub(view, 'getPanelFieldNamesList');
+        });
+
+        it('should set eventViewName', function() {
+            view.initialize(options);
+
+            expect(view.eventViewName).toBe('config_panel');
+        });
+
+        it('should call _getEventViewName', function() {
+            view.initialize(options);
+
+            expect(view._getEventViewName).toHaveBeenCalled();
         });
 
         it('should call getPanelFieldNamesList', function() {
@@ -159,6 +172,12 @@ describe('Quotes.View.ConfigPanel', function() {
         });
     });
 
+    describe('_getEventViewName()', function() {
+        it('should return config_panel', function() {
+            expect(view._getEventViewName()).toBe('config_panel');
+        });
+    });
+
     describe('_onDependentFieldsChange()', function() {
         var fieldDeps;
 
@@ -177,11 +196,11 @@ describe('Quotes.View.ConfigPanel', function() {
         });
 
         it('should set dependentFields', function() {
-            expect(view.dependentFields).toBe(fieldDeps);
+            expect(view.dependentFields).toEqual(fieldDeps);
         });
 
         it('should set relatedFields', function() {
-            expect(view.relatedFields).toBe(fieldDeps);
+            expect(view.relatedFields).toEqual(fieldDeps);
         });
     });
 
@@ -236,10 +255,18 @@ describe('Quotes.View.ConfigPanel', function() {
 
     describe('_customFieldsSorting()', function() {
         it('should return the arr passed in', function() {
-            var arr = ['test', 'hey'];
+            var arr = [{
+                name: 'bbb'
+            }, {
+                name: 'aaa'
+            }];
             var results = view._customFieldsSorting(arr);
 
-            expect(results).toBe(arr);
+            expect(results).toEqual([{
+                name: 'aaa'
+            }, {
+                name: 'bbb'
+            }]);
         });
     });
 

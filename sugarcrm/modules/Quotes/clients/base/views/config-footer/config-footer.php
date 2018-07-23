@@ -9,16 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Quotes']['base']['layout']['config-drawer-content'] = array(
-    'components' => array(
+$viewdefs['Quotes']['base']['view']['config-footer'] = array(
+    'label'=>'LBL_QUOTE_CONFIG_FOOTER_TITLE',
+    'panels' => array(
         array(
-            'view' => 'config-summary',
-        ),
-        array(
-            'view' => 'config-columns',
-        ),
-        array(
-            'view' => 'config-footer',
+            'fields' => array(),
         ),
     ),
 );

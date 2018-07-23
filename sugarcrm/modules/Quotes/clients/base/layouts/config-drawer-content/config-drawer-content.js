@@ -39,10 +39,9 @@
         switch (helpId) {
             case 'config-columns':
             case 'config-summary':
-            case 'config-summation':
-            case 'config-total':
+            case 'config-footer':
                 this.currentHowToData.title = app.lang.get('LBL_CONFIG_FIELD_SELECTOR', this.module, {
-                    moduleName: app.lang.get('LBL_MODULE_NAME', this.module),
+                    moduleName: app.lang.get('LBL_MODULE_NAME', this.module)
                 });
                 this.currentHowToData.text = this.viewQuotesObjTpl;
                 break;

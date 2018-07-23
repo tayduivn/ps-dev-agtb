@@ -57,22 +57,31 @@ describe('Base.Layout.ConfigDrawerContent', function() {
 
     describe('_render()', function() {
         var collapseStub;
+        var spliceStub;
+        var addClassStub;
 
         beforeEach(function() {
             collapseStub = sinon.collection.stub();
+            spliceStub = sinon.collection.stub();
+            addClassStub = sinon.collection.stub();
+
             sinon.collection.stub(layout.$el, 'addClass');
             sinon.collection.stub(layout.$el, 'attr');
             sinon.collection.stub(layout, '_super');
             sinon.collection.stub(layout, 'selectPanel');
             sinon.collection.stub(layout, '$', function() {
                 return {
-                    collapse: collapseStub
+                    collapse: collapseStub,
+                    splice: spliceStub,
+                    addClass: addClassStub
                 };
             });
         });
 
         afterEach(function() {
             collapseStub = null;
+            spliceStub = null;
+            addClassStub = null;
         });
 
         it('should add CSS class accordion', function() {
@@ -86,6 +95,18 @@ describe('Base.Layout.ConfigDrawerContent', function() {
             layout._render();
 
             expect(layout.$el.attr).toHaveBeenCalledWith('id', 'test1');
+        });
+
+        it('should call splice to remove the first toggle item', function() {
+            layout._render();
+
+            expect(spliceStub).toHaveBeenCalledWith(0, 1);
+        });
+
+        it('should add CSS class collapsed', function() {
+            layout._render();
+
+            expect(addClassStub).toHaveBeenCalledWith('collapsed');
         });
 
         it('should call collapse on the .collapse element', function() {
@@ -116,12 +137,10 @@ describe('Base.Layout.ConfigDrawerContent', function() {
                     collapse: collapseStub
                 };
             });
-            sinon.collection.stub(layout, 'onAccordionToggleClicked');
         });
 
         afterEach(function() {
             collapseStub = null;
-
         });
 
         it('should set selectedPanel to the passed in panelName', function() {
@@ -135,12 +154,6 @@ describe('Base.Layout.ConfigDrawerContent', function() {
 
             expect(layout.$).toHaveBeenCalledWith('#config-panelCollapse');
             expect(collapseStub).toHaveBeenCalledWith('show');
-        });
-
-        it('should call onAccordionToggleClicked', function() {
-            layout.selectPanel('config-panel');
-
-            expect(layout.onAccordionToggleClicked).toHaveBeenCalled();
         });
     });
 
@@ -165,7 +178,17 @@ describe('Base.Layout.ConfigDrawerContent', function() {
             triggerStub2 = null;
         });
 
-        it('call _switchHowToData from the current target data help-id', function() {
+        it('should do nothing if selectedPanel and the new panelName are the same', function() {
+            layout.selectedPanel = 'config-panel';
+            sinon.collection.stub($.fn, 'data', function() {
+                return 'config-panel';
+            });
+            layout.onAccordionToggleClicked(event);
+
+            expect(layout._switchHowToData).not.toHaveBeenCalled();
+        });
+
+        it('should call _switchHowToData from the current target data help-id', function() {
             layout.selectedPanel = undefined;
             sinon.collection.stub($.fn, 'data', function() {
                 return 'config-panel';
@@ -177,6 +200,9 @@ describe('Base.Layout.ConfigDrawerContent', function() {
 
         it('call _switchHowToData from the selectedPanel when data help-id is falsy', function() {
             layout.selectedPanel = 'config-panel';
+            sinon.collection.stub($.fn, 'data', function() {
+                return undefined;
+            });
             layout.onAccordionToggleClicked();
 
             expect(layout._switchHowToData).toHaveBeenCalledWith('config-panel');

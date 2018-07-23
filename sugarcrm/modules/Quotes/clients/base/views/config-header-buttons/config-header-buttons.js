@@ -25,6 +25,8 @@
     _getSaveConfigAttributes: function() {
         var saveObj = this.model.toJSON();
         var lineNum;
+        var footerRows = [];
+        var quotesMeta = app.metadata.getModule('Quotes', 'fields');
 
         // make sure line_num field exists in worksheet_columns
         lineNum = _.find(saveObj.worksheet_columns, function(col) {
@@ -63,6 +65,30 @@
         if (!_.contains(saveObj.worksheet_columns_related_fields, 'product_template_name')) {
             saveObj.worksheet_columns_related_fields.push('product_template_name');
         }
+
+        _.each(saveObj.footer_rows, function(row) {
+            let obj = {
+                name: row.name,
+                type: row.syncedType || row.type
+            };
+            if (row.syncedCssClass || row.css_class) {
+                obj.css_class = row.syncedCssClass || row.css_class;
+            }
+            if (row.hasOwnProperty('default')) {
+                obj.default = row.default;
+            }
+            if (quotesMeta[row.name] && !quotesMeta[row.name].formula) {
+                obj.type = 'quote-footer-currency';
+                obj.default = '0.00';
+                if (!obj.css_class || (row.css_class && row.css_class.indexOf('quote-footer-currency') === -1)) {
+                    obj.css_class = 'quote-footer-currency';
+                }
+            }
+
+            footerRows.push(obj);
+        }, this);
+
+        saveObj.footer_rows = footerRows;
 
         return saveObj;
     }

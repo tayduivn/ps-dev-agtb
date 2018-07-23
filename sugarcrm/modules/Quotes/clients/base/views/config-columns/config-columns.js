@@ -76,8 +76,6 @@
         var productListMeta = app.metadata.getView('Products', 'quote-data-group-list');
         var tmpField;
 
-        this.eventViewName = 'worksheet_columns';
-
         this._super('initialize', [options]);
 
         this.productsFieldMeta = app.metadata.getModule('Products', 'fields');
@@ -171,7 +169,14 @@
 
         this.listDefaultFieldNameLabels = fieldLabels.join(', ');
 
-        this.model.set('worksheet_columns', this.listHeaderFields);
+        this.model.set(this.eventViewName, this.listHeaderFields);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _getEventViewName: function() {
+        return 'worksheet_columns';
     },
 
     /**
@@ -315,13 +320,6 @@
      */
     _getPanelFieldsModule: function() {
         return 'Products';
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _customFieldsSorting: function(arr) {
-        return _.sortBy(arr, 'name');
     },
 
     /**

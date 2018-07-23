@@ -50,11 +50,17 @@
      * @inheritdoc
      */
     _render: function() {
+        var $toggles;
+
         this._super('_render');
 
         //This is because backbone injects a wrapper element.
         this.$el.addClass('accordion');
         this.$el.attr('id', this.collapseDivId);
+        $toggles = this.$('.accordion-toggle');
+        // ignore the first accordion toggle
+        $toggles.splice(0, 1);
+        $toggles.addClass('collapsed');
 
         //apply the accordion to this layout
         this.$('.collapse').collapse({
@@ -76,9 +82,6 @@
     selectPanel: function(panelName) {
         this.selectedPanel = panelName;
         this.$('#' + panelName + 'Collapse').collapse('show');
-        // manually trigger the accordion to toggle
-        // but don't pass event so it uses the selectedPanel name
-        this.onAccordionToggleClicked();
     },
 
     /**
@@ -91,6 +94,11 @@
         var oldPanel;
         var newPanel;
 
+        if (evt && panelName === this.selectedPanel) {
+            // dont allow closing the same tab
+            return false;
+        }
+
         this._switchHowToData(panelName);
 
         this.context.trigger('config:howtoData:change', this.currentHowToData);
@@ -101,6 +109,7 @@
             }, this);
 
             if (oldPanel) {
+                oldPanel.$('.accordion-toggle').addClass('collapsed');
                 oldPanel.trigger('config:panel:hide');
             }
         }
