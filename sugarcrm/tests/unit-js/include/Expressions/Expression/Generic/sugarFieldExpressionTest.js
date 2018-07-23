@@ -8,49 +8,53 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Sugar Field Expression Function", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('Sugar Field Expression Function', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
-    var getSLContext = function (modelOrCollection, context) {
+    var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
         context = context || app.context.getContext({
-            url: "someurl",
+            url: 'someurl',
             module: model.module,
             model: model
         });
-        var view = SugarTest.createComponent("View", {
+        var view = SugarTest.createComponent('View', {
             context: context,
-            type: "edit",
+            type: 'edit',
             module: model.module
         });
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
 
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("Sugar Field Expression Function", function () {
-        it("returns the Sugar Field Expression", function () {
-            var test_param = new SUGAR.expressions.StringLiteralExpression(['account_id']);
-            var res = new SUGAR.expressions.SugarFieldExpression([test_param], getSLContext(model)  );
-            SUGAR.forms.AssignmentHandler = { getValue : function() {}};
+    describe('Sugar Field Expression Function', function() {
+        it('returns the Sugar Field Expression', function() {
+            var testParam = new SUGAR.expressions.StringLiteralExpression(['account_id']);
+            var res = new SUGAR.expressions.SugarFieldExpression([testParam], getSLContext(model));
+            SUGAR.forms.AssignmentHandler = {getValue: function() {}};
             var mockObj = sinonSandbox.mock(SUGAR.forms.AssignmentHandler);
-            mockObj.expects("getValue").once().returns('value');
+            mockObj.expects('getValue').once().returns('value');
             expect(res.evaluate()).toBe('value');
             mockObj.verify();
         });

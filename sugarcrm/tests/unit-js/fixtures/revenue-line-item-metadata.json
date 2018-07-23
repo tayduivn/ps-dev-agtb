@@ -151,6 +151,27 @@
           ],
           "convertToBase": true,
           "showTransactionalAmount": true
+        },
+        "date_closed_timestamp" : {
+          "name" : "date_closed_timestamp",
+          "vname" : "LBL_DATE_CLOSED_TIMESTAMP",
+          "type" : "ulong",
+          "studio" : {
+            "formula" : true,
+            "related" : true,
+            "recordview" : false,
+            "listview" : false,
+            "detailview" : false,
+            "searchview" : false,
+            "createview" : false,
+            "editField" : false
+          },
+          "reportable" : false,
+          "workflow" : false,
+          "massupdate" : false,
+          "enforced" : true,
+          "calculated" : true,
+          "formula" : "timestamp($date_closed}"
         }
       },
       "relationships": {

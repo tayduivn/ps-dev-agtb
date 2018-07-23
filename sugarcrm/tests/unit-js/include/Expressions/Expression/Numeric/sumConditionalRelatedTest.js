@@ -8,55 +8,63 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Sum Conditional Related Expression Function", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('Sum Conditional Related Expression Function', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model =  isCollection ? new modelOrCollection.model() : modelOrCollection;
         context = context || app.context.getContext({
-            url: "someurl",
+            url: 'someurl',
             module: model.module,
             model: model
         });
-        var view = SugarTest.createComponent("View", {
+        var view = SugarTest.createComponent('View', {
             context: context,
-            type: "edit",
+            type: 'edit',
             module: model.module
         });
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("Sum Conditional Related Expression Function", function () {
-        it("should return the sum for a field of which another field matches a certain condition", function () {
-            var opp = new SUGAR.expressions.StringLiteralExpression(["opportunities"]);
-            var field_to_sum = new SUGAR.expressions.StringLiteralExpression(["best_case"]);
-            var condition_field = new SUGAR.expressions.StringLiteralExpression(["name"]);
-            var condition_value = new SUGAR.expressions.StringLiteralExpression(["Rubble Group Inc - 160 Units"]);
+    describe('Sum Conditional Related Expression Function', function() {
+        it('should return the sum for a field of which another field matches a certain condition', function() {
+            var opp = new SUGAR.expressions.StringLiteralExpression(['opportunities']);
+            var fieldToSum = new SUGAR.expressions.StringLiteralExpression(['best_case']);
+            var conditionField = new SUGAR.expressions.StringLiteralExpression(['name']);
+            var conditionValue = new SUGAR.expressions.StringLiteralExpression(['Rubble Group Inc - 160 Units']);
             var payload = dm.createBeanCollection('Opportunities', [model.get('opportunities')], {});
-            var res = new SUGAR.expressions.SumConditionalRelatedExpression([opp, field_to_sum, condition_field, condition_value], getSLContext(model));
-           //the following line stubs the related_collection referenced in SUGAR.expressions.SumConditionalRelatedExpression.evaluate
-            sinonSandbox.stub(res.context.model, "getRelatedCollection").withArgs("opportunities").returns(payload);
+            var res = new SUGAR.expressions.SumConditionalRelatedExpression(
+                [opp, fieldToSum, conditionField, conditionValue], getSLContext(model)
+            );
+            //the following line stubs the related_collection referenced in SUGAR.expressions.{...}.evaluate
+            sinonSandbox.stub(res.context.model, 'getRelatedCollection').withArgs('opportunities').returns(payload);
             //the following line stubs the value for current_value
-            sinonSandbox.stub(res.context, "getRelatedField").withArgs("opportunities", "rollupConditionalSum","best_case").returns(1000);
+            sinonSandbox.stub(res.context, 'getRelatedField').withArgs('opportunities', 'rollupConditionalSum',
+                'best_case').returns(1000);
             //the following line stubs the values for best_case
-            sinonSandbox.stub(res.context, "getRelatedCollectionValues").withArgs(res.context.model, "opportunities", "rollupConditionalSum","best_case").returns([600, 400]);
+            sinonSandbox.stub(res.context, 'getRelatedCollectionValues').withArgs(res.context.model, 'opportunities',
+                'rollupConditionalSum','best_case').returns([600, 400]);
             expect(parseFloat(res.evaluate())).toBe(1000);
         });
     });

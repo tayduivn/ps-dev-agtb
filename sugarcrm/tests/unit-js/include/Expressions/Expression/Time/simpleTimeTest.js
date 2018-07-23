@@ -8,43 +8,47 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Simple Time Expression Functions", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('Simple Time Expression Functions', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
-    var getSLContext = function (modelOrCollection, context) {
+    var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
         context = context || app.context.getContext({
-            url: "someurl",
+            url: 'someurl',
             module: model.module,
             model: model
         });
-        var view = SugarTest.createComponent("View", {
+        var view = SugarTest.createComponent('View', {
             context: context,
-            type: "edit",
+            type: 'edit',
             module: model.module
         });
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("Define Time Expression Function", function () {
-        it("should return equavilent of Date.getTime() for a given date", function () {
+    describe('Define Time Expression Function', function() {
+        it('should return equavilent of Date.getTime() for a given date', function() {
             var timeString = new SUGAR.expressions.StringLiteralExpression(['Jan 1, 1970 00:00:00']);
             var time = new SUGAR.expressions.DefineTimeExpression(timeString, getSLContext(model));
             var date = new Date('Jan 1, 1970 00:00:00');
@@ -52,8 +56,8 @@ describe("Simple Time Expression Functions", function () {
         });
     });
 
-    describe("Hour of Day Expression Function", function () {
-        it("should return hour of day", function () {
+    describe('Hour of Day Expression Function', function() {
+        it('should return hour of day', function() {
             var timeString = new SUGAR.expressions.StringLiteralExpression(['Jul 19, 2018 3:45:56']);
             var time = new SUGAR.expressions.DefineTimeExpression(timeString, getSLContext(model));
             var hourOfDay = new SUGAR.expressions.HourOfDayExpression([time]);

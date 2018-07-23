@@ -8,100 +8,104 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Is Forecast Closed Expression Function", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('Is Forecast Closed Expression Function', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
-    var getSLContext = function (modelOrCollection, context) {
+    var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
         context = context || app.context.getContext({
-            url: "someurl",
+            url: 'someurl',
             module: model.module,
             model: model
         });
-        var view = SugarTest.createComponent("View", {
+        var view = SugarTest.createComponent('View', {
             context: context,
-            type: "edit",
+            type: 'edit',
             module: model.module
         });
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
 
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("Is Forecast Closed Expression Function w/o Config True", function () {
-        it("returns whether a status is in the current config for closed forecasts", function () {
-            var closed_won = new SUGAR.expressions.StringLiteralExpression(["Closed Won"]);
-            var closed_lost = new SUGAR.expressions.StringLiteralExpression(["Closed Lost"]);
-            var res = new SUGAR.expressions.IsForecastClosedExpression([closed_won], getSLContext(model));
-            expect(res.evaluate()).toBe("true");
-            res = new SUGAR.expressions.IsForecastClosedExpression([closed_lost], getSLContext(model));
-            expect(res.evaluate()).toBe("true");
+    describe('Is Forecast Closed Expression Function w/o Config True', function() {
+        it('returns whether a status is in the current config for closed forecasts', function() {
+            var closedWon = new SUGAR.expressions.StringLiteralExpression(['Closed Won']);
+            var closedLost = new SUGAR.expressions.StringLiteralExpression(['Closed Lost']);
+            var res = new SUGAR.expressions.IsForecastClosedExpression([closedWon], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            res = new SUGAR.expressions.IsForecastClosedExpression([closedLost], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
         });
     });
 
-    describe("Is Forecast Closed Expression Function w/o Config False", function () {
-        it("returns whether a status is in the current config for closed forecasts", function () {
-            var closed_won = new SUGAR.expressions.StringLiteralExpression(["random_closed"]);
-            var closed_lost = new SUGAR.expressions.StringLiteralExpression(["random_closed_2"]);
-            var res = new SUGAR.expressions.IsForecastClosedExpression([closed_won], getSLContext(model));
-            expect(res.evaluate()).toBe("false");
-            res = new SUGAR.expressions.IsForecastClosedExpression([closed_lost], getSLContext(model));
-            expect(res.evaluate()).toBe("false");
+    describe('Is Forecast Closed Expression Function w/o Config False', function() {
+        it('returns whether a status is in the current config for closed forecasts', function() {
+            var closedWon = new SUGAR.expressions.StringLiteralExpression(['random_closed']);
+            var closedLost = new SUGAR.expressions.StringLiteralExpression(['random_closed_2']);
+            var res = new SUGAR.expressions.IsForecastClosedExpression([closedWon], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+            res = new SUGAR.expressions.IsForecastClosedExpression([closedLost], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
         });
     });
 
-    describe("Is Forecast Closed Expression Function w/ Config Set True", function () {
-        it("returns whether a status is in the current config for closed forecasts", function () {
-            var closed_won = new SUGAR.expressions.StringLiteralExpression(["random_closed_won"]);
-            var closed_lost = new SUGAR.expressions.StringLiteralExpression(["random_closed_lost"]);
-            var res = new SUGAR.expressions.IsForecastClosedExpression([closed_won], getSLContext(model));
-            var mockConfig = { sales_stage_won : ["random_closed_won"], sales_stage_lost : ["random_closed_lost"] };
+    describe('Is Forecast Closed Expression Function w/ Config Set True', function() {
+        it('returns whether a status is in the current config for closed forecasts', function() {
+            var closedWon = new SUGAR.expressions.StringLiteralExpression(['random_closedWon']);
+            var closedLost = new SUGAR.expressions.StringLiteralExpression(['random_closedLost']);
+            var res = new SUGAR.expressions.IsForecastClosedExpression([closedWon], getSLContext(model));
+            var mockConfig = {'sales_stage_won': ['random_closedWon'], 'sales_stage_lost': ['random_closedLost']};
             var mockObj = sinonSandbox.mock(App.metadata);
-            mockObj.expects("getModule").twice().withArgs("Forecasts", "config").returns(mockConfig);
+            mockObj.expects('getModule').twice().withArgs('Forecasts', 'config').returns(mockConfig);
             res.evaluate();
-            expect(res.evaluate()).toBe("true");
+            expect(res.evaluate()).toBe('true');
             mockObj.verify();
-            res = new SUGAR.expressions.IsForecastClosedExpression([closed_lost], getSLContext(model));
+            res = new SUGAR.expressions.IsForecastClosedExpression([closedLost], getSLContext(model));
             mockObj = sinonSandbox.mock(App.metadata);
-            mockObj.expects("getModule").twice().withArgs("Forecasts", "config").returns(mockConfig);
+            mockObj.expects('getModule').twice().withArgs('Forecasts', 'config').returns(mockConfig);
             res.evaluate();
-            expect(res.evaluate()).toBe("true");
+            expect(res.evaluate()).toBe('true');
             mockObj.verify();
         });
     });
 
-    describe("Is Forecast Closed Expression Function w/ Config Set False", function () {
-        it("returns whether a status is in the current config for closed forecasts", function () {
-            var closed_won = new SUGAR.expressions.StringLiteralExpression(["random_closed_won_fake"]);
-            var closed_lost = new SUGAR.expressions.StringLiteralExpression(["random_closed_lost_fake"]);
-            var res = new SUGAR.expressions.IsForecastClosedExpression([closed_won], getSLContext(model));
-            var mockConfig = { sales_stage_won : ["random_closed_won"], sales_stage_lost : ["random_closed_lost"] };
+    describe('Is Forecast Closed Expression Function w/ Config Set False', function() {
+        it('returns whether a status is in the current config for closed forecasts', function() {
+            var closedWon = new SUGAR.expressions.StringLiteralExpression(['random_closedWon_fake']);
+            var closedLost = new SUGAR.expressions.StringLiteralExpression(['random_closedLost_fake']);
+            var res = new SUGAR.expressions.IsForecastClosedExpression([closedWon], getSLContext(model));
+            var mockConfig = {'sales_stage_won': ['random_closedWon'], 'sales_stage_lost': ['random_closedLost']};
             var mockObj = sinonSandbox.mock(App.metadata);
-            mockObj.expects("getModule").twice().withArgs("Forecasts", "config").returns(mockConfig);
+            mockObj.expects('getModule').twice().withArgs('Forecasts', 'config').returns(mockConfig);
             res.evaluate();
-            expect(res.evaluate()).toBe("false");
+            expect(res.evaluate()).toBe('false');
             mockObj.verify();
-            res = new SUGAR.expressions.IsForecastClosedExpression([closed_lost], getSLContext(model));
+            res = new SUGAR.expressions.IsForecastClosedExpression([closedLost], getSLContext(model));
             mockObj = sinonSandbox.mock(App.metadata);
-            mockObj.expects("getModule").twice().withArgs("Forecasts", "config").returns(mockConfig);
+            mockObj.expects('getModule').twice().withArgs('Forecasts', 'config').returns(mockConfig);
             res.evaluate();
-            expect(res.evaluate()).toBe("false");
+            expect(res.evaluate()).toBe('false');
             mockObj.verify();
         });
     });

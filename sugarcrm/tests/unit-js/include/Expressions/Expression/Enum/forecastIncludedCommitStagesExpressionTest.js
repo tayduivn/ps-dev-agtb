@@ -1,0 +1,89 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+describe('Forecast Included Commit Stages Expression Function', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
+
+    var getSLContext = function(modelOrCollection, context) {
+        var isCollection = (modelOrCollection instanceof dm.beanCollection);
+        var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
+        context = context || app.context.getContext({
+            url: 'someurl',
+            module: model.module,
+            model: model
+        });
+        var view = SugarTest.createComponent('View', {
+            context: context,
+            type: 'edit',
+            module: model.module
+        });
+        return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
+    };
+
+    beforeEach(function() {
+        sinonSandbox = sinon.sandbox.create();
+        SugarTest.seedMetadata();
+        app = SugarTest.app;
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
+        app.metadata.set(meta);
+        dm = app.data;
+        dm.reset();
+        dm.declareModels();
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
+
+    });
+
+    afterEach(function() {
+        sinonSandbox.restore();
+    });
+
+    describe('Forecast Included Commit Stages Expression Function', function() {
+        it('returns the included commit stages for forecasts', function() {
+            var res = new SUGAR.expressions.ForecastIncludedCommitStagesExpression([], getSLContext(model));
+            var mockObj = sinonSandbox.mock(App.metadata);
+            var mockConfig = {'commit_stages_included': 'include'};
+            mockObj.expects('getModule').once().withArgs('Forecasts', 'config').returns(mockConfig);
+            expect(res.evaluate()).toBe('include');
+            mockObj.verify();
+        });
+    });
+
+    describe('Forecast Included Commit Stages Expression Function', function() {
+        it('returns the included commit stages for forecasts (empty)', function() {
+            var res = new SUGAR.expressions.ForecastIncludedCommitStagesExpression([], getSLContext(model));
+            var mockObj = sinonSandbox.mock(App.metadata);
+            var mockConfig = {'commit_stages_included': ''};
+            mockObj.expects('getModule').once().withArgs('Forecasts', 'config').returns(mockConfig);
+            expect(res.evaluate()).toBe('');
+            mockObj.verify();
+        });
+    });
+
+    describe('Forecast Included Commit Stages Expression Function', function() {
+        it('returns the included commit stages for forecasts, when App = undefined', function() {
+            var temp = App;
+            App = undefined;
+            var falseExpr = new SUGAR.expressions.FalseExpression([]);
+            var res = new SUGAR.expressions.ForecastSalesStageExpression([falseExpr, falseExpr], getSLContext(model));
+            SUGAR.language = {get: function() {}};
+            var mockObj = sinonSandbox.mock(SUGAR.language);
+            mockObj.expects('get').twice().withArgs('app_list_strings', 'sales_stage_dom').returns('value');
+            res.evaluate();
+            expect(res.evaluate()).toBe('value');
+            mockObj.verify();
+            App = temp;
+        });
+    });
+
+});

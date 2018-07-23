@@ -133,7 +133,8 @@
           "fields": [],
           "_hash": "654d337e0e912edaa00dbb0fb3dc3c17"
         },
-        "best_case": 600
+        "best_case": 600,
+        "date_closed_timestamp": 1531765837
       },
       {
         "name": "Rubble Group Inc - 160 Units",
@@ -142,7 +143,8 @@
           "fields": [],
           "_hash": "654d337e0e912edaa00dbb0fb3dc3c17"
         },
-        "best_case": 400
+        "best_case": 400,
+        "date_closed_timestamp": 1531765290
       }
     ]
   },

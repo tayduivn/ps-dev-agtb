@@ -8,43 +8,47 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Simple Date Expression Functions", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('Simple Date Expression Functions', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
-    var getSLContext = function (modelOrCollection, context) {
+    var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
         context = context || app.context.getContext({
-            url: "someurl",
+            url: 'someurl',
             module: model.module,
             model: model
         });
-        var view = SugarTest.createComponent("View", {
+        var view = SugarTest.createComponent('View', {
             context: context,
-            type: "edit",
+            type: 'edit',
             module: model.module
         });
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("Add Days Expression Function", function () {
-        it("should add/subtract certain number of days from original date", function () {
+    describe('Add Days Expression Function', function() {
+        it('should add/subtract certain number of days from original date', function() {
             var dateString = new SUGAR.expressions.StringLiteralExpression(['1/1/2010']);
             var date = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             var num = new SUGAR.expressions.ConstantExpression([5]);
@@ -56,8 +60,8 @@ describe("Simple Date Expression Functions", function () {
         });
     });
 
-    describe("Day of Week Expression Function", function () {
-        it("should return index for day of the week", function () {
+    describe('Day of Week Expression Function', function() {
+        it('should return index for day of the week', function() {
             var dateString = new SUGAR.expressions.StringLiteralExpression(['7/19/2018']);
             var date = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             var res = new SUGAR.expressions.DayOfWeekExpression([date], getSLContext(model));
@@ -65,8 +69,8 @@ describe("Simple Date Expression Functions", function () {
         });
     });
 
-    describe("Month of Year Expression Function", function () {
-        it("should return index for Month of Year", function () {
+    describe('Month of Year Expression Function', function() {
+        it('should return index for Month of Year', function() {
             var dateString = new SUGAR.expressions.StringLiteralExpression(['7/19/2018']);
             var date = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             var res = new SUGAR.expressions.MonthOfYearExpression([date], getSLContext(model));
@@ -74,56 +78,54 @@ describe("Simple Date Expression Functions", function () {
         });
     });
 
-    describe("Days Until Expression Function", function () {
-        it("returns number of days from now until the specified date.", function () {
-            var days, date, last, day, month, year, dateString, dateExpr, res;
-            days = 7;
-            date = new Date();
-            last = new Date(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            day =last.getDate();
-            month=last.getMonth()+1;
-            year=last.getFullYear();
+    describe('Days Until Expression Function', function() {
+        it('returns number of days from now until the specified date.', function() {
+            var days = 7;
+            var date = new Date();
+            var last = new Date(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            var day = last.getDate();
+            month = last.getMonth() + 1;
+            year = last.getFullYear();
             dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
             dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
-            res = new SUGAR.expressions.DaysUntilExpression([dateExpr], getSLContext(model));
+            var res = new SUGAR.expressions.DaysUntilExpression([dateExpr], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(days);
             last = new Date(date.getTime() - (days * 24 * 60 * 60 * 1000));
-            day =last.getDate();
-            month=last.getMonth()+1;
-            year=last.getFullYear();
-            dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
-            dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
+            day = last.getDate();
+            var month = last.getMonth() + 1;
+            var year = last.getFullYear();
+            var dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
+            var dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             res = new SUGAR.expressions.DaysUntilExpression([dateExpr], getSLContext(model));
-            expect(parseFloat(res.evaluate())).toBe(days*-1);
+            expect(parseFloat(res.evaluate())).toBe(days * -1);
         });
     });
 
-    describe("Hours Until Expression Function", function () {
-        it("returns number of hours from now until the specified date.", function () {
-            var days, date, last, day, month, year, dateString, dateExpr, res;
-            days = 7;
-            date = new Date();
-            last = new Date(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            day =last.getDate();
-            month=last.getMonth()+1;
-            year=last.getFullYear();
-            dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
-            dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
-            res = new SUGAR.expressions.HoursUntilExpression([dateExpr], getSLContext(model));
-            expect(parseFloat(res.evaluate())).toBe((days*24)-date.getHours()-1);
+    describe('Hours Until Expression Function', function() {
+        it('returns number of hours from now until the specified date.', function() {
+            var days = 7;
+            var date = new Date();
+            var last = new Date(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            var day = last.getDate();
+            var month = last.getMonth() + 1;
+            var year = last.getFullYear();
+            var dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
+            var dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
+            var res = new SUGAR.expressions.HoursUntilExpression([dateExpr], getSLContext(model));
+            expect(parseFloat(res.evaluate())).toBe((days * 24) - date.getHours() - 1);
             last = new Date(date.getTime() - (days * 24 * 60 * 60 * 1000));
-            day =last.getDate();
-            month=last.getMonth()+1;
-            year=last.getFullYear();
+            day = last.getDate();
+            month = last.getMonth() + 1;
+            year = last.getFullYear();
             dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
             dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             res = new SUGAR.expressions.HoursUntilExpression([dateExpr], getSLContext(model));
-            expect(parseFloat(res.evaluate())).toBe((days*-24) - date.getHours() );
+            expect(parseFloat(res.evaluate())).toBe((days * -24) - date.getHours());
         });
     });
 
-    describe("Define Date Expression Function", function () {
-        it("defines the date", function () {
+    describe('Define Date Expression Function', function() {
+        it('defines the date', function() {
             var date = new SUGAR.expressions.StringLiteralExpression(['01/01/2010']);
             var defDate = new SUGAR.expressions.DefineDateExpression([date], getSLContext(model));
             var expectDate = new Date('01/01/2010');
@@ -131,39 +133,38 @@ describe("Simple Date Expression Functions", function () {
         });
     });
 
-    describe("Define Now Expression Function", function () {
-        it("returns time expression of right now", function () {
+    describe('Define Now Expression Function', function() {
+        it('returns time expression of right now', function() {
             var today = new SUGAR.expressions.NowExpression([], getSLContext(model));
             var dateVar = new Date();
             var year = dateVar.getFullYear();
-            var month = ("0" + (dateVar.getMonth()+1)).slice(-2);
-            var date = ("0" + dateVar.getDate()).slice(-2);
-            var todaysDate = `${year}-${month}-${date} ${dateVar.getHours()}:${dateVar.getMinutes()}:00`;
-
+            var month = ('0' + (dateVar.getMonth() + 1)).slice(-2);
+            var date = ('0' + dateVar.getDate()).slice(-2);
+            var mins = ('0' + dateVar.getMinutes()).slice(-2);
+            var hours = ('0' + dateVar.getHours()).slice(-2);
+            var todaysDate = `${year}-${month}-${date} ${hours}:${mins}:00`;
             expect(today.evaluate()).toEqual(todaysDate);
-            // pending();
         });
     });
 
-    describe("Today Expression Function", function () {
-        it("returns today's date", function () {
+    describe('Today Expression Function', function() {
+        it('returns todays date', function() {
             var today = new SUGAR.expressions.TodayExpression([], getSLContext(model));
             var dateVar = new Date();
             var year = dateVar.getFullYear();
-            var month = ("0" + (dateVar.getMonth()+1)).slice(-2);
-            var date = ("0" + dateVar.getDate()).slice(-2);
+            var month = ('0' + (dateVar.getMonth() + 1)).slice(-2);
+            var date = ('0' + dateVar.getDate()).slice(-2);
             var todaysDate = `${year}-${month}-${date}`;
-
             expect(today.evaluate()).toEqual(todaysDate);
         });
     });
 
-    describe("Timestampe Expression Function", function () {
-        it("returns the passed in datetime string as a unix timestamp", function () {
+    describe('Timestampe Expression Function', function() {
+        it('returns the passed in datetime string as a unix timestamp', function() {
             var dateString = new SUGAR.expressions.StringLiteralExpression(['01/01/2010']);
             var today = new SUGAR.expressions.TimestampExpression([dateString], getSLContext(model));
             var tempDate = new Date('01/01/2010');
-            expect(today.evaluate()).toEqual(parseFloat(tempDate.getTime()/1000));
+            expect(today.evaluate()).toEqual(parseFloat(tempDate.getTime() / 1000));
         });
     });
 });

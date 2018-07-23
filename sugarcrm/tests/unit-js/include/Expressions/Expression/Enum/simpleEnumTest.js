@@ -8,49 +8,36 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Sugar Simple Enum Expression Functions", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('Sugar Simple Enum Expression Functions', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
-    var getSLContext = function (modelOrCollection, context) {
-        var isCollection = (modelOrCollection instanceof dm.beanCollection);
-        var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
-        context = context || app.context.getContext({
-            url: "someurl",
-            module: model.module,
-            model: model
-        });
-        var view = SugarTest.createComponent("View", {
-            context: context,
-            type: "edit",
-            module: model.module
-        });
-        return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
-    };
-
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("Create Enum Expression Function", function () {
-        it("returns enum object ", function () {
-            var a, b, c, d, e;
-            a = new SUGAR.expressions.ConstantExpression([4]);
-            b = new SUGAR.expressions.ConstantExpression([5]);
-            c = new SUGAR.expressions.ConstantExpression([6]);
-            d = new SUGAR.expressions.ConstantExpression([7]);
-            e = new SUGAR.expressions.ConstantExpression([10]);
+    describe('Create Enum Expression Function', function() {
+        it('returns enum object ', function() {
+            var a = new SUGAR.expressions.ConstantExpression([4]);
+            var b = new SUGAR.expressions.ConstantExpression([5]);
+            var c = new SUGAR.expressions.ConstantExpression([6]);
+            var d = new SUGAR.expressions.ConstantExpression([7]);
+            var e = new SUGAR.expressions.ConstantExpression([10]);
 
             var test = new SUGAR.expressions.DefineEnumExpression([a, b, c, d, e]);
 
@@ -58,10 +45,3 @@ describe("Sugar Simple Enum Expression Functions", function () {
         });
     });
 });
-
-/*
- * ForecastIncludedCommitStagesExpression.php
- * ForecastSalesStageExpression.php
- * SugarListWhereExpression.php
- * SugarTranslatedDropDownExpression.php
- */

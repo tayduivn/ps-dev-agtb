@@ -8,51 +8,55 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Sugar Translated Drop Down Expression Function", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('Sugar Translated Drop Down Expression Function', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
-    var getSLContext = function (modelOrCollection, context) {
+    var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
         context = context || app.context.getContext({
-            url: "someurl",
+            url: 'someurl',
             module: model.module,
             model: model
         });
-        var view = SugarTest.createComponent("View", {
+        var view = SugarTest.createComponent('View', {
             context: context,
-            type: "edit",
+            type: 'edit',
             module: model.module
         });
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
 
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("Sugar Translated Drop Down Expression Function", function () {
-        it("returns a collection of the translated values in the supplied dropdown list", function () {
-            var test_param = new SUGAR.expressions.StringLiteralExpression(['random_list_name']);
-            var res = new SUGAR.expressions.SugarTranslatedDropDownExpression([test_param], getSLContext(model));
-            var test_array = ['0','1','2','3','4']
-            SUGAR.lang = {get : function(){}};
-            sinonSandbox.stub(App.lang, "getAppListStrings").withArgs(test_param.evaluate()).returns(test_array);
-            sinonSandbox.stub(SUGAR.lang, "get").withArgs("app_list_strings", test_param.evaluate()).returns(test_array);
-            expect(res.evaluate()).toEqual(test_array);
+    describe('Sugar Translated Drop Down Expression Function', function() {
+        it('returns a collection of the translated values in the supplied dropdown list', function() {
+            var testParam = new SUGAR.expressions.StringLiteralExpression(['random_list_name']);
+            var res = new SUGAR.expressions.SugarTranslatedDropDownExpression([testParam], getSLContext(model));
+            var testArray = ['0','1','2','3','4'];
+            SUGAR.lang = {get: function() {}};
+            sinonSandbox.stub(App.lang, 'getAppListStrings').withArgs(testParam.evaluate()).returns(testArray);
+            sinonSandbox.stub(SUGAR.lang, 'get').withArgs('app_list_strings', testParam.evaluate()).returns(testArray);
+            expect(res.evaluate()).toEqual(testArray);
         });
     });
 });

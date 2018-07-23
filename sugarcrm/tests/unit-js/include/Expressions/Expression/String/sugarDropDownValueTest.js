@@ -8,59 +8,64 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("SugarDropDownValue Expression Function", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('SugarDropDownValue Expression Function', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
-    var getSLContext = function (modelOrCollection, context) {
+    var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
         context = context || app.context.getContext({
-            url: "someurl",
+            url: 'someurl',
             module: model.module,
             model: model
         });
-        var view = SugarTest.createComponent("View", {
+        var view = SugarTest.createComponent('View', {
             context: context,
-            type: "edit",
+            type: 'edit',
             module: model.module
         });
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("SugarDropDownValue Expression Function", function () {
-        it("should the value related to a selection in a drop down menu (in this case sales_probability_dom and sales stage)", function () {
-            var opp = new SUGAR.expressions.StringLiteralExpression(["sales_probability_dom"]);
-            var key = new SUGAR.expressions.StringLiteralExpression([model.get("sales_stage")]);
+    describe('SugarDropDownValue Expression Function', function() {
+        it('should the value related to a selection in a drop down menu (in this case sales_probability_dom and ' +
+            'sales stage)', function() {
+            var opp = new SUGAR.expressions.StringLiteralExpression(['sales_probability_dom']);
+            var key = new SUGAR.expressions.StringLiteralExpression([model.get('sales_stage')]);
             var dict = {
-                "Closed Lost": 0,
-                "Prospecting": 10,
-                "Qualification": 20,
-                "Need Analysis": 25,
-                "Value Proposition": 30,
-                "Id. Decision Makers": 40,
-                "Perception Analysis": 50,
-                "Proposal": 65,
-                "Negotiation/Review": 80,
-                "Closed Won": 100,
+                'Closed Lost': 0,
+                'Prospecting': 10,
+                'Qualification': 20,
+                'Need Analysis': 25,
+                'Value Proposition': 30,
+                'Id. Decision Makers': 40,
+                'Perception Analysis': 50,
+                'Proposal': 65,
+                'Negotiation/Review': 80,
+                'Closed Won': 100,
             };
             var res = new SUGAR.expressions.SugarDropDownValueExpression([opp, key], getSLContext(model));
-            sinonSandbox.stub(res.context, "getAppListStrings").withArgs(opp.evaluate()).returns(dict);
+            sinonSandbox.stub(res.context, 'getAppListStrings').withArgs(opp.evaluate()).returns(dict);
             expect(parseFloat(res.evaluate())).toBe(dict[key.evaluate()]);
         });
     });

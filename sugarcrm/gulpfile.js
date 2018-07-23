@@ -52,11 +52,10 @@ function splitByCommas(val) {
 }
 
 gulp.task('loadCaches', function(done) {
-
     var exec = require('child_process').exec;
-    var load_cache = 'php include/Expressions/updatecache.php';
-    var load_cache_process = exec(load_cache);
-    load_cache_process.stdout.on('data', function (data) {
+    var loadCache = 'php include/Expressions/updatecache.php';
+    var loadCacheProcess = exec(loadCache);
+    loadCacheProcess.stdout.on('data', function(data) {
         console.log(data);
     });
 });
@@ -224,7 +223,6 @@ gulp.task('karma', function(done) {
         done(exitStatus ? 'There are failing unit tests' : undefined);
     }).start();
 });
-
 
 gulp.task('karmaSugarLogic', ['loadCaches', 'karma'], function() {
     //task karma sugar

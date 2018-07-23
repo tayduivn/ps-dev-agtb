@@ -8,50 +8,54 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Sugar Translate Expression Function", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('Sugar Translate Expression Function', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
-    var getSLContext = function (modelOrCollection, context) {
+    var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
         context = context || app.context.getContext({
-            url: "someurl",
+            url: 'someurl',
             module: model.module,
             model: model
         });
-        var view = SugarTest.createComponent("View", {
+        var view = SugarTest.createComponent('View', {
             context: context,
-            type: "edit",
+            type: 'edit',
             module: model.module
         });
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
 
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("Sugar Translate Expression Function", function () {
-        it("returns translated label given a label and module)", function () {
-            var lbl= new SUGAR.expressions.StringLiteralExpression(["LBL_NAME"]);
-            var mod = new SUGAR.expressions.StringLiteralExpression(["Accounts"]);
+    describe('Sugar Translate Expression Function', function() {
+        it('returns translated label given a label and module)', function() {
+            var lbl = new SUGAR.expressions.StringLiteralExpression(['LBL_NAME']);
+            var mod = new SUGAR.expressions.StringLiteralExpression(['Accounts']);
             var res = new SUGAR.expressions.SugarTranslateExpression([lbl,mod], getSLContext(model));
-            SUGAR.language = {get : function(){}};
-            sinonSandbox.stub(SUGAR.language, "get").withArgs("Accounts", "LBL_NAME").returns('Name');
-            expect(res.evaluate()).toBe("Name");
+            SUGAR.language = {get: function() {}};
+            sinonSandbox.stub(SUGAR.language, 'get').withArgs('Accounts', 'LBL_NAME').returns('Name');
+            expect(res.evaluate()).toBe('Name');
 
         });
     });

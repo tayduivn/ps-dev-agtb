@@ -8,48 +8,51 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Sugar Condition Expression Function", function () {
-    var app, dm, sinonSandbox, meta, model;
+describe('Sugar Condition Expression Function', function() {
+    var app;
+    var dm;
+    var sinonSandbox;
+    var meta;
+    var model;
 
-    var getSLContext = function (modelOrCollection, context) {
+    var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
         context = context || app.context.getContext({
-            url: "someurl",
+            url: 'someurl',
             module: model.module,
             model: model
         });
-        var view = SugarTest.createComponent("View", {
+        var view = SugarTest.createComponent('View', {
             context: context,
-            type: "edit",
+            type: 'edit',
             module: model.module
         });
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
-        meta = SugarTest.loadFixture("revenue-line-item-metadata");
+        meta = SugarTest.loadFixture('revenue-line-item-metadata');
         app.metadata.set(meta);
         dm = app.data;
         dm.reset();
         dm.declareModels();
-        model = dm.createBean("RevenueLineItems", SugarTest.loadFixture("rli"));
+        model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
 
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinonSandbox.restore();
     });
 
-    describe("Currency Rate Expression Function", function () {
-        it("returns param[1] if param[0] is true or param[2] if param[0] is false", function () {
-            var curr_id = new SUGAR.expressions.StringLiteralExpression(['-99']);
-            var res = new SUGAR.expressions.CurrencyRateExpression([curr_id],getSLContext(model));
-            sinonSandbox.stub(App.metadata, "getCurrency").withArgs(curr_id.evaluate()).returns({'conversion_rate' : 1});
-            console.log(res.evaluate());
+    describe('Currency Rate Expression Function', function() {
+        it('returns param[1] if param[0] is true or param[2] if param[0] is false', function() {
+            var currId = new SUGAR.expressions.StringLiteralExpression(['-99']);
+            var res = new SUGAR.expressions.CurrencyRateExpression([currId],getSLContext(model));
+            sinonSandbox.stub(App.metadata, 'getCurrency').withArgs('-99').returns({'conversion_rate': 1});
             expect(res.evaluate()).toBe(1);
         });
     });

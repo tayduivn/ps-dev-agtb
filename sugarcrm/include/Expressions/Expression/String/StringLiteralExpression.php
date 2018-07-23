@@ -29,7 +29,7 @@ EOQ;
 	}
 	
 	/**
-	 * Returns the operation name that this Expression should be
+	 * Returns the opreation name that this Expression should be
 	 * called by.
 	 */
 	static function getOperationName() {
