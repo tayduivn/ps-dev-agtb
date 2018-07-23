@@ -2048,6 +2048,15 @@ LEFT JOIN all_constraints c
     /**
      * @inheritdoc
      */
+    public function getDbRandomNumberFunction(int $min, int $max) : string
+    {
+        $max++;
+        return "FLOOR(DBMS_RANDOM.VALUE($min, $max))";
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function massageIndexDefs($fieldDefs, $indices)
     {
         $indices = parent::massageIndexDefs($fieldDefs, $indices);

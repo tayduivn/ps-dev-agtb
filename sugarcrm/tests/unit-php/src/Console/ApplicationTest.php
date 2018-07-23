@@ -79,6 +79,7 @@ class ApplicationTest extends TestCase
                     'search:status' => $ns . '\Api\SearchStatusCommand',
                     'search:module' => $ns . '\Elasticsearch\ModuleCommand',
                     'search:silent_reindex' => $ns . '\Elasticsearch\SilentReindexCommand',
+                    'search:silent_reindex_mp' => $ns . '\Elasticsearch\SilentReindexMultiProcessCommand',
                     'password:config' => $ns . '\Password\PasswordConfigCommand',
                     'password:reset' => $ns . '\Password\PasswordResetCommand',
                     'password:weak' => $ns . '\Password\WeakHashesCommand',

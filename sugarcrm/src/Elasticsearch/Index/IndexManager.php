@@ -161,11 +161,6 @@ class IndexManager
      */
     public function scheduleIndexing(array $modules = array(), $recreateIndices = false)
     {
-        if (!$this->readyForIndexChanges()) {
-            $this->container->logger->critical('IndexManager: System not ready for full reindex, cancelling');
-            return false;
-        }
-
         $allModules = $this->getAllEnabledModules();
         if (empty($modules)) {
             $modules = $allModules;
@@ -173,14 +168,34 @@ class IndexManager
             $modules = array_intersect($modules, $allModules);
         }
 
-        if ($recreateIndices) {
-            $this->syncIndices($modules, $recreateIndices);
+        if (!$this->checkAndSyncIndices($modules, $recreateIndices)) {
+            return false;
         }
 
         $this->disableRefresh($modules);
         $this->disableReplicas($modules);
         $this->container->queueManager->reindexModules($modules);
 
+        return true;
+    }
+
+    /**
+     * check availability of elastic and create indices (drop existing one's on $recreateIndices)
+     *
+     * @param array $modules List of modules
+     * @param boolean $recreateIndices
+     * @return boolean False on failure, true on success
+     */
+    public function checkAndSyncIndices(array $modules = array(), $recreateIndices = false)
+    {
+        if (!$this->readyForIndexChanges()) {
+            $this->container->logger->critical('IndexManager: System not ready for full reindex, cancelling');
+            return false;
+        }
+
+        if ($recreateIndices) {
+            $this->syncIndices($modules, $recreateIndices);
+        }
         return true;
     }
 

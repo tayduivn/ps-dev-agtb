@@ -1361,6 +1361,13 @@ FROM information_schema.statistics';
       	return 'UUID()';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getRandInt(int $min, int $max)
+    {
+        return sprintf('FLOOR(%d + RAND() * %d)', $min, $max - $min + 1);
+    }
 
 	/**
 	* Check if the value is empty value for this type

@@ -4652,6 +4652,21 @@ abstract class DBManager implements LoggerAwareInterface
      */
 	abstract public function getGuidSQL();
 
+    /**
+     * get DB random number function, to get random number >= $min and <= $max
+     *
+     * This function works for underline db which supports 'FLOOR()' and 'RAND()',
+     * only exception is Oracle, which needs overwrite this method
+     *
+     * @param int $min
+     * @param int $max
+     * @return string, the DB function
+     */
+    public function getDbRandomNumberFunction(int $min, int $max) : string
+    {
+        return sprintf('FLOOR(%d + RAND() * %d)', $min, $max - $min + 1);
+    }
+
 	/**
 	 * List of SQL reserved words
 	 * Column can not be named as one of these

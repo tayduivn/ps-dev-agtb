@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Console;
 
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ExplainCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\SilentReindexMultiProcessCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Password\WeakHashesCommand;
@@ -98,6 +99,7 @@ class Application extends BaseApplication
             new CleanupQueueCommand(),
             new ModuleCommand(),
             new SilentReindexCommand(),
+            new SilentReindexMultiProcessCommand(),
 
             // Genreric Search
             new SearchFieldsCommand(),

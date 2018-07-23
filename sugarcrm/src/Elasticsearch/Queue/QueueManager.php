@@ -27,6 +27,7 @@ class QueueManager
     const JOB_QUEUE = 'job_queue';
     const PROCESSED_NEW = '0';
     const PROCESSED_DONE = '1';
+    const DEFAULT_BUCKET_ID = -1;
 
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
@@ -96,10 +97,32 @@ class QueueManager
     }
 
     /**
+     * check bucketId, return true if bucketId is self::DEFAULT_PROCESSOR_ID
+     * @param int $bucketId
+     * @return bool
+     */
+    private function isDefaultBucketId(int $bucketId) : bool
+    {
+        return $bucketId === self::DEFAULT_BUCKET_ID;
+    }
+
+    /**
      * Queue all beans for given modules.
      * @param array $modules
      */
     public function reindexModules(array $modules)
+    {
+        // clear the whole queue when all modules are selected
+        $this->resetAndCleanupQueue($modules);
+        $this->queueModules($modules);
+        $this->createScheduler();
+    }
+
+    /**
+     * reset and clean up queue
+     * @param array $modules
+     */
+    public function resetAndCleanupQueue(array $modules)
     {
         $allModules = $this->container->metaDataHelper->getAllEnabledModules();
         sort($allModules);
@@ -113,8 +136,6 @@ class QueueManager
         }
 
         $this->cleanupQueue();
-        $this->queueModules($modules);
-        $this->createScheduler();
     }
 
     /**
@@ -359,7 +380,7 @@ class QueueManager
      * @param string $module
      * @return array
      */
-    public function consumeModuleFromQueue($module)
+    public function consumeModuleFromQueue(string $module, int $bucketId = self::DEFAULT_BUCKET_ID) : array
     {
         // make sure the module is fts enabled
         if (!$this->container->metaDataHelper->isModuleEnabled($module)) {
@@ -370,7 +391,7 @@ class QueueManager
         $errorMsg = '';
         $success = true;
 
-        $query = $this->generateQueryModuleFromQueue($this->getNewBean($module));
+        $query = $this->generateQueryModuleFromQueue($this->getNewBean($module), $bucketId);
         $data = $query->execute();
         $beans = [];
         $ftsIds = [];
@@ -405,13 +426,13 @@ class QueueManager
      * Get a list of modules for which records are queued
      * @return array
      */
-    public function getQueuedModules()
+    public function getQueuedModules(int $bucketId = self::DEFAULT_BUCKET_ID) : array
     {
         $modules = array();
         $sql = sprintf(
             'SELECT DISTINCT bean_module FROM %s WHERE processed = %s',
             self::FTS_QUEUE,
-            self::PROCESSED_NEW
+            $this->isDefaultBucketId($bucketId) ? self::PROCESSED_NEW : $bucketId
         );
         $result = $this->db->query($sql);
         while ($row = $this->db->fetchByAssoc($result)) {
@@ -431,12 +452,12 @@ class QueueManager
      * @param string $module Module name
      * @return integer
      */
-    public function getQueueCountModule($module)
+    public function getQueueCountModule(string $module, int $bucketId = self::DEFAULT_BUCKET_ID)
     {
         $sql = sprintf(
             "SELECT count(bean_id) FROM %s WHERE processed = %s AND bean_module = %s",
             self::FTS_QUEUE,
-            self::PROCESSED_NEW,
+            $this->isDefaultBucketId($bucketId) ? self::PROCESSED_NEW : $bucketId,
             $this->db->quoted($module)
         );
         if ($result = $this->db->getOne($sql)) {
@@ -522,9 +543,10 @@ class QueueManager
     /**
      * Generate SQL query
      * @param \SugarBean
+     * @param int $bucketId
      * @return \SugarQuery
      */
-    protected function generateQueryModuleFromQueue(\SugarBean $bean)
+    protected function generateQueryModuleFromQueue(\SugarBean $bean, int $bucketId = self::DEFAULT_BUCKET_ID)
     {
         // Get all bean fields
         $beanFields = array_keys(
@@ -542,8 +564,14 @@ class QueueManager
         $sq->limit($this->maxBulkQueryThreshold);
 
         // join fts_queue table
-        $sq->joinTable(self::FTS_QUEUE)->on()
-            ->equalsField(self::FTS_QUEUE . '.bean_id', 'id');
+        if ($this->isDefaultBucketId($bucketId)) {
+            $sq->joinTable(self::FTS_QUEUE)->on()
+                ->equalsField(self::FTS_QUEUE . '.bean_id', 'id');
+        } else {
+            $sq->joinTable(self::FTS_QUEUE)->on()
+                ->equalsField(self::FTS_QUEUE . '.bean_id', 'id')
+                ->equals(self::FTS_QUEUE . '.processed', $bucketId);
+        }
 
         $additionalFields = array(
             array(self::FTS_QUEUE . '.id', 'fts_id'),
@@ -732,14 +760,90 @@ class QueueManager
     }
 
     /**
-     * Consume all records from database queue
+     * Consume all records from database queue, option to process $bucketId
+     * @param $bucketId
+     * @return int, number of records have been processed
      */
-    public function consumeQueue()
+    public function consumeQueue(int $bucketId = self::DEFAULT_BUCKET_ID) : int
     {
-        foreach ($this->getQueuedModules() as $module) {
-            $this->consumeModuleFromQueue($module);
+        $total = 0;
+        foreach ($this->getQueuedModules($bucketId) as $module) {
+            list($sucess, $processed, $duration, $errorMsg) = $this->consumeModuleFromQueue($module, $bucketId);
+            $total += $processed;
         }
-        $this->reportIndexingDone();
+
+        if ($this->isDefaultBucketId($bucketId)) {
+            // set elastic
+            $this->reportIndexingDone();
+        }
+        return $total;
+    }
+
+    /**
+     * Check if there are more records to consume
+     * @param $bucketId
+     * @return boolean
+     */
+    protected function hasMoreRecords(int $bucketId) : bool
+    {
+        // check the count for each module
+        foreach ($this->getQueuedModules($bucketId) as $module) {
+            if ($this->getQueueCountModule($module, $bucketId) > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * loop through Queue to process all data in the queue
+     * @return int
+     */
+    public function consumeAllDataFromQueue(int $bucketId) : int
+    {
+        $total = 0;
+        while ($this->hasMoreRecords($bucketId)) {
+            $total += $this->consumeQueue($bucketId);
+        }
+
+        return $total;
+    }
+
+    /**
+     * reset Queue and create data in FTS_QUEUE table
+     * @param array $modules
+     * @param int $bucketSize
+     */
+    public function createQueueForBuckets(array $modules, int $bucketSize)
+    {
+        $this->resetAndCleanupQueue($modules);
+        foreach ($modules as $module) {
+            $this->db->query($this->generateQueryModuleToQueueForBuckets($module, $bucketSize));
+        }
+    }
+
+    /**
+     * Generate SQL query to insert records into the queue for givem nodule, also assign bucket Id for parallel processing
+     * @param string $module
+     * @return string
+     */
+    public function generateQueryModuleToQueueForBuckets(string $module, int $bucketSize)
+    {
+        $seed = $this->getNewBean($module);
+        $sql = sprintf(
+            'INSERT INTO %s (id, bean_id, bean_module, date_modified, date_created, processed)
+            SELECT %s, m.id bean_id, %s, %s, %s, %s
+            FROM %s m WHERE m.deleted = 0 ',
+            QueueManager::FTS_QUEUE,
+            $this->db->getGuidSQL(),
+            $this->db->quoted($module),
+            $this->db->now(),
+            $this->db->now(),
+            $this->db->getDbRandomNumberFunction(1, $bucketSize),
+            $seed->table_name
+        );
+        return $sql;
     }
 
     /**
