@@ -592,7 +592,7 @@ class QuotesConfigApi extends ConfigModuleApi
                 unset($settings['summary_columns'][$key]['type']);
             }
 
-            if (isset($summaryField['css_class'])) {
+            if (isset($summaryField['css_class']) && !empty($summaryField['css_class'])) {
                 continue;
             } else {
                 $settings['summary_columns'][$key]['css_class'] = 'quote-totals-row-item';
