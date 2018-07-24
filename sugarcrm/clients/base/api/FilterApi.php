@@ -360,6 +360,7 @@ class FilterApi extends SugarApi
         if (count($q->join) > 0) {
             $options['id_query'] = $this->createQuery($seed, $args, array_merge($options, [
                 'select' => ['id'],
+                'erased_fields' => false,
             ]));
         }
 
@@ -672,6 +673,7 @@ class FilterApi extends SugarApi
                 ->in('id', $ids);
             $q->offset(null);
             $q->limit(null);
+            $queryOptions['skipFixQuery'] = true;
         }
 
         $fetched = $seed->fetchFromQuery($q, $fields, $queryOptions);
