@@ -89,6 +89,7 @@ $mod_strings = array (
     'LBL_PMSE_ADAM_DESIGNER_UNDO' => 'Undo',
     'LBL_PMSE_ADAM_DESIGNER_REDO' => 'Redo',
     'LBL_PMSE_ADAM_DESIGNER_SAVE' => 'Save',
+    'LBL_PMSE_ADAM_DESIGNER_VALIDATE' => 'Validate',
 
     /**ELEMENTS NAMES**/
     'LBL_PMSE_ADAM_DESIGNER_TASK' => 'Activity',

@@ -1380,6 +1380,15 @@ function renderProject (prjCode) {
         jCore.getActiveCanvas().RemoveCurrentMenu();
     });
 
+    $('#ButtonValidate').click(function() {
+        traverseProcess();
+        jCore.getActiveCanvas().RemoveCurrentMenu();
+    });
+
+    // Traverses the process definition elements
+    var traverseProcess = function() {
+    };
+
     //HANDLE ZOOM DROPDOWN
     $('#zoom').change(function (e) {
         var newZoomValue;
