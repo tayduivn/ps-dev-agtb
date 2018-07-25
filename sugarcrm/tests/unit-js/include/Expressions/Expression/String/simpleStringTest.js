@@ -8,15 +8,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-/*
- * For simple string expressions, we still need to add tests for
- * ForecastCommitStageExpression
- * FormatedNameExpression
- * SugarDropDownValueExpression
- * SugarTranslateExpression
- */
-
 describe('Simple Numeric Functions Test', function() {
     var app;
     var dm;
@@ -26,7 +17,7 @@ describe('Simple Numeric Functions Test', function() {
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
-        context = context || app.context.getContext({
+        context = context || new app.Context({
             url: 'someurl',
             module: model.module,
             model: model
@@ -62,6 +53,8 @@ describe('Simple Numeric Functions Test', function() {
         var e = new SUGAR.expressions.ConstantExpression([3]);
         var f = new SUGAR.expressions.ConstantExpression([4]);
         var g = new SUGAR.expressions.ConstantExpression([5]);
+        var neg = new SUGAR.expressions.ConstantExpression([-3]);
+        var above = new SUGAR.expressions.ConstantExpression([13]);
         it('should return character at a certain place', function() {
             var res =  new SUGAR.expressions.CharacterAtExpression([a,b], getSLContext(model));
             expect(res.evaluate()).toBe('H');
@@ -75,6 +68,10 @@ describe('Simple Numeric Functions Test', function() {
             expect(res.evaluate()).toBe('o');
             res =  new SUGAR.expressions.CharacterAtExpression([a,g], getSLContext(model));
             expect(res.evaluate()).toBe(' ');
+            res =  new SUGAR.expressions.CharacterAtExpression([a,neg], getSLContext(model));
+            expect(res.evaluate()).toBe('');
+            res =  new SUGAR.expressions.CharacterAtExpression([a,above], getSLContext(model));
+            expect(res.evaluate()).toBe('');
         });
     });
 
@@ -101,24 +98,24 @@ describe('Simple Numeric Functions Test', function() {
     });
 
     describe('String to Lower Expression Function', function() {
-        var a = new SUGAR.expressions.StringLiteralExpression(['HelloWorld']);
-        var b = new SUGAR.expressions.StringLiteralExpression((['HelloWorld']));
+        var stringA = new SUGAR.expressions.StringLiteralExpression(['HelloWorld']);
+        var stringB = new SUGAR.expressions.StringLiteralExpression((['HelloWorld']));
         it('should return all lowercase version of string A', function() {
-            var res =  new SUGAR.expressions.StrToLowerExpression([a], getSLContext(model));
+            var res =  new SUGAR.expressions.StrToLowerExpression([stringA], getSLContext(model));
             expect(res.evaluate()).toBe('helloworld');
-            res =  new SUGAR.expressions.StrToLowerExpression([b], getSLContext(model));
+            res =  new SUGAR.expressions.StrToLowerExpression([stringB], getSLContext(model));
             expect(res.evaluate()).toBe('helloworld');
         });
     });
 
     describe('String to Upper Expression Function', function() {
-        var a = new SUGAR.expressions.StringLiteralExpression(['helloworld']);
-        var b = new SUGAR.expressions.StringLiteralExpression((['HelloWorld']));
+        var stringA = new SUGAR.expressions.StringLiteralExpression(['helloworld']);
+        var stringB = new SUGAR.expressions.StringLiteralExpression((['HelloWorld']));
 
-        it('should return all uppercase version of string A', function() {
-            var res =  new SUGAR.expressions.StrToUpperExpression([a], getSLContext(model));
+        it('should return all uppercase version of strings A and B', function() {
+            var res =  new SUGAR.expressions.StrToUpperExpression([stringA], getSLContext(model));
             expect(res.evaluate()).toBe('HELLOWORLD');
-            res =  new SUGAR.expressions.StrToUpperExpression([b], getSLContext(model));
+            res =  new SUGAR.expressions.StrToUpperExpression([stringB], getSLContext(model));
             expect(res.evaluate()).toBe('HELLOWORLD');
         });
     });
@@ -130,7 +127,7 @@ describe('Simple Numeric Functions Test', function() {
         var d = new SUGAR.expressions.ConstantExpression([6]);  // for beginning of second word
         var e = new SUGAR.expressions.ConstantExpression([11]); // for end of string
 
-        it('should return all uppercase version of string A', function() {
+        it('should return substring of A', function() {
             var res =  new SUGAR.expressions.SubStrExpression([a,b,c], getSLContext(model));
             expect(res.evaluate()).toBe('Hello');
             res =  new SUGAR.expressions.SubStrExpression([a,d,e], getSLContext(model));
@@ -142,16 +139,11 @@ describe('Simple Numeric Functions Test', function() {
         var a = new SUGAR.expressions.StringLiteralExpression(['Mr.']);
         var b = new SUGAR.expressions.StringLiteralExpression(['Prashanth']);
         var c = new SUGAR.expressions.StringLiteralExpression(['Koushik']);
-        var d = new SUGAR.expressions.StringLiteralExpression(['']);
-        it('should return all uppercase version of string A', function() {
-            name_format = 's f l'; // jscs:ignore 
+        var d = new SUGAR.expressions.StringLiteralExpression(['testing_t']);
+        it('should return formatted name string', function() {
+            name_format = 's f l t'; // jscs:ignore
             var res = new SUGAR.expressions.FormatedNameExpression([a, b, c, d], getSLContext(model));
-            expect(res.evaluate()).toEqual(`${a.evaluate()} ${b.evaluate()} ${c.evaluate()}`);
+            expect(res.evaluate()).toEqual(`${a.evaluate()} ${b.evaluate()} ${c.evaluate()} ${d.evaluate()}`);
         });
     });
 });
-/*
- * For simple string expressions, we still need to add tests for
- * ForecastCommitStageExpression
- * FormatedNameExpression
- */

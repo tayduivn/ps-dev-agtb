@@ -18,7 +18,7 @@ describe('SugarDropDown Expression Function', function() {
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
-        context = context || app.context.getContext({
+        context = context || new app.Context({
             url: 'someurl',
             module: model.module,
             model: model
@@ -47,13 +47,20 @@ describe('SugarDropDown Expression Function', function() {
         sinonSandbox.restore();
     });
 
-    describe('SugarDropDown Expression Function', function() {
-        it('returns the list of values from a certain dropdown object', function() {
-            var opp = new SUGAR.expressions.StringLiteralExpression(['sales_probability_dom']);
+    describe('returns the list of values from a certain dropdown object', function() {
+        var opp = new SUGAR.expressions.StringLiteralExpression(['sales_probability_dom']);
+        it('list is found', function() {
             var res = new SUGAR.expressions.SugarDropDownExpression([opp], getSLContext(model));
-            sinonSandbox.stub(app.lang, 'getAppListStrings').withArgs(opp.evaluate()).returns({'test': 'test',
-                'array': 'array'});
-            expect(res.evaluate()).toEqual(['test','array']);
+            sinonSandbox.stub(app.lang, 'getAppListStrings').withArgs(opp.evaluate()).returns({
+                'test': 'test',
+                'array': 'array'
+            });
+            expect(res.evaluate()).toEqual(['test', 'array']);
+        });
+        it('list is not found', function() {
+            res = new SUGAR.expressions.SugarDropDownExpression([opp], getSLContext(model));
+            sinonSandbox.stub(app.lang, 'getAppListStrings').withArgs(opp.evaluate()).returns({});
+            expect(res.evaluate()).toEqual([]);
         });
     });
 });

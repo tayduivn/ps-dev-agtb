@@ -18,7 +18,7 @@ describe('Simple Boolean Functions Test', function() {
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
-        context = context || app.context.getContext({
+        context = context || new app.Context({
             url: 'someurl',
             module: model.module,
             model: model
@@ -52,7 +52,7 @@ describe('Simple Boolean Functions Test', function() {
 
     describe('True and Equal Expression Function', function() {
         it('should return true if true expression is true', function() {
-            var res =  new SUGAR.expressions.EqualExpression([trueExpr, new SUGAR.expressions.TrueExpression([])],
+            var res = new SUGAR.expressions.EqualExpression([trueExpr, new SUGAR.expressions.TrueExpression([])],
                 getSLContext(model));
             expect(res.evaluate()).toBe('true');
         });
@@ -60,43 +60,54 @@ describe('Simple Boolean Functions Test', function() {
 
     describe('False and Equal Expression Function', function() {
         it('should return true if false expression is false', function() {
-            var res =  new SUGAR.expressions.EqualExpression([falseExpr, new SUGAR.expressions.FalseExpression([])],
+            var res = new SUGAR.expressions.EqualExpression([falseExpr, new SUGAR.expressions.FalseExpression([])],
                 getSLContext(model));
             expect(res.evaluate()).toBe('true');
         });
     });
 
+    describe('Equal Expression Function', function() {
+        it('should check if false = true', function() {
+            var res = new SUGAR.expressions.EqualExpression([falseExpr, new SUGAR.expressions.TrueExpression([])],
+                getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+            res = new SUGAR.expressions.EqualExpression([trueExpr,new SUGAR.expressions.FalseExpression([])],
+                getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+        });
+    });
+
     describe('And Expression Function', function() {
         it('should return the LOGICAL AND of two boolean expressions', function() {
-            var res =  new SUGAR.expressions.AndExpression([falseExpr,falseExpr], getSLContext(model));
+            var res = new SUGAR.expressions.AndExpression([falseExpr, falseExpr], getSLContext(model));
             expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.AndExpression([falseExpr,trueExpr], getSLContext(model));
+            res = new SUGAR.expressions.AndExpression([falseExpr, trueExpr], getSLContext(model));
             expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.AndExpression([trueExpr,falseExpr], getSLContext(model));
+            res = new SUGAR.expressions.AndExpression([trueExpr, falseExpr], getSLContext(model));
             expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.AndExpression([trueExpr,trueExpr], getSLContext(model));
+            res = new SUGAR.expressions.AndExpression([trueExpr,trueExpr], getSLContext(model));
             expect(res.evaluate()).toBe('true');
         });
     });
 
     describe('Or Expression Function', function() {
         it('should return the LOGICAL OR of two boolean expressions', function() {
-            var res =  new SUGAR.expressions.OrExpression([falseExpr,falseExpr], getSLContext(model));
+            var res = new SUGAR.expressions.OrExpression([falseExpr, falseExpr], getSLContext(model));
             expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.OrExpression([falseExpr,trueExpr], getSLContext(model));
+            res = new SUGAR.expressions.OrExpression([falseExpr, trueExpr], getSLContext(model));
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.OrExpression([trueExpr,falseExpr], getSLContext(model));
+            res = new SUGAR.expressions.OrExpression([trueExpr, falseExpr], getSLContext(model));
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.OrExpression([trueExpr,trueExpr], getSLContext(model));
+            res = new SUGAR.expressions.OrExpression([trueExpr, trueExpr], getSLContext(model));
             expect(res.evaluate()).toBe('true');
         });
     });
 
     describe('Not Expression Function', function() {
         it('should return the LOGICAL NOT of a boolean expression', function() {
-            var res =  new SUGAR.expressions.NotExpression([falseExpr], getSLContext(model));
+            var res = new SUGAR.expressions.NotExpression([falseExpr], getSLContext(model));
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.NotExpression([trueExpr], getSLContext(model));
+            res = new SUGAR.expressions.NotExpression([trueExpr], getSLContext(model));
             expect(res.evaluate()).toBe('false');
         });
     });
@@ -106,9 +117,9 @@ describe('Simple Boolean Functions Test', function() {
         var randString = new SUGAR.expressions.StringLiteralExpression(['!-_?./']);
 
         it('should return whether are string is alphanumeric or not', function() {
-            var res =  new SUGAR.expressions.IsAlphaNumericExpression([stringAlphaNum], getSLContext(model));
+            var res = new SUGAR.expressions.IsAlphaNumericExpression([stringAlphaNum], getSLContext(model));
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.IsAlphaNumericExpression([randString], getSLContext(model));
+            res = new SUGAR.expressions.IsAlphaNumericExpression([randString], getSLContext(model));
             expect(res.evaluate()).toBe('false');
         });
     });
@@ -118,35 +129,50 @@ describe('Simple Boolean Functions Test', function() {
         var alphaOnly = new SUGAR.expressions.StringLiteralExpression(['ABCDEF']);
 
         it('should return whether are string is alpha only or not', function() {
-            var res =  new SUGAR.expressions.IsAlphaExpression([alphaOnly], getSLContext(model));
+            var res = new SUGAR.expressions.IsAlphaExpression([alphaOnly], getSLContext(model));
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.IsAlphaExpression([stringAlphaNum], getSLContext(model));
+            res = new SUGAR.expressions.IsAlphaExpression([stringAlphaNum], getSLContext(model));
             expect(res.evaluate()).toBe('false');
         });
     });
 
     describe('Greater Than Expression Function', function() {
-        var num1 = new SUGAR.expressions.ConstantExpression([1]);
-        var num2 = new SUGAR.expressions.ConstantExpression([200]);
+        var small = new SUGAR.expressions.ConstantExpression([1]);
+        var big = new SUGAR.expressions.ConstantExpression([200]);
 
         it('should return where num1 > num2', function() {
-            var res =  new SUGAR.expressions.GreaterThanExpression([num1, num2], getSLContext(model));
+            var res = new SUGAR.expressions.GreaterThanExpression([small, big], getSLContext(model));
             expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.GreaterThanExpression([num2, num1], getSLContext(model));
+            res = new SUGAR.expressions.GreaterThanExpression([big, small], getSLContext(model));
             expect(res.evaluate()).toBe('true');
         });
     });
 
-    describe('Befor e Expression Function', function() {
+    describe('Greater Than Expression Function', function() {
+        var small = new SUGAR.expressions.ConstantExpression([1]);
+
+        it('should return false if both numbers equal', function() {
+            var res = new SUGAR.expressions.GreaterThanExpression([small, small], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+        });
+    });
+
+    describe('Before Expression Function', function() {
         var datestr1 = new SUGAR.expressions.StringLiteralExpression(['05/10/2000']);
         var datestr2 = new SUGAR.expressions.StringLiteralExpression(['05/10/2010']);
 
-        it('should return whether date1 is befor e date2', function() {
+        it('should return whether date1 is before date2', function() {
             var date1 = new SUGAR.expressions.DefineDateExpression([datestr1], getSLContext(model));
             var date2 = new SUGAR.expressions.DefineDateExpression([datestr2], getSLContext(model));
-            var res =  new SUGAR.expressions.isBeforeExpression([date1,date2],  getSLContext(model));
+            var res = new SUGAR.expressions.isBeforeExpression([date1, date2], getSLContext(model));
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.isBeforeExpression([date2, date1], getSLContext(model));
+            res = new SUGAR.expressions.isBeforeExpression([date2, date1], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+        });
+
+        it('should return false if same date', function() {
+            var date1 = new SUGAR.expressions.DefineDateExpression([datestr1], getSLContext(model));
+            var res = new SUGAR.expressions.isBeforeExpression([date1, date1], getSLContext(model));
             expect(res.evaluate()).toBe('false');
         });
     });
@@ -157,23 +183,49 @@ describe('Simple Boolean Functions Test', function() {
         it('should return whether date1 is after date2', function() {
             var date1 = new SUGAR.expressions.DefineDateExpression([datestr1], getSLContext(model));
             var date2 = new SUGAR.expressions.DefineDateExpression([datestr2], getSLContext(model));
-            var res =  new SUGAR.expressions.isAfterExpression([date1,date2],  getSLContext(model));
+            var res = new SUGAR.expressions.isAfterExpression([date1, date2], getSLContext(model));
             expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.isAfterExpression([date2, date1], getSLContext(model));
+            res = new SUGAR.expressions.isAfterExpression([date2, date1], getSLContext(model));
             expect(res.evaluate()).toBe('true');
+        });
+
+        it('should return false if same date', function() {
+            var date1 = new SUGAR.expressions.DefineDateExpression([datestr1], getSLContext(model));
+            var res = new SUGAR.expressions.isAfterExpression([date1, date1], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
         });
     });
 
     describe('Is Valid Email Expression', function() {
 
-        it('should return whether date1 is after date2', function() {
+        it('should return whether parameter is a valid email', function() {
             var email = new SUGAR.expressions.StringLiteralExpression(['a@b.c']);
-            var res =  new SUGAR.expressions.IsValidEmailExpression([email],  getSLContext(model));
+            var res = new SUGAR.expressions.IsValidEmailExpression([email], getSLContext(model));
             expect(res.evaluate()).toBe('true');
             email = new SUGAR.expressions.StringLiteralExpression(['abc']);
-            res =  new SUGAR.expressions.IsValidEmailExpression([email],  getSLContext(model));
+            res = new SUGAR.expressions.IsValidEmailExpression([email], getSLContext(model));
             expect(res.evaluate()).toBe('false');
-
+            email = new SUGAR.expressions.StringLiteralExpression(['foo@example']);
+            res = new SUGAR.expressions.IsValidEmailExpression([email], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            email = new SUGAR.expressions.StringLiteralExpression(['foo.bar@example.com']);
+            res = new SUGAR.expressions.IsValidEmailExpression([email], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            email = new SUGAR.expressions.StringLiteralExpression(['☃@🌴']);
+            res = new SUGAR.expressions.IsValidEmailExpression([email], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            email = new SUGAR.expressions.StringLiteralExpression(['foo@']);
+            res = new SUGAR.expressions.IsValidEmailExpression([email], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+            email = new SUGAR.expressions.StringLiteralExpression(['foo.@example']);
+            res = new SUGAR.expressions.IsValidEmailExpression([email], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+            email = new SUGAR.expressions.StringLiteralExpression(['foo@example.']);
+            res = new SUGAR.expressions.IsValidEmailExpression([email], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+            email = new SUGAR.expressions.StringLiteralExpression(['@example']);
+            res = new SUGAR.expressions.IsValidEmailExpression([email], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
         });
     });
 
@@ -183,9 +235,9 @@ describe('Simple Boolean Functions Test', function() {
         var datestr2 = new SUGAR.expressions.StringLiteralExpression(['07/1221/2018']);
 
         it('should return datestr* is a valid date', function() {
-            var res =  new SUGAR.expressions.IsValidDateExpression([datestr1],  getSLContext(model));
+            var res = new SUGAR.expressions.IsValidDateExpression([datestr1], getSLContext(model));
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.IsValidDateExpression([datestr2],  getSLContext(model));
+            res = new SUGAR.expressions.IsValidDateExpression([datestr2], getSLContext(model));
             expect(res.evaluate()).toBe('false');
         });
     });
@@ -193,37 +245,68 @@ describe('Simple Boolean Functions Test', function() {
     describe('Is Valid Phone Expression', function() {
         var phoneStr1 = new SUGAR.expressions.StringLiteralExpression(['!!test_phone_fake!!']);
         var phoneStr2 = new SUGAR.expressions.StringLiteralExpression(['(408) 123-4567']);
+        var phoneStr3 = new SUGAR.expressions.StringLiteralExpression(['+44 0800 731 2000']);
 
         it('should return whether a string is a valid Phone Number', function() {
-            var res =  new SUGAR.expressions.IsValidPhoneExpression([phoneStr1],  getSLContext(model));
+            var res = new SUGAR.expressions.IsValidPhoneExpression([phoneStr1], getSLContext(model));
             expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.IsValidPhoneExpression([phoneStr2],  getSLContext(model));
+            res = new SUGAR.expressions.IsValidPhoneExpression([phoneStr2], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            res = new SUGAR.expressions.IsValidPhoneExpression([phoneStr3], getSLContext(model));
             expect(res.evaluate()).toBe('true');
         });
     });
 
     describe('Is Valid Time Expression', function() {
         //needs to be in HH:MM for mat
-        var phoneStr1 = new SUGAR.expressions.StringLiteralExpression(['12:00:00']);
-        var phoneStr2 = new SUGAR.expressions.StringLiteralExpression(['12:00']);
+        var timeStr1 = new SUGAR.expressions.StringLiteralExpression(['12:45']);
+        var timeStr2 = new SUGAR.expressions.StringLiteralExpression(['12:45am']);
+        var timeStr3 = new SUGAR.expressions.StringLiteralExpression(['12:45AM']);
+        var timeStr4 = new SUGAR.expressions.StringLiteralExpression(['12:45 PM']);
+        var timeStr5 = new SUGAR.expressions.StringLiteralExpression(['13:00']);
+        var timeStr6 = new SUGAR.expressions.StringLiteralExpression(['12:45QM']);
+        var timeStr7 = new SUGAR.expressions.StringLiteralExpression(['13:00AM']);
+        var timeStr8 = new SUGAR.expressions.StringLiteralExpression(['25:00']);
+        var timeStr9 = new SUGAR.expressions.StringLiteralExpression(['7:61']);
 
         it('should return whether a string is a valid time string', function() {
-            var res =  new SUGAR.expressions.IsValidTimeExpression([phoneStr1],  getSLContext(model));
-            expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.IsValidTimeExpression([phoneStr2],  getSLContext(model));
+            var res = new SUGAR.expressions.IsValidTimeExpression([timeStr1], getSLContext(model));
             expect(res.evaluate()).toBe('true');
+            res = new SUGAR.expressions.IsValidTimeExpression([timeStr2], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            res = new SUGAR.expressions.IsValidTimeExpression([timeStr3], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            res = new SUGAR.expressions.IsValidTimeExpression([timeStr4], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            res = new SUGAR.expressions.IsValidTimeExpression([timeStr5], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            res = new SUGAR.expressions.IsValidTimeExpression([timeStr6], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+            res = new SUGAR.expressions.IsValidTimeExpression([timeStr7], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+            res = new SUGAR.expressions.IsValidTimeExpression([timeStr8], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+            res = new SUGAR.expressions.IsValidTimeExpression([timeStr9], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
         });
     });
 
     describe('Is In Range', function() {
-        var a = new SUGAR.expressions.ConstantExpression([1]);
-        var b = new SUGAR.expressions.ConstantExpression([100]);
-        var queryOne = new SUGAR.expressions.ConstantExpression([50]);
-        var queryTwo = new SUGAR.expressions.ConstantExpression([101]);
+        var lowerBound = new SUGAR.expressions.ConstantExpression([1]);
+        var upperBound = new SUGAR.expressions.ConstantExpression([100]);
+        var below = new SUGAR.expressions.ConstantExpression([-10]);
+        var inbetween = new SUGAR.expressions.ConstantExpression([50]);
+        var above = new SUGAR.expressions.ConstantExpression([101]);
         it('should return if num query in range a to b', function() {
-            var res =  new SUGAR.expressions.IsInRangeExpression([queryOne, a,b],  getSLContext(model));
+            var res = new SUGAR.expressions.IsInRangeExpression([below, lowerBound, upperBound], getSLContext(model));
+            expect(res.evaluate()).toBe('false');
+            res = new SUGAR.expressions.IsInRangeExpression([lowerBound, lowerBound, upperBound], getSLContext(model));
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.IsInRangeExpression([queryTwo, a,b],  getSLContext(model));
+            res = new SUGAR.expressions.IsInRangeExpression([inbetween, lowerBound, upperBound], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            res = new SUGAR.expressions.IsInRangeExpression([upperBound, lowerBound, upperBound], getSLContext(model));
+            expect(res.evaluate()).toBe('true');
+            res = new SUGAR.expressions.IsInRangeExpression([above, lowerBound, upperBound], getSLContext(model));
             expect(res.evaluate()).toBe('false');
         });
     });
@@ -237,17 +320,17 @@ describe('Simple Boolean Functions Test', function() {
         var num6 = new SUGAR.expressions.StringLiteralExpression('-5.0');
 
         it('should return whether date1 is after date2', function() {
-            var res =  new SUGAR.expressions.IsNumericExpression([num1]);
+            var res = new SUGAR.expressions.IsNumericExpression([num1]);
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.IsNumericExpression([num2]);
+            res = new SUGAR.expressions.IsNumericExpression([num2]);
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.IsNumericExpression([num3]);
+            res = new SUGAR.expressions.IsNumericExpression([num3]);
             expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.IsNumericExpression([num4]);
+            res = new SUGAR.expressions.IsNumericExpression([num4]);
             expect(res.evaluate()).toBe('false');
-            res =  new SUGAR.expressions.IsNumericExpression([num5]);
+            res = new SUGAR.expressions.IsNumericExpression([num5]);
             expect(res.evaluate()).toBe('true');
-            res =  new SUGAR.expressions.IsNumericExpression([num6]);
+            res = new SUGAR.expressions.IsNumericExpression([num6]);
             expect(res.evaluate()).toBe('true');
         });
     });
@@ -262,7 +345,7 @@ describe('Simple Boolean Functions Test', function() {
 
             var not = new SUGAR.expressions.ConstantExpression([0]);
 
-            var test = new SUGAR.expressions.DefineEnumExpression([a,b,c,d,e]);
+            var test = new SUGAR.expressions.DefineEnumExpression([a, b, c, d, e]);
 
             var res = new SUGAR.expressions.IsInEnumExpression([c, test], getSLContext(model));
             expect(res.evaluate()).toBe('true');
@@ -295,7 +378,7 @@ describe('Simple Boolean Functions Test', function() {
         it('should return if value is a valid db name', function() {
             for (var i = 0; i < lenT; i = i + 1) {
                 expect(new SUGAR.expressions.IsValidDBNameExpression([new SUGAR.expressions.StringLiteralExpression
-                    ([trueValues[i]])], getSLContext(model)).evaluate()).toBe('true');
+                ([trueValues[i]])], getSLContext(model)).evaluate()).toBe('true');
             }
             for (i = 0; i < lenF; i = i + 1) {
                 expect(new SUGAR.expressions.IsValidDBNameExpression([new SUGAR.expressions.StringLiteralExpression

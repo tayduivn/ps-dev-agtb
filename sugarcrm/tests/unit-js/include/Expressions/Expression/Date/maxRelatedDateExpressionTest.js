@@ -18,7 +18,7 @@ describe('Max Related Date Expression Function', function() {
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
-        context = context || app.context.getContext({
+        context = context || new app.Context({
             url: 'someurl',
             module: model.module,
             model: model
@@ -50,32 +50,25 @@ describe('Max Related Date Expression Function', function() {
     var link = new SUGAR.expressions.StringLiteralExpression(['opportunities']);
     var field = new SUGAR.expressions.StringLiteralExpression(['date_closed_timestamp']);
 
-    describe('Max Related Date Expression Function', function() {
-        it('returns the highest value of field in records related by a link, app = undefined', function() {
+    describe('returns the highest value of field in records related by a link', function() {
+        it('case: app = undefined, returns false', function() {
             var temp = App;
             App = undefined;
-            var res = new SUGAR.expressions.MaxRelatedDateExpression([link,field], getSLContext(model));
+            var res = new SUGAR.expressions.MaxRelatedDateExpression([link, field], getSLContext(model));
             expect(res.evaluate()).toBe('false');
             App = temp;
         });
-    });
-
-    describe('Max Related Date Expression Function', function() {
-        it('returns the highest value of field in records related by a link', function() {
+        it('case: normal, returns the max date', function() {
             var res = new SUGAR.expressions.MaxRelatedDateExpression([link, field], getSLContext(model));
             var mockObj = sinonSandbox.mock(res.context);
             mockObj.expects('getRelatedField').once().withArgs(link.evaluate(), 'maxRelatedDate',
                 field.evaluate()).returns(1531765837);
             mockObj.expects('getRelatedCollectionValues').once().withArgs(res.context.model,
-                link.evaluate(), 'maxRelatedDate', field.evaluate()).returns([1531765837,1531765290]);
+                link.evaluate(), 'maxRelatedDate', field.evaluate()).returns([1531765837, 1531765290]);
             expect(res.evaluate()).toBe(1531765837);
             mockObj.verify();
-
         });
-    });
-
-    describe('Max Related Date Expression Function', function() {
-        it('returns the highest value of field in records related by a link go to end of method', function() {
+        it('case: go to end of expression evaluate function', function() {
             var res = new SUGAR.expressions.MaxRelatedDateExpression([link, field], getSLContext(model));
             var mockObj = sinonSandbox.mock(res.context);
             var mockObjUnderscore = sinonSandbox.mock(_);

@@ -18,7 +18,7 @@ describe('Sugar Field Expression Function', function() {
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
-        context = context || app.context.getContext({
+        context = context || new app.Context({
             url: 'someurl',
             module: model.module,
             model: model

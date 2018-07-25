@@ -18,7 +18,7 @@ describe('Forecast Included Commit Stages Expression Function', function() {
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
-        context = context || app.context.getContext({
+        context = context || new app.Context({
             url: 'someurl',
             module: model.module,
             model: model
@@ -49,7 +49,7 @@ describe('Forecast Included Commit Stages Expression Function', function() {
     });
 
     describe('Forecast Included Commit Stages Expression Function', function() {
-        it('returns the included commit stages for forecasts', function() {
+        it('should return empty when forecasts has not been configured', function() {
             var res = new SUGAR.expressions.ForecastIncludedCommitStagesExpression([], getSLContext(model));
             var mockObj = sinonSandbox.mock(App.metadata);
             var mockConfig = {'commit_stages_included': 'include'};
@@ -60,7 +60,7 @@ describe('Forecast Included Commit Stages Expression Function', function() {
     });
 
     describe('Forecast Included Commit Stages Expression Function', function() {
-        it('returns the included commit stages for forecasts (empty)', function() {
+        it('return the correct commit_stage for the number passed based on the forecast configuration', function() {
             var res = new SUGAR.expressions.ForecastIncludedCommitStagesExpression([], getSLContext(model));
             var mockObj = sinonSandbox.mock(App.metadata);
             var mockConfig = {'commit_stages_included': ''};

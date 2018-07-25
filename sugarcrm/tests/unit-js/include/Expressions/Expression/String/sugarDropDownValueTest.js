@@ -18,7 +18,7 @@ describe('SugarDropDownValue Expression Function', function() {
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
-        context = context || app.context.getContext({
+        context = context || new app.Context({
             url: 'someurl',
             module: model.module,
             model: model
@@ -48,9 +48,9 @@ describe('SugarDropDownValue Expression Function', function() {
     });
 
     describe('SugarDropDownValue Expression Function', function() {
-        it('should the value related to a selection in a drop down menu (in this case sales_probability_dom and ' +
+        it('should the value related to a selection in a drop down menu (in this case foo and ' +
             'sales stage)', function() {
-            var opp = new SUGAR.expressions.StringLiteralExpression(['sales_probability_dom']);
+            var opp = new SUGAR.expressions.StringLiteralExpression(['foo']);
             var key = new SUGAR.expressions.StringLiteralExpression([model.get('sales_stage')]);
             var dict = {
                 'Closed Lost': 0,

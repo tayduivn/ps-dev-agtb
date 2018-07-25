@@ -18,7 +18,7 @@ describe('Sugar Translated Drop Down Expression Function', function() {
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
         var model = isCollection ? new modelOrCollection.model() : modelOrCollection;
-        context = context || app.context.getContext({
+        context = context || new app.Context({
             url: 'someurl',
             module: model.module,
             model: model
@@ -48,8 +48,8 @@ describe('Sugar Translated Drop Down Expression Function', function() {
         sinonSandbox.restore();
     });
 
-    describe('Sugar Translated Drop Down Expression Function', function() {
-        it('returns a collection of the translated values in the supplied dropdown list', function() {
+    describe('returns a collection of the translated values in the supplied dropdown list', function() {
+        it('list name found', function() {
             var testParam = new SUGAR.expressions.StringLiteralExpression(['random_list_name']);
             var res = new SUGAR.expressions.SugarTranslatedDropDownExpression([testParam], getSLContext(model));
             var testArray = ['0','1','2','3','4'];
@@ -57,6 +57,14 @@ describe('Sugar Translated Drop Down Expression Function', function() {
             sinonSandbox.stub(App.lang, 'getAppListStrings').withArgs(testParam.evaluate()).returns(testArray);
             sinonSandbox.stub(SUGAR.lang, 'get').withArgs('app_list_strings', testParam.evaluate()).returns(testArray);
             expect(res.evaluate()).toEqual(testArray);
+        });
+        it('list name not found', function() {
+            var testParam = new SUGAR.expressions.StringLiteralExpression(['random_list_name']);
+            var res = new SUGAR.expressions.SugarTranslatedDropDownExpression([testParam], getSLContext(model));
+            SUGAR.lang = {get: function() {}};
+            sinonSandbox.stub(App.lang, 'getAppListStrings').withArgs(testParam.evaluate()).returns([]);
+            sinonSandbox.stub(SUGAR.lang, 'get').withArgs('app_list_strings', testParam.evaluate()).returns([]);
+            expect(res.evaluate()).toEqual([]);
         });
     });
 });
