@@ -1380,14 +1380,13 @@ function renderProject (prjCode) {
         jCore.getActiveCanvas().RemoveCurrentMenu();
     });
 
+    /**
+     * Button that when clicked triggers the process design validator
+     */
     $('#ButtonValidate').click(function() {
         traverseProcess();
         jCore.getActiveCanvas().RemoveCurrentMenu();
     });
-
-    // Traverses the process definition elements
-    var traverseProcess = function() {
-    };
 
     //HANDLE ZOOM DROPDOWN
     $('#zoom').change(function (e) {
@@ -1399,6 +1398,133 @@ function renderProject (prjCode) {
     }).mouseenter(function() {
         $('.ui-layout-north').css('overflow', 'visible');
     });
+
+    /**
+     * Traverses the process to access each element in order
+     * @return {Array} an array containing the errors found during traversal
+     */
+    var traverseProcess = function() {
+        var errorList = [];
+        var i;
+        var j;
+        var queue;
+        var currElement;
+        var destElement;
+        var connectedElements;
+
+        // Initialize the arrays of elements placed on the canvas
+        var allElements = getAllElements();
+        var startEvents = getStartEvents();
+
+        // For each start event element, traverse the path starting from that element
+        for (i = 0; i < startEvents.length; i++) {
+
+            // Initialize the queue with just the start node
+            queue = [startEvents[i]];
+            queue[0].hasBeenQueued = true;
+            queue[0].currentGatewayScope = [];
+
+            // While there are still elements left to traverse:
+            while (queue.length) {
+
+                // Remove the front element of the queue and validate it
+                currElement = queue.shift();
+                validateElement(currElement, errorList);
+
+                // For each unvisited element that the current element connects to, add it to the queue
+                connectedElements = currElement.getDestElements();
+                for (j = 0; j < connectedElements.length; j++) {
+                    destElement = connectedElements[j];
+
+                    if (!destElement.hasBeenQueued) {
+
+                        // Set the proper gateway scope of the destination element
+                        setGatewayScope(currElement, destElement);
+
+                        // Push the destination element onto the queue and mark it as queued
+                        queue.push(destElement);
+                        destElement.hasBeenQueued = true;
+                    }
+                }
+            }
+        }
+        // Restore elements to orignal state, check for unvisited elements, and return the error list
+        finalCleanup(allElements, errorList);
+        return errorList;
+    };
+
+    /**
+     * Returns an array containing all user-placed elements on the canvas
+     * @return {Array}
+     */
+    var getAllElements = function() {
+        return jCore.getActiveCanvas().children.asArray().filter(function(elem) {
+            return elem.type !== 'MultipleSelectionContainer';
+        });
+    };
+
+    /**
+     * Returns an array containing all start events placed on the canvas
+     * @return {Array}
+     */
+    var getStartEvents = function() {
+        return jCore.getActiveCanvas().children.asArray().filter(function(elem) {
+            return elem.type === 'AdamEvent' && elem.getEventType() === 'START';
+        });
+    };
+
+    /**
+     * Updates the destination element's gateway scope depending on the current element
+     * @param {Object} currElement is the current element being examined in the traversal
+     * @param {Object} destElement is a destination element of the current element being examined in the traversal
+     */
+    var setGatewayScope = function(currElement, destElement) {
+        destElement.currentGatewayScope = currElement.currentGatewayScope.slice();
+        if (currElement.getType() === 'AdamGateway') {
+            if (currElement.getDirection() === 'DIVERGING') {
+                destElement.currentGatewayScope.unshift(currElement.getGatewayType());
+            } else if (currElement.getDirection() === 'CONVERGING') {
+                destElement.currentGatewayScope.shift();
+            }
+        }
+    };
+
+    /**
+     * Perform a final check for unvisited elements and return the elements to their original state
+     * @param  {Array} allElements is an array containing all user-placed elements on the canvas
+     * @param  {Array} errorList is an array containing the errors found during traversal
+     */
+    var finalCleanup = function(allElements, errorList) {
+        var i;
+        for (i = 0; i < allElements.length; i++) {
+
+            // Check if the element was never visited (unreachable)
+            if (!allElements[i].hasBeenQueued) {
+                createElementError(errorList, allElements[i], 'Element is not reachable');
+            }
+
+            // Remove the temporary attributes from each node to reset the elements to their initial state
+            delete allElements[i].hasBeenQueued;
+            delete allElements[i].currentGatewayScope;
+        }
+    };
+
+    /**
+     * Validate an element based on its current settings in the current instance of Sugar
+     * @param  {Object} element is the element on the canvas that is currently being examined/validated
+     * @param  {Array} errorList is an array containing the errors found during traversal
+     */
+    var validateElement = function(element, errorList) {
+    };
+
+    /**
+     * Adds a new error to the error list
+     * @param  {Array} errorList is an array containing the errors found during traversal
+     * @param  {Object} element is the element on the canvas that is currently being examined/validated
+     * @param  {string} description contains the error text to be presented to the user about the error
+     */
+    var createElementError = function(errorList, element, description) {
+    };
 
     project.setUid(prjCode);
 
