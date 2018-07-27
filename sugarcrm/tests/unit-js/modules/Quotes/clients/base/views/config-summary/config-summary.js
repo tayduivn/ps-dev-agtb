@@ -194,6 +194,51 @@ describe('Quotes.View.ConfigSummary', function() {
         });
     });
 
+    describe('_getPanelFields()', function() {
+        var quotesFields;
+
+        beforeEach(function() {
+            quotesFields = {
+                aaa: {
+                    type: 'test'
+                },
+                bbb: {
+                    type: 'collection'
+                },
+                ccc_id: {
+                    type: 'test'
+                }
+            };
+            view.context.set({
+                quotesFields: quotesFields
+            });
+        });
+
+        afterEach(function() {
+            quotesFields = null;
+        });
+
+        it('should return quotesFields without collection field types', function() {
+            expect(view._getPanelFields()).toEqual([{
+                name: 'aaa',
+                type: 'test'
+            }]);
+        });
+
+        it('should return quotesFields without fields that have _id in the name', function() {
+            expect(view._getPanelFields()).toEqual([{
+                name: 'aaa',
+                type: 'test'
+            }]);
+        });
+    });
+
+    describe('_getPanelFieldsModule()', function() {
+        it('should return summary_columns', function() {
+            expect(view._getPanelFieldsModule()).toBe('Quotes');
+        });
+    });
+
     describe('_onDependentFieldsChange()', function() {
         beforeEach(function() {
             sinon.collection.stub(view.context, 'trigger');
@@ -204,7 +249,6 @@ describe('Quotes.View.ConfigSummary', function() {
         it('should set the _related_fields', function() {
             expect(view.model.get(view.eventViewName + '_related_fields')).toEqual([
                 'base_rate',
-                'currency_id',
                 'deal_tot',
                 'deal_tot_usdollar',
                 'shipping',

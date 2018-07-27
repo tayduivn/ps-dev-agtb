@@ -146,7 +146,16 @@
      * @inheritdoc
      */
     _getPanelFields: function() {
-        return this.context.get('quotesFields');
+        var fields = [];
+        _.each(this.context.get('quotesFields'), function(f, key) {
+            if (f.type !== 'collection' && key.indexOf('_id') === -1) {
+                fields.push(_.extend({
+                    name: key
+                }, f));
+            }
+        }, this);
+
+        return fields;
     },
 
     /**

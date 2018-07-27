@@ -52,9 +52,12 @@
             }
         }, this);
 
-        // make sure related_fields contains description and product name fields
+        // make sure related_fields contains description, quote_id, name, and product_template_name & _id fields
         if (!_.contains(saveObj.worksheet_columns_related_fields, 'description')) {
             saveObj.worksheet_columns_related_fields.push('description');
+        }
+        if (!_.contains(saveObj.worksheet_columns_related_fields, 'quote_id')) {
+            saveObj.worksheet_columns_related_fields.push('quote_id');
         }
         if (!_.contains(saveObj.worksheet_columns_related_fields, 'name')) {
             saveObj.worksheet_columns_related_fields.push('name');

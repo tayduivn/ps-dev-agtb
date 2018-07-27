@@ -84,6 +84,7 @@ describe('Quotes.View.ConfigHeaderButtons', function() {
                 expect(result.worksheet_columns_related_fields).toEqual([
                     'bbb',
                     'description',
+                    'quote_id',
                     'name',
                     'product_template_id',
                     'product_template_name'
