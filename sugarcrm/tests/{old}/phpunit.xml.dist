@@ -117,8 +117,6 @@
             <file>./rest/RestPortalMetadataBWCTest.php</file>
             <!-- <file>./rest/RestPortalMetadataviewDefsTest.php</file> -->
             <!-- <file>./rest/RestPortalSecurityTest.php</file> -->
-            <!-- FIXME TY-1317: Investigate why this test is failing -->
-            <!-- <file>./soap/CanGetUserListTest.php</file> -->
             <file>./upgrade/UpgradeFixPdfTest.php</file>
             <file>./upgrade/UpgradeMigrateDashableLists.php</file>
             <file>./upgrade/scripts/post/RemoveDuplicateAccountsContactsTest.php</file>
@@ -223,11 +221,13 @@
             <directory>./modules/SNIP</directory>
             <directory>./modules/UserSignatures</directory>
         </testsuite>
+        <testsuite name="Soap Test Suite">
+            <directory>./soap/</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist>
             <exclude>
-                <directory>./soap/</directory>
                 <directory>./service/</directory>
                 <directory>./rest/</directory>
             </exclude>

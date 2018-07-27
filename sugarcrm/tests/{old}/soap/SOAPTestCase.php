@@ -19,16 +19,12 @@ abstract class SOAPTestCase extends TestCase
 	public static $_user = null;
 	public $_soapClient = null;
 	public $_session = null;
-	public $_sessionId = '';
-    public $_soapURL = '';
+	public $_sessionId;
+    public $_soapURL;
 
     public static function setUpBeforeClass()
     {
-        self::$_user = SugarTestUserUtilities::createAnonymousUser();
-        self::$_user->status = 'Active';
-        self::$_user->is_admin = 1;
-        self::$_user->save();
-        $GLOBALS['db']->commit();
+        self::$_user = BeanFactory::retrieveBean('Users', '1');
         $GLOBALS['current_user'] = self::$_user;
     }
 
@@ -49,6 +45,10 @@ abstract class SOAPTestCase extends TestCase
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
+
+        $this->_soapURL = $this->_soapURL ?? $GLOBALS['sugar_config']['site_url']
+            . '/service/v4_1/soap.php';
+        // $this->_soapURL .= '?XDEBUG_SESSION_START=phpstorm-xdebug';
 
         $this->_soapClient = new nusoapclient($this->_soapURL,false,false,false,false,false,600,600);
         $GLOBALS['db']->commit();
@@ -71,8 +71,8 @@ abstract class SOAPTestCase extends TestCase
         $GLOBALS['db']->commit();
     	$result = $this->_soapClient->call('login',
             array('user_auth' =>
-                array('user_name' => self::$_user->user_name,
-                    'password' => self::$_user->user_hash,
+                array('user_name' => 'admin',
+                    'password' => md5('asdf'),
                     'version' => '.01'),
                 'application_name' => 'SoapTest', "name_value_list" => array())
             );

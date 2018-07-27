@@ -19,7 +19,7 @@
  * is assumed to be the session id.  This test replicates that check by searching on two modules (Accounts and Contacts) based on an email address
  * derived from the Contact.
  */
-class Bug49898Test extends SOAPTestCase
+class SearchByModuleWithSessionIdTest extends SOAPTestCase
 {
     var $contact;
     var $account;
@@ -32,7 +32,7 @@ class Bug49898Test extends SOAPTestCase
     public function setUp()
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
-   		parent::setUp();
+        parent::setUp();
         $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
         $this->contact = SugarTestContactUtilities::createContact();
         $this->contact->contacts_users_id = $GLOBALS['current_user']->id;
@@ -54,7 +54,7 @@ class Bug49898Test extends SOAPTestCase
         $this->assertTrue(!empty($result) && count($result['entry_list']) == 3, 'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response);
 
         //Assert that the traditional method of using user_name and password also works
-        $result = $this->_soapClient->call('search_by_module', array('user_name' => $GLOBALS['current_user']->user_name, 'password' => $GLOBALS['current_user']->user_hash, 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10));
+        $result = $this->_soapClient->call('search_by_module', array('user_name' => 'admin', 'password' => md5('asdf'), 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10));
         $this->assertTrue(!empty($result) && count($result['entry_list']) == 3, 'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response);
     }
 }

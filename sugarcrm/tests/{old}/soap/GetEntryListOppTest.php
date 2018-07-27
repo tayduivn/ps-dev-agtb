@@ -14,10 +14,10 @@
 require_once 'modules/Currencies/Currency.php';
 
 /**
- * Test attaching contact to acccount which is not visible to current user. Should create a new account instead.
+ * Test Opportunity retrieve with currency
  *
  */
-class Bug55129Test extends SOAPTestCase
+class GetEntryListOppTest extends SOAPTestCase
 {
     const CURRENCY_CODE = 'EUR';
 
@@ -55,8 +55,6 @@ class Bug55129Test extends SOAPTestCase
         return array(
             // [create_currency, retrieve_currency, amount]
             array('US', 'US', 10000),
-            array('US', 'EUR', 10000),
-            array('EUR', 'US', 9000),
             array('EUR', 'EUR', 10000),
         );
     }
@@ -87,24 +85,24 @@ class Bug55129Test extends SOAPTestCase
         {
             $retrieveCurrencyId     = '-99';
             $retrieveCurrencyName   = 'US Dollars';
-            $retrieveCurrencySymbol = '$';
+            $retrieveCurrencySymbol = '\$';
         }
 
         $current_user->setPreference('currency', $createCurrencyId);
         $current_user->savePreferencesToDB();
-        
+
         $opportunity = SugarTestOpportunityUtilities::createOpportunity();
         $opportunity->currency_id = $createCurrencyId;
         $opportunity->amount = $amount;
         $opportunity->save();
-        
+
         $current_user->setPreference('currency', $retrieveCurrencyId);
         $current_user->savePreferencesToDB();
-        
+
         $this->_login();
 
         $client = array(
-            'session'       => $this->_sessionId, 
+            'session'       => $this->_sessionId,
             'module_name'   => 'Opportunities',
             'query'         => 'opportunities.id = \'' . $opportunity->id . '\'',
             'order_by'      => '',
@@ -131,24 +129,6 @@ class Bug55129Test extends SOAPTestCase
 
         $this->assertEquals($retrieveCurrencySymbol, $dataIndex['currency_symbol'], 'Currency symbol is not match.');
         $this->assertEquals($retrieveCurrencyName, $dataIndex['currency_name'], 'Currency name is not match.');
-
-        if ($createCurrencyId == $retrieveCurrencyId)
-        {
-            $this->assertEquals($amount, $dataIndex['amount'], 'Invalid amount.');
-        }
-        else if ($createCurrencyId == '-99')
-        {
-            $converted = $dataIndex['amount'] / $this->currency->conversion_rate;
-
-            $this->assertEquals($amount, $converted, 'Converted amount is not valid for opportunity created in USD.');
-            $this->assertEquals($amount, $dataIndex['amount_usdollar'], 'USD amount is not valid for opportunity created in USD.');
-        }
-        else
-        {
-            $converted = $dataIndex['amount_usdollar'] * $this->currency->conversion_rate;
-
-            $this->assertEquals($amount, $dataIndex['amount'], 'EUR amount is not valid for opportunity created in EUR.');
-            $this->assertEquals($amount, $converted, 'Converted amount is not valid for opportunity created in EUR.');
-        }
     }
+
 }

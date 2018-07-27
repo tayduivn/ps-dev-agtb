@@ -12,7 +12,7 @@
 /**
  * @ticket 22504
  */
-class Bug22504Test extends SOAPTestCase
+class SetEntryEmailTest extends SOAPTestCase
 {
     /**
      * Create test account

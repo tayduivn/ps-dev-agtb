@@ -13,6 +13,7 @@
 use PHPUnit\Framework\TestCase;
 
 require_once 'service/core/NusoapSoap.php';
+require_once 'soap/SoapErrorDefinitions.php';
 
 class NusoapSoapTest extends TestCase
 {

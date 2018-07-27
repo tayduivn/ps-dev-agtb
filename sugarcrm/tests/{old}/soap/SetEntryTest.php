@@ -15,14 +15,14 @@ require_once('vendor/nusoap//nusoap.php');
 /**
  * @group bug43282
  */
-class Bug43282Test extends SOAPTestCase
+class SetEntryTest extends SOAPTestCase
 {
-	public $_soapURL = null;
+    public $_soapURL = null;
     private $_tsk = null;
 
-	public function setUp()
+    public function setUp()
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
 
         $this->_tsk = new Task();
@@ -54,36 +54,12 @@ class Bug43282Test extends SOAPTestCase
                 'name_value_list' => array(
                     array('name' => 'id', 'value' => $this->_tsk->id),
                     array('name' => 'team_id', 'value' => $privateTeamID),
-                    ),
-                )
-            );
+                ),
+            )
+        );
 
         $modifiedTask = new Task();
         $modifiedTask->retrieve($this->_tsk->id);
         $this->assertEquals($privateTeamID, $modifiedTask->team_id);
-    }
-
-    /**
-     * Attempt to login to the soap server
-     *
-     * @return $set_entry_result - this should contain an id and error.  The id corresponds
-     * to the session_id.
-     */
-    public function _login()
-    {
-		global $current_user;
-
-        $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
-		$result = $this->_soapClient->call(
-		    'login',
-            array('user_auth' =>
-                array('user_name' => $current_user->user_name,
-                    'password' => $current_user->user_hash,
-                    'version' => '.01'),
-                'application_name' => 'SoapTest')
-            );
-        $this->_sessionId = $result['id'];
-
-        return $result;
     }
 }

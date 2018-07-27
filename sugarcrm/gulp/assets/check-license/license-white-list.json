@@ -100,7 +100,7 @@
     "tests/{old}/include/SugarQuery/Builder/Field/ConditionTest.php",
     "tests/{old}/jssource/minify/",
     "tests/{old}/modules/Administration/Bug36008Test.php",
-    "tests/{old}/service/core/envelope.xsd",
+    "tests/{old}/soap/envelope.xsd",
     "themes/SugarIE6/js/pngbehavior.htc",
     "upload/",
     "vendor/",

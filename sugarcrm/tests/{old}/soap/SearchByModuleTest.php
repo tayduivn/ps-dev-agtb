@@ -17,11 +17,10 @@
  * @author mgusev@sugarcrm.com
  * @ticket 41392
  */
-class Bug41392Test extends SOAPTestCase
+class SearchByModuleTest extends SOAPTestCase
 {
     public function setUp()
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
     }
 
@@ -32,19 +31,15 @@ class Bug41392Test extends SOAPTestCase
      */
     public function testSearchByModule()
     {
-        $user = new User();
-        $user->retrieve(1);
-
         $account = new Account();
         $account->name = 'Bug4192Test';
         $account->email1 = 'Bug4192Test@example.com';
         $account->save();
-        $GLOBALS['db']->commit();
 
+        $this->_login();
         $params = array(
-            'user_name' => $user->user_name,
-            'password' => $user->user_hash,
-            'search_string' => '%@example.com',
+            'session' => $this->_sessionId,
+            'search_string' => '%4192Test%',
             'modules' => array(
                 'Accounts'
             ),
@@ -53,10 +48,12 @@ class Bug41392Test extends SOAPTestCase
         );
 
         $actual = $this->_soapClient->call('search_by_module', $params);
+
         $account->mark_deleted($account->id);
 
-        $this->assertGreaterThan(0, $actual['result_count'], 'Call must return one bean minimum');
-        $this->assertEquals('Accounts', $actual['entry_list'][0]['module_name'], 'Bean must be account');
-        $this->assertEquals($account->id, $actual['entry_list'][0]['id'], 'Bean id must be same as id of created account');
+        $this->assertGreaterThan(0, count($actual['entry_list']), 'Call must return one bean minimum');
+        $this->assertEquals('Accounts', $actual['entry_list'][0]['name'], 'Bean must be account');
+        $this->assertEquals($account->id, $actual['entry_list'][0]['records'][0][2]['value'],
+            'Bean id must be same as id of created account');
     }
 }

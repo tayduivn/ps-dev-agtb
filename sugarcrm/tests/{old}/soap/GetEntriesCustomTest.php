@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("service/v4_1/SugarWebServiceImplv4_1.php");
 
 /**
  * Bug #43339
@@ -18,7 +17,7 @@ require_once("service/v4_1/SugarWebServiceImplv4_1.php");
  *
  * @ticket 43339
  */
-class Bug43339Test extends SOAPTestCase
+class GetEntriesCustomTest extends SOAPTestCase
 {
     private $_module = NULL;
     private $_moduleName = 'Contacts';
@@ -30,18 +29,14 @@ class Bug43339Test extends SOAPTestCase
 
     public function setUp()
     {
-        $this->session['use_cookies'] = ini_get('session.use_cookies');
-        $this->session['cache_limiter'] = ini_get('session.session.cache_limiter');
-        ini_set('session.use_cookies', false);
-        ini_set('session.cache_limiter', false);
+        parent::setUp();
 
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
 
         $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
-        $this->_setupTestUser();
-
+        require_once 'modules/DynamicFields/FieldCases.php';
         $this->_field = get_widget('varchar');
         $this->_field->id = $this->_moduleName . $this->_customFieldName;
         $this->_field->name = $this->_customFieldName;
@@ -66,6 +61,8 @@ class Bug43339Test extends SOAPTestCase
         $this->_field->ext3 = NULL;
         $this->_field->ext4 = NULL;
 
+        global $beanList, $beanFiles;
+
         $className = $beanList[$this->_moduleName];
         require_once($beanFiles[$className]);
         $this->_module = new $className();
@@ -77,49 +74,22 @@ class Bug43339Test extends SOAPTestCase
     }
 
     /**
-     * get_entries_count doesn't work with custom fields
-     *
-     * @group 43339
-     */
-    public function testGetEntriesCountForCustomField()
-    {
-        $api = new SugarWebServiceImplv4_1();
-        $auth = $api->login(array('user_name' => self::$_user->user_name, 'password' => self::$_user->user_hash, 'version' => '.01'), 'SoapTest', array());
-        $assert = $api->get_entries_count($auth['id'], $this->_moduleName, $this->_customFieldName . ' LIKE \'\'', 0);
-        $api->logout($auth['id']);
-
-        $this->assertNotEquals(NULL, $assert['result_count']);
-    }
-
-    /**
      * Test for soap/SoapSugarUsers.php::get_entries_count()
      *
      * @group 43339
      */
     public function testGetEntriesCountFromBasicSoap()
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
-        parent::setUp();
-
-        $auth = $this->_soapClient->call('login',
-            array('user_auth' =>
-            array(
-                'user_name' => $this->_user->user_name,
-                'password' => $this->_user->user_hash,
-                'version' => '.01'),
-                'application_name' => 'SoapTest', "name_value_list" => array()
-            )
-        );
-
+        $this->_login();
         $params = array(
-            'session' => $auth['id'],
+            'session' => $this->_sessionId,
             'module_name' => $this->_moduleName,
             'query' => $this->_customFieldName . ' LIKE \'\'',
             'deleted' => 0
         );
-        $assert = $this->_soapClient->call('get_entries_count', $params);
+        $actual = $this->_soapClient->call('get_entries_count', $params);
 
-        $this->assertNotEquals(NULL, $assert['result_count']);
+        $this->assertNotSame(NULL, $actual['result_count'], 'Null value returned by get_entries_count.');
     }
 
     public function tearDown()
@@ -130,8 +100,5 @@ class Bug43339Test extends SOAPTestCase
         unset($_SERVER['REMOTE_ADDR']);
 
         $this->_tearDownTestUser();
-
-        ini_set('session.use_cookies', $this->session['use_cookies']);
-        ini_set('session.cache_limiter', $this->session['cache_limiter']);
     }
 }

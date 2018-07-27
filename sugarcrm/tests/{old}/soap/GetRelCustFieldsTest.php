@@ -10,9 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use PHPUnit\Framework\TestCase;
 
-require_once 'vendor/nusoap//nusoap.php';
 require_once 'modules/DynamicFields/FieldCases.php';
 
 /**
@@ -22,7 +20,7 @@ require_once 'modules/DynamicFields/FieldCases.php';
  * @author mgusev@sugarcrm.com
  * @ticked 58138
  */
-class Bug58138Test extends TestCase
+class GetRelCustFieldsTest extends SOAPTestCase
 {
     /**
      * @var nusoapclient
@@ -59,6 +57,7 @@ class Bug58138Test extends TestCase
      */
     public function setUp()
     {
+        parent::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, true));
@@ -86,7 +85,7 @@ class Bug58138Test extends TestCase
 
         $this->contact = SugarTestContactUtilities::createContact();
         $this->contact->account_id = $this->account->id;
-        $this->contact->test_c = 'test value';
+        $this->contact->test_c = 'test value' . $this->account->id;
         $this->contact->load_relationship('accounts');
         $this->contact->accounts->add($this->account->id);
         $this->contact->save();
@@ -110,95 +109,41 @@ class Bug58138Test extends TestCase
 
     /**
      * Test asserts that contact can be found by custom field
-     *
+     * @param string $url - Soap service url
      * @group 58138
+     * @dataProvider dataProvider
      */
-    public function testSoap()
+    public function testGetRelationships($url)
     {
-        $soap_url = $GLOBALS['sugar_config']['site_url'] . '/soap.php';
-        $this->soap = new nusoapclient($soap_url);
-
-        $result = $this->soap->call('login', array(
-                'user_auth' => array(
-                    'user_name' => $GLOBALS['current_user']->user_name,
-                    'password' => $GLOBALS['current_user']->user_hash,
-                    'version' => '.01'
-                ),
-                'application_name' => 'SoapTest'
-            )
-        );
-
-        $actual = $this->soap->call('get_relationships', array(
-            'session' => $result['id'],
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . $url;
+        $this->_login();
+        $actual = $this->_soapClient->call('get_relationships', [
+            'session' => $this->_sessionId,
             'module_name' => 'Accounts',
             'module_id' => $this->account->id,
-            'link_field_name' => 'Contacts',
-            'related_module_query' => "contacts_cstm.test_c = 'test value' ",
-            'deleted' => '1',
-        ));
+            'link_field_name' => 'contacts',
+            'related_module_query' => "contacts_cstm.test_c = '" . $this->contact->test_c ."'",
+            'related_fields' => ['id', 'test_c'],
+            'related_module_link_name_to_fields_array' => [],
+            'deleted' => '0',
+        ]);
 
-        $this->assertInternalType('array', $actual, 'Incorrect response');
+        $this->assertInternalType('array', $actual, 'Soap call returned incorrect response');
+        $this->assertNotEmpty($actual['entry_list'], 'get_relationships did not return any data.');
 
-        if (empty($actual['ids']))
-        {
-            $this->fail('Data is not present');
-        }
-
-        $actual = reset($actual['ids']);
-        $this->assertEquals($this->contact->id, $actual['id'], 'Contact is incorrect');
+        $actualById= array_combine(array_column($actual['entry_list'], 'id'), $actual['entry_list']);
+        $this->assertArrayHasKey($this->contact->id, $actualById, 'get_relationships returned incorrect Contact.');
     }
 
     public static function dataProvider()
     {
-        return array(
-            array('/service/v2/soap.php'),
-            array('/service/v2_1/soap.php'),
-            array('/service/v3/soap.php'),
-            array('/service/v3_1/soap.php'),
-            array('/service/v4/soap.php'),
-            array('/service/v4_1/soap.php')
-        );
-    }
-
-    /**
-     * Test asserts that contact can be found by custom field
-     *
-     * @group 58138
-     * @dataProvider dataProvider
-     */
-    public function testSoapVersions($url)
-    {
-        $soap_url = $GLOBALS['sugar_config']['site_url'] . $url;
-        $this->soap = new nusoapclient($soap_url);
-
-        $result = $this->soap->call('login', array(
-            'user_auth' => array(
-                'user_name' => $GLOBALS['current_user']->user_name,
-                'password' => $GLOBALS['current_user']->user_hash,
-                'version' => '.01'
-            ),
-            'application_name' => 'SoapTest'
-            )
-        );
-
-        $actual = $this->soap->call('get_relationships', array(
-            'session' => $result['id'],
-            'module_name' => 'Accounts',
-            'module_id' => $this->account->id,
-            'link_field_name' => 'contacts',
-            'related_module_query' => "contacts_cstm.test_c = 'test value' ",
-            'link_module_fields' => array('id'),
-            'deleted' => '1',
-        ));
-
-        $this->assertInternalType('array', $actual, 'Incorrect response');
-
-        if (empty($actual['entry_list']))
-        {
-            $this->fail('Data is not present');
-        }
-
-        $actual = reset($actual['entry_list']);
-        $this->assertEquals($this->contact->id, $actual['id'], 'Contact is incorrect');
+        return [
+            'v2' => ['/service/v2/soap.php'],
+            'v2_1' => ['/service/v2_1/soap.php'],
+            'v3' => ['/service/v3/soap.php'],
+            'v3_1' => ['/service/v3_1/soap.php'],
+            'v4' => ['/service/v4/soap.php'],
+            'v4_1' => ['/service/v4_1/soap.php']
+        ];
     }
 }

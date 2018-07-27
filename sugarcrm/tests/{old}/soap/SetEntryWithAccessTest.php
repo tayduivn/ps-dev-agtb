@@ -14,20 +14,20 @@
 /**
  * @group bug44680
  */
-class Bug44680Test extends SOAPTestCase
+class SetEntryWithAccessTest extends SOAPTestCase
 {
     var $testUser;
-	var $testAccount;
-	var $teamSet;
+    var $testAccount;
+    var $teamSet;
     var $testTeam;
 
-	public function setUp()
+    public function setUp()
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
-		parent::setUp();
+        parent::setUp();
         $this->testUser = SugarTestUserUtilities::createAnonymousUser();
-		$GLOBALS['current_user'] = $this->testUser;
-		$this->testAccount = SugarTestAccountUtilities::createAccount();
+        $GLOBALS['current_user'] = $this->testUser;
+        $this->testAccount = SugarTestAccountUtilities::createAccount();
 
         $this->testTeam = SugarTestTeamUtilities::createAnonymousTeam();
 
@@ -35,10 +35,10 @@ class Bug44680Test extends SOAPTestCase
         $this->teamSet->addTeams(array($this->testTeam->id, $this->testUser->getPrivateTeamID()));
 
 
-		$this->testAccount->team_id = $this->testUser->getPrivateTeamID();
-		$this->testAccount->team_set_id = $this->teamSet->id;
-		$this->testAccount->assigned_user_id = $this->testUser->id;
-		$this->testAccount->save();
+        $this->testAccount->team_id = $this->testUser->getPrivateTeamID();
+        $this->testAccount->team_set_id = $this->teamSet->id;
+        $this->testAccount->assigned_user_id = $this->testUser->id;
+        $this->testAccount->save();
         $GLOBALS['db']->commit();
     }
 
@@ -63,12 +63,13 @@ class Bug44680Test extends SOAPTestCase
 
     public function testSetEntryNoAccess()
     {
+        $this->markTestSkipped("Since soap api can not login with regular user, skip this.");
         $teamSet = BeanFactory::newBean('TeamSets');
         $teamSet->addTeams(array($this->testTeam->id));
         $this->testAccount->team_id = $this->testTeam->id;
-		$this->testAccount->team_set_id = $teamSet->id;
-		$this->testAccount->assigned_user_id = '1';
-		$this->testAccount->save();
+        $this->testAccount->team_set_id = $teamSet->id;
+        $this->testAccount->assigned_user_id = '1';
+        $this->testAccount->save();
 
         $this->testTeam->remove_user_from_team($this->testUser->id);
 

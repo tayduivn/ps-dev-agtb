@@ -18,7 +18,7 @@
  * @author mgusev@sugarcrm.com
  * @ticked 65782
  */
-class Bug65782Test extends SOAPTestCase
+class GetEntryListNoDuplicatesTest extends SOAPTestCase
 {
     /** @var Contact */
     protected $contact = null;

@@ -20,7 +20,7 @@ require_once('tests/{old}/SugarTestQuoteUtilities.php');
  *
  * @ticket 32064
  */
-class Bug32064Test extends SOAPTestCase
+class ProdBundlesRelWithProdQuotesTest extends SOAPTestCase
 {
     protected $prodBundle = null;
     protected $quote = null;
@@ -29,10 +29,6 @@ class Bug32064Test extends SOAPTestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->_setupTestUser();
-        // _login uses a static User instance and _setupTestUser doesn't setup it.
-        SOAPTestCase::$_user = $this->_user;
 
         $this->prodBundle = SugarTestProductBundleUtilities::createProductBundle();
         $this->quote = SugarTestQuoteUtilities::createQuote();
@@ -62,7 +58,6 @@ class Bug32064Test extends SOAPTestCase
     public function testProductBundlesRelationsWithProductsAndQuotesSoapV4()
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
-        $this->_soapClient = new nusoapclient($this->_soapURL, false, false, false, false, false, 600, 600);
         $this->_login();
 
         $this->_soapClient->call(
@@ -121,66 +116,5 @@ class Bug32064Test extends SOAPTestCase
 
         $this->assertEquals($this->product->id, $assertProductsRel['entry_list'][0]['id']);
         $this->assertEquals($this->quote->id, $assertQuoteRel['entry_list'][0]['id']);
-    }
-
-    /**
-     * @group 32064
-     */
-    public function testProductBundlesRelationsWithProductsAndQuotesSoapVer1()
-    {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/soap.php';
-        $this->_soapClient = new nusoapclient($this->_soapURL, false, false, false, false, false, 600, 600);
-        $this->_login();
-
-        $this->_soapClient->call(
-            'set_relationship',
-            array(
-                'session' => $this->_sessionId,
-                'set_relationship_value' => array(
-                    'module1' => 'ProductBundles',
-                    'module1_id' => $this->prodBundle->id,
-                    'module2' => 'Products',
-                    'module2_id' => $this->product->id,
-                )
-            )
-        );
-
-        $this->_soapClient->call(
-            'set_relationship',
-            array(
-                'session' => $this->_sessionId,
-                'set_relationship_value' => array(
-                    'module1' => 'ProductBundles',
-                    'module1_id' => $this->prodBundle->id,
-                    'module2' => 'Quotes',
-                    'module2_id' => $this->quote->id,
-                )
-            )
-        );
-
-        $assertProductsRel = $this->_soapClient->call(
-            'get_relationships',
-            array(
-                'session' => $this->_sessionId,
-                'module_name' => 'ProductBundles',
-                'module_id' => $this->prodBundle->id,
-                'related_module' => 'Products',
-                'deleted' => 0,
-            )
-        );
-
-        $assertQuoteRel = $this->_soapClient->call(
-            'get_relationships',
-            array(
-                'session' => $this->_sessionId,
-                'module_name' => 'ProductBundles',
-                'module_id' => $this->prodBundle->id,
-                'related_module' => 'Quotes',
-                'deleted' => 0,
-            )
-        );
-
-        $this->assertEquals($this->product->id, $assertProductsRel['ids'][0]['id']);
-        $this->assertEquals($this->quote->id, $assertQuoteRel['ids'][0]['id']);
     }
 }

@@ -14,7 +14,7 @@
 /**
  * @group SoapTests
  */
-class PAT198Test extends SOAPTestCase
+class GetEntryListByRelatedFieldTest extends SOAPTestCase
 {
     /** @var Account */
     private $account;

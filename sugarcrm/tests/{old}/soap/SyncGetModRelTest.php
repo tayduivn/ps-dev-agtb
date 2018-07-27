@@ -16,13 +16,14 @@ require_once('vendor/nusoap//nusoap.php');
 /**
  * @group bug43696
  */
-class Bug43696Test extends SOAPTestCase
+class SyncGetModRelTest extends SOAPTestCase
 {
     private $_tsk = null;
 
-	public function setUp()
+    public function setUp()
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        // sync_get_modified_relationships is not registered in Services.
+        $this->markTestSkipped("sync_get_modified_relationships is not registered in Services. Probably testing dead code.");
         parent::setUp();
         $this->_tsk = new Task();
         $this->_tsk->name = "Unit Test";
@@ -56,7 +57,7 @@ class Bug43696Test extends SOAPTestCase
                 'offset' => 0,
                 'max_results' => 100,
                 'deleted' => 0,
-                'module_id' => $GLOBALS['current_user']->id,
+                'module_id' => 1,
                 'select_fields' => array('id', 'date_modified', 'deleted', 'name'),
                 'id' => array(),
                 'relationship_name' => 'tasks_assigned_user',

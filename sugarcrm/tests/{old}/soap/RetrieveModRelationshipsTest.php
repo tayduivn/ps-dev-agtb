@@ -13,7 +13,7 @@
 use PHPUnit\Framework\TestCase;
 
 require_once('soap/SoapRelationshipHelper.php');
-class Bug68901Test extends TestCase
+class RetrieveModRelationshipsTest extends TestCase
 {
     protected static $call, $call2, $contact, $contact2, $meeting, $meeting2;
 
@@ -91,11 +91,6 @@ class Bug68901Test extends TestCase
         self::$meeting->users->add($current_user);
         // Use fake team_set_id to get excluded from query result (excluded by team security query)
         $GLOBALS['db']->query("UPDATE meetings SET team_id = 'South', team_set_id = 'South' WHERE id = '".self::$meeting->id."'");
-    }
-
-    public function tearDown()
-    {
-        SugarTestHelper::tearDown();
     }
 
     public static function tearDownAfterClass() {
