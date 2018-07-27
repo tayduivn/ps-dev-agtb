@@ -67,6 +67,7 @@
         var listRightIndex = len >> 1;
         var listLeftIndex = len - listRightIndex;
 
+        this.hiddenFields = [];
         this.fieldsListLeft = _.initial(fieldsList, listLeftIndex);
         this.fieldsListRight = _.rest(fieldsList, listRightIndex);
 
