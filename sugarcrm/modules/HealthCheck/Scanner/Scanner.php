@@ -4922,11 +4922,12 @@ ENDP;
 
         $conn = DBManagerFactory::getInstance()->getConnection();
         $stmt = $conn->executeQuery("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'");
+        $j=0;
         while ($table = $stmt->fetchColumn()) {
-            $tempTableName = 'temp_table_' . $table;
+            $tempTableName = 'temp_table_' . md5($table) . '_' . (++$j);
             $createResult = $this->db->query("CREATE TABLE {$tempTableName} LIKE {$table}");
             if ($createResult === false) {
-                $this->log("Failed trying to create temporary table: {$tempTableName}");
+                $this->log("Failed trying to create temporary table: {$tempTableName} from {$table}");
                 $this->updateStatus(
                     'cannotPerformCollationConversionOnTable',
                     $collationTarget,
@@ -4938,7 +4939,7 @@ ENDP;
             $success = $this->setTableCollation($tempTableName, 'utf8mb4', $collationTarget);
             if (!$success) {
                 $this->log(
-                    "Unable to alter table: '{$tempTableName}' " .
+                    "Unable to alter table: '{$tempTableName}' from {$table} " .
                     "using collation target: {$collationTarget}"
                 );
                 $this->updateStatus(
