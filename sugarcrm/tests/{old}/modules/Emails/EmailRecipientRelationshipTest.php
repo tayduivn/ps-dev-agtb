@@ -876,6 +876,47 @@ class EmailRecipientRelationshipTest extends TestCase
     }
 
     /**
+     * Activity streams entries should not be logged when linking or unlinking a recipient.
+     *
+     * @covers ::add
+     * @covers ::remove
+     */
+    public function testAddAndRemove_ActivityStreamsShouldBeDisabled()
+    {
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $contact = SugarTestContactUtilities::createContact();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
+        $ep = $this->createEmailParticipant($contact, $address);
+
+        Activity::enable();
+        $this->relationship->add($email, $ep);
+        $this->relationship->remove($email, $ep);
+        Activity::restoreToPreviousState();
+
+        $seed = BeanFactory::newBean('Activities');
+        $q = new SugarQuery();
+        $q->from($seed);
+        $q->select('id');
+        $q->where()
+            ->equals('parent_type', 'Emails')
+            ->equals('parent_id', $email->id);
+        $rows = $q->execute();
+
+        $this->assertCount(0, $rows);
+
+        $q = new SugarQuery();
+        $q->from($seed);
+        $q->select('id');
+        $q->where()
+            ->equals('parent_type', 'EmailParticipants')
+            ->equals('parent_id', $ep->id);
+        $rows = $q->execute();
+
+        $this->assertCount(0, $rows);
+    }
+
+    /**
      * Sets up an EmailParticipants bean from the data on the bean and the email address so that it is ready to add to a
      * relationship.
      *
