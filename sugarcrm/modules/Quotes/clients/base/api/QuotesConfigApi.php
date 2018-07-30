@@ -529,14 +529,14 @@ class QuotesConfigApi extends ConfigModuleApi
         //update quotes c/b/v/record.php name:related_fields, bundles and product_bundle_items with everything added
         //and anything needed for calculating fields -- include any new dependent fields
         //load viewdefs
-        $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
+        $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', false);
 
         //check to see if the key we need to update exists in the loaded viewdef, if not, load the base.
-        if (!isset($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields']['fields'][0])) {
+        if (!isset($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'])) {
             $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
         }
 
-        //now that we know the related_fields['fields'] exists, we need to search that array for the array def
+        //now that we know the related_fields[0]['fields'] exists, we need to search that array for the array def
         //for the product bundle items
         $fieldsIndex = 0;
         foreach ($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'] as $field) {
@@ -601,36 +601,6 @@ class QuotesConfigApi extends ConfigModuleApi
 
         $qlidatagrouplistdef['panels'][0]['fields'] = $settings['summary_columns'];
         $viewdefManager->saveViewdef($qlidatagrouplistdef, 'Quotes', 'base', 'quote-data-grand-totals-header');
-
-        //update quotes c/b/v/record.php name:related_fields, bundles and product_bundle_items with everything added
-        //and anything needed for calculating fields -- include any new dependent fields
-        //load viewdefs
-        $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
-
-        //check to see if the key we need to update exists in the loaded viewdef, if not, load the base.
-        if (!isset($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields']['fields'][0])) {
-            $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
-        }
-
-        //now that we know the related_fields['fields'] exists, we need to search that array for the array def
-        //for the product bundle items
-        $fieldsIndex = 0;
-        foreach ($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'] as $field) {
-            if (!is_array($field)) {
-                $fieldsIndex++;
-                continue;
-            } else {
-                if (array_key_exists('name', $field) && $field['name'] == 'product_bundle_items' && array_key_exists('fields', $field)) {
-                    $quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'][$fieldsIndex]['fields'] = $settings['summary_columns_related_fields'];
-                }
-                break;
-            }
-        }
-
-        //do the same as above for bundles when we're ready for that
-
-        //write out new quotes record.php
-        $viewdefManager->saveViewdef($quoteRecordViewdef, 'Quotes', 'base', 'record');
     }
 
     /**
@@ -663,36 +633,6 @@ class QuotesConfigApi extends ConfigModuleApi
 
         $quoteDataGroupListDef['panels'][0]['fields'] = $settings['footer_rows'];
         $viewdefManager->saveViewdef($quoteDataGroupListDef, 'Quotes', 'base', 'quote-data-grand-totals-footer');
-
-        //update quotes c/b/v/record.php name:related_fields, bundles and product_bundle_items with everything added
-        //and anything needed for calculating fields -- include any new dependent fields
-        //load viewdefs
-        $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
-
-        //check to see if the key we need to update exists in the loaded viewdef, if not, load the base.
-        if (!isset($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields']['fields'][0])) {
-            $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
-        }
-
-        //now that we know the related_fields['fields'] exists, we need to search that array for the array def
-        //for the product bundle items
-        $fieldsIndex = 0;
-        foreach ($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'] as $field) {
-            if (!is_array($field)) {
-                $fieldsIndex++;
-                continue;
-            } else {
-                if (array_key_exists('name', $field) && $field['name'] == 'product_bundle_items' && array_key_exists('fields', $field)) {
-                    $quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'][$fieldsIndex]['fields'] = $settings['summary_columns_related_fields'];
-                }
-                break;
-            }
-        }
-
-        //do the same as above for bundles when we're ready for that
-
-        //write out new quotes record.php
-        $viewdefManager->saveViewdef($quoteRecordViewdef, 'Quotes', 'base', 'record');
     }
 
     /**
