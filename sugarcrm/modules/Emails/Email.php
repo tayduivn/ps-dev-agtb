@@ -28,6 +28,18 @@ class Email extends SugarBean {
      */
     private $isSynchronizingEmailParticipants = false;
 
+    /**
+     * A flag to disable the sender and recipients synchronization logic. This is useful when loading a large number of
+     * emails and you need to avoid an expensive operation for performance reasons. Do not save any emails while this
+     * logic is disabled or you may experience data loss. Also be certain to enable this logic immediately after you are
+     * done.
+     *
+     * @var bool
+     * @internal Do not use or override this property.
+     * @deprecated This property will be removed once the sender and recipients for all emails have been synchronized.
+     */
+    public $disableSynchronizingEmailParticipants = false;
+
 	/* SugarBean schema */
 	var $id;
 	var $date_entered;
@@ -2092,6 +2104,10 @@ class Email extends SugarBean {
     public function synchronizeEmailParticipants()
     {
         if ($this->isSynchronizingEmailParticipants) {
+            return;
+        }
+
+        if ($this->disableSynchronizingEmailParticipants) {
             return;
         }
 

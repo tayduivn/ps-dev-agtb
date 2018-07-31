@@ -358,7 +358,19 @@ class QueueManager
         // Don't perform a full bean retrieve, rely on the generated query.
         // Related fields need to be handled separately.
         $bean = $this->getNewBean($module);
+
+        //TODO: MAR-4889 will remove this hack.
+        if ($bean instanceof \Email) {
+            $bean->disableSynchronizingEmailParticipants = true;
+        }
+
         $bean->populateFromRow($bean->convertRow($row));
+
+        //TODO: MAR-4889 will remove this hack.
+        if ($bean instanceof \Email) {
+            $bean->disableSynchronizingEmailParticipants = false;
+        }
+
         return $bean;
     }
 
