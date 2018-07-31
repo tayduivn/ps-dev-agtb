@@ -76,41 +76,14 @@ Feature: Data Privacy module verification
     When I select *DP_1 in #DataPrivacyList.ListView
     Then I should see #DP_1Record view
 
-    # Link Lead record to Data Privacy record
-    When I open the leads subpanel on #DP_1Record view
-    When I link_existing record from leads subpanel on #DP_1Record view
-    When I search for "John B" in #LeadsSearchAndAdd.FilterView view
-    When I toggle checkbox for *John in #LeadsSearchAndAdd.ListView
-    When I click Add button on #LeadsSearchAndAdd header
-    When I close alert
+    # Link records to Data Privacy record
+    When I link existing record *John to leads subpanel on #DP_1Record view
+    When I link existing record *Alex to contacts subpanel on #DP_1Record view
+    When I link existing record *Travis to prospects subpanel on #DP_1Record view
+    When I link existing record *Drew to accounts subpanel on #DP_1Record view
 
-    # Link Contact record to Data Privacy record
-    When I open the contacts subpanel on #DP_1Record view
-    When I link_existing record from contacts subpanel on #DP_1Record view
-    When I search for "Alex N" in #ContactsSearchAndAdd.FilterView view
-    When I toggle checkbox for *Alex in #ContactsSearchAndAdd.ListView
-    When I click Add button on #ContactsSearchAndAdd header
-    When I close alert
-
-    # Link Target record to Data Privacy record
-    When I open the prospects subpanel on #DP_1Record view
-    When I link_existing record from prospects subpanel on #DP_1Record view
-    When I search for "Travis H" in #ProspectsSearchAndAdd.FilterView view
-    When I toggle checkbox for *Travis in #ProspectsSearchAndAdd.ListView
-    When I click Add button on #ProspectsSearchAndAdd header
-    When I close alert
-
-    # Link Account record to Data Privacy record
-    When I open the accounts subpanel on #DP_1Record view
-    When I link_existing record from accounts subpanel on #DP_1Record view
-    When I search for "Drew" in #AccountsSearchAndAdd.FilterView view
-    When I toggle checkbox for *Drew in #AccountsSearchAndAdd.ListView
-    When I click Add button on #AccountsSearchAndAdd header
-    When I close alert
-
-    # Select which fields to erase for the contact
-    When I click on MarkToErase button for *Alex in #DP_1Record.SubpanelsLayout.subpanels.contacts
-    When I select fields in #PersonalInfoDrawer view
+    # Select which fields to erase for contact
+    When I select fields for erasure for *Alex record in #DP_1Record.SubpanelsLayout.subpanels.contacts subpanel
       | fieldName            |
       | first_name           |
       | last_name            |
@@ -118,37 +91,28 @@ Feature: Data Privacy module verification
       | title                |
       | primary_address_city |
       | email                |
-    When I click MarkForErasure button on #ContactsSearchAndAdd header
 
-    # Select which fields to erase for the lead
-    When I click on MarkToErase button for *John in #DP_1Record.SubpanelsLayout.subpanels.leads
-    When I select fields in #PersonalInfoDrawer view
+    # Select which fields to erase for lead
+    When I select fields for erasure for *John record in #DP_1Record.SubpanelsLayout.subpanels.leads subpanel
       | fieldName              |
       | phone_mobile           |
       | phone_other            |
       | primary_address_street |
-    When I click MarkForErasure button on #LeadsSearchAndAdd header
 
-    # Select which fields to erase for the target
-    When I click on MarkToErase button for *Travis in #DP_1Record.SubpanelsLayout.subpanels.prospects
-    When I select fields in #PersonalInfoDrawer view
+    # Select which fields to erase for target
+    When I select fields for erasure for *Travis record in #DP_1Record.SubpanelsLayout.subpanels.prospects subpanel
       | fieldName    |
       | title        |
       | phone_mobile |
       | last_name    |
-    When I click MarkForErasure button on #ProspectsSearchAndAdd header
 
-    # Select which fields to erase for the account
-    When I click on MarkToErase button for *Drew in #DP_1Record.SubpanelsLayout.subpanels.accounts
-    When I select fields in #PersonalInfoDrawer view
+    # Select which fields to erase for account
+    When I select fields for erasure for *Drew record in #DP_1Record.SubpanelsLayout.subpanels.accounts subpanel
       | fieldName |
       | email     |
-    When I click MarkForErasure button on #AccountsSearchAndAdd header
 
     # Erase and Complete
-    When I click EraseAndComplete button on #DP_1Record header
-    When I Confirm confirmation alert
-    When I close alert
+    When I complete the erasure request on #DP_1Record
 
     # Verify Data Privacy record status
     Then I verify fields on #DP_1Record.RecordView
@@ -156,12 +120,9 @@ Feature: Data Privacy module verification
       | status    | Completed |
 
     # Update Data Privacy record resolution field
-    When I click Edit button on #DP_1Record header
-    When I provide input for #DP_1Record.RecordView view
+    When I provide input for #DP_1Record
       | resolution                                       |
       | The request is successfully completed by Seedbed |
-    When I click Save button on #DP_1Record header
-    When I close alert
 
     # Verify that values for specified lead fields are erased
     When I choose Leads in modules menu
@@ -176,9 +137,7 @@ Feature: Data Privacy module verification
 
     # Verify that values for specified target fields are erased
     When I choose Prospects in modules menu
-    Then I should see *Travis in #ProspectsList.ListView
     When I select *Travis in #ProspectsList.ListView
-    Then I should see #TravisRecord view
     When I click show more button on #TravisRecord view
     Then I verify fields on #TravisRecord.HeaderView
       | fieldName | value  |
@@ -190,9 +149,7 @@ Feature: Data Privacy module verification
 
     # Verify that values for specified account fields are erased
     When I choose Accounts in modules menu
-    Then I should see *Drew in #AccountsList.ListView
     When I select *Drew in #AccountsList.ListView
-    Then I should see #DrewRecord view
     When I click show more button on #DrewRecord view
     Then I verify fields on #TravisRecord.RecordView
       | fieldName | value |
@@ -200,9 +157,7 @@ Feature: Data Privacy module verification
 
     # Verify that values for specified contact fields are erased
     When I choose Contacts in modules menu
-    Then I should see *Alex in #ContactsList.ListView
     When I select *Alex in #ContactsList.ListView
-    Then I should see #AlexRecord view
     When I click show more button on #AlexRecord view
     Then I verify fields on #AlexRecord.HeaderView
       | fieldName | value        |
@@ -252,26 +207,18 @@ Feature: Data Privacy module verification
     Then I should see #DP_1Record view
 
     # Link Contact record to Data Privacy record
-    When I open the contacts subpanel on #DP_1Record view
-    When I link_existing record from contacts subpanel on #DP_1Record view
-    When I search for "Alex N" in #ContactsSearchAndAdd.FilterView view
-    When I toggle checkbox for *Alex in #ContactsSearchAndAdd.ListView
-    When I click Add button on #ContactsSearchAndAdd header
-    When I close alert
+    When I link existing record *Alex to contacts subpanel on #DP_1Record view
 
     # Select which fields to erase  for contact
-    When I click on MarkToErase button for *Alex in #DP_1Record.SubpanelsLayout.subpanels.contacts
-    When I select fields in #PersonalInfoDrawer view
+    When I select fields for erasure for *Alex record in #DP_1Record.SubpanelsLayout.subpanels.contacts subpanel
       | fieledName            |
       | first_name            |
       | last_name             |
       | title                 |
       | primary_address_state |
-    When I click MarkForErasure button on #ContactsSearchAndAdd header
 
-    When I click Reject button on #DP_1Record header
-    When I Confirm confirmation alert
-    When I close alert
+    # Reject erasure request
+    When I reject the erasure request on #DP_1Record
 
     Then I verify fields on #DP_1Record.RecordView
       | fieldName | value    |
@@ -290,6 +237,3 @@ Feature: Data Privacy module verification
       | fieldName             | value               |
       | title                 | Automation Engineer |
       | primary_address_state | WA                  |
-
-
-

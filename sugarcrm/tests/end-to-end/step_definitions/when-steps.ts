@@ -18,6 +18,7 @@ import ListView from '../views/list-view';
 import RliTableRecord from '../views/rli-table';
 import SubpanelLayout from '../layouts/subpanel-layout';
 import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
+import AlertCmp from '../components/alert-cmp';
 
 /**
  * Select module in modules menu
@@ -123,7 +124,7 @@ When(/^I go to "([^"]*)" url$/,
 
     }, {waitForApp: true});
 
-// The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
+// The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layout
 When(/^I provide input for (#\S+) view$/,
     async function (view: RecordView, data: TableDefinition): Promise<void> {
 
@@ -146,6 +147,63 @@ When(/^I provide input for (#\S+) view$/,
         await view.setFieldsValue(inputData);
 
     }, {waitForApp: true});
+
+/**
+ *  Click edit button, edit record, save and close alert
+ *  (Record must be opened in the record view)
+ *
+ *  @example:
+ *  When I provide input for #DP_1Record
+ *      | name | resolution                                       |
+ *      | DP_2 | The request is successfully completed by Seedbed |
+ */
+When(/^I provide input for (#\S+)$/,
+    async function (layout: RecordLayout, data: TableDefinition): Promise<void> {
+
+        const editBtn = 'edit';
+        const saveBtn = 'save';
+        const showMoreBtn ='show more';
+
+        // Click Edit button to edit the record
+        await layout.HeaderView.clickButton(editBtn);
+        await this.driver.waitForApp();
+
+        // Click 'Show More'
+        await layout.showMore(showMoreBtn);
+        await this.driver.waitForApp();
+
+        // Input data validation
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+
+        let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
+
+        // check for * marked column and cache the record and view if needed
+        let uidInfo = Utils.computeRecordUID(inputData);
+
+        seedbed.cucumber.scenario.recordsInfo[uidInfo.uid] = {
+            uid: uidInfo.uid,
+            originInput: JSON.parse(JSON.stringify(inputData)),
+            input: inputData,
+            module: layout.module,
+        };
+
+        // Update Field Values
+        await layout.setFieldsValue(inputData);
+        await this.driver.waitForApp();
+
+        // Click Save button
+        await layout.HeaderView.clickButton(saveBtn);
+        await this.driver.waitForApp();
+
+        // Close Alert
+        let alert = new AlertCmp({});
+        await alert.close();
+        await this.driver.waitForApp();
+
+    }, {waitForApp: true});
+
 
 // The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
 When(/^I provide input for (#\S+) view for (\d+) row$/,

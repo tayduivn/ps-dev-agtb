@@ -38,7 +38,7 @@ export default class RecordHeaderView extends BaseView {
                 'convert': 'a[name="lead_convert_button"]:not(.hide)',
                 'actions': '.actions:not([style*="display: none"]) a.btn.dropdown-toggle',
                 'reply': 'a[name="reply_button"]:not(.hide)',
-                'eraseandcomplete': 'a[name="erase_complete_button"]:not(.hide)',
+                'complete': 'a[name="erase_complete_button"]:not(.hide)',
                 'markforerasure': 'a[name="mark_for_erasure_button"]:not(.hide)',
                 'reject': 'a[name="reject_button"]:not(.hide)',
                 'closecall': 'a[name="record-close"]:not(.hide)',
