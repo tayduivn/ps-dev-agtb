@@ -35,6 +35,14 @@ RUN chmod +x /opt/bin/install-web-browsers.sh && \
     /opt/bin/install-web-browsers.sh
 
 #========================
+# Install php7.1
+# Ref: https://blog.programster.org/debian-8-install-php-7-1
+#========================
+RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+RUN rm /etc/apt/sources.list.d/google-chrome.list && echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+RUN apt-get update && apt-get install -y php7.1
+
+#========================
 # Clean up Apt
 #========================
 RUN \
