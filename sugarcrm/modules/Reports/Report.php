@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Reports/config.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
@@ -2780,6 +2779,22 @@ class Report
     }
 
     /**
+     * Creates where clause for getRecordIds() and getRecordCount()
+     * @return string
+     */
+    private function getRecordWhere()
+    {
+        $where = " " . $this->focus->table_name . ".deleted=0 \n";
+        $options = $this->getVisibilityOptions();
+        $options['action'] = 'list';
+        $where = $this->focus->addVisibilityWhere($where, $options);
+        if (!empty($this->where)) {
+            $where = " ($this->where) AND $where";
+        }
+        return $where;
+    }
+
+    /**
      * Returns the record ids of this report
      * @param array $reportDef
      * @param integer $offset
@@ -2791,8 +2806,9 @@ class Report
         $recordIds = array();
         $this->create_where();
         $this->create_from();
-        $id = $this->full_bean_list['self']->table_name . '.id';
-        $query = "SELECT DISTINCT $id {$this->from} WHERE {$this->where} AND {$this->focus->table_name}.deleted=0";
+        $id = $this->focus->table_name . '.id';
+        $where = $this->getRecordWhere();
+        $query = "SELECT DISTINCT $id {$this->from} WHERE $where";
         $query .= " ORDER BY $id ASC";
         $query = str_replace("\n", " ", $query);
         if ($offset > 0 || $limit > 0) {
@@ -2817,8 +2833,9 @@ class Report
         $recordCount = 0;
         $this->create_where();
         $this->create_from();
-        $id = $this->full_bean_list['self']->table_name . '.id';
-        $query = "SELECT COUNT(DISTINCT $id) AS record_count {$this->from} WHERE {$this->where} AND {$this->focus->table_name}.deleted=0";
+        $id = $this->focus->table_name . '.id';
+        $where = $this->getRecordWhere();
+        $query = "SELECT COUNT(DISTINCT $id) AS record_count {$this->from} WHERE $where";
         $result = $this->db->query($query, true, "Error executing query");
         if ($result) {
             $row = $this->db->fetchByAssoc($result);
