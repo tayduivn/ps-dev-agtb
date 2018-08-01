@@ -753,6 +753,7 @@ class QueueManager
             $idClause
         );
         $this->db->query($sql);
+        $this->db->commit();
         $this->deleteFromQueue = array();
     }
 
@@ -833,6 +834,8 @@ class QueueManager
         foreach ($modules as $module) {
             $this->db->query($this->generateQueryModuleToQueueForBuckets($module, $bucketSize));
         }
+        // force to commit right way
+        $this->db->commit();
     }
 
     /**
@@ -840,7 +843,7 @@ class QueueManager
      * @param string $module
      * @return string
      */
-    public function generateQueryModuleToQueueForBuckets(string $module, int $bucketSize)
+    protected function generateQueryModuleToQueueForBuckets(string $module, int $bucketSize)
     {
         $seed = $this->getNewBean($module);
         $sql = sprintf(
