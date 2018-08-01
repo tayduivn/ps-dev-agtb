@@ -651,13 +651,16 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getDb'))
+                ->setMethods(array('retrieveBean', 'getDb', 'handleTerminatedFlowRelatedBeans'))
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->any())
             ->method('getDb')
             ->will($this->returnValue($db));
 
+        $caseFlowHandlerMock->expects($this->once())
+            ->method('handleTerminatedFlowRelatedBeans');
+        
         $casId = 1;
         $caseFlowHandlerMock->closeCase($casId);
     }

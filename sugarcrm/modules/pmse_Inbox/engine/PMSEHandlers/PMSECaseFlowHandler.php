@@ -600,53 +600,35 @@ class PMSECaseFlowHandler
      */
     public function handleTerminatedFlowRelatedBeans($casId)
     {
-        // We need the flow bean for SugarQuery
-        $flow = $this->retrieveBean('pmse_BpmFlow');
+        $inbox = $this->retrieveBean('pmse_Inbox');
 
-        // Get the query object
         $q = $this->retrieveSugarQueryObject();
 
-        // We only need these fields for checking/handling
-        $fields = array(
-            'pro_id',
-            'cas_flow_status',
-            'cas_sugar_module',
-            'cas_sugar_object_id',
-        );
+        $fields = [
+            'i.cas_status',
+            'i.cas_module',
+            'i.pro_id',
+            'pf.cas_sugar_object_id',
+        ];
 
-        // Build the query
-        $q->select($fields);
-        $q->from($flow)
+        $q->from($inbox, ['alias' => 'i'])
           ->where()
           ->equals('cas_id', $casId);
 
-        // Get our rows of the flow
-        $rows = $q->execute();
+        $q->joinTable('pmse_bpm_flow', array('alias' => 'pf', 'joinType' => 'INNER', 'linkingTable' => true))
+            ->on()
+            ->equalsField('pf.cas_id', 'i.cas_id');
 
-        // And get our count for comparison
-        $c = count($rows);
+        $q->select($fields);
+        $q->limit(1);
 
-        // We really only want to do this if there are rows, which there should
-        // always be
-        if ($c) {
-            // Set a check value here to see if all rows are closed/terminated
-            $v = 0;
+        $row = $q->execute();
 
-            // Loop and check
-            foreach ($rows as $row) {
-                if (in_array($row['cas_flow_status'], array('CLOSED', 'TERMINATED'))) {
-                    $v++;
-                }
-            }
-
-            // If the number of closed/terminated matches the numer of rows, they
-            // are all closed, so we need to remove the locked fields rel from the
-            // target bean
-            if ($v === $c) {
-                $bean = $this->retrieveBean($row['cas_sugar_module'], $row['cas_sugar_object_id']);
-                if (isset($bean)) {
-                    $this->deleteLockFieldsFromBean($bean, $row['pro_id']);
-                }
+        $row = !empty($row) ? $row[0] : [];
+        if (!empty($row) && $row['cas_status'] != 'IN PROGRESS') {
+            $bean = $this->retrieveBean($row['cas_module'], $row['cas_sugar_object_id']);
+            if (isset($bean)) {
+                $this->deleteLockFieldsFromBean($bean, $row['pro_id']);
             }
         }
     }
@@ -760,9 +742,6 @@ class PMSECaseFlowHandler
         $flowBean->cas_finish_date = TimeDate::getInstance()->nowDb();
         $return = $flowBean->save();
 
-        // Handle checking for locked field relationship
-        $this->handleTerminatedFlowRelatedBeans($casId);
-
         return $return;
     }
 
@@ -860,6 +839,8 @@ class PMSECaseFlowHandler
             " where cas_id = $cas_id ";
         $db->query($query, true, "Error updating bpm_inbox record ");
 
+        $this->handleTerminatedFlowRelatedBeans($cas_id);
+
         //$this->bpmLog('DEBUG', "[$cas_id][] has been marked as completed");
     }
 
@@ -942,9 +923,6 @@ class PMSECaseFlowHandler
         // Handle the update of the flow
         $return = $this->updateFlowData($data, $where);
 
-        // Handle checking for locked field relationship
-        $this->handleTerminatedFlowRelatedBeans($casId);
-
         return $return;
     }
 
@@ -971,9 +949,6 @@ class PMSECaseFlowHandler
 
         // Handle the update of the flow
         $return = $this->updateFlowData($data, $where);
-
-        // Handle checking for locked field relationship
-        $this->handleTerminatedFlowRelatedBeans($casId);
 
         return $return;
     }
