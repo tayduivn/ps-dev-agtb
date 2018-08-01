@@ -115,7 +115,7 @@
      * There are three types of filter type (startsWith, contains, endsWith).
      */
     filterCollection: function() {
-        var term = this.searchTerm;
+        var term = this.escapeRegExp(this.searchTerm);
         var filter = this._filter;
         var baseFields = this.model.fields;
 
@@ -137,6 +137,15 @@
                 }, this);
             }, this);
         }
+    },
+
+    /**
+     * Escape reserved chars of regular expression.
+     *
+     * @param {string} string Search term.
+     */
+    escapeRegExp: function(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
     },
 
     /**
