@@ -828,7 +828,7 @@ FormPanelField.prototype._getValueFromControl = function () {
 FormPanelField.prototype.fireDependentFields = function () {
     var dependantField, value = this._value;
     if(this._form) {
-        for(i = 0; i < this._dependantFields.length; i++) {
+        for(var i = 0; i < this._dependantFields.length; i++) {
             dependantField = this._form.getItem(this._dependantFields[i]);
             if (dependantField) {
                 dependantField._fireDependencyHandler(this, value);
@@ -1710,6 +1710,9 @@ FormPanelDropdown.prototype._onLoadDataSuccess = function () {
     var that = this;
     return function (data) {
         var items = that._dataRoot ? data[that._dataRoot] : data;
+        if (that._name == 'field' || that._name == 'relField') {
+            items.unshift({value: null, text: translate('LBL_PMSE_FORM_OPTION_SELECT'), type: null, optionItem: "none", len: 100});
+        }
         that._removeLoadingMessage();
         that.setOptions(items);
     };

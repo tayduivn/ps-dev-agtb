@@ -234,7 +234,7 @@ class PMSERelatedModule
         return $moduleName;
     }
 
-    public function getRelatedBeans($filter, $relationship = 'all')
+    public function getRelatedBeans($filter, $relationship = 'all', $removeTarget = false)
     {
         global $beanList, $app_list_strings;
         if (isset($beanList[$filter])) {
@@ -311,18 +311,19 @@ class PMSERelatedModule
         // Sort on the label
         array_multisort($labels, SORT_ASC, $output);
 
-        // Send text with pluralized module name
-        $filterText = isset($app_list_strings['moduleList'][$filter]) ? $app_list_strings['moduleList'][$filter] : $filter;
-        $filterArray = array(
-            'value' => $filter,
-            'text' => '<' . $filterText . '>',
-            'module' => $filter,
-            'module_label' => $filterText, // Display value for Module Name
-            'module_name' => $filter, // Actual Module Name Key
-            'relationship' => $filter
-        );
-
-        array_unshift($output, $filterArray);
+        if (!$removeTarget) {
+            // Send text with pluralized module name
+            $filterText = isset($app_list_strings['moduleList'][$filter]) ? $app_list_strings['moduleList'][$filter] : $filter;
+            $filterArray = array(
+                'value' => $filter,
+                'text' => '<' . $filterText . '>',
+                'module' => $filter,
+                'module_label' => $filterText, // Display value for Module Name
+                'module_name' => $filter, // Actual Module Name Key
+                'relationship' => $filter,
+            );
+            array_unshift($output, $filterArray);
+        }
 
         $res['search'] = $filter;
         $res['success'] = true;

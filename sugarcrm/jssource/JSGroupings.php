@@ -439,6 +439,7 @@
                 'include/javascript/pmse/ui/modal.js' => 'include/javascript/pmse.ui.min.js',
                 'include/javascript/pmse/ui/proxy.js' => 'include/javascript/pmse.ui.min.js',
                 'include/javascript/pmse/ui/element.js' => 'include/javascript/pmse.ui.min.js',
+                'include/javascript/pmse/ui/element_helper.js' => 'include/javascript/pmse.ui.min.js',
                 'include/javascript/pmse/ui/container.js' => 'include/javascript/pmse.ui.min.js',
                 'include/javascript/pmse/ui/window.js' => 'include/javascript/pmse.ui.min.js',
                 'include/javascript/pmse/ui/action.js' => 'include/javascript/pmse.ui.min.js',

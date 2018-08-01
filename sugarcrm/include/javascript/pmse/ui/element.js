@@ -72,6 +72,11 @@ PMSE.Element = function(options) {
      * @type {Object}
      */
     this.template2 = null;
+    /**
+     * Holds the element helper object
+     * @type {Object}
+     */
+    this.helper = null;
 
     PMSE.Element.prototype.initObject.call(this, options);
 };
@@ -123,6 +128,24 @@ PMSE.Element.prototype.initObject = function(options) {
         .setPosition(defaults.x, defaults.y)
         .setZOrder(defaults.zOrder)
         .setVisible(defaults.visible);
+};
+
+/**
+ * Configures and sets the element helper object
+ * @return {*}
+ */
+PMSE.Element.prototype.setElementHelper = function(options) {
+    var configObject = {
+        decimalSeparator: App.config.defaultDecimalSeparator,
+        numberGroupingSeparator: App.config.defaultNumberGroupingSeparator,
+        currencies: project.getMetadata('currencies'),
+        dateFormat: App.date.getUserDateFormat(),
+        timeFormat: App.user.getPreference('timepref')
+    };
+    $.extend(configObject, options);
+    this.helper = new PMSE.ElementHelper(configObject);
+    this.helper._parent = this;
+    return this;
 };
 
 /**

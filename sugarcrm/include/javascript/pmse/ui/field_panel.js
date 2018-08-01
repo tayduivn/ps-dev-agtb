@@ -362,6 +362,7 @@ FieldPanel.prototype.attachListeners = function () {
     var that = this;
     if (this.html && !this._attachedListeners) {
         jQuery('.adam-modal').add(this._context).on("click", function (e) {
+
             var $selector = $(that.html);
             if (that._owner) {
                 $selector = isHTMLElement(that._owner) ? $selector.add(that._owner) : $selector.add(that._owner.html);

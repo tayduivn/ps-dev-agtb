@@ -703,7 +703,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 break;
             case 'related':
                 $cardinality = isset($args['cardinality']) ? $args['cardinality'] : 'all';
-                $output = $this->retrieveRelatedBeans($filter, $cardinality);
+                $removeTarget = isset($args['removeTarget']) ? $args['removeTarget'] : false;
+                $output = $this->retrieveRelatedBeans($filter, $cardinality, $removeTarget);
                 $outputType = 1;
                 break;
             case 'oneToOneRelatedModules':
@@ -1242,9 +1243,9 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @param $filter
      * @return object
      */
-    public function retrieveRelatedBeans($filter, $relationship = 'all')
+    public function retrieveRelatedBeans($filter, $relationship = 'all', $removeTarget = false)
     {
-        return $this->pmseRelatedModule->getRelatedBeans($filter, $relationship);
+        return $this->pmseRelatedModule->getRelatedBeans($filter, $relationship, $removeTarget);
     }
 
     /**
