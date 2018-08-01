@@ -60,7 +60,7 @@ class QuotesConfigApi extends ConfigModuleApi
             null,
             'base'
         );
-        $quotesConfig['productsFields'] = $parser->getAvailableFields();
+        $quotesConfig['productsFields'] = array_merge($parser->getAvailableFields(), $parser->getDefaultFields());
 
         $parser = ParserFactory::getParser(
             MB_LISTVIEW,
@@ -69,7 +69,7 @@ class QuotesConfigApi extends ConfigModuleApi
             null,
             'base'
         );
-        $quotesConfig['quotesFields'] = $parser->getAvailableFields();
+        $quotesConfig['quotesFields'] = array_merge($parser->getAvailableFields(), $parser->getDefaultFields());
 
         return $quotesConfig;
     }

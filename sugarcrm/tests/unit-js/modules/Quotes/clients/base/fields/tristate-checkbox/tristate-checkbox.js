@@ -298,11 +298,18 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             sinon.collection.stub(field, 'changeState');
             sinon.collection.stub(field.context, 'trigger');
             sinon.collection.stub(field, 'render');
+
             relatedField = {
-                name: 'relField1'
+                name: 'relField1',
+                def: {
+                    labelModule: 'Quotes'
+                }
             };
             relatedField2 = {
-                name: 'relField2'
+                name: 'relField2',
+                def: {
+                    labelModule: 'Quotes'
+                }
             };
             relatedFields = [relatedField, relatedField2];
         });
@@ -318,7 +325,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
 
                 expect(field.dependentFields).toEqual({
                     relField1: {
-                        module: 'Products',
+                        module: 'Quotes',
                         field: 'relField1',
                         reason: 'related_fields'
                     }

@@ -144,6 +144,7 @@
                 name: field.name,
                 label: app.lang.get(field.label, moduleName),
                 type: 'tristate-checkbox',
+                labelModule: moduleName,
                 locked: field.locked,
                 related: field.related
             };

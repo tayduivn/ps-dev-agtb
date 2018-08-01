@@ -218,12 +218,14 @@ describe('Quotes.View.ConfigPanel', function() {
                 name: 'name',
                 label: 'LBL_QUOTE_NAME',
                 type: 'tristate-checkbox',
+                labelModule: 'Quotes',
                 locked: undefined,
                 related: undefined
             }, {
                 name: 'quantity',
                 label: 'LBL_QUANTITY',
                 type: 'tristate-checkbox',
+                labelModule: 'Quotes',
                 locked: undefined,
                 related: undefined
             }];

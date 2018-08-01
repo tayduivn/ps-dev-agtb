@@ -190,7 +190,7 @@
         if (toggleFieldOn) {
             _.each(relatedFields, function(relatedField) {
                 this.dependentFields[relatedField.name] = {
-                    module: 'Products',
+                    module: relatedField.def.labelModule,
                     field: relatedField.name,
                     reason: 'related_fields'
                 };
