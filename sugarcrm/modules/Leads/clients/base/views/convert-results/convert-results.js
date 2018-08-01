@@ -32,7 +32,7 @@
         if (model) {
             this.associatedModels.push(model);
         }
-        model = this.buildAssociatedModel('Opportunities', 'opportunity_id', 'opportunity_name');
+        model = this.buildAssociatedModel('Opportunities', 'opportunity_id', 'converted_opportunity_name');
         if (model) {
             this.associatedModels.push(model);
         }

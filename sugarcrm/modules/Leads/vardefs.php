@@ -275,6 +275,16 @@ $dictionary['Lead'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_OPPORTUNITIES',
         ),
+        'converted_opportunity_name' => array(
+            'name' => 'converted_opportunity_name',
+            'rname' => 'name',
+            'id_name' => 'opportunity_id',
+            'vname' => 'LBL_CONVERTED_OPPORTUNITY_NAME',
+            'type' => 'relate',
+            'link' => 'opportunity',
+            'module' => 'Opportunities',
+            'source' => 'non-db',
+        ),
         'opportunity_name' => array(
             'name' => 'opportunity_name',
             'vname' => 'LBL_OPPORTUNITY_NAME',

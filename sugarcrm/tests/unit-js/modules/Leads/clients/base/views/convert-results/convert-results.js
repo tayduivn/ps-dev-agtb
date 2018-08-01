@@ -16,6 +16,7 @@ describe("Leads.Views.ConvertResults", function() {
         contactName = 'con',
         opportunityId = '789',
         opportunityName = 'opp';
+    var convertedOpportunityName = 'opp';
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -78,12 +79,13 @@ describe("Leads.Views.ConvertResults", function() {
             contact_id: contactId,
             contact_name: contactName,
             opportunity_id: opportunityId,
-            opportunity_name: opportunityName
+            opportunity_name: opportunityName,
+            converted_opportunity_name: convertedOpportunityName
         });
         expect(view.associatedModels.length).toEqual(3);
         expect(view.associatedModels.get(accountId).get('name')).toEqual(accountName);
         expect(view.associatedModels.get(contactId).get('name')).toEqual(contactName);
-        expect(view.associatedModels.get(opportunityId).get('name')).toEqual(opportunityName);
+        expect(view.associatedModels.get(opportunityId).get('name')).toEqual(convertedOpportunityName);
     });
 
     it("should not have any models in the collection if lead is not converted, even if contact is related", function() {

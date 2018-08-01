@@ -147,6 +147,7 @@ $mod_strings = array (
     'LBL_OPPORTUNITY_AMOUNT' => 'Opportunity Amount:',
     'LBL_OPPORTUNITY_ID'=>'Opportunity ID',
     'LBL_OPPORTUNITY_NAME' => 'Opportunity Name:',
+    'LBL_CONVERTED_OPPORTUNITY_NAME' => 'Converted Opportunity Name',
     'LBL_OTHER_EMAIL_ADDRESS' => 'Other Email:',
     'LBL_OTHER_PHONE' => 'Other Phone:',
     'LBL_PHONE' => 'Phone:',

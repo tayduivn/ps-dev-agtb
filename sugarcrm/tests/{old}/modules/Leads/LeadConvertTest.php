@@ -637,6 +637,9 @@ class LeadConvertTest extends TestCase
             $contact->account_id,
             "Account id from converted lead does not match the new contact account id, there was an error during conversion."
         );
+
+        $this->assertSame($opp->name, $lead->opportunity_name, 'Opportunity name did not match.');
+        $this->assertSame($account->name, $lead->account_name, 'Account name did not match.');
     }
 
     public function testCopyActivities_CopyTaskToAccountAndContact_SuccessFullyCopied()

@@ -92,6 +92,10 @@ class LeadConvert
                 $this->lead->account_name = $modules['Accounts']->name;
             }
 
+            if ($moduleName === 'Opportunities' && $this->lead->opportunity_name !== $modules['Opportunities']->name) {
+                $this->lead->opportunity_name = $modules['Opportunities']->name;
+            }
+
             $this->setAssignedForModulesToLeads($moduleDef);
             $this->setRelationshipForModulesToLeads($moduleDef);
 
