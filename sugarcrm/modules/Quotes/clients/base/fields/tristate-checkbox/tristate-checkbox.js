@@ -253,7 +253,14 @@
                 this.def.initialState = 'unchecked';
             } else if (this.def.initialState === 'unchecked' && this.isRequired) {
                 this.def.initialState = 'checked';
+            } else if (this.def.initialState === 'checked' && this.isRequired &&
+                _.intersection(defaultFieldList, this.dependentFields).length === 0) {
+                this.def.initialState = 'unchecked';
+                this.def.dependentFields = {};
             }
+        } else {
+            // Making sure default fields are checked.
+            this.def.initialState = 'checked';
         }
 
         this.changeState(this._getInitialState());
