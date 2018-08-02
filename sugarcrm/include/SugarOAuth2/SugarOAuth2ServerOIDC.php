@@ -22,13 +22,18 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Sugarcrm\IdentityProvider\Srn;
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Sugar OAuth2.0 server that connects Sugar and OpenID Connect server (e.g. STS authentication).
  * @api
  */
-class SugarOAuth2ServerOIDC extends SugarOAuth2Server
+class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     const PORTAL_PLATFORM = 'portal';
 
     /**
@@ -45,6 +50,7 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
     public function __construct(IOAuth2Storage $storage, array $config)
     {
         parent::__construct($storage, $config);
+        $this->setLogger(LoggerFactory::getLogger('authentication'));
     }
 
     /**
@@ -171,6 +177,7 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
             /** @var IntrospectToken $userToken */
             $userToken = $authManager->authenticate($introspectToken);
         } catch (AuthenticationException $e) {
+            $this->logger->debug('IDM mode introspect exception: ' . $e->getMessage());
             throw new OAuth2AuthenticateException(
                 self::HTTP_UNAUTHORIZED,
                 $this->getVariable(self::CONFIG_TOKEN_TYPE),

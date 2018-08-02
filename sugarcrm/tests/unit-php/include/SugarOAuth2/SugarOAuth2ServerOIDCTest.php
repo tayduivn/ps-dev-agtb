@@ -26,6 +26,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \SugarOAuth2ServerOIDC
@@ -106,14 +107,18 @@ class SugarOAuth2ServerOIDCTest extends TestCase
         $this->storage = $this->createMock(\SugarOAuth2StorageOIDC::class);
         $this->storage->refreshToken = $this->createMock(\OAuthToken::class);
         $this->oAuth2Server = $this->getMockBuilder(\SugarOAuth2ServerOIDC::class)
-                                   ->setConstructorArgs([$this->storage, []])
+                                   ->disableOriginalConstructor()
                                    ->setMethods([
                                        'getAuthProviderBuilder',
                                        'getAuthProviderBasicBuilder',
                                        'getAuthProviderApiLoginBuilder',
                                        'genAccessToken',
+                                       'setLogger',
                                    ])
                                    ->getMock();
+        $this->logger = $this->createMock(\LoggerInterface::class);
+        TestReflection::setProtectedValue($this->oAuth2Server, 'storage', $this->storage);
+        TestReflection::setProtectedValue($this->oAuth2Server, 'logger', $this->logger);
 
         $this->authProviderBuilder = $this->createMock(AuthProviderOIDCManagerBuilder::class);
         $this->authProviderBasicBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
