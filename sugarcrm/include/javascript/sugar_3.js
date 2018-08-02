@@ -9,6 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 /**
  * Namespace for Sugar Objects
  */
@@ -4861,7 +4862,7 @@ function convertReportDateTimeToDB(dateValue, timeValue)
     var time_match = timeValue.match(/([0-9]{1,2})\:([0-9]{1,2})([ap]m)/);
     if ( date_match != null && time_match != null) {
         time_match[1] = parseInt(time_match[1]);
-        if (time_match[3] == 'pm') {
+        if (time_match[3] == 'pm' && time_match[1] < 12) {
             time_match[1] = time_match[1] + 12;
             if (time_match[1] >= 24) {
                 time_match[1] = time_match[1] - 24;
