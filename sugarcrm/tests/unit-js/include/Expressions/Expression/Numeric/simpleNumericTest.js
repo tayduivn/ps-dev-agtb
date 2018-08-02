@@ -60,7 +60,7 @@ describe('Simple Numeric Functions Test', function() {
         var i = new SUGAR.expressions.ConstantExpression([9]);
 
         it('should return average of the sum of 1 to 9', function() {
-            var res =  new SUGAR.expressions.AverageExpression([a,b,c,d,e,f,g,h,i], getSLContext(model));
+            var res =  new SUGAR.expressions.AverageExpression([a, b, c, d, e, f, g, h, i], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(5);
         });
     });
@@ -90,11 +90,11 @@ describe('Simple Numeric Functions Test', function() {
         var d = new SUGAR.expressions.ConstantExpression([10]);
 
         it('should return sum of a set of numbers', function() {
-            var res =  new SUGAR.expressions.AddExpression([a,b], getSLContext(model));
+            var res =  new SUGAR.expressions.AddExpression([a, b], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(0);
-            res =  new SUGAR.expressions.AddExpression([c,d], getSLContext(model));
+            res =  new SUGAR.expressions.AddExpression([c, d], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(20);
-            res =  new SUGAR.expressions.AddExpression([a,b,c,d], getSLContext(model));
+            res =  new SUGAR.expressions.AddExpression([a, b, c, d], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(20);
         });
     });
@@ -106,11 +106,11 @@ describe('Simple Numeric Functions Test', function() {
         var d = new SUGAR.expressions.ConstantExpression([10]);
 
         it('should return difference of a set of numbers', function() {
-            var res =  new SUGAR.expressions.SubtractExpression([a,b], getSLContext(model));
+            var res =  new SUGAR.expressions.SubtractExpression([a, b], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-2);
-            res =  new SUGAR.expressions.SubtractExpression([c,d], getSLContext(model));
+            res =  new SUGAR.expressions.SubtractExpression([c, d], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(0);
-            res =  new SUGAR.expressions.SubtractExpression([a,b,c,d], getSLContext(model));
+            res =  new SUGAR.expressions.SubtractExpression([a, b, c, d], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-22);
         });
     });
@@ -121,7 +121,7 @@ describe('Simple Numeric Functions Test', function() {
         var c = new SUGAR.expressions.ConstantExpression([10.9]);
         var d = new SUGAR.expressions.ConstantExpression([11.2]);
 
-        it('should return ceiling value of a number', function() {
+        it('should round up to next whole number', function() {
             var res =  new SUGAR.expressions.CeilingExpression([a], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-1);
             res =  new SUGAR.expressions.CeilingExpression([b], getSLContext(model));
@@ -139,7 +139,7 @@ describe('Simple Numeric Functions Test', function() {
         var c = new SUGAR.expressions.ConstantExpression([10.9]);
         var d = new SUGAR.expressions.ConstantExpression([11.2]);
 
-        it('should return ceiling value of a number', function() {
+        it('should round down to next whole number', function() {
             var res =  new SUGAR.expressions.FloorExpression([a], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-2);
             res =  new SUGAR.expressions.FloorExpression([b], getSLContext(model));
@@ -156,6 +156,7 @@ describe('Simple Numeric Functions Test', function() {
         var b = new SUGAR.expressions.ConstantExpression([1]);
         var c = new SUGAR.expressions.ConstantExpression([-10.1231]);
         var d = new SUGAR.expressions.ConstantExpression([10.1231]);
+
         it('should return constant number', function() {
             expect(parseFloat(a.evaluate())).toBe(-1);
             expect(parseFloat(b.evaluate())).toBe(1);
@@ -171,12 +172,13 @@ describe('Simple Numeric Functions Test', function() {
         var d = new SUGAR.expressions.ConstantExpression([10.1231]);
         var e = new SUGAR.expressions.ConstantExpression([1.5]);
         var f = new SUGAR.expressions.ConstantExpression([3]);
+
         it('should return quotient of any two numbers', function() {
-            var res =  new SUGAR.expressions.DivideExpression([a,b], getSLContext(model));
+            var res =  new SUGAR.expressions.DivideExpression([a, b], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-1);
-            res =  new SUGAR.expressions.DivideExpression([c,d], getSLContext(model));
+            res =  new SUGAR.expressions.DivideExpression([c, d], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(1);
-            res = new SUGAR.expressions.DivideExpression([e,f], getSLContext(model));
+            res = new SUGAR.expressions.DivideExpression([e, f], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(0.5);
         });
     });
@@ -188,12 +190,13 @@ describe('Simple Numeric Functions Test', function() {
         var d = new SUGAR.expressions.ConstantExpression([10]);
         var e = new SUGAR.expressions.ConstantExpression([1.5]);
         var f = new SUGAR.expressions.ConstantExpression([3]);
+
         it('should return product of any two numbers', function() {
-            var res =  new SUGAR.expressions.MultiplyExpression([a,b], getSLContext(model));
+            var res =  new SUGAR.expressions.MultiplyExpression([a, b], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-1);
-            res =  new SUGAR.expressions.MultiplyExpression([c,d], getSLContext(model));
+            res =  new SUGAR.expressions.MultiplyExpression([c, d], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(100);
-            res = new SUGAR.expressions.MultiplyExpression([e,f], getSLContext(model));
+            res = new SUGAR.expressions.MultiplyExpression([e, f], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(4.5);
         });
     });
@@ -206,8 +209,9 @@ describe('Simple Numeric Functions Test', function() {
         var e = new SUGAR.expressions.ConstantExpression([1]);
         var f = new SUGAR.expressions.ConstantExpression([2]);
         var g = new SUGAR.expressions.ConstantExpression([3]);
+
         it('should return maximum value of a set of numbers', function() {
-            var res =  new SUGAR.expressions.MaximumExpression([a,b,c,d,e,f,g], getSLContext(model));
+            var res =  new SUGAR.expressions.MaximumExpression([a, b, c, d, e, f, g], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(3);
         });
     });
@@ -220,8 +224,9 @@ describe('Simple Numeric Functions Test', function() {
         var e = new SUGAR.expressions.ConstantExpression([1]);
         var f = new SUGAR.expressions.ConstantExpression([2]);
         var g = new SUGAR.expressions.ConstantExpression([3]);
+
         it('should return minimum value of a set of numbers', function() {
-            var res =  new SUGAR.expressions.MinimumExpression([a,b,c,d,e,f,g], getSLContext(model));
+            var res =  new SUGAR.expressions.MinimumExpression([a, b, c, d, e, f, g], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-3);
         });
     });
@@ -234,8 +239,14 @@ describe('Simple Numeric Functions Test', function() {
         var e = new SUGAR.expressions.ConstantExpression([1]);
         var f = new SUGAR.expressions.ConstantExpression([2]);
         var g = new SUGAR.expressions.ConstantExpression([3]);
-        it('should return median of a set of number', function() {
-            var res =  new SUGAR.expressions.MedianExpression([a,b,c,d,e,f,g], getSLContext(model));
+
+        it('should return median of a set of numbers (odd number of numbers in set)', function() {
+            var res =  new SUGAR.expressions.MedianExpression([a, b, c, d, e, f, g], getSLContext(model));
+            expect(parseFloat(res.evaluate())).toBe(0);
+        });
+
+        it('should return average of middle two numbers when set is of even length', function() {
+            var res =  new SUGAR.expressions.MedianExpression([a, b, c, e, f, g], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(0);
         });
     });
@@ -245,14 +256,15 @@ describe('Simple Numeric Functions Test', function() {
         var b = new SUGAR.expressions.ConstantExpression([100]);
         var c = new SUGAR.expressions.ConstantExpression([0.1]);
         var d = new SUGAR.expressions.ConstantExpression([0.01]);
+
         it('should return log of a number', function() {
-            var res =  new SUGAR.expressions.LogExpression([a,a], getSLContext(model));
+            var res =  new SUGAR.expressions.LogExpression([a, a], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(1);
-            res =  new SUGAR.expressions.LogExpression([b,a], getSLContext(model));
+            res =  new SUGAR.expressions.LogExpression([b, a], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(2);
-            res =  new SUGAR.expressions.LogExpression([c,a], getSLContext(model));
+            res =  new SUGAR.expressions.LogExpression([c, a], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-1);
-            res =  new SUGAR.expressions.LogExpression([d,a], getSLContext(model));
+            res =  new SUGAR.expressions.LogExpression([d, a], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-2);
         });
     });
@@ -262,6 +274,7 @@ describe('Simple Numeric Functions Test', function() {
         var b = new SUGAR.expressions.ConstantExpression([3]);
         var c = new SUGAR.expressions.ConstantExpression([4]);
         var d = new SUGAR.expressions.ConstantExpression([-1]);
+
         it('should return a to the power of b (a^b) given PowerExpression[a,b]', function() {
             var res =  new SUGAR.expressions.PowerExpression([a,b], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(8);
@@ -279,6 +292,7 @@ describe('Simple Numeric Functions Test', function() {
         var b = new SUGAR.expressions.ConstantExpression([-3]);
         var c = new SUGAR.expressions.ConstantExpression([4]);
         var d = new SUGAR.expressions.ConstantExpression([-1]);
+
         it('should return -a given NegateExpression[a]', function() {
             var res =  new SUGAR.expressions.NegateExpression([a], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(-2);
@@ -298,6 +312,7 @@ describe('Simple Numeric Functions Test', function() {
         var round1 = new SUGAR.expressions.ConstantExpression([2]);
         var round2 = new SUGAR.expressions.ConstantExpression([0]);
         var round3 = new SUGAR.expressions.ConstantExpression([3]);
+
         it('should return rounded number to b precision given RoundExpression[a,b]', function() {
             var res =  new SUGAR.expressions.RoundExpression([a, round1], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(3.67);
@@ -312,6 +327,7 @@ describe('Simple Numeric Functions Test', function() {
         var a = new SUGAR.expressions.ConstantExpression([1]);
         var b = new SUGAR.expressions.ConstantExpression([Math.E]);
         var c = new SUGAR.expressions.ConstantExpression([Math.pow(Math.E,3)]);
+
         it('should return natural log of a number', function() {
             var res =  new SUGAR.expressions.NaturalLogExpression([a], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(0);
@@ -323,6 +339,7 @@ describe('Simple Numeric Functions Test', function() {
     });
 
     describe('String Length Expression Function', function() {
+
         it('should return length of a string', function() {
             var testString = 'This is a test string';
             var testStrExpression = new SUGAR.expressions.StringLiteralExpression([testString]);
@@ -332,6 +349,7 @@ describe('Simple Numeric Functions Test', function() {
     });
 
     describe('Standard Deviation Expression Function', function() {
+
         it('should return standard deviation of a set of numbers', function() {
             var a = new SUGAR.expressions.ConstantExpression([4]);
             var b = new SUGAR.expressions.ConstantExpression([5]);
@@ -339,13 +357,14 @@ describe('Simple Numeric Functions Test', function() {
             var d = new SUGAR.expressions.ConstantExpression([7]);
             var e = new SUGAR.expressions.ConstantExpression([10]);
 
-            var stddev = new SUGAR.expressions.StandardDeviationExpression([a,b,c,d,e], getSLContext(model));
+            var stddev = new SUGAR.expressions.StandardDeviationExpression([a, b, c, d, e], getSLContext(model));
             var num = stddev.evaluate();
             expect(Math.round(num * 100) / 100).toBe(2.06);
         });
     });
 
     describe('Index Of Expression Function', function() {
+
         it('should return index of a certain value in a provided list', function() {
             var a = new SUGAR.expressions.ConstantExpression([4]);
             var b = new SUGAR.expressions.ConstantExpression([5]);
@@ -353,7 +372,7 @@ describe('Simple Numeric Functions Test', function() {
             var d = new SUGAR.expressions.ConstantExpression([7]);
             var e = new SUGAR.expressions.ConstantExpression([10]);
 
-            var test = new SUGAR.expressions.DefineEnumExpression([a,b,c,d,e]);
+            var test = new SUGAR.expressions.DefineEnumExpression([a, b, c, d, e]);
 
             var res = new SUGAR.expressions.IndexOfExpression([c, test], getSLContext(model));
             expect(res.evaluate()).toBe(2);

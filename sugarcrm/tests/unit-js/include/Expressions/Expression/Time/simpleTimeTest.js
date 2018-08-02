@@ -23,6 +23,7 @@ describe('Simple Time Expression Functions', function() {
             module: model.module,
             model: model
         });
+
         var view = SugarTest.createComponent('View', {
             context: context,
             type: 'edit',

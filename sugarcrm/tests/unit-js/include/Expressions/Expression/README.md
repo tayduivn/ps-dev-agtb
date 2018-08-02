@@ -1,34 +1,7 @@
-Tests that still need to be completed
-
-Boolean
-
-     Nothing?
-     
-Date
-
-     Nothing?
-
-Enum
-
-     Nothing?
-
-Generic
-
-     Nothing?
-
-Numeric
-        
-     Nothing?
-
-Relationship
+SUGAR LOGIC TESTS
     
-     Nothing?
+Run gulp karma [options (--file) ... ]
 
-String
+Karma task creates cache files for sugar logic expressions and cleans them up if found.
 
-     Nothing?
-     
-Time
-        
-     Nothing?
-
+If you must create the php files manually, run php include/Expressions/updatecache.php in the sugarcrm directory.

@@ -55,6 +55,7 @@ describe('Simple Numeric Functions Test', function() {
         var g = new SUGAR.expressions.ConstantExpression([5]);
         var neg = new SUGAR.expressions.ConstantExpression([-3]);
         var above = new SUGAR.expressions.ConstantExpression([13]);
+
         it('should return character at a certain place', function() {
             var res =  new SUGAR.expressions.CharacterAtExpression([a,b], getSLContext(model));
             expect(res.evaluate()).toBe('H');
@@ -100,6 +101,7 @@ describe('Simple Numeric Functions Test', function() {
     describe('String to Lower Expression Function', function() {
         var stringA = new SUGAR.expressions.StringLiteralExpression(['HelloWorld']);
         var stringB = new SUGAR.expressions.StringLiteralExpression((['HelloWorld']));
+
         it('should return all lowercase version of string A', function() {
             var res =  new SUGAR.expressions.StrToLowerExpression([stringA], getSLContext(model));
             expect(res.evaluate()).toBe('helloworld');
@@ -121,17 +123,21 @@ describe('Simple Numeric Functions Test', function() {
     });
 
     describe('Substring of String Expression Function', function() {
-        var a = new SUGAR.expressions.StringLiteralExpression(['Hello World']);
-        var b = new SUGAR.expressions.ConstantExpression([0]);  // for beginning of string
-        var c = new SUGAR.expressions.ConstantExpression([5]);  // for ending of first word
-        var d = new SUGAR.expressions.ConstantExpression([6]);  // for beginning of second word
-        var e = new SUGAR.expressions.ConstantExpression([11]); // for end of string
+        var testStr = new SUGAR.expressions.StringLiteralExpression(['Hello World']);
+        var beginOfString = new SUGAR.expressions.ConstantExpression([0]);  // for beginning of string
+        var endOfString = new SUGAR.expressions.ConstantExpression([5]);  // for ending of first word
+        var beginOfString2 = new SUGAR.expressions.ConstantExpression([6]);  // for beginning of second word
+        var endOfString2 = new SUGAR.expressions.ConstantExpression([11]); // for end of string
+        var negBegin = new SUGAR.expressions.ConstantExpression([-3]); // for negative case begin
+        var negEnd = new SUGAR.expressions.ConstantExpression([2]); // for negative case end
 
         it('should return substring of A', function() {
-            var res =  new SUGAR.expressions.SubStrExpression([a,b,c], getSLContext(model));
+            var res =  new SUGAR.expressions.SubStrExpression([testStr,beginOfString,endOfString], getSLContext(model));
             expect(res.evaluate()).toBe('Hello');
-            res =  new SUGAR.expressions.SubStrExpression([a,d,e], getSLContext(model));
+            res =  new SUGAR.expressions.SubStrExpression([testStr,beginOfString2,endOfString2], getSLContext(model));
             expect(res.evaluate()).toBe('World');
+            res =  new SUGAR.expressions.SubStrExpression([testStr,negBegin,negEnd], getSLContext(model));
+            expect(res.evaluate()).toBe('rl');
         });
     });
 
@@ -140,6 +146,7 @@ describe('Simple Numeric Functions Test', function() {
         var b = new SUGAR.expressions.StringLiteralExpression(['Prashanth']);
         var c = new SUGAR.expressions.StringLiteralExpression(['Koushik']);
         var d = new SUGAR.expressions.StringLiteralExpression(['testing_t']);
+
         it('should return formatted name string', function() {
             name_format = 's f l t'; // jscs:ignore
             var res = new SUGAR.expressions.FormatedNameExpression([a, b, c, d], getSLContext(model));

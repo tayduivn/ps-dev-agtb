@@ -135,8 +135,10 @@ describe('Simple Date Expression Functions', function() {
 
     describe('Define Now Expression Function', function() {
         it('returns time expression of right now', function() {
-            var today = new SUGAR.expressions.NowExpression([], getSLContext(model));
             var dateVar = new Date();
+            var mockObj = sinonSandbox.mock(SUGAR.util.DateUtils);
+            mockObj.expects('getUserTime').once().returns(dateVar);
+            var today = new SUGAR.expressions.NowExpression([], getSLContext(model));
             var year = dateVar.getFullYear();
             var month = ('0' + (dateVar.getMonth() + 1)).slice(-2);
             var date = ('0' + dateVar.getDate()).slice(-2);
@@ -144,6 +146,7 @@ describe('Simple Date Expression Functions', function() {
             var hours = ('0' + dateVar.getHours()).slice(-2);
             var todaysDate = `${year}-${month}-${date} ${hours}:${mins}:00`;
             expect(today.evaluate()).toEqual(todaysDate);
+            mockObj.verify();
         });
     });
 

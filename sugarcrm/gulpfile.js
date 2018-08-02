@@ -218,8 +218,9 @@ gulp.task('karma', function(done) {
         // or: https://github.com/gulpjs/gulp/issues/587 for more information
         done(exitStatus ? 'There are failing unit tests' : undefined);
     }).start();
-    var removeCache = 'rm -rf cache/Expressions/ && rm cache/class_map.php';
-    execSync(removeCache);
+    const rimraf = require('rimraf');
+    rimraf.sync('cache/Expressions/');
+    rimraf.sync('cache/class_map.php');
 });
 
 // run the modern PHPUnit tests (i.e. testsunit/, not tests/)

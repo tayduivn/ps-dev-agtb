@@ -41,7 +41,6 @@ describe('Sugar Index Value Expression', function() {
         dm.reset();
         dm.declareModels();
         model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
-
     });
 
     afterEach(function() {
@@ -55,13 +54,12 @@ describe('Sugar Index Value Expression', function() {
             var c = new SUGAR.expressions.ConstantExpression([6]);
             var d = new SUGAR.expressions.ConstantExpression([7]);
             var e = new SUGAR.expressions.ConstantExpression([8]);
-            var indices = [0,1,2,3,4];
+            var indices = [0, 1, 2, 3, 4];
             var test = new SUGAR.expressions.DefineEnumExpression([a, b, c, d, e]);
             for (var i = 0; i < indices.length; i = i + 1) {
                 expect(new SUGAR.expressions.IndexValueExpression([new SUGAR.expressions.ConstantExpression([i]),test],
                     getSLContext(model)).evaluate()).toBe(i + 4);
             }
-
         });
     });
 });

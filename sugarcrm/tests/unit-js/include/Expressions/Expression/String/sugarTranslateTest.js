@@ -41,7 +41,6 @@ describe('Sugar Translate Expression Function', function() {
         dm.reset();
         dm.declareModels();
         model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
-
     });
 
     afterEach(function() {
@@ -56,7 +55,6 @@ describe('Sugar Translate Expression Function', function() {
             SUGAR.language = {get: function() {}};
             sinonSandbox.stub(SUGAR.language, 'get').withArgs('Accounts', 'LBL_NAME').returns('Name');
             expect(res.evaluate()).toBe('Name');
-
         });
     });
 });

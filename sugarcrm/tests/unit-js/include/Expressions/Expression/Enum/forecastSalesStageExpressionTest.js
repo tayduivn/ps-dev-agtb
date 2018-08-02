@@ -41,7 +41,6 @@ describe('ForecastSalesStageExpression Function', function() {
         dm.reset();
         dm.declareModels();
         model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
-
     });
 
     afterEach(function() {
