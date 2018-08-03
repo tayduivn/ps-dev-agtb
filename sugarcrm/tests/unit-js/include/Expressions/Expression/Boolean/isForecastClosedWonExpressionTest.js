@@ -51,24 +51,20 @@ describe('Is Forecast Closed Won Expression Function', function() {
         sinonSandbox.restore();
     });
 
-    describe('Is Forecast Closed Won Expression Function w/o Config True', function() {
-        it('returns whether a status is in the current config for closed won forecasts', function() {
+    describe('forecast closed won with different configurations', function() {
+        it('should return true with default configuration for closed won', function() {
             var closedWon = new SUGAR.expressions.StringLiteralExpression(['Closed Won']);
             var res = new SUGAR.expressions.IsForecastClosedWonExpression([closedWon], getSLContext(model));
             expect(res.evaluate()).toBe('true');
         });
-    });
 
-    describe('Is Forecast Closed Won Expression Function w/o Config False', function() {
-        it('returns whether a status is in the current config for closed won forecasts', function() {
+        it('should return false with default configuration for closed lost', function() {
             var closedWon = new SUGAR.expressions.StringLiteralExpression(['random_closed']);
             var res = new SUGAR.expressions.IsForecastClosedWonExpression([closedWon], getSLContext(model));
             expect(res.evaluate()).toBe('false');
         });
-    });
 
-    describe('Is Forecast Closed Won Expression Function w/ Config True', function() {
-        it('returns whether a status is in the current config for closed won forecasts', function() {
+        it('should return true with custom configuration and status is matches closed won', function() {
             var closedWon = new SUGAR.expressions.StringLiteralExpression(['random_closedWon']);
             var res = new SUGAR.expressions.IsForecastClosedWonExpression([closedWon], getSLContext(model));
             var mockConfig = {'sales_stage_won': ['random_closedWon']};
@@ -78,10 +74,8 @@ describe('Is Forecast Closed Won Expression Function', function() {
             expect(res.evaluate()).toBe('true');
             mockObj.verify();
         });
-    });
 
-    describe('Is Forecast Closed Won Expression Function w/ Config False', function() {
-        it('returns whether a status is in the current config for closed won forecasts', function() {
+        it('should return false with custom configuration and status is matches closed won', function() {
             var closedWon = new SUGAR.expressions.StringLiteralExpression(['random_closedWon_fake']);
             var res = new SUGAR.expressions.IsForecastClosedWonExpression([closedWon], getSLContext(model));
             var mockConfig = {'sales_stage_won': ['random_closedWon']};

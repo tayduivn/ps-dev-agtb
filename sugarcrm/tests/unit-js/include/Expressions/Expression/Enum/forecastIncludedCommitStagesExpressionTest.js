@@ -60,9 +60,7 @@ describe('Forecast Included Commit Stages Expression Function', function() {
             expect(res.evaluate()).toBe('include');
             mockObj.verify();
         });
-    });
 
-    describe('Forecast Included Commit Stages Expression Function', function() {
         it('return the correct commit_stage for the number passed based on the forecast configuration', function() {
             var res = new SUGAR.expressions.ForecastIncludedCommitStagesExpression([], getSLContext(model));
             var mockObj = sinonSandbox.mock(App.metadata);
@@ -71,9 +69,7 @@ describe('Forecast Included Commit Stages Expression Function', function() {
             expect(res.evaluate()).toBe('');
             mockObj.verify();
         });
-    });
 
-    describe('Forecast Included Commit Stages Expression Function', function() {
         it('returns the included commit stages for forecasts, when App = undefined', function() {
             var temp = App;
             App = undefined;
@@ -88,5 +84,4 @@ describe('Forecast Included Commit Stages Expression Function', function() {
             App = temp;
         });
     });
-
 });

@@ -61,6 +61,7 @@ describe('SugarDropDown Expression Function', function() {
             });
             expect(res.evaluate()).toEqual(['test', 'array']);
         });
+
         it('list is not found', function() {
             res = new SUGAR.expressions.SugarDropDownExpression([opp], getSLContext(model));
             sinonSandbox.stub(app.lang, 'getAppListStrings').withArgs(opp.evaluate()).returns({});

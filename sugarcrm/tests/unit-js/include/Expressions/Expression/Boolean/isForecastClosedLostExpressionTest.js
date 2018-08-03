@@ -51,24 +51,20 @@ describe('Is Forecast Closed Lost Expression Function', function() {
         sinonSandbox.restore();
     });
 
-    describe('Is Forecast Closed Lost Expression Function w/o Config True', function() {
-        it('returns whether a status is in the current config for closed lost forecasts', function() {
+    describe('forecast closed lost with different configurations', function() {
+        it('should return true with default configuration for closed lost', function() {
             var closedLost = new SUGAR.expressions.StringLiteralExpression(['Closed Lost']);
             var res = new SUGAR.expressions.IsForecastClosedLostExpression([closedLost], getSLContext(model));
             expect(res.evaluate()).toBe('true');
         });
-    });
 
-    describe('Is Forecast Closed Lost Expression Function w/o Config False', function() {
-        it('returns whether a status is in the current config for closed lost forecasts', function() {
+        it('should return false with default configuration for closed lost', function() {
             var closedLost = new SUGAR.expressions.StringLiteralExpression(['random_closedLost']);
             var res = new SUGAR.expressions.IsForecastClosedLostExpression([closedLost], getSLContext(model));
             expect(res.evaluate()).toBe('false');
         });
-    });
 
-    describe('Is Forecast Closed Lost Expression Function w/ Config True', function() {
-        it('returns whether a status is in the current config for closed lost forecasts', function() {
+        it('should return true with custom configuration and status is matches closed lost', function() {
             var closedLost = new SUGAR.expressions.StringLiteralExpression(['random_closedLost']);
             var res = new SUGAR.expressions.IsForecastClosedLostExpression([closedLost], getSLContext(model));
             var mockConfig = {'sales_stage_lost': ['random_closedLost']};
@@ -78,10 +74,8 @@ describe('Is Forecast Closed Lost Expression Function', function() {
             expect(res.evaluate()).toBe('true');
             mockObj.verify();
         });
-    });
 
-    describe('Is Forecast Closed Lost Expression Function w/ Config False', function() {
-        it('returns whether a status is in the current config for closed lost forecasts', function() {
+        it('should return false with custom configuration and status does not match closed lost', function() {
             var closedLost = new SUGAR.expressions.StringLiteralExpression(['random_closedLost_fake']);
             var res = new SUGAR.expressions.IsForecastClosedLostExpression([closedLost], getSLContext(model));
             var mockConfig = {'sales_stage_lost': ['random_closedLost']};

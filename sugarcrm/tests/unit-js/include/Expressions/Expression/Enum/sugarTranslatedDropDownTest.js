@@ -61,6 +61,7 @@ describe('Sugar Translated Drop Down Expression Function', function() {
             sinonSandbox.stub(SUGAR.lang, 'get').withArgs('app_list_strings', testParam.evaluate()).returns(testArray);
             expect(res.evaluate()).toEqual(testArray);
         });
+
         it('list name not found', function() {
             var testParam = new SUGAR.expressions.StringLiteralExpression(['random_list_name']);
             var res = new SUGAR.expressions.SugarTranslatedDropDownExpression([testParam], getSLContext(model));

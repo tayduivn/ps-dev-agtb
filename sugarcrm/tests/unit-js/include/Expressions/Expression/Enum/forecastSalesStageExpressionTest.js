@@ -68,7 +68,7 @@ describe('ForecastSalesStageExpression Function', function() {
     var falseExpr = new SUGAR.expressions.FalseExpression([]);
 
     describe('returns all the valid sales stages for the Forecast module from the sales_stage_dom, depending on ' +
-        'params', function() {
+        'boolean params', function() {
         it('should check both false case', function() {
             App.lang =  {getAppListStrings: function() {}};
             var res = new SUGAR.expressions.ForecastSalesStageExpression([falseExpr, falseExpr], getSLContext(model));
@@ -89,10 +89,7 @@ describe('ForecastSalesStageExpression Function', function() {
             mockObjConfig.verify();
             mockObjArray.verify();
         });
-    });
 
-    describe('returns all the valid sales stages for the Forecast module from the sales_stage_dom, depending on ' +
-        'boolean params', function() {
         it('should check both true case', function() {
             App.lang =  {getAppListStrings: function() {}};
             var res = new SUGAR.expressions.ForecastSalesStageExpression([trueExpr, trueExpr], getSLContext(model));
@@ -105,10 +102,7 @@ describe('ForecastSalesStageExpression Function', function() {
             mockObjConfig.verify();
             mockObjArray.verify();
         });
-    });
 
-    describe('returns all the valid sales stages for the Forecast module from the sales_stage_dom, depending on ' +
-        'boolean params', function() {
         it('should check App = undefined case', function() {
             var temp = App;
             App = undefined;
@@ -123,5 +117,4 @@ describe('ForecastSalesStageExpression Function', function() {
             App = temp;
         });
     });
-
 });

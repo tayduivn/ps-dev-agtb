@@ -61,9 +61,7 @@ describe('Forecast Commit Stage Expression Function', function() {
             expect(res.evaluate()).toBe('');
             mockObj.verify();
         });
-    });
 
-    describe('Forecast Commit Stage Expression Function', function() {
         it('return the correct commit_stage for the number passed (general use case)', function() {
             var constNum = new SUGAR.expressions.ConstantExpression([30]);
             var res = new SUGAR.expressions.ForecastCommitStageExpression([constNum], getSLContext(model));

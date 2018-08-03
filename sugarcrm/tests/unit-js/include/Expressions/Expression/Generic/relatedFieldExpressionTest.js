@@ -51,8 +51,8 @@ describe('Related Field Expression Function', function() {
         sinonSandbox.restore();
     });
 
-    describe('Related Field Expression Test with String link', function() {
-        it('returns the value of a field in the related module link', function() {
+    describe('Related Field Expression Test with link', function() {
+        it('returns the value of a field in the related module link (string param)', function() {
             var field = new SUGAR.expressions.StringLiteralExpression(['test_field']);
             var link = new SUGAR.expressions.StringLiteralExpression(['opportunities']);
             var res = new SUGAR.expressions.RelatedFieldExpression([link, field], getSLContext(model));
@@ -62,10 +62,8 @@ describe('Related Field Expression Function', function() {
             expect(res.evaluate()).toBe('value');
             mockObj.verify();
         });
-    });
 
-    describe('Related Field Expression Test with Other Type of link', function() {
-        it('returns the value of a field in the related module link', function() {
+        it('returns the value of a field in the related module link (other param)', function() {
             var field = new SUGAR.expressions.StringLiteralExpression(['test_field']);
             var link = new SUGAR.expressions.ConstantExpression([0]);
             var res = new SUGAR.expressions.RelatedFieldExpression([link, field], getSLContext(model));

@@ -62,6 +62,7 @@ describe('Max Related Date Expression Function', function() {
             expect(res.evaluate()).toBe('false');
             App = temp;
         });
+
         it('case: normal, returns the max date', function() {
             var res = new SUGAR.expressions.MaxRelatedDateExpression([link, field], getSLContext(model));
             var mockObj = sinonSandbox.mock(res.context);
@@ -72,6 +73,7 @@ describe('Max Related Date Expression Function', function() {
             expect(res.evaluate()).toBe(1531765837);
             mockObj.verify();
         });
+
         it('case: go to end of expression evaluate function', function() {
             var res = new SUGAR.expressions.MaxRelatedDateExpression([link, field], getSLContext(model));
             var mockObj = sinonSandbox.mock(res.context);
@@ -90,7 +92,6 @@ describe('Max Related Date Expression Function', function() {
             mockObj.verify();
             mockObjUnderscore.verify();
             mockObjSetValue.verify();
-
         });
     });
 });
