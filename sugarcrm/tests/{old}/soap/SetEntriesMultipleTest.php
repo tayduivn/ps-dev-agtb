@@ -45,7 +45,7 @@ class SetEntriesMultipleTest extends SOAPTestCase
 
     public function createAccount($name,$user_id) {
         $account = new Account();
-        $account->id = uniqid();
+        $account->id = create_guid();
         $account->name = $name;
         $account->assigned_user_id = $user_id;
         $account->new_with_id = true;
@@ -57,7 +57,7 @@ class SetEntriesMultipleTest extends SOAPTestCase
 
     public function createContact($first_name, $last_name, $email){
         $contact = new Contact();
-        $contact->id = uniqid();
+        $contact->id = create_guid();
         $contact->first_name = $first_name;
         $contact->last_name = $last_name;
         $contact->email1 = $email;
@@ -140,17 +140,20 @@ class SetEntriesMultipleTest extends SOAPTestCase
         $query1 = "SELECT account_id FROM accounts_contacts WHERE contact_id='{$this->cont1->id}'";
         $cont1_account_result = $GLOBALS['db']->query($query1,true,"");
         $row1 = $GLOBALS['db']->fetchByAssoc($cont1_account_result);
-        if(isset($row1) ){
-            $this->assertEquals($this->accnt1->id, $row1["account_id"], "check first account-contact relationship");
-        }
-
+        $this->assertEquals(
+            $this->accnt1->id,
+            $row1["account_id"],
+            "First account-contact relationship does not match with DB."
+        );
 
         // lets check second relationship
         $query2 = "SELECT account_id FROM accounts_contacts WHERE contact_id='{$this->cont2->id}'";
         $cont2_account_result = $GLOBALS['db']->query($query2,true,"");
         $row2 = $GLOBALS['db']->fetchByAssoc($cont2_account_result);
-        if(isset($row2) ){
-            $this->assertEquals($this->accnt2->id, $row2["account_id"], "check second account-contact relationship");
-        }
+        $this->assertEquals(
+            $this->accnt2->id,
+            $row2["account_id"],
+            "Second account-contact relationship returned does not match with DB."
+        );
     }
 }
