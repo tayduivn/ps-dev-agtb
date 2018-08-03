@@ -10,15 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarUpgradeSynchronizeTasksRelationshipToEmailsBeansTable extends UpgradeScript
+class SugarUpgradeSynchronizeTasksRelationshipToEmailsBeansTable extends UpgradeDBScript
 {
-    /**
-     * This upgrade script updates data in the database by saving links between modules.
-     *
-     * {@inheritdoc}
-     */
-    public $type = self::UPGRADE_DB;
-
     /**
      * This upgrade script should run after all new modules are installed so that we are certain we have the most
      * up-to-date list of modules.
@@ -48,11 +41,16 @@ class SugarUpgradeSynchronizeTasksRelationshipToEmailsBeansTable extends Upgrade
             return;
         }
 
-        $emails = $this->getEmails();
+        $totalEmails = 0;
 
-        foreach ($emails as $email) {
-            $this->linkEmailToLink($email);
-        }
+        do {
+            $emails = $this->getEmails();
+            $rows = $this->getRowsToInsert($emails);
+            $this->linkEmailsToTasks($rows);
+            $totalEmails += count($emails);
+        } while (!empty($emails));
+
+        $this->log("{$totalEmails} emails were linked with their parent tasks");
     }
 
     /**
@@ -62,12 +60,26 @@ class SugarUpgradeSynchronizeTasksRelationshipToEmailsBeansTable extends Upgrade
      */
     protected function getEmails()
     {
-        $email = BeanFactory::newBean('Emails');
+        $emails = [];
 
-        $q = new SugarQuery();
-        $q->from($email);
-        $q->where()->equals('parent_type', 'Tasks');
-        $emails = $email->fetchFromQuery($q);
+        try {
+            $sql = 'SELECT emails.id, emails.parent_type, emails.parent_id FROM emails WHERE ' .
+                "emails.parent_id IS NOT NULL AND emails.parent_id<>'' AND emails.parent_type='Tasks' AND " .
+                'emails.deleted=0 AND NOT EXISTS (SELECT emails_beans.id FROM emails_beans WHERE ' .
+                'emails_beans.email_id=emails.id AND emails_beans.bean_module=emails.parent_type AND ' .
+                'emails_beans.bean_id=emails.parent_id AND emails_beans.deleted=0)';
+            $result = $this->db->limitQuery($sql, 0, 100000);
+
+            while ($row = $this->db->fetchByAssoc($result)) {
+                $emails[$row['id']] = [
+                    'id' => $row['id'],
+                    'parent_type' => $row['parent_type'],
+                    'parent_id' => $row['parent_id'],
+                ];
+            }
+        } catch (Exception $e) {
+            $this->log('Error: ' . $e->getMessage());
+        }
 
         $ids = array_keys($emails);
         $this->log('Found ' . count($emails) . ' email(s) with parent_type=Tasks: ' . implode(', ', $ids));
@@ -76,28 +88,73 @@ class SugarUpgradeSynchronizeTasksRelationshipToEmailsBeansTable extends Upgrade
     }
 
     /**
+     * Get all of the rows to insert into the emails_beans table.
+     *
+     * @param array $emails The emails to link.
+     * @return array
+     */
+    private function getRowsToInsert(array $emails)
+    {
+        $rows = [];
+
+        foreach ($emails as $email) {
+            $rows[] = $this->getRowToInsert($email);
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Get the values to insert into the emails_beans table.
+     *
+     * @param array $email Contains data about the email to link to its parent record.
+     * @return string
+     */
+    private function getRowToInsert(array $email)
+    {
+        $row = [
+            $this->db->quoted(\Sugarcrm\Sugarcrm\Util\Uuid::uuid1()),
+            $this->db->quoted($email['id']),
+            $this->db->quoted($email['parent_type']),
+            $this->db->quoted($email['parent_id']),
+            $this->db->quoted(TimeDate::getInstance()->nowDb()),
+            0,
+        ];
+
+        return '(' . implode(',', $row) . ')';
+    }
+
+    /**
      * Synchronize the Emails parent relationship to the emails_beans table for the tasks link.
      *
-     * @param Email $email
+     * @param array $rows The rows to insert into the emails_beans table.
      */
-    protected function linkEmailToLink(Email $email)
+    private function linkEmailsToTasks(array $rows)
     {
-        $this->log("Linking Emails/{$email->id} to emails on Tasks/{$email->parent_id}");
-        $task = BeanFactory::retrieveBean('Tasks', $email->parent_id);
+        $totalRows = count($rows);
 
-        if (!$task) {
-            $this->log("Could not find Tasks/{$email->parent_id}");
+        if ($totalRows === 0) {
+            $this->log('No emails to link to their parent records');
             return;
         }
 
-        if ($email->load_relationship('tasks')) {
-            if ($email->tasks->add($task)) {
-                $this->log('Successfully linked the records');
-            } else {
-                $this->log('Failed to link the records');
+        $this->log("Linking {$totalRows} emails to their parent records");
+
+        try {
+            $sql = 'INSERT INTO emails_beans (id,email_id,bean_module,bean_id,date_modified,deleted) VALUES ' .
+                implode(',', $rows);
+            $affectedRows = $this->executeUpdate($sql);
+            $failures = $totalRows - $affectedRows;
+
+            if ($affectedRows > 0) {
+                $this->log("Successfully linked {$affectedRows} emails to their parent records");
             }
-        } else {
-            $this->log('Could not load the relationship named tasks on Emails');
+
+            if ($failures > 0) {
+                $this->log("Failed to link {$failures} emails to their parent records");
+            }
+        } catch (Exception $e) {
+            $this->log('Error: ' . $e->getMessage());
         }
     }
 }

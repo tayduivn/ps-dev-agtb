@@ -23,7 +23,6 @@ class SynchronizeTasksRelationshipToEmailsBeansTableTest extends UpgradeTestCase
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestTaskUtilities::removeAllCreatedTasks();
-        SugarTestContactUtilities::removeAllCreatedContacts();
         parent::tearDown();
     }
 
@@ -33,7 +32,6 @@ class SynchronizeTasksRelationshipToEmailsBeansTableTest extends UpgradeTestCase
     public function testRun()
     {
         $task = SugarTestTaskUtilities::createTask();
-
         $email = BeanFactory::newBean('Emails');
         $email->id = Uuid::uuid1();
 
@@ -52,73 +50,157 @@ class SynchronizeTasksRelationshipToEmailsBeansTableTest extends UpgradeTestCase
         );
         SugarTestEmailUtilities::setCreatedEmail($email->id);
 
+        $tasks = $email->get_linked_beans('tasks', 'Task');
+        $this->assertCount(0, $tasks, 'Should not be linked yet');
+
         $script = $this->upgrader->getScript('post', '4_SynchronizeTasksRelationshipToEmailsBeansTable');
         $script->db = $GLOBALS['db'];
         $script->version = '8.0.0';
         $script->from_version = '7.9.0.0';
         $script->run();
 
+        $email->tasks->resetLoaded();
         $tasks = $email->get_linked_beans('tasks', 'Task');
-
-        $this->assertCount(1, $tasks);
-        $this->assertSame($task->id, $tasks[0]->id);
+        $this->assertCount(1, $tasks, 'Should be linked now');
+        $this->assertSame($task->id, $tasks[0]->id, 'The IDs do not match');
     }
 
     /**
-     * @covers ::run
+     * @covers ::getEmails
      */
-    public function testRun_EmailSenderAndRecipientsAreUpgradedFrom79DuringUpgrade()
+    public function testGetEmails()
     {
-        $contact = SugarTestContactUtilities::createContact();
+        $db = DBManagerFactory::getInstance();
+
         $task = SugarTestTaskUtilities::createTask();
+        $seed = BeanFactory::newBean('Emails');
 
-        $email = BeanFactory::newBean('Emails');
-        $email->id = Uuid::uuid1();
+        // Email is linked to its parent. Should not be returned.
+        $email1 = [
+            'id' => Uuid::uuid1(),
+            'state' => 'Archived',
+            'name' => 'email1',
+            'parent_type' => 'Tasks',
+            'parent_id' => $task->id,
+        ];
+        $db->insertParams('emails', $seed->field_defs, $email1);
+        SugarTestEmailUtilities::setCreatedEmail($email1['id']);
+        $this->linkEmailToBean($email1);
 
-        // Insert an email into the database whose parent is $task. This email will be loaded by
-        // SugarUpgradeSynchronizeTasksRelationshipToEmailsBeansTable::getEmails().
-        DBManagerFactory::getInstance()->insertParams(
-            'emails',
-            $email->field_defs,
-            [
-                'id' => $email->id,
-                'state' => 'Archived',
-                'name' => 'foo',
-                'parent_type' => 'Tasks',
-                'parent_id' => $task->id,
-            ]
+        // Email is linked to a different task. Should be returned.
+        $email2 = [
+            'id' => Uuid::uuid1(),
+            'state' => 'Archived',
+            'name' => 'email2',
+            'parent_type' => 'Tasks',
+            'parent_id' => $task->id,
+        ];
+        $db->insertParams('emails', $seed->field_defs, $email2);
+        SugarTestEmailUtilities::setCreatedEmail($email2['id']);
+        $this->linkEmailToBean(array_merge($email2, ['parent_id' => Uuid::uuid1()]));
+
+        // Row in emails_beans is invalid; parent_id is empty. Should be returned.
+        $email3 = [
+            'id' => Uuid::uuid1(),
+            'state' => 'Archived',
+            'name' => 'email3',
+            'parent_type' => 'Tasks',
+            'parent_id' => $task->id,
+        ];
+        $db->insertParams('emails', $seed->field_defs, $email3);
+        SugarTestEmailUtilities::setCreatedEmail($email3['id']);
+        $this->linkEmailToBean(array_merge($email3, ['parent_id' => '']));
+
+        // Row in emails_beans is deleted. Should be returned.
+        $email4 = [
+            'id' => Uuid::uuid1(),
+            'state' => 'Archived',
+            'name' => 'email4',
+            'parent_type' => 'Tasks',
+            'parent_id' => $task->id,
+        ];
+        $db->insertParams('emails', $seed->field_defs, $email4);
+        SugarTestEmailUtilities::setCreatedEmail($email4['id']);
+        $this->linkEmailToBean(array_merge($email4, ['deleted' => 1]));
+
+        // Email is linked to its parent and a different task. Should not be returned.
+        $email5 = [
+            'id' => Uuid::uuid1(),
+            'state' => 'Archived',
+            'name' => 'email5',
+            'parent_type' => 'Tasks',
+            'parent_id' => $task->id,
+        ];
+        $db->insertParams('emails', $seed->field_defs, $email5);
+        SugarTestEmailUtilities::setCreatedEmail($email5['id']);
+        $this->linkEmailToBean($email5);
+        $this->linkEmailToBean(array_merge($email5, ['parent_id' => Uuid::uuid1()]));
+
+        // Email is not linked to its parent. Should be returned.
+        $email6 = [
+            'id' => Uuid::uuid1(),
+            'state' => 'Archived',
+            'name' => 'email6',
+            'parent_type' => 'Tasks',
+            'parent_id' => $task->id,
+        ];
+        $db->insertParams('emails', $seed->field_defs, $email6);
+        SugarTestEmailUtilities::setCreatedEmail($email6['id']);
+
+        // Email doesn't have a parent because parent_id is empty. Should not be returned.
+        $email7 = [
+            'id' => Uuid::uuid1(),
+            'state' => 'Archived',
+            'name' => 'email7',
+            'parent_type' => 'Tasks',
+            'parent_id' => '',
+        ];
+        $db->insertParams('emails', $seed->field_defs, $email7);
+        SugarTestEmailUtilities::setCreatedEmail($email7['id']);
+
+        // Email doesn't have a parent. Should not be returned.
+        $email7 = [
+            'id' => Uuid::uuid1(),
+            'state' => 'Archived',
+            'name' => 'email7',
+            'parent_type' => '',
+            'parent_id' => '',
+        ];
+        $db->insertParams('emails', $seed->field_defs, $email7);
+        SugarTestEmailUtilities::setCreatedEmail($email7['id']);
+
+        $script = $this->createPartialMock(
+            'SugarUpgradeSynchronizeTasksRelationshipToEmailsBeansTable',
+            ['log']
         );
-        SugarTestEmailUtilities::setCreatedEmail($email->id);
-
-        // Insert an emails_text row for the email. This resembles the way data is stored in 7.9 when OPI archives
-        // emails.
-        $text = BeanFactory::newBean('EmailText');
-        DBManagerFactory::getInstance()->insertParams(
-            'emails_text',
-            $text->field_defs,
-            [
-                'email_id' => $email->id,
-                'from_addr' => "{$contact->name} <{$contact->email1}>",
-                'to_addrs' => "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
-                'description' => 'test',
-                'description_html' => '<p>test</p>',
-            ]
-        );
-
-        $script = $this->upgrader->getScript('post', '4_SynchronizeTasksRelationshipToEmailsBeansTable');
-        $script->db = $GLOBALS['db'];
+        $script->db = $db;
         $script->version = '8.0.0';
         $script->from_version = '7.9.0.0';
-        $script->run();
 
-        // Verify that the email's sender and recipients were upgraded correctly when the email was retrieved as a
-        // side-effect of the upgrade script.
-        $email->retrieveEmailText();
-        $this->assertSame($contact->email1, $email->from_addr_name);
-        $this->assertSame($GLOBALS['current_user']->email1, $email->to_addrs_names);
+        $emails = SugarTestReflection::callProtectedMethod($script, 'getEmails');
 
-        $email->retrieveEmailAddresses();
-        $this->assertSame($contact->email1, $email->from_addr);
-        $this->assertSame($GLOBALS['current_user']->email1, $email->to_addrs);
+        $this->assertCount(4, $emails, 'Four emails should have been returned');
+        $this->assertArrayHasKey($email2['id'], $emails, '$email2 should have been found');
+        $this->assertArrayHasKey($email3['id'], $emails, '$email3 should have been found');
+        $this->assertArrayHasKey($email4['id'], $emails, '$email4 should have been found');
+        $this->assertArrayHasKey($email6['id'], $emails, '$email6 should have been found');
+    }
+
+    private function linkEmailToBean(array $row)
+    {
+        $db = DBManagerFactory::getInstance();
+
+        $row = [
+            $db->quoted(Uuid::uuid1()),
+            $db->quoted($row['id']),
+            $db->quoted($row['parent_type']),
+            $db->quoted($row['parent_id']),
+            $db->quoted(TimeDate::getInstance()->nowDb()),
+            isset($row['deleted']) ? $row['deleted'] : 0,
+        ];
+        $row = '(' . implode(',', $row) . ')';
+
+        $sql = "INSERT INTO emails_beans (id,email_id,bean_module,bean_id,date_modified,deleted) VALUES {$row}";
+        $db->query($sql);
     }
 }
