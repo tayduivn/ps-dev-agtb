@@ -25,7 +25,7 @@ class SugarTestQuotaUtilities
 
     private function __construct() {}
 
-    public static function createQuota($amount=500, $id = '')
+    public static function createQuota($amount=500.000000, $id = '')
     {
         $quota = new Quota();
         $quota->amount = $amount;
@@ -48,12 +48,12 @@ class SugarTestQuotaUtilities
         	self::$_createdQuotas[] = $quota;
     	} // foreach
     } // fn
-    
+
     public static function setCreatedUserIds($user_ids)
     {
-    	self::$_createdUserIds = $user_ids;	
+    	self::$_createdUserIds = $user_ids;
     }
-    
+
     public static function getCreatedUserIds()
     {
     	return self::$_createdUserIds;
@@ -62,7 +62,7 @@ class SugarTestQuotaUtilities
     public static function removeAllCreatedQuotas()
     {
         $quota_ids = self::getCreatedQuotaIds();
-        
+
         $GLOBALS['db']->query('DELETE FROM quotas WHERE id IN (\'' . implode("', '", $quota_ids) . '\')');
         //remove quotas generated in the worksheets by using the temporary user id's
         $GLOBALS['db']->query('DELETE FROM quotas WHERE user_id IN (\'' . implode("', '", self::getCreatedUserIds()) . '\')');

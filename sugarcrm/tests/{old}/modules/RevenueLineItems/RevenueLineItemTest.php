@@ -125,9 +125,9 @@ class RevenueLineItemTest extends TestCase
     {
         // values are likely, quantity, discount_price, expected_discount_price
         return array(
-            array('100.00', '1', '', '100.00'),
+            array('100.00', '1', '', '100.000000'),
             array('100.00', '1', '0.00', '0.00'),
-            array('100.00', '1', '150', '150.00'),
+            array('100.00', '1', '150', '150.000000'),
         );
     }
 

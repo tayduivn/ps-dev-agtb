@@ -103,7 +103,7 @@ class ForecastManagerWorksheetTest extends TestCase
         self::$user->reports_to_id = self::$manager->id;
         self::$user->save();
 
-        self::$user_quota = SugarTestQuotaUtilities::createQuota(600);
+        self::$user_quota = SugarTestQuotaUtilities::createQuota(600.000000);
         self::$user_quota->user_id = self::$user->id;
         self::$user_quota->quota_type = 'Direct';
         self::$user_quota->timeperiod_id = self::$timeperiod->id;
@@ -306,7 +306,7 @@ class ForecastManagerWorksheetTest extends TestCase
             )
         );
 
-        $this->assertEquals('1400.00', $quota->amount);
+        $this->assertEquals('1400.000000', $quota->amount);
     }
 
     /**
@@ -429,7 +429,7 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testManagerQuotaReCalcWorks()
     {
-        // from the data created when the class was started, the manager had a rollup quota of 2000, direct 1000, 
+        // from the data created when the class was started, the manager had a rollup quota of 2000, direct 1000,
         // and the user had a quota of 600, so, it should return 1400 as that is the difference
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
 
@@ -444,7 +444,7 @@ class ForecastManagerWorksheetTest extends TestCase
 
         $this->assertEquals(1400, $new_mgr_quota, '', 2);
     }
-    
+
     /**
      * @group forecasts
      * @covers ::recalcUserQuota
@@ -894,7 +894,7 @@ class ForecastManagerWorksheetTest extends TestCase
                         'amount' => array(
                             'field_name' => 'amount',
                             'field_type' => 'currency',
-                            'before' => '50.00000',
+                            'before' => '50.000000',
                             'after' => '60.000000'
                         )
                     )

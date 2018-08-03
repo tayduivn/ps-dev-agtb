@@ -74,10 +74,10 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
         $this->assertEquals(self::$opp->id, $quote->opportunity_id);
 
         // lets make sure the totals are correct
-        $this->assertEquals('50.00', $quote->subtotal);
-        $this->assertEquals('10.00', $quote->deal_tot);
-        $this->assertEquals('40.00', $quote->new_sub);
-        $this->assertEquals('40.00', $quote->total);
+        $this->assertEquals('50.000000', $quote->subtotal);
+        $this->assertEquals('10.000000', $quote->deal_tot);
+        $this->assertEquals('40.000000', $quote->new_sub);
+        $this->assertEquals('40.000000', $quote->total);
 
         $quote->load_relationship('revenuelineitems');
         $revenueLineItem = $quote->revenuelineitems->getBeans();
