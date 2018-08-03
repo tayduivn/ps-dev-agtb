@@ -265,7 +265,7 @@ class PipelineChartApiTest extends TestCase
         );
 
         // check the properties
-        $this->assertEquals('500', $data['properties']['total']);
+        $this->assertEquals('500.000000', $data['properties']['total']);
 
         // lets check the data, there should be two
         $this->assertEquals(2, count($data['data']));
