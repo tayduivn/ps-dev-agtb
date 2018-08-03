@@ -80,7 +80,7 @@ describe("Leads.Views.ConvertResults", function() {
             contact_name: contactName,
             opportunity_id: opportunityId,
             opportunity_name: opportunityName,
-            converted_opportunity_name: convertedOpportunityName
+            converted_opp_name: convertedOpportunityName
         });
         expect(view.associatedModels.length).toEqual(3);
         expect(view.associatedModels.get(accountId).get('name')).toEqual(accountName);

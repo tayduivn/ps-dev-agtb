@@ -182,7 +182,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         'contact_name',
                         'opportunity_id',
                         'opportunity_name',
-                        'converted_opportunity_name',
+                        'converted_opp_name',
                     ),
                 ),
             ),

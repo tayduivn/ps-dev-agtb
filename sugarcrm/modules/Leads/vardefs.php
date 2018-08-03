@@ -275,8 +275,8 @@ $dictionary['Lead'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_OPPORTUNITIES',
         ),
-        'converted_opportunity_name' => array(
-            'name' => 'converted_opportunity_name',
+        'converted_opp_name' => array(
+            'name' => 'converted_opp_name',
             'rname' => 'name',
             'id_name' => 'opportunity_id',
             'vname' => 'LBL_CONVERTED_OPPORTUNITY_NAME',
