@@ -131,94 +131,6 @@ class DefaultDashboardInstallerTest extends TestCase
     }
 
     /**
-     * @covers ::buildDashboardsFromMetadata
-     */
-    public function testBuildDashboardsFromMetadata()
-    {
-        $defaultDashboardInstaller = $this->getMockBuilder('DefaultDashboardInstaller')
-            ->setMethods(array(
-                'storeDashboard',
-                'getNewDashboardBean',
-                'getAdminUser',
-            ))
-            ->getMock();
-
-        $defaultDashboardInstaller->method('storeDashboard');
-
-        $defaultDashboardInstaller->method('getNewDashboardBean')
-            ->willReturn('beanStub');
-
-        $adminUserMock = $this->getMockBuilder('User')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $adminUserMock->id = 'adminId';
-
-        $defaultDashboardInstaller->method('getAdminUser')
-            ->willReturn($adminUserMock);
-
-        $expectTestModule = array(
-            'name' => 'Dashboard Name',
-            'dashboard_module' => 'TestModule',
-            'view_name' => 'records',
-            'metadata' => '{"metadata":"dashboard metadata"}',
-            'default_dashboard' => true,
-            'team_id' => '1',
-            'assigned_user_id' => 'adminId',
-            'set_created_by' => false,
-            'created_by' => 'adminId',
-            'update_modified_by' => false,
-            'modified_user_id' => 'adminId',
-        );
-        $expectHomeModule = array(
-            'name' => 'Dashboard Name',
-            'dashboard_module' => 'Home',
-            'view_name' => null,
-            'metadata' => '{"metadata":"dashboard metadata"}',
-            'default_dashboard' => true,
-            'team_id' => '1',
-            'assigned_user_id' => 'adminId',
-            'set_created_by' => false,
-            'created_by' => 'adminId',
-            'update_modified_by' => false,
-            'modified_user_id' => 'adminId',
-        );
-
-        $defaultDashboardInstaller->expects($this->exactly(2))
-            ->method('storeDashboard')
-            ->withConsecutive(
-                array($this->equalTo('beanStub'), $this->equalTo($expectTestModule)),
-                array($this->equalTo('beanStub'), $this->equalTo($expectHomeModule))
-            );
-
-        $testMetadata = array(
-            'modules' => array(
-                'TestModule' => array(
-                    'layouts' => array(
-                        'list-dashboard' => array(
-                            'meta' => array(
-                                'name' => 'Dashboard Name',
-                                'metadata' => array('metadata' => 'dashboard metadata'),
-                            ),
-                        ),
-                    ),
-                ),
-                'Home' => array(
-                    'layouts' => array(
-                        'record-dashboard' => array(
-                            'meta' => array(
-                                'name' => 'Dashboard Name',
-                                'metadata' => array('metadata' => 'dashboard metadata'),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
-
-        $defaultDashboardInstaller->buildDashboardsFromMetadata($testMetadata);
-    }
-
-    /**
      * Data provider for testSetupSavedReportDashlets
      */
     public function setupSavedReportDashletsProvider()
@@ -287,8 +199,7 @@ class DefaultDashboardInstallerTest extends TestCase
             ),
         );
     }
-
-    /**
+     /**
      * @covers ::setupSavedReportDashlets
      * @dataProvider setupSavedReportDashletsProvider
      */

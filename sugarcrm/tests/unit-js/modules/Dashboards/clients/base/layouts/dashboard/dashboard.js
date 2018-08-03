@@ -669,44 +669,6 @@ describe('Dashboards.Base.Layout.Dashboard', function() {
             expect(navigateStub).toHaveBeenCalledWith(firstModel.id);
         });
 
-        it('should create a new dashboard from metadata', function() {
-            var initial = {
-                metadata: {
-                    components: [{
-                        rows: [[{
-                            view: {
-                                type: 'dashablelist'
-                            },
-                            context: {
-                                module: parentModule
-                            }
-                        }]]
-                    }]
-                }
-            };
-
-            var testModel = app.data.createBean('Dashboards');
-            childContext.set('modelId', 'testId');
-
-            sandbox.stub(layout, '_getNewDashboardObject').withArgs('model', childContext).returns(testModel);
-            sandbox.stub(app.metadata, 'getLayout').withArgs(parentModule, 'list-dashboard').returns(initial);
-            var modelSaveStub = sandbox.stub(testModel, 'save');
-            modelSaveStub.yieldsToOn('success', layout);
-
-            layout.setDefaultDashboard();
-
-            var expectedAttributes = {
-                assigned_user_id: app.user.id,
-                dashboard_module: parentModule,
-                view_name: 'records',
-                my_favorite: true
-            };
-            expect(modelSaveStub.lastCall.args[0]).toEqual((expectedAttributes));
-            expect(testModel.get('id')).toEqual('testId');
-            expect(navigateStub).toHaveBeenCalledWith('list');
-            expect(layout.collection.models[0].get('id')).toEqual('testId');
-        });
-
         it('should render dashboard-empty template', function() {
             sandbox.stub(app.metadata, 'getLayout').withArgs(parentModule, 'list-dashboard').returns(null);
             sandbox.stub(app.template, 'getLayout')
