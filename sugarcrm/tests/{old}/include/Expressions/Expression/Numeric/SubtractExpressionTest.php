@@ -26,8 +26,8 @@ class SubtractExpressionTest extends TestCase
     public function dataProviderTestEvaluate()
     {
         return array(
-            array('subtract(1, "1")', '0'),
-            array('subtract("33.333333", "33.333333")', '0'),
+            array('subtract(1, "1")', '0.000000'),
+            array('subtract("33.333333", "33.333333")', '0.000000'),
             array('subtract("33.333333", "16.676767")', '16.656566'),
         );
     }

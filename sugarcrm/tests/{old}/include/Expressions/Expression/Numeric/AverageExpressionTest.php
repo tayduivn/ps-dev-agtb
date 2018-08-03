@@ -26,7 +26,7 @@ class AverageExpressionTest extends TestCase
     public function dataProviderTestEvaluate()
     {
         return array(
-            array('average(2, 5, 11)', '6')
+            array('average(2, 5, 11)', '6.000000'),
         );
     }
 }

@@ -26,8 +26,8 @@ class NegateExpressionTest extends TestCase
     public function dataProviderTestEvaluate()
     {
         return array(
-            array('negate(1)', '-1'),
-            array('negate("1")', '-1'),
+            array('negate(1)', '-1.000000'),
+            array('negate("1")', '-1.000000'),
             array('negate("33.333333")', '-33.333333'),
         );
     }

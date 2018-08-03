@@ -26,7 +26,7 @@ class DivideExpressionTest extends TestCase
     public function dataProviderTestEvaluate()
     {
         return array(
-            array('divide(8, "2")', '4'),
+            array('divide(8, "2")', '4.000000'),
             array('divide("33.333333", "0.90")', '37.037036'),
         );
     }
