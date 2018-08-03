@@ -578,41 +578,41 @@ class User extends Person {
 
 		global $sugar_flavor;
         $admin = Administration::getSettings();
-		if((isset($sugar_flavor) && $sugar_flavor != null) &&
-            (isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)) {
+        if (!empty($sugar_flavor) && !empty($admin->settings['license_enforce_user_limit'])) {
 	        // Begin Express License Enforcement Check
 			// this will cause the logged in admin to have the licensed user count refreshed
-				if( isset($_SESSION['license_seats_needed']))
-			        unset($_SESSION['license_seats_needed']);
-		     	if ($this->portal_only != 1 && $this->is_group != 1 && (empty($this->fetched_row) || $this->fetched_row['status'] == 'Inactive' || $this->fetched_row['status'] == '') && $this->status == 'Active'){
-			        global $sugar_flavor;
-			            $license_users = $admin->settings['license_users'];
-			            if ($license_users != '') {
-	            			global $db;
-							$result = $db->query($query, true, "Error filling in user array: ");
-							$row = $db->fetchByAssoc($result);
-				            $license_seats_needed = $row['total'] - $license_users;
-			            }
-				        else
-				        	$license_seats_needed = -1;
-				        if( $license_seats_needed >= 0 ){
-						    if (isset($_REQUEST['action']) && $_REQUEST['action'] != 'MassUpdate' && $_REQUEST['action'] != 'Save') {
-					            die(translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration'). ' ' . translate('WARN_LICENSE_SEATS2', 'Administration'));
-						    }
-							else if (isset($_REQUEST['action'])){ // When this is not set, we're coming from the installer.
-								$sv = new SugarView();
-							    $sv->init('Users');
-							    $sv->renderJavascript();
-							    $sv->displayHeader();
-		        				$sv->errors[] = translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration'). ' ' . translate('WARN_LICENSE_SEATS2', 'Administration');
-                                $sv->displayErrors();
-                                $sv->displayFooter();
-							    die();
-						  	}
-				        }
-		     	}
-			}
-            // End Express License Enforcement Check
+            unset($_SESSION['license_seats_needed']);
+            if ($this->portal_only != 1 && $this->is_group != 1 && $this->status == 'Active'
+                  && (empty($this->fetched_row)
+                      || $this->fetched_row['status'] == 'Inactive'
+                      || $this->fetched_row['status'] == '')) {
+                $license_users = $admin->settings['license_users'];
+                $license_seats_needed = -1;
+                if ($license_users != '') {
+                    global $db;
+                    $result = $db->query($query, true, "Error filling in user array: ");
+                    $row = $db->fetchByAssoc($result);
+                    $license_seats_needed = $row['total'] - $license_users;
+                }
+                if ($license_seats_needed >= 0) {
+                    if (isset($_REQUEST['action'])
+                        && ($_REQUEST['action'] == 'MassUpdate' || $_REQUEST['action'] == 'Save')) {
+                        $sv = new SugarView();
+                        $sv->init('Users');
+                        $sv->renderJavascript();
+                        $sv->displayHeader();
+                        $sv->errors[] = translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration')
+                                . ' ' . translate('WARN_LICENSE_SEATS2', 'Administration');
+                        $sv->displayErrors();
+                        $sv->displayFooter();
+                    }
+                    // When action is not set, we're coming from the installer or non-UI source.
+                    die(translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration')
+                            . ' ' . translate('WARN_LICENSE_SEATS2', 'Administration'));
+                }
+            }
+        }
+        // End Express License Enforcement Check
 
 		  //END SUGARCRM lic=sub ONLY
 
