@@ -10,6 +10,7 @@
  */
 describe('Sugar Index Value Expression', function() {
     var app;
+    var oldApp;
     var dm;
     var sinonSandbox;
     var meta;
@@ -32,6 +33,8 @@ describe('Sugar Index Value Expression', function() {
     };
 
     beforeEach(function() {
+        oldApp = App;
+        App = App || SUGAR.App;
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
@@ -44,6 +47,7 @@ describe('Sugar Index Value Expression', function() {
     });
 
     afterEach(function() {
+        App = oldApp;
         sinonSandbox.restore();
     });
 

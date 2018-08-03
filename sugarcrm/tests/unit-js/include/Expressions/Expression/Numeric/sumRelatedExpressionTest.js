@@ -10,6 +10,7 @@
  */
 describe('SumRelatedExpression Function', function() {
     var app;
+    var oldApp;
     var dm;
     var sinonSandbox;
     var meta;
@@ -101,6 +102,8 @@ describe('SumRelatedExpression Function', function() {
     };
 
     beforeEach(function() {
+        oldApp = App;
+        App = App || SUGAR.App;
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
@@ -121,6 +124,7 @@ describe('SumRelatedExpression Function', function() {
     });
 
     afterEach(function() {
+        App = oldApp;
         app.currency.convertAmount.restore();
         sinonSandbox.restore();
     });

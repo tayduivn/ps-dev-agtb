@@ -11,6 +11,7 @@
 
 describe('Simple Numeric Functions Test', function() {
     var app;
+    var oldApp;
     var dm;
     var sinonSandbox;
     var meta;
@@ -33,6 +34,8 @@ describe('Simple Numeric Functions Test', function() {
     };
 
     beforeEach(function() {
+        oldApp = App;
+        App = App || SUGAR.App;
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
@@ -45,6 +48,7 @@ describe('Simple Numeric Functions Test', function() {
     });
 
     afterEach(function() {
+        App = oldApp;
         sinonSandbox.restore();
     });
 
@@ -346,6 +350,13 @@ describe('Simple Numeric Functions Test', function() {
             var strlenExpr = new SUGAR.expressions.StringLengthExpression([testStrExpression], getSLContext(model));
             expect(parseFloat(strlenExpr.evaluate())).toBe(testString.length);
         });
+
+        it('should return length of a multibyte string', function() {
+            var multiByteTestString = '🌴🌴🌴';
+            var testStrExpression = new SUGAR.expressions.StringLiteralExpression([multiByteTestString]);
+            var strlenExpr = new SUGAR.expressions.StringLengthExpression([testStrExpression], getSLContext(model));
+            expect(parseFloat(strlenExpr.evaluate())).toBe(multiByteTestString.length);
+        });
     });
 
     describe('Standard Deviation Expression Function', function() {
@@ -359,23 +370,26 @@ describe('Simple Numeric Functions Test', function() {
 
             var stddev = new SUGAR.expressions.StandardDeviationExpression([a, b, c, d, e], getSLContext(model));
             var num = stddev.evaluate();
-            expect(Math.round(num * 100) / 100).toBe(2.06);
+            expect(num).toBeCloseTo(2.06);
         });
     });
 
     describe('Index Of Expression Function', function() {
-
+        var a = new SUGAR.expressions.ConstantExpression([4]);
+        var b = new SUGAR.expressions.ConstantExpression([5]);
+        var c = new SUGAR.expressions.ConstantExpression([6]);
+        var d = new SUGAR.expressions.ConstantExpression([7]);
+        var e = new SUGAR.expressions.ConstantExpression([10]);
+        var notInList = new SUGAR.expressions.ConstantExpression([20]);
+        var test = new SUGAR.expressions.DefineEnumExpression([a, b, c, d, e]);
         it('should return index of a certain value in a provided list', function() {
-            var a = new SUGAR.expressions.ConstantExpression([4]);
-            var b = new SUGAR.expressions.ConstantExpression([5]);
-            var c = new SUGAR.expressions.ConstantExpression([6]);
-            var d = new SUGAR.expressions.ConstantExpression([7]);
-            var e = new SUGAR.expressions.ConstantExpression([10]);
-
-            var test = new SUGAR.expressions.DefineEnumExpression([a, b, c, d, e]);
-
             var res = new SUGAR.expressions.IndexOfExpression([c, test], getSLContext(model));
             expect(res.evaluate()).toBe(2);
+        });
+
+        it('should return -1 for a value not in the list', function() {
+            var res = new SUGAR.expressions.IndexOfExpression([notInList, test], getSLContext(model));
+            expect(res.evaluate()).toBe(-1);
         });
     });
 });

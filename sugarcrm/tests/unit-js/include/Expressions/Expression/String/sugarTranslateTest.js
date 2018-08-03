@@ -10,10 +10,12 @@
  */
 describe('Sugar Translate Expression Function', function() {
     var app;
+    var oldApp;
     var dm;
     var sinonSandbox;
     var meta;
     var model;
+    var oldLang;
 
     var getSLContext = function(modelOrCollection, context) {
         var isCollection = (modelOrCollection instanceof dm.beanCollection);
@@ -32,6 +34,8 @@ describe('Sugar Translate Expression Function', function() {
     };
 
     beforeEach(function() {
+        oldApp = App;
+        App = App || SUGAR.App;
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
@@ -41,9 +45,13 @@ describe('Sugar Translate Expression Function', function() {
         dm.reset();
         dm.declareModels();
         model = dm.createBean('RevenueLineItems', SugarTest.loadFixture('rli'));
+        oldLang = SUGAR.language;
+        SUGAR.language = {get: function() {}};
     });
 
     afterEach(function() {
+        SUGAR.language = oldLang;
+        App = oldApp;
         sinonSandbox.restore();
     });
 
@@ -52,7 +60,6 @@ describe('Sugar Translate Expression Function', function() {
             var lbl = new SUGAR.expressions.StringLiteralExpression(['LBL_NAME']);
             var mod = new SUGAR.expressions.StringLiteralExpression(['Accounts']);
             var res = new SUGAR.expressions.SugarTranslateExpression([lbl,mod], getSLContext(model));
-            SUGAR.language = {get: function() {}};
             sinonSandbox.stub(SUGAR.language, 'get').withArgs('Accounts', 'LBL_NAME').returns('Name');
             expect(res.evaluate()).toBe('Name');
         });

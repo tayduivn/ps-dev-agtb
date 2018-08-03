@@ -10,6 +10,7 @@
  */
 describe('Simple Numeric Functions Test', function() {
     var app;
+    var oldApp;
     var dm;
     var sinonSandbox;
     var meta;
@@ -30,6 +31,8 @@ describe('Simple Numeric Functions Test', function() {
         return new SUGAR.expressions.SidecarExpressionContext(view, model, isCollection ? modelOrCollection : false);
     };
     beforeEach(function() {
+        oldApp = App;
+        App = App || SUGAR.App;
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
@@ -42,6 +45,7 @@ describe('Simple Numeric Functions Test', function() {
     });
 
     afterEach(function() {
+        App = oldApp;
         sinonSandbox.restore();
     });
 

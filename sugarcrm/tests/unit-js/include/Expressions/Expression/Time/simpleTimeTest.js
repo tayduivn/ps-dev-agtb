@@ -10,6 +10,7 @@
  */
 describe('Simple Time Expression Functions', function() {
     var app;
+    var oldApp;
     var dm;
     var sinonSandbox;
     var meta;
@@ -33,6 +34,8 @@ describe('Simple Time Expression Functions', function() {
     };
 
     beforeEach(function() {
+        oldApp = App;
+        App = App || SUGAR.App;
         sinonSandbox = sinon.sandbox.create();
         SugarTest.seedMetadata();
         app = SugarTest.app;
@@ -45,6 +48,7 @@ describe('Simple Time Expression Functions', function() {
     });
 
     afterEach(function() {
+        App = oldApp;
         sinonSandbox.restore();
     });
 
