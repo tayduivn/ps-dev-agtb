@@ -46,7 +46,7 @@ class SugarCurrencyTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
-        
+
         $current_user = $GLOBALS['current_user'];
         $current_user->setPreference('dec_sep', '.');
         $current_user->setPreference('num_grp_sep', ',');
@@ -54,7 +54,7 @@ class SugarCurrencyTest extends TestCase
 
         // setup test currencies
         self::$currencySGD = SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171,'currency-sgd');
-        self::$currencyPHP = SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982,'currency-php');
+        self::$currencyPHP = SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.829820,'currency-php');
         self::$currencyYEN = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87,'currency-yen');
         self::$currencyBase = BeanFactory::getBean('Currencies','-99');
     }
@@ -142,7 +142,7 @@ class SugarCurrencyTest extends TestCase
     public function testConvertAmountFromBase()
     {
         $amount = SugarCurrency::convertAmountFromBase('1000.00',self::$currencySGD->id);
-        $this->assertEquals('1246.171',$amount);
+        $this->assertEquals('1246.171000',$amount);
     }
 
     /**
@@ -181,8 +181,8 @@ class SugarCurrencyTest extends TestCase
         return array(
             array(1000,0.5,2000),
             array(1000,2.0,500),
-            array('1000','0.5','2000'),
-            array('1000','2.0','500'),
+            array('1000','0.5','2000.000000'),
+            array('1000','2.0','500.000000'),
             array('', '2.0', '0')
         );
     }
@@ -324,7 +324,7 @@ class SugarCurrencyTest extends TestCase
             array('1000.00', 'currency-sgd', 'currency-php', '33566.677446'),
             array('1000.00', 'currency-php', 'currency-yen', '1885.496997'),
             array('1000.00', 'currency-yen', '-99', '12.679092'),
-            array('1000.00', '-99', 'currency-sgd', '1246.171'),
+            array('1000.00', '-99', 'currency-sgd', '1246.171000'),
         );
     }
 

@@ -113,9 +113,9 @@ class SugarFieldCurrencyTest extends TestCase
     public function importSanitizeProvider()
     {
         return array(
-            array('$123.123,00', '123123.00', '.', ','),
-            array('$123,123.00', '123123.00', ',', '.'),
-            array('$123A123z00', '123123.00', 'A', 'z'),
+            array('$123.123,00', '123123.000000', '.', ','),
+            array('$123,123.00', '123123.000000', ',', '.'),
+            array('$123A123z00', '123123.000000', 'A', 'z'),
         );
     }
 
@@ -253,9 +253,9 @@ class SugarFieldCurrencyTest extends TestCase
     {
         return array(
             array('1000', '1000'),
-            array('1.000', '1.000'),
+            array('1.000', '1'),
             array('1,000', '1000'),
-            array('1,000.00', '1000.00'),
+            array('1,000.00', '1000'),
         );
     }
 
