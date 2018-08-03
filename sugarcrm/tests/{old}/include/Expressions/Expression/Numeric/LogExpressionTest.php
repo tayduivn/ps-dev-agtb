@@ -26,8 +26,8 @@ class LogExpressionTest extends TestCase
     public function dataProviderTestEvaluate()
     {
         return array(
-            array('log(100, 10)', '2'),
-            array('log("100", "10")', '2')
+            array('log(100, 10)', '2.000000'),
+            array('log("100", "10")', '2.000000'),
         );
     }
 }
