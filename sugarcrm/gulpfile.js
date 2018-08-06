@@ -248,6 +248,7 @@ gulp.task('test:unit:php', function(done) {
         .option('--path <path>', 'Set base output path')
         .option('--coverage', 'Enable code coverage')
         .option('--file <path>', 'File to execute')
+        .option('--suite <suite>', 'Test suite to execute')
         .parse(process.argv);
 
     var workspace = commander.path || process.env.WORKSPACE || os.tmpdir();
@@ -269,6 +270,8 @@ gulp.task('test:unit:php', function(done) {
 
     if (commander.file) {
         args.push(commander.file);
+    } else if (commander.suite) {
+        args.push('--testsuite', commander.suite);
     }
 
     var phpunitPath = path.join('..', '..', 'vendor', 'bin', 'phpunit');

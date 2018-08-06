@@ -30,6 +30,9 @@
             <directory>./</directory>
             <directory>modules/</directory>
         </testsuite>
+        <testsuite name="custom">
+            <directory>../../custom/tests/unit-php/</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="false">

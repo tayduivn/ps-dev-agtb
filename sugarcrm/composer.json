@@ -94,7 +94,8 @@
                 "tests/unit-php/src/",
                 "tests/unit-php/"
             ],
-            "Sugarcrm\\SugarcrmTestsUnit\\inc\\": "tests/unit-php/include/"
+            "Sugarcrm\\SugarcrmTestsUnit\\inc\\": "tests/unit-php/include/",
+            "Sugarcrm\\SugarcrmTestsUnit\\custom\\": "custom/tests/unit-php/"
         }
     },
     "require": {
