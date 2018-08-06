@@ -39,12 +39,21 @@ final class Redis extends RedisCache
 
         $client = new Client();
 
-        try {
-            $client->connect($host ?? '127.0.0.1', $port ?? 6379);
-        } catch (RedisException $e) {
-            throw new Exception($e->getMessage(), 0, $e);
+        if (version_compare(phpversion('redis'), '4.0.0') > 0) {
+            try {
+                $this->connect($client, $host, $port);
+            } catch (RedisException $e) {
+                throw new Exception($e->getMessage(), 0, $e);
+            }
+        } elseif (!@$this->connect($client, $host, $port)) {
+            throw new Exception(error_get_last()['message']);
         }
 
         parent::__construct($client);
+    }
+
+    private function connect(Client $client, ?string $host, ?int $port) : bool
+    {
+        return $client->connect($host ?? '127.0.0.1', $port ?? 6379);
     }
 }
