@@ -57,6 +57,49 @@ describe('Quotes.Base.Fields.Currency', function() {
         });
     });
 
+    describe('_loadTemplate()', function() {
+        it('should get noaccess template for header', function() {
+            sinon.collection.stub(field, '_checkAccessToAction', function() {
+                return false;
+            });
+            sinon.collection.spy(app.template, 'getField');
+            field.view.name = 'quote-data-grand-totals-header';
+            field._loadTemplate();
+
+            expect(app.template.getField).toHaveBeenCalledWith(
+                'currency',
+                'noaccess-quote-data-grand-totals-header',
+                'Quotes'
+            );
+        });
+
+        it('should get noaccess template for footer', function() {
+            sinon.collection.stub(field, '_checkAccessToAction', function() {
+                return false;
+            });
+            sinon.collection.spy(app.template, 'getField');
+            field.view.name = 'quote-data-grand-totals-footer';
+            field._loadTemplate();
+
+            expect(app.template.getField).toHaveBeenCalledWith(
+                'currency',
+                'noaccess-quote-data-grand-totals-footer',
+                'Quotes'
+            );
+        });
+
+        it('should use regular _loadTemplate when user has access', function() {
+            sinon.collection.stub(field, '_checkAccessToAction', function() {
+                return true;
+            });
+            sinon.collection.spy(app.template, 'getField');
+            field.view.name = 'quote-data-grand-totals-footer';
+            field._loadTemplate();
+
+            expect(field._super).toHaveBeenCalledWith('_loadTemplate');
+        });
+    });
+
     describe('_updateDiscountPercent()', function() {
         it('should leave valuePercent undefined if deal_tot_discount_percentage is undefined', function() {
             field.model.set('deal_tot_discount_percentage', undefined);

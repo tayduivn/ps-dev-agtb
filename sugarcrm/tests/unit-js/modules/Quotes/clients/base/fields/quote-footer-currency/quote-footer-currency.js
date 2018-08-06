@@ -151,6 +151,32 @@ describe('Quotes.Base.Fields.QuoteFooterCurrency', function() {
         });
     });
 
+    describe('_loadTemplate()', function() {
+        it('should get noaccess template when user has no access', function() {
+            sinon.collection.stub(field, '_checkAccessToAction', function() {
+                return false;
+            });
+            sinon.collection.spy(app.template, 'getField');
+            field._loadTemplate();
+
+            expect(app.template.getField).toHaveBeenCalledWith(
+                'quote-footer-currency',
+                'noaccess',
+                'Quotes'
+            );
+        });
+
+        it('should use regular _loadTemplate when user has access', function() {
+            sinon.collection.stub(field, '_checkAccessToAction', function() {
+                return true;
+            });
+            sinon.collection.spy(app.template, 'getField');
+            field._loadTemplate();
+
+            expect(field._super).toHaveBeenCalledWith('_loadTemplate');
+        });
+    });
+
     describe('_toggleFieldToEdit', function() {
         var record;
         var recordContextTriggerSpy;
