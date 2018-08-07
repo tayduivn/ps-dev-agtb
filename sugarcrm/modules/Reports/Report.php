@@ -1827,7 +1827,8 @@ class Report
         {
             if (!empty($params['join_id'])) {
                 $this->from .= "LEFT JOIN " . $params['base_table'] . " " . $params['join_table_alias'] . " ON " . $params['join_table_alias'] . ".id = ";
-                $this->from .= $params['join_id'] . "\n";
+                $this->from .= $params['join_id'];
+                $this->from .= ' AND ' . $this->db->convert($params['join_table_alias'] . '.deleted', 'IFNULL', array(0)) . "=0 \n";
             }
             else {
                 $tablename = (empty($params['real_table']) ? $params['base_table'] : $params['real_table']);
