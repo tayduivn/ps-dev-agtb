@@ -24,6 +24,10 @@ describe('Quotes.View.ConfigSummary', function() {
         app = SugarTest.app;
         context = app.context.getContext();
 
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('config-panel', 'view', 'base', 'help', 'Quotes');
+        SugarTest.testMetadata.set();
+
         meta = {
             label: 'testLabel',
             panels: [

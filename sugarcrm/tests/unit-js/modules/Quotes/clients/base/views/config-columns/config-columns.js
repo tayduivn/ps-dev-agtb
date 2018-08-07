@@ -26,6 +26,10 @@ describe('Quotes.View.ConfigColumns', function() {
         context = app.context.getContext();
         context.set('model', new Backbone.Model());
 
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('config-panel', 'view', 'base', 'help', 'Quotes');
+        SugarTest.testMetadata.set();
+
         meta = {
             label: 'testLabel',
             panels: [

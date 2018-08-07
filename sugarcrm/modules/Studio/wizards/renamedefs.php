@@ -757,6 +757,7 @@ $renamedefs = array(
             array('name' => 'LBL_QUOTE_COPY_ALERT_MESSAGE_LONG_TIME', 'type' => 'plural', 'source' => 'Products'),
             array('name' => 'LBL_QUOTE_COPY_ALERT_MESSAGE_LONG_TIME', 'type' => 'singular', 'source' => 'Quotes'),
             array('name' => 'LBL_HELP_MORE_INFO', 'type' => 'plural', 'source' => 'Quotes'),
+            array('name' => 'LBL_CONFIG_TITLE_MODULE_SETTINGS', 'type' => 'plural', 'source' => 'Quotes'),
         ),
         'Quotas' => array(
             array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),

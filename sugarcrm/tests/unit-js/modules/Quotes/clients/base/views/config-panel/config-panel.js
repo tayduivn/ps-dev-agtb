@@ -22,6 +22,10 @@ describe('Quotes.View.ConfigPanel', function() {
         context = app.context.getContext();
         context.set('model', new Backbone.Model());
 
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('config-panel', 'view', 'base', 'help', 'Quotes');
+        SugarTest.testMetadata.set();
+
         var meta = {
             label: 'testLabel',
             panels: [{
@@ -134,6 +138,9 @@ describe('Quotes.View.ConfigPanel', function() {
         beforeEach(function() {
             sinon.collection.spy(view, '_getEventViewName');
             sinon.collection.stub(view, 'getPanelFieldNamesList');
+            sinon.collection.stub(app.template, 'getView', function(){
+                return function(){};
+            });
         });
 
         it('should set eventViewName', function() {

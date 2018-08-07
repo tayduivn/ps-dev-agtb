@@ -1272,6 +1272,6 @@ Any integrations that rely on this platform will stop working.',
     'LBL_PMSE_ADMIN_DESC_MODULE' => 'Configure Advanced Workflow settings and view logs. Manage all BPM processes for all users via Process Management.',
     //END SUGARCRM flav=ent ONLY
 
-    'LBL_MANAGE_QUOTES_TITLE' => 'Quotes',
-    'LBL_MANAGE_QUOTES' => 'Configure your Quote layout',
+    'LBL_MANAGE_QUOTES_TITLE' => 'Quotes Configuration',
+    'LBL_MANAGE_QUOTES' => 'Configure the quotes worksheet layout',
 );

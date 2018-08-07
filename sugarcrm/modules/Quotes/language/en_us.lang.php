@@ -260,36 +260,29 @@ $mod_strings = array (
     'LBL_QUOTE_COPY_ALERT_MESSAGE' => 'Copying Quoted Line Items to new Quote.',
     'LBL_QUOTE_COPY_ALERT_MESSAGE_LONG_TIME' => 'Copying Quoted Line Items to new Quote. This process may take some time.',
     'LBL_QUOTE_CONFIG_COLUMNS_TITLE' => 'Worksheet Columns',
-    'LBL_QUOTE_CONFIG_SUMMARY_TITLE' => 'Summary Bar',
+    'LBL_QUOTE_CONFIG_SUMMARY_TITLE' => 'Summary Bar Header',
     'LBL_QUOTE_CONFIG_FOOTER_TITLE' => 'Grand Totals Footer',
     'LBL_CONFIG_FIELD_SELECTOR' => '{{moduleName}} Configuration Field Selector',
     'LBL_WORKSHEET_COLUMNS_PREVIEW' =>'Worksheet Columns Preview',
     'LBL_CONFIG_DIRECTIONS' => 'Directions',
-    'LBL_CONFIG_COLUMNS_DIRECTIONS_1' => 'To configure default fields to be displayed for the worksheet view',
-    'LBL_CONFIG_COLUMNS_DIRECTIONS_2' => 'Add or remove fields from field selector',
-    'LBL_CONFIG_COLUMNS_DIRECTIONS_3' => 'Rearrange column order by dragging and dropping',
-    'LBL_CONFIG_COLUMNS_DIRECTIONS_4' => 'The default fields are: ',
-    'LBL_CONFIG_COLUMNS_DIRECTIONS_5' => 'Restore default fields using this link: ',
+    'LBL_HELP_MORE_INFO' => 'Refer to the {{{more_info_url}}} Quotes Configuration documentation {{{more_info_url_close}}} for instructions.',
+    'LBL_CONFIG_COLUMNS_DIRECTIONS_1' => 'The following fields appear by default in the worksheet columns: ',
     'LBL_CONFIG_COLUMNS_RESTORE_DEFAULTS' => 'Restore Defaults',
-    'LBL_CONFIG_SUMMARY_COLUMNS_DIRECTIONS_1' => 'To configure default fields to be displayed for the summary bar of the worksheet view',
+    'LBL_CONFIG_SUMMARY_COLUMNS_DIRECTIONS_1' => 'The following fields appear by default in the summary bar header: ',
     'LBL_CONFIG_LEGEND' => 'Fields Legend',
     'LBL_CONFIG_LEGEND_INPUT_UNCHECKED' => 'Available',
     'LBL_CONFIG_LEGEND_INPUT_CHECKED' => 'Displayed',
     'LBL_CONFIG_LEGEND_INPUT_FILLED' => 'Related',
-    'LBL_CONFIG_LEGEND_HELP_TEXT' => 'Related fields are used by other fields on the page and will not be visible ' .
-        'to the user. A related field will be added automatically if it is part of a formula in a displayed field, ' .
-        'or if it is a required roll-up field. You may expose a related field to the user by clicking the check ' .
-        'box next to the field in the panel below, but you may not remove a related field unless you remove the ' .
-        'field or fields that use it.',
+    'LBL_CONFIG_LEGEND_HELP_TEXT' => 'Related fields are used by other fields on the page and will not be visible to the user.' .
+        'Fields are automatically marked as related if they are included in the formula for a visible, calculated field.' .
+        'You may expose a related field to users by marking its check box, but you may not remove a related field unless you remove the fields that use it.',
     'LBL_CONFIG_' => '',
     'LBL_CONFIG_TOOLTIP_FIELD_REQUIRED_BY' => 'This field is required by:',
-    'LBL_HELP_MORE_INFO' => 'For a complete guide to configuring the Quotes module, please visit the {{{more_info_url}}} Sugar Administrator Guide. {{{more_info_url_close}}}',
-    'LBL_SUMMARY_WORKSHEET_COLUMNS_PREVIEW' =>'Summary Bar Worksheet Columns Preview',
+    'LBL_SUMMARY_WORKSHEET_COLUMNS_PREVIEW' =>'Summary Bar Header Preview',
     'LBL_SUMMARY_WORKSHEET_COLUMNS_MAX_WARNING' =>'Only six (6) fields may be displayed in the summary bar. Please remove one or more fields before adding any others.',
 
     'LBL_CONFIG_GRAND_TOTAL_FOOTER_PREVIEW' =>'Grand Totals Footer Preview',
-    'LBL_CONFIG_GRAND_TOTAL_FOOTER_DIRECTIONS_1' => 'To configure default fields to be displayed for the Grand Totals footer view',
-    'LBL_CONFIG_GRAND_TOTAL_FOOTER_DIRECTIONS_3' => 'Rearrange row order by dragging and dropping',
+    'LBL_CONFIG_GRAND_TOTAL_FOOTER_DIRECTIONS_1' => 'The following fields appear by default in the grand totals footer: ',
     'LBL_CONFIG_FOOTER_ROWS_EMPTY_TOTAL_1' => 'Subtotal Fields',
     'LBL_CONFIG_FOOTER_ROWS_EMPTY_TOTAL_2' => 'Drop fields here to add them in the Subtotals area above the Grand Total line.',
     'LBL_CONFIG_FOOTER_ROWS_EMPTY_GRAND_TOTAL_1' => 'Grand Total Fields',
@@ -297,4 +290,5 @@ $mod_strings = array (
     'LBL_CONFIG_FOOTER_ROWS_EMPTY_GRAND_TOTAL_3' => 'If no fields are added here, the Grand Total line will be removed from view.',
 
     'LBL_OPPORTUNITY_ID' => 'Opportunity ID',
+    'LBL_CONFIG_TITLE_MODULE_SETTINGS' => 'Quotes Configuration',
 );

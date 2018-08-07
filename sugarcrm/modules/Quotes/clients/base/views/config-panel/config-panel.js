@@ -53,6 +53,13 @@
         this.eventViewName = this._getEventViewName();
 
         this.getPanelFieldNamesList();
+
+        var helpUrl = {
+            more_info_url: '<a href="' + app.help.getMoreInfoHelpURL('config', 'QuotesConfig') + '" target="_blank">',
+            more_info_url_close: '</a>',
+        };
+        var viewQuotesObj = app.help.get('Quotes', 'config_opps', helpUrl);
+        this.quotesDocumentation = app.template.getView('config-panel.help', this.module)(viewQuotesObj);
     },
 
     /**
