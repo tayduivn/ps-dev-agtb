@@ -45,6 +45,9 @@ export default class RecordHeaderView extends BaseView {
                 'closecall': 'a[name="record-close"]:not(.hide)',
                 'closemeeting': 'a[name="record-close"]:not(.hide)',
                 'closeandcreatenew':'a[name="record-close-new"]:not(.hide)',
+                'viewpersonalinfo':'a[name="view_pii_button"]:not(.hide)',
+                'auditlog':'a[name="audit_button"]:not(.hide)',
+                'closebutton': 'a[name="close_button"]:not(.hide)',
             },
 
             title: {

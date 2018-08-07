@@ -163,6 +163,12 @@ Feature: Data Privacy module verification
       | phone_mobile           | Value Erased |
       | primary_address_street | Value Erased |
 
+    # Verify that info is deleted from PII screen
+    Then I verify PII fields in #PersonalInfoDrawer for #JohnRecord
+      | fieldName              | value        |
+      | phone_mobile           | Value Erased |
+      | primary_address_street | Value Erased |
+
     # Verify that values for specified target fields are erased
     When I choose Prospects in modules menu
     When I select *Travis in #ProspectsList.ListView
@@ -175,6 +181,14 @@ Feature: Data Privacy module verification
       | title        | Value Erased |
       | phone_mobile | Value Erased |
 
+    # Verify that info is deleted from PII screen
+    Then I verify PII fields in #PersonalInfoDrawer for #TravisRecord
+      | fieldName    | value        |
+      | first_name   | Travis       |
+      | last_name    | Value Erased |
+      | title        | Value Erased |
+      | phone_mobile | Value Erased |
+
     # Verify that values for specified account fields are erased
     When I choose Accounts in modules menu
     When I select *Drew in #AccountsList.ListView
@@ -182,6 +196,33 @@ Feature: Data Privacy module verification
     Then I verify fields on #TravisRecord.RecordView
       | fieldName | value |
       | email     |       |
+
+    # Verify that info is deleted from PII screen
+    Then I verify PII fields in #PersonalInfoDrawer for #DrewRecord
+      | fieldName | value |
+      | email     |       |
+
+    # Verify that values for specified contact fields are erased
+    When I choose Contacts in modules menu
+    When I select *Ruslan in #ContactsList.ListView
+    When I click show more button on #RuslanRecord view
+    Then I verify fields on #RuslanRecord.HeaderView
+      | fieldName | value        |
+      | name      | Value Erased |
+    Then I verify fields on #RuslanRecord.RecordView
+      | fieldName            | value        |
+      | title                | Value Erased |
+      | primary_address_city | Value Erased |
+      | phone_mobile         | Value Erased |
+
+    # Verify that info is deleted from PII screen
+    Then I verify PII fields in #PersonalInfoDrawer for #RuslanRecord
+      | fieldName            | value        |
+      | first_name           | Value Erased |
+      | last_name            | Value Erased |
+      | title                | Value Erased |
+      | primary_address_city | Value Erased |
+      | phone_mobile         | Value Erased |
 
     # Verify that values for specified contact fields are erased
     When I choose Contacts in modules menu
@@ -192,6 +233,16 @@ Feature: Data Privacy module verification
       | name      | Value Erased |
     Then I verify fields on #AlexRecord.RecordView
       | fieldName            | value             |
+      | title                | Value Erased      |
+      | primary_address_city | Value Erased      |
+      | phone_mobile         | Value Erased      |
+      | email                | alex2@example.org |
+
+    # Verify that info is deleted from PII screen
+    Then I verify PII fields in #PersonalInfoDrawer for #AlexRecord
+      | fieldName            | value             |
+      | first_name           | Value Erased      |
+      | last_name            | Value Erased      |
       | title                | Value Erased      |
       | primary_address_city | Value Erased      |
       | phone_mobile         | Value Erased      |

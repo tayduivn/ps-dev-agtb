@@ -15,6 +15,8 @@ import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
 import ListView from '../views/list-view';
 import RecordsMarkedForErasureDashlet from '../views/records-marked-for-erasure-dashlet';
+import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
+import RecordLayout from '../layouts/record-layout';
 
 /**
  * Check whether the cached view is visible
@@ -147,3 +149,54 @@ Then(/^I verify headers on (#[a-zA-Z](?:\w|\S)*)$/,
             }
         }
     });
+
+Then(/^I verify PII fields in (#\S+) for (#[a-zA-Z](?:\w|\S)*)$/,
+    async function (layout: PersonalInfoDrawerLayout, recordlayout: RecordLayout, data: TableDefinition): Promise<void> {
+
+        let errors = [];
+
+        // Open Actions menu
+        await recordlayout.HeaderView.clickButton('actions');
+        await this.driver.waitForApp();
+
+        // Select View Personal Info menu item
+        await recordlayout.HeaderView.clickButton('viewpersonalinfo');
+        await this.driver.waitForApp();
+
+        // Verify field values in Personal Info drawer
+        const rows = data.rows();
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            let expected = row[1].trim();
+            let value = await layout.getFieldValue(row[0]);
+
+            if (expected !== value) {
+                errors.push(
+                    new Error(
+                        [
+                            `Field '${row[0]}' should be`,
+                            `\t'${expected}'`,
+                            `instead of`,
+                            `\t'${value}'`,
+                            `\n`,
+                        ].join('\n')
+                    )
+                );
+            }
+        }
+
+        let message = '';
+        _.each(errors, (item) => {
+            message += item.message;
+        });
+
+        if (message) {
+            throw new Error(message);
+        }
+
+        // Close Personal Info drawer
+        await layout.HeaderView.clickButton('closebutton');
+        await this.driver.waitForApp();
+
+    }, {waitForApp: true});

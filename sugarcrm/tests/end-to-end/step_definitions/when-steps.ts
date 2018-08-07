@@ -343,7 +343,7 @@ When(/^I select fields in (#\S+) view$/,
 
         const rows = data.rows();
         for (let i = 0; i < rows.length; i++) {
-            await layout.clickRowByFiledName(data.rows()[i]);
+            await layout.clickRowByFieldName(data.rows()[i]);
         }
     }, {waitForApp: true});
 

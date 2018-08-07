@@ -228,7 +228,6 @@ Feature: Leads module verification
     # Cancel Lead creation
     When I click Cancel button on #LeadsDrawer header
     Then I should see #LeadsList.ListView view
-    When I choose Leads in modules menu
     When I click Create button on #LeadsList header
     When I provide input for #LeadsDrawer.HeaderView view
       | *        | salutation | first_name | last_name |
@@ -250,4 +249,4 @@ Feature: Leads module verification
       | website      | http://novakdjokovic.com/en/       |
       | phone_mobile | 888-233-3221                       |
       | title        | Serbian professional tennis player |
-    
+

@@ -76,7 +76,7 @@ When(/^I select fields for erasure for (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) s
         // Process table of fields marked for erasure
         const rows = data.rows();
         for (let i = 0; i < rows.length; i++) {
-            await seedbed.components.PersonalInfoDrawer.clickRowByFiledName(data.rows()[i]);
+            await seedbed.components.PersonalInfoDrawer.clickRowByFieldName(data.rows()[i]);
             await this.driver.waitForApp();
         }
 

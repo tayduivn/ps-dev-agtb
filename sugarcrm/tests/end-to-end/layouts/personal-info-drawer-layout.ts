@@ -25,13 +25,18 @@ export default class PersonalInfoDrawerLayout extends DrawerLayout {
 
         this.selectors = this.mergeSelectors({
             row: 'tr[data-fieldname="{{field_name}}"] input[type="checkbox"]',
+            rowValue: 'tr[data-fieldname="{{field_name}}"] td[data-column="value"]',
         });
 
         this.type = 'drawer';
     }
 
-    public async clickRowByFiledName(field_name) {
+    public async clickRowByFieldName(field_name) {
         await this.driver.click(this.$('row', {field_name}));
     }
 
+    public async getFieldValue(field_name) {
+        let selector  = this.$('rowValue', {field_name});
+        return await this.driver.getText(selector);
+    }
 }
