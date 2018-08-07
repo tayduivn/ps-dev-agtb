@@ -26,10 +26,27 @@ export default class DashletView extends BaseView {
             $: '.dashlet-cell',
                 header: '.dashlet-header',
                 buttons: {
-                    cog: '.fa.fa-cog',
+                    cog: '.btn.btn-invisible.dropdown-toggle',
+                },
+                menuItems:{
+                    edit: 'a[name="edit_button"]',
+                    refresh:'a[name="refresh_button"]',
+                    remove: 'a[name="remove_button"]',
                 },
 
             content: 'dashlet-content'
         });
+    }
+
+    /**
+     * Perform standard dashlet operations such as edit, refresh or remove
+     * Note: Those operations are only available to Admin
+     *
+     * @param action
+     * @returns {Promise<void>}
+     */
+    public async performAction(action) {
+        await this.driver.click(this.$(`buttons.cog`));
+        await this.driver.click(this.$(`menuItems.`+ action));
     }
 }

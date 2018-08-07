@@ -14,7 +14,7 @@ Feature: Copy Quote E2E testing
     Given I use default account
     Given I launch App
 
-    # TITLE:
+    # TITLE: Copy Quote
     #
     # STEPS:
     # 1. Generate quote record with one group and 2 QLIs linked to the account, contact and etc.

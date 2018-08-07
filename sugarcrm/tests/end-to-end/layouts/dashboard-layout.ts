@@ -12,6 +12,7 @@ import BaseView from '../views/base-view';
 import HeaderView from '../views/dashboard-header-view';
 import DashboardView from '../views/dashboard-view';
 import DashletView from '../views/dashlet-view';
+import ProductCatalogQuickPicksDashlet from '../views/product-catalog-quick-picks-dashlet-view';
 import RecordsMarkedForErasureDashlet from '../views/records-marked-for-erasure-dashlet';
 
 /**
@@ -25,7 +26,7 @@ export default class DashboardLayout extends BaseView {
     public HeaderView: HeaderView;
     public defaultView: DashboardView;
     public DashboardView: DashboardView;
-    public DashletView: DashletView;
+    public ProductCatalogQuickPicksDashlet: DashletView;
     public RecordsMarkedForErasureDashlet: DashletView;
 
     protected type: string;
@@ -49,7 +50,7 @@ export default class DashboardLayout extends BaseView {
             module: options.module,
         });
 
-        this.DashletView = this.createComponent<DashletView>(DashletView, {
+        this.ProductCatalogQuickPicksDashlet = this.createComponent<ProductCatalogQuickPicksDashlet>(ProductCatalogQuickPicksDashlet, {
             module: options.module,
         });
 

@@ -385,6 +385,72 @@ When(/^I stop timer and verify$/, async function (data: TableDefinition) {
 }, {waitForApp: false});
 
 /**
+ *  Create custom user
+ *
+ *  @example
+ *
+ *    # Create new non-admin user
+ *    Given I create custom user "user"
+ *    .....
+ *    # Logout from Admin and Login as another user
+ *    When I go to "logout" url
+ *    When I use account "user"
+ *    When I open Home view and login
+ */
+When<string, string>(
+    /^I create custom user\s*(?:"([^"]*)"(?:\/"([^"]*)")?)?$/,
+    async function(login: string, password: string): Promise<void> {
+        try {
+            password = password || login;
+
+           let user = await seedbed.api.create({
+                record: {
+                    _module: 'Users',
+                    first_name: login,
+                    user_name: login,
+                    user_hash: password,
+                    last_name: login + 'LName',
+                    status: 'Active',
+                    is_admin: false,
+                    email: [
+                        {
+                            email_address: login + '@eee.eee',
+                            primary_address: true,
+                            reply_to_address: false,
+                            invalid_email: false,
+                            opt_out: false,
+                        },
+                    ],
+                },
+            });
+
+            seedbed.api.created.push(user);
+
+            // need to log in with the new user
+            await seedbed.api.login({
+                username: login,
+                password: password,
+            });
+
+            // set user preferences to avoid user profile wizard for the new user
+            await seedbed.api.updatePreferences({
+                preferences: seedbed.config.users.defaultPreferences,
+            });
+
+            // log in back as user mentioned in scenario.
+            await seedbed.api.login({
+                username: seedbed.userInfo.username,
+                password: seedbed.userInfo.password,
+            });
+        } catch (err) {
+            err.message = `Failed to create custom user '${login}'`;
+            throw err;
+        }
+    },
+    { waitForApp: true }
+);
+
+/**
  *  Toggle between projecting using Opportunities with RLIs (default) and Opportunities Only mode
  *
  *  @example     Given I configure Opportunities mode

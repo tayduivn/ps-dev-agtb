@@ -53,7 +53,7 @@ export const openMenuAndCheck = async function(layout, needToCheck, data?: Table
  *
  * @example "I click Save button on #AccountsDrawer header"
  */
-When(/^I click (Create|Edit|Cancel|Close|Save|Reply|Add|Complete|MarkForErasure|Reject|CloseButton|EmailQuote) button on (#[a-zA-Z](?:\w|\S)*) header$/,
+When(/^I click (Create|Edit|Cancel|Close|Save|Reply|Add|Complete|MarkForErasure|Reject|Add2Quote|CloseButton|EmailQuote) button on (#[a-zA-Z](?:\w|\S)*) header$/,
     async function(btnName: string, layout: any) {
         return layout.HeaderView.clickButton(btnName.toLowerCase());
     }, {waitForApp: true});

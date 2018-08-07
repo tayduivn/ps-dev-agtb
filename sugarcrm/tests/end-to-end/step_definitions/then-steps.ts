@@ -13,7 +13,6 @@ import BaseView from '../views/base-view';
 import {Then, seedbed} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
-import ListView from '../views/list-view';
 import RecordsMarkedForErasureDashlet from '../views/records-marked-for-erasure-dashlet';
 import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import RecordLayout from '../layouts/record-layout';
@@ -42,7 +41,7 @@ Then(/^I should (not )?see (#\S+) view$/,
  * @example "I verify number of records in #Opp1Record.SubpanelsLayout.subpanels.meetings is 0"
  */
 Then(/^I verify number of records in (#\S+) is (\d+)$/,
-    async function (view: ListView, count) {
+    async function (view: any, count) {
 
         let actualCount = await view.getNumberOfRecords();
         if (actualCount != count) {

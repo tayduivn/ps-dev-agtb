@@ -45,7 +45,7 @@ Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
  * @example "I should see *Account_A in #AccountsList"
  */
 Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
-    async function (not, record: { id: string }, view: ListView) {
+    async function(not, record: { id: string }, view: any) {
 
         let listItem = view.getListItem({id: record.id});
 

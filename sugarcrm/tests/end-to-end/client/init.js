@@ -14,6 +14,10 @@
         return false;
     }
 
+    app.events.on('app:sync:complete', function() {
+        app.user.set('show_wizard', false);
+    });
+
     /**
      * Override SUGAR.App.config values when metadata fetch finished
      */

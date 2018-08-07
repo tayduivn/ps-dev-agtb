@@ -148,6 +148,15 @@ var config = {
         admin: {
             login: 'admin',
             password: 'asdf',
+            defaultPreferences: {
+                timezone: 'America/Los_Angeles',
+                timepref: 'h:ia',
+                datepref: 'm/d/Y',
+                default_locale_name_format: 's f l',
+                ut: true,
+                max_tabs: 7,
+                reminder_time: 1800,
+            },
         },
         default: {
             login: 'admin',
@@ -159,8 +168,18 @@ var config = {
                 default_locale_name_format: 's f l',
                 ut: true,
                 max_tabs: 7,
-                reminder_time: 1800
-            }
+                reminder_time: 1800,
+            },
+        },
+        defaultPreferences: {
+            timezone: 'America/Los_Angeles',
+            timepref: 'h:ia',
+            datepref: 'm/d/Y',
+            default_locale_name_format: 's f l',
+            ut: true,
+            max_tabs: 7,
+            reminder_time: 1800,
+            show_wizard: false,
         }
     },
 
