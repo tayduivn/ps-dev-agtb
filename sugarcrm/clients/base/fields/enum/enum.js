@@ -231,6 +231,11 @@
             // default value.
             $el.select2('val', this.value, !!defaultValue);
         }
+
+        if (this.tplName === 'detail') {
+            $('.select2-drop').select2('close');
+        }
+
         return this;
     },
 
@@ -740,7 +745,6 @@
                 this.model.set(this.name + '_replace', this.appendValue ? '1' : '0');
             }, this));
         }
-
     },
 
     /**
@@ -783,6 +787,11 @@
      */
     _dispose: function() {
         this.unbindKeyDown();
+        var $el = this.$(this.fieldTag);
+        var plugin = $el.data('select2');
+        if (plugin) {
+            plugin.close();
+        }
         this._super('_dispose');
     }
 })
