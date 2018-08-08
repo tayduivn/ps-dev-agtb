@@ -50,6 +50,9 @@
                 // force product_template_name to be required if it exists
                 col.required = true;
             }
+            if (col.type === 'image') {
+                col.readonly = true;
+            }
         }, this);
 
         // make sure related_fields contains description, quote_id, name, and product_template_name & _id fields

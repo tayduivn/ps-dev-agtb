@@ -526,26 +526,34 @@ class QuotesConfigApi extends ConfigModuleApi
         $qlidatagrouplistdef['panels'][0]['fields'] = $settings['worksheet_columns'];
         $viewdefManager->saveViewdef($qlidatagrouplistdef, 'Products', 'base', 'quote-data-group-list');
 
+        $columnNames = array_column($settings['worksheet_columns'], 'name');
+        if (in_array('line_num', $columnNames)) {
+            $columnNames = array_diff($columnNames, array('line_num'));
+        }
+
         //update quotes c/b/v/record.php name:related_fields, bundles and product_bundle_items with everything added
         //and anything needed for calculating fields -- include any new dependent fields
         //load viewdefs
-        $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', false);
+        $qRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', false);
 
         //check to see if the key we need to update exists in the loaded viewdef, if not, load the base.
-        if (!isset($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'])) {
-            $quoteRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
+        if (!isset($qRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'])) {
+            $qRecordViewdef = $viewdefManager->loadViewdef('base', 'Quotes', 'record', true);
         }
 
         //now that we know the related_fields[0]['fields'] exists, we need to search that array for the array def
         //for the product bundle items
         $fieldsIndex = 0;
-        foreach ($quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'] as $field) {
+        foreach ($qRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'] as $field) {
             if (!is_array($field)) {
                 $fieldsIndex++;
                 continue;
             } else {
-                if (array_key_exists('name', $field) && $field['name'] == 'product_bundle_items' && array_key_exists('fields', $field)) {
-                    $quoteRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'][$fieldsIndex]['fields'] = $settings['worksheet_columns_related_fields'];
+                if (array_key_exists('name', $field) &&
+                    $field['name'] == 'product_bundle_items' &&
+                    array_key_exists('fields', $field)) {
+                    $qRecordViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'][$fieldsIndex]['fields'] =
+                        array_merge($columnNames, $settings['worksheet_columns_related_fields']);
                 }
                 break;
             }
@@ -554,7 +562,7 @@ class QuotesConfigApi extends ConfigModuleApi
         //do the same as above for bundles when we're ready for that
 
         //write out new quotes record.php
-        $viewdefManager->saveViewdef($quoteRecordViewdef, 'Quotes', 'base', 'record');
+        $viewdefManager->saveViewdef($qRecordViewdef, 'Quotes', 'base', 'record');
     }
 
     /**

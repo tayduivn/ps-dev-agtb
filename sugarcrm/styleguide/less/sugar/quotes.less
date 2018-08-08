@@ -52,8 +52,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      min-width: 72px;
-      width: 72px;
+      min-width: 71px;
+      width: 71px;
       border-right: @tableBorder;
 
       a.btn {
@@ -618,8 +618,13 @@ tbody.quote-data-group {
     border-top: none;
   }
 
+  td:first-child {
+    border-right: 1px solid @tableFixedColumnsBorderColor;
+  }
+
   td:first-child > span {
     border-bottom: none;
+    border-right: none;
 
     &::after {
       height: 36px;
