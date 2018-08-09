@@ -22,6 +22,10 @@ describe("Profile Actions", function() {
         sinonSandbox = sinon.sandbox.create();
         menuMeta = [{
             acl_action: 'admin',
+            label: 'LBL_ADMIN'
+        },{
+            acl_action: 'not_admin',
+            acl_module: 'Accounts'
         }];
     });
     afterEach(function() {
@@ -35,36 +39,40 @@ describe("Profile Actions", function() {
         menuMeta = null;
     });
 
-    it("should show admin link when acl of admin and developer", function() {
-        var stubAdminAndDev = sinonSandbox.stub(app.acl, 'hasAccessToAny', function(a) {
-            if (a === 'admin' || a === 'developer') {
+    it('should show admin link together with normal link when user is an admin', function() {
+        var stubAdmin = sinonSandbox.stub(app.acl, 'hasAccess', function(action, module) {
+            if (action === 'admin' && module === 'Administration') {
                 return true;
-            } else {
-                return false;
             }
-        });
-        var result = view.filterAvailableMenu(menuMeta);
-        expect(stubAdminAndDev).toHaveBeenCalled();
-        expect(result.length).toEqual(1);
-    });
-    it("should show admin link when acl of developer", function() {
-        var stubDev = sinonSandbox.stub(app.acl, 'hasAccessToAny', function(a) {
-            if (a === 'developer') {
+            if (module === 'Accounts') {
                 return true;
-            } else {
-                return false;
             }
-        });
-        var result = view.filterAvailableMenu(menuMeta);
-        expect(stubDev).toHaveBeenCalled();
-        expect(result.length).toEqual(1);
-    });
-    it("should NOT show admin link when acl is NOT of admin or developer", function() {
-        var notAdminOrDev = sinonSandbox.stub(app.acl, 'hasAccessToAny', function(a) {
             return false;
         });
         var result = view.filterAvailableMenu(menuMeta);
-        expect(notAdminOrDev).toHaveBeenCalled();
-        expect(result.length).toEqual(0);
+        expect(stubAdmin).toHaveBeenCalled();
+        expect(result.length).toEqual(2);
+    });
+
+    it('should show admin link together with normal link when user is a developer', function() {
+        var stubDev = sinonSandbox.stub(app.acl, 'hasAccessToAny', function(action) {
+            return action === 'developer';
+        });
+        var result = view.filterAvailableMenu(menuMeta);
+        expect(stubDev).toHaveBeenCalled();
+        expect(result.length).toEqual(2);
+    });
+
+    it('should NOT show admin link when user is NOT an admin or a developer', function() {
+        var notDev = sinonSandbox.stub(app.acl, 'hasAccessToAny', function(action) {
+            return false;
+        });
+        var notAdmin = sinonSandbox.stub(app.acl, 'hasAccess', function(action, module) {
+            return action === 'admin';
+        });
+        var result = view.filterAvailableMenu(menuMeta);
+        expect(notDev).toHaveBeenCalled();
+        expect(notAdmin).toHaveBeenCalled();
+        expect(result.length).toEqual(1);
     });
 });
