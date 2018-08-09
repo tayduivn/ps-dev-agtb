@@ -36,6 +36,8 @@ class Search implements Context
     {
         //It can take up to 1 second to index items that were previously created in this scenario
         $engine = SearchEngine::getInstance();
+        $container = $engine->getContainer();
+        $container->indexer->finishBatch();
         sleep(1);
 
         $globalsearchApi = new \GlobalSearchApi();

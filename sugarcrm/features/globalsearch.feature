@@ -6,7 +6,7 @@
 # install or use this SugarCRM file.
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@GlobalSearch
+@search
 Feature: GlobalSearch
     In order to search terms in sugar
     As a sugar user

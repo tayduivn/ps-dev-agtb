@@ -141,6 +141,15 @@ class Indexer
     }
 
     /**
+     * Force any Beans currently queued in memory to Elastic.
+     * Has no effect on the DB index queue
+     */
+    public function finishBatch()
+    {
+        $this->getBulkHandler()->finishBatch();
+    }
+
+    /**
      * Verify whether or not to use the queue
      * @param \SugarBean $bean
      * @return boolean
