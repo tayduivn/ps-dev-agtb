@@ -595,6 +595,22 @@ class User extends Person {
                     $license_seats_needed = $row['total'] - $license_users;
                 }
                 if ($license_seats_needed >= 0) {
+                    $GLOBALS['log']->error(
+                        'The number of active users is already the maximum number of licenses allowed.'
+                        . ' New user cannot be created or activated.'
+                    );
+                    if (!empty($this->external_auth_only)) {
+                        $e = new SugarApiExceptionLicenseSeatsNeeded(
+                            'WARN_LICENSE_SEATS_MAXED_ONLY_EXISTING_USERS',
+                            null,
+                            null,
+                            0,
+                            'license_seats_needed'
+                        );
+                        throw $e;
+                    }
+                    $msg = translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration')
+                        . ' ' . translate('WARN_LICENSE_SEATS2', 'Administration');
                     if (isset($_REQUEST['action'])
                         && ($_REQUEST['action'] == 'MassUpdate' || $_REQUEST['action'] == 'Save')) {
                         $sv = new SugarView();
@@ -605,10 +621,10 @@ class User extends Person {
                                 . ' ' . translate('WARN_LICENSE_SEATS2', 'Administration');
                         $sv->displayErrors();
                         $sv->displayFooter();
+                        $msg = '';
                     }
                     // When action is not set, we're coming from the installer or non-UI source.
-                    die(translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration')
-                            . ' ' . translate('WARN_LICENSE_SEATS2', 'Administration'));
+                    die($msg);
                 }
             }
         }

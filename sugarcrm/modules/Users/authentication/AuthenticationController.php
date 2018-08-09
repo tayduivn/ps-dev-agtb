@@ -157,6 +157,10 @@ class AuthenticationController implements LoggerAwareInterface
         } catch (InvalidUserException $e) {
             $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = $this->getMessageForProviderException($e);
+        } catch (SugarApiExceptionLicenseSeatsNeeded $e) {
+            $this->logger->error($e->getMessage());
+            $_SESSION['login_error'] = $e->getMessage();
+            throw $e;
         } catch (ExternalAuthUserException $e) {
             $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = $this->getMessageForProviderException($e);

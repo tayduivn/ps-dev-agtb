@@ -204,7 +204,7 @@ class Team extends SugarBean
 			$team->add_user_to_team($user->id);
 		}
 
-        $su = BeanFactory::retrieveBean('Users', $user->id);
+        $su = BeanFactory::retrieveBean('Users', $user->id, ['use_cache' => false]);
         if (!$su) {
             return;
         }
