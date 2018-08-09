@@ -1891,3 +1891,197 @@ AdamEvent.prototype.stringify = function () {
     $.extend(true, inheritedJSON, thisJSON);
     return inheritedJSON;
 };
+
+/**
+ * Retrieves the URL base endpoint for event element settings data
+ * @return {string} the correct URL base endpoint
+ */
+AdamEvent.prototype.getBaseURL = function() {
+    return 'pmse_Project/EventDefinition/';
+};
+
+/**
+ * Returns the proper validation callback function for this event element
+ * @return {Object} the correct callback function
+ */
+AdamEvent.prototype.getValidationFunction = function() {
+    switch (this.getEventType()) {
+        case 'START':
+            return this.callbackFunctionForStartEvent;
+        case 'INTERMEDIATE':
+            switch (this.getEventMarker()) {
+                case 'TIMER':
+                    return this.callbackFunctionForWaitEvent;
+                case 'MESSAGE':
+                    switch (this.evn_behavior) {
+                        case 'CATCH':
+                            return this.callbackFunctionForReceiveMessageEvent;
+                        case 'THROW':
+                            return this.callbackFunctionForSendMessageEvent;
+                    }
+            }
+        case 'END':
+            switch (this.getEventMarker()) {
+                case 'MESSAGE':
+                    return this.callbackFunctionForSendMessageEvent;
+            }
+    }
+};
+
+/**
+ * Validates a start event's settings
+ * @param {Object} data contains the element settings information received from the API call
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamEvent.prototype.callbackFunctionForStartEvent = function(data, element, validationTools) {
+    var i;
+    var atom;
+    var evaluator;
+    var criteria = [];
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(null, 0, 1, null, element);
+
+    // Check that the 'Applies to:' field is set
+    if (!data.evn_params) {
+        validationTools.createError(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', 'Applies to');
+    }
+
+    // Validate the criteria box logic
+    if (data.evn_criteria) {
+        criteria = JSON.parse(data.evn_criteria);
+    }
+    evaluator = new validationTools.CriteriaEvaluator();
+    evaluator.addOr(criteria.slice());
+    evaluator.emptyCriteriaIsTrue = true;
+    if (evaluator.isAlwaysFalse()) {
+        validationTools.createError(element, 'LBL_PMSE_ERROR_LOGIC_IMPOSSIBLE');
+    }
+    for (i = 0; i < criteria.length; i++) {
+        atom = criteria[i];
+        validationTools.validateAtom(
+            atom.expType,
+            atom.expModule,
+            atom.expField,
+            atom.expValue,
+            element,
+            validationTools);
+    }
+};
+
+/**
+ * Validates a wait event's settings
+ * @param {Object} data contains the element settings information received from the API call
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamEvent.prototype.callbackFunctionForWaitEvent = function(data, element, validationTools) {
+    var i;
+    var atom;
+    var criteria = [];
+    var datetimeCount = 0;
+    validationTools.validateNumberOfEdges(1, null, 1, 1, element);
+
+    // If fixed date is selected, validate the criteria box
+    if (data.evn_params === 'fixed date') {
+        if (data.evn_criteria) {
+            criteria = JSON.parse(data.evn_criteria);
+        }
+        for (i = 0; i < criteria.length; i++) {
+            atom = criteria[i];
+            validationTools.validateAtom(
+                atom.expType,
+                atom.expModule,
+                atom.expField,
+                atom.expValue,
+                element,
+                validationTools);
+            if (atom.expSubtype && atom.expSubtype.toUpperCase() === 'DATETIME') {
+                datetimeCount++;
+            }
+        }
+        // Check that there is exactly 1 criteria of Datetime type
+        if (datetimeCount !== 1) {
+            validationTools.createError(element, 'LBL_PMSE_ERROR_WAIT_EVENT_ONE_DATETIME');
+        }
+    } else if (data.evn_criteria == 0) {
+        // Duration is selected and the time given is 0
+        validationTools.createError(element, 'LBL_PMSE_ERROR_WAIT_EVENT_ZERO_DURATION');
+    } else if (!data.evn_params || !data.evn_criteria) {
+        // No criteria have been set. This can happen when the user first places the wait event on the canvas.
+        validationTools.createError(element, 'LBL_PMSE_ERROR_WAIT_EVENT_NO_PARAMETERS');
+    }
+};
+
+/**
+ * Validates a receive message event's settings
+ * @param {Object} data contains the element settings information received from the API call
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamEvent.prototype.callbackFunctionForReceiveMessageEvent = function(data, element, validationTools) {
+    var i;
+    var atom;
+    var criteria = [];
+    validationTools.validateNumberOfEdges(1, null, 1, 1, element);
+
+    // Validate the criteria box
+    if (data.evn_criteria) {
+        criteria = JSON.parse(data.evn_criteria);
+    }
+    evaluator = new validationTools.CriteriaEvaluator();
+    evaluator.addOr(criteria.slice());
+    if (evaluator.isAlwaysFalse()) {
+        validationTools.createError(element, 'LBL_PMSE_ERROR_LOGIC_IMPOSSIBLE');
+    }
+    for (i = 0; i < criteria.length; i++) {
+        atom = criteria[i];
+        validationTools.validateAtom(
+            atom.expType,
+            atom.expModule,
+            atom.expField,
+            atom.expValue,
+            element,
+            validationTools);
+    }
+};
+
+/**
+ * Validates a send message event's settings
+ * @param  {Object} data contains the element settings information received from the API call
+ * @param  {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamEvent.prototype.callbackFunctionForSendMessageEvent = function(data, element, validationTools) {
+    var i;
+    var atom;
+    var field;
+    var criteria = [];
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(1, null, 1, 1, element);
+
+    // Check that the email template field is set and the template exists
+    validationTools.validateAtom('TEMPLATE', null, null, data.evn_criteria, element, validationTools);
+
+    // Validate each of the criteria boxes
+    if (data.evn_params) {
+        criteria = JSON.parse(data.evn_params);
+    }
+    if (!criteria.to || !criteria.to.length) {
+        validationTools.createError(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', 'To');
+    }
+    for (field in criteria) {
+        for (i = 0; i < criteria[field].length; i++) {
+            atom = criteria[field][i];
+            validationTools.validateAtom(
+                atom.type,
+                atom.module,
+                atom.field,
+                atom.value,
+                element,
+                validationTools);
+        }
+    }
+};

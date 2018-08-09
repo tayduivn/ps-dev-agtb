@@ -539,3 +539,24 @@ AdamShape.prototype.addErrors = function (newLayer, pos) {
         lMarker.setElementClass(errorArrayClass);
     }
 };
+
+/**
+ * Initiates the validation process of an AdamShape.
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamShape.prototype.validate = function(validationTools) {
+    var self = this;
+    var url = App.api.buildURL(this.getBaseURL() + self.id, null, null);
+    var callback = self.getValidationFunction();
+    if (callback) {
+        validationTools.progress.incrementTotal();
+        App.api.call('read', url, null, {
+            success: function(data) {
+                callback(data, self, validationTools);
+            },
+            complete: function() {
+                validationTools.progress.incrementValidated();
+            }
+        });
+    }
+};

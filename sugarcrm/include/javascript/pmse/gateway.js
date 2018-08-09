@@ -813,3 +813,117 @@ AdamGateway.prototype.updateDefaultFlow = function (destID) {
     this.gat_default_flow = destID;
 };
 
+/**
+ * Retrieves the URL base endpoint for gateway element settings data
+ * @return {string} the correct URL base endpoint
+ */
+AdamGateway.prototype.getBaseURL = function() {
+    return 'pmse_Project/GatewayDefinition/';
+};
+
+/**
+ * Returns the proper validation callback function for this gateway element
+ * @return {Object} the correct callback function
+ */
+AdamGateway.prototype.getValidationFunction = function() {
+    switch (this.getDirection()) {
+        case 'DIVERGING':
+            switch (this.getGatewayType()) {
+                case 'PARALLEL':
+                    return;
+                default:
+                    return this.callbackFunctionForDivergingGateway;
+            }
+        case 'CONVERGING':
+            return this.callbackFunctionForConvergingGateway;
+    }
+};
+
+/**
+ * Validates a diverging gateway's settings
+ * @param {Object} data contains the element settings information received from the API call
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamGateway.prototype.callbackFunctionForDivergingGateway = function(data, element, validationTools) {
+    var i;
+    var j;
+    var atom;
+    var criteria;
+    var evaluator;
+    var allEdges;
+    var destElementName;
+    var thisPath;
+    var allPaths = new validationTools.CriteriaEvaluator();
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(null, null, 2, null, element);
+
+    // For each criteria box
+    for (i = 0; i < data.data.length; i++) {
+        criteria = [];
+
+        // Validate the criteria box seperately, as well as add its contents to the
+        // CriteriaEvaluator object that will eventually validate all paths combined
+        if (data.data[i].flo_condition) {
+            criteria = JSON.parse(data.data[i].flo_condition);
+            allPaths.addOr(JSON.parse(data.data[i].flo_condition));
+        }
+
+        // Check if this one path is reachable. If not, report the path name to the user
+        thisPath = new validationTools.CriteriaEvaluator();
+        thisPath.addOr(criteria.slice());
+        if (thisPath.isAlwaysFalse()) {
+            allEdges = validationTools.canvas.connections;
+            destElementName = allEdges.find('id', data.data[i].flo_uid).destPort.parent.getName();
+            validationTools.createError(element, 'LBL_PMSE_ERROR_LOGIC_IMPOSSIBLE', destElementName);
+        }
+
+        // Validate the individual logical atoms in the criteria box
+        for (j = 0; j < criteria.length; j++) {
+            atom = criteria[j];
+            validationTools.validateAtom(
+                atom.expType,
+                atom.expModule,
+                atom.expField,
+                atom.expValue,
+                element,
+                validationTools);
+        }
+    }
+
+    // If no default path is selected, check that a branch will always execute. Here,
+    // we have 'OR'ed each criteria box together, and we are checking if the resulting
+    // logical expression is always true
+    if (!element.gat_default_flow && !allPaths.isAlwaysTrue()) {
+        validationTools.createError(element, 'LBL_PMSE_ERROR_GATEWAY_NO_GUARANTEED_PATH');
+    }
+};
+
+/**
+ * Validates a converging gateway's settings
+ * @param {Object} data contains the element settings information received from the API call
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamGateway.prototype.callbackFunctionForConvergingGateway = function(data, element, validationTools) {
+    var lastDiverging = element.currentGatewayScope[0];
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(2, null, 1, 1, element);
+
+    // Check that the type of the converging gateway is the correct one for the type of diverging
+    // gateway that was last used
+    if (lastDiverging) {
+        if (element.getGatewayType() === 'EXCLUSIVE') {
+            if (lastDiverging === 'EXCLUSIVE' || lastDiverging === 'EVENTBASED') {
+                return;
+            }
+        } else if (element.getGatewayType() === 'PARALLEL') {
+            if (lastDiverging === 'PARALLEL' || lastDiverging === 'INCLUSIVE') {
+                return;
+            }
+        }
+    }
+    validationTools.createError(element, 'LBL_PMSE_ERROR_GATEWAY_CONVERGING_TYPE_MISMATCH');
+};

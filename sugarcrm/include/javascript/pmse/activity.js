@@ -2814,3 +2814,184 @@ AdamActivity.prototype.getWindowDef = function(type) {
         wTitle: translate(wTitle) + ': ' + this.getName()
     };
 };
+
+/**
+ * Retrieves the URL base endpoint for activity element settings data
+ * @return {string} the correct URL base endpoint
+ */
+AdamActivity.prototype.getBaseURL = function() {
+    return 'pmse_Project/ActivityDefinition/';
+};
+
+/**
+ * Returns the proper validation callback function for this activity element
+ * @return {Object} the correct callback function
+ */
+AdamActivity.prototype.getValidationFunction = function() {
+    switch (this.getActivityTaskType()) {
+        case 'USERTASK':
+            return this.callbackFunctionForActivity;
+        case 'SCRIPTTASK':
+            switch (this.getActivityScriptType()) {
+                case 'NONE':
+                    return this.callbackFunctionForUnassignedAction;
+                case 'BUSINESS_RULE':
+                    return this.callbackFunctionForBusinessRuleAction;
+                case 'ASSIGN_USER':
+                    return this.callbackFunctionForAssignUserAction;
+                case 'CHANGE_FIELD':
+                    return this.callbackFunctionForChangeFieldAction;
+                case 'ADD_RELATED_RECORD':
+                    return this.callbackFunctionForAddRelatedRecordAction;
+            }
+    }
+};
+
+/**
+ * Validates an activity's settings
+ * @param {Object} data contains the element settings information received from the API call
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamActivity.prototype.callbackFunctionForActivity = function(data, element, validationTools) {
+    var user;
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(1, null, 1, null, element);
+
+    // Under 'Forms' settings, check that expected time is > 0 (if it is entered)
+    if (data.act_expected_time.time && data.act_expected_time.time < 0) {
+        validationTools.createError(element, 'LBL_PMSE_ERROR_ACTIVITY_EXPECTED_TIME');
+    }
+
+    // Under 'Users' settings, if 'Assignment Method' is set to 'Static Assignment', and a
+    // specific user is selected, check that the user exists
+    if (data.act_assignment_method === 'static') {
+        user = data.act_assign_user;
+        if (user !== 'currentuser' && user !== 'owner' && user !== 'supervisor') {
+            validationTools.validateAtom('USER_IDENTITY', null, null, user, element, validationTools);
+        }
+    }
+};
+
+/**
+ * Validates an unassigned action's settings
+ * @param {Object} data contains the element settings information received from the API call
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamActivity.prototype.callbackFunctionForUnassignedAction = function(data, element, validationTools) {
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(1, null, 1, null, element);
+
+    // Action is unassigned, which is an error in itself
+    validationTools.createError(element, 'LBL_PMSE_ERROR_ACTION_UNASSIGNED');
+};
+
+/**
+ * Validates a business rule action's settings
+ * @param  {Object} data contains the element settings information received from the API call
+ * @param  {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamActivity.prototype.callbackFunctionForBusinessRuleAction = function(data, element, validationTools) {
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(1, null, 1, null, element);
+
+    // Validate the selected business rule
+    validationTools.validateAtom('ALL_BUSINESS_RULES', null, null, data.act_fields, element, validationTools);
+};
+
+/**
+ * Validates an assign user action's settings
+ * @param  {Object} data contains the element settings information received from the API call
+ * @param  {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamActivity.prototype.callbackFunctionForAssignUserAction = function(data, element, validationTools) {
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(1, null, 1, null, element);
+
+    // Validate the selected process user
+    validationTools.validateAtom('USER_IDENTITY', null, null, data.act_assign_user, element, validationTools);
+};
+
+/**
+ * Validates a change field action's settings
+ * @param  {Object} data contains the element settings information received from the API call
+ * @param  {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamActivity.prototype.callbackFunctionForChangeFieldAction = function(data, element, validationTools) {
+    var criteria = [];
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(1, null, 1, null, element);
+
+    // For any selected related fields, ensure that they exist in the current instance of Sugar
+    if (data.act_fields) {
+        criteria = JSON.parse(data.act_fields);
+    }
+    for (var i = 0; i < criteria.length; i++) {
+        validationTools.validateAtom(data.act_field_module, criteria[i].field, null, element, validationTools);
+    }
+};
+
+/**
+ * Validates an add related record action's settings
+ * @param  {Object} data contains the element settings information received from the API call
+ * @param  {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamActivity.prototype.callbackFunctionForAddRelatedRecordAction = function(data, element, validationTools) {
+    var i;
+    var k;
+    var field;
+    var criteria = [];
+    var requiredFields;
+    var requiredFieldIsSet;
+    var url = App.api.buildURL('pmse_Project/CrmData/addRelatedRecord/' +
+        data.act_field_module + '?base_module=' + validationTools.getTargetModule());
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(1, null, 1, null, element);
+
+    // Validate the field selections
+    if (data.act_fields) {
+        criteria = JSON.parse(data.act_fields);
+    }
+    validationTools.progress.incrementTotal();
+    App.api.call('read', url, null, {
+        success: function(form) {
+
+            // Get a list of the required fields of the related module in this instance of Sugar
+            var requiredFields = form.result.filter(function(elem) {
+                return elem.required;
+            });
+
+            // Check that all required fields are set
+            for (i = 0; i < requiredFields.length; i++) {
+                field = requiredFields[i];
+                requiredFieldIsSet = false;
+                for (j = 0; j < criteria.length; j++) {
+                    if (criteria[j].field === field.value && criteria[j].value) {
+                        requiredFieldIsSet = true;
+                        break;
+                    }
+                }
+                if (!requiredFieldIsSet) {
+                    validationTools.createError(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', field.text);
+                }
+            }
+        },
+        error: function() {
+            validationTools.createError(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', 'Module relationship');
+        },
+        complete: function() {
+            validationTools.progress.incrementValidated();
+        }
+    });
+};

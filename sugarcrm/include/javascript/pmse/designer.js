@@ -84,17 +84,6 @@ var project,
         });
 
     var countErrors = document.getElementById("countErrors");
-    //labelErrors.id = "labelErros";
-    /*countErrors.className = "btn btn-danger dropdown-toggle";
-    countErrors.id = "countErrors";
-    jQuery(countErrors).css({
-        display : "none",
-        marginLeft : "900px",
-        position : "fixed"
-
-    }).click(function(){
-        myLayout.toggle('east');
-    });*/
 
 var getAutoIncrementName = function (type, targetElement) {
     var i, j, k = canvas.getCustomShapes().getSize(), element, exists, index = 1, auxMap = {
@@ -174,7 +163,13 @@ function renderProject (prjCode) {
             slidable: false,
             resizable: false
         },
-        north__showOverflowOnHover:	true
+        north__showOverflowOnHover: true,
+        south: {
+            size: 200,
+            maxSize: 200,
+            minSize: 100,
+            initHidden: true
+        }
     });
     $('#container').css('zIndex', 1);
 
@@ -1289,34 +1284,6 @@ function renderProject (prjCode) {
         }
     );
 
-    /*$("#adam_toolbar span").hover(function (e) {
-     var $div = $('<div id="nToolTip"></div>'),
-     tip =  $(this).attr('tooltip');
-     //if (typeof tip !== 'undefined' && tip !== '') {
-     if (tip !== undefined && tip !== '') {
-     $div.addClass('adam-tooltip-message');
-     $div.html($(this).attr('tooltip'));
-     $div.appendTo($(this).parent());
-     $div.css('width', '80px');
-     $div.css({top: $(this).height() + 10, left: e.pageX - ($div.width() / 2), position: 'absolute'});
-     }
-     }, function (e) {
-     $('#nToolTip').remove();
-     });*/
-
-    /*$('#adam_toolbar').find('.btn-close-designer').click(function (e) {
-        e.preventDefault();
-        //App.router.navigate('Home' , {trigger: true, replace: true });
-        App.utils.tooltip.hide($('.btn-close-designer'));
-        App.router.goBack();
-        *//*var ieOrigin, baseUrl;
-        if (!window.location.origin) {
-            ieOrigin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-        }
-        baseUrl = App.config.siteUrl || (window.location.origin || ieOrigin) + window.location.pathname;
-        window.location = baseUrl;*//*
-    });*/
-
     $('#ProjectTitle').hover(function (e) {
         $('.icon-edit-title').css('display', 'block');
     }, function (e) {
@@ -1384,7 +1351,23 @@ function renderProject (prjCode) {
      * Button that when clicked triggers the process design validator
      */
     $('#ButtonValidate').click(function() {
-        traverseProcess();
+
+        // Only start the validator if no validation is already running (no active AJAX requests)
+        if (!jQuery.active) {
+
+            // Clear the table of errors from any previous validation runs
+            $('#Error-table').find('tr:gt(0)').remove();
+
+            // Traverse the process
+            traverseProcess();
+        } else {
+
+            // Inform the user that the attempt to start validation was not successful
+            App.alert.show('validation_results', {
+                level: 'error',
+                title: translate('LBL_PMSE_VALIDATOR_WAIT_FOR_PROCESSES')
+            });
+        }
         jCore.getActiveCanvas().RemoveCurrentMenu();
     });
 
@@ -1399,158 +1382,1098 @@ function renderProject (prjCode) {
         $('.ui-layout-north').css('overflow', 'visible');
     });
 
-    /**
-     * Traverses the process to access each element in order
-     * @return {Array} an array containing the errors found during traversal
-     */
-    var traverseProcess = function() {
-        var errorList = [];
-        var i;
-        var j;
-        var queue;
-        var currElement;
-        var destElement;
-        var connectedElements;
-
-        // Initialize the arrays of elements placed on the canvas
-        var allElements = getAllElements();
-        var startEvents = getStartEvents();
-
-        // For each start event element, traverse the path starting from that element
-        for (i = 0; i < startEvents.length; i++) {
-
-            // Initialize the queue with just the start node
-            queue = [startEvents[i]];
-            queue[0].hasBeenQueued = true;
-            queue[0].currentGatewayScope = [];
-
-            // While there are still elements left to traverse:
-            while (queue.length) {
-
-                // Remove the front element of the queue and validate it
-                currElement = queue.shift();
-                validateElement(currElement, errorList);
-
-                // For each unvisited element that the current element connects to, add it to the queue
-                connectedElements = currElement.getDestElements();
-                for (j = 0; j < connectedElements.length; j++) {
-                    destElement = connectedElements[j];
-
-                    if (!destElement.hasBeenQueued) {
-
-                        // Set the proper gateway scope of the destination element
-                        setGatewayScope(currElement, destElement);
-
-                        // Push the destination element onto the queue and mark it as queued
-                        queue.push(destElement);
-                        destElement.hasBeenQueued = true;
-                    }
-                }
-            }
-        }
-        // Restore elements to orignal state, check for unvisited elements, and return the error list
-        finalCleanup(allElements, errorList);
-        return errorList;
-    };
-
-    /**
-     * Returns an array containing all user-placed elements on the canvas
-     * @return {Array}
-     */
-    var getAllElements = function() {
-        return jCore.getActiveCanvas().children.asArray().filter(function(elem) {
-            return elem.type !== 'MultipleSelectionContainer';
-        });
-    };
-
-    /**
-     * Returns an array containing all start events placed on the canvas
-     * @return {Array}
-     */
-    var getStartEvents = function() {
-        return jCore.getActiveCanvas().children.asArray().filter(function(elem) {
-            return elem.type === 'AdamEvent' && elem.getEventType() === 'START';
-        });
-    };
-
-    /**
-     * Updates the destination element's gateway scope depending on the current element
-     * @param {Object} currElement is the current element being examined in the traversal
-     * @param {Object} destElement is a destination element of the current element being examined in the traversal
-     */
-    var setGatewayScope = function(currElement, destElement) {
-        destElement.currentGatewayScope = currElement.currentGatewayScope.slice();
-        if (currElement.getType() === 'AdamGateway') {
-            if (currElement.getDirection() === 'DIVERGING') {
-                destElement.currentGatewayScope.unshift(currElement.getGatewayType());
-            } else if (currElement.getDirection() === 'CONVERGING') {
-                destElement.currentGatewayScope.shift();
-            }
-        }
-    };
-
-    /**
-     * Perform a final check for unvisited elements and return the elements to their original state
-     * @param  {Array} allElements is an array containing all user-placed elements on the canvas
-     * @param  {Array} errorList is an array containing the errors found during traversal
-     */
-    var finalCleanup = function(allElements, errorList) {
-        var i;
-        for (i = 0; i < allElements.length; i++) {
-
-            // Check if the element was never visited (unreachable)
-            if (!allElements[i].hasBeenQueued) {
-                createElementError(errorList, allElements[i], 'Element is not reachable');
-            }
-
-            // Remove the temporary attributes from each node to reset the elements to their initial state
-            delete allElements[i].hasBeenQueued;
-            delete allElements[i].currentGatewayScope;
-        }
-    };
-
-    /**
-     * Validate an element based on its current settings in the current instance of Sugar
-     * @param  {Object} element is the element on the canvas that is currently being examined/validated
-     * @param  {Array} errorList is an array containing the errors found during traversal
-     */
-    var validateElement = function(element, errorList) {
-    };
-
-    /**
-     * Adds a new error to the error list
-     * @param  {Array} errorList is an array containing the errors found during traversal
-     * @param  {Object} element is the element on the canvas that is currently being examined/validated
-     * @param  {string} description contains the error text to be presented to the user about the error
-     */
-    var createElementError = function(errorList, element, description) {
-    };
-
     project.setUid(prjCode);
-
     project.setSaveInterval(20000);
-//    project.setRestClient(new RestClient());
-//    project.restClient.setRestfulBehavior(SUGAR_REST);
-//    if (!SUGAR_REST) {
-//        project.restClient.setBackupAjaxUrl(SUGAR_AJAX_URL);
-//    }
     project.setCanvas(canvas);
-
-    //project.loadProject({"success":true,"project":{"prj_id":"4","prj_uid":"78321684452559b5c660eb6043512161","prj_name":"Discount Approval Process","prj_target_namespace":"","prj_expression_language":"","prj_type_language":"","prj_exporter":"","prj_exporter_version":"","prj_create_date":"2013-10-09 14:07:24","prj_update_date":"2013-10-09 14:07:24","prj_author":"Administrator","prj_author_version":"","prj_original_source":"","prj_description":"","pro_uid":"57263330652559b5c826868012742456","diagram":[{"dia_id":"4","dia_uid":"78940909052559b5c6fd5a1016579214","prj_id":"4","dia_name":"Discount Approval Process","dia_is_closable":"0","activities":[{"act_uid":"67241953552559b848cae89075038926","act_name":"Supervisor approval","act_type":"TASK","act_is_for_compensation":"0","act_start_quantity":"1","act_completion_quantity":"1","act_task_type":"USERTASK","act_implementation":"","act_instantiate":"0","act_script_type":"","act_script":"","act_loop_type":"NONE","act_test_before":"0","act_loop_maximum":"0","act_loop_condition":"","act_loop_cardinality":"0","act_loop_behavior":"NONE","act_is_adhoc":"0","act_is_collapsed":"1","act_completion_condition":"","act_ordering":"PARALLEL","act_cancel_remaining_instances":"1","act_protocol":"","act_method":"","act_is_global":"0","act_referer":"0","act_default_flow":"0","act_master_diagram":"0","bou_x":"163","bou_y":"217","bou_width":"101","bou_height":"51","bou_container":"bpmnDiagram"},{"act_uid":"10469697952559baa8cb528043138032","act_name":"VP Sales approval","act_type":"TASK","act_is_for_compensation":"0","act_start_quantity":"1","act_completion_quantity":"1","act_task_type":"USERTASK","act_implementation":"","act_instantiate":"0","act_script_type":"","act_script":"","act_loop_type":"NONE","act_test_before":"0","act_loop_maximum":"0","act_loop_condition":"","act_loop_cardinality":"0","act_loop_behavior":"NONE","act_is_adhoc":"0","act_is_collapsed":"1","act_completion_condition":"","act_ordering":"PARALLEL","act_cancel_remaining_instances":"1","act_protocol":"","act_method":"","act_is_global":"0","act_referer":"0","act_default_flow":"0","act_master_diagram":"0","bou_x":"474","bou_y":"217","bou_width":"101","bou_height":"51","bou_container":"bpmnDiagram"},{"act_uid":"62788289352559c358d0b29096355536","act_name":"Remove Discount","act_type":"TASK","act_is_for_compensation":"0","act_start_quantity":"1","act_completion_quantity":"1","act_task_type":"SCRIPTTASK","act_implementation":"","act_instantiate":"0","act_script_type":"CHANGE_FIELD","act_script":"","act_loop_type":"NONE","act_test_before":"0","act_loop_maximum":"0","act_loop_condition":"","act_loop_cardinality":"0","act_loop_behavior":"NONE","act_is_adhoc":"0","act_is_collapsed":"1","act_completion_condition":"","act_ordering":"PARALLEL","act_cancel_remaining_instances":"1","act_protocol":"","act_method":"","act_is_global":"0","act_referer":"0","act_default_flow":"0","act_master_diagram":"0","bou_x":"747","bou_y":"386","bou_width":"35","bou_height":"35","bou_container":"bpmnDiagram"},{"act_uid":"3195682035255a350085cd5006873156","act_name":"taxable by amount","act_type":"TASK","act_is_for_compensation":"0","act_start_quantity":"1","act_completion_quantity":"1","act_task_type":"SCRIPTTASK","act_implementation":"","act_instantiate":"0","act_script_type":"BUSINESS_RULE","act_script":"","act_loop_type":"NONE","act_test_before":"0","act_loop_maximum":"0","act_loop_condition":"","act_loop_cardinality":"0","act_loop_behavior":"NONE","act_is_adhoc":"0","act_is_collapsed":"1","act_completion_condition":"","act_ordering":"PARALLEL","act_cancel_remaining_instances":"1","act_protocol":"","act_method":"","act_is_global":"0","act_referer":"0","act_default_flow":"0","act_master_diagram":"0","bou_x":"746","bou_y":"94","bou_width":"35","bou_height":"35","bou_container":"bpmnDiagram"},{"act_uid":"6913391785255a365086ef7092175235","act_name":"set Taxes","act_type":"TASK","act_is_for_compensation":"0","act_start_quantity":"1","act_completion_quantity":"1","act_task_type":"SCRIPTTASK","act_implementation":"","act_instantiate":"0","act_script_type":"CHANGE_FIELD","act_script":"","act_loop_type":"NONE","act_test_before":"0","act_loop_maximum":"0","act_loop_condition":"","act_loop_cardinality":"0","act_loop_behavior":"NONE","act_is_adhoc":"0","act_is_collapsed":"1","act_completion_condition":"","act_ordering":"PARALLEL","act_cancel_remaining_instances":"1","act_protocol":"","act_method":"","act_is_global":"0","act_referer":"0","act_default_flow":"0","act_master_diagram":"0","bou_x":"881","bou_y":"217","bou_width":"35","bou_height":"35","bou_container":"bpmnDiagram"}],"events":[{"evn_uid":"74909115852559b718cada6002065023","evn_name":"discount > 0","evn_type":"START","evn_marker":"MESSAGE","evn_is_interrupting":"1","evn_attached_to":"0","evn_cancel_activity":"0","evn_activity_ref":"0","evn_wait_for_completion":"1","evn_error_name":"","evn_error_code":"","evn_escalation_name":"","evn_escalation_code":"","evn_condition":"","evn_message":"OPPORTUNITY","evn_operation_name":"","evn_operation_implementation_ref":"","evn_time_date":"","evn_time_cycle":"","evn_time_duration":"","evn_behavior":"CATCH","bou_x":"92","bou_y":"224","bou_width":"33","bou_height":"33","bou_container":"bpmnDiagram"},{"evn_uid":"98548435352559bee8cd6c5023187280","evn_name":"Postive Response","evn_type":"INTERMEDIATE","evn_marker":"MESSAGE","evn_is_interrupting":"1","evn_attached_to":"0","evn_cancel_activity":"0","evn_activity_ref":"0","evn_wait_for_completion":"1","evn_error_name":"","evn_error_code":"","evn_escalation_name":"","evn_escalation_code":"","evn_condition":"","evn_message":"","evn_operation_name":"","evn_operation_implementation_ref":"","evn_time_date":"","evn_time_cycle":"","evn_time_duration":"","evn_behavior":"THROW","bou_x":"634","bou_y":"93","bou_width":"33","bou_height":"33","bou_container":"bpmnDiagram"},{"evn_uid":"38369812152559bf28cdb93097943566","evn_name":"Negative Response","evn_type":"INTERMEDIATE","evn_marker":"MESSAGE","evn_is_interrupting":"1","evn_attached_to":"0","evn_cancel_activity":"0","evn_activity_ref":"0","evn_wait_for_completion":"1","evn_error_name":"","evn_error_code":"","evn_escalation_name":"","evn_escalation_code":"","evn_condition":"","evn_message":"","evn_operation_name":"","evn_operation_implementation_ref":"","evn_time_date":"","evn_time_cycle":"","evn_time_duration":"","evn_behavior":"THROW","bou_x":"634","bou_y":"385","bou_width":"33","bou_height":"33","bou_container":"bpmnDiagram"},{"evn_uid":"71081809952559c408d12a7083856779","evn_name":"Discount approved","evn_type":"END","evn_marker":"EMPTY","evn_is_interrupting":"1","evn_attached_to":"0","evn_cancel_activity":"0","evn_activity_ref":"0","evn_wait_for_completion":"1","evn_error_name":"","evn_error_code":"","evn_escalation_name":"","evn_escalation_code":"","evn_condition":"","evn_message":"","evn_operation_name":"","evn_operation_implementation_ref":"","evn_time_date":"","evn_time_cycle":"","evn_time_duration":"","evn_behavior":"THROW","bou_x":"980","bou_y":"93","bou_width":"33","bou_height":"33","bou_container":"bpmnDiagram"},{"evn_uid":"75177863452559c428d1398075861600","evn_name":"Discount Rejected","evn_type":"END","evn_marker":"EMPTY","evn_is_interrupting":"1","evn_attached_to":"0","evn_cancel_activity":"0","evn_activity_ref":"0","evn_wait_for_completion":"1","evn_error_name":"","evn_error_code":"","evn_escalation_name":"","evn_escalation_code":"","evn_condition":"","evn_message":"","evn_operation_name":"","evn_operation_implementation_ref":"","evn_time_date":"","evn_time_cycle":"","evn_time_duration":"","evn_behavior":"THROW","bou_x":"852","bou_y":"385","bou_width":"33","bou_height":"33","bou_container":"bpmnDiagram"}],"gateways":[{"gat_uid":"33930715852559ba18cb386097070569","gat_name":"Approved","gat_type":"EXCLUSIVE","gat_direction":"DIVERGING","gat_instantiate":"0","gat_event_gateway_type":"NONE","gat_activation_count":"0","gat_waiting_for_start":"1","gat_default_flow":"","bou_x":"299","bou_y":"218","bou_width":"45","bou_height":"45","bou_container":"bpmnDiagram"},{"gat_uid":"12045436152559ba68cb446075495919","gat_name":"Discount > 20%","gat_type":"EXCLUSIVE","gat_direction":"DIVERGING","gat_instantiate":"0","gat_event_gateway_type":"NONE","gat_activation_count":"0","gat_waiting_for_start":"1","gat_default_flow":"","bou_x":"384","bou_y":"218","bou_width":"45","bou_height":"45","bou_container":"bpmnDiagram"},{"gat_uid":"98266465752559bc98cc8c4082811194","gat_name":"Approved?","gat_type":"EXCLUSIVE","gat_direction":"DIVERGING","gat_instantiate":"0","gat_event_gateway_type":"NONE","gat_activation_count":"0","gat_waiting_for_start":"1","gat_default_flow":"","bou_x":"628","bou_y":"218","bou_width":"45","bou_height":"45","bou_container":"bpmnDiagram"},{"gat_uid":"4132778515255a35c086cc0062984198","gat_name":"Exclusive Gateway # 1","gat_type":"EXCLUSIVE","gat_direction":"DIVERGING","gat_instantiate":"0","gat_event_gateway_type":"NONE","gat_activation_count":"0","gat_waiting_for_start":"1","gat_default_flow":"","bou_x":"874","bou_y":"87","bou_width":"45","bou_height":"45","bou_container":"bpmnDiagram"}],"artifacts":[],"flows":[{"flo_uid":"93919815552559b968cb261049132150","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"74909115852559b718cada6002065023","flo_element_origin_type":"bpmnEvent","flo_element_origin_port":"0","flo_element_dest":"67241953552559b848cae89075038926","flo_element_dest_type":"bpmnActivity","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"125","flo_y1":"241","flo_x2":"161","flo_y2":"241","flo_state":[{"x":125,"y":241},{"x":161,"y":241}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"58736614452559bbd8cb941097457829","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"67241953552559b848cae89075038926","flo_element_origin_type":"bpmnActivity","flo_element_origin_port":"0","flo_element_dest":"33930715852559ba18cb386097070569","flo_element_dest_type":"bpmnGateway","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"266","flo_y1":"241","flo_x2":"299","flo_y2":"241","flo_state":[{"x":266,"y":241},{"x":299,"y":241}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"44171218052559bc08cbe23018876066","flo_type":"SEQUENCE","flo_name":"yes","flo_element_origin":"33930715852559ba18cb386097070569","flo_element_origin_type":"bpmnGateway","flo_element_origin_port":"0","flo_element_dest":"12045436152559ba68cb446075495919","flo_element_dest_type":"bpmnGateway","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"[{\"expModule\":null,\"expField\":\"67241953552559b848cae89075038926\",\"expOperator\":\"equals\",\"expValue\":\"Approve\",\"expType\":\"CONTROL\",\"expLabel\":\"Supervisor approval == Approved\"}]","flo_x1":"344","flo_y1":"241","flo_x2":"385","flo_y2":"241","flo_state":[{"x":344,"y":241},{"x":385,"y":241}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"96395047652559bc48cc7e2003356896","flo_type":"SEQUENCE","flo_name":"yes","flo_element_origin":"12045436152559ba68cb446075495919","flo_element_origin_type":"bpmnGateway","flo_element_origin_port":"0","flo_element_dest":"10469697952559baa8cb528043138032","flo_element_dest_type":"bpmnActivity","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"[{\"expDirection\":\"after\",\"expFieldType\":\"Float\",\"expModule\":\"Opportunities\",\"expField\":\"discount_c\",\"expOperator\":\"major_than\",\"expValue\":20,\"expType\":\"MODULE\",\"expLabel\":\"discount > 20\"}]","flo_x1":"430","flo_y1":"241","flo_x2":"472","flo_y2":"241","flo_state":[{"x":430,"y":241},{"x":472,"y":241}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"36174649152559bcb8ccc29007209158","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"10469697952559baa8cb528043138032","flo_element_origin_type":"bpmnActivity","flo_element_origin_port":"0","flo_element_dest":"98266465752559bc98cc8c4082811194","flo_element_dest_type":"bpmnGateway","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"577","flo_y1":"241","flo_x2":"628","flo_y2":"241","flo_state":[{"x":577,"y":241},{"x":628,"y":241}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"77982702952559bf08cdac9044203138","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"98266465752559bc98cc8c4082811194","flo_element_origin_type":"bpmnGateway","flo_element_origin_port":"0","flo_element_dest":"98548435352559bee8cd6c5023187280","flo_element_dest_type":"bpmnEvent","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"[{\"expModule\":null,\"expField\":\"10469697952559baa8cb528043138032\",\"expOperator\":\"equals\",\"expValue\":\"Approve\",\"expType\":\"CONTROL\",\"expLabel\":\"VP Sales approval == Approved\"}]","flo_x1":"651","flo_y1":"218","flo_x2":"651","flo_y2":"126","flo_state":[{"x":651,"y":218},{"x":651,"y":126}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"57222647052559bf48cdf88032628623","flo_type":"DEFAULT","flo_name":"","flo_element_origin":"98266465752559bc98cc8c4082811194","flo_element_origin_type":"bpmnGateway","flo_element_origin_port":"0","flo_element_dest":"38369812152559bf28cdb93097943566","flo_element_dest_type":"bpmnEvent","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"651","flo_y1":"263","flo_x2":"651","flo_y2":"385","flo_state":[{"x":651,"y":263},{"x":651,"y":385}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"41934232452559bf98ce468001159637","flo_type":"DEFAULT","flo_name":"No","flo_element_origin":"33930715852559ba18cb386097070569","flo_element_origin_type":"bpmnGateway","flo_element_origin_port":"0","flo_element_dest":"38369812152559bf28cdb93097943566","flo_element_dest_type":"bpmnEvent","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"322","flo_y1":"263","flo_x2":"634","flo_y2":"402","flo_state":[{"x":322,"y":263},{"x":322,"y":402},{"x":634,"y":402}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"37745387752559c4a8d18f7045281496","flo_type":"DEFAULT","flo_name":"","flo_element_origin":"12045436152559ba68cb446075495919","flo_element_origin_type":"bpmnGateway","flo_element_origin_port":"0","flo_element_dest":"98548435352559bee8cd6c5023187280","flo_element_dest_type":"bpmnEvent","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"408","flo_y1":"218","flo_x2":"634","flo_y2":"110","flo_state":[{"x":408,"y":218},{"x":408,"y":110},{"x":634,"y":110}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"78542356652559ca28d1d26022179105","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"38369812152559bf28cdb93097943566","flo_element_origin_type":"bpmnEvent","flo_element_origin_port":"0","flo_element_dest":"62788289352559c358d0b29096355536","flo_element_dest_type":"bpmnActivity","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"667","flo_y1":"402","flo_x2":"745","flo_y2":"402","flo_state":[{"x":667,"y":402},{"x":745,"y":402}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"95416419952559cb18d2075083852689","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"62788289352559c358d0b29096355536","flo_element_origin_type":"bpmnActivity","flo_element_origin_port":"0","flo_element_dest":"75177863452559c428d1398075861600","flo_element_dest_type":"bpmnEvent","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"784","flo_y1":"402","flo_x2":"852","flo_y2":"402","flo_state":[{"x":784,"y":402},{"x":852,"y":402}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"9978622765255a3540865f5094054060","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"98548435352559bee8cd6c5023187280","flo_element_origin_type":"bpmnEvent","flo_element_origin_port":"0","flo_element_dest":"3195682035255a350085cd5006873156","flo_element_dest_type":"bpmnActivity","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"667","flo_y1":"110","flo_x2":"744","flo_y2":"110","flo_state":[{"x":667,"y":110},{"x":744,"y":110}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"2382848165255a36e087981092771775","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"3195682035255a350085cd5006873156","flo_element_origin_type":"bpmnActivity","flo_element_origin_port":"0","flo_element_dest":"4132778515255a35c086cc0062984198","flo_element_dest_type":"bpmnGateway","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"783","flo_y1":"110","flo_x2":"874","flo_y2":"110","flo_state":[{"x":783,"y":110},{"x":874,"y":110}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"5523208895255a381087db2059903911","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"4132778515255a35c086cc0062984198","flo_element_origin_type":"bpmnGateway","flo_element_origin_port":"0","flo_element_dest":"6913391785255a365086ef7092175235","flo_element_dest_type":"bpmnActivity","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"[{\"expFieldType\":null,\"expDirection\":null,\"expModule\":null,\"expField\":\"17\",\"expOperator\":\"equals\",\"expValue\":\"TAXABLE\",\"expType\":\"BUSINESS_RULES\",\"expLabel\":\"taxable by amount == &TAXABLE&\"}]","flo_x1":"897","flo_y1":"132","flo_x2":"897","flo_y2":"215","flo_state":[{"x":897,"y":132},{"x":897,"y":215}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"8969864515255a386088056037308854","flo_type":"DEFAULT","flo_name":"","flo_element_origin":"4132778515255a35c086cc0062984198","flo_element_origin_type":"bpmnGateway","flo_element_origin_port":"0","flo_element_dest":"71081809952559c408d12a7083856779","flo_element_dest_type":"bpmnEvent","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"919","flo_y1":"110","flo_x2":"980","flo_y2":"110","flo_state":[{"x":919,"y":110},{"x":980,"y":110}],"flo_eval_priority":"0","prj_id":"4"},{"flo_uid":"5527879075255a43908b389026760340","flo_type":"SEQUENCE","flo_name":"","flo_element_origin":"6913391785255a365086ef7092175235","flo_element_origin_type":"bpmnActivity","flo_element_origin_port":"0","flo_element_dest":"71081809952559c408d12a7083856779","flo_element_dest_type":"bpmnEvent","flo_element_dest_port":"0","flo_is_inmediate":"","flo_condition":"","flo_x1":"918","flo_y1":"233","flo_x2":"997","flo_y2":"126","flo_state":[{"x":918,"y":233},{"x":997,"y":233},{"x":997,"y":126}],"flo_eval_priority":"0","prj_id":"4"}],"pools":[],"lanes":[],"participants":[],"data":[]}],"process_definition":{"pro_module":"Opportunities","pro_status":"ACTIVE","pro_locked_variables":[],"pro_terminate_variables":false}}});
-    //console.log('que pasa');
     project.load(prjCode, {
         success: function() {
             $.extend(canvas, {'name': project.name});
 
             PROJECT_MODULE = project.process_definition.pro_module;
-            //PROJECT_LOCKED_VARIABLES = project.process_definition.pro_locked_variables.slice();
-
-            /*items = canvas.getDiagramTree();
-            Tree.treeReload('tree', items);*/
             project.init();
         }
     });
-}
+};
 
-//jQuery(".pane ui-layout-center").append(countErrors);
+/**
+ * Traverses the process to access each element in order
+ * @return {Array} an array containing the errors found during traversal
+ */
+var traverseProcess = function() {
+    var i;
+    var j;
+    var queue;
+    var currElement;
+    var destElement;
+    var connectedElements;
+    var validationTools = getValidationTools();
 
+    // Initialize the arrays of elements placed on the canvas
+    var allElements = getAllElements();
+    var startEvents = getStartEvents();
+
+    // If there are elements to validate, display the progress alert
+    if (startEvents.length) {
+        validationTools.progress.incrementTotal();
+    }
+
+    // For each start event element, traverse the path starting from that element
+    for (i = 0; i < startEvents.length; i++) {
+
+        // Initialize the queue with just the start node
+        queue = [startEvents[i]];
+        queue[0].hasBeenQueued = true;
+        queue[0].currentGatewayScope = [];
+
+        // While there are still elements left to traverse:
+        while (queue.length) {
+
+            // Remove the front element of the queue and validate it
+            currElement = queue.shift();
+            if (currElement.validate) {
+                currElement.validate(validationTools);
+            }
+
+            // For each unvisited element that the current element connects to, add it to the queue
+            connectedElements = currElement.getDestElements();
+            for (j = 0; j < connectedElements.length; j++) {
+                destElement = connectedElements[j];
+
+                if (!destElement.hasBeenQueued) {
+
+                    // Set the proper gateway scope of the destination element
+                    setGatewayScope(currElement, destElement);
+
+                    // Push the destination element onto the queue and mark it as queued
+                    queue.push(destElement);
+                    destElement.hasBeenQueued = true;
+                }
+            }
+        }
+    }
+    // Perform final checks for unvisited elements
+    finalCleanup(allElements);
+    validationTools.progress.incrementValidated();
+};
+
+/**
+ * Returns an array containing all user-placed elements on the canvas
+ * @return {Array}
+ */
+var getAllElements = function() {
+    return jCore.getActiveCanvas().children.asArray().filter(function(elem) {
+        return elem.type !== 'MultipleSelectionContainer';
+    });
+};
+
+/**
+ * Returns an array containing all start events placed on the canvas
+ * @return {Array}
+ */
+var getStartEvents = function() {
+    return jCore.getActiveCanvas().children.asArray().filter(function(elem) {
+        return elem.type === 'AdamEvent' && elem.getEventType() === 'START';
+    });
+};
+
+/**
+ * Updates the destination element's gateway scope depending on the current element
+ * @param {Object} currElement is the current element being examined in the traversal
+ * @param {Object} destElement is a destination element of the current element being examined in the traversal
+ */
+var setGatewayScope = function(currElement, destElement) {
+    destElement.currentGatewayScope = currElement.currentGatewayScope.slice();
+    if (currElement.getType() === 'AdamGateway') {
+        if (currElement.getDirection() === 'DIVERGING') {
+            destElement.currentGatewayScope.unshift(currElement.getGatewayType());
+        } else if (currElement.getDirection() === 'CONVERGING') {
+            destElement.currentGatewayScope.shift();
+        }
+    }
+};
+
+/**
+ * Perform a final check for unvisited elements and return the elements to their original state
+ * @param  {Array} allElements is an array containing all user-placed elements on the canvas
+ */
+var finalCleanup = function(allElements) {
+    var i;
+    for (i = 0; i < allElements.length; i++) {
+
+        // Check if the element was never visited (unreachable)
+        if (!allElements[i].hasBeenQueued && allElements[i].getType() !== 'AdamArtifact') {
+            createError(allElements[i], 'LBL_PMSE_ERROR_ELEMENT_UNREACHABLE');
+        }
+
+        // Delete each element's hasBeenQueued attribute in case we want to run the traversal again
+        delete allElements[i].hasBeenQueued;
+    }
+};
+
+/**
+ * @return {Object} a collection of utility functions used in element validation
+ */
+var getValidationTools = function() {
+    return {
+        'progress': new ProgressTracker(),
+        'canvas': jCore.getActiveCanvas(),
+        'validateNumberOfEdges': validateNumberOfEdges,
+        'validateAtom': validateAtom,
+        'createError': createError,
+        'CriteriaEvaluator': CriteriaEvaluator,
+        'LogicTracker': LogicTracker,
+        'LogicAtom': LogicAtom,
+        'getTargetModule': getTargetModule
+    };
+};
+
+/*
+ * Below are various utility functions that are used during a validation traversal of
+ * the process definition.
+ */
+
+/**
+ * Keeps track of the progress of a validation traversal of the canvas elements
+ * and displays the status to the user as a percentage
+ */
+var ProgressTracker = function() {
+    this.validated = 0,
+    this.total = 0,
+
+    /**
+     * Increments the count of finished/validated items
+     */
+    this.incrementValidated = function() {
+        var errorsFound;
+        this.validated++;
+        if (this.validated === this.total) {
+
+            errorsFound = document.getElementById('Error-table').rows.length - 1;
+
+            // We've reached the end of validation. Replace the 'in process' alert with
+            // a closable one that reports the completion to the user including the number
+            // of errors found
+            App.alert.dismiss('validator_running');
+            App.alert.show('validation_results', {
+                level: 'success',
+                title: translate('LBL_PMSE_VALIDATOR_COMPLETE') + errorsFound
+            });
+        } else {
+            this.show();
+        }
+    },
+
+    /**
+     * Increments the total count of items that require validation
+     */
+    this.incrementTotal = function() {
+        this.total++;
+        this.show();
+    },
+
+    /**
+     * Refreshes the alert that displays the progress to the user
+     */
+    this.show = function() {
+        var progress = Math.ceil((this.validated / this.total) * 100);
+        var newMessage = translate('LBL_PMSE_VALIDATOR_IN_PROGRESS') + ': ' + progress + '%';
+        var errorsFound = document.getElementById('Error-table').rows.length - 1;
+        App.alert.dismiss('validator_running');
+
+        // Only display the south pane if there is an error
+        if (errorsFound) {
+            myLayout.show('south');
+        }
+
+        App.alert.show('validator_running', {
+            level: 'process',
+            title: newMessage,
+            autoClose: false
+        });
+    };
+};
+
+/**
+ * Validates that an element has a proper number of incoming and outgoing edges
+ * @param  {integer} minIncoming is the minimum number of incoming edges allowed for the element
+ * @param  {integer} maxIncoming is the maximum number of incoming edges allowed for the element
+ * @param  {integer} minOutgoing is the minimum number of outgoing edges allowed for the element
+ * @param  {integer} maxOutgoing is the maximum number of outgoing edges allowed for the element
+ * @param  {Object} element is the element on the canvas that is currently being examined/validated
+ */
+var validateNumberOfEdges = function(minIncoming, maxIncoming, minOutgoing, maxOutgoing, element) {
+    var incomingEdges = element.getPorts().asArray().filter(function(edge) {
+        return edge.connection.srcPort.parent.id !== element.id;
+    });
+    var outgoingEdges = element.getDestElements();
+    // Depending on element type, check proper number of incoming and outgoing edges
+    if (minIncoming && incomingEdges.length < minIncoming) {
+        createError(element, 'LBL_PMSE_ERROR_FLOW_INCOMING_MINIMUM', minIncoming);
+    }
+    if (maxIncoming && incomingEdges.length > maxIncoming) {
+        createError(element, 'LBL_PMSE_ERROR_FLOW_INCOMING_MAXIMUM', maxIncoming);
+    }
+    if (minOutgoing && outgoingEdges.length < minOutgoing) {
+        createError(element, 'LBL_PMSE_ERROR_FLOW_OUTGOING_MINIMUM', minOutgoing);
+    }
+    if (maxOutgoing && outgoingEdges.length > maxOutgoing) {
+        createError(element, 'LBL_PMSE_ERROR_FLOW_OUTGOING_MAXIMUM', maxOutgoing);
+    }
+};
+
+/**
+ * Validates that the criterion is valid in the current instance of Sugar. The field names in the
+ * criterionTypes variable are meant to match with criterion type IDs that occur in element settings
+ * data. This way, we can simply pass in the information from a piece of criteria and this function
+ * will validate it. Some fields in criterionTypes check the same thing; this is because some criteria
+ * boxes contain criterion type IDs that differ from other criteria boxes' type IDs, but have the same
+ * meaning. For each entry in criterionTypes, 'url' is the endpoint URL to search, 'key' is the unique
+ * value to search for at that endpoint, and 'text' is the readable representation of type of criterion
+ * we are validating.
+ *
+ * @param {string} type represents the type of criterion being validated
+ * @param {string} module is the module ID of the piece of criterion
+ * @param {string} field is the field ID of the piece of criterion
+ * @param {string} value is the value of the piece of criterion
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+var validateAtom = function(type, module, field, value, element, validationTools) {
+    var i;
+    var searchInfo;
+    var criterionTypes = {
+        'MODULE': {
+            // Validates a module field criterion
+            url: App.api.buildURL('pmse_Project/CrmData/fields/' + module + '?base_module=' + getTargetModule()),
+            key: field,
+            text: 'Module field'
+        },
+        'VARIABLE': {
+            // Validates a module field criterion
+            url: App.api.buildURL('pmse_Project/CrmData/fields/' + module + '?base_module=' + getTargetModule()),
+            key: value,
+            text: 'Module field'
+        },
+        'recipient': {
+            // Validates a module field criterion
+            url: App.api.buildURL('pmse_Project/CrmData/fields/' + module + '?base_module=' + getTargetModule()),
+            key: value,
+            text: 'Module field'
+        },
+        'USER_IDENTITY': {
+            // Validates a user criterion
+            url: App.api.buildURL('pmse_Project/CrmData/users/'),
+            key: value,
+            text: 'User'
+        },
+        'USER_ROLE': {
+            // Validates a role criterion
+            url: App.api.buildURL('pmse_Project/CrmData/rolesList/'),
+            key: value,
+            text: 'Role'
+        },
+        'role': {
+            // Validates a role criterion
+            url: App.api.buildURL('pmse_Project/CrmData/rolesList/'),
+            key: value,
+            text: 'Role'
+        },
+        'RELATIONSHIP': {
+            // Validates a module relationship criterion
+            url: App.api.buildURL('pmse_Project/CrmData/related/' + getTargetModule()),
+            key: value,
+            text: 'Module relationship'
+        },
+        'user': {
+            // Validates a module relationship criterion
+            url: App.api.buildURL('pmse_Project/CrmData/related/' + getTargetModule()),
+            key: module,
+            text: 'Module relationship'
+        },
+        'TEAM': {
+            // Validates a team criterion
+            url: App.api.buildURL('pmse_Project/CrmData/teams/public/'),
+            key: value,
+            text: 'Team'
+        },
+        'team': {
+            // Validates a team criterion
+            url: App.api.buildURL('pmse_Project/CrmData/teams/public/'),
+            key: value,
+            text: 'Team'
+        },
+        'CONTROL': {
+            // Validates a form response criterion
+            url: App.api.buildURL('pmse_Project/CrmData/activities/' + project.uid),
+            key: field,
+            text: 'Form activity'
+        },
+        'ALL_BUSINESS_RULES': {
+            // Validates a business rule criterion
+            url: App.api.buildURL('pmse_Project/CrmData/rulesets/' + project.uid),
+            key: value,
+            text: 'Business rule'
+        },
+        'BUSINESS_RULES': {
+            // Validates a business rule action criterion
+            url: App.api.buildURL('pmse_Project/CrmData/businessrules/' + project.uid),
+            key: field,
+            text: 'Business rule action'
+        },
+        'TEMPLATE': {
+            // Validates an email template criterion
+            url: App.api.buildURL('pmse_Project/CrmData/emailtemplates/' + getTargetModule()),
+            key: value,
+            text: 'Email template'
+        }
+    };
+    if (criterionTypes[type]) {
+        searchInfo = criterionTypes[type];
+    }
+    if (searchInfo) {
+        validationTools.progress.incrementTotal();
+        App.api.call('read', searchInfo.url, null, {
+            success: function(data) {
+                for (i = 0; i < data.result.length; i++) {
+                    if (data.result[i].value === searchInfo.key) {
+                        return;
+                    }
+                }
+                createError(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', searchInfo.text);
+            },
+            complete: function() {
+                validationTools.progress.incrementValidated();
+            }
+        });
+    }
+};
+
+/**
+ * Adds a new error to the error list table
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {string} description contains the error text to be presented to the user about the error
+ * @param {string} field is an optional value representing a specific field that the error refers to
+ */
+var createError = function(element, errorLabel, field) {
+
+    // Get the information about the error
+    var elementName = element.getName();
+    var errorName = field ? (translate(errorLabel) + ': ' + field) : translate(errorLabel);
+    var errorInfo = translate(errorLabel + '_INFO');
+
+    // Get a reference to the error table
+    var tableRef = document.getElementById('Error-table').getElementsByTagName('tbody')[0];
+
+    // Find the correct spot to place the new row, based alphabetically by the element name
+    var rowNumber;
+    var otherElement;
+    for (rowNumber = 0; rowNumber < tableRef.rows.length; rowNumber++) {
+        otherElementName = tableRef.rows[rowNumber].cells[0].innerText;
+        if (element.getName() < otherElementName) {
+            break;
+        }
+    }
+
+    // Insert a new row into the error table at the correct index
+    var newRow = tableRef.insertRow(rowNumber);
+
+    // Insert new cells into the new table row
+    var nameCell = newRow.insertCell(0);
+    var errorCell = newRow.insertCell(1);
+
+    // Create the elements that will go into the cells
+    var nameText = document.createElement('a');
+    var errorText = document.createElement('a');
+
+    // Set the text content and click handler of the name cell element
+    nameText.textContent = elementName;
+    nameText.onclick = function() {
+
+        // When the user clicks the element name, select the element on the canvas and center the canvas view
+        // on it
+        canvas.emptyCurrentSelection();
+        canvas.addToSelection(element);
+        centerCanvasOnElement(element);
+    };
+
+    // Set the text content and tooltip of the error cell element
+    errorText.textContent = errorName;
+    errorText.setAttribute('rel', 'tooltip');
+    errorText.setAttribute('data-placement', 'top');
+    errorText.setAttribute('data-original-title', errorInfo);
+
+    // Add the new elements to the cells
+    nameCell.appendChild(nameText);
+    errorCell.appendChild(errorText);
+};
+
+/**
+ * Centers the canvas view on the given element
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ */
+var centerCanvasOnElement = function(element) {
+
+    // Calculate the correct scroll positions for the horizontal and vertical scrollbars in the center pane
+    var centerPane = myLayout.center.pane[0];
+    var targetScrollLeft = element.zoomX - (centerPane.clientWidth / 2);
+    var targetScrollTop = element.zoomY - (centerPane.clientHeight / 2);
+    targetScrollLeft = targetScrollLeft < 0 ? 0 : targetScrollLeft;
+    targetScrollTop = targetScrollTop < 0 ? 0 : targetScrollTop;
+
+    // Move the horizontal and vertical scrollbars to the calculated positions
+    centerPane.scrollLeft = targetScrollLeft;
+    centerPane.scrollTop = targetScrollTop;
+};
+
+/**
+ * CriteriaEvaluator provides a way to analyze gateway criteria box logic.
+ * The addOr or addAnd methods accept gateway flo_criteria JSON objects,
+ * and can be used to build larger statements across multiple criteria
+ * boxes. Included are methods to determine whether the logical statement
+ * is always true or always false.
+ */
+var CriteriaEvaluator = function() {
+    this.criteria = [],
+
+    // Some criteria boxes count empty criteria as true (i.e. start events). For others,
+    // it is false (i.e. diverging gateways). The following property can be used to
+    // adjust whether or not to count empty criteria as true for this CriteraEvaluator
+    // object. By default, it is set to false.
+    this.emptyCriteriaIsTrue = false;
+
+    /**
+     * Appends a logical statement onto the current one represented by this
+     * CriteriaEvaluator as an OR
+     * @param {Array} newCriteria is an array of criteria JSON elements parsed
+     *                from a set of criteria box data
+     */
+    this.addOr = function(newCriteria) {
+        var newOR;
+        if (newCriteria.length) {
+            if (this.criteria.length) {
+                newOR = new Operand('LOGIC', undefined, undefined, undefined, 'OR');
+                this.criteria.push(newOR);
+            }
+            this.criteria.push(this.changeCriteriaIntoEvaluableStructure(newCriteria));
+        }
+    },
+
+    /**
+     * Appends a logical statement onto the current one represented by this
+     * CriteriaEvaluator as an AND
+     * @param {Array} newCriteria is an array of criteria JSON elements parsed
+     *                from a set of criteria box data
+     */
+    this.addAnd = function(newCriteria) {
+        var newAND;
+        if (newCriteria.length) {
+            if (this.criteria.length) {
+                newAND = new Operand('LOGIC', undefined, undefined, undefined, 'AND');
+                this.criteria.push(newAND);
+            }
+            this.criteria.push(this.changeCriteriaIntoEvaluableStructure(newCriteria));
+        }
+    },
+
+    /**
+     * Determines if the logical statement represented by this CriteriaEvaluator is
+     * a tautology (always true).
+     * @return {boolean} true if there is no way for the statement to be false; false otherwise
+     */
+    this.isAlwaysTrue = function() {
+        var i;
+        var logicTracker;
+        var possibilities;
+        if (!this.emptyCriteriaIsTrue && !this.criteria.length) {
+            return false;
+        }
+        this.negateExpression(this.criteria);
+        possibilities = this.generatePossibilities(this.criteria.slice());
+        for (i = 0; i < possibilities.length; i++) {
+            logicTracker = new LogicTracker();
+            logicTracker.add(possibilities[i]);
+            if (logicTracker.evaluate()) {
+                this.negateExpression(this.criteria);
+                return false;
+            }
+        }
+        this.negateExpression(this.criteria);
+        return true;
+    },
+
+    /**
+     * Determines if the logical statement represented by this CriteriaEvaluator is
+     * a contradiction (always false).
+     * @return {boolean} true if there is no way for the statement to be true; false otherwise
+     */
+    this.isAlwaysFalse = function() {
+        var i;
+        var logicTracker;
+        var possibilities = this.generatePossibilities(this.criteria.slice());
+        if (this.emptyCriteriaIsTrue && !this.criteria.length) {
+            return false;
+        }
+        for (i = 0; i < possibilities.length; i++) {
+            logicTracker = new LogicTracker();
+            logicTracker.add(possibilities[i]);
+            if (logicTracker.evaluate()) {
+                return false;
+            }
+        }
+        return true;
+    },
+
+    /**
+     * Converts a JSON-parsed criteria array into an array of Operand objects and
+     * simplifies the statement by getting rid of any '( )' groupings and 'NOT'
+     * statements
+     * @param  {Array} criteria is the JSON-parsed criteria array obtained from criteria box data
+     * @return {Array} an array of Operand objects that represents a simplified version of the
+     *                 original criteria array
+     */
+    this.changeCriteriaIntoEvaluableStructure = function(criteria) {
+        // Convert the elements of the criteria into easy-to-work-with Operand objects
+        this.convertToOperandObjects(criteria);
+        // Convert all '( )' enclosed expressions in the criteria into nested arrays
+        criteria = this.getRidOfParentheses(criteria);
+        // Perform all negations in the expression in order to remove all 'NOT' Operands
+        this.getRidOfNOTs(criteria);
+        return criteria;
+    },
+
+    /**
+     * Converts the array of criteria box data into an array of Operand objects
+     * @param  {Array} criteria is the JSON-parsed criteria array obtained from criteria box data
+     */
+    this.convertToOperandObjects = function(criteria) {
+        var i;
+        for (i = 0; i < criteria.length; i++) {
+            criteria[i] = new Operand(
+                criteria[i].expType || undefined,
+                criteria[i].expModule || undefined,
+                criteria[i].expField || undefined,
+                criteria[i].expOperator || undefined,
+                criteria[i].expValue || undefined
+            );
+        }
+    },
+
+    /**
+     * Adjusts an array of Operand objects to remove any '(' and ')' Operands groupings, and replace
+     * the groupings with nested arrays of Operand objects that are easier to work with.
+     * @param  {Array} criteria is an array of Operand objects representing a criteria box logical statement
+     * @return {Array} newCriteria is a new array representing the original array after converting its
+     *                 nested statements into nested arrays
+     */
+    this.getRidOfParentheses = function(criteria) {
+        var newCriteria = [];
+        while (criteria.length) {
+            if (criteria[0].type === 'GROUP' && criteria[0].value === '(') {
+                criteria.shift();
+                newCriteria.push(this.getRidOfParentheses(criteria));
+            } else if (criteria[0].type === 'GROUP' && criteria[0].value === ')') {
+                criteria.shift();
+                return newCriteria;
+            } else {
+                newCriteria.push(criteria.shift());
+            }
+        }
+        return newCriteria;
+    },
+
+    /**
+     * Performs any negation within an array of Operand objects, and removes the 'NOT' Operands.
+     * @param  {Array} criteria is an array of Operand objects that has had any nested statements
+     *                 converted to nested arrays via the getRidOfParentheses() method
+     * @return {Array} the array after negation has been performed and all 'NOT' Operands have been removed.
+     */
+    this.getRidOfNOTs = function(criteria) {
+        var i;
+        // Recurse to the inner depths first
+        for (i = 0; i < criteria.length; i++) {
+            if (Array.isArray(criteria[i])) {
+                criteria[i] = this.getRidOfNOTs(criteria[i]);
+            }
+        }
+
+        // If we encounter a 'NOT', remove the not from the list, and invert the following expression
+        for (i = 0; i < criteria.length; i++) {
+            if (criteria[i].type === 'LOGIC' && criteria[i].value === 'NOT') {
+                criteria.splice(i, 1);
+                this.negateExpression(criteria[i]);
+            }
+        }
+        return criteria;
+    },
+
+    /**
+     * Returns an array of ALL combinations of values that could make the current criteria statement
+     * true. Note that this does not mean each combination is possible or valid, as it does not take
+     * into account contradictions among operators and values. Each subarray of the returned array
+     * can be thought of as an 'OR' with the other subarrays. Within each of those subarrays, each
+     * Operand can be thought of as an 'AND' with the other Operands.
+     * @param  {Array} criteria is an array of criteria box data that has been converted via the
+     *                 changeCriteriaIntoEvaluableStructure() method
+     * @return {Array} an array of subarrays; each subarray is a collection of Operands that represents
+     *                 a possible combination of 'AND's that could render the logical statement true
+     */
+    this.generatePossibilities = function(criteria) {
+        var i;
+        var j;
+        var k;
+        var l;
+        var dataToReturn = [];
+        var temp = [[]];
+        var combinations;
+        var possibility;
+
+        // Start by going into the bottom of each parentheses group recursively
+        for (i = 0; i < criteria.length; i++) {
+            if (Array.isArray(criteria[i])) {
+                criteria[i] = this.generatePossibilities(criteria[i]);
+            }
+        }
+        // Iterate through the criteria, and add each possible combination of
+        // criteria values as subarrays to the dataToReturn array
+        for (i = 0; i < criteria.length; i++) {
+            // If we reach an 'OR', start a new subarray
+            if (criteria[i].type === 'LOGIC' && criteria[i].value === 'OR') {
+                for (j = 0; j < temp.length; j++) {
+                    dataToReturn.push(temp[j]);
+                }
+                // dataToReturn = dataToReturn.concat(temp);
+                temp = [[]];
+            } else if (Array.isArray(criteria[i])) {
+                // If we encounter an array at this point, it has already been
+                // evaluated to an array of subarrays. Combine all possible
+                // combinations of the subarrays with the current temp array.
+                combinations = [];
+                for (j = 0; j < temp.length; j++) {
+                    for (k = 0; k < criteria[i].length; k++) {
+                        possibility = temp[j].concat(criteria[i][k]);
+                        combinations.push(possibility);
+                    }
+                }
+                temp = combinations;
+            } else if (criteria[i].type !== 'LOGIC') {
+                // If we encounter a single expression, add it to the temp array
+                for (j = 0; j < temp.length; j++) {
+                    temp[j].push(criteria[i]);
+                }
+            }
+        }
+        // Since we have finished iterating, check if temp has unpushed elements
+        for (i = 0; i < temp.length; i++) {
+            if (temp[i].length) {
+                dataToReturn.push(temp[i]);
+            }
+        }
+        return dataToReturn;
+    },
+
+    /**
+     * Negates the given expression, either an Operand or array of Operands
+     * @param  {Array} expression is an Operand object or array of Operand objects. This
+     *                 array should not contain any '(', ')', or 'NOT' Operands.
+     */
+    this.negateExpression = function(expression) {
+        var i;
+        if (Array.isArray(expression)) {
+            for (i = 0; i < expression.length; i++) {
+                this.negateExpression(expression[i]);
+            }
+        } else {
+            this.negateSingleExpression(expression);
+        }
+    },
+
+    /**
+     * Negates a single Operand object
+     * @param  {Operand} expression is a single Operand object. It must not be a '(',
+     *                   ')', or 'NOT' Operand.
+     */
+    this.negateSingleExpression = function(expression) {
+        // Provides mappings for negations of logic values
+        var invertLogic = {
+            'equals': 'not_equals',
+            'not_equals': 'equals',
+            'starts_with': 'not_starts_with',
+            'not_starts_with': 'starts_with',
+            'ends_with': 'not_ends_with',
+            'not_ends_with': 'ends_with',
+            'contains': 'does_not_contain',
+            'does_not_contain': 'contains',
+            'AND': 'OR',
+            'OR': 'AND'
+        };
+        if (expression.type === 'LOGIC') {
+            expression.value = invertLogic[expression.value];
+        } else {
+            expression.operator = invertLogic[expression.operator];
+        }
+    };
+};
+
+/**
+ * LogicTracker stores a collection of LogicAtoms which together hold the
+ * information about an entire logical statement in a criteria box. Its
+ * evaluate function will return true only if all LogicAtoms it contains
+ * are valid
+ */
+var LogicTracker = function() {
+    this.atoms = [],
+
+    /**
+     * Adds an array of operand objects to this LogicTracker
+     * @param {Array} operands is an array of Operand objects. This array
+     *                should contain only property Operands (no 'AND', 'OR',
+     *                '(', ')', or 'NOT' Operands). Each Operand of this array
+     *                is considered an 'AND' with each of the other Operands
+     */
+    this.add = function(operands) {
+        var i;
+        var k;
+        var found = false;
+        var newAtom;
+        for (i = 0; i < operands.length; i++) {
+            found = false;
+
+            // Check if the property referenced by the Operand already
+            // exists in the logic tracker, and update it if it does
+            for (k = 0; k < this.atoms.length; k++) {
+                if (operands[i].type === this.atoms[k].type) {
+                    if (operands[i].module === this.atoms[k].module) {
+                        if (operands[i].field === this.atoms[k].field) {
+                            this.atoms[k].add(operands[i].operator, operands[i].value);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Otherwise, create a new entry in the logic tracker
+            if (!found) {
+                newAtom = new LogicAtom(operands[i].type, operands[i].module, operands[i].field);
+                newAtom.add(operands[i].operator, operands[i].value);
+                this.atoms.push(newAtom);
+            }
+        }
+    },
+
+    /**
+     * Evaluates whether the group of LogicAtoms represented by this LogicTracker are all valid
+     * @return {boolean} true if the logical statement represented by this LogicTracker is valid; false otherwise
+     */
+    this.evaluate = function() {
+        var i;
+        if (!this.atoms.length) {
+            return false;
+        }
+        for (i = 0; i < this.atoms.length; i++) {
+            if (!this.atoms[i].evaluate()) {
+                return false;
+            }
+        }
+        return true;
+    };
+};
+
+/**
+ * LogicAtom represents a single property referenced in a logical expression.
+ * It holds information about all constraints placed on that property
+ * throughout the entire expression. Its evaluate function allows us to
+ * evaluate whether all the constraints placed on a property in a logical
+ * expression are valid when combined together.
+ * @param {string} type is the type of Operand that this LogicAtom represents
+ * @param {string} module is the module of the property that this LogicAtom represents
+ * @param {field} field is the field of the property that his LogicAtom represents
+ */
+var LogicAtom = function(type, module, field) {
+
+    this.type = type,
+    this.module = module,
+    this.field = field,
+    this.operators = {
+        'equals': [],
+        'not_equals': [],
+        'starts_with': [],
+        'not_starts_with': [],
+        'ends_with': [],
+        'not_ends_with': [],
+        'contains': [],
+        'does_not_contain': []
+    },
+
+    /**
+     * Adds a constraint to the property that this LogicAtom represents
+     * @param {string} operator is the operator that the constraint uses (see this.operators)
+     * @param {string} value is the specific value of the constraint
+     */
+    this.add = function(operator, value) {
+        this.operators[operator].push(value);
+    },
+
+    /**
+     * Evaluates all constraints on this LogicAtom to check if they are valid
+     * together. Examples of invalid LogicAtoms inlcude properties that are
+     * required to equal two different values simultaneously, are required to
+     * contain values that they are also required not to contain, etc.
+     * @return {boolean} true if this LogicAtom is valid; false otherwise
+     */
+    this.evaluate = function() {
+        var equals = this.operators.equals;
+        var notEquals = this.operators.not_equals;
+        var startsWith = this.operators.starts_with;
+        var notStartsWith = this.operators.not_starts_with;
+        var endsWith = this.operators.ends_with;
+        var notEndsWith = this.operators.not_ends_with;
+        var contains = this.operators.contains;
+        var notContains = this.operators.does_not_contain;
+        var result = true;
+
+        // Check for any contradictions from 'is' constraints
+        if (this.operators.equals.length) {
+            if (this.type !== 'USER_ROLE') {
+                // Exception for roles (users can have multiple roles)
+                result = result && arrayContainsOneDistinctValue(equals);
+            }
+            result = result && arrayDoesNotContainValues(equals, notEquals);
+            result = result && wordsStartWithPrefixes(equals, startsWith);
+            result = result && wordsDoNotStartWithPrefixes(equals, notStartsWith);
+            result = result && wordsEndWithSuffixes(equals, endsWith);
+            result = result && wordsDoNotEndWithSuffixes(equals, notEndsWith);
+            result = result && wordsContainSubstrings(equals, contains);
+            result = result && wordsDoNotContainSubstrings(equals, notContains);
+        }
+
+        // Check for any contradictions from 'starts with' constraints
+        if (this.operators.starts_with.length) {
+            result = result && multiplePrefixesAreAllValid(startsWith);
+            result = result && wordsDoNotStartWithPrefixes(startsWith, notStartsWith);
+            result = result && wordsDoNotContainSubstrings(startsWith, notContains);
+        }
+
+        // Check for any contradictions from 'ends with' constraints
+        if (this.operators.ends_with.length) {
+            result = result && multipleSuffixesAreAllValid(endsWith);
+            result = result && wordsDoNotEndWithSuffixes(endsWith, notEndsWith);
+            result = result && wordsDoNotContainSubstrings(endsWith, notContains);
+        }
+
+        // Check for any contradictions from 'contains' constraints
+        if (this.operators.contains.length) {
+            result = result && wordsDoNotContainSubstrings(contains, notContains);
+        }
+
+        return result;
+    },
+
+    /**
+     * Checks that there is only one distinct value inside the given array
+     * @param  {Array} an array of string values
+     * @return {boolean} true if there is only one distinct value in the array; false otherwise
+     */
+    arrayContainsOneDistinctValue = function(array) {
+        return _.uniq(array).length < 2;
+    },
+
+    /**
+     * Checks that the given array does not contain any of the given values
+     * @param  {Array} values is an array of string values
+     * @param  {Array} array is an array of string values
+     * @return {boolean} false if any string in values is found in array; true otherwise
+     */
+    arrayDoesNotContainValues = function(values, array) {
+        var i;
+        for (i = 0; i < values.length; i++) {
+            if (array.indexOf(values[i]) !== -1) {
+                return false;
+            }
+        }
+        return true;
+    },
+
+    /**
+     * Checks whether all of the given words begin with all of the given prefixes
+     * @param  {Array} words is an array of string values
+     * @param  {Array} prefixes is an array of string values
+     * @return {boolean} true if all strings in words begin with all strings in prefixes; false otherwise
+     */
+    wordsStartWithPrefixes = function(words, prefixes) {
+        var i;
+        var j;
+        for (i = 0; i < words.length; i++) {
+            for (j = 0; j < prefixes.length; j++) {
+                if (words[i].indexOf(prefixes[j]) !== 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+
+    /**
+     * Checks whether none of the given words begin with any of the given prefixes
+     * @param  {Array} words is an array of string values
+     * @param  {Array} prefixes is an array of string values
+     * @return {boolean} false if any string in words begins with any string in prefixes; true otherwise
+     */
+    wordsDoNotStartWithPrefixes = function(words, prefixes) {
+        var i;
+        var j;
+        for (i = 0; i < words.length; i++) {
+            for (j = 0; j < prefixes.length; j++) {
+                if (words[i].indexOf(prefixes[j]) === 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+
+    /**
+     * Checks whether all of the given words end with all of the given suffixes
+     * @param  {Array} words is an array of string values
+     * @param  {Array} suffixes is an array of string values
+     * @return {boolean} true if all strings in words end with all strings in suffixes; false otherwise
+     */
+    wordsEndWithSuffixes = function(words, suffixes) {
+        var i;
+        var j;
+        for (i = 0; i < words.length; i++) {
+            for (j = 0; j < suffixes.length; j++) {
+                if (words[i].substring(words[i].length - suffixes[j].length) !== suffixes[j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+
+    /**
+     * Checks whether any of the given words end with any of the given suffixes
+     * @param  {Array} words is an array of string values
+     * @param  {Array} suffixes is an array of string values
+     * @return {boolean} false if any string in words ends with any string in suffixes; true otherwise
+     */
+    wordsDoNotEndWithSuffixes = function(words, suffixes) {
+        var i;
+        var j;
+        for (i = 0; i < words.length; i++) {
+            for (j = 0; j < suffixes.length; j++) {
+                if (words[i].substring(words[i].length - suffixes[j].length) === suffixes[j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+
+    /**
+     * Checks whether all of the given words contain all of the given substrings
+     * @param  {Array} words is an array of string values
+     * @param  {Array} substrings is an array of string values
+     * @return {boolean} true if all strings in words contain all strings in substrings; false otherwise
+     */
+    wordsContainSubstrings = function(words, substrings) {
+        var i;
+        var j;
+        for (i = 0; i < words.length; i++) {
+            for (j = 0; j < substrings.length; j++) {
+                if (words[i].indexOf(substrings[j]) === -1) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+
+    /**
+     * Checks whether any of the given words contain any of the given substrings
+     * @param  {Array} words is an array of string values
+     * @param  {Array} substrings is an array of string values
+     * @return {boolean} false if any strings in words contain any strings in substrings; true otherwise
+     */
+    wordsDoNotContainSubstrings = function(words, substrings) {
+        var i;
+        var j;
+        for (i = 0; i < words.length; i++) {
+            for (j = 0; j < substrings.length; j++) {
+                if (words[i].indexOf(substrings[j]) !== -1) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+
+    /**
+     * Checks whether all string values in the array could represent the beginning of the same word.
+     * For example, ['app', 'appl', 'a', 'apple'] are all valid suffixes of the word 'apple'
+     * @param  {Array} array is an array of string values
+     * @return {boolean} false if any prefixes contradict each other; true otherwise
+     */
+    multiplePrefixesAreAllValid = function(array) {
+        var currWord;
+        var i;
+        array.sort(function(a, b) {
+            return a.length - b.length;
+        });
+        currWord = array[0];
+        for (i = 1; i < array.length; i++) {
+            if (!wordsStartWithPrefixes([array[i]], [currWord])) {
+                return false;
+            }
+            currWord = array[i];
+        }
+        return true;
+    },
+
+    /**
+     * Checks whether all string values in the array could represent the ending of the same word.
+     * For example, ['e', 'ple', 'le', 'apple'] are all valid suffixes of the word 'apple'
+     * @param  {Array} array is an array of string values
+     * @return {boolean} false if any suffixes contradict each other; true otherwise
+     */
+    multipleSuffixesAreAllValid = function(array) {
+        var currWord;
+        var i;
+        array.sort(function(a, b) {
+            return a.length - b.length;
+        });
+        currWord = array[0];
+        for (i = 1; i < array.length; i++) {
+            if (!wordsEndWithSuffixes([array[i]], [currWord])) {
+                return false;
+            }
+            currWord = array[i];
+        }
+        return true;
+    };
+};
+
+/**
+ * Operand represents a single criterion of a criteria box logical expression. It provides an easier type of object
+ * to work with when evaluating the validity of a logical expression.
+ * @param {string} typeID is the type of the criterion gathered from the criteria box JSON
+ * @param {string} moduleID is the module of the criterion gathered from the criteria box JSON
+ * @param {string} fieldID is the field of the criterion gathered from the criteria box JSON
+ * @param {string} operatorID is the operator of the criterion gathered from the criteria box JSON
+ * @param {string} value is the value of the criterion gathered from the criteria box JSON
+ */
+var Operand = function(typeID, moduleID, fieldID, operatorID, value) {
+    this.type = typeID;
+    this.module = moduleID;
+    this.field = fieldID;
+    this.operator = operatorID;
+    this.value = value;
+};
+
+/**
+ * Returns the target module of the current process definition being designed
+ * @return {string} The name of the target module
+ */
+var getTargetModule = function() {
+    return project.process_definition.pro_module;
+};

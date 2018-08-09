@@ -392,4 +392,55 @@ $mod_strings = array (
 
     'LBL_PMSE_INVALID_EXPRESSION_SYNTAX' => 'Invalid expression syntax.',
     'LBL_PMSE_MESSAGE_ERROR_CURRENCIES_MIX' => 'Can\'t use two different currencies in the same expression.',
+
+    // PMSE Validation tool strings
+
+    'LBL_PMSE_VALIDATOR_IN_PROGRESS' => 'Validating process definition',
+    'LBL_PMSE_VALIDATOR_WAIT_FOR_PROCESSES' => 'Error: Please wait for all processes to finish before starting validation',
+    'LBL_PMSE_VALIDATOR_COMPLETE' => 'Validation complete! Errors found: ',
+
+    'LBL_PMSE_ERROR_FLOW_INCOMING_MINUMUM' => 'Element does not meet the minimum number of incoming flows',
+    'LBL_PMSE_ERROR_FLOW_INCOMING_MINIMUM_INFO' => 'This element must have a minimum number of incoming paths. Check the number of paths that connect to this element to make sure that minimum number is met.',
+
+    'LBL_PMSE_ERROR_FLOW_INCOMING_MAXIMUM' => 'Element exceeds the maximum number of incoming flows',
+    'LBL_PMSE_ERROR_FLOW_INCOMING_MINIMUM_INFO' => 'This element has a maximum number of incoming paths that must not be exceeded. Check the number of paths that connect to this element to make sure that minumum number is not exceeded.',
+
+    'LBL_PMSE_ERROR_FLOW_OUTGOING_MINIMUM' => 'Element does not meet the minimum number of outgoing flows',
+    'LBL_PMSE_ERROR_FLOW_OUTGOING_MAXIMUM_INFO' => 'This element must have a minimum number of outgoing paths. Check the number of paths leading out of this element to make sure that minimum number is met.',
+
+    'LBL_PMSE_ERROR_FLOW_OUTGOING_MAXIMUM' => 'Element exceeds the maximum number of outgoing flows',
+    'LBL_PMSE_ERROR_FLOW_OUTGOING_MAXIMUM_INFO' => 'This element has a maximum number of outgoing paths that must not be exceeded. Check the number of paths leading out of this element to make sure that maximum number is not exceeded.',
+
+    'LBL_PMSE_ERROR_FIELD_REQUIRED' => 'Required field is not set',
+    'LBL_PMSE_ERROR_FIELD_REQUIRED_INFO' => 'This element has a field that is required, but has not been set. Check the element settings to ensure the field has been set correctly, then make sure to click the "Save" button.',
+
+    'LBL_PMSE_ERROR_DATA_NOT_FOUND' => 'Data does not currently exist in the system',
+    'LBL_PMSE_ERROR_DATA_NOT_FOUND_INFO' => 'The settings for this element reference a specific piece of data that does not exist in the database. Check the element settings to ensure that all data referenced exist (i.e. specific users, module fields, teams, etc.).',
+
+    'LBL_PMSE_ERROR_LOGIC_IMPOSSIBLE' => 'Criteria box expression will never evaluate to true',
+    'LBL_PMSE_ERROR_LOGIC_IMPOSSIBLE_INFO' => 'Criteria boxes contain logical AND/OR/NOT expressions. This error means that a criteria box in the element settings has been configured in such a way that the expression will never be true. Check the criteria box to eliminate any logical contradictions that prevent the expression from being true.',
+
+    'LBL_PMSE_ERROR_ELEMENT_UNREACHABLE' => 'Element is not reachable',
+    'LBL_PMSE_ERROR_ELEMENT_UNREACHABLE_INFO' => 'In order for an element to be executed in a process, it must have a path connected to it. The chain of paths leading to this element must begin with a start element. Check the chain of incoming paths to this element to make sure that chain begins with a start element.',
+
+    'LBL_PMSE_ERROR_WAIT_EVENT_ONE_DATETIME' => 'Wait time criteria must contain exactly one datetime constant',
+    'LBL_PMSE_ERROR_WAIT_EVENT_ONE_DATETIME_INFO' => 'This wait event element has been configured using the "Fixed Date" criteria box. This box must contain exactly one "Fixed Datetime" constant or Datetime field reference. All other pieces of the expression must be math operators (+/-) or "Time Span" constants.',
+
+    'LBL_PMSE_ERROR_WAIT_EVENT_ZERO_DURATION' => 'Duration value specified must not be zero',
+    'LBL_PMSE_ERROR_WAIT_EVENT_ZERO_DURATION_INFO' => 'This wait event element has been configured using the "Duration" setting. This setting must not be equal to zero, or an error will occur. Check the element settings to ensure the "Duration" is not set to zero.',
+
+    'LBL_PMSE_ERROR_WAIT_EVENT_NO_PARAMETERS' => 'Wait time parameters have not been set',
+    'LBL_PMSE_ERROR_WAIT_EVENT_NO_PARAMETERS_INFO' => 'This wait event element does not have any settings configured. Check the element settings to make sure "Duration" or "Fixed Date" is selected, enter the values desired, and click the "Save" button.',
+
+    'LBL_PMSE_ERROR_ACTIVITY_EXPECTED_TIME' => 'Expected time is less than zero',
+    'LBL_PMSE_ERROR_ACTIVITY_EXPECTED_TIME_INFO' => 'Under the "Forms" settings for this activity element, the expected time is set to a negative value, which will cause the process to freeze when reaching the element. Open the "Forms" settings for this element to change the expected time to a non-negative number.',
+
+    'LBL_PMSE_ERROR_ACTION_UNASSIGNED' => 'Action type is [Unassigned]',
+    'LBL_PMSE_ERROR_ACTION_UNASSIGNED_INFO' => 'This action element does not have a designated type. This can be changed by right-clicking on the action element, then selecting a type from the "Action Type" list.',
+
+    'LBL_PMSE_ERROR_GATEWAY_NO_GUARANTEED_PATH' => 'A path is not guaranteed to be taken',
+    'LBL_PMSE_ERROR_GATEWAY_NO_GUARANTEED_PATH_INFO' => 'This error message occurs because there is a chance that none of the paths out of this gateway element will be taken, which will cause the process to halt. It is advised to set a default path to take in case none of the criteria box expressions in the element settings are satisfied. This can be done by right-clicking on the gateway element, and selecting an element under the "Default Flow" menu. If a default path is not specified, the criteria box expressions in the element settings should be changed to ensure that at least one of them will be true when the process is run.',
+
+    'LBL_PMSE_ERROR_GATEWAY_CONVERGING_TYPE_MISMATCH' => 'Converging gateway type does not match gateway type of an incoming flow',
+    'LBL_PMSE_ERROR_GATEWAY_CONVERGING_TYPE_MISMATCH_INFO' => 'Diverging gateways expand processes into multiple branches. When using a converging gateway to re-converge these branches back into one path, the correct type of converging gateway must be used, depending on the type of diverging gateway that was used to create the branches. For branches created with exclusive or event-based diverging gateways, use an exclusive converging gateway to re-converge them. For branches created with parallel or inclusive diverging gateways, use a parallel converging gateway to re-converge them.',
 );
