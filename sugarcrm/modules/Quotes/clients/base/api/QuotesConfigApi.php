@@ -131,6 +131,8 @@ class QuotesConfigApi extends ConfigModuleApi
         $this-> applySummaryColumnsConfig();
         $this-> applyFooterRowsConfig();
 
+        MetaDataManager::refreshModulesCache(array('Quotes', 'Products'));
+
         return $settings;
     }
 
