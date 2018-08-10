@@ -180,6 +180,10 @@ return new Container([
     CacheInterface::class => function (ContainerInterface $container) : CacheInterface {
         $config = $container->get(SugarConfig::class);
 
+        if ($config->get('external_cache_disabled')) {
+            return new InMemoryCache();
+        }
+
         $backend = $container->get(
             $config->get('cache.backend') ?? BackwardCompatibleCache::class
         );

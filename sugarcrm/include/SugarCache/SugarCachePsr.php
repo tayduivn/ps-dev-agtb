@@ -37,14 +37,19 @@ class SugarCachePsr extends SugarCacheAbstract
     {
         parent::__construct();
 
+        $this->_priority = $priority;
+        $this->disableParameter = $disableParameter;
+
+        // prevent further object initialization since it may produce undesired side-effects like a connection attempt
+        if ($this->disableParameter && !empty($GLOBALS['sugar_config'][$this->disableParameter])) {
+            return;
+        }
+
         try {
             $this->backend = Container::getInstance()->get($backendService);
         } catch (ContainerExceptionInterface $e) {
             // The absence of the backend will prevent the object from being used
         }
-
-        $this->_priority = $priority;
-        $this->disableParameter = $disableParameter;
     }
 
     /**
@@ -57,10 +62,6 @@ class SugarCachePsr extends SugarCacheAbstract
         }
 
         if (!parent::useBackend()) {
-            return false;
-        }
-
-        if ($this->disableParameter && !empty($GLOBALS['sugar_config'][$this->disableParameter])) {
             return false;
         }
 
