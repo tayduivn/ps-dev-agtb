@@ -4925,7 +4925,7 @@ ENDP;
         $j=0;
         while ($table = $stmt->fetchColumn()) {
             $tempTableName = 'temp_table_' . md5($table) . '_' . (++$j);
-            $createResult = $this->db->query("CREATE TABLE {$tempTableName} LIKE {$table}");
+            $createResult = $this->db->query("CREATE TABLE {$tempTableName} LIKE `{$table}`");
             if ($createResult === false) {
                 $this->log("Failed trying to create temporary table: {$tempTableName} from {$table}");
                 $this->updateStatus(
