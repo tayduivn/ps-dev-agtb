@@ -1203,6 +1203,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                     label: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VARIABLE"),
                     width: "35%",
                     required: true,
+                    dataRoot: 'result',
                     labelField: "text",
                     valueField: function (field, data) {
                         return data["value"] + that.helper._auxSeparator + data["type"];

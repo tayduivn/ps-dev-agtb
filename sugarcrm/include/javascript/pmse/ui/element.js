@@ -138,9 +138,9 @@ PMSE.Element.prototype.setElementHelper = function(options) {
     var configObject = {
         decimalSeparator: App.config.defaultDecimalSeparator,
         numberGroupingSeparator: App.config.defaultNumberGroupingSeparator,
-        currencies: project.getMetadata('currencies'),
-        dateFormat: App.date.getUserDateFormat(),
-        timeFormat: App.user.getPreference('timepref')
+        currencies: project ? project.getMetadata('currencies') : [],
+        dateFormat: project ? App.date.getUserDateFormat() : null,
+        timeFormat: project ? App.user.getPreference('timepref') : null
     };
     $.extend(configObject, options);
     this.helper = new PMSE.ElementHelper(configObject);

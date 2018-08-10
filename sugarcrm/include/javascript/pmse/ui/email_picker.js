@@ -209,7 +209,7 @@ EmailPickerField.prototype._onItemSetText = function () {
     var self = this;
 	return function(itemObject, data) {
         var label;
-        if (data.filter.expLabel) {
+        if (data.filter && data.filter.expLabel) {
             label = self.helper.getLabel(data.filter);
         } else {
             label = data.moduleLabel;
@@ -267,19 +267,27 @@ EmailPickerField.prototype._onPanelValueGeneration = function () {
                 newEmailItem.filter = that.helper.moduleFieldEvalGeneration(fieldPanel, fieldPanelItem, data, false);
                 if (data.related) {
                     newEmailItem.chainedRelationship = {
-                        'module': data.related,
-                        'moduleLabel': fieldPanelItem.getItem('related').getSelectedData().module_label,
-                        'filter': that.helper.moduleFieldEvalGeneration(fieldPanel, fieldPanelItem, data, true)
+                        module: data.related,
+                        moduleLabel: fieldPanelItem.getItem('related').getSelectedData().module_label,
+                        filter: that.helper.moduleFieldEvalGeneration(fieldPanel, fieldPanelItem, data, true)
                     };
                 }
 				break;
 			case parentPanelID + '-recipient-form':
 				newEmailItem.type = 'recipient';
 				newEmailItem.module = data['module'];
+                newEmailItem.moduleLabel = fieldPanelItem.getItem('module').getSelectedData().module_label;
 				newEmailItem.value = data['emailAddressField'];
-				newEmailItem.label = fieldPanelItem.getItem('module').getSelectedText() + ":"
-					+ fieldPanelItem.getItem('emailAddressField').getSelectedText();
-				break;
+                newEmailItem.label = '%MODULE% : ' + fieldPanelItem.getItem('emailAddressField').getSelectedText();
+                newEmailItem.filter = that.helper.moduleFieldEvalGeneration(fieldPanel, fieldPanelItem, data, false);
+                if (data.related) {
+                    newEmailItem.chainedRelationship = {
+                        module: data.related,
+                        moduleLabel: fieldPanelItem.getItem('related').getSelectedData().module_label,
+                        filter: that.helper.moduleFieldEvalGeneration(fieldPanel, fieldPanelItem, data, true)
+                    };
+                }
+                break;
 			case parentPanelID + '-team-form':
 				newEmailItem.type = 'team';
 				newEmailItem.value = data['team'];
@@ -373,7 +381,7 @@ EmailPickerField.prototype._createPanel = function () {
 			width: '100%',
 			labelField: this._moduleTextField,
 			valueField: this._moduleValueField,
-			dependantFields: ['emailAddressField']
+            dependantFields: ['field', 'related', 'emailAddressField']
 		});
 		this.setModules(this._modules);
 
@@ -520,29 +528,97 @@ EmailPickerField.prototype._createPanel = function () {
 							title: "Recipient",
 							items: [
 								this._recipientModules,
-								{
-									name: 'emailAddressField',
-									label: 'Email Address Field',
-									type: 'dropdown',
-									required: true,
-									width: '100%',
-									dependencyHandler: function (dependantField, field, value) {
-										var relatedModule;
-										if (!value) {
-											return;
-										}
-										relatedModule = App.metadata.getRelationship(value);
-										dependantField.setDataURL('pmse_Project/CrmData/fields/' + value)
-											.setDataRoot('result')
-											.setLabelField('text')
-											.setValueField('value')
-                                            .setAttributes({base_module: PROJECT_MODULE, call_type: 'ET'})
-											.load();
-									},
-									optionsFilter: function (item) {
-										return item.type === "email" || item.type === "TextField";
-									}
-								}
+                                {
+                                    type: 'dropdown',
+                                    name: 'field',
+                                    label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VARIABLE'),
+                                    width: '35%',
+                                    required: false,
+                                    dataRoot: 'result',
+                                    labelField: 'text',
+                                    valueField: function(field, data) {
+                                        return data.value + that.helper._auxSeparator + data.type;
+                                    },
+                                    dependantFields: ['value'],
+                                    dependencyHandler: _.bind(this.helper.fieldDependencyHandler, this.helper)
+                                },
+                                {
+                                    type: 'dropdown',
+                                    name: 'operator',
+                                    label: '',
+                                    width: '30%',
+                                    labelField: 'text',
+                                    valueField: 'value',
+                                    required: false,
+                                    options: this.helper.OPERATORS.comparison,
+                                    dependantFields: ['value']
+                                },
+                                {
+                                    type: 'text',
+                                    name: 'value',
+                                    label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VALUE'),
+                                    width: '35%',
+                                    required: false,
+                                    dependencyHandler: _.bind(this.helper.valueDependencyHandler, this.helper)
+                                },
+                                {
+                                    type: 'dropdown',
+                                    name: 'related',
+                                    label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_RELATED'),
+                                    required: false,
+                                    width: '100%',
+                                    labelField: this._moduleTextField,
+                                    valueField: this._moduleValueField,
+                                    dependantFields: ['relField', 'emailAddressField'],
+                                    dependencyHandler: _.bind(this.helper.relatedDependencyHandler, this.helper)
+                                },
+                                {
+                                    type: 'dropdown',
+                                    name: 'relField',
+                                    label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VARIABLE'),
+                                    width: '35%',
+                                    required: false,
+                                    dataRoot: 'result',
+                                    labelField: 'text',
+                                    valueField: function(field, data) {
+                                        return data.value + that.helper._auxSeparator + data.type;
+                                    },
+                                    dependantFields: ['relValue'],
+                                    dependencyHandler: _.bind(this.helper.fieldDependencyHandler, this.helper)
+                                },
+                                {
+                                    type: 'dropdown',
+                                    name: 'relOperator',
+                                    label: '',
+                                    width: '30%',
+                                    labelField: 'text',
+                                    valueField: 'value',
+                                    required: false,
+                                    options: this.helper.OPERATORS.comparison,
+                                    dependantFields: ['relValue']
+                                },
+                                {
+                                    type: 'text',
+                                    name: 'relValue',
+                                    label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VALUE'),
+                                    width: '35%',
+                                    required: false,
+                                    dependencyHandler: _.bind(this.helper.valueDependencyHandler, this.helper)
+                                },
+                                {
+                                    type: 'dropdown',
+                                    name: 'emailAddressField',
+                                    label: 'Email Address Field',
+                                    width: '100%',
+                                    required: true,
+                                    dataRoot: 'result',
+                                    labelField: 'text',
+                                    valueField: 'value',
+                                    dependencyHandler: _.bind(this.helper.fieldDependencyHandler, this.helper),
+                                    optionsFilter: function(item) {
+                                        return item.type === 'email' || item.type === 'TextField';
+                                    }
+                                }
 							]
 						},
 						{

@@ -506,25 +506,30 @@ PMSE.ElementHelper.prototype.getLabel = function (data) {
 };
 
 PMSE.ElementHelper.prototype.fieldDependencyHandler = function(dependantField, field, value) {
+    dependantField.clearOptions();
     if (value) {
-        var dependent = dependantField.getName();
+        var parent = field.getName();
         var module;
-        if (dependent == 'field') {
+        if (parent == 'module') {
             module = PROJECT_MODULE;
         } else {
             var form = dependantField.getForm();
             var moduleField = form.getItem('module');
             module = moduleField.getSelectedData().module_name;
         }
+        var name = dependantField.getName();
+        var type;
+        if (name == 'emailAddressField') {
+            type = 'ET';
+        } else {
+            type = 'PD';
+        }
         dependantField.setDataURL('pmse_Project/CrmData/fields/' + value)
-            .setDataRoot('result')
             .setAttributes({
                 base_module: module,
-                call_type: 'PD'
+                call_type: type
             })
             .load();
-    } else {
-        dependantField.clearOptions();
     }
     dependantField.fireDependentFields();
 };
@@ -691,6 +696,7 @@ PMSE.ElementHelper.prototype.valueDependencyHandler = function (dependantField, 
 };
 
 PMSE.ElementHelper.prototype.relatedDependencyHandler = function(dependantField, field, value) {
+    dependantField.clearOptions();
     if (value) {
         var auxProxy = new SugarProxy({
             url: 'pmse_Project/CrmData/related/' + field.getSelectedData().module_name
@@ -705,8 +711,6 @@ PMSE.ElementHelper.prototype.relatedDependencyHandler = function(dependantField,
                 dependantField.setOptions(data);
             }
         });
-    } else {
-        dependantField.clearOptions();
-        dependantField.fireDependentFields();
     }
+    dependantField.fireDependentFields();
 };
