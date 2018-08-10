@@ -131,7 +131,7 @@
 
         // convert fieldsObj to an array then sort the array by name
         if (!_.isArray(fields)) {
-            let tmpArray = [];
+            var tmpArray = [];
             _.each(fields, function(value, key) {
                 tmpArray.push(_.extend(value, {
                     name: key

@@ -481,7 +481,7 @@
             delete prepopulateData._module;
 
             if (moduleName === 'Products' && prepopulateData.product_template_id) {
-                const metadataFields = app.metadata.getModule('Products', 'fields');
+                var metadataFields = app.metadata.getModule('Products', 'fields');
 
                 // getting the fields from metadata of the module and mapping them to prepopulateData
                 if (metadataFields && metadataFields.product_template_name &&

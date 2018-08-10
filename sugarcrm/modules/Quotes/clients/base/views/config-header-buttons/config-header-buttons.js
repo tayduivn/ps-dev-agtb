@@ -73,7 +73,7 @@
         }
 
         _.each(saveObj.footer_rows, function(row) {
-            let obj = {
+            var obj = {
                 name: row.name,
                 type: row.syncedType || row.type
             };
