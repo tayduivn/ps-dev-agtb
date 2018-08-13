@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Language;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 class ParserLabel extends ModuleBuilderParser
 {
@@ -127,6 +130,14 @@ class ParserLabel extends ModuleBuilderParser
             }
         }
 
+        $violations = Validator::getService()->validate($language, new Language());
+        if ($violations->count() > 0) {
+            throw new ViolationException(
+                'Violation for language value',
+                $violations
+            );
+        }
+
         $filename = "$basepath/$language.lang.php";
         $mod_strings = array();
 
@@ -152,7 +163,8 @@ class ParserLabel extends ModuleBuilderParser
         if ($changed) {
             $write  = "<?php\n// WARNING: The contents of this file are auto-generated.\n";
             foreach ($mod_strings as $k => $v) {
-                $write .= "\$mod_strings['$k'] = " . var_export($v, 1) . ";\n";
+                $ek = var_export($k, 1);
+                $write .= "\$mod_strings[$ek] = " . var_export($v, 1) . ";\n";
             }
             
             if (file_put_contents($filename, $write) == false) {
@@ -194,6 +206,14 @@ class ParserLabel extends ModuleBuilderParser
             }
         }
 
+        $violations = Validator::getService()->validate($language, new Language());
+        if ($violations->count() > 0) {
+            throw new ViolationException(
+                'Violation for language value',
+                $violations
+            );
+        }
+
         $filename = "$basepath/$language.lang.php";
         $mod_strings = array();
         $changed = false;
@@ -223,7 +243,8 @@ class ParserLabel extends ModuleBuilderParser
             // We can't use normal array writing here since multiple files can be
             // structured differently. This is dirty, yes, but necessary.
             foreach ($mod_strings as $k => $v) {
-                $write .= "\$mod_strings['$k'] = " . var_export($v, 1) . ";\n";
+                $ek = var_export($k, 1);
+                $write .= "\$mod_strings[$ek] = " . var_export($v, 1) . ";\n";
             }
 
             if (file_put_contents($filename, $write) === false) {
