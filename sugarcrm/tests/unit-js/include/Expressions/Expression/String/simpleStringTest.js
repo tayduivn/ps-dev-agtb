@@ -154,7 +154,7 @@ describe('Simple Numeric Functions Test', function() {
         it('should return formatted name string', function() {
             name_format = 's f l t'; // jscs:ignore
             var res = new SUGAR.expressions.FormatedNameExpression([a, b, c, d], getSLContext(model));
-            expect(res.evaluate()).toEqual(`${a.evaluate()} ${b.evaluate()} ${c.evaluate()} ${d.evaluate()}`);
+            expect(res.evaluate()).toEqual(a.evaluate() + ' ' + b.evaluate() + ' ' + c.evaluate() + ' ' + d.evaluate());
         });
     });
 });

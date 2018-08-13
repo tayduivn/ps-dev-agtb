@@ -88,18 +88,18 @@ describe('Simple Date Expression Functions', function() {
             var date = new Date();
             var last = new Date(date.getTime() + (days * 24 * 60 * 60 * 1000));
             var day = last.getDate();
-            month = last.getMonth() + 1;
-            year = last.getFullYear();
-            dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
-            dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
+            var month = last.getMonth() + 1;
+            var year = last.getFullYear();
+            var dateString = new SUGAR.expressions.StringLiteralExpression([month + '/' + day + '/' + year]);
+            var dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             var res = new SUGAR.expressions.DaysUntilExpression([dateExpr], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(days);
             last = new Date(date.getTime() - (days * 24 * 60 * 60 * 1000));
             day = last.getDate();
-            var month = last.getMonth() + 1;
-            var year = last.getFullYear();
-            var dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
-            var dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
+            month = last.getMonth() + 1;
+            year = last.getFullYear();
+            dateString = new SUGAR.expressions.StringLiteralExpression([month + '/' + day + '/' + year]);
+            dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             res = new SUGAR.expressions.DaysUntilExpression([dateExpr], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(days * -1);
         });
@@ -113,7 +113,7 @@ describe('Simple Date Expression Functions', function() {
             var day = last.getDate();
             var month = last.getMonth() + 1;
             var year = last.getFullYear();
-            var dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
+            var dateString = new SUGAR.expressions.StringLiteralExpression([month + '/' + day + '/' + year]);
             var dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             var res = new SUGAR.expressions.HoursUntilExpression([dateExpr], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe((days * 24) - date.getHours() - 1);
@@ -121,7 +121,7 @@ describe('Simple Date Expression Functions', function() {
             day = last.getDate();
             month = last.getMonth() + 1;
             year = last.getFullYear();
-            dateString = new SUGAR.expressions.StringLiteralExpression([`${month}/${day}/${year}`]);
+            dateString = new SUGAR.expressions.StringLiteralExpression([month + '/' + day + '/' + year]);
             dateExpr = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             res = new SUGAR.expressions.HoursUntilExpression([dateExpr], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe((days * -24) - date.getHours());
@@ -148,7 +148,7 @@ describe('Simple Date Expression Functions', function() {
             var date = ('0' + dateVar.getDate()).slice(-2);
             var mins = ('0' + dateVar.getMinutes()).slice(-2);
             var hours = ('0' + dateVar.getHours()).slice(-2);
-            var todaysDate = `${year}-${month}-${date} ${hours}:${mins}:00`;
+            var todaysDate = year + '-' + month + '-' + date + ' ' + hours + ':' + mins + ':00';
             expect(today.evaluate()).toEqual(todaysDate);
             mockObj.verify();
         });
@@ -161,12 +161,12 @@ describe('Simple Date Expression Functions', function() {
             var year = dateVar.getFullYear();
             var month = ('0' + (dateVar.getMonth() + 1)).slice(-2);
             var date = ('0' + dateVar.getDate()).slice(-2);
-            var todaysDate = `${year}-${month}-${date}`;
+            var todaysDate = year + '-' + month + '-' + date;
             expect(today.evaluate()).toEqual(todaysDate);
         });
     });
 
-    describe('Timestampe Expression Function', function() {
+    describe('Timestamp Expression Function', function() {
         it('returns the passed in datetime string as a unix timestamp', function() {
             var dateString = new SUGAR.expressions.StringLiteralExpression(['01/01/2010']);
             var today = new SUGAR.expressions.TimestampExpression([dateString], getSLContext(model));
