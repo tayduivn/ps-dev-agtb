@@ -273,6 +273,9 @@ function get_sugar_config_defaults()
     'default_currency_iso4217' => return_session_value_or_default('default_currency_iso4217', 'USD'),
     'default_currency_significant_digits' => return_session_value_or_default('default_currency_significant_digits', 2),
     'default_currency_show_preferred' => false,
+        //BEGIN SUGARCRM flav=ent ONLY
+        'currency_create_in_preferred' => false,
+        //END SUGARCRM flav=ent ONLY
     'default_number_grouping_seperator' => return_session_value_or_default('default_number_grouping_seperator', ','),
     'default_decimal_seperator' => return_session_value_or_default('default_decimal_seperator', '.'),
     'default_date_format' => 'm/d/Y',

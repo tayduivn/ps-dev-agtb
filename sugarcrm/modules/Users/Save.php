@@ -292,6 +292,16 @@ if (!$focus->is_group && !$focus->portal_only) {
         );
     }
     $focus->setPreference('currency_show_preferred', isset($_POST['currency_show_preferred']), false, 'global');
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    $focus->setPreference(
+        'currency_create_in_preferred',
+        isset($_POST['currency_create_in_preferred']),
+        false,
+        'global'
+    );
+    //END SUGARCRM flav=ent ONLY
+
     if (isset($_POST['num_grp_sep'])) {
         $focus->setPreference('num_grp_sep', $_POST['num_grp_sep'], 0, 'global');
     }

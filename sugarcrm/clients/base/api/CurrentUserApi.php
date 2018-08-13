@@ -492,7 +492,10 @@ class CurrentUserApi extends SugarApi
         $return['currency_iso'] = $currency->iso4217;
         $return['currency_rate'] = $currency->conversion_rate;
         $return['currency_show_preferred'] = $user->getPreference('currency_show_preferred');
-        
+        //BEGIN SUGARCRM flav=ent ONLY
+        $return['currency_create_in_preferred'] = $user->getPreference('currency_create_in_preferred');
+        //END SUGARCRM flav=ent ONLY
+
         // user number formatting prefs
         $return['decimal_precision'] = $locale->getPrecision();
         $return['decimal_separator'] = $locale->getDecimalSeparator();

@@ -611,6 +611,12 @@ class UserViewHelper {
 
         // convert base currency values to user preferred
         $this->ss->assign("currency_show_preferred", $locale->getPrecedentPreference('currency_show_preferred', $this->bean));
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->ss->assign(
+            "currency_create_in_preferred",
+            $locale->getPrecedentPreference('currency_create_in_preferred', $this->bean)
+        );
+        //END SUGARCRM flav=ent ONLY
 
         $currencyList = array();
         foreach($locale->currencies as $id => $val ) {

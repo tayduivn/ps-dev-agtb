@@ -139,6 +139,13 @@
                     <td><slot>{if $currency_show_preferred}Yes{else}No{/if}&nbsp;</slot></td>
                     <td><slot>{$MOD.LBL_CURRENCY_SHOW_PREFERRED_TEXT}&nbsp;</slot></td>
                 </tr>
+                //BEGIN SUGARCRM flav=ent ONLY
+                <tr>
+                    <td width="15%" scope="row"><slot>{$MOD.LBL_CURRENCY_CREATE_IN_PREFERRED_DETAIL|strip_semicolon}:</slot></td>
+                    <td><slot>{if $currency_create_in_preferred}Yes{else}No{/if}&nbsp;</slot></td>
+                    <td><slot>{$MOD.LBL_CURRENCY_CREATE_IN_PREFERRED_TEXT}&nbsp;</slot></td>
+                </tr>
+                //END SUGARCRM flav=ent ONLY
                 <tr>
                     <td width="15%" scope="row"><slot>{$MOD.LBL_SYSTEM_SIG_DIGITS|strip_semicolon}:</slot></td>
                     <td><slot>{$CURRENCY_SIG_DIGITS}&nbsp;</slot></td>

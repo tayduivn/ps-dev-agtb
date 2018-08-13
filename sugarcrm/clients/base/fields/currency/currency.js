@@ -186,7 +186,7 @@
         var baseRateField = this.def.base_rate_field || 'base_rate';
         // if the current_user doesn't have edit access to the field
         // don't add these listeners
-        if (this.hasEditAccess && this.view.action !== 'list') {
+        if (this.hasEditAccess && !this.hideCurrencyDropdown) {
             this.model.on('change:' + baseRateField, this.handleBaseRateFieldChange, this);
             this.model.on('change:' + currencyField, function(model, currencyId, options) {
                 //When model is reset, it should not be called

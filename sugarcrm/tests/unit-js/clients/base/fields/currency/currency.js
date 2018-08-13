@@ -10,10 +10,8 @@
  */
 
 describe('Base.Fields.Currency', function() {
-
     var app;
     var model;
-
     var moduleName;
     var metadata;
     var sandbox;
@@ -761,7 +759,6 @@ describe('Base.Fields.Currency', function() {
                 moduleName,
                 model
             );
-            field._loadTemplate();
         });
         afterEach(function() {
             field.dispose();
@@ -788,7 +785,7 @@ describe('Base.Fields.Currency', function() {
             });
 
             it('should not add handlers for base_rate or currency_id when the view action is list', function() {
-                field.view.action = 'list';
+                field.hideCurrencyDropdown = true;
                 field.bindDataChange();
                 expect(field.model.on.callCount).toEqual(1);
                 expect(field.model.on.getCall(0).calledWith('change:amount')).toBeTruthy();
