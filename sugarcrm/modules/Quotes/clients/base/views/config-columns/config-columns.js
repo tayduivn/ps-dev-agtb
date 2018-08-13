@@ -68,13 +68,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        var namesLen = this.listDefaultFieldNames.length;
-        var field;
-        var fieldLabels = [];
-        var fieldLabel;
-        var fieldLabelModule;
         var productListMeta = app.metadata.getView('Products', 'quote-data-group-list');
-        var tmpField;
 
         this._super('initialize', [options]);
 
@@ -92,82 +86,6 @@
         _.each(this.listHeaderFields, function(field) {
             field.labelModule = this._getFieldLabelModule(field);
         }, this);
-
-        // build the list header labels and defaultFields
-        this.listDefaultFieldNameLabels = [];
-        for (var i = 0; i < namesLen; i++) {
-            // try to get view defs from the quote-data-group-list meta
-            field = _.find(this.listHeaderFields, function(headerField) {
-                return this.listDefaultFieldNames[i] === headerField.name;
-            }, this);
-
-            if (!field) {
-                // if the field didn't exist in the group list meta, use the field vardef
-                field = this.productsFieldMeta[this.listDefaultFieldNames[i]];
-            }
-
-            // use either label (viewdefs) or vname (vardefs)
-            if (field && (field.label || field.vname)) {
-                fieldLabel = field.label || field.vname;
-
-                // check Products strings first
-                fieldLabel = app.lang.get(fieldLabel, 'Products');
-                fieldLabelModule = 'Products';
-
-                if (fieldLabel.indexOf('LBL_') !== -1) {
-                    // if Products label just returned LBL_ string, check Quotes
-                    fieldLabel = app.lang.get(fieldLabel, 'Quotes');
-                    fieldLabelModule = 'Quotes';
-                }
-
-                fieldLabels.push(fieldLabel);
-
-                tmpField = {
-                    name: field.name,
-                    label: fieldLabel,
-                    labelModule: fieldLabelModule,
-                    widthClass: field.widthClass,
-                    css_class: field.css_class || field.cssClass || ''
-                };
-
-                if (field.name === 'product_template_name') {
-                    tmpField.type = 'quote-data-relate';
-                    tmpField.required = true;
-                }
-
-                if (field.name === 'discount') {
-                    tmpField.type = 'fieldset';
-                    tmpField.css_class += ' quote-discount-percent';
-                    tmpField.fields = [{
-                        name: 'discount_amount',
-                        label: 'LBL_DISCOUNT_AMOUNT',
-                        type: 'discount',
-                        convertToBase: true,
-                        showTransactionalAmount: true
-                    }, {
-                        name: 'discount_select',
-                        type: 'discount-select',
-                        no_default_action: true,
-                        buttons: [{
-                            name: 'select_discount_amount_button',
-                            type: 'rowaction',
-                            label: 'LBL_DISCOUNT_AMOUNT',
-                            event: 'button:discount_select_change:click'
-                        }, {
-                            name: 'select_discount_percent_button',
-                            type: 'rowaction',
-                            label: 'LBL_DISCOUNT_PERCENT',
-                            event: 'button:discount_select_change:click'
-                        }]
-                    }];
-                }
-
-                // push the fieldDefs to default fields
-                this.defaultFields.push(tmpField);
-            }
-        }
-
-        this.listDefaultFieldNameLabels = fieldLabels.join(', ');
 
         this.model.set(this.eventViewName, this.listHeaderFields);
     },
@@ -215,6 +133,19 @@
         pFieldDeps = this.dependentFields.Products;
         pRelatedFields = this.relatedFields.Products;
 
+        // build default fields
+        var defaultWorksheetColumns = this.context.get('defaultWorksheetColumns');
+
+        // pluck all the fields arrays from panels and flatten into one array
+        this.defaultFields = _.flatten(_.pluck(defaultWorksheetColumns.panels, 'fields'));
+        // exclude the line_num field
+        this.defaultFields = _.reject(this.defaultFields, function(field) {
+            return field.name === 'line_num';
+        });
+
+        // building Default Fields
+        this.buildDefaultFields();
+
         _.each(this.panelFields, function(field) {
             pDependentField = pFieldDeps[field.name];
             pRelatedField = pRelatedFields[field.name];
@@ -258,10 +189,105 @@
     },
 
     /**
+     *
+     */
+    buildDefaultFields: function() {
+        var field;
+        var fieldLabel;
+        var fieldLabels = [];
+        var fieldLabelModule;
+        var tmpField;
+        var _defaultFields = this.defaultFields;
+
+        this.listDefaultFieldNameLabels = _.pluck(_defaultFields, 'name');
+        var namesLen = this.listDefaultFieldNameLabels.length;
+
+        // build the list header labels and defaultFields
+        this.listDefaultFieldNameLabels = [];
+        this.defaultFields = [];
+
+        for (var i = 0; i < namesLen; i++) {
+            // try to get view defs from the quote-data-group-list meta
+            field = _.find(this.listHeaderFields, function(headerField) {
+                return this.listDefaultFieldNames[i] === headerField.name;
+            }, this);
+
+            if (!field) {
+                // if the field didn't exist in the group list meta, use the field vardef
+                field = _.find(_defaultFields, {name: field.name}) ?
+                    _.find(_defaultFields, {name: this.listDefaultFieldNames[i]}) :
+                    this.productsFieldMeta[this.listDefaultFieldNames[i]];
+            }
+
+            // use either label (viewdefs) or vname (vardefs)
+            if (field && (field.label || field.vname)) {
+                fieldLabel = field.label || field.vname;
+
+                // check Products strings first
+                fieldLabel = app.lang.get(fieldLabel, 'Products');
+                fieldLabelModule = 'Products';
+
+                if (fieldLabel.indexOf('LBL_') !== -1) {
+                    // if Products label just returned LBL_ string, check Quotes
+                    fieldLabel = app.lang.get(fieldLabel, 'Quotes');
+                    fieldLabelModule = 'Quotes';
+                }
+
+                fieldLabels.push(fieldLabel);
+
+                tmpField = {
+                    name: field.name,
+                    label: fieldLabel,
+                    labelModule: fieldLabelModule,
+                    widthClass: field.widthClass,
+                    css_class: field.css_class || field.cssClass || ''
+                };
+                if (field.name === 'product_template_name') {
+                    tmpField.type = 'quote-data-relate';
+                    tmpField.required = true;
+                }
+                if (field.name === 'discount') {
+                    tmpField.type = 'fieldset';
+                    tmpField.css_class += ' quote-discount-percent';
+                    tmpField.fields = [{
+                        name: 'discount_amount',
+                        label: 'LBL_DISCOUNT_AMOUNT',
+                        type: 'discount',
+                        convertToBase: true,
+                        showTransactionalAmount: true
+                    }, {
+                        name: 'discount_select',
+                        type: 'discount-select',
+                        no_default_action: true,
+                        buttons: [{
+                            name: 'select_discount_amount_button',
+                            type: 'rowaction',
+                            label: 'LBL_DISCOUNT_AMOUNT',
+                            event: 'button:discount_select_change:click'
+                        }, {
+                            name: 'select_discount_percent_button',
+                            type: 'rowaction',
+                            label: 'LBL_DISCOUNT_PERCENT',
+                            event: 'button:discount_select_change:click'
+                        }]
+                    }];
+                }
+
+                // push the fieldDefs to default fields
+                this.defaultFields.push(tmpField);
+            }
+        }
+
+        this.listDefaultFieldNameLabels = fieldLabels.join(', ');
+    },
+
+    /**
      * @inheritdoc
      */
     _onConfigFieldChange: function(field, oldState, newState) {
-        var fieldVarDef = this.productsFieldMeta[field.name];
+        var fieldVarDef = _.find(this.defaultFields, {name: field.name}) ?
+            _.find(this.defaultFields, {name: field.name}) :
+            this.productsFieldMeta[field.name];
         var fieldViewDef;
         var wasVisible = oldState === 'checked';
         var isNowVisible = newState === 'checked';
@@ -276,6 +302,15 @@
                 type: fieldVarDef.type,
                 label: fieldVarDef.vname || fieldVarDef.label
             };
+
+            fieldViewDef.name === 'discount_amount' ?
+                (fieldViewDef.label = app.lang.get('LBL_DISCOUNT_AMOUNT_VALUE', 'Products')) :
+                fieldViewDef.label;
+
+            if (fieldViewDef.name === 'discount') {
+                fieldViewDef = fieldVarDef;
+            }
+
             fieldViewDef.labelModule = this._getFieldLabelModule(field);
 
             // add the column to header fields
@@ -365,6 +400,9 @@
      * @inheritdoc
      */
     _customFieldDef: function(def) {
+        def.name === 'discount_amount' ?
+            (def.label = app.lang.get('LBL_DISCOUNT_AMOUNT_VALUE', 'Products')) :
+            def.label;
         def.eventViewName = this.eventViewName;
 
         return def;

@@ -26,6 +26,77 @@ describe('Quotes.View.ConfigColumns', function() {
         context = app.context.getContext();
         context.set('model', new Backbone.Model());
 
+        var defaultFields = [
+            {
+                name: 'quantity',
+                label: 'LBL_QUANTITY',
+                labelModule: 'Quotes',
+                widthClass: undefined,
+                css_class: ''
+            }, {
+                name: 'product_template_name',
+                label: 'LBL_ITEM_NAME',
+                labelModule: 'Quotes',
+                widthClass: undefined,
+                required: true,
+                type: 'quote-data-relate',
+                css_class: ''
+            }, {
+                name: 'mft_part_num',
+                label: 'LBL_MFT_PART_NUM',
+                labelModule: 'Quotes',
+                widthClass: undefined,
+                css_class: ''
+            }, {
+                name: 'discount_price',
+                label: 'LBL_DISCOUNT_PRICE',
+                labelModule: 'Quotes',
+                widthClass: undefined,
+                css_class: ''
+            }, {
+                name: 'discount',
+                label: 'LBL_DISCOUNT_AMOUNT',
+                labelModule: 'Quotes',
+                widthClass: undefined,
+                css_class: ' quote-discount-percent',
+                type: 'fieldset',
+                fields: [
+                    {
+                        name: 'discount_amount',
+                        label: 'LBL_DISCOUNT_AMOUNT',
+                        type: 'discount',
+                        convertToBase: true,
+                        showTransactionalAmount: true
+                    }, {
+                        name: 'discount_select',
+                        type: 'discount-select',
+                        no_default_action: true,
+                        buttons: [
+                            {
+                                name: 'select_discount_amount_button',
+                                type: 'rowaction',
+                                label: 'LBL_DISCOUNT_AMOUNT',
+                                event: 'button:discount_select_change:click'
+                            }, {
+                                name: 'select_discount_percent_button',
+                                type: 'rowaction',
+                                label: 'LBL_DISCOUNT_PERCENT',
+                                event: 'button:discount_select_change:click'
+                            }
+                        ]
+                    }
+                ]
+            }, {
+                name: 'total_amount',
+                label: 'LBL_LINE_ITEM_TOTAL',
+                labelModule: 'Quotes',
+                widthClass: undefined,
+                css_class: ''
+            }
+        ];
+
+        context.set('defaultWorksheetColumns', defaultFields);
+
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('config-panel', 'view', 'base', 'help', 'Quotes');
         SugarTest.testMetadata.set();
@@ -130,12 +201,15 @@ describe('Quotes.View.ConfigColumns', function() {
             ]
         };
 
-        sinon.collection.stub(app.metadata, 'getModule')
-            .withArgs('Products', 'fields').returns(productsFieldsMeta)
-            .withArgs('Quotes', 'fields').returns(quotesFieldsMeta);
+        sinon.collection.stub(app.metadata, 'getModule').
+            withArgs('Products', 'fields').
+            returns(productsFieldsMeta).
+            withArgs('Quotes', 'fields').
+            returns(quotesFieldsMeta);
 
-        sinon.collection.stub(app.metadata, 'getView')
-            .withArgs('Products', 'quote-data-group-list').returns(productQuoteDataGroupListMeta);
+        sinon.collection.stub(app.metadata, 'getView').
+            withArgs('Products', 'quote-data-group-list').
+            returns(productQuoteDataGroupListMeta);
 
         SugarTest.loadComponent('base', 'view', 'config-panel');
         SugarTest.loadComponent('base', 'view', 'config-panel', 'Quotes');
@@ -161,80 +235,66 @@ describe('Quotes.View.ConfigColumns', function() {
         it('should set eventViewName', function() {
             expect(view.eventViewName).toBe('worksheet_columns');
         });
+    });
+
+    describe('_getEventViewName()', function() {
+        it('should return worksheet_columns', function() {
+            expect(view._getEventViewName()).toBe('worksheet_columns');
+        });
+    });
+
+    describe('_getFieldLabelModule()', function() {
+        it('should fallback to Quotes if not found on products', function() {
+            expect(view._getFieldLabelModule(productsFieldsMeta.quantity)).toBe('Quotes');
+        });
+
+        it('should use labelModule when it exists', function() {
+            sinon.collection.stub(app.lang, 'get', function() {
+                return 'test';
+            });
+            productsFieldsMeta.quantity.labelModule = 'ProductBundles';
+            expect(view._getFieldLabelModule(productsFieldsMeta.quantity)).toBe('ProductBundles');
+        });
+
+        it('should use Products if labelModule does not exist', function() {
+            sinon.collection.stub(app.lang, 'get', function() {
+                return 'test';
+            });
+            productsFieldsMeta.quantity.labelModule = undefined;
+            expect(view._getFieldLabelModule(productsFieldsMeta.quantity)).toBe('Products');
+        });
+    });
+
+    describe('_onDependentFieldsChange()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view.context, 'trigger');
+
+            view._onDependentFieldsChange(view.context, view.dependentFields);
+        });
+
+        it('should set the _related_fields', function() {
+            expect(view.model.get(view.eventViewName + '_related_fields')).toEqual([
+                'base_rate',
+                'currency_id',
+                'deal_calc',
+                'discount_amount',
+                'discount_price',
+                'discount_select',
+                'quantity',
+                'subtotal',
+                'total_amount'
+            ]);
+        });
+    });
+
+    describe('buildDefaultFields()', function() {
+        beforeEach(function() {
+            view.defaultFields = view.context.get('defaultWorksheetColumns');
+            view.buildDefaultFields();
+        });
 
         it('should set productsFieldMeta', function() {
             expect(view.productsFieldMeta).toBe(productsFieldsMeta);
-        });
-
-        it('should set defaultFields', function() {
-            expect(view.defaultFields).toEqual([
-                {
-                    name: 'quantity',
-                    label: 'LBL_QUANTITY',
-                    labelModule: 'Quotes',
-                    widthClass: undefined,
-                    css_class: ''
-                }, {
-                    name: 'product_template_name',
-                    label: 'LBL_ITEM_NAME',
-                    labelModule: 'Quotes',
-                    widthClass: undefined,
-                    required: true,
-                    type: 'quote-data-relate',
-                    css_class: ''
-                }, {
-                    name: 'mft_part_num',
-                    label: 'LBL_MFT_PART_NUM',
-                    labelModule: 'Quotes',
-                    widthClass: undefined,
-                    css_class: ''
-                }, {
-                    name: 'discount_price',
-                    label: 'LBL_DISCOUNT_PRICE',
-                    labelModule: 'Quotes',
-                    widthClass: undefined,
-                    css_class: ''
-                }, {
-                    name: 'discount',
-                    label: 'LBL_DISCOUNT_AMOUNT',
-                    labelModule: 'Quotes',
-                    widthClass: undefined,
-                    css_class: ' quote-discount-percent',
-                    type: 'fieldset',
-                    fields: [
-                        {
-                            name: 'discount_amount',
-                            label: 'LBL_DISCOUNT_AMOUNT',
-                            type: 'discount',
-                            convertToBase: true,
-                            showTransactionalAmount: true
-                        }, {
-                            name: 'discount_select',
-                            type: 'discount-select',
-                            no_default_action: true,
-                            buttons: [
-                                {
-                                    name: 'select_discount_amount_button',
-                                    type: 'rowaction',
-                                    label: 'LBL_DISCOUNT_AMOUNT',
-                                    event: 'button:discount_select_change:click'
-                                }, {
-                                    name: 'select_discount_percent_button',
-                                    type: 'rowaction',
-                                    label: 'LBL_DISCOUNT_PERCENT',
-                                    event: 'button:discount_select_change:click'
-                                }
-                            ]
-                        }
-                    ]
-                }, {
-                    name: 'total_amount',
-                    label: 'LBL_LINE_ITEM_TOTAL',
-                    labelModule: 'Quotes',
-                    widthClass: undefined,
-                    css_class: ''
-                }
-            ]);
         });
 
         it('should set listHeaderFields', function() {
@@ -313,6 +373,77 @@ describe('Quotes.View.ConfigColumns', function() {
             ]);
         });
 
+        it('should set defaultFields', function() {
+            expect(view.defaultFields).toEqual([
+                {
+                    name: 'quantity',
+                    label: 'LBL_QUANTITY',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ''
+                }, {
+                    name: 'product_template_name',
+                    label: 'LBL_ITEM_NAME',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    required: true,
+                    type: 'quote-data-relate',
+                    css_class: ''
+                }, {
+                    name: 'mft_part_num',
+                    label: 'LBL_MFT_PART_NUM',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ''
+                }, {
+                    name: 'discount_price',
+                    label: 'LBL_DISCOUNT_PRICE',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ''
+                }, {
+                    name: 'discount',
+                    label: 'LBL_DISCOUNT_AMOUNT',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ' quote-discount-percent',
+                    type: 'fieldset',
+                    fields: [
+                        {
+                            name: 'discount_amount',
+                            label: 'LBL_DISCOUNT_AMOUNT',
+                            type: 'discount',
+                            convertToBase: true,
+                            showTransactionalAmount: true
+                        }, {
+                            name: 'discount_select',
+                            type: 'discount-select',
+                            no_default_action: true,
+                            buttons: [
+                                {
+                                    name: 'select_discount_amount_button',
+                                    type: 'rowaction',
+                                    label: 'LBL_DISCOUNT_AMOUNT',
+                                    event: 'button:discount_select_change:click'
+                                }, {
+                                    name: 'select_discount_percent_button',
+                                    type: 'rowaction',
+                                    label: 'LBL_DISCOUNT_PERCENT',
+                                    event: 'button:discount_select_change:click'
+                                }
+                            ]
+                        }
+                    ]
+                }, {
+                    name: 'total_amount',
+                    label: 'LBL_LINE_ITEM_TOTAL',
+                    labelModule: 'Quotes',
+                    widthClass: undefined,
+                    css_class: ''
+                }
+            ]);
+        });
+
         it('should set listDefaultFieldNameLabels', function() {
             expect(view.listDefaultFieldNameLabels).toBe('LBL_QUANTITY, LBL_ITEM_NAME, LBL_MFT_PART_NUM,' +
                 ' LBL_DISCOUNT_PRICE, LBL_DISCOUNT_AMOUNT, LBL_LINE_ITEM_TOTAL');
@@ -320,56 +451,6 @@ describe('Quotes.View.ConfigColumns', function() {
 
         it('should set worksheet_columns on the model', function() {
             expect(view.model.get('worksheet_columns')).toBe(view.listHeaderFields);
-        });
-    });
-
-    describe('_getEventViewName()', function() {
-        it('should return worksheet_columns', function() {
-            expect(view._getEventViewName()).toBe('worksheet_columns');
-        });
-    });
-
-    describe('_getFieldLabelModule()', function() {
-        it('should fallback to Quotes if not found on products', function() {
-            expect(view._getFieldLabelModule(productsFieldsMeta.quantity)).toBe('Quotes');
-        });
-
-        it('should use labelModule when it exists', function() {
-            sinon.collection.stub(app.lang, 'get', function() {
-                return 'test';
-            });
-            productsFieldsMeta.quantity.labelModule = 'ProductBundles';
-            expect(view._getFieldLabelModule(productsFieldsMeta.quantity)).toBe('ProductBundles');
-        });
-
-        it('should use Products if labelModule does not exist', function() {
-            sinon.collection.stub(app.lang, 'get', function() {
-                return 'test';
-            });
-            productsFieldsMeta.quantity.labelModule = undefined;
-            expect(view._getFieldLabelModule(productsFieldsMeta.quantity)).toBe('Products');
-        });
-    });
-
-    describe('_onDependentFieldsChange()', function() {
-        beforeEach(function() {
-            sinon.collection.stub(view.context, 'trigger');
-
-            view._onDependentFieldsChange(view.context, view.dependentFields);
-        });
-
-        it('should set the _related_fields', function() {
-            expect(view.model.get(view.eventViewName + '_related_fields')).toEqual([
-                'base_rate',
-                'currency_id',
-                'deal_calc',
-                'discount_amount',
-                'discount_price',
-                'discount_select',
-                'quantity',
-                'subtotal',
-                'total_amount'
-            ]);
         });
     });
 

@@ -50,27 +50,32 @@
                 // force product_template_name to be required if it exists
                 col.required = true;
             }
+
             if (col.type === 'image') {
                 col.readonly = true;
             }
+
+            if (col.label === 'LBL_DISCOUNT_AMOUNT' && col.name === 'discount_amount') {
+                col.label = 'LBL_DISCOUNT_AMOUNT_VALUE';
+            }
         }, this);
 
-        // make sure related_fields contains description, quote_id, name, and product_template_name & _id fields
-        if (!_.contains(saveObj.worksheet_columns_related_fields, 'description')) {
-            saveObj.worksheet_columns_related_fields.push('description');
-        }
-        if (!_.contains(saveObj.worksheet_columns_related_fields, 'quote_id')) {
-            saveObj.worksheet_columns_related_fields.push('quote_id');
-        }
-        if (!_.contains(saveObj.worksheet_columns_related_fields, 'name')) {
-            saveObj.worksheet_columns_related_fields.push('name');
-        }
-        if (!_.contains(saveObj.worksheet_columns_related_fields, 'product_template_id')) {
-            saveObj.worksheet_columns_related_fields.push('product_template_id');
-        }
-        if (!_.contains(saveObj.worksheet_columns_related_fields, 'product_template_name')) {
-            saveObj.worksheet_columns_related_fields.push('product_template_name');
-        }
+        // make sure related_fields contains description, currency_id, base_rate, quote_id, name, and
+        // product_template_name & _id fields
+        var $requiredRelatedFields = [
+            'description',
+            'currency_id',
+            'base_rate',
+            'quote_id',
+            'name',
+            'product_template_id',
+            'product_template_name'];
+
+        _.each($requiredRelatedFields, function(field) {
+            if (!_.contains(saveObj.worksheet_columns_related_fields, field)) {
+                saveObj.worksheet_columns_related_fields.push(field);
+            }
+        });
 
         _.each(saveObj.footer_rows, function(row) {
             var obj = {

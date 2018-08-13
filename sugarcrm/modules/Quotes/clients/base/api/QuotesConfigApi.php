@@ -48,8 +48,9 @@ class QuotesConfigApi extends ConfigModuleApi
      */
     public function config(ServiceBase $api, array $args)
     {
-        $quotesConfig = parent::config($api, $args);
+        $viewdefManager = $this->getViewdefManager();
 
+        $quotesConfig = parent::config($api, $args);
         $quotesConfig['dependentFields'] = $this->getDependentFields();
         $quotesConfig['relatedFields'] = $this->getRelatedFieldsMap();
 
@@ -60,7 +61,49 @@ class QuotesConfigApi extends ConfigModuleApi
             null,
             'base'
         );
-        $quotesConfig['productsFields'] = array_merge($parser->getAvailableFields(), $parser->getDefaultFields());
+
+        $defaultDiscountAmt = array(
+            'name' => 'discount',
+            'type' => 'fieldset',
+            'css_class' => 'quote-discount-percent',
+            'label' => 'LBL_DISCOUNT_AMOUNT',
+            'fields' => array(
+                array(
+                    'name' => 'discount_amount',
+                    'label' => 'LBL_DISCOUNT_AMOUNT',
+                    'type' => 'discount',
+                    'convertToBase' => true,
+                    'showTransactionalAmount' => true,
+                ),
+                array(
+                    'type' => 'discount-select',
+                    'name' => 'discount_select',
+                    'no_default_action' => true,
+                    'buttons' => array(
+                        array(
+                            'type' => 'rowaction',
+                            'name' => 'select_discount_amount_button',
+                            'label' => 'LBL_DISCOUNT_AMOUNT',
+                            'event' => 'button:discount_select_change:click',
+                        ),
+                        array(
+                            'type' => 'rowaction',
+                            'name' => 'select_discount_percent_button',
+                            'label' => 'LBL_DISCOUNT_PERCENT',
+                            'event' => 'button:discount_select_change:click',
+                        ),
+                    ),
+                ),
+            ),
+        );
+
+        $quotesConfig['defaultWorksheetColumns'] = $viewdefManager->loadViewdef('base', 'Products', 'quote-data-group-list', true);
+
+        $quotesConfig['productsFields'] = array_merge(
+            $parser->getAvailableFields(),
+            $parser->getDefaultFields(),
+            array('discount' => $defaultDiscountAmt)
+        );
 
         $parser = ParserFactory::getParser(
             MB_LISTVIEW,
@@ -211,41 +254,6 @@ class QuotesConfigApi extends ConfigModuleApi
             'Quotes' => VardefManager::getFieldDefs('Quotes'),
             'ProductBundles' => VardefManager::getFieldDefs('ProductBundles'),
             'Products' => VardefManager::getFieldDefs('Products'),
-        );
-
-        $fieldVardefs['Products']['discount'] = array(
-            'name' => 'discount',
-            'type' => 'fieldset',
-            'css_class' => 'quote-discount-percent',
-            'label' => 'LBL_DISCOUNT_AMOUNT',
-            'fields' => array(
-                array(
-                    'name' => 'discount_amount',
-                    'label' => 'LBL_DISCOUNT_AMOUNT',
-                    'type' => 'discount',
-                    'convertToBase' => true,
-                    'showTransactionalAmount' => true,
-                ),
-                array(
-                    'type' => 'discount-select',
-                    'name' => 'discount_select',
-                    'no_default_action' => true,
-                    'buttons' => array(
-                        array(
-                            'type' => 'rowaction',
-                            'name' => 'select_discount_amount_button',
-                            'label' => 'LBL_DISCOUNT_AMOUNT',
-                            'event' => 'button:discount_select_change:click',
-                        ),
-                        array(
-                            'type' => 'rowaction',
-                            'name' => 'select_discount_percent_button',
-                            'label' => 'LBL_DISCOUNT_PERCENT',
-                            'event' => 'button:discount_select_change:click',
-                        ),
-                    ),
-                ),
-            ),
         );
 
         $qFields = $this->getDependenciesFromFields(
