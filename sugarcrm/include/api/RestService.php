@@ -545,13 +545,17 @@ class RestService extends ServiceBase
             // So we have to go for a hunt
             $headers = apache_request_headers();
             foreach ($headers as $key => $value) {
-                // Check for oAuth 2.0 header
-                if ($token = $this->getOAuth2AccessToken($key, $value)) {
-                    $sessionId = $token;
+                $key = strtolower($key);
+                /**
+                 * Check for oAuth 2.0 bearer header.
+                 * @link https://tools.ietf.org/html/rfc6750
+                 */
+                if ($key == 'authorization' && preg_match('~^Bearer (.*)$~', $value, $matches)) {
+                    $sessionId = $matches[1];
                     break;
                 }
-                $check = strtolower($key);
-                if ( $check == 'oauth_token' || $check == 'oauth-token') {
+
+                if ( $key == 'oauth_token' || $key == 'oauth-token') {
                     $sessionId = $value;
                     break;
                 }
@@ -559,25 +563,6 @@ class RestService extends ServiceBase
         }
 
         return $sessionId;
-    }
-
-    /**
-     * Check oAuth 2.0 header
-     * @param $header
-     * @param $value
-     * @return string
-     */
-    protected function getOAuth2AccessToken($header, $value)
-    {
-        $token = false;
-        $platform = !empty($_REQUEST['platform']) ? $_REQUEST['platform'] : 'base';
-        $config = SugarConfig::getInstance()->get('idm_mode', false);
-        $preCheck = is_array($config) && $platform == 'opi' && $header == 'Authorization';
-
-        if ($preCheck && preg_match('~^Bearer (.*)$~i', $value, $matches)) {
-            $token = $matches[1];
-        }
-        return $token;
     }
 
     /**
