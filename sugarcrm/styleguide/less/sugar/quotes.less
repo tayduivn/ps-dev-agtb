@@ -1,14 +1,22 @@
 /* QUOTES styles
   ----------------*/
 .quote-data-container {
-  border-top: 2px @grayDark solid;
-
   .quote-data-grand-totals-header-wrapper {
     border-bottom: 2px @grayDark solid;
+    border-top: 2px @grayDark solid;
     width: 100%;
     display: table;
     position: relative;
     height: 46px;
+
+    &:nth-child(1) {
+      padding-left: 70px;
+    }
+
+    &:last-child {
+      width: 15%;
+      margin-left: 5px;
+    }
 
     // left column
     .dropdown-toggle {
@@ -34,7 +42,7 @@
 
       &:last-child {
         border-right: none;
-        width: 20%;
+        width: 15%;
       }
 
       .quote-totals-row-value {

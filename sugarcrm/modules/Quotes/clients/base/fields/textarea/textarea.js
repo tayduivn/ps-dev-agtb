@@ -16,6 +16,10 @@
 ({
     extendsFrom: 'TextareaField',
 
+    shortName: undefined,
+
+    longName: undefined,
+
     /**
      * @inheritdoc
      *
@@ -28,7 +32,12 @@
      * @return {string} the formatted value
      */
     format: function(value) {
+        this.plugins = _.union(this.plugins, 'Tooltip');
+
         if (_.isString(value)) {
+            this.shortName = value.length > 20 ? value.substr(0,20) + '...' : value;
+            this.longName = value;
+
             return value;
         }
 
