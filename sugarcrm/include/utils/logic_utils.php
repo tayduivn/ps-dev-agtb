@@ -10,6 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleName;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+
 function get_hook_array($module_name){
 
 			$hook_array = null;
@@ -52,6 +56,14 @@ function replace_or_add_logic_type($hook_array){
 
 function write_logic_file($module_name, $contents)
 {
+    $violations = Validator::getService()->validate($module_name, new ModuleName());
+    if ($violations->count() > 0) {
+        $GLOBALS['log']->error('Violation for module name');
+        throw new ViolationException(
+            'Violation for module name',
+            $violations
+        );
+    }
 		$file = "modules/".$module_name . '/logic_hooks.php';
 		$file = create_custom_directory($file);
 		$fp = sugar_fopen($file, 'wb');
@@ -71,9 +83,10 @@ function build_logic_file($hook_array){
 	$hook_contents .= "// position, file, function \n";
 
     foreach ($hook_array as $event_array => $event) {
-        $hook_contents .= "\$hook_array['".$event_array."'] = Array(); \n";
+        $expEventArray = var_export($event_array, true);
+        $hook_contents .= "\$hook_array[$expEventArray] = Array(); \n";
         foreach ($event as $second_key => $elements) {
-            $hook_contents .= "\$hook_array['".$event_array."'][] = Array(";
+            $hook_contents .= "\$hook_array[$expEventArray][] = Array(";
             foreach ($elements as $el) {
                 $hook_contents .= var_export($el, true) . ',';
             }
