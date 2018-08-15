@@ -15,7 +15,7 @@ Feature: Opportunities
   Background:
      Given I am logged in
 
-  @opportunity_sales_stage_wip @pr @api @e2e
+  @opportunity_sales_stage @pr @api @e2e
   Scenario: Opportunities >  Verify that RLIs with closed lost sales stage are not included
     in the Opportunity rollup total
     Given RevenueLineItems records exist:
@@ -33,7 +33,7 @@ Feature: Opportunities
       | best_case  | $0.00 |
       | worst_case | $0.00 |
 
-  @opportunity_sale_status_wip @pr @api @e2e
+  @opportunity_sale_status @pr @api @e2e
   Scenario Outline: Opportunities > Verify that Status of the opportunity is changed to closed won/lost if
     all RLIs linked to the opportunity have sales stage "Close won/lost"
     Given RevenueLineItems records exist:
@@ -54,7 +54,7 @@ Feature: Opportunities
       | Closed Lost   | Closed Lost |
       | Qualification | In Progress |
 
-  @opportunity_accounts_wip @pr @api @e2e
+  @opportunity_accounts @pr @api @e2e
   Scenario: Opportunities > Verify that changing account on opportunity should cascade down to all RLIs
     linked to this opportunity
     Given RevenueLineItems records exist:
@@ -80,7 +80,7 @@ Feature: Opportunities
       | fieldName    | value        |
       | account_name | #@##_acc_%^& |
 
-  # @opportunity_not_able_to_delete_wip @pr @e2e
+  # @opportunity_not_able_to_delete @pr @e2e
   # Scenario Outline: Opportunities > Verify Opportunity cannot be deleted in the record view if sales stage of one or more RLIs is closed won
   #   Given RevenueLineItems records exist:
   #     | *name | date_closed               | worst_case | likely_case | best_case | sales_stage        | quantity |

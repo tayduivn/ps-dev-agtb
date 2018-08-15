@@ -12,7 +12,7 @@ Feature: RLI module verification
   Background:
     Given I am logged in
 
-  @revenue_line_items_products_wip @pr  @api @e2e
+  @revenue_line_items_products @pr  @api @e2e
   Scenario: RLI > Verify that the corresponding fields are auto populated when selecting a product while editing an RLI
     # Create Product
     Given ProductTemplates records exist:
@@ -67,7 +67,7 @@ Feature: RLI module verification
       | Closed Won  | $300.00      |
       | Closed Lost | $300.00      |
 
-  @revenue_line_items_accounts_wip @pr @api @e2e
+  @revenue_line_items_accounts @pr @api @e2e
   Scenario: RLI > Verify that account field is populated when an Opportunity is selected while editing an RLI
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
