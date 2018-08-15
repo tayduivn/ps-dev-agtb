@@ -27,18 +27,19 @@ class QuotesConfigApi extends ConfigModuleApi
                     'reqType' => 'GET',
                     'path' => array('Quotes', 'config'),
                     'pathVars' => array('module', ''),
+                    'minVersion' => '11.3',
                     'method' => 'config',
                     'shortHelp' => 'Retrieves the config settings for a given module',
-                    'longHelp' => 'include/api/help/config_get_help.html',
+                    'longHelp' => 'modules/Quotes/clients/base/api/help/quotes_module_config_get_help.html',
                 ),
                 'quotesConfigCreate' => array(
                     'reqType' => 'POST',
                     'path' => array('Quotes', 'config'),
                     'pathVars' => array('module', ''),
-                    'minVersion' => '11.2',
+                    'minVersion' => '11.3',
                     'method' => 'configSave',
                     'shortHelp' => 'Save the config settings for the Quotes Module',
-                    'longHelp' => 'modules/Quotes/clients/base/api/help/config_post_help.html',
+                    'longHelp' => 'modules/Quotes/clients/base/api/help/quotes_module_config_post_help.html',
                 ),
             );
     }
