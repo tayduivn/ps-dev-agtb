@@ -1203,7 +1203,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         name: 'address_to',
                         required: true,
                         submit: false,
-                        fieldWidth: 350,
+                        fieldWidth: 414,
                         change: hiddenFn,
                         suggestionItemName: 'fullName',
                         suggestionItemAddress: 'emailAddress',
@@ -1217,7 +1217,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         name: 'address_cc',
                         required: false,
                         submit: false,
-                        fieldWidth: 350,
+                        fieldWidth: 414,
                         change: hiddenFn,
                         suggestionItemName: 'fullName',
                         suggestionItemAddress: 'emailAddress',
@@ -1231,7 +1231,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         name: 'address_bcc',
                         required: false,
                         submit: false,
-                        fieldWidth: 350,
+                        fieldWidth: 414,
                         change: hiddenFn,
                         suggestionItemName: 'fullName',
                         suggestionItemAddress: 'emailAddress',
@@ -1242,7 +1242,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     hiddenParams
                 ];
                 wHeight = 380;
-                wWidth = 600;
+                wWidth = 690;
                 callback = {
                     loaded: function (data) {
                         var params = null, i, emailPickerFields = [], dataSource, auxProxy;

@@ -334,7 +334,7 @@ class PMSEEmailHandler
             $user = $this->getSupervisor($userBean);
         }
 
-        if ($this->isUserActiveForEmail($user)) {
+        if (isset($user) && $this->isUserActiveForEmail($user)) {
             $item = new stdClass();
             $item->name = $user->full_name;
             $item->address = $user->email1;

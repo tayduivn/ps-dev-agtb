@@ -208,21 +208,28 @@ EmailPickerField.prototype.setTeams = function (teams) {
 EmailPickerField.prototype._onItemSetText = function () {
     var self = this;
 	return function(itemObject, data) {
-        var label;
+        var module;
         if (data.filter && data.filter.expLabel) {
-            label = self.helper.getLabel(data.filter);
+            module = self.helper.getLabel(data.filter);
         } else {
-            label = data.moduleLabel;
+            module = data.moduleLabel;
+        }
+        var label = translate('LBL_PMSE_EMAILPICKER_RELATED_TO');
+        if (data.module != PROJECT_MODULE) {
+            module = label.replace('%RELATED%', module)
+                .replace('%MODULE%', PROJECT_MODULE);
         }
         if (data.chainedRelationship) {
-            label += translate('LBL_PMSE_EMAILPICKER_RELATED_TO');
             var related;
             if (data.chainedRelationship.filter.expLabel) {
                 related = self.helper.getLabel(data.chainedRelationship.filter);
             } else {
                 related = data.chainedRelationship.moduleLabel;
             }
-            label = label.replace('%RELATED%', related);
+            label = label.replace('%RELATED%', related)
+                .replace('%MODULE%', module);
+        } else {
+            label = module;
         }
         return data.label.replace('%MODULE%', label);
 	};

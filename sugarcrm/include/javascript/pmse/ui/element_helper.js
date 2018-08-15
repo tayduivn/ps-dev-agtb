@@ -275,15 +275,15 @@ PMSE.ElementHelper.prototype._updateCurrenciesToCurrenciesForm = function() {
     var currenciesField;
     if (this._parent && this._parent._constantPanels && this._parent._constantPanels.currency) {
         currenciesField = this._parent._constantPanels.currency.getItem("currency");
-        currenciesField.setOptions(this.helper._currencies);
-        if (this.helper._preferredCurrency) {
-            currenciesField.setValue(this.helper._preferredCurrency);
+        currenciesField.setOptions(this._currencies);
+        if (this._preferredCurrency) {
+            currenciesField.setValue(this._preferredCurrency);
         }
     }
     if (this._parent && this._parent._evaluationPanels && this._parent._evaluationPanels.module) {
         currenciesField = this._parent._evaluationPanels.module.getItem("value");
         if (currenciesField instanceof FormPanelCurrency) {
-            currenciesField.setCurrencies(this.helper._currencies);
+            currenciesField.setCurrencies(this._currencies);
         }
     }
     return this;
@@ -628,15 +628,11 @@ PMSE.ElementHelper.prototype.processValueDependency = function (dependantField, 
     if (this.EXTRA_OPERATORS[labelField]) {
         operators = operators.concat(this.EXTRA_OPERATORS[labelField]);
     }
-    if (this._name == 'evn_criteria') {
-        if (!selVal) {
+    if (selVal == 'updated' || selVal == 'allupdates') {
+        var url = parentField._dataURL,
+            base = parentField._attributes ? parentField._attributes.base_module : false;
+        if (url && base && (url.substring(url.length - base.length) === base)) {
             operators = operators.concat(this.OPERATORS.changes);
-        } else if (selVal == 'updated' || selVal == 'allupdates') {
-            var url = parentField._dataURL,
-                base = parentField._attributes ? parentField._attributes.base_module : false;
-            if (url && base && url.endsWith(base)) {
-                operators = operators.concat(this.OPERATORS.changes);
-            }
         }
     }
     operatorField.setLabelField(labelField);
