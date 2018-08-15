@@ -88,6 +88,7 @@ describe('Quotes.View.ConfigHeaderButtons', function() {
                     'base_rate',
                     'quote_id',
                     'name',
+                    'position',
                     'product_template_id',
                     'product_template_name'
                 ]);
