@@ -128,7 +128,6 @@
             };
             var params = {
                 format: 'sugar-html-json',
-                oauth_token: app.api.getOAuthToken()
             };
             var ajaxParams = {
                 files: projectFile,

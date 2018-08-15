@@ -221,17 +221,6 @@ describe("Base.Field.Attachments", function() {
             expect(alertStub.lastCall.args[0]).toEqual('upload_error');
         });
 
-        it('should pass the oauth token in the query string', function() {
-            var url;
-            var apiGetTokenStub = sinon.collection.stub(app.api, 'getOAuthToken').returns('foo');
-            apiCallStub = sinon.collection.stub(app.api, 'call');
-
-            field.uploadFile();
-            url = apiCallStub.lastCall.args[1];
-
-            expect(url).toMatch(/&oauth_token=foo/);
-        });
-
         it('should use the default error message when alerting an error', function() {
             sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
                 callbacks.error({});
