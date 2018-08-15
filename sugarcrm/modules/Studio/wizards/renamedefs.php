@@ -967,6 +967,14 @@ $renamedefs = array(
             array('name' => 'ERR_TIME_PERIOD_DATE_RANGE', 'type' => 'singular', 'source' => 'TimePeriods'),
             array('name' => 'LBL_LIST_WARNING', 'type' => 'singular', 'source' => 'TimePeriods'),
         ),
+        'Users' => array(
+            array('name' => 'LBL_CURRENCY_CREATE_IN_PREFERRED', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CURRENCY_CREATE_IN_PREFERRED', 'type' => 'singular', 'source' => 'Currencies'),
+            array('name' => 'LBL_CURRENCY_CREATE_IN_PREFERRED_TEXT', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CURRENCY_CREATE_IN_PREFERRED_TEXT', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_CURRENCY_CREATE_IN_PREFERRED_TEXT', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_CURRENCY_CREATE_IN_PREFERRED_TEXT', 'type' => 'plural', 'source' => 'Currencies'),
+        ),
     ),
     'global' => array(
         // Accounts

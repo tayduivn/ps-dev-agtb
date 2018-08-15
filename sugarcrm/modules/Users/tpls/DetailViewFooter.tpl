@@ -141,7 +141,7 @@
                 </tr>
                 //BEGIN SUGARCRM flav=ent ONLY
                 <tr>
-                    <td width="15%" scope="row"><slot>{$MOD.LBL_CURRENCY_CREATE_IN_PREFERRED_DETAIL|strip_semicolon}:</slot></td>
+                    <td width="15%" scope="row"><slot>{$MOD.LBL_CURRENCY_CREATE_IN_PREFERRED|strip_semicolon}:</slot></td>
                     <td><slot>{if $currency_create_in_preferred}Yes{else}No{/if}&nbsp;</slot></td>
                     <td><slot>{$MOD.LBL_CURRENCY_CREATE_IN_PREFERRED_TEXT}&nbsp;</slot></td>
                 </tr>

@@ -304,7 +304,7 @@
                             //BEGIN SUGARCRM flav=ent ONLY
                             <!-- BEGIN: create rlis in preferred currency -->
                             <td width="17%" scope="row">
-                                <slot>{$MOD.LBL_CURRENCY_CREATE_IN_PREFERRED_EDIT}:</slot>
+                                <slot>{$MOD.LBL_CURRENCY_CREATE_IN_PREFERRED}:</slot>
                                 &nbsp {sugar_help text=$MOD.LBL_CURRENCY_CREATE_IN_PREFERRED_TEXT }
                             </td>
                             <td>
