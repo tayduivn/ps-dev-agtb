@@ -13,7 +13,8 @@ import BaseView from '../views/base-view';
 import {Then, seedbed} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
-import ListView from "../views/list-view";
+import ListView from '../views/list-view';
+import RecordsMarkedForErasureDashlet from '../views/records-marked-for-erasure-dashlet';
 
 /**
  * Check whether the cached view is visible
@@ -109,4 +110,40 @@ Then(/^I verify fields on (#[a-zA-Z](?:\w|\S)*)$/,
             throw new Error(message);
         }
 
+    });
+
+Then(/^I verify records on (#[a-zA-Z](?:\w|\S)*)$/,
+    async function (view: RecordsMarkedForErasureDashlet, data: TableDefinition) {
+        let rows = data.rows();
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            let recordUID = row[0].replace('*', '');
+            let amountOfFieldsToErase = Number.parseInt(row[1], 10);
+
+            let record = seedbed.cachedRecords.get(recordUID);
+
+            let value = await view.getAmountOfFieldsToErase(record.id);
+
+            if (amountOfFieldsToErase !== value) {
+                throw new Error(`Record ${row[0]}: Expected number of field to erase: ${amountOfFieldsToErase}. Actual fields marked to erase: ${value}.`);
+            }
+        }
+    });
+
+Then(/^I verify headers on (#[a-zA-Z](?:\w|\S)*)$/,
+    async function (view: RecordsMarkedForErasureDashlet, data: TableDefinition) {
+        let rows = data.rows();
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            let moduleName = row[0];
+            let amountOfRecordsToErase = Number.parseInt(row[1], 10);
+
+            let value = await view.getAmountOfRecordsToErase(moduleName);
+
+            if (amountOfRecordsToErase !== value) {
+                throw new Error(`Module ${moduleName}: Expected number of records to erase: ${amountOfRecordsToErase}. Actual records marked to erase: ${value}.`);
+            }
+        }
     });

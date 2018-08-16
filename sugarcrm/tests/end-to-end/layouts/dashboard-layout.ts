@@ -12,6 +12,7 @@ import BaseView from '../views/base-view';
 import HeaderView from '../views/dashboard-header-view';
 import DashboardView from '../views/dashboard-view';
 import DashletView from '../views/dashlet-view';
+import RecordsMarkedForErasureDashlet from '../views/records-marked-for-erasure-dashlet';
 
 /**
  * Represents a Sugar Dashboard layout.
@@ -25,6 +26,7 @@ export default class DashboardLayout extends BaseView {
     public defaultView: DashboardView;
     public DashboardView: DashboardView;
     public DashletView: DashletView;
+    public RecordsMarkedForErasureDashlet: DashletView;
 
     protected type: string;
 
@@ -48,6 +50,10 @@ export default class DashboardLayout extends BaseView {
         });
 
         this.DashletView = this.createComponent<DashletView>(DashletView, {
+            module: options.module,
+        });
+
+        this.RecordsMarkedForErasureDashlet = this.createComponent<RecordsMarkedForErasureDashlet>(RecordsMarkedForErasureDashlet, {
             module: options.module,
         });
     }

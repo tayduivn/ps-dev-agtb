@@ -59,8 +59,9 @@ Feature: Data Privacy module verification
       | *name | type                         | priority | source     | date_due                  |
       | DP_1  | Request to Erase Information | Medium   | Phone Call | 2020-10-19T19:20:22+00:00 |
     Given Contacts records exist:
-      | *    | first_name | last_name | email                                          | primary_address_city | primary_address_street | primary_address_postalcode | primary_address_state | primary_address_country | title               |
-      | Alex | Alex       | Nisevich  | alex1@example.org (primary), alex2@example.org | City 1               | Street address here    | 220051                     | WA                    | USA                     | Automation Engineer |
+      | *      | first_name | last_name | email                                          | primary_address_city | primary_address_street | primary_address_postalcode | primary_address_state | primary_address_country | title               |
+      | Alex   | Alex       | Nisevich  | alex1@example.org (primary), alex2@example.org | City 1               | Street address here    | 220051                     | WA                    | USA                     | Automation Engineer |
+      | Ruslan | Ruslan     | Golovach  | rus1@example.org (primary), rus2@example.org   | City 1               | Street address here    | 220051                     | WA                    | USA                     | Automation Engineer |
     Given Leads records exist:
       | *    | first_name | last_name | account_name  | title             | phone_mobile   | phone_work     | primary_address  | primary_address_city | primary_address_state | primary_address_postalcode | email            |
       | John | John       | Barlow    | John's Acount | Software Engineer | (746) 079-5067 | (408) 536-6312 | 10050 N Wolfe Rd | Cupertino            | California            | 95014                      | John@example.org |
@@ -79,10 +80,11 @@ Feature: Data Privacy module verification
     # Link records to Data Privacy record
     When I link existing record *John to leads subpanel on #DP_1Record view
     When I link existing record *Alex to contacts subpanel on #DP_1Record view
+    When I link existing record *Ruslan to contacts subpanel on #DP_1Record view
     When I link existing record *Travis to prospects subpanel on #DP_1Record view
     When I link existing record *Drew to accounts subpanel on #DP_1Record view
 
-    # Select which fields to erase for contact
+    # Select which fields to erase for contact Alex
     When I select fields for erasure for *Alex record in #DP_1Record.SubpanelsLayout.subpanels.contacts subpanel
       | fieldName            |
       | first_name           |
@@ -91,6 +93,15 @@ Feature: Data Privacy module verification
       | title                |
       | primary_address_city |
       | email                |
+
+    # Select which fields to erase for contact Ruslan
+    When I select fields for erasure for *Ruslan record in #DP_1Record.SubpanelsLayout.subpanels.contacts subpanel
+      | fieldName            |
+      | first_name           |
+      | last_name            |
+      | phone_mobile         |
+      | title                |
+      | primary_address_city |
 
     # Select which fields to erase for lead
     When I select fields for erasure for *John record in #DP_1Record.SubpanelsLayout.subpanels.leads subpanel
@@ -110,6 +121,23 @@ Feature: Data Privacy module verification
     When I select fields for erasure for *Drew record in #DP_1Record.SubpanelsLayout.subpanels.accounts subpanel
       | fieldName |
       | email     |
+
+    # Verify number of fields marked for erasure in Records Marked for Erasure Dashlet
+    Then I verify records on #Dashboard.RecordsMarkedForErasureDashlet
+      | record  | fields_to_erase_count |
+      | *Alex   | 6                     |
+      | *Ruslan | 5                     |
+      | *John   | 3                     |
+      | *Travis | 3                     |
+      | *Drew   | 1                     |
+
+    # Verify number of records marked for erasure in each module in Records Marked for Erasure Dashlet
+    Then I verify headers on #Dashboard.RecordsMarkedForErasureDashlet
+      | header    | records_to_erase_count |
+      | Contacts  | 2                      |
+      | Leads     | 1                      |
+      | Prospects | 1                      |
+      | Accounts  | 1                      |
 
     # Erase and Complete
     When I complete the erasure request on #DP_1Record
