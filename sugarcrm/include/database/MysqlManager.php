@@ -1333,9 +1333,9 @@ FROM information_schema.statistics';
 
         while (($row = $this->fetchRow($res)) !== false) {
             $table = array_values($row)[0];
-            $this->query('ALTER TABLE ' . $table . ' COLLATE ' . $this->quoted($collation));
-            $this->query('ALTER TABLE ' . $table
-                . ' CONVERT TO CHARACTER SET ' . $this->quoted($charset)
+            $this->query('ALTER TABLE `' . $table . '` COLLATE ' . $this->quoted($collation));
+            $this->query('ALTER TABLE `' . $table
+                . '` CONVERT TO CHARACTER SET ' . $this->quoted($charset)
                 . ' COLLATE ' . $this->quoted($collation));
         }
     }
