@@ -121,7 +121,7 @@ var $useForSubpanel = true;
                     $license_seats_needed = -1;
                 }
                 if( $license_seats_needed >= 0 ){
-                    displayAdminError( translate('WARN_LICENSE_SEATS_USER_CREATE', 'Administration') . translate('WARN_LICENSE_SEATS2', 'Administration')  );
+                    displayAdminError(translate('WARN_LICENSE_SEATS_USER_CREATE', 'Administration'));
                     if( isset($_SESSION['license_seats_needed'])) {
                         unset($_SESSION['license_seats_needed']);
                     }

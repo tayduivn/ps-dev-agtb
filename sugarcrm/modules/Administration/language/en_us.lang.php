@@ -942,11 +942,20 @@ expressions in the regex. Regular expressions should not include any delimiters.
     'WARN_INSTALLER_LOCKED'=>'<b>Warning:</b> To safeguard your data, the installer must be locked by setting \'installer_locked\' to \'true\' in the config.php file.',
  	'WARN_LICENSE_EXPIRED'=> "<b>Notice:</b> Your license expires in ",
     'WARN_LICENSE_EXPIRED2' =>" day(s). Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen.",
-    'WARN_LICENSE_SEATS'=>  "<b>Warning:</b> User licenses exceeded by ",
-    'WARN_LICENSE_SEATS2' => ".  Please contact your sales representative or email <a href='mailto:sales@sugarcrm.com'>sales@sugarcrm.com</a>.",
+    'WARN_LICENSE_SEATS'=>  "<b>Warning:</b> There are ",
+    'WARN_LICENSE_SEATS2' => " active users when your subscription only allows for ",
+    'WARN_LICENSE_SEATS3' =>
+        ". <p class=\"error\">Please deactivate some users, contact your partner or sales representative,"
+        . " or email <a href='mailto:sales@sugarcrm.com'>sales@sugarcrm.com</a>.</p>"
+        . "<p class=\"error\">For more information, see the "
+        . "<a target=\"_blank\" "
+        . "href=\"https://support.sugarcrm.com/Knowledge_Base/License/User_Types_and_Sugar_Licenses/index.html\">"
+        . "Understanding User Types and Sugar Licenses</a> article.</p>",
     'WARN_LICENSE_SEATS_MAXED'=>  "<b>Warning:</b> The number of active users is already the maximum number of licenses allowed: ",
-    'WARN_LICENSE_SEATS_EDIT_USER'=>  "<b>Warning:</b> The number of active users is already the maximum number of licenses allowed",
-    'WARN_LICENSE_SEATS_USER_CREATE'=>"<b>Warning:</b> The number of active users allowed by your license matches the number of active users in the system. You will not be able to create additional active users.",
+    'WARN_LICENSE_SEATS_EDIT_USER'=>  "<b>Warning:</b> You will not be able to create additional active users."
+        . " Please purchase more subscriptions.",
+    'WARN_LICENSE_SEATS_USER_CREATE'=>"<b>Warning:</b> You will not be able to create additional active users."
+        . " Please purchase more subscriptions.",
     'WARN_REPAIR_CONFIG' => '<b>Warning:</b> The config.php file needs to be repaired.  Please use the <a href=\'index.php?module=Administration&action=RebuildConfig\'>Rebuild Config File</a> script in the Repair page in the Admin area to repair the config file.',
     'WARN_UPGRADE_APP'=> "An updated version of the application is now available. ",
     'WARN_UPGRADE' => '<b>Warning:</b> Please upgrade ',

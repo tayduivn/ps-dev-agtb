@@ -609,16 +609,14 @@ class User extends Person {
                         );
                         throw $e;
                     }
-                    $msg = translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration')
-                        . ' ' . translate('WARN_LICENSE_SEATS2', 'Administration');
+                    $msg = translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration');
                     if (isset($_REQUEST['action'])
                         && ($_REQUEST['action'] == 'MassUpdate' || $_REQUEST['action'] == 'Save')) {
                         $sv = new SugarView();
                         $sv->init('Users');
                         $sv->renderJavascript();
                         $sv->displayHeader();
-                        $sv->errors[] = translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration')
-                                . ' ' . translate('WARN_LICENSE_SEATS2', 'Administration');
+                        $sv->errors[] = $msg;
                         $sv->displayErrors();
                         $sv->displayFooter();
                         $msg = '';
