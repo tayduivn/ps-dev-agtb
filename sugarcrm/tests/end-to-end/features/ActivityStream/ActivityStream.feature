@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@activity_stream @job2 @ci-excluded @pr @scenario-stress-test
+@activity_stream @job2 @pr
 Feature: Activity Stream Feature verification
 
   Background:
@@ -28,6 +28,12 @@ Feature: Activity Stream Feature verification
 
     Given I open about view and login
 
+    # Enable Activity Streams in System Settings
+    When I go to "bwc/index.php?module=Administration" url
+    When I click on SystemSettings link in #AdminPanel
+    When I toggle activity_streams_enabled checkbox on #AdminPanel:SystemSettings
+    When I click on Save button on #AdminPanel:SystemSettings
+
     # Create contact record
     When I choose Contacts in modules menu
     When I click Create button on #ContactsList header
@@ -42,14 +48,10 @@ Feature: Activity Stream Feature verification
 
     # Link another record in Activity Stream message
     When I select ActivityStream in #ContactsList.FilterView
-    When I post the following activities to #ActivityStream
-      | message          |
-      | Hello #Travis Hu |
 
     # Verify that record is linked properly
     Then I verify activities in #ActivityStream
       | message                             |
-      | Hello Travis Hubbard on Contact.    |
       | Created Alexander Nisevich Contact. |
 
     # Comment on the top activity
@@ -106,15 +108,18 @@ Feature: Activity Stream Feature verification
       | Hello #Alexander Nis on Contact.               |
       | Updated Last Name, First Name on Value Erased. |
       | Linked DP_1 to Alexander Nisevich.             |
-      | Hello Travis Hubbard on Contact.               |
       | Created Alexander Nisevich Contact.            |
 
     # Verify messages in Activity Stream under Home Cube
     When I go to "activities" url
     Then I verify activities in #ActivityStream
       | activity_message                               |
-      | Unlinked Value Erased to Call_1.               |
-      | Linked Value Erased to Call_1.                 |
       | Updated Last Name, First Name on Value Erased. |
       | Linked DP_1 to Alexander Nisevich.             |
       | Created Alexander Nisevich Contact.            |
+
+    # Disable Activity Streams in System Settings
+    When I go to "bwc/index.php?module=Administration" url
+    When I click on SystemSettings link in #AdminPanel
+    When I toggle activity_streams_enabled checkbox on #AdminPanel:SystemSettings
+    When I click on Save button on #AdminPanel:SystemSettings

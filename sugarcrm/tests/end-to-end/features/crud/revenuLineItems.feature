@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_revenueLineItems @job5
+@crud_modules_revenueLineItems @job6
 Feature: Revenue Line Items module verification
 
   Background:

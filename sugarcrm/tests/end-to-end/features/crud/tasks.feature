@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_tasks @job3 @xxx
+@crud_modules_tasks @job3
 Feature: Tasks module verification
 
   Background:

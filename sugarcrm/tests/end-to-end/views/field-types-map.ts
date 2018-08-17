@@ -12,6 +12,7 @@ import * as TextField from '../fields/text-field';
 import * as TextareaField from '../fields/textarea-field';
 import * as NameField from '../fields/name-field';
 import * as EnumField from '../fields/enum-field';
+import * as EnumUserPrefField from '../fields/enum-user-pref-field';
 import * as PricingFormula from '../fields/pricing_formula';
 import * as IntField from '../fields/int-field';
 import * as FloatField from '../fields/float-field';
@@ -53,6 +54,7 @@ export const FIELD_TYPES__MAP = {
     text: TextField,
     textarea: TextareaField,
     enum: EnumField,
+    'enum-user-pref': EnumUserPrefField,
     'enum-config': EnumField,
     tag: TagField,
     int: IntField,

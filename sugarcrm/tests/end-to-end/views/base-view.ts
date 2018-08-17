@@ -49,12 +49,13 @@ export default class extends BaseView {
                 }
             }
 
-            let fieldTypeAttr = await this.driver.getAttribute(
-                selector,
-                'field-type'
-            );
-
-            type = _.isArray(fieldTypeAttr) ? fieldTypeAttr[0] : fieldTypeAttr;
+            if (!type) {
+                let fieldTypeAttr = await this.driver.getAttribute(
+                    selector,
+                    'field-type'
+                );
+                type = _.isArray(fieldTypeAttr) ? fieldTypeAttr[0] : fieldTypeAttr;
+            }
 
             field = await this.createField(name, type);
 
@@ -129,5 +130,36 @@ export default class extends BaseView {
 
     public async clickButton(buttonName) {
         await this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
+    }
+
+    /**
+     * Return css path to the specified link
+     *
+     * @param {string} link
+     * @return {string} css path to the link
+     */
+    public getLinkSelector(link: string): string {
+        return this.$(`links.${link.toLowerCase()}`);
+    }
+
+    /**
+     * Return css path to the specified button
+     *
+     * @param {string} btnName
+     * @return {string} css path to the button
+     */
+    public getButtonSelector(btnName: string): string {
+        return this.$(`buttons.${btnName.toLowerCase()}`);
+    }
+
+    /**
+     *  Click on the specified link
+     *
+     * @param {string} link to click at
+     */
+    public async clickLink(link: string): Promise<void> {
+        let lnk = this.getLinkSelector(link);
+        await this.driver.scroll(lnk);
+        await this.driver.click(lnk);
     }
 }

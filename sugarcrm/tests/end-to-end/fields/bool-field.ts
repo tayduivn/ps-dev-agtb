@@ -43,4 +43,23 @@ export default class BoolField extends BaseField {
     }
 }
 
-export const Edit = BoolField;
+//export const Edit = BoolField;
+
+export class Edit extends BaseField {
+    constructor(options: any) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            $: `input[name={{name}}].checkbox`,
+            field: {
+                selector: '',
+            },
+        });
+    }
+
+    public async setValue(value): Promise<any> {
+        let select = this.$();
+        await this.driver.scroll(select);
+        await this.driver.click(select);
+    }
+}

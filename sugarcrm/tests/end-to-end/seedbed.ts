@@ -25,6 +25,8 @@ import SearchAndSelectLayout from './layouts/searchAndSelect-layout';
 import PersonalInfoDrawerLayout from './layouts/personal-info-drawer-layout';
 import AddSugarDashletDrawerLayout from './layouts/add-sugar-dashlet-drawer-layout';
 import DashboardLayout from './layouts/dashboard-layout';
+import AdminPanelLayout from './layouts/admin-panel-layout';
+import AdminMenuCmp from './components/admin-menu-cmp';
 import LeadConversionLayout from './layouts/lead-conversion-layout';
 import AuditLogDrawerLayout from './layouts/audit-log-drawer-layout';
 import BusinessRulesDesignLayout from './layouts/business-rules-record-layout';
@@ -37,6 +39,8 @@ import KBSettingsLayout from './layouts/kb-settings-layout';
 import MergeLayout from './layouts/merge-layout';
 import HistoricalSummaryDrawerLayout from './layouts/historical-summary-layout';
 import PipelineView from './views/pipeline-view';
+import UserProfileLayout from './layouts/user-profile-layout'
+
 import TileViewSettings from './views/tile-settings-view';
 
 export default (seedbed: Seedbed) => {
@@ -94,6 +98,9 @@ export default (seedbed: Seedbed) => {
         seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
         seedbed.defineComponent(`Dashboard`, DashboardLayout, {module: 'Dashboards'});
         seedbed.defineComponent(`AddSugarDashletDrawer`, AddSugarDashletDrawerLayout, {module: 'Dashboards'});
+        seedbed.components[`AdminPanel`] = new AdminPanelLayout({});
+        seedbed.components[`AdminMenuCmp`] = new AdminMenuCmp({});
+        seedbed.components[`UserProfile`] = new UserProfileLayout({module: 'Users'});
         seedbed.defineComponent(`ActivityStream`, ActivityStreamLayout, {module: 'Activities'});
         seedbed.defineComponent(`KBViewCategoriesDrawer`, KBViewCategoriesDrawer, {module: 'Categories'});
         seedbed.defineComponent(`KBSettingsDrawer`, KBSettingsLayout, {module: 'KBContents'});
@@ -433,6 +440,11 @@ export default (seedbed: Seedbed) => {
         let url = req.url,
             responseData;
 
+        // if it's a bwc response, no need to run this logic
+        if (!/rest\/v\d\d/.test(url)) {
+            return;
+        }
+
         /*Cache Activities records when Activities stream is loaded*/
         if ((parseInt(res.statusCode, 10) === 200) &&
             _.includes(['POST', 'PUT'], req.method) &&
@@ -444,7 +456,19 @@ export default (seedbed: Seedbed) => {
             const responseString = /\/pmse_Project\/file\/project_import(\?.*|)$/.test(url) ?
                 data.buffer.toString().replace(reg, '"') :
                 data.buffer.toString();
+
             responseData = JSON.parse(responseString);
+            const mimeType = res.hasHeader('Content-Type') && res.getHeader('Content-Type');
+            try {
+                if (mimeType !== 'application/json') {
+                    seedbed.logger.warning(`NON-JSON response from url ${url}.`);
+                    return;
+                }
+                responseData = JSON.parse(responseString);
+            } catch(e) {
+                seedbed.logger.error(`JSON response was declared, but parsing error occurred from url ${url}`);
+                return;
+            }
 
             let responseRecord = responseData.related_record || responseData;
 

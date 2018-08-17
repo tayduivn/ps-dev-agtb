@@ -70,7 +70,7 @@ export default class ActivityStreamLayout extends BaseView {
         await this.driver.setValue(selector, value);
         await this.driver.waitForApp();
         // The delay is needed to properly reference an existing record in activity message
-        await this.driver.pause(2000);
+        await this.driver.pause(3000);
         await this.driver.keys('\uE007');
         await this.driver.waitForApp();
         await this.driver.click(this.$(`omnibar.addpost`));

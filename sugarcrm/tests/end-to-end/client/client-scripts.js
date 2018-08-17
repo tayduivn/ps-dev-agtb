@@ -132,5 +132,17 @@ module.exports = {
      */
     getRouter: function() {
         return App.router.getFragment();
-    }
+    },
+
+    // returns options as comma separated string
+    getSelectedOptionsText: function getSelectedOptionsText(selector) {
+        const select = $(selector)[0];
+        const {selectedOptions} = select;
+
+        return _.map(selectedOptions, 'text').join(', ');
+    },
+
+    getNestedElementIndexByClass: function getClassOfChildByText(parent, child, classValue) {
+        return window.seedbed.utils.getNestedElementIndexByClass(parent, child, classValue);
+    },
 };

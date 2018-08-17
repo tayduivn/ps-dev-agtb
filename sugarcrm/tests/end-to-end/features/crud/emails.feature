@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_email @job6
+@crud_modules_email @job5
 Feature: Emails module verification
 
   Background:
@@ -185,7 +185,7 @@ Feature: Emails module verification
     When I Confirm confirmation alert
     Then I verify number of records in #UserSignaturesList.ListView is 0
 
-  @email_compose_manual
+  @email_compose_manual @pr
   Scenario: Emails > Compose Email > Add addressees through Address Book and Populate Email Body
     Given Accounts records exist:
       | *   | name     | email                           |

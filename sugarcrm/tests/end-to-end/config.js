@@ -9,6 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 var path = require('path');
+const _ = require('lodash');
 
 var temp_folder = path.resolve(__dirname, './tmp');
 
@@ -71,6 +72,29 @@ var config = {
 
                     return scripts;
                 }
+            },
+
+            bwc_index: {
+                url: function(url) {
+                    return url.indexOf('index.php?') !== -1;
+                },
+
+                load: function(scripts) {
+                    scripts = _.filter(scripts, script => {
+                        return (
+                            script.id === 'seedbed:logger.js' ||
+                            script.id === 'seedbed:utils.js'
+                        );
+                    });
+
+                    scripts.unshift({
+                        id: 'sugar:bwc-init.js',
+                        path: path.join(__dirname, 'client', 'bwc-init.js'),
+                        insertAfter: '</script>',
+                    });
+
+                    return scripts;
+                },
             }
         }
     },
@@ -190,8 +214,13 @@ var config = {
         responses: true,
     },
 
-    apiUrl: '/rest/',
+    licenses: {
+        sugar: process.env.SUGAR_KEY,
+    },
+
+    apiUrl: '/rest',
     apiVersion: 'v10',
+
 };
 
 module.exports = {config};
