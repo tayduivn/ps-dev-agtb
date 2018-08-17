@@ -26,6 +26,12 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 class Indexer
 {
     /**
+     * the max size of text can be indexed by elastic search
+     * see: https://www.elastic.co/guide/en/elasticsearch/reference/current/ignore-above.html
+     */
+    const MAX_SIZE_OF_TEXT = 32766;
+
+    /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
      */
     protected $container;
@@ -315,7 +321,11 @@ class Indexer
         $data = array();
         foreach (array_keys($fields) as $field) {
             if (isset($bean->$field)) {
-                $data[$field] = $this->decodeBeanField($bean->$field);
+                if (is_string($bean->$field)) {
+                    $data[$field] = mb_strcut($this->decodeBeanField($bean->$field), 0, self::MAX_SIZE_OF_TEXT);
+                } else {
+                    $data[$field] = $this->decodeBeanField($bean->$field);
+                }
             }
         }
 
