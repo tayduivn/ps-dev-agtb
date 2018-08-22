@@ -19,6 +19,7 @@ import RliTableRecord from '../views/rli-table';
 import SubpanelLayout from '../layouts/subpanel-layout';
 import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import AlertCmp from '../components/alert-cmp';
+import {updateOpportunityConfig} from './steps-helper';
 
 /**
  * Select module in modules menu
@@ -203,7 +204,7 @@ When(/^I provide input for (#\S+)$/,
     }, {waitForApp: true});
 
 
-// The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
+// The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layout
 When(/^I provide input for (#\S+) view for (\d+) row$/,
     async function (view: any, index: number, data: TableDefinition): Promise<void> {
 
@@ -370,5 +371,20 @@ When(/^I stop timer and verify$/, async function (data: TableDefinition) {
     }  else {
         seedbed.logger.info('It took ' + actual_time + ' to complete this operation. It is within the specified max time of ' + specified_threshold);
     }
+
+}, {waitForApp: false});
+
+/**
+ *  Toggle between projecting using Opportunities with RLIs (default) and Opportunities Only mode
+ *
+ *  @example     Given I configure Opportunities mode
+ *                   | name            | value         |
+ *                   | opps_view_by    | Opportunities |
+ *                   | opps_close_date | earliest      |
+ *
+ */
+When(/^I configure Opportunities mode$/, async function (table: TableDefinition) {
+    let data = table.rowsHash();
+    await updateOpportunityConfig(data);
 
 }, {waitForApp: false});
