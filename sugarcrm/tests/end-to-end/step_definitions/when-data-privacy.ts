@@ -15,11 +15,11 @@ import * as _ from 'lodash';
 import AlertCmp from '../components/alert-cmp';
 
 /**
- * Complete or Reject Erasure Request and confirm
+ * Complete or Reject a Data Privacy Request and confirm
  *
- * @example When I reject the erasure request on #DP_1Record
+ * @example When I reject the Data Privacy request on #DP_1Record
  */
-When(/^I (complete|reject) the erasure request on (#[a-zA-Z](?:\w|\S)*)$/,
+When(/^I (complete|reject) the Data Privacy request on (#[a-zA-Z](?:\w|\S)*)$/,
     async function (action:string, layout: any) {
 
         await layout.HeaderView.clickButton(action);

@@ -140,7 +140,7 @@ Feature: Data Privacy module verification
       | Accounts  | 1                      |
 
     # Erase and Complete
-    When I complete the erasure request on #DP_1Record
+    When I complete the Data Privacy request on #DP_1Record
 
     # Verify Data Privacy record status
     Then I verify fields on #DP_1Record.RecordView
@@ -216,10 +216,6 @@ Feature: Data Privacy module verification
     Then I verify fields on #Quote1Record.HeaderView
       | fieldName | value        |
       | name      | My New Quote |
-#    Then I verify fields on #Quote1Record.RecordView
-#      | fieldName            | value        |
-#      | billing_contact_name | Value Erased |
-
 
   @DataPrivacy_Reject
   Scenario: Data Privacy > Reject
@@ -246,7 +242,7 @@ Feature: Data Privacy module verification
       | primary_address_state |
 
     # Reject erasure request
-    When I reject the erasure request on #DP_1Record
+    When I reject the Data Privacy request on #DP_1Record
 
     Then I verify fields on #DP_1Record.RecordView
       | fieldName | value    |
