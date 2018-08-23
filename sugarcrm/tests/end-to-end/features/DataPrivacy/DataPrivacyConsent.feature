@@ -34,7 +34,7 @@ Feature: Data Privacy Consent
         # 3. Support enabling of disabled modules
 
 
-    @DataPrivacy_GrantConsent
+    @DataPrivacy_GrantConsent @pr
     Scenario: Data Privacy > Grant Consent
         Given DataPrivacy records exist:
             | *name | type               | priority | source | date_due                  | business_purpose                    | assigned_user_id |
@@ -68,16 +68,23 @@ Feature: Data Privacy Consent
         When I select *joe_s in #ContactsList.ListView
         Then I should see #joe_sRecord view
 
+        # NOTE: This test cannot be run yet because there is no way to customize
+        # layouts in Seedbed. Since the fields used in this flow are not on the
+        # Contacts record view out of the box, this test fails.
+        #
+        # This test is being left here so that when we figure out how to customize
+        # layouts for use in Seedbed we can add this test back into the run.
+        #
         # Update the Contact record to add a Data Privacy Business Purpose
-        When I click Edit button on #joe_sRecord header
-        When I provide input for #joe_sRecord.RecordView view
-            | dp_business_purpose                 | dp_consent_last_updated   |
-            | Marketing communications by company | 2020-09-10T19:20:22+00:00 |
-        
+        #When I click Edit button on #joe_sRecord header
+        #When I provide input for #joe_sRecord.RecordView view
+        #    | dp_business_purpose                 | dp_consent_last_updated   |
+        #    | Marketing communications by company | 2020-09-10T19:20:22+00:00 |
+
         # Save the Contact record
-        When I click Save button on #joe_sRecord header
-        When I close alert
-        Then I should see #joe_sRecord view
+        #When I click Save button on #joe_sRecord header
+        #When I close alert
+        #Then I should see #joe_sRecord view
 
         # Back to the Data Privacy record via the module list view
         When I go to "DataPrivacy" url
@@ -86,12 +93,12 @@ Feature: Data Privacy Consent
 
         # Complete the Data Privacy record
         When I complete the Data Privacy request on #dp01Record
-        Then I Verify fields on #dp01Record.RecordView
-            | fieldName | value  |
-            | status    | Closed |
+        Then I verify fields on #dp01Record.RecordView
+            | fieldName | value     |
+            | status    | Completed |
 
 
-    @DataPrivacy_WithdrawConsent
+    @DataPrivacy_WithdrawConsent @pr
     Scenario: Data Privacy > Withdraw Consent
         Given DataPrivacy records exist:
             | *name | type             | priority  | source | date_due                  | business_purpose                     | resolution           | assigned_user_id |
@@ -114,24 +121,31 @@ Feature: Data Privacy Consent
         When I select *joe_s in #ContactsList.ListView
         Then I should see #joe_sRecord view
 
-        # Update the Contact record to add a Data Privacy Business Purpose
-        When I click Edit button on #joe_sRecord header
-        When I provide input for #joe_sRecord.RecordView view
-            | dp_business_purpose | dp_consent_last_updated   |
-            |                     | 2020-06-20T19:20:22+00:00 |
+        # NOTE: This test cannot be run yet because there is no way to customize
+        # layouts in Seedbed. Since the fields used in this flow are not on the
+        # Contacts record view out of the box, this test fails.
+        #
+        # This test is being left here so that when we figure out how to customize
+        # layouts for use in Seedbed we can add this test back into the run.
+        #
+        # Update the Contact record to remove the Data Privacy Business Purpose
+        #When I click Edit button on #joe_sRecord header
+        #When I provide input for #joe_sRecord.RecordView view
+        #    | dp_business_purpose | dp_consent_last_updated   |
+        #    |                     | 2020-06-20T19:20:22+00:00 |
 
         # Save the Contact record
-        When I click Save button on #joe_sRecord header
-        When I close alert
-        Then I should see #joe_sRecord view
+        #When I click Save button on #joe_sRecord header
+        #When I close alert
+        #Then I should see #joe_sRecord view
 
         # Back to the Data Privacy record via the module list view
         When I go to "DataPrivacy" url
-        When I select *dp01 in #DataPrivacyList.ListView
-        Then I should see #dp01Record view
+        When I select *dp02 in #DataPrivacyList.ListView
+        Then I should see #dp02Record view
 
         # Complete the Data Privacy record
-        When I complete the Data Privacy request on #dp01Record
-        Then I Verify fields on #dp01Record.RecordView
-            | fieldName | value  |
-            | status    | Closed |
+        When I complete the Data Privacy request on #dp02Record
+        Then I verify fields on #dp02Record.RecordView
+            | fieldName | value     |
+            | status    | Completed |

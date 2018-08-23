@@ -140,7 +140,7 @@ Feature: Data Privacy module verification
       | Accounts  | 1                      |
 
     # Erase and Complete
-    When I complete the Data Privacy request on #DP_1Record
+    When I eraseandcomplete the Data Privacy request on #DP_1Record
 
     # Verify Data Privacy record status
     Then I verify fields on #DP_1Record.RecordView

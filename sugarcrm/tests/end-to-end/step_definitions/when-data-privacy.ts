@@ -18,10 +18,10 @@ import AlertCmp from '../components/alert-cmp';
  * Complete or Reject a Data Privacy Request and confirm
  *
  * @example When I reject the Data Privacy request on #DP_1Record
+ * @example When I complete the Data Privacy request on #dp01Record (complete, non-erasure)
  */
-When(/^I (complete|reject) the Data Privacy request on (#[a-zA-Z](?:\w|\S)*)$/,
+When(/^I (eraseandcomplete|reject|complete) the Data Privacy request on (#[a-zA-Z](?:\w|\S)*)$/,
     async function (action:string, layout: any) {
-
         await layout.HeaderView.clickButton(action);
         await this.driver.waitForApp();
 
