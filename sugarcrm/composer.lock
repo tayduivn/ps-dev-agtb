@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d837a70c97d48258bb125d66fa85b225",
+    "content-hash": "e7defebe185f7ca014d1f1cee7597ff7",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2825,11 +2825,11 @@
         },
         {
             "name": "sugarcrm/identity-provider",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "0ca04c65bc54b1076ac7ae25a53d1be208ee3146",
+                "reference": "defbf16932df8a93efc14992d430acdef0d013c8",
                 "shasum": null
             },
             "require": {
