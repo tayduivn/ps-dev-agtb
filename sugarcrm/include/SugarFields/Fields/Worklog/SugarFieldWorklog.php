@@ -37,7 +37,8 @@ class SugarFieldWorklog extends SugarFieldBase
             return;
         }
 
-        $msg_beans = $bean->worklog_link->getBeans(array('order_by' => 'date_entered'));
+        // Although docs of getBeans said to use 'order_by', it is actually 'orderby'
+        $msg_beans = $bean->worklog_link->getBeans(array('orderby' => 'date_entered'));
         foreach ($msg_beans as $msg_bean) {
             $author_name = $this->getAuthorName($msg_bean->modified_user_id);
 
