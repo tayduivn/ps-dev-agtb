@@ -555,7 +555,7 @@ class RestService extends ServiceBase
                     break;
                 }
 
-                if ( $key == 'oauth_token' || $key == 'oauth-token') {
+                if ($key == 'oauth_token' || $key == 'oauth-token') {
                     $sessionId = $value;
                     break;
                 }
