@@ -57,7 +57,7 @@ return array(
     ],
     'Sugar-Constant Contact Integration' => [
         [
-            'version' => '*',
+            'version' => '2.8.5.4.2',
         ],
     ],
     'Adobe EchoSign e-Signatures for SugarCRM' => [
