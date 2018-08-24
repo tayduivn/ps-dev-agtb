@@ -3,7 +3,7 @@
   "devDependencies": {
     "@sugarcrm/sucrose-sugar": "^0.8.0",
     "@sugarcrm/thorn": "0.6.0",
-    "@sugarcrm/ventana": "1.0.3",
+    "@sugarcrm/ventana": "1.1.0",
     "@types/node": "6.0.51",
     "async": "0.9.0",
     "bluebird": "3.4.1",

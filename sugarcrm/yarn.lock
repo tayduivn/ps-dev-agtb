@@ -46,9 +46,9 @@
     faker "^4.1.0"
     lodash "^4.17.4"
 
-"@sugarcrm/ventana@1.0.3":
-  version "1.0.3"
-  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/ventana/-/ventana-1.0.3.tgz#3d5805cbe6f1443e1c9660e374d11dd497c11bd2"
+"@sugarcrm/ventana@1.1.0":
+  version "1.1.0"
+  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/ventana/-/ventana-1.1.0.tgz#ea2fd5248742fae7a68c71fc65218ea8d620adc6"
 
 "@types/node@6.0.51":
   version "6.0.51"
