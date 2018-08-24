@@ -374,7 +374,7 @@ return array(
     ],
     'Process Manager' => [
         [
-            'version' => '*',
+            'version' => '4.5',
         ],
     ],
     'Process Manager 3.0 OnDemand' => [
