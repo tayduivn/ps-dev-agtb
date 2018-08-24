@@ -113,12 +113,12 @@ return array(
     ],
     'SugarChimp' => [
         [
-            'version' => '7.7b',
+            'version' => '7.11.0',
         ],
     ],
     'SugarChimp - Force Sugar 7 Upgrade' => [
         [
-            'version' => '7.7b',
+            'version' => '7.11.0',
         ],
     ],
     'Calendar 2.0 V1.2 003' => [
