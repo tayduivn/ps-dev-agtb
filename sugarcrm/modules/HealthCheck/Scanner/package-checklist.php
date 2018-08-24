@@ -407,6 +407,11 @@ return array(
             'version' => '4.0',
         ],
     ],
+    'Timeline Dashlet Activities by CARRENET with license validation' => [
+        [
+            'version' => '*',
+        ],
+    ],
     'Bug 79365 Workaround' => [
         [
             'version' => '99999999',
