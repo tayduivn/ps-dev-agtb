@@ -399,7 +399,7 @@ return array(
     ],
     'wGauge' => [
         [
-            'version' => '*',
+            'version' => '1.31',
         ],
     ],
     'Bug 79365 Workaround' => [
