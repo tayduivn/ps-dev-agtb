@@ -344,7 +344,7 @@ return array(
     ],
     'DashboardCopyManagerSugar7' => [
         [
-            'version' => '*',
+            'version' => '1.7',
         ],
     ],
     'Dedupit' => [
