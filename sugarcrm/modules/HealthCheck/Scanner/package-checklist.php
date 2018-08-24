@@ -314,7 +314,7 @@ return array(
     ],
     'DrillDownReportsChart' => [
         [
-            'version' => '*',
+            'version' => '1.01',
         ],
     ],
     'iNetEditique' => [
