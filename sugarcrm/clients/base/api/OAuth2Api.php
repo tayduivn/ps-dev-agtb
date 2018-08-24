@@ -126,7 +126,7 @@ class OAuth2Api extends SugarApi
                 if ($loginStatus['message'] === 'ERROR_LICENSE_SEATS_MAXED') {
                     $GLOBALS['log']->error($loginStatus['message']);
                     $e = new SugarApiExceptionLicenseSeatsNeeded(
-                        $loginStatus['message'],
+                        'ERROR_LICENSE_SEATS_MAXED_ONLY_ADMINS',
                         null,
                         null,
                         0,
