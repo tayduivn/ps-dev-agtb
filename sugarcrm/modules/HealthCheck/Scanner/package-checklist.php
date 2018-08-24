@@ -229,7 +229,7 @@ return array(
     ],
     'iNetMiniETL' => [
         [
-            'version' => '1.5.4',
+            'version' => 'v1.7.0-alpha3-28-gb1ce3fd',
         ],
     ],
     'IP Restriction Manager' => [
