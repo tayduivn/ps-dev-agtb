@@ -402,6 +402,11 @@ return array(
             'version' => '1.31',
         ],
     ],
+    'Act-On Integrated Marketing Automation for SugarCRM version 7.x' => [
+        [
+            'version' => '4.0',
+        ],
+    ],
     'Bug 79365 Workaround' => [
         [
             'version' => '99999999',
