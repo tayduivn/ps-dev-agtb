@@ -37,7 +37,7 @@ return array(
     ],
     'Zendesk' => [
         [
-            'version' => '2.8',
+            'version' => '2.20',
         ],
     ],
     'Act-On Integrated Marketing Automation for SugarCRM' => [
