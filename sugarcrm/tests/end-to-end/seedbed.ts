@@ -25,7 +25,7 @@ import PersonalInfoDrawerLayout from './layouts/personal-info-drawer-layout';
 import AddSugarDashletDrawerLayout from './layouts/add-sugar-dashlet-drawer-layout';
 import DashboardLayout from './layouts/dashboard-layout';
 import LeadConversionLayout from "./layouts/lead-conversion-layout";
-
+import AuditLogDrawerLayout from './layouts/audit-log-drawer-layout';
 
 export default (seedbed: Seedbed) => {
 
@@ -61,6 +61,7 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`${moduleName}Drawer`, DrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`${moduleName}SearchAndAdd`, SearchAndAddLayout, {module: moduleName});
                 seedbed.defineComponent(`PersonalInfoDrawer`, PersonalInfoDrawerLayout, {module: moduleName});
+                seedbed.defineComponent(`AuditLogDrawer`, AuditLogDrawerLayout, {module: moduleName});
             }
         });
 

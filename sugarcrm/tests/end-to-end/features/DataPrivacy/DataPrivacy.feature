@@ -163,11 +163,16 @@ Feature: Data Privacy module verification
       | phone_mobile           | Value Erased |
       | primary_address_street | Value Erased |
 
-    # Verify that info is deleted from PII screen
+    # Verify that info is erased from PII screen
     Then I verify PII fields in #PersonalInfoDrawer for #JohnRecord
       | fieldName              | value        |
       | phone_mobile           | Value Erased |
       | primary_address_street | Value Erased |
+
+    # Verify that field values are erased from Audit Log
+    Then I verify Audit Log fields in #AuditLogDrawer for #JohnRecord
+      | fieldName    | Old Value    | New Value    |
+      | phone_mobile | Value Erased | Value Erased |
 
     # Verify that values for specified target fields are erased
     When I choose Prospects in modules menu
@@ -181,13 +186,21 @@ Feature: Data Privacy module verification
       | title        | Value Erased |
       | phone_mobile | Value Erased |
 
-    # Verify that info is deleted from PII screen
+    # Verify that info is erased from PII screen
     Then I verify PII fields in #PersonalInfoDrawer for #TravisRecord
       | fieldName    | value        |
       | first_name   | Travis       |
       | last_name    | Value Erased |
       | title        | Value Erased |
       | phone_mobile | Value Erased |
+
+    # Verify that field values are erased from Audit Log
+    Then I verify Audit Log fields in #AuditLogDrawer for #TravisRecord
+      | fieldName    | Old Value    | New Value    |
+      | first_name   |              | Travis       |
+      | last_name    | Value Erased | Value Erased |
+      | title        | Value Erased | Value Erased |
+      | phone_mobile | Value Erased | Value Erased |
 
     # Verify that values for specified account fields are erased
     When I choose Accounts in modules menu
@@ -197,7 +210,7 @@ Feature: Data Privacy module verification
       | fieldName | value |
       | email     |       |
 
-    # Verify that info is deleted from PII screen
+    # Verify that info is erased from PII screen
     Then I verify PII fields in #PersonalInfoDrawer for #DrewRecord
       | fieldName | value |
       | email     |       |
@@ -215,7 +228,7 @@ Feature: Data Privacy module verification
       | primary_address_city | Value Erased |
       | phone_mobile         | Value Erased |
 
-    # Verify that info is deleted from PII screen
+    # Verify that info is erased from PII screen
     Then I verify PII fields in #PersonalInfoDrawer for #RuslanRecord
       | fieldName            | value        |
       | first_name           | Value Erased |
@@ -223,6 +236,15 @@ Feature: Data Privacy module verification
       | title                | Value Erased |
       | primary_address_city | Value Erased |
       | phone_mobile         | Value Erased |
+
+    # Verify that field values are erased from Audit Log
+    Then I verify Audit Log fields in #AuditLogDrawer for #RuslanRecord
+      | fieldName            | Old Value    | New Value        |
+      | first_name           | Value Erased | Value Erased     |
+      | last_name            | Value Erased | Value Erased     |
+      | title                | Value Erased | Value Erased     |
+      | primary_address_city | Value Erased | Value Erased     |
+      | email                |              | rus2@example.org |
 
     # Verify that values for specified contact fields are erased
     When I choose Contacts in modules menu
@@ -238,7 +260,7 @@ Feature: Data Privacy module verification
       | phone_mobile         | Value Erased      |
       | email                | alex2@example.org |
 
-    # Verify that info is deleted from PII screen
+    # Verify that info is erased from PII screen
     Then I verify PII fields in #PersonalInfoDrawer for #AlexRecord
       | fieldName            | value             |
       | first_name           | Value Erased      |
@@ -247,6 +269,15 @@ Feature: Data Privacy module verification
       | primary_address_city | Value Erased      |
       | phone_mobile         | Value Erased      |
       | email                | alex2@example.org |
+
+    # Verify that field values are erased from Audit Log
+    Then I verify Audit Log fields in #AuditLogDrawer for #AlexRecord
+      | fieldName            | Old Value    | New Value    |
+      | email                | Value Erased |              |
+      | first_name           | Value Erased | Value Erased |
+      | last_name            | Value Erased | Value Erased |
+      | title                | Value Erased | Value Erased |
+      | primary_address_city | Value Erased | Value Erased |
 
     # Create Quote record from Quotes_BillTo subpanel of contact record view
     When I open the billing_quotes subpanel on #AlexRecord view

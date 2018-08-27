@@ -17,6 +17,8 @@ import ListView from '../views/list-view';
 import RecordsMarkedForErasureDashlet from '../views/records-marked-for-erasure-dashlet';
 import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import RecordLayout from '../layouts/record-layout';
+import AuditLogDrawerLayout from '../layouts/audit-log-drawer-layout';
+import {headerButtonClick, auditLogVerification, personalInfoDrawerVerification} from './steps-utils';
 
 /**
  * Check whether the cached view is visible
@@ -42,9 +44,9 @@ Then(/^I should (not )?see (#\S+) view$/,
 Then(/^I verify number of records in (#\S+) is (\d+)$/,
     async function (view: ListView, count) {
 
-        let actualCount  = await view.getNumberOfRecords();
+        let actualCount = await view.getNumberOfRecords();
         if (actualCount != count) {
-            throw new Error('Expected rows ' + count + ' Actual rows: ' + actualCount );
+            throw new Error(`Expected rows ` + count + ` Actual rows: ` + actualCount);
         }
     });
 
@@ -153,50 +155,39 @@ Then(/^I verify headers on (#[a-zA-Z](?:\w|\S)*)$/,
 Then(/^I verify PII fields in (#\S+) for (#[a-zA-Z](?:\w|\S)*)$/,
     async function (layout: PersonalInfoDrawerLayout, recordlayout: RecordLayout, data: TableDefinition): Promise<void> {
 
-        let errors = [];
+        // Open Actions menu
+        await headerButtonClick(recordlayout, 'actions');
+        // Select View Personal Info menu item
+        await headerButtonClick(recordlayout, 'viewpersonalinfo');
+        // Verify field values in Personal Info drawer
+        await personalInfoDrawerVerification(layout,data);
+        // Close Personal Info drawer
+        await headerButtonClick(recordlayout, 'closebutton');
+
+    }, {waitForApp: true});
+
+/**
+ *  Verify latest changes of field values in audit log for Old Value and New Value columns.
+ *
+ *  Note: Record view should be displayed to use this function
+ *
+ *  @example
+ *  Then I verify Audit Log fields in #AuditLogDrawer for #Lead_1Record
+ *      | fieldName  | Old Value  | New Value |
+ *      | first_name | Novak      | Pete      |
+ *      | last_name  | Djokovic   | Sampras   |
+ *
+ */
+Then(/^I verify Audit Log fields in (#AuditLogDrawer) for (#\S+)*$/,
+    async function (layout: AuditLogDrawerLayout, recordlayout: RecordLayout, data: TableDefinition): Promise<void> {
 
         // Open Actions menu
-        await recordlayout.HeaderView.clickButton('actions');
-        await this.driver.waitForApp();
-
-        // Select View Personal Info menu item
-        await recordlayout.HeaderView.clickButton('viewpersonalinfo');
-        await this.driver.waitForApp();
-
-        // Verify field values in Personal Info drawer
-        const rows = data.rows();
-
-        for (let i = 0; i < rows.length; i++) {
-            let row = rows[i];
-            let expected = row[1].trim();
-            let value = await layout.getFieldValue(row[0]);
-
-            if (expected !== value) {
-                errors.push(
-                    new Error(
-                        [
-                            `Field '${row[0]}' should be`,
-                            `\t'${expected}'`,
-                            `instead of`,
-                            `\t'${value}'`,
-                            `\n`,
-                        ].join('\n')
-                    )
-                );
-            }
-        }
-
-        let message = '';
-        _.each(errors, (item) => {
-            message += item.message;
-        });
-
-        if (message) {
-            throw new Error(message);
-        }
-
-        // Close Personal Info drawer
-        await layout.HeaderView.clickButton('closebutton');
-        await this.driver.waitForApp();
+        await headerButtonClick(recordlayout, 'actions');
+        // Select Audit Log menu item
+        await headerButtonClick(recordlayout, 'auditlog');
+        // Perform verifications
+        await auditLogVerification(layout, data);
+        // Close Audit Log drawer
+        await headerButtonClick(recordlayout, 'closebutton');
 
     }, {waitForApp: true});

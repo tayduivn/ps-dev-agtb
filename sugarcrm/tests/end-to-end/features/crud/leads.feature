@@ -221,32 +221,53 @@ Feature: Leads module verification
     When I click Create button on #LeadsList header
     When I provide input for #LeadsDrawer.HeaderView view
       | *        | first_name | last_name |
-      | RecordID | Novak      | Djokovic  |
+      | Lead_1 | Novak      | Djokovic  |
     When I provide input for #LeadsDrawer.RecordView view
       | *        | title                              | phone_mobile | website    |
-      | RecordID | Serbian professional tennis player | 888-233-3221 | www.ND.com |
+      | Lead_1 | Serbian professional tennis player | 888-233-3221 | www.ND.com |
     # Cancel Lead creation
     When I click Cancel button on #LeadsDrawer header
     Then I should see #LeadsList.ListView view
     When I click Create button on #LeadsList header
     When I provide input for #LeadsDrawer.HeaderView view
       | *        | salutation | first_name | last_name |
-      | RecordID | Mr.        | Novak      | Djokovic  |
+      | Lead_1 | Mr.        | Novak      | Djokovic  |
     When I provide input for #LeadsDrawer.RecordView view
       | *        | title                              | phone_mobile | website               | account_name    |
-      | RecordID | Serbian professional tennis player | 888-233-3221 | novakdjokovic.com/en/ | Novak's Account |
+      | Lead_1 | Serbian professional tennis player | 888-233-3221 | novakdjokovic.com/en/ | Novak's Account |
     # Save Lead record
     When I click Save button on #LeadsDrawer header
     When I close alert
-    Then I should see *RecordID in #LeadsList.ListView
-    When I click on preview button on *RecordID in #LeadsList.ListView
+    Then I should see *Lead_1 in #LeadsList.ListView
+    When I click on preview button on *Lead_1 in #LeadsList.ListView
     # Verify the new record values in preview
-    Then I should see #RecordIDPreview view
-    Then I verify fields on #RecordIDPreview.PreviewView
+    Then I should see #Lead_1Preview view
+    Then I verify fields on #Lead_1Preview.PreviewView
       | fieldName    | value                              |
       | name         | Mr. Novak Djokovic                 |
       | account_name | Novak's Account                    |
       | website      | http://novakdjokovic.com/en/       |
       | phone_mobile | 888-233-3221                       |
       | title        | Serbian professional tennis player |
-
+    # Check Audit Log
+    When I select *Lead_1 in #LeadsList.ListView
+    Then I verify Audit Log fields in #AuditLogDrawer for #Lead_1Record
+      | fieldName        | Old Value | New Value                          |
+      | first_name       |           | Novak                              |
+      | last_name        |           | Djokovic                           |
+      | title            |           | Serbian professional tennis player |
+      | phone_mobile     |           | 888-233-3221                       |
+      | team_id          |           | Global                             |
+      | assigned_user_id |           | admin                              |
+      | status           |           | New                                |
+    # Edit record and verify Audit Log
+    When I click Edit button on #Lead_1Record header
+    When I provide input for #Lead_1Record.HeaderView view
+      | first_name | last_name |
+      | Pete       | Sampras   |
+    When I click Save button on #Lead_1Record header
+    When I close alert
+    Then I verify Audit Log fields in #AuditLogDrawer for #Lead_1Record
+      | fieldName  | before   | after   |
+      | first_name | Novak    | Pete    |
+      | last_name  | Djokovic | Sampras |
