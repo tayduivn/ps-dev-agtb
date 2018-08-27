@@ -1391,6 +1391,11 @@ function renderProject (prjCode) {
 
             PROJECT_MODULE = project.process_definition.pro_module;
             project.init();
+
+            if (App.config.autoValidateProcessesOnImport &&
+                App.router.getPreviousFragment() === 'pmse_Project/layout/project-import') {
+                traverseProcess();
+            }
         }
     });
 };
