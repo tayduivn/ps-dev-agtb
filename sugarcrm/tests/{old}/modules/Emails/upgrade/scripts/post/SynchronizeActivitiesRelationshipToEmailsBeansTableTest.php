@@ -51,7 +51,7 @@ class SynchronizeActivitiesRelationshipToEmailsBeansTableTest extends UpgradeTes
         SugarTestEmailUtilities::setCreatedEmail($email->id);
 
         $contacts = $email->get_linked_beans('contacts', 'Contact');
-        $this->assertCount(0, $contacts, 'Should not be linked yet');
+        $this->assertCount(0, $contacts, 'Contacts should not be linked yet');
 
         $script = $this->createPartialMock(
             'SugarUpgradeSynchronizeActivitiesRelationshipToEmailsBeansTable',
@@ -68,7 +68,7 @@ class SynchronizeActivitiesRelationshipToEmailsBeansTableTest extends UpgradeTes
 
         $email->contacts->resetLoaded();
         $contacts = $email->get_linked_beans('contacts', 'Contact');
-        $this->assertCount(1, $contacts, 'Should be linked now');
+        $this->assertCount(1, $contacts, 'Contacts should be linked now');
         $this->assertSame($contact->id, $contacts[0]->id, 'The IDs do not match');
     }
 

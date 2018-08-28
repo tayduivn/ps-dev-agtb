@@ -64,7 +64,8 @@ class SugarUpgradeSynchronizeTasksRelationshipToEmailsBeansTable extends Upgrade
 
         try {
             $sql = 'SELECT emails.id, emails.parent_type, emails.parent_id FROM emails WHERE ' .
-                "emails.parent_id IS NOT NULL AND emails.parent_id<>'' AND emails.parent_type='Tasks' AND " .
+                $GLOBALS['db']->getNotEmptyFieldSQL('emails.parent_id') .
+                " AND emails.parent_type='Tasks' AND " .
                 'emails.deleted=0 AND NOT EXISTS (SELECT emails_beans.id FROM emails_beans WHERE ' .
                 'emails_beans.email_id=emails.id AND emails_beans.bean_module=emails.parent_type AND ' .
                 'emails_beans.bean_id=emails.parent_id AND emails_beans.deleted=0)';
