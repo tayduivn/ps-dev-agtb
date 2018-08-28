@@ -116,6 +116,8 @@ class MetaDataFiles
         MB_FILTERVIEW             => 'default',
         MB_BWCFILTERVIEW          => 'SearchFields',
         MB_SIDECARQUOTEDATAGROUPLIST => 'quote-data-group-list',
+        MB_QUOTEDATAGRANDTOTALHEADER => 'quote-data-grand-totals-header',
+        MB_QUOTEDATAGRANDTOTALFOOTER => 'quote-data-grand-totals-footer',
     );
 
     /**
