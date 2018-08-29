@@ -110,7 +110,15 @@ ExpressionControl.prototype.init = function(settings) {
         .setInputValidationFunction(this._inputValidationFunction())
         .setOnBeforeAddItemByInput(this._onBeforeAddItemByInput());
 
-    this.setElementHelper({})
+    var helperConf = {};
+    if (defaults.dateFormat) {
+        helperConf.dateFormat = defaults.dateFormat;
+    }
+    if (defaults.timeFormat) {
+        helperConf.timeFormat = defaults.timeFormat;
+    }
+
+    this.setElementHelper(helperConf)
         .setWidth(defaults.width)
         .setHeight(defaults.height)
         .setOwner(defaults.owner)
