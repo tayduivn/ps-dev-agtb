@@ -28,7 +28,7 @@ Feature: Quotes module performance testing
     # 8. Verify amounts in Grand Total header of QLI table
 
   @performance_Copy_Quote
-  Scenario: Quotes > Copy Quote with 50 QLis (7 by 7 + 1 ) > Performance Measure
+  Scenario: Quotes > Copy Quote with 50 QLIs (7 by 7 + 1 ) > Performance Measure
     # 1. Generate quote record linked to the account
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
@@ -99,7 +99,7 @@ Feature: Quotes module performance testing
     # 5. Stop Timer and verify
     When I stop timer and verify
       | max   |
-      | 18000 |
+      | 18100 |
 
     # 6. Name and save the newly created quote record
     When I provide input for #QuotesRecord.HeaderView view
