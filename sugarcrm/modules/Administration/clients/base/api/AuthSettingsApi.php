@@ -268,8 +268,6 @@ class AuthSettingsApi extends SugarApi
                 'require_lower' => boolval($passConfig['onelower']),
                 'require_number' => boolval($passConfig['onenumber']),
                 'require_special' => boolval($passConfig['onespecial']),
-                'password_regex' => (string)$passConfig['customregex'],
-                'regex_description' => (string)$passConfig['regexcomment'],
             ],
             'password_reset_policy' => [
                 'enable' => boolVal($passConfig['forgotpasswordON']),

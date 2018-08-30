@@ -201,8 +201,6 @@ class AuthSettingsApiTest extends TestCase
             'require_lower' => $passwordSetting['onelower'],
             'require_number' => $passwordSetting['onenumber'],
             'require_special' => $passwordSetting['onespecial'],
-            'password_regex' => $passwordSetting['customregex'],
-            'regex_description' => $passwordSetting['regexcomment'],
         ];
         $localConfExpReset = [
             'enable' => $passwordSetting['forgotpasswordON'],
