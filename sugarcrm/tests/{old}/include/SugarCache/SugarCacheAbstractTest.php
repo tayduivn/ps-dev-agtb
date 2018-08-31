@@ -86,6 +86,16 @@ abstract class SugarCacheAbstractTest extends TestCase
         $this->assertNull($reader->get('key'));
     }
 
+    public function testZeroExpiration()
+    {
+        $reader = $this->getInstance();
+        $writer = $this->getInstance();
+
+        $writer->set('key', 'value', 0);
+
+        $this->assertSame('value', $reader->get('key'));
+    }
+
     /**
      * @return SugarCacheAbstract
      */

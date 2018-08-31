@@ -73,7 +73,11 @@ class SugarCachePsr extends SugarCacheAbstract
      */
     protected function _setExternal($key, $value)
     {
-        $this->backend->set($this->filterKey($key), $value, $this->_expireTimeout);
+        $this->backend->set(
+            $this->filterKey($key),
+            $value,
+            $this->_expireTimeout ?: null
+        );
     }
 
     /**
