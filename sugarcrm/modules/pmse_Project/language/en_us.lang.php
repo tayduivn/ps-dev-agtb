@@ -399,6 +399,8 @@ $mod_strings = array (
     'LBL_PMSE_VALIDATOR_WAIT_FOR_PROCESSES' => 'Error: Please wait for all processes to finish before starting validation',
     'LBL_PMSE_VALIDATOR_COMPLETE' => 'Validation complete! Errors found: ',
 
+    'LBL_PMSE_ERROR_UNABLE_TO_VALIDATE' => 'Unable to validate element',
+
     'LBL_PMSE_ERROR_FLOW_INCOMING_MINUMUM' => 'Element does not meet the minimum number of incoming flows',
     'LBL_PMSE_ERROR_FLOW_INCOMING_MINIMUM_INFO' => 'This element must have a minimum number of incoming paths. Check the number of paths that connect to this element to make sure that minimum number is met.',
 

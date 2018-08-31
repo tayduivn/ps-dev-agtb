@@ -2955,6 +2955,9 @@ AdamActivity.prototype.callbackFunctionForAddRelatedRecordAction = function(data
     var requiredFieldIsSet;
     var url = App.api.buildURL('pmse_Project/CrmData/addRelatedRecord/' +
         data.act_field_module + '?base_module=' + validationTools.getTargetModule());
+    var options = {
+        'bulk': 'validate_element_settings'
+    };
 
     // Validate the number of incoming and outgoing edges
     validationTools.validateNumberOfEdges(1, null, 1, null, element);
@@ -2963,7 +2966,7 @@ AdamActivity.prototype.callbackFunctionForAddRelatedRecordAction = function(data
     if (data.act_fields) {
         criteria = JSON.parse(data.act_fields);
     }
-    validationTools.progress.incrementTotal();
+    validationTools.progressTracker.incrementTotalValidations();
     App.api.call('read', url, null, {
         success: function(form) {
 
@@ -2987,11 +2990,11 @@ AdamActivity.prototype.callbackFunctionForAddRelatedRecordAction = function(data
                 }
             }
         },
-        error: function() {
+        error: function(data) {
             validationTools.createError(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', 'Module relationship');
         },
-        complete: function() {
-            validationTools.progress.incrementValidated();
+        complete: function(data) {
+            validationTools.progressTracker.incrementValidated();
         }
-    });
+    }, options);
 };

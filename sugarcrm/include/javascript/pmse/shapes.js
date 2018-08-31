@@ -547,16 +547,22 @@ AdamShape.prototype.addErrors = function (newLayer, pos) {
 AdamShape.prototype.validate = function(validationTools) {
     var self = this;
     var url = App.api.buildURL(this.getBaseURL() + self.id, null, null);
+    var options = {
+        'bulk': 'get_element_settings'
+    };
     var callback = self.getValidationFunction();
-    if (callback) {
-        validationTools.progress.incrementTotal();
+    if (url && callback) {
+        validationTools.progressTracker.incrementTotalElements();
         App.api.call('read', url, null, {
             success: function(data) {
                 callback(data, self, validationTools);
             },
-            complete: function() {
-                validationTools.progress.incrementValidated();
+            error: function(data) {
+                validationTools.createError(element, 'LBL_PMSE_ERROR_UNABLE_TO_VALIDATE', self.getName());
+            },
+            complete: function(data) {
+                validationTools.progressTracker.incrementSettingsGathered();
             }
-        });
+        }, options);
     }
 };

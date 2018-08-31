@@ -1360,6 +1360,7 @@ function renderProject (prjCode) {
 
             // Traverse the process
             traverseProcess();
+
         } else {
 
             // Inform the user that the attempt to start validation was not successful
@@ -1418,9 +1419,7 @@ var traverseProcess = function() {
     var startEvents = getStartEvents();
 
     // If there are elements to validate, display the progress alert
-    if (startEvents.length) {
-        validationTools.progress.incrementTotal();
-    }
+    validationTools.progressTracker.incrementTotalElements();
 
     // For each start event element, traverse the path starting from that element
     for (i = 0; i < startEvents.length; i++) {
@@ -1456,9 +1455,10 @@ var traverseProcess = function() {
             }
         }
     }
-    // Perform final checks for unvisited elements
+    // Perform final checks for unvisited elements and start a bulk API call to get element settings
     finalCleanup(allElements);
-    validationTools.progress.incrementValidated();
+    App.api.triggerBulkCall('get_element_settings');
+    validationTools.progressTracker.incrementSettingsGathered();
 };
 
 /**
@@ -1520,7 +1520,7 @@ var finalCleanup = function(allElements) {
  */
 var getValidationTools = function() {
     return {
-        'progress': new ProgressTracker(),
+        'progressTracker': new ValidationProgressTracker(),
         'canvas': jCore.getActiveCanvas(),
         'validateNumberOfEdges': validateNumberOfEdges,
         'validateAtom': validateAtom,
@@ -1538,63 +1538,75 @@ var getValidationTools = function() {
  */
 
 /**
- * Keeps track of the progress of a validation traversal of the canvas elements
- * and displays the status to the user as a percentage
+ * Tracks the progress of validating the elements on the canvas. Displays the current
+ * status of the validation process to the user and reports the total errors found
+ * when complete
  */
-var ProgressTracker = function() {
-    this.validated = 0,
-    this.total = 0,
+var ValidationProgressTracker = function() {
+    this.totalElements = 0,
+    this.numSettingsGathered = 0,
+    this.totalValidations = 0,
+    this.numValidated = 0,
 
     /**
-     * Increments the count of finished/validated items
+     * Increment the total number of elements encountered, to keep track of how many
+     * we need API responses for
+     */
+    this.incrementTotalElements = function() {
+        this.totalElements++;
+        App.alert.show('getting_element_settings', {
+            level: 'process',
+            title: 'Validating process definition: Retrieving element settings',
+            autoClose: false
+        });
+    },
+
+    /**
+     * Increments the number of elements we have received API responses for, so that
+     * we can track when we have received responses for all of them.
+     */
+    this.incrementSettingsGathered = function() {
+        this.numSettingsGathered++;
+        if (this.numSettingsGathered === this.totalElements) {
+            // We've received the settings information for all elements, so now we can send
+            // their setting validation calls in one big bulk call instead of one-by-one
+            App.alert.dismiss('getting_element_settings');
+            App.alert.show('validating_element_settings', {
+                level: 'process',
+                title: 'Validating process definition: Validating element settings',
+                autoClose: false
+            });
+            this.incrementTotalValidations();
+            App.api.triggerBulkCall('validate_element_settings');
+            this.incrementValidated();
+        }
+    },
+
+    /**
+     * Increments the number of data validations that need to be done on element settings,
+     * to keep track of how many we need API responses for
+     */
+    this.incrementTotalValidations = function() {
+        this.totalValidations++;
+    },
+
+    /**
+     * Increments the number of data validations that have been completed, so that we
+     * can track when the validation process has been completed
      */
     this.incrementValidated = function() {
-        var errorsFound;
-        this.validated++;
-        if (this.validated === this.total) {
-
-            errorsFound = document.getElementById('Error-table').rows.length - 1;
-
-            // We've reached the end of validation. Replace the 'in process' alert with
-            // a closable one that reports the completion to the user including the number
-            // of errors found
-            App.alert.dismiss('validator_running');
+        var errorsFound = document.getElementById('Error-table').rows.length - 1;
+        this.numValidated++;
+        if (errorsFound) {
+            myLayout.show('south');
+        }
+        if (this.numValidated === this.totalValidations) {
+            App.alert.dismiss('validating_element_settings');
             App.alert.show('validation_results', {
                 level: 'success',
                 title: translate('LBL_PMSE_VALIDATOR_COMPLETE') + errorsFound
             });
-        } else {
-            this.show();
         }
-    },
-
-    /**
-     * Increments the total count of items that require validation
-     */
-    this.incrementTotal = function() {
-        this.total++;
-        this.show();
-    },
-
-    /**
-     * Refreshes the alert that displays the progress to the user
-     */
-    this.show = function() {
-        var progress = Math.ceil((this.validated / this.total) * 100);
-        var newMessage = translate('LBL_PMSE_VALIDATOR_IN_PROGRESS') + ': ' + progress + '%';
-        var errorsFound = document.getElementById('Error-table').rows.length - 1;
-        App.alert.dismiss('validator_running');
-
-        // Only display the south pane if there is an error
-        if (errorsFound) {
-            myLayout.show('south');
-        }
-
-        App.alert.show('validator_running', {
-            level: 'process',
-            title: newMessage,
-            autoClose: false
-        });
     };
 };
 
@@ -1732,11 +1744,14 @@ var validateAtom = function(type, module, field, value, element, validationTools
             text: 'Email template'
         }
     };
+    var options = {
+        'bulk': 'validate_element_settings'
+    };
     if (criterionTypes[type]) {
         searchInfo = criterionTypes[type];
     }
     if (searchInfo) {
-        validationTools.progress.incrementTotal();
+        validationTools.progressTracker.incrementTotalValidations();
         App.api.call('read', searchInfo.url, null, {
             success: function(data) {
                 for (i = 0; i < data.result.length; i++) {
@@ -1746,10 +1761,13 @@ var validateAtom = function(type, module, field, value, element, validationTools
                 }
                 createError(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', searchInfo.text);
             },
-            complete: function() {
-                validationTools.progress.incrementValidated();
+            error: function(data) {
+                createError(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', searchInfo.text);
+            },
+            complete: function(data) {
+                validationTools.progressTracker.incrementValidated();
             }
-        });
+        }, options);
     }
 };
 
