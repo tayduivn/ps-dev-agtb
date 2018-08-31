@@ -119,8 +119,8 @@ include "metadata/team_sets_usersMetaData.php";
 include "metadata/locked_field_bean_relMetaData.php";
 //END SUGARCRM flav=ent ONLY
 
-// worklog relation field
-include 'metadata/worklog_indexMetaData.php';
+// commentslog relation field
+include 'metadata/commentslog_relMetaData.php';
 
 
 $defs = SugarAutoLoader::loadExtension('tabledictionary');

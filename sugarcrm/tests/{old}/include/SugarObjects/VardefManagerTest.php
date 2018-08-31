@@ -147,7 +147,7 @@ class VardefManagerTest extends TestCase
                     //BEGIN SUGARCRM flav=ent ONLY
                     'lockable_fields',
                     //END SUGARCRM flav=ent ONLY
-                    'worklog', // Added for worklog field
+                    'commentslog', // Added for commentslog field
                 ),
             ),
         );
@@ -226,7 +226,7 @@ class VardefManagerTest extends TestCase
                     //BEGIN SUGARCRM flav=ent ONLY
                     'lockable_fields',
                     //END SUGARCRM flav=ent ONLY
-                    'worklog', // Added for worklog field
+                    'commentslog', // Added for commentslog field
                     'assignable',
                     'team_security',
                     'email_address',

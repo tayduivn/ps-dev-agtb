@@ -438,8 +438,8 @@ class GlobalSearchApi extends SugarApi
                     }
                 }
 
-                if (isset($highlights['worklog'])) {
-                    $highlights['worklog'] = $highlights['worklog']['worklog_entry'];
+                if (isset($highlights['commentslog'])) {
+                    $highlights['commentslog'] = $highlights['commentslog']['commentslog_entry'];
                 }
 
                 $data['_highlights'] = $highlights;

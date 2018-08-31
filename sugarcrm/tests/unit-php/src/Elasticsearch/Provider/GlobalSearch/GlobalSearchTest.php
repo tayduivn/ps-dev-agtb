@@ -54,7 +54,7 @@ class GlobalSearchTest extends TestCase
             'longtext',
             'htmleditable_tinymce',
             'email',
-            'worklog',
+            'commentslog',
         );
         $sut = new GlobalSearch();
         $this->assertEquals($supported, $sut->getStudioSupportedTypes());

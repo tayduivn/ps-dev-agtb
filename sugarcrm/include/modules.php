@@ -719,10 +719,10 @@ $modInvisList[] = 'EmbeddedFiles';
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
 
-// module for Worklog
-$beanList['Worklog'] = 'Worklog';
-$beanFiles['Worklog'] = 'modules/Worklog/Worklog.php';
-$modInvisList[] = 'Worklog';
+// module for Commentslog
+$beanList['Commentslog'] = 'Commentslog';
+$beanFiles['Commentslog'] = 'modules/Commentslog/Commentslog.php';
+$modInvisList[] = 'Commentslog';
 
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
