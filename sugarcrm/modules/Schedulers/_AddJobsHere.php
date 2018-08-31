@@ -314,7 +314,7 @@ function pruneDatabase() {
 
             if (in_array($table . '_cstm', $tables)) {
 			    $custom_columns = $db->get_columns($table.'_cstm');
-			    if(empty($custom_columns['id_c'])) {
+                if (!empty($custom_columns['id_c'])) {
                     $db->query('DELETE FROM ' . $table . '_cstm WHERE id_c IN'
                         . ' (SELECT id FROM ' . $table . ' WHERE deleted = 1)');
 			    }
