@@ -105,6 +105,12 @@
     },
 
     /**
+     * @inheritdoc
+     */
+    bindDomChange: function() {
+    },
+
+    /**
      * Handles changing from the current state to the next state
      *
      * @param {string} nextState The next state to transition to
