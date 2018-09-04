@@ -103,7 +103,7 @@ class ForecastManagerWorksheetTest extends TestCase
         self::$user->reports_to_id = self::$manager->id;
         self::$user->save();
 
-        self::$user_quota = SugarTestQuotaUtilities::createQuota(600.000000);
+        self::$user_quota = SugarTestQuotaUtilities::createQuota('600.000000');
         self::$user_quota->user_id = self::$user->id;
         self::$user_quota->quota_type = 'Direct';
         self::$user_quota->timeperiod_id = self::$timeperiod->id;

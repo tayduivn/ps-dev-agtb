@@ -127,7 +127,7 @@ class RevenueLineItemTest extends TestCase
         return array(
             array('100.00', '1', '', '100.000000'),
             array('100.00', '1', '0.00', '0.00'),
-            array('100.00', '1', '150', '150.000000'),
+            array('100.00', '1', '150.000000', '150.000000'),
         );
     }
 

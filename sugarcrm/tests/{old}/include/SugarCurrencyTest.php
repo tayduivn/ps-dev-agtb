@@ -54,7 +54,7 @@ class SugarCurrencyTest extends TestCase
 
         // setup test currencies
         self::$currencySGD = SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171,'currency-sgd');
-        self::$currencyPHP = SugarTestCurrencyUtilities::createCurrency('Philippines', '₱', 'PHP', 41.829820, 'currency-php');
+        self::$currencyPHP = SugarTestCurrencyUtilities::createCurrency('Philippines', '₱', 'PHP', '41.829820', 'currency-php');
         self::$currencyYEN = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87,'currency-yen');
         self::$currencyBase = BeanFactory::getBean('Currencies','-99');
     }
