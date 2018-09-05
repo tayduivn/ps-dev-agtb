@@ -1239,13 +1239,12 @@ SUGAR.reports = function() {
 			currEditorDiv="chart_options";
 
 
-			if(group_defs.length == 1 && document.getElementById('chart_type').options.length > 5) {
-				chartTypesHolder.push(document.getElementById('chart_type').options[5]);
-				document.getElementById('chart_type').options.length = 5;
-			}
-			else if (group_defs.length > 1 && document.getElementById('chart_type').options.length < 6) {
-				document.getElementById('chart_type').options[5] = chartTypesHolder.pop();		
-			}
+            if (group_defs.length == 1 && document.getElementById('chart_type').options.length > 7) {
+                chartTypesHolder.push(document.getElementById('chart_type').options[7]);
+                document.getElementById('chart_type').options.length = 7;
+            } else if (group_defs.length > 1 && document.getElementById('chart_type').options.length < 8) {
+                document.getElementById('chart_type').options[7] = chartTypesHolder.pop();
+            }
 			if (report_type == 'summation' && currWizardStep < 6) {
 				var reportTypeLabel = SUGAR.language.get('Reports','LBL_SUMMATION_REPORT');
 				if (isMatrix)
