@@ -34,7 +34,7 @@ class RelateApiTest extends TestCase
         $account->save();
         $this->accounts[] = $account;
 
-        $contact = BeanFactory::newBean('Contacts');
+        $contact = SugarTestContactUtilities::createContact();
         $contact->first_name = 'RelateApi setUp';
         $contact->last_name = 'Contact';
         $contact->save();
@@ -45,11 +45,24 @@ class RelateApiTest extends TestCase
 
         $opportunity = SugarTestOpportunityUtilities::createOpportunity();
         $opportunity->load_relationship('contacts');
+        $contact = SugarTestContactUtilities::createContact();
         $contact->opportunity_role = 'A';
+        $contact->first_name = 'LeanCount setUp';
+        $contact->last_name = 'Contact';
         $contact->save();
+        $this->contacts[] = $contact;
+        $opportunity->contacts->add($contact);
+        $contact = SugarTestContactUtilities::createContact();
+        $contact->opportunity_role = 'A';
+        $contact->first_name = 'RelateApi setUp';
+        $contact->last_name = 'Contact';
+        $contact->save();
+        $this->contacts[] = $contact;
         $opportunity->contacts->add($contact);
         $contact = SugarTestContactUtilities::createContact();
         $contact->opportunity_role = 'B';
+        $contact->first_name = 'RelateApi setUp';
+        $contact->last_name = 'Contact';
         $contact->save();
         $this->contacts[] = $contact;
         $opportunity->contacts->add($contact);
@@ -222,7 +235,7 @@ class RelateApiTest extends TestCase
     public function testOrderByRelationshipField()
     {
         $opp_id = $this->opportunities[0]->id;
-        $contact_id = $this->contacts[1]->id;
+        $contact_id = $this->contacts[3]->id;
         $serviceMock = new RelateApiServiceMockUp();
         $reply = $this->relateApi->filterRelated(
             $serviceMock,
@@ -232,7 +245,7 @@ class RelateApiTest extends TestCase
                   'fields' => 'id, name, opportunity_role',
                   'order_by' => 'opportunity_role:DESC'));
 
-        $this->assertEquals(2, count($reply['records']), 'Should return two records');
+        $this->assertEquals(3, count($reply['records']), 'Should return three records');
         $this->assertEquals($contact_id, $reply['records'][0]['id'], 'Should be in desc order');
     }
 
@@ -265,6 +278,40 @@ class RelateApiTest extends TestCase
 
         $this->expectException($exception);
         $this->getRelatedEmails($lead, $acl);
+    }
+
+    /**
+     * Test asserts result of filterRelatedLeanCount
+     * @dataProvider leanCountProvider
+     */
+    public function testRelatedLeanCount($args, $recordCount, $hasMore)
+    {
+        $args['record'] = $this->opportunities[0]->id;
+        $serviceMock = new RelateApiServiceMockUp();
+        $reply = $this->relateApi->filterRelatedLeanCount(
+            $serviceMock,
+            $args
+        );
+        $this->assertArrayHasKey('record_count', $reply);
+        $this->assertArrayHasKey('has_more', $reply);
+        $this->assertSame($recordCount, $reply['record_count']);
+        $this->assertSame($hasMore, $reply['has_more']);
+    }
+
+    /**
+     * Test asserts result of filterRelatedLeanCount
+     * @dataProvider leanCountExProvider
+     */
+    public function testRelatedLeanCountException($args)
+    {
+        $args['record'] = $this->opportunities[0]->id;
+        $serviceMock = new RelateApiServiceMockUp();
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
+        $this->relateApi->filterRelatedLeanCount(
+            $serviceMock,
+            $args
+        );
     }
 
     private function setUpArchivedEmails(User $owner)
@@ -318,6 +365,100 @@ class RelateApiTest extends TestCase
                 SugarApiExceptionNotFound::class,
             ),
         );
+    }
+
+    public static function leanCountProvider()
+    {
+        return [
+            [
+                [
+                    'module' => 'Opportunities',
+                    'link_name' => 'contacts',
+                    'filter' => [
+                        ['first_name' => ['$starts' => "RelateApi"]],
+                    ],
+                    'max_num' => 2,
+                ],
+                2,
+                false,
+
+            ],
+            [
+                [
+                    'module' => 'Opportunities',
+                    'link_name' => 'contacts',
+                    'filter' => [
+                        ['first_name' => ['$starts' => "RelateApi"]],
+                    ],
+                    'max_num' => 1,
+                ],
+                1,
+                true,
+            ],
+            [
+                [
+                    'module' => 'Opportunities',
+                    'link_name' => 'contacts',
+                    'max_num' => 2,
+                ],
+                2,
+                true,
+            ],
+            [
+                [
+                    'module' => 'Opportunities',
+                    'link_name' => 'contacts',
+                    'max_num' => 3,
+                ],
+                3,
+                false,
+            ],
+            [
+                [
+                    'module' => 'Opportunities',
+                    'link_name' => 'contacts',
+                    'max_num' => 4,
+                ],
+                3,
+                false,
+            ],
+        ];
+    }
+
+    public static function leanCountExProvider()
+    {
+        return [
+            [
+                [
+                    'module' => 'Opportunities',
+                    'link_name' => 'contacts',
+                    'filter' => [
+                        ['first_name' => ['$starts' => "RelateApi"]],
+                    ],
+                ],
+            ],
+            [
+                [
+                    'module' => 'Opportunities',
+                    'link_name' => 'contacts',
+                    'max_num' => '-1',
+                ],
+            ],
+            [
+                [
+                    'module' => 'Opportunities',
+                    'link_name' => 'contacts',
+                    'max_num' => 'foo',
+                ],
+            ],
+            [
+                [
+                    'module' => 'Opportunities',
+                    'link_name' => 'contacts',
+                    'max_num' => '',
+                ],
+            ],
+        ];
     }
 }
 
