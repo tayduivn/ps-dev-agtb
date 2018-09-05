@@ -27,7 +27,18 @@
         var lineNum;
         var footerRows = [];
         var quotesMeta = app.metadata.getModule('Quotes', 'fields');
-
+        // make sure related_fields contains description, currency_id, base_rate, quote_id, name, and
+        // product_template_name & _id fields
+        var requiredRelatedFields = [
+            'description',
+            'currency_id',
+            'base_rate',
+            'quote_id',
+            'name',
+            'position',
+            'product_template_id',
+            'product_template_name'
+        ];
         // make sure line_num field exists in worksheet_columns
         lineNum = _.find(saveObj.worksheet_columns, function(col) {
             return col.name === 'line_num';
@@ -58,21 +69,17 @@
             if (col.label === 'LBL_DISCOUNT_AMOUNT' && col.name === 'discount_amount') {
                 col.label = 'LBL_DISCOUNT_AMOUNT_VALUE';
             }
+
+            if (col.type === 'relate') {
+                requiredRelatedFields.push(col.id_name);
+            }
+            if (col.type === 'parent') {
+                requiredRelatedFields.push(col.id_name);
+                requiredRelatedFields.push(col.type_name);
+            }
         }, this);
 
-        // make sure related_fields contains description, currency_id, base_rate, quote_id, name, and
-        // product_template_name & _id fields
-        var $requiredRelatedFields = [
-            'description',
-            'currency_id',
-            'base_rate',
-            'quote_id',
-            'name',
-            'position',
-            'product_template_id',
-            'product_template_name'];
-
-        _.each($requiredRelatedFields, function(field) {
+        _.each(requiredRelatedFields, function(field) {
             if (!_.contains(saveObj.worksheet_columns_related_fields, field)) {
                 saveObj.worksheet_columns_related_fields.push(field);
             }

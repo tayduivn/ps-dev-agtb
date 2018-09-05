@@ -303,6 +303,14 @@
                 label: fieldVarDef.vname || fieldVarDef.label
             };
 
+            if (fieldVarDef.type === 'relate') {
+                fieldViewDef.id_name = fieldVarDef.id_name;
+            }
+            if (fieldVarDef.type === 'parent') {
+                fieldViewDef.id_name = fieldVarDef.id_name;
+                fieldViewDef.type_name = fieldVarDef.type_name;
+            }
+
             fieldViewDef.name === 'discount_amount' ?
                 (fieldViewDef.label = app.lang.get('LBL_DISCOUNT_AMOUNT_VALUE', 'Products')) :
                 fieldViewDef.label;
