@@ -532,6 +532,15 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
                     1 => '%X%Y%Z%',
                 ),
             ),
+            'in-set-with-int-0' => array(
+                function (SugarQuery_Builder_Where $where) {
+                    $where->in('industry', array(0));
+                },
+                'accounts.industry IN (?)',
+                array(
+                    1 => '0',
+                ),
+            ),
         );
     }
 
