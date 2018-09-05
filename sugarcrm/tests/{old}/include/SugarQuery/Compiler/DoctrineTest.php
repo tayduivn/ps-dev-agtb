@@ -398,7 +398,7 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
         $compiler = $this->getCompilerWithCollationCaseSensitivity(false);
         $builder = $compiler->compile($query);
 
-        $this->assertEquals($expectedWhere, $builder->getQueryPart('where'));
+        $this->assertEquals($expectedWhere, (string) $builder->getQueryPart('where'));
         $this->assertSame($expectedParams, $builder->getParameters());
     }
 
@@ -538,7 +538,16 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
                 },
                 'accounts.industry IN (?)',
                 array(
-                    1 => '0',
+                    1 => 0,
+                ),
+            ),
+            'in-set-with-empty-string' => array(
+                function (SugarQuery_Builder_Where $where) {
+                    $where->in('industry', array(''));
+                },
+                '(accounts.industry IS NULL) OR (accounts.industry IN (?))',
+                array(
+                    1 => '',
                 ),
             ),
         );
