@@ -246,6 +246,8 @@ function get_sugar_config_defaults()
     'oauth_token_life' => 86400, // 60*60*24
     'oauth_token_expiry' => 0,
     'admin_export_only' => false,
+    'processes_auto_validate_on_import' => true,
+    'processes_auto_validate_on_save' => true,
     'export_delimiter' => ',',
     'export_excel_compatible' => false,
     'cache_dir' => 'cache/',

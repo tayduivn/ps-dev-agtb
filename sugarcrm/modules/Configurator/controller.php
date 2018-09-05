@@ -53,6 +53,10 @@ class ConfiguratorController extends SugarController
         'activity_streams_enabled',
 
         'marketing_extras_enabled',
+
+        // Advanced Workflow settings
+        'processes_auto_validate_on_import',
+        'processes_auto_validate_on_save',
     );
 
     /**

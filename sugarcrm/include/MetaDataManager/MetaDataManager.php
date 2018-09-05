@@ -2205,6 +2205,10 @@ class MetaDataManager implements LoggerAwareInterface
             $configs['tenant'] = $idmModeConfig['tid'];
         }
 
+        // Advanced Workflow settings
+        $configs['autoValidateProcessesOnImport'] = $sugarConfig['processes_auto_validate_on_import'];
+        $configs['autoValidateProcessesOnSave'] = $sugarConfig['processes_auto_validate_on_save'];
+
         return $configs;
     }
 

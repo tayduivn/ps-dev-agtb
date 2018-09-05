@@ -145,6 +145,8 @@ class MetaDataManagerTest extends TestCase
         return [
             'configWithIDMModeDisabled' => [
                 'sugarConfig' => [
+                    'processes_auto_validate_on_import' => true,
+                    'processes_auto_validate_on_save' => true,
                     'list_max_entries_per_page' => 1,
                     'max_record_fetch_size' => 2,
                     'mass_actions' => [
@@ -157,6 +159,8 @@ class MetaDataManagerTest extends TestCase
                     'idm_mode' => [],
                 ],
                 'expectedConfig' => [
+                    'autoValidateProcessesOnImport' => true,
+                    'autoValidateProcessesOnSave' => true,
                     'maxQueryResult' => 1,
                     'maxRecordFetchSize' => 2,
                     'massActions' => [
@@ -171,6 +175,8 @@ class MetaDataManagerTest extends TestCase
             ],
             'configWithIDMModeEnable' => [
                 'sugarConfig' => [
+                    'processes_auto_validate_on_import' => true,
+                    'processes_auto_validate_on_save' => true,
                     'list_max_entries_per_page' => 1,
                     'max_record_fetch_size' => 2,
                     'mass_actions' => [
@@ -194,6 +200,8 @@ class MetaDataManagerTest extends TestCase
                     ],
                 ],
                 'expectedConfig' => [
+                    'autoValidateProcessesOnImport' => true,
+                    'autoValidateProcessesOnSave' => true,
                     'maxQueryResult' => 1,
                     'maxRecordFetchSize' => 2,
                     'massActions' => [
