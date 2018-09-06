@@ -203,9 +203,19 @@ class RestService extends ServiceBase
                 && !($systemStatus['level'] == 'maintenance' && isset($this->user) && $this->user->isAdmin())
                 && empty($route['ignoreSystemStatusError'])) {
                 // The system is unhappy and the route isn't flagged to let them through
-                $e = new SugarApiExceptionMaintenance($systemStatus['message'], null, null, 0, $systemStatus['level']);
-                $e->setExtraData("url", $systemStatus['url']);
-                throw $e;
+                // but user detail request needs to be honored to check if user should be deactivated
+                if (!(!empty($argArray['module']) && $argArray['module'] === 'Users'
+                    && !empty($route['method']) && $route['method'] === 'retrieveRecord')) {
+                    $e = new SugarApiExceptionMaintenance(
+                        $systemStatus['message'],
+                        null,
+                        null,
+                        0,
+                        $systemStatus['level']
+                    );
+                    $e->setExtraData("url", $systemStatus['url']);
+                    throw $e;
+                }
             }
             //END REQUIRED CODE DO NOT MODIFY
 
