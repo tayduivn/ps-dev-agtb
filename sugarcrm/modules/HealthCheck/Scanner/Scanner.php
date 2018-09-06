@@ -4089,6 +4089,12 @@ ENDP;
         if (error_reporting() === 0) {
             return false;
         }
+
+        // ignore redis initialization error when running healthcheck on 8.1
+        if (basename($errfile) === 'Redis.php') {
+            return false;
+        }
+
         switch ($errno) {
             case 1:     $e_type = 'E_ERROR'; break;
             case 2:     $e_type = 'E_WARNING'; break;
