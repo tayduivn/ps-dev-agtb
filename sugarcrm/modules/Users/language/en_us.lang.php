@@ -635,7 +635,7 @@ $mod_strings = array (
     'LBL_DETAIL' => 'User Profile',
 
     'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER' =>
-        'If certain fields are not editable, please login to your Cloud Console to manage these fields',
+        'If certain fields are not editable, please login to your Settings to manage these fields',
     'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_REGULAR_USER' =>
         'If you wish to change certain fields that are not editable, ' .
         'please contact Administrator to notify these changes',
