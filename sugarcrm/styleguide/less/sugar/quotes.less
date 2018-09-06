@@ -9,8 +9,10 @@
     position: relative;
     height: 46px;
 
-    &:nth-child(1) {
-      padding-left: 70px;
+    .quote-data-header-fields {
+      margin-left: 71px;
+      display: flex;
+      justify-content: space-around;
     }
 
     &:last-child {
@@ -33,7 +35,6 @@
     }
 
     .quote-totals-row-item {
-      display: table-cell;
       padding: 5px;
       text-align: right;
       border-right: @borderWidget;
@@ -42,7 +43,6 @@
 
       &:last-child {
         border-right: none;
-        width: 15%;
       }
 
       .quote-totals-row-value {
