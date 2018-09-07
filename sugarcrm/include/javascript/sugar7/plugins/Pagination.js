@@ -61,7 +61,7 @@
                         this.collection.off('reset', this.render, this);
                         this.collection.on('reset', function(collection, options) {
                             //Verify the table header has rendered, but we don't have any rows yet.
-                            if (_.isEmpty(options.previousModels) &&
+                            if (options && _.isEmpty(options.previousModels) &&
                                 this.$('tbody > tr').length === 0 && this.$('thead > tr').length > 0
                             ) {
                                 this._renderRows(collection, collection.models);
