@@ -94,7 +94,7 @@
                         }
                         app.alert.dismiss('upload');
                         var route = app.router.buildRoute(self.module, data.project_import.id);
-                        route = route + '/layout/designer';
+                        route = route + '/layout/designer?imported=true';
                         app.router.navigate(route, {trigger: true});
                         app.alert.show('process-import-saved', {
                             level: 'success',

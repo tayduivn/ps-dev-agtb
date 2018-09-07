@@ -1393,8 +1393,13 @@ function renderProject (prjCode) {
             PROJECT_MODULE = project.process_definition.pro_module;
             project.init();
 
+            // Check to see if auto-validate on import is turned on
             if (App.config.autoValidateProcessesOnImport &&
-                App.router.getPreviousFragment() === 'pmse_Project/layout/project-import') {
+                // Check to see that the page the user came from was the project import page
+                // Necessary to prevent re-validation if the user refreshes the canvas page
+                App.router.getPreviousFragment() === 'pmse_Project/layout/project-import' &&
+                // Check to see that the current URL has the unique data provided by the import page
+                App.router.getFragment().indexOf('imported=true') !== -1) {
                 traverseProcess();
             }
         }
