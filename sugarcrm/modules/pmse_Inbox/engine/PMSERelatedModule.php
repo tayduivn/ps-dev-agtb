@@ -160,7 +160,7 @@ class PMSERelatedModule
             $beansForFilter = array_merge($beansForFilter, $targetBeans, $allRelatedBeans);
         }
 
-        if (!empty($def->filter)) {
+        if (!empty((array)$def->filter)) {
             $beans = $this->filterBeans($beansForFilter, array($def->filter));
         }
 
