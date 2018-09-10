@@ -136,8 +136,8 @@ class PMSERelatedModule
 
     /**
      * Gets the related and related related beans for the provided target bean
-     * @param array $beans
-     * @param array $def
+     * @param array $beans Beans to be parsed for related, filtered beans
+     * @param stdClass $def The definition that holds the filter criteria if there is any
      * @return array
      */
     public function getChainedRelationshipBeans(array $beans, $def)
@@ -148,30 +148,49 @@ class PMSERelatedModule
             return $beans;
         }
 
+        // Create an array of beans to be filtered later on in this method
         $beansForFilter = [];
+
+        // Loop and handle each bean in the array that was passed in
         foreach ($beans as $bean) {
-            $targetBeans = [];
-            $allRelatedBeans = [];
+            // We will either be merging the target module or related modules into our list of beans to filter
+            $merge = [];
+
+            // If the module name on the bean is the module name from the def, it is the target record
+            // NOTE: `$def->module` will hold either a module name or a link name
             if ($bean->getModuleName() === $def->module) {
-                $targetBeans[] = $bean;
+                $merge[] = $bean;
             } else {
-                $allRelatedBeans = array_values($this->getRelatedModuleBeans($bean, $def->module));
+                // This will get records related to the bean
+                $merge = array_values($this->getRelatedModuleBeans($bean, $def->module));
             }
-            $beansForFilter = array_merge($beansForFilter, $targetBeans, $allRelatedBeans);
+
+            // This list ultimately becomes what we will filter on, first on the beansForFilter list, then on the target,
+            // then on the related beans
+            $beansForFilter = array_merge($beansForFilter, $merge);
         }
 
+        // If there are filter property details, filter our filter list
+        // NOTE: Since `$def` is a stdClass object, this needs to be converted to an array to check for properties to
+        // ensure that the object is not empty
         if (!empty((array)$def->filter)) {
-            $beans = $this->filterBeans($beansForFilter, array($def->filter));
+            $filteredBeans = $this->filterBeans($beansForFilter, array($def->filter));
+        } else {
+            // Otherwise, use the filter list as-is
+            $filteredBeans = $beansForFilter;
         }
 
-        $def = isset($def->chainedRelationship) ? $def->chainedRelationship : null;
-        return $this->getChainedRelationshipBeans($beans, $def);
+        // Send back the filtered list of beans now, recursively
+        return $this->getChainedRelationshipBeans(
+            $filteredBeans,
+            isset($def->chainedRelationship) ? $def->chainedRelationship : null
+        );
     }
 
     /**
      * Filters beans on the given filter
-     * @param SugarBean $beans
-     * @param array $filter definition
+     * @param array $beans An array of beans
+     * @param array $filter Filter definition to apply to the beans
      * @return array of SugarBean
      */
     public function filterBeans($beans, $filter)
