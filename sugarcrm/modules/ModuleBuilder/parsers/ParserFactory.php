@@ -164,6 +164,8 @@ class ParserFactory
 
             case MB_LISTVIEW:
             case MB_SIDECARQUOTEDATAGROUPLIST:
+            case MB_QUOTEDATAGRANDTOTALHEADER:
+            case MB_QUOTEDATAGRANDTOTALFOOTER:
                 if ($subpanelName == null) {
                     if (isModuleBWC($moduleName)) {
                         SugarAutoLoader::requireWithCustom(
@@ -176,9 +178,13 @@ class ParserFactory
                             'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php'
                         );
                         $parserClass = SugarAutoLoader::customClass('SidecarListLayoutMetaDataParser');
-                        $listViewName = $lView === MB_SIDECARQUOTEDATAGROUPLIST ?
-                            MB_SIDECARQUOTEDATAGROUPLIST :
-                            MB_SIDECARLISTVIEW;
+                        $listViewName = MB_SIDECARLISTVIEW;
+                        if ($lView === MB_SIDECARQUOTEDATAGROUPLIST ||
+                            $lView === MB_QUOTEDATAGRANDTOTALHEADER ||
+                            $lView === MB_QUOTEDATAGRANDTOTALFOOTER) {
+                            $listViewName = $lView;
+                        }
+
                         return new $parserClass($listViewName, $moduleName, $packageName, 'base');
                     }
                 } else {
