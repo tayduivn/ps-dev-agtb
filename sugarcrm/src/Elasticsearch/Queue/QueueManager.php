@@ -218,14 +218,26 @@ class QueueManager
         $jobExec = "class::\\{$jobClass}";
         $job = $this->getNewBean('SchedulersJobs');
 
-        $sq = new \SugarQuery();
-        $sq->select('id');
-        $sq->from($job)->where()
+        $queued = new \SugarQuery();
+        $queued->select('id');
+        $queued->from($job)->where()
             ->equals('target', $jobExec)
             ->starts('data', $module)
-            ->contains('status', array(\SchedulersJob::JOB_STATUS_QUEUED, \SchedulersJob::JOB_STATUS_RUNNING));
+            ->equals('status', \SchedulersJob::JOB_STATUS_QUEUED);
 
-        $result = $job->fetchFromQuery($sq);
+        $running = new \SugarQuery();
+        $running->select('id');
+        $running->from($job)->where()
+            ->equals('target', $jobExec)
+            ->starts('data', $module)
+            ->equals('status', \SchedulersJob::JOB_STATUS_RUNNING);
+
+        $sq = new \SugarQuery();
+        $sq->union($queued);
+        $sq->union($running);
+        $sq->limit(1);
+
+        $result = $job->fetchFromQuery($sq, ['id']);
 
         // No job is found for this module, let's create one.
         if (empty($result)) {
