@@ -2886,7 +2886,7 @@ AdamActivity.prototype.callbackFunctionForUnassignedAction = function(data, elem
     validationTools.validateNumberOfEdges(1, null, 1, null, element);
 
     // Action is unassigned, which is an error in itself
-    validationTools.createError(element, 'LBL_PMSE_ERROR_ACTION_UNASSIGNED');
+    validationTools.createWarning(element, 'LBL_PMSE_ERROR_ACTION_UNASSIGNED');
 };
 
 /**
@@ -2986,12 +2986,12 @@ AdamActivity.prototype.callbackFunctionForAddRelatedRecordAction = function(data
                     }
                 }
                 if (!requiredFieldIsSet) {
-                    validationTools.createError(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', field.text);
+                    validationTools.createWarning(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', field.text);
                 }
             }
         },
         error: function(data) {
-            validationTools.createError(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', 'Module relationship');
+            validationTools.createWarning(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', 'Module relationship');
         },
         complete: function(data) {
             validationTools.progressTracker.incrementValidated();

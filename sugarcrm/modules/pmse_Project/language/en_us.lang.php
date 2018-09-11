@@ -399,9 +399,11 @@ $mod_strings = array (
     'LBL_PMSE_VALIDATOR_IN_PROGRESS_RETRIEVING' => 'Validating process definition: Retrieving element settings',
     'LBL_PMSE_VALIDATOR_IN_PROGRESS_VALIDATING' => 'Validating process definition: Validating element settings',
     'LBL_PMSE_VALIDATOR_REFRESH_ERROR_LIST' => 'Refreshing error list...',
-    'LBL_PMSE_VALIDATOR_COMPLETE' => 'Validation complete! Errors found: ',
+    'LBL_PMSE_VALIDATOR_COMPLETE' => 'Validation complete! Issues found: ',
     'LBL_PMSE_VALIDATOR_TOOLTIP_ISSUES' => ' issues',
     'LBL_PMSE_VALIDATOR_TOOLTIP_IN_PROGRESS' => 'Validation in progress',
+    'LBL_PMSE_VALIDATOR_WARNING_INFO' => 'Warning: The process may halt at this element or have other unintended effects',
+    'LBL_PMSE_VALIDATOR_ERROR_INFO' => 'Error: The process will halt at this element',
 
     'LBL_PMSE_ERROR_UNABLE_TO_VALIDATE' => 'Unable to validate element',
 

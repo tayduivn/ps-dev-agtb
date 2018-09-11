@@ -1502,7 +1502,7 @@ var finalCleanup = function(allElements) {
 
         // Check if the element was never visited (unreachable)
         if (!allElements[i].hasBeenQueued && allElements[i].getType() !== 'AdamArtifact') {
-            createError(allElements[i], 'LBL_PMSE_ERROR_ELEMENT_UNREACHABLE');
+            createWarning(allElements[i], 'LBL_PMSE_ERROR_ELEMENT_UNREACHABLE');
         }
 
         // Delete each element's hasBeenQueued attribute in case we want to run the traversal again
@@ -1522,6 +1522,7 @@ var getValidationTools = function(silent) {
         'canvas': jCore.getActiveCanvas(),
         'validateNumberOfEdges': validateNumberOfEdges,
         'validateAtom': validateAtom,
+        'createWarning': createWarning,
         'createError': createError,
         'CriteriaEvaluator': CriteriaEvaluator,
         'LogicTracker': LogicTracker,
@@ -1851,10 +1852,10 @@ var validateAtom = function(type, module, field, value, element, validationTools
                         return;
                     }
                 }
-                createError(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', searchInfo.text);
+                createWarning(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', searchInfo.text);
             },
             error: function(data) {
-                createError(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', searchInfo.text);
+                createWarning(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', searchInfo.text);
             },
             complete: function(data) {
                 validationTools.progressTracker.incrementValidated();
@@ -1864,12 +1865,22 @@ var validateAtom = function(type, module, field, value, element, validationTools
 };
 
 /**
+ * Adds a new warning to the error list table
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {string} description contains the error text to be presented to the user about the error
+ * @param {string} field is an optional value representing a specific field that the error refers to
+ */
+var createWarning = function(element, warningLabel, field) {
+    createError(element, warningLabel, field, true);
+};
+
+/**
  * Adds a new error to the error list table
  * @param {Object} element is the element on the canvas that is currently being examined/validated
  * @param {string} description contains the error text to be presented to the user about the error
  * @param {string} field is an optional value representing a specific field that the error refers to
  */
-var createError = function(element, errorLabel, field) {
+var createError = function(element, errorLabel, field, warning) {
 
     // Get the information about the error
     var elementName = element.getName();
@@ -1894,8 +1905,22 @@ var createError = function(element, errorLabel, field) {
     var errorCell = newRow.insertCell(1);
 
     // Create the elements that will go into the cells
+    var typeIcon = document.createElement('i');
     var nameText = document.createElement('a');
-    var errorText = document.createElement('a');
+    var errorText = document.createElement('span');
+
+    // Set the icon type for the error
+    typeIcon.setAttribute('rel', 'tooltip');
+    typeIcon.setAttribute('data-placement', 'top');
+    if (warning) {
+        typeIcon.setAttribute('class', 'fa fa-exclamation-triangle fa');
+        typeIcon.setAttribute('style', 'color: #FFCC00');
+        typeIcon.setAttribute('data-original-title', translate('LBL_PMSE_VALIDATOR_WARNING_INFO'));
+    } else {
+        typeIcon.setAttribute('class', 'fa fa-exclamation-circle fa');
+        typeIcon.setAttribute('style', 'color: red');
+        typeIcon.setAttribute('data-original-title', translate('LBL_PMSE_VALIDATOR_ERROR_INFO'));
+    }
 
     // Set the text content and click handler of the name cell element
     nameText.textContent = elementName;
@@ -1909,13 +1934,14 @@ var createError = function(element, errorLabel, field) {
     };
 
     // Set the text content and tooltip of the error cell element
-    errorText.textContent = errorName;
+    errorText.textContent = '  ' + errorName;
     errorText.setAttribute('rel', 'tooltip');
     errorText.setAttribute('data-placement', 'top');
     errorText.setAttribute('data-original-title', errorInfo);
 
     // Add the new elements to the cells
     nameCell.appendChild(nameText);
+    errorCell.appendChild(typeIcon);
     errorCell.appendChild(errorText);
 };
 

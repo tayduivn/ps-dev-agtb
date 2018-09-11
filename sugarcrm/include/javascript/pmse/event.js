@@ -2070,7 +2070,7 @@ AdamEvent.prototype.callbackFunctionForSendMessageEvent = function(data, element
         criteria = JSON.parse(data.evn_params);
     }
     if (!criteria.to || !criteria.to.length) {
-        validationTools.createError(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', 'To');
+        validationTools.createWarning(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', 'To');
     }
     for (field in criteria) {
         for (i = 0; i < criteria[field].length; i++) {

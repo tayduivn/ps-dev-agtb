@@ -558,7 +558,7 @@ AdamShape.prototype.validate = function(validationTools) {
                 callback(data, self, validationTools);
             },
             error: function(data) {
-                validationTools.createError(element, 'LBL_PMSE_ERROR_UNABLE_TO_VALIDATE', self.getName());
+                validationTools.createWarning(element, 'LBL_PMSE_ERROR_UNABLE_TO_VALIDATE', self.getName());
             },
             complete: function(data) {
                 validationTools.progressTracker.incrementSettingsGathered();

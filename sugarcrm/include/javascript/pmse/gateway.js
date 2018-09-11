@@ -876,7 +876,7 @@ AdamGateway.prototype.callbackFunctionForDivergingGateway = function(data, eleme
         if (thisPath.isAlwaysFalse()) {
             allEdges = validationTools.canvas.connections;
             destElementName = allEdges.find('id', data.data[i].flo_uid).destPort.parent.getName();
-            validationTools.createError(element, 'LBL_PMSE_ERROR_LOGIC_IMPOSSIBLE', destElementName);
+            validationTools.createWarning(element, 'LBL_PMSE_ERROR_LOGIC_IMPOSSIBLE', destElementName);
         }
 
         // Validate the individual logical atoms in the criteria box
@@ -896,7 +896,7 @@ AdamGateway.prototype.callbackFunctionForDivergingGateway = function(data, eleme
     // we have 'OR'ed each criteria box together, and we are checking if the resulting
     // logical expression is always true
     if (!element.gat_default_flow && !allPaths.isAlwaysTrue()) {
-        validationTools.createError(element, 'LBL_PMSE_ERROR_GATEWAY_NO_GUARANTEED_PATH');
+        validationTools.createWarning(element, 'LBL_PMSE_ERROR_GATEWAY_NO_GUARANTEED_PATH');
     }
 };
 
@@ -925,5 +925,5 @@ AdamGateway.prototype.callbackFunctionForConvergingGateway = function(data, elem
             }
         }
     }
-    validationTools.createError(element, 'LBL_PMSE_ERROR_GATEWAY_CONVERGING_TYPE_MISMATCH');
+    validationTools.createWarning(element, 'LBL_PMSE_ERROR_GATEWAY_CONVERGING_TYPE_MISMATCH');
 };
