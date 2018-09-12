@@ -145,8 +145,11 @@ class MetaDataManagerTest extends TestCase
         return [
             'configWithIDMModeDisabled' => [
                 'sugarConfig' => [
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'processes_auto_validate_on_import' => true,
-                    'processes_auto_validate_on_save' => true,
+                    'processes_auto_validate_on_autosave' => true,
+                    'processes_auto_save_interval' => 0,
+                    //END SUGARCRM flav=ent ONLY
                     'list_max_entries_per_page' => 1,
                     'max_record_fetch_size' => 2,
                     'mass_actions' => [
@@ -159,8 +162,11 @@ class MetaDataManagerTest extends TestCase
                     'idm_mode' => [],
                 ],
                 'expectedConfig' => [
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'autoValidateProcessesOnImport' => true,
-                    'autoValidateProcessesOnSave' => true,
+                    'autoValidateProcessesOnAutosave' => true,
+                    'processDesignerAutosaveInterval' => 0,
+                    //END SUGARCRM flav=ent ONLY
                     'maxQueryResult' => 1,
                     'maxRecordFetchSize' => 2,
                     'massActions' => [
@@ -175,8 +181,11 @@ class MetaDataManagerTest extends TestCase
             ],
             'configWithIDMModeEnable' => [
                 'sugarConfig' => [
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'processes_auto_validate_on_import' => true,
-                    'processes_auto_validate_on_save' => true,
+                    'processes_auto_validate_on_autosave' => true,
+                    'processes_auto_save_interval' => 0,
+                    //END SUGARCRM flav=ent ONLY
                     'list_max_entries_per_page' => 1,
                     'max_record_fetch_size' => 2,
                     'mass_actions' => [
@@ -200,8 +209,11 @@ class MetaDataManagerTest extends TestCase
                     ],
                 ],
                 'expectedConfig' => [
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'autoValidateProcessesOnImport' => true,
-                    'autoValidateProcessesOnSave' => true,
+                    'autoValidateProcessesOnAutosave' => true,
+                    'processDesignerAutosaveInterval' => 0,
+                    //END SUGARCRM flav=ent ONLY
                     'maxQueryResult' => 1,
                     'maxRecordFetchSize' => 2,
                     'massActions' => [

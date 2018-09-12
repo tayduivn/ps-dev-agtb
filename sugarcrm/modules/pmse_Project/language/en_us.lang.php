@@ -90,6 +90,7 @@ $mod_strings = array (
     'LBL_PMSE_ADAM_DESIGNER_REDO' => 'Redo',
     'LBL_PMSE_ADAM_DESIGNER_SAVE' => 'Save',
     'LBL_PMSE_ADAM_DESIGNER_VALIDATE' => 'Validate',
+    'LBL_PMSE_ADAM_DESIGNER_VIEW_ERRORS' => 'Run validation to check for errors',
 
     /**ELEMENTS NAMES**/
     'LBL_PMSE_ADAM_DESIGNER_TASK' => 'Activity',
@@ -395,9 +396,12 @@ $mod_strings = array (
 
     // PMSE Validation tool strings
 
-    'LBL_PMSE_VALIDATOR_IN_PROGRESS' => 'Validating process definition',
-    'LBL_PMSE_VALIDATOR_WAIT_FOR_PROCESSES' => 'Error: Please wait for all processes to finish before starting validation',
+    'LBL_PMSE_VALIDATOR_IN_PROGRESS_RETRIEVING' => 'Validating process definition: Retrieving element settings',
+    'LBL_PMSE_VALIDATOR_IN_PROGRESS_VALIDATING' => 'Validating process definition: Validating element settings',
+    'LBL_PMSE_VALIDATOR_REFRESH_ERROR_LIST' => 'Refreshing error list...',
     'LBL_PMSE_VALIDATOR_COMPLETE' => 'Validation complete! Errors found: ',
+    'LBL_PMSE_VALIDATOR_TOOLTIP_ISSUES' => ' issues',
+    'LBL_PMSE_VALIDATOR_TOOLTIP_IN_PROGRESS' => 'Validation in progress',
 
     'LBL_PMSE_ERROR_UNABLE_TO_VALIDATE' => 'Unable to validate element',
 

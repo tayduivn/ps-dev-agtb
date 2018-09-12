@@ -51,6 +51,7 @@
                     project.dispose();
                     app.router.navigate(targetUrl , {trigger: true, replace: true });
                     window.location.reload();
+                    clearInterval(project.autosaveTimer);
                 },
                 onCancel: function () {
                     app.router.navigate('' , {trigger: false, replace: false })
@@ -59,6 +60,7 @@
             return false;
         }
         project.dispose();
+        clearInterval(project.autosaveTimer);
         return true;
     },
 

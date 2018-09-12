@@ -77,6 +77,11 @@ var AdamProject = function (settings) {
      * @type {Object}
      */
     this.autosaveTimer = null;
+    /**
+     * Stores whether this project is currently being validated
+     * @type {Object}
+     */
+    this.isBeingValidated = false;
     this.showWarning = false;
     /**
      * Object Structure to save elements without save
@@ -262,9 +267,14 @@ AdamProject.prototype.init = function () {
                 return true;
             }
         };
-        this.autosaveTimer = setInterval(function() {
-            self.save();
-        }, this.saveInterval);
+        if (typeof this.saveInterval === 'number' && this.saveInterval >= 30000) {
+            this.autosaveTimer = setInterval(function() {
+                self.save();
+                if (App.config.autoValidateProcessesOnAutosave && !this.isBeingValidated) {
+                    traverseProcess(true);
+                }
+            }, this.saveInterval);
+        }
         this.propertiesGrid = new PropertiesGrid('#properties-grid');
         this.canvas.commandStack.setHandler(AdamProject.prototype.updateUndoRedo);
     }

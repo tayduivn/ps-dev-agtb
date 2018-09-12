@@ -128,6 +128,39 @@
         width: 50px;
     }
 
+    #refreshing-errors {
+        visibility: hidden;
+        width: 130px;
+        left: 50%;
+        bottom: 10%;
+        transform: translateX(-50%);
+        background-color: #f6f6f6;
+        color: #000;
+        text-align: center;
+        border-radius: 2px;
+        padding: 5px;
+        position: fixed;
+        z-index: 1;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    #refreshing-errors.show {
+        visibility: visible;
+       -webkit-animation: fadein 0.5s;
+       animation: fadein 0.5s;
+    }
+
+    @-webkit-keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 10%; opacity: 1;}
+    }
+
+    @keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 10%; opacity: 1;}
+    }
+
 </style>
 <!--RECIPES HTML BEGINNIG-->
 <div id="container">
@@ -149,6 +182,7 @@
         </div>-->
     </div>
     <div id="Error-pane" class="pane ui-layout-south">
+        <div id="refreshing-errors">{{str "LBL_PMSE_VALIDATOR_REFRESH_ERROR_LIST" this.module}}</div>
         <table class="table table-striped table-sm" id="Error-table" width="100%">
             <thead>
                 <tr>
@@ -217,6 +251,9 @@
 
                 <!-- Validate -->
                 <span id="ButtonValidate" type="" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_VALIDATE" this.module}}" class="navbtn"><i class="fa fa-check-square"></i></span>
+
+                <!-- View Errors -->
+                <span id="ButtonToggleErrorPane" type="" rel="tooltip" title="" data-placement="bottom" data-original-title="{{str "LBL_PMSE_ADAM_DESIGNER_VIEW_ERRORS" this.module}}" class="navbtn"><i class="fa fa-exclamation-triangle exclamation-triangle-off"></i></span>
 
                 <!-- Zoom -->
                 <select id="zoom" class="friendly-select">

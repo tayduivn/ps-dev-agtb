@@ -54,9 +54,12 @@ class ConfiguratorController extends SugarController
 
         'marketing_extras_enabled',
 
+        //BEGIN SUGARCRM flav=ent ONLY
         // Advanced Workflow settings
         'processes_auto_validate_on_import',
-        'processes_auto_validate_on_save',
+        'processes_auto_validate_on_autosave',
+        'processes_auto_save_interval',
+        //END SUGARCRM flav=ent ONLY
     );
 
     /**

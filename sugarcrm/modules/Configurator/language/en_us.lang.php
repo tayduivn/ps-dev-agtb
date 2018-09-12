@@ -447,12 +447,16 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     // Marketing content settings
     'LBL_ADDITIONAL_MARKETING_CONTENT' => 'Enable additional login screen content',
 
+    //BEGIN SUGARCRM flav=ent ONLY
     // Advanced Workflow settings
+    'LBL_ADVANCED_WORKFLOW_SETTINGS_AUTO_SAVE_INTERVAL' => 'Auto-save process definitions',
+    'LBL_ADVANCED_WORKFLOW_SETTINGS_AUTO_SAVE_INTERVAL_HELP' => 'Determines how often process definitions are auto-saved when using the designer',
     'LBL_ADVANCED_WORKFLOW_SETTINGS_TITLE' => 'Advanced Workflow',
+    'LBL_ADVANCED_WORKFLOW_SETTINGS_SAVE' => 'Auto-validate process definitions on auto-save',
+    'LBL_ADVANCED_WORKFLOW_SETTINGS_SAVE_HELP' => 'Toggles whether process definitions are automatically validated when auto-saved. This will only take effect if "Auto-save process definitions" is set to a time interval',
     'LBL_ADVANCED_WORKFLOW_SETTINGS_IMPORT' => 'Auto-validate process definitions on import',
     'LBL_ADVANCED_WORKFLOW_SETTINGS_IMPORT_HELP' => 'Toggles whether process definitions are automatically validated when first imported',
-    'LBL_ADVANCED_WORKFLOW_SETTINGS_SAVE' => 'Auto-validate process definitions on save',
-    'LBL_ADVANCED_WORKFLOW_SETTINGS_SAVE_HELP' => 'Toggles whether process definitions are automatically validated each time they are saved',
+    //END SUGARCRM flav=ent ONLY
 );
 
 

@@ -85,6 +85,8 @@ var project,
 
     var countErrors = document.getElementById("countErrors");
 
+var currentErrorTable;
+
 var getAutoIncrementName = function (type, targetElement) {
     var i, j, k = canvas.getCustomShapes().getSize(), element, exists, index = 1, auxMap = {
         AdamUserTask: translate('LBL_PMSE_ADAM_DESIGNER_TASK'),
@@ -1351,24 +1353,7 @@ function renderProject (prjCode) {
      * Button that when clicked triggers the process design validator
      */
     $('#ButtonValidate').click(function() {
-
-        // Only start the validator if no validation is already running (no active AJAX requests)
-        if (!jQuery.active) {
-
-            // Clear the table of errors from any previous validation runs
-            $('#Error-table').find('tr:gt(0)').remove();
-
-            // Traverse the process
-            traverseProcess();
-
-        } else {
-
-            // Inform the user that the attempt to start validation was not successful
-            App.alert.show('validation_results', {
-                level: 'error',
-                title: translate('LBL_PMSE_VALIDATOR_WAIT_FOR_PROCESSES')
-            });
-        }
+        traverseProcess();
         jCore.getActiveCanvas().RemoveCurrentMenu();
     });
 
@@ -1384,7 +1369,7 @@ function renderProject (prjCode) {
     });
 
     project.setUid(prjCode);
-    project.setSaveInterval(20000);
+    project.setSaveInterval(parseInt(App.config.processDesignerAutosaveInterval));
     project.setCanvas(canvas);
     project.load(prjCode, {
         success: function() {
@@ -1408,20 +1393,25 @@ function renderProject (prjCode) {
 
 /**
  * Traverses the process to access each element in order
- * @return {Array} an array containing the errors found during traversal
+ * @param {Object} silent is an optional boolean flag indicating if this validation should be run
+ *                 silently (no alerts to the user)
  */
-var traverseProcess = function() {
+var traverseProcess = function(silent) {
     var i;
     var j;
     var queue;
     var currElement;
     var destElement;
     var connectedElements;
-    var validationTools = getValidationTools();
+    var validationTools = getValidationTools(silent);
 
     // Initialize the arrays of elements placed on the canvas
     var allElements = getAllElements();
     var startEvents = getStartEvents();
+
+    // Mark the project as currently being validated as start a fresh error table
+    project.isBeingValidated = true;
+    currentErrorTable = document.createElement('tbody');
 
     // If there are elements to validate, display the progress alert
     validationTools.progressTracker.incrementTotalElements();
@@ -1521,11 +1511,14 @@ var finalCleanup = function(allElements) {
 };
 
 /**
- * @return {Object} a collection of utility functions used in element validation
+ * Gathers together all the helper functions needed when validating an element
+ * @param {Object} silent is an optional boolean flag indicating if this
+ *                 validation should be run silently (no alerts to the user)
+ * @return {Object} an object containing utility functions used in element validation
  */
-var getValidationTools = function() {
+var getValidationTools = function(silent) {
     return {
-        'progressTracker': new ValidationProgressTracker(),
+        'progressTracker': new ValidationProgressTracker(silent),
         'canvas': jCore.getActiveCanvas(),
         'validateNumberOfEdges': validateNumberOfEdges,
         'validateAtom': validateAtom,
@@ -1543,44 +1536,37 @@ var getValidationTools = function() {
  */
 
 /**
- * Tracks the progress of validating the elements on the canvas. Displays the current
- * status of the validation process to the user and reports the total errors found
- * when complete
+ * Tracks the progress of validating the elements on the canvas. Displays the
+ * current status of the validation process to the user and reports the total
+ * errors found when complete
+ * @param {Object} silent is an optional boolean flag indicating if this
+ *                 validation should be run silently (no alerts to the user)
  */
-var ValidationProgressTracker = function() {
+var ValidationProgressTracker = function(silent) {
     this.totalElements = 0,
     this.numSettingsGathered = 0,
     this.totalValidations = 0,
     this.numValidated = 0,
+    this.silent = silent,
 
     /**
-     * Increment the total number of elements encountered, to keep track of how many
-     * we need API responses for
+     * Increment the total number of elements encountered, to keep track of how
+     * many we need API responses for
      */
     this.incrementTotalElements = function() {
         this.totalElements++;
-        App.alert.show('getting_element_settings', {
-            level: 'process',
-            title: 'Validating process definition: Retrieving element settings',
-            autoClose: false
-        });
+        this.showProgress();
     },
 
     /**
-     * Increments the number of elements we have received API responses for, so that
-     * we can track when we have received responses for all of them.
+     * Increments the number of elements we have received API responses for, so
+     * that we can track when we have received responses for all of them
      */
     this.incrementSettingsGathered = function() {
         this.numSettingsGathered++;
         if (this.numSettingsGathered === this.totalElements) {
             // We've received the settings information for all elements, so now we can send
             // their setting validation calls in one big bulk call instead of one-by-one
-            App.alert.dismiss('getting_element_settings');
-            App.alert.show('validating_element_settings', {
-                level: 'process',
-                title: 'Validating process definition: Validating element settings',
-                autoClose: false
-            });
             this.incrementTotalValidations();
             App.api.triggerBulkCall('validate_element_settings');
             this.incrementValidated();
@@ -1588,29 +1574,130 @@ var ValidationProgressTracker = function() {
     },
 
     /**
-     * Increments the number of data validations that need to be done on element settings,
-     * to keep track of how many we need API responses for
+     * Increments the number of data validations that need to be done on element
+     * settings, to keep track of how many we need API responses for
      */
     this.incrementTotalValidations = function() {
         this.totalValidations++;
+        this.showProgress();
     },
 
     /**
-     * Increments the number of data validations that have been completed, so that we
-     * can track when the validation process has been completed
+     * Increments the number of data validations that have been completed, so that
+     * we can track when the validation process has been completed
      */
     this.incrementValidated = function() {
-        var errorsFound = document.getElementById('Error-table').rows.length - 1;
         this.numValidated++;
-        if (errorsFound) {
-            myLayout.show('south');
+        this.showProgress();
+    },
+
+    /**
+     * Displays the current progress of the validation process (if not silent), and
+     * updates the error pane toggle button when validation is finished.
+     */
+    this.showProgress = function() {
+        var errorsFound = currentErrorTable.rows.length;
+        if (this.numSettingsGathered === this.totalElements && this.numValidated === this.totalValidations) {
+            // Validation is complete. Replace the existing error table with the new one
+            project.isBeingValidated = false;
+            $('#refreshing-errors').removeClass();
+            $('#Error-table').find('tbody').remove();
+            $('#Error-table').append(currentErrorTable);
+
+            // If no errors are found, we don't need the error pane open anymore
+            if (!errorsFound) {
+                myLayout.close('south');
+            }
+        } else {
+            $('#refreshing-errors').addClass('show');
         }
-        if (this.numValidated === this.totalValidations) {
+        if (!this.silent) {
+            // Silent mode is not activated, so display the correct alert for the current status
+            // of the validation process
+            App.alert.dismiss('getting_element_settings');
             App.alert.dismiss('validating_element_settings');
-            App.alert.show('validation_results', {
-                level: 'success',
-                title: translate('LBL_PMSE_VALIDATOR_COMPLETE') + errorsFound
+            if (this.numSettingsGathered < this.totalElements) {
+                App.alert.show('getting_element_settings', {
+                    level: 'process',
+                    title: translate('LBL_PMSE_VALIDATOR_IN_PROGRESS_RETRIEVING'),
+                    autoClose: false
+                });
+            } else if (this.numValidated < this.totalValidations) {
+                App.alert.show('validating_element_settings', {
+                    level: 'process',
+                    title: translate('LBL_PMSE_VALIDATOR_IN_PROGRESS_VALIDATING'),
+                    autoClose: false
+                });
+            } else {
+                App.alert.show('validation_results', {
+                    level: 'success',
+                    title: translate('LBL_PMSE_VALIDATOR_COMPLETE') + errorsFound
+                });
+                if (errorsFound) {
+                    myLayout.open('south');
+                }
+            }
+        }
+        this.updateButtons();
+    },
+
+    /**
+     * Updates the button styling and action for the validation and error pane toggle
+     * buttons based on the current status of the validation
+     */
+    this.updateButtons = function() {
+        var tooltip;
+        var errorsFound = currentErrorTable.rows.length;
+        var validateButton = $('#ButtonValidate > i');
+        var viewErrorsButton = $('#ButtonToggleErrorPane > i');
+
+        // Remove any existing classes and action from the buttons
+        validateButton.removeClass();
+        viewErrorsButton.removeClass();
+        $('#ButtonValidate').off();
+        $('#ButtonToggleErrorPane').off();
+
+        if (this.numSettingsGathered === this.totalElements && this.numValidated === this.totalValidations) {
+            // Validation is complete
+
+            // Un-grey the validate button and give it action
+            validateButton.addClass('fa fa-check-square check-square-on');
+            $('#ButtonValidate').click(function() {
+                traverseProcess();
             });
+
+            // Set the error pane toggle button to show the number of errors. If there are errors,
+            // un-grey the button and give it action. Otherwise, grey it out.
+            if (errorsFound) {
+                viewErrorsButton.addClass('fa fa-exclamation-triangle exclamation-triangle-on');
+                $('#ButtonToggleErrorPane').click(function() {
+                    myLayout.toggle('south');
+                });
+            } else {
+                viewErrorsButton.addClass('fa fa-exclamation-triangle exclamation-triangle-off');
+            }
+            tooltip = errorsFound + translate('LBL_PMSE_VALIDATOR_TOOLTIP_ISSUES');
+            $('#ButtonToggleErrorPane').attr('data-original-title', tooltip);
+        } else {
+            // Validation is still in progress
+
+            // Grey out the validate button
+            validateButton.addClass('fa fa-check-square check-square-off');
+
+            // If validation was previously run and errors still exist in that table, let the user
+            // keep accessing the error table with the error pane button. Otherwise, grey it out
+            if ($('#Error-table > tbody > tr').length) {
+                viewErrorsButton.addClass('fa fa-exclamation-triangle exclamation-triangle-on');
+                $('#ButtonToggleErrorPane').click(function() {
+                    myLayout.toggle('south');
+                });
+            } else {
+                viewErrorsButton.addClass('fa fa-exclamation-triangle exclamation-triangle-off');
+            }
+
+            // Set the tooltip of the error pane button to show that validation is in progress
+            tooltip = translate('LBL_PMSE_VALIDATOR_TOOLTIP_IN_PROGRESS');
+            $('#ButtonToggleErrorPane').attr('data-original-title', tooltip);
         }
     };
 };
@@ -1789,21 +1876,18 @@ var createError = function(element, errorLabel, field) {
     var errorName = field ? (translate(errorLabel) + ': ' + field) : translate(errorLabel);
     var errorInfo = translate(errorLabel + '_INFO');
 
-    // Get a reference to the error table
-    var tableRef = document.getElementById('Error-table').getElementsByTagName('tbody')[0];
-
-    // Find the correct spot to place the new row, based alphabetically by the element name
+    // Find the correct row in the table for the error, based alphabetically by the element name
     var rowNumber;
     var otherElement;
-    for (rowNumber = 0; rowNumber < tableRef.rows.length; rowNumber++) {
-        otherElementName = tableRef.rows[rowNumber].cells[0].innerText;
+    for (rowNumber = 0; rowNumber < currentErrorTable.rows.length; rowNumber++) {
+        otherElementName = currentErrorTable.rows[rowNumber].cells[0].innerText;
         if (element.getName() < otherElementName) {
             break;
         }
     }
 
     // Insert a new row into the error table at the correct index
-    var newRow = tableRef.insertRow(rowNumber);
+    var newRow = currentErrorTable.insertRow(rowNumber);
 
     // Insert new cells into the new table row
     var nameCell = newRow.insertCell(0);

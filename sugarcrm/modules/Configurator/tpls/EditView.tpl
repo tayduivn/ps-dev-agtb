@@ -283,9 +283,24 @@
 		</tr>
 	</table>
 
+<!--//BEGIN SUGARCRM flav=ent ONLY -->
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 		<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_TITLE}</h4></th>
+	</tr>
+	<tr>
+		<td width="25%" scope="row">{$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_AUTO_SAVE_INTERVAL}:&nbsp;{sugar_help text=$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_AUTO_SAVE_INTERVAL_HELP}</td>
+		<td><select name="processes_auto_save_interval">{$processes_auto_save_options}</select></td>
+		<td width="25%" scope="row">{$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_SAVE}&nbsp{sugar_help text=$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_SAVE_HELP WIDTH=400}</td>
+	    {if !empty($config.processes_auto_validate_on_autosave)}
+	        {assign var='processes_auto_validate_on_autosave_checked' value='CHECKED'}
+	    {else}
+	        {assign var='processes_auto_validate_on_autosave_checked' value=''}
+	    {/if}
+	    <td width="25%">
+			<input type='hidden' name='processes_auto_validate_on_autosave' value='false'>
+			<input name="processes_auto_validate_on_autosave" value="true" class="checkbox" tabindex='1' type="checkbox" {$processes_auto_validate_on_autosave_checked}>
+		</td>
 	</tr>
 	<tr>
 		<td width="25%" scope="row">{$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_IMPORT}&nbsp{sugar_help text=$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_IMPORT_HELP WIDTH=400}</td>
@@ -298,18 +313,9 @@
 			<input type='hidden' name='processes_auto_validate_on_import' value='false'>
 			<input name="processes_auto_validate_on_import" value="true" class="checkbox" tabindex='1' type="checkbox" {$processes_auto_validate_on_import_checked}>
 		</td>
-		<td width="25%" scope="row">{$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_SAVE}&nbsp{sugar_help text=$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_SAVE_HELP WIDTH=400}</td>
-	    {if !empty($config.processes_auto_validate_on_save)}
-	        {assign var='processes_auto_validate_on_save_checked' value='CHECKED'}
-	    {else}
-	        {assign var='processes_auto_validate_on_save_checked' value=''}
-	    {/if}
-	    <td width="25%">
-			<input type='hidden' name='processes_auto_validate_on_save' value='false'>
-			<input name="processes_auto_validate_on_save" value="true" class="checkbox" tabindex='1' type="checkbox" {$processes_auto_validate_on_save_checked}>
-		</td>
 	</tr>
 </table>
+<!--//END SUGARCRM flav=ent ONLY -->
 
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>

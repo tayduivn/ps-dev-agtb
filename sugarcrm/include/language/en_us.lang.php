@@ -2088,6 +2088,17 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
+  //BEGIN SUGARCRM flav=ent ONLY
+  'processes_auto_save_interval' => array(
+        0 => 'Never',
+        30000 => 'Every 30 seconds',
+        60000 => 'Every 1 minute',
+        120000 => 'Every 2 minutes',
+        180000 => 'Every 3 minutes',
+        240000 => 'Every 4 minutes',
+        300000 => 'Every 5 minutes',
+  ),
+  //END SUGARCRM flav=ent ONLY
     'forecasts_chart_options_group' => array(
         'forecast' => 'In Forecast',
         'sales_stage' => 'Sales Stage',
