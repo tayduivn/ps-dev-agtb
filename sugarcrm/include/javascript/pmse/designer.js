@@ -153,7 +153,10 @@ function renderProject (prjCode) {
                 south__paneSelector:    ".east-south",
                 south__size: '50%'
             },*/
-            initClosed: false,
+            // Setting initHidden to true as a temporary way to get rid of the east error pane
+            // JIRA ticket ICE-874 will address actually removing the pane and any references
+            // to it
+            initHidden: true,
             onresize: function () {
                 listPanelError.resizeWidthTitleItems();
             }
@@ -1718,16 +1721,16 @@ var validateNumberOfEdges = function(minIncoming, maxIncoming, minOutgoing, maxO
     var outgoingEdges = element.getDestElements();
     // Depending on element type, check proper number of incoming and outgoing edges
     if (minIncoming && incomingEdges.length < minIncoming) {
-        createError(element, 'LBL_PMSE_ERROR_FLOW_INCOMING_MINIMUM', minIncoming);
+        createWarning(element, 'LBL_PMSE_ERROR_FLOW_INCOMING_MINIMUM', minIncoming);
     }
     if (maxIncoming && incomingEdges.length > maxIncoming) {
-        createError(element, 'LBL_PMSE_ERROR_FLOW_INCOMING_MAXIMUM', maxIncoming);
+        createWarning(element, 'LBL_PMSE_ERROR_FLOW_INCOMING_MAXIMUM', maxIncoming);
     }
     if (minOutgoing && outgoingEdges.length < minOutgoing) {
-        createError(element, 'LBL_PMSE_ERROR_FLOW_OUTGOING_MINIMUM', minOutgoing);
+        createWarning(element, 'LBL_PMSE_ERROR_FLOW_OUTGOING_MINIMUM', minOutgoing);
     }
     if (maxOutgoing && outgoingEdges.length > maxOutgoing) {
-        createError(element, 'LBL_PMSE_ERROR_FLOW_OUTGOING_MAXIMUM', maxOutgoing);
+        createWarning(element, 'LBL_PMSE_ERROR_FLOW_OUTGOING_MAXIMUM', maxOutgoing);
     }
 };
 
