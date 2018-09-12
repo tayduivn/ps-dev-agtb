@@ -318,3 +318,128 @@ Feature: Opportunities
     When I choose RevenueLineItems in modules menu
     Then I should see *RLI2 in #RevenueLineItemsList.ListView
     Then I should see *RLI3 in #RevenueLineItemsList.ListView
+
+  @change_rli_currency_when_opp_is_created
+  Scenario: Opportunities >  Change currency of the RLI when creating new opportunity
+    # Create 3 product records
+    Given 3 ProductTemplates records exist:
+      | *name          | discount_price | cost_price | list_price |
+      | Prod_{{index}} | 100            | 200        | 300        |
+    # Create Account
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+
+    Given I open about view and login
+    # 2. Add new 'Euro' currency to Sugar instance
+    When I go to "Currencies" url
+    When I click Create button on #CurrenciesList header
+    When I provide input for #CurrenciesDrawer.RecordView view
+      | iso4217 | conversion_rate |
+      | EUR     | 0.5             |
+    When I click Save button on #CurrenciesDrawer header
+    When I close alert
+
+    # 3. Add new 'Rubles' currency to Sugar instance
+    When I click Create button on #CurrenciesList header
+    When I provide input for #CurrenciesDrawer.RecordView view
+      | iso4217 | conversion_rate |
+      | RUB     | 1.5             |
+    When I click Save button on #CurrenciesDrawer header
+    When I close alert
+
+    # 4. Change 'Prod_1' product's currency to EUR
+    When I go to "ProductTemplates" url
+    When I select *Prod_1 in #ProductTemplatesList.ListView
+    Then I should see #Prod_1Record view
+    When I click Edit button on #Prod_1Record header
+    When I provide input for #Prod_1Record.RecordView view
+      | currency_id |
+      | € (EUR)     |
+    When I click Save button on #Prod_1Record header
+    When I close alert
+
+    # 5. Change 'Prod_2' product's currency to RUB
+    When I go to "ProductTemplates" url
+    When I select *Prod_2 in #ProductTemplatesList.ListView
+    Then I should see #Prod_2Record view
+    When I click Edit button on #Prod_2Record header
+    When I provide input for #Prod_2Record.RecordView view
+      | currency_id |
+      | руб (RUB)   |
+    When I click Save button on #Prod_2Record header
+    When I close alert
+
+    # Create opportunity records from products
+    When I choose Opportunities in modules menu
+    When I click Create button on #OpportunitiesList header
+    When I provide input for #OpportunitiesDrawer.HeaderView view
+      | *     | name                  |
+      | Opp_1 | CreateOpportunityTest |
+    When I provide input for #OpportunitiesDrawer.RecordView view
+      | *     | account_name |
+      | Opp_1 | Acc_1        |
+    # Provide input for the first (default) RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 1 row
+      | *name | date_closed | product_template_name | currency_id |
+      | RLI1  | 12/12/2020  | Prod_1                | € (EUR)     |
+
+    # Add second RLI by clicking '+' button on the first row
+    When I choose addRLI on #OpportunityDrawer.RLITable view for 1 row
+    # Provide input for the second RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 2 row
+      | *name | date_closed | product_template_name | currency_id |
+      | RLI2  | 12/12/2021  | Prod_2                | € (EUR)     |
+    # Add third RLI by clicking '+' button on the second row
+    When I choose addRLI on #OpportunityDrawer.RLITable view for 2 row
+    # Provide input for the third RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 3 row
+      | *name | date_closed | product_template_name | currency_id |
+      | RLI3  | 12/12/2022  | Prod_3                | € (EUR)     |
+
+    # Save new opportunity
+    When I click Save button on #OpportunitiesDrawer header
+    When I close alert
+
+    # Verify opportunity data
+    When I click on preview button on *Opp_1 in #OpportunitiesList.ListView
+    Then I should see #Opp_1Preview view
+    Then I verify fields on #Opp_1Preview.PreviewView
+      | fieldName    | value                 |
+      | name         | CreateOpportunityTest |
+      | best_case    | $300.00               |
+      | amount       | $300.00               |
+      | worst_case   | $300.00               |
+      | date_closed  | 12/12/2022            |
+      | sales_status | In Progress           |
+
+    # Verify that created RLI records are present in RLI list view and values are presented in Euro currency
+    # This proves that currency selector was functional during opportunity creation.
+    When I select *Opp_1 in #OpportunitiesList.ListView
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    Then I verify number of records in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems is 3
+
+    Then I should see *RLI1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    Then I verify fields for *RLI1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value         |
+      | name        | RLI1          |
+      | likely_case | €50.00$100.00 |
+      | best_case   | €50.00$100.00 |
+      | worst_case  | €50.00$100.00 |
+
+    Then I should see *RLI2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    Then I verify fields for *RLI2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value         |
+      | name        | RLI2          |
+      | likely_case | €50.00$100.00 |
+      | best_case   | €50.00$100.00 |
+      | worst_case  | €50.00$100.00 |
+
+    Then I should see *RLI3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    Then I verify fields for *RLI3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value         |
+      | name        | RLI3          |
+      | likely_case | €50.00$100.00 |
+      | best_case   | €50.00$100.00 |
+      | worst_case  | €50.00$100.00 |
+
