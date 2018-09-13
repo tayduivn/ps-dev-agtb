@@ -128,7 +128,7 @@
         "symfony/process": "v3.4.11"
     },
     "require-dev": {
-        "phpunit/phpunit": "7.1.4"
+        "phpunit/phpunit": "7.3.5"
     },
     "repositories": [
         {
