@@ -425,8 +425,8 @@ The following options are available to all Karma tasks:
 
 By specifying `--browsers` you are able to tell against which browsers this task should run against.
 If no browser is specified, `Chrome` is used by default for the `dev` task and `ChromeHeadless` is used by default for
-almost everything else. Currently supported browsers are: `Chrome`, `Firefox`, `Safari`, and `ChromeHeadless`, except for
-the `sauce` task, which has other options.
+almost everything else. Currently supported browsers are: `Chrome`, `Firefox`, `FirefoxHeadless`, `Safari`, and
+`ChromeHeadless`, except for the `sauce` task, which has other options.
 
 By specifying `--team` you're reducing the scope of each test run by only running tests relevant to the given team.
 Currently supported teams are: `typhoon`, `hacks`, `crystal`, `sfa`, `mar`, `macaroon`, `integrations`, `burritos`, and `lang`.
