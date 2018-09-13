@@ -15,6 +15,14 @@ use Doctrine\DBAL\DriverManager as DoctrineDriverManager;
 use Doctrine\DBAL\Logging\SQLLogger;
 use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\Dbal\Connection;
+// BEGIN SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Dbal\IbmDb2\Driver as IbmDb2Driver;
+// END SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Dbal\Mysqli\Driver as MysqliDriver;
+// BEGIN SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Dbal\Oci8\Driver as Oci8Driver;
+// END SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Dbal\SqlSrv\Driver as SqlSrvDriver;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 
@@ -32,6 +40,38 @@ class DBManagerFactory
 
     /** @var SQLLogger instance of Doctrine Dbal logger class */
     protected static $dbalLogger;
+
+    /**
+     * Mapping of DB driver names to their classes
+     *
+     * @var string[]
+     */
+    protected static $driverClasses = [
+// BEGIN SUGARCRM flav=ent ONLY
+        'ibm_db2' => IbmDb2Driver::class,
+// END SUGARCRM flav=ent ONLY
+        'mysqli' => MysqliDriver::class,
+// BEGIN SUGARCRM flav=ent ONLY
+        'oci8' => Oci8Driver::class,
+// END SUGARCRM flav=ent ONLY
+        'sqlsrv' => SqlSrvDriver::class,
+    ];
+
+    /**
+     * Overrides implementation of the given driver
+     *
+     * @param string $name Driver name
+     * @param string $class Implementation class
+     * @throws Exception
+     */
+    public static function setDriverClass(string $name, string $class) : void
+    {
+        if (!isset(self::$driverClasses[$name])) {
+            throw new Exception('Unsupported DB driver ' . $name);
+        }
+
+        self::$driverClasses[$name] = $class;
+    }
 
     /**
      * Returns a reference to the DB object of specific type
@@ -162,22 +202,13 @@ class DBManagerFactory
      */
     public static function createConnection(DBManager $instance)
     {
-        static $driverMap = array(
-            'mysqli' => 'Sugarcrm\Sugarcrm\Dbal\Mysqli\Driver',
-            'sqlsrv' => 'Sugarcrm\Sugarcrm\Dbal\SqlSrv\Driver',
-// BEGIN SUGARCRM flav=ent ONLY
-            'oci8' => 'Sugarcrm\Sugarcrm\Dbal\Oci8\Driver',
-            'ibm_db2' => 'Sugarcrm\Sugarcrm\Dbal\IbmDb2\Driver',
-// END SUGARCRM flav=ent ONLY
-        );
-
-        if (!isset($driverMap[$instance->variant])) {
+        if (!isset(self::$driverClasses[$instance->variant])) {
             throw new Exception('Unsupported DB driver ' . $instance->variant);
         }
 
         $params = array(
             'wrapperClass' => Connection::class,
-            'driverClass' => $driverMap[$instance->variant],
+            'driverClass' => self::$driverClasses[$instance->variant],
             'connection' => $instance->getDatabase(),
         );
 
