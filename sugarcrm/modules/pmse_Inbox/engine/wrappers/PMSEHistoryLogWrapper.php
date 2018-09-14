@@ -451,7 +451,6 @@ class PMSEHistoryLogWrapper
         $q->where()->equals('cas_id', $case_id);
         $q->limit('1');
         $rows = $q->execute();
-
         // If the status is IN PROGRESS then the status is not shown.
         if (!empty($rows[0]) && !empty($rows[0]['cas_status']) && $rows[0]['cas_status'] != "IN PROGRESS") {
             $statusEntry['image'] = "label label-module label-pmse_Inbox pull-left";
@@ -468,7 +467,7 @@ class PMSEHistoryLogWrapper
             }
             return $statusEntry;
         }
-        return $statusEntry;
+        return [];
     }
 
 
