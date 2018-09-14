@@ -99,8 +99,17 @@ class SugarUpgradeFreeLockedFields extends UpgradeScript
      */
     protected function deleteLockedFieldRelationship($module, $beanId, $proId)
     {
-        $bean = BeanFactory::getBean($module, $beanId);
-        $this->caseFlowHandler->deleteLockFieldsFromBean($bean, $proId);
+        // Enforce strict retrieve of the bean so you can verify module AND record
+        $bean = BeanFactory::retrieveBean($module, $beanId);
+
+        // If there is a bean, use it
+        if ($bean) {
+            $this->caseFlowHandler->deleteLockFieldsFromBean($bean, $proId);
+        } else {
+            // Log that there was no record found. This realistically shouldn't happen,
+            // but in case it does, handle it.
+            $this->log("Free Locked Fields could not find $module record $beanId");
+        }
     }
 
     /**
