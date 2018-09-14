@@ -3224,7 +3224,7 @@ class SugarBean
                 case 'decimal':
                 case 'currency':
                     if ( $this->$field === '' || $this->$field == null || $this->$field == 'NULL') {
-                        continue;
+                        continue 2;
                     }
                     // always want string for currency/decimal values
                     if(!is_numeric($this->$field)) {
@@ -3238,7 +3238,7 @@ class SugarBean
                 case 'double':
                 case 'float':
                     if ( $this->$field === '' || $this->$field == null || $this->$field == 'NULL') {
-                        continue;
+                        continue 2;
                     }
                     if (is_string($this->$field) && !is_numeric($this->$field)) {
                         $this->$field = (float)unformat_number($this->$field);
@@ -3252,7 +3252,7 @@ class SugarBean
                case 'tinyint':
                case 'int':
                     if ( $this->$field === '' || $this->$field == null || $this->$field == 'NULL') {
-                        continue;
+                        continue 2;
                     }
                     if ( is_string($this->$field) ) {
                         $this->$field = (int)unformat_number($this->$field);

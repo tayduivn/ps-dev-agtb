@@ -986,7 +986,7 @@ abstract class UpgradeDriver
             } else {
                 switch ($token[0]) {
                     case T_WHITESPACE:
-                        continue;
+                        continue 2;
                     case T_EVAL:
                     case T_EXIT:
                         return $this->error("{$token[1]}() is not allowed");

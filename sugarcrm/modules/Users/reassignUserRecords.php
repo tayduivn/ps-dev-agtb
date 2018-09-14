@@ -223,7 +223,7 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 				$extra .= "\n</select>";
 				break;
 			default:
-				continue;
+                continue 2;
 		}
 		echo "<$tag $size name=\"$name\" $multi>\n$extra";
 		echo "<BR>\n";
@@ -382,7 +382,7 @@ else if(!isset($_GET['execute'])){
 					case "multiselect":
 
                         if(!isset($_POST[$metaName]) || empty($_POST[$metaName])){
-                            continue;
+                            continue 2;
                         }
 
                         // Also check condition where default selected was the
@@ -392,7 +392,7 @@ else if(!isset($_GET['execute'])){
                         if (count($_POST[$metaName]) == 1 &&
                             empty($_POST[$metaName][0]) &&
                             $_POST[$metaName][0] !== '0') {
-                            continue;
+                            continue 2;
                         }
 
 						$in_string = "";
@@ -407,7 +407,7 @@ else if(!isset($_GET['execute'])){
 						$q_where .= " and ({$object->table_name}{$addcstm}.{$meta['dbname']} in ($in_string) $empty_check)";
 						break;
 					default:
-						continue;
+                        continue 2;
 						break;
 				}
 			}
