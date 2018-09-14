@@ -215,11 +215,11 @@ gulp.task('karma', function(done) {
         // Karma's return status is not compatible with gulp's streams
         // See: http://stackoverflow.com/questions/26614738/issue-running-karma-task-from-gulp
         // or: https://github.com/gulpjs/gulp/issues/587 for more information
+        const rimraf = require('rimraf');
+        rimraf.sync('cache/Expressions/');
+        rimraf.sync('cache/class_map.php');
         done(exitStatus ? 'There are failing unit tests' : undefined);
     }).start();
-    const rimraf = require('rimraf');
-    rimraf.sync('cache/Expressions/');
-    rimraf.sync('cache/class_map.php');
 });
 
 // run the modern PHPUnit tests (i.e. testsunit/, not tests/)
