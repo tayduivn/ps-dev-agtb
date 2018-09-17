@@ -275,8 +275,6 @@ class AuthSettingsApi extends SugarApi
                     * intval($passConfig['linkexpirationtype'])
                     * 60,
                 'require_recaptcha' => boolval($this->get('captcha_on', false)),
-                'recaptcha_public' => $this->get('captcha_public_key', ''),
-                'recaptcha_private' => $this->get('captcha_private_key', ''),
                 'require_honeypot' => boolval($this->get('honeypot_on', false)),
             ],
             'password_expiration' => $this->getPasswordExpiration($passConfig),

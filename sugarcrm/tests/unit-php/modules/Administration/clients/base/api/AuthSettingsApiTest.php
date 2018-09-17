@@ -206,8 +206,6 @@ class AuthSettingsApiTest extends TestCase
             'enable' => $passwordSetting['forgotpasswordON'],
             'expiration' => $passwordSetting['linkexpirationtime'] * $passwordSetting['linkexpirationtype'] * 60,
             'require_recaptcha' => $adminSettingsMap['captcha_on'][2],
-            'recaptcha_public' => $adminSettingsMap['captcha_public_key'][2],
-            'recaptcha_private' => $adminSettingsMap['captcha_private_key'][2],
             'require_honeypot' => $adminSettingsMap['honeypot_on'][2],
         ];
         $localConfExpExpirDisabled = [
