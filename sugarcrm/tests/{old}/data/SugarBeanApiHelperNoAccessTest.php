@@ -82,6 +82,40 @@ class SugarBeanApiHelperNoAccessTest extends TestCase
 
         $this->beanApiHelper->populateFromApi($this->bean, $data);
     }
+    /**
+     * @dataProvider providerFunction
+     */
+    public function testNoFieldAccessWithDiffDefaultSetSave($defaultValue, $fieldValue)
+    {
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Test']['fields']['testInt'] = SugarACL::ACL_NO_ACCESS;
+        $this->bean->field_defs['testInt']['default'] = $defaultValue;
+        $data['testInt'] = $fieldValue;
+        $data['module'] = 'Test';
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
+        $this->expectExceptionMessage('Not allowed to edit field testInt in module: Test');
+
+        $this->beanApiHelper->populateFromApi($this->bean, $data);
+    }
+
+    public function providerFunction()
+    {
+        return [
+            'default and field value does not match' => [20, 15],
+            'default not set but field value set' => [null, 15],
+        ];
+    }
+
+    public function testNoFieldAccessWithDefaultSetSave()
+    {
+        $this->bean->field_defs['testInt']['default'] = 15;
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Test']['fields']['testInt'] = SugarACL::ACL_NO_ACCESS;
+        $data['testInt'] = 15;
+        $data['module'] = 'Test';
+
+        $expected = $this->beanApiHelper->populateFromApi($this->bean, $data);
+        $this->assertTrue($expected, 'Edit field should be allowed.');
+    }
 }
 
 class SugarBeanApiHelperNoAccessTest_ServiceMockup extends ServiceBase

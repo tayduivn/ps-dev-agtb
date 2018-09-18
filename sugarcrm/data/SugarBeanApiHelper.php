@@ -253,7 +253,8 @@ class SugarBeanApiHelper
         // check ACLs first
         $acl = !empty($options['acl']) ? $options['acl'] : 'save';
         foreach ($bean->field_defs as $fieldName => $properties) {
-            if ( !isset($submittedData[$fieldName]) ) {
+            if (!isset($submittedData[$fieldName])
+                || (isset($properties['default']) && $properties['default'] == $submittedData[$fieldName])) {
                 // They aren't trying to modify this field
                 continue;
             }
