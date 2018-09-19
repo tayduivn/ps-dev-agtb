@@ -72,6 +72,11 @@ var AdamProject = function (settings) {
      * @type {Number}
      */
     this.saveInterval = 30000;
+    /**
+     * Stores the id of the autosave timer
+     * @type {Object}
+     */
+    this.autosaveTimer = null;
     this.showWarning = false;
     /**
      * Object Structure to save elements without save
@@ -257,7 +262,7 @@ AdamProject.prototype.init = function () {
                 return true;
             }
         };
-        setInterval(function () {
+        this.autosaveTimer = setInterval(function() {
             self.save();
         }, this.saveInterval);
         this.propertiesGrid = new PropertiesGrid('#properties-grid');
@@ -1829,6 +1834,7 @@ AdamProject.prototype.getMetadata = function (metadataName) {
 
 AdamProject.prototype.dispose = function () {
     // TODO: dispose the project completely
+    clearInterval(this.autosaveTimer);
     jQuery('body > .adam-modal').remove();
     jCore.dispose();
 }
