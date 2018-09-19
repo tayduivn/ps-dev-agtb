@@ -465,7 +465,7 @@ AdamShape.prototype.countFlow = function (element, direction) {
 
 AdamShape.prototype.addErrorLayer = function (cssMarker, position) {
     var layer, cl, cs, zoom, options;
-    layer = this.layers.find('id', this.id + 'Layer-Errors');
+    layer = this.layers.find('id', this.id + 'Layer-error-layer');
     if (typeof position === 'undefined' || position === null) {
         cl = cssMarker;
         cs = 'bpmn_zoom';
