@@ -62,28 +62,7 @@ var project,
         LBL_REJECTED: translate('LBL_PMSE_LABEL_REJECTED'),
         BUTTON_SUBMIT: translate('LBL_PMSE_BUTTON_ADD'),
         BUTTON_CANCEL: translate('LBL_PMSE_BUTTON_CANCEL')
-    },
-    listPanelError = new ErrorListPanel({
-            id : 'panel-Errors',
-            onClickItem : function (listPanel, listItem, type, messageId){
-                var shape, shapeId, canvas;
-                canvas = jCore.getActiveCanvas();
-                shapeId = listItem.getErrorId();
-                shape = canvas.customShapes.find('id', shapeId);
-                if (shape) {
-                    shape.canvas.emptyCurrentSelection();
-                    shape.canvas.addToSelection(shape);
-                    //to disable textbox of label
-                    if (shape.canvas.currentLabel) {
-                        shape.canvas.currentLabel.loseFocus();
-                    }
-                    //for property grids
-                    shape.canvas.project.updatePropertiesGrid(shape);
-                }
-            }
-        });
-
-    var countErrors = document.getElementById("countErrors");
+    };
 
 var currentErrorTable;
 
@@ -125,10 +104,6 @@ var getAutoIncrementName = function (type, targetElement) {
 function renderProject (prjCode) {
     var pmseCurrencies, currencies, sugarCurrencies, currentCurrency, i;
 
-    // initialize the error sidebar
-    listPanelError.title = App.lang.get('LBL_PMSE_BPMN_WARNING_PANEL_TITLE', 'pmse_Project');
-    listPanelError.appendTo('#div-bpmn-error');
-
     adamUID = prjCode;
 
     //RESIZE OPTIONS
@@ -144,23 +119,6 @@ function renderProject (prjCode) {
 
     //LAYOUT
     myLayout = $('#container').layout({
-        east: {
-            size: 300,
-            maxSize: 300,
-            minSize: 200,
-            /*childOptions: {
-                center__paneSelector:   ".east-center",
-                south__paneSelector:    ".east-south",
-                south__size: '50%'
-            },*/
-            // Setting initHidden to true as a temporary way to get rid of the east error pane
-            // JIRA ticket ICE-874 will address actually removing the pane and any references
-            // to it
-            initHidden: true,
-            onresize: function () {
-                listPanelError.resizeWidthTitleItems();
-            }
-        },
         north: {
             size: 44,
             spacing_open: 0,
@@ -1365,7 +1323,6 @@ function renderProject (prjCode) {
         var newZoomValue;
         newZoomValue = parseInt($(this).val());
         jCore.getActiveCanvas().applyZoom(newZoomValue);
-        jCore.getActiveCanvas().bpmnValidation();
         $('.ui-layout-north').css('overflow', 'hidden');
     }).mouseenter(function() {
         $('.ui-layout-north').css('overflow', 'visible');

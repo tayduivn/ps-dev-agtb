@@ -241,7 +241,6 @@ AdamProject.prototype.load = function (id, callback) {
                 callback.success.call(this, data);
             }
             if (canvas){
-                canvas.bpmnValidation();
                 //jQuery(".pane.ui-layout-center").append(countErrors);
             }
         },

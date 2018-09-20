@@ -1234,7 +1234,6 @@ AdamActivity.prototype.updateScriptType = function (newType) {
     updateCommand.execute();
 
     this.canvas.commandStack.add(updateCommand);
-    this.canvas.bpmnValidation();
     return this;
 };
 

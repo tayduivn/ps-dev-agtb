@@ -62,18 +62,6 @@ AdamShape.prototype.setName = function (value) {
     var item;
     if (this.label) {
         this.label.setMessage(value);
-        if (listPanelError){
-            if ( listPanelError.items.length ) {
-                item = listPanelError.getItemById(this.id);
-                if ( item ) {
-                    if ( value.trim().length ) {
-                        item.setTitle(value);                        
-                    } else {
-                        item.setTitle("[unnamed]");
-                    }
-                }
-            }
-        }
     }
     return this;
 };
@@ -295,112 +283,6 @@ AdamShape.prototype.getFamilyNumber = function (shape) {
         'AdamArtifact': 9
     };
     return map[shape.getType()];
-};
-
-AdamShape.prototype.attachErrorToShape = function (objArray) {
-    var i, j,
-        sw,
-        message,
-        ruleArray,
-        testCount,
-        rule,
-        error,
-        sizeItems,
-        allErrors = [];
-    this.BPMNError = new jCore.ArrayList();
-    for (i = 0; i < objArray.length; i += 1) {
-        message  = objArray[i].message;
-        ruleArray = objArray[i].rules;
-
-        sw = (objArray[i].family === 8 && objArray[i].familyType === 4) ?
-            false : true;
-        for (j = 0; j < ruleArray.length; j += 1) {
-            rule = ruleArray[j];
-
-            testCount = this.countFlow(rule.element, rule.direction);
-            if (objArray[i].family === 8 && objArray[i].familyType === 4) {
-                sw = sw || (testCount > rule.value);
-            } else if (objArray[i].family === 5 && objArray[i].familyType === 1 && objArray[i].familySubType === 1) {
-                switch (rule.compare){
-                    case '!=':
-                        sw = sw && ('NONE' !== rule.value);
-                        break;
-                }
-            } else {
-                switch (rule.compare){
-                    case '=':
-                        sw = sw && (testCount === rule.value);
-                        break;
-                    case '>':
-                        sw = sw && (testCount > rule.value);
-                        break;
-                    case '<':
-                        sw = sw && (testCount < rule.value);
-                        break;
-                }
-            }
-        }
-        if (!sw){
-            //TODO attach error to shape
-            this.BPMNError.insert({
-                code: objArray[i].id,
-                //element: rule.element,
-                direction: rule.direction,
-                description: message
-            });
-            //this.canvas.diagram.refreshErrorGrid(this);
-
-        }
-    }
-    if (this.BPMNError.getSize() > 0) {
-        this.addErrorLayer('error', 2);
-
-    } else {
-        this.clearErrors();
-    }
-
-    //listPanelError.setItems(items)
-    //console.log(listPanelError);
-    listPanelError.setItems(this.getShapeWithErros());
-        if (countErrors){
-            if (listPanelError.getItems().length){
-                countErrors.style.display = "block";
-                sizeItems = listPanelError.getAllErros();
-                countErrors.textContent =  sizeItems === 1 ? sizeItems + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL') : sizeItems + translate('LBL_PMSE_BPMN_WARNING_LABEL');
-                $("#error-div").show();
-            } else {
-                countErrors.textContent = "0" + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL');
-                $("#error-div").hide();
-            }
-        }
-};
-
-
-AdamShape.prototype.getShapeWithErros = function () {
-    var i, shape, errors, error, f = [], items = [], object = {}, subObject = {};
-    for (i = 0; i < canvas.getCustomShapes().getSize(); i += 1) {
-        shape = canvas.getCustomShapes().get(i);
-        if(shape.BPMNError !== undefined) {
-            if (shape.BPMNError.getSize()){
-                object = {};
-                object.title = shape.getName()||'[unnamed]';
-
-                object.errorType =  this.getShapeType(shape.getType(), shape);
-                object.items = [];
-                object.errorId = shape.getID();
-                errors = shape.BPMNError;
-                for ( j = 0; j < errors.getSize(); j += 1) {
-                    subObject = {};
-                    error = errors.get(j);
-                    subObject.messageId =  error.code;
-                    subObject.message = error.description;
-                    object.items.push(subObject);
-                }
-                items.push(object);
-                }
-        }
-    }
-    return items;
 };
 
 AdamShape.prototype.getShapeType = function (type, shape) {
