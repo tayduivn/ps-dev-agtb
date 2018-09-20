@@ -1323,6 +1323,7 @@ function renderProject (prjCode) {
         var newZoomValue;
         newZoomValue = parseInt($(this).val());
         jCore.getActiveCanvas().applyZoom(newZoomValue);
+        refreshMarkers();
         $('.ui-layout-north').css('overflow', 'hidden');
     }).mouseenter(function() {
         $('.ui-layout-north').css('overflow', 'visible');
@@ -1349,6 +1350,22 @@ function renderProject (prjCode) {
             }
         }
     });
+};
+
+/**
+ * Refreshes the error and warning marker icons placed on elements
+ */
+var refreshMarkers = function() {
+    var allElements = getAllElements();
+    for (var i = 0; i < allElements.length; i++) {
+        allElements[i].clearIssueMarkers();
+        if (allElements[i].hasError) {
+            allElements[i].showErrorMarker();
+        }
+        if (allElements[i].hasWarning) {
+            allElements[i].showWarningMarker();
+        }
+    }
 };
 
 /**
@@ -1569,6 +1586,9 @@ var ValidationProgressTracker = function(silent) {
             if (!errorsFound) {
                 myLayout.close('south');
             }
+
+            // Refresh the error/warning markers on the elements
+            refreshMarkers();
         } else {
             $('#refreshing-errors').addClass('show');
         }
@@ -1903,6 +1923,13 @@ var createError = function(element, errorLabel, field, warning) {
     nameCell.appendChild(nameText);
     errorCell.appendChild(typeIcon);
     errorCell.appendChild(errorText);
+
+    // Update the error/warning status of the element for adding marker icons
+    if (warning) {
+        element.hasWarning = true;
+    } else {
+        element.hasError = true;
+    }
 };
 
 /**

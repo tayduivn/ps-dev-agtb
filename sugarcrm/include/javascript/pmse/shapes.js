@@ -30,6 +30,16 @@ var AdamShape = function (options) {
      * @type {jCore.ArrayList}
      */
     this.markersArray = new jCore.ArrayList();
+    /**
+     * Stores whether this shape currently has a warning
+     * @type {boolean}
+     */
+    this.hasWarning = false;
+    /**
+     * Stores whether this shape currently has an error
+     * @type {boolean}
+     */
+    this.hasError = false;
 };
 AdamShape.prototype = new jCore.CustomShape();
 
@@ -345,7 +355,47 @@ AdamShape.prototype.countFlow = function (element, direction) {
     return count;
 };
 
-AdamShape.prototype.addErrorLayer = function (cssMarker, position) {
+/**
+ * Attaches a warning marker (yellow triangle) to the bottom-right of this shape
+ */
+AdamShape.prototype.showWarningMarker = function() {
+    this.addErrorLayer('error', 5, true);
+};
+
+/**
+ * Attaches an error marker (red circle) to the top-right of this shape
+ */
+AdamShape.prototype.showErrorMarker = function() {
+    this.addErrorLayer('error', 2);
+};
+
+/**
+ * Removes any error or warning markers attached to this shape
+ */
+AdamShape.prototype.clearIssueMarkers = function() {
+    var i;
+    var lMarker;
+    for (i = 0; i < this.markersArray.getSize(); i += 1) {
+        lMarker = this.markersArray.get(i);
+        if (lMarker.position === 2 || lMarker.position === 5) {
+            $('#' + lMarker.id).remove();
+            lMarker.removeAllClasses();
+            this.markersArray.remove(lMarker);
+            i--;
+        }
+    }
+};
+
+/**
+ * Adds an error layer to this shape (or re-uses one if it already exists)
+ * and attaches a marker to it in the specified position
+ * @param {string} cssMarker is the type of marker to add
+ * @param {number} position is the position on the shape to attach the marker at
+ *                 (valid options are 0-5. From left-to-right, top-to bottom, 0
+ *                 is top-left and 5 is bottom-right)
+ * @param {boolean} warning indicates whether the marker should be a warning marker
+ */
+AdamShape.prototype.addErrorLayer = function(cssMarker, position, warning) {
     var layer, cl, cs, zoom, options;
     layer = this.layers.find('id', this.id + 'Layer-error-layer');
     if (typeof position === 'undefined' || position === null) {
@@ -373,24 +423,19 @@ AdamShape.prototype.addErrorLayer = function (cssMarker, position) {
         }
     }
     if (typeof position !== 'undefined' && position !== null) {
-        this.addErrors(layer, position);
+        this.addErrors(layer, position, warning);
     }
 };
 
-AdamShape.prototype.clearErrors = function () {
-    var i, lMarker, ifExist;
-    for (i = 0; i < this.markersArray.getSize(); i += 1){
-        lMarker = this.markersArray.get(i);
-        if (lMarker.position === 2) {
-            //ifExist = true;
-
-            lMarker.removeAllClasses();
-            break;
-        }
-    }
-};
-
-AdamShape.prototype.addErrors = function (newLayer, pos) {
+/**
+ * Attaches a marker to a layer in the specified position
+ * @param {Object} newLayer is the layer to attach the marker to
+ * @param {number} pos is the position on the layer to attach the marker at
+ *                 (valid options are 0-5. From left-to-right, top-to bottom, 0
+ *                 is top-left and 5 is bottom-right)
+ * @param {boolean} warning indicates whether the marker should be a warning marker
+ */
+AdamShape.prototype.addErrors = function(newLayer, pos, warning) {
     var  nMarker, x, lMarker, ifExist = false,
         errorArrayClass = [], cls, i;
 
@@ -402,7 +447,11 @@ AdamShape.prototype.addErrors = function (newLayer, pos) {
         }
     }
     for (i = 0; i < newLayer.ZOOMSCALES; i += 1) {
-        cls = 'adam-status-' + ((i * 25) + 50) + '-warning adam-error-color fa fa-exclamation-circle';
+        if (warning) {
+            cls = 'element-zoom-' + ((i * 25) + 50) + '-marker adam-warning-color fa fa-exclamation-triangle';
+        } else {
+            cls = 'element-zoom-' + ((i * 25) + 50) + '-marker adam-error-color fa fa-exclamation-circle';
+        }
         errorArrayClass.push(cls);
     }
     if (!ifExist) {
@@ -433,6 +482,8 @@ AdamShape.prototype.validate = function(validationTools) {
         'bulk': 'get_element_settings'
     };
     var callback = self.getValidationFunction();
+    self.hasWarning = false;
+    self.hasError = false;
     if (url && callback) {
         validationTools.progressTracker.incrementTotalElements();
         App.api.call('read', url, null, {
