@@ -90,6 +90,7 @@ $mod_strings = array (
     'LBL_PMSE_ADAM_DESIGNER_REDO' => 'Redo',
     'LBL_PMSE_ADAM_DESIGNER_SAVE' => 'Save',
     'LBL_PMSE_ADAM_DESIGNER_VALIDATE' => 'Validate',
+    'LBL_PMSE_ADAM_DESIGNER_SAVE_AND_VALIDATE' => 'Save and validate',
     'LBL_PMSE_ADAM_DESIGNER_VIEW_ERRORS' => 'Run validation to check for errors',
 
     /**ELEMENTS NAMES**/

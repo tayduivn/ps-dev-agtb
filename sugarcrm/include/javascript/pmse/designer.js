@@ -1318,6 +1318,12 @@ function renderProject (prjCode) {
         jCore.getActiveCanvas().RemoveCurrentMenu();
     });
 
+    $('#ButtonSaveValidate').click(function() {
+        project.save();
+        traverseProcess();
+        jCore.getActiveCanvas().RemoveCurrentMenu();
+    });
+
     //HANDLE ZOOM DROPDOWN
     $('#zoom').change(function (e) {
         var newZoomValue;
