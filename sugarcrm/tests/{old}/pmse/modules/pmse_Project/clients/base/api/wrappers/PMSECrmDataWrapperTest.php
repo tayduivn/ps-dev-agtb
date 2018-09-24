@@ -115,7 +115,6 @@ class PMSECrmDataWrapperTest extends TestCase
             'Relationships' => 'Relationship',
             'Employees' => 'Employee',
             'Reports' => 'SavedReport',
-            'Reports_1' => 'SavedReport',
             'Teams' => 'Team',
             'TeamMemberships' => 'TeamMembership',
             'TeamSets' => 'TeamSet',

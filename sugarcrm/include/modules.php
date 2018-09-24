@@ -121,7 +121,6 @@ $beanList['EmailText'] = 'EmailText';
 $beanList['Relationships'] = 'Relationship';
 $beanList['Employees']      = 'Employee';
 $beanList['Reports']        = 'SavedReport';
-$beanList['Reports_1']      = 'SavedReport';
 $beanList['Teams']          = 'Team';
 $beanList['TeamMemberships']            = 'TeamMembership';
 $beanList['TeamSets']            = 'TeamSet';
