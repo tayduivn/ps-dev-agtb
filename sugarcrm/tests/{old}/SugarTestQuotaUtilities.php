@@ -25,7 +25,7 @@ class SugarTestQuotaUtilities
 
     private function __construct() {}
 
-    public static function createQuota($amount = '500.000000', $id = '')
+    public static function createQuota($amount = 500, $id = '')
     {
         $quota = new Quota();
         $quota->amount = $amount;

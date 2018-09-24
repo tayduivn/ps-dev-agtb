@@ -158,7 +158,7 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
             ));
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('target_quota', $actual);
-        $this->assertEquals($this->quota->amount, $actual['target_quota']);
+        $this->assertEquals(500, $actual['target_quota']);
     }
 
     /**

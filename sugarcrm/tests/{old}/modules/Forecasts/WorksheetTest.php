@@ -18,7 +18,7 @@ class WorksheetTest extends TestCase
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', '2.000000');
+        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2);
     }
 
     public function tearDown()
@@ -42,6 +42,6 @@ class WorksheetTest extends TestCase
         $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
         $worksheet->currency_id = $currency->id;
         $worksheet->save();
-        $this->assertEquals($worksheet->base_rate, $currency->conversion_rate, '', '2.000000');
+        $this->assertEquals(2, $currency->conversion_rate, '', '2.000000');
     }
 }
