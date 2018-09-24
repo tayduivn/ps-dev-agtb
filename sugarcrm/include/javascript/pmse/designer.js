@@ -1636,21 +1636,32 @@ var ValidationProgressTracker = function(silent) {
         var tooltip;
         var errorsFound = currentErrorTable.rows.length;
         var validateButton = $('#ButtonValidate > i');
+        var saveAndValidateButton = $('#ButtonSaveValidate > i');
         var viewErrorsButton = $('#ButtonToggleErrorPane > i');
 
         // Remove any existing classes and action from the buttons
         validateButton.removeClass();
+        saveAndValidateButton.removeClass();
         viewErrorsButton.removeClass();
         $('#ButtonValidate').off();
+        $('#ButtonSaveValidate').off();
         $('#ButtonToggleErrorPane').off();
 
         if (this.numSettingsGathered === this.totalElements && this.numValidated === this.totalValidations) {
             // Validation is complete
 
-            // Un-grey the validate button and give it action
+            // Un-grey the validate buttons and give them action
             validateButton.addClass('fa fa-check-square check-square-on');
+            saveAndValidateButton.filter(':first').addClass('fa fa-save fa-sm save-on');
+            saveAndValidateButton.filter(':last').addClass('fa fa-check-square fa-sm check-square-on');
             $('#ButtonValidate').click(function() {
                 traverseProcess();
+                jCore.getActiveCanvas().RemoveCurrentMenu();
+            });
+            $('#ButtonSaveValidate').click(function() {
+                project.save();
+                traverseProcess();
+                jCore.getActiveCanvas().RemoveCurrentMenu();
             });
 
             // Set the error pane toggle button to show the number of errors. If there are errors,
@@ -1670,6 +1681,8 @@ var ValidationProgressTracker = function(silent) {
 
             // Grey out the validate button
             validateButton.addClass('fa fa-check-square check-square-off');
+            saveAndValidateButton.filter(':first').addClass('fa fa-save fa-sm save-off');
+            saveAndValidateButton.filter(':last').addClass('fa fa-check-square fa-sm check-square-off');
 
             // If validation was previously run and errors still exist in that table, let the user
             // keep accessing the error table with the error pane button. Otherwise, grey it out

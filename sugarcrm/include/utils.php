@@ -249,7 +249,7 @@ function get_sugar_config_defaults()
     //BEGIN SUGARCRM flav=ent ONLY
     'processes_auto_validate_on_import' => true,
     'processes_auto_validate_on_autosave' => true,
-    'processes_auto_save_interval' => 0,
+    'processes_auto_save_interval' => 30000,
     //END SUGARCRM flav=ent ONLY
     'export_delimiter' => ',',
     'export_excel_compatible' => false,
