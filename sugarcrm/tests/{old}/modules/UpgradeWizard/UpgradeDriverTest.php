@@ -135,27 +135,27 @@ class UpgradeDriverTest extends TestCase
             //////////////////
             array( // Case: string value, same $over and $new but not in $old
                 array(),
-                array('chartEngine' => 'nvd3'),
-                array('chartEngine' => 'nvd3'),
+                array('chartEngine' => 'bar'),
+                array('chartEngine' => 'bar'),
                 array(),
             ),
             array( // Case: string value, same in $over and new, but different in $old
-                array('chartEngine' => 'Jit'),
-                array('chartEngine' => 'nvd3'),
-                array('chartEngine' => 'nvd3'),
-                array('chartEngine' => 'Jit'),
+                array('chartEngine' => 'foo'),
+                array('chartEngine' => 'bar'),
+                array('chartEngine' => 'bar'),
+                array('chartEngine' => 'foo'),
             ),
             array( // Case: string value, only in $new but not in $over or $old
                 array(),
                 array(),
-                array('chartEngine' => 'nvd3'),
-                array('chartEngine' => 'nvd3'),
+                array('chartEngine' => 'baz'),
+                array('chartEngine' => 'baz'),
             ),
             array( // Case: string value, Different in everything
-                array('chartEngine' => 'Jit'),
-                array('chartEngine' => 'nvd3'),
                 array('chartEngine' => 'foo'),
-                array('chartEngine' => 'foo'),
+                array('chartEngine' => 'bar'),
+                array('chartEngine' => 'paz'),
+                array('chartEngine' => 'paz'),
             ),
             ///////////////////
             //Cases for number

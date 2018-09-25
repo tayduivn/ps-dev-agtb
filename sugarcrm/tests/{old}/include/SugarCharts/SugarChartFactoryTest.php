@@ -45,17 +45,6 @@ class SugarChartFactoryTest extends TestCase
         $this->assertEquals('sucrose', $name, 'Assert chart engine defaults to sucrose');
     }
 
-    public function testChartFactoryJit()
-    {
-        $sugarChart = SugarChartFactory::getInstance('Jit');
-        $name = get_class($sugarChart);
-        $this->assertEquals('Jit', $name, 'Assert engine is Jit');
-
-        $sugarChart = SugarChartFactory::getInstance('Jit', 'Reports');
-        $name = get_class($sugarChart);
-        $this->assertEquals('JitReports', $name, 'Assert chart engine is JitReport');
-    }
-
     public function testChartFactoryNvd3()
     {
         $sugarChart = SugarChartFactory::getInstance('nvd3');

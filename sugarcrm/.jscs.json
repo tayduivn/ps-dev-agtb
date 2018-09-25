@@ -30,7 +30,6 @@
         "include/javascript/jquery.js",
         "include/javascript/modernizr.js",
         "include/javascript/StackBlur.js",
-        "include/SugarCharts/Jit/js/Jit/jit.js",
         "include/javascript/pmse/lib/**",
         "sidecar/**",
         "styleguide/content/charts/js/**",

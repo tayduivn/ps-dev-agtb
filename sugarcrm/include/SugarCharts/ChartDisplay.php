@@ -105,7 +105,7 @@ class ChartDisplay
     {
         if ($this->canDrawChart()) {
 
-            /* @var $sugarChart JitReports */
+            /* @var $sugarChart SugarChart or its sub class */
             $sugarChart = SugarChartFactory::getInstance('', 'Reports');
 
             $sugarChart->setData($this->chartRows);

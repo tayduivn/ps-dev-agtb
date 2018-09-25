@@ -37,7 +37,6 @@
     "include/javascript/yui3/",
     "include/javascript/clipboardjs/clipboard.min.js",
     "include/php-sql-parser.php",
-    "include/SugarCharts/Jit/js/Jit/jit.js",
     "include/SugarTheme/cssmin.php",
     "jssource/Minifier.php",
     "mobile/",
