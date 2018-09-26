@@ -14,6 +14,13 @@ use Sugarcrm\Sugarcrm\IdentityProvider\OAuth2StateRegistry;
 
 class UsersViewOAuth2Authenticate extends SidecarView
 {
+
+    /**
+     * current platform
+     * @var string
+     */
+    protected $platform;
+
     /**
      * @inheritdoc
      */
@@ -34,7 +41,7 @@ class UsersViewOAuth2Authenticate extends SidecarView
         if (!$code || !$scope || !$state) {
             $this->redirect();
         }
-        list($platform, $state) = explode('_', $state);
+        list($this->platform, $state) = explode('_', $state);
 
         $stateRegistry = $this->getStateRegistry();
         $isStateRegistered = $stateRegistry->isStateRegistered($state);
@@ -55,7 +62,7 @@ class UsersViewOAuth2Authenticate extends SidecarView
             // Adding the setcookie() here instead of calling $api->setHeader() because
             // manually adding a cookie header will break 3rd party apps that use cookies
             setcookie(
-                RestService::DOWNLOAD_COOKIE . '_' . $platform,
+                RestService::DOWNLOAD_COOKIE . '_' . $this->platform,
                 $this->authorization['download_token'],
                 time() + $this->authorization['refresh_expires_in'],
                 ini_get('session.cookie_path'),
@@ -68,6 +75,21 @@ class UsersViewOAuth2Authenticate extends SidecarView
         }
 
         parent::preDisplay($params);
+    }
+
+    /**
+     * This method sets the config file to use and renders the template
+     *
+     * @param array $params additional view paramters passed through from the controller
+     */
+    public function display($params = [])
+    {
+        if ($this->platform === 'mobile') {
+            $this->ss->assign("siteUrl", SugarConfig::getInstance()->get('site_url'));
+            $this->ss->display('modules/Users/tpls/AuthenticateMobile.tpl');
+        } else {
+            parent::display($params);
+        }
     }
 
     /**

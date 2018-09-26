@@ -295,8 +295,9 @@ class SugarApplication
         }
 
         // If we're authenticating, do not redirect
-        if (!empty($_REQUEST['module']) && !empty($_REQUEST['action'])
-            && 'Users' == $_REQUEST['module'] && 'authenticate' == strtolower($_REQUEST['action'])) {
+        $module = $this->request->getValidInputRequest('module');
+        $action = $this->request->getValidInputRequest('action');
+        if ($module === 'Users' && in_array(strtolower($action), ['authenticate', 'oauth2codeexchange'], true)) {
             return false;
         }
 
