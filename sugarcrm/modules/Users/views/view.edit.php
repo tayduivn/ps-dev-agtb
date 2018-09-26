@@ -231,7 +231,7 @@ EOD
         $showNonEditableFieldsAlert = $idpConfig->isIDMModeEnabled() &&
             !$idpConfig->isSpecialBeanAction($this->bean, $_REQUEST);
         $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $showNonEditableFieldsAlert);
-        if ($GLOBALS['current_user']->isAdminForModule('Users') && $this->bean->id !== $GLOBALS['current_user']->id) {
+        if ($GLOBALS['current_user']->isAdminForModule('Users')) {
             $tenantSrn = Srn\Converter::fromString($idpConfig->getIDMModeConfig()['tid']);
             $srnManager = new Srn\Manager([
                 'partition' => $tenantSrn->getPartition(),

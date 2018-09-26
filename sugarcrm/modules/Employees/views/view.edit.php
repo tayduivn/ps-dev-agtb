@@ -64,7 +64,7 @@ class EmployeesViewEdit extends ViewEdit {
         // Check for IDM mode.
         $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
         $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $idpConfig->isIDMModeEnabled());
-        if ($GLOBALS['current_user']->isAdminForModule('Users') && $this->bean->id !== $GLOBALS['current_user']->id) {
+        if ($GLOBALS['current_user']->isAdminForModule('Users')) {
             $tenantSrn = Srn\Converter::fromString($idpConfig->getIDMModeConfig()['tid']);
             $srnManager = new Srn\Manager([
                 'partition' => $tenantSrn->getPartition(),
