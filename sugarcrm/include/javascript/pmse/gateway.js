@@ -827,13 +827,9 @@ AdamGateway.prototype.getBaseURL = function() {
  */
 AdamGateway.prototype.getValidationFunction = function() {
     switch (this.getDirection()) {
+        case 'UNSPECIFIED':
         case 'DIVERGING':
-            switch (this.getGatewayType()) {
-                case 'PARALLEL':
-                    return;
-                default:
-                    return this.callbackFunctionForDivergingGateway;
-            }
+            return this.callbackFunctionForDivergingGateway;
         case 'CONVERGING':
             return this.callbackFunctionForConvergingGateway;
     }
@@ -846,57 +842,13 @@ AdamGateway.prototype.getValidationFunction = function() {
  * @param {Object} validationTools is a collection of utility functions for validating element data
  */
 AdamGateway.prototype.callbackFunctionForDivergingGateway = function(data, element, validationTools) {
-    var i;
-    var j;
-    var atom;
-    var criteria;
-    var evaluator;
-    var allEdges;
-    var destElementName;
-    var thisPath;
-    var allPaths = new validationTools.CriteriaEvaluator();
 
     // Validate the number of incoming and outgoing edges
     validationTools.validateNumberOfEdges(null, null, 2, null, element);
 
-    // For each criteria box
-    for (i = 0; i < data.data.length; i++) {
-        criteria = [];
-
-        // Validate the criteria box seperately, as well as add its contents to the
-        // CriteriaEvaluator object that will eventually validate all paths combined
-        if (data.data[i].flo_condition) {
-            criteria = JSON.parse(data.data[i].flo_condition);
-            allPaths.addOr(JSON.parse(data.data[i].flo_condition));
-        }
-
-        // Check if this one path is reachable. If not, report the path name to the user
-        thisPath = new validationTools.CriteriaEvaluator();
-        thisPath.addOr(criteria.slice());
-        if (thisPath.isAlwaysFalse()) {
-            allEdges = validationTools.canvas.connections;
-            destElementName = allEdges.find('id', data.data[i].flo_uid).destPort.parent.getName();
-            validationTools.createWarning(element, 'LBL_PMSE_ERROR_LOGIC_IMPOSSIBLE', destElementName);
-        }
-
-        // Validate the individual logical atoms in the criteria box
-        for (j = 0; j < criteria.length; j++) {
-            atom = criteria[j];
-            validationTools.validateAtom(
-                atom.expType,
-                atom.expModule,
-                atom.expField,
-                atom.expValue,
-                element,
-                validationTools);
-        }
-    }
-
-    // If no default path is selected, check that a branch will always execute. Here,
-    // we have 'OR'ed each criteria box together, and we are checking if the resulting
-    // logical expression is always true
-    if (!element.gat_default_flow && !allPaths.isAlwaysTrue()) {
-        validationTools.createWarning(element, 'LBL_PMSE_ERROR_GATEWAY_NO_GUARANTEED_PATH');
+    // Validate the criteria boxes if this is an exclusive or inclusive gateway
+    if (element.getGatewayType() === 'EXCLUSIVE' || element.getGatewayType() === 'INCLUSIVE') {
+        element.validateCriteriaBoxes(data, element, validationTools);
     }
 };
 
@@ -925,5 +877,106 @@ AdamGateway.prototype.callbackFunctionForConvergingGateway = function(data, elem
             }
         }
     }
+
+    // If we have reached this point, the type of this converging gateway is not the proper one to use
     validationTools.createWarning(element, 'LBL_PMSE_ERROR_GATEWAY_CONVERGING_TYPE_MISMATCH');
+};
+
+/**
+ * Validates a set of gateway criteria boxes together
+ * @param {Object} data contains the element settings information received from the API call
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamGateway.prototype.validateCriteriaBoxes = function(data, element, validationTools) {
+    var i;
+    var evaluator = new validationTools.CriteriaEvaluator();
+
+    // For each criteria box
+    for (i = 0; i < data.data.length; i++) {
+
+        // Validate the criteria box
+        element.validateSingleCriteriaBox(data.data[i], element, validationTools);
+
+        // If the criteria box is not empty, its data is a string, so parse it
+        // and add it to the evaluator
+        if (data.data[i].flo_condition) {
+            evaluator.addOr(JSON.parse(data.data[i].flo_condition));
+        }
+    }
+
+    // If no default path is selected, check that a branch will always execute. Here,
+    // we have 'OR'ed each criteria box together, and we are checking if the resulting
+    // logical expression is always true
+    if (!element.gat_default_flow && !evaluator.isAlwaysTrue()) {
+        validationTools.createWarning(element, 'LBL_PMSE_ERROR_GATEWAY_NO_GUARANTEED_PATH');
+    }
+};
+
+/**
+ * Validates a single gateway criteria box
+ * @param {Object} data contains the criteria box settings
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamGateway.prototype.validateSingleCriteriaBox = function(data, element, validationTools) {
+    var criteria = [];
+
+    // If the criteria box is not empty, its data is a string, so parse it
+    if (data.flo_condition) {
+        criteria = JSON.parse(data.flo_condition);
+    }
+
+    // Check if the logic in this criteria box is impossible
+    element.checkForImpossibleLogic(data, element, validationTools, criteria);
+
+    // Validate the atoms in this criteria box
+    element.validateCriteriaBoxAtoms(element, validationTools, criteria);
+};
+
+/**
+ * Validates a set of criteria atoms in a criteria box
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ * @param {Array} criteria is the array of criteria atoms to validate
+ */
+AdamGateway.prototype.validateCriteriaBoxAtoms = function(element, validationTools, criteria) {
+    var i;
+    var atom;
+
+    // Validate the individual logical atoms in the criteria box
+    for (i = 0; i < criteria.length; i++) {
+        atom = criteria[i];
+        validationTools.validateAtom(
+            atom.expType,
+            atom.expModule,
+            atom.expField,
+            atom.expValue,
+            element,
+            validationTools);
+    }
+};
+
+/**
+ * Checks the logic inside a criteria box to determine if it is impossible
+ * @param {Object} data contains the criteria box settings
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ * @param {Array} criteria is the logical statement to be evaluated
+ */
+AdamGateway.prototype.checkForImpossibleLogic = function(data, element, validationTools, criteria) {
+    var evaluator;
+    var destElementName;
+
+    // Create the evaluator that will evaluate the logic
+    evaluator = new validationTools.CriteriaEvaluator();
+
+    // Add the criteria to the evaluator
+    evaluator.addOr(criteria.slice());
+
+    // Check the evaluator to see if the logic is impossible/always false
+    if (evaluator.isAlwaysFalse()) {
+        destElementName = element.getDestElementName(data.flo_uid);
+        validationTools.createWarning(element, 'LBL_PMSE_ERROR_LOGIC_IMPOSSIBLE', destElementName);
+    }
 };

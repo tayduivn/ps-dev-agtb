@@ -2946,12 +2946,6 @@ AdamActivity.prototype.callbackFunctionForChangeFieldAction = function(data, ele
  * @param {Object} validationTools is a collection of utility functions for validating element data
  */
 AdamActivity.prototype.callbackFunctionForAddRelatedRecordAction = function(data, element, validationTools) {
-    var i;
-    var k;
-    var field;
-    var criteria = [];
-    var requiredFields;
-    var requiredFieldIsSet;
     var url = App.api.buildURL('pmse_Project/CrmData/addRelatedRecord/' +
         data.act_field_module + '?base_module=' + validationTools.getTargetModule());
     var options = {
@@ -2961,33 +2955,11 @@ AdamActivity.prototype.callbackFunctionForAddRelatedRecordAction = function(data
     // Validate the number of incoming and outgoing edges
     validationTools.validateNumberOfEdges(1, null, 1, null, element);
 
-    // Validate the field selections
-    if (data.act_fields) {
-        criteria = JSON.parse(data.act_fields);
-    }
+    // Validate the module field settings against the current instance
     validationTools.progressTracker.incrementTotalValidations();
     App.api.call('read', url, null, {
         success: function(form) {
-
-            // Get a list of the required fields of the related module in this instance of Sugar
-            var requiredFields = form.result.filter(function(elem) {
-                return elem.required;
-            });
-
-            // Check that all required fields are set
-            for (i = 0; i < requiredFields.length; i++) {
-                field = requiredFields[i];
-                requiredFieldIsSet = false;
-                for (j = 0; j < criteria.length; j++) {
-                    if (criteria[j].field === field.value && criteria[j].value) {
-                        requiredFieldIsSet = true;
-                        break;
-                    }
-                }
-                if (!requiredFieldIsSet) {
-                    validationTools.createWarning(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', field.text);
-                }
-            }
+            element.validateAddRelatedRecordForm(form, data, element, validationTools);
         },
         error: function(data) {
             validationTools.createWarning(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', 'Module relationship');
@@ -2996,4 +2968,59 @@ AdamActivity.prototype.callbackFunctionForAddRelatedRecordAction = function(data
             validationTools.progressTracker.incrementValidated();
         }
     }, options);
+};
+
+/**
+ * Validates the field settings in an add related record action
+ * @param  {Object} form is the API response data from the addRelatedRecord endpoint (provides information on
+ *                  required fields for the given module relationship in the current instance)
+ * @param  {Object} data contains the element settings information received from the API call
+ * @param  {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamActivity.prototype.validateAddRelatedRecordForm = function(form, data, element, validationTools) {
+    var i;
+    var requiredFields;
+    var critera = [];
+
+    // Parse the list of field settings for the new record
+    if (data.act_fields) {
+        criteria = JSON.parse(data.act_fields);
+    }
+
+    // Get a list of the required fields of the related module in this instance of Sugar
+    requiredFields = form.result.filter(function(field) {
+        return field.required;
+    });
+
+    // For each required field, check if that field is set in the field settings of the new record
+    for (i = 0; i < requiredFields.length; i++) {
+        element.checkIfRequiredFieldIsSet(requiredFields[i], criteria, element, validationTools);
+    }
+};
+
+/**
+ * Checks an add related record's field settings to ensure a given required field is set
+ * @param  {Object} field is a specific field object obtained from the API response from the
+ *                  addRelatedRecord endpoint, and is a required field in the element settings
+ * @param  {Object} criteria is the set of field settings obtained from the element settings
+ *                  API response
+ * @param  {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamActivity.prototype.checkIfRequiredFieldIsSet = function(field, criteria, element, validationTools) {
+    var i;
+    var requiredFieldIsSet = false;
+
+    // Check if the required field has been set in the new record
+    for (i = 0; i < criteria.length; i++) {
+        if (criteria[i].field === field.value && criteria[i].value) {
+            requiredFieldIsSet = true;
+            break;
+        }
+    }
+
+    if (!requiredFieldIsSet) {
+        validationTools.createWarning(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', field.text);
+    }
 };

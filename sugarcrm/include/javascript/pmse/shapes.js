@@ -227,6 +227,25 @@ AdamShape.prototype.getDestElements = function () {
 };
 
 /**
+ * Returns the name of a shape that is connected to this shape with the given floID
+ * @param  {string} floID is the unique ID number of the flow going to the destination shape
+ * @return {string} The name of the destination shape, or undefined if this shape does not have
+ *                  a flow with the given floID
+ */
+AdamShape.prototype.getDestElementName = function(floID) {
+    var i;
+    var flow;
+    var ports = this.getPorts().asArray();
+
+    for (i = 0; i < ports.length; i++) {
+        flow = ports[i].connection;
+        if (flow.flo_uid === floID) {
+            return flow.destPort.parent.getName();
+        }
+    }
+};
+
+/**
  * Set flow as a default and update the other flows
  * @param {String} destID
  * @returns {AdamShape}
@@ -379,7 +398,6 @@ AdamShape.prototype.clearIssueMarkers = function() {
         lMarker = this.markersArray.get(i);
         if (lMarker.position === 2 || lMarker.position === 5) {
             $('#' + lMarker.id).remove();
-            lMarker.removeAllClasses();
             this.markersArray.remove(lMarker);
             i--;
         }

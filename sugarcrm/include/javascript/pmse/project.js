@@ -266,13 +266,13 @@ AdamProject.prototype.init = function () {
                 return true;
             }
         };
-        if (typeof this.saveInterval === 'number' && this.saveInterval >= 30000) {
+        if (this.saveInterval && typeof this.saveInterval === 'number') {
             this.autosaveTimer = setInterval(function() {
                 self.save();
                 if (App.config.autoValidateProcessesOnAutosave && !this.isBeingValidated) {
                     traverseProcess(true);
                 }
-            }, this.saveInterval);
+            }, Math.max(this.saveInterval, 30000));
         }
         this.propertiesGrid = new PropertiesGrid('#properties-grid');
         this.canvas.commandStack.setHandler(AdamProject.prototype.updateUndoRedo);
@@ -1846,4 +1846,4 @@ AdamProject.prototype.dispose = function () {
     clearInterval(this.autosaveTimer);
     jQuery('body > .adam-modal').remove();
     jCore.dispose();
-}
+};
