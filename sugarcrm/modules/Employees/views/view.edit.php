@@ -12,6 +12,7 @@
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
+use Sugarcrm\IdentityProvider\Srn;
 
 class EmployeesViewEdit extends ViewEdit {
     var $useForSubpanel = true;
@@ -64,11 +65,20 @@ class EmployeesViewEdit extends ViewEdit {
         $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
         $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $idpConfig->isIDMModeEnabled());
         if ($GLOBALS['current_user']->isAdminForModule('Users') && $this->bean->id !== $GLOBALS['current_user']->id) {
-            $label = 'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER';
+            $tenantSrn = Srn\Converter::fromString($idpConfig->getIDMModeConfig()['tid']);
+            $srnManager = new Srn\Manager([
+                'partition' => $tenantSrn->getPartition(),
+                'region' => $tenantSrn->getRegion(),
+            ]);
+            $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $this->bean->id);
+            $msg = sprintf(
+                translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER', 'Users'),
+                $idpConfig->buildCloudConsoleUrl('userProfile', [Srn\Converter::toString($userSrn)])
+            );
         } else {
-            $label = 'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_REGULAR_USER';
+            $msg = translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_REGULAR_USER', 'Users');
         }
-        $this->ss->assign('NON_EDITABLE_FIELDS_MSG', translate($label, 'Users'));
+        $this->ss->assign('NON_EDITABLE_FIELDS_MSG', $msg);
 
  		parent::display();
  	}

@@ -76,8 +76,8 @@ $mod_strings = array (
 	'ERR_RECIPIENT_EMAIL'				=> 'Recipient Email Address',
 	'ERR_SERVER_STATUS'					=> 'Your server status',
 	'ERR_SERVER_SMTP_EMPTY'				=> 'The system is unable to send an email to the user. Please check the Outgoing Mail Configuration in <a href="index.php?module=EmailMan&action=config">Email Settings</a>.',
-    'ERR_CREATE_USER_FOR_IDM_MODE'      => 'The user can be created only in <a href="{0}" target="_blank">Cloud console</a> for IDM mode.',
-    'ERR_UPDATE_PRIMARY_EMAIL_FOR_IDM_MODE' => 'The primary email address can be updated only in <a href="{0}" target="_blank">Cloud console</a> for IDM mode.',
+    'ERR_CREATE_USER_FOR_IDM_MODE'      => 'The user can be created only in <a href="{0}" target="_blank">Settings</a>.',
+    'ERR_UPDATE_PRIMARY_EMAIL_FOR_IDM_MODE' => 'The primary email address can be updated only in <a href="{0}" target="_blank">Settings</a>',
 
     'LBL_EMAIL_ADDRESS'                 => 'Email Address',
 
@@ -635,10 +635,12 @@ $mod_strings = array (
     'LBL_DETAIL' => 'User Profile',
 
     'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER' =>
-        'If certain fields are not editable, please login to your Settings to manage these fields',
+        'If certain fields are not editable, please login to your Settings to manage these fields. ' .
+        'Please use <a href="%s" target="_blank">Settings</a> to change user name, first name, ' .
+        'last name, work phone and primary email address.',
     'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_REGULAR_USER' =>
-        'If you wish to change certain fields that are not editable, ' .
-        'please contact Administrator to notify these changes',
+        'Please contact your Sugar Administrator to change user name, first name, last name, ' .
+        'work phone and primary email address.',
 ); // END STRINGS DEFS
 
 ?>
