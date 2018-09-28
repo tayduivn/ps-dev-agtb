@@ -313,7 +313,7 @@ class UserViewHelper {
                             && !$enable_syst_generate_pwd)
                 )
                 && !$this->bean->external_auth_only
-                && !$idpConfig->isIDMModeEnabled()) {
+                && (!$idpConfig->isIDMModeEnabled() || $this->usertype == 'PORTAL_ONLY')) {
             $this->ss->assign('CHANGE_PWD', '1');
         } else {
             $this->ss->assign('CHANGE_PWD', '0');

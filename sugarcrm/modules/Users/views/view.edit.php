@@ -46,7 +46,8 @@ var $useForSubpanel = true;
         global $current_user, $app_list_strings;
 
         $idpConfig = new IdmConfig(\SugarConfig::getInstance());
-        if ($idpConfig->isIDMModeEnabled() && !$this->bean->isUpdate()) {
+        if ($idpConfig->isIDMModeEnabled() && !$this->bean->isUpdate() &&
+            !$idpConfig->isSpecialBeanAction($this->bean, $_REQUEST)) {
             $this->showRedirectToCloudConsole($idpConfig->buildCloudConsoleUrl('userCreate'));
         }
 
@@ -225,8 +226,10 @@ EOD
             $this->ss->assign('scroll_to_cal', true);
         }
 
-        // Check for IDM mode.
-        $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $idpConfig->isIDMModeEnabled());
+        // Check for IDM mode and specific User type.
+        $showNonEditableFieldsAlert = $idpConfig->isIDMModeEnabled() &&
+            !$idpConfig->isSpecialBeanAction($this->bean, $_REQUEST);
+        $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $showNonEditableFieldsAlert);
         if ($GLOBALS['current_user']->isAdminForModule('Users') && $this->bean->id !== $GLOBALS['current_user']->id) {
             $label = 'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER';
         } else {

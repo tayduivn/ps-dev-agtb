@@ -1094,4 +1094,44 @@ class ConfigTest extends TestCase
             ->method('refreshMetadata');
         $config->setIDMMode($setIDMModeConfig);
     }
+
+    /**
+     * @return array
+     */
+    public function isSpecialBeanActionProvider() : array
+    {
+        return [
+            ['1', null, 'Users', [], true],
+            [null, '1', 'Users', [], true],
+            [null, null, 'Users', [], false],
+            ['0', '0', 'Users', [], false],
+            [false, false, 'Users', [], false],
+            [true, true, 'Users', [], true],
+            ['1', '1', 'Calls', [], false],
+            [null, null, 'Users', ['usertype' => 'portal'], true],
+            [null, null, 'Users', ['usertype' => 'group'], true],
+            [null, null, 'Users', ['usertype' => 'foo'], false],
+            ['1', '1', 'Calls', ['usertype' => 'group'], false],
+        ];
+    }
+
+    /**
+     * @covers ::isSpecialBeanAction
+     * @dataProvider isSpecialBeanActionProvider
+     *
+     * @param mixed $isGroup
+     * @param mixed $isPortal
+     * @param string $moduleName
+     * @param array $request
+     * @param bool $result
+     */
+    public function testIsSpecialBeanAction($isGroup, $isPortal, string $moduleName, array $request, bool $result)
+    {
+        $config = new Config($this->createMock(\SugarConfig::class));
+        $bean = $this->createMock(\SugarBean::class);
+        $bean->is_group = $isGroup;
+        $bean->portal_only = $isPortal;
+        $bean->module_name = $moduleName;
+        $this->assertEquals($result, $config->isSpecialBeanAction($bean, $request));
+    }
 }
