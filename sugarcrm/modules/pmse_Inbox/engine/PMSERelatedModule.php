@@ -385,28 +385,64 @@ class PMSERelatedModule
     }
 
     /**
-     * Creates a new Related Record
+     * Creates a new Related (or Related Related) Record
      * @param $moduleBean
      * @param $linkField
      * @param $fields
-     * @return null|SugarBean
+     * @param $def - action filter definition if any
+     * @return $relatedRecords - array of added related records
      * @throws Exception
      */
-    public function addRelatedRecord($moduleBean, $linkField, $fields)
+    public function addRelatedRecord($moduleBean, $linkField, $fields, $def = null)
     {
         $fieldName = $linkField;
+        $params = (isset($def) && !empty($def->act_params)) ? json_decode($def->act_params) : null;
+
         if (empty($moduleBean->field_defs[$fieldName])) {
             throw ProcessManager\Factory::getException('InvalidData', "Unable to find field {$fieldName}", 1);
         }
 
-        if (!$moduleBean->load_relationship($fieldName)) {
-            throw ProcessManager\Factory::getException('InvalidData', "Unable to load relationship $fieldName", 1);
+        $relatedRecords = array();
+
+        $parentBeans = $this->getChainedRelationshipBeans([$moduleBean], $params);
+        if (is_array($parentBeans) && !empty($parentBeans[0]) && $parentBeans[0]->load_relationship($fieldName)) {
+            $rModule = $parentBeans[0]->$fieldName->getRelatedModuleName();
+
+            foreach ($parentBeans as $parentBean) {
+                $relatedModuleBean = $this->newBean($rModule);
+                $relatedModuleBean = $this->addRelatedRecordValues($relatedModuleBean, $fields);
+
+                if (isset($relatedModuleBean->field_defs['parent_type'], $relatedModuleBean->field_defs['parent_id'])) {
+                    $relatedModuleBean->parent_type = $parentBean->module_dir;
+                    $relatedModuleBean->parent_id = $parentBean->id;
+                }
+
+                if ($parentBean->module_name == $rModule) {
+                    $relatedModuleBean->pa_related_module_save = true;
+                }
+
+                // Save the new Related Record
+                PMSEEngineUtils::saveAssociatedBean($relatedModuleBean);
+
+                if (!$relatedModuleBean->in_save) {
+                    $rel_id = $relatedModuleBean->id;
+                    $parentBean->load_relationship($fieldName);
+                    $parentBean->$fieldName->add($rel_id);
+                    $relatedRecords[] = $relatedModuleBean;
+                }
+            }
         }
+        return $relatedRecords;
+    }
 
-        $rModule = $moduleBean->$fieldName->getRelatedModuleName();
-
-        $relatedModuleBean = $this->newBean($rModule);
-
+    /**
+     * Adds Related Record Values
+     * @param $relatedModuleBean
+     * @param $fields
+     * @return $relatedModuleBean
+     */
+    public function addRelatedRecordValues($relatedModuleBean, $fields)
+    {
         foreach ($fields as $key => $value) {
             if (isset($relatedModuleBean->field_defs[$key])) {
                 // check if is of type link
@@ -433,26 +469,6 @@ class PMSERelatedModule
                 }
             }
         }
-
-        if (isset($relatedModuleBean->field_defs['parent_type'], $relatedModuleBean->field_defs['parent_id'])) {
-            $relatedModuleBean->parent_type = $moduleBean->module_dir;
-            $relatedModuleBean->parent_id = $moduleBean->id;
-        }
-
-        if ($moduleBean->module_name == $rModule) {
-            $relatedModuleBean->pa_related_module_save = true;
-        }
-
-        // Save the new Related Record
-        PMSEEngineUtils::saveAssociatedBean($relatedModuleBean);
-
-
-        if (!$relatedModuleBean->in_save) {
-            $rel_id = $relatedModuleBean->id;
-            $moduleBean->$fieldName->add($rel_id);
-            return $relatedModuleBean;
-        } else {
-            return null;
-        }
+        return $relatedModuleBean;
     }
 }

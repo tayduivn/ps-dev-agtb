@@ -17,6 +17,35 @@ use PHPUnit\Framework\TestCase;
  */
 class PMSERelatedModulesTest extends TestCase
 {
+    /** @var  Account */
+    private $account;
+
+    /** @var  Contact */
+    private $contact;
+
+    protected function setUp()
+    {
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user', array(true, 1));
+
+        $this->account = SugarTestAccountUtilities::createAccount();
+        $this->contact = $this->contact = SugarTestContactUtilities::createContact();
+        $this->contact->lead_source = 'Cold Call';
+        $this->contact->save();
+
+        $this->account->load_relationship('contacts');
+        $this->account->contacts->add($this->contact->id);
+    }
+
+    protected function tearDown()
+    {
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+
+        SugarTestHelper::tearDown();
+    }
+
    /**
     * Unit test class to cover getRelatedBeans method for a type of relationship 'all'.
     * @covers ::geRelatedBeans
@@ -41,6 +70,45 @@ class PMSERelatedModulesTest extends TestCase
         // Verify that the label decorator was added
         $this->assertRegexp('/[*:1]/', $o['text']);
         $this->assertRegexp('/[*:M]/', $m['text']);
+    }
+
+    /**
+     *
+     * @covers ::addRelatedRecord
+     */
+    public function testAddRelatedRecord()
+    {
+        $bugFields = array(
+            "assigned_user_id" => "1",
+            "priority" => "Urgent",
+            "status" => "New",
+            "name" => "New Bug ICE-717",
+            "type" => "Defect",
+        );
+
+        $def = BeanFactory::newBean('pmse_BpmActivityDefinition');
+        $def->act_params = '{
+                       "module":"contacts",
+                       "moduleLabel":"Contacts",
+                       "filter":{
+                           "expType":"MODULE",
+                           "expSubtype":"DropDown",
+                           "expLabel":"Contacts (Lead Source is equal to Cold Call)",
+                           "expValue":"Cold Call",
+                           "expOperator":"equals",
+                           "expModule":"contacts",
+                           "expField":"lead_source"
+                        }
+                }';
+
+        $PMSERelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
+        $addedBeans = $PMSERelatedModule->addRelatedRecord($this->account, 'bugs', $bugFields, $def);
+
+        // the Related Related Bug bean should be added to the Related Contact bean
+        $this->contact->load_relationship('bugs');
+        $bugBeans = $this->contact->bugs->getBeans();
+
+        $this->assertNotEmpty($bugBeans[$addedBeans[0]->id]);
     }
 
     /**
