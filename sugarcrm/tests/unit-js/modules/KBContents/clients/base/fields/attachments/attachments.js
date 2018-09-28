@@ -66,32 +66,26 @@ describe('modules.kbcontents.clients.base.fields.attachments', function() {
         expect(field.$('[data-action="download-all"]').length).toEqual(0);
     });
 
+    it('should render when model gets data', function() {
+        field = SugarTest.createField('base', fieldName, fieldType, 'detail',
+            fieldDef, module, model, null, true
+        );
+        field.render();
+        var renderStub = sandbox.stub(field, 'render');
+        model.set(fieldName, {});
+        expect(renderStub).toHaveBeenCalled();
+    });
+
     it('should rendered download all attachments button when attachments not empty', function() {
         field = SugarTest.createField('base', fieldName, fieldType, 'detail', 
             fieldDef, module, model, null, true
         );
+        field.render();
         model.set('attachments', [{   
             id: 'testAttach1',
             name: 'testAttach1'
         }]);
-        field.render();
         expect(field.$('[data-action="download-all"]').length).toEqual(1);
-    });
-
-    it('should load related collection when model is not new', function() {
-        var getRelatedCollectionStub = sandbox.stub(model, 'getRelatedCollection', function() {
-            return {
-                fetch: function(callbacks) {
-                    if (callbacks && callbacks.success)
-                        callbacks.success({});
-                }
-            }
-        });
-        model.set({id: 'test_id'});
-        field = SugarTest.createField('base', fieldName, fieldType, 'edit', 
-            fieldDef, module, model, null, true
-        );
-        expect(getRelatedCollectionStub).toHaveBeenCalled();
     });
 
     it('format should return valid value', function() {
@@ -177,11 +171,11 @@ describe('modules.kbcontents.clients.base.fields.attachments', function() {
         field = SugarTest.createField('base', fieldName, fieldType, 'edit', 
             fieldDef, module, model, null, true
         );
+        field.render();
         model.set('attachments', [{   
             id: 'testAttach1',
             name: 'testAttach1'
         }]);
-        field.render();
         var sel2Data = field.$node.select2('data');
         model.set('attachments', [{   
             id: 'testAttach2',
