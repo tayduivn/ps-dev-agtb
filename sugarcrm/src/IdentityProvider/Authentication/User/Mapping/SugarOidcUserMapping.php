@@ -23,12 +23,17 @@ class SugarOidcUserMapping implements MappingInterface
     const OIDC_USER_STATUS_ACTIVE = 0;
     const OIDC_USER_STATUS_INACTIVE = 1;
 
+    const IDM_USER_TYPE_REGULAR = 0;
+    const IDM_USER_TYPE_ADMINISTRATOR = 1;
+
     protected $userMapping = [
         'user_name' => 'preferred_username',
         'first_name' => 'given_name',
         'last_name' => 'family_name',
         'phone_work' => 'phone_number',
         'email' => 'email',
+        'title' => 'title',
+        'department' => 'department',
     ];
 
     protected $addressMapping = [
@@ -50,7 +55,10 @@ class SugarOidcUserMapping implements MappingInterface
             return [];
         }
 
-        $userData = ['status' => $this->getUserStatus($response)];
+        $userData = [
+            'status' => $this->getUserStatus($response),
+            'is_admin' => $this->getIsAdmin($response),
+        ];
 
         foreach ($this->userMapping as $mangoKey => $oidcKey) {
             $userData[$mangoKey] = $this->getAttribute($response, $oidcKey);
@@ -139,5 +147,20 @@ class SugarOidcUserMapping implements MappingInterface
         return (int) $status == self::OIDC_USER_STATUS_ACTIVE
             ? User::USER_STATUS_ACTIVE
             : User::USER_STATUS_INACTIVE;
+    }
+
+    /**
+     * Returns is_admin flag
+     *
+     * @param array $response
+     * @return null|bool
+     */
+    protected function getIsAdmin(array $response)
+    {
+        $userType = $this->getAttribute($response, 'user_type');
+        if (is_null($userType)) {
+            return null;
+        }
+        return (int)$userType == self::IDM_USER_TYPE_ADMINISTRATOR;
     }
 }

@@ -682,7 +682,6 @@ $dictionary['User'] = array(
             'vname' => 'LBL_REPORTS_TO_ID',
             'type' => 'id',
             'required' => false,
-            'idm_mode_disabled' => true,
         ) ,
         'reports_to_name' => array(
             'name' => 'reports_to_name',
@@ -698,7 +697,6 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'duplicate_merge' => 'disabled',
             'side' => 'right',
-            'idm_mode_disabled' => true,
         ) ,
         'reports_to_link' => array(
             'name' => 'reports_to_link',
@@ -708,7 +706,6 @@ $dictionary['User'] = array(
             'side' => 'right',
             'source' => 'non-db',
             'vname' => 'LBL_REPORTS_TO',
-            'idm_mode_disabled' => true,
         ) ,
         'reportees' => array(
             'name' => 'reportees',
