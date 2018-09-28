@@ -62,7 +62,7 @@ EmailPickerField.prototype.init = function (settings) {
 
 	this._lastQuery = {};
 
-    this.setElementHelper({})
+    this.setElementHelper({mode: 'EmailPickerField'})
         .setTeamTextField(defaults.teamTextField)
 		.setTeamValueField(defaults.teamValueField)
 		.setTeams(defaults.teams)
@@ -413,6 +413,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VARIABLE'),
                                     width: '35%',
                                     required: false,
+                                    disabled: true,
                                     dataRoot: 'result',
                                     labelField: 'text',
                                     valueField: function(field, data) {
@@ -429,6 +430,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     labelField: 'text',
                                     valueField: 'value',
                                     required: false,
+                                    disabled: true,
                                     options: this.helper.OPERATORS.comparison,
                                     dependantFields: ['value']
                                 },
@@ -438,6 +440,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VALUE'),
                                     width: '35%',
                                     required: false,
+                                    disabled: true,
                                     dependencyHandler: _.bind(this.helper.valueDependencyHandler, this.helper)
                                 },
                                 {
@@ -445,6 +448,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     name: 'related',
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_RELATED'),
                                     required: false,
+                                    disabled: true,
                                     width: '100%',
                                     labelField: this._moduleTextField,
                                     valueField: this._moduleValueField,
@@ -457,6 +461,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VARIABLE'),
                                     width: '35%',
                                     required: false,
+                                    disabled: true,
                                     dataRoot: 'result',
                                     labelField: 'text',
                                     valueField: function(field, data) {
@@ -473,6 +478,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     labelField: 'text',
                                     valueField: 'value',
                                     required: false,
+                                    disabled: true,
                                     options: this.helper.OPERATORS.comparison,
                                     dependantFields: ['relValue']
                                 },
@@ -482,6 +488,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VALUE'),
                                     width: '35%',
                                     required: false,
+                                    disabled: true,
                                     dependencyHandler: _.bind(this.helper.valueDependencyHandler, this.helper)
                                 },
 								{
@@ -541,6 +548,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VARIABLE'),
                                     width: '35%',
                                     required: false,
+                                    disabled: true,
                                     dataRoot: 'result',
                                     labelField: 'text',
                                     valueField: function(field, data) {
@@ -557,6 +565,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     labelField: 'text',
                                     valueField: 'value',
                                     required: false,
+                                    disabled: true,
                                     options: this.helper.OPERATORS.comparison,
                                     dependantFields: ['value']
                                 },
@@ -566,6 +575,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VALUE'),
                                     width: '35%',
                                     required: false,
+                                    disabled: true,
                                     dependencyHandler: _.bind(this.helper.valueDependencyHandler, this.helper)
                                 },
                                 {
@@ -573,6 +583,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     name: 'related',
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_RELATED'),
                                     required: false,
+                                    disabled: true,
                                     width: '100%',
                                     labelField: this._moduleTextField,
                                     valueField: this._moduleValueField,
@@ -585,6 +596,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VARIABLE'),
                                     width: '35%',
                                     required: false,
+                                    disabled: true,
                                     dataRoot: 'result',
                                     labelField: 'text',
                                     valueField: function(field, data) {
@@ -601,6 +613,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     labelField: 'text',
                                     valueField: 'value',
                                     required: false,
+                                    disabled: true,
                                     options: this.helper.OPERATORS.comparison,
                                     dependantFields: ['relValue']
                                 },
@@ -610,6 +623,7 @@ EmailPickerField.prototype._createPanel = function () {
                                     label: translate('LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VALUE'),
                                     width: '35%',
                                     required: false,
+                                    disabled: true,
                                     dependencyHandler: _.bind(this.helper.valueDependencyHandler, this.helper)
                                 },
                                 {

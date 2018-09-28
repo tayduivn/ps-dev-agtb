@@ -1163,8 +1163,7 @@ ExpressionControl.prototype._createVariablePanel = function () {
 };
 
 ExpressionControl.prototype._createModulePanel = function () {
-    var moduleField, that = this, settings = this._evaluationSettings.module, currentType;
-    var currentVal, currentMod;
+    var moduleField, that = this, settings = this._evaluationSettings.module;
     if (!this._evaluationPanels.module) {
         this._evaluationPanels.module = new FormPanel({
             expressionControl: this,

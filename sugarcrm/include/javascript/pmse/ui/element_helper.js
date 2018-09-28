@@ -23,6 +23,8 @@ var PMSE = PMSE || {};
 PMSE.ElementHelper = function(options) {
     PMSE.Base.call(this, options);
 
+    this._mode = null;
+
     this._currentMod = null;
     this._currentType = null;
     this._currentVal = null;
@@ -87,6 +89,10 @@ PMSE.ElementHelper.prototype._typeToControl = {
     "user": "friendlydropdown"
 };
 
+/**
+ * Initializes the operators
+ * @return {*}
+ */
 PMSE.ElementHelper.prototype.initOperators = function () {
     PMSE.ElementHelper.prototype.OPERATORS  = {
         'runTime': [
@@ -141,6 +147,11 @@ PMSE.ElementHelper.prototype.initOperators = function () {
     return this;
 };
 
+/**
+ * Initializes the comparison operators
+ * @param {String} module
+ * @return {*}
+ */
 PMSE.ElementHelper.prototype.initComparisonOperators = function(module) {
     var changesLabel = App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES', module);
     var fromLabel = App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES_FROM', module);
@@ -220,6 +231,11 @@ PMSE.ElementHelper.prototype.initComparisonOperators = function(module) {
 
 PMSE.ElementHelper.prototype.EXTRA_OPERATORS = {};
 
+/**
+ * Checks whether the character has special meaning in the RegExp pattern
+ * @param {String} c
+ * @return {Boolean}
+ */
 PMSE.ElementHelper.prototype._isRegExpSpecialChar = function (c) {
     switch (c) {
         case "\\":
@@ -239,6 +255,10 @@ PMSE.ElementHelper.prototype._isRegExpSpecialChar = function (c) {
     return false;
 };
 
+/**
+ * Returns the RegExp pattern for the decimal separator
+ * @return {Object}
+ */
 PMSE.ElementHelper.prototype._getDecimalSeparatorRegExp = function () {
     var prefix = "";
     if (this._isRegExpSpecialChar(this._decimalSeparator)) {
@@ -247,6 +267,11 @@ PMSE.ElementHelper.prototype._getDecimalSeparatorRegExp = function () {
     return new RegExp(prefix + this._decimalSeparator, "g");
 };
 
+/**
+ * Parses the input for either a string or a number, returns the result
+ * @param {String} value
+ * @return {String}
+ */
 PMSE.ElementHelper.prototype._getStringOrNumber = function (value) {
     var aux, isNum = false;
 
@@ -271,6 +296,10 @@ PMSE.ElementHelper.prototype._getStringOrNumber = function (value) {
     return value;
 };
 
+/**
+ * Sets the currency fields of the form to use the proper currency settings
+ * @return {*}
+ */
 PMSE.ElementHelper.prototype._updateCurrenciesToCurrenciesForm = function() {
     var currenciesField;
     if (this._parent && this._parent._constantPanels && this._parent._constantPanels.currency) {
@@ -328,6 +357,12 @@ PMSE.ElementHelper.prototype.setCurrencies = function(currencies) {
     return this._updateCurrenciesToCurrenciesForm();
 };
 
+/**
+ * Sets the decimal separator
+ * @param {String} decimalSeparator
+ * @return {*}
+ * @throws {Object}
+ */
 PMSE.ElementHelper.prototype.setDecimalSeparator = function (decimalSeparator) {
     if (!(typeof decimalSeparator === 'string' && decimalSeparator && decimalSeparator.length === 1
         && !/\d/.test(decimalSeparator) && !/[\+\-\*\/]/.test(decimalSeparator))) {
@@ -342,6 +377,12 @@ PMSE.ElementHelper.prototype.setDecimalSeparator = function (decimalSeparator) {
     return this;
 };
 
+/**
+ * Sets the number grouping separator
+ * @param {String} separator
+ * @return {*}
+ * @throws {Object}
+ */
 PMSE.ElementHelper.prototype.setNumberGroupingSeparator = function (separator) {
     if (!(separator === null || (typeof separator === 'string' && separator.length <= 1))) {
         throw new Error("setNumberGroupingSeparator(): The parameter is optional should be a single character or "
@@ -355,6 +396,11 @@ PMSE.ElementHelper.prototype.setNumberGroupingSeparator = function (separator) {
     return this;
 };
 
+/**
+ * Sets the date format
+ * @param {String} dateFormat
+ * @return {*}
+ */
 PMSE.ElementHelper.prototype.setDateFormat = function (dateFormat) {
     this._dateFormat = dateFormat;
     if (this._parent && this._parent._constantPanels && this._parent._constantPanels.date) {
@@ -366,6 +412,11 @@ PMSE.ElementHelper.prototype.setDateFormat = function (dateFormat) {
     return this;
 };
 
+/**
+ * Sets the time format
+ * @param {String} timeFormat
+ * @return {*}
+ */
 PMSE.ElementHelper.prototype.setTimeFormat = function (timeFormat) {
     this._timeFormat = timeFormat;
     if (this._parent && this._parent._constantPanels && this._parent._constantPanels.datetime) {
@@ -384,6 +435,7 @@ PMSE.ElementHelper.prototype.initObject = function(options) {
     PMSE.ElementHelper.prototype.initComparisonOperators('pmse_Project');
 
     var defaults = {
+        mode: 'ExpressionControl',
         dateFormat: "YYYY-MM-DD",
         timeFormat: "H:i",
         currencies: [],
@@ -393,6 +445,8 @@ PMSE.ElementHelper.prototype.initObject = function(options) {
 
     jQuery.extend(true, defaults, options);
 
+    this._mode = defaults.mode;
+
     this.setDateFormat(defaults.dateFormat)
         .setTimeFormat(defaults.timeFormat)
         .setDecimalSeparator(defaults.decimalSeparator)
@@ -400,6 +454,14 @@ PMSE.ElementHelper.prototype.initObject = function(options) {
         .setCurrencies(defaults.currencies);
 };
 
+/**
+ * Processes the module field evaluation into the proper data format
+ * @param {Object} fieldPanel
+ * @param {Object} fieldPanelItem
+ * @param {Object} data
+ * @param {Boolean} related
+ * @return {Object}
+ */
 PMSE.ElementHelper.prototype.moduleFieldEvalGeneration = function(fieldPanel, fieldPanelItem, data, related) {
     var aux, modItem, fieldItem, opItem, valItem, val, valueField, value, valueType, op, label, itemData = {};
 
@@ -418,7 +480,7 @@ PMSE.ElementHelper.prototype.moduleFieldEvalGeneration = function(fieldPanel, fi
         opItem = 'operator';
         val = data.value;
     }
-    if (aux[0] != 'null' || aux[1] != 'null') {
+    if (aux.length > 1 && (aux[0] != 'null' || aux[1] != 'null')) {
         valueField = fieldPanelItem.getItem(valItem);
         if (aux[1] === 'Currency') {
             value = valueField.getAmount();
@@ -477,6 +539,11 @@ PMSE.ElementHelper.prototype.moduleFieldEvalGeneration = function(fieldPanel, fi
     return itemData;
 };
 
+/**
+ * Gets the user facing text label from the data object
+ * @param {Object} data
+ * @return {String}
+ */
 PMSE.ElementHelper.prototype.getLabel = function (data) {
     var label, aux, that = this;
     if (data.expType === 'MODULE' || (data.expType === 'CONSTANT'
@@ -505,35 +572,76 @@ PMSE.ElementHelper.prototype.getLabel = function (data) {
     return label;
 };
 
+/**
+ * Retrieves the proper data from the backend and populate the field control
+ * @param {Object} dependantField
+ * @param {Object} field
+ * @param {String} value
+ * @param {String} name
+ */
+PMSE.ElementHelper.prototype.loadFieldControl = function(dependantField, field, value, name) {
+    var parent = field.getName();
+    var module;
+    if (parent == 'module') {
+        module = PROJECT_MODULE;
+    } else {
+        var form = dependantField.getForm();
+        var moduleField = form.getItem('module');
+        module = moduleField.getSelectedData().module_name;
+    }
+    var type;
+    if (name == 'emailAddressField') {
+        type = 'ET';
+    } else {
+        type = 'PD';
+    }
+    dependantField.setDataURL('pmse_Project/CrmData/fields/' + value)
+        .setAttributes({
+            base_module: module,
+            call_type: type
+        })
+        .load();
+};
+
+/**
+ * Handles the dependency change event for the field control
+ * @param {Object} dependantField
+ * @param {Object} field
+ * @param {String} value
+ */
 PMSE.ElementHelper.prototype.fieldDependencyHandler = function(dependantField, field, value) {
     dependantField.clearOptions();
-    if (value) {
-        var parent = field.getName();
-        var module;
-        if (parent == 'module') {
-            module = PROJECT_MODULE;
-        } else {
-            var form = dependantField.getForm();
-            var moduleField = form.getItem('module');
-            module = moduleField.getSelectedData().module_name;
+    var name = dependantField.getName();
+    if (this._mode == 'EmailPickerField' && name != 'emailAddressField' &&
+        (field._disabled ||
+            !value ||
+            value == PROJECT_MODULE ||
+            field.getSelectedData().type == 'one')) {
+        if (!dependantField._disabled) {
+            dependantField.disable();
         }
-        var name = dependantField.getName();
-        var type;
-        if (name == 'emailAddressField') {
-            type = 'ET';
-        } else {
-            type = 'PD';
+    } else {
+        if (dependantField._disabled) {
+            dependantField.enable();
         }
-        dependantField.setDataURL('pmse_Project/CrmData/fields/' + value)
-            .setAttributes({
-                base_module: module,
-                call_type: type
-            })
-            .load();
+    }
+    if (!dependantField._disabled && value) {
+        this.loadFieldControl(dependantField, field, value, name);
     }
     dependantField.fireDependentFields();
 };
 
+/**
+ * Switches the value control type based on the parent field type
+ * Populates the operator control with the proper operators
+ * @param {Object} dependantField
+ * @param {Object} parentField
+ * @param {Object} operatorField
+ * @param {String} type
+ * @param {String} selVal
+ * @param {Object} form
+ * @return {Object}
+ */
 PMSE.ElementHelper.prototype.processValueDependency = function (dependantField, parentField, operatorField, type, selVal, form) {
     var labelField = 'textfield',
         newFieldSettings = {
@@ -643,45 +751,82 @@ PMSE.ElementHelper.prototype.processValueDependency = function (dependantField, 
     return newField;
 };
 
+/**
+ * Checks whether the value control type needs to be switched
+ * @param {Object} dependantField
+ * @param {Object} parentField
+ * @param {String} value
+ * @param {String} parent
+ * @return {Object}
+ */
+PMSE.ElementHelper.prototype.doValueDependency = function (dependantField, parentField, value, parent) {
+    var module, operator;
+    if (parent == 'field') {
+        module = 'module';
+        operator = 'operator';
+    } else {
+        module = 'related';
+        operator = 'relOperator';
+    }
+    var form = dependantField.getForm();
+    var operatorField = form.getItem(operator);
+    var modVal = form.getItem(module)._value;
+    var selVal = $('#evn_params').val();
+    var type = value.split(this._auxSeparator)[1];
+    type = type && this._typeToControl[type.toLowerCase()];
+    if (parent == 'field') {
+        if (!type ||
+            (type && type !== this._currentType) ||
+            type === 'dropdown' ||
+            selVal !== this._currentVal ||
+            modVal !== this._currentMod) {
+            this._currentType = type;
+            this._currentVal = selVal;
+            this._currentMod = modVal;
+            dependantField = this.processValueDependency(dependantField, parentField, operatorField, type, selVal, form);
+        }
+    } else {
+        if (!type ||
+            (type && type !== this._currentRelType) ||
+            type === 'dropdown' ||
+            selVal !== this._currentRelVal ||
+            modVal !== this._currentRelMod) {
+            this._currentRelType = type;
+            this._currentRelVal = selVal;
+            this._currentRelMod = modVal;
+            dependantField = this.processValueDependency(dependantField, parentField, operatorField, type, selVal, form);
+        }
+    }
+    return {operator: operatorField, value: dependantField};
+};
+
+/**
+ * Handles the dependency change event for the value control
+ * @param {Object} dependantField
+ * @param {Object} parentField
+ * @param {String} value
+ */
 PMSE.ElementHelper.prototype.valueDependencyHandler = function (dependantField, parentField, value) {
     var operatorField;
     var parent = parentField.getName();
     if (parent == 'field' || parent == 'relField') {
-        var module, operator;
-        if (parent == 'field') {
-            module = 'module';
-            operator = 'operator';
-        } else {
-            module = 'related';
-            operator = 'relOperator';
-        }
-        var form = dependantField.getForm(),
-        operatorField = form.getItem(operator);
-        var modVal = form.getItem(module)._value;
-        var selVal = $('#evn_params').val();
-        var type = value.split(this._auxSeparator)[1];
-        type = type && this._typeToControl[type.toLowerCase()];
-        if (parent == 'field') {
-            if (!type ||
-                (type && type !== this._currentType) ||
-                type === 'dropdown' ||
-                selVal !== this._currentVal ||
-                modVal !== this._currentMod) {
-                this._currentType = type;
-                this._currentVal = selVal;
-                this._currentMod = modVal;
-                dependantField = this.processValueDependency(dependantField, parentField, operatorField, type, selVal, form);
+        var res = this.doValueDependency(dependantField, parentField, value, parent);
+        operatorField = res.operator;
+        dependantField = res.value;
+        if (this._mode == 'EmailPickerField' &&
+            parentField._disabled) {
+            if (!dependantField._disabled) {
+                dependantField.disable();
+            }
+            if (!operatorField._disabled) {
+                operatorField.disable();
             }
         } else {
-            if (!type ||
-                (type && type !== this._currentRelType) ||
-                type === 'dropdown' ||
-                selVal !== this._currentRelVal ||
-                modVal !== this._currentRelMod) {
-                this._currentRelType = type;
-                this._currentRelVal = selVal;
-                this._currentRelMod = modVal;
-                dependantField = this.processValueDependency(dependantField, parentField, operatorField, type, selVal, form);
+            if (dependantField._disabled) {
+                dependantField.enable();
+            }
+            if (operatorField._disabled) {
+                operatorField.enable();
             }
         }
     } else {
@@ -691,22 +836,48 @@ PMSE.ElementHelper.prototype.valueDependencyHandler = function (dependantField, 
     dependantField.setVisible(showValue);
 };
 
+/**
+ * Retrieves the proper data from the backend and populate the related control
+ * @param {Object} dependantField
+ * @param {Object} field
+ */
+PMSE.ElementHelper.prototype.loadRelatedControl = function(dependantField, field) {
+    var auxProxy = new SugarProxy({
+        url: 'pmse_Project/CrmData/related/' + field.getSelectedData().module_name
+    });
+    auxProxy.getData({'removeTarget': true}, {
+        success: function (data) {
+            data = data.result;
+            data.unshift({value: "", text: "Select..."});
+            data = _.filter(data, function (item) {
+                if (item.module !== "Users") return item;
+            });
+            dependantField.setOptions(data);
+        }
+    });
+};
+
+/**
+ * Handles the dependency change event for the related control
+ * @param {Object} dependantField
+ * @param {Object} field
+ * @param {String} value
+ */
 PMSE.ElementHelper.prototype.relatedDependencyHandler = function(dependantField, field, value) {
     dependantField.clearOptions();
-    if (value) {
-        var auxProxy = new SugarProxy({
-            url: 'pmse_Project/CrmData/related/' + field.getSelectedData().module_name
-        });
-        auxProxy.getData({'removeTarget' : true}, {
-            success: function (data) {
-                data = data.result;
-                data.unshift({value: "", text: "Select..."});
-                data = _.filter(data, function (item) {
-                    if (item.module !== "Users") return item;
-                });
-                dependantField.setOptions(data);
-            }
-        });
+    if (this._mode == 'EmailPickerField' &&
+        (!value ||
+            value == PROJECT_MODULE)) {
+        if (!dependantField._disabled) {
+            dependantField.disable();
+        }
+    } else {
+        if (dependantField._disabled) {
+            dependantField.enable();
+        }
+    }
+    if (!dependantField._disabled && value) {
+        this.loadRelatedControl(dependantField, field);
     }
     dependantField.fireDependentFields();
 };

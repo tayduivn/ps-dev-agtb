@@ -957,6 +957,7 @@ FormPanelText.prototype.type = "FormPanelText";
 
 FormPanelText.prototype.init = function(settings) {
     var defaults = {
+        disabled: false,
         placeholder: "",
         onKeyUp: null,
         maxLength: 0
@@ -965,6 +966,12 @@ FormPanelText.prototype.init = function(settings) {
     this.setPlaceholder(defaults.placeholder)
         .setOnKeyUpHandler(defaults.onKeyUp)
         .setMaxLength(defaults.maxLength);
+
+    if (defaults.disabled) {
+        this.disable();
+    } else {
+        this.enable();
+    }
 };
 
 FormPanelText.prototype.setMaxLength = function (maxLength) {
@@ -1624,6 +1631,7 @@ FormPanelDropdown.prototype.type = "FormPanelDropdown";
 
 FormPanelDropdown.prototype.init = function (settings) {
     var defaults = {
+        disbaled: false,
         options: [],
         value: "",
         dataURL: null,
@@ -1650,6 +1658,12 @@ FormPanelDropdown.prototype.init = function (settings) {
         this.load();
     } else {
         this.setOptions(defaults.options);
+    }
+
+    if (defaults.disabled) {
+        this.disable();
+    } else {
+        this.enable();
     }
 };
 
