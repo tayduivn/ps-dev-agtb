@@ -535,6 +535,22 @@ class FilterApiTest extends TestCase
         $this->assertEquals(10, $reply['next_offset'], 'Empty filter did not return at least 10 results.');
     }
 
+    public function testNoFilterNoDeleted()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, true);
+        $uh = BeanFactory::newBean('UpgradeHistory');
+        $uh->save();
+
+        $reply = $this->filterApi->filterList(
+            $this->serviceMock,
+            array('module' => 'UpgradeHistory', 'filter' => array(), 'max_num' => '-1')
+        );
+
+        $this->assertNotEmpty($reply['records'], 'Empty filter returned no results.');
+        $records = array_column($reply['records'], 'id');
+        $this->assertContains($uh->id, $records, 'No filter with no deleted field bean did not return results.');
+    }
+
     public function testEmptyFilters()
     {
         $field = $this->equalTo('account_type');

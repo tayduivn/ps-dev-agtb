@@ -371,7 +371,9 @@ class FilterApi extends SugarApi
     {
         $query = self::getQueryObject($seed, $options);
 
-        static::addFilters($args['filter'], $query->where(), $query);
+        if (!empty($args['filter'])) {
+            static::addFilters($args['filter'], $query->where(), $query);
+        }
 
         if (!empty($args['my_items'])) {
             static::addOwnerFilter($query, $query->where(), '_this');

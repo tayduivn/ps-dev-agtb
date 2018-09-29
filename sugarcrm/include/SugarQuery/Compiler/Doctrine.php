@@ -354,7 +354,8 @@ class SugarQuery_Compiler_Doctrine
      */
     protected function compileWhere(QueryBuilder $builder, SugarQuery $query)
     {
-        if ($query->shouldSkipDeletedRecords()) {
+        $del = $query->getFromBean()->getFieldDefinition('deleted');
+        if (!empty($del) && $query->shouldSkipDeletedRecords()) {
             $where = new SugarQuery_Builder_Andwhere($query);
             if ($query->where) {
                 $where->add($query->where);
