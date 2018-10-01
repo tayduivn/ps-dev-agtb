@@ -76,7 +76,7 @@ $mod_strings = array (
 	'ERR_RECIPIENT_EMAIL'				=> 'Recipient Email Address',
 	'ERR_SERVER_STATUS'					=> 'Your server status',
 	'ERR_SERVER_SMTP_EMPTY'				=> 'The system is unable to send an email to the user. Please check the Outgoing Mail Configuration in <a href="index.php?module=EmailMan&action=config">Email Settings</a>.',
-    'ERR_CREATE_USER_FOR_IDM_MODE'      => 'The user can be created only in <a href="{0}" target="_blank">Settings</a>.',
+    'ERR_CREATE_USER_FOR_IDM_MODE'      => 'Create user(s) via <a href="{0}" target="_blank">Settings</a>',
     'ERR_UPDATE_PRIMARY_EMAIL_FOR_IDM_MODE' => 'The primary email address can be updated only in <a href="{0}" target="_blank">Settings</a>',
 
     'LBL_EMAIL_ADDRESS'                 => 'Email Address',
