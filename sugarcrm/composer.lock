@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aaabfc0c709480b122a66ec248e58239",
+    "content-hash": "7a371783a606330b6f6bc691f1868d26",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2656,17 +2656,17 @@
         },
         {
             "name": "symfony/asset",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/asset",
-                "reference": "84ae9e6ed9bcf837bbb9ee0bcf95a750419fa13c"
+                "reference": "11a085271ac09a32fb78f7922ee377611092c4a8"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/asset/symfony-asset-v3.4.11-876c10.tar",
-                "reference": "84ae9e6ed9bcf837bbb9ee0bcf95a750419fa13c",
-                "shasum": "5e37f0f30c49d5fcb694549dae5c3fbfdfe47bad"
+                "url": "https://satis.sugardev.team/dist/symfony/asset/symfony-asset-v3.4.16-208f14.tar",
+                "reference": "11a085271ac09a32fb78f7922ee377611092c4a8",
+                "shasum": "173f4ea4751d524e55e25a5eee6a587d1868174a"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8"
@@ -2707,21 +2707,21 @@
             ],
             "description": "Symfony Asset Component",
             "homepage": "https://symfony.com",
-            "time": "2018-01-03T07:37:34+00:00"
+            "time": "2018-07-26T09:06:28+00:00"
         },
         {
             "name": "symfony/cache",
-            "version": "v3.4.8",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache",
-                "reference": "10eedbfd830cec7ff4b3b8507f94d3eb506ab4f8"
+                "reference": "a285db4fccf29eb3afc6d0c7dacac120d425289d"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/cache/symfony-cache-v3.4.8-307500.tar",
-                "reference": "10eedbfd830cec7ff4b3b8507f94d3eb506ab4f8",
-                "shasum": "a87bd4db3ee739910980b99a508e1b0d5bf087d6"
+                "url": "https://satis.sugardev.team/dist/symfony/cache/symfony-cache-v3.4.16-3df5b9.tar",
+                "reference": "a285db4fccf29eb3afc6d0c7dacac120d425289d",
+                "shasum": "06de4cf5210f8ad818c90e4a3913507dc9064501"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -2776,21 +2776,21 @@
                 "caching",
                 "psr6"
             ],
-            "time": "2018-04-02T14:30:50+00:00"
+            "time": "2018-09-23T07:05:27+00:00"
         },
         {
             "name": "symfony/class-loader",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/class-loader",
-                "reference": "a3ac77dec4503b3a7e20d24a5fede1ad056acdc1"
+                "reference": "9a50be3d83231763b8653f7be5c5af6b767fe123"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://api.github.com/repos/symfony/class-loader/zipball/a3ac77dec4503b3a7e20d24a5fede1ad056acdc1",
-                "reference": "a3ac77dec4503b3a7e20d24a5fede1ad056acdc1",
-                "shasum": "0f3287608cacfe9ca18fff0d134cf3e1c1021f1e"
+                "url": "https://satis.sugardev.team/dist/symfony/class-loader/symfony-class-loader-v3.4.16-dadc21.tar",
+                "reference": "9a50be3d83231763b8653f7be5c5af6b767fe123",
+                "shasum": "5d38f42e0b925e70a6ab4ff4d4fb4c8eed83c018"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8"
@@ -2831,25 +2831,26 @@
             ],
             "description": "Symfony ClassLoader Component",
             "homepage": "https://symfony.com",
-            "time": "2018-01-03T07:37:34+00:00"
+            "time": "2018-07-26T11:19:56+00:00"
         },
         {
             "name": "symfony/config",
-            "version": "v3.4.9",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
-                "reference": "f79a50e27a949ab8dd1c324294deb36cd456627e"
+                "reference": "25f50e1690431fce1c82eb6b89195f89b6b82864"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://api.github.com/repos/symfony/config/zipball/f79a50e27a949ab8dd1c324294deb36cd456627e",
-                "reference": "f79a50e27a949ab8dd1c324294deb36cd456627e",
-                "shasum": "2543c416a484a772758ca6e1d634c604770acf4a"
+                "url": "https://satis.sugardev.team/dist/symfony/config/symfony-config-v3.4.16-63da63.tar",
+                "reference": "25f50e1690431fce1c82eb6b89195f89b6b82864",
+                "shasum": "46609d0de01ae042bada5060a35db060bd463936"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
-                "symfony/filesystem": "~2.8|~3.0|~4.0"
+                "symfony/filesystem": "~2.8|~3.0|~4.0",
+                "symfony/polyfill-ctype": "~1.8"
             },
             "conflict": {
                 "symfony/dependency-injection": "<3.3",
@@ -2893,21 +2894,21 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2018-03-19T22:32:39+00:00"
+            "time": "2018-09-08T13:15:14+00:00"
         },
         {
             "name": "symfony/console",
-            "version": "v3.4.8",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "3b13c95a1881d2099010c489a6593e1bfe516038"
+                "reference": "adeba3ac6837f89589ee75f85713633e05bc2219"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/console/symfony-console-v3.4.8-a7f95f.tar",
-                "reference": "3b13c95a1881d2099010c489a6593e1bfe516038",
-                "shasum": "30141a367102b7a62f452e10fa29e9cf4d39e02a"
+                "url": "https://satis.sugardev.team/dist/symfony/console/symfony-console-v3.4.16-511fce.tar",
+                "reference": "adeba3ac6837f89589ee75f85713633e05bc2219",
+                "shasum": "835484c6b20c30464f2fbba8afb492d14083e6f8"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -2927,7 +2928,7 @@
                 "symfony/process": "~3.3|~4.0"
             },
             "suggest": {
-                "psr/log": "For using the console logger",
+                "psr/log-implementation": "For using the console logger",
                 "symfony/event-dispatcher": "",
                 "symfony/lock": "",
                 "symfony/process": ""
@@ -2961,21 +2962,21 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2018-04-03T05:22:50+00:00"
+            "time": "2018-09-30T03:35:36+00:00"
         },
         {
             "name": "symfony/debug",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "73b14011cbfb3bd1481fdde6af7c689297812191"
+                "reference": "a72cf29f7bcc56267ba9bcab9051dc5025547a76"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/debug/symfony-debug-v3.4.11-f0cf1d.tar",
-                "reference": "73b14011cbfb3bd1481fdde6af7c689297812191",
-                "shasum": "8b1e4df30bd675f3b8c533d14a088d14a84bd804"
+                "url": "https://satis.sugardev.team/dist/symfony/debug/symfony-debug-v3.4.16-899863.tar",
+                "reference": "a72cf29f7bcc56267ba9bcab9051dc5025547a76",
+                "shasum": "10f66a490b44bc2cfdf532be287e7f4a60b7f698"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -3016,21 +3017,21 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-16T14:03:39+00:00"
+            "time": "2018-09-22T10:34:13+00:00"
         },
         {
             "name": "symfony/dependency-injection",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "b6218c9830eb04be46c273f34540a5ce8c0057f7"
+                "reference": "2f8b869a4ac9960b174bdb73b754b42c0e59e631"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/b6218c9830eb04be46c273f34540a5ce8c0057f7",
-                "reference": "b6218c9830eb04be46c273f34540a5ce8c0057f7",
-                "shasum": "11a3e0b4141c30c51557455e0da875833df066bd"
+                "url": "https://satis.sugardev.team/dist/symfony/dependency-injection/symfony-dependency-injection-v3.4.16-889e1e.tar",
+                "reference": "2f8b869a4ac9960b174bdb73b754b42c0e59e631",
+                "shasum": "a7f51a3ed48f628d675d63ba6832350353a54fbc"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -3086,21 +3087,21 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-25T11:57:15+00:00"
+            "time": "2018-09-21T12:47:38+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "081a2b652147431387fd900c1484c9af53d687d7"
+                "reference": "4b31e1a7d73b4e4a772c084bfe9c520d778d42f9"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/event-dispatcher/symfony-event-dispatcher-v3.4.11-004b63.tar",
-                "reference": "081a2b652147431387fd900c1484c9af53d687d7",
-                "shasum": "8fe84c310c4d802b5383ae82f02cf691fcd88abf"
+                "url": "https://satis.sugardev.team/dist/symfony/event-dispatcher/symfony-event-dispatcher-v3.4.16-cc9cb7.tar",
+                "reference": "4b31e1a7d73b4e4a772c084bfe9c520d778d42f9",
+                "shasum": "69742b5f4a125ccd62761cdaec8e18588a99f2fb"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8"
@@ -3148,21 +3149,21 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2018-04-06T07:35:25+00:00"
+            "time": "2018-07-26T09:06:28+00:00"
         },
         {
             "name": "symfony/expression-language",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/expression-language.git",
-                "reference": "ee06041f28a27a04e61ad40b5d2794139ba30945"
+                "reference": "ebe3d1d332725f4bb5c8f65a6927b764ddc5b65f"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/expression-language/symfony-expression-language-v3.4.11-18294e.tar",
-                "reference": "ee06041f28a27a04e61ad40b5d2794139ba30945",
-                "shasum": "c560226b52e36d5ee776518dbb8719c7454ab33d"
+                "url": "https://satis.sugardev.team/dist/symfony/expression-language/symfony-expression-language-v3.4.16-c8ebfe.tar",
+                "reference": "ebe3d1d332725f4bb5c8f65a6927b764ddc5b65f",
+                "shasum": "786eb3608955ed0e0635c7fb502751001d45d8fa"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -3197,24 +3198,25 @@
             ],
             "description": "Symfony ExpressionLanguage Component",
             "homepage": "https://symfony.com",
-            "time": "2018-01-03T07:37:34+00:00"
+            "time": "2018-07-26T09:06:28+00:00"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v3.4.9",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "95f99f7a883f90cb147ccb0c63907f56904eded5"
+                "reference": "c79217a31a1c936652bc4873ab0072e49e48fc8d"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/95f99f7a883f90cb147ccb0c63907f56904eded5",
-                "reference": "95f99f7a883f90cb147ccb0c63907f56904eded5",
-                "shasum": "548e641d38bed7fc4af84066ac31d4af91a8c17d"
+                "url": "https://satis.sugardev.team/dist/symfony/filesystem/symfony-filesystem-v3.4.16-d68313.tar",
+                "reference": "c79217a31a1c936652bc4873ab0072e49e48fc8d",
+                "shasum": "e3f382cda60bd645a9e28052c5cfe991d40534a7"
             },
             "require": {
-                "php": "^5.5.9|>=7.0.8"
+                "php": "^5.5.9|>=7.0.8",
+                "symfony/polyfill-ctype": "~1.8"
             },
             "type": "library",
             "extra": {
@@ -3245,21 +3247,21 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2018-02-22T10:48:49+00:00"
+            "time": "2018-09-30T03:32:28+00:00"
         },
         {
             "name": "symfony/finder",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "d67ae62d2cc730012ba40a4e18f17d37be3f2b3d"
+                "reference": "628abb63dcf541cc8f2256488322be48e0fcc8b1"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/d67ae62d2cc730012ba40a4e18f17d37be3f2b3d",
-                "reference": "d67ae62d2cc730012ba40a4e18f17d37be3f2b3d",
-                "shasum": "6bccd951f834b4e552742e7861da4033604ec18e"
+                "url": "https://satis.sugardev.team/dist/symfony/finder/symfony-finder-v3.4.16-2aa8aa.tar",
+                "reference": "628abb63dcf541cc8f2256488322be48e0fcc8b1",
+                "shasum": "2a97adcbfa66379a445b5a5c1d05427dfd47c14b"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8"
@@ -3293,21 +3295,21 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-16T08:49:21+00:00"
+            "time": "2018-09-21T12:47:38+00:00"
         },
         {
             "name": "symfony/framework-bundle",
-            "version": "v3.4.8",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/framework-bundle",
-                "reference": "c4359caec0877399823c924144d772d07e3549ba"
+                "reference": "441babf84e13ca6c4213284fe95d8277eee58d24"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://api.github.com/repos/symfony/framework-bundle/zipball/c4359caec0877399823c924144d772d07e3549ba",
-                "reference": "c4359caec0877399823c924144d772d07e3549ba",
-                "shasum": "e40a45160bcc336b44c31fea49c3f4ca2f9e9c23"
+                "url": "https://satis.sugardev.team/dist/symfony/framework-bundle/symfony-framework-bundle-v3.4.16-e7634a.tar",
+                "reference": "441babf84e13ca6c4213284fe95d8277eee58d24",
+                "shasum": "a5b5b95d9c2d1652923f99a42ad93cea00709be8"
             },
             "require": {
                 "ext-xml": "*",
@@ -3354,9 +3356,8 @@
                 "symfony/polyfill-intl-icu": "~1.0",
                 "symfony/process": "~2.8|~3.0|~4.0",
                 "symfony/property-info": "~3.3|~4.0",
-                "symfony/security": "~2.8|~3.0|~4.0",
                 "symfony/security-core": "~3.2|~4.0",
-                "symfony/security-csrf": "~2.8|~3.0|~4.0",
+                "symfony/security-csrf": "^2.8.31|^3.3.13|~4.0",
                 "symfony/serializer": "~3.3|~4.0",
                 "symfony/stopwatch": "~3.4|~4.0",
                 "symfony/templating": "~2.8|~3.0|~4.0",
@@ -3407,21 +3408,21 @@
             ],
             "description": "Symfony FrameworkBundle",
             "homepage": "https://symfony.com",
-            "time": "2018-04-04T17:20:26+00:00"
+            "time": "2018-09-30T03:32:28+00:00"
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "881f725aebb03e172966db028fec750f9bb61c75"
+                "reference": "c8631014ceadc6edff5049a14d60e11fdc32f293"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/http-foundation/symfony-http-foundation-v3.4.11-a30440.tar",
-                "reference": "881f725aebb03e172966db028fec750f9bb61c75",
-                "shasum": "ba4a8140a7840d1fb78b06126d3b64c10a9a3a83"
+                "url": "https://satis.sugardev.team/dist/symfony/http-foundation/symfony-http-foundation-v3.4.16-da8dd4.tar",
+                "reference": "c8631014ceadc6edff5049a14d60e11fdc32f293",
+                "shasum": "6d3e7c76be7eb4fedf28db18371ec2e44380bc79"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -3460,32 +3461,33 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-25T11:07:14+00:00"
+            "time": "2018-09-30T03:32:28+00:00"
         },
         {
             "name": "symfony/http-kernel",
-            "version": "v3.4.9",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "63cabe5ad2afba4dc4fda339e9bcf6596c167783"
+                "reference": "2ef1fa6e747b8bf17ea014b86f3b9770482d692f"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/http-kernel/symfony-http-kernel-v3.4.9-adc4ad.tar",
-                "reference": "63cabe5ad2afba4dc4fda339e9bcf6596c167783",
-                "shasum": "7ca5c2c0d03a0083afff9944a7a48423eac16392"
+                "url": "https://satis.sugardev.team/dist/symfony/http-kernel/symfony-http-kernel-v3.4.16-9b52e8.tar",
+                "reference": "2ef1fa6e747b8bf17ea014b86f3b9770482d692f",
+                "shasum": "109ae727961fcb836374280b42fd136a542f0f2d"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
                 "psr/log": "~1.0",
                 "symfony/debug": "~2.8|~3.0|~4.0",
                 "symfony/event-dispatcher": "~2.8|~3.0|~4.0",
-                "symfony/http-foundation": "^3.4.4|^4.0.4"
+                "symfony/http-foundation": "~3.4.12|~4.0.12|^4.1.1",
+                "symfony/polyfill-ctype": "~1.8"
             },
             "conflict": {
                 "symfony/config": "<2.8",
-                "symfony/dependency-injection": "<3.4.5|<4.0.5,>=4",
+                "symfony/dependency-injection": "<3.4.10|<4.0.10,>=4",
                 "symfony/var-dumper": "<3.3",
                 "twig/twig": "<1.34|<2.4,>=2"
             },
@@ -3499,7 +3501,7 @@
                 "symfony/config": "~2.8|~3.0|~4.0",
                 "symfony/console": "~2.8|~3.0|~4.0",
                 "symfony/css-selector": "~2.8|~3.0|~4.0",
-                "symfony/dependency-injection": "^3.4.5|^4.0.5",
+                "symfony/dependency-injection": "^3.4.10|^4.0.10",
                 "symfony/dom-crawler": "~2.8|~3.0|~4.0",
                 "symfony/expression-language": "~2.8|~3.0|~4.0",
                 "symfony/finder": "~2.8|~3.0|~4.0",
@@ -3547,21 +3549,21 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
-            "time": "2018-04-30T19:27:02+00:00"
+            "time": "2018-09-30T04:53:52+00:00"
         },
         {
             "name": "symfony/ldap",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ldap",
-                "reference": "f4198e8a1aa5c9daa9d3329c952a25d9b6de9fd0"
+                "reference": "43620fef0a9c16285c011b2b44bf93d6bb3ca188"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/ldap/symfony-ldap-v3.4.11-55531b.tar",
-                "reference": "f4198e8a1aa5c9daa9d3329c952a25d9b6de9fd0",
-                "shasum": "c1047d157d013585acdd2edc1ff92f71238c6a78"
+                "url": "https://satis.sugardev.team/dist/symfony/ldap/symfony-ldap-v3.4.16-e98614.tar",
+                "reference": "43620fef0a9c16285c011b2b44bf93d6bb3ca188",
+                "shasum": "3f6a6a9906422dac8ae160ff218d20670d44b620"
             },
             "require": {
                 "ext-ldap": "*",
@@ -3602,21 +3604,21 @@
                 "active directory",
                 "ldap"
             ],
-            "time": "2018-01-03T07:37:34+00:00"
+            "time": "2018-09-18T12:35:56+00:00"
         },
         {
             "name": "symfony/options-resolver",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/options-resolver",
-                "reference": "54d72c80a37cad0bb918672346673867d6685479"
+                "reference": "12dc2c65d83b64f1104ede82403facafcd6344b4"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/options-resolver/symfony-options-resolver-v3.4.11-4d85cf.tar",
-                "reference": "54d72c80a37cad0bb918672346673867d6685479",
-                "shasum": "d5b7034ecbdea2ab410e194037ca413586bd3878"
+                "url": "https://satis.sugardev.team/dist/symfony/options-resolver/symfony-options-resolver-v3.4.16-c1aab7.tar",
+                "reference": "12dc2c65d83b64f1104ede82403facafcd6344b4",
+                "shasum": "9992596f4cf2393b2e7b4b44665f602d30dd8cf6"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8"
@@ -3655,21 +3657,21 @@
                 "configuration",
                 "options"
             ],
-            "time": "2018-01-11T07:39:01+00:00"
+            "time": "2018-09-13T13:16:37+00:00"
         },
         {
             "name": "symfony/polyfill-apcu",
-            "version": "v1.8.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-apcu.git",
-                "reference": "9e3ca530b040115ec9a44259d8d49ba9f82c37aa"
+                "reference": "b9642af8a9ca6f7319f59d2e87dfd14f45a7e4ee"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/polyfill-apcu/symfony-polyfill-apcu-v1.8.0-22cf09.tar",
-                "reference": "9e3ca530b040115ec9a44259d8d49ba9f82c37aa",
-                "shasum": "fd367910d92fbc887d261796128805a6e2ce586a"
+                "url": "https://satis.sugardev.team/dist/symfony/polyfill-apcu/symfony-polyfill-apcu-v1.9.0-3f6252.tar",
+                "reference": "b9642af8a9ca6f7319f59d2e87dfd14f45a7e4ee",
+                "shasum": "26c3e9bda630a7661a65c93a01e4b9ac46f83c57"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -3677,7 +3679,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -3710,21 +3712,78 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-04-26T10:06:28+00:00"
+            "time": "2018-08-06T14:22:27+00:00"
         },
         {
-            "name": "symfony/polyfill-mbstring",
-            "version": "v1.8.0",
+            "name": "symfony/polyfill-ctype",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "4e0bf9432a56832018bd1123028d110eeaa5b97b"
+                "url": "https://github.com/symfony/polyfill-ctype.git",
+                "reference": "d30d981eec265681ad99cd6327cc3cf1d2594362"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/polyfill-mbstring/symfony-polyfill-mbstring-v1.8.0-b65549.tar",
-                "reference": "4e0bf9432a56832018bd1123028d110eeaa5b97b",
-                "shasum": "f53e36f3fa4b2f4d637e30e0d58e114cc5fd5f50"
+                "url": "https://satis.sugardev.team/dist/symfony/polyfill-ctype/symfony-polyfill-ctype-v1.9.0-64364b.tar",
+                "reference": "d30d981eec265681ad99cd6327cc3cf1d2594362",
+                "shasum": "04ba1e3ee6d3873f2a053f71083a3219775f0bd3"
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-ctype": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.9-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Ctype\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gert de Pagter",
+                    "email": "BackEndTea@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for ctype functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "ctype",
+                "polyfill",
+                "portable"
+            ],
+            "time": "2018-08-06T14:22:27+00:00"
+        },
+        {
+            "name": "symfony/polyfill-mbstring",
+            "version": "v1.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-mbstring.git",
+                "reference": "5957b95f29f15e3074e85be45656265578c5722b"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/symfony/polyfill-mbstring/symfony-polyfill-mbstring-v1.9.0-035546.tar",
+                "reference": "5957b95f29f15e3074e85be45656265578c5722b",
+                "shasum": "16bceada93955ac78a8ac0001daa394c5ae500d0"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -3735,7 +3794,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -3768,21 +3827,21 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-04-26T10:06:28+00:00"
+            "time": "2018-08-06T14:22:27+00:00"
         },
         {
             "name": "symfony/polyfill-php56",
-            "version": "v1.8.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php56.git",
-                "reference": "fe20a0e6896d753b9b0231e41b54f5ee75688178"
+                "reference": "401d2b93fc738abb53785bb12b681f5adedbe8d8"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/polyfill-php56/symfony-polyfill-php56-v1.8.0-93b45f.tar",
-                "reference": "fe20a0e6896d753b9b0231e41b54f5ee75688178",
-                "shasum": "d059b840df0ffe4796ae76c7beab36a3a43eaf00"
+                "url": "https://satis.sugardev.team/dist/symfony/polyfill-php56/symfony-polyfill-php56-v1.9.0-5c0457.tar",
+                "reference": "401d2b93fc738abb53785bb12b681f5adedbe8d8",
+                "shasum": "a8788615614afba2d7d7d11e92d8dbc2f586ee79"
             },
             "require": {
                 "php": ">=5.3.3",
@@ -3791,7 +3850,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -3823,30 +3882,30 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-04-26T10:06:28+00:00"
+            "time": "2018-08-06T14:22:27+00:00"
         },
         {
             "name": "symfony/polyfill-php70",
-            "version": "v1.8.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php70.git",
-                "reference": "bfd9f9fc142cc81878b724e146ef4ca7392d01d4"
+                "reference": "fa99f09715cb23e8094a533e6a4c4c25d64e6949"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/polyfill-php70/symfony-polyfill-php70-v1.8.0-c030c9.tar",
-                "reference": "bfd9f9fc142cc81878b724e146ef4ca7392d01d4",
-                "shasum": "5433f161c750fc5eda25b9930acf57228a1f6ca8"
+                "url": "https://satis.sugardev.team/dist/symfony/polyfill-php70/symfony-polyfill-php70-v1.9.0-3e890e.tar",
+                "reference": "fa99f09715cb23e8094a533e6a4c4c25d64e6949",
+                "shasum": "5ebdbe652c50ca65a9ce969b5d62b300649a968c"
             },
             "require": {
-                "paragonie/random_compat": "~1.0|~2.0",
+                "paragonie/random_compat": "~1.0|~2.0|~9.99",
                 "php": ">=5.3.3"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -3881,21 +3940,21 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-04-26T10:06:28+00:00"
+            "time": "2018-08-06T14:22:27+00:00"
         },
         {
             "name": "symfony/polyfill-util",
-            "version": "v1.8.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-util.git",
-                "reference": "47208a4cc9780faf586ae2004721eafdc24cb219"
+                "reference": "d739556068a75388e73ed1b8de16b70f4f9859b4"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/polyfill-util/symfony-polyfill-util-v1.8.0-c1865d.tar",
-                "reference": "47208a4cc9780faf586ae2004721eafdc24cb219",
-                "shasum": "d1b5b0e7dd7dab2154a1cafa752fabb3b48dd288"
+                "url": "https://satis.sugardev.team/dist/symfony/polyfill-util/symfony-polyfill-util-v1.9.0-e7b20d.tar",
+                "reference": "d739556068a75388e73ed1b8de16b70f4f9859b4",
+                "shasum": "c8a571ab8bdda0ecefc125cfcd43024dad759887"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -3903,7 +3962,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -3932,7 +3991,7 @@
                 "polyfill",
                 "shim"
             ],
-            "time": "2018-04-26T10:06:28+00:00"
+            "time": "2018-08-06T14:22:27+00:00"
         },
         {
             "name": "symfony/process",
@@ -3984,17 +4043,17 @@
         },
         {
             "name": "symfony/routing",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/routing",
-                "reference": "4fc704642bf79c15ccb65933c237dde30be5a737"
+                "reference": "90fbfb9eb3ed8977067a3092e26a519e370c5a96"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/routing/symfony-routing-v3.4.11-80c427.tar",
-                "reference": "4fc704642bf79c15ccb65933c237dde30be5a737",
-                "shasum": "995403bdef2935355cc4b0db047b1f1fc277a0ba"
+                "url": "https://satis.sugardev.team/dist/symfony/routing/symfony-routing-v3.4.16-dbbe7c.tar",
+                "reference": "90fbfb9eb3ed8977067a3092e26a519e370c5a96",
+                "shasum": "4f44eae5b747e5e78ceb18521a168484636a2961"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8"
@@ -4006,7 +4065,6 @@
             },
             "require-dev": {
                 "doctrine/annotations": "~1.0",
-                "doctrine/common": "~2.2",
                 "psr/log": "~1.0",
                 "symfony/config": "^3.3.1|~4.0",
                 "symfony/dependency-injection": "~3.3|~4.0",
@@ -4057,21 +4115,21 @@
                 "router",
                 "routing"
             ],
-            "time": "2018-05-11T15:58:37+00:00"
+            "time": "2018-09-08T13:15:14+00:00"
         },
         {
             "name": "symfony/security-core",
-            "version": "v3.4.8",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-core.git",
-                "reference": "085026cd24222a6cf951bb2da5a92cbf2fa1472c"
+                "reference": "b79e05e31f9d392e56cc5247e8db3a937f59c425"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/security-core/symfony-security-core-v3.4.8-d68b1a.tar",
-                "reference": "085026cd24222a6cf951bb2da5a92cbf2fa1472c",
-                "shasum": "10dbd204027930a9d9ca441337c8aef83c83867c"
+                "url": "https://satis.sugardev.team/dist/symfony/security-core/symfony-security-core-v3.4.16-588fe2.tar",
+                "reference": "b79e05e31f9d392e56cc5247e8db3a937f59c425",
+                "shasum": "d5adf1e67c233b4073a6b913413fc2efd2c83024"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -4087,7 +4145,7 @@
                 "symfony/validator": "^3.2.5|~4.0"
             },
             "suggest": {
-                "psr/container": "To instantiate the Security class",
+                "psr/container-implementation": "To instantiate the Security class",
                 "symfony/event-dispatcher": "",
                 "symfony/expression-language": "For using the expression voter",
                 "symfony/http-foundation": "",
@@ -4123,21 +4181,21 @@
             ],
             "description": "Symfony Security Component - Core Library",
             "homepage": "https://symfony.com",
-            "time": "2018-04-06T07:35:25+00:00"
+            "time": "2018-09-02T17:11:59+00:00"
         },
         {
             "name": "symfony/security-csrf",
-            "version": "v3.4.8",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-csrf.git",
-                "reference": "45b4aeaf24a27ec8ac321dd00b3a38246285340c"
+                "reference": "f302adc0bbd0841693edf166b0dd16386e07edcd"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/security-csrf/symfony-security-csrf-v3.4.8-1c585f.tar",
-                "reference": "45b4aeaf24a27ec8ac321dd00b3a38246285340c",
-                "shasum": "84c1cdb182421038603a4b2e0392c253cea324b2"
+                "url": "https://satis.sugardev.team/dist/symfony/security-csrf/symfony-security-csrf-v3.4.16-86c52f.tar",
+                "reference": "f302adc0bbd0841693edf166b0dd16386e07edcd",
+                "shasum": "0b8927d08a58fd1658608a696d487bd0dc7b00c0"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -4183,21 +4241,21 @@
             ],
             "description": "Symfony Security Component - CSRF Library",
             "homepage": "https://symfony.com",
-            "time": "2018-01-03T07:37:34+00:00"
+            "time": "2018-09-04T06:27:33+00:00"
         },
         {
             "name": "symfony/translation",
-            "version": "v3.4.8",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Translation.git",
-                "reference": "0a5184165ee237253436260e66a1da10631ac618"
+                "reference": "e29b7787d711a7eb97024fe01cc3fc63077fd322"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/translation/symfony-translation-v3.4.8-288b7b.tar",
-                "reference": "0a5184165ee237253436260e66a1da10631ac618",
-                "shasum": "788921f51c56ae7e06c5c7a4ad5215b1080d0260"
+                "url": "https://satis.sugardev.team/dist/symfony/translation/symfony-translation-v3.4.16-511027.tar",
+                "reference": "e29b7787d711a7eb97024fe01cc3fc63077fd322",
+                "shasum": "1bb925608eff7f57ef8e88368e22567f747da1ac"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -4217,7 +4275,7 @@
                 "symfony/yaml": "~3.4|~4.0"
             },
             "suggest": {
-                "psr/log": "To use logging capability in translator",
+                "psr/log-implementation": "To use logging capability in translator",
                 "symfony/config": "",
                 "symfony/yaml": ""
             },
@@ -4250,21 +4308,21 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2018-02-20T17:46:36+00:00"
+            "time": "2018-09-21T12:47:38+00:00"
         },
         {
             "name": "symfony/twig-bridge",
-            "version": "v3.4.11",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/twig-bridge",
-                "reference": "96fbc9a74627584bbe634ce596c821b66c5c5fa2"
+                "reference": "2e77745106eefd21243ae2621f745b5649ebd6fe"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/twig-bridge/symfony-twig-bridge-v3.4.11-064774.tar",
-                "reference": "96fbc9a74627584bbe634ce596c821b66c5c5fa2",
-                "shasum": "4d7e08de5a631b717bd42f346465f082dbd6b7df"
+                "url": "https://satis.sugardev.team/dist/symfony/twig-bridge/symfony-twig-bridge-v3.4.16-57d1cb.tar",
+                "reference": "2e77745106eefd21243ae2621f745b5649ebd6fe",
+                "shasum": "31a646e733979087d4fcfc0c0c03c2c08bffc305"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -4272,7 +4330,7 @@
             },
             "conflict": {
                 "symfony/console": "<3.4",
-                "symfony/form": "<3.4.9|<4.0.9,>=4.0"
+                "symfony/form": "<3.4.13|>=4.0,<4.0.13|>=4.1,<4.1.2"
             },
             "require-dev": {
                 "symfony/asset": "~2.8|~3.0|~4.0",
@@ -4280,7 +4338,7 @@
                 "symfony/dependency-injection": "~2.8|~3.0|~4.0",
                 "symfony/expression-language": "~2.8|~3.0|~4.0",
                 "symfony/finder": "~2.8|~3.0|~4.0",
-                "symfony/form": "^3.4.9|^4.0.9",
+                "symfony/form": "^3.4.16|^4.1.5",
                 "symfony/http-foundation": "^3.3.11|~4.0",
                 "symfony/http-kernel": "~3.2|~4.0",
                 "symfony/polyfill-intl-icu": "~1.0",
@@ -4339,24 +4397,25 @@
             ],
             "description": "Symfony Twig Bridge",
             "homepage": "https://symfony.com",
-            "time": "2018-05-21T10:06:52+00:00"
+            "time": "2018-09-18T17:03:56+00:00"
         },
         {
             "name": "symfony/validator",
-            "version": "v3.4.8",
+            "version": "v3.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Validator.git",
-                "reference": "9b08b582ba67be4a573bbf648bb1f28a95e738cf"
+                "reference": "f0ff630b5f8cbe498d5c70c84e18cccaec8084b7"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/validator/symfony-validator-v3.4.8-3b76c6.tar",
-                "reference": "9b08b582ba67be4a573bbf648bb1f28a95e738cf",
-                "shasum": "9d73a2d1a8b3d1e2657c06149ec704daf3546ec6"
+                "url": "https://satis.sugardev.team/dist/symfony/validator/symfony-validator-v3.4.16-07cce7.tar",
+                "reference": "f0ff630b5f8cbe498d5c70c84e18cccaec8084b7",
+                "shasum": "f4991df3d1bd7236e2aee33fe88c15a33c5640e6"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
+                "symfony/polyfill-ctype": "~1.8",
                 "symfony/polyfill-mbstring": "~1.0",
                 "symfony/translation": "~2.8|~3.0|~4.0"
             },
@@ -4422,7 +4481,7 @@
             ],
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
-            "time": "2018-04-06T07:35:25+00:00"
+            "time": "2018-09-30T03:32:28+00:00"
         },
         {
             "name": "tedivm/jshrink",
