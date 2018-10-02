@@ -1921,10 +1921,7 @@ AdamEvent.prototype.getValidationFunction = function() {
                     }
             }
         case 'END':
-            switch (this.getEventMarker()) {
-                case 'MESSAGE':
-                    return this.callbackFunctionForSendMessageEvent;
-            }
+            return this.callbackFunctionForEndEvent;
     }
 };
 
@@ -1997,8 +1994,10 @@ AdamEvent.prototype.callbackFunctionForWaitEvent = function(data, element, valid
                 atom.expValue,
                 element,
                 validationTools);
-            if (atom.expSubtype && atom.expSubtype.toUpperCase() === 'DATETIME') {
-                datetimeCount++;
+            if (atom.expSubtype) {
+                if (atom.expSubtype.toUpperCase() === 'DATETIME' || atom.expSubtype.toUpperCase() === 'DATE') {
+                    datetimeCount++;
+                }
             }
         }
         // Check that there is exactly 1 criteria of Datetime type
@@ -2082,6 +2081,49 @@ AdamEvent.prototype.callbackFunctionForSendMessageEvent = function(data, element
                 atom.value,
                 element,
                 validationTools);
+        }
+    }
+};
+
+/**
+ * Validates an end event's settings
+ * @param {Object} data contains the element settings information received from the API call
+ * @param {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamEvent.prototype.callbackFunctionForEndEvent = function(data, element, validationTools) {
+    var i;
+    var atom;
+    var field;
+    var criteria = [];
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(1, null, 0, 0, element);
+
+    // If this is a send-message-end event, validate it like a send message event
+    if (element.getEventMarker() === 'MESSAGE') {
+
+        // Check that the email template field is set and the template exists
+        validationTools.validateAtom('TEMPLATE', null, null, data.evn_criteria, element, validationTools);
+
+        // Validate each of the criteria boxes
+        if (data.evn_params) {
+            criteria = JSON.parse(data.evn_params);
+        }
+        if (!criteria.to || !criteria.to.length) {
+            validationTools.createWarning(element, 'LBL_PMSE_ERROR_FIELD_REQUIRED', 'To');
+        }
+        for (field in criteria) {
+            for (i = 0; i < criteria[field].length; i++) {
+                atom = criteria[field][i];
+                validationTools.validateAtom(
+                    atom.type,
+                    atom.module,
+                    atom.field,
+                    atom.value,
+                    element,
+                    validationTools);
+            }
         }
     }
 };
