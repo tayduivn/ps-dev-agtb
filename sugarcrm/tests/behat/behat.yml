@@ -1,12 +1,14 @@
 #
-#  Your installation or use of this SugarCRM file is subject to the applicable
-#  terms available at
-#  http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
-#  If you do not agree to all of the applicable terms or do not have the
-#  authority to bind the entity as an authorized representative, then do not
-#  install or use this SugarCRM file.
-#
-#  Copyright (C) SugarCRM Inc. All rights reserved.
+#/*
+# * Your installation or use of this SugarCRM file is subject to the applicable
+# * terms available at
+# * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+# * If you do not agree to all of the applicable terms or do not have the
+# * authority to bind the entity as an authorized representative, then do not
+# * install or use this SugarCRM file.
+# *
+# * Copyright (C) SugarCRM Inc. All rights reserved.
+# */
 #
 # behat.yml
 # suite definitions
@@ -23,17 +25,19 @@ default:
         - Sugarcrm\SugarcrmTestsBehat\Contexts\Common
         - Sugarcrm\SugarcrmTestsBehat\Contexts\Search
       filters:
-        tags: "@search"
-    sfa:
+        tags: "@php&&@search"
+    oportunities:
       paths:
         - %paths.base%/../../features
 #      Only requries the basic common context for now.
       contexts:
         - Sugarcrm\SugarcrmTestsBehat\Contexts\Common
       filters:
-        tags: "@Opportunity"
-#    sfa:
-#      paths:
-#        - %paths.base%/../../features/sfa
-#      contexts:
-#
+        tags: "@php&&@Opportunity"
+    rli:
+      paths:
+        - %paths.base%/../../features
+      contexts:
+        - Sugarcrm\SugarcrmTestsBehat\Contexts\Common
+      filters:
+        tags: "@php&&@rli"

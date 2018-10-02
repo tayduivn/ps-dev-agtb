@@ -29,6 +29,6 @@ How to create a new feature test suite:
             - Sugarcrm\SugarcrmTestsBehat\Contexts\SugarTest
             - Sugarcrm\SugarcrmTestsBehat\Contexts\<yourFeature>
           filters:
-            tags: "@<yourFeature>"
+            tags: "@php&&@<yourFeature>"
         ```
 4. From `tests/behat`, run `../../vendor/bin/behat --tags "@<yourFeature>"`

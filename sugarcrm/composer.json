@@ -95,7 +95,8 @@
                 "tests/unit-php/"
             ],
             "Sugarcrm\\SugarcrmTestsUnit\\inc\\": "tests/unit-php/include/",
-            "Sugarcrm\\SugarcrmTestsUnit\\custom\\": "custom/tests/unit-php/"
+            "Sugarcrm\\SugarcrmTestsUnit\\custom\\": "custom/tests/unit-php/",
+            "Sugarcrm\\SugarcrmTestsBehat\\": "tests/behat"
         }
     },
     "require": {
@@ -128,7 +129,8 @@
         "symfony/process": "v3.4.11"
     },
     "require-dev": {
-        "phpunit/phpunit": "7.3.5"
+        "phpunit/phpunit": "7.3.5",
+        "behat/behat": "3.4.3"
     },
     "repositories": [
         {

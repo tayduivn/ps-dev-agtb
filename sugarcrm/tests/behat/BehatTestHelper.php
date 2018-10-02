@@ -150,8 +150,7 @@ class BehatTestHelper
                     }
                 }
             }
-        }
-        catch (\SugarQueryException $e) {
+        } catch (\SugarQueryException $e) {
             Assert::fail("Unable to link related bean through {$def['name']} : " . $e->getMessage());
         }
     }

@@ -9,14 +9,14 @@
 
 @modules @Opportunity
 Feature: Opportunity characteristic verification
-  In order to assert proper linkage between an Opportunity and its RevenueLineItem
-  As a sugar user,
-  I need to be able to change values for each item and find that they are both updated.
+  As a Sugar user, I need to be able to create, update, and track Opportunities related to Accounts
+  through the Opportunity itself and through the use of Revenue Line Items
   Background:
      Given I am logged in
 
-  @opportunity_sales_stage_wip @pr @api @e2e
-  Scenario: Opportunities >  Verify that RLIs with closed lost sales stage are not included in the Opportunity rollup total
+  @opportunity_sales_stage @pr @php @api @e2e
+  Scenario: Opportunities >  Verify that RLIs with closed lost sales stage are not included
+    in the Opportunity rollup total
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
       | RLI_1 | 2018-10-19T19:20:22+00:00 | 200        | 300         | 400       | Prospecting | 5        |
@@ -32,8 +32,9 @@ Feature: Opportunity characteristic verification
       | best_case  | $0.00 |
       | worst_case | $0.00 |
 
-  @opportunity_sale_status_wip @pr @api @e2e
-  Scenario Outline: Opportunities > Verify that Status of the opportunity is changed to closed won/lost if all RLIs linked to the opportunity have sales stage "Close won/lost"
+  @opportunity_sale_status @pr @php @api @e2e
+  Scenario Outline: Opportunities > Verify that Status of the opportunity is changed to closed won/lost if
+    all RLIs linked to the opportunity have sales stage "Close won/lost"
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
       | RLI_1 | 2018-10-19T19:20:22+00:00 | 200        | 300         | 400       | Prospecting | 5        |
@@ -52,8 +53,9 @@ Feature: Opportunity characteristic verification
       | Closed Lost   | Closed Lost |
       | Qualification | In Progress |
 
-  @opportunity_accounts_wip @pr @api @e2e
-  Scenario: Opportunities > Verify that changing account on opportunity should cascade down to all RLIs linked to this opportunity
+  @opportunity_accounts @pr @php @api @e2e
+  Scenario: Opportunities > Verify that changing account on opportunity should cascade down to all RLIs
+    linked to this opportunity
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
       | RLI_1 | 2018-10-19T19:20:22+00:00 | 200        | 300         | 400       | Prospecting | 5        |
@@ -77,7 +79,7 @@ Feature: Opportunity characteristic verification
       | fieldName    | value        |
       | account_name | #@##_acc_%^& |
 
-  # @opportunity_not_able_to_delete_wip @pr @e2e
+  # @opportunity_not_able_to_delete @pr @e2e
   # Scenario Outline: Opportunities > Verify Opportunity cannot be deleted in the record view if sales stage of one or more RLIs is closed won
   #   Given RevenueLineItems records exist:
   #     | *name | date_closed               | worst_case | likely_case | best_case | sales_stage        | quantity |

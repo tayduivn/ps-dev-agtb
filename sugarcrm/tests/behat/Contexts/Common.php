@@ -75,14 +75,13 @@ class Common implements Context
      * @param String $link
      * @param String $parent
      */
-    public function recordsExistRelatedViaTo(
-        TableNode $table, String $module, String $link, String $parent
-    ) {
+    public function recordsExistRelatedViaTo(TableNode $table, String $module, String $link, String $parent)
+    {
         $parentRecord = $this->helper->getRecord($parent);
         if (!$parentRecord) {
             Assert::fail("Unable to find parent record $parent");
         }
-        foreach($table as $row) {
+        foreach ($table as $row) {
             $childRecord = $this->helper->createRecord($module, $row);
             if (!$parentRecord->load_relationship($link)) {
                 Assert::fail("Unable to load link $link");
@@ -105,7 +104,7 @@ class Common implements Context
         if (!$record) {
             Assert::fail("Unable to find $module $ident");
         }
-        foreach($table as $props) {
+        foreach ($table as $props) {
             $this->helper->updateRecord($record, $props);
         }
     }
@@ -125,7 +124,7 @@ class Common implements Context
             Assert::fail("Unable to find $module $ident");
         }
 
-        foreach($table as $row) {
+        foreach ($table as $row) {
             $this->helper->assertFieldValue($record, $row['fieldName'], $row['value']);
         }
     }

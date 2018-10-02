@@ -44,8 +44,7 @@ class Search implements Context
         $restService = new \RestService();
         $restService->user = $GLOBALS["current_user"];
 
-        foreach($table as $row) {
-
+        foreach ($table as $row) {
             $args = array (
                 '__sugar_url' => 'v11_2/globalsearch',
                 'tags' => 'true',
@@ -58,8 +57,5 @@ class Search implements Context
             Assert::assertEquals($row['total'], $result['total']);
             Assert::assertContains($row['value'], array_column($result['records'], $row['fieldName']));
         }
-
-
     }
-
 }

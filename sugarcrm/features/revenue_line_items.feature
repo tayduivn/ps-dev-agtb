@@ -12,8 +12,8 @@ Feature: RLI module verification
   Background:
     Given I am logged in
 
-  @revenue_line_items_products_wip @pr  @api @e2e
-  Scenario: RLI > Verify that corresponding fields are auto populated when select product in the RLI edit mode
+  @revenue_line_items_products @pr @php @api @e2e
+  Scenario: RLI > Verify that the corresponding fields are auto populated when selecting a product while editing an RLI
     # Create Product
     Given ProductTemplates records exist:
       | *name     | discount_price | list_price | cost_price |
@@ -32,21 +32,22 @@ Feature: RLI module verification
       | website         | category_name |  
       | www.google.com  | Category_1    |
     Then ProductTemplates *Product_1 should have the following values:
-      | category_name |
-      | Category_1    | 
+      | fieldName      | value      |
+      | category_name  | Category_1 |
     When I update RevenueLineItems *RLI_1 with the following values: 
       | product_template_name |
       | Product_1             |
     Then RevenueLineItems *RLI_1 should have the following values:
-      | fieldName      | value       |
+      | fieldName      | value      |
       | discount_price | 1000.000000 |
       | total_amount   | 5000.000000 |
-      | category_name  | Category_1  |
+      | category_name  | Category_1 |
       | list_price     | 2000.000000 |
       | cost_price     | 500.000000  |
 
   @revenue_line_item_best_worst_likely @pr @e2e
-  Scenario Outline: RLI > Verify that Best and Worst amounts made read-only and equal to likely when closed won/lost sales stage is selected.#
+  Scenario Outline: RLI > Verify that Best and Worst amounts made read-only and equal to likely
+    when closed won/lost sales stage is selected.
     # Create RLI record
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -67,7 +68,7 @@ Feature: RLI module verification
       | Closed Won  | 300.000000   |
       | Closed Lost | 300.000000   |
 
-  @revenue_line_items_accounts_wip @pr @api @e2e
+  @revenue_line_items_accounts @pr @php @api @e2e
   Scenario: RLI > Verify that account field is populated when opportunity is selected in RLI edit view
     # Create RLI
     Given RevenueLineItems records exist:
