@@ -175,9 +175,23 @@ class OAuth2AuthenticateTest extends TestCase
     /**
      * @covers ::getLogoutUrl
      */
-    public function testGetLogoutUrl()
+    public function testGetLogoutUrl(): void
     {
-        $this->assertFalse($this->authMock->getLogoutUrl());
+        $GLOBALS['sugar_config']['idm_mode'] = [
+            'enabled' => true,
+            'clientId' => 'testLocal',
+            'clientSecret' => 'testLocalSecret',
+            'stsUrl' => 'http://sts.sugarcrm.local',
+            'idpUrl' => 'http://idp.url',
+            'stsKeySetId' => 'keySetId',
+            'requestedOAuthScopes' => ['offline', 'profile'],
+            'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+        ];
+
+        $this->assertEquals(
+            'http://idp.url/logout?redirect_uri=http://idp.url',
+            $this->authMock->getLogoutUrl()
+        );
     }
 
 

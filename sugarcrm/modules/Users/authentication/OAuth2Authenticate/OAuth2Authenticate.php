@@ -63,9 +63,11 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
     /**
      * {@inheritdoc}
      */
-    public function getLogoutUrl()
+    public function getLogoutUrl(): string
     {
-        return false;
+        $config = new Config(\SugarConfig::getInstance());
+        $idmModeConfig = $config->getIDMModeConfig();
+        return $idmModeConfig['idpUrl'] . '/logout?redirect_uri='.$idmModeConfig['idpUrl'];
     }
 
     /**
