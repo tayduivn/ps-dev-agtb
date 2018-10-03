@@ -231,21 +231,23 @@ EOD
         $showNonEditableFieldsAlert = $idpConfig->isIDMModeEnabled() &&
             !$idpConfig->isSpecialBeanAction($this->bean, $_REQUEST);
         $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $showNonEditableFieldsAlert);
-        if ($GLOBALS['current_user']->isAdminForModule('Users')) {
-            $tenantSrn = Srn\Converter::fromString($idpConfig->getIDMModeConfig()['tid']);
-            $srnManager = new Srn\Manager([
-                'partition' => $tenantSrn->getPartition(),
-                'region' => $tenantSrn->getRegion(),
-            ]);
-            $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $this->bean->id);
-            $msg = sprintf(
-                translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER', 'Users'),
-                $idpConfig->buildCloudConsoleUrl('userProfile', [Srn\Converter::toString($userSrn)])
-            );
-        } else {
-            $msg = translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_REGULAR_USER', 'Users');
+        if ($showNonEditableFieldsAlert) {
+            if ($GLOBALS['current_user']->isAdminForModule('Users')) {
+                $tenantSrn = Srn\Converter::fromString($idpConfig->getIDMModeConfig()['tid']);
+                $srnManager = new Srn\Manager([
+                    'partition' => $tenantSrn->getPartition(),
+                    'region' => $tenantSrn->getRegion(),
+                ]);
+                $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $this->bean->id);
+                $msg = sprintf(
+                    translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER', 'Users'),
+                    $idpConfig->buildCloudConsoleUrl('userProfile', [Srn\Converter::toString($userSrn)])
+                );
+            } else {
+                $msg = translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_REGULAR_USER', 'Users');
+            }
+            $this->ss->assign('NON_EDITABLE_FIELDS_MSG', $msg);
         }
-        $this->ss->assign('NON_EDITABLE_FIELDS_MSG', $msg);
 
         $this->ev->process($processSpecial,$processFormName);
 
