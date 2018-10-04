@@ -535,19 +535,15 @@ class SugarQuery_Compiler_Doctrine
         foreach ($expression->conditions as $condition) {
             if ($condition instanceof SugarQuery_Builder_Where) {
                 $compiledField = $this->compileExpression($builder, $condition);
-                if ($compiledField) {
+                if (count($compiledField) > 0) {
                     $expressions[] = $compiledField;
                 }
             } elseif ($condition instanceof SugarQuery_Builder_Condition) {
                 $compiledField = $this->compileCondition($builder, $condition);
-                if ($compiledField) {
+                if (!empty($compiledField)) {
                     $expressions[] = $compiledField;
                 }
             }
-        }
-
-        if (count($expressions) == 0) {
-            return null;
         }
 
         if (count($expressions) == 1) {
