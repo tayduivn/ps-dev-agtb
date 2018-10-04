@@ -112,11 +112,11 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $this->_moduleName = $moduleName;
     }
 
-    /**
-     * @inheritDoc
+    /*
+     * Deploy the layout
+     * @param boolean $populate If true (default), then update the layout first with new layout information from the $_REQUEST array
      */
-    public function handleSave($populate = true, $clearCache = true)
-    {
+    function handleSave($populate = true, $clearCache = true) {
         if ($populate) {
             $this->_populateFromRequest();
         }

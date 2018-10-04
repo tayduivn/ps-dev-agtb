@@ -100,11 +100,8 @@
         return $searchFields ;
 	}
 
-    /**
-     * @inheritDoc
-     */
-    public function handleSave($populate = true, $clearCache = true)
-    {
+    function handleSave ($populate = true)
+   {
     	if (empty (  $this->_packageName ))
         {
         	foreach(array(MB_CUSTOMMETADATALOCATION , MB_BASEMETADATALOCATION) as $value){

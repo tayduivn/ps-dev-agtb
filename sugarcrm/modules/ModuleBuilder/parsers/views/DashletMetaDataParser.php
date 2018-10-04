@@ -12,8 +12,9 @@
 
  require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
-class DashletMetaDataParser extends ListLayoutMetaDataParser
-{
+ class DashletMetaDataParser extends ListLayoutMetaDataParser
+ {
+
  	// Columns is used by the view to construct the listview - each column is built by calling the named function
  	public $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_AVAILABLE' => 'getAdditionalFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;
 
@@ -94,10 +95,7 @@ class DashletMetaDataParser extends ListLayoutMetaDataParser
     	return $temp;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function handleSave($populate = true, $clearCache = true)
+    function handleSave ($populate = true)
     {
     	if (empty (  $this->_packageName ))
         {
