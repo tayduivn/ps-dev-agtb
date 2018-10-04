@@ -189,51 +189,109 @@ class PMSEBeanHandler
         return trim($parsed_template);
     }
 
-    public function mergingTemplate ($bean, $template, $component_array, $evaluate)
+    /**
+     * Gets the PMSERelatedModule object
+     * @return PMSERelatedModule
+     */
+    public function getPMSERelatedModuleObject()
     {
-        global $beanList;
-        $replace_array = array();
+        if ($this->pmseRelatedModule === null) {
+            $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
+        }
 
-        foreach ($component_array as $module_name => $module_array) {
-            foreach ($module_array as $field => $field_array) {
-                if (!isset($field_array['filter']) || !isset($beanList[$field_array['filter']])) {
-                    if (isset($field_array['type']) && $field_array['type'] === 'relate') {
-                        $newBean = $this->pmseRelatedModule->getRelatedModule($bean, $field_array['rel_module']);
-                    } else if (isset($field_array['filter'])) {
-                        $newBean = $this->pmseRelatedModule->getRelatedModule($bean, $field_array['filter']);
-                    } else {
-                        $newBean = $bean;
+        return $this->pmseRelatedModule;
+    }
+
+    /**
+     * Merges parsed placeholders into the email template
+     * @param SugarBean|array $bean A collection of beans, or a single bean
+     * @param string $template The email template to parse
+     * @param array $components The substitutions array
+     * @param boolean $evaluate Whether to evaluate or return
+     * @return string
+     */
+    public function mergingTemplate($bean, $template, $components, $evaluate)
+    {
+        $replace = array();
+
+        // Loop over each of the component elements
+        foreach ($components as $module) {
+            // Then each component element
+            foreach ($module as $field => $data) {
+                // This is the default case
+                $newBean = $bean;
+
+                // If there is no filter, or if the filter is not a bean...
+                if (!isset($data['filter']) || BeanFactory::getBeanClass($data['filter']) === false) {
+                    // Needs to be reset each iteration
+                    $fetch = null;
+                    if (isset($data['type']) && $data['type'] === 'relate') {
+                        $fetch = $data['rel_module'];
+                    } elseif (isset($data['filter'])) {
+                        $fetch = $data['filter'];
                     }
-                } else {
-                    $newBean = $bean;
+
+                    // If there is a related record to fetch, fetch it
+                    if (!empty($fetch)) {
+                        $newBean = $this->getPMSERelatedModuleObject()->getRelatedModule($bean, $fetch);
+                    }
                 }
-                $field = $field_array['name'];
+
+                // There are strange cases where bean that was passed in is actually
+                // an array of beans, so this needs to handle that
+                if (!$newBean instanceof SugarBean) {
+                    // Why we even allow an array of beans is beyond me, but it
+                    // is what it is, for now
+                    $newBean = array_pop($newBean);
+                }
+
+                // Set a default value
+                $value = null;
+
+                // If we have a bean, work with it
                 if ($newBean instanceof SugarBean) {
-                    $def = $newBean->field_defs[$field];
-                    if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo') {
-                        $value = (!empty($newBean->fetched_row[$field])) ? $newBean->fetched_row[$field] : $newBean->$field;
-                    } else if ($def['type'] == 'bool') {
-                        $value = ($newBean->$field==1) ? true : false;
+                    // Now get a value for our field name
+                    $fieldName = $data['name'];
+
+                    // Default value is always the bean's current value
+                    $value = $newBean->$fieldName;
+
+                    // We'll need these for later
+                    $def = $newBean->field_defs[$fieldName];
+
+                    // If we are looking for a "from" value, and we have one...
+                    if ($data['value_type'] === 'old' && array_key_exists($fieldName, (array) $newBean->dataChanges)) {
+                        $value = $newBean->dataChanges[$fieldName]['before'];
                     } else {
-                        $value = $newBean->$field;
+                        // Handle date/datetime, and boolean, field types
+                        // to maintain proper UTC values
+                        if (in_array($def['type'], ['datetime', 'datetimecombo']) && !empty($newBean->fetched_row[$fieldName])) {
+                            $value = $newBean->fetched_row[$fieldName];
+                        }
                     }
-                } else {
-                     $value = !empty($newBean) ? array_pop($newBean)->{$field_array['name']} : null;
+
+                    // Handle booleans, but only for non null values
+                    if ($def['type'] === 'bool' && $value !== null) {
+                        $value = $value == 1;
+                    }
                 }
-                if (($field_array['value_type']) === 'href_link') {
-                    $replace_array[$field_array['original']] = bpminbox_get_href($newBean, $field, $value);
+
+                if ($data['value_type'] === 'href_link') {
+                    $replace[$data['original']] = bpminbox_get_href($newBean, $fieldName, $value);
                 } else {
-                    $replace_array[$field_array['original']] = $evaluate ?
-                        nl2html(bpminbox_get_display_text($newBean, $field, $value)) :
-                        bpminbox_get_display_text($newBean, $field, $value);
+                    $replace[$data['original']] = $evaluate ?
+                        nl2html(bpminbox_get_display_text($newBean, $fieldName, $value)) :
+                        bpminbox_get_display_text($newBean, $fieldName, $value);
                 }
             }
         }
 
-        foreach ($replace_array as $name => $replacement_value) {
-            $template = str_replace($name, $replacement_value, $template);
-        }
-        return $template;
+        // Handle the replacements and send back the parsed template
+        return str_replace(
+            array_keys($replace),
+            array_values($replace),
+            $template
+        );
     }
 
     /**
@@ -440,58 +498,110 @@ class PMSEBeanHandler
     }
 
     /**
-     * Parse the variables strings
-     * @param type $template
-     * @param type $base_module
-     * @return type
+     * Sets the proper metadata for handling record link replacements
+     * @param array &$return The return data
+     * @param array $parts Parts of the replacement placeholder
+     * @param string $target The target module
+     * @param string $original The original full replacement placeholder
+     */
+    protected function setRecordLinkReplacementMeta(array &$return, array $parts, string $target, string $original)
+    {
+        // This is a related record link
+        if (isset($parts[3])) {
+            // 0 = href_link
+            // 1 = base_module
+            // 2 = rel_module
+            // 3 = field
+            // Formart is [rel_module][field] = []
+            $return[$parts[2]][$parts[3]] = [
+                'name' => $parts[3],
+                'value_type' => $parts[0],
+                'original' => $original,
+                'type' => 'relate',
+                'rel_module' => $parts[2],
+            ];
+        } else {
+            // This is a target record link
+            // 0 = href_link
+            // 1 = base_module
+            // 2 = field
+            $return[$target][$parts[2] . '_' . $parts[0]] = [
+                'name' => $parts[2],
+                'value_type' => $parts[0],
+                'original' => $original,
+            ];
+        }
+    }
+
+    /**
+     * Sets the proper metadata for handling record link replacements
+     * @param array &$return The return data
+     * @param array $parts Parts of the replacement placeholder
+     * @param string $target The target module
+     * @param string $original The original full replacement placeholder
+     */
+    protected function setDataReplacementMeta(array &$return, array $parts, string $target, string $original)
+    {
+        // Old value, or new value?
+        $type = !isset($parts[2]) || $parts[2] !== 'old' ? 'future' : 'old';
+
+        // Prepare the key for the return array
+        $key = sprintf(
+            '%s_%s_%s',
+            $parts[0],
+            $parts[1],
+            $type
+        );
+
+        // Handle setting the metadata
+        $return[$target][$key] = [
+            'filter' => $parts[0],
+            'name' => $parts[1],
+            'value_type' => $type,
+            'original' => $original,
+        ];
+    }
+
+    /**
+     * Collect all template placeholders for parsing and replacement with bean data
+     * @param string $template The email template body
+     * @param string $base_module The target module
+     * @return array
      */
     public function parseString($template, $base_module)
     {
-        $component_array = Array();
-        $component_array[$base_module] = Array();
+        $return = [
+            $base_module => [],
+        ];
 
-        preg_match_all("/(({::)[^>]*?)(.*?)((::})[^>]*?)/", $template, $matches, PREG_SET_ORDER);
+        preg_match_all(
+            '/(({::)[^>]*?)(.*?)((::})[^>]*?)/',
+            $template,
+            $matches,
+            PREG_SET_ORDER
+        );
 
         foreach ($matches as $val) {
-            $matched_component = $val[0];
-            $matched_component_core = $val[3];
+            // For use as the 'original' value
+            $match = $val[0];
 
-            $split_array = preg_split('{::}', $matched_component_core);
+            // The actual placeholder without the bookends
+            $core = $val[3];
 
-            //related module
-            //0 - future/past/href_link 1 - base_module 2 - rel_module 3 - field
-            if (!empty($split_array[3])) {
-                $component_array[$split_array[2]][$split_array[3]]['name'] = $split_array[3];
-                $component_array[$split_array[2]][$split_array[3]]['value_type'] = $split_array[0];
-                $component_array[$split_array[2]][$split_array[3]]['original'] = $matched_component;
-                $component_array[$split_array[2]][$split_array[3]]['type'] = 'relate';
-                $component_array[$split_array[2]][$split_array[3]]['rel_module'] = $split_array[2];
-            } else {
-                //base module
-                //0 - future/past/href_link 1 - base_module 2 - field
-                if (!empty($split_array[2])) {
-                    $meta_name = $split_array[2] . "_" . $split_array[0];
-                    $component_array[$base_module][$meta_name]['name'] = $split_array[2];
-                    $component_array[$base_module][$meta_name]['value_type'] = $split_array[0];
-                    $component_array[$base_module][$meta_name]['original'] = $matched_component;
-                } else {
-                    //0 - base_module 1 - field
-                    $meta_name = $split_array[0] . '_' . $split_array[1] . "_" . 'future';
-                    $component_array[$base_module][$meta_name]['filter'] = $split_array[0];
-                    $component_array[$base_module][$meta_name]['name'] = $split_array[1];
-                    $component_array[$base_module][$meta_name]['value_type'] = 'future';
-                    $component_array[$base_module][$meta_name]['original'] = $matched_component;
+            // This will be the actual array of parts
+            $parts = explode('::', $core);
 
-                    // If the base_module has an alternate name which matches the filter then use the
-                    // base_module name as the filter instead of the alternate name
-                    if (translate($base_module) === $component_array[$base_module][$meta_name]['filter']) {
-                        $component_array[$base_module][$meta_name]['filter'] = $base_module;
-                    }
-                }
-            }
+            // Determine if we are creating link or data replacement meta
+            $method = sprintf(
+                'set%sReplacementMeta',
+                $parts[0] === 'href_link' ? 'RecordLink' : 'Data'
+            );
+
+            // Handle it
+            $this->$method($return, $parts, $base_module, $match);
         }
 
-        return $component_array;
+        return $return;
     }
 
     /**
