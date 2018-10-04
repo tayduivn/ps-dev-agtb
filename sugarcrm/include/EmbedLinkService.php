@@ -175,23 +175,21 @@ class EmbedLinkService
             $xmlOEmbed->loadXML($xmlString);
 
             $typeElements = $xmlOEmbed->getElementsByTagName('type');
-            if ($typeElements->length > 0
-                && in_array($typeElements->item(0)->nodeValue, static::$supportedOEmbedTypes)
-            ) {
+            if ((count($typeElements) > 0) && in_array($typeElements->item(0)->nodeValue, static::$supportedOEmbedTypes)) {
                 $embedData['type'] = $typeElements->item(0)->nodeValue;
 
                 $htmlElements = $xmlOEmbed->getElementsByTagName('html');
-                if ($htmlElements->length > 0) {
+                if (count($htmlElements) > 0) {
                     $embedData['html'] = $this->convertToProtocolRelativeUrl($this->cleanHtml($htmlElements->item(0)->nodeValue));
                 }
 
                 $widthElements = $xmlOEmbed->getElementsByTagName('width');
-                if ($widthElements->length > 0) {
+                if (count($widthElements) > 0) {
                     $embedData['width'] = $widthElements->item(0)->nodeValue;
                 }
 
                 $heightElements = $xmlOEmbed->getElementsByTagName('height');
-                if ($heightElements->length > 0) {
+                if (count($heightElements) > 0) {
                     $embedData['height'] = $heightElements->item(0)->nodeValue;
                 }
             }

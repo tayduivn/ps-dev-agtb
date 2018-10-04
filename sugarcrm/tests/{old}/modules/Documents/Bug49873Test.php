@@ -64,8 +64,10 @@ class Bug49873Test extends TestCase
      * This test will test the call to the mark_deleted function.  This should result in the mark_relationships_deleted function
      * being called in the Documents module.  Then we check that the contracts relationships have been appropriated marked.
      */
-    public function testDocumentMarkDeleted()
-    {
+	function testDocumentMarkDeleted() {
+        $this->doc->load_relationship('contracts');
+        $this->assertEquals(1, count($this->doc->contracts), 'unable to link contract to document');
+
         //Call mark_deleted
         $this->doc->mark_deleted($this->doc->id);
         $this->doc->save();
@@ -76,7 +78,7 @@ class Bug49873Test extends TestCase
               $deleted = $row['deleted'];
               break;
         }
-
+        //$deleted = $GLOBALS['db']->getOne($GLOBALS['db']->limitQuerySql("SELECT deleted FROM linked_documents WHERE document_id = '{$this->doc->id}'", 0, 1));
         $this->assertEquals('1', $deleted, 'linked_documents entries are not deleted');
     }
 }

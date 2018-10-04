@@ -52,7 +52,9 @@ class UnifiedSearchApi extends SugarListApi {
      */
     public function parseSearchOptions(ServiceBase $api, array $args)
     {
-        if (isset($args['module_list'])) {
+        $options = array();
+
+        if ( isset($args['module_list']) && count($args['module_list']) == 1 ) {
             // We can create a bean of this type
             $seed = BeanFactory::newBean($args['module_list']);
         } else {

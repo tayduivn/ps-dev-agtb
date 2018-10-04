@@ -26,6 +26,11 @@ class Bug46365Test extends TestCase
             ->getMock();
     }
 
+    public function tearDown()
+    {
+        unset($this->_o);
+    }
+
     public function provider()
     {
         return array(
@@ -47,6 +52,7 @@ class Bug46365Test extends TestCase
                         ),
                     ),
                 ),
+                true
             ),
 
             // 1 row, 2 elements, 3 columns
@@ -69,6 +75,7 @@ class Bug46365Test extends TestCase
                         ),
                     ),
                 ),
+                true
             ),
         );
     }
@@ -76,11 +83,16 @@ class Bug46365Test extends TestCase
     /**
      * @dataProvider provider
      */
-    public function testPanelWithOneFullWidthItem($defs)
+    public function testPanelWithOneFullWidthItem($defs, $shouldHaveFiller)
     {
         $this->_o->defs = $defs;
         $this->_o->render();
 
-        $this->assertEquals($defs['panels'], $this->_o->defs['panels']);
+        $this->assertEquals($this->hasFiller($defs), $shouldHaveFiller);
+    }
+
+    private function hasFiller($defs)
+    {
+        return (boolean) count(intval($defs['panels']['panel1'][0]) - intval((int) $this->_o->defs['panels']['panel1'][0]));
     }
 }
