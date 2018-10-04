@@ -1078,7 +1078,7 @@ class MetaDataFiles
                         $subpath = "custom" . ucfirst($subpath);
                     }
                     if (isset($results[$subpath]['controller'][$fileInfo['platform']])) {
-                        continue 2;
+                        continue;
                     }
                     $controller = file_get_contents($fileInfo['path']);
                     $results[$subpath]['controller'][$fileInfo['platform']] = $controller;
@@ -1086,7 +1086,7 @@ class MetaDataFiles
                 case 'hbs':
                     $layoutName = substr($fileInfo['file'],0,-4);
                     if ( isset($results[$fileInfo['subPath']]['templates'][$layoutName]) ) {
-                        continue 2;
+                        continue;
                     }
                     $results[$fileInfo['subPath']]['templates'][$layoutName] = self::trimLicense(
                         file_get_contents($fileInfo['path'])
@@ -1095,7 +1095,7 @@ class MetaDataFiles
                 case 'php':
                     $viewdefs = array();
                     if ( isset($results[$fileInfo['subPath']]['meta']) && !strstr($fileInfo['path'], '.ext.php')) {
-                        continue 2;
+                        continue;
                     }
                     //When an extension file is found and NO corresponding metadata has been found so far
                     if (!empty($module) && strstr($fileInfo['path'], '.ext.php') &&
@@ -1123,12 +1123,12 @@ class MetaDataFiles
                         }
                         if ( !is_a($bean,'SugarBean') ) {
                             // I'm not sure what this is, but it's not something we can template
-                            continue 2;
+                            continue;
                         }
                         $viewdefs = self::getModuleMetaDataDefsWithReplacements($bean, $viewdefs);
                         if ( ! isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
                             $GLOBALS['log']->error('Could not generate a metadata file for module '.$module.', platform: '.$fileInfo['platform'].', type: '.$type);
-                            continue 2;
+                            continue;
                         }
 
                         $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];

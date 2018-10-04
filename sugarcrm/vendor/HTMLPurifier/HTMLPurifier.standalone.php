@@ -11459,13 +11459,13 @@ class HTMLPurifier_ChildDef_Table extends HTMLPurifier_ChildDef
                     case 'tr':
                         $is_collecting = true;
                         $collection[] = $token;
-                        continue 2;
+                        continue;
                     default:
                         if (!empty($token->is_whitespace)) {
                             $collection[] = $token;
                             $tag_index++;
                         }
-                        continue 2;
+                        continue;
                 }
             }
         }
