@@ -202,12 +202,6 @@ class AuthSettingsApiTest extends TestCase
             'require_number' => $passwordSetting['onenumber'],
             'require_special' => $passwordSetting['onespecial'],
         ];
-        $localConfExpReset = [
-            'enable' => $passwordSetting['forgotpasswordON'],
-            'expiration' => $passwordSetting['linkexpirationtime'] * $passwordSetting['linkexpirationtype'] * 60,
-            'require_recaptcha' => $adminSettingsMap['captcha_on'][2],
-            'require_honeypot' => $adminSettingsMap['honeypot_on'][2],
-        ];
         $localConfExpExpirDisabled = [
             'time' => 0,
             'attempt' => 0,
@@ -246,7 +240,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
@@ -270,7 +263,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirTime,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
@@ -293,7 +285,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirAttempt,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
@@ -320,7 +311,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => [
                             'type' => Authentication\Lockout::LOCK_TYPE_TIME,
@@ -351,7 +341,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => [
                             'type' => Authentication\Lockout::LOCK_TYPE_PERMANENT,
@@ -378,7 +367,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local', 'ldap'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
@@ -406,7 +394,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local', 'ldap'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
@@ -440,7 +427,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local', 'ldap'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
@@ -481,7 +467,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local', 'ldap'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
@@ -514,7 +499,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local', 'saml'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => $loginLockoutDisabled,
                     ],
@@ -546,7 +530,6 @@ class AuthSettingsApiTest extends TestCase
                     'enabledProviders' => ['local', 'saml'],
                     'local' => [
                         'password_requirements' => $localConfExpPassReq,
-                        'password_reset_policy' => $localConfExpReset,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => $loginLockoutDisabled,
                     ],

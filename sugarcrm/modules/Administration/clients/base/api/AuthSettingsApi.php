@@ -269,14 +269,6 @@ class AuthSettingsApi extends SugarApi
                 'require_number' => boolval($passConfig['onenumber']),
                 'require_special' => boolval($passConfig['onespecial']),
             ],
-            'password_reset_policy' => [
-                'enable' => boolVal($passConfig['forgotpasswordON']),
-                'expiration' => intval($passConfig['linkexpirationtime'])
-                    * intval($passConfig['linkexpirationtype'])
-                    * 60,
-                'require_recaptcha' => boolval($this->get('captcha_on', false)),
-                'require_honeypot' => boolval($this->get('honeypot_on', false)),
-            ],
             'password_expiration' => $this->getPasswordExpiration($passConfig),
             'login_lockout' => [
                 'type' => $lockout->getLockType(),
