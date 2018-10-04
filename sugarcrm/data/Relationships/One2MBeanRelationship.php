@@ -119,7 +119,7 @@ class One2MBeanRelationship extends One2MRelationship
         }
     }
 
-    public function remove($lhs, $rhs)
+    public function remove($lhs, $rhs, $save = true)
     {
         $rhsID = $this->def['rhs_key'];
 
@@ -138,7 +138,7 @@ class One2MBeanRelationship extends One2MRelationship
             $this->callBeforeDelete($rhs, $lhs, $this->getRHSLink());
         }
 
-        if (!$rhs->deleted) {
+        if ($save && !$rhs->deleted) {
             $rhs->in_relationship_update = true;
             // Rather than calling full save on the related bean just update the
             // parent id field to empty it. This saves a significant amount of
