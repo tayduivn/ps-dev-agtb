@@ -77,6 +77,15 @@
         flex: 0 0 100%;
         max-width: 100%;
 
+        &[data-name$="address_street"] {
+          word-break: break-all; /* `break-word` does not work in Firefox and IE11 */
+          word-break: break-word;
+          hyphens: auto;
+          -webkit-hyphens: auto;
+          -ms-hyphens: auto;
+          -ms-word-break: normal;
+        }
+
         &[data-name$="address_city"],
         &[data-name$="address_state"],
         &[data-name$="address_postalcode"] {
