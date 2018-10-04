@@ -326,14 +326,14 @@ abstract class AbstractMetaDataImplementation
         // the defs are pathed from a module
         reset($defs);
         if ($modulePath) {
-            $value = current($defs);
+            $temp = each($defs);
         } else {
-            $value = $defs;
+            $temp['value'] = $defs;
         }
 
-        $GLOBALS['log']->debug(get_class($this) . '->_loadFromFile: returning ' . print_r($value, true));
+        $GLOBALS['log']->debug( get_class ( $this ) . "->_loadFromFile: returning ".print_r($temp['value'],true)) ;
 
-        return $value;
+        return $temp['value']; // 'value' contains the value part of 'key'=>'value' part
     }
 
     protected function _loadFromPopupFile ($filename, $mod, $view, $forSave = false)

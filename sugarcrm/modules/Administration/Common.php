@@ -393,7 +393,9 @@ function dropdown_item_move_up($dropdown_type, $language, $index)
 		$value = '';
 		$i = 0;
 
-        foreach ($dropdown_array as $k => $v) {
+		reset($dropdown_array);
+		while(list($k, $v) = each($dropdown_array))
+		{
 			if($i == $index)
 			{
 				$key = $k;
@@ -427,7 +429,9 @@ function dropdown_item_move_down($dropdown_type, $language, $index)
 		$value = '';
 		$i = 0;
 
-        foreach ($dropdown_array as $k => $v) {
+		reset($dropdown_array);
+		while(list($k, $v) = each($dropdown_array))
+		{
 			if($i == $index)
 			{
 				$key = $k;

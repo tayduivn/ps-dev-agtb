@@ -189,7 +189,8 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
 
                         $bundle_list = $product_bundle->get_product_bundle_line_items();
                         if (is_array($bundle_list)) {
-                            foreach ($bundle_list as $line_item) {
+                            while (list($key, $line_item) = each ($bundle_list)) {
+
                                 if ($line_item->object_name == "Product") {
                                     $item[$count][$mod_strings['LBL_PDF_ITEM_QUANTITY']] = format_number_sugarpdf($line_item->quantity, $locale->getPrecision(), $locale->getPrecision());
                                     $item[$count][$mod_strings['LBL_PDF_PART_NUMBER']] = $line_item->mft_part_num;

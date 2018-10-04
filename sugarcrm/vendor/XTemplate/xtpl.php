@@ -4,8 +4,6 @@
 
 Modification information for LGPL compliance
 
-2017-06-28 - smorozov - PHP 7.2 compatibility
-
 2016-01-22 - avlasov - PHP 7 compatibility
 
 jvink@sugarcrm.com - 2015-06-30 - Adding CSRF form token support
@@ -162,6 +160,7 @@ var $AUTORESET=1;										/* auto-reset sub blocks */
 	$this->filecontents=$this->r_getfile($file);	/* read in template file */
 	//if(substr_count($file, 'backup') == 1)_ppd($this->filecontents);
 	$this->blocks=$this->maketree($this->filecontents,$mainblock);	/* preprocess some stuff */
+	//$this->scan_globals();
 }
 
 
@@ -307,10 +306,10 @@ function var_exists($bname,$vname){
 
 function rparse($bname) {
 	if (!empty($this->sub_blocks[$bname])) {
-        foreach ($this->sub_blocks[$bname] as $k => $v) {
+		reset($this->sub_blocks[$bname]);
+		while (list($k,$v)=each($this->sub_blocks[$bname]))
 			if (!empty($v))
 				$this->rparse($v,$indent."\t");
-        }
 	}
 	$this->parse($bname);
 }
@@ -419,6 +418,18 @@ function clear_autoreset() {
 	$this->AUTORESET=0;
 }
 
+/***[ scan_globals ]********************************************************/
+/*
+	scans global variables
+*/
+
+function scan_globals() {
+	reset($GLOBALS);
+	while (list($k,$v)=each($GLOBALS))
+		$GLOB[$k]=$v;
+	$this->assign("PHP",$GLOB);	/* access global variables as {PHP.HTTP_HOST} in your template! */
+}
+
 /******
 
 		WARNING
@@ -445,7 +456,7 @@ function maketree($con,$block) {
 	$block_names=array();
 	$blocks=array();
 	reset($con2);
-    foreach ($con2 as $v) {
+	while(list($k,$v)=each($con2)) {
 		$patt="($this->block_start_word|$this->block_end_word)\s*(\w+)\s*$this->block_end_delim(.*)";
 		if (preg_match_all("/$patt/ims",$v,$res, PREG_SET_ORDER)) {
 			// $res[0][1] = BEGIN or END
