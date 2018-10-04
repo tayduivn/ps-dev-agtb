@@ -158,12 +158,19 @@ abstract class SugarRelationship
             }
 
             if ($link->getSide() == REL_LHS) {
-                $sub_result = $this->remove($focus, $relBean);
+                $lhs = $focus;
+                $rhs = $relBean;
             } else {
-                $sub_result = $this->remove($relBean, $focus);
+                $lhs = $relBean;
+                $rhs = $focus;
             }
 
-            $result = $result && $sub_result;
+            $subResult = $this->remove($lhs, $rhs);
+
+            // free resources due to possible issue with memory consumption
+            $this->resetLinks($lhs, $rhs);
+
+            $result = $result && $subResult;
         }
 
         return $result;
@@ -898,5 +905,25 @@ abstract class SugarRelationship
         }
 
         return null;
+    }
+
+    /**
+     * Free resources allocated by loaded Link2 for provided SugarBean arguments
+     *
+     * @param SugarBean $lhs
+     * @param SugarBean $rhs
+     */
+    protected function resetLinks(SugarBean $lhs, SugarBean $rhs): void
+    {
+        $lhsLinkName = $this->getLHSLink();
+        $rhsLinkName = $this->getRHSLink();
+        $lhsLink = $lhs->$lhsLinkName ?? null;
+        $rhsLink = $rhs->$rhsLinkName ?? null;
+        if ($lhsLink instanceof Link2) {
+            $lhsLink->resetLoaded();
+        }
+        if ($rhsLink instanceof Link2) {
+            $rhsLink->resetLoaded();
+        }
     }
 }

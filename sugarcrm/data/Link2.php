@@ -126,23 +126,29 @@ class Link2 {
     }
 
     /**
-     *  Forces the link to load the relationship rows.
+     * Forces the link to load the relationship rows.
      * Will be called internally when the $rows property is accessed or get() is called
+     *
+     * @param array $params
      * @return void
      */
     public function load($params = array())
     {
-        $data = $this->query($params);
-        $this->rows = $data['rows'];
+        // free previously allocated memory to avoid the issue when <old-dataset> + <new-dataset> = memory limit reached
+        $this->rows = null;
+
+        $this->rows = $this->query($params)['rows'];
         $this->beans = null;
         $this->loaded = true;
     }
 
     /**
-     * Resets the loaded flag on this link so that it must reload the next time it is used
+     * Resets the loaded flag on this link so that it must reload the next time it is used. Also releases used memory.
      */
-    public function resetLoaded() {
+    public function resetLoaded()
+    {
         $this->loaded = false;
+        $this->rows = []; // free memory
     }
 
     /**

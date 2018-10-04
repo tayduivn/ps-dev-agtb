@@ -125,4 +125,32 @@ class Link2Test extends TestCase
         TestReflection::setProtectedValue($link, 'relationship', $relationship);
         $this->assertEquals($expected, $link->getSide());
     }
+
+    /**
+     * @covers ::resetLoaded()
+     */
+    public function testResetLoaded()
+    {
+        $link = $this->getMockBuilder(\Link2::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['query'])
+            ->getMock();
+
+        $dataSet = ['foo' => 'bar'];
+        $link->expects($this->any())->method('query')->willReturn(['rows' => $dataSet]);
+        /** @var \Link2 $link */
+
+        // populate
+        $link->load();
+
+        // check that link is populated
+        $this->assertEquals($dataSet, $link->rows);
+        $this->assertTrue($link->loaded);
+
+        $link->resetLoaded();
+
+        // check that link properties were freed
+        $this->assertEmpty($link->rows);
+        $this->assertFalse($link->loaded);
+    }
 }
