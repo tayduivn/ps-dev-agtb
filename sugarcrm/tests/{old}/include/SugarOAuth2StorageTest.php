@@ -52,6 +52,9 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         $admin->retrieveSettings(false, true);
         sugar_cache_clear('admin_settings_cache');
 
+        // We need to disable the cache headers, otherwise the session_start() complains=
+        session_cache_limiter('');
+        
         // When setting $_SESSION['platform'] to portal we are also, inadvertently
         // setting $_SESSION['type'] to 'support_portal' in the setPlatformStore()
         // call. This was lasting beyond this test and causing failure downstream
