@@ -10,17 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-
 class PMSEStartEvent extends PMSEEvent
 {
     /**
-     *
-     * @param type $flowData
-     * @param type $bean
-     * @param type $externalAction
-     * @param type $arguments
-     * @return type
+     * Runs the StartEvent element
+     * @param array $flowData The data for this particular flow segment
+     * @param mixed $bean Target bean, related bean or nothing at all
+     * @param string $externalAction The next action to take
+     * @param array $arguments The arguments passed in from the Request
+     * @return array
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
@@ -28,7 +26,7 @@ class PMSEStartEvent extends PMSEEvent
         $regKey = 'triggered_starts';
 
         // Used to read from and write to if necessary
-        $registry = Registry\Registry::getInstance();
+        $registry = $this->getRegistry();
 
         // Get our list of triggered starts
         $triggered = $registry->get($regKey, array());
@@ -51,16 +49,17 @@ class PMSEStartEvent extends PMSEEvent
             }
         }
 
+        // Set the triggered ID into registry now
+        if (isset($startEventID)) {
+            $triggered[$startEventID] = true;
+            $registry->set($regKey, $triggered, true);
+        }
+
         $relatedBean = $this->retrieveRelatedBean($flowData, $bean);
         if (!empty($relatedBean)) {
             $flowData = $this->createNewCase($relatedBean, $flowData);
         } else {
             $flowData = $this->createNewCase($bean, $flowData);
-        }
-        // Set the triggered ID into registry now
-        if (isset($startEventID)) {
-            $triggered[$startEventID] = true;
-            $registry->set($regKey, $triggered, true);
         }
 
         $this->createFlow = true;

@@ -13,7 +13,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 use Sugarcrm\Sugarcrm\ProcessManager;
-use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
 class PMSEUserTask extends PMSEEvent
@@ -312,7 +311,7 @@ class PMSEUserTask extends PMSEEvent
      */
     public function lockFlowRoute($id)
     {
-        $registry = Registry\Registry::getInstance();
+        $registry = $this->getRegistry();
 
         // Simplified logic here... get all locked flows or a default array...
         $flows = $registry->get('locked_flows', array());

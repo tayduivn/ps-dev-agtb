@@ -1,0 +1,59 @@
+<?php
+//FILE SUGARCRM flav=ent ONLY
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine;
+
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+use PHPUnit\Framework\TestCase;
+
+/**
+ * @coversDefaultClass \PMSEStartEvent
+ */
+class PMSEStartEventTest extends TestCase
+{
+    /**
+     * @covers ::run
+     */
+    public function testRun()
+    {
+        $id = '1234567890';
+        $flowData = array('bpmn_id' => $id);
+        $registryEntry = array($id => true);
+
+        $registryMock = $this->createMock(Registry\Registry::class);
+
+        $registryMock->method('get')
+            ->willReturn($registryEntry);
+
+        $loggerMock = $this->createMock('PMSELogger', ['alert']);
+
+        $loggerMock->expects($this->once())
+            ->method('alert');
+
+        $startEventMock = $this->getMockBuilder('PMSEStartEvent')
+            ->disableOriginalConstructor()
+            ->setMethods(['getRegistry', 'prepareResponse'])
+            ->getMock();
+
+        $startEventMock->method('getRegistry')
+            ->willReturn($registryMock);
+
+        $startEventMock->setLogger($loggerMock);
+
+        $startEventMock->expects($this->once())
+            ->method('prepareResponse')
+            ->with(array(), '', '');
+
+        $startEventMock->run($flowData);
+    }
+}

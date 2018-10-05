@@ -13,6 +13,7 @@
 
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 class PMSEElement implements PMSERunnable
 {
@@ -77,6 +78,12 @@ class PMSEElement implements PMSERunnable
     protected $createFlow;
 
     /**
+     * The ProcessManager\Registry object
+     * @var Registry
+     */
+    protected $registry;
+
+    /**
      * Class constructor
      * @codeCoverageIgnore
      */
@@ -91,6 +98,20 @@ class PMSEElement implements PMSERunnable
         $this->dbHandler = $db;
         $this->logger = PMSELogger::getInstance();
         $this->createFlow = false;
+    }
+
+    /**
+     * Gets the Registry object
+     * @return Registry
+     */
+    public function getRegistry()
+    {
+        // Wrapping this static getter in an instance method makes it testable
+        if (empty($this->registry)) {
+            $this->registry = Registry\Registry::getInstance();
+        }
+
+        return $this->registry;
     }
 
     /**
