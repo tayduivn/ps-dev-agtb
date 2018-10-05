@@ -131,6 +131,22 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
+     * get config flag for shortcut operator
+     * @return bool
+     */
+    public function getUseShortcutOperator() : bool
+    {
+        $ret = false;
+        // using config to override the default shortcut operator
+        global $sugar_config;
+        if (isset($sugar_config['gs_use_shortcut_operator']) && isTruthy($sugar_config['gs_use_shortcut_operator'])) {
+            $ret = true;
+        }
+
+        return $ret;
+    }
+
+    /**
      * Register handlers
      */
     protected function registerHandlers()
@@ -738,6 +754,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $multiMatch = new MultiMatchQuery();
         $multiMatch->setTerms($this->term);
         $multiMatch->setOperator($this->getDefaultOperator());
+        $multiMatch->setUseShortcutOperator($this->getUseShortcutOperator());
         $multiMatch->setVisibilityProvider($this->container->getProvider('Visibility'));
         $multiMatch->setSearchFields($this->buildSearchFields($this->modules));
         $multiMatch->setUser($this->user);
