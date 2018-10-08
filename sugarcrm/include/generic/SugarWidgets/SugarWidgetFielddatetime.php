@@ -106,7 +106,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         }
         $offset = $timedate->handle_offset(
             $date,
-            $timedate->get_db_date_time_format(),
+            $this->hasTime($date) ? $timedate->get_db_date_time_format() : $timedate->get_db_date_format(),
             false,
             $user
         );

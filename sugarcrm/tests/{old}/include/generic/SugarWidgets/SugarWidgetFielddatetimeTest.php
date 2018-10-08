@@ -37,6 +37,32 @@ class SugarWidgetFielddatetimeTest extends TestCase
     }
 
     /**
+     * @return array
+     */
+    public function providerTestNoFormatChange()
+    {
+        return array(
+            array('2018-10-10', false),
+            array('2018-10-10 12:00:00', true),
+        );
+    }
+
+    /**
+     * Unit test to make sure no date time format change after calling getTZOffsetByUser.
+     * Date should remain date, datetime should remain datetime.
+     * @covers ::getTZOffsetByUser
+     * @dataProvider providerTestNoFormatChange
+     */
+    public function testNoFormatChange(string $date, bool $hasTime)
+    {
+        $datetimeField = $this->createPartialMock('SugarWidgetFieldDateTime', []);
+        $newDate = SugarTestReflection::callProtectedMethod($datetimeField, 'getTZOffsetByUser', array($date));
+
+        $resultHasTime = SugarTestReflection::callProtectedMethod($datetimeField, 'hasTime', array($newDate));
+        $this->assertEquals($hasTime, $resultHasTime);
+    }
+
+    /**
      * Check if the returned data is formatted properly
      *
      * @param array $layout_def Layout def for the field
