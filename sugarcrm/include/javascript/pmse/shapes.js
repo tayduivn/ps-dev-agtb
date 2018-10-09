@@ -210,6 +210,26 @@ AdamShape.prototype.dropBehaviorFactory = function (type, selectors) {
     }
 };
 
+/**
+ * Returns an array of elements that have this shape as a destination
+ * @return {Array} The array of source elements
+ */
+AdamShape.prototype.getSourceElements = function() {
+    var elements = [];
+    var i;
+    var port;
+    var connection;
+
+    for (i = 0; i < this.getPorts().getSize(); i += 1) {
+        port = this.getPorts().get(i);
+        connection = port.connection;
+        if (connection.srcPort.parent.getID() !== this.getID()) {
+            elements.push(connection.srcPort.parent);
+        }
+    }
+    return elements;
+};
+
 AdamShape.prototype.getDestElements = function () {
     var elements = [],
         i,

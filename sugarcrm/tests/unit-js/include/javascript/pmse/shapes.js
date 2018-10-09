@@ -68,6 +68,39 @@ describe('includes.javascript.pmse.shapes', function() {
         App = oldApp;
     });
 
+    describe('getSourceElements', function() {
+
+        beforeEach(function() {
+
+            // Mocking 2 events and a gateway
+            // Adding flows from both events to the gateway
+            mockEvent1 = new AdamEvent();
+            mockEvent2 = new AdamEvent();
+            mockGateway = new AdamGateway();
+
+            mockConnection1 = new jCore.Connection();
+            mockConnection1.srcPort = new jCore.Port();
+            mockConnection1.srcPort.parent = mockEvent1;
+
+            mockConnection2 = new jCore.Connection();
+            mockConnection2.srcPort = new jCore.Port();
+            mockConnection2.srcPort.parent = mockEvent2;
+
+            mockPort1 = new jCore.Port();
+            mockPort1.connection = mockConnection1;
+            mockGateway.ports.insert(mockPort1);
+
+            mockPort2 = new jCore.Port();
+            mockPort2.connection = mockConnection2;
+            mockGateway.ports.insert(mockPort2);
+        });
+
+        it('should return an array of the source elements', function() {
+
+            expect(mockGateway.getSourceElements()).toEqual([mockEvent1, mockEvent2]);
+        });
+    });
+
     describe('getDestElementName', function() {
 
         var mockEvent;

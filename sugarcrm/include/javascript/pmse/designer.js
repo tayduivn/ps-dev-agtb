@@ -1318,6 +1318,10 @@ function renderProject (prjCode) {
         jCore.getActiveCanvas().RemoveCurrentMenu();
     });
 
+    /**
+     * Button that when clicked both saves the project and triggers the
+     * process design validator
+     */
     $('#ButtonSaveValidate').click(function() {
         project.save();
         traverseProcess();
@@ -1380,61 +1384,60 @@ var refreshMarkers = function() {
  *                 silently (no alerts to the user)
  */
 var traverseProcess = function(silent) {
-    var i;
-    var j;
-    var queue;
-    var currElement;
-    var destElement;
-    var connectedElements;
-    var validationTools = getValidationTools(silent);
 
-    // Initialize the arrays of elements placed on the canvas
-    var allElements = getAllElements();
+    var validationTools = getValidationTools(silent);
     var startEvents = getStartEvents();
 
-    // Mark the project as currently being validated as start a fresh error table
-    project.isBeingValidated = true;
-    currentErrorTable = document.createElement('tbody');
-
-    // If there are elements to validate, display the progress alert
-    validationTools.progressTracker.incrementTotalElements();
+    // Prepare the canvas for traversal
+    initializeTraversal(validationTools);
 
     // For each start event element, traverse the path starting from that element
     for (i = 0; i < startEvents.length; i++) {
+        validatePathFromStartNode([startEvents[i]], validationTools);
+    }
 
-        // Initialize the queue with just the start node
-        queue = [startEvents[i]];
-        queue[0].hasBeenQueued = true;
-        queue[0].currentGatewayScope = [];
+    // Perform final steps for traversal
+    finishTraversal(validationTools);
+};
 
-        // While there are still elements left to traverse:
-        while (queue.length) {
+/**
+ * Performs actions necessary before beginning a validation traversal
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+var initializeTraversal = function(validationTools) {
 
-            // Remove the front element of the queue and validate it
-            currElement = queue.shift();
-            if (currElement.validate) {
-                currElement.validate(validationTools);
-            }
+    var i;
+    var allElements = getAllElements();
 
-            // For each unvisited element that the current element connects to, add it to the queue
-            connectedElements = currElement.getDestElements();
-            for (j = 0; j < connectedElements.length; j++) {
-                destElement = connectedElements[j];
+    // Reset the hasBeenQueued and currentGatewayScope attributes of each element
+    for (i = 0; i < allElements.length; i++) {
+        delete allElements[i].hasBeenQueued;
+        delete allElements[i].currentGatewayScope;
+    }
 
-                if (!destElement.hasBeenQueued) {
+    // Counting the entire validation as an element itself, start the progress tracker
+    validationTools.progressTracker.incrementTotalElements();
+    validationTools.progressTracker.start();
+};
 
-                    // Set the proper gateway scope of the destination element
-                    setGatewayScope(currElement, destElement);
+/**
+ * Performs actions necessary at the end of a validation traversal
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+var finishTraversal = function(validationTools) {
 
-                    // Push the destination element onto the queue and mark it as queued
-                    queue.push(destElement);
-                    destElement.hasBeenQueued = true;
-                }
-            }
+    var i;
+    var allElements = getAllElements();
+
+    // Generate a warning for any elements that were unreachable during traversal
+    for (i = 0; i < allElements.length; i++) {
+        if (!allElements[i].hasBeenQueued && allElements[i].getType() !== 'AdamArtifact') {
+            validationTools.createWarning(allElements[i], 'LBL_PMSE_ERROR_ELEMENT_UNREACHABLE');
         }
     }
-    // Perform final checks for unvisited elements and start a bulk API call to get element settings
-    finalCleanup(allElements);
+
+    // Counting the entire validation as an element itself, initiate the bulk API call to start
+    // gathering the element settings
     App.api.triggerBulkCall('get_element_settings');
     validationTools.progressTracker.incrementSettingsGathered();
 };
@@ -1445,7 +1448,7 @@ var traverseProcess = function(silent) {
  */
 var getAllElements = function() {
     return jCore.getActiveCanvas().children.asArray().filter(function(elem) {
-        return elem.type !== 'MultipleSelectionContainer';
+        return elem.type !== 'MultipleSelectionContainer' && elem.type !== 'AdamArtifact';
     });
 };
 
@@ -1476,21 +1479,63 @@ var setGatewayScope = function(currElement, destElement) {
 };
 
 /**
- * Perform a final check for unvisited elements and return the elements to their original state
- * @param  {Array} allElements is an array containing all user-placed elements on the canvas
+ * Validates the elements along a path from a given start node
+ * @param  {Array} queue is an array that initially contains only the start node element
+ * @param {Object} validationTools is a collection of utility functions for validating element data
  */
-var finalCleanup = function(allElements) {
-    var i;
-    for (i = 0; i < allElements.length; i++) {
+var validatePathFromStartNode = function(queue, validationTools) {
 
-        // Check if the element was never visited (unreachable)
-        if (!allElements[i].hasBeenQueued && allElements[i].getType() !== 'AdamArtifact') {
-            createWarning(allElements[i], 'LBL_PMSE_ERROR_ELEMENT_UNREACHABLE');
-        }
+    // Initialize the queue
+    queue[0].hasBeenQueued = true;
+    queue[0].currentGatewayScope = [];
 
-        // Delete each element's hasBeenQueued attribute in case we want to run the traversal again
-        delete allElements[i].hasBeenQueued;
+    // While there are still elements in the queue, process the next one
+    while (queue.length) {
+        processNextElement(queue.shift(), queue, validationTools);
     }
+};
+
+/**
+ * Processes the next element in the traversal queue
+ * @param  {Object} currElement is the current element being traversed
+ * @param  {Array} queue is an array of elements to be traversed in FIFO order
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+var processNextElement = function(currElement, queue, validationTools) {
+
+    var i;
+    var connectedElements = currElement.getDestElements();
+
+    // Validate the current element
+    if (currElement.validate) {
+        currElement.validate(validationTools);
+    }
+
+    // For each unvisited element that the current element connects to, add it to the queue
+    for (i = 0; i < connectedElements.length; i++) {
+
+        if (!connectedElements[i].hasBeenQueued) {
+            queueConnectedElement(currElement, connectedElements[i], queue);
+        }
+    }
+};
+
+/**
+ * Adds a destination element to the queue, with the correct hasBeenQueued and
+ * currentGatewayScope attributes
+ * @param  {Object} currElement is the current element being traversed
+ * @param  {Object} destElement is a destination element from currElement that
+ *                  has not yet been queued
+ * @param  {Array} queue is an array of elements to be traversed in FIFO order
+ */
+var queueConnectedElement = function(currElement, destElement, queue) {
+
+    // Set the proper gateway scope of the destination element
+    setGatewayScope(currElement, destElement);
+
+    // Push the destination element onto the queue and mark it as queued
+    queue.push(destElement);
+    destElement.hasBeenQueued = true;
 };
 
 /**
@@ -1502,14 +1547,11 @@ var finalCleanup = function(allElements) {
 var getValidationTools = function(silent) {
     return {
         'progressTracker': new ValidationProgressTracker(silent),
-        'canvas': jCore.getActiveCanvas(),
         'validateNumberOfEdges': validateNumberOfEdges,
         'validateAtom': validateAtom,
         'createWarning': createWarning,
         'createError': createError,
         'CriteriaEvaluator': CriteriaEvaluator,
-        'LogicTracker': LogicTracker,
-        'LogicAtom': LogicAtom,
         'getTargetModule': getTargetModule
     };
 };
@@ -1534,12 +1576,32 @@ var ValidationProgressTracker = function(silent) {
     this.silent = silent,
 
     /**
+     * Performs necessary actions to start the progress tracker
+     */
+    this.start = function() {
+
+        // Mark the project as currently being validated
+        project.isBeingValidated = true;
+
+        // Update button status during validation
+        this.updateButtons();
+
+        // Start a fresh error table
+        currentErrorTable = document.createElement('tbody');
+
+        // Add the "Refreshing errors" indicator to the error pane
+        $('#refreshing-errors').addClass('show');
+
+        // Display the correct progress modal for non-silent validations
+        this.showModal();
+    },
+
+    /**
      * Increment the total number of elements encountered, to keep track of how
      * many we need API responses for
      */
     this.incrementTotalElements = function() {
         this.totalElements++;
-        this.showProgress();
     },
 
     /**
@@ -1549,12 +1611,30 @@ var ValidationProgressTracker = function(silent) {
     this.incrementSettingsGathered = function() {
         this.numSettingsGathered++;
         if (this.numSettingsGathered === this.totalElements) {
-            // We've received the settings information for all elements, so now we can send
-            // their setting validation calls in one big bulk call instead of one-by-one
-            this.incrementTotalValidations();
-            App.api.triggerBulkCall('validate_element_settings');
-            this.incrementValidated();
+
+            // All element settings have been gathered, so start validating those settings
+            this.startValidating();
         }
+    },
+
+    /**
+     * Transitions the progress tracker from gathering element settings to validating
+     * those settings
+     */
+    this.startValidating = function() {
+
+        // Count all element validations as a single validation in itself
+        this.incrementTotalValidations();
+
+        // Display the correct progress modal for non-silent validations
+        this.showModal();
+
+        // We've received the settings information for all elements, so now we can send
+        // their setting validation calls in one big bulk call instead of one-by-one
+        App.api.triggerBulkCall('validate_element_settings');
+
+        // Count all element validations as a single validation in itself
+        this.incrementValidated();
     },
 
     /**
@@ -1563,7 +1643,6 @@ var ValidationProgressTracker = function(silent) {
      */
     this.incrementTotalValidations = function() {
         this.totalValidations++;
-        this.showProgress();
     },
 
     /**
@@ -1572,133 +1651,181 @@ var ValidationProgressTracker = function(silent) {
      */
     this.incrementValidated = function() {
         this.numValidated++;
-        this.showProgress();
+        if (this.numValidated === this.totalValidations) {
+
+            // All elements have been validated, so report the results to the user
+            this.finish();
+        }
     },
 
     /**
-     * Displays the current progress of the validation process (if not silent), and
-     * updates the error pane toggle button when validation is finished.
+     * Performs final actions after validation has finished
      */
-    this.showProgress = function() {
+    this.finish = function() {
+
         var errorsFound = currentErrorTable.rows.length;
-        if (this.numSettingsGathered === this.totalElements && this.numValidated === this.totalValidations) {
-            // Validation is complete. Replace the existing error table with the new one
-            project.isBeingValidated = false;
-            $('#refreshing-errors').removeClass();
-            $('#Error-table').find('tbody').remove();
-            $('#Error-table').append(currentErrorTable);
 
-            // If no errors are found, we don't need the error pane open anymore
-            if (!errorsFound) {
-                myLayout.close('south');
-            }
+        // Remove the "Refreshing errors" indicator from the error pane
+        $('#refreshing-errors').removeClass();
 
-            // Refresh the error/warning markers on the elements
-            refreshMarkers();
-        } else {
-            $('#refreshing-errors').addClass('show');
+        // Append the new error table body to the error table
+        $('#Error-table').find('tbody').remove();
+        $('#Error-table').append(currentErrorTable);
+
+        // Close the error pane if no errors are found
+        if (!errorsFound) {
+            myLayout.close('south');
+        } else if (!this.silent) {
+            myLayout.open('south');
         }
+
+        // Refresh the error/warning markers on the elements on the canvas
+        refreshMarkers();
+
+        // Display the correct progress modal for non-silent validations
+        this.showModal();
+
+        // Mark the project as no longer being validated
+        project.isBeingValidated = false;
+
+        // Update buttons after validation
+        this.updateButtons();
+    },
+
+    /**
+     * If validation is non-silent, displays the correct modal to show the user
+     * the current status of the validation process
+     */
+    this.showModal = function() {
+
+        var errorsFound;
+
         if (!this.silent) {
-            // Silent mode is not activated, so display the correct alert for the current status
-            // of the validation process
             App.alert.dismiss('getting_element_settings');
             App.alert.dismiss('validating_element_settings');
             if (this.numSettingsGathered < this.totalElements) {
+
+                // Validation is in the gathering settings phase
                 App.alert.show('getting_element_settings', {
                     level: 'process',
                     title: translate('LBL_PMSE_VALIDATOR_IN_PROGRESS_RETRIEVING'),
                     autoClose: false
                 });
             } else if (this.numValidated < this.totalValidations) {
+
+                // Validation is in the validating settings phase
                 App.alert.show('validating_element_settings', {
                     level: 'process',
                     title: translate('LBL_PMSE_VALIDATOR_IN_PROGRESS_VALIDATING'),
                     autoClose: false
                 });
             } else {
+
+                // Validation is complete
+                errorsFound = currentErrorTable.rows.length;
                 App.alert.show('validation_results', {
                     level: 'success',
                     title: translate('LBL_PMSE_VALIDATOR_COMPLETE') + errorsFound
                 });
-                if (errorsFound) {
-                    myLayout.open('south');
-                }
             }
         }
-        this.updateButtons();
     },
 
     /**
-     * Updates the button styling and action for the validation and error pane toggle
-     * buttons based on the current status of the validation
+     * Updates the styling and action of buttons depending on the current state of
+     * validation
      */
     this.updateButtons = function() {
-        var tooltip;
-        var errorsFound = currentErrorTable.rows.length;
-        var validateButton = $('#ButtonValidate > i');
-        var saveAndValidateButton = $('#ButtonSaveValidate > i');
-        var viewErrorsButton = $('#ButtonToggleErrorPane > i');
+        this.clearButtonStyleAndAction();
+        this.updateValidateButton();
+        this.updateSaveValidateButton();
+        this.updateErrorPaneToggleButton();
+    },
 
-        // Remove any existing classes and action from the buttons
-        validateButton.removeClass();
-        saveAndValidateButton.removeClass();
-        viewErrorsButton.removeClass();
+    /**
+     * Clears the style and action from process validator buttons on the canvas toolbar
+     */
+    this.clearButtonStyleAndAction = function() {
+
+        // Remove style and action from the validate button
         $('#ButtonValidate').off();
+        $('#ButtonValidate > i').removeClass();
+
+        // Remove style and action from the save+validate button
         $('#ButtonSaveValidate').off();
+        $('#ButtonSaveValidate > i').removeClass();
+
+        // Remove style and action from the error pane toggle button
         $('#ButtonToggleErrorPane').off();
+        $('#ButtonToggleErrorPane > i').removeClass();
+    },
 
-        if (this.numSettingsGathered === this.totalElements && this.numValidated === this.totalValidations) {
-            // Validation is complete
+    /**
+     * Updates the styling and action of the validate button depending on the current
+     * state of the validation process
+     */
+    this.updateValidateButton = function() {
+        if (!project.isBeingValidated) {
 
-            // Un-grey the validate buttons and give them action
-            validateButton.addClass('fa fa-check-square check-square-on');
-            saveAndValidateButton.filter(':first').addClass('fa fa-save fa-sm save-on');
-            saveAndValidateButton.filter(':last').addClass('fa fa-check-square fa-sm check-square-on');
+            // Validate button should be ungreyed and have action
             $('#ButtonValidate').click(function() {
                 traverseProcess();
                 jCore.getActiveCanvas().RemoveCurrentMenu();
             });
+            $('#ButtonValidate > i').addClass('fa fa-check-square check-square-on');
+        } else {
+
+            // Validate button should be greyed out and have no action
+            $('#ButtonValidate > i').addClass('fa fa-check-square check-square-off');
+        }
+    },
+
+    /**
+     * Updates the styling and action of the save+validate button depending on the
+     * current state of the validation process
+     */
+    this.updateSaveValidateButton = function() {
+        if (!project.isBeingValidated) {
+
+            // Save+validate button should be ungreyed and have action
             $('#ButtonSaveValidate').click(function() {
                 project.save();
                 traverseProcess();
                 jCore.getActiveCanvas().RemoveCurrentMenu();
             });
-
-            // Set the error pane toggle button to show the number of errors. If there are errors,
-            // un-grey the button and give it action. Otherwise, grey it out.
-            if (errorsFound) {
-                viewErrorsButton.addClass('fa fa-exclamation-triangle exclamation-triangle-on');
-                $('#ButtonToggleErrorPane').click(function() {
-                    myLayout.toggle('south');
-                });
-            } else {
-                viewErrorsButton.addClass('fa fa-exclamation-triangle exclamation-triangle-off');
-            }
-            tooltip = errorsFound + translate('LBL_PMSE_VALIDATOR_TOOLTIP_ISSUES');
-            $('#ButtonToggleErrorPane').attr('data-original-title', tooltip);
+            $('#ButtonSaveValidate > i').filter(':first').addClass('fa fa-save fa-sm save-on');
+            $('#ButtonSaveValidate > i').filter(':last').addClass('fa fa-check-square fa-sm check-square-on');
         } else {
-            // Validation is still in progress
 
-            // Grey out the validate button
-            validateButton.addClass('fa fa-check-square check-square-off');
-            saveAndValidateButton.filter(':first').addClass('fa fa-save fa-sm save-off');
-            saveAndValidateButton.filter(':last').addClass('fa fa-check-square fa-sm check-square-off');
-
-            // If validation was previously run and errors still exist in that table, let the user
-            // keep accessing the error table with the error pane button. Otherwise, grey it out
-            if ($('#Error-table > tbody > tr').length) {
-                viewErrorsButton.addClass('fa fa-exclamation-triangle exclamation-triangle-on');
-                $('#ButtonToggleErrorPane').click(function() {
-                    myLayout.toggle('south');
-                });
-            } else {
-                viewErrorsButton.addClass('fa fa-exclamation-triangle exclamation-triangle-off');
-            }
-
-            // Set the tooltip of the error pane button to show that validation is in progress
-            tooltip = translate('LBL_PMSE_VALIDATOR_TOOLTIP_IN_PROGRESS');
-            $('#ButtonToggleErrorPane').attr('data-original-title', tooltip);
+            // Save+validate button should be greyed out and have no action
+            $('#ButtonSaveValidate > i').filter(':first').addClass('fa fa-save fa-sm save-off');
+            $('#ButtonSaveValidate > i').filter(':last').addClass('fa fa-check-square fa-sm check-square-off');
         }
+    },
+
+    /**
+     * Updates the styling and action of the error pane toggle button depending on the
+     * current state of the error table
+     */
+    this.updateErrorPaneToggleButton = function() {
+
+        if ($('#Error-table > tbody > tr').length) {
+
+            // Error pane toggle button should be ungreyed and have action
+            $('#ButtonToggleErrorPane').click(function() {
+                myLayout.toggle('south');
+            });
+            $('#ButtonToggleErrorPane > i').addClass('fa fa-exclamation-triangle exclamation-triangle-on');
+        } else {
+
+            // Error pane toggle button should be greyed out and have no action
+            $('#ButtonToggleErrorPane > i').addClass('fa fa-exclamation-triangle exclamation-triangle-off');
+        }
+
+        // Set the correct tooltip for the error pane toggle button
+        $('#ButtonToggleErrorPane').attr('data-original-title', project.isBeingValidated ?
+            translate('LBL_PMSE_VALIDATOR_TOOLTIP_IN_PROGRESS') :
+            currentErrorTable.rows.length + translate('LBL_PMSE_VALIDATOR_TOOLTIP_ISSUES'));
     };
 };
 
@@ -1711,138 +1838,39 @@ var ValidationProgressTracker = function(silent) {
  * @param  {Object} element is the element on the canvas that is currently being examined/validated
  */
 var validateNumberOfEdges = function(minIncoming, maxIncoming, minOutgoing, maxOutgoing, element) {
-    var incomingEdges = element.getPorts().asArray().filter(function(edge) {
-        return edge.connection.srcPort.parent.id !== element.id;
-    });
-    var outgoingEdges = element.getDestElements();
+    var incomingEdges = element.getSourceElements().length;
+    var outgoingEdges = element.getDestElements().length;
     // Depending on element type, check proper number of incoming and outgoing edges
-    if (minIncoming && incomingEdges.length < minIncoming) {
+    if (minIncoming && incomingEdges < minIncoming) {
         createWarning(element, 'LBL_PMSE_ERROR_FLOW_INCOMING_MINIMUM', minIncoming);
     }
-    if (maxIncoming && incomingEdges.length > maxIncoming) {
+    if (maxIncoming && incomingEdges > maxIncoming) {
         createWarning(element, 'LBL_PMSE_ERROR_FLOW_INCOMING_MAXIMUM', maxIncoming);
     }
-    if (minOutgoing && outgoingEdges.length < minOutgoing) {
+    if (minOutgoing && outgoingEdges < minOutgoing) {
         createWarning(element, 'LBL_PMSE_ERROR_FLOW_OUTGOING_MINIMUM', minOutgoing);
     }
-    if (maxOutgoing && outgoingEdges.length > maxOutgoing) {
+    if (maxOutgoing && outgoingEdges > maxOutgoing) {
         createWarning(element, 'LBL_PMSE_ERROR_FLOW_OUTGOING_MAXIMUM', maxOutgoing);
     }
 };
 
 /**
- * Validates that the criterion is valid in the current instance of Sugar. The field names in the
- * criterionTypes variable are meant to match with criterion type IDs that occur in element settings
- * data. This way, we can simply pass in the information from a piece of criteria and this function
- * will validate it. Some fields in criterionTypes check the same thing; this is because some criteria
- * boxes contain criterion type IDs that differ from other criteria boxes' type IDs, but have the same
- * meaning. For each entry in criterionTypes, 'url' is the endpoint URL to search, 'key' is the unique
- * value to search for at that endpoint, and 'text' is the readable representation of type of criterion
- * we are validating.
- *
- * @param {string} type represents the type of criterion being validated
- * @param {string} module is the module ID of the piece of criterion
- * @param {string} field is the field ID of the piece of criterion
- * @param {string} value is the value of the piece of criterion
+ * Validates that the data the criterion atom refers to exists in the database.
+ * @param {string} type is the type attribute of the atom being validated
+ * @param {string} module is the module attribute of the atom being validated
+ * @param {string} field is the field attribute of the atom being validated
+ * @param {string} value is the value attribute of the atom being validated
  * @param {Object} element is the element on the canvas that is currently being examined/validated
  * @param {Object} validationTools is a collection of utility functions for validating element data
  */
 var validateAtom = function(type, module, field, value, element, validationTools) {
     var i;
-    var searchInfo;
-    var criterionTypes = {
-        'MODULE': {
-            // Validates a module field criterion
-            url: App.api.buildURL('pmse_Project/CrmData/fields/' + module + '?base_module=' + getTargetModule()),
-            key: field,
-            text: 'Module field'
-        },
-        'VARIABLE': {
-            // Validates a module field criterion
-            url: App.api.buildURL('pmse_Project/CrmData/fields/' + module + '?base_module=' + getTargetModule()),
-            key: value,
-            text: 'Module field'
-        },
-        'recipient': {
-            // Validates a module field criterion
-            url: App.api.buildURL('pmse_Project/CrmData/fields/' + module + '?base_module=' + getTargetModule()),
-            key: value,
-            text: 'Module field'
-        },
-        'USER_IDENTITY': {
-            // Validates a user criterion
-            url: App.api.buildURL('pmse_Project/CrmData/users/'),
-            key: value,
-            text: 'User'
-        },
-        'USER_ROLE': {
-            // Validates a role criterion
-            url: App.api.buildURL('pmse_Project/CrmData/rolesList/'),
-            key: value,
-            text: 'Role'
-        },
-        'role': {
-            // Validates a role criterion
-            url: App.api.buildURL('pmse_Project/CrmData/rolesList/'),
-            key: value,
-            text: 'Role'
-        },
-        'RELATIONSHIP': {
-            // Validates a module relationship criterion
-            url: App.api.buildURL('pmse_Project/CrmData/related/' + getTargetModule()),
-            key: value,
-            text: 'Module relationship'
-        },
-        'user': {
-            // Validates a module relationship criterion
-            url: App.api.buildURL('pmse_Project/CrmData/related/' + getTargetModule()),
-            key: module,
-            text: 'Module relationship'
-        },
-        'TEAM': {
-            // Validates a team criterion
-            url: App.api.buildURL('pmse_Project/CrmData/teams/public/'),
-            key: value,
-            text: 'Team'
-        },
-        'team': {
-            // Validates a team criterion
-            url: App.api.buildURL('pmse_Project/CrmData/teams/public/'),
-            key: value,
-            text: 'Team'
-        },
-        'CONTROL': {
-            // Validates a form response criterion
-            url: App.api.buildURL('pmse_Project/CrmData/activities/' + project.uid),
-            key: field,
-            text: 'Form activity'
-        },
-        'ALL_BUSINESS_RULES': {
-            // Validates a business rule criterion
-            url: App.api.buildURL('pmse_Project/CrmData/rulesets/' + project.uid),
-            key: value,
-            text: 'Business rule'
-        },
-        'BUSINESS_RULES': {
-            // Validates a business rule action criterion
-            url: App.api.buildURL('pmse_Project/CrmData/businessrules/' + project.uid),
-            key: field,
-            text: 'Business rule action'
-        },
-        'TEMPLATE': {
-            // Validates an email template criterion
-            url: App.api.buildURL('pmse_Project/CrmData/emailtemplates/' + getTargetModule()),
-            key: value,
-            text: 'Email template'
-        }
-    };
+    var searchInfo = getSearchInfo(type, module, field, value);
     var options = {
         'bulk': 'validate_element_settings'
     };
-    if (criterionTypes[type]) {
-        searchInfo = criterionTypes[type];
-    }
-    if (searchInfo) {
+    if (searchInfo.url) {
         validationTools.progressTracker.incrementTotalValidations();
         App.api.call('read', searchInfo.url, null, {
             success: function(data) {
@@ -1864,9 +1892,86 @@ var validateAtom = function(type, module, field, value, element, validationTools
 };
 
 /**
+ * Returns the correct API endpoint URL, key to search for at that endpoint, and a text
+ * representation of the endpoint type, based upon the criterion atom attributes
+ * @param {string} type is the type attribute of the atom being validated
+ * @param {string} module is the module attribute of the atom being validated
+ * @param {string} field is the field attribute of the atom being validated
+ * @param {string} value is the value attribute of the atom being validated
+ * @return {Object} an object containing the correct URL, search key, and text
+ */
+var getSearchInfo = function(type, module, field, value) {
+
+    var url;
+    var text;
+    var key;
+
+    switch (type) {
+        case 'MODULE':
+            key = field;
+        case 'VARIABLE':
+        case 'recipient':
+            url = App.api.buildURL('pmse_Project/CrmData/fields/' + module + '?base_module=' + getTargetModule());
+            text = 'Module field';
+            key = key || value;
+            break;
+        case 'USER_IDENTITY':
+            url = App.api.buildURL('pmse_Project/CrmData/users/');
+            text = 'User';
+            key = value;
+            break;
+        case 'USER_ROLE':
+        case 'role':
+            url = App.api.buildURL('pmse_Project/CrmData/rolesList/');
+            text = 'Role';
+            key = value;
+            break;
+        case 'RELATIONSHIP':
+            key = value;
+        case 'user':
+            url = App.api.buildURL('pmse_Project/CrmData/related/' + getTargetModule());
+            text = 'Module relationship';
+            key = key || module;
+            break;
+        case 'TEAM':
+        case 'team':
+            url = App.api.buildURL('pmse_Project/CrmData/teams/public/');
+            text = 'Team';
+            key = value;
+            break;
+        case 'CONTROL':
+            url = App.api.buildURL('pmse_Project/CrmData/activities/' + project.uid);
+            text = 'Form activity';
+            key = field;
+            break;
+        case 'ALL_BUSINESS_RULES':
+            url = App.api.buildURL('pmse_Project/CrmData/rulesets/' + project.uid);
+            text = 'Business rule';
+            key = value;
+            break;
+        case 'BUSINESS_RULES':
+            url = App.api.buildURL('pmse_Project/CrmData/businessrules/' + project.uid);
+            text = 'Business rule action';
+            key = field;
+            break;
+        case 'TEMPLATE':
+            url = App.api.buildURL('pmse_Project/CrmData/emailtemplates/' + getTargetModule());
+            text = 'Email template';
+            key = value;
+            break;
+    };
+
+    return {
+        url: url,
+        text: text,
+        key: key
+    };
+};
+
+/**
  * Adds a new warning to the error list table
  * @param {Object} element is the element on the canvas that is currently being examined/validated
- * @param {string} description contains the error text to be presented to the user about the error
+ * @param {string} warningLabel contains the error text to be presented to the user about the error
  * @param {string} field is an optional value representing a specific field that the error refers to
  */
 var createWarning = function(element, warningLabel, field) {
@@ -1876,17 +1981,36 @@ var createWarning = function(element, warningLabel, field) {
 /**
  * Adds a new error to the error list table
  * @param {Object} element is the element on the canvas that is currently being examined/validated
- * @param {string} description contains the error text to be presented to the user about the error
+ * @param {string} errorLabel contains the error text to be presented to the user about the error
  * @param {string} field is an optional value representing a specific field that the error refers to
  */
 var createError = function(element, errorLabel, field, warning) {
 
     // Get the information about the error
-    var elementName = element.getName();
     var errorName = field ? (translate(errorLabel) + ': ' + field) : translate(errorLabel);
     var errorInfo = translate(errorLabel + '_INFO');
 
-    // Find the correct row in the table for the error, based alphabetically by the element name
+    // Insert a new row into the error table at the correct index
+    var newRow = createErrorRow(element);
+
+    // Insert new cells into the new table row
+    var nameCell = newRow.insertCell(0);
+    var errorCell = newRow.insertCell(1);
+
+    // Insert the contents into the new table row cells
+    nameCell.appendChild(createErrorName(element));
+    errorCell.appendChild(createErrorIcon(warning));
+    errorCell.appendChild(createErrorText(errorName, errorInfo));
+
+    // Update the error/warning status of the element for adding marker icons
+    if (warning) {
+        element.hasWarning = true;
+    } else {
+        element.hasError = true;
+    }
+};
+
+var createErrorRow = function(element) {
     var rowNumber;
     var otherElement;
     for (rowNumber = 0; rowNumber < currentErrorTable.rows.length; rowNumber++) {
@@ -1895,34 +2019,14 @@ var createError = function(element, errorLabel, field, warning) {
             break;
         }
     }
+    return currentErrorTable.insertRow(rowNumber);
+};
 
-    // Insert a new row into the error table at the correct index
-    var newRow = currentErrorTable.insertRow(rowNumber);
-
-    // Insert new cells into the new table row
-    var nameCell = newRow.insertCell(0);
-    var errorCell = newRow.insertCell(1);
-
-    // Create the elements that will go into the cells
-    var typeIcon = document.createElement('i');
+var createErrorName = function(element) {
     var nameText = document.createElement('a');
-    var errorText = document.createElement('span');
-
-    // Set the icon type for the error
-    typeIcon.setAttribute('rel', 'tooltip');
-    typeIcon.setAttribute('data-placement', 'top');
-    if (warning) {
-        typeIcon.setAttribute('class', 'fa fa-exclamation-triangle fa');
-        typeIcon.setAttribute('style', 'color: #FFCC00');
-        typeIcon.setAttribute('data-original-title', translate('LBL_PMSE_VALIDATOR_WARNING_INFO'));
-    } else {
-        typeIcon.setAttribute('class', 'fa fa-exclamation-circle fa');
-        typeIcon.setAttribute('style', 'color: red');
-        typeIcon.setAttribute('data-original-title', translate('LBL_PMSE_VALIDATOR_ERROR_INFO'));
-    }
 
     // Set the text content and click handler of the name cell element
-    nameText.textContent = elementName;
+    nameText.textContent = element.getName();
     nameText.onclick = function() {
 
         // When the user clicks the element name, select the element on the canvas and center the canvas view
@@ -1932,23 +2036,38 @@ var createError = function(element, errorLabel, field, warning) {
         centerCanvasOnElement(element);
     };
 
+    return nameText;
+};
+
+var createErrorIcon = function(warning) {
+    var errorIcon = document.createElement('i');
+
+    // Set the icon type for the error
+    errorIcon.setAttribute('rel', 'tooltip');
+    errorIcon.setAttribute('data-placement', 'top');
+    if (warning) {
+        errorIcon.setAttribute('class', 'fa fa-exclamation-triangle fa');
+        errorIcon.setAttribute('style', 'color: #FFCC00');
+        errorIcon.setAttribute('data-original-title', translate('LBL_PMSE_VALIDATOR_WARNING_INFO'));
+    } else {
+        errorIcon.setAttribute('class', 'fa fa-exclamation-circle fa');
+        errorIcon.setAttribute('style', 'color: red');
+        errorIcon.setAttribute('data-original-title', translate('LBL_PMSE_VALIDATOR_ERROR_INFO'));
+    }
+
+    return errorIcon;
+};
+
+var createErrorText = function(errorName, errorInfo) {
+    var errorText = document.createElement('span');
+
     // Set the text content and tooltip of the error cell element
     errorText.textContent = '  ' + errorName;
     errorText.setAttribute('rel', 'tooltip');
     errorText.setAttribute('data-placement', 'top');
     errorText.setAttribute('data-original-title', errorInfo);
 
-    // Add the new elements to the cells
-    nameCell.appendChild(nameText);
-    errorCell.appendChild(typeIcon);
-    errorCell.appendChild(errorText);
-
-    // Update the error/warning status of the element for adding marker icons
-    if (warning) {
-        element.hasWarning = true;
-    } else {
-        element.hasError = true;
-    }
+    return errorText;
 };
 
 /**
@@ -1970,11 +2089,19 @@ var centerCanvasOnElement = function(element) {
 };
 
 /**
- * CriteriaEvaluator provides a way to analyze gateway criteria box logic.
- * The addOr or addAnd methods accept gateway flo_criteria JSON objects,
- * and can be used to build larger statements across multiple criteria
- * boxes. Included are methods to determine whether the logical statement
- * is always true or always false.
+ * Returns the target module of the current process definition being designed
+ * @return {string} The name of the target module
+ */
+var getTargetModule = function() {
+    return project.process_definition.pro_module;
+};
+
+/**
+ * CriteriaEvaluator provides a way to analyze logical statements in a
+ * criteria box. The addOr or addAnd methods accept JSON objects from
+ * parsed criteria boxes, and can be used to build larger statements
+ * across multiple criteria boxes. Included are methods to determine
+ * whether the logical statement is always true or always false.
  */
 var CriteriaEvaluator = function() {
     this.criteria = [],
@@ -1988,34 +2115,36 @@ var CriteriaEvaluator = function() {
     /**
      * Appends a logical statement onto the current one represented by this
      * CriteriaEvaluator as an OR
-     * @param {Array} newCriteria is an array of criteria JSON elements parsed
+     * @param {Array} newCriteria is an array of JSON objects parsed
      *                from a set of criteria box data
      */
     this.addOr = function(newCriteria) {
-        var newOR;
         if (newCriteria.length) {
             if (this.criteria.length) {
-                newOR = new Operand('LOGIC', undefined, undefined, undefined, 'OR');
-                this.criteria.push(newOR);
+                this.criteria.push({
+                    expType: 'LOGIC',
+                    expValue: 'OR'
+                });
             }
-            this.criteria.push(this.changeCriteriaIntoEvaluableStructure(newCriteria));
+            this.criteria.push(this.simplifyCriteria(newCriteria));
         }
     },
 
     /**
      * Appends a logical statement onto the current one represented by this
      * CriteriaEvaluator as an AND
-     * @param {Array} newCriteria is an array of criteria JSON elements parsed
+     * @param {Array} newCriteria is an array of JSON objects parsed
      *                from a set of criteria box data
      */
     this.addAnd = function(newCriteria) {
-        var newAND;
         if (newCriteria.length) {
             if (this.criteria.length) {
-                newAND = new Operand('LOGIC', undefined, undefined, undefined, 'AND');
-                this.criteria.push(newAND);
+                this.criteria.push({
+                    expType: 'LOGIC',
+                    expValue: 'AND'
+                });
             }
-            this.criteria.push(this.changeCriteriaIntoEvaluableStructure(newCriteria));
+            this.criteria.push(this.simplifyCriteria(newCriteria));
         }
     },
 
@@ -2025,24 +2154,19 @@ var CriteriaEvaluator = function() {
      * @return {boolean} true if there is no way for the statement to be false; false otherwise
      */
     this.isAlwaysTrue = function() {
-        var i;
-        var logicTracker;
-        var possibilities;
-        if (!this.emptyCriteriaIsTrue && !this.criteria.length) {
-            return false;
+        var result;
+
+        // If criteria is empty, and empty criteria is true, then the statement
+        // is always true, so return true
+        if (!this.criteria.length) {
+            return this.emptyCriteriaIsTrue ? true : false;
         }
+
+        // If the negation of the statement is always false, then the statement is always true
         this.negateExpression(this.criteria);
-        possibilities = this.generatePossibilities(this.criteria.slice());
-        for (i = 0; i < possibilities.length; i++) {
-            logicTracker = new LogicTracker();
-            logicTracker.add(possibilities[i]);
-            if (logicTracker.evaluate()) {
-                this.negateExpression(this.criteria);
-                return false;
-            }
-        }
+        result = this.isAlwaysFalse();
         this.negateExpression(this.criteria);
-        return true;
+        return result;
     },
 
     /**
@@ -2052,70 +2176,65 @@ var CriteriaEvaluator = function() {
      */
     this.isAlwaysFalse = function() {
         var i;
-        var logicTracker;
+        var usersLogic;
+
+        // Get a list of all possible ways the statement could be true
         var possibilities = this.generatePossibilities(this.criteria.slice());
-        if (this.emptyCriteriaIsTrue && !this.criteria.length) {
-            return false;
+
+        // If criteria is empty, and empty criteria is true, then the statement
+        // is always true, so return true
+        if (!this.criteria.length) {
+            return this.emptyCriteriaIsTrue ? false : true;
         }
+
+        // If one of the possible ways for the statement to be true is
+        // actually valid, then return false
         for (i = 0; i < possibilities.length; i++) {
-            logicTracker = new LogicTracker();
-            logicTracker.add(possibilities[i]);
-            if (logicTracker.evaluate()) {
+            usersLogic = new LogicTracker();
+            usersLogic.add(possibilities[i]);
+            if (usersLogic.isValid()) {
                 return false;
             }
         }
+
+        // If we reach this point, there are no valid possibilities for the
+        // statement to be true, so it must be always false
         return true;
     },
 
     /**
-     * Converts a JSON-parsed criteria array into an array of Operand objects and
-     * simplifies the statement by getting rid of any '( )' groupings and 'NOT'
+     * Simplifies JSON-parsed criteria by getting rid of any '( )' groupings and 'NOT'
      * statements
-     * @param  {Array} criteria is the JSON-parsed criteria array obtained from criteria box data
-     * @return {Array} an array of Operand objects that represents a simplified version of the
-     *                 original criteria array
+     * @param  {Array} criteria is array of JSON objects parsed from a set of criteria box data
+     * @return {Array} an array of the simplified criteria objects
      */
-    this.changeCriteriaIntoEvaluableStructure = function(criteria) {
-        // Convert the elements of the criteria into easy-to-work-with Operand objects
-        this.convertToOperandObjects(criteria);
+    this.simplifyCriteria = function(criteria) {
+
         // Convert all '( )' enclosed expressions in the criteria into nested arrays
         criteria = this.getRidOfParentheses(criteria);
+
         // Perform all negations in the expression in order to remove all 'NOT' Operands
         this.getRidOfNOTs(criteria);
+
         return criteria;
     },
 
     /**
-     * Converts the array of criteria box data into an array of Operand objects
-     * @param  {Array} criteria is the JSON-parsed criteria array obtained from criteria box data
-     */
-    this.convertToOperandObjects = function(criteria) {
-        var i;
-        for (i = 0; i < criteria.length; i++) {
-            criteria[i] = new Operand(
-                criteria[i].expType || undefined,
-                criteria[i].expModule || undefined,
-                criteria[i].expField || undefined,
-                criteria[i].expOperator || undefined,
-                criteria[i].expValue || undefined
-            );
-        }
-    },
-
-    /**
-     * Adjusts an array of Operand objects to remove any '(' and ')' Operands groupings, and replace
-     * the groupings with nested arrays of Operand objects that are easier to work with.
-     * @param  {Array} criteria is an array of Operand objects representing a criteria box logical statement
-     * @return {Array} newCriteria is a new array representing the original array after converting its
-     *                 nested statements into nested arrays
+     * Takes an array of atom objects and removes any '()' parenthesized groupings by
+     * replacing the groupings with nested arrays that are easier to work with.
+     * @param  {Array} criteria is array of JSON objects parsed from a set of criteria box data
+     * @return {Array} an array consisting of the original criteria data, but with parentheses
+     *                 removed and nested parenthesized groupings converted to nested arrays
      */
     this.getRidOfParentheses = function(criteria) {
         var newCriteria = [];
+
+        // Recursively convert parenthesized statements into arrays instead
         while (criteria.length) {
-            if (criteria[0].type === 'GROUP' && criteria[0].value === '(') {
+            if (criteria[0].expType === 'GROUP' && criteria[0].expValue === '(') {
                 criteria.shift();
                 newCriteria.push(this.getRidOfParentheses(criteria));
-            } else if (criteria[0].type === 'GROUP' && criteria[0].value === ')') {
+            } else if (criteria[0].expType === 'GROUP' && criteria[0].expValue === ')') {
                 criteria.shift();
                 return newCriteria;
             } else {
@@ -2126,23 +2245,26 @@ var CriteriaEvaluator = function() {
     },
 
     /**
-     * Performs any negation within an array of Operand objects, and removes the 'NOT' Operands.
-     * @param  {Array} criteria is an array of Operand objects that has had any nested statements
-     *                 converted to nested arrays via the getRidOfParentheses() method
-     * @return {Array} the array after negation has been performed and all 'NOT' Operands have been removed.
+     * Performs any negation within an array of JSON-parsed criteria, and removes the 'NOT' operators.
+     * @param  {Array} criteria is array of JSON objects parsed from a set of criteria box data
+     *                 that has had any parenthesized statements converted to nested arrays via the
+     *                 getRidOfParentheses() method
+     * @return {Array} an array consisting of criteria equivalent to the given criteria, but with 'NOT'
+     *                 statements removed
      */
     this.getRidOfNOTs = function(criteria) {
         var i;
-        // Recurse to the inner depths first
+
+        // Recurse to the innermost arrays first
         for (i = 0; i < criteria.length; i++) {
             if (Array.isArray(criteria[i])) {
                 criteria[i] = this.getRidOfNOTs(criteria[i]);
             }
         }
 
-        // If we encounter a 'NOT', remove the not from the list, and invert the following expression
+        // If we encounter a 'NOT' operator, remove it from criteria, and invert the following expression
         for (i = 0; i < criteria.length; i++) {
-            if (criteria[i].type === 'LOGIC' && criteria[i].value === 'NOT') {
+            if (criteria[i].expType === 'LOGIC' && criteria[i].expValue === 'NOT') {
                 criteria.splice(i, 1);
                 this.negateExpression(criteria[i]);
             }
@@ -2155,73 +2277,83 @@ var CriteriaEvaluator = function() {
      * true. Note that this does not mean each combination is possible or valid, as it does not take
      * into account contradictions among operators and values. Each subarray of the returned array
      * can be thought of as an 'OR' with the other subarrays. Within each of those subarrays, each
-     * Operand can be thought of as an 'AND' with the other Operands.
-     * @param  {Array} criteria is an array of criteria box data that has been converted via the
-     *                 changeCriteriaIntoEvaluableStructure() method
-     * @return {Array} an array of subarrays; each subarray is a collection of Operands that represents
+     * criteria atom can be thought of as an 'AND' with the other criteria atoms.
+     * @param  {Array} criteria is array of JSON objects parsed from a set of criteria box data that
+     *                 has been simplified via the simplifyCriteria method
+     * @return {Array} an array of subarrays; each subarray is a collection of criteria atoms that represents
      *                 a possible combination of 'AND's that could render the logical statement true
      */
     this.generatePossibilities = function(criteria) {
         var i;
         var j;
         var k;
-        var l;
         var dataToReturn = [];
         var temp = [[]];
         var combinations;
-        var possibility;
 
-        // Start by going into the bottom of each parentheses group recursively
+        // Recurse into the innermost nested/parenthesized statement
         for (i = 0; i < criteria.length; i++) {
             if (Array.isArray(criteria[i])) {
                 criteria[i] = this.generatePossibilities(criteria[i]);
             }
         }
+
         // Iterate through the criteria, and add each possible combination of
         // criteria values as subarrays to the dataToReturn array
         for (i = 0; i < criteria.length; i++) {
-            // If we reach an 'OR', start a new subarray
-            if (criteria[i].type === 'LOGIC' && criteria[i].value === 'OR') {
+
+            if (criteria[i].expType === 'LOGIC' && criteria[i].expValue === 'OR') {
+
+                // We've reached an OR statement, so add the temporary array contents
+                // to dataToReturn and start a new temporary array
                 for (j = 0; j < temp.length; j++) {
                     dataToReturn.push(temp[j]);
                 }
-                // dataToReturn = dataToReturn.concat(temp);
                 temp = [[]];
             } else if (Array.isArray(criteria[i])) {
+
                 // If we encounter an array at this point, it has already been
-                // evaluated to an array of subarrays. Combine all possible
-                // combinations of the subarrays with the current temp array.
+                // evaluated to an array of subarrays. Afterward, temp should
+                // consist of all possible combinations of the subarrays with
+                // the current temp subarrays.
                 combinations = [];
                 for (j = 0; j < temp.length; j++) {
                     for (k = 0; k < criteria[i].length; k++) {
-                        possibility = temp[j].concat(criteria[i][k]);
-                        combinations.push(possibility);
+                        combinations.push(temp[j].concat(criteria[i][k]));
                     }
                 }
                 temp = combinations;
-            } else if (criteria[i].type !== 'LOGIC') {
-                // If we encounter a single expression, add it to the temp array
+            } else if (criteria[i].expType !== 'LOGIC') {
+
+                // If we encounter a single expression, add it to all temp subarrays
                 for (j = 0; j < temp.length; j++) {
                     temp[j].push(criteria[i]);
                 }
             }
         }
+
         // Since we have finished iterating, check if temp has unpushed elements
         for (i = 0; i < temp.length; i++) {
             if (temp[i].length) {
                 dataToReturn.push(temp[i]);
             }
         }
+
         return dataToReturn;
     },
 
     /**
-     * Negates the given expression, either an Operand or array of Operands
-     * @param  {Array} expression is an Operand object or array of Operand objects. This
-     *                 array should not contain any '(', ')', or 'NOT' Operands.
+     * Negates the given expression, either a single criterion atom object or array of
+     * criterion atom objects
+     * @param  {Object} expression is either a single criterion atom object from parsed
+     *                 criteria box data, or an array of them. This array should not
+     *                 contain any '(', ')', or 'NOT' operators.
      */
     this.negateExpression = function(expression) {
         var i;
+
+        // If the expression is an array of expressions, then negate it recursively.
+        // Otherwise, negate the single expression
         if (Array.isArray(expression)) {
             for (i = 0; i < expression.length; i++) {
                 this.negateExpression(expression[i]);
@@ -2232,11 +2364,12 @@ var CriteriaEvaluator = function() {
     },
 
     /**
-     * Negates a single Operand object
-     * @param  {Operand} expression is a single Operand object. It must not be a '(',
-     *                   ')', or 'NOT' Operand.
+     * Negates a single criterion atom object's operator
+     * @param  {Object} expression is a single criterion atom object. It must not be a
+     *                  '(', ')', or 'NOT' operator.
      */
     this.negateSingleExpression = function(expression) {
+
         // Provides mappings for negations of logic values
         var invertLogic = {
             'equals': 'not_equals',
@@ -2250,45 +2383,51 @@ var CriteriaEvaluator = function() {
             'AND': 'OR',
             'OR': 'AND'
         };
-        if (expression.type === 'LOGIC') {
-            expression.value = invertLogic[expression.value];
+        if (expression.expType === 'LOGIC') {
+
+            // Inverts AND/OR logic operators
+            expression.expValue = invertLogic[expression.expValue];
         } else {
-            expression.operator = invertLogic[expression.operator];
+
+            // Inverts all other logic operators
+            expression.expOperator = invertLogic[expression.expOperator];
         }
     };
 };
 
 /**
  * LogicTracker stores a collection of LogicAtoms which together hold the
- * information about an entire logical statement in a criteria box. Its
- * evaluate function will return true only if all LogicAtoms it contains
- * are valid
+ * information about an entire logical statement in a criteria box, and can
+ * be used to evauate the logical statement
  */
 var LogicTracker = function() {
     this.atoms = [],
 
     /**
-     * Adds an array of operand objects to this LogicTracker
-     * @param {Array} operands is an array of Operand objects. This array
-     *                should contain only property Operands (no 'AND', 'OR',
-     *                '(', ')', or 'NOT' Operands). Each Operand of this array
-     *                is considered an 'AND' with each of the other Operands
+     * Adds an array of criteria to this LogicTracker
+     * @param {Array} criteria is an array in the form produced by the generatePossibilities
+     *                function of the CriteriaEvaluator object, where the array
+     *                consists of subarrays, and each subarray consists of a
+     *                collection of criterion atoms (no ANDs, ORs, NOTs, or parentheses) that
+     *                represent a chain of AND statements
      */
-    this.add = function(operands) {
+    this.add = function(criteria) {
         var i;
         var k;
         var found = false;
         var newAtom;
-        for (i = 0; i < operands.length; i++) {
+        for (i = 0; i < criteria.length; i++) {
             found = false;
 
-            // Check if the property referenced by the Operand already
-            // exists in the logic tracker, and update it if it does
+            // For each criterion atom in the criteria, check if the data it refers to
+            // (user, module field, etc.) has been added already to this LogicTracker.
+            // If it has, then update the entry in this LogicTracker with the operator
+            // and value of the criterion atom.
             for (k = 0; k < this.atoms.length; k++) {
-                if (operands[i].type === this.atoms[k].type) {
-                    if (operands[i].module === this.atoms[k].module) {
-                        if (operands[i].field === this.atoms[k].field) {
-                            this.atoms[k].add(operands[i].operator, operands[i].value);
+                if (criteria[i].expType === this.atoms[k].type) {
+                    if (criteria[i].expModule === this.atoms[k].module) {
+                        if (criteria[i].expField === this.atoms[k].field) {
+                            this.atoms[k].add(criteria[i].expOperator, criteria[i].expValue);
                             found = true;
                             break;
                         }
@@ -2296,26 +2435,24 @@ var LogicTracker = function() {
                 }
             }
 
-            // Otherwise, create a new entry in the logic tracker
+            // Otherwise, create a new unique entry in this LogicTracker using the
+            // expType, expModule, and expFields as a key.
             if (!found) {
-                newAtom = new LogicAtom(operands[i].type, operands[i].module, operands[i].field);
-                newAtom.add(operands[i].operator, operands[i].value);
+                newAtom = new LogicAtom(criteria[i].expType, criteria[i].expModule, criteria[i].expField);
+                newAtom.add(criteria[i].expOperator, criteria[i].expValue);
                 this.atoms.push(newAtom);
             }
         }
     },
 
     /**
-     * Evaluates whether the group of LogicAtoms represented by this LogicTracker are all valid
+     * Evaluates whether it is possible for the logical statement represented by this LogicTracker to be true
      * @return {boolean} true if the logical statement represented by this LogicTracker is valid; false otherwise
      */
-    this.evaluate = function() {
+    this.isValid = function() {
         var i;
-        if (!this.atoms.length) {
-            return false;
-        }
         for (i = 0; i < this.atoms.length; i++) {
-            if (!this.atoms[i].evaluate()) {
+            if (!this.atoms[i].isValid()) {
                 return false;
             }
         }
@@ -2325,19 +2462,19 @@ var LogicTracker = function() {
 
 /**
  * LogicAtom represents a single property referenced in a logical expression.
- * It holds information about all constraints placed on that property
- * throughout the entire expression. Its evaluate function allows us to
- * evaluate whether all the constraints placed on a property in a logical
- * expression are valid when combined together.
- * @param {string} type is the type of Operand that this LogicAtom represents
- * @param {string} module is the module of the property that this LogicAtom represents
- * @param {field} field is the field of the property that his LogicAtom represents
+ * It holds information about all constraints placed on that property, and can
+ * be used to evaluate the constraints together. A property is defined by a
+ * unique key combination of expType, expModule, and expField fields from a
+ * criterion atom object.
+ * @param {string} type is the expType field of the property
+ * @param {string} module is the expModule field of the property
+ * @param {field} field is the expField field of the property
  */
-var LogicAtom = function(type, module, field) {
+var LogicAtom = function(expType, expModule, expField) {
 
-    this.type = type,
-    this.module = module,
-    this.field = field,
+    this.type = expType,
+    this.module = expModule,
+    this.field = expField,
     this.operators = {
         'equals': [],
         'not_equals': [],
@@ -2355,7 +2492,9 @@ var LogicAtom = function(type, module, field) {
      * @param {string} value is the specific value of the constraint
      */
     this.add = function(operator, value) {
-        this.operators[operator].push(value);
+        if (this.operators[operator]) {
+            this.operators[operator].push(value);
+        }
     },
 
     /**
@@ -2365,49 +2504,42 @@ var LogicAtom = function(type, module, field) {
      * contain values that they are also required not to contain, etc.
      * @return {boolean} true if this LogicAtom is valid; false otherwise
      */
-    this.evaluate = function() {
-        var equals = this.operators.equals;
-        var notEquals = this.operators.not_equals;
-        var startsWith = this.operators.starts_with;
-        var notStartsWith = this.operators.not_starts_with;
-        var endsWith = this.operators.ends_with;
-        var notEndsWith = this.operators.not_ends_with;
-        var contains = this.operators.contains;
-        var notContains = this.operators.does_not_contain;
+    this.isValid = function() {
         var result = true;
 
         // Check for any contradictions from 'is' constraints
-        if (this.operators.equals.length) {
+        if (result && this.operators.equals.length) {
             if (this.type !== 'USER_ROLE') {
+
                 // Exception for roles (users can have multiple roles)
-                result = result && arrayContainsOneDistinctValue(equals);
+                result = result && arrayContainsOneDistinctValue(this.operators.equals);
             }
-            result = result && arrayDoesNotContainValues(equals, notEquals);
-            result = result && wordsStartWithPrefixes(equals, startsWith);
-            result = result && wordsDoNotStartWithPrefixes(equals, notStartsWith);
-            result = result && wordsEndWithSuffixes(equals, endsWith);
-            result = result && wordsDoNotEndWithSuffixes(equals, notEndsWith);
-            result = result && wordsContainSubstrings(equals, contains);
-            result = result && wordsDoNotContainSubstrings(equals, notContains);
+            result = result && arrayDoesNotContainValues(this.operators.equals, this.operators.not_equals) &&
+                wordsStartWithPrefixes(this.operators.equals, this.operators.starts_with) &&
+                wordsDoNotStartWithPrefixes(this.operators.equals, this.operators.not_starts_with) &&
+                wordsEndWithSuffixes(this.operators.equals, this.operators.ends_with) &&
+                wordsDoNotEndWithSuffixes(this.operators.equals, this.operators.not_ends_with) &&
+                wordsContainSubstrings(this.operators.equals, this.operators.contains) &&
+                wordsDoNotContainSubstrings(this.operators.equals, this.operators.does_not_contain);
         }
 
         // Check for any contradictions from 'starts with' constraints
-        if (this.operators.starts_with.length) {
-            result = result && multiplePrefixesAreAllValid(startsWith);
-            result = result && wordsDoNotStartWithPrefixes(startsWith, notStartsWith);
-            result = result && wordsDoNotContainSubstrings(startsWith, notContains);
+        if (result && this.operators.starts_with.length) {
+            result = result && multiplePrefixesAreAllValid(this.operators.starts_with) &&
+                wordsDoNotStartWithPrefixes(this.operators.starts_with, this.operators.not_starts_with) &&
+                wordsDoNotContainSubstrings(this.operators.starts_with, this.operators.does_not_contain);
         }
 
         // Check for any contradictions from 'ends with' constraints
-        if (this.operators.ends_with.length) {
-            result = result && multipleSuffixesAreAllValid(endsWith);
-            result = result && wordsDoNotEndWithSuffixes(endsWith, notEndsWith);
-            result = result && wordsDoNotContainSubstrings(endsWith, notContains);
+        if (result && this.operators.ends_with.length) {
+            result = result && multipleSuffixesAreAllValid(this.operators.ends_with) &&
+                wordsDoNotEndWithSuffixes(this.operators.ends_with, this.operators.not_ends_with) &&
+                wordsDoNotContainSubstrings(this.operators.ends_with, this.operators.does_not_contain);
         }
 
         // Check for any contradictions from 'contains' constraints
-        if (this.operators.contains.length) {
-            result = result && wordsDoNotContainSubstrings(contains, notContains);
+        if (result && this.operators.contains.length) {
+            result = result && wordsDoNotContainSubstrings(this.operators.contains, this.operators.does_not_contain);
         }
 
         return result;
@@ -2554,22 +2686,27 @@ var LogicAtom = function(type, module, field) {
 
     /**
      * Checks whether all string values in the array could represent the beginning of the same word.
-     * For example, ['app', 'appl', 'a', 'apple'] are all valid suffixes of the word 'apple'
+     * For example, ['app', 'appl', 'a', 'apple'] are all valid prefixes of the word 'apple'
      * @param  {Array} array is an array of string values
      * @return {boolean} false if any prefixes contradict each other; true otherwise
      */
     multiplePrefixesAreAllValid = function(array) {
-        var currWord;
         var i;
+        var k;
+
+        // Sort the array in order by string length
         array.sort(function(a, b) {
             return a.length - b.length;
         });
-        currWord = array[0];
-        for (i = 1; i < array.length; i++) {
-            if (!wordsStartWithPrefixes([array[i]], [currWord])) {
-                return false;
+
+        // For each index of the array, check that the string in that index
+        // is prefixed by every string in a lower index
+        for (i = 0; i < array.length; i++) {
+            for (k = 0; k < i; k++) {
+                if (!wordsStartWithPrefixes([array[i]], [array[k]])) {
+                    return false;
+                }
             }
-            currWord = array[i];
         }
         return true;
     },
@@ -2581,43 +2718,23 @@ var LogicAtom = function(type, module, field) {
      * @return {boolean} false if any suffixes contradict each other; true otherwise
      */
     multipleSuffixesAreAllValid = function(array) {
-        var currWord;
         var i;
+        var k;
+
+        // Sort the array in order by string length
         array.sort(function(a, b) {
             return a.length - b.length;
         });
-        currWord = array[0];
-        for (i = 1; i < array.length; i++) {
-            if (!wordsEndWithSuffixes([array[i]], [currWord])) {
-                return false;
+
+        // For each index of the array, check that the string in that index
+        // is suffixed by every string in a lower index
+        for (i = 0; i < array.length; i++) {
+            for (k = 0; k < i; k++) {
+                if (!wordsEndWithSuffixes([array[i]], [array[k]])) {
+                    return false;
+                }
             }
-            currWord = array[i];
         }
         return true;
     };
-};
-
-/**
- * Operand represents a single criterion of a criteria box logical expression. It provides an easier type of object
- * to work with when evaluating the validity of a logical expression.
- * @param {string} typeID is the type of the criterion gathered from the criteria box JSON
- * @param {string} moduleID is the module of the criterion gathered from the criteria box JSON
- * @param {string} fieldID is the field of the criterion gathered from the criteria box JSON
- * @param {string} operatorID is the operator of the criterion gathered from the criteria box JSON
- * @param {string} value is the value of the criterion gathered from the criteria box JSON
- */
-var Operand = function(typeID, moduleID, fieldID, operatorID, value) {
-    this.type = typeID;
-    this.module = moduleID;
-    this.field = fieldID;
-    this.operator = operatorID;
-    this.value = value;
-};
-
-/**
- * Returns the target module of the current process definition being designed
- * @return {string} The name of the target module
- */
-var getTargetModule = function() {
-    return project.process_definition.pro_module;
 };
