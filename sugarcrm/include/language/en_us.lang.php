@@ -6628,9 +6628,14 @@ $app_list_strings['moduleListSingular']['EmbeddedFiles'] = 'Embedded File';
     'YER' => 'Rials',
     'ZWD' => 'Zimbabwe Dollars',
     );
-
 //BEGIN SUGARCRM flav=ent ONLY
-$app_list_strings['business_rule_type_list'] = array(
-    'single' => 'Single-Hit',
-);
+    $app_list_strings['process_et_field_type'] = array(
+        'none' => 'None',
+        'future' => 'Current Value',
+        'old' => 'Old Value',
+        'both' => 'Current and Old Values',
+    );
+    $app_list_strings['business_rule_type_list'] = array(
+        'single' => 'Single-Hit',
+    );
 //END SUGARCRM flav=ent ONLY
