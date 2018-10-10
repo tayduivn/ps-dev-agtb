@@ -316,7 +316,7 @@ $vardefs = array(
         //BEGIN SUGARCRM flav=ent ONLY
         'lockable_fields',
         //END SUGARCRM flav=ent ONLY
-        'commentslog',
+        'commentlog',
     ),
     'duplicate_check' => array(
         'enabled' => true,

@@ -18,7 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\ContainerAwareInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\ContainerAwareTrait;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\CommentslogHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\CommentLogHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
@@ -92,7 +92,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         'longtext',
         'htmleditable_tinymce',
         'email',
-        'commentslog',
+        'commentlog',
     );
 
     /**
@@ -161,8 +161,8 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->addHandler(new FavoritesHandler());
         $this->addHandler(new HtmlHandler());
         $this->addHandler(new ErasedFieldsHandler());
-        // commentslog field
-        $this->addHandler(new CommentslogHandler());
+        // commentlog field
+        $this->addHandler(new CommentLogHandler());
     }
 
     /**

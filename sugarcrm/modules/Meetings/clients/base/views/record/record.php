@@ -349,7 +349,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'span' => 12,
                 ),
                 array(
-                    'name' => 'commentslog',
+                    'name' => 'commentlog',
                     'span' => 12,
                 ),
             ),

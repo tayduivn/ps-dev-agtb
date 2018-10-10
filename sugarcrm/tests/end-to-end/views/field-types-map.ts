@@ -38,7 +38,7 @@ import * as DashboardtitleField from '../fields/dashboardtitle-field';
 import * as FavoriteField from '../fields/favorite-field';
 import * as EmailAttachmentsField from '../fields/email-attachments-field';
 import * as FromField from '../fields/from-field';
-import * as CommentslogField from '../fields/commentslog-field';
+import * as CommentLogField from '../fields/commentlog-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -78,6 +78,6 @@ export const FIELD_TYPES__MAP = {
     'favorite': FavoriteField,
     'email-attachments': EmailAttachmentsField,
     'from': FromField,
-    'commentslog': CommentslogField,
+    'commentlog': CommentLogField,
 };
 
