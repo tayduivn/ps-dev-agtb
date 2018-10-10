@@ -831,11 +831,15 @@ class PMSEEmailHandler
             if (empty($preEmail)) {
                 //is a new record, it hasn't any email in DB yet
                 $emailKey = $this->getPrimaryEmailKeyFromREQUEST($bean);
-                $historyData->savePredata($field->field, $_REQUEST[$emailKey]);
+                if (isset($historyData)) {
+                    $historyData->savePredata($field->field, $_REQUEST[$emailKey]);
+                }
                 $_REQUEST[$emailKey] = $field->value;
             } else {
                 //the record exist in db
-                $historyData->savePredata($field->field, $preEmail);
+                if (isset($historyData)) {
+                    $historyData->savePredata($field->field, $preEmail);
+                }
                 $this->updateEmails($bean, $field->value);
             }
             return true;
