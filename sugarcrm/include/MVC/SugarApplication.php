@@ -20,6 +20,7 @@ use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Bwc;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 /**
  * SugarCRM application
@@ -328,7 +329,17 @@ EOF;
 
     }
 
-    public function getMobileUrl(){
+    /**
+     * return mobile url or redirect to auth in IDM mode
+     * @return string
+     */
+    public function getMobileUrl()
+    {
+        $auth = AuthenticationController::getInstance();
+        $config = new Config(SugarConfig::getInstance());
+        if ($config->isIDMModeEnabled() && !$auth->sessionAuthenticate()) {
+            return $auth->getLoginUrl(['platform' => 'mobile']);
+        }
         return 'mobile/';
     }
 

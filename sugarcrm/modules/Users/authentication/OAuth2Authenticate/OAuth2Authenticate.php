@@ -37,7 +37,7 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
         }
 
         $request = InputValidation::getService();
-        $platform = $request->getValidInputGet('platform', null, 'base');
+        $platform = $returnQueryVars['platform'] ?? $request->getValidInputGet('platform', null, 'base');
         $state = $platform . '_' . $this->createState();
 
         return $this->getIdmProvider($idmModeConfig)->getAuthorizationUrl(
