@@ -48,7 +48,7 @@
                         break;
                     case 'bootstrap_core':
                         return array(
-                            'include/javascript/jquery/bootstrap/bootstrap.min.js'       =>   $target,
+                            'include/javascript/twitterbootstrap/bootstrap.min.js'       =>   $target,
                             'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
                         );
                         break;
