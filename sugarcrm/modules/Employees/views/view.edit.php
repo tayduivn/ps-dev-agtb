@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
-use Sugarcrm\IdentityProvider\Srn;
 
 class EmployeesViewEdit extends ViewEdit {
     var $useForSubpanel = true;
@@ -22,7 +21,7 @@ class EmployeesViewEdit extends ViewEdit {
 
             $idpConfig = new IdmConfig(\SugarConfig::getInstance());
             if ($idpConfig->isIDMModeEnabled() && !$this->bean->isUpdate()) {
-                $this->showRedirectToCloudConsole($idpConfig->buildCloudConsoleUrl('userCreate'));
+                $this->showRedirectToCloudConsole();
             }
 
             $json = getJSONobj();
@@ -66,16 +65,7 @@ class EmployeesViewEdit extends ViewEdit {
         $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $isIDMModeEnabled);
         if ($isIDMModeEnabled) {
             if ($GLOBALS['current_user']->isAdminForModule('Users')) {
-                $tenantSrn = Srn\Converter::fromString($idpConfig->getIDMModeConfig()['tid']);
-                $srnManager = new Srn\Manager([
-                    'partition' => $tenantSrn->getPartition(),
-                    'region' => $tenantSrn->getRegion(),
-                ]);
-                $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $this->bean->id);
-                $msg = sprintf(
-                    translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER', 'Users'),
-                    $idpConfig->buildCloudConsoleUrl('userProfile', [Srn\Converter::toString($userSrn)])
-                );
+                $msg = translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER', 'Users');
             } else {
                 $msg = translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_REGULAR_USER', 'Users');
             }
@@ -87,12 +77,11 @@ class EmployeesViewEdit extends ViewEdit {
 
     /**
      * Show redirect to cloud console
-     * @param string $url cloud console url
      */
-    protected function showRedirectToCloudConsole($url)
+    protected function showRedirectToCloudConsole()
     {
         $ss = new Sugar_Smarty();
-        $error = string_format($GLOBALS['mod_strings']['ERR_CREATE_EMPLOYEE_FOR_IDM_MODE'], [$url]);
+        $error = $GLOBALS['mod_strings']['ERR_CREATE_EMPLOYEE_FOR_IDM_MODE'];
         $ss->assign("error", $error);
         $ss->display('modules/Users/tpls/errorMessage.tpl');
         sugar_cleanup(true);

@@ -16,8 +16,7 @@
 	
 	SUGAR.EmailAddressWidget = function(module) {
         this.idmMode = {
-            disabledForModule: false,
-            cloudConsoleUrl: ''
+            disabledForModule: false
         };
 		if (!SUGAR.EmailAddressWidget.count[module]) SUGAR.EmailAddressWidget.count[module] = 0;
 		this.count = SUGAR.EmailAddressWidget.count[module];
@@ -532,9 +531,7 @@
         showErrDismissUpdatePrimaryEmail: function() {
             parent.SUGAR.App.alert.show('dismiss_delete_primary_email', {
                 level: 'error',
-                messages: SUGAR.language
-                    .get('Users', 'ERR_UPDATE_PRIMARY_EMAIL_FOR_IDM_MODE')
-                    .replace('{0}', this.idmMode.cloudConsoleUrl)
+                messages: SUGAR.language.get('Users', 'ERR_UPDATE_PRIMARY_EMAIL_FOR_IDM_MODE')
             });
         },
 		
