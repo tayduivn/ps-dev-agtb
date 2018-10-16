@@ -506,12 +506,15 @@ class PMSEBeanHandler
      */
     protected function setRecordLinkReplacementMeta(array &$return, array $parts, string $target, string $original)
     {
-        // This is a related record link
+        // This is to support legacy workflow conversions
+        $key = $this->getLastArrayKey($parts);
+        if ($parts[$key] === 'href_link') {
+            $parts[$key] = 'name';
+        }
+
+        // This is a related record link...
+        // $parts[href_link, base_module, rel_module, field]
         if (isset($parts[3])) {
-            // 0 = href_link
-            // 1 = base_module
-            // 2 = rel_module
-            // 3 = field
             // Formart is [rel_module][field] = []
             $return[$parts[2]][$parts[3]] = [
                 'name' => $parts[3],
@@ -521,10 +524,8 @@ class PMSEBeanHandler
                 'rel_module' => $parts[2],
             ];
         } else {
-            // This is a target record link
-            // 0 = href_link
-            // 1 = base_module
-            // 2 = field
+            // This is a target record link...
+            // $parts[href_link, base_module, field]
             $return[$target][$parts[2] . '_' . $parts[0]] = [
                 'name' => $parts[2],
                 'value_type' => $parts[0],
@@ -534,7 +535,14 @@ class PMSEBeanHandler
     }
 
     /**
-     * Sets the proper metadata for handling record link replacements
+     * Sets the proper metadata for handling regular data replacements. Expected
+     * format of the `$parts` array should be one of:
+     *  - `$parts[target_or_link, field]`
+     *  - `$parts[target_or_link, field, old]`
+     *  - `$parts[future, target, field]`
+     *  - `$parts[future, target, link_name, field]`
+     *  - `$parts[past, target, field]`
+     *  - `$parts[past, target, link_name, field]`
      * @param array &$return The return data
      * @param array $parts Parts of the replacement placeholder
      * @param string $target The target module
@@ -542,6 +550,21 @@ class PMSEBeanHandler
      */
     protected function setDataReplacementMeta(array &$return, array $parts, string $target, string $original)
     {
+        // See if we can handle legacy workflow template conversion
+        if (($parts[0] === 'past' || $parts[0] === 'future') && ($partsCount = count($parts)) > 2) {
+            // Convert past to old, or leave future as is
+            $type = $parts[0] === 'past' ? 'old' : 'future';
+
+            // Set up our module|link value
+            $mod = $partsCount === 4 ? $parts[2] : $target;
+
+            // Get the field, which is always the last element in the placeholder array
+            $field = $this->getLastArrayValue($parts);
+
+            // Reset the parts array
+            $parts = [$mod, $field, $type];
+        }
+
         // Old value, or new value?
         $type = !isset($parts[2]) || $parts[2] !== 'old' ? 'future' : 'old';
 
@@ -560,6 +583,41 @@ class PMSEBeanHandler
             'value_type' => $type,
             'original' => $original,
         ];
+    }
+
+    /**
+     * Gets the last member of a numerically indexed array
+     * @param array $array The numerically indexed array to get the last value from
+     * @return mixed
+     */
+    public function getLastArrayValue(array $array)
+    {
+        return $array[$this->getLastArrayKey($array)];
+    }
+
+    /**
+     * Gets the key of the last member of a numerically indexed array
+     * @param array $array The numerically indexed array to get the last value key from
+     * @return int
+     */
+    public function getLastArrayKey(array $array)
+    {
+        return count($array) - 1;
+    }
+
+    /**
+     * Determines if a placeholder is for a record link. Supports both legacy and
+     * advanced workflow template placeholders
+     * @param array $parts Placeholder string broken down into its parts
+     * @return boolean
+     */
+    public function isRecordLinkType(array $parts)
+    {
+        // {::href_link::Accounts::href_link::}
+        // {::href_link::Accounts::member_of::href_link::}
+        // {::href_link::Accounts::name::}
+        // {::href_link::Accounts::member_of::name::}
+        return $parts[0] === 'href_link' && in_array($this->getLastArrayValue($parts), ['href_link', 'name']);
     }
 
     /**
@@ -582,23 +640,17 @@ class PMSEBeanHandler
         );
 
         foreach ($matches as $val) {
-            // For use as the 'original' value
-            $match = $val[0];
+            // The array of placeholder parts
+            $parts = explode('::', $val[3]);
 
-            // The actual placeholder without the bookends
-            $core = $val[3];
-
-            // This will be the actual array of parts
-            $parts = explode('::', $core);
-
-            // Determine if we are creating link or data replacement meta
+            // Determine if we are creating record link or data replacement meta
             $method = sprintf(
                 'set%sReplacementMeta',
-                $parts[0] === 'href_link' ? 'RecordLink' : 'Data'
+                $this->isRecordLinkType($parts) ? 'RecordLink' : 'Data'
             );
 
             // Handle it
-            $this->$method($return, $parts, $base_module, $match);
+            $this->$method($return, $parts, $base_module, $val[0]);
         }
 
         return $return;
