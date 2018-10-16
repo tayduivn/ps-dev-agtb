@@ -462,7 +462,7 @@
                 '<div class="' + cssClasses + '"></div>'
             );
             this.$el.parent().wrap(
-                '<div class="flex-list-view scroll-width left-actions quote-data-table-scrollable"></div>'
+                '<div class="flex-list-view left-actions quote-data-table-scrollable"></div>'
             );
         }
     },
