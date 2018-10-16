@@ -1157,8 +1157,7 @@ function hasExportAccess($args = array())
 
     if (// Exports disabled
         !(empty($sugar_config['disable_export']))
-        // Report is not tabular
-        || $args['reporter']->report_def['report_type'] != 'tabular'
+        || !$args['reporter']->allowExport()
         // User doesn't have rights to export the reported module
         || !SugarACL::checkAccess($args['reporter']->module, 'export', $is_owner?array("owner_override" => true):array())
         // Only admins can export, and the user doesn't have admin rights

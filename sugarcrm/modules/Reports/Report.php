@@ -117,6 +117,11 @@ class Report
     public $isScheduledReport = false;
 
     /**
+     * @var array these types support export
+     */
+    static protected $allowExportType = array('summary'/*, 'tabular', 'detailed_summary', 'Matrix'*/);
+
+    /**
      *
      * Default visibility options
      * @var array
@@ -2545,32 +2550,56 @@ class Report
         return $row;
     }
 
-    function save($report_name)
+    /**
+     * Do we support export for this report
+     *
+     * @return bool
+     */
+    public function allowExport()
     {
-        global $current_user;
-        $saved_vars = array();
+        $type = $this->getReportType();
+        return in_array($type, self::$allowExportType);
+    }
 
-        $saved_report = BeanFactory::newBean('Reports');
-        $report_type = 'tabular';
-        $chart_type = 'none';
-
-        if (isset($this->report_def['chart_type'])) {
-            $chart_type = $this->report_def['chart_type'];
-        }
+    /**
+     * To get the report type
+     *
+     * @return string
+     */
+    public function getReportType()
+    {
+        $reportType = 'tabular';
         if ($this->report_def['report_type'] == 'summary') {
-            $report_type = 'summary';
+            $reportType = 'summary';
             if (!empty($this->report_def['display_columns'])) {
-                $report_type = 'detailed_summary';
+                $reportType = 'detailed_summary';
             } else {
                 if (!empty($this->report_def['group_defs'])) {
                     $group_def_array = $this->report_def['group_defs'];
                     if (isset($this->report_def['layout_options']) &&
                         ((count($group_def_array) == 2) || (count($group_def_array) == 3))
                     ) {
-                        $report_type = 'Matrix';
-                    } // if
-                } // if
-            } // else
+                        $reportType = 'Matrix';
+                    }
+                }
+            }
+        }
+        return $reportType;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save($report_name)
+    {
+        global $current_user;
+
+        $saved_report = BeanFactory::newBean('Reports');
+        $report_type = $this->getReportType();
+        $chart_type = 'none';
+
+        if (isset($this->report_def['chart_type'])) {
+            $chart_type = $this->report_def['chart_type'];
         }
 
         $record = $this->request->getValidInputRequest('record', 'Assert\Guid', -1) ?: -1;
