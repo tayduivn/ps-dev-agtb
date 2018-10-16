@@ -2181,6 +2181,7 @@ AdamActivity.prototype.actionFactory = function(type) {
     var actionDef = this.getAction(type, w);
 
     var f = new PMSE.Form({
+        type: 'action',
         proxy: actionDef.proxy,
         items: actionDef.items || [],
         closeContainerOnSubmit: true,
@@ -2456,10 +2457,25 @@ AdamActivity.prototype.getAction = function(type, w) {
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-
+                filterModules.setObjectValue(null);
+                filterModules.setModule(comboModules.value, PROJECT_MODULE);
+                comboRelated.removeOptions();
+                comboRelated.value = '';
+                comboRelated.proxy.url = 'pmse_Project/CrmData/related/' + comboModules.getSelectedData().module_name;
+                comboRelated.proxy.getData({removeTarget: true}, {
+                    success: function(data) {
+                        App.alert.dismiss('upload');
+                        if (data) {
+                            data.result.unshift({value: '', text: 'Select...'});
+                            comboRelated.setOptions(data.result);
+                            filterRelated.setObjectValue(null);
+                            filterRelated.setModule(null, null);
+                        }
+                    }
+                });
                 updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + comboModules.value;
                 // Call type set to CF to distinguish from Add Related Record
-                var data = updater_field.proxy.getData({call_type: 'CF', base_module: PROJECT_MODULE}, {
+                updater_field.proxy.getData({call_type: 'CF', base_module: PROJECT_MODULE}, {
                     success: function(data) {
                         App.alert.dismiss('upload');
                         if (data) {
@@ -2470,11 +2486,77 @@ AdamActivity.prototype.getAction = function(type, w) {
                 });
 
             };
+            var changeRelatedFn = function() {
+                $('.pmse-form-error')
+                    .removeClass('pmse-form-error-on')
+                    .addClass('pmse-form-error-off');
+                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                filterRelated.setObjectValue(null);
+                if (comboRelated.value) {
+                    filterRelated.setModule(comboRelated.value, comboModules.getSelectedData().module_name);
+                    updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + comboRelated.value;
+                    updater_field.proxy.getData({
+                        call_type: 'CF',
+                        base_module: comboModules.getSelectedData().module_name
+                    }, {
+                        success: function(data) {
+                            App.alert.dismiss('upload');
+                            if (data) {
+                                updater_field.setOptions(data.result);
+                            }
+
+                        }
+                    });
+                } else {
+                    filterRelated.setModule(null, null);
+                    updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + comboModules.value;
+                    updater_field.proxy.getData({call_type: 'CF', base_module: PROJECT_MODULE}, {
+                        success: function(data) {
+                            App.alert.dismiss('upload');
+                            if (data) {
+                                updater_field.setOptions(data.result);
+                            }
+
+                        }
+                    });
+                }
+            };
             var comboModules = new ComboboxField({
                 label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
                 name: 'act_field_module',
                 submit: true,
                 change: changeFieldsFn,
+                proxy: new SugarProxy({
+                    url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
+                    uid: PROJECT_MODULE,
+                    callback: null
+                })
+            });
+            var filterModules = new FilterField({
+                label: translate('LBL_PMSE_FORM_LABEL_FILTER'),
+                name: 'act_field_filter',
+                submit: true,
+                proxy: new SugarProxy({
+                    url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
+                    uid: PROJECT_MODULE,
+                    callback: null
+                })
+            });
+            var comboRelated = new ComboboxField({
+                label: translate('LBL_PMSE_FORM_LABEL_RELATED'),
+                name: 'act_field_related',
+                submit: true,
+                change: changeRelatedFn,
+                proxy: new SugarProxy({
+                    url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
+                    uid: PROJECT_MODULE,
+                    callback: null
+                })
+            });
+            var filterRelated = new FilterField({
+                label: translate('LBL_PMSE_FORM_LABEL_FILTER'),
+                name: 'act_field_filter_related',
+                submit: true,
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
                     uid: PROJECT_MODULE,
@@ -2500,7 +2582,7 @@ AdamActivity.prototype.getAction = function(type, w) {
 
             var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
             var actionCSS = 'adam-menu-icon-configure';
-            var items = [comboModules, updater_field];
+            var items = [comboModules, filterModules, comboRelated, filterRelated, updater_field];
             var proxy = new SugarProxy({
                 url: 'pmse_Project/ActivityDefinition/' + this.id,
                 uid: this.id,
@@ -2508,6 +2590,8 @@ AdamActivity.prototype.getAction = function(type, w) {
             });
             var callback = {
                 'loaded': function(data) {
+                    var params = data.act_params ? JSON.parse(data.act_params) : {};
+
                     self.canvas.emptyCurrentSelection();
 
                     comboModules.proxy.getData({
@@ -2524,13 +2608,47 @@ AdamActivity.prototype.getAction = function(type, w) {
                                         updater_field.setVariables(data);
                                     }
                                 });
-                                updater_field.proxy.uid = PROJECT_MODULE;
-                                updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + initialModule;
+                                if (params.filter) {
+                                    filterModules.setObjectValue(params.filter);
+                                }
+                                filterModules.setModule(comboModules.value, PROJECT_MODULE);
+                                if (params.chainedRelationship) {
+                                    comboRelated.setValue(params.chainedRelationship.module);
+                                }
+                                comboRelated.proxy.url = 'pmse_Project/CrmData/related/' +
+                                    comboModules.getSelectedData().module_name;
+                                comboRelated.proxy.getData({removeTarget: true}, {
+                                    success: function(data) {
+                                        if (data) {
+                                            data.result.unshift({value: '', text: 'Select...'});
+                                            comboRelated.setOptions(data.result);
+                                            if (params.chainedRelationship) {
+                                                if (params.chainedRelationship.filter) {
+                                                    filterRelated.setObjectValue(params.chainedRelationship.filter);
+                                                }
+                                                filterRelated.setModule(
+                                                    comboRelated.value,
+                                                    comboModules.getSelectedData().module_name
+                                                );
+                                            } else {
+                                                filterRelated.setModule(null, null);
+                                            }
+                                        }
+                                    }
+                                });
+                                if (params.chainedRelationship) {
+                                    updater_field.proxy.uid = comboModules.getSelectedData().module_name;
+                                    updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' +
+                                        params.chainedRelationship.module;
+                                } else {
+                                    updater_field.proxy.uid = PROJECT_MODULE;
+                                    updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + initialModule;
+                                }
                                 // Call type set to CF to distinguish from Add Related Record
-                                updater_field.proxy.getData({call_type: 'CF', base_module: PROJECT_MODULE}, {
+                                updater_field.proxy.getData({call_type: 'CF', base_module: updater_field.proxy.uid}, {
                                     success: function(fields) {
                                         if (fields) {
-                                            updater_field.setOptions(fields.result, true);
+                                            updater_field.setOptions(fields.result);
                                             updater_field.setValue(data.act_fields || null);
                                             updater_field.isValid();
                                             App.alert.dismiss('upload');
@@ -2561,6 +2679,20 @@ AdamActivity.prototype.getAction = function(type, w) {
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
+                filterModules.setObjectValue(null);
+                filterModules.setModule(comboModules.value, PROJECT_MODULE);
+                comboRelated.removeOptions();
+                comboRelated.value = '';
+                comboRelated.proxy.url = 'pmse_Project/CrmData/related/' + comboModules.getSelectedData().module_name;
+                comboRelated.proxy.getData({removeTarget: true}, {
+                    success: function(data) {
+                        App.alert.dismiss('upload');
+                        if (data) {
+                            data.result.unshift({value: '', text: 'Select...'});
+                            comboRelated.setOptions(data.result);
+                        }
+                    }
+                });
                 updater_field.proxy.uid = comboModules.value;
                 updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + comboModules.value;
                 updater_field.proxy.getData({base_module: PROJECT_MODULE}, {
@@ -2573,12 +2705,66 @@ AdamActivity.prototype.getAction = function(type, w) {
                 });
 
             };
+            var changeRelatedFn = function() {
+                $('.pmse-form-error')
+                    .removeClass('pmse-form-error-on')
+                    .addClass('pmse-form-error-off');
+                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                if (comboRelated.value) {
+                    updater_field.proxy.uid = comboRelated.value;
+                    updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + comboRelated.value;
+                    updater_field.proxy.getData({
+                        base_module: comboModules.getSelectedData().module_name
+                    }, {
+                        success: function(data) {
+                            App.alert.dismiss('upload');
+                            if (data) {
+                                updater_field.setOptions(data.result);
+                            }
+
+                        }
+                    });
+                } else {
+                    updater_field.proxy.uid = comboModules.value;
+                    updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + comboModules.value;
+                    updater_field.proxy.getData({base_module: PROJECT_MODULE}, {
+                        success: function(data) {
+                            App.alert.dismiss('upload');
+                            if (data) {
+                                updater_field.setOptions(data.result);
+                            }
+
+                        }
+                    });
+                }
+            };
             var comboModules = new ComboboxField({
                 jtype: 'combobox',
                 label: translate('LBL_PMSE_FORM_LABEL_RELATED_MODULE'),
                 name: 'act_field_module',
                 submit: true,
                 change: changeFieldsFn,
+                proxy: new SugarProxy({
+                    url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
+                    uid: PROJECT_MODULE,
+                    callback: null
+                })
+            });
+            var filterModules = new FilterField({
+                label: translate('LBL_PMSE_FORM_LABEL_FILTER'),
+                name: 'act_field_filter',
+                submit: true,
+                proxy: new SugarProxy({
+                    url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
+                    uid: PROJECT_MODULE,
+                    callback: null
+                })
+            });
+            var comboRelated = new ComboboxField({
+                label: translate('LBL_PMSE_FORM_LABEL_RELATED'),
+                name: 'act_field_related',
+                submit: true,
+                change: changeRelatedFn,
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
                     uid: PROJECT_MODULE,
@@ -2602,7 +2788,7 @@ AdamActivity.prototype.getAction = function(type, w) {
             });
             var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
             var actionCSS = 'adam-menu-icon-configure';
-            var items = [comboModules, updater_field];
+            var items = [comboModules, filterModules, comboRelated, updater_field];
             var proxy = new SugarProxy({
                 url: 'pmse_Project/ActivityDefinition/' + this.id,
                 uid: this.id,
@@ -2610,6 +2796,7 @@ AdamActivity.prototype.getAction = function(type, w) {
             });
             var callback = {
                 'loaded': function(data) {
+                    var params = data.act_params ? JSON.parse(data.act_params) : {};
                     self.canvas.emptyCurrentSelection();
                     comboModules.proxy.getData({cardinality: 'one-to-many'}, {
                         success: function(modules) {
@@ -2625,8 +2812,6 @@ AdamActivity.prototype.getAction = function(type, w) {
                                     comboModules.setValid(false);
                                 }
                                 var initialModule = data.act_field_module || modules.result[0].value;
-                                updater_field.proxy.uid = PROJECT_MODULE;
-                                updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + initialModule;
                                 project.addMetadata('projectModuleFieldsRelated', {
                                     dataURL: 'pmse_Project/CrmData/fields/' + PROJECT_MODULE +
                                         '?base_module=' + PROJECT_MODULE,
@@ -2635,7 +2820,32 @@ AdamActivity.prototype.getAction = function(type, w) {
                                         updater_field.setVariables(data);
                                     }
                                 });
-                                updater_field.proxy.getData({base_module: PROJECT_MODULE}, {
+                                if (params.filter) {
+                                    filterModules.setObjectValue(params.filter);
+                                }
+                                filterModules.setModule(comboModules.value, PROJECT_MODULE);
+                                if (params.chainedRelationship) {
+                                    comboRelated.setValue(params.chainedRelationship.module);
+                                }
+                                comboRelated.proxy.url = 'pmse_Project/CrmData/related/' +
+                                    comboModules.getSelectedData().module_name;
+                                comboRelated.proxy.getData({removeTarget: true}, {
+                                    success: function(data) {
+                                        if (data) {
+                                            data.result.unshift({value: '', text: 'Select...'});
+                                            comboRelated.setOptions(data.result);
+                                        }
+                                    }
+                                });
+                                if (params.chainedRelationship) {
+                                    updater_field.proxy.uid = comboModules.getSelectedData().module_name;
+                                    updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' +
+                                        params.chainedRelationship.module;
+                                } else {
+                                    updater_field.proxy.uid = PROJECT_MODULE;
+                                    updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + initialModule;
+                                }
+                                updater_field.proxy.getData({base_module: updater_field.proxy.uid}, {
                                     success: function(fields) {
                                         updater_field.setOptions(fields.result);
                                         updater_field.setValue(data.act_fields || null);

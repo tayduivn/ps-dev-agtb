@@ -130,6 +130,439 @@ TextField.prototype.attachListeners = function () {
     return this;
 };
 
+var FilterField = function(options, parent) {
+    PMSE.Field.call(this, options, parent);
+    this.selectField = null;
+    this.selectOperator = null;
+    this.valueElements = [];
+    this.options = [];
+    this.operators = [];
+    this._type = null;
+    this.module = null;
+    this.value = null;
+    FilterField.prototype.initObject.call(this, options);
+};
+FilterField.prototype = new PMSE.Field();
+FilterField.prototype.type = 'FilterField';
+FilterField.prototype.initObject = function(options) {
+    var defaults = {
+        options: []
+    };
+    $.extend(true, defaults, options);
+    this.initOperators('pmse_Project');
+};
+FilterField.prototype._typeToControl = {
+    address: 'text',
+    checkbox: 'checkbox',
+    currency: 'currency',
+    date: 'date',
+    datetime: 'datetime', //
+    decimal: 'number',
+    encrypt: 'text',
+    dropdown: 'dropdown',
+    float: 'number',
+    email: 'text',
+    name: 'text',
+    htmleditable_tinymce: 'text',
+    tinyint: 'integer',
+    //html: 'html',
+    //iframe: 'iframe',
+    //image: 'image' ,
+    integer: 'integer',
+    multiselect: 'multiselect',
+    //flex relate: 'flexrelate',
+    phone: 'text',
+    radio: 'radio',
+    //relate: 'related',
+    textarea: 'text',//'textarea',
+    url: 'text',
+    textfield: 'text',
+    user: 'friendlydropdown'
+};
+FilterField.prototype.initOperators = function(module) {
+    this.operators = [
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL', module),
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL_TEXT', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL', module),
+            value: 'equals'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL', module),
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE', module),
+            value: 'not_equals'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE', module),
+            value: 'major_than'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN_DATE', module),
+            value: 'minor_than'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL_DATE', module),
+            value: 'major_equals_than'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_THAN', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_DATE', module),
+            value: 'minor_equals_than'
+        },
+        {
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_STARTS_TEXT', module),
+            value: 'starts_with'
+        },
+        {
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_ENDS_TEXT', module),
+            value: 'ends_with'
+        },
+        {
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CONTAINS_TEXT', module),
+            value: 'contains'
+        },
+        {
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_CONTAINS_TEXT', module),
+            value: 'does_not_contain'
+        }
+    ];
+};
+FilterField.prototype.createHTML = function() {
+    PMSE.Field.prototype.createHTML.call(this);
+
+    var disableAtt;
+    if (this.readOnly) {
+        disableAtt = document.createAttribute('disabled');
+    }
+
+    var required = '';
+
+    if (this.required) {
+        required = '<i>*</i> ';
+    }
+
+    var fieldLabel = this.createHTMLElement('span');
+    fieldLabel.className = 'adam-form-label';
+    fieldLabel.innerHTML = this.label + ': ' + required;
+    fieldLabel.style.width = this.parent.labelWidth;
+    this.html.appendChild(fieldLabel);
+
+    this.selectField = this.createHTMLElement('select');
+    this.selectField.id = this.name + '_field';
+    this.selectField.style.width = '20%';
+    if (this.readOnly) {
+        this.selectField.setAttributeNode(disableAtt);
+    }
+    this.html.appendChild(this.selectField);
+
+    this.selectOperator = this.createHTMLElement('select');
+    this.selectOperator.id = this.name + '_operator';
+    this.selectOperator.style.width = '20%';
+    if (this.readOnly) {
+        this.selectOperator.setAttributeNode(disableAtt);
+    }
+    this.html.appendChild(this.selectOperator);
+
+    this.createValueElements({type: 'text'});
+
+    if (this.helpTooltip) {
+        this.html.appendChild(this.helpTooltip.getHTML());
+    }
+    this.labelObject = fieldLabel;
+
+    if (this.disabled) {
+        this.disable();
+    } else if (!this.readOnly) {
+        this.enable();
+    }
+
+    return this.html;
+};
+FilterField.prototype.removeOptions = function(select) {
+    while (select.firstChild) {
+        select.removeChild(select.firstChild);
+    }
+    return this;
+};
+FilterField.prototype.setOptions = function(data) {
+    this.options = data;
+    if (this.html) {
+        this.removeOptions(this.selectField);
+        var first = {value: '', text: 'Select...'};
+        this.selectField.appendChild(this.generateOption('expField', first, 'text'));
+        for (var i = 0; i < this.options.length; i++) {
+            this.selectField.appendChild(this.generateOption('expField', this.options[i], 'text'));
+        }
+    }
+    return this;
+};
+FilterField.prototype.setOperators = function(data, labelField) {
+    if (this.html) {
+        this.removeOptions(this.selectOperator);
+        for (var i = 0; i < data.length; i++) {
+            this.selectOperator.appendChild(this.generateOption('expOperator', data[i], labelField));
+        }
+    }
+    return this;
+};
+FilterField.prototype.generateOption = function(type, item, labelField) {
+    var value;
+    var text;
+    var out = this.createHTMLElement('option');
+    if (typeof item === 'object') {
+        value = item.value;
+        switch (labelField) {
+            case 'textfield':
+                text = item.textfield;
+                break;
+            case 'datefield':
+                text = item.datefield;
+                break;
+            default:
+                text = item.text;
+        }
+    } else {
+        value = item;
+    }
+    out.selected = this.value ? this.value[type] === value : false;
+    out.value = value;
+    out.label = text || value;
+    out.appendChild(document.createTextNode(out.label));
+    return out;
+};
+FilterField.prototype.getSelectedData = function(value) {
+    for (var i = 0; i < this.options.length; i++) {
+        if (this.options[i].value === value) {
+            return cloneObject(this.options[i]);
+        }
+    }
+    return null;
+};
+FilterField.prototype.attachListeners = function() {
+    var self = this;
+    if (this.selectField) {
+        $(this.selectField).change(function() {
+            self.value = null;
+            FilterField.prototype.onFieldChange.call(self);
+        });
+    }
+    return this;
+};
+FilterField.prototype.onFieldChange = function() {
+    var type = this.getSelectedData(this.selectField.value);
+    if (type) {
+        type = this._typeToControl[type.type.toLowerCase()];
+        if (type !== this._type ||
+            type === 'dropdown') {
+            this.processValueDependency(type);
+        }
+    } else {
+        this.processValueDependency(type);
+    }
+};
+FilterField.prototype.processValueDependency = function(type) {
+    var labelField = 'textfield';
+    var settings = {type: 'text'};
+    var operators = [];
+    if (type) {
+        var setPrecision = setGrouping = true;
+        settings = {
+            type: type
+        };
+        operators = this.operators.slice(0, 2);
+        switch (type) {
+            case 'checkbox':
+                labelField = 'text';
+                break;
+            case 'dropdown':
+                labelField = 'text';
+            case 'multiselect':
+            case 'radio':
+                var aux = this.getSelectedData();
+                var itemsObj = aux.optionItem;
+                settings.options = [];
+                Object.keys(itemsObj).forEach(function(item, index, arr) {
+                    settings.options.push({
+                        value: item,
+                        label: itemsObj[item]
+                    });
+                });
+                break;
+            case 'friendlydropdown':
+                settings.options = [
+                    {
+                        'label': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'),
+                        'value': 'currentuser'
+                    },
+                    {
+                        'label': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'),
+                        'value': 'owner'
+                    },
+                    {
+                        'label': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'),
+                        'value': 'supervisor'
+                    }
+                ];
+                settings.searchMore = {
+                    module: 'Users',
+                    fields: ['id', 'full_name'],
+                    filterOptions: null
+                };
+                settings.searchValue = PMSE_USER_SEARCH.value;
+                settings.searchLabel = PMSE_USER_SEARCH.text;
+                settings.searchURL = PMSE_USER_SEARCH.url;
+                break;
+            case 'datetime':
+                settings.timeFormat = this._timeFormat;
+            case 'date':
+                settings.dateFormat = this._dateFormat;
+                operators = this.operators.slice(0, 6);
+                labelField = 'datefield';
+                break;
+            case 'currency':
+                settings.currencies = this._currencies;
+                settings.precision = 2;
+                setPrecision = false;
+                settings.groupingSeparator = this._numberGroupingSeparator;
+                setGrouping = false;
+            case 'decimal':
+            case 'float':
+            case 'number':
+                if (setPrecision) {
+                    settings.precision = -1;
+                    setPrecision = false;
+                }
+            case 'integer':
+                labelField = 'text';
+                if (setPrecision) {
+                    settings.precision = 0;
+                }
+                if (setGrouping) {
+                    settings.groupingSeparator = '';
+                }
+                settings.decimalSeparator = this._decimalSeparator;
+                operators = this.operators.slice(0, 6);
+                break;
+            case 'text':
+                operators = this.operators.slice();
+                operators.splice(2, 4);
+                break;
+            default:
+        }
+    }
+    this.setOperators(operators, labelField);
+    this.swapValueElement(settings);
+    if (this.value && this.value.expValue) {
+        this.setValueElementsValue(this.value.expValue);
+    }
+};
+FilterField.prototype.swapValueElement = function(settings) {
+    this.removeValueElements();
+    this.createValueElements(settings);
+};
+FilterField.prototype.removeValueElements = function() {
+    if (this.html) {
+        for (var i = 0; i < this.valueElements.length; i++) {
+            this.html.removeChild(this.valueElements[i]);
+        }
+    }
+    this.valueElements = [];
+};
+FilterField.prototype.createValueElements = function(settings) {
+    var valueElement = this.createHTMLElement('input');
+    switch (settings.type) {
+        case 'checkbox':
+            valueElement.type = 'checkbox';
+            break;
+        case 'text':
+        default:
+            valueElement.type = 'text';
+    }
+    valueElement.id = this.name + '_value';
+    valueElement.style.width = '20%';
+    if (this.readOnly) {
+        valueElement.setAttributeNode(document.createAttribute('disabled'));
+    }
+    this.valueElements.push(valueElement);
+    if (this.html) {
+        for (var i = 0; i < this.valueElements.length; i++) {
+            this.html.appendChild(this.valueElements[i]);
+        }
+    }
+    this._type = settings.type;
+};
+FilterField.prototype.getValueElementsValue = function() {
+    var value = null;
+    if (this.valueElements.length > 0) {
+        switch (this._type) {
+            case 'checkbox':
+                value = this.valueElements[0].checked;
+                break;
+            case 'text':
+            default:
+                value = this.valueElements[0].value;
+        }
+    }
+    return value;
+};
+FilterField.prototype.setValueElementsValue = function(value) {
+    if (this.valueElements.length > 0) {
+        switch (this._type) {
+            case 'checkbox':
+                this.valueElements[0].checked = value;
+                break;
+            case 'text':
+            default:
+                this.valueElements[0].value = value;
+        }
+    }
+};
+FilterField.prototype.setModule = function(module, base) {
+    this.module = module;
+    if (module) {
+        var self = this;
+        this.proxy.url = 'pmse_Project/CrmData/fields/' + module;
+        this.proxy.getData({call_type: 'PD', base_module: base}, {
+            success: function(data) {
+                App.alert.dismiss('upload');
+                if (data) {
+                    self.setOptions(data.result);
+                    self.onFieldChange();
+                }
+            }
+        });
+    } else {
+        App.alert.dismiss('upload');
+        this.setOptions([]);
+        this.onFieldChange();
+    }
+};
+FilterField.prototype.getObjectValue = function() {
+    var value = {};
+    var data = this.getSelectedData(this.selectField.value);
+    if (data && this.submit) {
+        value[this.name] = {
+            module: this.module,
+            filter: {
+                expType: 'MODULE',
+                expSubtype: data.type,
+                expValue: this.getValueElementsValue(),
+                expOperator: this.selectOperator.value,
+                expModule: this.module,
+                expField: this.selectField.value
+            }
+        };
+    }
+    return value;
+};
+FilterField.prototype.setObjectValue = function(value) {
+    this.value = value;
+};
+
 /**
  * @class ComboboxField
  * Handles drop down fields
@@ -188,9 +621,9 @@ ComboboxField.prototype.setOptions = function (data) {
             this.controlObject.appendChild(this.generateOption(this.options[i]));
         }
 
-        if (!this.value) {
+        //if (!this.value) {
             this.value = this.controlObject.value;
-        }
+        //}
     }
     return this;
 

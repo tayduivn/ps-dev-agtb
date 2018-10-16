@@ -118,6 +118,8 @@ $mod_strings = array (
     'LBL_PMSE_CONTEXT_MENU_DELETE' => 'Delete',
 
     'LBL_PMSE_FORM_LABEL_MODULE' => 'Module',
+    'LBL_PMSE_FORM_LABEL_FILTER' => 'Filter',
+    'LBL_PMSE_FORM_LABEL_RELATED' => 'Related To',
     'LBL_PMSE_FORM_LABEL_CRITERIA' => 'Criteria',
     'LBL_PMSE_FORM_LABEL_DURATION' => 'Duration',
     'LBL_PMSE_FORM_LABEL_UNIT' => 'Unit',
