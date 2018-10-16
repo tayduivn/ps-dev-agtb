@@ -156,6 +156,7 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
             });
             app.drawer = {
                 close: $.noop,
+                count: $.noop,
                 reset: $.noop,
                 open: $.noop
             };
@@ -172,9 +173,24 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
             sinon.collection.stub(app.router, 'getFragment', function() {
                 return 'Opportunities/record';
             });
+            sinon.collection.stub(app.drawer, 'count', function() {
+                return 0;
+            });
             view.openRLICreate(prodData);
 
             expect(app.drawer.open).toHaveBeenCalled();
+        });
+
+        it('should not call app.drawer.open if already in a drawer', function() {
+            sinon.collection.stub(app.router, 'getFragment', function() {
+                return 'Opportunities/record';
+            });
+            sinon.collection.stub(app.drawer, 'count', function() {
+                return 1;
+            });
+            view.openRLICreate(prodData);
+
+            expect(app.drawer.open).not.toHaveBeenCalled();
         });
 
         it('should not call app.drawer.open if this is create view', function() {

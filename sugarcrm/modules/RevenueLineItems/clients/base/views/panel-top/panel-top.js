@@ -89,8 +89,9 @@
         var parentModel;
         var model;
 
-        if (routerFrags[1] === 'create') {
+        if (routerFrags[1] === 'create' || app.drawer.count()) {
             // if panel-top has been initialized on a record, but we're currently in create, ignore the event
+            // or if there is already an Opps drawer opened
             return;
         }
 
