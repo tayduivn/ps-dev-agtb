@@ -74,24 +74,41 @@
      * @override
      */
     addMultiSelectionAction: function() {
-        var _generateMeta = function(buttons, disableSelectAllAlert) {
-            return {
-                name: 'quote-data-mass-actions',
-                type: 'fieldset',
-                fields: [
-                    {
-                        type: 'quote-data-actionmenu',
-                        buttons: buttons || [],
-                        disable_select_all_alert: !!disableSelectAllAlert
-                    }
-                ],
-                value: false,
-                sortable: false
-            };
-        };
-        var buttons = this.meta.selection.actions;
+        var buttons = [];
         var disableSelectAllAlert = !!this.meta.selection.disable_select_all_alert;
-        this.leftColumns.push(_generateMeta(buttons, disableSelectAllAlert));
+
+        if (this.layout && this.layout.name === 'config-summary') {
+            var _generateMeta = function(buttons, disableSelectAllAlert) {
+                return {
+                    name: '',
+                    type: 'button',
+                    icon: 'fa-plus',
+                    value: false,
+                    sortable: false
+                };
+            };
+
+            this.leftColumns.push(_generateMeta(buttons, disableSelectAllAlert));
+        } else {
+            var _generateMeta = function(buttons, disableSelectAllAlert) {
+                return {
+                    name: 'quote-data-mass-actions',
+                    type: 'fieldset',
+                    fields: [
+                        {
+                            type: 'quote-data-actionmenu',
+                            buttons: buttons || [],
+                            disable_select_all_alert: !!disableSelectAllAlert
+                        }
+                    ],
+                    value: false,
+                    sortable: false
+                };
+            };
+
+            buttons = this.meta.selection.actions;
+            this.leftColumns.push(_generateMeta(buttons, disableSelectAllAlert));
+        }
     },
 
     /**
@@ -125,9 +142,10 @@
      */
     setColumnHeaderFields: function(headerFieldList) {
         headerFieldList = _.clone(headerFieldList);
-        this.meta.panels = [{
-            fields: headerFieldList
-        }];
+        this.meta.panels = [
+            {
+                fields: headerFieldList
+            }];
         this.model.set(this.options.eventViewName, headerFieldList);
 
         this._fields = this.parseFields();
