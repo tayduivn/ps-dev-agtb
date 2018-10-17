@@ -16,9 +16,6 @@
 class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
     public function __construct() {
-        //Override module_name to distinguish bean for BeanFactory
-        $this->module_name = 'MonthTimePeriods';
-
         parent::__construct();
 
         //The time period type
