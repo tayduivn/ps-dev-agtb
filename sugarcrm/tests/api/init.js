@@ -16,6 +16,7 @@ const {window} = jsdom;
 const {document} = window;
 global.window = window;
 global.document = document;
+global.FormData = window.FormData;
 global.$ = global.jQuery = require('jquery');
 
 const Ventana = require('@sugarcrm/ventana');
