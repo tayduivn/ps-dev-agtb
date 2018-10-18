@@ -48,6 +48,7 @@ export default class RecordHeaderView extends BaseView {
                 'viewpersonalinfo':'a[name="view_pii_button"]:not(.hide)',
                 'auditlog':'a[name="audit_button"]:not(.hide)',
                 'closebutton': 'a[name="close_button"]:not(.hide)',
+                'emailquote' : '.dropdown-inset a[data-action="email"]',
             },
 
             title: {

@@ -87,6 +87,37 @@ export class Edit extends EmailRecipientsField {
     }
 }
 
-export const Detail = EmailRecipientsField;
+export const Detail = class EmailRecipientsField extends BaseField {
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'span'
+            }
+        });
+    }
+
+    public async getText(selector: string): Promise<string> {
+        // First check if any recipients exist by looking for pills.
+        const recipientsSelector = this.$('field.selector');
+        const hasRecipients = await this.driver.isExisting(recipientsSelector);
+
+        let value: string | string[] = [];
+
+        // Only get the names of the recipients if there are any.
+        if (hasRecipients) {
+            value = await this.driver.getText(recipientsSelector);
+        }
+
+        // The return value could be a string, so let's protect against it.
+        if (!_.isArray(value)) {
+            value = [value];
+        }
+
+        return value.join(',');
+    }
+};
+
 export const List = EmailRecipientsField;
 export const Preview = EmailRecipientsField;

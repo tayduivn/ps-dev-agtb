@@ -334,7 +334,7 @@ Feature: Quotes module E2E testing
     When I choose createLineItem on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.QliRecord view
       | *     | quantity | product_template_name | discount_price | discount_amount | discount_select |
-      | Test1 | 2.00     | New QLI               | 100            | 2.00            |  $ US Dollar    |
+      | Test1 | 2.00     | New QLI               | 100            | 2.00            | $ US Dollar     |
     When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
     When I close alert
     # 2. Verify all fields in QLI Grand Total bar are calculated properly
@@ -1241,3 +1241,28 @@ Feature: Quotes module E2E testing
       | tax       | $0.00       |
       | shipping  | $280.25     |
       | total     | $280.25     |
+
+  @email_quote_invoice
+  Scenario: Quotes > Record View > Email > Invoice
+    Given Quotes records exist:
+      | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed | quote_stage |
+      | Quote_3 | City 1               | Street address here    | 220051                     | WA                    | USA                     | 2017-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link:
+      | name  | email                      |
+      | Acc_1 | test@example.com (primary) |
+    Given I open about view and login
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+    When I open actions menu in #Quote_3Record
+    When I click EmailQuote button on #Quote_3Record header
+    When I close alert
+    Then I should see #EmailsRecord view
+    Then I verify fields on #EmailsRecord.HeaderView
+      | fieldName | value   |
+      | name      | Quote_3 |
+    Then I verify fields on #EmailsRecord.RecordView
+      | fieldName              | value                                  |
+      | attachments_collection | Email Attachment : Quote_3_Invoice.pdf |
+      | from_collection        | Administrator                          |
+      | to_collection          | Acc_1                                  |
