@@ -271,6 +271,14 @@ class DrPhilTest extends TestCase
                 $this->assertArrayHasKey($subField, $defs, "DB concat field $subField for $table/$key points to an invalid field.");
             }
         }
+
+        // Tag field verifications
+        if ($key === 'tag') {
+            $this->assertArrayHasKey('studio', $defs, 'Studio config should be defined for the tag field');
+            $this->assertArrayHasKey('base', $defs['studio'], 'Base studio config should be defined for the tag field');
+            $this->assertArrayHasKey('popupsearch', $defs['studio']['base'], 'Popup search view config should be defined for the tag field');
+            $this->assertFalse($defs['studio']['base']['popupsearch'], 'Tags is not an allowed field on the BWC Popup Search view in studio');
+        }
     }
 
     /**
