@@ -178,16 +178,21 @@ class Config
         }
         $configurator->handleOverride();
         $configurator->clearCache();
-        $this->sugarConfig->clearCache('idm_mode');
-        $this->sugarConfig->clearCache('idm_mode.enabled');
-        $this->refreshMetadata();
+
+        $this->refreshCache();
     }
 
     /**
-     * Refresh config metadata
+     * Refresh config cache
      */
-    protected function refreshMetadata() : void
+    protected function refreshCache(): void
     {
+        $this->sugarConfig->clearCache('idm_mode');
+        $this->sugarConfig->clearCache('idm_mode.enabled');
+
+        $repairAndClear = new \RepairAndClear();
+        $repairAndClear->repairAndClearAll(['clearAll'], ['Employees', 'Users'], false, false, false);
+
         \MetaDataManager::refreshSectionCache(\MetaDataManager::MM_CONFIG);
     }
 

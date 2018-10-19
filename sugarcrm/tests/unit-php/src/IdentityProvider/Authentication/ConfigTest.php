@@ -1078,7 +1078,7 @@ class ConfigTest extends TestCase
     public function testSetIDMMode($setIDMModeConfig) : void
     {
         $config = $this->getMockBuilder(Config::class)
-            ->setMethods(['getConfigurator', 'refreshMetadata'])
+            ->setMethods(['getConfigurator', 'refreshCache'])
             ->setConstructorArgs([$this->createMock('\SugarConfig')])
             ->getMock();
         $configurator = $this->getMockBuilder('\Configurator')
@@ -1091,7 +1091,7 @@ class ConfigTest extends TestCase
         $config->method('getConfigurator')
             ->willReturn($configurator);
         $config->expects($this->once())
-            ->method('refreshMetadata');
+            ->method('refreshCache');
         $config->setIDMMode($setIDMModeConfig);
     }
 
