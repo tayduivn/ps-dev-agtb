@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@sugarcrm/seedbed@0.8.4":
-  version "0.8.4"
-  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/seedbed/-/seedbed-0.8.4.tgz#572decf5cbcf6d7c4ba0aae9079c211e061c143f"
+"@sugarcrm/seedbed@0.8.6":
+  version "0.8.6"
+  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/seedbed/-/seedbed-0.8.6.tgz#60a7dd482104fb6297558afe114974b021f0a19e"
   dependencies:
     "@types/async" "1.4.28"
     "@types/bluebird" "2.0.30"

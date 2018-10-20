@@ -25,10 +25,10 @@ export default class RecordView extends BaseView {
 
         this.selectors = this.mergeSelectors({
             $: '.record',
-            panel_body: 'div[data-panelname=\'panel_body\'] .pull-right',
-            panel_shipping_body: 'div[data-panelname=\'panel_shipping_body\'] .pull-right',
-            panel_setting_body: 'div[data-panelname=\'panel_setting_body\'] .pull-right',
-            panel_hidden: 'div[data-panelname=\'panel_hidden\'] .pull-right',
+            panel_body: 'div[data-panelname=\'panel_body\']',
+            panel_shipping_body: 'div[data-panelname=\'panel_shipping_body\']',
+            panel_setting_body: 'div[data-panelname=\'panel_setting_body\']',
+            panel_hidden: 'div[data-panelname=\'panel_hidden\']',
             title: '.title',
             arrow: '.icon-chevron-right',
 
@@ -42,15 +42,13 @@ export default class RecordView extends BaseView {
 
     }
 
-    public async togglePanel(panelName) {
-
+    public async getSelector(panelName) {
         let panelSelector = null;
 
         switch (panelName) {
-
             case 'Business_Card':
                 panelSelector = this.$('panel_body');
-            break;
+                break;
             case 'Billing_and_Shipping':
                 panelSelector = this.$('panel_shipping_body');
                 break;
@@ -60,11 +58,53 @@ export default class RecordView extends BaseView {
             case 'Show_More':
                 panelSelector = this.$('panel_hidden');
                 break;
-
         }
+        return panelSelector;
+    }
 
+    /**
+     * Get panel Selector on quote record view
+     *
+     * @param string panelName
+     * @returns {Promise<void>}
+     */
+    public async togglePanel(panelName) {
+        let panelSelector = await this.getSelector(panelName);
         await this.driver.scroll(panelSelector);
         await this.driver.click(panelSelector);
+    }
 
+    /**
+     * Expand selected panel on quote record view if not already expanded
+     *
+     * @param string panelName
+     * @returns {Promise<void>}
+     */
+    public async expandQuotePanel(panelName) {
+        let panelSelector = await this.getSelector(panelName);
+        let expandedPanelSelector = panelSelector + '.panel-active';
+        let isExpanded = await this.driver.isElementExist(expandedPanelSelector);
+
+        if (!isExpanded) {
+            await this.driver.scroll(panelSelector);
+            await this.driver.click(panelSelector);
+        }
+    }
+
+    /**
+     * Collapse selected panel on quote record view if not already collapsed
+     *
+     * @param string panelName
+     * @returns {Promise<void>}
+     */
+    public async collapseQuotePanel(panelName) {
+        let panelSelector = await this.getSelector(panelName);
+        let expandedPanelSelector = panelSelector + '.panel-active';
+        let isExpanded = await this.driver.isElementExist(expandedPanelSelector);
+
+        if (isExpanded) {
+            await this.driver.scroll(panelSelector);
+            await this.driver.click(panelSelector);
+        }
     }
 }

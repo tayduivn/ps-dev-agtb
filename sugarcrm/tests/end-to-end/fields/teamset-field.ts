@@ -10,15 +10,13 @@
  */
 
 import BaseField from './text-field';
-import {seedbed} from '@sugarcrm/seedbed';
 
 /**
- * @class RelateField
+ * @class TeamsetField
  * @extends BaseField
  */
 
 export class Detail extends BaseField {
-
     constructor(options) {
         super(options);
 
@@ -30,11 +28,36 @@ export class Detail extends BaseField {
     }
 
     public async getText(selector: string): Promise<string> {
-
         let value: string | string[] = await this.driver.getText(selector);
+        return value.toString().replace(/\n/g, ',').trim();
+    }
+}
 
-        return value.toString().trim();
+export class Edit extends BaseField {
+    private itemSelector: string;
+    private inputSelector: string;
 
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            $: '[field-name={{name}}]',
+            field: {
+                selector: '.select2-container.select2',
+            }
+        });
+
+        this.itemSelector = '.select2-result-label=';
+        this.inputSelector = '.select2-input.select2-focused';
+    }
+
+    public async setValue(val: any): Promise<void> {
+        await this.driver.click(this.$('field.selector'));
+        await this.driver.waitForApp();
+        await this.driver.setValue(this.inputSelector, val);
+        await this.driver.waitForApp();
+        await this.driver.click(`${this.itemSelector}${val}`);
+        await this.driver.waitForApp();
     }
 }
 

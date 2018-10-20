@@ -35,6 +35,13 @@ export default class ListView extends BaseListView {
                     row : 'tr[name*="{{module}}"]:nth-child({{index}})',
                     },
                 tableRow: '.table.table-striped.dataTable tbody tr',
+                actionsMenu: '.fieldset.actions.actionmenu .btn.dropdown-toggle',
+                actions: {
+                    'Delete Selected': 'a[name="delete_button"]:not(.hide)',
+                    'Export': 'a[name="export_button"]:not(.hide)',
+                    'Mass Update': 'a[name="massupdate_button"]:not(.hide)',
+                    'Recalculate Values': 'a[name="calc_field_button"]:not(.hide)',
+                }
             });
     }
 
@@ -43,9 +50,17 @@ export default class ListView extends BaseListView {
     }
 
     public async getNumberOfRecords() {
-        let driver:any = this.driver;
+        let driver: any = this.driver;
         let rows = await driver.elements(this.$('tableRow'));
         return rows.value.length;
     }
 
+    public async toggleActionsDropdown() {
+        await this.driver.click(this.$('actionsMenu'));
+    }
+
+    public async selectAction(action) {
+        await this.toggleActionsDropdown();
+        await this.driver.click(this.$('actions.' + action));
+    }
 }

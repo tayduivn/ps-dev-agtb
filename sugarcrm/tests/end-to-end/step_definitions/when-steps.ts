@@ -84,6 +84,16 @@ When(/^I toggleAll records in (#\S+)$/,
     }, {waitForApp: true});
 
 /**
+ *  Select action from List view Actions dropdown
+ *
+ *  @example I select "Mass Update" action in #QuotesList.ListView
+ */
+When(/^I select "(Mass Update|Recalculate Values|Delete Selected|Export)" action in (#\S+)$/,
+    async function (action: string, view: ListView) {
+        await view.selectAction(action);
+    }, {waitForApp: true});
+
+/**
  * Select Generate quote or Delete mass update action in the RLI table of Opportunity record view
  *
  * @example When I select GenerateQuote action in #Opp_ARecord.SubpanelsLayout.subpanels.revenuelineitems
@@ -161,7 +171,7 @@ When(/^I provide input for (#\S+)$/,
 
         const editBtn = 'edit';
         const saveBtn = 'save';
-        const showMoreBtn ='show more';
+        const showMoreBtn = 'show more';
 
         // Click Edit button to edit the record
         await layout.HeaderView.clickButton(editBtn);
@@ -362,7 +372,7 @@ When(/^I stop timer and verify$/, async function (data: TableDefinition) {
         throw new Error('One line data table entry is expected');
     }
 
-    let specified_threshold = parseInt( data.rows()[0][0] );
+    let specified_threshold = parseInt(data.rows()[0][0], 10);
 
     let actual_time = (new Date().getTime() - timer);
 

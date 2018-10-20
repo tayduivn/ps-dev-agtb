@@ -21,23 +21,23 @@ import * as _ from 'lodash';
 import AlertCmp from '../components/alert-cmp';
 
 Given(/^I am logged in$/,
-    async function() {
+    async function () {
         await useDefaultAcct('default', 'admin', 'asdf');
         await launchApp('launch', '');
         await whenStepsHelper.setUrlHashAndLogin('about');
     }, {waitForApp: true}
 );
 
-const useDefaultAcct = async function(isDefaultAccount: string, username: string, password: string): Promise<void> {
+const useDefaultAcct = async function (isDefaultAccount: string, username: string, password: string): Promise<void> {
     await givenStepsHelper.useAccount(isDefaultAccount, username, password);
 };
 
-const launchApp = async function(launch: string, schemesList: string): Promise<void> {
+const launchApp = async function (launch: string, schemesList: string): Promise<void> {
     await givenStepsHelper.launchOrUpdate(launch, schemesList);
 };
 
 When(/^I update (\w+) \*(\w+) with the following values:$/,
-    async function(module, name: string, table: TableDefinition) {
+    async function (module, name: string, table: TableDefinition) {
         // TODO: In the future we should check the current route and if we are already on the correct module/record
         await chooseModule(module);
         let view = await seedbed.components[`${module}List`].ListView;
@@ -54,18 +54,24 @@ When(/^I update (\w+) \*(\w+) with the following values:$/,
 
 // TODO check if we're already on desired rec. view instead of navigating to the list view.
 Then(/^(\w+) \*(\w+) should have the following values:$/,
-    async function(module, name: string, table: TableDefinition) {
-        await chooseModule(module);
-        let view = await seedbed.components[`${module}List`].ListView;
+    async function (module, name: string, table: TableDefinition) {
         let record = await seedbed.cachedRecords.get(name);
-        await chooseRecord({id: record.id}, view);
         let rec_view = await seedbed.components[`${name}Record`];
+
+        await goToUrl(module + '/' + record.id);
         await buttonClicks('show more', rec_view);
+        if (module === 'Quotes') {
+            let rec = await seedbed.components[`${name}Record`].RecordView;
+            await rec.expandQuotePanel('Billing_and_Shipping');
+            await rec.expandQuotePanel('Quote_Settings');
+            await rec.expandQuotePanel('Show_More');
+        }
+
         await checkValues(rec_view, table);
     }, {waitForApp: true}
 );
 
-const chooseModule = async function(itemName) {
+export const chooseModule = async function (itemName) {
     await seedbed.client.driver.waitForApp();
 
     let moduleMenuCmp = new ModuleMenuCmp({});
@@ -84,24 +90,31 @@ const chooseModule = async function(itemName) {
             await goToUrl(itemName);
         }
     }
+    // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
+    await seedbed.client.driver.pause(1000);
 };
 
-const chooseRecord = async function(record: { id: string }, view: ListView) {
+export const chooseRecord = async function (record: { id: string }, view: ListView) {
     let listItem = view.getListItem({id: record.id});
     await listItem.clickListItem();
     await seedbed.client.driver.waitForApp();
 };
 
+export const toggleRecord = async function (record: { id: string }, view: ListView) {
+    let listItem = view.getListItem({id: record.id});
+    await listItem.clickItem('checkbox');
+    await seedbed.client.driver.waitForApp();
+};
 
-const buttonClicks = async function(btnName: string, layout: any) {
+export const buttonClicks = async function (btnName: string, layout: any) {
     if (btnName.toLowerCase() === 'show more') {
         return layout.showMore(btnName);
     }
-    await layout.HeaderView.clickButton(btnName.toLowerCase())
+    await layout.HeaderView.clickButton(btnName.toLowerCase());
     return seedbed.client.driver.waitForApp();
 };
 
-const provideInput = async function(view: RecordView, data: TableDefinition): Promise<void> {
+const provideInput = async function (view: RecordView, data: TableDefinition): Promise<void> {
     if (data.hashes.length > 1) {
         throw new Error('One line data table entry is expected');
     }
@@ -120,7 +133,7 @@ const provideInput = async function(view: RecordView, data: TableDefinition): Pr
     await view.setFieldsValue(inputData);
 };
 
-const checkValues = async function(view: BaseView, data: TableDefinition) {
+const checkValues = async function (view: BaseView, data: TableDefinition) {
     const attrRefRegex = RegExp(/\{\*([a-zA-Z](?:\w|\S)*)\.((?:\w|\s)*)}/g);
 
     /**
@@ -151,7 +164,6 @@ const checkValues = async function(view: BaseView, data: TableDefinition) {
                 replacements[match[0]] = apiResponseForRecord[match[2]];
             }
         }
-
         return replacements;
     }
 
@@ -178,12 +190,41 @@ const checkValues = async function(view: BaseView, data: TableDefinition) {
     }
 };
 
-const closeAlert = async function() {
+export const closeAlert = async function () {
     let alert = new AlertCmp({});
     await alert.close();
 };
 
-const goToUrl = async function(urlHash): Promise<void> {
+const goToUrl = async function (urlHash): Promise<void> {
     await seedbed.client.driver.setUrlHash(urlHash);
-    await seedbed.client.driver.waitForApp();
+    // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
+    await seedbed.client.driver.pause(1500);
+};
+
+export const parseInputArray = async function (arg: string): Promise<any[]> {
+    arg = arg.slice(arg.indexOf('[') + 1, arg.indexOf(']'));
+
+    if (arg.startsWith('*')) {
+        if (arg.indexOf(',') === -1) {
+            let record = seedbed.cachedRecords.get(arg.replace('*', ''));
+
+            if (!record) {
+                throw new Error(`Record '${arg}' doesn't exist`);
+            }
+            return record;
+        } else {
+            let records = [];
+            let sRecord = arg.split(',');
+            for (let i = 0; i < sRecord.length; i++) {
+
+                let record = seedbed.cachedRecords.get(sRecord[i].trim().replace('*', ''));
+
+                if (!record) {
+                    throw new Error(`Record '${arg}' doesn't exist`);
+                }
+                records.push(record);
+            }
+            return records;
+        }
+    }
 };

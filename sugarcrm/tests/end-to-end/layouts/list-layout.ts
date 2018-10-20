@@ -12,6 +12,7 @@
 import {BaseView} from '@sugarcrm/seedbed';
 import ListView from '../views/list-view';
 import FilterView from '../views/filter-view';
+import MassUpdateView from '../views/massupdate-view';
 import HeaderView from '../views/record-header-view';
 
 /**
@@ -24,6 +25,7 @@ export default class ListLayout extends BaseView {
 
     public type = 'list';
     public FilterView: FilterView;
+    public MassUpdateView: MassUpdateView;
     public ListView: ListView;
     public defaultView: ListView;
     public HeaderView: HeaderView;
@@ -37,6 +39,7 @@ export default class ListLayout extends BaseView {
         });
 
         this.FilterView = this.createComponent<FilterView>(FilterView, { module: options.module });
+        this.MassUpdateView = this.createComponent<MassUpdateView>(MassUpdateView, { module: options.module });
         this.HeaderView = this.createComponent<HeaderView>(HeaderView);
         this.defaultView = this.ListView = this.createComponent<ListView>(ListView, { module: options.module, default: true });
     }

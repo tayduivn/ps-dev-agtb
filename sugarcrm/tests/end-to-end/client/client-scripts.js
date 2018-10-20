@@ -19,4 +19,23 @@ module.exports = {
         $(elementSelector).get(0).scrollIntoView(false);
     },
 
+    /**
+     * Get field label from the field name
+     *
+     * @param {string} fieldName
+     * @param {string} moduleName
+     */
+    getLabelByFieldName: function(fieldName, moduleName) {
+        return App.lang.get(App.metadata.getField({module: moduleName, name: fieldName}).vname, moduleName);
+    },
+
+    /**
+     * Get field object
+     *
+     * @param {string} fieldName
+     * @param {string} moduleName
+     */
+    getFieldDef: function(fieldName, moduleName) {
+        return App.metadata.getField({module: moduleName, name: fieldName});
+    }
 };
