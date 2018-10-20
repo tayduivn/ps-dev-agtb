@@ -25,24 +25,24 @@ Given(/^I am logged in$/,
         await useDefaultAcct('default', 'admin', 'asdf');
         await launchApp('launch', '');
         await whenStepsHelper.setUrlHashAndLogin('about');
-    }, {waitForApp : true}
+    }, {waitForApp: true}
 );
 
-const useDefaultAcct = async function (isDefaultAccount: string, username: string, password: string): Promise<void> {
+const useDefaultAcct = async function(isDefaultAccount: string, username: string, password: string): Promise<void> {
     await givenStepsHelper.useAccount(isDefaultAccount, username, password);
 };
 
-const launchApp = async function (launch: string, schemesList: string): Promise<void> {
+const launchApp = async function(launch: string, schemesList: string): Promise<void> {
     await givenStepsHelper.launchOrUpdate(launch, schemesList);
 };
 
 When(/^I update (\w+) \*(\w+) with the following values:$/,
     async function(module, name: string, table: TableDefinition) {
-        //TODO: In the future we should check the current route and if we are already on the correct module/record
+        // TODO: In the future we should check the current route and if we are already on the correct module/record
         await chooseModule(module);
         let view = await seedbed.components[`${module}List`].ListView;
         let record = await seedbed.cachedRecords.get(name);
-        await chooseRecord({id : record.id}, view );
+        await chooseRecord({id: record.id}, view);
         let rec_view = await seedbed.components[`${name}Record`];
         await buttonClicks('Edit', rec_view);
         await buttonClicks('show more', rec_view);
@@ -58,59 +58,50 @@ Then(/^(\w+) \*(\w+) should have the following values:$/,
         await chooseModule(module);
         let view = await seedbed.components[`${module}List`].ListView;
         let record = await seedbed.cachedRecords.get(name);
-        await chooseRecord({id : record.id}, view );
+        await chooseRecord({id: record.id}, view);
         let rec_view = await seedbed.components[`${name}Record`];
         await buttonClicks('show more', rec_view);
         await checkValues(rec_view, table);
     }, {waitForApp: true}
 );
 
-const chooseModule = async function (itemName) {
-
+const chooseModule = async function(itemName) {
     await seedbed.client.driver.waitForApp();
 
-    // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-    await seedbed.client.driver.pause(2000);
-
     let moduleMenuCmp = new ModuleMenuCmp({});
-
     let isVisible = await moduleMenuCmp.isVisible(itemName);
 
     if (isVisible) {
         await moduleMenuCmp.clickItem(itemName);
-
+        await seedbed.client.driver.waitForApp();
     } else {
-
         await moduleMenuCmp.showAllModules();
         isVisible = await moduleMenuCmp.isVisible(itemName);
-        if (isVisible){
+        if (isVisible) {
             await moduleMenuCmp.clickItem(itemName, true);
-        }
-        else{
+            await seedbed.client.driver.waitForApp();
+        } else {
             await goToUrl(itemName);
         }
     }
-
-    // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-    await seedbed.client.driver.pause(1000);
-
 };
 
-const chooseRecord = async function (record: { id: string }, view: ListView) {
+const chooseRecord = async function(record: { id: string }, view: ListView) {
     let listItem = view.getListItem({id: record.id});
     await listItem.clickListItem();
     await seedbed.client.driver.waitForApp();
 };
 
 
-const buttonClicks = async function (btnName: string, layout: any) {
+const buttonClicks = async function(btnName: string, layout: any) {
     if (btnName.toLowerCase() === 'show more') {
         return layout.showMore(btnName);
     }
-    return layout.HeaderView.clickButton(btnName.toLowerCase());
+    await layout.HeaderView.clickButton(btnName.toLowerCase())
+    return seedbed.client.driver.waitForApp();
 };
 
-const provideInput = async function (view: RecordView, data: TableDefinition): Promise<void> {
+const provideInput = async function(view: RecordView, data: TableDefinition): Promise<void> {
     if (data.hashes.length > 1) {
         throw new Error('One line data table entry is expected');
     }
@@ -129,7 +120,7 @@ const provideInput = async function (view: RecordView, data: TableDefinition): P
     await view.setFieldsValue(inputData);
 };
 
-const checkValues = async function (view: BaseView, data: TableDefinition) {
+const checkValues = async function(view: BaseView, data: TableDefinition) {
     const attrRefRegex = RegExp(/\{\*([a-zA-Z](?:\w|\S)*)\.((?:\w|\s)*)}/g);
 
     /**
@@ -194,7 +185,5 @@ const closeAlert = async function() {
 
 const goToUrl = async function(urlHash): Promise<void> {
     await seedbed.client.driver.setUrlHash(urlHash);
-    // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-    await seedbed.client.driver.pause(1500);
-
+    await seedbed.client.driver.waitForApp();
 };
