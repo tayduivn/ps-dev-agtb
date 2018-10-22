@@ -119,7 +119,7 @@ class Report
     /**
      * @var array these types support export
      */
-    static protected $allowExportType = array('summary', 'tabular', /*'detailed_summary', 'Matrix'*/);
+    static protected $allowExportType = array('summary', 'detailed_summary', 'tabular', /*'Matrix'*/);
 
     /**
      *
@@ -2053,10 +2053,17 @@ class Report
     }
 
 
-    function get_summary_header_row()
+    /**
+     * Gets a list of all display summaries appearing in the summary header.
+     *
+     * @param bool $exporting If true, returns the data in export mode.
+     *   Defaults to false.
+     * @return array A list of the names of all desired display summaries.
+     */
+    public function get_summary_header_row($exporting = false)
     {
         $this->layout_manager->setAttribute('list_type', 'summary');
-        $header_row = $this->get_header_row_generic('summary_columns');
+        $header_row = $this->get_header_row_generic('summary_columns', false, $exporting, false);
         return $header_row;
     }
 
@@ -2068,6 +2075,16 @@ class Report
         return $header_row;
     }
 
+    /**
+     * Get the next header row for this report.
+     *
+     * @param string $column_field_name The column field name.
+     *   Defaults to 'display_columns'.
+     * @param bool $skip_non_group
+     * @param bool $exporting If true, return plaintext output instead of HTML.
+     * @param bool $force_distinct
+     * @return array The next header row.
+     */
     function get_header_row($column_field_name = 'display_columns', $skip_non_group = false, $exporting = false, $force_distinct = false)
     {
         $this->layout_manager->setAttribute('list_type', 'columns');
@@ -2076,6 +2093,16 @@ class Report
         return $header_row;
     }
 
+    /**
+     * @param string $column_field_name The column field name.
+     *   Defaults to 'display_columns'.
+     * @param bool $skip_non_group If true, skip non-group display columns.
+     *   Defaults to false.
+     * @param bool $exporting If true, set export mode. Defaults to false.
+     * @param bool $force_distinct If true, ensure that all header labels are
+     *   distinct. Defaults to false.
+     * @return array
+     */
     function get_header_row_generic($column_field_name = 'display_columns', $skip_non_group = false, $exporting = false, $force_distinct = false)
     {
         if ($this->plain_text_output == true) {
@@ -2222,10 +2249,17 @@ class Report
         return $get_next_row;
     }
 
-    function get_summary_next_row()
+    /**
+     * Gets the next summary row.
+     *
+     * @param bool $exporting If true, get the row in export mode.
+     *   Defaults to false.
+     * @return int|array The next summary row, or 0 if there are no rows left.
+     */
+    public function get_summary_next_row($exporting = false)
     {
         $this->_load_currency();
-        $get_next_row = $this->get_next_row('summary_result', 'summary_columns');
+        $get_next_row = $this->get_next_row('summary_result', 'summary_columns', false, $exporting);
         if(isset($get_next_row['count'])) {
             $this->current_summary_row_count = $get_next_row['count'];
         } else {
@@ -2303,6 +2337,15 @@ class Report
         return $field_name;
     }
 
+    /**
+     * Gets the next database row.
+     *
+     * @param string $result_field_name
+     * @param string $column_field_name
+     * @param bool $skip_non_summary_columns
+     * @param bool $exporting If true, return plaintext output instead of HTML.
+     * @return int|array The next database row, or 0 if there are no more rows.
+     */
     function get_next_row($result_field_name = 'result', $column_field_name = 'display_columns', $skip_non_summary_columns = false, $exporting = false)
     {
         global $current_user;

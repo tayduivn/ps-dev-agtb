@@ -62,7 +62,7 @@ abstract class ReportCSVExporterBase implements ReportExporterInterface
         $return = '"Grand Total"' . $this->getLineEnd();
         $return .= '"' . implode($this->getDelimiter(), $this->reporter->get_total_header_row(true)) . '"' . $this->getLineEnd();
 
-        $row = $this->reporter->get_summary_total_row();
+        $row = $this->reporter->get_summary_total_row(true);
         if (isset($row['cells'])) {
             $return .= '"' . implode($this->getDelimiter(), $row['cells']) . '"';
         }

@@ -29,7 +29,7 @@ class ReportExporter
     protected $typeMapping = [
         'summary' => 'Summation',
         'tabular' => 'RowsAndColumns',
-        'detailed_summary' => 'SummationDetailed',
+        'detailed_summary' => 'SummationWithDetails',
         'Matrix' => 'Matrix',
     ];
 
