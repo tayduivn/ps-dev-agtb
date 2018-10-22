@@ -34,7 +34,8 @@
             // need to trigger on app.controller.context because of contexts changing between
             // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
             // app.controller.context is the only consistent context to use
-            app.controller.context.on('productCatalogDashlet:add', this.openRLICreate, this);
+            var _context = this.context.parent || this.context;
+            app.controller.context.on(_context.cid + ':productCatalogDashlet:add', this.openRLICreate, this);
         }
     },
 
@@ -163,7 +164,8 @@
      */
     _dispose: function() {
         if (app.controller && app.controller.context) {
-            app.controller.context.off('productCatalogDashlet:add', null, this);
+            var _context = this.context.parent || this.context;
+            app.controller.context.off(_context.cid + ':productCatalogDashlet:add', null, this);
         }
 
         this._super('_dispose');

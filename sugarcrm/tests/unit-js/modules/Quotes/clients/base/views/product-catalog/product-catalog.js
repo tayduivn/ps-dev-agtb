@@ -94,7 +94,9 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
 
         it('should set an event listener on the context for productCatalogDashlet:add:complete', function() {
-            expect(app.controller.context.on).toHaveBeenCalledWith('productCatalogDashlet:add:complete');
+            var _context = view.context.parent || view.context;
+            expect(app.controller.context.on)
+                .toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add:complete');
         });
     });
 
@@ -542,7 +544,8 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
 
         it('should trigger context event', function() {
-            expect(app.controller.context.trigger).toHaveBeenCalledWith('productCatalogDashlet:add');
+            var _context = view.context.parent || view.context;
+            expect(app.controller.context.trigger).toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
         });
     });
 

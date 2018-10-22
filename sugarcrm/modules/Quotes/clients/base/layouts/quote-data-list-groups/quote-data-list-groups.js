@@ -124,14 +124,17 @@
         this.context.on('quotes:defaultGroup:save', this._onSaveDefaultQuoteGroup, this);
 
         if (!(_.has(userACLs.Quotes, 'edit') ||
-                _.has(userACLs.Products, 'access') ||
-                _.has(userACLs.Products, 'edit'))) {
+            _.has(userACLs.Products, 'access') ||
+            _.has(userACLs.Products, 'edit'))) {
             // only listen for PCDashlet if this is Quotes and user has access
             // to both Quotes and Products
             // need to trigger on app.controller.context because of contexts changing between
             // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
             // app.controller.context is the only consistent context to use
-            app.controller.context.on('productCatalogDashlet:add', this._onProductCatalogDashletAddItem, this);
+
+            var _context = this.context.parent || this.context;
+            app.controller.context.on(_context.cid + ':productCatalogDashlet:add', this._onProductCatalogDashletAddItem,
+                this);
         }
 
         // check if this is create mode, in which case add an empty array to bundles
@@ -310,7 +313,8 @@
         }
 
         // trigger event on the context to let dashlet know this is done adding the product
-        app.controller.context.trigger('productCatalogDashlet:add:complete');
+        var _context = this.context.parent || this.context;
+        app.controller.context.trigger(_context.cid + ':productCatalogDashlet:add:complete');
     },
 
     /**
@@ -1639,7 +1643,8 @@
     _dispose: function() {
         this.beforeRender();
         if (app.controller && app.controller.context) {
-            app.controller.context.off('productCatalogDashlet:add', null, this);
+            var _context = this.context.parent || this.context;
+            app.controller.context.off(_context.cid + ':productCatalogDashlet:add', null, this);
         }
         this._super('_dispose');
     }

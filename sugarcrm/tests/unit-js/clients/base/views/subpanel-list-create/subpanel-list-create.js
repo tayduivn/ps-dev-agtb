@@ -99,7 +99,8 @@ describe('Base.View.SubpanelListCreate', function() {
                 });
                 view.bindDataChange();
 
-                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = view.context.parent || view.context;
+                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
         });
 
@@ -124,7 +125,8 @@ describe('Base.View.SubpanelListCreate', function() {
                 });
                 view.bindDataChange();
 
-                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = view.context.parent || view.context;
+                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
 
             it('should not set listener on app.controller.context when user has no access to RLIs', function() {
@@ -138,7 +140,8 @@ describe('Base.View.SubpanelListCreate', function() {
                 });
                 view.bindDataChange();
 
-                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = view.context.parent || view.context;
+                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
 
             it('should not set listener on app.controller.context when user has no edit access to RLIs', function() {
@@ -152,7 +155,8 @@ describe('Base.View.SubpanelListCreate', function() {
                 });
                 view.bindDataChange();
 
-                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = view.context.parent || view.context;
+                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
         });
 

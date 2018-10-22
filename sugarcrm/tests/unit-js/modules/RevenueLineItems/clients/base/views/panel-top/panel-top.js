@@ -79,7 +79,8 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
                 });
                 view.initialize({});
 
-                expect(app.controller.context.on).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = view.context.parent || view.context;
+                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
 
             it('should not set listener when user does not have access to RLIs', function() {
@@ -93,7 +94,8 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
                 });
                 view.initialize({});
 
-                expect(app.controller.context.on).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = view.context.parent || view.context;
+                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
 
             it('should not set listener when user does not have access to RLIs Edit', function() {
@@ -107,7 +109,8 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
                 });
                 view.initialize({});
 
-                expect(app.controller.context.on).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = view.context.parent || view.context;
+                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
 
             it('should set listener when user has correct ACLs', function() {
@@ -119,7 +122,8 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
                 });
                 view.initialize({});
 
-                expect(app.controller.context.on).toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = view.context.parent || view.context;
+                expect(app.controller.context.on).toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
         });
     });

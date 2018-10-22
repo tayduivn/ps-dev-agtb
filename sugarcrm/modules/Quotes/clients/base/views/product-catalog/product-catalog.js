@@ -104,7 +104,9 @@
         // need to trigger on app.controller.context because of contexts changing between
         // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
         // app.controller.context is the only consistent context to use
-        app.controller.context.on('productCatalogDashlet:add:complete', this._onProductDashletAddComplete, this);
+        var _context = this.context.parent || this.context;
+        app.controller.context.on(_context.cid + ':productCatalogDashlet:add:complete',
+            this._onProductDashletAddComplete, this);
         $(window).on('resize', _.bind(this._resizePhaserCanvas, this));
 
         sidebarLayout = this.closestComponent('sidebar');
@@ -288,7 +290,8 @@
                 }
             ]
         };
-        var EventHub = function() {};
+        var EventHub = function() {
+        };
         EventHub.prototype = {
 
             /**
@@ -782,7 +785,7 @@
                 );
 
                 if (this.isLangRTL) {
-                    text.anchor.setTo(1,0);
+                    text.anchor.setTo(1, 0);
                 }
 
                 text._itemName = itemName;
@@ -1308,10 +1311,11 @@
         delete data.date_modified;
         delete data.pricing_formula;
 
+        var _context = this.context.parent || this.context;
         // need to trigger on app.controller.context because of contexts changing between
         // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
         // app.controller.context is the only consistent context to use
-        app.controller.context.trigger('productCatalogDashlet:add', data);
+        app.controller.context.trigger(_context.cid + ':productCatalogDashlet:add', data);
     },
 
     /**
@@ -1381,7 +1385,8 @@
         // remove window resize event
         $(window).off('resize');
         if (app.controller && app.controller.context) {
-            app.controller.context.off('productCatalogDashlet:add:complete', null, this);
+            var _context = this.context.parent || this.context;
+            app.controller.context.off(_context.cid + ':productCatalogDashlet:add:complete', null, this);
         }
 
         this._super('_dispose');

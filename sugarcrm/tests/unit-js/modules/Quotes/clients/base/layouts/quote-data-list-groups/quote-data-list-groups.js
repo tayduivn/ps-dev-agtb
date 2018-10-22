@@ -19,11 +19,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         sinon.collection.stub(app.metadata, 'getView', function() {
             return {
-                panels: [{
-                    fields: [
-                        'field1', 'field2', 'field3', 'field4'
-                    ]
-                }]
+                panels: [
+                    {
+                        fields: [
+                            'field1', 'field2', 'field3', 'field4'
+                        ]
+                    }]
             };
         });
 
@@ -33,8 +34,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             };
         });
         layout = SugarTest.createLayout('base', 'Quotes', 'quote-data-list-groups', null, null, true);
-        sinon.collection.stub(layout, 'before', function() {});
-        sinon.collection.stub(layout, '_super', function() {});
+        sinon.collection.stub(layout, 'before', function() {
+        });
+        sinon.collection.stub(layout, '_super', function() {
+        });
     });
 
     afterEach(function() {
@@ -104,7 +107,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 });
                 layout.bindDataChange();
 
-                expect(app.controller.context.on).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = layout.context.parent || layout.context;
+                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
 
             it('should not set listener if user has no access to Products', function() {
@@ -118,7 +122,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 });
                 layout.bindDataChange();
 
-                expect(app.controller.context.on).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = layout.context.parent || layout.context;
+                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
 
             it('should not set listener if user has no access to Products edit', function() {
@@ -132,7 +137,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 });
                 layout.bindDataChange();
 
-                expect(app.controller.context.on).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = layout.context.parent || layout.context;
+                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
         });
 
@@ -170,7 +176,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             });
 
             it('should listen on layout.context for productCatalogDashlet:add', function() {
-                expect(app.controller.context.on).toHaveBeenCalledWith('productCatalogDashlet:add');
+                var _context = layout.context.parent || layout.context;
+                expect(app.controller.context.on).toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
             });
         });
 
@@ -202,7 +209,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 }, {
                     silent: true
                 });
-                sinon.collection.stub(layout, 'toggleCopyAlert', function() {});
+                sinon.collection.stub(layout, 'toggleCopyAlert', function() {
+                });
             });
 
             it('should not call toggleCopyAlert if there are no items to copy', function() {
@@ -283,8 +291,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('toggleCopyAlert()', function() {
         beforeEach(function() {
-            sinon.collection.stub(app.alert, 'show', function() {});
-            sinon.collection.stub(app.alert, 'dismiss', function() {});
+            sinon.collection.stub(app.alert, 'show', function() {
+            });
+            sinon.collection.stub(app.alert, 'dismiss', function() {
+            });
         });
 
         it('should call alert.show when called with showAlert = true', function() {
@@ -302,8 +312,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('completedCopyItem()', function() {
         beforeEach(function() {
-            sinon.collection.stub(layout, 'toggleCopyAlert', function() {});
-            sinon.collection.stub(layout, 'render', function() {});
+            sinon.collection.stub(layout, 'toggleCopyAlert', function() {
+            });
+            sinon.collection.stub(layout, 'render', function() {
+            });
         });
 
         describe('when bundleComplete is false', function() {
@@ -345,10 +357,14 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         beforeEach(function() {
 
-            sinon.collection.stub(layout, '_updateDefaultGroupWithNewData', function() {});
-            sinon.collection.stub(layout.context, 'once', function() {});
-            sinon.collection.stub(layout, '_onCreateQuoteGroup', function() {});
-            sinon.collection.stub(layout, 'completedCopyItem', function() {});
+            sinon.collection.stub(layout, '_updateDefaultGroupWithNewData', function() {
+            });
+            sinon.collection.stub(layout.context, 'once', function() {
+            });
+            sinon.collection.stub(layout, '_onCreateQuoteGroup', function() {
+            });
+            sinon.collection.stub(layout, 'completedCopyItem', function() {
+            });
         });
 
         afterEach(function() {
@@ -364,10 +380,11 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     modelView: 'test',
                     cid: 'test1'
                 };
-                relatedRecords = [{
-                    default_group: true,
-                    product_bundle_items: [pbItem1]
-                }];
+                relatedRecords = [
+                    {
+                        default_group: true,
+                        product_bundle_items: [pbItem1]
+                    }];
                 defaultGroup = {
                     quoteDataGroupList: {
                         collection: new Backbone.Collection(),
@@ -415,9 +432,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         describe('when relatedRecords is not the default group', function() {
             beforeEach(function() {
-                relatedRecords = [{
-                    default_group: false
-                }];
+                relatedRecords = [
+                    {
+                        default_group: false
+                    }];
                 layout.context.set('relatedRecords', relatedRecords);
                 sinon.collection.stub(layout, '_getComponentByGroupId', function() {
                     return defaultGroup;
@@ -445,7 +463,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         beforeEach(function() {
             triggerStub = sinon.collection.stub();
-            sinon.collection.stub(layout, 'completedCopyItem', function() {});
+            sinon.collection.stub(layout, 'completedCopyItem', function() {
+            });
 
             pbItem1 = {
                 modelView: 'test',
@@ -544,7 +563,9 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         it('should call trigger on app.controller.context', function() {
             layout._onProductCatalogDashletAddItem({});
 
-            expect(app.controller.context.trigger).toHaveBeenCalledWith('productCatalogDashlet:add:complete');
+            var _context = layout.context.parent || layout.context;
+            expect(app.controller.context.trigger)
+                .toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add:complete');
         });
     });
 
@@ -573,7 +594,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 silent: true
             });
 
-            sinon.collection.stub(app.api, 'call', function() {});
+            sinon.collection.stub(app.api, 'call', function() {
+            });
 
             layout._checkProductsQuoteLink();
             lastCallArgs = app.api.call.lastCall.args;
@@ -612,7 +634,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_onShowLineNumsChanged()', function() {
         beforeEach(function() {
-            sinon.collection.stub(layout.context, 'trigger', function() {});
+            sinon.collection.stub(layout.context, 'trigger', function() {
+            });
         });
 
         it('should trigger the quotes:show_line_nums:changed event with true', function() {
@@ -630,7 +653,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_render()', function() {
         beforeEach(function() {
-            sinon.collection.stub($.fn, 'sortable', function() {});
+            sinon.collection.stub($.fn, 'sortable', function() {
+            });
         });
 
         describe('when there are no sortable items', function() {
@@ -718,8 +742,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_onDragStart()', function() {
         beforeEach(function() {
-            sinon.collection.stub(app.tooltip, 'clear', function() {});
-            sinon.collection.stub(app.tooltip, '_disable', function() {});
+            sinon.collection.stub(app.tooltip, 'clear', function() {
+            });
+            sinon.collection.stub(app.tooltip, '_disable', function() {
+            });
 
             layout._onDragStart();
         });
@@ -809,9 +835,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 return model.get('position');
             };
 
-            sinon.collection.stub(app.tooltip, '_enable', function() {});
-            sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {});
-            sinon.collection.stub(layout, '_callBulkRequests', function() {});
+            sinon.collection.stub(app.tooltip, '_enable', function() {
+            });
+            sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {
+            });
+            sinon.collection.stub(layout, '_callBulkRequests', function() {
+            });
 
             sinon.collection.stub(layout, '_getComponentByGroupId', function(id) {
                 if (id === oldGroupId) {
@@ -849,12 +878,14 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 sinon.collection.stub($.fn, 'parent', function() {
                     return '<div data-group-id="' + newGroupId + '"></div>';
                 });
-                sinon.collection.stub(layout, '_moveItemToNewGroup', function() {});
+                sinon.collection.stub(layout, '_moveItemToNewGroup', function() {
+                });
                 oldGroup.collection.add(rowModel);
 
-                layout.currentBulkSaveRequests = [{
-                    id: 'hey'
-                }];
+                layout.currentBulkSaveRequests = [
+                    {
+                        id: 'hey'
+                    }];
                 layout._onDragStop(evtParam, uiParam);
             });
 
@@ -894,12 +925,16 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     expect(layout._callBulkRequests).toHaveBeenCalled();
                 });
                 it('should call _saveDefaultGroupThenCallBulk with an unsaved group', function() {
-                    sinon.collection.stub(newGroupModel, 'isNew', function() { return true });
+                    sinon.collection.stub(newGroupModel, 'isNew', function() {
+                        return true;
+                    });
                     // reset everything back
                     layout._saveDefaultGroupThenCallBulk.restore();
                     layout._callBulkRequests.restore();
-                    sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {});
-                    sinon.collection.stub(layout, '_callBulkRequests', function() {});
+                    sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {
+                    });
+                    sinon.collection.stub(layout, '_callBulkRequests', function() {
+                    });
                     newGroup.collection.remove(rowModel);
                     oldGroup.collection.add(rowModel);
 
@@ -990,7 +1025,6 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
     });
 
-
     describe('moveMassCollectionItemsToNewGroup()', function() {
         var rowModel;
         var massCollection;
@@ -1019,8 +1053,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             massCollection.add(rowModel);
             layout.context.set('mass_collection', massCollection);
 
-            sinon.collection.stub(layout, '_moveItemToNewGroup', function() {});
-            sinon.collection.stub(layout, '_callBulkRequests', function() {});
+            sinon.collection.stub(layout, '_moveItemToNewGroup', function() {
+            });
+            sinon.collection.stub(layout, '_callBulkRequests', function() {
+            });
         });
 
         afterEach(function() {
@@ -1084,20 +1120,21 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var rowModel;
 
         beforeEach(function() {
-            bulkResponses = [{
-                contents: {
-                    record: {
-                        id: 'bundleId1',
-                        total: '100'
-                    },
-                    related_record: {
-                        id: 'modelId1',
-                        total: '100',
-                        date_modified: '100',
-                        position: 0
+            bulkResponses = [
+                {
+                    contents: {
+                        record: {
+                            id: 'bundleId1',
+                            total: '100'
+                        },
+                        related_record: {
+                            id: 'modelId1',
+                            total: '100',
+                            date_modified: '100',
+                            position: 0
+                        }
                     }
-                }
-            }];
+                }];
 
             groupModel = app.data.createBean('ProductBundles', {
                 id: 'bundleId1',
@@ -1536,7 +1573,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             bulkSaveRequests = [];
             layoutModelId = 'layoutModelId1';
 
-            sinon.collection.stub(app.api, 'relationships', function() {});
+            sinon.collection.stub(app.api, 'relationships', function() {
+            });
 
             layout.model.set('id', layoutModelId);
             layout._saveDefaultGroupThenCallBulk(oldGroup, newGroup, bulkSaveRequests);
@@ -1602,11 +1640,14 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     test: true
                 }
             };
-            bulkSaveRequests = [{
-                url: 'v10/ProductBundles/' + newGroupOldId + '/stuff'
-            }];
-            sinon.collection.stub(layout, '_callBulkRequests', function() {});
-            sinon.collection.stub(layout, '_updateDefaultGroupWithNewData', function() {});
+            bulkSaveRequests = [
+                {
+                    url: 'v10/ProductBundles/' + newGroupOldId + '/stuff'
+                }];
+            sinon.collection.stub(layout, '_callBulkRequests', function() {
+            });
+            sinon.collection.stub(layout, '_updateDefaultGroupWithNewData', function() {
+            });
 
             layout._onDefaultGroupSaveSuccess(oldGroup, newGroup, bulkSaveRequests, newGroupOldId, serverData);
         });
@@ -1635,9 +1676,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_callBulkRequests', function() {
         beforeEach(function() {
-            layout.currentBulkSaveRequests = [{
-                url: 'testUrl'
-            }];
+            layout.currentBulkSaveRequests = [
+                {
+                    url: 'testUrl'
+                }];
             sinon.collection.stub(app.api, 'call', function() {
                 layout.currentBulkSaveRequests = null;
             });
@@ -1679,7 +1721,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var response2;
 
         beforeEach(function() {
-            sinon.collection.stub(layout, '_processSaveQueue', function() {});
+            sinon.collection.stub(layout, '_processSaveQueue', function() {
+            });
             customSuccessParam = sinon.collection.stub();
             sinon.collection.spy(layout.saveQueue, 'shift');
             request1 = {
@@ -2422,7 +2465,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     '<div class="ui-sortable"></div>'
                 ];
             });
-            sinon.collection.stub($.fn, 'sortable', function() {});
+            sinon.collection.stub($.fn, 'sortable', function() {
+            });
             layout.beforeRender();
         });
 
@@ -2529,7 +2573,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     initComponents: initComponentsSpy
                 };
             });
-            sinon.collection.stub(layout, 'addComponent', function() {});
+            sinon.collection.stub(layout, 'addComponent', function() {
+            });
 
             layout._addQuoteGroupToLayout({});
         });
@@ -2556,13 +2601,14 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var bundles;
 
         beforeEach(function() {
-            bundles = new Backbone.Collection([{
-                id: 'testId1',
-                position: 0
-            }, {
-                id: 'testId2',
-                position: 1
-            }]);
+            bundles = new Backbone.Collection([
+                {
+                    id: 'testId1',
+                    position: 0
+                }, {
+                    id: 'testId2',
+                    position: 1
+                }]);
             layout.model.set({
                 id: 'testQuoteLayoutId',
                 bundles: bundles,
@@ -2570,8 +2616,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 base_rate: '50.37'
             });
 
-            sinon.collection.stub(app.alert, 'show', function() {});
-            sinon.collection.stub(app.api, 'relationships', function() {});
+            sinon.collection.stub(app.alert, 'show', function() {
+            });
+            sinon.collection.stub(app.api, 'relationships', function() {
+            });
         });
 
         afterEach(function() {
@@ -2584,11 +2632,13 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
             beforeEach(function() {
                 newBundle = new Backbone.Model();
-                sinon.collection.stub(layout.context, 'trigger', function() {});
+                sinon.collection.stub(layout.context, 'trigger', function() {
+                });
                 sinon.collection.stub(layout, '_createNewProductBundleBean', function() {
                     return newBundle;
                 });
-                sinon.collection.spy(bundles, 'add', function() {});
+                sinon.collection.spy(bundles, 'add', function() {
+                });
                 layout.isCreateView = true;
 
                 layout._onCreateQuoteGroup();
@@ -2672,13 +2722,14 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var newBundleData;
         var bundles;
         beforeEach(function() {
-            bundles = new Backbone.Collection([{
-                id: 'testId1',
-                position: 0
-            }, {
-                id: 'testId2',
-                position: 1
-            }]);
+            bundles = new Backbone.Collection([
+                {
+                    id: 'testId1',
+                    position: 0
+                }, {
+                    id: 'testId2',
+                    position: 1
+                }]);
             layout.model.set('bundles', bundles);
             newBundleData = {
                 related_record: {
@@ -2687,11 +2738,16 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     product_bundle_items: []
                 }
             };
-            sinon.collection.stub(app.alert, 'dismiss', function() {});
-            sinon.collection.stub(app.alert, 'show', function() {});
-            sinon.collection.stub(layout, '_addQuoteGroupToLayout', function() {});
-            sinon.collection.stub(layout, 'render', function() {});
-            sinon.collection.stub(layout.context, 'trigger', function() {});
+            sinon.collection.stub(app.alert, 'dismiss', function() {
+            });
+            sinon.collection.stub(app.alert, 'show', function() {
+            });
+            sinon.collection.stub(layout, '_addQuoteGroupToLayout', function() {
+            });
+            sinon.collection.stub(layout, 'render', function() {
+            });
+            sinon.collection.stub(layout.context, 'trigger', function() {
+            });
             sinon.collection.spy(bundles, 'add');
         });
 
@@ -2763,9 +2819,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     id: 'relatedId1'
                 }
             };
-            sinon.collection.stub(app.alert, 'dismiss', function() {});
-            sinon.collection.stub(app.alert, 'show', function() {});
-            sinon.collection.stub(layout.context, 'trigger', function() {});
+            sinon.collection.stub(app.alert, 'dismiss', function() {
+            });
+            sinon.collection.stub(app.alert, 'show', function() {
+            });
+            sinon.collection.stub(layout.context, 'trigger', function() {
+            });
         });
 
         afterEach(function() {
@@ -2880,7 +2939,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             sinon.collection.stub(app.api, 'buildURL', function(path) {
                 return '.../' + path;
             });
-            sinon.collection.stub(layout, '_callBulkRequests', function() {});
+            sinon.collection.stub(layout, '_callBulkRequests', function() {
+            });
 
             layout._onDeleteSelectedItems(massCollection);
         });
@@ -2984,8 +3044,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 dispose: $.noop
             };
 
-            sinon.collection.stub(app.alert, 'dismiss', function() {});
-            sinon.collection.stub(app.alert, 'show', function() {});
+            sinon.collection.stub(app.alert, 'dismiss', function() {
+            });
+            sinon.collection.stub(app.alert, 'show', function() {
+            });
             sinon.collection.stub(layout, '_getComponentByGroupId', function() {
                 return groupLayout;
             });
@@ -3017,11 +3079,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         describe('when request is a record delete', function() {
             beforeEach(function() {
-                bulkRequests = [{
-                    contents: {
-                        id: 'productId1'
-                    }
-                }];
+                bulkRequests = [
+                    {
+                        contents: {
+                            id: 'productId1'
+                        }
+                    }];
 
                 layout._onDeleteSelectedItemsSuccess(massCollection, bulkRequests);
             });
@@ -3037,12 +3100,13 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         describe('when request is a group update', function() {
             beforeEach(function() {
-                bulkRequests = [{
-                    contents: {
-                        id: 'layoutId1',
-                        total: '0.00'
-                    }
-                }];
+                bulkRequests = [
+                    {
+                        contents: {
+                            id: 'layoutId1',
+                            total: '0.00'
+                        }
+                    }];
                 sinon.collection.stub(layout, '_updateModelWithRecord');
 
                 layout._onDeleteSelectedItemsSuccess(massCollection, bulkRequests);
@@ -3100,9 +3164,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             layout.defaultGroupId = defaultGroupId;
             layout.model.set('id', 'testQuoteLayoutId');
             layout.model.set('bundles', new Backbone.Collection(groupModel));
-            sinon.collection.stub(app.alert, 'show', function() {});
-            sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {});
-            sinon.collection.stub(layout, '_callBulkRequests', function() {});
+            sinon.collection.stub(app.alert, 'show', function() {
+            });
+            sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {
+            });
+            sinon.collection.stub(layout, '_callBulkRequests', function() {
+            });
         });
 
         afterEach(function() {
@@ -3123,7 +3190,9 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
 
         it('should call _saveDefaultGroupThenCallBulk if default group is not saved', function() {
-            sinon.collection.stub(defaultGroupModel, 'isNew', function() { return true; });
+            sinon.collection.stub(defaultGroupModel, 'isNew', function() {
+                return true;
+            });
             layout._onDeleteQuoteGroupConfirm(groupId, groupName, groupToDelete);
 
             expect(layout._saveDefaultGroupThenCallBulk).toHaveBeenCalled();
@@ -3138,7 +3207,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_dispose()', function() {
         beforeEach(function() {
-            sinon.collection.stub(layout, 'beforeRender', function() {});
+            sinon.collection.stub(layout, 'beforeRender', function() {
+            });
         });
 
         it('should call beforeRender', function() {
