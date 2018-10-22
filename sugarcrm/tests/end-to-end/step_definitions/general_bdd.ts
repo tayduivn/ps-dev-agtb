@@ -195,7 +195,7 @@ export const closeAlert = async function () {
     await alert.close();
 };
 
-const goToUrl = async function (urlHash): Promise<void> {
+export const goToUrl = async function (urlHash): Promise<void> {
     await seedbed.client.driver.setUrlHash(urlHash);
     // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
     await seedbed.client.driver.pause(1500);
