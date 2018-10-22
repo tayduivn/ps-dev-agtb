@@ -486,7 +486,9 @@ gulp.task('check-license', function(done) {
             // lock files
             'lock',
             // checksum lists
-            'md5'
+            'md5',
+            // YAML files
+            'yml'
         ],
         licenseFile: 'LICENSE',
         // Add paths you want to exclude in the whiteList file.
