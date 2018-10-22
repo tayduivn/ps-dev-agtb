@@ -703,7 +703,7 @@
 
     .listed {
       li {
-        padding: 1px;
+        padding: 2px 0 0;
       }
     }
 
@@ -744,7 +744,7 @@
         }
 
         nav {
-          padding: 6px;
+          padding: 5px;
           margin: 0;
         }
 
@@ -752,24 +752,23 @@
         .favorite-pagination {
           display: inline-block;
 
-
           .fa-ellipsis-h {
-            vertical-align: super;
+            vertical-align: bottom;
           }
 
           .left-ellipsis-icon {
-            padding-left: 6px;
+            padding-left: 3px;
           }
 
           .right-ellipsis-icon {
-            padding-right: 6px;
+            padding-right: 3px;
           }
 
           //Anchor tag containing chevron spans
           .paginate-aria-button {
             font-weight: 600;
-            font-size: 16px;
-            line-height: 16px;
+            font-size: 12px;
+            line-height: 12px;
             width: 40%;
             background-color: @btnBackgroundHighlight;
             color: @btnPrimaryBackground;
@@ -792,6 +791,8 @@
             .previous-fav,
             .next-fav {
               color: @btnPrimaryBackground;
+              width: 8px;
+              font-size: smaller;
 
               &:hover {
                 background-color: @grayLighter;
@@ -812,7 +813,7 @@
 
           //Previous button
           .nav-previous {
-            padding: 5px 10px;
+            padding: 3px 6px;
             border: 1px solid #ddd;
             border-top-left-radius: 5px;
             border-bottom-left-radius: 5px;
@@ -820,7 +821,7 @@
 
           //Next button
           .nav-next {
-            padding: 5px 10px;
+            padding: 3px 6px;
             border: 1px solid #ddd;
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
@@ -836,8 +837,8 @@
           //Numbered buttons to paginate
           .paginate-num-button {
             font-weight: 600;
-            font-size: 16px;
-            line-height: 16px;
+            font-size: 12px;
+            line-height: 12px;
             border: none;
             width: 40%;
             color: @grayDark;
@@ -865,16 +866,17 @@
       .recent-records-list {
         padding: 6px;
         font-size: 12px;
-        height: 75%;
+        height: 80%;
 
         .recent-records {
           i {
-            font-size: 18px;
+            font-size: 16px;
           }
 
           .recent-link {
             margin-left: 8px;
             text-align: center;
+            vertical-align: top;
           }
 
           border-bottom: none;

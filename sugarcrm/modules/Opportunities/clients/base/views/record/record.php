@@ -136,7 +136,6 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     )
                     //END SUGARCRM flav=ent ONLY
                 ),
-
                 array(
                     'name' => 'follow',
                     'label' => 'LBL_FOLLOW',

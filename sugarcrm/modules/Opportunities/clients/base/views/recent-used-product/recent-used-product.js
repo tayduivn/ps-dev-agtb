@@ -68,14 +68,13 @@
     _initTabs: function() {
         this._super('_initTabs');
         //Remove Recent used tabs for Opportunity Only mode
-        if (app.controller.context.get('module') !== 'Quotes') {
+        if (app.controller.context.get('module') !== 'Quotes' || this.layout.module === 'Opportunities') {
             if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'Opportunities') {
                 this.tabs = _.without(this.tabs, _.findWhere(this.tabs, {
                     label: 'LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB'
                 }));
             }
         }
-
         return this;
     },
 
@@ -89,7 +88,12 @@
         } else {
             this.activeTab = 'favorites';
         }
-        return app.api.buildURL(app.controller.context.get('module'), this.activeTab);
+
+        if (this.layout.module === 'Home') {
+            return app.api.buildURL(app.controller.context.get('module'), this.activeTab);
+        } else {
+            return app.api.buildURL(this.layout.module, this.activeTab);
+        }
     },
 
     /**
@@ -104,7 +108,7 @@
     },
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      * @param options gets page number for Pagination in Favorites tab
      */
     loadData: function(options) {

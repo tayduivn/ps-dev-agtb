@@ -753,7 +753,7 @@
                     'prodCatTS',
                     iconName
                 );
-                icon.height = this.iconHeight;
+                icon.height = iconName === 'list-alt' ? 12 : this.iconHeight;
                 icon.width = this.iconWidth;
                 icon.anchor.setTo(0.5, 0.5);
                 icon._itemName = itemName;

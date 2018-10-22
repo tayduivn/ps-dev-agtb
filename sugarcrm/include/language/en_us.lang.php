@@ -3694,7 +3694,7 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account.',
     'LBL_RECENT_USED_PRODUCT_DASHLET_NAME' => 'Product Catalog Quick Picks',
     'LBL_RECENT_USED_PRODUCT_DASHLET_DESCRIPTION'=> 'Lists Recently used items and products saved as Favorites',
-    'LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB' => 'Recently used',
+    'LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB' => 'Recently Used',
     'LBL_DASHLET_RECENT_USED_PRODUCT_FAVORITES_TAB' => 'Favorites',
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',

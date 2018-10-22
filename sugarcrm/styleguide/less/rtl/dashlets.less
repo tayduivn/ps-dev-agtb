@@ -1,31 +1,48 @@
 /* Product Catalog Quick Picks Dashlet */
 
-.recent-used-product {
-  .listed {
-    li {
-      padding: 1px;
+.product-catalog-quick-picks {
+  .recent-used-product {
+    .listed {
+      li {
+        padding: 2px 0 0;
+      }
     }
-  }
 
-  .tab-content {
-    .recent-records-list {
-      padding-top: 8px;
-      font-size: 12px;
-      margin-right: 16px;
+    .tab-content {
+      .block-footer {
+        .favorite-pagination {
+          .left-ellipsis-icon {
+            padding: 0 3px 0 0;
+          }
 
-      .recent-records {
-        i {
-          font-size: 18px;
-          font-weight: 500;
-          align-self: baseline;
+          .right-ellipsis-icon {
+            padding: 0 0 0 3px;
+          }
+
+          //Previous button
+          .nav-previous {
+            border-radius: 0 5px 5px 0;
+          }
+
+          //Next button
+          .nav-next {
+            border-radius: 5px 0 0 5px;
+          }
         }
+      }
 
-        .recent-link {
-          margin-right: 8px;
-          text-align: center;
+      .recent-records-list {
+        .recent-records {
+          i {
+            font-size: 18px;
+          }
+
+          .recent-link {
+            margin-right: 8px;
+          }
+
+          border-bottom: none;
         }
-
-        border-bottom: none;
       }
     }
   }

@@ -363,28 +363,28 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
         describe('when records are present in the result', function() {
             describe('when recent-products tab is active', function() {
                 beforeEach(function() {
-                   result = {
-                       records: [
-                           {
-                               id: 1,
-                               name: 'test1'
-                           },
-                           {
-                               id: 2,
-                               name: 'test2'
-                           }
-                       ],
-                       totalPages: 0
-                   };
-                   view.activeTab = 'recent-product';
-                   view.onProductFetchSuccess(result);
+                    result = {
+                        records: [
+                            {
+                                id: 1,
+                                name: 'test1'
+                            },
+                            {
+                                id: 2,
+                                name: 'test2'
+                            }
+                        ],
+                        totalPages: 0
+                    };
+                    view.activeTab = 'recent-product';
+                    view.onProductFetchSuccess(result);
                 });
                 afterEach(function() {
                    view.activeTab = null;
                });
 
                 it('should assign the results to the view.recentCollection', function() {
-                   expect(view.recentCollection.reset).toHaveBeenCalledWith(result.records);
+                    expect(view.recentCollection.reset).toHaveBeenCalledWith(result.records);
                 });
             });
             describe('when favorites tab is active', function() {
@@ -556,7 +556,6 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
 
                         it('should set view.pageNumList isActive to true', function() {
                             view.onProductFetchSuccess(result);
-                            debugger;
                             expect(view.pageNumList[1].isActive).toBeTruthy();
                         });
 
