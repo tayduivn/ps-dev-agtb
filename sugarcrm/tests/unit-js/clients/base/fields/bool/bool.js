@@ -65,9 +65,9 @@ describe('Base.Field.Bool', function() {
 
             field.render();
             var modelSpy = sinon.collection.spy(field.model, 'set');
-            field.$(field.fieldTag).attr('checked', true).trigger('change');
+            field.$(field.fieldTag).prop('checked', true).trigger('change');
             expect(modelSpy).toHaveBeenCalledWith('my_bool', true);
-            field.$(field.fieldTag).attr('checked', false).trigger('change');
+            field.$(field.fieldTag).prop('checked', false).trigger('change');
             expect(modelSpy).toHaveBeenCalledWith('my_bool', false);
         });
 

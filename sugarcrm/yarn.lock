@@ -5174,9 +5174,9 @@ simple-is@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/simple-is/-/simple-is-0.2.0.tgz#2abb75aade39deb5cc815ce10e6191164850baf0"
 
-sinon@1.6.0:
-  version "1.6.0"
-  resolved "http://npm-cache.qa.sugarcrm.net:8181/repository/npm/sinon/-/sinon-1.6.0.tgz#577b017d86943b8c42537d5ac2e863730f58cc9b"
+sinon@1.7.1:
+  version "1.7.1"
+  resolved "http://registry.npmjs.org/sinon/-/sinon-1.7.1.tgz#8cddcfa5178459fde90ad4981f353bda53ae4962"
   dependencies:
     buster-format "~0.5"
 
