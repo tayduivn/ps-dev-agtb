@@ -160,7 +160,9 @@
         var self = this;
         var el = this.$el.find(this.fieldTag);
         el.on('change', function() {
-            var val = self.unformat(el.val());
+            // trimming the value to remove space if any
+            var trimVal = el.val() ? el.val().trim() : el.val();
+            var val = self.unformat(trimVal);
             if (_.isEqual(val, self.model.get(self.name))) {
                 self.setCurrencyValue(val);
             } else {
