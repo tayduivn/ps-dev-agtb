@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Multi-tenant cache key storage

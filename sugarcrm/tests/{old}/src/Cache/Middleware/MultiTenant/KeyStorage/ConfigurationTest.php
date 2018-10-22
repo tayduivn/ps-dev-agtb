@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Cache\Middleware\MultiTenant\KeyStorage;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage\Configuration;

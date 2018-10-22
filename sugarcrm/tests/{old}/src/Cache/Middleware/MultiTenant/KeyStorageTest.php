@@ -13,7 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Cache\Middleware\MultiTenant;
 
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage;
 
 /**

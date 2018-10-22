@@ -54,7 +54,7 @@ if(empty($app_list_strings)) {
  * Seed the random number generator with a fixed constant.  This will make all installs of the same code have the same
  * seed data.  This facilitates cross database testing..
  */
-mt_srand(93285903);
+mt_srand(93285904);
 $db = DBManagerFactory::getInstance();
 $timedate = TimeDate::getInstance();
 // Set the max time to one hour (helps Windows load the seed data)

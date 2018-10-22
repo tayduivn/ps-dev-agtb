@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTests\Cache\Middleware;
 
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Sugarcrm\Sugarcrm\Cache\Backend\InMemory as InMemoryBackend;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage;

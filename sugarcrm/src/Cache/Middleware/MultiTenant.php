@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Cache\Middleware;
 
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage;
 use Sugarcrm\Sugarcrm\Security\Crypto\AES256GCM;

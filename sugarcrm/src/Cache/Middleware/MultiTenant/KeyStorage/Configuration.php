@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage;
 
 use Configurator;
 use InvalidArgumentException;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage;
 
