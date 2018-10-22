@@ -90,15 +90,12 @@ describe('Base.Fields.Pdfaction', function() {
                 action: 'download',
                 acl_action: 'view'
             });
-            var loginSpy = sinon.collection.spy(app.bwc, 'login');
-            var fileDownloadStub = sinon.collection.stub(app.api, 'fileDownload');
-            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks, options) {
-                callbacks.success();
-            });
+            // todo: this needs to be updated when ventana is updated
+            app.api.xhrDownloadBlob = $.noop;
+            var xhrDownloadFileSpy = sinon.collection.spy(app.api, 'xhrDownloadFile');
             download.downloadClicked({});
 
-            expect(loginSpy).toHaveBeenCalled();
-            expect(fileDownloadStub).toHaveBeenCalled();
+            expect(xhrDownloadFileSpy).toHaveBeenCalled();
         });
     });
 });

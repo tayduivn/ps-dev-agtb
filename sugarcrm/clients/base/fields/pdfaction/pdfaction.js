@@ -87,24 +87,6 @@
     },
 
     /**
-     * Build download link url.
-     *
-     * @param {String} templateId PDF Template id.
-     * @return {string} Link url.
-     * @private
-     */
-    _buildDownloadLink: function(templateId) {
-        var urlParams = $.param({
-            'action': 'sugarpdf',
-            'module': this.module,
-            'sugarpdf': 'pdfmanager',
-            'record': this.model.id,
-            'pdf_template_id': templateId
-        });
-        return '?' + urlParams;
-    },
-
-    /**
      * Build email pdf link url.
      *
      * @param {String} templateId PDF Template id.
@@ -157,26 +139,21 @@
      * @param {Event} evt The `click` event.
      */
     downloadClicked: function(evt) {
-        var templateId = this.$(evt.currentTarget).data('id');
-
-        app.bwc.login(null, _.bind(function() {
-            this._triggerDownload(this._buildDownloadLink(templateId));
-        }, this));
-    },
-
-    /**
-     * Download the file once authenticated in bwc mode.
-     *
-     * @param {String} url The file download url.
-     * @protected
-     */
-    _triggerDownload: function(url) {
-        app.api.fileDownload(url, {
-            error: function(data) {
-                // refresh token if it has expired
-                app.error.handleHttpError(data, {});
-            }
-        }, {iframe: this.$el});
+        var $target = this.$(evt.currentTarget);
+        var templateId = $target.data('id');
+        var url = app.api.buildURL('PdfManager', 'generate', null, {
+            module: this.module,
+            record: this.model.id,
+            pdf_template_id: templateId,
+            sugarpdf: 'pdfmanager'
+        });
+        app.alert.show('generating_pdf', {
+            level: 'process',
+            title: 'Generating PDF'
+        });
+        app.api.xhrDownloadFile(url, function() {
+            app.alert.dismiss('generating_pdf');
+        });
     },
 
     /**
