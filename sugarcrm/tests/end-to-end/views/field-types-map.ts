@@ -38,7 +38,7 @@ import * as DashboardtitleField from '../fields/dashboardtitle-field';
 import * as FavoriteField from '../fields/favorite-field';
 import * as EmailAttachmentsField from '../fields/email-attachments-field';
 import * as FromField from '../fields/from-field';
-import * as PmseHtmleditableTinymce from '../fields/pmse_htmleditable_tinymce-field';
+import * as HtmleditableTinymceField from '../fields/htmleditable-tinymce-field';
 import * as CommentLogField from '../fields/commentlog-field';
 
 export const FIELD_TYPES__MAP = {
@@ -79,7 +79,9 @@ export const FIELD_TYPES__MAP = {
     'favorite': FavoriteField,
     'email-attachments': EmailAttachmentsField,
     'from': FromField,
-    'pmse_htmleditable_tinymce': PmseHtmleditableTinymce,
+    'htmleditable_tinymce': HtmleditableTinymceField,
+    signature_html: HtmleditableTinymceField,
+    'pmse_htmleditable_tinymce': HtmleditableTinymceField,
     'commentlog': CommentLogField,
 };
 

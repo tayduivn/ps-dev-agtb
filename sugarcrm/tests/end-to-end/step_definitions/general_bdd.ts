@@ -205,30 +205,26 @@ export const goToUrl = async function (urlHash): Promise<void> {
 };
 
 export const parseInputArray = async function (arg: string): Promise<any[]> {
-    arg = arg.slice(arg.indexOf('[') + 1, arg.indexOf(']'));
 
+    // trim spaces and square brackets
+    arg = arg.replace(/[\[\]]/g,'').trim();
+
+    let records = [];
     if (arg.startsWith('*')) {
-        if (arg.indexOf(',') === -1) {
-            let record = seedbed.cachedRecords.get(arg.replace('*', ''));
+
+        let sRecord = arg.split(',');
+        for (let i = 0; i < sRecord.length; i++) {
+
+            let record = seedbed.cachedRecords.get(sRecord[i].trim().replace('*', ''));
 
             if (!record) {
                 throw new Error(`Record '${arg}' doesn't exist`);
             }
-            return record;
-        } else {
-            let records = [];
-            let sRecord = arg.split(',');
-            for (let i = 0; i < sRecord.length; i++) {
-
-                let record = seedbed.cachedRecords.get(sRecord[i].trim().replace('*', ''));
-
-                if (!record) {
-                    throw new Error(`Record '${arg}' doesn't exist`);
-                }
-                records.push(record);
-            }
-            return records;
+            records.push(record);
         }
+        return records;
+    } else {
+        throw new Error (`Record '${arg}' doesn't exist`);
     }
 };
 

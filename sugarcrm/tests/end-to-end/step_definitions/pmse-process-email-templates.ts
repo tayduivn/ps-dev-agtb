@@ -23,6 +23,7 @@ Given(/^I design (\w+) \*(\w+)/,
     async function(module: string, name: string) {
         await chooseModule(module);
         let view = await seedbed.components[`${module}List`].ListView;
+        await seedbed.client.driver.waitForApp();
         let record = await seedbed.cachedRecords.get(name);
         await chooseRecord({id: record.id}, view);
         let rec_view = await seedbed.components[`${name}Record`];
@@ -84,7 +85,7 @@ When(/^a placeholder is inserted in the (subject|content) \*(\w+) record from mo
         if (recordModule != table['rawTable'][1][0]) {
             await petSelectField.clickButton('module_dropdown');
             await seedbed.client.driver.waitForApp();
-            await petSelectField.clickModuleSelect(table['rawTable'][1][3]);
+            await petSelectField.clickModuleSelect(linkText);
             await seedbed.client.driver.waitForApp();
             selectedModule = recordModule;
         } else {

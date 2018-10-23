@@ -15,10 +15,26 @@ module.exports = {
      *
      * @param elementSelector
      */
-    scrollToSelector: function (elementSelector) {
+    scrollToSelector: function(elementSelector) {
         $(elementSelector).get(0).scrollIntoView(false);
     },
 
+    /**
+     * Set value for TinyMCE field
+     *
+     * @param {string }mceId
+     * @param {string} fieldValue
+     */
+    setValueForTinyMCE: function(mceId, fieldValue) {
+        tinyMCE.get(mceId).execCommand('mceInsertContent', false, fieldValue);
+    },
+
+    /**
+     * Get value of TinyMCE field
+     */
+    getValueForTinyMCE: function(mceId) {
+        return tinyMCE.get(mceId).getContent({format: 'raw'});
+    },
     /**
      * Get field label from the field name
      *
@@ -40,18 +56,11 @@ module.exports = {
     },
 
     /**
-     * Set value for TinyMCE field
+     * Get html value from iFrame
      *
-     * @param {string} fieldValue
      */
-    setValueForTinyMCE: function(fieldValue) {
-        tinyMCE.execCommand('mceInsertContent', false, fieldValue);
-    },
-
-    /**
-     * Get value of TinyMCE field
-     */
-    getValueForTinyMCE: function() {
-        return document.getElementsByTagName('BODY')[0].innerHTML;
+    getiFrameValue: function(iFrameName) {
+        var oFrame = document.querySelector('[data-name=' + iFrameName + '] iframe');
+        return oFrame.contentDocument.body.innerHTML;
     },
 };

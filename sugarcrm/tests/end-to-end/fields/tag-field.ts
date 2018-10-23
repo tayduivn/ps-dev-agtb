@@ -32,7 +32,7 @@ export default class extends BaseField {
             }
         });
 
-        this.matchInput = '.select2-match';
+        this.matchInput = '.select2-highlighted';
 
     }
 
@@ -60,9 +60,7 @@ export class TagEdit extends BaseField {
     }
 
     public async getText(): Promise<string> {
-
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
-
         return value.toString().trim();
     }
 }

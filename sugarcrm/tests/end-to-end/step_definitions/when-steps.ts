@@ -20,7 +20,7 @@ import SubpanelLayout from '../layouts/subpanel-layout';
 import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import AlertCmp from '../components/alert-cmp';
 import {updateOpportunityConfig} from './steps-helper';
-import {chooseModule, closeAlert } from '../step_definitions/general_bdd';
+import {toggleRecord, parseInputArray, chooseModule, closeAlert} from '../step_definitions/general_bdd';
 
 /**
  * Select module in modules menu
@@ -54,7 +54,7 @@ When(/^I choose (\w+) in modules menu$/,
  * Select item from cached View
  */
 When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-    async function (record: {id: string}, view: ListView) {
+    async function (record: { id: string }, view: ListView) {
         let listItem = view.getListItem({id: record.id});
         await listItem.clickListItem();
     }, {waitForApp: true});
@@ -63,7 +63,7 @@ When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
  * Select item from cached View
  */
 When(/^I toggle (checkbox|favorite) for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-    async function (itemName, record: {id: string}, view: ListView) {
+    async function (itemName, record: { id: string }, view: ListView) {
         let listItem = view.getListItem({id: record.id});
         await listItem.clickItem(itemName);
     }, {waitForApp: true});
@@ -96,7 +96,7 @@ When(/^I select "(Mass Update|Recalculate Values|Delete Selected|Export)" action
 When(/^I select (GenerateQuote|Delete) action in (#\S+)$/,
     async function (itemName, view: SubpanelLayout) {
 
-    await view.clickMenuItem(itemName);
+        await view.clickMenuItem(itemName);
     }, {waitForApp: true});
 
 /**
@@ -111,17 +111,17 @@ When(/^I click on preview button on (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
     }, {waitForApp: true});
 
 When(/^I wait for (\d+) seconds$/,
-    async function(delay: string): Promise<void> {
+    async function (delay: string): Promise<void> {
         await whenStepsHelper.waitStep(parseInt(delay, 10));
     });
 
 When(/^I open ([\w,\/]+) view and login$/,
-    async function(module: string): Promise<void> {
+    async function (module: string): Promise<void> {
         await whenStepsHelper.setUrlHashAndLogin(module);
     }, {waitForApp: true});
 
 When(/^I go to "([^"]*)" url$/,
-        async function(urlHash): Promise<void> {
+    async function (urlHash): Promise<void> {
         await this.driver.setUrlHash(urlHash);
     }, {waitForApp: true});
 
@@ -237,7 +237,7 @@ When(/^I provide input for (#\S+) view for (\d+) row$/,
  *
  * @example When I click more guests button on #C_1Preview view
  */
-When(/^I click (show more|show less|more guests) button on (#\S+) view$/, async function(buttonName: string, layout: any) {
+When(/^I click (show more|show less|more guests) button on (#\S+) view$/, async function (buttonName: string, layout: any) {
     await layout.showMore(buttonName);
 }, {waitForApp: true});
 
@@ -258,7 +258,7 @@ When(/^I toggle (Business_Card|Billing_and_Shipping|Quote_Settings|Show_More) pa
  * @example I click on edit button for *Account_A in #AccountsList.ListView
  */
 When(/^I click on (\w+) button for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-    async function(button, record: {id}, view: ListView) {
+    async function (button, record: { id }, view: ListView) {
         let listItem = view.getListItem({id: record.id});
 
         let isVisible = await listItem.isVisible(button);
@@ -279,7 +279,7 @@ When(/^I click on (\w+) button for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
  * @example I set values for *Account_A in #AccountsList.ListView
  */
 When(/^I set values for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-    async function(record: {id: string}, view: ListView, data: TableDefinition) {
+    async function (record: { id: string }, view: ListView, data: TableDefinition) {
         let listItem = view.getListItem({id: record.id});
 
         let row: any;
@@ -292,13 +292,13 @@ When(/^I set values for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
     }, {waitForApp: true});
 
 When(/^I click (\S+) field on (#\S+) view$/,
-    async function(fieldName, layout: any) {
+    async function (fieldName, layout: any) {
         let view = layout.type ? layout.defaultView : layout;
         return view.clickField(fieldName);
     }, {waitForApp: true});
 
 When(/^I click (\S+) field on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) view$/,
-    async function(fieldName: string, record: { id: string }, listView: ListView) {
+    async function (fieldName: string, record: { id: string }, listView: ListView) {
 
         let listItem = listView.getListItem({id: record.id});
 
@@ -312,7 +312,7 @@ When(/^I click (\S+) field on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) view$/,
  *
  * @example "I choose addRLI on #OpportunityDrawer.RLITable view for 1 row"
  */
-When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/, async function (buttonName, view: RliTableRecord, index)  {
+When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/, async function (buttonName, view: RliTableRecord, index) {
 
     let rowView = view.getRowByIndex(index);
 
@@ -322,9 +322,9 @@ When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/
 
 When(/^I dismiss alert$/, async function () {
 
-        await this.driver.alertDismiss();
+    await this.driver.alertDismiss();
 
-    }, {waitForApp: true});
+}, {waitForApp: true});
 
 /**
  * This step required in personal info drawer of GDPR workflow. This steps selects the fields for erasure in Personal Info drawer
@@ -338,7 +338,7 @@ When(/^I dismiss alert$/, async function () {
  *
  */
 When(/^I select fields in (#\S+) view$/,
-    async function (layout: PersonalInfoDrawerLayout , data: TableDefinition): Promise<void> {
+    async function (layout: PersonalInfoDrawerLayout, data: TableDefinition): Promise<void> {
 
         if (data.hashes.length > 1) {
             throw new Error('One line data table entry is expected');
@@ -364,13 +364,13 @@ When(/^I stop timer and verify$/, async function (data: TableDefinition) {
         throw new Error('One line data table entry is expected');
     }
 
-    let specified_threshold = parseInt(data.rows()[0][0], 10);
+    let specified_threshold = parseInt( data.rows()[0][0] , 10);
 
     let actual_time = (new Date().getTime() - timer);
 
-    if ( actual_time > specified_threshold  ) {
-        throw new Error('It took longer than expected to complete this operation. Max Expected: ' + specified_threshold + '. Actual: ' + actual_time );
-    }  else {
+    if (actual_time > specified_threshold) {
+        throw new Error('It took longer than expected to complete this operation. Max Expected: ' + specified_threshold + '. Actual: ' + actual_time);
+    } else {
         seedbed.logger.info('It took ' + actual_time + ' to complete this operation. It is within the specified max time of ' + specified_threshold);
     }
 
@@ -457,7 +457,6 @@ When(/^I configure Opportunities mode$/, async function (table: TableDefinition)
 
 }, {waitForApp: false});
 
-
 When(/^I add new currency$/, async function (data: TableDefinition) {
 
     const module = 'Currencies';
@@ -498,3 +497,105 @@ When(/^I add new currency$/, async function (data: TableDefinition) {
     await closeAlert();
 
 }, {waitForApp: false});
+
+/**
+ *  Add recipients to new or saved email message
+ *
+ *  @example
+ *      When I add the following recipients to the email in #EmailsRecord.RecordView
+ *          | fieldName | value       |
+ *          | To        | *A_2        |
+ *          | Cc        | *C_2        |
+ *          | Bcc       | *L_1, *L_2] |
+ */
+When(/^I add the following recipients to the email in (#\S+)$/,
+    async function (view: RecordView ,table: TableDefinition) {
+        const listView = await seedbed.components[`EmailsList`].ListView;
+
+        // Activate recipients field. This is only needed in existing Email's record view
+        await view.clickButton('activate_recipents_field');
+        await this.driver.waitForApp();
+
+        const rows = table.rows();
+        for (let row of rows) {
+            let recipientsGroup = row[0];
+            let recipientsList = row[1];
+
+            // Parse the recipients IDs
+            const recordIds = await parseInputArray(recipientsList);
+
+            switch (recipientsGroup.toLowerCase()) {
+                case 'to':
+                    // Open Related Address Book
+                    await view.clickButton('open_address_book_btn');
+                    await this.driver.waitForApp();
+                    break;
+
+                case 'cc':
+                    // Click CC button if CC field is not activated in Email record view
+                    if (!(await view.elementExists('buttons.cc_button_active'))) {
+                        await view.clickButton('cc_button');
+                        await this.driver.waitForApp();
+                    }
+
+                    // Open Related Address Book
+                    await view.clickButton('open_address_book_btn_cc');
+                    await this.driver.waitForApp();
+                    break;
+
+                case 'bcc':
+                    // Click BCC button if BCC field is not activated in Email record view
+                    if (!(await view.elementExists('buttons.bcc_button_active'))) {
+                        await view.clickButton('bcc_button');
+                        await this.driver.waitForApp();
+                    }
+
+                    // Open Related Address Book
+                    await view.clickButton('open_address_book_btn_bcc');
+                    await this.driver.waitForApp();
+                    break;
+
+                default:
+                    throw new Error('Such field does not exist!');
+            }
+
+            // Toggle specific record(s)
+            for (let record of recordIds) {
+                await toggleRecord({id: record.id}, listView);
+            }
+
+            // Click Done button in the header of Address Book drawer
+            const headerView = await seedbed.components[`AuditLogDrawer`].HeaderView;
+            await headerView.clickButton('done');
+            await this.driver.waitForApp();
+        }
+    }, {waitForApp: false});
+
+/**
+ *  Open CC (BCC) field in the email message.
+ *
+ *  Note: This step definition applies to record view of Email record
+ *
+ *  @example: When I click CC button on #EmailsRecord.RecordView
+ */
+When(/^I click (CC|BCC) button on (#\S+)$/,
+    async function (recipientsGroup: string, view: RecordView) {
+
+        switch (recipientsGroup.toLowerCase()) {
+            case 'cc':
+                if
+                (!(await view.elementExists('buttons.cc_button_active'))) {
+                    await view.clickButton('cc_button');
+                    await this.driver.waitForApp();
+                }
+                break;
+            case 'bcc':
+                if (!(await view.elementExists('buttons.bcc_button_active'))) {
+                    await view.clickButton('bcc_button');
+                    await this.driver.waitForApp();
+                }
+                break;
+            default:
+                throw new Error('Such field does not exist!');
+        }
+    }, {waitForApp: false});

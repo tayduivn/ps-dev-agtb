@@ -38,8 +38,18 @@ export default class RecordView extends BaseView {
                 label: '.label-module-sm.label-{{label}}'
             },
             listingItemCreateLink: "a[href$='{{module}}/create']",
-        });
 
+            buttons: {
+                open_address_book_btn: '.address-book[data-name="to_collection"]',
+                open_address_book_btn_cc: '.address-book[data-name="cc_collection"]',
+                open_address_book_btn_bcc: '.address-book[data-name="bcc_collection"]',
+                cc_button: '[data-toggle-field="cc_collection"]',
+                cc_button_active: '.active[data-toggle-field="cc_collection"]',
+                bcc_button: '[data-toggle-field="bcc_collection"]',
+                bcc_button_active: '.active[data-toggle-field="bcc_collection"]',
+                activate_recipents_field: '.email-recipients.fieldset',
+            }
+        });
     }
 
     public async getSelector(panelName) {
@@ -106,5 +116,17 @@ export default class RecordView extends BaseView {
             await this.driver.scroll(panelSelector);
             await this.driver.click(panelSelector);
         }
+    }
+
+    /**
+     * Check if element is present on the record view
+     *
+     * @param elementName
+     * @returns {Promise<>}
+     */
+    public async elementExists(elementName) {
+        let selector = this.$(elementName);
+        let value = await this.driver.isElementExist(selector);
+        return value;
     }
 }
