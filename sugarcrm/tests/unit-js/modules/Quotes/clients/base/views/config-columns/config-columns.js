@@ -287,7 +287,7 @@ describe('Quotes.View.ConfigColumns', function() {
         });
     });
 
-    ddescribe('buildDefaultFields()', function() {
+    describe('buildDefaultFields()', function() {
         beforeEach(function() {
             view.defaultFields = view.context.get('defaultWorksheetColumns');
             view.buildDefaultFields();
