@@ -3226,7 +3226,6 @@ function sugar_cleanup($exit = false)
         if ($exit) exit; else return;
     }
 
-    Tracker::logPage();
     // Now write the cached tracker_queries
     if (class_exists("TrackerManager")) {
         $trackerManager = TrackerManager::getInstance();

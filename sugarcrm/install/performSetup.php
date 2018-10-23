@@ -693,7 +693,7 @@ if (function_exists('imagecreatetruecolor')) {
     rebuildSprites(true);
 }
 
-if (count($bottle) > 0) {
+if (is_array($bottle) && count($bottle) > 0) {
     foreach ($bottle as $bottle_message) {
         $bottleMsg .= "{$bottle_message}\n";
     }

@@ -1813,9 +1813,6 @@ class ModuleInstaller{
             );
             $this->silent = $silentBak;
 
-            //TY-188, clearing session
-            $ACLAllowedModules = getACLAllowedModules(true);
-
             //#27877, If the request from MB redeploy a custom module , we will not remove the ACL actions for this package.
             if( !isset($_REQUEST['action']) || $_REQUEST['action']!='DeployPackage' ){
                 $this->remove_acl_actions();

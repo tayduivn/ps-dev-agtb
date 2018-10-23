@@ -456,15 +456,11 @@ class SavedReport extends Basic
  * @param bool $ignoreSessionCache  When true, just ignore any session and re-generate it
  * @return array
  */
-function getACLAllowedModules($ignoreSessionCache = false) {
-
-	if ($ignoreSessionCache === false && isset($_SESSION['reports_getACLAllowedModules'])) {
-        return (array) $_SESSION['reports_getACLAllowedModules'];
-    }
-
+function getACLAllowedModules()
+{
      require_once('modules/Reports/config.php');
 
-     global $beanFiles, $modListHeader;
+     global $modListHeader;
 
      $report_modules = getAllowedReportModules($modListHeader);
 
@@ -475,7 +471,7 @@ function getACLAllowedModules($ignoreSessionCache = false) {
                 unset($report_modules[$module]);
         }
      }
-     $_SESSION['reports_getACLAllowedModules'] = $report_modules;
+
      return $report_modules;
   }
 

@@ -236,15 +236,7 @@ class AuthenticationController implements LoggerAwareInterface
 		if(!$this->authenticated){
 			$this->authenticated = $this->authController->sessionAuthenticate();
 		}
-		if($this->authenticated){
-			if(!isset($_SESSION['userStats']['pages'])){
-			    $_SESSION['userStats']['loginTime'] = time();
-			    $_SESSION['userStats']['pages'] = 0;
-			}
-			$_SESSION['userStats']['lastTime'] = time();
-			$_SESSION['userStats']['pages'] += 1;
 
-		}
 		return $this->authenticated;
 	}
 
@@ -264,14 +256,6 @@ class AuthenticationController implements LoggerAwareInterface
 				session_destroy();
 			}
 			$_SESSION = array();
-		} else {
-			if(!isset($_SESSION['userStats']['pages'])){
-			    $_SESSION['userStats']['loginTime'] = time();
-			    $_SESSION['userStats']['pages'] = 0;
-			}
-			$_SESSION['userStats']['lastTime'] = time();
-			$_SESSION['userStats']['pages'] += 1;
-
 		}
 		return $this->authenticated;
 	}

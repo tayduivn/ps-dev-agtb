@@ -30,7 +30,6 @@ class TrackerCreateDefaultUserTest extends TestCase
 		$GLOBALS['current_user'] = $user;    	
     	
     	TrackerTestUtility::setUp(); 
-    	$_SESSION['reports_getACLAllowedModules'] = null;
         $this->nonAdminUser = new User();
         $this->nonAdminUser->first_name = 'non';
         $this->nonAdminUser->last_name = 'admin';
