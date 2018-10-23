@@ -1303,6 +1303,7 @@
 
         // remove ID/etc since we dont want Template ID to be the record id
         delete data.id;
+        delete data.status;
         delete data.date_entered;
         delete data.date_modified;
         delete data.pricing_formula;

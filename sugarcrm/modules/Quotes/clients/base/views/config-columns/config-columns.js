@@ -246,6 +246,11 @@
                     tmpField.type = 'quote-data-relate';
                     tmpField.required = true;
                 }
+                if (field.type === 'currency') {
+                    tmpField.convertToBase = true;
+                    tmpField.showTransactionalAmount = true;
+                    tmpField.related_fields = ['currency_id', 'base_rate'];
+                }
                 if (field.name === 'discount') {
                     tmpField.type = 'fieldset';
                     tmpField.css_class += ' quote-discount-percent';

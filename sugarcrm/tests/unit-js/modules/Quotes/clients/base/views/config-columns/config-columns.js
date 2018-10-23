@@ -202,14 +202,14 @@ describe('Quotes.View.ConfigColumns', function() {
         };
 
         sinon.collection.stub(app.metadata, 'getModule').
-            withArgs('Products', 'fields').
-            returns(productsFieldsMeta).
-            withArgs('Quotes', 'fields').
-            returns(quotesFieldsMeta);
+        withArgs('Products', 'fields').
+        returns(productsFieldsMeta).
+        withArgs('Quotes', 'fields').
+        returns(quotesFieldsMeta);
 
         sinon.collection.stub(app.metadata, 'getView').
-            withArgs('Products', 'quote-data-group-list').
-            returns(productQuoteDataGroupListMeta);
+        withArgs('Products', 'quote-data-group-list').
+        returns(productQuoteDataGroupListMeta);
 
         SugarTest.loadComponent('base', 'view', 'config-panel');
         SugarTest.loadComponent('base', 'view', 'config-panel', 'Quotes');
@@ -287,7 +287,7 @@ describe('Quotes.View.ConfigColumns', function() {
         });
     });
 
-    describe('buildDefaultFields()', function() {
+    ddescribe('buildDefaultFields()', function() {
         beforeEach(function() {
             view.defaultFields = view.context.get('defaultWorksheetColumns');
             view.buildDefaultFields();
@@ -400,7 +400,10 @@ describe('Quotes.View.ConfigColumns', function() {
                     label: 'LBL_DISCOUNT_PRICE',
                     labelModule: 'Quotes',
                     widthClass: undefined,
-                    css_class: ''
+                    css_class: '',
+                    convertToBase: true,
+                    showTransactionalAmount: true,
+                    related_fields: ['currency_id', 'base_rate']
                 }, {
                     name: 'discount',
                     label: 'LBL_DISCOUNT_AMOUNT',
@@ -439,7 +442,10 @@ describe('Quotes.View.ConfigColumns', function() {
                     label: 'LBL_LINE_ITEM_TOTAL',
                     labelModule: 'Quotes',
                     widthClass: undefined,
-                    css_class: ''
+                    css_class: '',
+                    convertToBase: true,
+                    showTransactionalAmount: true,
+                    related_fields: ['currency_id', 'base_rate']
                 }
             ]);
         });
