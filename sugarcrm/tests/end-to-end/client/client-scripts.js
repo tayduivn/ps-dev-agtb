@@ -37,5 +37,21 @@ module.exports = {
      */
     getFieldDef: function(fieldName, moduleName) {
         return App.metadata.getField({module: moduleName, name: fieldName});
-    }
+    },
+
+    /**
+     * Set value for TinyMCE field
+     *
+     * @param {string} fieldValue
+     */
+    setValueForTinyMCE: function(fieldValue) {
+        tinyMCE.execCommand('mceInsertContent', false, fieldValue);
+    },
+
+    /**
+     * Get value of TinyMCE field
+     */
+    getValueForTinyMCE: function() {
+        return document.getElementsByTagName('BODY')[0].innerHTML;
+    },
 };

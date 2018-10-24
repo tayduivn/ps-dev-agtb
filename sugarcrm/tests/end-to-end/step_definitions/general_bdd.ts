@@ -133,7 +133,7 @@ const provideInput = async function (view: RecordView, data: TableDefinition): P
     await view.setFieldsValue(inputData);
 };
 
-const checkValues = async function (view: BaseView, data: TableDefinition) {
+export const checkValues = async function (view: BaseView, data: TableDefinition) {
     const attrRefRegex = RegExp(/\{\*([a-zA-Z](?:\w|\S)*)\.((?:\w|\s)*)}/g);
 
     /**
