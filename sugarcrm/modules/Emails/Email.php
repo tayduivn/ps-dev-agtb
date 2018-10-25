@@ -3475,45 +3475,56 @@ class Email extends SugarBean {
 
         $mod_strings = return_module_language($GLOBALS['current_language'], 'Emails');
 
-		$query  = "SELECT contacts.first_name, contacts.last_name, contacts.phone_work, contacts.id, contacts.assigned_user_id contact_name_owner, 'Contacts' contact_name_mod FROM contacts, emails_beans
-		           WHERE emails_beans.email_id='$this->id' AND emails_beans.bean_id=contacts.id AND emails_beans.bean_module = 'Contacts' AND emails_beans.deleted=0 AND contacts.deleted=0";
+        $query = <<<SQL
+        SELECT contacts.first_name, contacts.last_name, contacts.phone_work, contacts.id, 
+            contacts.assigned_user_id contact_name_owner, 'Contacts' contact_name_mod 
+        FROM contacts, emails_beans
+        WHERE emails_beans.email_id=?
+          AND emails_beans.bean_id=contacts.id 
+          AND emails_beans.bean_module = 'Contacts' 
+          AND emails_beans.deleted=0 
+          AND contacts.deleted=0
+SQL;
+        $connection = $this->db->getConnection();
+        switch (true) {
+            case !empty($this->parent_id):
+                $query .= ' AND contacts.id= ?';
+                $stmt = $connection->executeQuery($query, [$this->id, $this->parent_id]);
+                break;
+            case !empty($_REQUEST['record']):
+                $query .= ' AND contacts.id= ?';
+                $stmt = $connection->executeQuery($query, [$this->id,  $_REQUEST['record']]);
+                break;
+            default:
+                $stmt = $connection->executeQuery($query, [$this->id]);
+                break;
+        }
+        $row = $stmt->fetch();
 
-			if(!empty($this->parent_id)){
-				$query .= " AND contacts.id= '".$this->parent_id."' ";
-			}else if(!empty($_REQUEST['record'])){
-				$query .= " AND contacts.id= '".$_REQUEST['record']."' ";
-			}
-			$result =$this->db->query($query,true," Error filling in additional detail fields: ");
-
-			// Get the id and the name.
-			$row = $this->db->fetchByAssoc($result);
-			if($row != null)
-			{
-
-				$contact = BeanFactory::getBean('Contacts', $row['id']);
-				$this->contact_name = $contact->full_name;
-				$this->contact_phone = $row['phone_work'];
-				$this->contact_id = $row['id'];
-				$this->contact_email = $contact->emailAddress->getPrimaryAddress($contact);
-				$this->contact_name_owner = $row['contact_name_owner'];
-				$this->contact_name_mod = $row['contact_name_mod'];
-				$GLOBALS['log']->debug("Call($this->id): contact_name = $this->contact_name");
-				$GLOBALS['log']->debug("Call($this->id): contact_phone = $this->contact_phone");
-				$GLOBALS['log']->debug("Call($this->id): contact_id = $this->contact_id");
-				$GLOBALS['log']->debug("Call($this->id): contact_email1 = $this->contact_email");
-			}
-			else {
-				$this->contact_name = '';
-				$this->contact_phone = '';
-				$this->contact_id = '';
-				$this->contact_email = '';
-				$this->contact_name_owner = '';
-				$this->contact_name_mod = '';
-				$GLOBALS['log']->debug("Call($this->id): contact_name = $this->contact_name");
-				$GLOBALS['log']->debug("Call($this->id): contact_phone = $this->contact_phone");
-				$GLOBALS['log']->debug("Call($this->id): contact_id = $this->contact_id");
-				$GLOBALS['log']->debug("Call($this->id): contact_email1 = $this->contact_email");
-			}
+        if ($row !== false) {
+            $contact = BeanFactory::getBean('Contacts', $row['id']);
+            $this->contact_name = $contact->full_name;
+            $this->contact_phone = $row['phone_work'];
+            $this->contact_id = $row['id'];
+            $this->contact_email = $contact->emailAddress->getPrimaryAddress($contact);
+            $this->contact_name_owner = $row['contact_name_owner'];
+            $this->contact_name_mod = $row['contact_name_mod'];
+            $GLOBALS['log']->debug("Call($this->id): contact_name = $this->contact_name");
+            $GLOBALS['log']->debug("Call($this->id): contact_phone = $this->contact_phone");
+            $GLOBALS['log']->debug("Call($this->id): contact_id = $this->contact_id");
+            $GLOBALS['log']->debug("Call($this->id): contact_email1 = $this->contact_email");
+        } else {
+            $this->contact_name = '';
+            $this->contact_phone = '';
+            $this->contact_id = '';
+            $this->contact_email = '';
+            $this->contact_name_owner = '';
+            $this->contact_name_mod = '';
+            $GLOBALS['log']->debug("Call($this->id): contact_name = $this->contact_name");
+            $GLOBALS['log']->debug("Call($this->id): contact_phone = $this->contact_phone");
+            $GLOBALS['log']->debug("Call($this->id): contact_id = $this->contact_id");
+            $GLOBALS['log']->debug("Call($this->id): contact_email1 = $this->contact_email");
+        }
 		//}
 
 
