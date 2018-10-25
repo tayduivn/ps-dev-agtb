@@ -255,7 +255,10 @@ $dictionary['ProductBundle'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'currencySubtract($subtotal, $deal_tot)',
+            'formula' => 'currencySubtract(
+                rollupCurrencySum($products, "subtotal"),
+                rollupCurrencySum($products, "deal_calc")
+             )',
             'enforced' => true,
             'calculated' => true,
         ),
