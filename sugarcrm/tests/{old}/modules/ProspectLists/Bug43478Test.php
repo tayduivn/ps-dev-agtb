@@ -116,7 +116,7 @@ class Bug43478Test extends TestCase
      */
     public function testEmailExistsExportList()
     {
-        $content = export("ProspectLists", $this->_prospectList->id, true);
+        $content = export("ProspectLists", [$this->_prospectList->id], true);
         $this->assertContains("Test adress state", $content);
     }
 

@@ -107,7 +107,7 @@ class Bug36422Test extends TestCase
      */
     public function testEmailExistsExportList()
     {
-        $content = export("ProspectLists", $this->_prospectList->id, true);
+        $content = export("ProspectLists", [$this->_prospectList->id], true);
         $this->assertContains($this->_contacts[0]->email1, $content, "Report should contain email of created contact");
         $this->assertContains($this->_contacts[1]->email1, $content, "Report should contain email of created contact");
 
@@ -117,7 +117,7 @@ class Bug36422Test extends TestCase
         $this->_contacts[1]->email1 = "changed" . $this->_contacts[1]->email1;
         $this->_contacts[1]->save();
 
-        $content = export("ProspectLists", $this->_prospectList->id, true);
+        $content = export("ProspectLists", [$this->_prospectList->id], true);
         $this->assertContains($this->_contacts[0]->email1, $content, "Report should contain email of created contact");
         $this->assertContains($this->_contacts[1]->email1, $content, "Report should contain email of created contact");
     }

@@ -62,7 +62,7 @@ class Bug55520Test extends TestCase
     public function testExportStringIncludesBOM()
     {
         $this->currentUser->setPreference(self::DEFAULT_EXPORT_CHARSET_PREF_NAME, self::UTF8_CHARSET);
-        $export = export('Opportunities', $this->opportunity->id);
+        $export = export('Opportunities', [$this->opportunity->id]);
         $this->assertStringStartsWith(self::BOM, $export);
     }
 
@@ -74,7 +74,7 @@ class Bug55520Test extends TestCase
     public function testExportStringNotIncludesBOM()
     {
         $this->currentUser->setPreference(self::DEFAULT_EXPORT_CHARSET_PREF_NAME, self::NON_UTF8_CHARSET);
-        $export = export('Opportunities', $this->opportunity->id);
+        $export = export('Opportunities', [$this->opportunity->id]);
         $this->assertStringStartsNotWith(self::BOM, $export);
     }
 

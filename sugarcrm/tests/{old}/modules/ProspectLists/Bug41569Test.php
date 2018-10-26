@@ -116,7 +116,7 @@ class Bug41569Test extends TestCase
      */
     public function testContactExistExportList()
     {
-        $content = export("ProspectLists", $this->_prospectList->id, true);
+        $content = export("ProspectLists", [$this->_prospectList->id], true);
         $this->assertContains($this->_contacts[0]->first_name, $content, "Report should contain email of created contact");
         $this->assertContains($this->_contacts[1]->first_name, $content, "Report should contain email of created contact");
     }

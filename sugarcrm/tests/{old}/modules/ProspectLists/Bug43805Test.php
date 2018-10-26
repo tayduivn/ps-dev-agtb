@@ -111,7 +111,7 @@ class Bug43805Test extends TestCase
      */
     public function testTitleExistsExportList()
     {
-        $content = export("ProspectLists", $this->_prospectList->id, true);
+        $content = export("ProspectLists", [$this->_prospectList->id], true);
 				
         $this->assertContains($this->_prospects[0]->title, $content, "Report should contain title of created Prospect");
     }
