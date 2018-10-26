@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
+use OneLogin\Saml2\Constants;
+use RobRichards\XMLSecLibs\XMLSecurityKey;
 use Sugarcrm\IdentityProvider\STS\EndpointInterface;
 use Sugarcrm\IdentityProvider\STS\EndpointService;
 
@@ -260,13 +262,13 @@ class Config
                 'entityId' => htmlspecialchars_decode($this->get('SAML_issuer', 'php-saml'), ENT_QUOTES) ?: 'php-saml',
                 'assertionConsumerService' => [
                     'url' => $acsUrl,
-                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
+                    'binding' => Constants::BINDING_HTTP_POST,
                 ],
                 'singleLogoutService' => [
                     'url' => $sloUrl,
-                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
+                    'binding' => Constants::BINDING_HTTP_REDIRECT,
                 ],
-                'NameIDFormat' =>\OneLogin_Saml2_Constants::NAMEID_EMAIL_ADDRESS,
+                'NameIDFormat' => Constants::NAMEID_EMAIL_ADDRESS,
                 'x509cert' => $this->get('SAML_request_signing_x509', ''),
                 'privateKey' => $this->get('SAML_request_signing_pkey', ''),
                 'provisionUser' => $this->get('SAML_provisionUser', true),
@@ -276,11 +278,11 @@ class Config
                 'entityId' => htmlspecialchars_decode($this->get('SAML_idp_entityId', $idpSsoUrl), ENT_QUOTES),
                 'singleSignOnService' => [
                     'url' => $idpSsoUrl,
-                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
+                    'binding' => Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'singleLogoutService' => [
                     'url' => $idpSloUrl,
-                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
+                    'binding' => Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'x509cert' => $this->get('SAML_X509Cert'),
             ],
@@ -289,7 +291,7 @@ class Config
                 'authnRequestsSigned' => $isSPPrivateKeyCertSet && $this->get('SAML_sign_authn', false),
                 'logoutRequestSigned' => $isSPPrivateKeyCertSet && $this->get('SAML_sign_logout_request', false),
                 'logoutResponseSigned' => $isSPPrivateKeyCertSet && $this->get('SAML_sign_logout_response', false),
-                'signatureAlgorithm' => $this->get('SAML_request_signing_method', \XMLSecurityKey::RSA_SHA256),
+                'signatureAlgorithm' => $this->get('SAML_request_signing_method', XMLSecurityKey::RSA_SHA256),
                 'validateRequestId' => $this->get('saml.validate_request_id', false),
             ],
         ];

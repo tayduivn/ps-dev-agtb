@@ -11,6 +11,7 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSAMLAuthenticate;
 
+use OneLogin\Saml2\Constants;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\ResultToken;
@@ -240,7 +241,7 @@ class IdMSAMLAuthenticateTest extends TestCase
                 'idp' => [
                     'singleLogoutService' => [
                         'url' => 'http://test.com/saml/logout',
-                        'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
+                        'binding' => Constants::BINDING_HTTP_POST,
                     ],
                 ],
             ]
@@ -264,7 +265,7 @@ class IdMSAMLAuthenticateTest extends TestCase
                 'idp' => [
                     'singleLogoutService' => [
                         'url' => '',
-                        'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
+                        'binding' => Constants::BINDING_HTTP_POST,
                     ],
                 ],
             ]

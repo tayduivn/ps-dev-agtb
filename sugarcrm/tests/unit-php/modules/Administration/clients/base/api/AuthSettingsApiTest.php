@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\modules\Administration\clients\base\api;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject;
+use RobRichards\XMLSecLibs\XMLSecurityKey;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 require_once 'modules/Administration/clients/base/api/AuthSettingsApi.php';
@@ -133,7 +134,7 @@ class AuthSettingsApiTest extends TestCase
                 'authnRequestsSigned' => 1,
                 'logoutRequestSigned' => 0,
                 'logoutResponseSigned' => '1',
-                'signatureAlgorithm' => \XMLSecurityKey::RSA_SHA512,
+                'signatureAlgorithm' => XMLSecurityKey::RSA_SHA512,
                 'validateRequestId' => null,
             ],
             'user_mapping' => [],
@@ -513,7 +514,7 @@ class AuthSettingsApiTest extends TestCase
                         $samlConfig,
                         [
                             'security' => [
-                                'signatureAlgorithm' => \XMLSecurityKey::RSA_SHA256,
+                                'signatureAlgorithm' => XMLSecurityKey::RSA_SHA256,
                             ],
                             'user_mapping' => [
                                 'key-1' => 'val-1',

@@ -29,7 +29,7 @@ class SugarLdapUserProviderTest extends TestCase
      */
     public function testLoadUser()
     {
-        $entry = new Entry('dn', [($key = 'userPrincipalName') => 'uuid']);
+        $entry = new Entry('dn', [($key = 'userPrincipalName') => ['uuid']]);
 
         $query = $this->getMockBuilder(QueryInterface::class)->getMock();
         $query->method('execute')->willReturn([$entry]);

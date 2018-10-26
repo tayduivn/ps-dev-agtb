@@ -12,11 +12,13 @@
 
 require_once 'include/utils.php';
 
+use OneLogin\Saml2\IdPMetadataParser;
+use OneLogin\Saml2\Settings;
+
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Parser\XmlIdpMetadataParser;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -512,7 +514,7 @@ class AdministrationController extends SugarController
      */
     protected function getParsedIdPMetadata($file)
     {
-        return \OneLogin_Saml2_IdPMetadataParser::parseFileXML($file);
+        return IdPMetadataParser::parseFileXML($file);
     }
 
     /**
@@ -544,8 +546,8 @@ class AdministrationController extends SugarController
     }
 
     /**
-     * create OneLogin_Saml2_Settings with predefined config
-     * @return \OneLogin_Saml2_Settings
+     * create OneLogin Saml2 Settings with predefined config
+     * @return Settings
      */
     protected function getSamlSettings()
     {
@@ -562,7 +564,7 @@ class AdministrationController extends SugarController
             unset($config['security']);
         }
 
-        return new \OneLogin_Saml2_Settings($config);
+        return new Settings($config);
     }
 
     /**

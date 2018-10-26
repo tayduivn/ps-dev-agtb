@@ -12,7 +12,9 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication;
 
+use OneLogin\Saml2\Constants;
 use PHPUnit\Framework\TestCase;
+use RobRichards\XMLSecLibs\XMLSecurityKey;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 /**
@@ -168,13 +170,13 @@ class ConfigTest extends TestCase
                 'entityId' => 'SAML_issuer',
                 'assertionConsumerService' => [
                     'url' => 'site_url/index.php?module=Users&action=Authenticate',
-                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
+                    'binding' => Constants::BINDING_HTTP_POST,
                 ],
                 'singleLogoutService' => [
                     'url' => 'site_url/index.php?module=Users&action=Logout',
-                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
+                    'binding' => Constants::BINDING_HTTP_REDIRECT,
                 ],
-                'NameIDFormat' => \OneLogin_Saml2_Constants::NAMEID_EMAIL_ADDRESS,
+                'NameIDFormat' => Constants::NAMEID_EMAIL_ADDRESS,
                 'x509cert' => 'SAML_REQUEST_SIGNING_X509',
                 'privateKey' => 'SAML_REQUEST_SIGNING_PKEY',
                 'provisionUser' => 'SAML_provisionUser',
@@ -184,11 +186,11 @@ class ConfigTest extends TestCase
                 'entityId' => 'SAML_idp_entityId',
                 'singleSignOnService' => [
                     'url' => 'SAML_loginurl',
-                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
+                    'binding' => Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'singleLogoutService' => [
                     'url' => 'SAML_SLO',
-                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
+                    'binding' => Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'x509cert' => 'SAML_X509Cert',
             ],
@@ -221,7 +223,7 @@ class ConfigTest extends TestCase
                        ['SAML_X509Cert', null, 'SAML_X509Cert'],
                        [
                            'SAML_request_signing_method',
-                           \XMLSecurityKey::RSA_SHA256,
+                           XMLSecurityKey::RSA_SHA256,
                            'SAML_REQUEST_SIGNING_METHOD',
                        ],
                        ['SAML', [], []],

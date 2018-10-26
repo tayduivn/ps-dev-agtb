@@ -11,6 +11,7 @@
  */
 
 
+use RobRichards\XMLSecLibs\XMLSecurityKey;
 use Sugarcrm\Sugarcrm\Util\Serialized;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;

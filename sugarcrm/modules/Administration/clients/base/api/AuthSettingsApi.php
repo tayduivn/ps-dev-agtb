@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use RobRichards\XMLSecLibs\XMLSecurityKey;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 class AuthSettingsApi extends SugarApi
@@ -210,8 +211,8 @@ class AuthSettingsApi extends SugarApi
     {
         $config = $this->getAuthConfig()->getSAMLConfig();
         $signatureAlgorithmMap = [
-            \XMLSecurityKey::RSA_SHA256 => 'RSA_SHA256',
-            \XMLSecurityKey::RSA_SHA512 => 'RSA_SHA512',
+            XMLSecurityKey::RSA_SHA256 => 'RSA_SHA256',
+            XMLSecurityKey::RSA_SHA512 => 'RSA_SHA512',
         ];
         return [
             'config' => [

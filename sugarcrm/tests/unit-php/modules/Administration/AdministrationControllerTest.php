@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Administration;
 
+use OneLogin\Saml2\Error;
+use OneLogin\Saml2\Settings;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -27,7 +29,7 @@ class AdministrationControllerTest extends TestCase
     protected $controller;
 
     /**
-     * @var \OneLogin_Saml2_Settings|MockObject
+     * @var Settings|MockObject
      */
     protected $settings;
 
@@ -57,7 +59,7 @@ class AdministrationControllerTest extends TestCase
             ->method('terminate')
             ->willReturn(true);
 
-        $this->settings = $this->createMock(\OneLogin_Saml2_Settings::class);
+        $this->settings = $this->createMock(Settings::class);
         $this->controller->expects($this->any())
             ->method('getSamlSettings')
             ->willReturn($this->settings);
@@ -75,7 +77,7 @@ class AdministrationControllerTest extends TestCase
     {
         $this->settings->expects($this->once())
             ->method('getSPMetadata')
-            ->willThrowException(new \OneLogin_Saml2_Error('parse metadata error'));
+            ->willThrowException(new Error('parse metadata error'));
 
         $this->settings->expects($this->never())
             ->method('validateMetadata')
