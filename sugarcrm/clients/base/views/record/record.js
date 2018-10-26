@@ -1500,6 +1500,9 @@
      * Adjust headerpane such that certain fields can be shown with ellipsis
      */
     adjustHeaderpane: function() {
+        if (this.disposed) {
+            return;
+        }
         this.setContainerWidth();
         this.adjustHeaderpaneFields();
     },
@@ -1708,6 +1711,9 @@
      * Moves overflowing tabs into a dropdown
      */
     overflowTabs: function() {
+        if (this.disposed) {
+            return;
+        }
         var $tabs = this.$('#recordTab > .tab:not(.dropdown)'),
             $dropdownList = this.$('#recordTab .dropdown'),
             $dropdownTabs = this.$('#recordTab .dropdown-menu li'),
