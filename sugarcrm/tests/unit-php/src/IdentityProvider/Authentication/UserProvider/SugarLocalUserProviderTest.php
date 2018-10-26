@@ -11,6 +11,8 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\UserProvider;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
@@ -344,6 +346,7 @@ class SugarLocalUserProviderTest extends TestCase
                 return true;
             }));
         $this->user->expects($this->once())->method('save');
+        $this->user->expects($this->never())->method('retrieve');
         $this->userProvider->createUser('user1');
     }
 
@@ -359,5 +362,21 @@ class SugarLocalUserProviderTest extends TestCase
         $emailAddress->expects($this->once())->method('save');
 
         $this->userProvider->createUser('user1', ['email' => 'test@test.com']);
+    }
+
+    /**
+     * @covers ::createUser
+     */
+    public function testCreateCollision()
+    {
+        $this->user
+            ->expects($this->once())
+            ->method('save')
+            ->willThrowException($this->createMock(UniqueConstraintViolationException::class));
+        $this->user
+            ->expects($this->once())
+            ->method('retrieve');
+
+        $this->userProvider->createUser('user1');
     }
 }

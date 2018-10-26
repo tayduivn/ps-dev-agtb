@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
@@ -135,7 +137,12 @@ class SugarLocalUserProvider implements UserProviderInterface
 
         $sugarUser->new_with_id = isset($additionalFields['id']);
 
-        $sugarUser->save();
+        try {
+            $sugarUser->save();
+        } catch (UniqueConstraintViolationException $e) {
+            //if user already exists try to retrieve
+            $sugarUser->retrieve();
+        }
 
         if (isset($additionalFields['email'])) {
             $sugarUser->emailAddress->addAddress($additionalFields['email'], true);
