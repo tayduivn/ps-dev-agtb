@@ -2190,9 +2190,7 @@ class ModuleInstaller{
             // point the global dictionary for this object may be set with just
             // relationship fields.
             $rv = isset($GLOBALS['reload_vardefs']) ? $GLOBALS['reload_vardefs'] : null;
-            $dm = isset($_SESSION['developerMode']) ? $_SESSION['developerMode'] : null;
             $GLOBALS['reload_vardefs'] = true;
-            $_SESSION['developerMode'] = true;
 
             $this->log( translate('LBL_MI_IN_BEAN') . " $bean");
             $mod = BeanFactory::newBean($bean);
@@ -2203,7 +2201,6 @@ class ModuleInstaller{
 
             // Return state. Null values essentially unset what wasn't set before
             $GLOBALS['reload_vardefs'] = $rv;
-            $_SESSION['developerMode'] = $dm;
         }
     }
 
