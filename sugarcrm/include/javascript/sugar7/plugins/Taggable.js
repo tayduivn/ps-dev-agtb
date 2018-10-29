@@ -267,7 +267,7 @@
                     range = selection.getRangeAt(0),
                     tagElement = $(taggingHtml),
                     textNode = tagElement.contents()[0],
-                    cursorPosition = $.browser.webkit ? 1 : 0;
+                    cursorPosition = /Chrome/.test(navigator.userAgent) || /Webkit/.test(navigator.userAgent) ? 1 : 0;
 
                 if (this._shouldEnableTaggable(range)) {
                     range.insertNode(tagElement.get(0));
