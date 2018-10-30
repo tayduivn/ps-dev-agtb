@@ -71,7 +71,7 @@ class PMSECaseFlowHandler
      *
      * @param type $module
      * @param type $beanId
-     * @return type
+     * @return SugarBean
      * @codeCoverageIgnore
      */
     public function retrieveBean($module, $beanId = null)
@@ -104,13 +104,13 @@ class PMSECaseFlowHandler
 
     /**
      *
-     * @return type
+     * @return SugarBean
      * @codeCoverageIgnore
      */
     public function getBpmFlow()
     {
         if (is_null($this->bpmFlow)) {
-            $this->bpmFlow = BeanFactory::newBean('pmse_BpmFlow');
+            $this->bpmFlow = $this->retrieveBean('pmse_BpmFlow');
         }
         return $this->bpmFlow;
     }
@@ -193,13 +193,15 @@ class PMSECaseFlowHandler
         // set the bpmFlow attribute in this line for performance reasons
         $this->getBpmFlow();
 
-        $query = sprintf(
-            'SELECT MAX(cas_index) max_index FROM %s flow WHERE flow.deleted = 0 AND flow.cas_id = %s',
-            $this->bpmFlow->getTableName(),
-            $flowData['cas_id']
-        );
-        $result = (int) $this->getDb()->getOne($query);
-        return max(1, $result);
+        $q = $this->retrieveSugarQueryObject();
+        $q->from($this->bpmFlow);
+        $q->select()->fieldRaw("MAX(cas_index) max_index");
+        $q->where()
+            ->equals('cas_id', $flowData['cas_id']);
+
+        $result = $q->getOne();
+
+        return max(1, (int) $result);
     }
 
     /**
@@ -735,6 +737,10 @@ class PMSECaseFlowHandler
 
     public function closeFlow($casId, $casIndex)
     {
+        if (empty($casId) || empty($casIndex)) {
+            LoggerManager::getLogger()->fatal("No Value for arguments for PMSE method closeFlow");
+            return;
+        }
         $flowBean = $this->retrieveBean('pmse_BpmFlow');
         $params = array('cas_id' => $casId, 'cas_index' => $casIndex);
         $flowBean->retrieve_by_string_fields($params);
@@ -750,10 +756,13 @@ class PMSECaseFlowHandler
      * @global type $db
      * @param type $cas_id
      * @param type $cas_thread_index
-     * @return boolean
      */
     public function closeThreadByThreadIndex($cas_id, $cas_thread_index)
     {
+        if (empty($cas_id) || empty($cas_thread_index)) {
+            LoggerManager::getLogger()->fatal("No Value for arguments for PMSE method closeThreadByThreadIndex");
+            return;
+        }
         $q = $this->retrieveSugarQueryObject();
         $threadBean = $this->retrieveBean('pmse_BpmThread');
         $fields = array('id');
@@ -780,23 +789,24 @@ class PMSECaseFlowHandler
      * @global type $db
      * @param type $cas_id
      * @param type $cas_thread_index
-     * @return boolean
      */
     public function closeThreadByCaseIndex($cas_id, $cas_index)
     {
-        $db = $this->getDb();
+        if (empty($cas_id) || empty($cas_index)) {
+            LoggerManager::getLogger()->fatal("No Value for arguments for PMSE method closeThreadByCaseIndex");
+            return;
+        }
 
         //get current values
         $flowBean = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
         $flowBean->retrieve_by_string_fields(array('cas_id' => $cas_id, 'cas_index' => $cas_index));
         $currentThreadIndex = $flowBean->cas_thread;
 
-        $query = "update pmse_bpm_thread set " .
-            " cas_flow_index = $cas_index, " .
-            " cas_thread_status = 'CLOSED' " .
-            " where cas_id = $cas_id and cas_thread_index = $currentThreadIndex ";
-        $db->query($query, true, "Error updating bpm_thread record ");
-        //$this->bpmLog('DEBUG', "[$cas_id][$cas_index] thread $currentThreadIndex closed");
+        $bpmThread = $this->retrieveBean('pmse_BpmThread');
+        $bpmThread->retrieve_by_string_fields(array('cas_id' => $cas_id, 'cas_thread_index' => $currentThreadIndex));
+        $bpmThread->cas_flow_index = $cas_index;
+        $bpmThread->cas_thread_status = 'CLOSED';
+        $bpmThread->save();
     }
 
     /**
@@ -810,12 +820,30 @@ class PMSECaseFlowHandler
      */
     public function changeCaseStatus($cas_id, $status = 'IN PROGRESS')
     {
-        $db = $this->getDb();
+        if (empty($cas_id)) {
+            //Log a fatal and return
+            LoggerManager::getLogger()->fatal('Process Management Change Case did not receive an ID');
+            return;
+        }
 
-        $query = "update pmse_inbox set " .
-            " cas_status = '{$status}' " .
-            " where cas_id = $cas_id  AND cas_status<>'COMPLETED' AND cas_status<>'TERMINATED'";
-        $db->query($query, true, "Error updating bpm_inbox record ");
+        $inbox = $this->retrieveBean('pmse_Inbox');
+
+        $query = $this->retrieveSugarQueryObject();
+        $query->select(array('id'));
+        $query->from($inbox);
+        $query->where()
+            ->equals('cas_id', $cas_id)
+            ->notEquals('cas_status', 'COMPLETED')
+            ->notEquals('cas_status', 'TERMINATED');
+
+        $result = $query->execute();
+
+        // in an ideal world there shouldn't be more than one but cz shit happens just put it in a loop
+        foreach ($result as $row) {
+            $bean = $this->retrieveBean('pmse_Inbox', $row['id']);
+            $bean->cas_status = $status;
+            $bean->save();
+        }
     }
 
     /**
@@ -830,18 +858,19 @@ class PMSECaseFlowHandler
      */
     public function closeCase($cas_id, $status = 'COMPLETED')
     {
-        $db = $this->getDb();
+        if (empty($cas_id)) {
+            //Log a fatal and return
+            LoggerManager::getLogger()->fatal('Process Management Case Close did not receive an ID');
+            return;
+        }
 
-        $today = TimeDate::getInstance()->nowDb();
-        $query = "update pmse_inbox set " .
-            " cas_status = '{$status}', " .
-            " cas_finish_date = '" . $today . "' " .
-            " where cas_id = $cas_id ";
-        $db->query($query, true, "Error updating bpm_inbox record ");
+        $inbox = $this->retrieveBean('pmse_Inbox');
+        $inbox->retrieve_by_string_fields(array('cas_id' => $cas_id));
+        $inbox->cas_status = $status;
+        $inbox->cas_finish_date = TimeDate::getInstance()->nowDb();
+        $inbox->save();
 
         $this->handleTerminatedFlowRelatedBeans($cas_id);
-
-        //$this->bpmLog('DEBUG', "[$cas_id][] has been marked as completed");
     }
 
     /**
@@ -855,17 +884,8 @@ class PMSECaseFlowHandler
         // We'll need this bean
         $flow = $this->getBpmFlow();
 
-        // And we'll need the DBManager as well
+        // And we'll need the DBManager as well cz we're using where()->fieldRaw()
         $db = $this->getDb();
-
-        // Build the SET SQL
-        $sets = array();
-        foreach ($data as $k => $v) {
-            // Non numeric values must be quoted
-            $set = is_numeric($v) ? $v : $db->quoted($v);
-            $sets[] = "$k = $set";
-        }
-        $setSql = implode(',', $sets);
 
         // Build the WHERE SQL
         $wheres = array();
@@ -887,17 +907,22 @@ class PMSECaseFlowHandler
         // Support only AND operators for now
         $whereSql = implode(' AND ', $wheres);
 
-        $sql = "UPDATE {$flow->table_name}
-                SET
-                    $setSql";
+        $query = $this->retrieveSugarQueryObject();
+        $query->select(array('id'));
+        $query->from($flow);
+        $query->whereRaw($whereSql);
 
-        if (!empty($wheres)) {
-            $sql .= "WHERE $whereSql";
+        $rows = $query->execute();
+
+        $moduleName = $flow->getModuleName();
+        foreach ($rows as $row) {
+            $bean = $this->retrieveBean($moduleName, $row['id']);
+            // set the value for each column
+            foreach ($data as $key => $val) {
+                $bean->$key = $val;
+            }
+            $bean->save();
         }
-
-        // Run the query now
-        $db->query($sql, true, 'Error updating the BPM Flow table');
-
         // Send back a result, for now will always be true
         return true;
     }
@@ -908,6 +933,11 @@ class PMSECaseFlowHandler
      */
     public function terminateCaseFlow($casId)
     {
+        if (empty($casId)) {
+            LoggerManager::getLogger()->fatal("No Value for `casId` for PMSE method terminateCaseFlow");
+            return false;
+        }
+
         $data = array(
             'cas_finish_date' => TimeDate::getInstance()->nowDb(),
             'cas_finished' => 1,
@@ -935,6 +965,11 @@ class PMSECaseFlowHandler
      */
     public function setCloseStatusForThisThread($casId, $casThreadIndex)
     {
+        if (empty($casId) || empty($casThreadIndex)) {
+            LoggerManager::getLogger()->fatal("No Value for arguments for PMSE method setCloseStatusForThisThread");
+            return false;
+        }
+
         $data = array(
             'cas_finish_date' => TimeDate::getInstance()->nowDb(),
             'cas_finished' => 1,
@@ -1045,15 +1080,29 @@ class PMSECaseFlowHandler
 
     public function terminateCase($flowData, $bean, $inboxStatus = 'COMPLETED')
     {
-        //$this->closeThreadByCaseIndex($flowData['cas_id'], $flowData['cas_index']);
+        if (empty($flowData) || empty($flowData['cas_id'])) {
+            LoggerManager::getLogger()->fatal("No Value for `cas_id` for PMSE method terminateCase");
+            return;
+        }
+
+        $bpmThread = $this->retrieveBean('pmse_BpmThread');
         //check the list of open threads
-        $query = "select cas_thread_index, cas_flow_index from  pmse_bpm_thread where cas_id = {$flowData['cas_id']} and cas_thread_status = 'OPEN' ";
-        $result = $bean->db->Query($query);
+        $query = $this->retrieveSugarQueryObject();
+        $query->select(array(
+            'cas_thread_index',
+        ));
 
-        while ($row = $bean->db->fetchByAssoc($result)) {
+        $query->from($bpmThread);
+        $query->where()
+            ->equals('cas_id', $flowData['cas_id'])
+            ->equals('cas_thread_status', 'OPEN');
 
+        $rows = $query->execute();
+
+        foreach ($rows as $row) {
             $this->closeThreadByThreadIndex($flowData['cas_id'], $row['cas_thread_index']);
         }
+
         // Change status in flow when Activity status is FORM
         $this->terminateCaseFlow($flowData['cas_id']);
         //finally close the entire case

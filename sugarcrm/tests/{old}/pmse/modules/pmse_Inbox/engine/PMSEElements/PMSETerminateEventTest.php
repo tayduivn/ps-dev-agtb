@@ -28,25 +28,40 @@ class PMSETerminateEventTest extends TestCase
             ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('closeThreadByCaseIndex', 'closeCase', 'terminateCaseFlow', 'setCloseStatusForThisThread', 'closeThreadByThreadIndex'))
+            ->setMethods(array('closeThreadByCaseIndex', 'closeCase', 'terminateCaseFlow', 'retrieveSugarQueryObject',
+                'setCloseStatusForThisThread', 'closeThreadByThreadIndex', 'retrieveBean'))
             ->getMock();
 
-
-        $dbMock = $this->getMockBuilder('DBHandler')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+        $sugarQueryMock = $this->getMockBuilder('SugarQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(array('select', 'from', 'where', 'equals', 'execute'))
             ->getMock();
 
-        $dbMock->expects($this->exactly(1))
-            ->method('Query')
-            ->will($this->returnValue(array()));
+        $bean = $this->getMockBuilder('SugarBean')
+            ->disableAutoload()
+            ->disableOriginalConstructor()
+            ->setMethods(array('save'))
+            ->getMock();
 
-        $dbMock->expects($this->at(1))
-            ->method('fetchByAssoc')
-            ->with(array())
+        $caseFlowHandlerMock->expects($this->once())
+            ->method('retrieveBean')
+            ->will($this->returnValue($bean));
+
+        $caseFlowHandlerMock->expects($this->once())
+            ->method('retrieveSugarQueryObject')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $sugarQueryMock->expects($this->once())
+            ->method('where')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $sugarQueryMock->expects($this->exactly(2))
+            ->method('equals')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $sugarQueryMock->expects($this->once())
+            ->method('execute')
             ->will($this->returnValue(array('cas_thread_index' => 1)));
-
-        $bean = new stdClass();
-        $bean->db = $dbMock;
 
         $this->endEvent->setCaseFlowHandler($caseFlowHandlerMock);
 
