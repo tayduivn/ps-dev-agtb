@@ -42,6 +42,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateAwareBuilder;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Composite;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Logger;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\PreFetch;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
@@ -103,6 +104,7 @@ return new Container([
         return $state;
     },
     Listener::class => function (ContainerInterface $container) {
+        $conn = $container->get(Connection::class);
         $state = $container->get(State::class);
         $builder = new StateAwareBuilder(
             $container->get(Connection::class),
@@ -116,7 +118,8 @@ return new Container([
 
         return new Composite(
             new Logger($logger),
-            $listener
+            $listener,
+            new PreFetch($conn)
         );
     },
     StateAwareRebuild::class => function (ContainerInterface $container) {
