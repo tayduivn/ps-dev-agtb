@@ -119,7 +119,7 @@ class Report
     /**
      * @var array these types support export
      */
-    static protected $allowExportType = array('summary', 'detailed_summary', 'tabular', /*'Matrix'*/);
+    static protected $allowExportType = array('summary', 'tabular', 'detailed_summary', 'Matrix');
 
     /**
      *

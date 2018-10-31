@@ -63,7 +63,10 @@ class ReportExporter
 
         $class = "Sugarcrm\\Sugarcrm\\modules\\Reports\\Exporters\\" . 'Report' . $format . 'Exporter' . $type;
         $class = class_exists($class) ? $class : 'Notype';
-
+        if (method_exists($class, 'getSubTypeExporter')) {
+            $subType = $class::getSubTypeExporter($this->reporter);
+            $class .= $subType;
+        }
         return new $class($this->reporter);
     }
 

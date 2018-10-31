@@ -44,25 +44,28 @@ class ReportExporterTest extends TestCase
     }
 
     /**
-     * Given the report type and format, it should instantiate an instance of the correct exporter class
-     *
      * @param string $reportType Report Type
+     * @param string $layoutOptions Reporter's layout options
+     * @param string $format output format
      * @param string $exporterClass expected exporter class
      * @covers Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportExporter::__construct
      * @dataProvider reportExporterProvider
      */
     public function testReportExporter(
         string $reportType,
+        string $layoutOptions,
+        string $format,
         string $exporterClass
     ) {
-        $reporter = $this->createPartialMock('\Report', array('getReportType'));
+        $reporter = $this->createPartialMock('\Report', array('getReportType', 'getSubTypeExporter'));
         $reporter->method('getReportType')
             ->willReturn($reportType);
 
+        $reporter->report_def = array('layout_options' => $layoutOptions);
         $reporter->report_type = $reportType;
 
         $exporter = $this->getMockBuilder('Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportExporter')
-            ->setConstructorArgs(array($reporter, 'CSV'))
+            ->setConstructorArgs(array($reporter, $format))
             ->getMock();
 
         // member variable $exporter should be an instance of the correct exporter class
@@ -75,13 +78,43 @@ class ReportExporterTest extends TestCase
     public function reportExporterProvider()
     {
         return array(
-            array('summary', 'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterSummation'),
+            array(
+                'summary',
+                '',
+                'CSV',
+                'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterSummation',
+            ),
             array(
                 'detailed_summary',
+                '',
+                'CSV',
                 'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterSummationWithDetails',
             ),
-            array('tabular', 'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterRowsAndColumns'),
-            //array('Matrix', 'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterMatrix'),
+            array(
+                'tabular',
+                '',
+                'CSV',
+                'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterRowsAndColumns',
+                '',
+            ),
+            array(
+                'Matrix',
+                '2x2',
+                'CSV',
+                'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterMatrix1x1',
+            ),
+            array(
+                'Matrix',
+                '1x2',
+                'CSV',
+                'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterMatrix1x2',
+            ),
+            array(
+                'Matrix',
+                '2x1',
+                'CSV',
+                'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterMatrix2x1',
+            ),
         );
     }
 }
