@@ -32,9 +32,9 @@
     d3-voronoi "1.1.2"
     d3-zoom "1.7.1"
 
-"@sugarcrm/sucrose-sugar@^0.8.1":
-  version "0.8.1"
-  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/sucrose-sugar/-/sucrose-sugar-0.8.1.tgz#3a026b20f525d2b93ec8f89f5518c7b57caa29dd"
+"@sugarcrm/sucrose-sugar@^0.8.2":
+  version "0.8.2"
+  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/sucrose-sugar/-/sucrose-sugar-0.8.2.tgz#091e945aad875d06d8f816b0ad5e9d04727af578"
   dependencies:
     "@sugarcrm/d3-sugar" "4.13.0"
 

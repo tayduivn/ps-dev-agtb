@@ -1,7 +1,7 @@
 {
   "private": true,
   "devDependencies": {
-    "@sugarcrm/sucrose-sugar": "^0.8.1",
+    "@sugarcrm/sucrose-sugar": "^0.8.2",
     "@sugarcrm/thorn": "0.6.0",
     "@sugarcrm/ventana": "1.1.0",
     "@types/node": "6.0.51",
