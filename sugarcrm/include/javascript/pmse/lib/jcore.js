@@ -17262,7 +17262,7 @@ var jCore = (function ($, window) {
             })
             .width(lineWidth)
             .height(lineHeight)
-            .offset(offset);
+            .css(offset);
         if (transform) {
             $(this.html).css({
                 '-webkit-transform': transform,
