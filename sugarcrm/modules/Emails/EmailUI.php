@@ -11,6 +11,8 @@
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\FetchMode;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
@@ -686,43 +688,50 @@ eoq;
 	}
 
 	/* *************** MAILING LISTS ***************** */
-	/**
-	 * Adds contact items to a mailing list
-	 * @param string list_id GUID
-	 * @param array contacts
-	 * @param string newName
-	 * @param bool truncate
-	 */
-	function addContactsToList($list_id, $contacts, $newName, $truncate=false) {
-		// update list name if set
-		if(!empty($newName)) {
-			$q1 = "UPDATE address_book_lists SET list_name = '{$newName}' WHERE id = '{$list_id}'";
-			$r1 = $this->db->query($q1);
-		}
+    /**
+     * Adds contact items to a mailing list
+     * @param string $list_id GUID
+     * @param array $contacts
+     * @param string $newName
+     * @param bool $truncate
+     * @throws DBALException
+     */
+    public function addContactsToList($list_id, $contacts, $newName, $truncate = false)
+    {
+        $connection = $this->db->getConnection();
+        // update list name if set
+        if (!empty($newName)) {
+            $connection->executeUpdate(
+                'UPDATE address_book_lists SET list_name = ? WHERE id = ?',
+                [$newName, $list_id]
+            );
+        }
 
-		// clean out if flag passed
-		if($truncate) {
-			$q2 = "DELETE FROM address_book_list_items WHERE list_id = '{$list_id}'";
-			$r2 = $this->db->query($q2);
-		}
+        // clean out if flag passed
+        if ($truncate) {
+            $connection->executeUpdate(
+                'DELETE FROM address_book_list_items WHERE list_id = ?',
+                [$list_id]
+            );
+        }
 
-		$qc = "SELECT bean_id FROM address_book_list_items WHERE list_id = '{$list_id}'";
-		$rc = $this->db->query($qc);
+        $stmt = $connection->executeQuery(
+            'SELECT bean_id FROM address_book_list_items WHERE list_id = ?',
+            [$list_id]
+        );
+        $check = $stmt->fetchAll(FetchMode::COLUMN);
 
-		$check = array();
-		while($ac = $this->db->fetchByAssoc($rc)) {
-			$check[] = $ac['bean_id'];
-		}
-
-		if(is_array($contacts)) {
-			for($i=0; $i<count($contacts); $i++) {
-				if(!in_array($contacts[$i], $check)) {
-					$q3 = "INSERT INTO address_book_list_items (list_id, bean_id) VALUES ('{$list_id}', '{$contacts[$i]}')";
-					$r3 = $this->db->query($q3);
-				}
-			}
-		}
-	}
+        if (is_array($contacts)) {
+            for ($i = 0; $i < count($contacts); $i++) {
+                if (!in_array($contacts[$i], $check)) {
+                    $connection->executeUpdate(
+                        'INSERT INTO address_book_list_items (list_id, bean_id) VALUES (?, ?)',
+                        [$list_id, $contacts[$i]]
+                    );
+                }
+            }
+        }
+    }
 
     /**
      * Removes selected lists from User's preferences
