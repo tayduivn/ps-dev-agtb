@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\Connection;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
@@ -716,27 +717,26 @@ eoq;
 		}
 	}
 
-	/**
-	 * Removes selected lists from User's preferences
-	 * @param array $removeIds IDs of lists to remove
-	 */
-	function removeLists($removeIds) {
-		global $current_user;
+    /**
+     * Removes selected lists from User's preferences
+     * @param array $removeIds IDs of lists to remove
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function removeLists(array $removeIds)
+    {
+        $connection = $this->db->getConnection();
+        $connection->executeUpdate(
+            'DELETE FROM address_book_list_items WHERE list_id IN (?)',
+            [$removeIds],
+            [Connection::PARAM_STR_ARRAY]
+        );
 
-		$concat = '';
-		foreach($removeIds as $id) {
-			if(!empty($concat))
-				$concat .= ", ";
-
-			$concat .= "'{$id}'";
-		}
-
-		$q = "DELETE FROM address_book_list_items WHERE list_id IN ({$concat})";
-		$r = $this->db->query($q);
-
-		$q2 = "DELETE FROM address_book_lists WHERE id IN ({$concat})";
-		$r2 = $this->db->query($q2);
-	}
+        $connection->executeUpdate(
+            'DELETE FROM address_book_lists WHERE id IN (?)',
+            [$removeIds],
+            [Connection::PARAM_STR_ARRAY]
+        );
+    }
 
 	/**
 	 * Returns metadata to construct a user's mailing lists
