@@ -539,44 +539,50 @@ eoq;
 
 	///////////////////////////////////////////////////////////////////////////
 	////	ADDRESS BOOK
-	/**
-	 * Retrieves all relationship metadata for a user's address book
-	 * @return array
-	 */
-	function getContacts() {
-		global $current_user;
+    /**
+     * Retrieves all relationship metadata for a user's address book
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function getContacts()
+    {
+        global $current_user;
+        $stmt = $this->db->getConnection()
+            ->executeQuery(
+                'SELECT * FROM address_book WHERE assigned_user_id = ? ORDER BY bean DESC',
+                [$current_user->id]
+            );
+        $ret = [];
+        foreach ($stmt as $addressBookData) {
+            $ret[$addressBookData['bean_id']] = array(
+                'id' => $addressBookData['bean_id'],
+                'module' => $addressBookData['bean'],
+            );
+        }
 
-		$q = "SELECT * FROM address_book WHERE assigned_user_id = '{$current_user->id}' ORDER BY bean DESC";
-		$r = $this->db->query($q);
+        return $ret;
+    }
 
-		$ret = array();
+    /**
+     * Saves changes to a user's address book
+     * @param array contacts
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function setContacts($contacts)
+    {
+        global $current_user;
 
-		while($a = $this->db->fetchByAssoc($r)) {
-			$ret[$a['bean_id']] = array(
-				'id'		=> $a['bean_id'],
-				'module'	=> $a['bean'],
-			);
-		}
-
-		return $ret;
-	}
-
-	/**
-	 * Saves changes to a user's address book
-	 * @param array contacts
-	 */
-	function setContacts($contacts) {
-		global $current_user;
-
-		$oldContacts = $this->getContacts();
-
-		foreach($contacts as $cid => $contact) {
-			if(!in_array($contact['id'], $oldContacts)) {
-				$q = "INSERT INTO address_book (assigned_user_id, bean, bean_id) VALUES ('{$current_user->id}', '{$contact['module']}', '{$contact['id']}')";
-				$r = $this->db->query($q, true);
-			}
-		}
-	}
+        $oldContacts = $this->getContacts();
+        $connection = $this->db->getConnection();
+        foreach ($contacts as $cid => $contact) {
+            if (!in_array($contact['id'], $oldContacts)) {
+                $connection->executeUpdate(
+                    'INSERT INTO address_book (assigned_user_id, bean, bean_id) VALUES (?, ?, ?)',
+                    [$current_user->id, $contact['module'], $contact['id']]
+                );
+            }
+        }
+    }
 
 	/**
 	 * Removes contacts from the user's address book
