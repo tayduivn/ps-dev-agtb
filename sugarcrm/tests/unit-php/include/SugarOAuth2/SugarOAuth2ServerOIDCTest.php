@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
@@ -116,9 +117,9 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                                        'setLogger',
                                    ])
                                    ->getMock();
-        $this->logger = $this->createMock(\LoggerInterface::class);
+
         TestReflection::setProtectedValue($this->oAuth2Server, 'storage', $this->storage);
-        TestReflection::setProtectedValue($this->oAuth2Server, 'logger', $this->logger);
+        TestReflection::setProtectedValue($this->oAuth2Server, 'logger', $this->createMock(LoggerInterface::class));
 
         $this->authProviderBuilder = $this->createMock(AuthProviderOIDCManagerBuilder::class);
         $this->authProviderBasicBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
