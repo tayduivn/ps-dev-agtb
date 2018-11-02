@@ -382,7 +382,7 @@ FilterField.prototype.processValueDependency = function(type) {
                 labelField = 'text';
             case 'multiselect':
             case 'radio':
-                var aux = this.getSelectedData();
+                var aux = this.getSelectedData(this.selectField.value);
                 var itemsObj = aux.optionItem;
                 settings.options = [];
                 Object.keys(itemsObj).forEach(function(item, index, arr) {
@@ -478,6 +478,10 @@ FilterField.prototype.createValueElements = function(settings) {
         case 'checkbox':
             valueElement.type = 'checkbox';
             break;
+        case 'dropdown':
+        case 'radio':
+            valueElement = this.createDropdownValueElement(settings);
+            break;
         case 'text':
         default:
             valueElement.type = 'text';
@@ -495,6 +499,35 @@ FilterField.prototype.createValueElements = function(settings) {
     }
     this._type = settings.type;
 };
+FilterField.prototype.createDropdownValueElement = function(settings) {
+    var valueElement = this.createHTMLElement('div');
+    valueElement.id = this.id;
+    valueElement.className = 'adam form-panel-item';
+    valueElement.className += ' adam form-panel-field record-cell';
+    valueElement.className += ' adam-' + settings.type.toLowerCase();
+    var htmlLabelContainer = this.createHTMLElement('div');
+    htmlLabelContainer.className = 'adam form-panel-label record-label';
+    var span = this.createHTMLElement('span');
+    span.className = 'normal index';
+    var htmlControlContainer = this.createHTMLElement('span');
+    htmlControlContainer.className = 'edit';
+    var select = this.createHTMLElement('select');
+    select.className = 'inherit-width adam form-panel-field-control';
+    for (var i = 0; i < settings.options.length; i++) {
+        select.appendChild(this.generateOption('expValue', settings.options[i], 'text'));
+    }
+    htmlControlContainer.appendChild(select);
+    span.appendChild(htmlControlContainer);
+    valueElement.appendChild(htmlLabelContainer);
+    valueElement.appendChild(span);
+    $(valueElement).change(function() {
+        var document = $('.inherit-width adam form-panel-field-control').context;
+        if (document && document.activeElement && document.activeElement.value) {
+            this.value = document.activeElement.value;
+        }
+    });
+    return valueElement;
+};
 FilterField.prototype.getValueElementsValue = function() {
     var value = null;
     if (this.valueElements.length > 0) {
@@ -502,6 +535,8 @@ FilterField.prototype.getValueElementsValue = function() {
             case 'checkbox':
                 value = this.valueElements[0].checked;
                 break;
+            case 'dropdown':
+            case 'radio':
             case 'text':
             default:
                 value = this.valueElements[0].value;
@@ -515,6 +550,8 @@ FilterField.prototype.setValueElementsValue = function(value) {
             case 'checkbox':
                 this.valueElements[0].checked = value;
                 break;
+            case 'dropdown':
+            case 'radio':
             case 'text':
             default:
                 this.valueElements[0].value = value;
