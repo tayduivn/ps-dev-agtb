@@ -245,6 +245,9 @@ FilterField.prototype.createHTML = function() {
         required = '<i>*</i> ';
     }
 
+    this.dateFormat = App.date.getUserDateFormat();
+    this.timeFormat = App.user.getPreference('timepref');
+
     var fieldLabel = this.createHTMLElement('span');
     fieldLabel.className = 'adam-form-label';
     fieldLabel.innerHTML = this.label + ': ' + required;
@@ -417,9 +420,9 @@ FilterField.prototype.processValueDependency = function(type) {
                 settings.searchURL = PMSE_USER_SEARCH.url;
                 break;
             case 'datetime':
-                settings.timeFormat = this._timeFormat;
+                settings.timeFormat = this.timeFormat;
             case 'date':
-                settings.dateFormat = this._dateFormat;
+                settings.dateFormat = this.dateFormat;
                 operators = this.operators.slice(0, 6);
                 labelField = 'datefield';
                 break;
@@ -482,6 +485,11 @@ FilterField.prototype.removeValueElements = function() {
 FilterField.prototype.createValueElements = function(settings) {
     var valueElement = this.createHTMLElement('input');
     switch (settings.type) {
+        case 'datetime':
+            settings.showTimePicker = true;
+        case 'date':
+            valueElement = this.createDateElement(settings);
+            break;
         case 'checkbox':
             valueElement.type = 'checkbox';
             break;
@@ -517,6 +525,62 @@ FilterField.prototype.createValueElements = function(settings) {
     }
     this._type = settings.type;
 };
+
+/**
+ * Creates a date element
+ * @param settings
+ * @return {HTMLElement}
+ */
+FilterField.prototype.createDateElement = function(settings) {
+    var valueElement = this.createHTMLElement('span');
+    valueElement.id = this.id;
+    valueElement.className = 'adam form-panel-item';
+    valueElement.className += ' adam form-panel-field record-cell';
+    valueElement.className += ' adam-' + settings.type.toLowerCase();
+
+    var dateInput = this.createPicker('60%');
+    $(dateInput).datepicker({format: this.dateFormat.toLowerCase()});
+
+    valueElement.appendChild(dateInput);
+
+    if (settings.showTimePicker) {
+        var timeInput = this.createPicker('40%');
+        $(timeInput).timepicker({timeFormat: this.timeFormat});
+        valueElement.appendChild(timeInput);
+    }
+
+    $(valueElement).click(function() {
+        jQuery(valueElement[0]).datepicker('show');
+        jQuery(valueElement[1]).timepicker('show');
+    });
+    return valueElement;
+};
+
+/**
+ * Create a date or time picker
+ * @param width
+ * @return {HTMLElement}
+ */
+FilterField.prototype.createPicker = function(width) {
+    var picker = this.createHTMLElement('input');
+    picker.className = 'inherit-width adam form-panel-field-control';
+    picker.style.width = width;
+    return picker;
+};
+/**
+ * Formats a date
+ * @param value
+ * @param format
+ * @return formatted value or null
+ */
+FilterField.prototype.dateFormatter = function(value, format) {
+    if (!value) {
+        return value;
+    }
+    value = App.date(value);
+    return value.isValid() ? value.format(format) : null;
+};
+
 FilterField.prototype.createDropdownValueElement = function(settings) {
     var valueElement = this.createHTMLElement('div');
     valueElement.id = this.id;
@@ -919,6 +983,12 @@ FilterField.prototype.getValueElementsValue = function() {
     var value = null;
     if (this.valueElements.length > 0) {
         switch (this._type) {
+            case 'date':
+                value = this.getDateValue();
+                break;
+            case 'datetime':
+                value = this.getDateTimeValue();
+                break;
             case 'checkbox':
                 value = this.valueElements[0].checked;
                 break;
@@ -939,14 +1009,47 @@ FilterField.prototype.getValueElementsValue = function() {
     }
     return value;
 };
+
 FilterField.prototype.getValueElementsCurrency = function() {
     if (this.valueElements.length > 0 && this._type === 'currency') {
         return this.valueElements[0].children[0].value;
     }
 };
+
+/**
+ * Gets the date value
+ * @return string or null
+ */
+FilterField.prototype.getDateValue = function() {
+    var date = App.date(this.valueElements[0].children[0].value, this.dateFormat, true);
+    var value = date.isValid() ? date.formatServer(true) : null;
+    return value;
+};
+
+/**
+ * Gets date and time value
+ * @return string or null
+ */
+FilterField.prototype.getDateTimeValue = function() {
+    var date = this.valueElements[0].children[0].value;
+    var time = this.valueElements[0].children[1].value;
+    var datetime = SUGAR.App.date(date + '' + time, this.dateFormat + '' +
+        SUGAR.App.date.convertFormat(this.timeFormat), true);
+
+    var value = datetime.isValid() ? datetime.formatServer() : null;
+    return value;
+};
+
 FilterField.prototype.setValueElementsValue = function(value) {
     if (this.valueElements.length > 0) {
         switch (this._type) {
+            case 'date':
+                this.valueElements[0].children[0].value = this.dateFormatter(value, this.dateFormat);
+                break;
+            case 'datetime':
+                this.valueElements[0].children[0].value = this.dateFormatter(value, this.dateFormat);
+                this.setTimeValue(value);
+                break;
             case 'checkbox':
                 this.valueElements[0].checked = value;
                 break;
@@ -966,11 +1069,23 @@ FilterField.prototype.setValueElementsValue = function(value) {
         }
     }
 };
+
 FilterField.prototype.setValueElementsCurrency = function(value) {
     if (this.valueElements.length > 0 && this._type === 'currency') {
         this.valueElements[0].children[0].value = value;
     }
 };
+
+/**
+ * Sets the value of time field
+ * @param value
+ */
+FilterField.prototype.setTimeValue = function(value) {
+    var datetime = value.split('T');
+    var time = datetime[1].split(/[\+\-]/);
+    jQuery(this.valueElements[0].children[1]).timepicker('setTime', time[0]);
+};
+
 FilterField.prototype.setModule = function(module, base) {
     this.module = module;
     if (module) {
