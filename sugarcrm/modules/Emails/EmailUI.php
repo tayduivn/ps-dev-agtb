@@ -584,28 +584,29 @@ eoq;
         }
     }
 
-	/**
-	 * Removes contacts from the user's address book
-	 * @param array ids
-	 */
-	function removeContacts($ids) {
-		global $current_user;
+    /**
+     * Removes contacts from the user's address book
+     * @param array ids
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function removeContacts($ids)
+    {
+        global $current_user;
 
-		$concat = "";
+        $connection = $this->db->getConnection();
+        $connection->executeUpdate(
+            'DELETE FROM address_book WHERE assigned_user_id = ? AND bean_id IN(?)',
+            [$current_user->id, $ids],
+            [null, Connection::PARAM_STR_ARRAY]
+        );
 
-		foreach($ids as $id) {
-			if(!empty($concat))
-				$concat .= ", ";
-
-			$concat .= "'{$id}'";
-		}
-
-		$q = "DELETE FROM address_book WHERE assigned_user_id = '{$current_user->id}' AND bean_id IN ({$concat})";
-		$r = $this->db->query($q);
-		//Delete references to this contact from email lists.
-		$q = "DELETE FROM address_book_list_items WHERE address_book_list_items.bean_id IN (SELECT id FROM email_addr_bean_rel eabr WHERE eabr.deleted=0 AND eabr.bean_id IN ({$concat}))";
-		$r = $this->db->query($q);
-	}
+        $connection->executeUpdate(
+            'DELETE FROM address_book_list_items WHERE address_book_list_items.bean_id IN 
+            (SELECT id FROM email_addr_bean_rel eabr WHERE eabr.deleted=0 AND eabr.bean_id IN (?))',
+            [$ids],
+            [Connection::PARAM_STR_ARRAY]
+        );
+    }
 
 	/**
 	 * saves editted Contact info
