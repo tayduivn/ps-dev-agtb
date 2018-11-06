@@ -104,9 +104,21 @@
         // need to trigger on app.controller.context because of contexts changing between
         // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
         // app.controller.context is the only consistent context to use
-        var _context = this.context.parent || this.context;
-        app.controller.context.on(_context.cid + ':productCatalogDashlet:add:complete',
-            this._onProductDashletAddComplete, this);
+
+        // adding PC Dashlet just return
+        if (this.isConfig) {
+            return;
+        }
+
+        var viewDetails = this.closestComponent('record') ?
+            this.closestComponent('record') :
+            this.closestComponent('create');
+
+        if (!_.isUndefined(viewDetails)) {
+            app.controller.context.on(viewDetails.cid + ':productCatalogDashlet:add:complete',
+                this._onProductDashletAddComplete, this);
+        }
+
         $(window).on('resize', _.bind(this._resizePhaserCanvas, this));
 
         sidebarLayout = this.closestComponent('sidebar');
@@ -1311,11 +1323,15 @@
         delete data.date_modified;
         delete data.pricing_formula;
 
-        var _context = this.context.parent || this.context;
+        var viewDetails = this.closestComponent('record') ?
+            this.closestComponent('record') :
+            this.closestComponent('create');
         // need to trigger on app.controller.context because of contexts changing between
         // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
         // app.controller.context is the only consistent context to use
-        app.controller.context.trigger(_context.cid + ':productCatalogDashlet:add', data);
+        if (!_.isUndefined(viewDetails)) {
+            app.controller.context.trigger(viewDetails.cid + ':productCatalogDashlet:add', data);
+        }
     },
 
     /**
@@ -1326,6 +1342,11 @@
      */
     _openItemInDrawer: function(data) {
         var model = app.data.createBean('ProductTemplates', data);
+        var viewDetails = this.closestComponent('record') ?
+            this.closestComponent('record').cid :
+            this.closestComponent('create').cid;
+
+        model.viewId = viewDetails;
         app.drawer.open({
             layout: 'product-catalog-dashlet-drawer-record',
             context: {
@@ -1385,10 +1406,19 @@
         // remove window resize event
         $(window).off('resize');
         if (app.controller && app.controller.context) {
-            var _context = this.context.parent || this.context;
-            app.controller.context.off(_context.cid + ':productCatalogDashlet:add:complete', null, this);
-        }
+            if (this.isConfig) {
+                this._super('_dispose');
+                return;
+            }
 
+            var viewDetails = this.closestComponent('record') ?
+                this.closestComponent('record') :
+                this.closestComponent('create');
+
+            if (!_.isUndefined(viewDetails)) {
+                app.controller.context.off(viewDetails.cid + ':productCatalogDashlet:add:complete', null, this);
+            }
+        }
         this._super('_dispose');
     }
 })

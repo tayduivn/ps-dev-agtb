@@ -29,13 +29,18 @@
         userACLs = app.user.getAcls();
 
         if (!(_.has(userACLs.Opportunities, 'edit') ||
-                _.has(userACLs.RevenueLineItems, 'access') ||
-                _.has(userACLs.RevenueLineItems, 'edit'))) {
+            _.has(userACLs.RevenueLineItems, 'access') ||
+            _.has(userACLs.RevenueLineItems, 'edit'))) {
             // need to trigger on app.controller.context because of contexts changing between
             // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
             // app.controller.context is the only consistent context to use
-            var _context = this.context.parent || this.context;
-            app.controller.context.on(_context.cid + ':productCatalogDashlet:add', this.openRLICreate, this);
+            var viewDetails = this.closestComponent('record') ?
+                this.closestComponent('record') :
+                this.closestComponent('create');
+
+            if (!_.isUndefined(viewDetails)) {
+                app.controller.context.on(viewDetails.cid + ':productCatalogDashlet:add', this.openRLICreate, this);
+            }
         }
     },
 
@@ -43,20 +48,19 @@
      * Refreshes the RevenueLineItems subpanel when a new Opportunity is added
      * @private
      */
-     _reloadOpportunities: function() {
-         var $oppsSubpanel = $('div[data-subpanel-link="opportunities"]');
-         // only reload Opportunities if it is closed & no data exists
-         if ($('li.subpanel', $oppsSubpanel).hasClass('closed')) {
-             if ($('table.dataTable', $oppsSubpanel).length) {
-                 this.context.parent.trigger('subpanel:reload', {links: ['opportunities']});
-             } else {
-                 this.context.parent.trigger('subpanel:reload');
-             }
-         }
-         else {
-             this.context.parent.trigger('subpanel:reload', {links: ['opportunities']});
-         }
-     },
+    _reloadOpportunities: function() {
+        var $oppsSubpanel = $('div[data-subpanel-link="opportunities"]');
+        // only reload Opportunities if it is closed & no data exists
+        if ($('li.subpanel', $oppsSubpanel).hasClass('closed')) {
+            if ($('table.dataTable', $oppsSubpanel).length) {
+                this.context.parent.trigger('subpanel:reload', {links: ['opportunities']});
+            } else {
+                this.context.parent.trigger('subpanel:reload');
+            }
+        } else {
+            this.context.parent.trigger('subpanel:reload', {links: ['opportunities']});
+        }
+    },
 
     /**
      * @inheritdoc
@@ -191,8 +195,13 @@
      */
     _dispose: function() {
         if (app.controller && app.controller.context) {
-            var _context = this.context.parent || this.context;
-            app.controller.context.off(_context.cid + ':productCatalogDashlet:add', null, this);
+            var viewDetails = this.closestComponent('record') ?
+                this.closestComponent('record') :
+                this.closestComponent('create');
+
+            if (!_.isUndefined(viewDetails)) {
+                app.controller.context.off(viewDetails.cid + ':productCatalogDashlet:add', null, this);
+            }
         }
 
         this._super('_dispose');

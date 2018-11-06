@@ -38,6 +38,11 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
         sinon.collection.stub(layout, '_super', function() {
         });
+        sinon.collection.stub(layout, 'closestComponent', function() {
+            return {
+                cid: 'c37'
+            };
+        });
     });
 
     afterEach(function() {
@@ -89,6 +94,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             sinon.collection.stub(layout, '_setCopyQuoteData');
             sinon.collection.stub(layout, '_checkProductsQuoteLink');
             sinon.collection.stub(app.controller.context, 'on');
+
         });
 
         afterEach(function() {
@@ -107,8 +113,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 });
                 layout.bindDataChange();
 
-                var _context = layout.context.parent || layout.context;
-                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
+                expect(app.controller.context.on).not.toHaveBeenCalledWith('c37:productCatalogDashlet:add');
             });
 
             it('should not set listener if user has no access to Products', function() {
@@ -122,8 +127,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 });
                 layout.bindDataChange();
 
-                var _context = layout.context.parent || layout.context;
-                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
+                expect(app.controller.context.on).not.toHaveBeenCalledWith('c37:productCatalogDashlet:add');
             });
 
             it('should not set listener if user has no access to Products edit', function() {
@@ -137,8 +141,18 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 });
                 layout.bindDataChange();
 
-                var _context = layout.context.parent || layout.context;
-                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
+                expect(app.controller.context.on).not.toHaveBeenCalledWith('c37:productCatalogDashlet:add');
+            });
+
+            it('should not set listener if user has no access to Quotes edit', function() {
+                sinon.collection.stub(app.user, 'getAcls', function() {
+                    return {
+                        Quotes: {},
+                        Products: {}
+                    };
+                });
+                layout.bindDataChange();
+                expect(app.controller.context.on).toHaveBeenCalledWith('c37:productCatalogDashlet:add');
             });
         });
 
@@ -176,8 +190,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             });
 
             it('should listen on layout.context for productCatalogDashlet:add', function() {
-                var _context = layout.context.parent || layout.context;
-                expect(app.controller.context.on).toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
+                expect(app.controller.context.on).toHaveBeenCalledWith('c37:productCatalogDashlet:add');
             });
         });
 
@@ -563,9 +576,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         it('should call trigger on app.controller.context', function() {
             layout._onProductCatalogDashletAddItem({});
 
-            var _context = layout.context.parent || layout.context;
-            expect(app.controller.context.trigger)
-                .toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add:complete');
+            expect(app.controller.context.trigger).toHaveBeenCalledWith('c37:productCatalogDashlet:add:complete');
         });
     });
 

@@ -24,7 +24,7 @@
         'click [data-action=tab-switcher]': 'tabSwitcher',
         'click [data-action=page-nav-clicked]': 'onPageNavClicked',
         'click .recent-link': 'onNameClicked',
-        'click .recent-records i': 'onIconClicked',
+        'click .recent-records i': 'onIconClicked'
     },
 
     //declaring global variables
@@ -116,11 +116,11 @@
             return;
         }
         var data = {
-                results: [],
-                // only show one page of results
-                // if more results are needed, then the address book should be used
-                more: false
-            };
+            results: [],
+            // only show one page of results
+            // if more results are needed, then the address book should be used
+            more: false
+        };
         var callbacks = {};
         var url;
         var payloadData = {};
@@ -141,7 +141,7 @@
             this.toggleLoading(false);
             data.results = [];
         }, this);
-        app.api.call('create',url,payloadData,callbacks);
+        app.api.call('create', url, payloadData, callbacks);
     },
 
     /**
@@ -172,7 +172,7 @@
         //if some data is returned
         if (result.records.length > 0) {
             //if 'Recent used' is the active tab
-            if (this.activeTab  === 'recent-product') {
+            if (this.activeTab === 'recent-product') {
                 this.recentCollection.reset(result.records);
             } else { //else 'Favorites' tab is active
                 this.paginationLength = result.totalPages;
@@ -192,13 +192,13 @@
                 tmpLeftEllipsesObject = {
                     isIcon: true,
                     listClass: 'favorite-pagination',
-                    subListClass: 'left-ellipsis-icon fa fa-ellipsis-h',
+                    subListClass: 'left-ellipsis-icon fa fa-ellipsis-h'
                 };
 
                 tmpRightEllipsesObject = {
                     isIcon: true,
                     listClass: 'favorite-pagination',
-                    subListClass: 'right-ellipsis-icon fa fa-ellipsis-h',
+                    subListClass: 'right-ellipsis-icon fa fa-ellipsis-h'
                 };
 
                 //Push details for each list item in the pagination
@@ -208,7 +208,7 @@
                         listClass: 'favorite-pagination',
                         subListClass: 'paginate-num-button btn btn-link btn-invisible',
                         pageNum: page + 1,
-                        isActive: this.pageNumClicked === page + 1 && !this.isPageNumDisabled ? true : false,
+                        isActive: this.pageNumClicked === page + 1 && !this.isPageNumDisabled ? true : false
                     });
                 }
 
@@ -243,7 +243,7 @@
         }
         _.each(this.recentCollection.models, function(model) {
             var name = model.get('name');
-            var shortName = name.length > 25 ? name.substr(0,25) + '...' : name;
+            var shortName = name.length > 25 ? name.substr(0, 25) + '...' : name;
             model.set({
                 longName: name,
                 shortName: shortName
@@ -264,7 +264,7 @@
             return;
         }
         this.loadData({
-            pageNum: pageId,
+            pageNum: pageId
         });
         this.toggleLoading(false);
         this.render();
@@ -280,11 +280,11 @@
         var currentPageNum = $el.data('page-id');
         if ($el.hasClass('previous-fav') || $el.hasClass('nav-previous')) {
             this.loadData({
-                pageNum: currentPageNum - 1,
+                pageNum: currentPageNum - 1
             });
         } else if ($el.hasClass('next-fav') || $el.hasClass('nav-next')) {
             this.loadData({
-                pageNum: currentPageNum + 1,
+                pageNum: currentPageNum + 1
             });
         }
         this.toggleLoading(false);
@@ -310,7 +310,14 @@
             delete data.date_modified;
             delete data.pricing_formula;
             delete data.my_favorite;
-            app.controller.context.trigger('productCatalogDashlet:add', data);
+
+            var viewDetails = this.closestComponent('record') ?
+                this.closestComponent('record') :
+                this.closestComponent('create');
+
+            if (!_.isUndefined(viewDetails)) {
+                app.controller.context.trigger(viewDetails.cid + ':productCatalogDashlet:add', data);
+            }
         }
     },
 
@@ -368,6 +375,11 @@
      */
     _openItemInDrawer: function(response) {
         var data = app.data.createBean('ProductTemplates', response);
+        var viewDetails = this.closestComponent('record') ?
+            this.closestComponent('record').cid :
+            this.closestComponent('create').cid;
+
+        data.viewId = viewDetails;
         app.drawer.open({
             layout: 'product-catalog-dashlet-drawer-record',
             context: {

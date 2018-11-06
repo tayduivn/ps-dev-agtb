@@ -941,11 +941,18 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
         });
 
         it('should call app.controller.context.trigger with productCatalogDashlet:add and data', function() {
-            expect(app.controller.context.trigger).toHaveBeenCalledWith('productCatalogDashlet:add', {
-                product_template_id: 10,
-                product_template_name: 'asd',
-                name: 'asd'
-            });
+            var viewDetails = view.closestComponent('record') ?
+                view.closestComponent('record') :
+                view.closestComponent('create');
+
+            if (!_.isUndefined(viewDetails)) {
+                expect(app.controller.context.trigger)
+                    .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add', {
+                        product_template_id: 10,
+                        product_template_name: 'asd',
+                        name: 'asd'
+                    });
+            }
         });
     });
 
@@ -1054,16 +1061,23 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
                 name: 'test'
             });
 
-            expect(app.drawer.open).toHaveBeenCalledWith({
-                layout: 'product-catalog-dashlet-drawer-record',
-                context: {
-                    module: 'ProductTemplates',
-                    model: {
-                        id: 'asd1',
-                        name: 'test'
+            var viewDetails = view.closestComponent('record') ?
+                view.closestComponent('record') :
+                view.closestComponent('create');
+
+            if (!_.isUndefined(viewDetails)) {
+                expect(app.drawer.open).toHaveBeenCalledWith({
+                    layout: 'product-catalog-dashlet-drawer-record',
+                    context: {
+                        module: 'ProductTemplates',
+                        model: {
+                            id: 'asd1',
+                            name: 'test',
+                            viewId: viewDetails.cid
+                        }
                     }
-                }
-            });
+                });
+            }
         });
     });
 });

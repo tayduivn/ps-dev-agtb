@@ -132,9 +132,14 @@
             // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
             // app.controller.context is the only consistent context to use
 
-            var _context = this.context.parent || this.context;
-            app.controller.context.on(_context.cid + ':productCatalogDashlet:add', this._onProductCatalogDashletAddItem,
-                this);
+            var viewDetails = this.closestComponent('record') ?
+                this.closestComponent('record') :
+                this.closestComponent('create');
+            if (!_.isUndefined(viewDetails)) {
+                app.controller.context.on(viewDetails.cid + ':productCatalogDashlet:add',
+                    this._onProductCatalogDashletAddItem,
+                    this);
+            }
         }
 
         // check if this is create mode, in which case add an empty array to bundles
@@ -158,7 +163,7 @@
                 var bundles = this.model.get('bundles');
                 this._checkProductsQuoteLink();
 
-                if (bundles.length == 0) {
+                if (bundles.length === 0) {
                     this._onProductBundleChange(bundles);
                 }
             }, this);
@@ -313,8 +318,13 @@
         }
 
         // trigger event on the context to let dashlet know this is done adding the product
-        var _context = this.context.parent || this.context;
-        app.controller.context.trigger(_context.cid + ':productCatalogDashlet:add:complete');
+        var viewDetails = this.closestComponent('record') ?
+            this.closestComponent('record') :
+            this.closestComponent('create');
+
+        if (!_.isUndefined(viewDetails)) {
+            app.controller.context.trigger(viewDetails.cid + ':productCatalogDashlet:add:complete');
+        }
     },
 
     /**
@@ -1643,8 +1653,12 @@
     _dispose: function() {
         this.beforeRender();
         if (app.controller && app.controller.context) {
-            var _context = this.context.parent || this.context;
-            app.controller.context.off(_context.cid + ':productCatalogDashlet:add', null, this);
+            var viewDetails = this.closestComponent('record') ?
+                this.closestComponent('record') :
+                this.closestComponent('create');
+            if (!_.isUndefined(viewDetails)) {
+                app.controller.context.off(viewDetails.cid + ':productCatalogDashlet:add', null, this);
+            }
         }
         this._super('_dispose');
     }

@@ -94,9 +94,14 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
 
         it('should set an event listener on the context for productCatalogDashlet:add:complete', function() {
-            var _context = view.context.parent || view.context;
-            expect(app.controller.context.on)
-                .toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add:complete');
+            var viewDetails = view.closestComponent('record') ?
+                view.closestComponent('record') :
+                view.closestComponent('create');
+
+            if (!_.isUndefined(viewDetails)) {
+                expect(app.controller.context.on)
+                    .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add:complete');
+            }
         });
     });
 
@@ -544,8 +549,14 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
 
         it('should trigger context event', function() {
-            var _context = view.context.parent || view.context;
-            expect(app.controller.context.trigger).toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
+            var viewDetails = view.closestComponent('record') ?
+                view.closestComponent('record') :
+                this.closestComponent('create');
+
+            if (!_.isUndefined(viewDetails)) {
+                expect(app.controller.context.trigger)
+                    .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add');
+            }
         });
     });
 

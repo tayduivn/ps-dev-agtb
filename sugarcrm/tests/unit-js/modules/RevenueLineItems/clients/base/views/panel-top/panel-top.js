@@ -45,6 +45,11 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
         };
         view = SugarTest.createView('base', 'RevenueLineItems', 'panel-top', viewMeta, context, true, layout);
         sinon.collection.stub(view, '_super', function() {});
+        sinon.collection.stub(view, 'closestComponent', function() {
+            return {
+                cid: 'c37'
+            };
+        });
     });
 
     afterEach(function() {
@@ -79,8 +84,15 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
                 });
                 view.initialize({});
 
-                var _context = view.context.parent || view.context;
-                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
+                var viewDetails = view.closestComponent('record') ?
+                    view.closestComponent('record') :
+                    view.closestComponent('create');
+                if (!_.isUndefined(viewDetails)) {
+                    expect(app.controller.context.on)
+                        .not
+                        .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add');
+                }
+
             });
 
             it('should not set listener when user does not have access to RLIs', function() {
@@ -94,8 +106,15 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
                 });
                 view.initialize({});
 
-                var _context = view.context.parent || view.context;
-                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
+                var viewDetails = view.closestComponent('record') ?
+                    view.closestComponent('record') :
+                    view.closestComponent('create');
+                if (!_.isUndefined(viewDetails)) {
+                    expect(app.controller.context.on)
+                        .not
+                        .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add');
+                }
+
             });
 
             it('should not set listener when user does not have access to RLIs Edit', function() {
@@ -109,8 +128,15 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
                 });
                 view.initialize({});
 
-                var _context = view.context.parent || view.context;
-                expect(app.controller.context.on).not.toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
+                var viewDetails = view.closestComponent('record') ?
+                    view.closestComponent('record') :
+                    view.closestComponent('create');
+                if (!_.isUndefined(viewDetails)) {
+                    expect(app.controller.context.on)
+                        .not
+                        .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add');
+                }
+
             });
 
             it('should set listener when user has correct ACLs', function() {
@@ -122,8 +148,13 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
                 });
                 view.initialize({});
 
-                var _context = view.context.parent || view.context;
-                expect(app.controller.context.on).toHaveBeenCalledWith(_context.cid + ':productCatalogDashlet:add');
+                var viewDetails = view.closestComponent('record') ?
+                    view.closestComponent('record') :
+                    view.closestComponent('create');
+                if (!_.isUndefined(viewDetails)) {
+                    expect(app.controller.context.on)
+                        .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add');
+                }
             });
         });
     });
