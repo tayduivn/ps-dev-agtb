@@ -142,7 +142,7 @@ describe('modules.kbcontents.clients.base.fields.attachments', function() {
         );
         field.render();
 
-        var event = 'change ' + field.getFileNode().selector;
+        var event = 'change ' + field.fileInputSelector + '[data-type=fileinput]';
 
         expect(field.events[event]).toBeDefined();
         expect(field.events[event]).toEqual('uploadFile');

@@ -56,7 +56,7 @@
         var evt = {},
             relate,
             self = this;
-        evt['change ' +  this.getFileNode().selector] = 'uploadFile';
+        evt['change ' + this.fileInputSelector + '[data-type=fileinput]'] = 'uploadFile';
         this.events = _.extend({}, this.events, opts.def.events, evt);
 
         this.fileInputSelector = opts.def.fileinput || '';
