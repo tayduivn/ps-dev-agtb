@@ -7,28 +7,27 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@quotes
-Feature: Quotes module performance testing
+@quotes @pr
+Feature: Verification of Copy Quote functionality for the cases when
+    quote contains a large number of QLIs linked to it.
 
   Background:
     Given I use default account
     Given I launch App
 
 
-    # TITLE:  Verify performance of Copy Quote functionality - Scenario 1
+    # TITLE:  Verify Copy Quote functionality - Scenario 1
     #
     # STEPS:
     # 1. Generate quote record with 7 groups and 7 QLIs in each group
     # 2. Navigate to quote record view
-    # 3. Start timer
-    # 4. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
-    # 5. Stop Timer and verify
-    # 6. Name and save the newly created quote record
-    # 7. Check the alert message properties
-    # 8. Verify amounts in Grand Total header of QLI table
+    # 3. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
+    # 4. Name and save the newly created quote record
+    # 5. Check the alert message properties
+    # 6. Verify amounts in Grand Total header of QLI table
 
-  @performance_Copy_Quote
-  Scenario: Quotes > Copy Quote with 50 QLIs (7 by 7 + 1 ) > Performance Measure
+  @Copy_Quote
+  Scenario: Quotes > Copy Quote with 50 QLIs (7 by 7 + 1 )
     # 1. Generate quote record linked to the account
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
@@ -90,31 +89,23 @@ Feature: Quotes module performance testing
     Then I should see #Quote_3Record view
     When I open actions menu in #Quote_3Record
 
-    # 3. Start timer
-    When I start timer
-
-    # 4. Initiate Copy Quote process by click on related menu item
+    # 3. Initiate Copy Quote process by click on related menu item
     When I choose Copy from actions menu in #Quote_3Record
 
-    # 5. Stop Timer and verify
-    When I stop timer and verify
-      | max   |
-      | 18100 |
-
-    # 6. Name and save the newly created quote record
+    # 4. Name and save the newly created quote record
     When I provide input for #QuotesRecord.HeaderView view
       | *name   |
       | Quote_4 |
     When I click Save button on #QuotesRecord header
 
-    # 7. Check the alert message properties
+    # 5. Check the alert message properties
     Then I check alert
       | type    | message                                             |
       | Success | Success You successfully created the quote Quote_4. |
     When I close alert
     Then I should see #QuotesRecord view
 
-    # 8. Verify amounts in Grand Total header of QLI table
+    # 6. Verify amounts in Grand Total header of QLI table
     Then I verify fields on QLI total header on #QuotesRecord view
       | fieldName | value         |
       | deal_tot  | 2.00% $200.00 |
@@ -125,20 +116,18 @@ Feature: Quotes module performance testing
 
 
 
-    # TITLE:  Verify performance of Copy Quote functionality - Scenario 2
+    # TITLE:  Verify Copy Quote functionality - Scenario 2
     #
     # STEPS:
     # 1. Generate quote record with 1 group and 50 QLIs in the group
     # 2. Navigate to quote record view
-    # 3. Start timer
-    # 4. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
-    # 5. Stop Timer and verify
-    # 6. Name and save the newly created quote record
-    # 7. Check the alert message properties
-    # 8. Verify amounts in Grand Total header of QLI table
+    # 3. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
+    # 4. Name and save the newly created quote record
+    # 5. Check the alert message properties
+    # 6. Verify amounts in Grand Total header of QLI table
 
-  @performance_Copy_Quote
-  Scenario: Quotes > Copy Quote with 50 QLIs (1 by 50 ) > Performance Measure
+  @Copy_Quote
+  Scenario: Quotes > Copy Quote with 50 QLIs (1 by 50 )
     # 1. Generate quote record linked to the account
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
@@ -165,31 +154,23 @@ Feature: Quotes module performance testing
     Then I should see #Quote_3Record view
     When I open actions menu in #Quote_3Record
 
-    # 3. Start timer
-    When I start timer
-
-    # 4. Initiate Copy Quote process by click on related menu item
+    # 3. Initiate Copy Quote process by click on related menu item
     When I choose Copy from actions menu in #Quote_3Record
 
-    # 5. Stop Timer and verify
-    When I stop timer and verify
-      | max   |
-      | 18000 |
-
-    # 6. Name and save the newly created quote record
+    # 4. Name and save the newly created quote record
     When I provide input for #QuotesRecord.HeaderView view
       | *name   |
       | Quote_4 |
     When I click Save button on #QuotesRecord header
 
-    # 7. Check the alert message properties
+    # 5. Check the alert message properties
     Then I check alert
       | type    | message                                             |
       | Success | Success You successfully created the quote Quote_4. |
     When I close alert
     Then I should see #QuotesRecord view
 
-    # 8. Verify amounts in Grand Total header of QLI table
+    # 6. Verify amounts in Grand Total header of QLI table
     Then I verify fields on QLI total header on #QuotesRecord view
       | fieldName | value         |
       | deal_tot  | 2.00% $200.00 |
@@ -200,20 +181,18 @@ Feature: Quotes module performance testing
 
 
 
-    # TITLE:  Verify performance of Copy Quote functionality - Scenario 3
+    # TITLE:  Verify Copy Quote functionality - Scenario 3
     #
     # STEPS:
     # 1. Generate quote record with 50 group-less QLIs
     # 2. Navigate to quote record view
-    # 3. Start timer
-    # 4. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
-    # 5. Stop Timer and verify
-    # 6. Name and save the newly created quote record
-    # 7. Check the alert message properties
-    # 8. Verify amounts in Grand Total header of QLI table
+    # 3. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
+    # 4. Name and save the newly created quote record
+    # 5. Check the alert message properties
+    # 6. Verify amounts in Grand Total header of QLI table
 
-  @performance_Copy_Quote
-  Scenario: Quotes > Copy Quote with 50 QLIs (50 groupless) > Performance Measure
+  @Copy_Quote
+  Scenario: Quotes > Copy Quote with 50 groupless QLIs
       # 1. Generate quote record with 50 group-less QLIs
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
@@ -240,31 +219,23 @@ Feature: Quotes module performance testing
     Then I should see #Quote_3Record view
     When I open actions menu in #Quote_3Record
 
-    # 3. Start timer
-    When I start timer
-
-    # 4. Initiate Copy Quote process by click on related menu item
+    # 3. Initiate Copy Quote process by click on related menu item
     When I choose Copy from actions menu in #Quote_3Record
 
-    # 5. Stop Timer and verify
-    When I stop timer and verify
-      | max   |
-      | 20000 |
-
-    # 6. Name and save the newly created quote record
+    # 4. Name and save the newly created quote record
     When I provide input for #QuotesRecord.HeaderView view
       | *name   |
       | Quote_4 |
     When I click Save button on #QuotesRecord header
 
-    # 7. Check the alert message properties
+    # 5. Check the alert message properties
     Then I check alert
       | type    | message                                             |
       | Success | Success You successfully created the quote Quote_4. |
     When I close alert
     Then I should see #QuotesRecord view
 
-    # 8. Verify amounts in Grand Total header of QLI table
+    # 6. Verify amounts in Grand Total header of QLI table
     Then I verify fields on QLI total header on #QuotesRecord view
       | fieldName | value         |
       | deal_tot  | 2.00% $200.00 |
@@ -275,20 +246,18 @@ Feature: Quotes module performance testing
 
 
 
-    # TITLE:  Verify performance of Copy Quote functionality - Scenario 4
+    # TITLE:  Verify Copy Quote functionality - Scenario 4
     #
     # STEPS:
     # 1. Generate quote record with 75 QLIs  ( 5 group of 10 + 1 group of 25)
     # 2. Navigate to quote record view
-    # 3. Start timer
-    # 4. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
-    # 5. Stop Timer and verify
-    # 6. Name and save the newly created quote record
-    # 7. Check the alert message properties
-    # 8. Verify amounts in Grand Total header of QLI table
+    # 3. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
+    # 4. Name and save the newly created quote record
+    # 5. Check the alert message properties
+    # 6. Verify amounts in Grand Total header of QLI table
 
-  @performance_Copy_Quote
-  Scenario: Quotes > Copy Quote with 75 QLIs (5 gr. by 10 qlis + 1 gr by 25 qlis) > Performance Measure
+  @Copy_Quote
+  Scenario: Quotes > Copy Quote with 75 QLIs (5 gr. by 10 QLIs + 1 gr by 25 QLIs)
       # 1. Generate quote record with 75 QLIs  ( 5 group of 10 + 1 group of 25)
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
@@ -340,31 +309,23 @@ Feature: Quotes module performance testing
     Then I should see #Quote_3Record view
     When I open actions menu in #Quote_3Record
 
-    # 3. Start timer
-    When I start timer
-
-    # 4. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
+    # 3. Initiate Copy Quote process by click on related menu item in the quote record view Actions menu
     When I choose Copy from actions menu in #Quote_3Record
 
-    # 5. Stop Timer and verify
-    When I stop timer and verify
-      | max   |
-      | 30000 |
-
-    # 6. Name and save the newly created quote record
+    # 4. Name and save the newly created quote record
     When I provide input for #QuotesRecord.HeaderView view
       | *name   |
       | Quote_4 |
     When I click Save button on #QuotesRecord header
 
-    # 7. Check the alert message properties
+    # 5. Check the alert message properties
     Then I check alert
       | type    | message                                             |
       | Success | Success You successfully created the quote Quote_4. |
     When I close alert
     Then I should see #QuotesRecord view
 
-    # 8. Verify amounts in Grand Total header of QLI table
+    # 6. Verify amounts in Grand Total header of QLI table
     Then I verify fields on QLI total header on #QuotesRecord view
       | fieldName | value         |
       | deal_tot  | 2.00% $300.00 |
