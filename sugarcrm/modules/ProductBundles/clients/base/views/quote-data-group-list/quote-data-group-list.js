@@ -181,6 +181,8 @@
         this.action = 'list';
         this.viewName = this.isCreateView ? 'edit' : 'list';
 
+        // combine qliListMetadata's panels into this.meta
+        this.meta = _.extend(this.meta, this.qliListMetadata);
         this._fields = _.flatten(_.pluck(this.qliListMetadata.panels, 'fields'));
 
         this.toggledModels = {};
