@@ -28,7 +28,7 @@ class ReportExporter
      */
     protected $typeMapping = [
         'summary' => 'Summation',
-        'tabular' => 'RowColumn',
+        'tabular' => 'RowsAndColumns',
         'detailed_summary' => 'SummationDetailed',
         'Matrix' => 'Matrix',
     ];

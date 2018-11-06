@@ -22,5 +22,5 @@ interface ReportExporterInterface
      *
      * @return string
      */
-    public function export();
+    public function export(): string;
 }

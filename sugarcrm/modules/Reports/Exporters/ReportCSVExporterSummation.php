@@ -19,9 +19,17 @@ namespace Sugarcrm\Sugarcrm\modules\Reports\Exporters;
 class ReportCSVExporterSummation extends ReportCSVExporterBase
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function export()
+    protected function runQuery()
+    {
+        $this->reporter->run_summary_combo_query();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function export(): string
     {
         $this->prepareExport();
 

@@ -35,16 +35,22 @@ abstract class ReportCSVExporterBase implements ReportExporterInterface
      *
      * @return string
      */
-    abstract public function export();
+    abstract public function export(): string;
+
+    /**
+     * Run the corresponding query to get the data
+     * Concrete implementations must define their own query method
+     */
+    abstract protected function runQuery();
 
     /**
      * To prepare the export
      */
     protected function prepareExport()
     {
-        $this->reporter->run_summary_combo_query();
         $this->reporter->do_export = true;
         $this->reporter->_load_currency();
+        $this->runQuery();
     }
 
     /**

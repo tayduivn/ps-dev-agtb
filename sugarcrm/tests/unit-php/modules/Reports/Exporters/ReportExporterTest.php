@@ -76,7 +76,7 @@ class ReportExporterTest extends TestCase
     {
         return array(
             array('summary', 'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterSummation'),
-            //array('tabular', 'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterRowColumn'),
+            array('tabular', 'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterRowsAndColumns'),
             //array('detailed_summary', 'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterDetailedSummation'),
             //array('Matrix', 'Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterMatrix'),
         );
