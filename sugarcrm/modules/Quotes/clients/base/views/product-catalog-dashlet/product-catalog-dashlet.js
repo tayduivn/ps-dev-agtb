@@ -50,6 +50,9 @@
      * @inheritdoc
      */
     toggleLoading: function(startLoading, showPhaserLoading) {
+        if (this.layout.disposed === true) {
+            return;
+        }
         var $el = this.layout.$('i[data-action=loading]');
         if (startLoading) {
             $el.removeClass('fa-cog');

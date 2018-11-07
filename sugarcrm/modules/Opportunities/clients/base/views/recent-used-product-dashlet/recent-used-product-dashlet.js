@@ -33,7 +33,9 @@
     render: function() {
         if (!this.meta.config) {
             this._super('render');
-            this.closestComponent('dashlet-cell').$el.parents().eq(1).addClass('product-catalog-quick-picks');
+            if (this.closestComponent('dashlet-cell').$el) {
+                this.closestComponent('dashlet-cell').$el.parents().eq(1).addClass('product-catalog-quick-picks');
+            }
         }
     },
 
@@ -41,6 +43,9 @@
      * @inheritdoc
      */
     toggleLoading: function(startLoading) {
+        if (this.layout.disposed === true) {
+            return;
+        }
         var $el = this.layout.$('i[data-action=loading]');
         if (startLoading) {
             $el.removeClass('fa-cog');
