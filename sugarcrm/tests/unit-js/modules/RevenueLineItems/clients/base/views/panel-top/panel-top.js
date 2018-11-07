@@ -150,11 +150,23 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
 
         beforeEach(function() {
             prodData = {
+                base_rate: '0.75',
+                currency_id: 'gbp-id-hash',
                 product_template_name: 'ptName',
                 product_template_id: 'ptId',
                 discount_price: '100'
             };
             linkModel = app.data.createBean('RevenueLineItems');
+            linkModel.fields = [{
+                name: 'likely_case',
+                type: 'currency'
+            }, {
+                name: 'best_case',
+                type: 'currency'
+            }, {
+                name: 'worst_case',
+                type: 'currency'
+            }];
             sinon.collection.stub(view, 'createLinkModel', function() {
                 return linkModel;
             });
@@ -204,6 +216,29 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
             view.openRLICreate(prodData);
 
             expect(app.drawer.open).not.toHaveBeenCalled();
+        });
+
+        it('should convert rli to users preferred currency if currency_create_in_preferred is set', function() {
+            var result;
+
+            sinon.collection.stub(app.router, 'getFragment', function() {
+                return 'Opportunities/record';
+            });
+            sinon.collection.stub(app.user, 'getCurrency', function() {
+                return {
+                    currency_id: '-99',
+                    currency_rate: '1.0',
+                    currency_create_in_preferred: true
+                };
+            });
+            view.openRLICreate(prodData);
+            result = app.drawer.open.args[0][0].context.model.toJSON();
+
+            expect(result.currency_id).toBe('-99');
+            expect(result.base_rate).toBe('1.0');
+            expect(result.likely_case).toBe('133.333333');
+            expect(result.best_case).toBe('133.333333');
+            expect(result.worst_case).toBe('133.333333');
         });
     });
 

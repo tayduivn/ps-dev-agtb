@@ -89,12 +89,19 @@
         var routerFrags = app.router.getFragment().split('/');
         var parentModel;
         var model;
+        var userCurrency;
+        var createInPreferred;
+        var currencyFields;
+        var currencyFromRate;
 
         if (routerFrags[1] === 'create' || app.drawer.count()) {
             // if panel-top has been initialized on a record, but we're currently in create, ignore the event
             // or if there is already an Opps drawer opened
             return;
         }
+
+        userCurrency = app.user.getCurrency();
+        createInPreferred = userCurrency.currency_create_in_preferred;
 
         if (data.product_template_id) {
             var metadataFields = app.metadata.getModule('Products', 'fields');
@@ -116,6 +123,26 @@
         data.worst_case = data.discount_price;
         data.assigned_user_id = app.user.get('id');
         data.assigned_user_name = app.user.get('name');
+
+        if (createInPreferred) {
+            currencyFields = _.filter(model.fields, function(field) {
+                return field.type === 'currency';
+            });
+            currencyFromRate = data.base_rate;
+            data.currency_id = userCurrency.currency_id;
+            data.base_rate = userCurrency.currency_rate;
+
+            _.each(currencyFields, function(field) {
+                // if the field exists on the model, convert the value to the new rate
+                if (data[field.name] && field.name.indexOf('_usdollar') === -1) {
+                    data[field.name] = app.currency.convertWithRate(
+                        data[field.name],
+                        currencyFromRate,
+                        userCurrency.currency_rate
+                    );
+                }
+            }, this);
+        }
 
         model.set(data);
         model.ignoreUserPrefCurrency = true;
