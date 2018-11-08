@@ -19,6 +19,7 @@ use Sugarcrm\IdentityProvider\Authentication\UserMapping\MappingInterface;
 use Sugarcrm\IdentityProvider\STS\EndpointInterface;
 use Sugarcrm\IdentityProvider\Srn\Converter;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
@@ -181,11 +182,28 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
             throw new AuthenticationException('OIDC Token is not valid');
         }
 
+        if (empty($result['sub'])) {
+            throw new AuthenticationException('Empty subject in OIDC token');
+        }
+
         $resultScopes = explode($this->oAuthProvider->getScopeSeparator(), $result['scope'] ?? '');
         if (!in_array($token->getCrmOAuthScope(), $resultScopes)) {
             throw new AuthenticationException(
                 sprintf('Access token should contain %s scope', $token->getCrmOAuthScope())
             );
+        }
+
+        $resultToken = new IntrospectToken($token->getCredentials(), $token->getTenant(), $token->getCrmOAuthScope());
+        $resultToken->setAttributes($result);
+        $resultToken->setAttribute('platform', $token->getAttribute('platform'));
+
+        /** @var User $user */
+        $user = $this->userProvider->loadUserBySrn($result['sub']);
+
+        if ($user->isServiceAccount()) {
+            $resultToken->setUser($user);
+            $resultToken->setAuthenticated(true);
+            return $resultToken;
         }
 
         if (isset($result['ext']['tid']) && $token->getTenant() != $result['ext']['tid']) {
@@ -202,15 +220,7 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
             );
         }
 
-        $resultToken = new IntrospectToken($token->getCredentials(), $token->getTenant(), $token->getCrmOAuthScope());
-        $resultToken->setAttributes($result);
-        $resultToken->setAttribute('platform', $token->getAttribute('platform'));
-        /** @var User $user */
-        $user = $this->userProvider->loadUserBySrn($result['sub']);
         $userInfo = $this->oAuthProvider->getUserInfo($accessToken);
-
-        // TODO change one attribute to separate attributes!!!
-        // TODO don't use oidc_data for update exists sugar user
         $user->setAttribute('oidc_data', $this->userMapping->map($userInfo));
         $user->setAttribute('oidc_identify', $this->userMapping->mapIdentity($result));
 
@@ -218,6 +228,7 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
             $user->setAttribute($key, $value);
         }
         $this->userChecker->checkPostAuth($user);
+
         $resultToken->setUser($user);
         $resultToken->setAuthenticated(true);
 

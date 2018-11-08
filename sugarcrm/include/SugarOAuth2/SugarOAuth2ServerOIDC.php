@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\RefreshToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Sugarcrm\IdentityProvider\Srn;
@@ -192,11 +193,20 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
             return [];
         }
 
-        return [
+        /** @var User $user */
+        $user = $userToken->getUser();
+
+        $tokenInfo = [
             'client_id' => $userToken->getAttribute('client_id'),
-            'user_id' => $userToken->getUser()->getSugarUser()->id,
+            'user_id' => $user->getSugarUser()->id,
             'expires' => $userToken->getAttribute('exp'),
         ];
+
+        if ($user->isServiceAccount()) {
+            $tokenInfo['serviceAccount'] = $user;
+        }
+
+        return $tokenInfo;
     }
 
     /**

@@ -12,8 +12,10 @@
 
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
+use Sugarcrm\Sugarcrm\Security\Subject\IdentityAwareServiceAccount;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
 
 /** @noinspection PhpInconsistentReturnPointsInspection */
@@ -153,7 +155,15 @@ class RestService extends ServiceBase
                     $this->platform = $_SESSION['platform'];
                 }
 
-                $subject = new User($GLOBALS['current_user'], $subject);
+                if (isset($authenticateUser['serviceAccount']) &&
+                    $authenticateUser['serviceAccount'] instanceof ServiceAccount) {
+                    $subject = new IdentityAwareServiceAccount(
+                        $authenticateUser['serviceAccount'],
+                        $subject
+                    );
+                } else {
+                    $subject = new User($GLOBALS['current_user'], $subject);
+                }
             } else {
                 // Since we don't have a session we have to allow the user to specify their platform
                 // However, since the results from the same URL will be different with
@@ -481,6 +491,7 @@ class RestService extends ServiceBase
     protected function authenticateUser()
     {
         $valid = false;
+        $tokenInfo = [];
 
         $token = $this->grabToken();
 
@@ -488,7 +499,7 @@ class RestService extends ServiceBase
         if ( !empty($token) ) {
             try {
                 $oauthServer = \SugarOAuth2Server::getOAuth2Server($platform);
-                $oauthServer->verifyAccessToken($token);
+                $tokenInfo = $oauthServer->verifyAccessToken($token);
                 if (isset($_SESSION['authenticated_user_id'])) {
                     $authController = AuthenticationController::getInstance();
                     // This will return false if anything is wrong with the session
@@ -523,7 +534,16 @@ class RestService extends ServiceBase
             return array('isLoggedIn' => false, 'exception' => $exception);
         }
 
-        return array('isLoggedIn' => true, 'exception' => false);
+        $authResult = [
+            'isLoggedIn' => true,
+            'exception' => false,
+        ];
+
+        if (isset($tokenInfo['serviceAccount'])) {
+            $authResult['serviceAccount'] = $tokenInfo['serviceAccount'];
+        }
+
+        return $authResult;
     }
 
     /**

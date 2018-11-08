@@ -281,4 +281,12 @@ class IdMUserTest extends TestCase
 
         $this->assertEquals($expected, $this->user->getAttribute($name));
     }
+
+    /**
+     * @covers ::isServiceAccount
+     */
+    public function testIsServiceAccount(): void
+    {
+        $this->assertFalse($this->user->isServiceAccount());
+    }
 }

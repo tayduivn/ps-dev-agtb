@@ -19,6 +19,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManage
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
@@ -485,6 +486,45 @@ class SugarOAuth2ServerOIDCTest extends TestCase
         $this->oAuth2Server->setPlatform('testPlatform');
         $result = $this->oAuth2Server->verifyAccessToken($this->stsAccessToken);
         $this->assertEquals(['client_id' => 'testClient', 'user_id' => 'testUserId', 'expires' => '123'], $result);
+    }
+
+    /**
+     * @covers ::verifyAccessToken
+     */
+    public function testVerifyAccessTokenWithServiceAccount(): void
+    {
+        $this->oAuth2Server->expects($this->once())->method('getAuthProviderBuilder')->willReturnCallback(
+            function ($config) {
+                $this->assertInstanceOf(Config::class, $config);
+                return $this->authProviderBuilder;
+            }
+        );
+
+        $this->user = new ServiceAccount();
+        $this->user->setSrn('srn:cluster:iam::0000000001:sa:service_account_id');
+        $this->user->setSugarUser($this->sugarUser);
+
+        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
+            function ($token) {
+                $this->assertInstanceOf(IntrospectToken::class, $token);
+                $this->assertEquals('testPlatform', $token->getAttribute('platform'));
+                $token->setUser($this->user);
+                $token->setAuthenticated(true);
+                $token->setAttribute('client_id', 'testClient');
+                $token->setAttribute('exp', '123');
+                return $token;
+            }
+        );
+
+        $this->oAuth2Server->setPlatform('testPlatform');
+        $result = $this->oAuth2Server->verifyAccessToken($this->stsAccessToken);
+        $expectedResult = [
+            'client_id' => 'testClient',
+            'user_id' => 'testUserId',
+            'expires' => '123',
+            'serviceAccount' => $this->user,
+        ];
+        $this->assertEquals($expectedResult, $result);
     }
 
     /**

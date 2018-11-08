@@ -17,6 +17,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
@@ -63,7 +64,15 @@ class OIDCAuthenticationProviderTest extends TestCase
      */
     protected $userMapping;
 
+    /**
+     * @var null
+     */
     protected $user = null;
+
+    /**
+     * @var ServiceAccount
+     */
+    protected $serviceAccount;
 
     /**
      * @inheritdoc
@@ -76,6 +85,7 @@ class OIDCAuthenticationProviderTest extends TestCase
         $this->oAuthProvider->method('getScopeSeparator')->willReturn(' ');
         $this->userMapping = new User\Mapping\SugarOidcUserMapping();
         $this->user = new User();
+        $this->serviceAccount = new ServiceAccount();
         $this->provider =new OIDCAuthenticationProvider(
             $this->oAuthProvider,
             $this->userProvider,
@@ -180,6 +190,54 @@ class OIDCAuthenticationProviderTest extends TestCase
     /**
      * @covers ::authenticate
      */
+    public function testAuthenticateWithServiceAccountIntrospectToken(): void
+    {
+        $introspectResult = [
+            'active' => true,
+            'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
+            'client_id' => 'testLocal',
+            'sub' => 'srn:cluster:iam::9999999999:sa:service_account_id',
+            'exp' => 1507571717,
+            'iat' => 1507535718,
+            'aud' => 'testLocal',
+            'iss' => 'http://sts.sugarcrm.local',
+            'ext' => [
+                'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
+            ],
+        ];
+
+        $token = new IntrospectToken(
+            'token',
+            'srn:cloud:iam:eu:0000000001:tenant',
+            'https://apis.sugarcrm.com/auth/crm'
+        );
+        $token->setAttribute('platform', 'base');
+
+        $this->oAuthProvider->expects($this->once())
+            ->method('introspectToken')
+            ->with('token')
+            ->willReturn($introspectResult);
+
+        $this->userProvider->expects($this->once())
+            ->method('loadUserBySrn')
+            ->with($introspectResult['sub'])
+            ->willReturn($this->serviceAccount);
+
+        $this->oAuthProvider->expects($this->never())->method('getUserInfo');
+        $this->userChecker->expects($this->never())->method('checkPostAuth');
+
+        $resultToken = $this->provider->authenticate($token);
+
+        $this->assertInstanceOf(IntrospectToken::class, $resultToken);
+        $this->assertTrue($resultToken->isAuthenticated());
+        $this->assertEquals('base', $resultToken->getAttribute('platform'));
+        $this->assertEquals('token', $resultToken->getCredentials());
+        $this->assertTrue($resultToken->getUser()->isServiceAccount());
+    }
+
+    /**
+     * @covers ::authenticate
+     */
     public function testAuthenticateWithIntrospectToken()
     {
         $introspectResult = [
@@ -233,6 +291,7 @@ class OIDCAuthenticationProviderTest extends TestCase
         foreach ($introspectResult as $key => $expectedValue) {
             $this->assertEquals($expectedValue, $resultToken->getAttribute($key));
         }
+        $this->assertFalse($resultToken->getUser()->isServiceAccount());
     }
 
     /**
@@ -292,6 +351,7 @@ class OIDCAuthenticationProviderTest extends TestCase
         $tidExceptionMessage = 'Access token does not belong to tenant srn:cloud:idp:eu:0000000001:tenant';
         $subExceptionMessage = 'Access token claims should belong to tenant srn:cloud:idp:eu:0000000001:tenant';
         $subSRNExceptionMessage = 'Invalid number of components in SRN';
+        $subEmptyExceptionMessage = 'Empty subject in OIDC token';
         return [
             'noScope' => [
                 'response' => [
@@ -376,12 +436,24 @@ class OIDCAuthenticationProviderTest extends TestCase
                     ],
                     'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
                 ],
-                'exceptionMessage' => $subSRNExceptionMessage,
+                'exceptionMessage' => $subEmptyExceptionMessage,
             ],
             'subIsEmpty' => [
                 'response' => [
                     'active' => true,
                     'sub' => '',
+                    'ext'=> [
+                        'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+                    ],
+                    'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
+                ],
+                'exceptionMessage' => $subEmptyExceptionMessage,
+
+            ],
+            'subIsInvalid' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => 'srn:123',
                     'ext'=> [
                         'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
                     ],
@@ -415,6 +487,8 @@ class OIDCAuthenticationProviderTest extends TestCase
             'srn:cloud:idp:eu:0000000001:tenant',
             'https://apis.sugarcrm.com/auth/crm'
         );
+
+        $token->setAttribute('platform', 'base');
 
         $this->expectExceptionMessage($exceptionMessage);
         $this->oAuthProvider->expects($this->once())

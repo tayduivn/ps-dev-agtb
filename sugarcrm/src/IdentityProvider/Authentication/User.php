@@ -193,4 +193,12 @@ class User extends IdmUser
             return null;
         }
     }
+
+    /**
+     * @return bool
+     */
+    public function isServiceAccount(): bool
+    {
+        return $this instanceof ServiceAccount;
+    }
 }

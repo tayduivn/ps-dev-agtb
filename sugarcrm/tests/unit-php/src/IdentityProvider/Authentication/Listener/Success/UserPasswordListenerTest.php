@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Suc
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UserPasswordListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
@@ -71,9 +72,6 @@ class UserPasswordListenerTest extends TestCase
             ->willReturn($this->sugarUser);
 
         $this->token = $this->createMock(UsernamePasswordToken::class);
-        $this->token->expects($this->once())
-            ->method('getUser')
-            ->willReturn($this->user);
 
         $this->event = new AuthenticationEvent($this->token);
         $this->config = $this->createMock(\SugarConfig::class);
@@ -95,8 +93,27 @@ class UserPasswordListenerTest extends TestCase
     /**
      * @covers ::execute
      */
+    public function testExecuteWithServiceAccount(): void
+    {
+        $serviceUser = new ServiceAccount('test', 'test', []);
+        $serviceUser->setSugarUser($this->sugarUser);
+
+        $this->token->expects($this->once())->method('getUser')->willReturn($serviceUser);
+        $this->sugarUser->expects($this->never())->method('save');
+        $this->listener->expects($this->never())->method('setSessionVariable');
+
+        $this->listener->execute($this->event);
+    }
+
+    /**
+     * @covers ::execute
+     */
     public function testExecuteCheckTimeLastDateExistNotExpired()
     {
+        $this->token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($this->user);
+
         $this->listener->expects($this->never())
             ->method('setSessionVariable');
 
@@ -148,6 +165,10 @@ class UserPasswordListenerTest extends TestCase
      */
     public function testExecuteCheckTimeLastDateNotExistExpired()
     {
+        $this->token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($this->user);
+
         $now = $this->createMock(\SugarDateTime::class);
         $now->ts = 1;
 
@@ -216,6 +237,10 @@ class UserPasswordListenerTest extends TestCase
      */
     public function testExecuteCheckAttempts()
     {
+        $this->token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($this->user);
+
         $this->user->expects($this->exactly(2))
             ->method('getPasswordType')
             ->willReturn(User::PASSWORD_TYPE_USER);

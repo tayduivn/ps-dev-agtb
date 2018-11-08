@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Suc
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UpdateUserLastLoginListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
@@ -34,7 +35,7 @@ class UpdateUserLastLoginListenerTest extends TestCase
     protected $token;
 
     /**
-     * @var MockObject
+     * @var \User | MockObject
      */
     protected $sugarUser;
 
@@ -44,25 +45,12 @@ class UpdateUserLastLoginListenerTest extends TestCase
     protected $event;
 
     /**
-     * @var User
-     */
-    protected $user;
-
-    /**
      * @inheritdoc
      */
     protected function setUp()
     {
         $this->sugarUser = $this->createMock(\User::class);
-
-        $this->user = new User('test', 'test', []);
-        $this->user->setSugarUser($this->sugarUser);
-
         $this->token = $this->createMock(UsernamePasswordToken::class);
-        $this->token->expects($this->once())
-            ->method('getUser')
-            ->willReturn($this->user);
-
         $this->event = new AuthenticationEvent($this->token);
         $this->listener = new UpdateUserLastLoginListener();
     }
@@ -72,9 +60,30 @@ class UpdateUserLastLoginListenerTest extends TestCase
      */
     public function testExecute()
     {
+        $user = new User('test', 'test', []);
+        $user->setSugarUser($this->sugarUser);
+
+        $this->token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($user);
+
         $this->sugarUser->expects($this->once())
             ->method('updateLastLogin')
             ->willReturn(true);
+        $this->listener->execute($this->event);
+    }
+
+    /**
+     * @covers ::execute
+     */
+    public function testExecuteWithServiceAccount(): void
+    {
+        $serviceUser = new ServiceAccount('test', 'test', []);
+        $serviceUser->setSugarUser($this->sugarUser);
+
+        $this->token->expects($this->once())->method('getUser')->willReturn($serviceUser);
+        $this->sugarUser->expects($this->never())->method('updateLastLogin');
+
         $this->listener->execute($this->event);
     }
 }

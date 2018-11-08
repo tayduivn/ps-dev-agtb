@@ -13,6 +13,7 @@ namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Suc
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\RehashPasswordListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -44,25 +45,12 @@ class RehashPasswordListenerTest extends TestCase
     protected $event;
 
     /**
-     * @var User
-     */
-    protected $user;
-
-    /**
      * @inheritdoc
      */
     protected function setUp()
     {
         $this->sugarUser = $this->createMock(\User::class);
-
-        $this->user = new User('test', 'test', []);
-        $this->user->setSugarUser($this->sugarUser);
-
         $this->token = $this->createMock(UsernamePasswordToken::class);
-        $this->token->expects($this->once())
-            ->method('getUser')
-            ->willReturn($this->user);
-
         $this->event = new AuthenticationEvent($this->token);
         $this->listener = new RehashPasswordListener();
     }
@@ -72,6 +60,12 @@ class RehashPasswordListenerTest extends TestCase
      */
     public function testExecute()
     {
+        $user = new User('test', 'test', []);
+        $user->setSugarUser($this->sugarUser);
+
+        $this->token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($user);
         $this->token->expects($this->once())
             ->method('hasAttribute')
             ->with($this->equalTo('isPasswordEncrypted'))
@@ -89,6 +83,21 @@ class RehashPasswordListenerTest extends TestCase
             ->method('rehashPassword')
             ->with($this->equalTo($password))
             ->willReturn(true);
+
+        $this->listener->execute($this->event);
+    }
+
+    /**
+     * @covers ::execute
+     */
+    public function testExecuteWithServiceAccount(): void
+    {
+        $serviceUser = new ServiceAccount('test', 'test', []);
+        $serviceUser->setSugarUser($this->sugarUser);
+
+        $this->token->expects($this->once())->method('getUser')->willReturn($serviceUser);
+        $this->token->expects($this->never())->method('hasAttribute');
+        $this->sugarUser->expects($this->never())->method('rehashPassword');
 
         $this->listener->execute($this->event);
     }

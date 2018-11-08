@@ -100,12 +100,36 @@ class SugarOIDCUserProviderTest extends TestCase
     }
 
     /**
-     * @covers ::loadUserBySrn
+     * Provides data for testLoadUserBySrn
+     * @return array
      */
-    public function testLoadUserBySrn()
+    public function loadUserBySrnProvider(): array
     {
-        $srn = 'srn:cluster:idm:eu:0000000001:user:seed_sally_id';
+        return [
+            'UserAccount' => [
+                'srn' => 'srn:cluster:iam::0000000001:user:seed_sally_id',
+                'isServiceAccount' => false,
+            ],
+            'ServiceAccount' => [
+                'srn' => 'srn:cluster:iam::0000000001:sa:seed_sa_id',
+                'isServiceAccount' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param string $srn
+     * @param bool $isServiceAccount
+     *
+     * @covers ::loadUserBySrn
+     *
+     * @dataProvider loadUserBySrnProvider
+     */
+    public function testLoadUserBySrn(string $srn, bool $isServiceAccount): void
+    {
+        /** @var User $user */
         $user = $this->userProvider->loadUserBySrn($srn);
         $this->assertEquals($srn, $user->getSrn());
+        $this->assertEquals($isServiceAccount, $user->isServiceAccount());
     }
 }
