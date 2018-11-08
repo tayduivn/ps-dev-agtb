@@ -86,7 +86,9 @@ class RecentProductApi extends SugarApi
 
             $returnList = array();
 
-            for ($recentRecordCount = 0; $recentRecordCount <=10; $recentRecordCount++) {
+            $count = count($returnMostRecentRecords);
+            $len = $count > 10 ? 10 : $count;
+            for ($recentRecordCount = 0; $recentRecordCount < $len; $recentRecordCount++) {
                 foreach ($productTemplateNamesResult as $pt) {
                     if ($returnMostRecentRecords[$recentRecordCount]['product_template_id'] === $pt['id']) {
                         $returnList[]= $pt;
