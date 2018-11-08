@@ -424,11 +424,20 @@ FilterField.prototype.processValueDependency = function(type) {
                 labelField = 'datefield';
                 break;
             case 'currency':
-                settings.currencies = this._currencies;
+                var currencies = project ? project.getMetadata('currencies') : [];
+                settings.options = [];
+                for (var i = 0; i < currencies.length; i++) {
+                    settings.options.push({
+                        'label': currencies[i].symbol + ' (' + currencies[i].iso + ')',
+                        'value': currencies[i].id
+                    });
+                }
+                settings.decimalSeparator = App.user.getPreference('decimal_separator');
+                settings.groupingSeparator = App.user.getPreference('number_grouping_separator');
                 settings.precision = 2;
                 setPrecision = false;
-                settings.groupingSeparator = this._numberGroupingSeparator;
                 setGrouping = false;
+                break;
             case 'decimal':
             case 'float':
             case 'number':
@@ -457,7 +466,13 @@ FilterField.prototype.processValueDependency = function(type) {
     this.setOperators(operators, labelField);
     this.swapValueElement(settings);
     if (this.value && this.value.expValue) {
-        this.setValueElementsValue(this.value.expValue);
+        if (type === 'currency') {
+            this.setValueElementsCurrency(this.value.expCurrency);
+            this.setValueElementsValue(App.utils.formatNumber(this.value.expValue, settings.precision,
+                settings.precision, settings.groupingSeparator, settings.decimalSeparator));
+        } else {
+            this.setValueElementsValue(this.value.expValue);
+        }
     }
 };
 FilterField.prototype.swapValueElement = function(settings) {
@@ -481,6 +496,9 @@ FilterField.prototype.createValueElements = function(settings) {
         case 'dropdown':
         case 'radio':
             valueElement = this.createDropdownValueElement(settings);
+            break;
+        case 'currency':
+            valueElement = this.createCurrencyValueElement(settings);
             break;
         case 'text':
         default:
@@ -528,12 +546,73 @@ FilterField.prototype.createDropdownValueElement = function(settings) {
     });
     return valueElement;
 };
+FilterField.prototype.createCurrencyValueElement = function(settings) {
+    var valueElement = this.createHTMLElement('span');
+    valueElement.appendChild(this.createCurrencyValueCurrencySelector(settings));
+    valueElement.appendChild(this.createCurrencyValueAmountSelector(settings));
+    return valueElement;
+};
+FilterField.prototype.createCurrencyValueCurrencySelector = function(settings) {
+    var currencyControl = this.createHTMLElement('select');
+    currencyControl.className = 'inherit-width adam form-panel-field-control';
+    for (var i = 0; i < settings.options.length; i++) {
+        var option = this.createHTMLElement('option');
+        option.text = settings.options[i].label;
+        option.value = settings.options[i].value;
+        currencyControl.appendChild(option);
+    }
+    currencyControl.style.width = '10%';
+    return currencyControl;
+};
+FilterField.prototype.createCurrencyValueAmountSelector = function(settings) {
+    var amountControl = this.createHTMLElement('input');
+    amountControl.type = 'text';
+    amountControl.style.width = '10%';
+    amountControl.value = '0.00';
+
+    // Can't use FormPanelCurrency, so copy the behavior of its value field
+    // Only allow numbers to be entered, and format the value to {settings.precision} decimal places
+    var onKeyDown = function(e) {
+        return function(e) {
+            var number;
+            var printableKey = '';
+
+            // If key is non-numeric, do not process it (unless its left arrow, right arrow, backspace, delete, or tab)
+            if ((e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode > 105) &&
+                e.keyCode !== 37 && e.keyCode !== 39 && e.keyCode !== 8 && e.keyCode !== 46 && e.keyCode !== 9) {
+                e.preventDefault();
+                return;
+            }
+
+            // If key is a number, process it
+            if ((e.keyCode > 47 && e.keyCode < 58) || e.keyCode === 8) {
+                printableKey = String.fromCharCode(e.keyCode);
+                e.preventDefault();
+            }
+
+            // If the key is a backspace, delete the last number (cent value)
+            if (e.keyCode === 8) {
+                this.value = this.value.slice(0,-1);
+            }
+
+            number = parseInt(this.value.replace(/[^0-9]/g, '') + printableKey, 10) / Math.pow(10, settings.precision);
+            number = isNaN(number) ? 0 : number;
+            this.value = App.utils.formatNumber(number, settings.precision, settings.precision,
+                settings.groupingSeparator, settings.decimalSeparator);
+        };
+    };
+    $(amountControl).on('keydown', onKeyDown());
+    return amountControl;
+};
 FilterField.prototype.getValueElementsValue = function() {
     var value = null;
     if (this.valueElements.length > 0) {
         switch (this._type) {
             case 'checkbox':
                 value = this.valueElements[0].checked;
+                break;
+            case 'currency':
+                value = this.valueElements[0].children[1].value.replace(/,/g, '');
                 break;
             case 'dropdown':
             case 'radio':
@@ -544,11 +623,19 @@ FilterField.prototype.getValueElementsValue = function() {
     }
     return value;
 };
+FilterField.prototype.getValueElementsCurrency = function() {
+    if (this.valueElements.length > 0 && this._type === 'currency') {
+        return this.valueElements[0].children[0].value;
+    }
+};
 FilterField.prototype.setValueElementsValue = function(value) {
     if (this.valueElements.length > 0) {
         switch (this._type) {
             case 'checkbox':
                 this.valueElements[0].checked = value;
+                break;
+            case 'currency':
+                this.valueElements[0].children[1].value = value;
                 break;
             case 'dropdown':
             case 'radio':
@@ -556,6 +643,11 @@ FilterField.prototype.setValueElementsValue = function(value) {
             default:
                 this.valueElements[0].value = value;
         }
+    }
+};
+FilterField.prototype.setValueElementsCurrency = function(value) {
+    if (this.valueElements.length > 0 && this._type === 'currency') {
+        this.valueElements[0].children[0].value = value;
     }
 };
 FilterField.prototype.setModule = function(module, base) {
@@ -593,6 +685,9 @@ FilterField.prototype.getObjectValue = function() {
                 expField: this.selectField.value
             }
         };
+        if (data.type === 'Currency') {
+            value[this.name].filter.expCurrency = this.getValueElementsCurrency();
+        }
     }
     return value;
 };
