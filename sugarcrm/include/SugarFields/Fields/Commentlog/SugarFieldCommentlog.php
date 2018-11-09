@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarFieldCommentLog extends SugarFieldBase
+class SugarFieldCommentlog extends SugarFieldBase
 {
     /**
      * @inheritdoc
