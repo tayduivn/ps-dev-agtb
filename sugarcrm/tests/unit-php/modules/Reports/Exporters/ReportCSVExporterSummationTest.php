@@ -21,7 +21,7 @@ use Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterSummation;
  */
 class ReportCSVExporterSummationTest extends TestCase
 {
-    static protected $IdxToPass = 3;
+    static protected $IdxToPass = 4;
 
     public function setUp()
     {

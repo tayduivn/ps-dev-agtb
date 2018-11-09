@@ -23,7 +23,8 @@ class ReportCSVExporterSummation extends ReportCSVExporterBase
      */
     protected function runQuery()
     {
-        $this->reporter->run_summary_combo_query();
+        $this->reporter->run_summary_query();
+        $this->reporter->run_total_query();
     }
 
     /**
