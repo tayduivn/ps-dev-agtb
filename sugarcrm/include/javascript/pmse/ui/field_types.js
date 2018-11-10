@@ -491,6 +491,8 @@ FilterField.prototype.createValueElements = function(settings) {
             break;
         case 'currency':
             valueElement = this.createCurrencyValueElement(settings);
+        case 'friendlydropdown':
+            valueElement = this.createFriendlyDropdownValueElement(settings);
             break;
         case 'decimal':
         case 'float':
@@ -518,24 +520,14 @@ FilterField.prototype.createValueElements = function(settings) {
 FilterField.prototype.createDropdownValueElement = function(settings) {
     var valueElement = this.createHTMLElement('div');
     valueElement.id = this.id;
-    valueElement.className = 'adam form-panel-item';
-    valueElement.className += ' adam form-panel-field record-cell';
+    valueElement.className = 'adam form-panel-field';
     valueElement.className += ' adam-' + settings.type.toLowerCase();
-    var htmlLabelContainer = this.createHTMLElement('div');
-    htmlLabelContainer.className = 'adam form-panel-label record-label';
-    var span = this.createHTMLElement('span');
-    span.className = 'normal index';
-    var htmlControlContainer = this.createHTMLElement('span');
-    htmlControlContainer.className = 'edit';
     var select = this.createHTMLElement('select');
     select.className = 'inherit-width adam form-panel-field-control';
     for (var i = 0; i < settings.options.length; i++) {
         select.appendChild(this.generateOption('expValue', settings.options[i], 'text'));
     }
-    htmlControlContainer.appendChild(select);
-    span.appendChild(htmlControlContainer);
-    valueElement.appendChild(htmlLabelContainer);
-    valueElement.appendChild(span);
+    valueElement.appendChild(select);
     $(valueElement).change(function() {
         var document = $('.inherit-width adam form-panel-field-control').context;
         if (document && document.activeElement && document.activeElement.value) {
@@ -590,7 +582,7 @@ FilterField.prototype.createCurrencyValueAmountSelector = function(settings) {
 
             // If the key is a backspace, delete the last number (cent value)
             if (e.keyCode === 8) {
-                this.value = this.value.slice(0,-1);
+                this.value = this.value.slice(0, -1);
             }
 
             number = parseInt(this.value.replace(/[^0-9]/g, '') + printableKey, 10) / Math.pow(10, settings.precision);
@@ -627,7 +619,7 @@ FilterField.prototype.createNumberValueElement = function(settings) {
             }
 
             if (e.keyCode === 8) {
-                this.value = this.value.slice(0,-1);
+                this.value = this.value.slice(0, -1);
             }
 
             number = parseInt(this.value.replace(/[^0-9]/g, '') + printableKey, 10) / Math.pow(10, settings.precision);
@@ -639,6 +631,289 @@ FilterField.prototype.createNumberValueElement = function(settings) {
 
     $(valueElement).on('keydown', onKeyDown());
     return valueElement;
+};
+FilterField.prototype.createFriendlyDropdownValueElement = function(settings) {
+    var defaults = {
+        placeholder: '',
+        searchURL: null,
+        searchLabel: 'text',
+        searchValue: 'value',
+        searchDelay: 1500,
+        searchMore: false,
+        pageSize: 5
+    };
+    var valueElement;
+    var htmlLabelContainer;
+    var span;
+    var input;
+    var control;
+
+    this._searchURL = null;
+    this._searchValue = null;
+    this._searchLabel = null;
+    this._searchMoreList = null;
+    this._pageSize = null;
+    this._valueOptions = null;
+    this._finalData = null;
+
+    valueElement = this.createHTMLElement('div');
+    valueElement.id = this.id;
+    valueElement.className = 'adam form-panel-field';
+    valueElement.className += ' adam-' + settings.type.toLowerCase();
+    $.extend(true, defaults, settings);
+    this._pageSize = typeof defaults.pageSize === 'number' &&
+        defaults.pageSize >= 1 ? Math.floor(defaults.pageSize) : 0;
+    this._htmlControl = [];
+    this._searchValue = defaults.searchValue;
+    this._searchLabel = defaults.searchLabel;
+    this.friendlyDropdownSetSearchURL(defaults.searchURL);
+
+    this._valueOptions = settings.options;
+
+    if (!this._htmlControl[0]) {
+        input = this.createHTMLElement('input');
+        input.name = this._name;
+        this._htmlControl[0] = $(input);
+        this._htmlControl[0].select2({
+            placeholder: this._placeholder,
+            query: this.friendlyDropdownQueryFunction(),
+            initSelection: this.friendlyDropdownInitSelection(),
+            width: '100%',
+            formatNoMatches: function(term) {
+                return (term && (term !== '')) ? translate('LBL_PA_FORM_COMBO_NO_MATCHES_FOUND') : '';
+            }
+        });
+        control = this._htmlControl[0].data('select2').container[0];
+        control.className += ' inherit-width adam form-panel-field-control';
+        valueElement.appendChild(control);
+        valueElement.appendChild(this._htmlControl[0].get(0));
+    }
+
+    this._searchMore = defaults.searchMore;
+    if (this._htmlControl[0]) {
+        this.friendlyDropdownCreateSearchMoreOption();
+        this._searchMoreList.style.display = '';
+    }
+    $(this._searchMoreList).on('click', this.friendlyDropdownOpenSearchMore());
+
+    return valueElement;
+};
+FilterField.prototype.friendlyDropdownCreateSearchMoreOption = function() {
+    var dropdownHTML;
+    var additionalList;
+    var listItem;
+    var tpl;
+    if (!this._searchMoreList && this._htmlControl[0]) {
+        dropdownHTML = this._htmlControl[0].data('select2').dropdown;
+        additionalList = this.createHTMLElement('ul');
+        additionalList.className = 'select2-results adam-searchmore-list';
+        listItem = this.createHTMLElement('li');
+        tpl = this.createHTMLElement('div');
+        tpl.className = 'select2-result-label';
+        tpl.appendChild(document.createTextNode(translate('LBL_SEARCH_AND_SELECT_ELLIPSIS')));
+        listItem.appendChild(tpl);
+        additionalList.appendChild(listItem);
+        dropdownHTML.append(additionalList);
+        this._searchMoreList = additionalList;
+    }
+    return this;
+};
+FilterField.prototype.friendlyDropdownQueryFunction = function() {
+    var self = this;
+    return function(queryObject) {
+        var finalData = [];
+        if (queryObject.term) {
+            self._searchFunction(queryObject);
+        } else {
+            if ($(self._htmlControl[0]).select2('dropdown').find('.select2-result-selectable').length == 0) {
+                self._valueOptions.forEach(function(item) {
+                    finalData.push({
+                        id: item.value,
+                        text: item.label
+                    });
+                });
+            }
+            queryObject.callback({
+                more: false,
+                results: finalData
+            });
+        }
+    };
+};
+FilterField.prototype.friendlyDropdownInitSelection = function() {
+    var self = this;
+    return function($el, callback) {
+        var options = self._valueOptions;
+        var value = (self.value && self.value.expValue) ? self.value.expValue : '';
+        var text = (self.value && self.value.expLabel) ? self.value.expLabel : '';
+        for (var i = 0; i < options.length; i += 1) {
+            if (options[i][value] === value) {
+                callback({
+                    id: options[i].value,
+                    text: options[i].label
+                });
+                return;
+            }
+        }
+        callback({
+            id: value,
+            text: text || value
+        });
+    };
+};
+FilterField.prototype.friendlyDropdownResizeListSize = function() {
+    var list = this._htmlControl[0].data('select2').dropdown;
+    var listItemHeight;
+    list = $(list).find('ul[role=listbox]');
+    listItemHeight = list.find('li').eq(0).outerHeight();
+    list.get(0).style.maxHeight = (listItemHeight * this._pageSize) + 'px';
+    return this;
+};
+FilterField.prototype.friendlyDropdownSetSearchURL = function(url) {
+    var delayToUse;
+    var self = this;
+    if (!(typeof url === 'string' || url === null)) {
+        throw new Error('friendlyDropdownSetSearchURL(): The parameter must be a string or null.');
+    }
+    if (url !== null && (!this._searchLabel || !this._searchValue)) {
+        throw new Error('friendlyDropdownSetSearchURL(): You can\'t set the Suggestions URL ' +
+            'if the Suggestions Label or Suggestions Value are set to null.');
+    }
+    this._searchURL = url;
+    delayToUse = url ? this._searchDelay : 0;
+
+    this._searchFunction = _.debounce(function(queryObject) {
+        var proxy = new SugarProxy();
+        var result = {
+                more: false
+            };
+        var term = jQuery.trim(queryObject.term);
+        var finalData = [];
+        var getText = function(obj, criteria) {
+                if (typeof criteria === 'function') {
+                    return criteria(obj);
+                } else {
+                    return obj[criteria];
+                }
+            };
+        var options = self._valueOptions;
+        if (queryObject.page == 1) {
+            options.forEach(function(item) {
+                if (!term || queryObject.matcher(term, item.label)) {
+                    finalData.push({
+                        id: item.value,
+                        text: item.label
+                    });
+                }
+            });
+        }
+        if (term && self._searchURL) {
+            proxy.url = this._searchURL.replace(/\{%TERM%\}/g, queryObject.term)
+                .replace(/\{%OFFSET%\}/g, (queryObject.page - 1) * self._pageSize);
+            if (self._pageSize > 0) {
+                proxy.url = proxy.url.replace(/\{%PAGESIZE%\}/g, self._pageSize);
+            }
+            proxy.getData(null, {
+                success: function(data) {
+                    result.more = data.next_offset >= 0 ? true : false;
+                    data = data.records;
+                    data.forEach(function(item) {
+                        finalData.push({
+                            id: getText(item, self._searchValue),
+                            text: getText(item, self._searchLabel)
+                        });
+                    });
+                    self._finalData = finalData;
+                    result.results = finalData;
+                    queryObject.callback(result);
+                    self.friendlyDropdownResizeListSize();
+                },
+                error: function() {
+                    console.log('failure', arguments);
+                }
+            });
+        } else {
+            result.results = finalData;
+            queryObject.callback(result);
+        }
+    }, delayToUse);
+
+    return this;
+};
+FilterField.prototype.friendlyDropdownOpenSearchMore = function() {
+    var self = this;
+
+    return function() {
+        self._htmlControl[0].select2('close');
+        $(self.html).closest('.adam-modal').hide();
+        App.drawer.open({
+                layout: 'selection-list',
+                context: self._searchMore
+            },
+            _.bind(function(drawerValues) {
+                var oldValue = (self.value && self.value.expValue) ? self.value.expValue : '';
+                $(self.html).closest('.adam-modal').show();
+                if (!_.isUndefined(drawerValues)) {
+                    self.friendlyDropdownSetValue({text: drawerValues.value, value: drawerValues.id}, true);
+                    self.processValueDependency('friendlydropdown');
+                }
+            }, this)
+        );
+    };
+};
+FilterField.prototype.friendlyDropdownSetValue = function(value) {
+    var theText = null;
+    if (value && typeof value === 'object') {
+        theText = value.text;
+        value = value.value;
+    }
+    if (this._htmlControl[0]) {
+        if (this.value) {
+            this.value.expLabel = theText;
+            this.value.expValue = value;
+        } else {
+            var objectValue = this.getObjectValue();
+            if (objectValue && objectValue.act_field_filter && objectValue.act_field_filter.filter) {
+                this.value = objectValue.act_field_filter.filter;
+                this.value.expLabel = theText;
+                this.value.expValue = value;
+            }
+        }
+    } else {
+        this.value = value;
+    }
+    return this;
+};
+FilterField.prototype.friendlyDropdownGetValues = function() {
+    var expValue;
+    var expLabel;
+    var currentLabel;
+    if (this.valueElements && this.valueElements[0] && this.valueElements[0].innerText) {
+        currentLabel = this.valueElements[0].innerText.trim();
+    }
+    if (this._finalData) {
+        for (var i = 0; i < this._finalData.length; i++) {
+            if (this._finalData[i] && this._finalData[i].id &&
+                this._finalData[i].text && this._finalData[i].text === currentLabel) {
+                expLabel = this._finalData[i].text;
+                expValue = this._finalData[i].id;
+            }
+        }
+        this._finalData = null;
+    } else if (this.value && this.value.expValue &&
+        this.value.expLabel && this.value.expLabel === currentLabel) {
+        expLabel = this.value.expLabel;
+        expValue = this.value.expValue;
+    } else {
+        for (var i = 0; i < this._valueOptions.length; i++) {
+            if (this._valueOptions[i] && this._valueOptions[i].label &&
+                this._valueOptions[i].label === currentLabel) {
+                expLabel = this._valueOptions[i].label;
+                expValue = this._valueOptions[i].value;
+            }
+        }
+    }
+    return [expValue, expLabel];
 };
 FilterField.prototype.getValueElementsValue = function() {
     var value = null;
@@ -656,6 +931,7 @@ FilterField.prototype.getValueElementsValue = function() {
             case 'float':
             case 'number':
             case 'integer':
+            case 'friendlydropdown':
             case 'text':
             default:
                 value = this.valueElements[0].value;
@@ -683,6 +959,7 @@ FilterField.prototype.setValueElementsValue = function(value) {
             case 'float':
             case 'number':
             case 'integer':
+            case 'friendlydropdown':
             case 'text':
             default:
                 this.valueElements[0].value = value;
@@ -717,13 +994,26 @@ FilterField.prototype.setModule = function(module, base) {
 FilterField.prototype.getObjectValue = function() {
     var value = {};
     var data = this.getSelectedData(this.selectField.value);
+    var expValue;
+    var expLabel;
+    if (this._type === 'friendlydropdown') {
+        var values = this.friendlyDropdownGetValues();
+        if (values && values[0] && values[1]) {
+            expValue = values[0];
+            expLabel = values[1];
+        }
+    } else {
+        expValue = this.getValueElementsValue();
+        expLabel = expValue;
+    }
     if (data && this.submit) {
         value[this.name] = {
             module: this.module,
             filter: {
                 expType: 'MODULE',
                 expSubtype: data.type,
-                expValue: this.getValueElementsValue(),
+                expLabel: expLabel,
+                expValue: expValue,
                 expOperator: this.selectOperator.value,
                 expModule: this.module,
                 expField: this.selectField.value
