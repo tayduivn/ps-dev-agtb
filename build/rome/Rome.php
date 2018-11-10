@@ -197,6 +197,7 @@ class Rome
     {
         $this->setVersion($ver);
         $this->setMarketingVersion($ver);
+        $this->setCopyrightYear($ver);
     }
 
     /**
@@ -217,6 +218,16 @@ class Rome
     {
         $h = new MarketingVersionHandler;
         $this->config['sugarVariables']['@_SUGAR_MAR_VERSION'] = $h->getMarketingVersion($ver);
+    }
+
+    /**
+     * Sets the copyright year variable from a Sugar verion
+     * @param string $ver Sugar version
+     */
+    public function setCopyrightYear($ver)
+    {
+        $h = new MarketingVersionHandler;
+        $this->config['sugarVariables']['@_SUGAR_COPYRIGHT_YEAR'] = $h->getCopyrightYear($ver);
     }
 
     /**

@@ -79,6 +79,68 @@ final class MarketingVersionHandler
     }
 
     /**
+     * Gets a four digit string year for copyright use throughout the product
+     * @param string $version The standard software version string
+     * @return string
+     */
+    public function getCopyrightYear(string $version) : string
+    {
+        // Get our methodology first
+        $m = $this->getVersionMethodology($version);
+
+        // If there is a year already, just use that
+        if (!empty($m['args']['year'])) {
+            return $this->getParsedYear($m['args']['year']);
+        }
+
+        // Otherwise, get the year from the version
+        $m = $this->getVersionMeta($version);
+        if (!empty($m['year'])) {
+            return $this->getParsedYear($m['year']);
+        }
+
+        // Default is just the current year
+        return date('Y');
+    }
+
+    /**
+     * Returns a four digit year string made from a one or two digit year number
+     * @param int $year The year to turn into a four digit year string
+     * @return string
+     */
+    private function getParsedYear(int $year) : string
+    {
+        return date(
+            'Y',
+            strtotime(
+                sprintf(
+                    '01-Jun-%02d',
+                    $year
+                )
+            )
+        );
+    }
+
+    /**
+     * Gets the methodology needed to handle versioning and such
+     * @param string $version The version to use as a basis for calculation
+     * @return array
+     */
+    private function getVersionMethodology(string $version) : array
+    {
+        foreach ($this->versionPatterns as $pattern => $actions) {
+            if (preg_match("#$pattern#", $version)) {
+                return [
+                    'method' => $actions['method'],
+                    'args' => $actions['args'] ?? $version,
+                ];
+            }
+        }
+
+        return [];
+    }
+
+    /**
      * Gets the formatted marketing version if one is found according to the
      * supported patterns, or the default value
      * @param string $version
@@ -86,10 +148,8 @@ final class MarketingVersionHandler
      */
     public function getMarketingVersion(string $version) : string
     {
-        foreach ($this->versionPatterns as $pattern => $actions) {
-            if (preg_match("#$pattern#", $version)) {
-                return $this->{$actions['method']}($actions['args'] ?? $version);
-            }
+        if (($m = $this->getVersionMethodology($version)) !== []) {
+            return $this->{$m['method']}($m['args']);
         }
 
         return $this->default;

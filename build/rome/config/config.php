@@ -45,6 +45,7 @@ $config['sugarVariables'] = array(
     '@_SUGAR_FLAV' => '',
     '@_SUGAR_BUILD_NUMBER' => '999',
     '@_SUGAR_BUILD_TIME' => date('Y-m-d g:ia'),
+    '@_SUGAR_COPYRIGHT_YEAR' => date('Y'),
 );
 $config['mergeDirs'] = array('translations'=>'sugarcrm');
 
