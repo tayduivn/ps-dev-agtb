@@ -62,9 +62,8 @@ Feature: Create Quote record from subpanel
   @create_quote_record_from_AccountRecordView_Quotes_BillTo_Subpanel
   Scenario: Account Record View > Quote BillTo Subpanel > Create Quote > Save
     Given Accounts records exist:
-      | *name     | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
-      | Account_A | City 1               | Street address here    | 22051                      | WA                    | USA                     |
-      | Account_B | Cupertino            | 10050 N Wolfe Rd       | 95014                      | CA                    | USA                     |
+      | *name     | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | shipping_address_street | shipping_address_city | shipping_address_state | shipping_address_postalcode | shipping_address_country |
+      | Account_A | City 1               | Street address here    | 22051                      | WA                    | USA                     | 4307 Emperor Boulevard  | Durham                | NC                     | 27703                       | USA                      |
     Given I open about view and login
     When I choose Accounts in modules menu
     Then I should see *Account_A in #AccountsList.ListView
@@ -82,13 +81,20 @@ Feature: Create Quote record from subpanel
       | *      | date_quote_expected_closed |
       | Quote1 | 12/12/2020                 |
     Then I verify fields on #QuotesRecord.RecordView
-      | fieldName                  | value               |
-      | billing_account_name       | Account_A           |
-      | billing_address_city       | City 1              |
-      | billing_address_street     | Street address here |
-      | billing_address_postalcode | 22051               |
-      | billing_address_state      | WA                  |
-      | billing_address_country    | USA                 |
+      | fieldName                   | value                  |
+      | billing_account_name        | Account_A              |
+      | billing_address_city        | City 1                 |
+      | billing_address_street      | Street address here    |
+      | billing_address_postalcode  | 22051                  |
+      | billing_address_state       | WA                     |
+      | billing_address_country     | USA                    |
+      | shipping_account_name       | Account_A              |
+      | shipping_address_street     | 4307 Emperor Boulevard |
+      | shipping_address_city       | Durham                 |
+      | shipping_address_state      | NC                     |
+      | shipping_address_postalcode | 27703                  |
+      | shipping_address_country    | USA                    |
+
 
     # Add New QLI
     When I choose createLineItem on QLI section on #QuotesRecord view
@@ -164,15 +170,15 @@ Feature: Create Quote record from subpanel
   @create_quote_record_from_AccountRecordView_Quotes_ShipTo_Subpanel
   Scenario: Account Record View > Quote ShipTo Subpanel > Create Quote > Save
     Given Accounts records exist:
-      | *name     | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
-      | Account_A | City 1               | Street address here    | 22051                      | WA                    | USA                     |
-      | Account_B | Cupertino            | 10050 N Wolfe Rd       | 95014                      | CA                    | USA                     |
+      | *name     | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | shipping_address_street     | shipping_address_city | shipping_address_state | shipping_address_postalcode | shipping_address_country |
+      | Account_A | City 1               | Street address here    | 22051                      | WA                    | USA                     | 4307 Emperor Boulevard      | Durham                | NC                     | 27703                       | USA                      |
+      | Account_B | Cupertino            | 10050 N Wolfe Rd       | 95014                      | CA                    | USA                     | 200 Park Avenue, Suite 1700 | New York              | NY                     | 10166                       | USA                      |
     Given I open about view and login
     When I choose Accounts in modules menu
     Then I should see *Account_A in #AccountsList.ListView
     When I select *Account_A in #AccountsList.ListView
 
-    # Create Quote record from Quotes_BillTo subpanel of account record view
+    # Create Quote record from Quotes_ShipTo subpanel of account record view
     When I open the quotes subpanel on #Account_ARecord view
     # Create record from the subpanel
     When I create_new record from quotes_shipto subpanel on #Account_ARecord view
@@ -181,12 +187,63 @@ Feature: Create Quote record from subpanel
       | *      | name       |
       | Quote1 | My Quote 1 |
     When I provide input for #QuotesRecord.RecordView view
-      | *      | date_quote_expected_closed | billing_account_name |
-      | Quote1 | 12/12/2021                 | Account_B            |
+      | *      | date_quote_expected_closed |
+      | Quote1 | 12/12/2021                 |
+
+    # Verify that both billing and shipping addresses populated properly 
+    Then I verify fields on #QuotesRecord.RecordView
+      | fieldName                   | value                  |
+      | billing_account_name        | Account_A              |
+      | billing_address_city        | City 1                 |
+      | billing_address_street      | Street address here    |
+      | billing_address_postalcode  | 22051                  |
+      | billing_address_state       | WA                     |
+      | billing_address_country     | USA                    |
+      | shipping_account_name       | Account_A              |
+      | shipping_address_street     | 4307 Emperor Boulevard |
+      | shipping_address_city       | Durham                 |
+      | shipping_address_state      | NC                     |
+      | shipping_address_postalcode | 27703                  |
+      | shipping_address_country    | USA                    |
+
+    When I provide input for #QuotesRecord.RecordView view
+      | billing_account_name |
+      | Account_B            |
     When I Confirm confirmation alert
     Then I verify fields on #QuotesRecord.RecordView
-      | fieldName             | value     |
-      | shipping_account_name | Account_A |
+      | fieldName                   | value                  |
+      | billing_account_name        | Account_B              |
+      | billing_address_street      | 10050 N Wolfe Rd       |
+      | billing_address_city        | Cupertino              |
+      | billing_address_state       | CA                     |
+      | billing_address_postalcode  | 95014                  |
+      | billing_address_country     | USA                    |
+      | shipping_account_name       | Account_A              |
+      | shipping_address_street     | 4307 Emperor Boulevard |
+      | shipping_address_city       | Durham                 |
+      | shipping_address_state      | NC                     |
+      | shipping_address_postalcode | 27703                  |
+      | shipping_address_country    | USA                    |
+
+    # Copy Billing address to shipping address
+    When I provide input for #QuotesRecord.RecordView view
+      | copy |
+      | true |
+
+    Then I verify fields on #QuotesRecord.RecordView
+      | fieldName                   | value            |
+      | billing_account_name        | Account_B        |
+      | billing_address_street      | 10050 N Wolfe Rd |
+      | billing_address_city        | Cupertino        |
+      | billing_address_state       | CA               |
+      | billing_address_postalcode  | 95014            |
+      | billing_address_country     | USA              |
+      | shipping_account_name       | Account_B        |
+      | shipping_address_street     | 10050 N Wolfe Rd |
+      | shipping_address_city       | Cupertino        |
+      | shipping_address_state      | CA               |
+      | shipping_address_postalcode | 95014            |
+      | shipping_address_country    | USA              |
 
     # Add New QLI
     When I choose createLineItem on QLI section on #QuotesRecord view
@@ -196,23 +253,23 @@ Feature: Create Quote record from subpanel
     When I click Save button on #QuotesRecord header
     When I close alert
     When I choose Accounts in modules menu
-    When I select *Account_A in #AccountsList.ListView
-    When I open the quotes_shipto subpanel on #Account_ARecord view
-    Then I verify fields for *Quote1 in #Account_ARecord.SubpanelsLayout.subpanels.quotes_shipto
+    When I select *Account_B in #AccountsList.ListView
+    When I open the quotes_shipto subpanel on #Account_BRecord view
+    Then I verify fields for *Quote1 in #Account_BRecord.SubpanelsLayout.subpanels.quotes_shipto
       | fieldName                  | value      |
       | name                       | My Quote 1 |
       | total_usdollar             | $291.00    |
       | date_quote_expected_closed | 12/12/2021 |
 
     # Inline edit record in subpanel
-    When I click on Edit button for *Quote1 in #Account_ARecord.SubpanelsLayout.subpanels.quotes_shipto
-    When I set values for *Quote1 in #Account_ARecord.SubpanelsLayout.subpanels.quotes_shipto
+    When I click on Edit button for *Quote1 in #Account_BRecord.SubpanelsLayout.subpanels.quotes_shipto
+    When I set values for *Quote1 in #Account_BRecord.SubpanelsLayout.subpanels.quotes_shipto
       | fieldName                  | value      |
       | name                       | Alex3      |
       | date_quote_expected_closed | 12/31/2021 |
-    When I click on Save button for *Quote1 in #Account_ARecord.SubpanelsLayout.subpanels.quotes_shipto
+    When I click on Save button for *Quote1 in #Account_BRecord.SubpanelsLayout.subpanels.quotes_shipto
     When I close alert
-    Then I verify fields for *Quote1 in #Account_ARecord.SubpanelsLayout.subpanels.quotes_shipto
+    Then I verify fields for *Quote1 in #Account_BRecord.SubpanelsLayout.subpanels.quotes_shipto
       | fieldName                  | value      |
       | name                       | Alex3      |
       | total_usdollar             | $291.00    |
