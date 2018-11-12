@@ -19,7 +19,10 @@ fixtures.search = {
         _module: 'module1',
         _highlights: {
             alphaField: ['highlight1'],
-            bravoField: ['highlight2']
+            bravoField: ['highlight2'],
+            commentlog: {
+                commentlog_entry: ['this is a comment log']
+            },
         }
     },
     model1_fields: {
@@ -32,7 +35,8 @@ fixtures.search = {
         fields: {
             name: {vname: 'Module 1'},
             alphaField: {vname: 'Alpha'},
-            bravoField: {vname: 'Bravo'}
+            bravoField: {vname: 'Bravo'},
+            commentlog: {vname: 'Comment Log'},
         }
     },
     getView1_return: {

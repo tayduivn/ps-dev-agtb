@@ -48,6 +48,9 @@ describe('Sugar7 search utils', function() {
             expect(modelHighlights[1].name).toEqual('bravoField');
             expect(modelHighlights[1].label).toEqual('Bravo');
             expect(modelHighlights[1].value.string).toEqual('highlight2');
+            expect(modelHighlights[2].name).toEqual('commentlog');
+            expect(modelHighlights[2].label).toEqual('Comment Log');
+            expect(modelHighlights[2].value.string).toEqual('this is a comment log');
         });
     });
 

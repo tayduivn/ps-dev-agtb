@@ -76,6 +76,13 @@
                                 } else {
                                     return false;
                                 }
+                            // `commentlog` highlight has a format like commentlog: {commentlog_entry: [...]}
+                            } else if (key === 'commentlog') {
+                                if (val.commentlog_entry) {
+                                    val = new Handlebars.SafeString(_.first(val.commentlog_entry));
+                                } else {
+                                    return false;
+                                }
                             } else {
                                 val = new Handlebars.SafeString(_.first(val));
                             }
