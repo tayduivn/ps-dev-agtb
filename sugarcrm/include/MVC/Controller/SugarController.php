@@ -886,12 +886,14 @@ class SugarController
 		if(!empty($_REQUEST['entryPoint'])){
 			$this->loadMapping('entry_point_registry');
 			$entryPoint = $_REQUEST['entryPoint'];
-
-			if(!empty($this->entry_point_registry[$entryPoint])){
+            if (!$this->entryPointExists($entryPoint)
+                || ($this->checkEntryPointRequiresAuth($entryPoint) && !isset($GLOBALS['current_user']->id))) {
+                ACLController::displayNoAccess();
+                sugar_cleanup(true);
+            }
 				require_once($this->entry_point_registry[$entryPoint]['file']);
 				$this->_processed = true;
 				$this->view = '';
-			}
 		}
 	}
 
