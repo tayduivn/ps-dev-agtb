@@ -96,6 +96,10 @@ class SugarOIDCUserChecker extends UserChecker
             unset($attributes['email']);
         }
 
+        if (array_key_exists('user_name', $attributes)) {
+            unset($attributes['user_name']);
+        }
+
         $attributes = $this->getDbMassagedAttributes($attributes, $sugarUser);
         foreach ($attributes as $name => $value) {
             if (isset($sugarUser->$name) && strcasecmp($sugarUser->$name, $value) !== 0) {

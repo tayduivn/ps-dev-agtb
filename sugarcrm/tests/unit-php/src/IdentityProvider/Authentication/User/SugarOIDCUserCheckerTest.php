@@ -229,7 +229,11 @@ class SugarOIDCUserCheckerTest extends TestCase
         return [
             'existing-user' => [
                 [
-                    'data' => ['user_name' => 'test', 'first_name' => 'new_first_name', 'email' => 'old@test.lh'],
+                    'data' => [
+                        'user_name' => 'user_name.new',
+                        'first_name' => 'new_first_name',
+                        'email' => 'old@test.lh',
+                    ],
                     'identify' => ['field' => 'id', 'value' => 'seed_sally_id'],
                 ],
                 [
@@ -246,8 +250,8 @@ class SugarOIDCUserCheckerTest extends TestCase
                         'len' => '30',
                     ],
                 ],
-                ['user_name' => 'test', 'first_name' => 'old_first_name', 'email' => 'old@test.lh'],
-                ['user_name' => 'test', 'first_name' => 'new_first_name', 'email' => 'old@test.lh'],
+                ['user_name' => 'user_name.old', 'first_name' => 'old_first_name', 'email' => 'old@test.lh'],
+                ['user_name' => 'user_name.old', 'first_name' => 'new_first_name', 'email' => 'old@test.lh'],
             ],
             'long-attribute-value' => [
                 [
@@ -342,6 +346,32 @@ class SugarOIDCUserCheckerTest extends TestCase
                 ],
                 ['user_name' => 'test', 'first_name' => 'old_first_name'],
                 ['user_name' => 'test', 'first_name' => 'old_first_name'],
+            ],
+            'check_keep_old_user_name' => [
+                [
+                    'data' => [
+                        'user_name' => 'user_name.new',
+                        'first_name' => 'old_first_name',
+                        'email' => 'old@test.lh',
+                    ],
+                    'identify' => ['field' => 'id', 'value' => 'seed_sally_id'],
+                ],
+                [
+                    'user_name' => [
+                        'name' => 'user_name',
+                        'type' => 'username',
+                        'dbType' => 'varchar',
+                        'len' => '60',
+                    ],
+                    'first_name' => [
+                        'name' => 'first_name',
+                        'dbType' => 'varchar',
+                        'type' => 'name',
+                        'len' => '30',
+                    ],
+                ],
+                ['user_name' => 'user_name.old', 'first_name' => 'old_first_name'],
+                ['user_name' => 'user_name.old', 'first_name' => 'old_first_name'],
             ],
             'existing-user-no-oidc-email' => [
                 [
