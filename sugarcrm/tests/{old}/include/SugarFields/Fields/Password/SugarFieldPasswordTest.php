@@ -36,10 +36,10 @@ class SugarFieldPasswordTest extends TestCase
     {
         $settings = new ImportFieldSanitize();
 
-        $this->assertEquals(
-            md5('test value'),
+        $this->assertTrue(User::checkPassword(
+            'test value',
             $this->fieldObj->importSanitize('test value',array(),null,$settings)
-            );
+        ));
     }
 
     /**
