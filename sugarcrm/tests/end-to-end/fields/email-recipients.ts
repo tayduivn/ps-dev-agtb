@@ -79,9 +79,6 @@ export class Edit extends EmailRecipientsField {
 
         await this.driver.click(this.$('field.selector'));
         await this.driver.setValue(this.inputSelector, val);
-
-        // TODO remove this pause later!!!, waitForApp should handle this case for select2 control
-        await this.driver.pause(4000);
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${val}`);
     }

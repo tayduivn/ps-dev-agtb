@@ -90,7 +90,7 @@ export const chooseModule = async function (itemName) {
             await goToUrl(itemName);
         }
     }
-    // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
+    // TODO: it's a temporary solution, need to remove this 'pause' after AT-219 is fixed.
     await seedbed.client.driver.pause(1000);
 };
 
@@ -202,8 +202,6 @@ export const closeWarning  = async function(actionName) {
 
 export const goToUrl = async function (urlHash): Promise<void> {
     await seedbed.client.driver.setUrlHash(urlHash);
-    // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-    await seedbed.client.driver.pause(1500);
 };
 
 export const parseInputArray = async function (arg: string): Promise<any[]> {

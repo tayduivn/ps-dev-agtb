@@ -39,10 +39,7 @@ export default class extends BaseField {
     public async setValue(val: any): Promise<void> {
         await this.driver.click(this.$('field'));
         await this.driver.setValue(this.$('field.input'), val);
-        // await this.driver.waitForApp();
-        // TODO: the better approach is to use waitForApp, as above, but a known issue tracked as SBD-358 requires a sleep
-        // TODO remove this pause once SBD-358 is fixed, and uncomment the line above.
-        await this.driver.pause(4000);
+        await this.driver.waitForApp();
         await this.driver.click(`${this.matchInput}`);
     }
 

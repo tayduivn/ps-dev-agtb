@@ -34,9 +34,6 @@ When(/^I choose (\w+) in modules menu$/,
 
         await this.driver.waitForApp();
 
-        // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-        await this.driver.pause(2000);
-
         let moduleMenuCmp = new ModuleMenuCmp({});
 
         let isVisible = await moduleMenuCmp.isVisible(itemName);
@@ -49,9 +46,6 @@ When(/^I choose (\w+) in modules menu$/,
             await moduleMenuCmp.showAllModules();
             await moduleMenuCmp.clickItem(itemName, true);
         }
-
-        // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-        await this.driver.pause(1000);
 
     }, {waitForApp: true});
 
@@ -128,9 +122,6 @@ When(/^I open ([\w,\/]+) view and login$/,
 When(/^I go to "([^"]*)" url$/,
         async function(urlHash): Promise<void> {
         await this.driver.setUrlHash(urlHash);
-        // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-        await this.driver.pause(1500);
-
     }, {waitForApp: true});
 
 // The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layout

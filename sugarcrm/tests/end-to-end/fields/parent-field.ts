@@ -50,17 +50,11 @@ export class Edit extends BaseField {
 
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${type}`);
-
         await this.driver.click(this.$('field.selector_id'));
         await this.driver.setValue(this.inputSelector, id);
-
-        // need to handle setTimeout 400ms in search box
-        await this.driver.pause(500);
-
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${id}`);
     }
-
 }
 export class List extends BaseField {
 
