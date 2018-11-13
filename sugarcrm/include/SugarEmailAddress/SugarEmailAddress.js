@@ -531,7 +531,7 @@
         showErrDismissUpdatePrimaryEmail: function() {
             parent.SUGAR.App.alert.show('dismiss_delete_primary_email', {
                 level: 'error',
-                messages: SUGAR.language.get('Users', 'ERR_UPDATE_PRIMARY_EMAIL_FOR_IDM_MODE')
+                messages: SUGAR.language.get('app_strings', 'ERR_UPDATE_PERSON_PRIMARY_EMAIL_IN_IDM_MODE')
             });
         },
 		

@@ -2714,6 +2714,7 @@ $app_strings = array (
     'ERR_NOT_ADMIN' => "Unauthorized access to administration.",
     'ERR_DISABLED_FOR_IDM_MODE' => "This option is disabled in SugarCRM for IDM mode and available in Cloud Settings.",
     'ERR_GOTO_CLOUD_CONSOLE' => "Please go to the Cloud Settings.",
+    'ERR_UPDATE_PERSON_PRIMARY_EMAIL_IN_IDM_MODE' => 'The primary email address can be updated only in Cloud Settings',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Missing required field:',
     'ERR_INVALID_REQUIRED_FIELDS' => 'Invalid required field:',
     'ERR_INVALID_VALUE' => 'Invalid Value:',

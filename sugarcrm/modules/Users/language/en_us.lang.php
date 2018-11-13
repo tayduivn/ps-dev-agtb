@@ -77,7 +77,6 @@ $mod_strings = array (
 	'ERR_SERVER_STATUS'					=> 'Your server status',
 	'ERR_SERVER_SMTP_EMPTY'				=> 'The system is unable to send an email to the user. Please check the Outgoing Mail Configuration in <a href="index.php?module=EmailMan&action=config">Email Settings</a>.',
     'ERR_CREATE_USER_FOR_IDM_MODE'      => 'Create user(s) via Cloud Settings',
-    'ERR_UPDATE_PRIMARY_EMAIL_FOR_IDM_MODE' => 'The primary email address can be updated only in Cloud Settings',
 
     'LBL_EMAIL_ADDRESS'                 => 'Email Address',
 
