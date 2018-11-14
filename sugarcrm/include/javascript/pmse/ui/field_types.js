@@ -441,19 +441,11 @@ FilterField.prototype.processValueDependency = function(type) {
             case 'decimal':
             case 'float':
             case 'number':
-                if (setPrecision) {
-                    settings.precision = -1;
-                    setPrecision = false;
-                }
+                settings.precision = App.user.getPreference('decimal_precision');
             case 'integer':
+                settings.precision = settings.precision || 0;
+                settings.decimalSeparator = App.user.getPreference('decimal_separator');
                 labelField = 'text';
-                if (setPrecision) {
-                    settings.precision = 0;
-                }
-                if (setGrouping) {
-                    settings.groupingSeparator = '';
-                }
-                settings.decimalSeparator = this._decimalSeparator;
                 operators = this.operators.slice(0, 6);
                 break;
             case 'text':
@@ -499,6 +491,12 @@ FilterField.prototype.createValueElements = function(settings) {
             break;
         case 'currency':
             valueElement = this.createCurrencyValueElement(settings);
+            break;
+        case 'decimal':
+        case 'float':
+        case 'number':
+        case 'integer':
+            valueElement = this.createNumberValueElement(settings);
             break;
         case 'text':
         default:
@@ -604,6 +602,44 @@ FilterField.prototype.createCurrencyValueAmountSelector = function(settings) {
     $(amountControl).on('keydown', onKeyDown());
     return amountControl;
 };
+FilterField.prototype.createNumberValueElement = function(settings) {
+    var valueElement = this.createHTMLElement('input');
+    valueElement.type = 'text';
+    valueElement.style['text-align'] = 'right';
+
+    // Only allow numbers, left, right, backspace, delete, and tab
+    // Numbers are entered/deleted from right to left, as elsewhere in AWF
+    // Automatically format value in real time to the given precision
+    var onKeyDown = function(e) {
+        return function(e) {
+            var number;
+            var printableKey = '';
+
+            if ((e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode > 105) &&
+                e.keyCode !== 37 && e.keyCode !== 39 && e.keyCode !== 8 && e.keyCode !== 46 && e.keyCode !== 9) {
+                e.preventDefault();
+                return;
+            }
+
+            if ((e.keyCode > 47 && e.keyCode < 58) || e.keyCode === 8) {
+                printableKey = String.fromCharCode(e.keyCode);
+                e.preventDefault();
+            }
+
+            if (e.keyCode === 8) {
+                this.value = this.value.slice(0,-1);
+            }
+
+            number = parseInt(this.value.replace(/[^0-9]/g, '') + printableKey, 10) / Math.pow(10, settings.precision);
+            number = isNaN(number) ? 0 : number;
+            this.value = App.utils.formatNumber(number, settings.precision, settings.precision,
+                '', settings.decimalSeparator);
+        };
+    };
+
+    $(valueElement).on('keydown', onKeyDown());
+    return valueElement;
+};
 FilterField.prototype.getValueElementsValue = function() {
     var value = null;
     if (this.valueElements.length > 0) {
@@ -616,6 +652,10 @@ FilterField.prototype.getValueElementsValue = function() {
                 break;
             case 'dropdown':
             case 'radio':
+            case 'decimal':
+            case 'float':
+            case 'number':
+            case 'integer':
             case 'text':
             default:
                 value = this.valueElements[0].value;
@@ -639,6 +679,10 @@ FilterField.prototype.setValueElementsValue = function(value) {
                 break;
             case 'dropdown':
             case 'radio':
+            case 'decimal':
+            case 'float':
+            case 'number':
+            case 'integer':
             case 'text':
             default:
                 this.valueElements[0].value = value;
