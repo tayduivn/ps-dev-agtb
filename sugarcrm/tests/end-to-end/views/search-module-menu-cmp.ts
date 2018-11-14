@@ -131,14 +131,14 @@ export default class SearchModuleMenuCmp extends BaseView {
     }
 
     // BR-FTS: to check if the aggrecation filter passed in exists or not
-    // find the element by XPATH here since it's easier to do when finding elements based on the text content
+    // find the element by XPATH here since it's not easy for css selector to find elements based on the text content
     public async isFilterDisplayed(oneFilter: string) {
         return this.driver.isElementExist('//span[text()="' + oneFilter + '"]');
 
     }
 
-    // BR-FTS: to check if an item passed in (should be an email address) is highlighted
-    public async isHighLightedEmail(oneItem: string) {
+    // BR-FTS: to check if an item passed in is highlighted
+    public async isHighLightedItem(oneItem: string) {
         let currentLocator = '//div[@class = "typeahead-wrapper"]/descendant::strong[text()="' + oneItem + '"]';
         console.log( currentLocator );
         return this.driver.isElementExist( currentLocator );

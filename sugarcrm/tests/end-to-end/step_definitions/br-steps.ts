@@ -118,7 +118,7 @@ Then(/^I should see list of highlighted items "([^"]*)" under the search type ah
     await this.driver.waitForApp();
 
     for (let i in expectedHLArray) {
-        let currentResult = await searchMenu.isHighLightedEmail(expectedHLArray[i]);
+        let currentResult = await searchMenu.isHighLightedItem(expectedHLArray[i]);
 
         if (!currentResult) {
             throw new Error('Expected ' + expectedHLArray[i] + ' to be highlighted but is not!');
