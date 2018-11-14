@@ -55,7 +55,6 @@ export default class SearchModuleMenuCmp extends BaseView {
         // BR-FTS: if search input box is not expanded, expand it. Hmm...you can use toogleSearchBox to close the search input, but cannot expand it. There fore, we use click:
         if (!(await this.isSearchExpanded())) {
             await this.driver.waitForVisibleAndClick(this.locator_fts_input);
-            console.log('Search input box is in an expanded state!');
         }
 
         // when "Search all" is selected, the menu item locator does not match the format defined in the "this.selectors" so we need a special case for it.
@@ -65,10 +64,6 @@ export default class SearchModuleMenuCmp extends BaseView {
         } else {
             itemSelector = this.$('moduleList.listItem', {moduleName: moduleName});
         }
-
-        console.log('The itemSelector is ' + itemSelector + ' before calling toggleMenu()');
-        // await this.toggleMenu();
-
 
         await this.driver.waitForVisible(itemSelector);
         await this.driver.click(itemSelector);
@@ -81,7 +76,6 @@ export default class SearchModuleMenuCmp extends BaseView {
      */
     public async toggleMenu() {
         let theMoreIcon = this.$('moduleList.moreIcon');
-        console.log('Clicking on the moreIcon now to toggleMenu at css selector theMoreIcon: ' + theMoreIcon);
         await this.driver.click(theMoreIcon);
     }
 
@@ -140,7 +134,6 @@ export default class SearchModuleMenuCmp extends BaseView {
     // BR-FTS: to check if an item passed in is highlighted
     public async isHighLightedItem(oneItem: string) {
         let currentLocator = '//div[@class = "typeahead-wrapper"]/descendant::strong[text()="' + oneItem + '"]';
-        console.log( currentLocator );
         return this.driver.isElementExist( currentLocator );
     }
 
