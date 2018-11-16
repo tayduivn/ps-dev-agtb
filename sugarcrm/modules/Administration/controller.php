@@ -457,6 +457,9 @@ class AdministrationController extends SugarController
             }
         }
 
+        if (!headers_sent()) {
+            header_remove('Content-Type');
+        }
         $response->send();
         $this->terminate();
     }
