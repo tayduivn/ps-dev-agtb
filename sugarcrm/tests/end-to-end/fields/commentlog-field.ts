@@ -9,14 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {seedbed} from '@sugarcrm/seedbed';
 import {BaseField} from './base-field';
 
 /**
  * @class CommentLogField
  * @extends BaseField
  */
-
 export class Edit extends BaseField {
     constructor(options) {
         super(options);
@@ -57,14 +55,14 @@ export class Detail extends BaseField {
     }
 
     /**
-     * @return string The content and content only of the commentlog, if multiple commentlog message
-     *         were present, there will be a "," between each commentlog message, in the order of
-     *         top to down in the UI
-     * */
+     * @param {string} selector The selector.
+     * @return {string} The content and content only of the commentlog.
+     *   If multiple commentlog messages are present, there will be a
+     *   "," between each commentlog message, in the order of top to down
+     *   in the UI.
+     */
     public async getText(selector: string): Promise<string> {
-
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
-
         return value.toString();
     }
 }
