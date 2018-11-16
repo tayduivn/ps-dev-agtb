@@ -53,14 +53,14 @@
             (e.target.className ? ' className - ' + e.target.className : '')));
     }, true);
 
-    $('input').live('keydown', function(e) {
+    $(document.body).on('keydown', 'input', function(e) {
         console.log('keydown: ' + '"' + $(e.target).val() + '" ' + ((e.target.id ? 'id - ' +
-                e.target.id : '') + (e.target.className ? ' className - ' + e.target.className : '')));
+            e.target.id : '') + (e.target.className ? ' className - ' + e.target.className : '')));
     });
 
-    $('input').live('focusin', (e) => {
+    $(document.body).on('focusin', 'input', function(e) {
         console.log('focusin: ' + '"' + $(e.target).val() + '" ' + ((e.target.id ? 'id - ' +
-                e.target.id : '') + (e.target.className ? ' className - ' + e.target.className : '')));
+            e.target.id : '') + (e.target.className ? ' className - ' + e.target.className : '')));
     });
 
     let originalAlertShow = app.alert.show;

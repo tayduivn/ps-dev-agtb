@@ -134,8 +134,7 @@ gulp.task('karma', function(done) {
         karmaOptions.browsers = [];
         karmaOptions.singleRun = false;
         karmaOptions.autoWatch = true;
-    }
-    else if (commander.dev) {
+    } else if (commander.dev) {
         karmaOptions.autoWatch = true;
         karmaOptions.singleRun = false;
         if (!commander.browsers) {
