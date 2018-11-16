@@ -95,13 +95,13 @@ describe('Base.View.RecordList', function() {
                 type: 'editablelistbutton',
                 label: 'LBL_CANCEL_BUTTON_LABEL',
                 name: 'inline-cancel',
-                css_class: 'btn-link btn-invisible inline-cancel'
+                css_class: 'btn-link btn-invisible inline-cancel ellipsis_inline'
             });
             expect(view.rightColumns[0].fields[1]).toEqual({
                 type: 'editablelistbutton',
                 label: 'LBL_SAVE_BUTTON_LABEL',
                 name: 'inline-save',
-                css_class: 'btn-primary'
+                css_class: 'btn-primary ellipsis_inline'
             });
             expect(view.rightColumns[0].css_class).toEqual('overflow-visible');
         });
