@@ -490,6 +490,11 @@ describe('Quotes.Base.Views.Record', function() {
             expect(actual).not.toEqual({});
             expect(actual.success).toBeDefined();
         });
+
+        it('should null out params.view and params.fields', function() {
+            actual = view.getCustomSaveOptions({params: {view: 'myview', fields: 'lots,of,fields'}});
+            expect(actual).toEqual({params: {view: null, fields: null}});
+        });
     });
 
     describe('_createBulkBundlesPayload', function() {
