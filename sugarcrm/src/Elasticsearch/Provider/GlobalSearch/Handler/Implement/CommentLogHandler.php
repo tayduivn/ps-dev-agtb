@@ -231,11 +231,11 @@ class CommentLogHandler extends AbstractHandler implements
 
     /**
      * Check if given field def is an commentlog field
-     * @param array $defs
-     * @return boolean
+     * @param array $defs Field definition.
+     * @return boolean True if this is a commentlog field.
      */
     protected function isCommentLogField(array $defs)
     {
-        return $defs['name'] === 'commentlog' && $defs['type'] === 'commentlog';
+        return $defs['name'] === 'commentlog';
     }
 }

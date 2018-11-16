@@ -1071,6 +1071,17 @@
             viewed: true
         };
 
+        // ensure view and field are sent as params so collection-type fields come back in the response to PUT requests
+        // (they're not sent unless specifically requested)
+        options.params = options.params || {};
+        if (this.context.has('dataView') && _.isString(this.context.get('dataView'))) {
+            options.params.view = this.context.get('dataView');
+        }
+
+        if (this.context.has('fields')) {
+            options.params.fields = this.context.get('fields').join(',');
+        }
+
         options = _.extend({}, options, this.getCustomSaveOptions(options));
 
         this.model.save({}, options);

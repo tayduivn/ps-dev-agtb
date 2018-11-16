@@ -11,7 +11,7 @@
  */
 --}}
 
-<div class="commentLog" class="detail" data-name="{{name}}" name="{{name}}">
+<div class="commentLog detail" data-name="{{name}}" name="{{name}}">
     {{#each msgs}}
         <div class="msg-div toggle-text">
             <span class="ellipsis_inline" title data-placement="bottom" data-fieldname="author_name">
@@ -23,7 +23,6 @@
                 {{entered_date}}
             </span>
             <div class="msg-content">{{entry}}</div>
-
             <hr />
         </div>
     {{/each}}

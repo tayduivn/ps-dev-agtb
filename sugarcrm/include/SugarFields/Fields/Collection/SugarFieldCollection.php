@@ -285,15 +285,20 @@ class SugarFieldCollection extends SugarFieldBase {
      */
     protected function getBeanCollection(SugarBean $bean, array $field, array $displayParams, ServiceBase $service)
     {
-        $args = array_merge(array(
-            // make sure "fields" argument is always passed to the API
-            // since otherwise it will return all fields by default
-            'fields' => array('id', 'date_modified'),
-        ), $displayParams, array(
-            'module' => $bean->module_name,
-            'record' => $bean->id,
-            'collection_name' => $field['name'],
-        ));
+        $args = array_merge(
+            array(
+                // make sure "fields" argument is always passed to the API
+                // since otherwise it will return all fields by default
+                'fields' => array('id', 'date_modified'),
+            ),
+            $field['displayParams'] ?? [],
+            $displayParams,
+            array(
+                'module' => $bean->module_name,
+                'record' => $bean->id,
+                'collection_name' => $field['name'],
+            )
+        );
 
         $response = $this->getCollectionApi()->getCollection($service, $args);
 

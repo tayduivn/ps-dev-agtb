@@ -16,15 +16,22 @@ describe('commentlog field', function() {
     var app;
     var field;
     var template;
+    var editTemplate;
     var module = 'Bugs';
     var fieldName = 'commentlog';
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        template = SugarTest.loadHandlebarsTemplate('commentlog', 'field', 'base', 'detail');
+        template = SugarTest.loadHandlebarsTemplate(fieldName, 'field', 'base', 'detail');
+        editTemplate = SugarTest.loadHandlebarsTemplate(fieldName, 'field', 'base', 'edit');
+        SugarTest.seedMetadata(false, 'fixtures');
         SugarTest.testMetadata.set();
-        field = SugarTest.createField('base', fieldName, 'commentlog', 'detail', {}, module);
+        var fieldDef = {
+            name: 'commentlog',
+            type: 'collection'
+        };
+        field = SugarTest.createField('base', fieldName, 'commentlog', 'detail', fieldDef, module);
     });
 
     afterEach(function() {
@@ -122,7 +129,7 @@ describe('commentlog field', function() {
                     }
                 });
             }, function(value) {
-                it('showCommentLog() should handle data from showCommentLog Correctly', function() {
+                it('showCommentLog() should handle data from showCommentLog correctly', function() {
                     field.model.set(fieldName, value.msgs);
                     field.showCommentLog();
 
@@ -177,7 +184,7 @@ describe('commentlog field', function() {
             aclStub.restore();
         });
 
-        using('Go into edit mode then go back to record view will not display all past messages',
+        using('Going into edit mode and then going back to detail mode will not display all past messages',
             [
                 {
                     'msgs': [
@@ -216,27 +223,43 @@ describe('commentlog field', function() {
                 }
             ],
             function(value) {
-                it('should still show same past message after coming back from edit without editing anything',
+                it('should still show the same past messages after coming back from edit mode without saving anything',
                     function() {
-                    // first render the record mode
-                    field.model.set(fieldName, value.msgs);
-                    field.render();
+                        // first render the details mode
+                        var collOptions = {
+                            parentBean: field.model,
+                            collectionField: fieldName,
+                            links: ['commentlog_link']
+                        };
+                        var coll = app.data.createMixedBeanCollection(
+                            [],
+                            collOptions
+                        );
+                        var oldCollection = app.data.createMixedBeanCollection(value.msgs, collOptions);
+                        field.model.set(fieldName, coll);
+                        field.model.get(fieldName).add(value.msgs);
+                        field.model.setSyncedAttributes({commentlog: coll});
+                        field.model.save();
+                        field.render();
 
-                    // the amount of the messages should remain the same
-                    expect(field.msgs.length).toEqual(value.msgs.length);
+                        // the amount of the messages should remain the same
+                        expect(field.msgs.length).toEqual(value.msgs.length);
 
-                    // get into edit mode
-                    field.tplName = 'edit';
-                    field.model.set(fieldName, value.entered);
-                    field.render();
+                        // go into edit mode
+                        field.setMode('edit');
+                        field.$el.find(field.fieldTag).val(value.entered).change();
 
-                    // return to record view without saving
-                    field.tplName = 'detail';
-                    field.render();
+                        // return to detail view without saving
+                        sinon.collection.stub(field.model, 'changedAttributes').returns({commentlog: oldCollection});
+                        sinon.collection.stub(coll, 'hasDelta').returns(true);
+                        sinon.collection.stub(field.model, 'getCollectionFields').returns({commentlog: oldCollection});
+                        field.model.revertAttributes();
+                        field.setMode('detail');
 
-                    // the amount of the messages should remain the same
-                    expect(field.msgs.length).toEqual(value.msgs.length);
-                });
+                        // the amount of the messages should be the same as before
+                        expect(field.msgs.length).toEqual(value.msgs.length);
+                    }
+                );
             },
             function(value) {
                 it('should still keep entered message after entering, focus on something outside of testarea, then ' +

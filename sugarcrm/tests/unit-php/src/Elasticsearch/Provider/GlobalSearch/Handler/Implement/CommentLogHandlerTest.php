@@ -196,36 +196,6 @@ class CommentLogHandlerTest extends TestCase
                     ),
                 ),
             ),
-            // test 'commentlog' type for non 'commentlog' field
-            array(
-                'Accounts',
-                'other_commentlog',
-                array(
-                    'name' => 'other_commentlog',
-                    'type' => 'commentlog',
-                ),
-                array(),
-            ),
-            // test non 'commentlog' type for 'commentlog' field
-            array(
-                'Contacts',
-                'commentlog',
-                array(
-                    'name' => 'commentlog',
-                    'type' => 'non_commentlog',
-                ),
-                array(),
-            ),
-            // test non 'commentlog' type for non 'commentlog' field
-            array(
-                'Leads',
-                'other_commentlog',
-                array(
-                    'name' => 'other_commentlog',
-                    'type' => 'non_commentlog',
-                ),
-                array(),
-            ),
         );
     }
 
@@ -268,16 +238,6 @@ class CommentLogHandlerTest extends TestCase
                 'first_name',
                 array(
                     'name' => 'first_name',
-                    'type' => 'varchar',
-                ),
-                array(),
-            ),
-            // commentlog field, non commentlog type
-            array(
-                'Contacts',
-                'commentlog',
-                array(
-                    'name' => 'commentlog',
                     'type' => 'varchar',
                 ),
                 array(),

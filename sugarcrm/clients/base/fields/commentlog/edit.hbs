@@ -11,8 +11,9 @@
  */
 --}}
 
-<div class="commentLog">
+<div class="commentLog edit" data-name="{{name}}" name="{{name}}">
     {{#each msgs}}
+        {{#unless isNew}}
         <div class="msg-div toggle-text">
             <span class="ellipsis_inline" title data-placement="bottom" data-fieldname="author_name">
                 {{#if href}}
@@ -26,8 +27,9 @@
 
             <hr />
         </div>
+        {{/unless}}
     {{/each}}
     <div class="new-msg-div edit">
-        <textarea rows="5" name="{{name}}">{{value}}</textarea>
+        <textarea rows="5" name="{{name}}">{{newValue}}</textarea>
     </div>
 </div>

@@ -97,6 +97,14 @@
                 }
             }
         },
+        "Bugs": {
+            "fields": {
+                "commentlog": {
+                    "name": "commentlog",
+                    "type": "collection"
+                }
+            }
+        },
         "Cases": {
             "fields": {
                 "id": {

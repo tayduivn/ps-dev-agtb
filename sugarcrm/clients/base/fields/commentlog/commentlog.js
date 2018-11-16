@@ -15,7 +15,6 @@
  */
 ({
     fieldTag: 'textarea',
-    name: 'commentlog',
 
     /**
      * Called when initializing the field
@@ -23,10 +22,6 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-
-        if (!this.model.has(this.name)) {
-            this.model.setDefault(this.name, []);
-        }
     },
 
     /**
@@ -35,7 +30,6 @@
      */
     _render: function() {
         this.showCommentLog();
-
         this._super('_render'); // everything showing in the UI should be done before this line.
     },
 
@@ -44,45 +38,54 @@
      * @param value
      */
     format: function(value) {
-        if (_.isString(value)) {
-            return value;
-        }
-
-        if (this.tplName == 'edit') {
-            return '';
-        }
-
         return value;
     },
 
     /**
      * Builds model for handlebar to show pass commentlog messages in record view.
      * This should only be called when there is need to render past messages, only
-     * when this.getFormattedValue() returns the data format for message
-     * */
+     * when this.getFormattedValue() returns the data format for message.
+     */
     showCommentLog: function() {
-        var self = this;
-        var value = this.getFormattedValue();
+        var collection = this.model.get('commentlog');
 
-        if (!_.isString(value)) {
+        if (!collection) {
+            return;
+        }
+        var comments = collection.models;
+
+        if (comments) {
             this.msgs = [];
-            // recursively get out all data
-            _.each(value, function(msg) {
-                var copied = _.clone(msg);
+            // add readable time and user link to users
+            _.each(comments, function(commentModel) {
+                var msg = {
+                    entry: commentModel.get('entry'),
+                    created_by_name: commentModel.get('created_by_name'),
+                };
 
                 // to date display format
-                var enteredDate = app.date(msg.date_entered);
+                var enteredDate = app.date(commentModel.get('date_entered'));
                 if (enteredDate.isValid()) {
-                    copied.entered_date = enteredDate.formatUser();
+                    msg.entered_date = enteredDate.formatUser();
                 }
 
-                if (app.acl.hasAccess('view', 'Users', {acls: copied.created_by_link._acl})) {
-                    copied.href = '#' + app.router.buildRoute('Users', copied.created_by, 'detail');
+                var link = commentModel.get('created_by_link');
+                if (link && link.id) {
+                    if (app.acl.hasAccess('view', 'Users', {acls: link._acl})) {
+                        msg.href = '#' + app.router.buildRoute('Users', link.id, 'detail');
+                    }
+                } else if (commentModel.has('created_by')) {
+                    msg.href = '#' + app.router.buildRoute('Users', commentModel.get('created_by'), 'detail');
                 }
 
-                self.msgs.push(copied);
-            });
+                if (commentModel === this._newEntryModel) {
+                    msg.isNew = true;
+                }
+                this.msgs.push(msg);
+            }, this);
         }
+
+        this.newValue = this._newEntryModel ? this._newEntryModel.get('entry') : '';
     },
 
     /**
@@ -91,5 +94,60 @@
      */
     unformat: function(value) {
         return value;
-    }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    bindDomChange: function() {
+        if (!(this.model instanceof Backbone.Model)) {
+            return;
+        }
+
+        var el = this.$el.find(this.fieldTag);
+
+        var self = this;
+
+        el.on('change', function() {
+            var value = self.unformat(el.val());
+
+            if (!self._newEntryModel) {
+                var collectionField = self.model.get('commentlog');
+
+                if (!collectionField) {
+                    self.model.set(self.name, []);
+                    collectionField = self.model.get('commentlog');
+                }
+
+                self._newEntryModel = app.data.createRelatedBean(self.model, null, 'commentlog_link', {
+                    entry: value,
+                    _link: 'commentlog_link',
+                });
+
+                collectionField.add(self._newEntryModel);
+            }
+
+            self._newEntryModel.set('entry', value);
+        });
+    },
+
+    /**
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        if (this.model) {
+            var collectionField = this.model.get(this.name);
+            if (collectionField) {
+                this.listenTo(collectionField, 'reset', function() {
+                    this.newValue = this._newEntryModel = null;
+                });
+            }
+            this.model.on('change:' + this.name, function(model, value) {
+                if (this.action !== 'edit') {
+                    this.newValue = this._newEntryModel = null;
+                }
+                this.render();
+            }, this);
+        }
+    },
 })

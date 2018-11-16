@@ -15,12 +15,20 @@ $vardefs = array(
         'commentlog' =>  array(
             'name' => 'commentlog',
             'vname' => 'LBL_COMMENTLOG',
-            'type' => 'commentlog',
-            'link' => 'commentlog_link',
+            'type' => 'collection',
+            'displayParams' => array(
+                'type' => 'commentlog',
+                'fields' => array(
+                    'entry',
+                    'date_entered',
+                    'created_by_name',
+                ),
+                'max_num' => 100,
+            ),
+            'links' => array('commentlog_link'),
+            'order_by' => 'date_entered:asc',
             'source' => 'non-db',
             'module' => 'CommentLog',
-            'relate_collection' => true,
-            'rname' => 'name',
             'studio' => array(
                 'listview' => false,
                 'recordview' => true,
