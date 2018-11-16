@@ -29,9 +29,9 @@ describe('searchahead', function() {
     });
 
     it('should listen to input', function() {
-        expect($input.data('events').blur).toBeDefined();
-        expect($input.data('events').keypress).toBeDefined();
-        expect($input.data('events').keyup).toBeDefined();
+        expect($._data($input[0]).events.blur).toBeDefined();
+        expect($._data($input[0]).events.keypress).toBeDefined();
+        expect($._data($input[0]).events.keyup).toBeDefined();
     });
     it('should provide sensible defaults', function() {
         expect($input.searchahead().data('searchahead').throttle).toBeDefined();
@@ -48,7 +48,7 @@ describe('searchahead', function() {
     });
     it('should have mouseover on the $menu', function() {
         var $menu = $input.searchahead().data('searchahead').$menu;
-        expect($menu.data('events').mouseover).toBeDefined();
+        expect($._data($menu[0]).events.mouseover).toBeDefined();
     });
 
     it('should define public methods disable and enable', function() {
