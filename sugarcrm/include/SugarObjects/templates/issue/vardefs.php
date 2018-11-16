@@ -120,6 +120,7 @@ $vardefs = array (
 	),
         'uses' => array(
             'taggable',
+            'commentlog',
         ),
     'duplicate_check' => array(
         'enabled' => true,
