@@ -65,12 +65,6 @@ describe('Plugins.VirtualCollection', function() {
                     'picture'
                 ]
             },
-            related_cases: {
-                name: 'related_cases',
-                source: 'non-db',
-                type: 'collection',
-                links: ['cases']
-            },
             contacts: {
                 name: 'contacts',
                 type: 'link',
@@ -78,11 +72,6 @@ describe('Plugins.VirtualCollection', function() {
             },
             accounts: {
                 name: 'accounts',
-                type: 'link',
-                source: 'non-db'
-            },
-            cases: {
-                name: 'cases',
                 type: 'link',
                 source: 'non-db'
             },
@@ -788,39 +777,20 @@ describe('Plugins.VirtualCollection', function() {
                 expect(_.size(result.invitees)).toBe(6);
             });
 
-            it('should return all collections by default', function() {
+            it('should return invitees (and id) by default', function() {
                 var result;
-
-                model.set('related_cases', [{
-                    _module: 'Cases',
-                    id: '11',
-                    name: 'foo'
-                }, {
-                    _module: 'Cases',
-                    id: '12',
-                    name: 'bar'
-                }]);
 
                 result = model.toJSON();
 
-                expect(_.size(result)).toBe(3);
+                expect(_.size(result)).toBe(2);
+                expect(result.id).toBeTruthy();
                 expect(_.size(result.invitees)).toBe(4);
-                expect(_.size(result.related_cases)).toBe(2);
             });
 
             it('should return no collections and links if specifically not included in options.fields', function() {
                 var result;
 
                 model.set('id', '123');
-                model.set('related_cases', [{
-                    _module: 'Cases',
-                    id: '11',
-                    name: 'foo'
-                }, {
-                    _module: 'Cases',
-                    id: '12',
-                    name: 'bar'
-                }]);
 
                 result = model.toJSON({fields:['id']});
 
@@ -1081,7 +1051,6 @@ describe('Plugins.VirtualCollection', function() {
         describe('getting the names of the collection fields', function() {
             it('should return an empty array', function() {
                 delete model.fields[attribute];
-                delete model.fields['related_cases'];
 
                 expect(model.getCollectionFieldNames().length).toBe(0);
             });
@@ -1089,8 +1058,9 @@ describe('Plugins.VirtualCollection', function() {
             it('should return an array with the collection field names', function() {
                 var fields = model.getCollectionFieldNames();
 
-                expect(fields.length).toBe(2);
-                expect(fields).toEqual(['invitees','related_cases']);
+                // Virtual collection now explicitly only handles invitees
+                expect(fields.length).toBe(1);
+                expect(fields).toEqual(['invitees']);
             });
         });
     });

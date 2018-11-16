@@ -341,15 +341,12 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                         'duration_hours',
                         'duration_minutes',
                     ),
+                    'max_num' => 20,
                 ),
                 'assigned_user_name',
                 'team_name',
                 array(
                     'name' => 'tag',
-                    'span' => 12,
-                ),
-                array(
-                    'name' => 'commentlog',
                     'span' => 12,
                 ),
             ),

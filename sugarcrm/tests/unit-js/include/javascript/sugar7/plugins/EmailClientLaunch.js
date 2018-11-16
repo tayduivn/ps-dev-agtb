@@ -993,25 +993,6 @@ describe('EmailClientLaunch Plugin', function() {
             actual = emailField._retrieveEmailOptions($link);
             expect(actual.to[0].email.get('opt_out')).toBe(true);
         });
-
-        it('should use a copy of the related model', function() {
-            var model = app.data.createBean('Contacts', {
-                id: _.uniqueId(),
-                foo: 'bar'
-            });
-            var $link = $('<a href="#">Foo!</a>');
-            var actual;
-
-            // Add the related model as an option.
-            field.addEmailOptions({related: model});
-
-            // The related model should be cloned when the options are
-            // retrieved.
-            actual = field._retrieveEmailOptions($link);
-
-            expect(actual.related).not.toBe(model);
-            expect(actual.related.toJSON()).toEqual(model.toJSON());
-        });
     });
 
     describe('Setting email links on attach', function() {
