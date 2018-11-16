@@ -14,7 +14,6 @@ use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-
 /**
  * Main SugarCRM controller
  * @api
@@ -753,9 +752,7 @@ class SugarController
 		    $requestedMethod = $_REQUEST['method'];
 		    $dashletDefs = $GLOBALS['current_user']->getPreference('dashlets', 'Home'); // load user's dashlets config
 		    if(!empty($dashletDefs[$id])) {
-		        require_once($dashletDefs[$id]['fileLocation']);
-
-		        $dashlet = new $dashletDefs[$id]['className']($id, (isset($dashletDefs[$id]['options']) ? $dashletDefs[$id]['options'] : array()));
+                $dashlet = Dashlet::instantiate($id, $dashletDefs[$id]);
 
 		        if(method_exists($dashlet, $requestedMethod) || method_exists($dashlet, '__call')) {
 		            echo $dashlet->$requestedMethod();
@@ -776,9 +773,8 @@ class SugarController
 		if(!empty($_REQUEST['id'])) {
 		    $id = $_REQUEST['id'];
 		    $dashletDefs = $current_user->getPreference('dashlets', $_REQUEST['module']); // load user's dashlets config
-		    require_once($dashletDefs[$id]['fileLocation']);
+            $dashlet = Dashlet::instantiate($id, $dashletDefs[$id]);
 
-		    $dashlet = new $dashletDefs[$id]['className']($id, (isset($dashletDefs[$id]['options']) ? $dashletDefs[$id]['options'] : array()));
 		    if(!empty($_REQUEST['configure']) && $_REQUEST['configure']) { // save settings
 		        $dashletDefs[$id]['options'] = $dashlet->saveOptions($_REQUEST);
 		        $current_user->setPreference('dashlets', $dashletDefs, 0, $_REQUEST['module']);
