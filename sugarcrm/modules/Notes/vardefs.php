@@ -488,7 +488,13 @@ $dictionary['Note'] = array(
     ),
 );
 
-VardefManager::createVardef('Notes','Note', array('default', 'assignable',
-'team_security',
-));
-
+VardefManager::createVardef(
+    'Notes',
+    'Note',
+    array(
+        'default',
+        'assignable',
+        'team_security',
+        'commentlog',
+    )
+);

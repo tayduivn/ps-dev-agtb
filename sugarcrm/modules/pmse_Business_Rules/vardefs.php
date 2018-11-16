@@ -293,6 +293,7 @@ $dictionary['pmse_Business_Rules'] = array(
         'basic',
         'team_security',
         'assignable',
+        'commentlog',
     ),
 );
 VardefManager::createVardef('pmse_Business_Rules', 'pmse_Business_Rules');

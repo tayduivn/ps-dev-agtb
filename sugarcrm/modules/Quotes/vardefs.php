@@ -1041,7 +1041,9 @@ VardefManager::createVardef(
         'default',
         'assignable',
         'team_security',
-        'currency'
+        'currency',
+        // FIXME: Disable commentlog on Quotes until we can handle collection resets of bundles
+        //'commentlog',
     )
 );
 

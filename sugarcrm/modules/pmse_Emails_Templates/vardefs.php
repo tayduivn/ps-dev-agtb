@@ -265,6 +265,7 @@ $dictionary['pmse_Emails_Templates'] = array(
         'basic',
         'team_security',
         'assignable',
+        'commentlog',
     ),
 );
 

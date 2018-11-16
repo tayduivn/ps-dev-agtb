@@ -117,6 +117,7 @@ $app_list_strings = array (
     'EmailParticipants' => 'Email Participants',
     'DataPrivacy' => 'Data Privacy',
     'ReportSchedules' => 'Report Schedules',
+    'CommentLog' => 'Comment Log',
   ),
 
     'moduleIconList' =>
@@ -225,6 +226,7 @@ $app_list_strings = array (
     'OAuthTokens' => 'OAuth Token',
     'Filters' => 'Filter',
     'Comments' => 'Comment',
+    'CommentLog' => 'Comment Log',
     'Currencies' => 'Currency',
     'ProductTemplates' => 'Product Template',
     'ProductTypes' => 'Product Type',

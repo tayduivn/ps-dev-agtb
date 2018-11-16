@@ -184,6 +184,7 @@ $mod_strings = array (
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
 
     'LBL_MEETING_CLOSE_SUCCESS' => 'Meeting closed successfully.',
+    'LBL_COMMENTLOG' => 'Comment Log',
 
     //record save
     'LBL_RECORD_SAVED_SUCCESS' => 'You scheduled the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a> for {{formatDate date_start}}.',

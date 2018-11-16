@@ -131,6 +131,7 @@ class VardefManagerTest extends TestCase
                     'person',
                     'email_address',
                     'taggable',
+                    'commentlog',
                 ),
             ),
             // Tests handling of 'default' template
@@ -147,7 +148,6 @@ class VardefManagerTest extends TestCase
                     //BEGIN SUGARCRM flav=ent ONLY
                     'lockable_fields',
                     //END SUGARCRM flav=ent ONLY
-                    'commentlog', // Added for commentlog field
                 ),
             ),
         );
@@ -226,10 +226,10 @@ class VardefManagerTest extends TestCase
                     //BEGIN SUGARCRM flav=ent ONLY
                     'lockable_fields',
                     //END SUGARCRM flav=ent ONLY
-                    'commentlog', // Added for commentlog field
                     'assignable',
                     'team_security',
                     'email_address',
+                    'commentlog',
                 ),
             ),
         );

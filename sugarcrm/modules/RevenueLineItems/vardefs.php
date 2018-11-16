@@ -1147,7 +1147,8 @@ VardefManager::createVardef(
         'default',
         'assignable',
         'team_security',
-        'currency'
+        'currency',
+        'commentlog',
     )
 );
 

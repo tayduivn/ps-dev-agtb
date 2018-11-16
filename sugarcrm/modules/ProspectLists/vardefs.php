@@ -317,5 +317,6 @@ VardefManager::createVardef(
     array(
          'assignable',
          'team_security',
+        'commentlog',
     )
 );

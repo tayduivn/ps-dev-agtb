@@ -758,8 +758,11 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     ),
 );
 
-VardefManager::createVardef('Meetings','Meeting', array('default', 'assignable',
-'team_security',
+VardefManager::createVardef('Meetings', 'Meeting', array(
+    'default',
+    'assignable',
+    'team_security',
+    'commentlog',
 ));
 
 //boost value for full text search

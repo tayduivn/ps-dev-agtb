@@ -164,10 +164,6 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'name' => 'tag',
                     'span' => 12,
                 ),
-                array(
-                    'name' => 'commentlog',
-                    'span' => 12,
-                ),
             ),
         ),
         array(

@@ -82,6 +82,7 @@ $mod_strings = array (
   'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',
   'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
   'LBL_LIST_ASSIGNED_TO_NAME' => 'Assigned User',
+    'LBL_COMMENTLOG' => 'Comment Log',
 	'LBL_ASSIGNED_TO_NAME' => 'Assigned to',
 
 	'LNK_BUG_REPORTS' => 'View Bug Reports',

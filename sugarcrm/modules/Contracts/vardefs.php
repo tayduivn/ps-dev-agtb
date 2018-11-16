@@ -374,6 +374,7 @@ $dictionary['Contract'] = array(
         'team_security',
         'currency',
         'taggable',
+        'commentlog',
     ),
 );
 

@@ -89,6 +89,7 @@ $mod_strings = array (
   'LBL_EXPORT_PARENT_ID' => 'Related To ID',
   'LBL_TASK_CLOSE_SUCCESS' => 'Task closed successfully.',
   'LBL_ASSIGNED_USER' => 'Assigned to',
+  'LBL_COMMENTLOG' => 'Comment Log',
 
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 

@@ -182,11 +182,12 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                     'span' => 12,
                 ),
                 array(
-                    'name' => 'tag',
+                    'name' => 'commentlog',
+                    'label' => 'LBL_COMMENTLOG',
                     'span' => 12,
                 ),
                 array(
-                    'name' => 'commentlog',
+                    'name' => 'tag',
                     'span' => 12,
                 ),
             ),

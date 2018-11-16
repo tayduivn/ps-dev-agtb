@@ -747,8 +747,11 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     ),
 );
 
-VardefManager::createVardef('Calls','Call', array('default', 'assignable',
-'team_security',
+VardefManager::createVardef('Calls', 'Call', array(
+    'default',
+    'assignable',
+    'team_security',
+    'commentlog',
 ));
 
 $dictionary['Call']['fields']['description']['full_text_search']['boost'] = 0.54;

@@ -15,71 +15,51 @@ use PHPUnit\Framework\TestCase;
 class commentlogTemplateTest extends TestCase
 {
     /**
-     * Checks if all modules uses basics or default has commentlog as a field
-     * @param string $module The module we would like to check for whether commentlog_field exists
-     * @dataProvider moduleListProvider
+     * Checks that modules that should have commentlog as a field do so.
+     *
+     * @param string $module The module we would like to check for whether
+     *   commentlog exists.
+     * @param bool $hasField True if it should have the field and false
+     *   otherwise.
+     * @dataProvider hasCommentLogFieldProvider
      */
-    public function testCheckAllAvailableModuleHasCommentLogField($module)
+    public function testCheckModulesHaveCommentLogField(string $module, bool $hasField)
     {
         $bean = BeanFactory::newBean($module);
-        $this->assertArrayHasKey('commentlog', $bean->field_defs);
-        $this->assertArrayHasKey('commentlog_link', $bean->field_defs);
-    }
-
-    /**
-     * Checks if default enabled module has commentlog field in record view
-     * @param string $folder The folder name of the $module
-     * @param bool $default_enabled Whether commentlog field should be default enabled or not
-     * @dataProvider moduleListProvider
-     */
-    public function testCheckDefaultEnabled(string $folder, bool $default_enabled)
-    {
-        // Make a file name for testing/including
-        $file = 'modules/' . $folder . '/clients/base/views/record/record.php';
-
-        // Assert that the file exists
-        $this->assertFileExists($file);
-
-        // Setup some needed vars
-        $enabled = false;
-        $viewdefs = [];
-
-        // Get the view def
-        include $file;
-
-        // Get the assertion value
-        foreach ($viewdefs[$folder]['base']['view']['record']['panels'][1]['fields'] as $field) {
-            if (is_array($field) && $field['name'] === 'commentlog') {
-                $enabled = true;
-                break;
-            }
+        if ($hasField) {
+            $this->assertArrayHasKey('commentlog', $bean->field_defs);
+            $this->assertArrayHasKey('commentlog_link', $bean->field_defs);
+        } else {
+            $this->assertArrayNotHasKey('commentlog', $bean->field_defs);
+            $this->assertArrayNotHasKey('commentlog_link', $bean->field_defs);
         }
-
-        $this->assertSame($enabled, $default_enabled);
     }
 
-    public function moduleListProvider()
+    public function hasCommentLogFieldProvider(): array
     {
         return array(
-            array('Accounts', false),
-            array('Bugs', true),
-            array('Calls', false),
-            array('Cases', true),
-            array('Contacts', false),
-            array('Contracts', false),
-            array('DataPrivacy', false),
+            array('Accounts', true), // company
+            array('Bugs', true), // issue
+            array('Calls', true), // explicitly included in vardefs
+            array('Cases', true), // issue
+            array('Contacts', true), // person
+            array('Contracts', true), // explicitly included in vardefs
+            array('DataPrivacy', true), // issue
             array('KBArticles', false),
             array('KBContents', false),
             array('KBContentTemplates', false),
             array('KBDocuments', false),
-            array('Leads', false),
-            array('Meetings', true),
-            array('Notes', false),
+            array('Leads', true), // person
+            array('Meetings', true), // explicitly included in vardefs
+            array('Notes', true), // explicitly included in vardefs
             array('Opportunities', true),
             array('ProductCategories', false),
-            array('Quotes', false),
-            array('RevenueLineItems', false),
-            array('Tasks', true),
+            // FIXME: re-enable once commentlog is enabled in Quotes
+            // array('Quotes', true), // explicitly included in vardefs
+            //BEGIN SUGARCRM flav=ent ONLY
+            array('RevenueLineItems', true), // explicitly included in vardefs
+            //END SUGARCRM flav=ent ONLY
+            array('Tasks', true), // explicitly included in vardefs
         );
     }
 }
