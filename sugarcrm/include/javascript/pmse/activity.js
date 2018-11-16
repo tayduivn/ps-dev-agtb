@@ -2457,22 +2457,37 @@ AdamActivity.prototype.getAction = function(type, w) {
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                var optionType = filterModules.selectedFieldOption(this.html, this.options);
+                if (!optionType) {
+                    filterModules.setFilterFieldDisable(filterModules, true);
+                    filterRelated.setFilterFieldDisable(filterRelated, true);
+                } else if (optionType === 'one') {
+                    filterModules.setFilterFieldDisable(filterModules, true);
+                } else {
+                    filterModules.setFilterFieldDisable(filterModules, false);
+                }
                 filterModules.setObjectValue(null);
                 filterModules.setModule(comboModules.value, PROJECT_MODULE);
-                comboRelated.removeOptions();
-                comboRelated.value = '';
-                comboRelated.proxy.url = 'pmse_Project/CrmData/related/' + comboModules.getSelectedData().module_name;
-                comboRelated.proxy.getData({removeTarget: true}, {
-                    success: function(data) {
-                        App.alert.dismiss('upload');
-                        if (data) {
-                            data.result.unshift({value: '', text: 'Select...'});
-                            comboRelated.setOptions(data.result);
-                            filterRelated.setObjectValue(null);
-                            filterRelated.setModule(null, null);
+                if (!optionType) {
+                    comboRelated.disable();
+                } else {
+                    comboRelated.enable();
+                    comboRelated.removeOptions();
+                    comboRelated.value = '';
+                    comboRelated.proxy.url = 'pmse_Project/CrmData/related/' +
+                        comboModules.getSelectedData().module_name;
+                    comboRelated.proxy.getData({removeTarget: true}, {
+                        success: function(data) {
+                            App.alert.dismiss('upload');
+                            if (data) {
+                                data.result.unshift({value: '', text: 'Select...'});
+                                comboRelated.setOptions(data.result);
+                                filterRelated.setObjectValue(null);
+                                filterRelated.setModule(null, null);
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + comboModules.value;
                 // Call type set to CF to distinguish from Add Related Record
                 updater_field.proxy.getData({call_type: 'CF', base_module: PROJECT_MODULE}, {
@@ -2491,9 +2506,17 @@ AdamActivity.prototype.getAction = function(type, w) {
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                var optionType = filterModules.selectedFieldOption(this.html, this.options);
+                if (!optionType || optionType === 'one') {
+                    filterRelated.setFilterFieldDisable(filterRelated, true);
+                } else {
+                    filterRelated.setFilterFieldDisable(filterRelated, false);
+                }
                 filterRelated.setObjectValue(null);
                 if (comboRelated.value) {
-                    filterRelated.setModule(comboRelated.value, comboModules.getSelectedData().module_name);
+                    if (filterRelated.selectField.disabled === false) {
+                        filterRelated.setModule(comboRelated.value, comboModules.getSelectedData().module_name);
+                    }
                     updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + comboRelated.value;
                     updater_field.proxy.getData({
                         call_type: 'CF',
@@ -2595,7 +2618,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                     self.canvas.emptyCurrentSelection();
 
                     comboModules.proxy.getData({
-                        cardinality: 'one'
+                        cardinality: 'all'
                     }, {
                         success: function(modules) {
                             if (modules && modules.success) {
@@ -2608,10 +2631,26 @@ AdamActivity.prototype.getAction = function(type, w) {
                                         updater_field.setVariables(data);
                                     }
                                 });
-                                if (params.filter) {
-                                    filterModules.setObjectValue(params.filter);
+                                var optionType = filterModules.selectedFieldOption(comboModules.html, modules.result);
+                                if (!optionType) {
+                                    filterModules.setFilterFieldDisable(filterModules, true);
+                                    filterRelated.setFilterFieldDisable(filterRelated, true);
+                                } else if (optionType === 'one') {
+                                    filterModules.setFilterFieldDisable(filterModules, true);
+                                } else {
+                                    filterModules.setFilterFieldDisable(filterModules, false);
                                 }
-                                filterModules.setModule(comboModules.value, PROJECT_MODULE);
+                                if (filterModules.valueElements[0].disabled === false) {
+                                    if (params.filter) {
+                                        filterModules.setObjectValue(params.filter);
+                                    }
+                                    filterModules.setModule(comboModules.value, PROJECT_MODULE);
+                                }
+                                if (!optionType) {
+                                    comboRelated.disable();
+                                } else {
+                                    comboRelated.enable();
+                                }
                                 if (params.chainedRelationship) {
                                     comboRelated.setValue(params.chainedRelationship.module);
                                 }
@@ -2622,16 +2661,27 @@ AdamActivity.prototype.getAction = function(type, w) {
                                         if (data) {
                                             data.result.unshift({value: '', text: 'Select...'});
                                             comboRelated.setOptions(data.result);
-                                            if (params.chainedRelationship) {
-                                                if (params.chainedRelationship.filter) {
-                                                    filterRelated.setObjectValue(params.chainedRelationship.filter);
-                                                }
-                                                filterRelated.setModule(
-                                                    comboRelated.value,
-                                                    comboModules.getSelectedData().module_name
-                                                );
+                                            var optionType = filterModules.selectedFieldOption(
+                                                comboRelated.html,
+                                                data.result
+                                            );
+                                            if (!optionType || optionType === 'one') {
+                                                filterRelated.setFilterFieldDisable(filterRelated, true);
                                             } else {
-                                                filterRelated.setModule(null, null);
+                                                filterRelated.setFilterFieldDisable(filterRelated, false);
+                                            }
+                                            if (filterRelated.valueElements[0].disabled === false) {
+                                                if (params.chainedRelationship) {
+                                                    if (params.chainedRelationship.filter) {
+                                                        filterRelated.setObjectValue(params.chainedRelationship.filter);
+                                                    }
+                                                    filterRelated.setModule(
+                                                        comboRelated.value,
+                                                        comboModules.getSelectedData().module_name
+                                                    );
+                                                } else {
+                                                    filterRelated.setModule(null, null);
+                                                }
                                             }
                                         }
                                     }
@@ -2679,20 +2729,34 @@ AdamActivity.prototype.getAction = function(type, w) {
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
+                var optionType = filterModules.selectedFieldOption(this.html, this.options);
+                if (!optionType) {
+                    filterModules.setFilterFieldDisable(filterModules, true);
+                } else if (optionType === 'one') {
+                    filterModules.setFilterFieldDisable(filterModules, true);
+                } else {
+                    filterModules.setFilterFieldDisable(filterModules, false);
+                }
                 filterModules.setObjectValue(null);
                 filterModules.setModule(comboModules.value, PROJECT_MODULE);
-                comboRelated.removeOptions();
-                comboRelated.value = '';
-                comboRelated.proxy.url = 'pmse_Project/CrmData/related/' + comboModules.getSelectedData().module_name;
-                comboRelated.proxy.getData({removeTarget: true}, {
-                    success: function(data) {
-                        App.alert.dismiss('upload');
-                        if (data) {
-                            data.result.unshift({value: '', text: 'Select...'});
-                            comboRelated.setOptions(data.result);
+                if (!optionType) {
+                    comboRelated.disable();
+                } else {
+                    comboRelated.enable();
+                    comboRelated.removeOptions();
+                    comboRelated.value = '';
+                    comboRelated.proxy.url = 'pmse_Project/CrmData/related/' +
+                        comboModules.getSelectedData().module_name;
+                    comboRelated.proxy.getData({removeTarget: true}, {
+                        success: function(data) {
+                            App.alert.dismiss('upload');
+                            if (data) {
+                                data.result.unshift({value: '', text: 'Select...'});
+                                comboRelated.setOptions(data.result);
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 updater_field.proxy.uid = comboModules.value;
                 updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + comboModules.value;
                 updater_field.proxy.getData({base_module: PROJECT_MODULE}, {
@@ -2798,7 +2862,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                 'loaded': function(data) {
                     var params = data.act_params ? JSON.parse(data.act_params) : {};
                     self.canvas.emptyCurrentSelection();
-                    comboModules.proxy.getData({cardinality: 'one-to-many'}, {
+                    comboModules.proxy.getData({cardinality: 'all'}, {
                         success: function(modules) {
                             if (modules && modules.success && modules.result && modules.result.length > 1) {
                                 modules.result = modules.result.splice(1);
@@ -2820,10 +2884,25 @@ AdamActivity.prototype.getAction = function(type, w) {
                                         updater_field.setVariables(data);
                                     }
                                 });
-                                if (params.filter) {
-                                    filterModules.setObjectValue(params.filter);
+                                var optionType = filterModules.selectedFieldOption(comboModules.html, modules.result);
+                                if (!optionType) {
+                                    filterModules.setFilterFieldDisable(filterModules, true);
+                                } else if (optionType === 'one') {
+                                    filterModules.setFilterFieldDisable(filterModules, true);
+                                } else {
+                                    filterModules.setFilterFieldDisable(filterModules, false);
                                 }
-                                filterModules.setModule(comboModules.value, PROJECT_MODULE);
+                                if (filterModules.valueElements[0].disabled === false) {
+                                    if (params.filter) {
+                                        filterModules.setObjectValue(params.filter);
+                                    }
+                                    filterModules.setModule(comboModules.value, PROJECT_MODULE);
+                                }
+                                if (!optionType) {
+                                    comboRelated.disable();
+                                } else {
+                                    comboRelated.enable();
+                                }
                                 if (params.chainedRelationship) {
                                     comboRelated.setValue(params.chainedRelationship.module);
                                 }

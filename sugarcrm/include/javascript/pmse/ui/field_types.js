@@ -520,12 +520,35 @@ FilterField.prototype.createValueElements = function(settings) {
     this.valueElements.push(valueElement);
     if (this.html) {
         for (var i = 0; i < this.valueElements.length; i++) {
+            if (this.selectField && this.selectField.disabled === true) {
+                this.valueElements[i].disabled = true;
+            }
             this.html.appendChild(this.valueElements[i]);
         }
     }
     this._type = settings.type;
 };
-
+FilterField.prototype.selectedFieldOption = function(html, options) {
+    var option = jQuery(html).find('option:selected')[0].text;
+    var optionType = null;
+    for (var i = 0; i < options.length; i++) {
+        if (option && options[i].text === option && options[i].type) {
+            optionType = options[i].type;
+        }
+    }
+    return optionType;
+};
+FilterField.prototype.setFilterFieldDisable = function(filterField, value) {
+    if (filterField.selectField) {
+        filterField.selectField.disabled = value;
+    }
+    if (filterField.selectOperator) {
+        filterField.selectOperator.disabled = value;
+    }
+    if (filterField.valueElements[0]) {
+        filterField.valueElements[0].disabled = value;
+    }
+};
 /**
  * Creates a date element
  * @param settings
@@ -580,7 +603,6 @@ FilterField.prototype.dateFormatter = function(value, format) {
     value = App.date(value);
     return value.isValid() ? value.format(format) : null;
 };
-
 FilterField.prototype.createDropdownValueElement = function(settings) {
     var valueElement = this.createHTMLElement('div');
     valueElement.id = this.id;
