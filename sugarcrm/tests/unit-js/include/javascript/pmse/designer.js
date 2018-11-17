@@ -1001,6 +1001,7 @@ describe('includes.javascript.pmse.designer', function() {
 
             beforeEach(function() {
                 $('#ButtonToggleErrorPane').click(function() {
+                    // Function stub
                 });
             });
 
@@ -1015,13 +1016,13 @@ describe('includes.javascript.pmse.designer', function() {
             });
 
             it('should remove action from the process validator buttons', function() {
-                expect($('#ButtonValidate').data('events')).not.toBe(undefined);
-                expect($('#ButtonSaveValidate').data('events')).not.toBe(undefined);
-                expect($('#ButtonToggleErrorPane').data('events')).not.toBe(undefined);
+                expect($._data(document.getElementById('ButtonValidate'), 'events')).not.toBe(undefined);
+                expect($._data(document.getElementById('ButtonSaveValidate'), 'events')).not.toBe(undefined);
+                expect($._data(document.getElementById('ButtonToggleErrorPane'), 'events')).not.toBe(undefined);
                 mockSilentTracker.clearButtonStyleAndAction();
-                expect($('#ButtonValidate').data('events')).toBe(undefined);
-                expect($('#ButtonSaveValidate').data('events')).toBe(undefined);
-                expect($('#ButtonToggleErrorPane').data('events')).toBe(undefined);
+                expect($._data(document.getElementById('ButtonValidate'), 'events')).toBe(undefined);
+                expect($._data(document.getElementById('ButtonSaveValidate'), 'events')).toBe(undefined);
+                expect($._data(document.getElementById('ButtonToggleErrorPane'), 'events')).toBe(undefined);
             });
         });
 
@@ -1030,7 +1031,7 @@ describe('includes.javascript.pmse.designer', function() {
                 project.isBeingValidated = true;
                 mockNonSilentTracker.clearButtonStyleAndAction();
                 mockNonSilentTracker.updateValidateButton();
-                expect($('#ButtonValidate').data('events')).toBe(undefined);
+                expect($._data(document.getElementById('ButtonValidate'), 'events')).toBe(undefined);
                 expect($('#ButtonValidate > i').attr('class')).toEqual('fa fa-check-square check-square-off');
             });
 
@@ -1038,7 +1039,7 @@ describe('includes.javascript.pmse.designer', function() {
                 project.isBeingValidated = false;
                 mockNonSilentTracker.clearButtonStyleAndAction();
                 mockNonSilentTracker.updateValidateButton();
-                expect($('#ButtonValidate').data('events')).not.toBe(undefined);
+                expect($._data(document.getElementById('ButtonValidate'), 'events')).not.toBe(undefined);
                 expect($('#ButtonValidate > i').attr('class')).toEqual('fa fa-check-square check-square-on');
             });
         });
@@ -1048,7 +1049,7 @@ describe('includes.javascript.pmse.designer', function() {
                 project.isBeingValidated = true;
                 mockNonSilentTracker.clearButtonStyleAndAction();
                 mockNonSilentTracker.updateSaveValidateButton();
-                expect($('#ButtonSaveValidate').data('events')).toBe(undefined);
+                expect($._data(document.getElementById('ButtonSaveValidate'), 'events')).toBe(undefined);
                 expect($('#ButtonSaveValidate > i').filter(':first').attr('class')).toEqual(
                     'fa fa-save fa-sm save-off');
                 expect($('#ButtonSaveValidate > i').filter(':last').attr('class')).toEqual(
@@ -1059,7 +1060,7 @@ describe('includes.javascript.pmse.designer', function() {
                 project.isBeingValidated = false;
                 mockNonSilentTracker.clearButtonStyleAndAction();
                 mockNonSilentTracker.updateSaveValidateButton();
-                expect($('#ButtonSaveValidate').data('events')).not.toBe(undefined);
+                expect($._data(document.getElementById('ButtonSaveValidate'), 'events')).not.toBe(undefined);
                 expect($('#ButtonSaveValidate > i').filter(':first').attr('class')).toEqual(
                     'fa fa-save fa-sm save-on');
                 expect($('#ButtonSaveValidate > i').filter(':last').attr('class')).toEqual(
@@ -1095,7 +1096,7 @@ describe('includes.javascript.pmse.designer', function() {
             it('should set the correct button action if no errors have been found', function() {
                 mockNonSilentTracker.clearButtonStyleAndAction();
                 mockNonSilentTracker.updateErrorPaneToggleButton();
-                expect($('#ButtonToggleErrorPane').data('events')).toBe(undefined);
+                expect($._data(document.getElementById('ButtonToggleErrorPane'), 'events')).toBe(undefined);
                 $('#ButtonToggleErrorPane').click();
                 expect(myLayout.toggle).not.toHaveBeenCalled();
             });
