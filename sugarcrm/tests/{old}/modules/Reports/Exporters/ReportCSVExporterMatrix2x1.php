@@ -43,10 +43,9 @@ class ReportCSVExporterMatrix1x1Test extends TestCase
         array $dataRows,
         string $expected
     ) {
-        // Fake a Report class so it won't run un-wanted php script
-        $reporter = $this->getMockBuilder('nonexistant')
-            ->setMockClassName('Report')
-            ->setMethods(['run_summary_query',
+        $reporter = $this->createPartialMock(
+            '\Report',
+            ['run_summary_query',
                 'run_summary_combo_query',
                 'run_total_query',
                 '_load_currency',
@@ -57,8 +56,8 @@ class ReportCSVExporterMatrix1x1Test extends TestCase
                 'get_summary_next_row',
                 'get_header_row',
                 'getReportType',
-                'getDataTypeForColumnsForMatrix'])
-            ->getMock();
+                'getDataTypeForColumnsForMatrix']
+        );
 
         $reporter->report_type = 'summary';
         $reporter->report_def = array(
