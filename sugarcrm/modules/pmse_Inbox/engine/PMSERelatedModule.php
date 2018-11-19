@@ -398,13 +398,29 @@ class PMSERelatedModule
         $fieldName = $linkField;
         $params = (isset($def) && !empty($def->act_params)) ? json_decode($def->act_params) : null;
 
+        $chainModuleExists = false;
+        if (!empty($params->chainedRelationship->module)) {
+            $fieldName = $params->chainedRelationship->module;
+            $chainModuleExists = true;
+            unset($params->chainedRelationship);
+        }
+
         if (empty($moduleBean->field_defs[$fieldName])) {
             throw ProcessManager\Factory::getException('InvalidData', "Unable to find field {$fieldName}", 1);
         }
 
         $relatedRecords = array();
 
-        $parentBeans = $this->getChainedRelationshipBeans([$moduleBean], $params);
+        $parentBeans = array();
+        // It calls getChainedRelationshipBeans() only when Related To (module) is set, it adds new record to
+        // the Related To (module). $parentBeans will be Related To (module) in this case.
+        // If Related To (module) is not set (i.e. $chainModuleExists is false), it adds new record to target module.
+        // $parentBeans will contain target module (i.e. $moduleBean) in this case.
+        if ($chainModuleExists === true) {
+            $parentBeans = $this->getChainedRelationshipBeans([$moduleBean], $params);
+        } else {
+            $parentBeans = array($moduleBean);
+        }
         if (is_array($parentBeans) && !empty($parentBeans[0]) && $parentBeans[0]->load_relationship($fieldName)) {
             $rModule = $parentBeans[0]->$fieldName->getRelatedModuleName();
 

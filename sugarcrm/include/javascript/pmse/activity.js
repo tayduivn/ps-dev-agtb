@@ -2748,7 +2748,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                     comboRelated.value = '';
                     comboRelated.proxy.url = 'pmse_Project/CrmData/related/' +
                         comboModules.getSelectedData().module_name;
-                    comboRelated.proxy.getData({removeTarget: true}, {
+                    comboRelated.proxy.getData({removeTarget: true, cardinality: 'many'}, {
                         success: function(data) {
                             App.alert.dismiss('upload');
                             if (data) {
@@ -2910,7 +2910,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                                 }
                                 comboRelated.proxy.url = 'pmse_Project/CrmData/related/' +
                                     comboModules.getSelectedData().module_name;
-                                comboRelated.proxy.getData({removeTarget: true}, {
+                                comboRelated.proxy.getData({removeTarget: true, cardinality: 'many'}, {
                                     success: function(data) {
                                         if (data) {
                                             data.result.unshift({value: '', text: 'Select...'});

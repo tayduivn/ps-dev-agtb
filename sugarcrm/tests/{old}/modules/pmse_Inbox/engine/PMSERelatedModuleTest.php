@@ -20,6 +20,8 @@ class PMSERelatedModulesTest extends TestCase
     /** @var  Account */
     private $account;
 
+    private $accountOne;
+
     /** @var  Contact */
     private $contact;
 
@@ -36,6 +38,8 @@ class PMSERelatedModulesTest extends TestCase
 
         $this->account->load_relationship('contacts');
         $this->account->contacts->add($this->contact->id);
+
+        $this->accountOne = SugarTestAccountUtilities::createAccount();
     }
 
     protected function tearDown()
@@ -98,17 +102,33 @@ class PMSERelatedModulesTest extends TestCase
                            "expOperator":"equals",
                            "expModule":"contacts",
                            "expField":"lead_source"
+                        },
+                       "chainedRelationship":{
+                           "module":"bugs"
                         }
                 }';
 
         $PMSERelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
-        $addedBeans = $PMSERelatedModule->addRelatedRecord($this->account, 'bugs', $bugFields, $def);
+        $addedBeans = $PMSERelatedModule->addRelatedRecord($this->account, 'contacts', $bugFields, $def);
 
         // the Related Related Bug bean should be added to the Related Contact bean
         $this->contact->load_relationship('bugs');
         $bugBeans = $this->contact->bugs->getBeans();
 
         $this->assertNotEmpty($bugBeans[$addedBeans[0]->id]);
+
+        // No Related To (module) is selected, a new record of the Related Module is added to the Target Module
+        $contactFields = array(
+            "assigned_user_id" => "1",
+            "last_name" => "Doe",
+        );
+        $def->act_params = '{"module":"contacts"}';
+        $addedBeans = $PMSERelatedModule->addRelatedRecord($this->accountOne, 'contacts', $contactFields, $def);
+
+        $this->accountOne->load_relationship('contacts');
+        $contactBeans = $this->accountOne->contacts->getBeans();
+
+        $this->assertNotEmpty($contactBeans[$addedBeans[0]->id]);
     }
 
     /**
