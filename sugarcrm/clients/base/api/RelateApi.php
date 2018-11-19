@@ -216,7 +216,7 @@ class RelateApi extends FilterApi {
         list(, $q) = $this->filterRelatedSetup($api, $args);
         $q->orderByReset();
         $stmt = $q->compile()->execute();
-        $count = $stmt->rowCount();
+        $count = count($stmt->fetchAll());
 
         return array(
             'record_count' => $count > $args['max_num'] ? $args['max_num'] : $count,
