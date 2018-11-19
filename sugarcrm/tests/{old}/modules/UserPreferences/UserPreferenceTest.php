@@ -64,14 +64,6 @@ class UserPreferenceTest extends TestCase
         $this->assertArrayHasKey('userGmtOffset', $res);
     }
 
-    public function testUpdateAllUserPrefs()
-    {
-        global $current_user;
-        $current_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
-        $bean = new UserPreference();
-        $result = $bean->updateAllUserPrefs('test_pref', 'Value');
-        $this->assertEmpty($result);
-    }
 
     public function testPreferenceLifeTime()
     {

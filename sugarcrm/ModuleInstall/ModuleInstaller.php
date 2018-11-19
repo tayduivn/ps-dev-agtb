@@ -259,17 +259,6 @@ class ModuleInstaller{
 
     }
 
-    function install_user_prefs($module, $hide_from_user=false){
-        UserPreference::updateAllUserPrefs('display_tabs', $module, '', true, !$hide_from_user);
-        UserPreference::updateAllUserPrefs('hide_tabs', $module, '', true, $hide_from_user);
-        UserPreference::updateAllUserPrefs('remove_tabs', $module, '', true, $hide_from_user);
-    }
-    function uninstall_user_prefs($module){
-        UserPreference::updateAllUserPrefs('display_tabs', $module, '', true, true);
-        UserPreference::updateAllUserPrefs('hide_tabs', $module, '', true, true);
-        UserPreference::updateAllUserPrefs('remove_tabs', $module, '', true, true);
-    }
-
     function pre_execute(){
         $data = $this->readManifest();
         extract($data);
@@ -1769,7 +1758,6 @@ class ModuleInstaller{
                 foreach($this->installdefs['beans'] as $bean){
 
                     $installed_modules[] = $bean['module'];
-                    $this->uninstall_user_prefs($bean['module']);
                 }
                 $this->modulesInPackage = $installed_modules;
                 $this->uninstall_beans($installed_modules);
@@ -2159,7 +2147,6 @@ class ModuleInstaller{
                         // Add this module to the moduleList array
                         $moduleList[] = $module;
                         $str .= "\$moduleList[] = '$module';\n";
-                        $this->install_user_prefs($module, empty($bean['hide_by_default']));
                         $this->tab_modules[] = $module;
                     }else{
                         $str .= "\$modules_exempt_from_availability_check['$module'] = '$module';\n";
