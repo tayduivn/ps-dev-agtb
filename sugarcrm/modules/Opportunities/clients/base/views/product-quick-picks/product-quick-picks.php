@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,26 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Opportunities']['base']['view']['recent-used-product-dashlet'] = array(
-    'dashlets' => array(
-        array(
-            'label' => 'LBL_RECENT_USED_PRODUCT_DASHLET_NAME',
-            'description' => 'LBL_RECENT_USED_PRODUCT_DASHLET_DESCRIPTION',
-            'config' => array(
-                'module' => 'Opportunities',
-            ),
-            'filter' => array(
-                'module' => array(
-                    'Opportunities',
-                    'Quotes',
-                ),
-            ),
-        ),
-    ),
+$viewdefs['Opportunities']['base']['view']['product-quick-picks'] = array(
     'tabs' => array(
         array(
             'active' => true,
-            'label' => 'LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB',
+            'label' => 'LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB',
             'link' => '',
             'module' => '',
             'row_actions' => array(
@@ -50,7 +36,7 @@ $viewdefs['Opportunities']['base']['view']['recent-used-product-dashlet'] = arra
             ),
         ),
         array(
-            'label' => 'LBL_DASHLET_RECENT_USED_PRODUCT_FAVORITES_TAB',
+            'label' => 'LBL_DASHLET_PRODUCT_QUICK_PICKS_FAVORITES_TAB',
             'link' => '',
             'module' => '',
             'row_actions' => array(

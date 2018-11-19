@@ -10,12 +10,12 @@
  */
 
 /**
- * @class View.Views.Base.Opportunities.RecentUsedProductDashletView
- * @alias SUGAR.App.view.views.BaseOpportunitiesRecentUsedProductDashletView
- * @extends View.Views.Base.Opportunities.RecentUsedProductView
+ * @class View.Views.Base.Opportunities.ProductQuickPicksDashletView
+ * @alias SUGAR.App.view.views.BaseOpportunitiesProductQuickPicksDashletView
+ * @extends View.Views.Base.Opportunities.ProductQuickPicksView
  */
 ({
-    extendsFrom: 'OpportunitiesRecentUsedProductView',
+    extendsFrom: 'OpportunitiesProductQuickPicksView',
 
     /**
      * @inheritdoc

@@ -18,7 +18,7 @@ $viewdefs['Opportunities']['base']['layout']['create-preview'] = array(
             ),
         ),
         array(
-            'view' => 'recent-used-product',
+            'view' => 'product-quick-picks',
             'context' => array(
                 'module' => 'Opportunities',
             ),

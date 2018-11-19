@@ -71,7 +71,7 @@
         if (app.controller.context.get('module') !== 'Quotes' || this.layout.module === 'Opportunities') {
             if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'Opportunities') {
                 this.tabs = _.without(this.tabs, _.findWhere(this.tabs, {
-                    label: 'LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB'
+                    label: 'LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB'
                 }));
             }
         }
@@ -83,7 +83,7 @@
      */
     getUrl: function() {
         var tab = this.tabs[this.settings.get('activeTab')];
-        if (tab.label === 'LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB') {
+        if (tab.label === 'LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB') {
             this.activeTab = 'recent-product';
         } else {
             this.activeTab = 'favorites';

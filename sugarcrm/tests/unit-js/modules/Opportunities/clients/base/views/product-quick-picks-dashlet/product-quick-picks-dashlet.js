@@ -26,7 +26,7 @@ describe('Opportunities.Base.Views.RecentUsedProductDashlet', function() {
 
         layout = SugarTest.createLayout('base', 'Opportunities', 'record', {});
         view = SugarTest.createView('base', 'Opportunities',
-            'recent-used-product-dashlet', viewMeta, context, true, layout);
+            'product-quick-picks-dashlet', viewMeta, context, true, layout);
     });
 
     afterEach(function() {

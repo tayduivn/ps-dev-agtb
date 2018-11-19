@@ -34,7 +34,7 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
                 off: $.noop
             };
         });
-        view = SugarTest.createView('base', 'Opportunities', 'recent-used-product', viewMeta, context, true, layout);
+        view = SugarTest.createView('base', 'Opportunities', 'product-quick-picks', viewMeta, context, true, layout);
 
         removeClassStub = sinon.collection.stub();
         addClassStub = sinon.collection.stub();
@@ -131,10 +131,10 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
         beforeEach(function() {
            view.tabs = [
                {
-                   label: 'LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB',
+                   label: 'LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB',
                },
                {
-                   label: 'LBL_DASHLET_RECENT_USED_PRODUCT_FAVORITES_TAB',
+                   label: 'LBL_DASHLET_PRODUCT_QUICK_PICKS_FAVORITES_TAB',
                },
            ];
 
@@ -154,12 +154,12 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
                 });
                 view._initTabs();
 
-                expect(view.tabs[0].label).not.toBe('LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB');
+                expect(view.tabs[0].label).not.toBe('LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB');
             });
         });
 
         it('should have both tabs if the dashlet is not in the Opportunity only mode', function() {
-            expect(view.tabs[0].label).toBe('LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB');
+            expect(view.tabs[0].label).toBe('LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB');
         });
     });
 
@@ -169,10 +169,10 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
         beforeEach(function() {
             view.tabs = [
                 {
-                    label: 'LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB',
+                    label: 'LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB',
                 },
                 {
-                    label: 'LBL_DASHLET_RECENT_USED_PRODUCT_FAVORITES_TAB',
+                    label: 'LBL_DASHLET_PRODUCT_QUICK_PICKS_FAVORITES_TAB',
                 },
             ];
         });
@@ -180,21 +180,21 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
         it('should set tab to recent products', function() {
             view.settings = new Backbone.Model({
                 activeTab: 0,
-                label: 'LBL_RECENT_USED_PRODUCT_DASHLET_NAME',
-                type: 'recent-used-product-dashlet',
+                label: 'LBL_PRODUCT_QUICK_PICKS_DASHLET_NAME',
+                type: 'product-quick-picks-dashlet',
             });
             activeTabIndex = view.settings.get('activeTab');
-            expect(view.tabs[activeTabIndex].label).toBe('LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB');
+            expect(view.tabs[activeTabIndex].label).toBe('LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB');
         });
 
         it('should set tab to favorites products', function() {
             view.settings = new Backbone.Model({
                 activeTab: 1,
-                label: 'LBL_RECENT_USED_PRODUCT_DASHLET_NAME',
-                type: 'recent-used-product-dashlet',
+                label: 'LBL_PRODUCT_QUICK_PICKS_DASHLET_NAME',
+                type: 'product-quick-picks-dashlet',
             });
             activeTabIndex = view.settings.get('activeTab');
-            expect(view.tabs[activeTabIndex].label).toBe('LBL_DASHLET_RECENT_USED_PRODUCT_FAVORITES_TAB');
+            expect(view.tabs[activeTabIndex].label).toBe('LBL_DASHLET_PRODUCT_QUICK_PICKS_FAVORITES_TAB');
         });
     });
 
@@ -233,11 +233,11 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
             view.tabs = [
                 {
                     active: 'true',
-                    label: 'LBL_DASHLET_RECENT_USED_PRODUCT_RECENT_TAB'
+                    label: 'LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB'
                 },
                 {
                     active: 'false',
-                    label: 'LBL_DASHLET_RECENT_USED_PRODUCT_FAVORITES_TAB'
+                    label: 'LBL_DASHLET_PRODUCT_QUICK_PICKS_FAVORITES_TAB'
                 }
             ];
 

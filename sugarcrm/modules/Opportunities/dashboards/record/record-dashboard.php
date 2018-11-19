@@ -33,8 +33,8 @@ return array(
                     array(
                         array(
                             'view' => array(
-                                'type' => 'recent-used-product-dashlet',
-                                'label' => 'LBL_RECENT_USED_PRODUCT_DASHLET_NAME',
+                                'type' => 'product-quick-picks-dashlet',
+                                'label' => 'LBL_PRODUCT_QUICK_PICKS_DASHLET_NAME',
                             ),
                             'context' => array(
                                 'module' => 'Opportunities',
