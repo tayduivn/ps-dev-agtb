@@ -963,6 +963,11 @@ FilterField.prototype.friendlyDropdownSetValue = function(value) {
                 this.value = objectValue.act_field_filter.filter;
                 this.value.expLabel = theText;
                 this.value.expValue = value;
+            } else if (objectValue && objectValue.act_field_filter_related &&
+                objectValue.act_field_filter_related.filter) {
+                this.value = objectValue.act_field_filter_related.filter;
+                this.value.expLabel = theText;
+                this.value.expValue = value;
             }
         }
     } else {
