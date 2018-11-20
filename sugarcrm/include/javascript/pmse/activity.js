@@ -2513,6 +2513,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                     filterRelated.setFilterFieldDisable(filterRelated, false);
                 }
                 filterRelated.setObjectValue(null);
+                filterRelated.setModule(null, null);
                 if (comboRelated.value) {
                     if (filterRelated.selectField.disabled === false) {
                         filterRelated.setModule(comboRelated.value, comboModules.getSelectedData().module_name);
@@ -2531,7 +2532,6 @@ AdamActivity.prototype.getAction = function(type, w) {
                         }
                     });
                 } else {
-                    filterRelated.setModule(null, null);
                     updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + comboModules.value;
                     updater_field.proxy.getData({call_type: 'CF', base_module: PROJECT_MODULE}, {
                         success: function(data) {
