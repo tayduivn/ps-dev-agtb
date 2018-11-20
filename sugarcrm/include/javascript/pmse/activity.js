@@ -2903,6 +2903,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                                 } else {
                                     comboRelated.enable();
                                 }
+                                comboModules.setValue(params.module || initialModule);
                                 if (params.chainedRelationship) {
                                     comboRelated.setValue(params.chainedRelationship.module);
                                 }
@@ -2922,7 +2923,8 @@ AdamActivity.prototype.getAction = function(type, w) {
                                         params.chainedRelationship.module;
                                 } else {
                                     updater_field.proxy.uid = PROJECT_MODULE;
-                                    updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + initialModule;
+                                    updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' +
+                                        comboModules.getSelectedData().module_name;
                                 }
                                 updater_field.proxy.getData({base_module: updater_field.proxy.uid}, {
                                     success: function(fields) {
