@@ -325,6 +325,9 @@ FilterField.prototype.generateOption = function(type, item, labelField) {
             case 'datefield':
                 text = item.datefield;
                 break;
+            case 'label':
+                text = item.label;
+                break;
             default:
                 text = item.text;
         }
@@ -607,13 +610,16 @@ FilterField.prototype.createDropdownValueElement = function(settings) {
     var select = this.createHTMLElement('select');
     select.className = 'inherit-width adam form-panel-field-control';
     for (var i = 0; i < settings.options.length; i++) {
-        select.appendChild(this.generateOption('expValue', settings.options[i], 'text'));
+        select.appendChild(this.generateOption('expValue', settings.options[i], 'label'));
     }
     valueElement.appendChild(select);
     $(valueElement).change(function() {
-        var document = $('.inherit-width adam form-panel-field-control').context;
-        if (document && document.activeElement && document.activeElement.value) {
-            this.value = document.activeElement.value;
+        var option = jQuery(this).find('option:selected')[0];
+        if (option && option.value) {
+            this.value = option.value;
+        }
+        if (option && option.label) {
+            this.label = option.label;
         }
     });
     return valueElement;
@@ -1142,7 +1148,7 @@ FilterField.prototype.getObjectValue = function() {
         }
     } else {
         expValue = this.getValueElementsValue();
-        expLabel = expValue;
+        expLabel = this.valueElements[0].label ? this.valueElements[0].label : expValue;
     }
     if (data && this.submit) {
         value[this.name] = {
