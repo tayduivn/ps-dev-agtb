@@ -568,6 +568,9 @@ FilterField.prototype.createDateElement = function(settings) {
     if (settings.showTimePicker) {
         var timeInput = this.createPicker('40%');
         $(timeInput).timepicker({timeFormat: this.timeFormat});
+        $(timeInput).blur(function() {
+            $(timeInput).timepicker('hide');
+        });
         valueElement.appendChild(timeInput);
     }
 
