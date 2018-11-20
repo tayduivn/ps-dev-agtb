@@ -433,8 +433,8 @@ FilterField.prototype.processValueDependency = function(type) {
                 settings.decimalSeparator = App.user.getPreference('decimal_separator');
                 settings.groupingSeparator = App.user.getPreference('number_grouping_separator');
                 settings.precision = 2;
-                setPrecision = false;
-                setGrouping = false;
+                operators = this.operators.slice(0, 6);
+                labelField = 'text';
                 break;
             case 'decimal':
             case 'float':
@@ -494,6 +494,7 @@ FilterField.prototype.createValueElements = function(settings) {
             break;
         case 'currency':
             valueElement = this.createCurrencyValueElement(settings);
+            break;
         case 'friendlydropdown':
             valueElement = this.createFriendlyDropdownValueElement(settings);
             break;
