@@ -359,13 +359,8 @@ FilterField.prototype.onFieldChange = function() {
     var type = this.getSelectedData(this.selectField.value);
     if (type) {
         type = this._typeToControl[type.type.toLowerCase()];
-        if (type !== this._type ||
-            type === 'dropdown') {
-            this.processValueDependency(type);
-        }
-    } else {
-        this.processValueDependency(type);
     }
+    this.processValueDependency(type);
 };
 FilterField.prototype.processValueDependency = function(type) {
     var labelField = 'textfield';
