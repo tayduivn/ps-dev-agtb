@@ -39,7 +39,7 @@ final class Redis extends RedisCache
 
         $client = new Client();
 
-        if (version_compare(phpversion('redis'), '4.0.0') > 0) {
+        if (version_compare(phpversion('redis'), '4.0.0') >= 0) {
             try {
                 $this->connect($client, $host, $port);
             } catch (RedisException $e) {
