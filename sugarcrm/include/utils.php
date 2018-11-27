@@ -3120,7 +3120,7 @@ function check_php_version($sys_php_version = '')
         return -1;
     }
 
-    if (version_compare($sys_php_version, '7.2.0-dev', '>=')) {
+    if (version_compare($sys_php_version, '7.3.0-dev', '>=')) {
         return -1;
     }
 

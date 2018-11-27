@@ -14,26 +14,24 @@ use PHPUnit\Framework\TestCase;
 
 class CheckPHPVersionTest extends TestCase
 {
-    public function providerPhpVersion()
+    public function providerPhpVersion() : iterable
     {
-        return array(
-            array('5.6.0', -1, 'Minimum valid version check failed.'),
-            array('7.1.0-dev', -1, 'Minimum valid version check failed.'),
-            array('7.1.0', 1, 'Supported version check Failed'),
-            array('7.2.0', -1, 'Threshold Check Failed'),
-            array('7.2.0-dev', -1, 'Threshold Check Failed'),
-        );
+        return [
+            'too-old' => ['7.0.0', -1],
+            'supported-but-dev' => ['7.1.0-dev', -1],
+            'supported-71' => ['7.1.0', 1],
+            'supported-72' => ['7.2.0', 1],
+            'too-new-and-dev' => ['7.3.0-dev', -1],
+            'too-new' => ['7.3.0', -1],
+        ];
     }
 
     /**
      * @dataProvider providerPhpVersion
      * @ticket 33202
      */
-    public function testPhpVersion(
-        $ver,
-        $expected_retval,
-        $message
-    ) {
-        $this->assertEquals($expected_retval, check_php_version($ver), $message);
+    public function testPhpVersion(string $ver, int $expected_retval) : void
+    {
+        $this->assertEquals($expected_retval, check_php_version($ver));
     }
 }
