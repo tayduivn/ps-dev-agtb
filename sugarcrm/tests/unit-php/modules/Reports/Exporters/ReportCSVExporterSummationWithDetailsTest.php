@@ -172,15 +172,15 @@ class ReportCSVExporterSummationWithDetailsTest extends TestCase
             array('cells' => array('Fortress of Solitude', '$2,400,000')),
         );
 
-        $expected1 = "\"Superhero Name = Iron Man, Value of Total Property Owned = $12,400,000,000, Count = 1\"\r\n" .
+        $expected1 = "\"Superhero Name = Iron Man, Value of Total Property Owned = $12,400,000,000\"\r\n" .
             "\"Name\",\"Property Value\"\r\n" .
             "\"Avengers Tower\",\"$12,400,000,000\"\r\n" .
             "\r\n" .
-            "\"Superhero Name = Batman, Value of Total Property Owned = $9,200,000,000, Count = 1\"\r\n" .
+            "\"Superhero Name = Batman, Value of Total Property Owned = $9,200,000,000\"\r\n" .
             "\"Name\",\"Property Value\"\r\n" .
             "\"Wayne Manor\",\"$9,200,000,000\"\r\n" .
             "\r\n" .
-            "\"Superhero Name = Superman, Value of Total Property Owned = $2,400,000, Count = 1\"\r\n" .
+            "\"Superhero Name = Superman, Value of Total Property Owned = $2,400,000\"\r\n" .
             "\"Name\",\"Property Value\"\r\n" .
             "\"Fortress of Solitude\",\"$2,400,000\"\r\n" .
             "\r\n" .

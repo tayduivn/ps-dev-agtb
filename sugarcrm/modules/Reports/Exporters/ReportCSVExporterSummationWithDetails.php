@@ -159,10 +159,7 @@ class ReportCSVExporterSummationWithDetails extends ReportCSVExporterBase
                     $mainTableData['content'] .= $this->getSummaryDelimiter() . " $label = $data";
                 }
             }
-            // add a Count entry for this grouping (whether we're at the bottom of the tree or not, and regardless of
-            // whether or not Count was specified this is always included)
-            $count = $lowerOutput['count'];
-            $mainTableData['content'] .= $this->getSummaryDelimiter() . " Count = $count\"" . $this->getLineEnd();
+            $mainTableData['content'] .= '"' . $this->getLineEnd();
 
             // accumulate both the detail rows and the number of rows into this table
             $mainTableData['content'] .= $lowerOutput['content'];
