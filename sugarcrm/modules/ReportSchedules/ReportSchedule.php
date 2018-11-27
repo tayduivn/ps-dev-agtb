@@ -469,8 +469,11 @@ QUERY;
             $last_run += $interval;
         }
         $next_run = $timedate->fromTimestamp($last_run)->asDb();
-        $query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
-        $this->db->query($query);
+        $this->db->getConnection()
+            ->executeUpdate(
+                "UPDATE {$this->table_name} SET next_run = ? WHERE id = ?",
+                [$next_run, $schedule_id]
+            );
     }
 
     /**
