@@ -414,7 +414,7 @@ $mod_strings = array (
     'LBL_PMSE_ERROR_FLOW_INCOMING_MINIMUM_INFO' => 'This element must have a minimum number of incoming paths. Check the number of paths that connect to this element to make sure that minimum number is met.',
 
     'LBL_PMSE_ERROR_FLOW_INCOMING_MAXIMUM' => 'Element exceeds the maximum number of incoming flows',
-    'LBL_PMSE_ERROR_FLOW_INCOMING_MINIMUM_INFO' => 'This element has a maximum number of incoming paths that must not be exceeded. Check the number of paths that connect to this element to make sure that minumum number is not exceeded.',
+    'LBL_PMSE_ERROR_FLOW_INCOMING_MAXIMUM_INFO' => 'This element has a maximum number of incoming paths that must not be exceeded. Check the number of paths that connect to this element to make sure that maximum number is not exceeded.',
 
     'LBL_PMSE_ERROR_FLOW_OUTGOING_MINIMUM' => 'Element does not meet the minimum number of outgoing flows',
     'LBL_PMSE_ERROR_FLOW_OUTGOING_MINIMUM_INFO' => 'This element must have a minimum number of outgoing paths. Check the number of paths leading out of this element to make sure that minimum number is met.',
