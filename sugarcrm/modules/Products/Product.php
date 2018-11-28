@@ -291,7 +291,10 @@ class Product extends SugarBean
         $quotesIndex = array_search('quotes', $fields);
         $pbIndex = array_search('product_bundles', $fields);
 
-        if ($pbIndex > $quotesIndex) {
+        // make sure both indices exist in the fields, otherwise do nothing to the order
+        $bothIndicesExist = $quotesIndex !== false && $pbIndex !== false;
+
+        if ($bothIndicesExist && $pbIndex > $quotesIndex) {
             function arraySwap(&$array, $swapFirst, $swapSecond) {
                 list($array[$swapFirst], $array[$swapSecond]) = array($array[$swapSecond], $array[$swapFirst]);
             }

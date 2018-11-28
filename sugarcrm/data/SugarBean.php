@@ -2312,7 +2312,7 @@ class SugarBean
     {
         global $dictionary;
 
-        return $dictionary[$this->object_name]['related_calc_fields'];
+        return $dictionary[$this->object_name]['related_calc_fields'] ?? [];
     }
 
     /**
