@@ -716,7 +716,18 @@ class UserViewHelper {
         if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' ) {
             $GLOBALS['dictionary']['User']['fields']['email1']['required'] = false;
         }
-        $this->ss->assign("NEW_EMAIL",  '<span id="email_span">' . getEmailAddressWidget($this->bean, "email1", $this->bean->email1, $this->viewType) . '</span>');
+        $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
+        $skipIdmRestrictions = $idpConfig->isIDMModeEnabled() && $idpConfig->isSpecialBeanAction($this->bean, []);
+        $this->ss->assign('NEW_EMAIL', '<span id="email_span">'
+            . getEmailAddressWidget(
+                $this->bean,
+                'email1',
+                $this->bean->email1,
+                $this->viewType,
+                '0',
+                $skipIdmRestrictions
+            )
+            . '</span>');
         // hack to undo that previous hack
         if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' ) {
             $GLOBALS['dictionary']['User']['fields']['email1']['required'] = true;
