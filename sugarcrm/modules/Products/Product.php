@@ -276,6 +276,31 @@ class Product extends SugarBean
         }
     }
 
+    /**
+     * @inheritdoc
+     *
+     * Overriden here to ensure that the ProductBundles bean is saved before the Quotes bean in all cases.
+     *
+     * @return array
+     */
+    protected function getRelatedCalcFields()
+    {
+        global $dictionary;
+
+        $links = $dictionary[$this->object_name]['related_calc_fields'];
+        $quotesIndex = array_search('quotes', $fields);
+        $pbIndex = array_search('product_bundles', $fields);
+
+        if ($pbIndex > $quotesIndex) {
+            function arraySwap(&$array, $swapFirst, $swapSecond) {
+                list($array[$swapFirst], $array[$swapSecond]) = array($array[$swapSecond], $array[$swapFirst]);
+            }
+            arraySwap($fields, $quotesIndex, $pbIndex);
+        }
+
+        return $links;
+    }
+
     public function save($check_notify = false)
     {
         //If an opportunity_id value is provided, lookup the Account information (if available)

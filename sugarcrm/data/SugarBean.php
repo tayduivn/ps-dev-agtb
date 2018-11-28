@@ -2304,6 +2304,18 @@ class SugarBean
     }
 
     /**
+     * Extensible function to allow child models to change the order in which to save beans.
+     *
+     * @return array The array of related bean link names that need to be saved in order
+     */
+    protected function getRelatedCalcFields()
+    {
+        global $dictionary;
+
+        return $dictionary[$this->object_name]['related_calc_fields'];
+    }
+
+    /**
      * Update any related calculated fields
      *
      * @param string $linkName      The specific link that needs updating
@@ -2315,7 +2327,7 @@ class SugarBean
             return;
         }
 
-        global $dictionary, $sugar_config;
+        global $sugar_config;
 
         if(!empty($sugar_config['disable_related_calc_fields'])){
             return;
@@ -2324,8 +2336,8 @@ class SugarBean
         // If linkName is empty then we need to handle all links
         if (empty($linkName)) {
             $GLOBALS['log']->debug("Updating records related to {$this->module_dir} {$this->id}");
-            if (!empty($dictionary[$this->object_name]['related_calc_fields'])) {
-                $links = $dictionary[$this->object_name]['related_calc_fields'];
+            $links = $this->getRelatedCalcFields();
+            if (!empty($links)) {
                 $resavedManyBeans = false;
                 foreach($links as $lname) {
                     if (isset(self::$recursivelyResavedLinks[$this->module_name][$lname])) {
