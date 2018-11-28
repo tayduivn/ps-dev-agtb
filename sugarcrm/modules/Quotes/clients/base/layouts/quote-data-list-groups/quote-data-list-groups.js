@@ -678,6 +678,19 @@
                 }
             }
         }, this);
+
+        _.each(this._components, function(comp) {
+            if (comp.type === 'quote-data-group') {
+                _.each(comp._components, function(subComp) {
+                    if (subComp.type === 'quote-data-group-list') {
+                        // re-initialize the SugarLogic Context on the QuoteDataGroupList
+                        subComp.slContext.initialize(
+                            subComp._getSugarLogicDependenciesForModel(subComp.model)
+                        );
+                    }
+                }, this);
+            }
+        }, this);
     },
 
     /**
