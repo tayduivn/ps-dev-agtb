@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\modules\Reports\Exporters;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\modules\Reports\unformat_number;
 use Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterSummation;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass ReportCSVExporterSummation
@@ -91,22 +92,17 @@ class ReportCSVExporterSummationTest extends TestCase
             ->method('get_next_row')
             ->willReturn(0);
 
-        $reporter->method('get_total_header_row')
-            ->willReturn($totalHeaderRow);
+        // don't mock out the individual methods in the implementation of grand total,
+        // instead mock the grand total at the exporter level below
 
-        for ($i = 0; $i < count($totalData); $i++) {
-            $reporter->expects($this->at(self::$IdxToPass + count($dataRows) + 2 + $i))
-                ->method('get_summary_total_row')
-                ->willReturn($totalData[$i]);
-        }
+        // get mock
+        $csvMaker = $this->createMockExporter($reporter);
+        $csvMaker->expects($this->once())
+            ->method('getGrandTotal')
+            ->willReturn("Grand Total\r\nThe Grand Total Goes Here");
 
-        $reporter->expects($this->at(self::$IdxToPass + count($dataRows) + 1 + count($totalData)))
-            ->method('get_summary_total_row')
-            ->willReturn(0);
-
-        $csvMaker = new ReportCSVExporterSummation($reporter);
-
-        $this->assertEquals($expected, $csvMaker->export());
+        $actual = $csvMaker->export();
+        $this->assertEquals($expected, $actual);
     }
 
     public function summationExportProvider()
@@ -117,31 +113,37 @@ class ReportCSVExporterSummationTest extends TestCase
                 'cells' => ["Iron Man", "Marvel", "$12,400,000,000"],
             ),
             array(
-                'cells' => ["Bat Man", "DC", "$9,200,000,000"],
+                'cells' => ["Batman", "DC", "$9,200,000,000"],
             ),
             array(
                 'cells' => ["Superman", "DC", "$2,400,000"],
             ),
         );
 
-        $totalHeaderRow1 = array("", "Count");
+        $totalHeaderRow1 = array('', 'Count');
         $totalData1 = array(
             array(
-                'cells' => ["", "4"],
+                'cells' => ['', '3'],
             ),
         );
 
         $expected1 = "\"Name\",\"Universe\",\"Total Property Owned\"\r\n" .
             "\"Iron Man\",\"Marvel\",\"$12,400,000,000\"\r\n" .
-            "\"Bat Man\",\"DC\",\"$9,200,000,000\"\r\n" .
+            "\"Batman\",\"DC\",\"$9,200,000,000\"\r\n" .
             "\"Superman\",\"DC\",\"$2,400,000\"\r\n" .
             "\r\n\r\n" .
-            "\"Grand Total\"\r\n" .
-            "\"\",\"Count\"\r\n" .
-            "\"\",\"4\"";
+            "Grand Total\r\n" .
+            "The Grand Total Goes Here";
 
         return array(
             array($headerRow1, $dataRows1, $totalHeaderRow1, $totalData1, $expected1),
         );
+    }
+
+    public function createMockExporter(\Report $reporter)
+    {
+        $mockExporter = $this->createPartialMock(ReportCSVExporterSummation::class, array('getGrandTotal'));
+        TestReflection::setProtectedValue($mockExporter, 'reporter', $reporter);
+        return $mockExporter;
     }
 }

@@ -32,7 +32,7 @@ class ReportCSVExporterMatrix1x1 extends ReportCSVExporterMatrix
         foreach ($this->columnHeaders as $columnHeader) {
             $content .= $this->getDelimiter(false) . "\"$columnHeader\"";
         }
-        $content .= $this->getDelimiter(false) . "\"Grand Total\"" . $this->getLineEnd();
+        $content .= $this->getDelimiter(false) . $this->getTranslationOf('LBL_GRAND_TOTAL') . $this->getLineEnd();
         $rowGrandTotal = array_pad(
             array(),
             count($this->columnHeaders),
@@ -97,7 +97,7 @@ class ReportCSVExporterMatrix1x1 extends ReportCSVExporterMatrix
             $passedFirstRow = true;
         }
         // build last row grand total
-        $content .= "\"Grand Total\"";
+        $content .= $this->getTranslationOf('LBL_GRAND_TOTAL');
         for ($i = 0; $i < count($this->displayHeaders); $i++) {
             $columnGrandTotal = 0;
             $columnCount = 0;

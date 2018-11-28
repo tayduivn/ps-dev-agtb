@@ -686,6 +686,7 @@ $mod_strings = array (
 	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
 	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
     'LBL_ALT_INFORMATION' => 'Information',
+    // Do not use LBL_REPORT_GRAND_TOTAL, use LBL_GRAND_TOTAL instead. See RPT-937
     'LBL_REPORT_GRAND_TOTAL' => "Grand Total",
     'LBL_EDIT_REPORT_BUTTON' => 'Edit Report',
     'LBL_SCHEDULE_REPORT_BUTTON' => 'Create Schedule',

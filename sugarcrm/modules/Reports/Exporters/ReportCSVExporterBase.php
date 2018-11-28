@@ -59,7 +59,7 @@ abstract class ReportCSVExporterBase implements ReportExporterInterface
      */
     protected function getGrandTotal()
     {
-        $return = '"Grand Total"' . $this->getLineEnd();
+        $return = $this->getTranslationOf('LBL_GRAND_TOTAL') . $this->getLineEnd();
         $return .= '"' . implode($this->getDelimiter(), $this->reporter->get_total_header_row(true)) . '"' . $this->getLineEnd();
 
         $row = $this->reporter->get_summary_total_row(true);
@@ -81,6 +81,21 @@ abstract class ReportCSVExporterBase implements ReportExporterInterface
             return '"' . getDelimiter() . '"';
         }
         return getDelimiter();
+    }
+
+    /**
+     * Gets a translation for the given label.
+     * @param string $label The label to get.
+     * @param bool $withQuotes If true, wrap in double quotes. Defaults to true
+     * @return string The translation.
+     */
+    protected function getTranslationOf(string $label, $withQuotes = true): string
+    {
+        $str = translate($label, 'Reports');
+        if ($withQuotes) {
+            $str = $this->wrapInQuotes($str);
+        }
+        return $str;
     }
 
     /**
@@ -119,5 +134,15 @@ abstract class ReportCSVExporterBase implements ReportExporterInterface
         $output['cells'] = array_combine($detail_header, $detail_row['cells']);
         $output['count'] = $detail_row['count'];
         return $output;
+    }
+
+    /**
+     * Returns the given string wrapped in double quotes.
+     * @param string The string to wrap.
+     * @return string The wrapped string.
+     */
+    private function wrapInQuotes(string $str): string
+    {
+        return '"' . $str . '"';
     }
 }

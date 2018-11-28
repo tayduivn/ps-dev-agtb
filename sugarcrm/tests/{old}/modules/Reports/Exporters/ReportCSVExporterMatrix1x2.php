@@ -18,6 +18,7 @@ class ReportCSVExporterMatrix1x1Test extends TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
+        $GLOBALS['current_user']->setPreference('export_delimiter', ',');
     }
 
     public function tearDown()
