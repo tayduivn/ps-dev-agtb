@@ -1631,7 +1631,7 @@ FormPanelDropdown.prototype.type = "FormPanelDropdown";
 
 FormPanelDropdown.prototype.init = function (settings) {
     var defaults = {
-        disbaled: false,
+        disabled: false,
         options: [],
         value: "",
         dataURL: null,

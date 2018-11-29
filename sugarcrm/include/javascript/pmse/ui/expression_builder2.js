@@ -1597,7 +1597,7 @@ ExpressionControl.prototype._createTimespanPanel = function() {
                     label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_UNIT"),
                     name: "unittime",
                     width: "60%",
-                    disabled: true,
+                    disabled: false,
                     options: [
                         {
                             label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_YEARS"),
@@ -1655,7 +1655,7 @@ ExpressionControl.prototype._createDatespanPanel = function() {
                     label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_UNIT"),
                     name: "unittime",
                     width: "60%",
-                    disabled: true,
+                    disabled: false,
                     options: [
                         {
                             label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_YEARS"),
