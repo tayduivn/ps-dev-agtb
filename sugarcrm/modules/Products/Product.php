@@ -288,17 +288,18 @@ class Product extends SugarBean
         global $dictionary;
 
         $links = $dictionary[$this->object_name]['related_calc_fields'];
-        $quotesIndex = array_search('quotes', $fields);
-        $pbIndex = array_search('product_bundles', $fields);
+        $quotesIndex = array_search('quotes', $links);
+        $pbIndex = array_search('product_bundles', $links);
 
         // make sure both indices exist in the fields, otherwise do nothing to the order
         $bothIndicesExist = $quotesIndex !== false && $pbIndex !== false;
 
         if ($bothIndicesExist && $pbIndex > $quotesIndex) {
-            function arraySwap(&$array, $swapFirst, $swapSecond) {
+            function arraySwap(&$array, $swapFirst, $swapSecond)
+            {
                 list($array[$swapFirst], $array[$swapSecond]) = array($array[$swapSecond], $array[$swapFirst]);
             }
-            arraySwap($fields, $quotesIndex, $pbIndex);
+            arraySwap($links, $quotesIndex, $pbIndex);
         }
 
         return $links;

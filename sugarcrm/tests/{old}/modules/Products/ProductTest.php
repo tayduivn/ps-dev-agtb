@@ -415,4 +415,37 @@ class ProductTest extends TestCase
             array(42,42),
         );
     }
+
+    /**
+     * Tests to make sure product_bundles always saves before quotes
+     *
+     * @covers ::getRelatedCalcFields
+     */
+    public function testGetRelatedCalcFields()
+    {
+        global $dictionary;
+
+        $product = $this->getMockBuilder('Product')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        $initialState = $dictionary['Product']['related_calc_fields'];
+
+        // set dictionary for test
+        $dictionary['Product']['related_calc_fields'] = ['quotes', 'product_bundles'];
+
+        $result = SugarTestReflection::callProtectedMethod($product, 'getRelatedCalcFields');
+
+        $this->assertEquals($result, ['product_bundles', 'quotes']);
+
+        // test if both product_bundles or quotes is missing from the list
+        $dictionary['Product']['related_calc_fields'] = ['test', 'quotes'];
+
+        $result = SugarTestReflection::callProtectedMethod($product, 'getRelatedCalcFields');
+
+        $this->assertEquals($result, ['test', 'quotes']);
+
+        // restore dictionary
+        $dictionary['Product']['related_calc_fields'] = $initialState;
+    }
 }
