@@ -2573,24 +2573,6 @@ class Email extends SugarBean {
 		return $the_script;
 	}
 
-    /**
-     * @deprecated This method is no longer used.
-     * @return string
-     */
-	function pickOneButton() {
-		global $theme;
-		global $mod_strings;
-
-        LoggerManager::getLogger()->deprecated('Email::pickOneButton() has been deprecated.');
-
-		$out = '<div><input	title="'.$mod_strings['LBL_BUTTON_GRAB_TITLE'].'"
-						class="button"
-						type="button" name="button"
-						onClick="window.location=\'index.php?module=Emails&action=Grab\';"
-						style="margin-bottom:2px"
-						value="  '.$mod_strings['LBL_BUTTON_GRAB'].'  "></div>';
-		return $out;
-	}
 
 	/**
 	 * Determines what Editor (HTML or Plain-text) the current_user uses;
