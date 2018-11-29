@@ -2412,10 +2412,12 @@ class Report
                 /*nsingh: bug 13554- date and time fields must be displayed using user's locale settings.
                 * Since to_pdf uses plain_text_output=true, we handle the date and time case here by using the 'List' context of the layout_manager
                 */
-                if ($display_column['type'] == 'date' || $display_column['type'] == 'time' || $display_column['type'] == 'datetimecombo')
+                $dateTimeTypes = array('date', 'time', 'datetimecombo', 'datetime');
+                if (!empty($display_column['type']) && in_array($display_column['type'], $dateTimeTypes)) {
                     $this->layout_manager->setAttribute('context', 'List');
-                else
+                } else {
                     $this->layout_manager->setAttribute('context', 'ListPlain');
+                }
             }
             else {
                 $this->layout_manager->setAttribute('context', 'List');
