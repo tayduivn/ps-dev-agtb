@@ -10,8 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#if value}}
-<div data-placement="bottom"{{#if dir}} dir="{{dir}}"{{/if}} title="{{value.long}}">
-    {{nl2br value.long}}
-</div>
-{{/if}}
+<textarea rows="{{def.rows}}" cols="{{def.cols}}" name="{{name}}"
+          {{#if def.placeholder}} placeholder="{{str def.placeholder module}}"{{/if}}
+{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>{{value.long}}</textarea>
+{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
