@@ -160,6 +160,13 @@ describe('SugarCharts', function() {
         expect(date.annualDate).toBe('Sun, 01 Oct 2017 00:00:00 GMT');
     });
 
+    it('should not set cache if no timeperiods are available', function() {
+        var firstQuarter = false;
+        SUGAR.charts.setFiscalStartDate(firstQuarter);
+        var cache = app.cache.get('fiscaltimeperiods');
+        expect(cache).toBe(undefined);
+    });
+
     it('should return a date string when getFiscalStartDate is called', function() {
         var date = SUGAR.charts.getFiscalStartDate();
         expect(date).toBeNull();

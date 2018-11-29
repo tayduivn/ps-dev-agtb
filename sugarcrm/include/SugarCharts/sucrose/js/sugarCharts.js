@@ -679,6 +679,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * @param firstQuarter the currently configured fiscal time period
          */
         setFiscalStartDate: function(firstQuarter) {
+            // it will be false if timeperiods are not set up
+            if (!firstQuarter) {
+                return;
+            }
             var fiscalYear = firstQuarter.start_date.split('-')[0];
             var quarterNumber = firstQuarter.name.match(/.*Q(\d{1})/)[1];  // [1-4]
             var quarterDateStart = new Date(firstQuarter.start_date);      // 2017-01-01
