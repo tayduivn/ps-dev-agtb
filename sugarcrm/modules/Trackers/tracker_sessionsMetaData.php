@@ -109,7 +109,15 @@ $dictionary['tracker_sessions'] = array(
             'fields' => array(
                 'user_id', 'active', 'session_id'
             ), 
-        )    
+        ),
+        array(
+            'name' => 'idx_tracker_sessions_active_date',
+            'type' => 'index',
+            'fields' => array(
+                'active',
+                'date_end',
+            ),
+        ),
     ),    
     //relationships
  	'relationships' => array (
