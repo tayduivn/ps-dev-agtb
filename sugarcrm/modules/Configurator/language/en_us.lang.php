@@ -456,6 +456,7 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_ADVANCED_WORKFLOW_SETTINGS_SAVE_HELP' => 'Toggles whether process definitions are automatically validated when auto-saved. This will only take effect if "Auto-save process definitions" is set to a time interval',
     'LBL_ADVANCED_WORKFLOW_SETTINGS_IMPORT' => 'Auto-validate process definitions on import',
     'LBL_ADVANCED_WORKFLOW_SETTINGS_IMPORT_HELP' => 'Toggles whether process definitions are automatically validated when first imported',
+    'LBL_ADVANCED_WORKFLOW_SETTINGS_CYCLES' => 'Error number of cycles',
     //END SUGARCRM flav=ent ONLY
 );
 

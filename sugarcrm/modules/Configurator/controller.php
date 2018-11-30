@@ -59,6 +59,7 @@ class ConfiguratorController extends SugarController
         'processes_auto_validate_on_import',
         'processes_auto_validate_on_autosave',
         'processes_auto_save_interval',
+        'error_number_of_cycles',
         //END SUGARCRM flav=ent ONLY
     );
 

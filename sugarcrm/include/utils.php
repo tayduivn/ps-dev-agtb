@@ -250,6 +250,7 @@ function get_sugar_config_defaults()
     'processes_auto_validate_on_import' => true,
     'processes_auto_validate_on_autosave' => true,
     'processes_auto_save_interval' => 30000,
+    'error_number_of_cycles' =>  '10',
     //END SUGARCRM flav=ent ONLY
     'export_delimiter' => ',',
     'export_excel_compatible' => false,
@@ -453,7 +454,6 @@ function get_sugar_config_defaults()
         'roleBasedViews' => true,
         'pmse_settings_default' => array(
             'logger_level' => 'critical',
-            'error_number_of_cycles' =>  '10',
             'error_timeout' => '40',
         ),
         'sugar_min_int' => -2147483648,

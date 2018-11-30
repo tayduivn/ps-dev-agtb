@@ -313,6 +313,8 @@
 			<input type='hidden' name='processes_auto_validate_on_import' value='false'>
 			<input name="processes_auto_validate_on_import" value="true" class="checkbox" tabindex='1' type="checkbox" {$processes_auto_validate_on_import_checked}>
 		</td>
+		<td scope="row">{$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_CYCLES}  <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
+		<td > <input name="error_number_of_cycles" value="{$config.error_number_of_cycles}"></td>
 	</tr>
 </table>
 <!--//END SUGARCRM flav=ent ONLY -->

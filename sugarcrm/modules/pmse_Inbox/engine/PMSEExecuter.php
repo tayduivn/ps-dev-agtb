@@ -70,7 +70,7 @@ class PMSEExecuter
         $this->logger = PMSELogger::getInstance();
 
         $settings = $sugar_config['pmse_settings_default'];
-        $this->maxExecutionCycleNumber = (int)$settings['error_number_of_cycles'];
+        $this->maxExecutionCycleNumber = (int)$sugar_config['error_number_of_cycles'];
         $this->maxExecutionTimeout = (int)$settings['error_timeout'];
         $this->executedElements = array();
         $this->executionTime = 0;

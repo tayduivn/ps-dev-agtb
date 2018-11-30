@@ -134,7 +134,6 @@ $mod_strings = array (
     'LBL_PMSE_ACTIVITY_STREAM_REASSIGN'=>"&0 on <strong>%s</strong> assigned to user &1 ",
     'LBL_PMSE_CANCEL_MESSAGE' => "Are you sure you want to cancel Process Number #{}?",
     'LBL_ASSIGNED_USER'=>"User Assigned",
-    'LBL_PMSE_SETTING_NUMBER_CYCLES' => "Error Number of Cycles",
     'LBL_PMSE_SHOW_PROCESS' => 'Show Process',
     'LBL_PMSE_FILTER' => 'Filter',
 
