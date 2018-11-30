@@ -140,7 +140,10 @@ var $useForSubpanel = true;
 
         $error_password = $this->request->getValidInputRequest('error_password');
         if ($error_password) {
-            $this->ss->assign('ERROR_PASSWORD', '<span id="error_pwd" class="error">Error: ' . htmlspecialchars($error_password, ENT_QUOTES, 'UTF-8') . '</span>');
+            $this->ss->assign(
+                'ERROR_PASSWORD',
+                'Error: ' . htmlspecialchars($error_password, ENT_QUOTES, 'UTF-8')
+            );
         }
 
         // Build viewable versions of a few fields for non-admins

@@ -87,7 +87,7 @@
                             <tr>
                                 <th align="left" scope="row" colspan="4">
                                     <h4>{$MOD.LBL_CHANGE_PASSWORD_TITLE}</h4><br>
-                                    {$ERROR_PASSWORD}
+                                    <span id="error_pwd" class="error" {if empty($ERROR_PASSWORD) } style="display: none" {/if}>{$ERROR_PASSWORD}</span>
                                 </th>
                             </tr>
                         </table>
