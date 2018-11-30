@@ -295,11 +295,13 @@ class Product extends SugarBean
         $bothIndicesExist = $quotesIndex !== false && $pbIndex !== false;
 
         if ($bothIndicesExist && $pbIndex > $quotesIndex) {
-            function arraySwap(&$array, $swapFirst, $swapSecond)
-            {
-                list($array[$swapFirst], $array[$swapSecond]) = array($array[$swapSecond], $array[$swapFirst]);
+            if (!function_exists('pbQuotesArraySwap')) {
+                function pbQuotesArraySwap(&$array, $swapFirst, $swapSecond)
+                {
+                    list($array[$swapFirst], $array[$swapSecond]) = array($array[$swapSecond], $array[$swapFirst]);
+                }
             }
-            arraySwap($links, $quotesIndex, $pbIndex);
+            pbQuotesArraySwap($links, $quotesIndex, $pbIndex);
         }
 
         return $links;
