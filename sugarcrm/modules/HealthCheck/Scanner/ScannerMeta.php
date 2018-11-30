@@ -733,6 +733,13 @@ class HealthCheckScannerMeta
             'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_Of_App_View_InvokeParent/',
             //@codingStandardsIgnoreEnd
         ),
+        580 => array (
+            'report' => 'foundCustomizationFileUsingRemovedJQueryFunctions',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Removed_jQuery_Functions_Detected',
+            //@codingStandardsIgnoreEnd
+        ),
         // Bucket G
         901 => array(
             'report' => 'alreadyUpgraded',

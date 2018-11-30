@@ -110,6 +110,7 @@ $mod_strings = array(
     'LBL_SCAN_574_LOG' => 'Emails Subpanel Exists Custom Directory: %s',
     'LBL_SCAN_575_LOG' => 'Contacts Subpanel for Emails needs to be changed to use subpanel-for-contacts-archived-emails: %s',
     'LBL_SCAN_576_LOG' => 'Skin customizations were detected in: `%s`. Final skin result may not work as expected, please check your skin customizations.',
+    'LBL_SCAN_580_LOG' => 'Removed jQuery function(s) detected in: `%s`.',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',
@@ -253,6 +254,7 @@ $mod_strings = array(
     'LBL_SCAN_574_TITLE' => 'There are customizations to the Emails subpanel',
     'LBL_SCAN_575_TITLE' => 'There are customizations to the Contacts subpanel in Emails',
     'LBL_SCAN_576_TITLE' => 'Skin customizations were detected',
+    'LBL_SCAN_580_TITLE' => 'Removed jQuery function(s) detected',
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_TITLE' => 'Unsupported Upgrader version',

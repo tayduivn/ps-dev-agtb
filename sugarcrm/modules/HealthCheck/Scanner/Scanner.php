@@ -838,6 +838,9 @@ class HealthCheckScanner
         // Check for existing skin customizations when updating to a new skin
         $this->checkForExistingSkinCustomizations();
 
+        // Check for customizations using removed JQuery functions
+        $this->checkForCustomizationsUsingRemovedJQueryFunctions();
+
         if (version_compare($sugar_version, '7.9.0.0', '<')) {
             $calls = array();
             $this->scanCustomPhpFiles(array(
@@ -1575,6 +1578,58 @@ class HealthCheckScanner
 
         if (file_exists('custom/themes/custom.less')) {
             $this->updateStatus('foundSkinCustomizationFile', 'custom/themes/custom.less');
+        }
+    }
+
+    /**
+     * Check for customizations using removed jQuery functions in versions < 8.3.0
+     */
+    protected function checkForCustomizationsUsingRemovedJQueryFunctions()
+    {
+        // Get Version & Flavors
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        // Apply only to versions < 8.3.0.0
+        if (version_compare($version, '8.3.0.0', '>=')) {
+            return;
+        }
+
+        // Check if any customizations exist
+        if (!file_exists('custom/')) {
+            return;
+        }
+
+        $regexPatterns = array(
+            '\$\.browser',
+            '\.live\(',
+            '\.die\(',
+            '\.sub\(\)',
+            '\.andSelf\(',
+            '\$\.deletedIds',
+            '\$\.uuid',
+            '\$\.attrFn',
+            '\$\.clean\(',
+            '\$\.event\.handle',
+            '\$\.offset\.bodyOffset',
+            '\.data\(\s?[\'"]events[\'"]',
+        );
+
+        $excludeFiles = array(
+            'custom/backup/themes/Sugar/js/style.js',
+            'custom/normalview/ace/src-min-noconflict/snippets/php.js',
+        );
+
+        $directory = new RecursiveDirectoryIterator('custom/');
+        $iterator = new RecursiveIteratorIterator($directory);
+        $regex = new RegexIterator($iterator, '/^.+\.js$/i', RecursiveRegexIterator::GET_MATCH);
+
+        foreach ($regex as $info) {
+            $customFile = $info[0];
+
+            if (!in_array($customFile, $excludeFiles) &&
+                preg_match('/' . implode('|', $regexPatterns) . '/', file_get_contents($customFile))) {
+                $this->updateStatus('foundCustomizationFileUsingRemovedJQueryFunctions', $customFile);
+            }
         }
     }
 
