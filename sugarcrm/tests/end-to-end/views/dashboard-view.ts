@@ -29,6 +29,7 @@ export default class DashboardView extends BaseView {
                 adddashlet: '.add-dashlet .fa.fa-plus'
             },
             elements: {
+                dashlet: '.dashlets.row-fluid',
                 InForecastDashlet: '.row-fluid.sortable[name="dashlet_00"]',
                 ForecastBarChart: '.row-fluid.sortable[name="dashlet_01"]',
             }
