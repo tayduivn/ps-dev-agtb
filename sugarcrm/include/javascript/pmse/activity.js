@@ -2472,22 +2472,23 @@ AdamActivity.prototype.getAction = function(type, w) {
                     comboRelated.disable();
                 } else {
                     comboRelated.enable();
-                    comboRelated.removeOptions();
-                    comboRelated.value = '';
-                    comboRelated.proxy.url = 'pmse_Project/CrmData/related/' +
-                        comboModules.getSelectedData().module_name;
-                    comboRelated.proxy.getData({removeTarget: true}, {
-                        success: function(data) {
-                            App.alert.dismiss('upload');
-                            if (data) {
-                                data.result.unshift({value: '', text: 'Select...'});
-                                comboRelated.setOptions(data.result);
-                                filterRelated.setObjectValue(null);
-                                filterRelated.setModule(null, null);
-                            }
-                        }
-                    });
                 }
+                comboRelated.removeOptions();
+                comboRelated.value = '';
+                comboRelated.proxy.url = 'pmse_Project/CrmData/related/' +
+                    comboModules.getSelectedData().module_name;
+                comboRelated.proxy.getData({removeTarget: true}, {
+                    success: function(data) {
+                        App.alert.dismiss('upload');
+                        if (data) {
+                            data.result.unshift({value: '', text: 'Select...'});
+                            comboRelated.setOptions(data.result);
+                            filterRelated.setObjectValue(null);
+                            filterRelated.setModule(null, null);
+                        }
+                    }
+                });
+
                 updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + comboModules.value;
                 // Call type set to CF to distinguish from Add Related Record
                 updater_field.proxy.getData({call_type: 'CF', base_module: PROJECT_MODULE}, {
