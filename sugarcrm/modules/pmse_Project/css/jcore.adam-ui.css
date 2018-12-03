@@ -1284,3 +1284,20 @@ input.adam-team-append {
   display: inline;
   margin-right: 9px;
 }
+
+.adam-filterfield-selectors {
+  margin-right: 2px;
+}
+
+.adam-filterfield-input {
+  position: absolute;
+}
+
+.adam.adam-filterfield-datetime,
+.adam.adam-filterfield-date,
+.adam.adam-filterfield-dropdown,
+.adam.adam-filterfield-number,
+.adam.adam-filterfield-currency {
+  height: 28px;
+  margin-right: 2px;
+}

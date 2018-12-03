@@ -257,6 +257,8 @@ FilterField.prototype.createHTML = function() {
     this.selectField = this.createHTMLElement('select');
     this.selectField.id = this.name + '_field';
     this.selectField.style.width = '20%';
+    this.selectField.className = 'adam-filterfield-selectors';
+
     if (this.readOnly) {
         this.selectField.setAttributeNode(disableAtt);
     }
@@ -265,6 +267,8 @@ FilterField.prototype.createHTML = function() {
     this.selectOperator = this.createHTMLElement('select');
     this.selectOperator.id = this.name + '_operator';
     this.selectOperator.style.width = '20%';
+    this.selectOperator.className = 'adam-filterfield-selectors';
+
     if (this.readOnly) {
         this.selectOperator.setAttributeNode(disableAtt);
     }
@@ -482,6 +486,8 @@ FilterField.prototype.removeValueElements = function() {
 };
 FilterField.prototype.createValueElements = function(settings) {
     var valueElement = this.createHTMLElement('input');
+    valueElement.className = 'adam-filterfield-input';
+
     switch (settings.type) {
         case 'datetime':
             settings.showTimePicker = true;
@@ -512,7 +518,7 @@ FilterField.prototype.createValueElements = function(settings) {
             valueElement.type = 'text';
     }
     valueElement.id = this.name + '_value';
-    valueElement.style.width = '20%';
+    valueElement.style.width = '25%';
     if (this.readOnly) {
         valueElement.setAttributeNode(document.createAttribute('disabled'));
     }
@@ -560,13 +566,16 @@ FilterField.prototype.createDateElement = function(settings) {
     valueElement.className += ' adam form-panel-field record-cell';
     valueElement.className += ' adam-' + settings.type.toLowerCase();
 
-    var dateInput = this.createPicker('60%');
+    var dateInput = this.createPicker('55%');
+    dateInput.className += ' adam-filterfield-' + settings.type.toLowerCase();
+
     $(dateInput).datepicker({format: this.dateFormat.toLowerCase()});
 
     valueElement.appendChild(dateInput);
 
     if (settings.showTimePicker) {
         var timeInput = this.createPicker('40%');
+        timeInput.className += ' adam-filterfield-' + settings.type.toLowerCase();
         $(timeInput).timepicker({timeFormat: this.timeFormat});
         $(timeInput).blur(function() {
             $(timeInput).timepicker('hide');
@@ -609,9 +618,11 @@ FilterField.prototype.createDropdownValueElement = function(settings) {
     var valueElement = this.createHTMLElement('div');
     valueElement.id = this.id;
     valueElement.className = 'adam form-panel-field';
-    valueElement.className += ' adam-' + settings.type.toLowerCase();
+
     var select = this.createHTMLElement('select');
     select.className = 'inherit-width adam form-panel-field-control';
+    select.className += ' adam-filterfield-' + settings.type.toLowerCase();
+
     for (var i = 0; i < settings.options.length; i++) {
         select.appendChild(this.generateOption('expValue', settings.options[i], 'label'));
     }
@@ -628,7 +639,9 @@ FilterField.prototype.createDropdownValueElement = function(settings) {
     return valueElement;
 };
 FilterField.prototype.createCurrencyValueElement = function(settings) {
-    var valueElement = this.createHTMLElement('span');
+    var valueElement = this.createHTMLElement('div');
+    valueElement.className = 'adam form-panel-field';
+    valueElement.className += ' adam-filterfield-' + settings.type.toLowerCase();
     valueElement.appendChild(this.createCurrencyValueCurrencySelector(settings));
     valueElement.appendChild(this.createCurrencyValueAmountSelector(settings));
     return valueElement;
@@ -636,19 +649,21 @@ FilterField.prototype.createCurrencyValueElement = function(settings) {
 FilterField.prototype.createCurrencyValueCurrencySelector = function(settings) {
     var currencyControl = this.createHTMLElement('select');
     currencyControl.className = 'inherit-width adam form-panel-field-control';
+    currencyControl.className += ' adam-filterfield-' + settings.type.toLowerCase();
     for (var i = 0; i < settings.options.length; i++) {
         var option = this.createHTMLElement('option');
         option.text = settings.options[i].label;
         option.value = settings.options[i].value;
         currencyControl.appendChild(option);
     }
-    currencyControl.style.width = '10%';
+    currencyControl.style.width = '41%';
     return currencyControl;
 };
 FilterField.prototype.createCurrencyValueAmountSelector = function(settings) {
     var amountControl = this.createHTMLElement('input');
+    amountControl.className = 'adam-filterfield-currency-value';
     amountControl.type = 'text';
-    amountControl.style.width = '10%';
+    amountControl.style.width = '45%';
     amountControl.value = '0.00';
 
     // Can't use FormPanelCurrency, so copy the behavior of its value field
@@ -687,6 +702,7 @@ FilterField.prototype.createCurrencyValueAmountSelector = function(settings) {
 };
 FilterField.prototype.createNumberValueElement = function(settings) {
     var valueElement = this.createHTMLElement('input');
+    valueElement.className = 'adam adam-filterfield-number';
     valueElement.type = 'text';
     valueElement.style['text-align'] = 'right';
 
