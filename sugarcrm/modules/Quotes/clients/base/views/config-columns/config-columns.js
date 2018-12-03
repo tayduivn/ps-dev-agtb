@@ -214,9 +214,8 @@
 
             if (!field) {
                 // if the field didn't exist in the group list meta, use the field vardef
-                field = _.find(_defaultFields, {name: field.name}) ?
-                    _.find(_defaultFields, {name: this.listDefaultFieldNames[i]}) :
-                    this.productsFieldMeta[this.listDefaultFieldNames[i]];
+                field = _.find(_defaultFields, {name: this.listDefaultFieldNames[i]}) ||
+                this.productsFieldMeta[this.listDefaultFieldNames[i]];
             }
 
             // use either label (viewdefs) or vname (vardefs)
