@@ -134,7 +134,9 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                         // Special case about discount amount
                         if ($product_bundle_line_item->discount_select) {
                             $bundleFields['products'][$count]['discount_amount'] = format_number($product_bundle_line_item->discount_amount, $locale->getPrecision(), $locale->getPrecision()) . '%';
-                    }
+                        }
+                        // ensure the discount_select field exists in the pdf data
+                        $bundleFields['products'][$count]['discount_select'] = $product_bundle_line_item->discount_select;
 
                         // Special case about ext price
                         $bundleFields['products'][$count]['ext_price'] = format_number_sugarpdf($product_bundle_line_item->discount_price * $product_bundle_line_item->quantity, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
