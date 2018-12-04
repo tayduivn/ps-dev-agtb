@@ -96,26 +96,25 @@ class UpgradeHistory extends SugarBean
     /**
      * Check if this is an upgrade, if it is then return the latest version before this installation
      */
-    function determineIfUpgrade($id_name, $version){
-        $query = "SELECT id, version FROM " . $this->table_name . " WHERE id_name = '$id_name' ORDER BY date_entered DESC";
-        $result = $this->db->query($query);
-         if(empty($result)){
-            return null;
-         }else{
-            $temp_version = 0;
-            $id = '';
-            while($row = $this->db->fetchByAssoc($result))
-            {
-                if(!$this->is_right_version_greater(explode('.', $row['version']), explode('.', $temp_version))){
-                    $temp_version = $row['version'];
-                    $id = $row['id'];
-                }
-            }//end while
-            if($this->is_right_version_greater(explode('.', $temp_version), explode('.', $version), false))
-                return array('id' => $id, 'version' => $temp_version);
-            else
-                return null;
-         }
+    public function determineIfUpgrade($id_name, $version)
+    {
+        $stmt = $this->db->getConnection()
+            ->executeQuery(
+                "SELECT id, version FROM {$this->table_name} WHERE id_name = ? ORDER BY date_entered DESC",
+                [$id_name]
+            );
+        $temp_version = 0;
+        $id = '';
+        foreach ($stmt as $row) {
+            if (!$this->is_right_version_greater(explode('.', $row['version']), explode('.', $temp_version))) {
+                $temp_version = $row['version'];
+                $id = $row['id'];
+            }
+        }
+        if ($this->is_right_version_greater(explode('.', $temp_version), explode('.', $version), false)) {
+            return array('id' => $id, 'version' => $temp_version);
+        }
+        return null;
     }
 
     function getAll()
