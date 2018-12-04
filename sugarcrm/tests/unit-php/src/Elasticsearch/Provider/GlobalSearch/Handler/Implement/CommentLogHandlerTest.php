@@ -33,7 +33,6 @@ class CommentLogHandlerTest extends TestCase
     {
         $nsPrefix = 'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler';
         $interfaces = array(
-            $nsPrefix . '\AnalysisHandlerInterface',
             $nsPrefix . '\MappingHandlerInterface',
             $nsPrefix . '\SearchFieldsHandlerInterface',
             $nsPrefix . '\ProcessDocumentHandlerInterface',
@@ -102,44 +101,6 @@ class CommentLogHandlerTest extends TestCase
     }
 
     /**
-     * Validation test for implemented analysis settings
-     * @covers ::buildAnalysis
-     */
-    public function testBuildAnalysisValidation()
-    {
-        $analysisBuilder = new AnalysisBuilder();
-        $sut = $this->getCommentLogHandlerMock();
-        $sut->buildAnalysis($analysisBuilder);
-
-        $expected = array(
-            'analysis' => array(
-                'analyzer' => array(
-                    'gs_analyzer_commentlog' => array(
-                        'tokenizer' => 'whitespace',
-                        'filter' => array(
-                            'lowercase',
-                        ),
-                        'type' => 'custom',
-                    ),
-                    'gs_analyzer_commentlog_ngram' => array(
-                        'tokenizer' => 'whitespace',
-                        'filter' => array(
-                            'lowercase',
-                            'gs_filter_ngram_1_15',
-                        ),
-                        'type' => 'custom',
-                    ),
-                ),
-                'tokenizer' => array(),
-                'filter' => array(),
-                'char_filter' => array(),
-            ),
-        );
-
-        $this->assertEquals($expected, $analysisBuilder->compile());
-    }
-
-    /**
      * @covers ::buildMapping
      * @dataProvider providerTestBuildMapping
      */
@@ -172,17 +133,17 @@ class CommentLogHandlerTest extends TestCase
                                 'type' => 'keyword',
                                 'index' => false,
                                 'fields' => array(
-                                    'gs_commentlog' => array(
+                                    'gs_string' => array(
                                         'type' => 'text',
                                         'index' => true,
-                                        'analyzer' => 'gs_analyzer_commentlog',
+                                        'analyzer' => 'gs_analyzer_string',
                                         'store' => true,
                                     ),
-                                    'gs_commentlog_wildcard' => array(
+                                    'gs_string_wildcard' => array(
                                         'type' => 'text',
                                         'index' => true,
-                                        'analyzer' => 'gs_analyzer_commentlog_ngram',
-                                        'search_analyzer' => 'gs_analyzer_commentlog',
+                                        'analyzer' => 'gs_analyzer_string_ngram',
+                                        'search_analyzer' => 'gs_analyzer_string',
                                         'store' => true,
                                     ),
                                 ),
@@ -228,8 +189,8 @@ class CommentLogHandlerTest extends TestCase
                     'type' => 'commentlog',
                 ),
                 array(
-                    'Contacts__commentlog_search.commentlog_entry.gs_commentlog',
-                    'Contacts__commentlog_search.commentlog_entry.gs_commentlog_wildcard',
+                    'Contacts__commentlog_search.commentlog_entry.gs_string',
+                    'Contacts__commentlog_search.commentlog_entry.gs_string_wildcard',
                 ),
             ),
             // non commentlog type/field

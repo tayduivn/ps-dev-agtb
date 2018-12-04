@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
@@ -21,7 +20,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AbstractHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AnalysisHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\SearchFieldsHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\ProcessDocumentHandlerInterface;
@@ -33,27 +31,29 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchField;
  *
  */
 class CommentLogHandler extends AbstractHandler implements
-    AnalysisHandlerInterface,
     MappingHandlerInterface,
     SearchFieldsHandlerInterface,
     ProcessDocumentHandlerInterface
 {
+    const COMMENTLOG_FIELD = 'commentlog';
+
     /**
      * Multi field definitions
      * @var array
      */
     protected $multiFieldDefs = [
-        'gs_commentlog' => [
+        'gs_string' => [
             'type' => 'text',
             'index' => true,
-            'analyzer' => 'gs_analyzer_commentlog',
+            'analyzer' => 'gs_analyzer_string',
             'store' => true,
         ],
-        'gs_commentlog_wildcard' => [
+
+        'gs_string_wildcard' => [
             'type' => 'text',
             'index' => true,
-            'analyzer' => 'gs_analyzer_commentlog_ngram',
-            'search_analyzer' => 'gs_analyzer_commentlog',
+            'analyzer' => 'gs_analyzer_string_ngram',
+            'search_analyzer' => 'gs_analyzer_string',
             'store' => true,
         ],
     ];
@@ -92,37 +92,19 @@ class CommentLogHandler extends AbstractHandler implements
     {
         parent::setProvider($provider);
 
-        $provider->addSupportedTypes(array('commentlog'));
+        $provider->addSupportedTypes(array(self::COMMENTLOG_FIELD));
         $provider->addHighlighterFields($this->highlighterFields);
         $provider->addWeightedBoosts($this->weightedBoost);
 
         // As we are searching against commentlog_search field, we want to remap the
         // highlights from that field back to the original commentlog field.
-        $provider->addFieldRemap(array($this->searchField => 'commentlog'));
+        $provider->addFieldRemap(array($this->searchField => self::COMMENTLOG_FIELD));
 
         // We don't want to add the commentlog field to the queuemanager query
         // because we will populate the commentlogs seperately.
-        $provider->addSkipTypesFromQueue(array('commentlog'));
+        $provider->addSkipTypesFromQueue(array(self::COMMENTLOG_FIELD));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildAnalysis(AnalysisBuilder $analysisBuilder)
-    {
-        $analysisBuilder
-            ->addCustomAnalyzer(
-                'gs_analyzer_commentlog',
-                'whitespace',
-                array('lowercase')
-            )
-            ->addCustomAnalyzer(
-                'gs_analyzer_commentlog_ngram',
-                'whitespace',
-                array('lowercase', 'gs_filter_ngram_1_15')
-            )
-        ;
-    }
 
     /**
      * {@inheritdoc}
@@ -146,7 +128,7 @@ class CommentLogHandler extends AbstractHandler implements
             $commentlog->addField($multiField, $multiFieldProp);
         }
 
-        // Additional field holding both primary/secondary addresses
+        // Additional fields for commentlogs
         $searchField = new ObjectProperty();
         $searchField->addProperty('commentlog_entry', $commentlog);
 
@@ -165,10 +147,9 @@ class CommentLogHandler extends AbstractHandler implements
         }
 
         $commentlogFields = array('commentlog_entry');
-        $multiFields = array('gs_commentlog', 'gs_commentlog_wildcard');
 
         foreach ($commentlogFields as $commentlogField) {
-            foreach ($multiFields as $multiField) {
+            foreach ($this->multiFieldDefs as $multiField => $mdefs) {
                 $sf = new SearchField($module, $defs['name'], $defs);
                 $sf->setPath([$this->searchField, $commentlogField, $multiField]);
                 $sfs->addSearchField($sf, $multiField . '_' . $commentlogField);
@@ -181,7 +162,7 @@ class CommentLogHandler extends AbstractHandler implements
      */
     public function getSupportedTypes()
     {
-        return array('commentlog');
+        return array(self::COMMENTLOG_FIELD);
     }
 
     /**
@@ -190,10 +171,10 @@ class CommentLogHandler extends AbstractHandler implements
     public function processDocumentPreIndex(Document $document, \SugarBean $bean)
     {
         // skip if there is no commentlog field
-        if (!isset($bean->field_defs['commentlog'])) {
+        if (!isset($bean->field_defs[self::COMMENTLOG_FIELD])) {
             return;
         }
-        $defs = $bean->field_defs['commentlog'];
+        $defs = $bean->field_defs[self::COMMENTLOG_FIELD];
         if (!$this->isCommentLogField($defs)) {
             return;
         }
@@ -212,8 +193,8 @@ class CommentLogHandler extends AbstractHandler implements
             $commentlogs[] = $commentlog_bean->entry;
         }
 
-        $document->setDataField($document->getType() . Mapping::PREFIX_SEP . 'commentlog', $commentlogs);
-        $document->removeDataField('commentlog');
+        $document->setDataField($document->getType() . Mapping::PREFIX_SEP . self::COMMENTLOG_FIELD, $commentlogs);
+        $document->removeDataField(self::COMMENTLOG_FIELD);
 
         // Format data for commentlog search fields
         $value = array(
@@ -236,6 +217,6 @@ class CommentLogHandler extends AbstractHandler implements
      */
     protected function isCommentLogField(array $defs)
     {
-        return $defs['name'] === 'commentlog';
+        return $defs['name'] === self::COMMENTLOG_FIELD;
     }
 }
