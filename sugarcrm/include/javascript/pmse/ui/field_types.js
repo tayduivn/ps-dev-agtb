@@ -617,6 +617,16 @@ FilterField.prototype.dateFormatter = function(value, format) {
 FilterField.prototype.createDropdownValueElement = function(settings) {
     var valueElement = this.createHTMLElement('div');
     valueElement.id = this.id;
+    valueElement.value = '';
+    valueElement.label = '';
+    if (settings && settings.options && settings.options[0]) {
+        if (typeof settings.options[0].value !== 'undefined') {
+            valueElement.value = settings.options[0].value;
+        }
+        if (typeof settings.options[0].label !== 'undefined') {
+            valueElement.label = settings.options[0].label;
+        }
+    }
     valueElement.className = 'adam form-panel-field';
 
     var select = this.createHTMLElement('select');
@@ -629,10 +639,10 @@ FilterField.prototype.createDropdownValueElement = function(settings) {
     valueElement.appendChild(select);
     $(valueElement).change(function() {
         var option = jQuery(this).find('option:selected')[0];
-        if (option && option.value) {
+        if (option && typeof option.value !== 'undefined') {
             this.value = option.value;
         }
-        if (option && option.label) {
+        if (option && typeof option.label !== 'undefined') {
             this.label = option.label;
         }
     });
