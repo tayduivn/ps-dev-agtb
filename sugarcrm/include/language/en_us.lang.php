@@ -3602,6 +3602,7 @@ Sincerely, SugarCRM',
     'MSG_EMPTY_LIST_VIEW_NO_RESULTS_NO_IMPORT' => "You currently have no <item1> records saved. <item2> one now.",
     'MSG_EMPTY_LIST_VIEW_GO_TO_PARENT' => "You can create <item1> from a <item2>. <item3> <item2> list.",
 
+    'LBL_GENERATING_PDF' => 'Generating PDF',
     'LBL_CLICK_HERE' => "Click here",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',

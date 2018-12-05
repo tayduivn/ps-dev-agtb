@@ -132,6 +132,24 @@
     },
 
     /**
+     * Build download link url.
+     *
+     * @param string templateId PDF Template id.
+     * @return string Link url.
+     * @private
+     */
+    _buildDownloadLink: function(templateId) {
+        var urlParams = $.param({
+            'action': 'sugarpdf',
+            'module': this.module,
+            'sugarpdf': 'pdfmanager',
+            'record': this.model.id,
+            'pdf_template_id': templateId
+        });
+        return '?' + urlParams;
+    },
+
+    /**
      * Handles download pdf link.
      *
      * Authenticate in bwc mode before triggering the download.
@@ -141,19 +159,34 @@
     downloadClicked: function(evt) {
         var $target = this.$(evt.currentTarget);
         var templateId = $target.data('id');
-        var url = app.api.buildURL('PdfManager', 'generate', null, {
-            module: this.module,
-            record: this.model.id,
-            pdf_template_id: templateId,
-            sugarpdf: 'pdfmanager'
-        });
+
         app.alert.show('generating_pdf', {
             level: 'process',
-            title: 'Generating PDF'
+            title: app.lang.get('LBL_GENERATING_PDF')
         });
-        app.api.xhrDownloadFile(url, function() {
-            app.alert.dismiss('generating_pdf');
-        });
+
+        app.bwc.login(null, _.bind(function() {
+            this._triggerDownload(this._buildDownloadLink(templateId));
+        }, this));
+    },
+
+    /**
+     * Download the file once authenticated in bwc mode.
+     *
+     * @param string url The file download url.
+     * @protected
+     */
+    _triggerDownload: function(url) {
+        app.api.fileDownload(url, {
+            success: function() {
+                app.alert.dismiss('generating_pdf');
+            },
+            error: function(data) {
+                // refresh token if it has expired
+                app.alert.dismiss('generating_pdf');
+                app.error.handleHttpError(data, {});
+            }
+        }, {iframe: this.$el});
     },
 
     /**
