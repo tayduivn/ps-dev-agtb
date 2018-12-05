@@ -1354,18 +1354,31 @@ function update_license_settings($users, $expire_date, $key)
 
     $query = "DELETE FROM config WHERE category='license' AND name='users'";
     $db->query($query);
-    $query = "INSERT INTO config (value, category, name) VALUES ('$users', 'license', 'users')";
-    $db->query($query);
+
+    $connection = $db->getConnection();
+    $connection
+        ->insert(
+            'config',
+            ['value' => $users, 'category' => 'license', 'name' => 'users']
+        );
 
     $query = "DELETE FROM config WHERE category='license' AND name='expire_date'";
     $db->query($query);
-    $query = "INSERT INTO config (value, category, name) VALUES ('$expire_date', 'license', 'expire_date')";
-    $db->query($query);
+
+    $connection
+        ->insert(
+            'config',
+            ['value' => $expire_date, 'category' => 'license', 'name' => 'expire_date']
+        );
 
     $query = "DELETE FROM config WHERE category='license' AND name='key'";
     $db->query($query);
-    $query = "INSERT INTO config (value, category, name) VALUES ('$key', 'license', 'key')";
-    $db->query($query);
+
+    $connection
+        ->insert(
+            'config',
+            ['value' => $key, 'category' => 'license', 'name' => 'key']
+        );
 }
 
   //END SUGARCRM lic=sub ONLY
