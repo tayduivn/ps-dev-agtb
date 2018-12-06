@@ -1658,7 +1658,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
     describe('AllChecked Functions', function() {
         var $item = {
-            attr: function() {
+            prop: function() {
                 return undefined;
             },
             trigger: sinon.collection.stub()

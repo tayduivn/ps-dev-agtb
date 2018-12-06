@@ -239,7 +239,7 @@
         _.each(this.$('div.checkall input'), function(item) {
             var $item = $(item);
             //only trigger if the item isn't checked.
-            if (_.isUndefined($item.attr('checked'))) {
+            if (!$item.prop('checked')) {
                 $item.trigger('click');
             }
         });
@@ -253,7 +253,7 @@
         _.each(this.$('div.checkall input'), function(item) {
             var $item = $(item);
             //only trigger if the item IS checked.
-            if (!_.isUndefined($item.attr('checked'))) {
+            if ($item.prop('checked')) {
                 $item.trigger('click');
             }
         });
