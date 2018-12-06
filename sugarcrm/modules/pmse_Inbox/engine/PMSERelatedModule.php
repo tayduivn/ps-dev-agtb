@@ -405,12 +405,7 @@ class PMSERelatedModule
             unset($params->chainedRelationship);
         }
 
-        if (empty($moduleBean->field_defs[$fieldName])) {
-            throw ProcessManager\Factory::getException('InvalidData', "Unable to find field {$fieldName}", 1);
-        }
-
         $relatedRecords = array();
-
         $parentBeans = array();
         // It calls getChainedRelationshipBeans() only when Related To (module) is set, it adds new record to
         // the Related To (module). $parentBeans will be Related To (module) in this case.
@@ -421,7 +416,11 @@ class PMSERelatedModule
         } else {
             $parentBeans = array($moduleBean);
         }
-        if (is_array($parentBeans) && !empty($parentBeans[0]) && $parentBeans[0]->load_relationship($fieldName)) {
+        if (is_array($parentBeans) && !empty($parentBeans[0])) {
+            if (empty($parentBeans[0]->field_defs[$fieldName])) {
+                throw ProcessManager\Factory::getException('InvalidData', "Unable to find field {$fieldName}", 1);
+            }
+            $parentBeans[0]->load_relationship($fieldName);
             $rModule = $parentBeans[0]->$fieldName->getRelatedModuleName();
 
             foreach ($parentBeans as $parentBean) {
