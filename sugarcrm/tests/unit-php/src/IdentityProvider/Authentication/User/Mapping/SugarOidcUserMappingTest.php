@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\IdentityProvider\Authentication\User as IdmUser;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarOidcUserMapping;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarOidcUserMapping
@@ -28,35 +29,112 @@ class SugarOidcUserMappingTest extends TestCase
     protected $userMapper;
 
     /**
+     * @var array
+     */
+    protected $sugarConfig;
+
+    /**
      * @inheritdoc
      */
     protected function setUp()
     {
         $this->userMapper = new SugarOidcUserMapping();
+
+        if (isset($GLOBALS['sugar_config'])) {
+            $this->sugarConfig = $GLOBALS['sugar_config'];
+        }
+        $GLOBALS['sugar_config']['languages'] = ['de_DE' => 'de_DE', 'en_us' => 'en_us', 'it_it' => 'it_it'];
+        Validator::clearValidatorsCache();
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        $GLOBALS['sugar_config'] = $this->sugarConfig;
     }
 
     /**
+     * @return array
+     */
+    public function mapProvider(): array
+    {
+        return [
+            'simpleMapping' => [
+                'source' => [
+                    'preferred_username' => 'username',
+                    'status' => 0,
+                    'address' => [
+                        'street_address' => 'street',
+                    ],
+                ],
+                'expectedMapping' => [
+                    'user_name' => 'username',
+                    'status' => User::USER_STATUS_ACTIVE,
+                    'address_street' => 'street',
+                ],
+            ],
+            'statusMapping' => [
+                'source' => [
+                    'status' => 1,
+                ],
+                'expectedMapping' => [
+                    'status' => User::USER_STATUS_INACTIVE,
+                ],
+            ],
+            'existingLanguageMapping' => [
+                'source' => [
+                    'locale' => 'de-DE',
+                ],
+                'expectedMapping' => [
+                    'preferred_language' => 'de_DE',
+                ],
+            ],
+            'existingLanguageMappingLocaleTwoLetters' => [
+                'source' => [
+                    'locale' => 'de',
+                ],
+                'expectedMapping' => [
+                    'preferred_language' => 'de_DE',
+                ],
+            ],
+            'enUSLanguageMapping' => [
+                'source' => [
+                    'locale' => 'en-US',
+                ],
+                'expectedMapping' => [
+                    'preferred_language' => 'en_us',
+                ],
+            ],
+            'itITLanguageMapping' => [
+                'source' => [
+                    'locale' => 'it-IT',
+                ],
+                'expectedMapping' => [
+                    'preferred_language' => 'it_it',
+                ],
+            ],
+            'notExistingLanguageMapping' => [
+                'source' => [
+                    'locale' => 'rt_RT',
+                ],
+                'expectedMapping' => [],
+            ],
+        ];
+    }
+
+    /**
+     * @param array $source
+     * @param array $expectedMapping
+     *
+     * @dataProvider mapProvider
+     *
      * @covers ::map
      */
-    public function testMap()
+    public function testMap(array $source, array $expectedMapping): void
     {
-        $result = $this->userMapper->map([
-            'preferred_username' => 'username',
-            'status' => 0,
-            'address' => [
-                'street_address' => 'street',
-            ],
-        ]);
-        $this->assertEquals('username', $result['user_name']);
-        $this->assertEquals('street', $result['address_street']);
-        $this->assertArrayNotHasKey('address_city', $result);
-        $this->assertEquals(User::USER_STATUS_ACTIVE, $result['status']);
-
-        $result = $this->userMapper->map(['status' => 1]);
-        $this->assertEquals(User::USER_STATUS_INACTIVE, $result['status']);
-
-        $result = $this->userMapper->map(['preferred_username' => 'username']);
-        $this->assertArrayNotHasKey('status', $result);
+        $result = $this->userMapper->map($source);
+        $this->assertEquals($expectedMapping, $result);
     }
 
     public function providerMapIdentityException()

@@ -16,6 +16,8 @@ use Sugarcrm\IdentityProvider\Authentication\UserMapping\MappingInterface;
 use Sugarcrm\IdentityProvider\Authentication\User as IdmUser;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\IdentityProvider\Srn\Converter;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Language;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 class SugarOidcUserMapping implements MappingInterface
@@ -45,6 +47,14 @@ class SugarOidcUserMapping implements MappingInterface
     ];
 
     /**
+     * @var array
+     */
+    protected $languageMapping = [
+        'en_US' => 'en_us',
+        'it_IT' => 'it_it',
+    ];
+
+    /**
      * Map OIDC response to sugar user fields
      * @param array $response
      * @return array
@@ -58,6 +68,7 @@ class SugarOidcUserMapping implements MappingInterface
         $userData = [
             'status' => $this->getUserStatus($response),
             'is_admin' => $this->getIsAdmin($response),
+            'preferred_language' => $this->getUserLanguage($response),
         ];
 
         foreach ($this->userMapping as $mangoKey => $oidcKey) {
@@ -162,5 +173,40 @@ class SugarOidcUserMapping implements MappingInterface
             return null;
         }
         return (int)$userType == self::IDM_USER_TYPE_ADMINISTRATOR;
+    }
+
+    /**
+     * Returns language for user
+     *
+     * @param array $response
+     * @return string
+     */
+    protected function getUserLanguage(array $response): ?string
+    {
+        $userLanguage = $this->getAttribute($response, 'locale');
+
+        if (empty($userLanguage)) {
+            return null;
+        }
+
+        $languageParts = explode('-', $userLanguage);
+
+        if (count($languageParts) === 1) {
+            $languageParts[1] = strtoupper($languageParts[0]);
+        }
+
+        $userLanguage = implode('_', $languageParts);
+
+
+        if (array_key_exists($userLanguage, $this->languageMapping)) {
+            $userLanguage = $this->languageMapping[$userLanguage];
+        }
+
+        $violations = Validator::getService()->validate($userLanguage, [new Language()]);
+        if ($violations->count() > 0) {
+            return null;
+        }
+
+        return $userLanguage;
     }
 }
