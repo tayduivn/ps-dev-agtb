@@ -499,6 +499,24 @@ $dictionary['ForecastWorksheet'] = array(
                 'deleted',
             ),
         ),
+        array(
+            'name' => 'idx_forecastworksheet_aid_del_id',
+            'type' => 'index',
+            'fields' => array(
+                'account_id',
+                'deleted',
+                'id',
+            ),
+        ),
+        array(
+            'name' => 'idx_forecastworksheet_oppid_del_id',
+            'type' => 'index',
+            'fields' => array(
+                'opportunity_id',
+                'deleted',
+                'id',
+            ),
+        ),
     ),
     'relationships' => array(
         'forecastworksheets_accounts' =>  array(

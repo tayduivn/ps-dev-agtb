@@ -68,6 +68,7 @@ class CustomFieldsTest extends TestCase
     {
         $query = $this->createQuery();
         $query->select('custom_name_c');
+        $query->orderBy('custom_name_c', 'ASC');
 
         $this->assertSame([
             self::$accounts['Account #1']->id => [

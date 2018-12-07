@@ -2008,6 +2008,10 @@ class Email extends SugarBean {
                 $participants[$linkName][] = $bean->getRecordName();
             }
         }
+        sort($participants['from']);
+        sort($participants['to']);
+        sort($participants['cc']);
+        sort($participants['bcc']);
 
         // Populate the sender and recipient properties on the email so they can be mapped to $text.
         $this->{$this->email_to_text['from_addr']} = implode(', ', $participants['from']);

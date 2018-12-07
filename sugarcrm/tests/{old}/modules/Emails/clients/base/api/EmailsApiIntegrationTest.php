@@ -732,7 +732,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             "{$GLOBALS['current_user']->name} <" . static::$overrideConfig->email_address . ">",
             $bean->from_addr_name
         );
-        $to = "{$contact1->name} <{$contact1->email1}>, {$contact2->name} <{$contact2->email1}>";
+        $sorted_to = ["{$contact1->name} <{$contact1->email1}>", "{$contact2->name} <{$contact2->email1}>"];
+        sort($sorted_to);
+        $to = implode(', ', $sorted_to);
         $this->assertEquals($to, $bean->to_addrs_names);
     }
 

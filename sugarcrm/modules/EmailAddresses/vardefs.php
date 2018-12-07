@@ -110,6 +110,15 @@ $dictionary['EmailAddress'] = array(
                 'invalid_email',
             ),
         ),
+        array(
+            'name' => 'idx_ea_del_ea_id',
+            'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'email_address',
+                'id',
+            ),
+        ),
     ),
 );
 
