@@ -20,6 +20,7 @@ import SubpanelLayout from '../layouts/subpanel-layout';
 import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import AlertCmp from '../components/alert-cmp';
 import {updateOpportunityConfig} from './steps-helper';
+import {chooseModule, closeAlert } from '../step_definitions/general_bdd';
 
 /**
  * Select module in modules menu
@@ -453,5 +454,47 @@ When<string, string>(
 When(/^I configure Opportunities mode$/, async function (table: TableDefinition) {
     let data = table.rowsHash();
     await updateOpportunityConfig(data);
+
+}, {waitForApp: false});
+
+
+When(/^I add new currency$/, async function (data: TableDefinition) {
+
+    const module = 'Currencies';
+    // Choose 'Currencies' module
+    await chooseModule(module);
+
+    // Click Create button
+    const listViewLayout = await seedbed.components[`${module}List`];
+    await listViewLayout.HeaderView.clickButton('create');
+    await this.driver.waitForApp();
+
+    // Populate data
+    const recordView = await seedbed.components[`${module}Drawer`].RecordView;
+    const headerView = await seedbed.components[`${module}Drawer`].HeaderView;
+    if (data.hashes.length > 1) {
+        throw new Error('One line data table entry is expected');
+    }
+
+    let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
+
+    // check for * marked column and cache the record and view if needed
+    let uidInfo = Utils.computeRecordUID(inputData);
+
+    seedbed.cucumber.scenario.recordsInfo[uidInfo.uid] = {
+        uid: uidInfo.uid,
+        originInput: JSON.parse(JSON.stringify(inputData)),
+        input: inputData,
+        module: recordView.module,
+    };
+
+    await recordView.setFieldsValue(inputData);
+
+    // Click 'Save' button
+    await headerView.clickButton('save');
+    await this.driver.waitForApp();
+
+    // Close Alert
+    await closeAlert();
 
 }, {waitForApp: false});

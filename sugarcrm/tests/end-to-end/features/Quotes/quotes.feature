@@ -1266,3 +1266,87 @@ Feature: Quotes module E2E testing
       | attachments_collection | Email Attachment : Quote_3_Invoice.pdf |
       | from_collection        | Administrator                          |
       | to_collection          | Acc_1                                  |
+
+
+
+    # TITLE:  Verify that Group Totals are updated properly after editing one of the grouped QLIs
+    #
+    # STEPS:
+    # Generate quote record with 2 groupless QLIs
+    # Add EUR currency to system
+    # Navigate to quote record view
+    # Select all items in QLI table
+    # Group Selected items and give a name to a new group
+    # Verify group name and total
+    # Edit one of the QLIs and change QLI currency
+    # Verify Group Total before QLI changes are saved
+    # Save QLI changes
+    # Verify Group Total
+    # Verify Grand Total in QLI table header bar
+
+  @SFA-5555
+  Scenario: Quotes > Verify that group subtotal is correct after editing QLI record
+    # Generate quote record with 2 groupless QLIs
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2020-10-19T19:20:22+00:00  | Negotiation |
+    And ProductBundles records exist related via product_bundles link to *Quote_3:
+      | *name   | default_group |
+      | Group 0 | true          |
+    And Products records exist related via products link:
+      | *name | discount_price | discount_amount | quantity |
+      | QLI_1 | 100            | 2               | 2        |
+      | QLI_2 | 200            | 2               | 3        |
+
+    Given I open about view and login
+    # Add EUR currency
+    When I add new currency
+      | iso4217 | conversion_rate |
+      | EUR     | 0.5             |
+
+    # Navigate to quote record view
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+
+    # Select all items in QLI table
+    When I toggle all items in #Quote_3Record.QliTable
+
+    # Group Selected items and give a name to a new group
+    When I choose GroupSelected from #Quote_3Record.QliTable
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name          |
+      | MyGroup1 | Alex Nisevich |
+    When I click on save button on Group #MyGroup1GroupRecord record
+    When I close alert
+
+    # Verify group name and total
+    Then I verify fields on #MyGroup1GroupRecord
+      | fieldName | value         |
+      | new_sub   | $784.00       |
+      | name      | Alex Nisevich |
+
+    # Edit one of the QLIs and change QLI currency
+    When I choose editLineItem on #QLI_1QLIRecord
+    When I provide input for #QLI_1QLIRecord view
+      | quantity | currency_id | discount_price | mft_part_num |
+      | 4        | € (EUR)     | 150.00         | abc123       |
+
+    # Verify Group Total before QLI changes are saved
+    Then I verify fields on #MyGroup1GroupRecord
+      | fieldName | value     |
+      | new_sub   | $1,764.00 |
+
+    # Save QLI changes
+    When I click on save button on QLI #QLI_1QLIRecord record
+
+    # Verify Group Total
+    Then I verify fields on #MyGroup1GroupRecord
+      | fieldName | value     |
+      | new_sub   | $1,764.00 |
+
+    # Verify Grand Total in QLI table header bar
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value        |
+      | deal_tot  | 2.00% $36.00 |
+      | new_sub   | $1,764.00    |
+      | total     | $1,764.00    |
