@@ -71,8 +71,8 @@ Feature: Dashboard main functionality verification
       | fieldName | value                   |
       | name      | Accounts List Dashboard |
 
-  @create_dashboard @add_dashlet @delete_dashboard
-  Scenario: Record view View > Create Dashboard > Add Dashlets > Save > Delete Dashboard
+  @create_dashboard @add_dashlet
+  Scenario: Record view View > Create Dashboard > Add Dashlets > Save
     Given Accounts records exist:
       | *name |
       | A1    |
@@ -96,11 +96,3 @@ Feature: Dashboard main functionality verification
     Then I verify fields on #Dashboard.HeaderView
       | fieldName | value                |
       | name      | RecordView Dashboard |
-
-    # Delete dashboard
-    When I delete dashboard
-
-    # Verify the dashboard is successfully deleted
-    Then I verify fields on #Dashboard.HeaderView
-      | fieldName | value                     |
-      | name      | Accounts Record Dashboard |

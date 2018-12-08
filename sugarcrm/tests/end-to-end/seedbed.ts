@@ -266,6 +266,22 @@ export default (seedbed: Seedbed) => {
         }
     });
 
+
+    /**
+     *  Register dashboard created through UI so it can be torn down by Seedbed
+     */
+    seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
+
+        if (req.method === 'POST' && /\/Dashboards(\?.*|)$/.test(req.url)) {
+
+            let responseRecord = JSON.parse(data.buffer.toString());
+
+            if (responseRecord) {
+                seedbed.api.created.push(responseRecord);
+            }
+        }
+    });
+
     seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
 
         let url = req.url;

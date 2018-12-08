@@ -49,8 +49,6 @@ Feature: Product Catalog Quick Picks Dashlet
     # Select 'Favorites' tab
     # Verify number of records in the 'Favorites' tab
     # Remove Product Catalog Quick Picks Dashlet
-    # Delete dashboard
-    # Verify the dashboard is successfully deleted
 
   @product_catalog_quick_picks_dashlet @opportunity_record_view
   Scenario: Product Catalog Quick Picks Dashlet in Opportunity record view
@@ -213,16 +211,6 @@ Feature: Product Catalog Quick Picks Dashlet
     When I remove #Dashboard.ProductCatalogQuickPicksDashlet dashlet
     When I Confirm confirmation alert
 
-    # Delete dashboard
-    When I delete dashboard
-
-    # Verify the dashboard is successfully deleted
-    Then I verify fields on #Dashboard.HeaderView
-      | fieldName | value                          |
-      | name      | Opportunities Record Dashboard |
-
-
-
 
     # TITLE: Product Catalog Quick Picks Dashlet - Quote Record View
     #
@@ -262,8 +250,6 @@ Feature: Product Catalog Quick Picks Dashlet
     # Select 'Favorites' tab
     # Verify that product added to favorites exists in the 'Favorites' tab
     # Remove Product Catalog Quick Picks Dashlet
-    # Delete dashboard
-    # Verify the dashboard is successfully deleted
 
   @product_catalog_quick_picks_dashlet @quote_record_view
   Scenario: Product Catalog Quick Picks Dashlet in Quotes record view
@@ -427,14 +413,6 @@ Feature: Product Catalog Quick Picks Dashlet
     # Remove Product Catalog Quick Picks Dashlet
     When I remove #Dashboard.ProductCatalogQuickPicksDashlet dashlet
     When I Confirm confirmation alert
-
-    # Delete dashboard
-    When I delete dashboard
-
-    # Verify the dashboard is successfully deleted
-    Then I verify fields on #Dashboard.HeaderView
-      | fieldName | value                   |
-      | name      | Quotes Record Dashboard |
 
 
 
