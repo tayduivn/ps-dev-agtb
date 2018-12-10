@@ -544,6 +544,9 @@ FilterField.prototype.selectedFieldOption = function(html, options) {
     return optionType;
 };
 FilterField.prototype.setFilterFieldDisable = function(filterField, value) {
+    if (filterField.labelObject) {
+        filterField.labelObject.className = value ? 'adam-form-label-disabled' : 'adam-form-label';
+    }
     if (filterField.selectField) {
         filterField.selectField.disabled = value;
     }

@@ -2458,10 +2458,8 @@ AdamActivity.prototype.getAction = function(type, w) {
                     .addClass('pmse-form-error-off');
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
                 var optionType = filterModules.selectedFieldOption(this.html, this.options);
-                if (!optionType) {
-                    filterModules.setFilterFieldDisable(filterModules, true);
-                    filterRelated.setFilterFieldDisable(filterRelated, true);
-                } else if (optionType === 'one') {
+                filterRelated.setFilterFieldDisable(filterRelated, true);
+                if (!optionType || optionType === 'one') {
                     filterModules.setFilterFieldDisable(filterModules, true);
                 } else {
                     filterModules.setFilterFieldDisable(filterModules, false);
