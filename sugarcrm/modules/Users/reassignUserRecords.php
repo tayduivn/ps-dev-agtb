@@ -331,17 +331,21 @@ else if(!isset($_GET['execute'])){
 
         //Add modified_user_id clause if it exists in the table
         if(isset($obj->field_defs['modified_user_id'])) {
-            $q_set .= ", modified_user_id = '{$current_user->id}' ";
+            $q_set .= ', modified_user_id = ' . $db->quoted($current_user->id);
         }
 
         //make sure team_id and team_set_id columns are available
 		if(!empty($team_id) && isset($object->field_defs['team_id']))
         {
-			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
+            $q_set .= sprintf(
+                ', team_id = %s, team_set_id = %s ',
+                $db->quoted($team_id),
+                $db->quoted($team_set_id)
+            );
 		}
         //BEGIN SUGARCRM flav=ent ONLY
         if ($teamSetSelectedId && $tbaConfigurator->isEnabledForModule($module)) {
-            $q_set .= ", acl_team_set_id = '{$teamSetSelectedId}' ";
+            $q_set .= ', acl_team_set_id = ' . $db->quoted($teamSetSelectedId);
         }
         //END SUGARCRM flav=ent ONLY
 		$q_tables   = " {$object->table_name} ";
