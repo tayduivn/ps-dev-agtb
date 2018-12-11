@@ -34,7 +34,7 @@ Feature: Data Privacy Consent
         # 3. Support enabling of disabled modules
 
 
-    @DataPrivacy_GrantConsent @pr
+    @DataPrivacy_GrantConsent
     Scenario: Data Privacy > Grant Consent
         Given DataPrivacy records exist:
             | *name | type               | priority | source | date_due                  | business_purpose                    | assigned_user_id |
@@ -98,7 +98,7 @@ Feature: Data Privacy Consent
             | status    | Completed |
 
 
-    @DataPrivacy_WithdrawConsent @pr
+    @DataPrivacy_WithdrawConsent
     Scenario: Data Privacy > Withdraw Consent
         Given DataPrivacy records exist:
             | *name | type             | priority  | source | date_due                  | business_purpose                     | resolution           | assigned_user_id |

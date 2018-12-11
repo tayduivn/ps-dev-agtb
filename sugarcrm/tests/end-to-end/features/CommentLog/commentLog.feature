@@ -14,7 +14,7 @@ Feature: CommentLog in record view
     Given I use default account
     Given I launch App
 
-    @Add_CommentLog_when_one_is_already_there @pr
+    @Add_CommentLog_when_one_is_already_there
       Scenario: Comment Log > CommentLog existed in a record > add another CommentLog
         Given Bugs records exist:
         | *     | name                     | date_start                | assigned_user_id |
@@ -32,7 +32,7 @@ Feature: CommentLog in record view
           | fieldName    | value                                                                                        |
           | commentlog   | It must be ike's, why are we having this bug anyways?,Objection! That's why we need this bug |
 
-    @Add_fresh_CommentLog_to_record @pr
+    @Add_fresh_CommentLog_to_record
       Scenario: Comment Log > A record with no CommentLog > add a CommentLog
         Given Bugs records exist:
           | *    | name                   | date_start                | assigned_user_id |
