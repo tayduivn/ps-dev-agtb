@@ -1296,8 +1296,18 @@ input.adam-team-append {
 .adam.adam-filterfield-datetime,
 .adam.adam-filterfield-date,
 .adam.adam-filterfield-dropdown,
-.adam.adam-filterfield-number,
 .adam.adam-filterfield-currency {
   height: 28px;
   margin-right: 2px;
+}
+
+.adam.adam-filterfield-currency-value {
+  width: 45%;
+  text-align: right;
+}
+
+.adam.adam-filterfield-number {
+  height: 18px;
+  text-align: right;
+  margin-bottom: 9px;
 }

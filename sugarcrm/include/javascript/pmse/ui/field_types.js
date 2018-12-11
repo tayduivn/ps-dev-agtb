@@ -671,9 +671,8 @@ FilterField.prototype.createCurrencyValueCurrencySelector = function(settings) {
 };
 FilterField.prototype.createCurrencyValueAmountSelector = function(settings) {
     var amountControl = this.createHTMLElement('input');
-    amountControl.className = 'adam-filterfield-currency-value';
+    amountControl.className = 'adam adam-filterfield-currency-value';
     amountControl.type = 'text';
-    amountControl.style.width = '45%';
     amountControl.value = '0.00';
 
     // Can't use FormPanelCurrency, so copy the behavior of its value field
@@ -714,7 +713,6 @@ FilterField.prototype.createNumberValueElement = function(settings) {
     var valueElement = this.createHTMLElement('input');
     valueElement.className = 'adam adam-filterfield-number';
     valueElement.type = 'text';
-    valueElement.style['text-align'] = 'right';
 
     // Only allow numbers, left, right, backspace, delete, and tab
     // Numbers are entered/deleted from right to left, as elsewhere in AWF
