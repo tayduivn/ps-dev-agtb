@@ -18,7 +18,9 @@
         this._super('bindDataChange');
 
         var config = app.metadata.getModule('Forecasts', 'config');
-        if(config && config.is_setup && config.forecast_by === 'Opportunities') {
+
+        if (config && config.is_setup && config.forecast_by === 'Opportunities' &&
+            app.metadata.getServerInfo().flavor !== 'PRO') {
             // make sure forecasts exists and is setup
             this.collection.on('change:sales_stage change:commit_stage reset', function(model) {
                 var myModel = model;
