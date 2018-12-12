@@ -28,7 +28,7 @@ import LeadConversionLayout from "./layouts/lead-conversion-layout";
 import AuditLogDrawerLayout from './layouts/audit-log-drawer-layout';
 import BusinessRulesDesignLayout from './layouts/business-rules-record-layout';
 import ForecastsListLayout from './layouts/forecasts-layout';
-
+import ActivityStreamLayout from './layouts/activity-stream-layout';
 
 export default (seedbed: Seedbed) => {
 
@@ -74,6 +74,8 @@ export default (seedbed: Seedbed) => {
         seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
         seedbed.defineComponent(`Dashboard`, DashboardLayout, {module: 'Dashboards'});
         seedbed.defineComponent(`AddSugarDashletDrawer`, AddSugarDashletDrawerLayout, {module: 'Dashboards'});
+        seedbed.defineComponent(`ActivityStream`, ActivityStreamLayout, {module: 'Activities'});
+
     });
 
     /**

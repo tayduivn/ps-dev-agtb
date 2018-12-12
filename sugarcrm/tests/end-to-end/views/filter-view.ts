@@ -28,6 +28,8 @@ export default class FilterView extends BaseView {
             $: '.search-filter',
             searchField: '.search-name',
             filter: '.search-filter .select2-choice-type',
+            activitystream: '.fa.fa-clock-o',
+            listview: '.fa.fa-table'
         });
 
         this.globalSelectors = {
@@ -51,21 +53,25 @@ export default class FilterView extends BaseView {
      * @returns {*}
      */
     public async setSearchField(value) {
-
         let locator = this.$('searchField');
-
         await this.driver.waitForVisible(locator);
         await this.driver.setValue(locator, value);
     }
 
     public async selectFilter(filterName: string) {
-
         let locator = this.$('filter');
-
         await this.driver.click(locator);
-
         await this.driver.waitForVisible(locator);
         await this.driver.click(this.globalSelectors[filterName]);
+    }
 
+    /**
+     * Toggle between ListView and ActivityStream modes
+     * @param {string} mode
+     * @returns {Promise<void>}
+     */
+    public async toggleListViewMode(mode: string) {
+        let locator = this.$(mode);
+        await this.driver.click(locator);
     }
 }

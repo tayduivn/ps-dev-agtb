@@ -22,6 +22,7 @@ import {updateForecastConfig} from "./steps-helper";
 import AlertCmp from '../components/alert-cmp';
 import {updateOpportunityConfig} from './steps-helper';
 import {toggleRecord, parseInputArray, chooseModule, closeAlert} from '../step_definitions/general_bdd';
+import ActivityStream from '../layouts/activity-stream-layout';
 
 /**
  * Select module in modules menu
@@ -616,3 +617,33 @@ When(/^I click (CC|BCC) button on (#\S+)$/,
                 throw new Error('Such field does not exist!');
         }
     }, {waitForApp: false});
+
+
+/**
+ *  Post messages to Activity Stream
+ */
+When(/^I post the following activities to (#\S+)$/, async function (layout: ActivityStream, data: TableDefinition) {
+
+    const rows = data.rows();
+    for (let row of rows ) {
+        let value = row[0];
+        await layout.addPost(value);
+        await closeAlert();
+        await this.driver.waitForApp();
+    }
+}, {waitForApp: false});
+
+/**
+ *  Comment on the top activity
+ */
+When(/^I comment on the top activity in (#\S+)$/, async function (layout: ActivityStream, data: TableDefinition) {
+
+    const rows = data.rows();
+    let i = 1;
+    for (let row of rows ) {
+        let value = row[0];
+        await layout.addComment(1, value);
+        await this.driver.waitForApp();
+        i++;
+    }
+}, {waitForApp: false});

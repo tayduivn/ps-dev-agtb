@@ -14,6 +14,7 @@ import {seedbed} from '@sugarcrm/seedbed/seedbed';
 import RecordLayout from '../layouts/record-layout';
 import AlertCmp from '../components/alert-cmp';
 import * as _ from 'lodash';
+import {closeAlert, closeWarning} from '../step_definitions/general_bdd';
 
 /**
  * Open the specified subpanel on a specified record view
@@ -77,8 +78,36 @@ When(/^I link existing record (\*[a-zA-Z](?:\w|\S)*) to (\S+) subpanel on (#\S+)
         await this.driver.waitForApp();
 
         // Close Alert
-        let alert = new AlertCmp({});
-        await alert.close();
+        await closeAlert();
+    }, {waitForApp: true});
+
+/**
+ * Unlink record specified by ID to the subpanel
+ *
+ * @example "I link existing record *John to leads subpanel on #DP_1Record view"
+ */
+When(/^I unlink existing record (\*[a-zA-Z](?:\w|\S)*) from (\S+) subpanel on (#\S+) view$/,
+    async function(
+
+        record: {id: string},
+        subpanelName: string,
+        layout: any,
+
+    ): Promise<void> {
+
+        const menuItemName = 'Unlink';
+
+        let listItem = await layout.getListItem({id: record.id});
+
+        // Open Actions drop-down and select 'Mark To Erase' menu item
+        await listItem.openDropdown();
+        await this.driver.waitForApp();
+        await listItem.clickListButton(menuItemName);
         await this.driver.waitForApp();
 
+        // Close Warning
+        await closeWarning('confirm');
+
+        // Close Alert
+        await closeAlert();
     }, {waitForApp: true});

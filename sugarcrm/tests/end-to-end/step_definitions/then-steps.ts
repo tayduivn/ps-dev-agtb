@@ -18,6 +18,8 @@ import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import RecordLayout from '../layouts/record-layout';
 import AuditLogDrawerLayout from '../layouts/audit-log-drawer-layout';
 import {headerButtonClick, auditLogVerification, personalInfoDrawerVerification} from './steps-utils';
+import ActivityStreamLayout from "../layouts/activity-stream-layout";
+import {chooseModule} from '../step_definitions/general_bdd';
 
 /**
  * Check whether the cached view is visible
@@ -189,6 +191,49 @@ Then(/^I verify Audit Log fields in (#AuditLogDrawer) for (#\S+)*$/,
         // Close Audit Log drawer
         await headerButtonClick(recordlayout, 'closebutton');
 
+    }, {waitForApp: true});
+
+/**
+ *  Verify messages and messages order in Sugar Activity Stream
+ *
+ *  Note: Message order MUST be the same as in Activity Stream for this method to fuction properly
+ *
+ *  @example
+ *  Then I verify messages in #ActivityStream
+ *      | activity_message                    |
+ *      | Hello Travis Hubbard on Contact.    |
+ *      | Created Alexander Nisevich Contact. |
+ *
+ */
+Then(/^I verify activities in (#\S+)*$/,
+    async function (layout: ActivityStreamLayout, data: TableDefinition): Promise<void> {
+
+        let rows = data.rows();
+        let errors = [];
+
+        await this.driver.waitForApp();
+
+        for (let i = 1; i <= rows.length; i++) {
+            let expected = rows[i-1][0];
+            let value = await layout.getMessage(i);
+            if (value !== expected) {
+                errors.push(
+                    [
+                        `Expected activity message value: ${expected}`,
+                        `\tActual activity message value: ${value}`,
+                        `\n`,
+                    ].join('\n')
+                )
+            }
+        }
+        let message = '';
+        _.each(errors, (item) => {
+            message += item;
+        });
+
+        if (message) {
+            throw new Error(message);
+        }
     }, {waitForApp: true});
 
 /**

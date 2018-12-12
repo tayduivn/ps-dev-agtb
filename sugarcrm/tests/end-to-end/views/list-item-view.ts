@@ -34,6 +34,7 @@ export default class ListItemView extends BaseView {
                     preview: '.fa.fa-eye',
                     dropdown: 'a.btn.dropdown-toggle',
                     edit: '[name="edit_button"]',
+                    unlink: '[name="unlink_button"]',
                     save: '[name="inline-save"]',
                     cancel: '[name="inline-cancel"]',
                     follow: '[name="follow_button"]',

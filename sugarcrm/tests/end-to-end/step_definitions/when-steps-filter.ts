@@ -33,3 +33,14 @@ When(/^I choose for (\w+) in (#\S+) view$/,
         await view.selectFilter(filterName);
 
     }, {waitForApp: true});
+
+/**
+ * Toggle between List VIew and Activity Stream views
+ *
+ * @example When I select ActivityStream in #ContactsList.FilterView
+ */
+When(/^I select (ActivityStream|ListView) in (#\S+)$/,
+    async function (mode:string, view: FilterView) {
+
+        await view.toggleListViewMode(mode.toLowerCase());
+    }, {waitForApp: true});
