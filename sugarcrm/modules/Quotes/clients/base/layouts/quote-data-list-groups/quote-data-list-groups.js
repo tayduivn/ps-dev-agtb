@@ -85,6 +85,11 @@
     copyBundleCount: undefined,
 
     /**
+     * Keeps track of the copyBundle functionality
+     */
+    copyBundleCompleted: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -211,6 +216,7 @@
         if (bundleComplete) {
             this.copyBundleCount--;
             if (this.copyBundleCount === 0) {
+                this.copyBundleCompleted = true;
                 this.render();
             }
         }
@@ -1316,6 +1322,9 @@
         }, this);
 
         if (!this.isCopy) {
+            this.render();
+        } else if (this.copyBundleCount === 0 && this.copyBundleCompleted) {
+            // Rendering when user tries to create a group in Quote Copy Mode.
             this.render();
         }
     },
