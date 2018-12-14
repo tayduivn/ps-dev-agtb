@@ -117,7 +117,7 @@ class ProductTemplateTreeApiTest extends TestCase
 
         $mock->expects($this->once())
             ->method('getTreeData')
-            ->with($unionFilter, $unionFilter, $filter, $filter);
+            ->with($unionFilter, $unionFilter, [$filter, $filter]);
 
         TestReflection::callProtectedMethod($mock, 'getFilteredTreeData', ['foo']);
     }
@@ -134,9 +134,11 @@ class ProductTemplateTreeApiTest extends TestCase
         if ($root == null) {
             $union1Root = "and parent_id is null ";
             $union2Root = "and category_id is null ";
+            $params = [];
         } else {
             $union1Root = "and parent_id = ? ";
             $union2Root = "and category_id = ? ";
+            $params = [$root, $root];
         }
 
         $mock = $this->getMockBuilder('\ProductTemplateTreeApi')
@@ -146,7 +148,7 @@ class ProductTemplateTreeApiTest extends TestCase
 
         $mock->expects($this->once())
             ->method('getTreeData')
-            ->with($union1Root, $union2Root, $root, $root);
+            ->with($union1Root, $union2Root, $params);
 
         TestReflection::callProtectedMethod($mock, 'getRootedTreeData', [$root]);
     }
@@ -168,6 +170,7 @@ class ProductTemplateTreeApiTest extends TestCase
         $union2Filter = 'bar';
         $filter1 = 'foo1';
         $filter2 = 'bar1';
+        $params = [$filter1, $filter2];
 
         $q = "select id, name, 'category' as type from product_categories " .
             "where deleted = 0 " .
@@ -200,7 +203,7 @@ class ProductTemplateTreeApiTest extends TestCase
         TestReflection::callProtectedMethod(
             $mock,
             'getTreeData',
-            [$union1Filter, $union2Filter, $filter1, $filter2]
+            [$union1Filter, $union2Filter, $params]
         );
 
         //because simply testing that a function is called with params isn't enough, we MUST assert something ಠ_ಠ
