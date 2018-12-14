@@ -49,6 +49,7 @@ $vardefs = array(
             'studio' => false,
             'isnull' => true,
             'duplicate_on_record_copy' => 'always',
+            'reportable' => false,
         ),
         //END SUGARCRM flav=ent ONLY
 		'team_count' =>
