@@ -304,6 +304,9 @@
             // copy Template's id and name to where the QLI expects them
             data.product_template_id = data.id;
             data.product_template_name = data.name;
+            data.created_by = data.created_by && data.created_by.trim();
+            data.modified_user_id = data.modified_user_id && data.modified_user_id.trim();
+            data.currency_id = data.currency_id && data.currency_id.trim();
             // remove ID/etc since we dont want Template ID to be the record id
             delete data.id;
             delete data.date_entered;

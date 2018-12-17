@@ -922,7 +922,10 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
                 return new Backbone.Model({
                     id: 10,
                     name: 'asd',
-                    my_favorite: 1
+                    my_favorite: 1,
+                    created_by: 'testUser     ',
+                    modified_user_id: 'testUser2       ',
+                    currency_id: '-99               '
                 });
             });
             sinon.collection.stub(evt, 'preventDefault', function() {});
@@ -950,6 +953,9 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
                     .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add', {
                         product_template_id: 10,
                         product_template_name: 'asd',
+                        created_by: 'testUser',
+                        modified_user_id: 'testUser2',
+                        currency_id: '-99',
                         name: 'asd'
                     });
             }
