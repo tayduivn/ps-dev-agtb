@@ -16,6 +16,10 @@
 ({
     extendsFrom: 'TextareaField',
 
+    shortName: undefined,
+
+    longName: undefined,
+
     /**
      * @inheritdoc
      *
@@ -31,10 +35,8 @@
         this.plugins = _.union(this.plugins, 'Tooltip');
 
         if (_.isString(value)) {
-            value = {
-                long: value,
-                short: value.length > 20 ? value.substr(0,20) + '...' : value
-            };
+            this.shortName = value.length > 20 ? value.substr(0,20) + '...' : value;
+            this.longName = value;
 
             return value;
         }

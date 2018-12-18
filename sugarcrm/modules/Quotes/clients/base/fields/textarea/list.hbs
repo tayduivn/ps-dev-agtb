@@ -10,7 +10,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<textarea rows="{{def.rows}}" cols="{{def.cols}}" name="{{name}}"
-          {{#if def.placeholder}} placeholder="{{str def.placeholder module}}"{{/if}}
-{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>{{longName}}</textarea>
-{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
+<div class="ellipsis_inline" data-placement="bottom" title="{{longName}}">{{longName}}</div>
