@@ -36,6 +36,10 @@ $viewdefs[$module_name]['DetailView'] = array(
     'resolution',
     'status',
   ),
+
+        array(
+            'follow_up_datetime',
+        ),
   
   array (
 	array (
@@ -67,4 +71,3 @@ $viewdefs[$module_name]['DetailView'] = array(
   ),
 )   
 );
-?>

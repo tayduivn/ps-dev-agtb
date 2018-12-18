@@ -175,6 +175,7 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 'type',
                 'source',
                 'status',
+                'follow_up_datetime',
                 'assigned_user_name',
                 array(
                     'name' => 'description',

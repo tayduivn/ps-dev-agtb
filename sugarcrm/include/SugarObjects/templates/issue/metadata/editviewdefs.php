@@ -16,7 +16,7 @@ $viewdefs[$module_name]['EditView'] = array(
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'), 
                                             array('label' => '10', 'field' => '30')
-                                            ),                                                                                                                                    
+                                            ),
                                             ),
                                             
                                             
@@ -43,6 +43,10 @@ $viewdefs[$module_name]['EditView'] = array(
       'status',
     ),
 
+        array(
+            'follow_up_datetime',
+        ),
+
     array (
       array('name'=>'name', 'displayParams'=>array('size'=>60)),
     ),
@@ -60,4 +64,3 @@ $viewdefs[$module_name]['EditView'] = array(
 ),
                         
 );
-?>

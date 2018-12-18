@@ -168,6 +168,7 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 ),
                 'priority',
                 'status',
+                'follow_up_datetime',
                 'type',
                 'source',
                 'product_category',

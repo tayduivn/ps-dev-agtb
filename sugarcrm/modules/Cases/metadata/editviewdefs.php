@@ -28,11 +28,12 @@ $viewdefs['Cases']['EditView'] = array(
 
 	  array (
 	    'priority',
+          'account_name',
 	  ),
 
 	  array (
 	    'status',
-	    'account_name',
+          'follow_up_datetime',
 	  ),
 
 	  array (
@@ -84,4 +85,3 @@ $viewdefs['Cases']['EditView'] = array(
 
 
 );
-?>
