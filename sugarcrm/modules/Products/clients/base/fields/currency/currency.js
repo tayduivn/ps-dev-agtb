@@ -26,4 +26,49 @@
         this.hideCurrencyDropdown = false;
     },
 
+    /**
+     * @inheritdoc
+     */
+    format: function(value) {
+        // Skipping the core currencyField call
+        // app.view.Field.prototype.format.call(this, value);
+        this._super('format', [value]);
+
+        //Check if in 'Edit' mode
+        if (this.tplName === 'edit') {
+            //Display just currency value without currency symbol when entering edit mode for the first time
+            //We want the correct value in input field corresponding to the currency in the dropdown
+            //Example: Dropdown has Euro then display '100.00' instead of '$111.11'
+            return app.utils.formatNumberLocale(value);
+        }
+
+        var transactionalCurrencyId = this.model.get(this.def.currency_field || 'currency_id');
+        var convertedCurrencyId = transactionalCurrencyId;
+        var origTransactionValue = value;
+
+        // convert value to Quote preferred currency
+        var context = this.context.parent || this.context;
+        var quotePreferredCurrencyId = context.get('model').get('currency_id');
+        if (quotePreferredCurrencyId !== transactionalCurrencyId) {
+            convertedCurrencyId = quotePreferredCurrencyId;
+
+            this.transactionValue = app.currency.formatAmountLocale(
+                this.model.get(this.name) || 0,
+                transactionalCurrencyId
+            );
+
+            value = app.currency.convertWithRate(
+                value,
+                this.model.get('base_rate'),
+                app.metadata.getCurrency(quotePreferredCurrencyId).conversion_rate
+            );
+        } else {
+            // user preferred same as transactional, no conversion required
+            this.transactionValue = '';
+            convertedCurrencyId = transactionalCurrencyId;
+            value = origTransactionValue;
+        }
+        return app.currency.formatAmountLocale(value, convertedCurrencyId);
+    },
+
 })
