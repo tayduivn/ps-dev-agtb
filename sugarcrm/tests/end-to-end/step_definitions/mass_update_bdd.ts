@@ -135,3 +135,68 @@ When(/^I (perform|cancel) mass update of (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\])
         }
     }, {waitForApp: true}
 );
+
+/**
+ *  Recalculate values for all records in the List view
+ */
+When(/^I recalculate all values in (\w+)$/,
+    async function (module) {
+
+        // Navigate to specified module
+        await chooseModule(module);
+        await seedbed.client.driver.waitForApp();
+        const listView = await seedbed.components[`${module}List`].ListView;
+
+        // Toggle all records
+        await listView.toggleAll();
+        this.driver.waitForApp();
+
+        // Select Recalculate Values
+        await listView.selectAction('Recalculate Values');
+        this.driver.waitForApp();
+
+        // Close Alert
+        await closeAlert();
+        this.driver.waitForApp();
+
+    }, {waitForApp: true}
+);
+
+/**
+ *  Recalculate values for specific records in the List view
+ */
+
+When(/^I recalculate (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) values in (\w+)$/,
+    async function (inputIDs: string, module) {
+
+        // Navigate to specified module
+        await chooseModule(module);
+        await seedbed.client.driver.waitForApp();
+        const listView = await seedbed.components[`${module}List`].ListView;
+
+        let recordIds = null;
+        recordIds = await parseInputArray(inputIDs);
+
+        // toggle specific record(s)
+        if ( !Array.isArray(recordIds) ) {
+            await toggleRecord({id : recordIds.id}, listView );
+        } else {
+            for ( let i = 0; i < recordIds.length; i++) {
+                await toggleRecord({id : recordIds[i].id}, listView );
+            }
+        }
+
+        // Toggle all records
+        await listView.toggleAll();
+        this.driver.waitForApp();
+
+        // Select Recalculate Values
+        await listView.selectAction('Recalculate Values');
+        this.driver.waitForApp();
+
+        // Close Alert
+        await closeAlert();
+        this.driver.waitForApp();
+
+    }, {waitForApp: true}
+);
