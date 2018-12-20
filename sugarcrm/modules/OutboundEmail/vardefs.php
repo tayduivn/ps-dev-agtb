@@ -190,4 +190,12 @@ $dictionary['OutboundEmail'] = [
             'relationship_type' => 'one-to-many',
         ],
     ],
+    'uses' => [
+        'team_security',
+    ],
+    'ignore_templates' => [
+        'default',
+    ],
 ];
+
+VardefManager::createVardef('OutboundEmail', 'OutboundEmail');

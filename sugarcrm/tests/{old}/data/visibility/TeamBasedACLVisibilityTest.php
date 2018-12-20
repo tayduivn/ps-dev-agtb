@@ -125,9 +125,7 @@ class TeamBasedACLVisibilityTest extends TestCase
     {
         $newUser = SugarTestUserUtilities::createAnonymousUser();
         $privateTeamSet = BeanFactory::newBean('TeamSets');
-        $privateTeamSet->addTeams(array($newUser->getPrivateTeamID()));
-
-        $this->bean->acl_team_set_id = $privateTeamSet->id;
+        $this->bean->acl_team_set_id = $privateTeamSet->addTeams(array($newUser->getPrivateTeamID()));
         $this->bean->save();
 
         $this->assertFalse($this->isBeanAvailableUsingFrom());

@@ -79,6 +79,8 @@ class OutboundEmailTest extends TestCase
             'mail_smtppass' => $encodedPassword,
             'mail_smtpauth_req' => '1',
             'mail_smtpssl' => '0',
+            'team_id' => '1',
+            'team_set_id' => '1',
         );
         $configuration = OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 

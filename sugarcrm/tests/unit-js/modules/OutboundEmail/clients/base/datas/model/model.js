@@ -42,10 +42,14 @@ describe('Data.Base.OutboundEmailBean', function() {
             'primary_address': true,
             'reply_to_address': true
         }];
+        var teamId = _.uniqueId();
         var stub = sandbox.stub(app.user, 'get');
 
         stub.withArgs('full_name').returns(name);
         stub.withArgs('email').returns(email);
+        stub.withArgs('private_team_id').returns(teamId);
+        stub.withArgs('my_teams').returns([{id: teamId, name: 'my name'}]);
+
         sandbox.stub(app.utils, 'getPrimaryEmailAddress').returns(primary);
 
         model = app.data.createBean('OutboundEmail');
@@ -54,10 +58,12 @@ describe('Data.Base.OutboundEmailBean', function() {
         expect(model.getDefault('name')).toBe(name);
         expect(model.getDefault('email_address')).toBe(primary);
         expect(model.getDefault('email_address_id')).toBe(email[0].email_address_id);
+        expect(model.getDefault('team_name')[0].id).toBe(teamId);
 
         // Defaults are applied.
         expect(model.get('name')).toBe(name);
         expect(model.get('email_address')).toBe(primary);
         expect(model.get('email_address_id')).toBe(email[0].email_address_id);
+        expect(model.get('team_name')[0].id).toBe(teamId);
     });
 });

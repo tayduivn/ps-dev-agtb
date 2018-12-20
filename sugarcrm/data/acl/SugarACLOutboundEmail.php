@@ -55,8 +55,8 @@ class SugarACLOutboundEmail extends SugarACLStrategy
 
                 switch ($bean->type) {
                     case OutboundEmail::TYPE_SYSTEM:
-                        // The name cannot be changed.
-                        return $context['field'] !== 'name';
+                        // The name and teams cannot be changed.
+                        return !in_array($context['field'], ['name', 'team_id', 'team_set_id', 'team_name']);
                     case OutboundEmail::TYPE_SYSTEM_OVERRIDE:
                         // Only the username and password can be changed.
                         return in_array($context['field'], ['id', 'mail_smtpuser', 'mail_smtppass']);

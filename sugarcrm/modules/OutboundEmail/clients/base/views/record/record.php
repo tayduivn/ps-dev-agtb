@@ -117,6 +117,7 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                 'mail_smtpport',
                 'mail_smtpauth_req',
                 'mail_smtpssl',
+                'team_name',
             ),
         ),
     ),

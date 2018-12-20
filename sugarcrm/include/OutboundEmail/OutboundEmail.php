@@ -208,6 +208,7 @@ class OutboundEmail extends SugarBean
 
             if ($user) {
                 $ob->populateFromUser($user);
+                $ob->setDefaultTeamFromUser($user);
             }
         } else {
             // Update the user's existing system-override account.
@@ -500,6 +501,8 @@ class OutboundEmail extends SugarBean
                         $this->mail_smtptype,
                         $this->mail_smtpserver
                     );
+                    // Set teams
+                    $this->setDefaultTeam();
                     $this->save();
                     static::$sysMailerCache = $this;
                 }
@@ -637,6 +640,8 @@ class OutboundEmail extends SugarBean
         if (isset($GLOBALS['current_user'])) {
             $this->populateFromUser($GLOBALS['current_user']);
         }
+
+        $this->setDefaultTeam();
     }
 
     /**
@@ -739,6 +744,7 @@ class OutboundEmail extends SugarBean
 		$this->id = $a['id'];
         $this->type = static::TYPE_SYSTEM;
 		$this->user_id = '1';
+        $this->setDefaultTeam();
 		$this->save();
 
         if ($saveConfig) {
@@ -888,5 +894,41 @@ class OutboundEmail extends SugarBean
     public function resetSystemMailerCache()
     {
         static::$sysMailerCache = null;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see SugarBean::setDefaultTeam()
+     */
+    public function setDefaultTeam()
+    {
+        global $current_user;
+
+        if ($this->type === static::TYPE_SYSTEM) {
+            $this->team_id = '1';
+            $this->team_set_id = '1';
+        } elseif ($current_user instanceof User) {
+            $this->setDefaultTeamFromUser($current_user);
+        }
+
+        if (empty($this->team_id)) {
+            parent::setDefaultTeam();
+        }
+    }
+
+    /**
+     * Set default team for user.
+     * @param User $user
+     */
+    protected function setDefaultTeamFromUser(User $user)
+    {
+        if (empty($this->type)) {
+            return;
+        }
+        $this->team_id = $user->getPrivateTeamID();
+        $this->team_set_id = $this->team_id;
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->acl_team_set_id = '';
+        //END SUGARCRM flav=ent ONLY
     }
 }

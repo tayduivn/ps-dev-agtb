@@ -632,7 +632,7 @@ class CurrentUserApi extends SugarApi
             $my_teams[] = array('id' => $id, 'name' => $name,);
         }
         $user_data['my_teams'] = $my_teams;
-
+        $user_data['private_team_id'] = $current_user->getPrivateTeamID();
         $defaultTeams = TeamSetManager::getTeamsFromSet($current_user->team_set_id);
         //BEGIN SUGARCRM flav=ent ONLY
         $defaultSelectedTeamIds = array();

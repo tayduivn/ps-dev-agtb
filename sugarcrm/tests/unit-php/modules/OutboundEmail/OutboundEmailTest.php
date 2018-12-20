@@ -475,19 +475,26 @@ class OutboundEmailTest extends TestCase
     /**
      * @covers ::populateDefaultValues
      * @covers ::populateFromUser
+     * @covers ::setDefaultTeam
+     * @covers ::setDefaultTeamFromUser
      */
     public function testPopulateDefaultValues()
     {
         $primary = 'foo@bar.com';
         $primaryId = Uuid::uuid1();
+        $privateTeamId = Uuid::uuid1();
         $ea = $this->createPartialMock('\\EmailAddress', ['getEmailGUID']);
         $ea->method('getEmailGUID')->willReturn($primaryId);
 
-        $user = $this->createPartialMock('\\User', ['getUsersNameAndEmail']);
+        $user = $this->createPartialMock('\\User', [
+            'getUsersNameAndEmail',
+            'getPrivateTeamID',
+        ]);
         $user->id = Uuid::uuid1();
         $user->name = 'George Butler';
         $user->emailAddress = $ea;
         $user->method('getUsersNameAndEmail')->willReturn(['email' => $primary, 'name' => $user->name]);
+        $user->method('getPrivateTeamID')->willReturn($privateTeamId);
         $GLOBALS['current_user'] = $user;
 
         $this->bean->populateDefaultValues();
@@ -495,5 +502,6 @@ class OutboundEmailTest extends TestCase
         $this->assertSame($user->name, $this->bean->name, 'The names should match');
         $this->assertSame($primary, $this->bean->email_address, 'The email addresses should match');
         $this->assertSame($primaryId, $this->bean->email_address_id, 'The email address IDs should match');
+        $this->assertSame($privateTeamId, $this->bean->team_id, 'The team ID should match');
     }
 }

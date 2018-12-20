@@ -107,6 +107,8 @@ class OutboundEmailConfigurationTestHelper
             'user_id' => $userId,
             'from_email' => $email,
             'from_name' => $name,
+            'team_id' => $user->getPrivateTeamID(),
+            'team_set_id' => $user->getPrivateTeamID(),
         );
         $configuration = self::mergeOutboundEmailConfigurations($configuration);
         $outboundEmail = self::createOutboundEmail($configuration);
@@ -171,6 +173,8 @@ class OutboundEmailConfigurationTestHelper
             "mail_smtppass"     => "foobar",
             "mail_smtpauth_req" => "1",
             "mail_smtpssl"      => "0",
+            'team_id' => '1',
+            'team_set_id' => '1',
         );
 
         return array_merge($defaults, $configuration);
@@ -196,6 +200,8 @@ class OutboundEmailConfigurationTestHelper
         $outboundEmail->mail_smtpssl      = $configuration["mail_smtpssl"];
         $outboundEmail->email_address = $configuration['from_email'];
         $outboundEmail->email_address_id = $sea->getEmailGUID($outboundEmail->email_address);
+        $outboundEmail->team_id = $configuration["team_id"];
+        $outboundEmail->team_set_id = $configuration["team_set_id"];
         $outboundEmail->save();
 
         return $outboundEmail;
