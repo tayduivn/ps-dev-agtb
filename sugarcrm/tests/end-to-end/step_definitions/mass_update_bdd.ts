@@ -18,7 +18,7 @@ import {chooseModule, closeAlert, toggleRecord, parseInputArray} from '../step_d
 import MassupdateView from '../views/massupdate-view';
 
 When(/^I (perform|cancel) mass update of all (\w+) with the following values:$/,
-    async function(button: string, module, table: TableDefinition) {
+    async function (button: string, module, table: TableDefinition) {
         await chooseModule(module);
         const listView = await seedbed.components[`${module}List`].ListView;
         const massUpdateView = await seedbed.components[`${module}List`].MassUpdateView;
@@ -50,7 +50,7 @@ When(/^I (perform|cancel) mass update of all (\w+) with the following values:$/,
     }, {waitForApp: true}
 );
 
-const populateMassUpdate = async function ( massUpdateView, module, table: TableDefinition) {
+const populateMassUpdate = async function (massUpdateView, module, table: TableDefinition) {
     const rows = table.rows();
 
     // Populate mass update with data from the table
@@ -58,7 +58,7 @@ const populateMassUpdate = async function ( massUpdateView, module, table: Table
 
         // Add new Mass Update row after first one is filled
         if (i !== 0) {
-            await  massUpdateView.addRow( i + 1 );
+            await  massUpdateView.addRow(i + 1);
         }
 
         let row = rows[i];
@@ -82,7 +82,7 @@ const populateMassUpdate = async function ( massUpdateView, module, table: Table
         let fieldObject = await seedbed.client.driver.execSync('getFieldDef', argumentsArray);
 
         // Dismiss confirmation alert for fields of 'populate_list' type
-        if ( fieldObject.value.populate_list ) {
+        if (fieldObject.value.populate_list && (fieldName.indexOf('account_name') !== -1 )) {
             let alert = new AlertCmp({type: 'warning'});
             await alert.clickButton('confirm');
         }
@@ -97,18 +97,18 @@ When(/^I (perform|cancel) mass update of (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\])
     async function(button: string, module, inputIDs: string, table: TableDefinition) {
 
         await chooseModule(module);
-        const listView =       await seedbed.components[`${module}List`].ListView;
+        const listView = await seedbed.components[`${module}List`].ListView;
         const massUpdateView = await seedbed.components[`${module}List`].MassUpdateView;
 
         let recordIds = null;
         recordIds = await parseInputArray(inputIDs);
 
         // toggle specific record(s)
-        if ( !Array.isArray(recordIds) ) {
-            await toggleRecord({id : recordIds.id}, listView );
+        if (!Array.isArray(recordIds)) {
+            await toggleRecord({id: recordIds.id}, listView);
         } else {
-            for ( let i = 0; i < recordIds.length; i++) {
-                await toggleRecord({id : recordIds[i].id}, listView );
+            for (let i = 0; i < recordIds.length; i++) {
+                await toggleRecord({id: recordIds[i].id}, listView);
             }
         }
 

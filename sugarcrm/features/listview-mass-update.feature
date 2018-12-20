@@ -159,3 +159,77 @@ Feature: Quotes module mass update verification
       | lead_source | Employee                     |
       | team_name   | Administrator,East (Primary) |
 
+  @contacts_mass_updates @e2e
+  Scenario: Contacts > List View > Mass Update > Selected Records
+    And Contacts records exist:
+      | *   | first_name | last_name |
+      | C_1 | Bill       | Clinton   |
+      | C_2 | George     | Bush      |
+      | C_3 | Barak      | Obama     |
+      | C_4 | Donald     | Trump     |
+
+    And Accounts records exist:
+      | *name       |
+      | New Account |
+
+    # Perform Mass Update
+    When I perform mass update of Contacts [*C_1, *C_2, *C_4] with the following values:
+      | fieldName    | value       |
+      | account_name | New Account |
+
+    # Verify that selected fields are updated for *C_1 record
+    Then Contacts *C_1 should have the following values:
+      | fieldName    | value       |
+      | account_name | New Account |
+
+       # Verify that selected fields are updated for *C_1 record
+    Then Contacts *C_2 should have the following values:
+      | fieldName    | value       |
+      | account_name | New Account |
+
+        # Verify that selected fields are updated for *C_1 record
+    Then Contacts *C_3 should have the following values:
+      | fieldName    | value |
+      | account_name |       |
+
+        # Verify that selected fields are updated for *C_1 record
+    Then Contacts *C_4 should have the following values:
+      | fieldName    | value       |
+      | account_name | New Account |
+
+  @rli_mass_updates @e2e
+  Scenario: RevenueLineItems > List View > Mass Update > All
+    Given RevenueLineItems records exist:
+      | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
+      | RLI_1 | 2020-10-19T19:20:22+00:00 | 100         | 150       | Prospecting | 1        |
+      | RLI_2 | 2020-10-19T19:20:22+00:00 | 200         | 250       | Prospecting | 2        |
+      | RLI_3 | 2020-10-19T19:20:22+00:00 | 300         | 350       | Prospecting | 3        |
+    And Opportunities records exist:
+      | *name |
+      | Opp_1 |
+    And Accounts records exist related via accounts link to *Opp_1:
+      | *name       |
+      | New Account |
+
+    # Perform Mass Update
+    When I perform mass update of all RevenueLineItems with the following values:
+      | fieldName        | value |
+      | opportunity_name | Opp_1 |
+
+    # Verify that selected fields are updated for *RLI_1 record
+    Then RevenueLineItems *RLI_1 should have the following values:
+      | fieldName        | value       |
+      | opportunity_name | Opp_1       |
+      | account_name     | New Account |
+
+    # Verify that selected fields are updated for *RLI_2 record
+    Then RevenueLineItems *RLI_2 should have the following values:
+      | fieldName        | value       |
+      | opportunity_name | Opp_1       |
+      | account_name     | New Account |
+
+    # Verify that selected fields are updated for *RLI_3 record
+    Then RevenueLineItems *RLI_3 should have the following values:
+      | fieldName        | value       |
+      | opportunity_name | Opp_1       |
+      | account_name     | New Account |
