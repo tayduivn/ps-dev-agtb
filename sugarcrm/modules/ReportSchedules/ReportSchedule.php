@@ -360,9 +360,9 @@ QUERY;
         $where = '';
         if (!empty($userId)) {
             if ($scheduleType == 'pro') {
-                $where = "AND reportschedules_users.user_id = '$userId'";
+                $where = 'AND reportschedules_users.user_id = ' . $this->db->quoted($userId);
             } else {
-                $where = "AND user_id = '$userId'";
+                $where = 'AND user_id = ' . $this->db->quoted($userId);
             }
         }
         $time = $timedate->nowDb();
@@ -378,7 +378,7 @@ QUERY;
                 "$this->table_name.next_run < '$time' $where AND " .
                 "$this->table_name.deleted = 0 AND " .
                 "$this->table_name.active = 1 AND " .
-                "$this->table_name.schedule_type = '" . $scheduleType . "' AND " .
+                "$this->table_name.schedule_type = " . $this->db->quoted($scheduleType) . " AND " .
                 "users.status = 'Active' AND users.deleted = 0 " .
                 "AND reportschedules_users.deleted = 0 " .
                 "ORDER BY $this->table_name.next_run ASC";
@@ -393,7 +393,7 @@ QUERY;
                 "$this->table_name.next_run < '$time' $where AND \n".
                 "$this->table_name.deleted=0 AND \n".
                 "$this->table_name.active=1 AND " .
-                "$this->table_name.schedule_type='".$scheduleType."' AND\n".
+                "$this->table_name.schedule_type=" . $this->db->quoted($scheduleType) . " AND\n".
                 "users.status='Active' AND users.deleted='0'".
                 "ORDER BY $this->table_name.next_run ASC";
         }

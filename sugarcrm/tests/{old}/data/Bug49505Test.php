@@ -65,15 +65,6 @@ class Bug49505Test extends TestCase
             // get relation from 'Link2' class
             $link2List = $focus->get_related_list($linkedBean, strtolower($v));
 
-            // get relation for 'get_related_list' function from Link class
-            $focus->field_defs[strtolower($v)]['link_class'] = 'Link';
-            $focus->field_defs[strtolower($v)]['link_file'] = 'data/Link.php';
-            $linkList = $focus->get_related_list($linkedBean, strtolower($v));
-
-            unset($focus->field_defs[strtolower($v)]['link_class']);
-            unset($focus->field_defs[strtolower($v)]['link_file']);
-
-            $this->assertEquals($linkedBean->id, $linkList['list'][0]->id);
             $this->assertEquals($linkedBean->id, $link2List['list'][0]->id);
         }
     }

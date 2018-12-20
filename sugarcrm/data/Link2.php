@@ -832,7 +832,7 @@ class Link2 {
      *
      */
     public function _get_alternate_key_fields($table_name) {
-        $indices = Link::get_link_table_definition($table_name, null, 'indices');
+        $indices = self::get_link_table_definition($table_name, null, 'indices');
         if (!empty($indices)) {
             foreach ($indices as $index) {
                 if ( isset($index['type']) && $index['type'] == 'alternate_key' ) {
@@ -846,6 +846,36 @@ class Link2 {
             return array($relDef['join_key_lhs'], $relDef['join_key_rhs']);
 
         return array();
+    }
+
+    public static function get_link_table_definition($table_name, $relationshipName, $def_name)
+    {
+        global $dictionary;
+
+        include 'modules/TableDictionary.php';
+        // first check to see if already loaded - assumes hasn't changed in the meantime
+        if (isset($dictionary[$table_name][$def_name])) {
+            return $dictionary[$table_name][$def_name];
+        }
+
+        if ($relationshipName && isset($dictionary[$relationshipName][$def_name])) {
+            return $dictionary[$relationshipName][$def_name];
+        }
+
+        // custom metadata is found in custom/metadata (naturally) and the naming follows
+        // the convention $relationship_name_c, and $relationship_name = $table_name
+        $relationshipName = preg_replace('/_c$/', '', $table_name);
+
+        foreach (SugarAutoLoader::existingCustom("metadata/{$relationshipName}MetaData.php") as $file) {
+            include $file;
+        }
+        if (isset($dictionary[$relationshipName][$def_name])) {
+            return $dictionary[$relationshipName][$def_name];
+        }
+        // couldn't find the metadata for the table in either the standard or custom locations
+        $GLOBALS['log']->debug('Error fetching field defs for join table ' . $table_name);
+
+        return null;
     }
 
     /**

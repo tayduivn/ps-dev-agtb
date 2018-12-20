@@ -17,10 +17,6 @@
 class One2OneBeanRelationship extends One2MBeanRelationship
 {
 
-    public function __construct($def)
-    {
-        parent::__construct($def);
-    }
     /**
      * @param  $lhs SugarBean left side bean to add to the relationship.
      * @param  $rhs SugarBean right side bean to add to the relationship.

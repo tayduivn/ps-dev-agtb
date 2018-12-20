@@ -27,6 +27,8 @@ class ReportScheduleTest extends TestCase
     public function testGetQuery($scheduleType, $expected)
     {
         $mockObject = $this->getReportsScheduleMock();
+        $mockDb = $this->createMock(\DBManager::class);
+        $mockObject->db = $mockDb;
         $result = TestReflection::callProtectedMethod($mockObject, 'getQuery', array('test_id', $scheduleType));
         call_user_func(array($this, $expected['assert']), $expected['subString'], $result);
     }

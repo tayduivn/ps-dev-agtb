@@ -728,8 +728,11 @@ abstract class SugarRelationship
         if (!empty($whereTable)) {
             $whereTable .= '.';
         }
-
-        return $whereTable . $optional_array['lhs_field'] . "" . $optional_array['operator'] . "'" . $optional_array['rhs_value'] . "'";
+        $db = DBManagerFactory::getInstance();
+        return $whereTable
+            . $optional_array['lhs_field']
+            . $optional_array['operator']
+            . $db->quoted($optional_array['rhs_value']);
     }
 
 
