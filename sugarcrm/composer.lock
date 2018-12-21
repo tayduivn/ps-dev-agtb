@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d5faed3d20b637a3aeb27bce3de0f817",
+    "content-hash": "8af749c243a86dfbee1b6446a99e1bbc",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -251,29 +251,17 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.8.0",
+            "version": "v2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "ce43835f40aac55c4ee4c104219950fe589cdfe0"
+                "reference": "d7c2df104dadd35cabc18fe52025aa66b9fe342e"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine/dbal/doctrine-dbal-v2.8.0-0a5d3f.tar",
-                "reference": "ce43835f40aac55c4ee4c104219950fe589cdfe0",
-                "shasum": "b32ad7b977a735e2ca42a0da88eaf83df17087eb"
-            },
-            "archive": {
-                "exclude": [
-                    "!vendor",
-                    "tests",
-                    "*phpunit.xml",
-                    ".appveyor.yml",
-                    ".travis.yml",
-                    "build.xml",
-                    "build.properties",
-                    "composer.phar"
-                ]
+                "url": "https://satis.sugardev.team/dist/doctrine/dbal/doctrine-dbal-v2.9.2-252b63.tar",
+                "reference": "d7c2df104dadd35cabc18fe52025aa66b9fe342e",
+                "shasum": "c523c4fcbc236a04b286c76c21f20f27b3815431"
             },
             "require": {
                 "doctrine/cache": "^1.0",
@@ -282,11 +270,10 @@
                 "php": "^7.1"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^4.0",
+                "doctrine/coding-standard": "^5.0",
                 "jetbrains/phpstorm-stubs": "^2018.1.2",
                 "phpstan/phpstan": "^0.10.1",
-                "phpunit/phpunit": "^7.1.2",
-                "phpunit/phpunit-mock-objects": "!=3.2.4,!=3.2.5",
+                "phpunit/phpunit": "^7.4",
                 "symfony/console": "^2.0.5|^3.0|^4.0",
                 "symfony/phpunit-bridge": "^3.4.5|^4.0.5"
             },
@@ -299,18 +286,18 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8.x-dev",
+                    "dev-master": "2.9.x-dev",
                     "dev-develop": "3.0.x-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Doctrine\\DBAL\\": "lib/"
+                "psr-4": {
+                    "Doctrine\\DBAL\\": "lib/Doctrine/DBAL"
                 }
             },
             "autoload-dev": {
-                "psr-0": {
-                    "Doctrine\\Tests\\": "tests/"
+                "psr-4": {
+                    "Doctrine\\Tests\\": "tests/Doctrine/Tests"
                 }
             },
             "license": [
@@ -334,15 +321,19 @@
                     "email": "jonwage@gmail.com"
                 }
             ],
-            "description": "Database Abstraction Layer",
-            "homepage": "http://www.doctrine-project.org",
+            "description": "Powerful PHP database abstraction layer (DBAL) with many features for database schema introspection and management.",
+            "homepage": "https://www.doctrine-project.org/projects/dbal.html",
             "keywords": [
+                "abstraction",
                 "database",
                 "dbal",
+                "mysql",
                 "persistence",
+                "pgsql",
+                "php",
                 "queryobject"
             ],
-            "time": "2018-07-13T03:16:35+00:00"
+            "time": "2018-12-31T03:27:51+00:00"
         },
         {
             "name": "doctrine/event-manager",
