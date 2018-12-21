@@ -129,7 +129,7 @@
         "symfony/process": "v3.4.11"
     },
     "require-dev": {
-        "phpunit/phpunit": "7.3.5",
+        "phpunit/phpunit": "7.5.1",
         "behat/behat": "3.4.3"
     },
     "repositories": [

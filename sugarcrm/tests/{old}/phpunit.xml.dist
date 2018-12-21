@@ -15,7 +15,6 @@
          xsi:noNamespaceSchemaLocation="../../vendor/phpunit/phpunit/phpunit.xsd"
          colors="true"
          beStrictAboutOutputDuringTests="true"
-         enforceTimeLimit="true"
          timeoutForSmallTests="100"
          timeoutForMediumTests="145"
          timeoutForLargeTests="165"
