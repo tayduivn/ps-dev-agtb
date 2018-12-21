@@ -50,7 +50,7 @@ class RecentProductApi extends SugarApi
             $mostRecentQuery->select(array('product_template_id', 'date_entered'));
             $mostRecentQuery->from($bean, array('add_deleted' => true));
             $mostRecentQuery->where()
-                ->equals('assigned_user_id', "{$GLOBALS['current_user']->id}")
+                ->equals('created_by', "{$GLOBALS['current_user']->id}")
                 ->notNull('product_template_id');
             $mostRecentQuery->orderBy('date_entered');
 
