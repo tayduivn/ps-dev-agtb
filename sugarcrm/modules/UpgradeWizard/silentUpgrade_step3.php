@@ -213,13 +213,6 @@ logThis('Start rebuild relationships.', $path);
 @rebuildRelations();
 logThis('End rebuild relationships.', $path);
 
-// Bug 61826 - We need to run these SQL files after the tables are first created.
-if (version_compare(getSilentUpgradeVar('origVersion'), '6.7.0', '<')) {
-	require_once(clean_path($unzip_dir.'/scripts/post_install.php'));
-	runSqlFiles(getSilentUpgradeVar('origVersion'), getSilentUpgradeVar('destVersion'), 'sql_query');
-}
-// End Bug 61826 /////////////////////////////////
-
 //Make sure to call preInstall on database instance to setup additional tables for hierarchies if needed
 if($db->supports('recursive_query')) {
     $db->preInstall();
@@ -230,7 +223,6 @@ $admin = new Administration();
 $admin->saveSetting('system','adminwizard',1);
 
 include("$unzip_dir/manifest.php");
-$ce_to_pro_ent = isset($manifest['name']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $manifest['name']);
 $sugar_version = getSilentUpgradeVar('origVersion');
 if (!$sugar_version)
 {
@@ -242,34 +234,7 @@ logThis("Begin: Update custom module built using module builder to add favorites
 add_custom_modules_favorites_search();
 logThis("Complete: Update custom module built using module builder to add favorites", $path);
 
-if($ce_to_pro_ent) {
-	//add the global team if it does not exist
-	$globalteam = new Team();
-	$globalteam->retrieve('1');
-	require_once($unzip_dir.'/'.$zip_from_dir.'/modules/Administration/language/en_us.lang.php');
-	if(isset($globalteam->name)){
-		echo 'Global '.$mod_strings['LBL_UPGRADE_TEAM_EXISTS'].'<br>';
-		logThis(" Finish Building Global Team", $path);
-	}else{
-        Team::create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
-	}
-
-	logThis(" Start Building private teams", $path);
-
-    upgradeModulesForTeam();
-    logThis(" Finish Building private teams", $path);
-
-    logThis(" Start Building the team_set and team_sets_teams", $path);
-    upgradeModulesForTeamsets();
-    logThis(" Finish Building the team_set and team_sets_teams", $path);
-
-	logThis(" Start modules/Administration/upgradeTeams.php", $path);
-        include('modules/Administration/upgradeTeams.php');
-        logThis(" Finish modules/Administration/upgradeTeams.php", $path);
-}
-
 // we need to add templates when either conversion from CE to Pro+, or upgrade of Pro+ flavors from older versions
-// this needs to be outside of if($ce_to_pro_ent) because it does not cover second case where $ce_to_pro_ent is 'SugarPro'
 logThis("Starting to add pdf template", $path);
 addPdfManagerTemplate();
 logThis("Finished adding pdf template", $path);
@@ -296,47 +261,6 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 
 //Patch for bug57431 : Module name isn't updated in portal layout editor
 updateRenamedModulesLabels();
-
-// Bug 57216 - Upgrade wizard dying on metadata upgrader because needed files were
-// already called but news needed to replace them. This moves the metadata upgrader
-// later in the process - rgonzalez
-logThis('Checking for mobile/portal metadata upgrade...');
-// 6.6 metadata enhancements for portal and wireless, should only be
-// handled for upgrades FROM pre-6.6 to a version POST 6.6 and MUST be
-// handled AFTER inclusion of the upgrade package files
-if (!didThisStepRunBefore('commit','upgradePortalMobileMetadata')) {
-    if (version_compare($sugar_version, '6.6.0', '<')) {
-        if (file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) {
-            set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','in_progress');
-            logThis('Sidecar Upgrade: Preparing to upgrade metadata to 6.6.0 compatibility through the silent upgrader ...');
-            require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
-
-            // Get the sidecar metadata upgrader
-            logThis('Sidecar Upgrade: Instantiating the mobile/portal metadata upgrader ...');
-            $smdUpgrader = new SidecarMetaDataUpgrader();
-
-            // Run the upgrader
-            logThis('Sidecar Upgrade: Beginning the mobile/portal metadata upgrade ...');
-            $smdUpgrader->upgrade();
-            logThis('Sidecar Upgrade: Mobile/portal metadata upgrade complete');
-
-            // Log failures if any
-            $failures = $smdUpgrader->getFailures();
-            if (!empty($failures)) {
-                logThis('Sidecar Upgrade: ' . count($failures) . ' metadata files failed to upgrade through the silent upgrader:');
-                logThis(print_r($failures, true));
-            } else {
-                logThis('Sidecar Upgrade: Mobile/portal metadata upgrade ran with no failures:');
-                logThis($smdUpgrader->getCountOfFilesForUpgrade() . ' files were upgraded.');
-            }
-
-            // Reset the progress
-            set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','done');
-        }
-    }
-}
-// END sidecar metadata updates
-logThis('Mobile/portal metadata upgrade check complete');
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	TAKE OUT TRASH

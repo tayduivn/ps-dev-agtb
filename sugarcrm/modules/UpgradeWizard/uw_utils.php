@@ -3116,56 +3116,6 @@ function upgradeLocaleNameFormat($name_format) {
 }
 
 
-function migrate_sugar_favorite_reports(){
-    require_once('modules/SugarFavorites/SugarFavorites.php');
-
-    // Need to repair the RC1 instances that have incorrect GUIDS
-    $deleteRows = array();
-    $res = $GLOBALS['db']->query("select * from sugarfavorites where module='Reports'");
-    while($row = $GLOBALS['db']->fetchByAssoc($res)){
-        $expectedId = SugarFavorites::generateGUID('Reports', $row['record_id'], $row['assigned_user_id']);
-        if ($row['id'] != $expectedId) {
-            $deleteRows[] = $row['id'];
-        }
-    }
-    $GLOBALS['db']->query("delete from sugarfavorites where id in ('" . implode("','",$deleteRows) . "')");
-    // End Repair
-
-
-    $active_users = array();
-    $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
-    while($row = $GLOBALS['db']->fetchByAssoc($res)){
-        $active_users[] = $row['id'];
-    }
-
-    foreach($active_users as $user_id){
-        $user = new User();
-        $user->retrieve($user_id);
-
-        $user_favorites = $user->getPreference('favorites', 'Reports');
-        if(!is_array($user_favorites)) $user_favorites = array();
-
-        if(!empty($user_favorites)){
-            foreach($user_favorites as $report_id => $bool){
-                $fav = new SugarFavorites();
-                $record = SugarFavorites::generateGUID('Reports', $report_id, $user_id);
-                if(!$fav->retrieve($record, true, false)){
-                        $fav->new_with_id = true;
-                }
-                $fav->id = $record;
-                $fav->module = 'Reports';
-                $fav->record_id = $report_id;
-                $fav->assigned_user_id = $user->id;
-                $fav->created_by = $user->id;
-                $fav->modified_user_id = $user->id;
-
-                $fav->deleted = 0;
-                $fav->save();
-            }
-        }
-    }
-}
-
 function add_custom_modules_favorites_search(){
     $module_directories = scandir('modules');
 
@@ -3391,58 +3341,6 @@ function upgradeFolderSubscriptionsTeamSetId()
     logThis("Finished upgradeFolderSubscriptionsTeamSetId()");
 }
 
-/**
- * upgradeModulesForTeam
- *
- * This method update the associated_user_id, name, name_2 to the private team records on teams table
- * This function is used for upgrade process from 5.1.x and 5.2.x.
- *
- */
-function upgradeModulesForTeam() {
-    logThis("In upgradeModulesForTeam()");
-    $result = $GLOBALS['db']->query("SELECT id, user_name, first_name, last_name FROM users where deleted=0");
-
-    while($row = $GLOBALS['db']->fetchByAssoc($result)) {
-    	$results2 = $GLOBALS['db']->query("SELECT id FROM teams WHERE name = '({$row['user_name']})'");
-    	$assoc = '';
-  		if(!$assoc = $GLOBALS['db']->fetchByAssoc($results2)) {
-  			//if team does not exist, then lets create the team for this user
-  			$team = new Team();
-			$user = new User();
-  			$user->retrieve($row['id']);
-			$team->new_user_created($user);
-			$team_id = $team->id;
-  		}else{
-  			$team_id =$assoc['id'];
-  		}
-
-  			//upgrade the team
-  			$name = is_null($row['first_name'])?'':$row['first_name'];
-			$name_2 = is_null($row['last_name'])?'':$row['last_name'];
-			$associated_user_id = $row['id'];
-
-			//Bug 32914
-			//Ensure team->name is not empty by using team->name_2 if available
-			if(empty($name) && !empty($name_2)) {
-			   $name = $name_2;
-			   $name_2 = '';
-			}
-
-			$query = "UPDATE teams SET name = '{$name}', name_2 = '{$name_2}', associated_user_id = '{$associated_user_id}' WHERE id = '{$team_id}'";
-			$GLOBALS['db']->query($query);
-    } //while
-
-    //Update the team_set_id and default_team columns
-    $ce_to_pro_or_ent = isset($_SESSION['upgrade_from_flavor']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $_SESSION['upgrade_from_flavor']);
-
-    //Update team_set_id
-	if($ce_to_pro_or_ent) {
-	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
-	   $GLOBALS['db']->query("update users set default_team = (select teams.id from teams where teams.associated_user_id = users.id)");
-	}
-
-}
-
 
     function addNewSystemTabsFromUpgrade($from_dir){
         global $path;
@@ -3518,83 +3416,6 @@ function upgradeModulesForTeam() {
 		}
 	}
 
-    /**
-     * convertImageToText
-     * @deprecated
-     * This method attempts to convert date type image to text on Microsoft SQL Server.
-     * This method could NOT be used in any other type of datebases.
-     */
-	function convertImageToText($table_name,$column_name){
-		$set_lang = "SET LANGUAGE us_english";
-		$GLOBALS['db']->query($set_lang);
-	    if($GLOBALS['db']->lastError()){
-            logThis('An error occurred when performing this query-->'.$set_lang);
-        }
-       $q="SELECT data_type
-        FROM INFORMATION_SCHEMA.Tables T JOIN INFORMATION_SCHEMA.Columns C
-        ON T.TABLE_NAME = C.TABLE_NAME where T.TABLE_NAME = '$table_name' and C.COLUMN_NAME = '$column_name'";
-       $res= $GLOBALS['db']->query($q);
-       if($GLOBALS['db']->lastError()){
-            logThis('An error occurred when performing this query-->'.$q);
-        }
-       $row= $GLOBALS['db']->fetchByAssoc($res);
-
-     if(trim(strtolower($row['data_type'])) == 'image'){
-        $addContent_temp = "alter table {$table_name} add {$column_name}_temp text null";
-        $GLOBALS['db']->query($addContent_temp);
-        if($GLOBALS['db']->lastError()){
-            logThis('An error occurred when performing this query-->'.$addContent_temp);
-        }
-        $qN = "select count=datalength({$column_name}), id, {$column_name} from {$table_name}";
-        $result = $GLOBALS['db']->query($qN);
-        while($row = $GLOBALS['db']->fetchByAssoc($result)){
-           if($row['count'] >8000){
-                $contentLength = $row['count'];
-                $start = 1;
-                $next=8000;
-                $convertedContent = '';
-                while($contentLength >0){
-                    $stepsQuery = "select cont=convert(varchar(max), convert(varbinary(8000), substring({$column_name},{$start},{$next}))) from {$table_name} where id= '{$row['id']}'";
-                    $steContQ = $GLOBALS['db']->query($stepsQuery);
-                    if($GLOBALS['db']->lastError()){
-                        logThis('An error occurred when performing this query-->'.$stepsQuery);
-                    }
-                    $stepCont = $GLOBALS['db']->fetchByAssoc($steContQ);
-                    if(isset($stepCont['cont'])){
-                        $convertedContent = $convertedContent.$stepCont['cont'];
-                    }
-                    $start = $start+$next;
-                    $contentLength = $contentLength - $next;
-                }
-                $addContentDataText="update {$table_name} set {$column_name}_temp = '{$convertedContent}' where id= '{$row['id']}'";
-                $GLOBALS['db']->query($addContentDataText);
-                if($GLOBALS['db']->lastError()){
-                    logThis('An error occurred when performing this query-->'.$addContentDataText);
-                }
-           }
-           else{
-                $addContentDataText="update {$table_name} set {$column_name}_temp =
-                convert(varchar(max), convert(varbinary(8000), {$column_name})) where id= '{$row['id']}'";
-                $GLOBALS['db']->query($addContentDataText);
-                if($GLOBALS['db']->lastError()){
-                    logThis('An error occurred when performing this query-->'.$addContentDataText);
-                }
-           }
-        }
-        //drop the contents now and change contents_temp to contents
-        $dropColumn = "alter table {$table_name} drop column {$column_name}";
-        $GLOBALS['db']->query($dropColumn);
-        if($GLOBALS['db']->lastError()){
-            logThis('An error occurred when performing this query-->'.$dropColumn);
-        }
-        $changeColumnName = "EXEC sp_rename '{$table_name}.[{$column_name}_temp]','{$column_name}','COLUMN'";
-        $GLOBALS['db']->query($changeColumnName);
-        if($GLOBALS['db']->lastError()){
-            logThis('An error occurred when performing this query-->'.$changeColumnName);
-        }
-     }
-    }
-
 	 /**
      * clearHelpFiles
      * This method attempts to delete all English inline help files.
@@ -3611,51 +3432,6 @@ function upgradeModulesForTeam() {
 	            logThis("Deleted file: $the_file");
 	        }
 	    }
-	}
-
-
-	/**
-	 * fix_assigned_user_link_reports
-	 *
-	 * This method goes through the existing reports and fixes errors with the reports definition
-	 * where the assigned_user_link may have been pointing to the wrong relationship name
-	 * ("teams" instead of "team_memberships").  Also, fix errors where the team_memberships relationship
-	 * may have been incorrectly pointing to the wrong name definition ("teams" instead of "team_memberships").
-	 * This will fix existing reports created before 5.2.0d that used the Assigned User Name's
-	 * teams as a filter.  The fix will allow the Teams folder for the Assigned To User field to
-	 * be displayed.  Also, the fix to the team memberships relationship name will correctly fix the
-	 * query to join against the team_memberships table rather than the teams table.
-	 *
-	 * @param $path String variable for the log path
-	 *
-	 */
-	function fix_report_relationships($path='') {
-		if(!empty($path)) {
-		   logThis('Begin fix_report_relationships', $path);
-		}
-
-		$query = "SELECT id, content FROM saved_reports WHERE deleted = 0";
-        $result = $GLOBALS['db']->query($query);
-
-        while($row = $GLOBALS['db']->fetchByAssoc($result)) {
-        	  $content = $row['content'];
-        	  $content = str_replace('&quot;', '"', $content);
-			  $content2 = str_replace(':assigned_user_link:teams', ':assigned_user_link:team_memberships', $content);
-              $content3 = str_replace('{"name":"teams","relationship_name":"team_memberships"', '{"name":"team_memberships","relationship_name":"team_memberships"', $content2);
-
-              //If the contents have been altered, update the saved_report definition
-              if($content != $content3) {
-              	 $update_query = 'UPDATE saved_reports SET content = \'' . $GLOBALS['db']->quote($content3) . '\' WHERE id = \'' . $row['id'] . '\'';
-              	 if(!empty($path)) {
-              	 	logThis('Running SQL:' . $update_query, $path);
-              	 }
-              	 $GLOBALS['db']->query($update_query);
-              }
-        }
-
-        if(!empty($path)) {
-           logThis('End fix_report_relationships', $path);
-        }
 	}
 
 	/**
@@ -4258,39 +4034,6 @@ function repairSearchFields($globString='modules/*/metadata/SearchFields.php', $
 	{
 		logThis('End repairSearchFields', $path);
 	}
-}
-
-/**
- * repairUpgradeHistoryTable
- *
- * This is a helper function used in the upgrade process to fix upgrade_history entries so that the filename column points
- * to the new upload directory location introduced in 6.4 versions
- */
-function repairUpgradeHistoryTable()
-{
-    require_once('modules/Configurator/Configurator.php');
-    new Configurator();
-    global $sugar_config;
-
-    //Now upgrade the upgrade_history table entries
-    $results = $GLOBALS['db']->query('SELECT id, filename FROM upgrade_history');
-    $upload_dir = $sugar_config['cache_dir'].'upload/';
-
-    //Create regular expression string to
-    $match = '/^' . str_replace('/', '\/', $upload_dir) . '(.*?)$/';
-
-    while(($row = $GLOBALS['db']->fetchByAssoc($results)))
-    {
-        $file = str_replace('//', '/', $row['filename']); //Strip out double-paths that may exist
-
-        if(!empty($file) && preg_match($match, $file, $matches))
-        {
-            //Update new file location to use the new $sugar_config['upload_dir'] value
-            $new_file_location = $sugar_config['upload_dir'] . $matches[1];
-            $GLOBALS['db']->query("UPDATE upgrade_history SET filename = '{$new_file_location}' WHERE id = '{$row['id']}'");
-        }
-    }
-
 }
 
 

@@ -130,7 +130,6 @@ initialize_session_vars();
 // Load manifest
 require("$unzip_dir/manifest.php");
 
-$ce_to_pro_ent = isset($manifest['name']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $manifest['name']);
 $_SESSION['upgrade_from_flavor'] = $manifest['name'];
 
 global $sugar_config;
@@ -272,34 +271,6 @@ if(empty($errors)) {
 		require("sugar_version.php");
 		require('config.php');
 
-		if($ce_to_pro_ent){
-			if(isset($sugar_config['sugarbeet']))
-			{
-			    //$sugar_config['sugarbeet'] is only set in COMM
-			    unset($sugar_config['sugarbeet']);
-			}
-		    if(isset($sugar_config['disable_team_access_check']))
-			{
-			    //$sugar_config['disable_team_access_check'] is a runtime configration,
-			    //no need to write to config.php
-			    unset($sugar_config['disable_team_access_check']);
-			}
-			logThis('Running merge_passwordsetting', $path);
-			if(!merge_passwordsetting($sugar_config, $sugar_version)) {
-				logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
-				$errors[] = 'Could not write config.php!';
-			}
-			logThis('Done merge_passwordsetting', $path);
-		}
-
-        if (version_compare($sugar_version, '6.7.0', '<') && isset($sugar_config['default_theme']) && $sugar_config['default_theme'] == 'Sugar5') {
-            logThis('Set default_theme to RacerX', $path);
-            require_once('modules/Configurator/Configurator.php');
-            $configurator = new Configurator();
-            $configurator->config['default_theme'] = 'RacerX';
-            $configurator->handleOverride();
-        }
-
 		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
             logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
             $errors[] = 'Could not write config.php!';
@@ -402,66 +373,6 @@ if(empty($errors)) {
 @deleteCache();
 
 ///////////////////////////////////////////////////////////////////////////////
-if($ce_to_pro_ent){
-	if(function_exists('upgradeDashletsForSalesAndMarketing')){
-		logThis('Upgrading tracker dashlets for sales and marketing start .', $path);
-		upgradeDashletsForSalesAndMarketing();
-		logThis('Upgrading tracker dashlets for sales and marketing start .', $path);
-	}
-}
-
-fix_report_relationships($path);
-
-if($ce_to_pro_ent)
-{
-        //check to see if there are any new files that need to be added to systems tab
-        //retrieve old modules list
-        logThis('check to see if new modules exist',$path);
-        $newModuleList = array();
-        include('include/modules.php');
-        $newModuleList = $moduleList;
-
-        //include tab controller
-        require_once('modules/MySettings/TabController.php');
-        $newTB = new TabController();
-
-        //make sure new modules list has a key we can reference directly
-        $newModuleList = $newTB->get_key_array($newModuleList);
-        $oldModuleList = $newTB->get_key_array($oldModuleList);
-
-        //iterate through list and remove commonalities to get new modules
-        foreach ($newModuleList as $remove_mod){
-            if(in_array($remove_mod, $oldModuleList)){
-                unset($newModuleList[$remove_mod]);
-            }
-        }
-
-        $must_have_modules= array(
-			  'Activities'=>'Activities',
-        	  'Calendar'=>'Calendar',
-        	  'Reports' => 'Reports',
-			  'Quotes' => 'Quotes',
-			  'Products' => 'Products',
-			  'Forecasts' => 'Forecasts',
-			  'Contracts' => 'Contracts',
-        );
-        $newModuleList = array_merge($newModuleList,$must_have_modules);
-
-        //new modules list now has left over modules which are new to this install, so lets add them to the system tabs
-        logThis('new modules to add are '.var_export($newModuleList,true),$path);
-
-        //grab the existing system tabs
-        $tabs = $newTB->get_system_tabs();
-
-        //add the new tabs to the array
-        foreach($newModuleList as $nm ){
-          $tabs[$nm] = $nm;
-        }
-
-        //now assign the modules to system tabs
-        $newTB->set_system_tabs($tabs);
-        logThis('module tabs updated',$path);
-}
 
 //Also set the tracker settings if  flavor conversion ce->pro or ce->ent
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){
@@ -471,19 +382,6 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 	    ob_start();
 			include('vendor/Smarty/internals/core.write_file.php');
 		ob_end_clean();
-	 	$db = DBManagerFactory::getInstance();
-		if($ce_to_pro_ent){
-	        //Also set license information
-	        $admin = new Administration();
-			$category = 'license';
-			$value = 0;
-			$admin->saveSetting($category, 'users', $value);
-            $key = array('key', 'expire_date');
-			$value = '';
-			foreach($key as $k){
-				$admin->saveSetting($category, $k, $value);
-			}
-		}
 	}
 }
 
