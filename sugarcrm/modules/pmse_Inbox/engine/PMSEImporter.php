@@ -159,8 +159,11 @@ class PMSEImporter
         }
         $project = json_decode($_data, true);
 
-        if (!empty($project['dependencies']) && !empty($options['selectedIds'])) {
-            $this->importDependencies($project['dependencies'], $options['selectedIds']);
+        if (!empty($project['dependencies'])) {
+            if (!empty($options['selectedIds'])) {
+                $this->importDependencies($project['dependencies'], $options['selectedIds']);
+            }
+            $this->matchDependencies($project['dependencies']);
         }
 
         if (!empty($project) && isset($project['project'])) {
@@ -205,6 +208,115 @@ class PMSEImporter
                 }
             }
         }
+    }
+
+    /**
+     * Matches process dependencies like business rules and email templates with
+     * existing ones in the system according to their definitions
+     * @param $dependencies
+     */
+    public function matchDependencies($dependencies)
+    {
+        if ($dependencies['business_rule']) {
+            // Create a map of BR definitions -> BR IDs to make matching easier
+            $businessRulesByDefinition = $this->mapDefinitionsToIDs($dependencies, 'business_rule');
+            $this->matchDependencyDefinitions($businessRulesByDefinition, 'business_rule');
+        }
+        if ($dependencies['email_template']) {
+            // Create a map of ET definitions -> ET IDs to make matching easier
+            $emailTemplatesByDefinition = $this->mapDefinitionsToIDs($dependencies, 'email_template');
+            $this->matchDependencyDefinitions($emailTemplatesByDefinition, 'email_template');
+        }
+    }
+
+    /**
+     * Returns an array with dependency definitions of the given type as keys,
+     * and their corresponding IDs in the database as values
+     * @param $dependencies
+     * @param $type
+     * @return array
+     */
+    public function mapDefinitionsToIDs($dependencies, $type)
+    {
+        $mapping = array();
+        switch ($type) {
+            case 'business_rule':
+                foreach ($dependencies['business_rule'] as $businessRuleDependency) {
+                    $brDefinition = $businessRuleDependency['rst_source_definition'];
+                    $brId = $businessRuleDependency['id'];
+                    $mapping[$brDefinition] = $brId;
+                }
+                break;
+            case 'email_template':
+                foreach ($dependencies['email_template'] as $emailTemplateDependency) {
+                    $etDefinition = $this->extractDefinitionFromET($emailTemplateDependency, 'base_module') .
+                        $this->extractDefinitionFromET($emailTemplateDependency, 'name') .
+                        $this->extractDefinitionFromET($emailTemplateDependency, 'description') .
+                        $this->extractDefinitionFromET($emailTemplateDependency, 'subject') .
+                        $this->extractDefinitionFromET($emailTemplateDependency, 'body_html');
+                    $etId = $emailTemplateDependency['id'];
+                    $mapping[$etDefinition] = $etId;
+                }
+                break;
+        }
+        return $mapping;
+    }
+
+    /**
+     * Searches the database to link any process dependencies of the given type
+     * to any existing dependency that matches them by definition
+     * @param $dependenciesByDefinition
+     * @param $dependencyType
+     * @throws SugarQueryException
+     */
+    public function matchDependencyDefinitions($dependenciesByDefinition, $dependencyType)
+    {
+        $q = new SugarQuery();
+        switch ($dependencyType) {
+            case 'business_rule':
+                $q->select(array('id', 'rst_source_definition'));
+                $q->from(BeanFactory::getBean('pmse_Business_Rules'));
+                $q->where()->in('rst_source_definition', array_keys($dependenciesByDefinition));
+                $result = $q->execute();
+                // Match the business rules by definition and set their new ID references
+                foreach ($result as $existingBusinessRule) {
+                    $existingBRDef = $existingBusinessRule['rst_source_definition'];
+                    $oldBRId = $dependenciesByDefinition[$existingBRDef];
+                    $newBRId = $existingBusinessRule['id'];
+                    $this->dependencyKeys[$oldBRId] = $newBRId;
+                }
+                break;
+            case 'email_template':
+                $q->select(array('id', 'base_module', 'name', 'description', 'subject', 'body_html'));
+                $q->from(BeanFactory::getBean('pmse_Emails_Templates'));
+                $result = $q->execute();
+                foreach ($result as $existingEmailTemplate) {
+                    // Compare the stringified definition of the existing ET with the non-imported
+                    // email template dependencies
+                    $extractedDefinition = $this->extractDefinitionFromET($existingEmailTemplate, 'base_module') .
+                        $this->extractDefinitionFromET($existingEmailTemplate, 'name') .
+                        $this->extractDefinitionFromET($existingEmailTemplate, 'description') .
+                        $this->extractDefinitionFromET($existingEmailTemplate, 'subject') .
+                        $this->extractDefinitionFromET($existingEmailTemplate, 'body_html');
+                    if (isset($dependenciesByDefinition[$extractedDefinition])) {
+                        $oldETId = $dependenciesByDefinition[$extractedDefinition];
+                        $newETId = $existingEmailTemplate['id'];
+                        $this->dependencyKeys[$oldETId] = $newETId;
+                    }
+                }
+                break;
+        }
+    }
+
+    /**
+     * Returns a stringified definition of an email template field from its contents
+     * @param $emailTemplateDependency
+     * @param $field
+     * @return string
+     */
+    public function extractDefinitionFromET($emailTemplateDependency, $field)
+    {
+        return isset($emailTemplateDependency[$field]) ? $emailTemplateDependency[$field] . '|' : 'NULL|';
     }
 
     /**

@@ -619,6 +619,16 @@ class PMSEProjectImporter extends PMSEImporter
                                                 $tokenExpression[$_key]->expField = $this->changedUidElements[$_value->expField]['new_uid'];
                                                 $flowBean->$key = json_encode($tokenExpression);
                                                 break;
+                                            case 'BUSINESS_RULES':
+                                                // Need to adjust references to business rule actions to reflect their new ID after being imported
+                                                $oldBusinessRuleActionID = $_value->expField;
+                                                $importedActivities = $this->getSavedElements()['bpmnActivity'];
+                                                if (isset($importedActivities[$oldBusinessRuleActionID])) {
+                                                    $newBusinessRuleActionID = $importedActivities[$oldBusinessRuleActionID];
+                                                    $value = str_replace($oldBusinessRuleActionID, $newBusinessRuleActionID, $value);
+                                                }
+                                                $flowBean->$key = $value;
+                                                break;
                                             default:
                                                 $flowBean->$key = $value;
                                         }
