@@ -15,13 +15,23 @@ class FavoritesApi extends SugarApi
     public function registerApiRest()
     {
         return array(
-            'getFavoriteRecords' => array(
+            'postFavoriteRecords' => array(
                 'reqType' => 'POST',
                 'path' => array('<module>', 'favorites'),
                 'pathVars' => array('module', 'favorites'),
+                'min_version' => 11.4,
                 'method' => 'getFavoriteRecords',
                 'shortHelp' => 'Get all the favorite items in alphabetical order',
                 'longHelp' => 'modules/Opportunities/clients/base/api/help/favorites_post_help.html',
+            ),
+            'getFavoriteRecords' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', 'favorites'),
+                'pathVars' => array('module', 'favorites'),
+                'min_version' => 11.5,
+                'method' => 'getFavoriteRecords',
+                'shortHelp' => 'Get all the favorite items in alphabetical order',
+                'longHelp' => 'modules/Opportunities/clients/base/api/help/favorites_get_help.html',
             ),
         );
     }

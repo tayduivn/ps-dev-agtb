@@ -287,10 +287,10 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
                 view.activeTab = 'recent-product';
             });
 
-            it('should call app.api.call with create, url and payloadData as null', function() {
+            it('should call app.api.call with read, url and payloadData as null', function() {
                 view.loadData();
 
-                expect(app.api.call).toHaveBeenCalledWith('create', 'testUrl');
+                expect(app.api.call).toHaveBeenCalledWith('read', 'testUrl');
             });
         });
 
@@ -299,10 +299,10 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
                 view.activeTab = 'favorites';
             });
 
-            it('should call app.api.call with create, url and payloadData', function() {
+            it('should call app.api.call with read, url and payloadData', function() {
                 view.loadData();
 
-                expect(app.api.call).toHaveBeenCalledWith('create', 'testUrl', {
+                expect(app.api.call).toHaveBeenCalledWith('read', 'testUrl', {
                     pageNum: view.pageNumClicked - 1
                 });
             });

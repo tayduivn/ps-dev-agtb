@@ -141,7 +141,7 @@
             this.toggleLoading(false);
             data.results = [];
         }, this);
-        app.api.call('create', url, payloadData, callbacks);
+        app.api.call('read', url, payloadData, callbacks);
     },
 
     /**

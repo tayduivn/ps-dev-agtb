@@ -15,13 +15,23 @@ class RecentProductApi extends SugarApi
     public function registerApiRest()
     {
         return array(
-            'getRecentRecords' => array(
+            'postRecentRecords' => array(
                 'reqType' => 'POST',
                 'path' => array('<module>', 'recent-product'),
                 'pathVars' => array('module', 'recent-product'),
+                'min_version' => 11.4,
                 'method' => 'getRecentRecords',
                 'shortHelp' => 'Get top 10 recently used items in reverse Chronological order',
                 'longHelp' => 'modules/Opportunities/clients/base/api/help/recent_product_post_help.html',
+            ),
+            'getRecentRecords' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', 'recent-product'),
+                'pathVars' => array('module', 'recent-product'),
+                'min_version' => 11.5,
+                'method' => 'getRecentRecords',
+                'shortHelp' => 'Get top 10 recently used items in reverse Chronological order',
+                'longHelp' => 'modules/Opportunities/clients/base/api/help/recent_product_get_help.html',
             ),
         );
     }
