@@ -58,6 +58,12 @@ $viewdefs['Accounts']['EditView'] = array(
           ),
         ),
 
+        //BEGIN SUGARCRM flav=ent ONLY
+        array (
+          'service_level',
+        ),
+        //END SUGARCRM flav=ent ONLY
+
         array (
 
           array (

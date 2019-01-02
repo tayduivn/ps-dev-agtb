@@ -318,6 +318,15 @@ $app_list_strings = array (
     'Utilities' => 'Utilities',
     'Other' => 'Other',
   ),
+  //BEGIN SUGARCRM flav=ent ONLY
+  'service_level_dom' => array (
+    '' => '',
+    'T1' => 'Tier 1',
+    'T2' => 'Tier 2',
+    'T3' => 'Tier 3',
+    'T4' => 'Tier 4',
+  ),
+  //END SUGARCRM flav=ent ONLY
   'lead_source_default_key' => 'Self Generated',
   'lead_source_dom' =>
   array (

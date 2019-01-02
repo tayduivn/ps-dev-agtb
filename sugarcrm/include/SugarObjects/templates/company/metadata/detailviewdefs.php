@@ -29,6 +29,9 @@ $viewdefs[$module_name]['DetailView'] = array(
         array('ownership', 'rating'),
         array('industry'),
         array($_object_name . '_type', 'annual_revenue'),
+        //BEGIN SUGARCRM flav=ent ONLY
+        array('service_level'),
+        //END SUGARCRM flav=ent ONLY
 		array(
             array('name'=>'date_modified', 'label'=>'LBL_DATE_MODIFIED', 'customCode'=>'{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}'),
             'team_name',

@@ -157,6 +157,9 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 'industry',
                 'parent_name',
                 'account_type',
+                //BEGIN SUGARCRM flav=ent ONLY
+                'service_level',
+                //END SUGARCRM flav=ent ONLY
                 'assigned_user_name',
                 'phone_office',
                 array(

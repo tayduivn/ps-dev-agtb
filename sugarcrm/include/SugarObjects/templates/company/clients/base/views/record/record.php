@@ -146,6 +146,9 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'website',
+                //BEGIN SUGARCRM flav=ent ONLY
+                'service_level',
+                //END SUGARCRM flav=ent ONLY
                 'phone_office',
                 'employees',
                 'phone_alternate',
