@@ -65,16 +65,16 @@ export default class ActivityStreamLayout extends BaseView {
      */
     public async addPost(value) {
         await this.driver.click(this.$(`omnibar.inputbox`));
-        this.driver.waitForApp();
+        await this.driver.waitForApp();
         let selector  = this.$('omnibar.sayit');
         await this.driver.setValue(selector, value);
-        this.driver.waitForApp();
+        await this.driver.waitForApp();
         // The delay is needed to properly reference an existing record in activity message
-        this.driver.pause(2000);
+        await this.driver.pause(2000);
         await this.driver.keys('\uE007');
-        this.driver.waitForApp();
+        await this.driver.waitForApp();
         await this.driver.click(this.$(`omnibar.addpost`));
-        this.driver.waitForApp();
+        await this.driver.waitForApp();
     }
 
     /**
@@ -87,16 +87,17 @@ export default class ActivityStreamLayout extends BaseView {
     public async addComment(index, value) {
         let selector  = this.$(`messages.comment`, {index});
         await this.driver.click(selector);
-        this.driver.waitForApp();
+        await this.driver.waitForApp();
 
         selector  = this.$(`comments.replyArea`, {index});
         await this.driver.click(selector);
-        this.driver.waitForApp();
+        await this.driver.waitForApp();
 
         await this.driver.keys(value);
-        this.driver.waitForApp();
+        await this.driver.waitForApp();
 
         selector  = this.$(`comments.replyButton`,{index});
         await this.driver.click(selector);
+        await this.driver.waitForApp();
     }
 }

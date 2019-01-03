@@ -251,9 +251,9 @@ Feature: Quotes module E2E testing
     When I close alert
     # 7. Verify that added QLI info is correct
     Then I verify fields on #test1QLIRecord
-      | fieldName      | value          |
-      | discount_price | T100.00$200.00 |
-      | total_amount   | T196.00        |
+      | fieldName      | value   |
+      | discount_price | T100.00 |
+      | total_amount   | T196.00 |
     # 8. Verify that numbers in QLI Grand Total bar are updated properly
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value        |

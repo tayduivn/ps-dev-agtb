@@ -73,7 +73,7 @@ export const updateForecastConfig = async (data) => {
         ],
         "show_worksheet_likely": 1,
         "show_worksheet_best": 1,
-        "show_worksheet_worst": 0,
+        "show_worksheet_worst": 1,
         "show_projected_likely": 1,
         "show_projected_best": 1,
         "show_projected_worst": 0,
@@ -85,7 +85,7 @@ export const updateForecastConfig = async (data) => {
             "account_name",
             "date_closed",
             "sales_stage",
-            "probability",
+            "worst_case",
             "likely_case",
             "best_case"
         ]

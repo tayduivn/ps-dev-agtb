@@ -230,7 +230,7 @@ Feature: Products module verification
       | mft_part_num    | B.H. Edwards Inc 72868XYZ987 |
       | discount_amount | 6.00%                        |
 
-  @edit
+  @edit @ci-excluded @reEnable_after_sfa_5592_is_fixed
   Scenario: Products > Edit existing QLI record > Cancel/Save
     Given Products records exist:
       | *name | discount_price | cost_price | list_price | quantity | discount_amount | mft_part_num                 |
