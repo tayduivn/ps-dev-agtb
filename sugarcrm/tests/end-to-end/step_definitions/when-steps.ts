@@ -422,6 +422,9 @@ When<string, string>(
                     last_name: login + 'LName',
                     status: 'Active',
                     is_admin: false,
+                    reports_to_id: '1',
+                    reports_to_link: {name: 'Administrator', id: '1'},
+                    reports_to_name: 'Administrator',
                     email: [
                         {
                             email_address: login + '@eee.eee',
@@ -435,6 +438,15 @@ When<string, string>(
             });
 
             seedbed.api.created.push(user);
+
+            seedbed.cachedRecords.push(
+                login,
+                {
+                    input: user,
+                    id: user.id,
+                    module: 'Users'
+                }
+            );
 
             // need to log in with the new user
             await seedbed.api.login({

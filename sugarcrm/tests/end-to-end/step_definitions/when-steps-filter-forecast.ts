@@ -10,10 +10,13 @@
  */
 
 import {When} from '@sugarcrm/seedbed';
-import ForecastFilterView from "../views/forecast-filter-view";
+import ForecastFilterView from '../views/forecasts-filter-view';
 
 /**
- * Add filter in Forecast Sales Rep worksheet
+ *      Add filter in Forecast Sales Rep worksheet
+ *
+ *      @example
+ *      When I add "Exclude" in #Forecasts.SalesRepWorksheet.Filter view
  */
 When(/^I add "([^"]*)" in (#\S+) view$/,
     async function(value: string, view: ForecastFilterView) {
@@ -25,7 +28,10 @@ When(/^I add "([^"]*)" in (#\S+) view$/,
     }, {waitForApp: true});
 
 /**
- *  Remove filter in Forecast Sales Rep worksheet
+ *      Remove filter in Forecast Sales Rep worksheet
+ *
+ *      @example
+ *      When I remove "Include" in #Forecasts.SalesRepWorksheet.Filter view
  */
 When(/^I remove "([^"]*)" filter in (#\S+) view$/,
     async function(value: string, view: ForecastFilterView) {

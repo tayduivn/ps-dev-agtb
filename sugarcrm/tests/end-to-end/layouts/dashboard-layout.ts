@@ -14,6 +14,7 @@ import DashboardView from '../views/dashboard-view';
 import DashletView from '../views/dashlet-view';
 import ProductCatalogQuickPicksDashlet from '../views/product-catalog-quick-picks-dashlet-view';
 import RecordsMarkedForErasureDashlet from '../views/records-marked-for-erasure-dashlet';
+import ForecastsBarChartDashlet from '../views/forecasts-bar-chart-dashlet';
 
 /**
  * Represents a Sugar Dashboard layout.
@@ -26,6 +27,7 @@ export default class DashboardLayout extends BaseView {
     public HeaderView: HeaderView;
     public defaultView: DashboardView;
     public DashboardView: DashboardView;
+    public ForecastsBarChartDashlet: DashletView;
     public ProductCatalogQuickPicksDashlet: DashletView;
     public RecordsMarkedForErasureDashlet: DashletView;
 
@@ -44,6 +46,10 @@ export default class DashboardLayout extends BaseView {
         this.defaultView = this.DashboardView = this.createComponent<DashboardView>(DashboardView, {
             module: options.module,
             default: true
+        });
+
+        this.ForecastsBarChartDashlet = this.createComponent<ForecastsBarChartDashlet>(ForecastsBarChartDashlet, {
+            module: options.module,
         });
 
         this.HeaderView = this.createComponent<HeaderView>(HeaderView, {

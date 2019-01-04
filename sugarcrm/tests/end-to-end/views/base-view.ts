@@ -128,6 +128,6 @@ export default class extends BaseView {
     }
 
     public async clickButton(buttonName) {
-        return this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
+        await this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
     }
 }

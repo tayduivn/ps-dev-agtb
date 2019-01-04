@@ -9,8 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import BaseView from './base-view';
-import {seedbed} from '@sugarcrm/seedbed';
+import * as _ from 'lodash';
 import BaseListView from './baselist-view';
 import ForecastsListItemView from "./forecasts-list-item-view";
 
@@ -43,5 +42,21 @@ export default class ForecastsListView extends BaseListView {
 
         this.listItems.push(listViewItem as any);
         return listViewItem as any;
+    }
+
+    public getListItem (conditions) {
+        let keys = _.keys(conditions);
+
+        if (keys.length !== 1 || !_.includes(['id', 'index', 'current'], keys[0])) {
+            return null;
+        } else {
+            let listItems = _.filter(this.listItems, conditions),
+                listViewItem = listItems.length ? listItems[0] : null;
+
+            if (!listViewItem) {
+                listViewItem = this.createListItem(conditions);
+            }
+            return listViewItem;
+        }
     }
 }

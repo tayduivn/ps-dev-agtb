@@ -30,8 +30,8 @@ export default class DashboardView extends BaseView {
             },
             elements: {
                 dashlet: '.dashlets.row-fluid',
-                InForecastDashlet: '.row-fluid.sortable[name="dashlet_00"]',
-                ForecastBarChart: '.row-fluid.sortable[name="dashlet_01"]',
+                InForecastDashlet: '.row-fluid[name="dashlet_00"]',
+                ForecastBarChart: '.row-fluid[name="dashlet_01"]',
             }
         });
     }

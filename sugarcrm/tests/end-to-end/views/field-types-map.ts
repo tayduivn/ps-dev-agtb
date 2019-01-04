@@ -44,6 +44,7 @@ import * as QuotaPoint from '../fields/quotapoint-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
+    userLink: NameField,
     phone: TextField,
     discount: FloatField,
     fullname: FullnameField,

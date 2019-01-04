@@ -9,10 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/*
- Represents Forecasts Filter view PageObject on ForecastListView Layout.
- */
-
 import BaseView from './base-view';
 
 /**

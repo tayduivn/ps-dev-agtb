@@ -10,10 +10,9 @@
  */
 
 import BaseView from '../views/base-view';
-import ForecastsFilterView from '../views/forecast-filter-view';
-import ForecastsHeaderView from '../views/record-header-view';
-import ForecastsListView from '../views/forecasts-list-view';
-import ForecastsFooterView from '../views/forecasts-footer';
+import SalesRepWorksheetView from '../views/forecasts-sales-rep-worksheet-view';
+import SalesManagerWorksheetView from '../views/forecasts-manager-worksheet-view';
+
 
 /**
  * Represents Forecast Sales Rep layout
@@ -23,12 +22,8 @@ import ForecastsFooterView from '../views/forecasts-footer';
  */
 export default class ForecastsLayout extends BaseView {
 
-    public type = 'list';
-    public FilterView: ForecastsFilterView;
-    public ListView: ForecastsListView;
-    public defaultView: ForecastsListView;
-    public HeaderView: ForecastsHeaderView;
-    public Footer: ForecastsFooterView;
+    public SalesRepWorksheet: SalesRepWorksheetView;
+    public SalesManagerWorksheet: SalesManagerWorksheetView;
 
     constructor(options) {
         super(options);
@@ -37,9 +32,7 @@ export default class ForecastsLayout extends BaseView {
             $: '.main-pane:not([style*="display: none"])'
         });
 
-        this.FilterView = this.createComponent<ForecastsFilterView>(ForecastsFilterView, { module: options.module });
-        this.HeaderView = this.createComponent<ForecastsHeaderView>(ForecastsHeaderView);
-        this.defaultView = this.ListView = this.createComponent<ForecastsListView>(ForecastsListView, { module: options.module, default: true });
-        this.Footer = this.createComponent<ForecastsFooterView>(ForecastsFooterView);
+        this.SalesRepWorksheet = this.createComponent<SalesRepWorksheetView>(SalesRepWorksheetView);
+        this.SalesManagerWorksheet = this.createComponent<SalesManagerWorksheetView>(SalesManagerWorksheetView);
     }
 }

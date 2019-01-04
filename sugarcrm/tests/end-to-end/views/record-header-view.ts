@@ -61,6 +61,7 @@ export default class RecordHeaderView extends BaseView {
                 'savedraft':'a[name="save_draft_button"]:not(.hide)',
                 'exportcsv':'a[name="export_button"]:not(.hide)',
                 'settings':'a[name="settings_button"]:not(.hide)',
+                'assignquota': 'a[name="assign_quota"]:not(.hide)',
             },
 
             title: {
@@ -68,10 +69,6 @@ export default class RecordHeaderView extends BaseView {
                 'new': 'h1 [data-name="title"] span.list-headerpane div'
             }
         });
-    }
-
-    public async clickButton(buttonName) {
-        return this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
     }
 
     public async checkIsButtonActive(buttonName) {
