@@ -1730,7 +1730,6 @@ class PMSECrmDataWrapperTest extends TestCase
                         'isValidStudioField',
                         'fieldTodo',
                         'returnArrayModules',
-                        'dataFieldPersonalized',
                         'gatewayModulesMethod'
                     )
                 )
@@ -1855,10 +1854,6 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->object->expects($this->once())
             ->method('getModuleFilter')
             ->will($this->returnValue($moduleBeanMock));
-
-        $this->object->expects($this->any())
-            ->method('dataFieldPersonalized')
-            ->will($this->returnArgument(0));
 
         $this->object->expects($this->any())
             ->method('isValidStudioField')
