@@ -171,7 +171,7 @@ class AuthenticationController implements LoggerAwareInterface
 			loginLicense();
 			if(!empty($GLOBALS['login_error'])){
 				unset($_SESSION['authenticated_user_id']);
-                $this->logger->fatal('FAILED LOGIN: potential hack attempt:' . $GLOBALS['login_error']);
+                $this->logger->critical('FAILED LOGIN: potential hack attempt:' . $GLOBALS['login_error']);
 				$this->loginSuccess = false;
 				return false;
 			}
