@@ -1356,7 +1356,8 @@ describe('includes.javascript.pmse.designer', function() {
             expect(getSearchInfo('MODULE', 'Accounts', 'phone_alternate', '123')).toEqual({
                 url: App.api.buildURL('pmse_Project/CrmData/fields/Accounts?base_module=Accounts'),
                 key: 'phone_alternate',
-                text: 'Module field'
+                text: 'Module field',
+                backupSearchFunction: jasmine.any(Function)
             });
         });
 
@@ -1364,7 +1365,8 @@ describe('includes.javascript.pmse.designer', function() {
             expect(getSearchInfo('VARIABLE', 'Accounts', undefined, 'date_entered')).toEqual({
                 url: App.api.buildURL('pmse_Project/CrmData/fields/Accounts?base_module=Accounts'),
                 key: 'date_entered',
-                text: 'Module field'
+                text: 'Module field',
+                backupSearchFunction: jasmine.any(Function)
             });
         });
 
@@ -1372,7 +1374,8 @@ describe('includes.javascript.pmse.designer', function() {
             expect(getSearchInfo('recipient', 'Accounts', undefined, 'employees')).toEqual({
                 url: App.api.buildURL('pmse_Project/CrmData/fields/Accounts?base_module=Accounts'),
                 key: 'employees',
-                text: 'Module field'
+                text: 'Module field',
+                backupSearchFunction: jasmine.any(Function)
             });
         });
 

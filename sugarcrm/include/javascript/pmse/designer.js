@@ -1879,6 +1879,11 @@ var validateAtom = function(type, module, field, value, element, validationTools
                         return;
                     }
                 }
+                // Since some types of data can be gathered from different sources,
+                // check any backup sources of the data
+                if (searchInfo.backupSearchFunction && searchInfo.backupSearchFunction()) {
+                    return;
+                }
                 createWarning(element, 'LBL_PMSE_ERROR_DATA_NOT_FOUND', searchInfo.text);
             },
             error: function(data) {
@@ -1905,6 +1910,7 @@ var getSearchInfo = function(type, module, field, value) {
     var url;
     var text;
     var key;
+    var backupSearchFunction;
 
     switch (type) {
         case 'MODULE':
@@ -1914,6 +1920,14 @@ var getSearchInfo = function(type, module, field, value) {
             url = App.api.buildURL('pmse_Project/CrmData/fields/' + module + '?base_module=' + getTargetModule());
             text = 'Module field';
             key = key || value;
+            backupSearchFunction = function() {
+                var fields = App.metadata.getModule(module.charAt(0).toUpperCase() + module.slice(1)).fields;
+                for (fieldName in fields) {
+                    if (fieldName === key) {
+                        return true;
+                    }
+                }
+            };
             break;
         case 'USER_IDENTITY':
             url = App.api.buildURL('pmse_Project/CrmData/users/');
@@ -1964,7 +1978,8 @@ var getSearchInfo = function(type, module, field, value) {
     return {
         url: url,
         text: text,
-        key: key
+        key: key,
+        backupSearchFunction: backupSearchFunction
     };
 };
 

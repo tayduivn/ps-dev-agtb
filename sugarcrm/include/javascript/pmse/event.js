@@ -2106,15 +2106,20 @@ AdamEvent.prototype.validateSendMessageCriteriaBoxes = function(data, element, v
 AdamEvent.prototype.validateCriteriaBoxAtoms = function(element, validationTools, criteria, sendEvent) {
     var i;
     var atom;
+    var module;
 
     // Check each atom of the criteria box to ensure the data exists in the database
     // The atoms from send message and send message end events have different attribute names than
     // the atoms from other event criteria boxes, which is why we need the ternary check
     for (i = 0; i < criteria.length; i++) {
         atom = criteria[i];
+        module = sendEvent ? atom.module : atom.expModule;
+        if (atom.chainedRelationship) {
+            module = atom.chainedRelationship.moduleLabel;
+        }
         validationTools.validateAtom(
             sendEvent ? atom.type : atom.expType,
-            sendEvent ? atom.module : atom.expModule,
+            module,
             sendEvent ? atom.field : atom.expField,
             sendEvent ? atom.value : atom.expValue,
             element,
