@@ -130,7 +130,7 @@ class ViewWizard extends SugarView
 			$this->ss->assign("CURRENCY", $selectCurrency);
         }
 
-        $currenciesArray = $locale->currencies;
+        $currenciesArray = $locale->getCurrencies();
         $currenciesVars = $this->correctCurrenciesSymbolsSort($currenciesArray);
 
         $currencySymbolsJs = <<<eoq

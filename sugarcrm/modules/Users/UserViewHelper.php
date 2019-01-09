@@ -619,9 +619,11 @@ class UserViewHelper {
         //END SUGARCRM flav=ent ONLY
 
         $currencyList = array();
-        foreach($locale->currencies as $id => $val ) {
-            $currencyList[$id] = $val['symbol'];
+
+        foreach ($locale->getCurrencies() as $id => ['symbol' => $symbol]) {
+            $currencyList[$id] = $symbol;
         }
+
         $currencySymbolJSON = json_encode($currencyList);
         $this->ss->assign('currencySymbolJSON', $currencySymbolJSON);
 
