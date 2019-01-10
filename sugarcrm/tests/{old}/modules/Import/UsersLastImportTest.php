@@ -76,12 +76,10 @@ class UsersLastImportTest extends TestCase
     
     public function testUndo()
     {
-        $this->assertTrue(
-            $this->_usersLastImport->undo(
-                $this->_importModule
-                )
-            );
-        
+        $this->_usersLastImport->undo(
+            $this->_importModule
+        );
+
         $focus = $this->_loadBean($this->_importModule);
         
         $query = "SELECT * FROM {$focus->table_name}
@@ -121,13 +119,11 @@ class UsersLastImportTest extends TestCase
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
-        
-        $this->assertTrue(
-            $last_import->undo(
-                $last_import->import_module
-                )
-            );
-        
+
+        $last_import->undo(
+            $last_import->import_module
+        );
+
         $result = $GLOBALS['db']->query("SELECT * FROM email_addr_bean_rel where id = '{$this->email_addr_bean_rel_id}'");
 		$rows = $GLOBALS['db']->fetchByAssoc($result);
     	$this->assertFalse($rows);
@@ -141,12 +137,10 @@ class UsersLastImportTest extends TestCase
     
     public function testUndoById()
     {
-        $this->assertTrue(
-            $this->_usersLastImport->undoById(
-                $this->_usersLastImportIds[0]
-                )
-            );
-        
+        $this->_usersLastImport->undoById(
+            $this->_usersLastImportIds[0]
+        );
+
         $focus = $this->_loadBean($this->_importModule);
         
         $query = "SELECT * FROM {$focus->table_name}
