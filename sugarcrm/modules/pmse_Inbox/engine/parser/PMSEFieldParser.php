@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 /**
  * Class that analyzes the data type of a bean
@@ -327,11 +328,16 @@ class PMSEFieldParser implements PMSEDataParserInterface
                         ($token[2] == 'changes' ||
                             $token[2] == 'changes_from' ||
                             $token[2] == 'changes_to')) {
-                        if (isset($bean->dataChanges) && isset($bean->dataChanges[$field])) {
+                        $dataChanges = isset($bean->dataChanges) ? $bean->dataChanges : null;
+                        $cfDataChanges = Registry\Registry::getInstance()->get('cf_data_changes', false);
+                        if ($cfDataChanges) {
+                            $dataChanges = $cfDataChanges;
+                        }
+                        if (isset($dataChanges) && isset($dataChanges[$field])) {
                             if ($token[2] == 'changes_from') {
-                                $value = $bean->dataChanges[$field]['before'];
+                                $value = $dataChanges[$field]['before'];
                             } else {
-                                $value = $bean->dataChanges[$field]['after'];
+                                $value = $dataChanges[$field]['after'];
                             }
                         } else {
                             // used as a flag that means no changes

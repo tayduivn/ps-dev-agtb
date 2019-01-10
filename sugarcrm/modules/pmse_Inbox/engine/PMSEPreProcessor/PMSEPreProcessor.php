@@ -335,6 +335,10 @@ class PMSEPreProcessor
                 }
             }
 
+            if (Registry\Registry::getInstance()->get('cf_data_changes', false)) {
+                Registry\Registry::getInstance()->drop('cf_data_changes');
+            }
+
             // Clear validator caches AFTER the loop completes so that the cache
             // is clear for future iterations
             $this->validator->clearValidatorCaches();

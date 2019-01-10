@@ -232,7 +232,7 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
 
         if ($processFinished) {
             $q->where()
-                ->notIn('cas_flow_status', array('CLOSED', 'TERMINATED'));
+                ->notIn('cas_flow_status', array('CLOSED', 'TERMINATED', 'ERROR'));
         } else {
             $q->where()
                 ->equals('cas_index', 1);

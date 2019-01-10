@@ -12,6 +12,7 @@
 
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 class PMSEChangeField extends PMSEScriptTask
 {
@@ -201,6 +202,12 @@ class PMSEChangeField extends PMSEScriptTask
                         }
                     }
                     $bean->new_with_id = false;
+                    // When mutiple PDs are triggered for the same target module, we need to register the dataChanges
+                    // for later use as the saveAssociatedBean($bean) will override the original dataChanges in $bean.
+                    if (Registry\Registry::getInstance()->get('cf_data_changes', false) === false &&
+                        isset($bean->dataChanges)) {
+                        Registry\Registry::getInstance()->set('cf_data_changes', $bean->dataChanges);
+                    }
                     PMSEEngineUtils::saveAssociatedBean($bean);
                 } else {
                     $this->logger->warning(
