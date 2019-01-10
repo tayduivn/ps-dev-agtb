@@ -13,26 +13,31 @@
 class OutboundEmailVisibility extends SugarVisibility
 {
     /**
-     * OutboundEmail records can only be seen by their owner. When the admin allows users to use the system default
-     * outbound account, all users can also see the system default outbound account.
+     * The system and system-override accounts are included and excluded based on whether or not the
+     * "Allow users to use this account for outgoing email" checkbox is checked in System Email Settings.
      *
      * {@inheritdoc}
      */
     public function addVisibilityWhere(&$query)
     {
+        $db = DBManagerFactory::getInstance();
+        $where = '';
         $alias = $this->getOption('table_alias');
-        $where = $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $alias);
 
         if (empty($alias)) {
             $alias = $this->bean->getTableName();
         }
 
         if ($this->bean->isAllowUserAccessToSystemDefaultOutbound()) {
-            $where = "({$where} OR {$alias}.type="  .  $GLOBALS['db']->quoted(OutboundEmail::TYPE_SYSTEM) .
-                ") AND {$alias}.type<>" . $GLOBALS['db']->quoted(OutboundEmail::TYPE_SYSTEM_OVERRIDE);
+            // Show the system account but not the system-override account.
+            $where = "{$alias}.type<>" . $db->quoted(OutboundEmail::TYPE_SYSTEM_OVERRIDE);
+        } else {
+            // Show the user accounts and the user's own system-override account
+            $where = $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $alias);
+            $where = "({$where} AND {$alias}.type="  .  $db->quoted(OutboundEmail::TYPE_SYSTEM_OVERRIDE) .
+                ") OR {$alias}.type=" . $db->quoted(OutboundEmail::TYPE_USER);
         }
 
-        $where = "({$where})";
         $query = empty($query) ? $where : "{$query} AND {$where}";
 
         return $query;

@@ -58,12 +58,19 @@ class SugarACLOutboundEmailTest extends TestCase
                 false,
                 true,
             ],
-            'Users should not have read access to records they do not own' => [
+            'Users should not have read access to records they do not own for system and system-override accounts' => [
                 ['view', 'list'],
-                ['user', 'system-override', 'system'],
+                ['system-override', 'system'],
                 false,
                 false,
                 false,
+            ],
+            'Users should have read access to records they do not own for user type account' => [
+                ['view', 'list'],
+                ['user'],
+                false,
+                false,
+                true,
             ],
             'Users should not have write access to records they do not own' => [
                 ['edit', 'delete'],

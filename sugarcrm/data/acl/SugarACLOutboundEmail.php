@@ -94,6 +94,11 @@ class SugarACLOutboundEmail extends SugarACLStrategy
             return true;
         }
 
+        // Depending on team visibility, user may see the user-type record even if they don't own.
+        if ($bean->type === OutboundEmail::TYPE_USER) {
+            return true;
+        }
+
         // No one can see a non-system record they don't own.
         return false;
     }

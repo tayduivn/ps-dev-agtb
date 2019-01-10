@@ -51,9 +51,9 @@ class OutboundEmailVisibilityTest extends TestCase
     public function addVisibilityProvider()
     {
         return [
-            [0, 3],
-            [1, 3],
-            [2, 3],
+            [0, 4],
+            [1, 4],
+            [2, 4],
         ];
     }
 
