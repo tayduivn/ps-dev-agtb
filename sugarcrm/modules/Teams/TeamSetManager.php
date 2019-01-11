@@ -159,30 +159,27 @@ class TeamSetManager {
         }
 
         $connection = DBManagerFactory::getConnection();
-        $builder = $connection->createQueryBuilder();
-        $builder->select('NULL')
-            ->from($table);
-        $expr = $builder->expr();
-
-        $where = $expr->orX();
-
+        $platform = $connection->getDatabasePlatform();
         foreach ($columns as $column => $value) {
-            $where->add(
-                $expr->eq($column, $builder->createPositionalParameter($value))
+            $query = $platform->modifyLimitQuery(
+                sprintf(
+                    'SELECT id FROM %s WHERE %s = ? and deleted = ?',
+                    $table,
+                    $column
+                ),
+                $excludeId === null ? 1 : 2
             );
+            $ids = $connection->executeQuery($query, [$teamSetId, 0])
+                ->fetchAll(\PDO::FETCH_COLUMN);
+
+            foreach ($ids as $id) {
+                if ($excludeId === null || $id != $excludeId) {
+                    return true;
+                }
+            }
         }
 
-        if ($excludeId) {
-            $where = $expr->andX($where, $expr->neq('id', $builder->createPositionalParameter($excludeId)));
-        }
-
-        $where = $expr->andX($where, $expr->eq('deleted', 0));
-
-        $builder->where($where)
-            ->setMaxResults(1);
-
-        return $builder->execute()
-            ->fetchColumn() !== false;
+        return false;
     }
 
     /**
