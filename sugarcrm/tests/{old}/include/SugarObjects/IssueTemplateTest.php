@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -84,6 +85,7 @@ class IssueTemplateTest extends TestCase
     {
         $this->assertContains('follow_up_datetime', $this->manager->getModuleViewFields($module, 'record'));
     }
+
 
     public function hasFollowUpDateFieldOnRecordViewProvider(): array
     {

@@ -112,6 +112,7 @@ $vardefs = array (
             'duplicate_on_record_copy' => 'always',
 			'comment' => 'Free-form text used to denote activities of interest'
 		),
+        //BEGIN SUGARCRM flav=ent ONLY
         'follow_up_datetime' => array(
             'name' => 'follow_up_datetime',
             'vname' => 'LBL_FOLLOW_UP_DATETIME',
@@ -120,6 +121,7 @@ $vardefs = array (
             'comment' => 'Deadline for following up on an issue',
             'audited' => true,
         ),
+        //END SUGARCRM flav=ent ONLY
 	),
 	'indices'=>array(
 		 'number'=>array('name' =>strtolower($module).'numk', 'type' =>'unique', 'fields'=>array($_object_name . '_number'))

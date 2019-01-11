@@ -36,11 +36,11 @@ $viewdefs[$module_name]['DetailView'] = array(
     'resolution',
     'status',
   ),
-
+        //BEGIN SUGARCRM flav=ent ONLY
         array(
             'follow_up_datetime',
         ),
-  
+        //END SUGARCRM flav=ent ONLY
   array (
 	array (
       'name' => 'date_entered',

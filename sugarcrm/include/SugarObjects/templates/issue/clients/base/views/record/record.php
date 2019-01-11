@@ -151,7 +151,9 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 ),
                 'priority',
                 'status',
+                //BEGIN SUGARCRM flav=ent ONLY
                 'follow_up_datetime',
+                //END SUGARCRM flav=ent ONLY
                 'type',
                 'resolution',
                 'assigned_user_name',

@@ -31,7 +31,9 @@ $viewdefs['Cases']['DetailView'] = array(
 
 	  array (
 	    'status',
+          //BEGIN SUGARCRM flav=ent ONLY
           'follow_up_datetime',
+          //END SUGARCRM flav=ent ONLY
 	  ),
 	  array (
 	      'type',

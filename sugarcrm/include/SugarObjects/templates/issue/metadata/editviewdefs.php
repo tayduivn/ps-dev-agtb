@@ -42,11 +42,11 @@ $viewdefs[$module_name]['EditView'] = array(
       'resolution',
       'status',
     ),
-
+        //BEGIN SUGARCRM flav=ent ONLY
         array(
             'follow_up_datetime',
         ),
-
+        //END SUGARCRM flav=ent ONLY
     array (
       array('name'=>'name', 'displayParams'=>array('size'=>60)),
     ),

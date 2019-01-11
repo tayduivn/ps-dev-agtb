@@ -138,7 +138,9 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
                 ),
                 'type',
                 'priority',
+                //BEGIN SUGARCRM flav=ent ONLY
                 'follow_up_datetime',
+                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'source',
                     'nl2br' => true,

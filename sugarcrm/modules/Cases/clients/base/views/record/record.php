@@ -175,7 +175,9 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 'type',
                 'source',
                 'status',
+                //BEGIN SUGARCRM flav=ent ONLY
                 'follow_up_datetime',
+                //END SUGARCRM flav=ent ONLY
                 'assigned_user_name',
                 array(
                     'name' => 'description',

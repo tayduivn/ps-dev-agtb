@@ -168,7 +168,9 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 ),
                 'priority',
                 'status',
+                //BEGIN SUGARCRM flav=ent ONLY
                 'follow_up_datetime',
+                //END SUGARCRM flav=ent ONLY
                 'type',
                 'source',
                 'product_category',

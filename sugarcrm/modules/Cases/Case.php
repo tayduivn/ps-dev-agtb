@@ -26,7 +26,10 @@ class aCase extends Basic
     var $name;
     var $status;
     var $priority;
+
+    //BEGIN SUGARCRM flav=ent ONLY
     public $follow_up_datetime;
+    //END SUGARCRM flav=ent ONLY
 
     var $created_by;
     var $created_by_name;
