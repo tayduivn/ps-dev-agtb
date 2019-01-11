@@ -96,6 +96,47 @@ class OutboundEmailTest extends TestCase
                 'type' => 'relate',
                 'vname' => 'LBL_EMAIL_ADDRESS',
             ],
+            'reply_to_name' => [
+                'name' => 'reply_to_name',
+                'vname' => 'LBL_REPLY_TO_NAME',
+                'type' => 'name',
+                'dbType' => 'varchar',
+                'len' => 255,
+                'reportable' => false,
+                'dependency'=> 'not(equal($type, "system"))',
+            ],
+            'reply_to_email_addresses' => [
+                'name' => 'reply_to_email_addresses',
+                'relationship' => 'outbound_email_reply_to_email_addresses',
+                'source' => 'non-db',
+                'type' => 'link',
+                'vname' => 'LBL_REPLY_TO_EMAIL_ADDRESSES',
+            ],
+            'reply_to_email_address_id' => [
+                'name' => 'reply_to_email_address_id',
+                'duplicate_merge' => 'disabled',
+                'id_name' => 'reply_to_email_address_id',
+                'link' => 'reply_to_email_addresses',
+                'massupdate' => false,
+                'module' => 'EmailAddresses',
+                'reportable' => false,
+                'rname' => 'id',
+                'table' => 'email_addresses',
+                'type' => 'id',
+                'vname' => 'LBL_REPLY_TO_EMAIL_ADDRESS_ID',
+            ],
+            'reply_to_email_address' => [
+                'name' => 'reply_to_email_address',
+                'id_name' => 'reply_to_email_address_id',
+                'link' => 'reply_to_email_addresses',
+                'module' => 'EmailAddresses',
+                'rname' => 'email_address',
+                'source' => 'non-db',
+                'table' => 'email_addresses',
+                'type' => 'relate',
+                'vname' => 'LBL_REPLY_TO_EMAIL_ADDRESS',
+                'dependency'=> 'not(equal($type, "system"))',
+            ],
             'mail_sendtype' => [
                 'name' => 'mail_sendtype',
                 'vname' => 'LBL_MAIL_SENDTYPE',
@@ -503,5 +544,44 @@ class OutboundEmailTest extends TestCase
         $this->assertSame($primary, $this->bean->email_address, 'The email addresses should match');
         $this->assertSame($primaryId, $this->bean->email_address_id, 'The email address IDs should match');
         $this->assertSame($privateTeamId, $this->bean->team_id, 'The team ID should match');
+    }
+
+    /**
+     * @covers ::populateFromUser
+     */
+    public function testPopulateFromUser()
+    {
+        $primary = 'foo@bar.com';
+        $primaryId = Uuid::uuid1();
+        $replyTo = 'reply.foo@bar.com';
+        $replyToId = Uuid::uuid1();
+        $ea = $this->createPartialMock('\\EmailAddress', ['getEmailGUID', 'getReplyToAddress']);
+        $ea->method('getEmailGUID')->will($this->returnCallback(
+            function ($email) use ($primary, $primaryId, $replyTo, $replyToId) {
+                $emailGUIDs = array(
+                    $primary => $primaryId,
+                    $replyTo => $replyToId,
+                );
+                return $emailGUIDs[$email];
+            }
+        ));
+        $ea->method('getReplyToAddress')->willReturn($replyTo);
+
+        $user = $this->createPartialMock('\\User', ['getUsersNameAndEmail']);
+        $user->id = Uuid::uuid1();
+        $user->name = 'George Butler';
+        $user->emailAddress = $ea;
+        $user->method('getUsersNameAndEmail')->willReturn(['email' => $primary, 'name' => $user->name]);
+
+        $this->bean->type = \OutboundEmail::TYPE_SYSTEM_OVERRIDE;
+        $this->bean->emailAddress = $ea;
+        $this->bean->populateFromUser($user);
+
+        $this->assertSame($user->name, $this->bean->name, 'The names should match');
+        $this->assertSame($primary, $this->bean->email_address, 'The email addresses should match');
+        $this->assertSame($primaryId, $this->bean->email_address_id, 'The email address IDs should match');
+        $this->assertSame($user->name, $this->bean->reply_to_name, 'The reply-to names should match');
+        $this->assertSame($replyTo, $this->bean->reply_to_email_address, 'The reply-to email addresses should match');
+        $this->assertSame($replyToId, $this->bean->reply_to_email_address_id, 'The reply-to email address IDs should match');
     }
 }

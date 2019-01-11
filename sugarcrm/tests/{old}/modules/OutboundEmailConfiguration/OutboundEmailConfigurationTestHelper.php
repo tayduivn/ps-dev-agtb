@@ -109,6 +109,8 @@ class OutboundEmailConfigurationTestHelper
             'from_name' => $name,
             'team_id' => $user->getPrivateTeamID(),
             'team_set_id' => $user->getPrivateTeamID(),
+            'reply_to_name' => $name,
+            'reply_to_email_address' => "reply.{$userId}@unit.net",
         );
         $configuration = self::mergeOutboundEmailConfigurations($configuration);
         $outboundEmail = self::createOutboundEmail($configuration);
@@ -202,6 +204,9 @@ class OutboundEmailConfigurationTestHelper
         $outboundEmail->email_address_id = $sea->getEmailGUID($outboundEmail->email_address);
         $outboundEmail->team_id = $configuration["team_id"];
         $outboundEmail->team_set_id = $configuration["team_set_id"];
+        $outboundEmail->reply_to_email_address = $configuration['reply_to_email_address'] ?? '';
+        $outboundEmail->reply_to_email_address_id = $sea->getEmailGUID($outboundEmail->reply_to_email_address);
+        $outboundEmail->reply_to_name = $configuration['reply_to_name'] ?? '';
         $outboundEmail->save();
 
         return $outboundEmail;

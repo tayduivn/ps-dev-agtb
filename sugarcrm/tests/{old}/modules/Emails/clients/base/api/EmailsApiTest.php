@@ -153,6 +153,29 @@ class EmailsApiTest extends TestCase
     /**
      * @covers ::sendEmail
      */
+    public function testSendEmail_UsesConfigurationReplyTo()
+    {
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
+
+        $replyToName = $this->currentUserConfiguration->reply_to_name;
+        $replyToAddress = $this->currentUserConfiguration->reply_to_email_address;
+
+        $email = $this->createPartialMock('Email', ['sendEmail']);
+        $email->expects($this->once())->method('sendEmail')->with($this->callback(
+            function ($config) use ($replyToName, $replyToAddress) {
+                return $config->getReplyTo()->getEmail() === $replyToAddress &&
+                    $config->getReplyTo()->getName() === $replyToName;
+            }
+        ));
+        $email->outbound_email_id = $this->currentUserConfiguration->id;
+
+        $api = new EmailsApi();
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
+    }
+
+    /**
+     * @covers ::sendEmail
+     */
     public function testSendEmail_CurrentUserHasNoConfigurations_ThrowsException()
     {
         OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);

@@ -659,6 +659,15 @@ class OutboundEmail extends SugarBean
             $this->email_address = $userData['email'];
             $this->email_address_id = $user->emailAddress->getEmailGUID($this->email_address);
         }
+
+        if (!empty($this->type) && $this->type === static::TYPE_SYSTEM_OVERRIDE) {
+            $replyToAddress = $user->emailAddress->getReplyToAddress($user, true);
+            if (!empty($replyToAddress)) {
+                $this->reply_to_name = $this->name;
+                $this->reply_to_email_address = $replyToAddress;
+                $this->reply_to_email_address_id = $user->emailAddress->getEmailGUID($this->reply_to_email_address);
+            }
+        }
     }
 
 	/**
