@@ -700,7 +700,7 @@ Feature: Product Catalog Quick Picks Dashlet
     Then I verify product *Prod_2 exists in #Dashboard.ProductCatalogQuickPicksDashlet
 
 
-  @product_catalog_quick_picks_dashlet @ci-exculded @reEnable_after_SFA-5598_is_fixed
+  @product_catalog_quick_picks_dashlet @ci-excluded @reEnable_after_SFA-5598_is_fixed
   Scenario: Product Catalog Quick Picks Dashlet > Pagination in Favorites Tab
     # Generate Product records in Product Catalog
     Given 1 ProductTemplates records exist:
