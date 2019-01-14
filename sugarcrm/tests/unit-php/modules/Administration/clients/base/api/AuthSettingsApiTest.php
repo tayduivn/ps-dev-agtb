@@ -115,6 +115,9 @@ class AuthSettingsApiTest extends TestCase
                 'x509cert' => 'SAML_request_signing_x509-value',
                 'privateKey' => 'SAML_request_signing_pkey-value',
                 'provisionUser' => 0,
+                'sugarCustom' => [
+                    'id' => 'user_name',
+                ],
             ],
 
             'idp' => [
@@ -156,6 +159,7 @@ class AuthSettingsApiTest extends TestCase
                 'sign_logout_response' => true,
                 'request_signing_method' => 'RSA_SHA512',
                 'validate_request_id' => false,
+                'user_identity_field' => 'user_name',
             ],
             'attribute_mapping' => [],
         ];
@@ -520,6 +524,11 @@ class AuthSettingsApiTest extends TestCase
                                 'key-1' => 'val-1',
                                 'key-2' => 'val-2',
                             ],
+                            'sp' => [
+                                'sugarCustom' => [
+                                    'id' => '',
+                                ],
+                            ],
                         ]
                     ),
                     'authenticationClass' => 'IdMSAMLAuthenticate',
@@ -539,6 +548,7 @@ class AuthSettingsApiTest extends TestCase
                         [
                             'config' => [
                                 'request_signing_method' => 'RSA_SHA256',
+                                'user_identity_field' => 'email',
                             ],
                             'attribute_mapping' => [
                                 [

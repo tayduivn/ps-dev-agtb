@@ -88,7 +88,7 @@ class SugarSAMLUserMapping extends SAMLUserMapping
      *
      * @inheritDoc
      */
-    protected function getIdentityField()
+    public function getIdentityField()
     {
         return !empty($this->config['sp']['sugarCustom']['id']) ? $this->config['sp']['sugarCustom']['id'] : 'email';
     }

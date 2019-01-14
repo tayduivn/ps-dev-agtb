@@ -148,7 +148,9 @@ class Lockout
      */
     public function getLockoutDurationMins(): int
     {
-        return $this->getConfigValue('lockoutexpirationtime', 0) * $this->getConfigValue('lockoutexpirationtype', 0);
+        $time = (int) $this->getConfigValue('lockoutexpirationtime', 0);
+        $type = (int) $this->getConfigValue('lockoutexpirationtype', 0);
+        return $time * $type;
     }
 
     /**

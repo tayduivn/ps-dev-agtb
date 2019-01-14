@@ -210,6 +210,7 @@ class AuthSettingsApi extends SugarApi
     private function getSAMLConfig(): array
     {
         $config = $this->getAuthConfig()->getSAMLConfig();
+        $mapping  = new Authentication\User\Mapping\SugarSAMLUserMapping($config);
         $signatureAlgorithmMap = [
             XMLSecurityKey::RSA_SHA256 => 'RSA_SHA256',
             XMLSecurityKey::RSA_SHA512 => 'RSA_SHA512',
@@ -230,8 +231,9 @@ class AuthSettingsApi extends SugarApi
                 'sign_logout_response' => (bool)$config['security']['logoutResponseSigned'],
                 'request_signing_method' => $signatureAlgorithmMap[$config['security']['signatureAlgorithm']],
                 'validate_request_id' => (bool)$config['security']['validateRequestId'],
+                'user_identity_field' => $mapping->getIdentityField(),
             ],
-            'attribute_mapping' => $this->reformatAttributeMapping((array)$config['user_mapping']),
+            'attribute_mapping' => $this->reformatAttributeMapping((array) ($config['user_mapping'] ?? [])),
         ];
     }
 
