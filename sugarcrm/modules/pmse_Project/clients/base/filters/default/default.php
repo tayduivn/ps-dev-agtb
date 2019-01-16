@@ -10,11 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
-
-$module_name = 'pmse_Project';
-$viewdefs[$module_name]['base']['filter']['default'] = array(
+$viewdefs['pmse_Project']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
@@ -28,4 +24,5 @@ $viewdefs[$module_name]['base']['filter']['default'] = array(
             'vname' => 'LBL_FAVORITES_FILTER',
         ),
     ),
+    'tag' => array(),
 );

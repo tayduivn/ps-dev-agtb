@@ -16,6 +16,9 @@ $dictionary['pmse_Project'] = array(
     'audited' => false,
     'activity_enabled' => true,
     'duplicate_merge' => true,
+    'unified_search' => true,
+    'full_text_search' => true,
+    'unified_search_default_enabled' => true,
     'fields' => array(
         'prj_uid' => array(
             'name' => 'prj_uid',
@@ -202,10 +205,8 @@ $dictionary['pmse_Project'] = array(
             'type' => 'name',
             'dbType' => 'varchar',
             'len' => '255',
-            'unified_search' => false,
-            'full_text_search' => array(
-                'boost' => '3',
-            ),
+            'unified_search' => true,
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.55),
             'required' => true,
             'importable' => 'required',
             'duplicate_merge' => 'enabled',
@@ -284,7 +285,6 @@ $dictionary['pmse_Project'] = array(
     // templates we can safely remove these as this module will implement
     // default instead of basic.
     'ignore_templates' => array(
-        'taggable',
         'lockable_fields',
     ),
     'uses' => array(
@@ -292,6 +292,7 @@ $dictionary['pmse_Project'] = array(
         'team_security',
         'assignable',
         'commentlog',
+        'taggable',
     ),
 );
 

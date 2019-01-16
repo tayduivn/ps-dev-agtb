@@ -166,6 +166,10 @@ array (
                     'readonly' => true,
                     'type' => 'hidden',
                 ),
+              array(
+                'name' => 'tag',
+                'span' => 12,
+              ),
             ),
           ),
           2 =>

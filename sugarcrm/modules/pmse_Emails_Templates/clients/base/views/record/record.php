@@ -153,6 +153,10 @@ $viewdefs[$module_name] =
                                                         'label' => 'LBL_BASE_MODULE',
                                                     ),
                                                     'assigned_user_name',
+              array(
+                'name' => 'tag',
+                'span' => 12,
+              ),
                                                 ),
                                             ),
                                         2 =>

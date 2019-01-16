@@ -157,6 +157,10 @@ array (
                 'name' => 'prj_status',
                 'span' => 6,
               ),
+              array(
+                'name' => 'tag',
+                'span' => 12,
+              ),
             ),
           ),
           2 => 

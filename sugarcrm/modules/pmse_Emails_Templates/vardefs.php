@@ -15,6 +15,9 @@ $dictionary['pmse_Emails_Templates'] = array(
     'audited' => false,
     'activity_enabled' => true,
     'duplicate_merge' => true,
+    'unified_search' => true,
+    'full_text_search' => true,
+    'unified_search_default_enabled' => true,
     'fields' => array(
         'name' => array(
             'name' => 'name',
@@ -22,7 +25,7 @@ $dictionary['pmse_Emails_Templates'] = array(
             'type' => 'name',
             'dbType' => 'varchar',
             'len' => '255',
-            'unified_search' => false,
+            'unified_search' => true,
             'required' => true,
             'importable' => 'required',
             'duplicate_merge' => 'enabled',
@@ -37,6 +40,7 @@ $dictionary['pmse_Emails_Templates'] = array(
             'reportable' => true,
             'calculated' => false,
             'size' => '20',
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.55),
         ),
         'from_name' => array(
             'required' => false,
@@ -258,7 +262,6 @@ $dictionary['pmse_Emails_Templates'] = array(
     // templates we can safely remove these as this module will implement
     // default instead of basic.
     'ignore_templates' => array(
-        'taggable',
         'lockable_fields',
     ),
     'uses' => array(
@@ -266,6 +269,7 @@ $dictionary['pmse_Emails_Templates'] = array(
         'team_security',
         'assignable',
         'commentlog',
+        'taggable',
     ),
 );
 

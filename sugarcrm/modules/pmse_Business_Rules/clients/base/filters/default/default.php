@@ -10,10 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
-$module_name = 'pmse_Business_Rules';
-$viewdefs[$module_name]['base']['filter']['default'] = array(
+$viewdefs['pmse_Business_Rules']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
@@ -26,5 +23,6 @@ $viewdefs[$module_name]['base']['filter']['default'] = array(
             'predefined_filter' => true,
             'vname' => 'LBL_FAVORITES_FILTER',
         ),
+        'tag' => array(),
     ),
 );
