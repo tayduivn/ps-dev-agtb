@@ -253,6 +253,48 @@ class SugarFieldCollection extends SugarFieldBase {
     }
 
     /**
+     * Prune any records that are forbidden by a field-level ACL on a link.
+     * (Collections which share a link with another collection, where only one is
+     * subject to a field-level ACL, would otherwise leak data).
+     * Also prune the next_offset.
+     *
+     * @param array $data (Reference to) array of result data.
+     * @param SugarBean $bean The bean.
+     * @param string $fieldName Name of the collection field from which the
+     *   restrictions are derived.
+     * @param string $action Action we are attempting (view, list).
+     * @param array $fieldDef Field definition.
+     * @param ServiceBase $service REST API service.
+     */
+    public function processAdditionalAcls(
+        array &$data,
+        SugarBean $bean,
+        string $fieldName,
+        string $action,
+        array $fieldDef,
+        ServiceBase $service = null
+    ) {
+        $links = $fieldDef['links'] ?? [];
+        $forbiddenLinks = array_filter($links, function ($link) use ($action, $bean) {
+            return !SugarACL::checkField($bean->module_name, $link, $action);
+        });
+        if (!empty($forbiddenLinks)) {
+            if (!empty($data[$fieldName]['records'])) {
+                $data[$fieldName]['records'] = array_filter(
+                    $data[$fieldName]['records'],
+                    function ($record) use ($forbiddenLinks) {
+                        return !in_array($record['_link'], $forbiddenLinks);
+                    }
+                );
+            }
+
+            foreach ($forbiddenLinks as $link) {
+                unset($data[$fieldName]['next_offset'][$link]);
+            }
+        }
+    }
+
+    /**
      * {@inheritDoc}
      *
      * Applies the callback only to the given field and does not iterate over "fields" since they mean collection fields

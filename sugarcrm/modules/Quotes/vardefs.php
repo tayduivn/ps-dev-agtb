@@ -821,6 +821,7 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_PRODUCT_BUNDLES',
             'links' => array('product_bundles'),
             'source' => 'non-db',
+            'hideacl' => true,
         ),
         'opportunities' => array(
             'name' => 'opportunities',

@@ -614,11 +614,7 @@
      * Parses through an array of panels metadata and sets some of them
      * as no edit fields.
      *
-     * FIXME: SC-3940, remove this call to _setNoEditFields when we merge
-     * master_platform into master, as this was fixed by SC-3908.
-     *
-     * @param {Array} [panels] The panels to parse. This default to
-     *   `this.meta.panels`.
+     * @param {Object[]} [panels=this.meta.panels] The panels to parse.
      * @private
      */
     _setNoEditFields: function(panels) {
@@ -636,8 +632,12 @@
                     field.readonly = true;
                 }
 
-                // disable the pencil icon if the user doesn't have ACLs
-                if (field.fields) {
+                /* Disable the pencil icon if the user doesn't have ACLs.
+                   Collection fields may have the "fields" property, but it corresponds to fields
+                   on models in the related collection, not the model itself. */
+                var isCollectionField = this.model.fields[field.name] &&
+                    (this.model.fields[field.name].type === 'collection');
+                if (field.fields && !isCollectionField) {
                     // Some fieldsets have fields that are only for viewing, like the
                     // `copy` field on alternate addresses. Those should be filtered
                     // out of the fields list.

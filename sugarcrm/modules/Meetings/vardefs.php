@@ -671,6 +671,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
             ),
             'order_by' => 'name:asc',
             'studio' => false,
+            'hideacl' => true,
         ),
     'auto_invite_parent' => array(
         'name' => 'auto_invite_parent',

@@ -249,6 +249,10 @@ fixtures.metadata = {
                     "type": "radioenum",
                     "options": "Elastic_boost_options"
                 },
+                commentlog: {
+                    name: 'commentlog',
+                    type: 'collection',
+                },
                 "account_id": {
                     "name": "account_id",
                     "type": "id"

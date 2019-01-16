@@ -367,6 +367,7 @@ $dictionary['ProductBundle'] = array(
             'links' => array('products','product_bundle_notes'),
             'source' => 'non-db',
             'order_by' => 'position:asc',
+            'hideacl' => true,
         ),
         'position' => array(
             'massupdate' => false,

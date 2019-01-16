@@ -96,7 +96,19 @@ describe("Record View", function () {
                     "fields": [
                         {name: "description", type: "base", label: "description", span: 8, labelSpan: 4},
                         {name: "case_number", type: "float", label: "case_number", span: 8, labelSpan: 4},
-                        {name: "type", type: "text", label: "type", span: 8, labelSpan: 4}
+                        {name: 'type', type: 'text', label: 'type', span: 8, labelSpan: 4},
+                        {
+                            name: 'commentlog',
+                            type: 'commentlog',
+                            label: 'Comment Log',
+                            span: 8,
+                            labelSpan: 4,
+                            fields: [
+                                'entry',
+                                'date_entered',
+                                'created_by_name',
+                            ],
+                        },
                     ]
                 },
                 {
@@ -154,6 +166,58 @@ describe("Record View", function () {
         app.data.reset();
         view.dispose();
         view = null;
+    });
+
+    describe('handleAclChange', function() {
+        beforeEach(function() {
+            this.oldAction = view.action;
+            this.oldNoEditFields = view.noEditFields;
+        });
+
+        afterEach(function() {
+            view.action = this.oldAction;
+            view.noEditFields = this.oldNoEditFields;
+        });
+
+        it('should set the editable fields and toggle the pencils', function() {
+            sinonSandbox.stub(app.acl, 'hasAccessToModel').withArgs('edit', view.model).returns(true);
+            sinonSandbox.stub(view, 'setEditableFields', function() {
+                this.noEditFields = [];
+            });
+            var pencilStubElement = {'I am a': 'pencil stub'};
+            var recordCellJqueryStub = {toggleClass: sinonSandbox.stub()};
+            var pencilJqueryStub = {
+                closest: sinonSandbox.stub().withArgs('.record-cell').returns(recordCellJqueryStub),
+                data: sinonSandbox.stub().withArgs('name').returns('i_now_have_no_acls'),
+                toggleClass: sinonSandbox.stub(),
+            };
+            sinonSandbox.stub(view, '$').withArgs('[data-wrapper=edit]').returns([pencilStubElement]);
+            sinonSandbox.stub(window, '$').withArgs(pencilStubElement).returns(pencilJqueryStub);
+
+            view.action = 'edit';
+            view.handleAclChange({'i_now_have_no_acls': true});
+
+            expect(view.setEditableFields).toHaveBeenCalled();
+            expect(pencilJqueryStub.toggleClass).toHaveBeenCalledWith('hide', false);
+            expect(recordCellJqueryStub.toggleClass).toHaveBeenCalledWith('edit', true);
+        });
+    });
+
+    describe('noEditFields handling', function() {
+        it('should be able to put a collection in noEditFields', function() {
+            // everything is editable, except commentlog
+            var hasAccessToModelStub = sinonSandbox.stub(app.acl, 'hasAccessToModel');
+            hasAccessToModelStub
+                .withArgs('edit', view.model, 'commentlog')
+                .returns(false);
+            hasAccessToModelStub
+                .withArgs('edit', view.model, sinon.match(function(f) { return f !== 'commentlog'; }))
+                .returns(true);
+
+            view.handleAclChange({commentlog: true});
+
+            expect(view.noEditFields).toEqual(['commentlog']);
+        });
     });
 
     describe('Pencil icon handling', function() {

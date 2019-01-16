@@ -624,6 +624,7 @@ $dictionary['Email'] = array(
             'type' => 'collection',
             'vname' => 'LBL_ATTACHMENTS',
             'reportable' => false,
+            'hideacl' => true,
         ),
         'total_attachments' => array(
             'name' => 'total_attachments',
@@ -662,6 +663,7 @@ $dictionary['Email'] = array(
             'type' => 'collection',
             'vname' => 'LBL_FROM',
             'reportable' => false,
+            'hideacl' => true,
         ),
         'to_collection' => array(
             'name' => 'to_collection',
@@ -674,6 +676,7 @@ $dictionary['Email'] = array(
             'type' => 'collection',
             'vname' => 'LBL_TO_ADDRS',
             'reportable' => false,
+            'hideacl' => true,
         ),
         'cc_collection' => array(
             'name' => 'cc_collection',
@@ -686,6 +689,7 @@ $dictionary['Email'] = array(
             'type' => 'collection',
             'vname' => 'LBL_CC',
             'reportable' => false,
+            'hideacl' => true,
         ),
         'bcc_collection' => array(
             'name' => 'bcc_collection',
@@ -698,6 +702,7 @@ $dictionary['Email'] = array(
             'type' => 'collection',
             'vname' => 'LBL_BCC',
             'reportable' => false,
+            'hideacl' => true,
         ),
         'from' => array(
             'name' => 'from',

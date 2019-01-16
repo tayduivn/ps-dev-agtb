@@ -51,6 +51,17 @@ class ACLFieldTest extends TestCase
         $this->assertEquals(4, ACLField::hasAccess('name', 'Accounts', $current_user));
     }
 
+    public function testCollectionFieldsCanHaveAcls()
+    {
+        global $current_user;
+
+        $this->setUpReadOnlyField('Accounts', 'Account', 'commentlog');
+        $this->assertEquals(1, ACLField::hasAccess('commentlog', 'Accounts', $current_user));
+
+        // ensure changes to collection field ACL's are propagated to links
+        $this->assertEquals(1, ACLField::hasAccess('commentlog_link', 'Accounts', $current_user));
+    }
+
     private function setUpReadOnlyField($module, $object, $field)
     {
         global $current_user;

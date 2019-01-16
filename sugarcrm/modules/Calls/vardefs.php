@@ -615,6 +615,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
             ),
             'order_by' => 'name:asc',
             'studio' => false,
+            'hideacl' => true,
         ),
     'auto_invite_parent' => array(
         'name' => 'auto_invite_parent',
