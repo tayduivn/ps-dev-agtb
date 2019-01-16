@@ -11,7 +11,6 @@
 
 import {When} from '@sugarcrm/seedbed';
 import FilterView from '../views/filter-view';
-import ListView from "../views/list-view";
 
 /**
  * Search for "value" in list view search filter
@@ -19,7 +18,7 @@ import ListView from "../views/list-view";
  * @example "I search for "Account_Search" in #AccountsList:FilterView view"
  */
 When(/^I search for "([^"]*)" in (#\S+) view$/,
-    async function(value, view: FilterView) {
+    async function(value: string, view: FilterView) {
         await view.setSearchField(value);
 
         // need to handle setTimeout 400ms in search box
@@ -40,7 +39,7 @@ When(/^I choose for (\w+) in (#\S+) view$/,
  * @example When I select ActivityStream in #ContactsList.FilterView
  */
 When(/^I select (ActivityStream|ListView) in (#\S+)$/,
-    async function (mode:string, view: FilterView) {
+    async function (mode: string, view: FilterView) {
 
         await view.toggleListViewMode(mode.toLowerCase());
     }, {waitForApp: true});

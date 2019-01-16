@@ -71,7 +71,7 @@ const populateMassUpdate = async function (massUpdateView, module, table: TableD
         let fieldLabel = await seedbed.client.driver.execSync('getLabelByFieldName', argumentsArray);
 
         // Set value for field selector ('parent field')
-        await massUpdateView.setParentFieldValue(fieldLabel.value, i + 2);
+        await massUpdateView.setFieldValue(fieldLabel.value, i + 2);
 
         // Set new value for the selected field ('child field')
         let inputData = new Hashmap();

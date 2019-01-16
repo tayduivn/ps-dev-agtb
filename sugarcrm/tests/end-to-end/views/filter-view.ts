@@ -12,14 +12,16 @@
  Represents Filter view PageObject on ListView Layout.
  */
 
-import {seedbed} from '@sugarcrm/seedbed';
 import BaseView from './base-view';
 
 /**
- * @class FilterView
+ * @class FilterView represents Filter Bar on the list view
  * @extends BaseView
  */
 export default class FilterView extends BaseView {
+
+    protected fieldToUpdateItem: string;
+    protected itemSelector: String;
 
     constructor(options) {
         super(options);
@@ -29,7 +31,21 @@ export default class FilterView extends BaseView {
             searchField: '.search-name',
             filter: '.search-filter .select2-choice-type',
             activitystream: '.fa.fa-clock-o',
-            listview: '.fa.fa-table'
+            listview: '.fa.fa-table',
+            createButton: '.choice-filter',
+            closeFilterButton: '.choice-filter-clickable .choice-filter-close',
+            editFilterButton: '.choice-filter-clickable .choice-filter-label',
+            filterNameField: '.filter-header input',
+            actionButton: '.btn[data-action="{{dataAction}}"]',
+            filterBody: {
+                $: '.filter-body:nth-child({{rowNum}})',
+                fieldToUpdate: 'div[data-filter="{{field}}"] .select2-container.select2',
+                buttons: {
+                    $: '.filter-actions.btn-group',
+                    addRow: '.fa.fa-plus',
+                    removeRow: '.fa.fa-minus',
+                },
+            },
         });
 
         this.globalSelectors = {
@@ -40,8 +56,11 @@ export default class FilterView extends BaseView {
             my_sent: '[data-id=my_sent]',
             all_records: '[data-id=all_records]',
             recently_created: '[data-id=recently_created]',
-            recently_viewed: '[data-id=recently_viewed]'
+            recently_viewed: '[data-id=recently_viewed]',
         };
+
+        this.itemSelector = '.select2-result=';
+        this.fieldToUpdateItem = '.select2-result-label=';
     }
 
     private globalSelectors: any;
@@ -49,15 +68,21 @@ export default class FilterView extends BaseView {
     /**
      * Set Search field name with "value"
      *
-     * @param value
-     * @returns {*}
+     * @param {string} value
+     * @returns {Promise<void>}
      */
-    public async setSearchField(value) {
+    public async setSearchField(value: string) {
         let locator = this.$('searchField');
         await this.driver.waitForVisible(locator);
         await this.driver.setValue(locator, value);
     }
 
+    /**
+     * Select filter from Filter drop-down
+     *
+     * @param {string} filterName
+     * @returns {Promise<void>}
+     */
     public async selectFilter(filterName: string) {
         let locator = this.$('filter');
         await this.driver.click(locator);
@@ -66,12 +91,135 @@ export default class FilterView extends BaseView {
     }
 
     /**
+     * Select custom filter from Filter drop-down
+     *
+     * @param {string} customFilterName
+     * @returns {Promise<void>}
+     */
+    public async selectCustomFilter(customFilterName: string) {
+        let locator = this.$('filter');
+        await this.driver.click(locator);
+        await this.driver.waitForVisible(locator);
+        await this.driver.click(`${this.itemSelector}${customFilterName}`);
+    }
+
+    /**
      * Toggle between ListView and ActivityStream modes
+     *
      * @param {string} mode
      * @returns {Promise<void>}
      */
     public async toggleListViewMode(mode: string) {
         let locator = this.$(mode);
         await this.driver.click(locator);
+    }
+
+    /**
+     * Click on Create button to create new custom filter
+     *
+     * @returns {Promise<void>}
+     */
+    public async clickCreateButton() {
+        let locator = this.$('createButton');
+        await this.driver.click(locator);
+    }
+
+    /**
+     * Select field on which a new filter will apply
+     *
+     * @param {number} rowNum row number
+     * @param {string} field name of the field to update
+     * @param {string} pValue parent Field Value to Set
+     *
+     * @return {Promise<void>}
+     */
+    public async setFieldValue(rowNum: number, field: string, pValue: string) {
+        // Set 'Parent' field value
+        let selector = this.$(`filterBody.fieldToUpdate`, {rowNum, field});
+        await this.driver.click(selector);
+        await this.driver.waitForApp();
+        await this.driver.click(`${this.fieldToUpdateItem}${pValue}`);
+        await this.driver.waitForApp();
+    }
+
+    /**
+     * Add new row to custom filter
+     *
+     * @param {number} rowNum
+     * @returns {Promise<void>}
+     */
+    public async addRow(rowNum: number) {
+        await this.driver.click(this.$(`filterBody.buttons.addRow`, {rowNum}));
+        await this.driver.waitForApp();
+    }
+
+    /**
+     * Delete specified row in custom filter
+     *
+     * @param {number} rowNum
+     * @returns {Promise<void>}
+     */
+    public async deleteRow(rowNum: number) {
+        await this.driver.click(this.$(`filterBody.buttons.removeRow`, {rowNum}));
+        await this.driver.waitForApp();
+    }
+
+    /**
+     * Type in the custom filter name
+     *
+     * @param {string} name
+     * @returns {Promise<void>}
+     */
+    public async typeFilterName(name: string) {
+        let selector = this.$('filterNameField');
+        await this.driver.setValue(selector, name);
+    }
+
+    /**
+     * Select action to perform on the existing custom filter
+     *
+     * Available actions are:
+     *  cancel: 'filter-close'
+     *  delete 'filter-delete'
+     *  reset: 'filter-reset'
+     *  save: 'filter-reset'
+     *
+     * @param {string} dataAction select action to perform.
+     * @returns {Promise<void>}
+     */
+    public async performAction(dataAction: string) {
+        let locator = this.$('actionButton', {dataAction});
+        await this.driver.click(locator);
+    }
+
+    /**
+     * Hide custom filter
+     *
+     * @returns {Promise<void>}
+     */
+    public async hideCustomFilter() {
+        let locator = this.$('closeFilterButton');
+        await this.driver.click(locator);
+    }
+
+    /**
+     * Edit custom filter
+     *
+     * @returns {Promise<void>}
+     */
+    public async editCustomFilter() {
+        let locator = this.$('editFilterButton');
+        await this.driver.click(locator);
+    }
+
+    /**
+     *  Check if filter row already exists
+     *
+     * @param {number} rowNum
+     * @returns {Promise<any>}
+     */
+    public async isFilterRowExist(rowNum: number) {
+        let selector = this.$(`filterBody`, {rowNum});
+        return await this.driver.isElementExist(selector);
     }
 }
