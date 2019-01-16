@@ -351,7 +351,7 @@ class IdmProviderTest extends TestCase
 
         $provider->expects($this->once())
                  ->method('getAccessToken')
-                 ->with('client_credentials', ['scope' => 'idp.auth.password'])
+                 ->with('client_credentials', ['scope' => 'https://apis.sugarcrm.com/auth/iam.password'])
                  ->willReturn($accessToken);
 
         $this->requestFactory->expects($this->once())
