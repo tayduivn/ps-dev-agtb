@@ -263,10 +263,10 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
             });
         });
 
-        it('should call getUrl', function() {
+        it('should call getUrl with payloadData', function() {
             view.loadData();
 
-            expect(view.getUrl).toHaveBeenCalled();
+            expect(view.getUrl).toHaveBeenCalledWith({});
         });
 
         it('should call toggleLoading with true', function() {
@@ -282,30 +282,11 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
             expect(view.getUrl).not.toHaveBeenCalled();
         });
 
-        describe('when recent-product tab is active', function() {
-            beforeEach(function() {
-                view.activeTab = 'recent-product';
-            });
 
-            it('should call app.api.call with read, url and payloadData as null', function() {
-                view.loadData();
+        it('should call app.api.call with read and url', function() {
+            view.loadData();
 
-                expect(app.api.call).toHaveBeenCalledWith('read', 'testUrl');
-            });
-        });
-
-        describe('when favorites tab is active', function() {
-            beforeEach(function() {
-                view.activeTab = 'favorites';
-            });
-
-            it('should call app.api.call with read, url and payloadData', function() {
-                view.loadData();
-
-                expect(app.api.call).toHaveBeenCalledWith('read', 'testUrl', {
-                    pageNum: view.pageNumClicked - 1
-                });
-            });
+            expect(app.api.call).toHaveBeenCalledWith('read', 'testUrl');
         });
     });
 

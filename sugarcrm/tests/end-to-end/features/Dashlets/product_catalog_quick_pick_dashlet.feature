@@ -700,7 +700,8 @@ Feature: Product Catalog Quick Picks Dashlet
     Then I verify product *Prod_2 exists in #Dashboard.ProductCatalogQuickPicksDashlet
 
 
-  @product_catalog_quick_picks_dashlet @ci-excluded @reEnable_after_SFA-5598_is_fixed
+
+  @product_catalog_quick_picks_dashlet
   Scenario: Product Catalog Quick Picks Dashlet > Pagination in Favorites Tab
     # Generate Product records in Product Catalog
     Given 1 ProductTemplates records exist:
@@ -719,6 +720,9 @@ Feature: Product Catalog Quick Picks Dashlet
     When I choose Quotes in modules menu
     When I select *Quote_1 in #QuotesList.ListView
     When I select Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
+
+    #Verify that page 1 of favorites only has one product
+    Then I verify product *Prod1_1 exists in #Dashboard.ProductCatalogQuickPicksDashlet
 
     # Verify that both chevron buttons are disabled
     Then I verify pagination controls in #Dashboard.ProductCatalogQuickPicksDashlet
@@ -741,12 +745,18 @@ Feature: Product Catalog Quick Picks Dashlet
       | rightNavArrow | true     |
       | leftNavArrow  | false    |
 
+    #Verify that page 2 of favorites only has one product
+    Then I verify product *Prod2_8 exists in #Dashboard.ProductCatalogQuickPicksDashlet
+
     # Go to page 1 & verify chevron buttons state
     When I go to page 1 in #Dashboard.ProductCatalogQuickPicksDashlet
     Then I verify pagination controls in #Dashboard.ProductCatalogQuickPicksDashlet
       | buttonName    | disable |
       | rightNavArrow | false   |
       | leftNavArrow  | true    |
+
+    Then I verify product *Prod1_1 exists in #Dashboard.ProductCatalogQuickPicksDashlet
+    Then I verify product *Prod2_7 exists in #Dashboard.ProductCatalogQuickPicksDashlet
 
     # Add 8 more Product Templates - 3 pages
     Given 8 ProductTemplates records exist:
@@ -762,11 +772,17 @@ Feature: Product Catalog Quick Picks Dashlet
       | rightNavArrow | false    |
       | leftNavArrow  | false    |
 
+    Then I verify product *Prod2_8 exists in #Dashboard.ProductCatalogQuickPicksDashlet
+    Then I verify product *Prod3_7 exists in #Dashboard.ProductCatalogQuickPicksDashlet
+
     When I go to page 3 in #Dashboard.ProductCatalogQuickPicksDashlet
     Then I verify pagination controls in #Dashboard.ProductCatalogQuickPicksDashlet
       | buttonName    | Disabled |
       | rightNavArrow | true     |
       | leftNavArrow  | false    |
+
+    #Verify that page 3 of favorites only has one product
+    Then I verify product *Prod3_8 exists in #Dashboard.ProductCatalogQuickPicksDashlet
 
     When I go to page 1 in #Dashboard.ProductCatalogQuickPicksDashlet
     Then I verify pagination controls in #Dashboard.ProductCatalogQuickPicksDashlet
@@ -777,7 +793,7 @@ Feature: Product Catalog Quick Picks Dashlet
     # Add 8 more Product Templates - 4 pages
     Given 8 ProductTemplates records exist:
       | *name           | discount_price | cost_price | list_price | quantity | mft_part_num                 | my_favorite |
-      | Prod3_{{index}} | 100            | 200        | 300        | 10       | B.H. Edwards Inc 72868XYZ987 | true        |
+      | Prod4_{{index}} | 100            | 200        | 300        | 10       | B.H. Edwards Inc 72868XYZ987 | true        |
 
     # Refresh dashlet
     When I refresh #Dashboard.ProductCatalogQuickPicksDashlet dashlet
@@ -789,12 +805,18 @@ Feature: Product Catalog Quick Picks Dashlet
       | rightNavArrow | true     |
       | leftNavArrow  | false    |
 
+    #Verify that page 4 of favorites only has one product
+    Then I verify product *Prod4_8 exists in #Dashboard.ProductCatalogQuickPicksDashlet
+
     # Go to page 3 & verify chevron buttons state
     When I go to previous page in #Dashboard.ProductCatalogQuickPicksDashlet
     Then I verify pagination controls in #Dashboard.ProductCatalogQuickPicksDashlet
       | buttonName    | Disabled |
       | rightNavArrow | false    |
       | leftNavArrow  | false    |
+
+    Then I verify product *Prod3_8 exists in #Dashboard.ProductCatalogQuickPicksDashlet
+    Then I verify product *Prod4_7 exists in #Dashboard.ProductCatalogQuickPicksDashlet
 
     # Go to page 2 & verify chevron buttons state
     When I go to previous page in #Dashboard.ProductCatalogQuickPicksDashlet
@@ -813,7 +835,7 @@ Feature: Product Catalog Quick Picks Dashlet
     # Add 8 more Product Templates - 5 pages - ellipsis are introduced
     Given 8 ProductTemplates records exist:
       | *name           | discount_price | cost_price | list_price | quantity | mft_part_num                 | my_favorite |
-      | Prod4_{{index}} | 100            | 200        | 300        | 10       | B.H. Edwards Inc 72868XYZ987 | true        |
+      | Prod5_{{index}} | 100            | 200        | 300        | 10       | B.H. Edwards Inc 72868XYZ987 | true        |
 
     # Refresh dashlet
     When I refresh #Dashboard.ProductCatalogQuickPicksDashlet dashlet
@@ -845,14 +867,14 @@ Feature: Product Catalog Quick Picks Dashlet
       | rightNavArrow | true     |
 
     #Verify that page 5 of favorites only has one product
-    Then I verify product *Prod4_8 exists in #Dashboard.ProductCatalogQuickPicksDashlet
+    Then I verify product *Prod5_8 exists in #Dashboard.ProductCatalogQuickPicksDashlet
 
     # Remove one product from favorites
-    When I click *Prod4_8 on Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
-    When I provide input for #Prod4_8Drawer.HeaderView view
+    When I click *Prod5_8 on Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
+    When I provide input for #Prod5_8Drawer.HeaderView view
       | my_favorite |
       | False       |
-    When I click Cancel button on #Prod4_8Drawer header
+    When I click Cancel button on #Prod5_8Drawer header
 
     # Refresh dashlet
     When I refresh #Dashboard.ProductCatalogQuickPicksDashlet dashlet
@@ -862,6 +884,9 @@ Feature: Product Catalog Quick Picks Dashlet
       | buttonName    | Disabled |
       | rightNavArrow | true     |
       | leftNavArrow  | false    |
+
+    Then I verify product *Prod4_8 exists in #Dashboard.ProductCatalogQuickPicksDashlet
+    Then I verify product *Prod5_7 exists in #Dashboard.ProductCatalogQuickPicksDashlet
 
     When I go to page 3 in #Dashboard.ProductCatalogQuickPicksDashlet
     Then I verify pagination controls in #Dashboard.ProductCatalogQuickPicksDashlet

@@ -81,7 +81,7 @@
     /**
      * Get url for recent/favorites api
      */
-    getUrl: function() {
+    getUrl: function(payloadData) {
         var tab = this.tabs[this.settings.get('activeTab')];
         if (tab.label === 'LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB') {
             this.activeTab = 'recent-product';
@@ -90,9 +90,13 @@
         }
 
         if (this.layout.module === 'Home') {
-            return app.api.buildURL(app.controller.context.get('module'), this.activeTab);
+            return app.api.buildURL(app.controller.context.get('module'), this.activeTab, null,
+                this.activeTab === 'favorites' ? payloadData : null
+            );
         } else {
-            return app.api.buildURL(this.layout.module, this.activeTab);
+            return app.api.buildURL(this.layout.module, this.activeTab, null,
+                this.activeTab === 'favorites' ? payloadData : null
+            );
         }
     },
 
@@ -129,10 +133,10 @@
             this.pageNumClicked = options.pageNum;
         }
 
-        url = this.getUrl();
         if (this.activeTab === 'favorites') {
             payloadData.pageNum = this.pageNumClicked - 1;
         }
+        url = this.getUrl(payloadData);
         this.toggleLoading(true);
         callbacks.success = _.bind(this.onProductFetchSuccess, this);
         callbacks.error = _.bind(function() {
@@ -141,7 +145,7 @@
             this.toggleLoading(false);
             data.results = [];
         }, this);
-        app.api.call('read', url, payloadData, callbacks);
+        app.api.call('read', url, null, callbacks);
     },
 
     /**
