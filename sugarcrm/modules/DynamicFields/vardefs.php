@@ -22,7 +22,7 @@ $dictionary['FieldsMetaData'] = array (
 		'len'=>array('name' =>'len','vname'=>'COLUMN_TITLE_MAX_SIZE', 'type' =>'int', 'len'=>'11', 'required'=>false, 'validation' => array('type' => 'range', 'min' => 1, 'max' => 255),),
 		'required'=>array('name' =>'required', 'type' =>'bool', 'default'=>'0'),
 		'default_value'=>array('name' =>'default_value', 'type' =>'varchar', 'len'=>'255', ),
-		'date_modified'=>array('name' =>'date_modified', 'type' =>'datetime', 'len'=>'255',),		
+        'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
 		'deleted'=>array('name' =>'deleted', 'type' =>'bool', 'default'=>'0', 'reportable'=>false),
 		'audited'=>array('name' =>'audited', 'type' =>'bool', 'default'=>'0'),		
 		'massupdate'=>array('name' =>'massupdate', 'type' =>'bool', 'default'=>'0'),	
