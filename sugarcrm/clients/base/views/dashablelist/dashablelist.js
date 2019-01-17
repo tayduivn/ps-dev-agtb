@@ -633,6 +633,16 @@
         if (filterDef) {
             this._applyFilterDef(filterDef);
             this.context.reloadData({'recursive': false});
+        } else {
+            // This case will treat if the user has no access to a shared filtered list,
+            // acl returns true even if the user has no access.
+            var listBottom = this.layout.getComponent('list-bottom');
+            if (listBottom) {
+                // Will rerender the list-bottom component to show the no access support link message,
+                // the message is built in the list-bottom.js file.
+                listBottom.noFilterPermissionSupportUrl = app.help.getMoreInfoHelpURL('nofilter', 'listviewdashlet');
+                listBottom.render();
+            }
         }
         this._startAutoRefresh();
     },

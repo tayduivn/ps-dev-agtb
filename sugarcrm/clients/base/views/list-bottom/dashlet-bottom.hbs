@@ -18,6 +18,15 @@
     {{/notEq}}
 {{else}}
     <div class="block-footer">
-        {{loading 'LBL_ALERT_TITLE_LOADING'}}
+        {{#if noFilterPermissionSupportUrl}}
+            <span>
+                <p>
+                    {{str 'LBL_ALERT_NO_ACCESS'}}
+                    <a target="_blank" href="{{noFilterPermissionSupportUrl}}">{{str 'LBL_ALERT_NO_ACCESS_SUPPORT'}}</a>
+                <p>
+            </span>
+        {{else}}
+            {{loading 'LBL_ALERT_TITLE_LOADING'}}
+        {{/if}}
     </div>
 {{/if}}
