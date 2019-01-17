@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\Constraint\ArrayHasKey;
 use PHPUnit\Framework\TestCase;
 
 class AdvancedQueryTest extends TestCase
@@ -142,18 +143,34 @@ class AdvancedQueryTest extends TestCase
         $this->assertEquals($result['name'], 'Test Case', 'The name Did Not Match it was ' . $result['name']);
     }
 
-    public function testSelectUnion()
+    public function testSelectUnionWithOrder()
     {
+        $result = $this->getUnionResults(true);
+        $this->assertCount(2, $result, 'Exactly 2 rows were expected to be returned');
+        $this->assertSame('Awesome', $result[0]['name']);
+        $this->assertSame('Not Awesome', $result[1]['name']);
+    }
+
+    public function testSelectUnionWithNoOrder()
+    {
+        $result = $this->getUnionResults(false);
+        $this->assertCount(2, $result, 'Exactly 2 rows were expected to be returned');
+        $this->assertTrue(in_array('Awesome', [$result[0]['name'], $result[1]['name']]));
+        $this->assertTrue(in_array('Not Awesome', [$result[0]['name'], $result[1]['name']]));
+    }
+
+    private function getUnionResults(bool $useOrder) : array
+    {
+
+        // create 2 new accounts
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Awesome';
         $account->save();
-        $account1 = $account->id;
         $this->accounts[] = $account;
-        // create a new contact
+
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Not Awesome';
         $account->save();
-        $account2 = $account->id;
 
         $this->accounts[] = $account;
 
@@ -170,13 +187,12 @@ class AdvancedQueryTest extends TestCase
         $sqUnion = new SugarQuery();
         $sqUnion->union($sq1);
         $sqUnion->union($sq2);
-        $sqUnion->orderBy('name', 'ASC');
+        if ($useOrder) {
+            $sqUnion->orderBy('name', 'ASC');
+        }
+        $sqUnion->limit(2);
 
-        $result = $sqUnion->execute();
-
-        $this->assertCount(2, $result, 'Exactly 2 rows were expected to be returned');
-        $this->assertSame('Awesome', $result[0]['name']);
-        $this->assertSame('Not Awesome', $result[1]['name']);
+        return $sqUnion->execute();
     }
 
     public function testSelectNotes() {

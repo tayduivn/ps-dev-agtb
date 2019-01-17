@@ -78,13 +78,12 @@ class SugarQuery_Compiler_Doctrine
         }
 
         $hasLimit = $query->limit !== null || $query->offset !== null;
-        $hasOrderBy = count($query->order_by) > 0;
         $platform = $this->db->getConnection()->getDatabasePlatform();
 
-        // in case of a UNION query with LIMIT and ORDER BY, wrap the UNIONs in a sub-query
+        // in case of a UNION query with LIMIT, wrap the UNIONs in a sub-query
         // in order to let Doctrine DBAL apply the LIMIT
         // @link https://github.com/doctrine/dbal/issues/2374
-        if ($hasLimit && $hasOrderBy && $platform instanceof SQLServerPlatform) {
+        if ($hasLimit && $platform instanceof SQLServerPlatform) {
             $sql = 'SELECT * FROM (' . $sql . ') union_tmp';
         }
 
