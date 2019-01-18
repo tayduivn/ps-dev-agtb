@@ -37,10 +37,11 @@ export default class RecordLayout extends BaseView {
 
         this.selectors = this.mergeSelectors({
             $: '.main-pane',
-            'show more': '.show-hide-toggle .btn.more',
-            'show less': '.show-hide-toggle .btn.less',
+            'show more': '.show-hide-toggle .more',
+            'show less': '.show-hide-toggle .less',
             'more guests': '.detail .btn.btn-link.btn-invisible.more',
-
+            notuseful: '.usefulness .btn[data-action="notuseful"]',
+            useful: '.usefulness .btn[data-action="useful"]',
             'click': '.table tr[name={{module}}_{{id}}] div a',
             'preview': '.table tr[name={{module}}_{{id}}] .preview-list-cell .fa.fa-eye',
         });

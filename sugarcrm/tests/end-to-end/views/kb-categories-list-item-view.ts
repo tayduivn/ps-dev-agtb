@@ -8,31 +8,28 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 import BaseView from './base-view';
 
 /**
- * Represents Dashboard view.
- *
- * @class DashboardView
+ * @class KbListItemView
  * @extends BaseView
  */
-export default class DashboardView extends BaseView {
+export default class KbListItemView extends BaseView {
+
+    public id: string;
+    public index: number;
+    public current: boolean;
 
     constructor(options) {
+
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.dashboard',
-            buttons: {
-                newrow: '.add-row.empty',
-                adddashlet: '.add-dashlet .fa.fa-plus'
-            },
-            elements: {
-                dashlet: '.dashlets.row-fluid',
-                FirstDashlet: '.row-fluid[name="dashlet_00"]',
-                SecondDashlet: '.row-fluid[name="dashlet_01"]',
-            }
+            $: 'li[data-id*="{{id}}"]',
         });
+
+        this.id = options.id;
+        this.index = options.index;
+        this.current = !this.id && !this.index;
     }
 }

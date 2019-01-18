@@ -33,7 +33,25 @@ export default class extends BaseView {
                     $: 'a.module-list-link[href="#{{itemName}}"]'
                 },
                 currentItem: 'li.current a[href="#{{itemName}}"]',
-                moreIcon: '.more button'
+                moreIcon: '.more button',
+
+                moduleItems: {
+                    $: '.dropdown.active',
+                    caret: ' .fa.fa-caret-down',
+                    // Acounts Module menu selectors
+                    'Create Account': 'a[data-navbar-menu-item="LNK_NEW_ACCOUNT"]',
+                    'View Accounts': 'a[data-navbar-menu-item="LNK_ACCOUNT_LIST"]',
+                    'View Account Reports': 'a[data-navbar-menu-item="LNK_ACCOUNT_REPORTS"]',
+                    'Import Accounts': 'a[data-navbar-menu-item="LNK_IMPORT_ACCOUNTS"]',
+
+                    // KB Module menu selectors
+                    'Create Article': 'a[data-navbar-menu-item="LNK_NEW_ARTICLE"]',
+                    'Create Template': 'a[data-navbar-menu-item="LNK_NEW_KBCONTENT_TEMPLATE"]',
+                    'View Articles': 'a[data-navbar-menu-item="LNK_LIST_ARTICLES"]',
+                    'View Templates': 'a[data-navbar-menu-item="LNK_LIST_KBCONTENT_TEMPLATES"]',
+                    'View Categories': 'a[data-navbar-menu-item="LNK_LIST_KBCATEGORIES"]',
+                    'Settings': 'a[data-navbar-menu-item="LNK_KNOWLEDGE_BASE_ADMIN_MENU"]',
+                },
             }
         };
     }
@@ -58,7 +76,7 @@ export default class extends BaseView {
      * @param dropdown
      * @returns {*}
      */
-    public async clickItem (link, dropdown?) {
+    public async clickItem(link, dropdown?) {
         let itemSelector = this.getModuleButtonSelector(link, dropdown);
 
         await this.driver
@@ -83,5 +101,16 @@ export default class extends BaseView {
     public async showAllModules() {
         await this.driver
             .click(this.$('moduleList.moreIcon'));
+    }
+
+    /**
+     * Click on Menu Item under Module's Menu in Sugar Mega Menu
+     * @param {string} menuItem
+     * @returns {Promise<void>}
+     */
+    public async clickItemUnderModuleMenu(menuItem: string) {
+        await this.driver.click(this.$('moduleList.moduleItems.caret'));
+        await this.driver.click(this.$(`moduleList.moduleItems.${menuItem}`));
+        await this.driver.waitForApp();
     }
 }

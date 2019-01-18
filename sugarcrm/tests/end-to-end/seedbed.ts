@@ -21,14 +21,18 @@ import CommentRecord from './views/comment-record';
 import GroupRecord from './views/group-record';
 import DrawerLayoutOpp from './layouts/drawer-layout-opp';
 import SearchAndAddLayout from './layouts/searchAndAdd-layout';
+import SearchAndSelectLayout from './layouts/searchAndSelect-layout';
 import PersonalInfoDrawerLayout from './layouts/personal-info-drawer-layout';
 import AddSugarDashletDrawerLayout from './layouts/add-sugar-dashlet-drawer-layout';
 import DashboardLayout from './layouts/dashboard-layout';
-import LeadConversionLayout from "./layouts/lead-conversion-layout";
+import LeadConversionLayout from './layouts/lead-conversion-layout';
 import AuditLogDrawerLayout from './layouts/audit-log-drawer-layout';
 import BusinessRulesDesignLayout from './layouts/business-rules-record-layout';
 import ForecastsListLayout from './layouts/forecasts-layout';
 import ActivityStreamLayout from './layouts/activity-stream-layout';
+import ModuleMenuCmp from './components/module-menu-cmp';
+import KBViewCategoriesDrawer from './layouts/kb-view-categories-layout';
+import KBSettingsLayout from './layouts/kb-settings-layout';
 
 export default (seedbed: Seedbed) => {
 
@@ -55,6 +59,8 @@ export default (seedbed: Seedbed) => {
 
         seedbed.defineComponent(`Forecasts`, ForecastsListLayout, {module: 'Forecasts'});
 
+        seedbed.defineComponent(`moduleMenu`, ModuleMenuCmp, null);
+
         /*cache drawers for modules*/
         _.each(seedbed.meta.modules, (module, moduleName) => {
 
@@ -65,6 +71,7 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`${moduleName}Record`, RecordLayout, {module: moduleName});
                 seedbed.defineComponent(`${moduleName}Drawer`, DrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`${moduleName}SearchAndAdd`, SearchAndAddLayout, {module: moduleName});
+                seedbed.defineComponent(`${moduleName}SearchAndSelect`, SearchAndSelectLayout, {module: moduleName});
                 seedbed.defineComponent(`PersonalInfoDrawer`, PersonalInfoDrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`AuditLogDrawer`, AuditLogDrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`BusinessRulesDesign`, BusinessRulesDesignLayout, {module: moduleName});
@@ -75,7 +82,8 @@ export default (seedbed: Seedbed) => {
         seedbed.defineComponent(`Dashboard`, DashboardLayout, {module: 'Dashboards'});
         seedbed.defineComponent(`AddSugarDashletDrawer`, AddSugarDashletDrawerLayout, {module: 'Dashboards'});
         seedbed.defineComponent(`ActivityStream`, ActivityStreamLayout, {module: 'Activities'});
-
+        seedbed.defineComponent(`KBViewCategoriesDrawer`, KBViewCategoriesDrawer, {module: 'Categories'});
+        seedbed.defineComponent(`KBSettingsDrawer`, KBSettingsLayout, {module: 'KBContents'});
     });
 
     /**
@@ -262,6 +270,29 @@ export default (seedbed: Seedbed) => {
             // Scenario: Quotes > Create Opportunity
             if (!recordInfo) {
                 seedbed.api.created.push(responseRecord);
+            }
+        }
+
+        if (req.method === 'POST' && /(\/Categories)/.test(req.url)) {
+
+            let responseRecord = JSON.parse(data.buffer.toString());
+
+            // we need to push record to seedbed.api.created to let Seedbed know that we need to remove this records at the end of the scenario.
+            seedbed.api.created.push(responseRecord);
+
+            // we try to find cached record without 'recordId' and the same 'module' as in responseRecord. We assume that it's
+            // a record we just created.
+            let recordInfo = _.find(seedbed.cucumber.scenario.recordsInfo, _recordInfo => !_recordInfo.recordId
+                && _recordInfo.module === responseRecord._module);
+
+            // save record in cachedRecords by uid if such record is found
+            if (recordInfo && recordInfo.uid) {
+
+                seedbed.cachedRecords.push(recordInfo.uid, {
+                    input: recordInfo.input,
+                    id: responseRecord.id,
+                    module: recordInfo.module
+                });
             }
         }
     });

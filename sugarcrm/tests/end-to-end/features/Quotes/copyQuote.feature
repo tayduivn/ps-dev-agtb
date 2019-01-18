@@ -293,7 +293,7 @@ Feature: Copy Quote E2E testing
       | fieldName      | value   |
       | taxrate_name   | Tax_1   |
       | currency_id    | $ (USD) |
-      | show_line_nums |         |
+      | show_line_nums | false   |
     When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
 
       # Verify data in Quote Settings section of the quote record

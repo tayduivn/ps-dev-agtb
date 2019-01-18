@@ -32,6 +32,11 @@ export default class BoolField extends BaseField {
         await this.driver.scroll(this.$('field.selector'));
         await this.driver.click(this.$('field.selector'));
     }
+
+    public async getText(selector: string): Promise<string> {
+        let value: boolean =  await this.driver.isSelected(selector);
+        return value.toString();
+    }
 }
 
 export const Edit = BoolField;

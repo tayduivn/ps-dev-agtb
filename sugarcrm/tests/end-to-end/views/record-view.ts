@@ -48,7 +48,9 @@ export default class RecordView extends BaseView {
                 bcc_button: '[data-toggle-field="bcc_collection"]',
                 bcc_button_active: '.active[data-toggle-field="bcc_collection"]',
                 activate_recipents_field: '.email-recipients.fieldset',
-            }
+            },
+            // Knowledge Base module
+            templates: '.load-template a',
         });
     }
 
@@ -128,5 +130,16 @@ export default class RecordView extends BaseView {
         let selector = this.$(elementName);
         let value = await this.driver.isElementExist(selector);
         return value;
+    }
+
+    /**
+     * Click Templates button on Knowledge Base create drawer
+     *
+     * @returns {Promise<void>}
+     */
+    public async clickTemplatesButton() {
+        let selector = this.$('templates');
+        await this.driver.scroll(selector);
+        await this.driver.click(selector);
     }
 }

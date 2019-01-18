@@ -8,31 +8,29 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-import BaseView from './base-view';
+import ListLayout from './list-layout';
+import {KbCategoriesListView} from '../views/kb-categories-list-view';
 
 /**
- * Represents Dashboard view.
+ * Represents Knowledge Base Categories drawer
  *
- * @class DashboardView
- * @extends BaseView
+ * @class KBViewCategoriesDrawer
+ * @extends ListLayout
  */
-export default class DashboardView extends BaseView {
+export default class KBViewCategoriesDrawer extends ListLayout {
+
+    public KBCategoriesList: KbCategoriesListView;
 
     constructor(options) {
+
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.dashboard',
-            buttons: {
-                newrow: '.add-row.empty',
-                adddashlet: '.add-dashlet .fa.fa-plus'
-            },
-            elements: {
-                dashlet: '.dashlets.row-fluid',
-                FirstDashlet: '.row-fluid[name="dashlet_00"]',
-                SecondDashlet: '.row-fluid[name="dashlet_01"]',
-            }
+            $: '.drawer.active',
         });
+
+        this.type = 'drawer';
+
+        this.KBCategoriesList = this.createComponent<KbCategoriesListView>(KbCategoriesListView);
     }
 }

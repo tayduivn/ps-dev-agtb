@@ -11,10 +11,10 @@
 import RecordLayout from './record-layout';
 
 /**
- * Represents a Detail/Record page layout.
+ * Represents a Drawer page layout
  *
- * @class RecordLayout
- * @extends BaseView
+ * @class DrawerLayout
+ * @extends RecordLayout
  */
 export default class DrawerLayout extends RecordLayout {
 
@@ -24,17 +24,11 @@ export default class DrawerLayout extends RecordLayout {
 
         this.selectors = this.mergeSelectors({
             $: '.drawer.active',
-            'show more': '.show-hide-toggle .btn.more',
-            'show less': '.show-hide-toggle .btn.less',
+            'show more': '.show-hide-toggle .more',
+            'show less': '.show-hide-toggle .less',
 
         });
 
         this.type = 'drawer';
     }
-    public async showMore(btnName) {
-        if (await this.driver.isVisible(this.$(btnName))) {
-            await this.driver.click(this.$(btnName));
-        }
-    }
 }
-

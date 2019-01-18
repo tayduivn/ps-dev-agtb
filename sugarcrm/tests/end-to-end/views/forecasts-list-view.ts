@@ -10,16 +10,16 @@
  */
 
 import * as _ from 'lodash';
-import BaseListView from './baselist-view';
+import ListView from './list-view';
 import ForecastsListItemView from "./forecasts-list-item-view";
 
 /**
  * Represents Forecasts module Record view.
  *
  * @class ForecastsListView
- * @extends BaseListView
+ * @extends ListView
  */
-export default class ForecastsListView extends BaseListView {
+export default class ForecastsListView extends ListView {
 
     constructor(options) {
         super(options);
@@ -42,21 +42,5 @@ export default class ForecastsListView extends BaseListView {
 
         this.listItems.push(listViewItem as any);
         return listViewItem as any;
-    }
-
-    public getListItem (conditions) {
-        let keys = _.keys(conditions);
-
-        if (keys.length !== 1 || !_.includes(['id', 'index', 'current'], keys[0])) {
-            return null;
-        } else {
-            let listItems = _.filter(this.listItems, conditions),
-                listViewItem = listItems.length ? listItems[0] : null;
-
-            if (!listViewItem) {
-                listViewItem = this.createListItem(conditions);
-            }
-            return listViewItem;
-        }
     }
 }

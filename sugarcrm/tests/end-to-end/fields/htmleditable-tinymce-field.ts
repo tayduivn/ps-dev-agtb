@@ -17,7 +17,32 @@ import {seedbed} from '@sugarcrm/seedbed';
  * @extends BaseField
  */
 
-export default class HtmleditableTinymceField extends BaseField {
+export default class KBDetail extends BaseField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            $: '[field-name={{name}}].detail',
+            field: {
+                selector: 'div.kbdocument-body',
+            },
+        });
+    }
+
+    /**
+     *  Get text from body field in Knowledge Base record (detail) view
+     *
+     * @param {string} selector
+     * @returns {Promise<string>}
+     */
+    public async getText(selector: string): Promise<string> {
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+        return value.toString().trim();
+    }
+}
+
+export class HtmleditableTinymceField extends BaseField {
 
     constructor(options) {
         super(options);
@@ -72,4 +97,3 @@ export class Detail extends HtmleditableTinymceField {
         return value.value;
     }
 }
-

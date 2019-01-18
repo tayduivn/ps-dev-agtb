@@ -74,7 +74,7 @@ Then(/^(\w+) \*(\w+) should have the following values:$/,
 export const chooseModule = async function (itemName) {
     await seedbed.client.driver.waitForApp();
 
-    let moduleMenuCmp = new ModuleMenuCmp({});
+    let moduleMenuCmp = seedbed.components['moduleMenu'] as ModuleMenuCmp;
     let isVisible = await moduleMenuCmp.isVisible(itemName);
 
     if (isVisible) {

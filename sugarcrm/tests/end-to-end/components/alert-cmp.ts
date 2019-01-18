@@ -30,6 +30,7 @@ export default class AlertCmp extends BaseView {
             $: '#alerts',
             container: '.alert-{{alertType}}',
             closeIcon: 'button.close',
+            warning: '.fa.fa-exclamation-triangle',
             message: '.message',
             text: '.text',
             buttons: {
@@ -62,6 +63,12 @@ export default class AlertCmp extends BaseView {
     }
 
     public async getType() {
+        let selector = this.$('warning');
+        let exists = await this.driver.isElementExist(selector);
+        if (exists) {
+            return 'warning';
+        }
+
         return this.driver.getText(this.$('type'));
     }
 }

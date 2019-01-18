@@ -43,7 +43,10 @@ export default class ListItemView extends BaseView {
                     checkbox: '.actions.actionmenu.list input[type=checkbox]',
                     favorite: '.fa.fa-favorite',
                     convert: '[name="lead_convert_button"]',
-                }
+                    localization: '[name="create_localization_button"]',
+                    revision: '[name="create_revision_button"]',
+                    radio: 'td[data-column="KBContentTemplates_select"] input'
+                },
             },
             buttons: {
                 addRow: '.addBtn'

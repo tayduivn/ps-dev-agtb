@@ -62,6 +62,11 @@ export default class RecordHeaderView extends BaseView {
                 'exportcsv':'a[name="export_button"]:not(.hide)',
                 'settings':'a[name="settings_button"]:not(.hide)',
                 'assignquota': 'a[name="assign_quota"]:not(.hide)',
+
+                // Knowledge Base controls
+                'createlocalization': 'a[name="create_localization_button"]:not(.hide)',
+                'createrevision': 'a[name="create_revision_button"]:not(.hide)',
+                'createcategory': 'a[name="add_node_button"]:not(.hide)',
             },
 
             title: {

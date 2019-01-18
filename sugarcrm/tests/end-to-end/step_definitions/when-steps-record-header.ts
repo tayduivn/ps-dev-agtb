@@ -53,7 +53,7 @@ export const openMenuAndCheck = async function(layout, needToCheck, data?: Table
  *
  * @example "I click Save button on #AccountsDrawer header"
  */
-When(/^I click (Create|Edit|Cancel|Close|Save|Reply|Add|Complete|MarkForErasure|Reject|Add2Quote|CloseButton|EmailQuote|Commit|SaveDraft|ToggleSidePanel) button on (#[a-zA-Z](?:\w|\S)*) header$/,
+When(/^I click (Create|Edit|Cancel|Close|Save|Reply|Add|Complete|MarkForErasure|Reject|Add2Quote|CloseButton|EmailQuote|Commit|SaveDraft|ToggleSidePanel|CreateCategory) button on (#[a-zA-Z](?:\w|\S)*) header$/,
     async function(btnName: string, layout: any) {
         await layout.HeaderView.clickButton(btnName.toLowerCase());
     }, {waitForApp: true});
@@ -82,7 +82,7 @@ When(/^I open actions menu in (#[a-zA-Z]\w+)$/,
  *
  * @example "I choose Delete from actions menu in #Account_ARecord"
  */
-When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote|Convert|CloseCall|CloseMeeting|CloseAndCreateNew|Edit|Cancel|Edit_Cancel|ViewPersonalInfo|AuditLog|ExportCSV|Settings|AssignQuota) from actions menu in (#[a-zA-Z]\w+)\s*$/,
+When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote|Convert|CloseCall|CloseMeeting|CloseAndCreateNew|Edit|Cancel|Edit_Cancel|ViewPersonalInfo|AuditLog|ExportCSV|Settings|AssignQuota|CreateLocalization|CreateRevision) from actions menu in (#[a-zA-Z]\w+)\s*$/,
     async function(action, layout: any) {
         await layout.HeaderView.clickButton(action);
     }, {waitForApp: true});

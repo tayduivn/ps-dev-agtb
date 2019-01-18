@@ -21,33 +21,33 @@ import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import {updateForecastConfig} from "./steps-helper";
 import AlertCmp from '../components/alert-cmp';
 import {updateOpportunityConfig} from './steps-helper';
-import {toggleRecord, parseInputArray, chooseModule, closeAlert} from '../step_definitions/general_bdd';
+import {toggleRecord, parseInputArray, chooseModule, closeAlert} from './general_bdd';
 import ActivityStream from '../layouts/activity-stream-layout';
 
 /**
  * Select module in modules menu
  *
- * If "itemName" is visible, it means that it can be located in main menu.
+ * If "moduleName" is visible, it means that it can be located in main menu.
  * If not - trying to open modules dropdown menu and find this module there
  *
  * @example "I choose Accounts in modules menu"
  */
-When(/^I choose (\w+) in modules menu$/,
-    async function (itemName) {
+When(/^I choose (\w+) in modules menu(?: and select "([^"]*)" menu item)?$/,
+    async function (moduleName: string, itemName?: string) : Promise<void> {
 
-        await this.driver.waitForApp();
-
-        let moduleMenuCmp = new ModuleMenuCmp({});
-
-        let isVisible = await moduleMenuCmp.isVisible(itemName);
+        let moduleMenuCmp = seedbed.components['moduleMenu'] as ModuleMenuCmp;
+        let isVisible = await moduleMenuCmp.isVisible(moduleName);
 
         if (isVisible) {
-            await moduleMenuCmp.clickItem(itemName);
-
+            await moduleMenuCmp.clickItem(moduleName);
         } else {
-
             await moduleMenuCmp.showAllModules();
-            await moduleMenuCmp.clickItem(itemName, true);
+            await moduleMenuCmp.clickItem(moduleName, true);
+        }
+        await this.driver.waitForApp();
+
+        if (itemName) {
+            await moduleMenuCmp.clickItemUnderModuleMenu(itemName);
         }
 
     }, {waitForApp: true});
@@ -127,6 +127,12 @@ When(/^I open ([\w,\/]+) view and login$/,
 When(/^I go to "([^"]*)" url$/,
     async function (urlHash): Promise<void> {
         await this.driver.setUrlHash(urlHash);
+    }, {waitForApp: true});
+
+When(/^I click on "([^"]*)" menu item$/,
+    async function (menuItem: string): Promise<void> {
+        let moduleMenuCmp = seedbed.components['moduleMenu'] as ModuleMenuCmp;
+        await moduleMenuCmp.clickItemUnderModuleMenu(menuItem);
     }, {waitForApp: true});
 
 // The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layout
@@ -241,7 +247,7 @@ When(/^I provide input for (#\S+) view for (\d+) row$/,
  *
  * @example When I click more guests button on #C_1Preview view
  */
-When(/^I click (show more|show less|more guests) button on (#\S+) view$/, async function (buttonName: string, layout: any) {
+When(/^I click (show more|show less|more guests|useful|notuseful) button on (#\S+) view$/, async function (buttonName: string, layout: any) {
     await layout.showMore(buttonName);
 }, {waitForApp: true});
 
@@ -659,3 +665,4 @@ When(/^I comment on the top activity in (#\S+)$/, async function (layout: Activi
         i++;
     }
 }, {waitForApp: false});
+

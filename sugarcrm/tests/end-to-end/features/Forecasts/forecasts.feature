@@ -72,8 +72,8 @@ Feature: Forecasts module
     When I close alert
 
     # Verify 'In Forecast' and 'Forecasts Bar Chart' dashlet appearances
-    Then I verify that InForecastDashlet element from #Dashboard.DashboardView still looks like salesManager_InForecast1
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart1
+    Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like salesManager_InForecast1
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart1
 
     # Verify Totals in forecast manager's worksheet footer
     Then I verify forecasts Total amounts in #Forecasts.SalesManagerWorksheet.Footer
@@ -142,16 +142,16 @@ Feature: Forecasts module
       | best      | $750.00 |
 
     # Verify 'In Forecast' and 'Forecasts Bar Chart' dashlet appearance
-    Then I verify that InForecastDashlet element from #Dashboard.DashboardView still looks like salesRep_InForecast1
+    Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like salesRep_InForecast1
 
     When I select Sales Stage in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart1_salesStage
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart1_salesStage
 
     When I select Probability in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart1_probability
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart1_probability
 
     When I select In Forecast in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart1_inForecast
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart1_inForecast
 
     # Add 'Exclude' filter to sales rep worksheet
     When I add "Exclude" in #Forecasts.SalesRepWorksheet.Filter view
@@ -193,16 +193,16 @@ Feature: Forecasts module
       | best_case   | $750.00   |
 
     # Verify 'In Forecast' and 'Forecasts Bar Chart' dashlet appearance
-    Then I verify that InForecastDashlet element from #Dashboard.DashboardView still looks like salesRep_InForecast2
+    Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like salesRep_InForecast2
 
     When I select Sales Stage in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart2_salesStage
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart2_salesStage
 
     When I select Probability in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart2_probability
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart2_probability
 
     When I select In Forecast in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart2_inForecast
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart2_inForecast
 
     # Remove 'Exclude' filter from forecast sales rep worksheet
     When I remove "Exclude" filter in #Forecasts.SalesRepWorksheet.Filter view
@@ -241,16 +241,16 @@ Feature: Forecasts module
       | best_case   | $800.00   |
 
     # Verify 'In Forecast' and 'Forecasts Bar Chart' dashlet appearance
-    Then I verify that InForecastDashlet element from #Dashboard.DashboardView still looks like salesRep_InForecast3
+    Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like salesRep_InForecast3
 
     When I select Sales Stage in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_salesStage
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_salesStage
 
     When I select Probability in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_probability
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_probability
 
     When I select In Forecast in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_inForecast
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_inForecast
 
     # Click Commit button
     When I click Commit button on #Forecasts.SalesRepWorksheet header
@@ -272,16 +272,16 @@ Feature: Forecasts module
       | 2020 Q4            |
 
     # Verify 'In Forecast' and 'Forecasts Bar Chart' dashlet appearances
-    Then I verify that InForecastDashlet element from #Dashboard.DashboardView still looks like salesManager_InForecast2
+    Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like salesManager_InForecast2
 
     When I select Best in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart2_best
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart2_best
 
     When I select Worst in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart2_worst
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart2_worst
 
     When I select Likely in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart2_likely
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart2_likely
 
     # Verify quota, likely and best amounts at manager's worksheet Top Info Bar
     Then I verify forecasts data on #Forecasts.SalesManagerWorksheet.TopInfoBar
@@ -332,16 +332,16 @@ Feature: Forecasts module
       | best_case   | $1,200.00 |
 
     # Verify 'In Forecast' and 'Forecasts Bar Chart' dashlet appearances
-    Then I verify that InForecastDashlet element from #Dashboard.DashboardView still looks like salesManager_InForecast3
+    Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like salesManager_InForecast3
 
     When I select Best in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart3_best
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart3_best
 
     When I select Worst in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart3_worst
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart3_worst
 
     When I select Likely in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart3_likely
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesManager_ForecastBarChart3_likely
 
     # Navigate to user's Forecast Sales rep worksheet by clicking the link in manager's worksheet
     When I click name field on *user record in #Forecasts.SalesManagerWorksheet.ListView view
@@ -352,13 +352,13 @@ Feature: Forecasts module
     Then I should see *RLI_3 in #Forecasts.SalesRepWorksheet.ListView
 
     # Verify 'In Forecast' and 'Forecasts Bar Chart' dashlet appearances
-    Then I verify that InForecastDashlet element from #Dashboard.DashboardView still looks like salesRep_InForecast3_viewedByMngr
+    Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like salesRep_InForecast3_viewedByMngr
 
     When I select Sales Stage in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_salesStage_viewedByMngr
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_salesStage_viewedByMngr
 
     When I select Probability in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_probability_viewedByMngr
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_probability_viewedByMngr
 
     When I select In Forecast in #Dashboard.ForecastsBarChartDashlet
-    Then I verify that ForecastBarChart element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_inForecast_viewedByMngr
+    Then I verify that SecondDashlet element from #Dashboard.DashboardView still looks like salesRep_ForecastBarChart3_inForecast_viewedByMngr
