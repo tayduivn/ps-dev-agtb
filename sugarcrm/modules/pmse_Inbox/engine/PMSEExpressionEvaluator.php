@@ -201,6 +201,8 @@ class PMSEExpressionEvaluator
      * @param string $firstOperand assess value
      * @param string $operator type of operator that evaluates
      * @param string $secondOperand assess value
+     * @param string $tokenType
+     * @param boolean $isTerminateNewBean
      * @return type
      */
     public function routeFunctionOperator(
@@ -208,7 +210,8 @@ class PMSEExpressionEvaluator
         $firstOperand,
         $operator,
         $secondOperand = null,
-        $tokenType = null
+        $tokenType = null,
+        $isTerminateNewBean = false
     ) {
         switch ($operation) {
             case 'unary':
@@ -240,7 +243,8 @@ class PMSEExpressionEvaluator
                     $firstOperand,
                     $operator,
                     $secondOperand,
-                    $tokenType
+                    $tokenType,
+                    $isTerminateNewBean
                 );
                 break;
             case 'logic':

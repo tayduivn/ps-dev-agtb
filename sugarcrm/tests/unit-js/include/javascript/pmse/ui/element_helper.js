@@ -26,6 +26,16 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
                 numberGroupingSeparator: '.'
             };
             helper = new PMSE.ElementHelper(params);
+            helper.OPERATORS.comparison = [
+                {
+                    value: 'equals'
+                }
+            ];
+            helper.OPERATORS.changes = [
+                {
+                    value: 'changes_to'
+                }
+            ];
             expect(helper._decimalSeparator).toEqual(params.decimalSeparator);
             expect(helper._numberGroupingSeparator).toEqual(params.numberGroupingSeparator);
             expect(PROJECT_MODULE).toEqual('Leads');
@@ -138,6 +148,50 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
             expect(related._disabled).toEqual(false);
         });
 
+    });
+
+    describe('processValueDependency', function() {
+        var parentField = new FormPanelDropdown({
+            _name: 'field'
+        });
+        var dependantField = new FormPanelText({
+            _name: 'value',
+            _label: 'Value',
+        });
+        var operatorField = new FormPanelDropdown({
+            _name: 'operator'
+        });
+        operatorField.html = {innerHTML: '<div/>'};
+        operatorField._htmlControl[0] = document.createElement('select');
+        var form = new FormPanel();
+        var checkOperator = function(operatorField, operator) {
+            var op = false;
+            if (operatorField._htmlControl && operatorField._htmlControl[0]) {
+                for (i = 0; i < operatorField._htmlControl[0].length; i++) {
+                    if (operatorField._htmlControl[0][i].value === operator) {
+                        op = true;
+                        break;
+                    }
+                }
+            }
+            return op;
+        };
+        var ret = new FormPanelDate();
+        beforeEach(function() {
+            sinon.collection.stub(FormPanel.prototype, '_createField').returns(ret);
+        });
+        it('Check to include changes_to operators for date/datetime fields', function() {
+            helper._parent = new ExpressionControl({});
+            helper._parent._name = 'evn_criteria';
+            helper.processValueDependency(dependantField, parentField, operatorField, 'date', null, form);
+            var operatorExist = checkOperator(operatorField, 'changes_to');
+            expect(operatorExist).toEqual(true);
+
+            helper._parent._name = 'pro_terminate_variables';
+            helper.processValueDependency(dependantField, parentField, operatorField, 'datetime', null, form);
+            operatorExist = checkOperator(operatorField, 'changes_to');
+            expect(operatorExist).toEqual(true);
+        });
     });
 
 });

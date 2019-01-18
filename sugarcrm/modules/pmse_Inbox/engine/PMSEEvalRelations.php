@@ -17,9 +17,11 @@ trait PMSEEvalRelations
      * @param string $value1 value
      * @param string $operator This value should be one in either $arrayRelationsSig or $arrayRelationsLit
      * @param string $value2 value
+     * @param string $typeDate
+     * @param boolean $isTerminateNewBean
      * @return int
      */
-    public function evalRelations($value1, $operator, $value2, $typeDate = 'typeDefault')
+    public function evalRelations($value1, $operator, $value2, $typeDate = 'typeDefault', $isTerminateNewBean = false)
     {
         $arrayRelationsSig = array(
             "==",
@@ -64,11 +66,11 @@ trait PMSEEvalRelations
                 $result = $value1 == $value2 ? 1 : 0;
                 break;
             case 'changes':
-                $result = isset($value1) ? 1 : 0;
+                $result = isset($value1) && !$isTerminateNewBean ? 1 : 0;
                 break;
             case 'changes_from':
             case 'changes_to':
-                $result = (isset($value1) && $value1 == $value2) ? 1 : 0;
+                $result = (isset($value1) && !$isTerminateNewBean && $value1 == $value2) ? 1 : 0;
                 break;
             case 'not_equals':
                 $result = $value1 != $value2 ? 1 : 0;

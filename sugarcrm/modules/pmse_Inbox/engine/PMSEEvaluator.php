@@ -116,9 +116,16 @@ class PMSEEvaluator
      * @param object $evaluatedBean this is the bean object
      * @param array $params if additional parameters
      * @param bool $returnToken DEPRECATED AS OF 7.9 AND WILL BE REMOVED IN A FUTURE RELEASE
+     * @param object $request
      * @return bool
      */
-    public function evaluateExpression($expression, $evaluatedBean, $params = array(), $returnToken = false)
+    public function evaluateExpression(
+        $expression,
+        $evaluatedBean,
+        $params = array(),
+        $returnToken = false,
+        $request = null
+    )
     {
         global $current_user;
         global $beanList;
@@ -130,6 +137,24 @@ class PMSEEvaluator
                         if ($attrVal == $fieldKey) {
                             $expression[$expKey]->$attrKey = $fieldVal;
                         }
+                    }
+                }
+            }
+        }
+
+        if (!empty($request)) {
+            $arsuments = $request->getArguments();
+            $flowData = $request->getFlowData();
+            if ($flowData['evn_id'] == 'TERMINATE' &&
+                // Need to check the isUpdate flag that is set by the after_save hook
+                // changes/to/from operations will skip when isUpdate is false (i.e. new bean)
+                isset($arsuments['isUpdate']) && $arsuments['isUpdate'] === false) {
+                foreach ($expression as $field) {
+                    if (isset($field->expOperator) &&
+                        ($field->expOperator == 'changes' ||
+                            $field->expOperator == 'changes_from' ||
+                            $field->expOperator == 'changes_to')) {
+                        $field->isTerminateNewBean = true;
                     }
                 }
             }

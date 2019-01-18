@@ -61,7 +61,8 @@ class PMSECriteriaEvaluator
                     $currentValue,
                     $criteriaToken->expOperator,
                     $criteriaToken->expValue,
-                    $criteriaToken->expSubtype
+                    $criteriaToken->expSubtype,
+                    isset($criteriaToken->isTerminateNewBean) ? $criteriaToken->isTerminateNewBean : false
                 );
                 if ($criteriaToken->expRel == 'All') {
                     if (!$resultToken->expValue) {
@@ -79,7 +80,8 @@ class PMSECriteriaEvaluator
                 $criteriaToken->currentValue[0],
                 $criteriaToken->expOperator,
                 $criteriaToken->expValue,
-                $criteriaToken->expSubtype
+                $criteriaToken->expSubtype,
+                isset($criteriaToken->isTerminateNewBean) ? $criteriaToken->isTerminateNewBean : false
             );
         }
         $this->expressionEvaluator->processTokenAttributes($resultToken);

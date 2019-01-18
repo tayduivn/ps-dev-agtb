@@ -1967,7 +1967,7 @@ ExpressionControl.prototype.isValid = function() {
                 (current.expOperator == 'changes' ||
                     current.expOperator == 'changes_from' ||
                     current.expOperator == 'changes_to')) {
-                if (this._name == 'evn_criteria') {
+                if (this._name == 'evn_criteria' || this._name == 'pro_terminate_variables') {
                     var selVal = $('#evn_params').val();
                     valid = !selVal || selVal == 'updated' || selVal == 'allupdates';
                 } else {

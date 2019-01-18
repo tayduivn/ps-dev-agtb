@@ -54,7 +54,7 @@ class PMSETerminateValidator extends PMSEBaseValidator implements PMSEValidate
 
         // If the expression evaluates to terminate, handle that
         $valid = $criteria !== '' && $criteria !== '[]';
-        if ($valid && $this->getEvaluator()->evaluateExpression($criteria, $bean, $paramsRelated)) {
+        if ($valid && $this->getEvaluator()->evaluateExpression($criteria, $bean, $paramsRelated, false, $request)) {
             $request->setResult('TERMINATE_CASE');
         }
 

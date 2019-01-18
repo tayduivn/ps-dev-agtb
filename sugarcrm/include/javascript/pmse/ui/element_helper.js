@@ -737,7 +737,11 @@ PMSE.ElementHelper.prototype.processValueDependency = function (dependantField, 
         operators = operators.concat(this.EXTRA_OPERATORS[labelField]);
     }
     if (!selVal) {
-        operators = operators.concat(this.OPERATORS.changes);
+        var expControl = (this._parent) ? this._parent : null;
+        if (expControl && expControl._name &&
+            (expControl._name === 'evn_criteria' || expControl._name === 'pro_terminate_variables')) {
+            operators = operators.concat(this.OPERATORS.changes);
+        }
     } else if (selVal == 'updated' || selVal == 'allupdates') {
         var url = parentField._dataURL,
             base = parentField._attributes ? parentField._attributes.base_module : false;
