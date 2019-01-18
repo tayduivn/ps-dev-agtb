@@ -429,8 +429,10 @@ class Team extends SugarBean
 				$membershipExists = true;
 			}
 
-			// This is an error.  There should not be a memberhsip row that does not have implicit or explicit asisgnments.
-			$GLOBALS['log']->error("Membership record found (id $membership->id) that does not have a implicit or explicit assignment");
+            if (!$membershipExists) {
+                // This is an error.  There should not be a memberhsip row that does not have implicit or explicit asisgnments.
+                $GLOBALS['log']->error("Membership record found (id $membership->id) that does not have a implicit or explicit assignment");
+            }
 		}
 
         if (!$membershipExists)
@@ -915,8 +917,8 @@ AND team_id = ?';
             $query = 'SELECT t.id, t.name, t.name_2
 FROM teams t
 INNER JOIN team_memberships tm
-ON tm.team_id = t.id 
-AND tm.deleted = 0 
+ON tm.team_id = t.id
+AND tm.deleted = 0
 WHERE tm.user_id = ?
 AND t.deleted = 0
 ORDER BY t.private, t.name';
