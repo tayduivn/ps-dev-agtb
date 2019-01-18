@@ -218,41 +218,31 @@ class QueueManager
         $jobExec = "class::\\{$jobClass}";
         $job = $this->getNewBean('SchedulersJobs');
 
-        $queued = new \SugarQuery();
-        $queued->select('id');
-        $queued->from($job)->where()
-            ->equals('target', $jobExec)
-            ->starts('data', $module)
-            ->equals('status', \SchedulersJob::JOB_STATUS_QUEUED);
-
-        $running = new \SugarQuery();
-        $running->select('id');
-        $running->from($job)->where()
-            ->equals('target', $jobExec)
-            ->starts('data', $module)
-            ->equals('status', \SchedulersJob::JOB_STATUS_RUNNING);
-
-        $sq = new \SugarQuery();
-        $sq->union($queued);
-        $sq->union($running);
-        $sq->limit(1);
-
-        $result = $job->fetchFromQuery($sq, ['id']);
+        foreach ([\SchedulersJob::JOB_STATUS_QUEUED, \SchedulersJob::JOB_STATUS_RUNNING] as $status) {
+            $sq = new \SugarQuery();
+            $sq->select('id');
+            $sq->from($job)->where()
+                ->equals('target', $jobExec)
+                ->starts('data', $module)
+                ->equals('status', $status);
+            $sq->limit(1);
+            $result = $job->fetchFromQuery($sq, ['id']);
+            if (!empty($result)) {
+                $this->getLogger()->info("Elastic consumer for $module already present");
+                return;
+            }
+        }
 
         // No job is found for this module, let's create one.
-        if (empty($result)) {
-            $job->name = 'Elasticsearch Queue Consumer';
-            $job->target = $jobExec;
-            $job->data = $module;
-            $job->job_delay = $this->postponeJobTime;
-            $job->assigned_user_id = $GLOBALS['current_user']->id;
+        $job->name = 'Elasticsearch Queue Consumer';
+        $job->target = $jobExec;
+        $job->data = $module;
+        $job->job_delay = $this->postponeJobTime;
+        $job->assigned_user_id = $GLOBALS['current_user']->id;
 
-            $this->submitNewJob($job);
+        $this->submitNewJob($job);
 
-            $this->getLogger()->info("Create elastic consumer for $module");
-        } else {
-            $this->getLogger()->info("Elastic consumer for $module already present");
-        }
+        $this->getLogger()->info("Create elastic consumer for $module");
     }
 
     /**
