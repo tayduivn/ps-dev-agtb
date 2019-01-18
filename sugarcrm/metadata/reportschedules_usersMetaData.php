@@ -16,17 +16,14 @@ $dictionary['reportschedules_users'] = array(
         'id' => array(
             'name' => 'id',
             'type' => 'id',
-            'len' => '36',
         ),
         'reportschedule_id' => array(
             'name' => 'reportschedule_id',
             'type' => 'id',
-            'len' => '36',
         ),
         'user_id' => array(
             'name' => 'user_id',
             'type' => 'id',
-            'len' => '36',
         ),
         'date_modified' => array(
             'name' => 'date_modified',

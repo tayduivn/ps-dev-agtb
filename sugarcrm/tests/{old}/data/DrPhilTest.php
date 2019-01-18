@@ -279,6 +279,14 @@ class DrPhilTest extends TestCase
             $this->assertArrayHasKey('popupsearch', $defs['studio']['base'], 'Popup search view config should be defined for the tag field');
             $this->assertFalse($defs['studio']['base']['popupsearch'], 'Tags is not an allowed field on the BWC Popup Search view in studio');
         }
+
+        if ($def['type'] === 'id') {
+            $this->assertArrayNotHasKey('len', $def, sprintf(
+                'The ID field %s.%s is not expected to have length defined',
+                $table,
+                $key
+            ));
+        }
     }
 
     /**
@@ -606,6 +614,8 @@ class DrPhilTest extends TestCase
                 $data[$name] = array($name, $def);
             }
         }
+
+        ksort($data);
 
         return $data;
     }

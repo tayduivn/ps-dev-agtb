@@ -429,7 +429,6 @@ $dictionary['User'] = array(
             'vname' => 'LBL_DEFAULT_TEAM',
             'reportable' => false,
             'type' => 'id',
-            'len' => '36',
             'studio' => array(
                 'listview' => false,
                 'searchview'=>false,
@@ -445,7 +444,6 @@ $dictionary['User'] = array(
             'reportable' => false,
         	'source' => 'non-db',
             'type' => 'id',
-            'len' => '36',
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,
 			'team_set_id' =>
@@ -507,7 +505,6 @@ $dictionary['User'] = array(
 				'massupdate' => false,
 				'dbType' => 'varchar',
 				'source' => 'non-db',
-				'len' => 36,
 				'custom_type' => 'teamset',
                 'studio' => array(
                     'listview'    => false,

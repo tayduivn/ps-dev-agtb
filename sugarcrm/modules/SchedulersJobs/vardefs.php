@@ -20,7 +20,6 @@ $dictionary['SchedulersJob'] = array(
             'name' => 'id',
             'vname' => 'LBL_NAME',
             'type' => 'id',
-            'len' => '36',
             'required' => true,
             'reportable' => false,
         ),
@@ -155,8 +154,7 @@ $dictionary['SchedulersJob'] = array(
         'job_group' => array(
             'name' => 'job_group',
             'vname' => 'LBL_JOB_GROUP',
-            'type' => 'id',
-            'dbType' => 'varchar',
+            'type' => 'varchar',
             'len' => 255,
             'required' => false,
             'reportable' => true,

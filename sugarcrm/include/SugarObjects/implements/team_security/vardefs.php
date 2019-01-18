@@ -93,7 +93,6 @@ $vardefs = array(
 			'massupdate' => true,
 			'dbType' => 'varchar',
 			'source' => 'non-db',
-			'len' => 36,
 			'custom_type' => 'teamset',
             'studio' => array(
                    // Bug 56832 - Exclude list/detail/edit view from portal

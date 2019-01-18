@@ -562,7 +562,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'name' => 'repeat_parent_id',
     'vname' => 'LBL_REPEAT_PARENT_ID',
     'type' => 'id',
-    'len' => 36,
     'comment' => 'Id of the first element of recurring records',
     'importable' => 'false',
     'massupdate' => false,

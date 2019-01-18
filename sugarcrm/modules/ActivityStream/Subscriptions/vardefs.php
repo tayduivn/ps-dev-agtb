@@ -39,7 +39,6 @@ $dictionary['Subscription'] = array(
         'parent_id' => array(
             'name'     => 'parent_id',
             'type'     => 'id',
-            'len'      => 36,
             'required' => true,
         ),
     ),
