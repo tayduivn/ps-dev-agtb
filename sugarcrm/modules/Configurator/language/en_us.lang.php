@@ -458,6 +458,10 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_ADVANCED_WORKFLOW_SETTINGS_IMPORT_HELP' => 'Toggles whether process definitions are automatically validated when first imported',
     'LBL_ADVANCED_WORKFLOW_SETTINGS_CYCLES' => 'Error number of cycles',
     //END SUGARCRM flav=ent ONLY
+
+    //Comment log settings
+    'LBL_COMMENT_LOG_SETTINGS' => 'Comment Log Settings',
+    'LBL_COMMENT_LOG_MAX_CHARS' => 'Maximum characters to show per comment entry',
 );
 
 

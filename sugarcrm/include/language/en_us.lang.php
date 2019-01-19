@@ -5474,6 +5474,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_TEXT_COPIED_TO_CLIPBOARD_ERROR' => 'Could not copy to your clipboard',
 
     'LBL_COPY_EMAIL_ADDRESS_CONFIRMATION_LINK' => 'Copy Confirmation Link',
+
+    // Comment Log
+    'LBL_COMMENT_LOG_SHOW_MORE' => 'Show more...',
+    'LBL_COMMENT_LOG_SHOW_LESS' => 'Show less...',
 );
 
 $app_list_strings['activity_user_options'] = array (

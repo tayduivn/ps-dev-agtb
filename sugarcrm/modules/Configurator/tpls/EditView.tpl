@@ -321,6 +321,16 @@
 
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
+		<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_COMMENT_LOG_SETTINGS}</h4></th>
+	</tr>
+	<tr>
+		<td width="25%" scope="row">{$MOD.LBL_COMMENT_LOG_MAX_CHARS}</td>
+		<td> <input name="commentlog_maxchars" value="{$config.commentlog.maxchars}"></td>
+	</tr>
+</table>
+
+<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.ADVANCED}</h4></th>
 	</tr>
 	<tr>

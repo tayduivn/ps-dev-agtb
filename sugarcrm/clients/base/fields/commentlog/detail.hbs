@@ -22,7 +22,21 @@
                 {{/if}}
                 {{entered_date}}
             </span>
-            <div class="msg-content">{{entry}}</div>
+            {{#if showShort}}
+                {{#if collapsed}}
+                    <div class="msg-content">{{entryShort}}...</div>
+                    <button data-action="toggle" class="btn btn-link btn-invisible toggle-text" data-comment-id="{{id}}">
+                        {{str 'LBL_COMMENT_LOG_SHOW_MORE' ../module}}
+                    </button>
+                {{else}}
+                    <div class="msg-content">{{entry}}</div>
+                    <button data-action="toggle" class="btn btn-link btn-invisible toggle-text" data-comment-id="{{id}}">
+                        {{str 'LBL_COMMENT_LOG_SHOW_LESS' ../module}}
+                    </button>
+                {{/if}}
+            {{else}}
+                <div class="msg-content">{{entry}}</div>
+            {{/if}}
             <hr />
         </div>
     {{/each}}

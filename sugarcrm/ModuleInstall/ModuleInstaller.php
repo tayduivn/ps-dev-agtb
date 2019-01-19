@@ -3038,6 +3038,9 @@ class ModuleInstaller{
             'clientID' => 'sugar',
             'collapseSubpanels' => $config->get('collapse_subpanels', false),
             'previewEdit' => $config->get('preview_edit', false),
+            'commentlog' => array(
+                'maxchars' => $config->get('commentlog.maxchars', 500),
+            ),
             'serverTimeout' => self::getBaseTimeoutValue(),
             'metadataTypes' => array(
                 "currencies",

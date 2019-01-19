@@ -298,6 +298,9 @@ class MetaDataManager implements LoggerAwareInterface
             'enabled_modules' => true,
         ),
         'preview_edit' => true,
+        'commentlog' => array(
+            'maxchars' => true,
+        ),
         'max_aggregate_email_attachments_bytes' => true,
         'new_email_addresses_opted_out' => true,
         'activity_streams_enabled' => true,

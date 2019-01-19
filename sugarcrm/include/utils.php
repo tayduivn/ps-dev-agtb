@@ -85,6 +85,9 @@ function make_sugar_config(&$sugar_config)
     'calculate_response_time' => empty($calculate_response_time) ? true : $calculate_response_time,
     'create_default_user' => empty($create_default_user) ? false : $create_default_user,
     'chartEngine' => 'sucrose',
+    'commentlog' => array(
+        'maxchars' => 500,
+    ),
     'date_formats' => empty($dateFormats) ? array(
     'Y-m-d'=>'2010-12-23',
     'd-m-Y' => '23-12-2010',
@@ -256,6 +259,9 @@ function get_sugar_config_defaults()
     'export_excel_compatible' => false,
     'cache_dir' => 'cache/',
     'calculate_response_time' => true,
+    'commentlog' => array(
+        'maxchars' => 500,
+    ),
     'create_default_user' => false,
     'chartEngine' => 'sucrose',
     'date_formats' => array (

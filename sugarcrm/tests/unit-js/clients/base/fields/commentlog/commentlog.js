@@ -31,6 +31,7 @@ describe('commentlog field', function() {
             name: 'commentlog',
             type: 'collection'
         };
+        app.config.commentlog = {maxchars: 500};
         field = SugarTest.createField('base', fieldName, 'commentlog', 'detail', fieldDef, module);
     });
 
@@ -146,6 +147,16 @@ describe('commentlog field', function() {
                     }
                 });
             });
+
+        describe('_getShortComment', function() {
+            it('should truncate a comment if it is longer than max chars', function() {
+                field._settings.max_display_chars = 10;
+                var comment = 'This comment is longer than 10 chars';
+                var shortened = field._getShortComment(comment);
+                expect(shortened).toEqual('This ');
+            });
+
+        });
     });
 
     describe('Edit View Behavior', function() {
@@ -189,6 +200,7 @@ describe('commentlog field', function() {
                 {
                     'msgs': [
                         {
+                            'id': 'a',
                             'created_by_name': 'I\' the author, I authored',
                             'date_entered': '2018-08-29T22:50:17+00:00',
                             'entry': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' +
@@ -203,6 +215,7 @@ describe('commentlog field', function() {
                             }
                         },
                         {
+                            'id': 'b',
                             'created_by_name': 'I am another author, and a wizard',
                             'date_entered': '2018-08-29T22:51:17+00:00',
                             'entry': 'Ur a wizard Harry.',
@@ -211,6 +224,7 @@ describe('commentlog field', function() {
                             }
                         },
                         {
+                            'id': 'c',
                             'created_by_name': 'U are a wizard, but I am a lizard',
                             'date_entered': '2018-08-29T22:52:17+00:00',
                             'entry': 'Lizards are better',

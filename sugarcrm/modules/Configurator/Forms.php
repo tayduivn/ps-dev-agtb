@@ -78,6 +78,7 @@ function add_checks(f) {
 	addToValidateMoreThan('ConfigureSettings', 'list_max_entries_per_subpanel', 'int', true, '', 1);
 
 	addToValidateMoreThan('ConfigureSettings', 'error_number_of_cycles', 'int', true, '', 1);
+	addToValidateMoreThan('ConfigureSettings', 'commentlog_maxchars', 'int', true, '', 1);
 
 	addToValidate('ConfigureSettings', 'logger_file_name', 'varchar', 'true', '{$mod_strings['LBL_LOGGER_FILENAME']}');
 	addToValidate('ConfigureSettings', 'logger_file_ext', 'varchar', 'true', '{$mod_strings['LBL_LOGGER_FILE_EXTENSION']}');

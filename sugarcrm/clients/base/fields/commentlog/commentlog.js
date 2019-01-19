@@ -17,11 +17,47 @@
     fieldTag: 'textarea',
 
     /**
+     * @inheritdoc
+     */
+    events: {
+        'click [data-action=toggle]': 'toggleCollapsedEntry'
+    },
+
+    /**
+     * Object to keep track of what comment entries are collapsed
+     */
+    collapsedEntries: undefined,
+
+    /**
+     * Defaults
+     */
+    _defaultSettings: {
+        max_display_chars: 500,
+    },
+
+    /**
      * Called when initializing the field
      * @param options
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.collapsedEntries = {};
+        this._initSettings();
+    },
+
+    /**
+     * Initialize settings, default settings are used when none are supplied
+     * through metadata.
+     *
+     * @return {View.Fields.BaseCommentlogField} Instance of this field.
+     * @protected
+     */
+    _initSettings: function() {
+        var configSettings = {
+            max_display_chars: app.config.commentlog.maxchars,
+        };
+        this._settings = _.extend({}, this._defaultSettings, configSettings);
+        return this;
     },
 
     /**
@@ -58,10 +94,20 @@
             this.msgs = [];
             // add readable time and user link to users
             _.each(comments, function(commentModel) {
+                var id = commentModel.get('id');
+                if (_.isUndefined(this.collapsedEntries[id])) {
+                    this.collapsedEntries[id] = true;
+                }
+
                 var msg = {
+                    id: commentModel.get('id'),
                     entry: commentModel.get('entry'),
+                    entryShort: this._getShortComment(commentModel.get('entry')),
                     created_by_name: commentModel.get('created_by_name'),
+                    collapsed: this.collapsedEntries[id],
                 };
+
+                msg.showShort = msg.entry !== msg.entryShort;
 
                 // to date display format
                 var enteredDate = app.date(commentModel.get('date_entered'));
@@ -86,6 +132,37 @@
         }
 
         this.newValue = this._newEntryModel ? this._newEntryModel.get('entry') : '';
+    },
+
+    /**
+     * Truncate the comment log entry so it is shorter than the max_display_chars
+     * Only truncate on full words to prevent ellipsis in the middle of words
+     * @param {string} comment The comment log entry to truncate
+     * @return {string} the shortened version of an entry if it was originally longer than max_display_chars
+     * @private
+     */
+    _getShortComment: function(comment) {
+        if (comment.length > this._settings.max_display_chars) {
+
+            var cut = comment.substring(0, this._settings.max_display_chars);
+            // let's cut at a full word by checking we are at a whitespace char
+            while (!(/\s/.test(cut[cut.length - 1])) && cut.length > 0) {
+                cut = cut.substring(0, cut.length - 1);
+            }
+            comment = cut;
+        }
+
+        return comment;
+    },
+
+    /**
+     * Save the id in this.collapsedEntries to keep track of what entries are shortened on view or not
+     * @param event
+     */
+    toggleCollapsedEntry: function(event) {
+        var id = $(event.currentTarget).data('commentId');
+        this.collapsedEntries[id] = !this.collapsedEntries[id];
+        this.render();
     },
 
     /**
