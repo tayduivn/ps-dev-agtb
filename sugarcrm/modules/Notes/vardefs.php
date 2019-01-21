@@ -478,6 +478,13 @@ $dictionary['Note'] = array(
                 'email_type',
             ),
         ),
+                               array(
+                                   'name' => 'idx_note_upload_id',
+                                   'type' => 'index',
+                                   'fields' => array(
+                                       'upload_id',
+                                   ),
+                               ),
     )
 
     //This enables optimistic locking for Saves From EditView
