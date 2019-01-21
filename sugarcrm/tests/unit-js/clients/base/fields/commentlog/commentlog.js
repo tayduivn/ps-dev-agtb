@@ -302,4 +302,90 @@ describe('commentlog field', function() {
                     });
             });
     });
+
+    describe('showCommentLog', function() {
+        var collOptions;
+
+        beforeEach(function() {
+            field.tplName = 'detail';
+            collOptions = {
+                parentBean: field.model,
+                collectionField: fieldName,
+                links: {commentlog_link: field.model.getRelatedCollection('commentlog_link')}
+            };
+
+            app.routing.start();
+            sinon.collection.stub(app.date, 'getUserDateFormat').returns('YYMMDD');
+            sinon.collection.stub(app.date, 'getUserTimeFormat').returns('H:m');
+        });
+
+        afterEach(function() {
+            app.router.stop();
+        });
+
+        it('should set href on msg when created_by_link exists and user has access to it', function() {
+            var modelAttr = {
+                'created_by_name': 'James Bond',
+                'date_entered': '2018-08-29T22:52:17+00:00',
+                'entry': 'I am Bond. James Bond',
+                'created_by_link': {
+                    '_acl': 'stub',
+                    'id': '007'
+                }
+            };
+            sinon.collection.stub(app.acl, 'hasAccess').returns(true);
+            sinon.collection.stub(app.router, 'buildRoute')
+                .withArgs('Employees', modelAttr.created_by_link.id, 'detail')
+                .returns('007');
+
+            var bean = app.data.createBean(fieldName, modelAttr);
+            var coll = app.data.createMixedBeanCollection([], collOptions);
+            coll.add(bean);
+            field.model.set(fieldName, coll);
+            field.showCommentLog();
+            expect(field.msgs[0].href).toEqual('#007');
+        });
+
+        it('should not set href on msg when user does not have access to created_by_link', function() {
+            var modelAttr = {
+                'created_by_name': 'James Bond',
+                'date_entered': '2018-08-29T22:52:17+00:00',
+                'entry': 'I am Bond. James Bond',
+                'created_by_link': {
+                    '_acl': 'stub',
+                    'id': '007'
+                }
+            };
+            sinon.collection.stub(app.acl, 'hasAccess').returns(false);
+
+            var bean = app.data.createBean(fieldName, modelAttr);
+            var coll = app.data.createMixedBeanCollection([], collOptions);
+            coll.add(bean);
+            field.model.set(fieldName, coll);
+            field.showCommentLog();
+
+            expect(field.msgs[0]).toBeTruthy();
+            expect(field.msgs[0].href).toBeUndefined();
+        });
+
+        it('should set href on msg when created_by exists', function() {
+            var modelAttr = {
+                'created_by_name': 'Bat Man',
+                'date_entered': '2018-08-29T22:52:17+00:00',
+                'entry': 'I am Batman. Guardian of Gotham',
+                'created_by': '212'
+            };
+            sinon.collection.stub(app.router, 'buildRoute')
+                .withArgs('Employees', modelAttr.created_by, 'detail')
+                .returns('212');
+
+            var bean = app.data.createBean(fieldName, modelAttr);
+            var coll = app.data.createMixedBeanCollection([], collOptions);
+            coll.add(bean);
+            field.model.set(fieldName, coll);
+            field.showCommentLog();
+
+            expect(field.msgs[0].href).toEqual('#212');
+        });
+    });
 });

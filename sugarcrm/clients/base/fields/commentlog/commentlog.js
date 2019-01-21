@@ -117,11 +117,11 @@
 
                 var link = commentModel.get('created_by_link');
                 if (link && link.id) {
-                    if (app.acl.hasAccess('view', 'Users', {acls: link._acl})) {
-                        msg.href = '#' + app.router.buildRoute('Users', link.id, 'detail');
+                    if (app.acl.hasAccess('view', 'Employees', {acls: link._acl})) {
+                        msg.href = '#' + app.router.buildRoute('Employees', link.id, 'detail');
                     }
                 } else if (commentModel.has('created_by')) {
-                    msg.href = '#' + app.router.buildRoute('Users', commentModel.get('created_by'), 'detail');
+                    msg.href = '#' + app.router.buildRoute('Employees', commentModel.get('created_by'), 'detail');
                 }
 
                 if (commentModel === this._newEntryModel) {
