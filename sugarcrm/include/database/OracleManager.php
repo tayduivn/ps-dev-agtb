@@ -1585,11 +1585,11 @@ LEFT JOIN all_constraints c
     }
 
     /**
-     * @see DBManager::massageFieldDef()
+     * {@inheritDoc}
      */
-    public function massageFieldDef(&$fieldDef, $tablename)
+    public function massageFieldDef(array &$fieldDef) : void
     {
-        parent::massageFieldDef($fieldDef,$tablename);
+        parent::massageFieldDef($fieldDef);
 
         if (!empty($fieldDef['len'])) {
             return;

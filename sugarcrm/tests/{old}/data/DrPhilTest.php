@@ -173,7 +173,7 @@ class DrPhilTest extends TestCase
             foreach ($index['fields'] as $field) {
                 $def = $bean->getFieldDefinition($field);
                 $this->assertNotEmpty($def, 'Field for primary key should exists');
-                $bean->db->massageFieldDef($def, $bean->getTableName());
+                $bean->db->massageFieldDef($def);
                 $this->assertFalse(
                     SugarTestReflection::callProtectedMethod($bean->db, 'isNullable', array($def)),
                     'Field for primary key shouldn\'t be nullable'
@@ -200,7 +200,7 @@ class DrPhilTest extends TestCase
             foreach ($index['fields'] as $field) {
                 $def = $metadata['fields'][$field];
                 $this->assertNotEmpty($def, 'Field for primary key should exists');
-                $db->massageFieldDef($def, $metadata['table']);
+                $db->massageFieldDef($def);
                 $this->assertFalse(
                     SugarTestReflection::callProtectedMethod($db, 'isNullable', array($def)),
                     'Field for primary key shouldn\'t be nullable'

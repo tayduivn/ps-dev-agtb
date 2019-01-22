@@ -26,7 +26,6 @@ class Bug51311Test extends TestCase
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
                 ),
-                'user_preferences',
                 'max'
             ),
 
@@ -38,7 +37,6 @@ class Bug51311Test extends TestCase
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
                 ),
-                'user_preferences',
                 'max'
             ),
 
@@ -50,7 +48,6 @@ class Bug51311Test extends TestCase
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
                 ),
-                'user_preferences',
                 '2147483647'
             ),
 
@@ -62,7 +59,6 @@ class Bug51311Test extends TestCase
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
                 ),
-                'user_preferences',
                 '2147483646'
             ),
 
@@ -74,7 +70,6 @@ class Bug51311Test extends TestCase
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
                 ),
-                'user_preferences',
                 '255'
             ),
         );
@@ -83,10 +78,10 @@ class Bug51311Test extends TestCase
     /**
      * @dataProvider providerBug51311
      */
-    public function testSqlSrvMassageFieldDef($fieldDef, $tablename, $len)
+    public function testSqlSrvMassageFieldDef($fieldDef, $len)
     {
         $manager = new SqlsrvManager();
-        $manager->massageFieldDef($fieldDef, $tablename);
+        $manager->massageFieldDef($fieldDef);
         $this->assertEquals($len, $fieldDef['len']);
     }
 }

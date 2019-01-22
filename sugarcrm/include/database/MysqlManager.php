@@ -882,12 +882,12 @@ FROM information_schema.statistics';
 		return $this->isEngineEnabled('MyISAM');
 	}
 
-	/**
-	 * @see DBManager::massageFieldDef()
-	 */
-	public function massageFieldDef(&$fieldDef, $tablename)
-	{
-		parent::massageFieldDef($fieldDef,$tablename);
+    /**
+     * {@inheritDoc}
+     */
+    public function massageFieldDef(array &$fieldDef) : void
+    {
+        parent::massageFieldDef($fieldDef);
 
 		if ( isset($fieldDef['default']) &&
 			($fieldDef['dbType'] == 'text'

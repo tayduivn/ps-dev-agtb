@@ -136,7 +136,7 @@ class IBMDB2ManagerTest extends TestCase
      */
     public function testMassageFieldDefDefault(array $defs, $expected)
     {
-        $this->_db->massageFieldDef($defs, 'table');
+        $this->_db->massageFieldDef($defs);
         if (isset($expected)) {
             $this->assertArrayHasKey('default', $defs, 'Default value is not present');
             $this->assertEquals($expected, $defs['default'], 'Default value is incorrect');

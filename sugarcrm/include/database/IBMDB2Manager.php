@@ -900,14 +900,13 @@ public function convert($string, $type, array $additional_parameters = array())
         return $sql;
     }
 
-	/**+
-	 *
+    /**
 	 * Generates a sequence of SQL statements to accomplish the required column alterations
 	 *
 	 * @param  $tablename
 	 * @param  $def
 	 * @param bool $ignoreRequired
-	 * @return void
+     * @return string[]
 	 */
 	protected function alterOneColumnSQL($tablename, $def, $ignoreRequired = false) {
 		// Column attributes can only be modified one sql statement at a time
@@ -921,12 +920,16 @@ public function convert($string, $type, array $additional_parameters = array())
         $cols = $this->get_columns($tablename);
         if (isset($cols[$def['name']])) {
             $oldType = $cols[$def['name']]['type'];
-            $newType = $def['type'];
 
-            $alterMethod = 'alter' . ucfirst($oldType) . 'To' . ucfirst($newType);
+            $columnType = $this->getColumnType($this->getFieldType($def));
+            $parts = $this->getTypeParts($columnType);
 
-            if (method_exists($this, $alterMethod)) {
-                return $this->$alterMethod($tablename, $cols[$def['name']], $def, $ignoreRequired);
+            if ($parts !== false) {
+                $alterMethod = sprintf('alter%sto%s', $oldType, $parts['baseType']);
+
+                if (method_exists($this, $alterMethod)) {
+                    return $this->$alterMethod($tablename, $cols[$def['name']], $def, $ignoreRequired);
+                }
             }
         }
 		switch($req['required']) {
@@ -1369,12 +1372,12 @@ FROM SYSIBMTS.TSINDEXES';
 		// Pending reply from IBM marking this as unsupported.
 	}
 
-	/**
-	 * @see DBManager::massageFieldDef()
-	 */
-	public function massageFieldDef(&$fieldDef, $tablename)
-	{
-		parent::massageFieldDef($fieldDef,$tablename);
+    /**
+     * {@inheritDoc}
+     */
+    public function massageFieldDef(array &$fieldDef) : void
+    {
+        parent::massageFieldDef($fieldDef);
 
 		switch($fieldDef['type']){
 			case 'integer'  :   $fieldDef['len'] = '4'; break;

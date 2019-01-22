@@ -96,7 +96,7 @@ class SqlsrvManager extends MssqlManager
         'file'          => 'nvarchar',
         'float'         => 'float',
         'html'          => 'nvarchar(max)',
-        'id'            => 'varchar(36)',
+        'id'            => 'nvarchar(36)',
         'int'           => 'int',
         'long'          => 'bigint',
         'longblob'      => 'nvarchar(max)',
@@ -266,26 +266,6 @@ class SqlsrvManager extends MssqlManager
             return "CONVERT(datetime,$string,120)";
         else
             return parent::convert($string, $type, $additional_parameters);
-    }
-
-	/**
-     * Compares two vardefs. Overriding 39098  due to bug: 39098 . IN 6.0 we changed the id columns to dbType = 'id'
-     * for example emails_beans.  In 554 the field email_id was nvarchar but in 6.0 since it id dbType = 'id' we would want to alter
-     * it to varchar. This code will prevent it.
-     *
-     * @param  array  $fielddef1 This is from the database
-     * @param  array  $fielddef2 This is from the vardef
-     * @param bool $ignoreName Ignore name-only differences?
-     * @return bool   true if they match, false if they don't
-     */
-    public function compareVarDefs($fielddef1, $fielddef2, $ignoreName = false)
-    {
-        if((isset($fielddef2['dbType']) && $fielddef2['dbType'] == 'id') || preg_match('/(_id$|^id$)/', $fielddef2['name'])){
-            if(isset($fielddef1['type']) && isset($fielddef2['type'])){
-                $fielddef2['type'] = $fielddef1['type'];
-            }
-        }
-        return parent::compareVarDefs($fielddef1, $fielddef2, $ignoreName);
     }
 
     /**

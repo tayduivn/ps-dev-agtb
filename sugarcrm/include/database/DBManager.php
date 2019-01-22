@@ -1149,8 +1149,6 @@ abstract class DBManager implements LoggerAwareInterface
             }
 
             $name = strtolower($value['name']);
-            // add or fix the field defs per what the DB is expected to give us back
-            $this->massageFieldDef($value,$tableName);
 
             $ignorerequired=false;
 
@@ -1175,7 +1173,7 @@ abstract class DBManager implements LoggerAwareInterface
                     $this->addColumn($tableName, $value);
                 }
                 $take_action = true;
-            } elseif ( !$this->compareVarDefs($compareFieldDefs[$name],$value)) {
+            } elseif (!$this->compareVarDefs($compareFieldDefs[$name], $this->createColumnDefinition($value))) {
                 //fields are different lets alter it
                 $sql .=	"/*MISMATCH WITH DATABASE - $name -  ROW ";
                 foreach($compareFieldDefs[$name] as $rKey => $rValue) {
@@ -1246,6 +1244,19 @@ abstract class DBManager implements LoggerAwareInterface
             }
         }
         return ($take_action === true) ? $sql : '';
+    }
+
+    /**
+     * Creates a DB column definition from the CRM field definition
+     *
+     * @param mixed[] $fieldDefinition
+     * @return mixed[]
+     */
+    private function createColumnDefinition(array $fieldDefinition) : array
+    {
+        $this->massageFieldDef($fieldDefinition);
+
+        return $fieldDefinition;
     }
 
     /**
@@ -2642,22 +2653,22 @@ abstract class DBManager implements LoggerAwareInterface
         return $forPrepared ? $val : $this->convert($this->quoted($val), $type);
     }
 
-	/**
-	 * Massages the field defintions to fill in anything else the DB backend may add
-	 *
-	 * @param  array  $fieldDef
-	 * @param  string $tablename
-	 * @return array
-	 */
-	public function massageFieldDef(&$fieldDef, $tablename)
-	{
+    /**
+     * Modifies the field definition by replacing CRM-level properties (e.g. type) with the ones specific
+     * for the currently used database platform.
+     *
+     * @param mixed[] $fieldDef
+     */
+    public function massageFieldDef(array &$fieldDef) : void
+    {
 		if ( !isset($fieldDef['dbType']) ) {
 			if ( isset($fieldDef['dbtype']) )
 				$fieldDef['dbType'] = $fieldDef['dbtype'];
 			else
 				$fieldDef['dbType'] = $fieldDef['type'];
 		}
-		$type = $this->getColumnType($fieldDef['dbType'],$fieldDef['name'],$tablename);
+
+        $type = $this->getColumnType($fieldDef['dbType']);
 		$matches = array();
         // len can be a number or a string like 'max', for example, nvarchar(max)
         preg_match_all('/(\w+)(?:\(([0-9]+,?[0-9]*|\w+)\)|)/i', $type, $matches);
@@ -2942,7 +2953,7 @@ abstract class DBManager implements LoggerAwareInterface
 	 * @param  bool   $ignoreRequired  Optional, true if we should ignore this being a required field
 	 * @param  string $table           Optional, table name
 	 * @param  bool   $return_as_array Optional, true if we should return the result as an array instead of sql
-	 * @return string or array if $return_as_array is true
+     * @return string|string[]
 	 */
 	protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
 	{

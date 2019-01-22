@@ -919,7 +919,7 @@ WHERE TABLE_NAME = ?
                 ";
                 //create wakeup table
                 $FTSqry[] = "CREATE TABLE fts_wakeup(
-                    id varchar(36) NOT NULL CONSTRAINT pk_fts_wakeup_id PRIMARY KEY CLUSTERED (id ASC ),
+                    id nvarchar(36) NOT NULL CONSTRAINT pk_fts_wakeup_id PRIMARY KEY CLUSTERED (id ASC ),
                     body text NULL,
                     kb_index int IDENTITY(1,1) NOT NULL CONSTRAINT wakeup_fts_unique_idx UNIQUE NONCLUSTERED
                 )
@@ -1696,11 +1696,11 @@ EOQ;
 	}
 
     /**
-     * @see DBManager::massageFieldDef()
+     * {@inheritDoc}
      */
-    public function massageFieldDef(&$fieldDef, $tablename)
+    public function massageFieldDef(array &$fieldDef) : void
     {
-        parent::massageFieldDef($fieldDef,$tablename);
+        parent::massageFieldDef($fieldDef);
 
         if ($fieldDef['type'] == 'int')
             $fieldDef['len'] = '4';

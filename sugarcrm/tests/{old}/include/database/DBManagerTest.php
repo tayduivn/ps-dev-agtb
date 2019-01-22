@@ -3775,7 +3775,7 @@ SQL;
             'len' => '18',
             'precision' => '',
         );
-        $this->_db->massageFieldDef($fielddef,'mytable');
+        $this->_db->massageFieldDef($fielddef);
 
         $this->assertEquals("18",$fielddef['len']);
     }
@@ -3807,7 +3807,7 @@ SQL;
             'len' => '18',
             'precision' => ' ',
         );
-        $this->_db->massageFieldDef($fielddef,'mytable');
+        $this->_db->massageFieldDef($fielddef);
 
         $this->assertEquals("18",$fielddef['len']);
     }
@@ -3838,7 +3838,7 @@ SQL;
             'len' => '18',
             'precision' => '2',
         );
-        $this->_db->massageFieldDef($fielddef,'mytable');
+        $this->_db->massageFieldDef($fielddef);
 
         $this->assertEquals("18,2",$fielddef['len']);
     }
@@ -3868,7 +3868,7 @@ SQL;
             'reportable' => 1,
             'len' => '18,2',
         );
-        $this->_db->massageFieldDef($fielddef,'mytable');
+        $this->_db->massageFieldDef($fielddef);
 
         $this->assertEquals("18,2",$fielddef['len']);
     }
