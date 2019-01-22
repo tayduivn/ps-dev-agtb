@@ -2470,14 +2470,6 @@ class MetaDataManager implements LoggerAwareInterface
             $data = array_merge($data, $contextData);
         }
 
-        // We need to see if we need to send any warnings down to the user
-        $systemStatus = apiCheckSystemStatus();
-        if ($systemStatus !== true) {
-            // Something is up with the system status
-            // We need to tack it on and refresh the hash
-            $data['config']['system_status'] = $systemStatus;
-        }
-
         return $data;
     }
 
@@ -3731,16 +3723,6 @@ class MetaDataManager implements LoggerAwareInterface
             if (!$this->verifyJSSource($data)) {
                 //The jssource file is invalid, we need to invalidate the hash as well.
                 return false;
-            }
-        }
-
-        if ($hash) {
-            // We need to see if we need to send any warnings down to the user
-            $systemStatus = apiCheckSystemStatus();
-            if ($systemStatus !== true) {
-                // Something is up with the system status, let the client know
-                // by mangling the hash
-                $hash = md5($hash.serialize($systemStatus));
             }
         }
 

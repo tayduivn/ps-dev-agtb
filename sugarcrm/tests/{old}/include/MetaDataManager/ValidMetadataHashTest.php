@@ -27,12 +27,6 @@ class ValidMetadataHashTest extends TestCase
             'meta:hash:portal,base' => $this->portalHash,
         );
 
-        // If we are getting a system level warning the hashes won't match up
-        $systemStatus = apiCheckSystemStatus(true);
-        if ($systemStatus !== true) {
-            $this->markTestSkipped("Can't test metadata hashing with bad system status.");
-        }
-
         // Get the base metadata manager
         $mm = new ValidMetadataHashMetadataManager();
         $mm->setHashCacheForTest($hashes);

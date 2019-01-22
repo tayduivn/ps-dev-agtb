@@ -567,12 +567,12 @@ function checkSystemLicenseStatus()
 
 /**
  * Check if system status is OK
- * @param string $forceReload
+ * @param bool $forceReload
  * @return array|true True on OK or array with system status problem
  */
 function apiCheckSystemStatus($forceReload = false)
 {
-    global $sugar_config, $sugar_flavor, $db;
+    global $sugar_config;
 
     if (!isset($sugar_config['installer_locked']) || $sugar_config['installer_locked'] == false ){
         return array(
@@ -625,7 +625,7 @@ function apiCheckSystemStatus($forceReload = false)
 
 /**
  * Get system status from cache or settings or calculate it
- * @param string $forceReload
+ * @param bool $forceReload
  * @return array|boolean
  */
 function apiLoadSystemStatus($forceReload = false)
