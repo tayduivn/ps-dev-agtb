@@ -230,7 +230,7 @@ Feature: Products module verification
       | mft_part_num    | B.H. Edwards Inc 72868XYZ987 |
       | discount_amount | 6.00%                        |
 
-  @edit @ci-excluded @reEnable_after_sfa_5592_is_fixed
+  @edit
   Scenario: Products > Edit existing QLI record > Cancel/Save
     Given Products records exist:
       | *name | discount_price | cost_price | list_price | quantity | discount_amount | mft_part_num                 |
@@ -268,11 +268,11 @@ Feature: Products module verification
     When I click Save button on #QLI_1Record header
     When I close alert
     Then I verify fields on #QLI_1Record.RecordView
-      | fieldName      | value            |
-      | quantity       | 5.00             |
-      | discount_price | €500.00$1,000.00 |
-      | cost_price     | €500.00$1,000.00 |
-      | list_price     | €500.00$1,000.00 |
+      | fieldName      | value   |
+      | quantity       | 5.00    |
+      | discount_price | €500.00 |
+      | cost_price     | €500.00 |
+      | list_price     | €500.00 |
 
   @create @discount_type_field
   Scenario: Products > Change discount type
