@@ -19,6 +19,7 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
     var showStub;
     var hideStub;
     var offStub;
+    var initObj;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -27,6 +28,7 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         viewMeta = {
             config: false
         };
+
         layout = SugarTest.createLayout('base', 'Quotes', 'create', {});
         sinon.collection.stub(layout, 'closestComponent', function() {
             return {
@@ -34,6 +36,10 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
                 off: $.noop
             };
         });
+        initObj = {
+            context: context,
+            layout: layout
+        };
         view = SugarTest.createView('base', 'Quotes', 'product-catalog', viewMeta, context, true, layout);
 
         removeClassStub = sinon.collection.stub();
@@ -78,12 +84,55 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
             expect(view.activeFetchCt).toBe(0);
         });
 
+        describe('when calling functions', function() {
+            beforeEach(function() {
+                sinon.collection.spy(view, 'getSearchTextPlaceholder');
+                sinon.collection.spy(view, 'initializeProviderModules');
+                sinon.collection.spy(view, 'getTreeStateConfigSettings');
+                sinon.collection.spy(view, 'getSpriteSheetManifestObject');
+                view.initialize(initObj);
+            });
+
+            it('should call getSearchTextPlaceholder to set searchText', function() {
+                expect(view.getSearchTextPlaceholder).toHaveBeenCalled();
+            });
+
+            it('should call initializeProviderModules to set searchText', function() {
+                expect(view.initializeProviderModules).toHaveBeenCalled();
+            });
+
+            it('should call getTreeStateConfigSettings to set searchText', function() {
+                expect(view.getTreeStateConfigSettings).toHaveBeenCalled();
+            });
+
+            it('should call getSpriteSheetManifestObject to set searchText', function() {
+                expect(view.getSpriteSheetManifestObject).toHaveBeenCalled();
+            });
+        });
+
         it('should set searchText to LBL_SEARCH_CATALOG_PLACEHOLDER', function() {
             expect(view.searchText).toBe('LBL_SEARCH_CATALOG_PLACEHOLDER');
         });
 
         it('should set dataLoaded to False', function() {
             expect(view.dataLoaded).toBeFalsy();
+        });
+
+        it('should set treeModule', function() {
+            expect(view.treeModule).toBe('ProductTemplates');
+        });
+    });
+
+    describe('getSearchTextPlaceholder()', function() {
+        it('should return LBL_SEARCH_CATALOG_PLACEHOLDER', function() {
+            expect(view.getSearchTextPlaceholder()).toBe('LBL_SEARCH_CATALOG_PLACEHOLDER');
+        });
+    });
+
+    describe('initializeProviderModules()', function() {
+        it('should set treeModule', function() {
+            view.initializeProviderModules();
+            expect(view.treeModule).toBe('ProductTemplates');
         });
     });
 
@@ -445,6 +494,347 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
     });
 
+    describe('getSpriteSheetManifestObject()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_getSpriteSheets', function() {
+                return 'test1';
+            });
+        });
+
+        it('should get back an object with atlasJSONHash in it', function() {
+            expect(view.getSpriteSheetManifestObject()).toEqual({
+                atlasJSONHash: 'test1'
+            });
+        });
+    });
+
+    describe('_getSpriteSheets()', function() {
+        it('should return an array with a specific object in it', function() {
+            expect(view._getSpriteSheets()).toEqual([{
+                id: 'prodCatTS',
+                imagePath: 'modules/Quotes/clients/base/views/product-catalog/product-catalog-ss.png',
+                dataPath: 'modules/Quotes/clients/base/views/product-catalog/product-catalog-ss.json'
+            }]);
+        });
+    });
+
+    describe('_getTreeNodeTextColor()', function() {
+        beforeEach(function() {
+            view.treeConfig = {
+                categoryColor: 'categoryColorBlue',
+                itemColor: 'itemColorRed'
+            };
+        });
+
+        it('should return the category color for itemType category', function() {
+            expect(view._getTreeNodeTextColor('category', {})).toBe('categoryColorBlue');
+        });
+
+        it('should return the category color for itemType product', function() {
+            expect(view._getTreeNodeTextColor('product', {})).toBe('itemColorRed');
+        });
+
+        it('should return the category color for itemType showMore', function() {
+            expect(view._getTreeNodeTextColor('showMore', {})).toBe('itemColorRed');
+        });
+    });
+
+    describe('_getTreeNodeIconName()', function() {
+        var result;
+        beforeEach(function() {
+            sinon.collection.stub(view, '_getTreeIconClosedStateName', function() {
+                return 'closed';
+            });
+            sinon.collection.stub(view, '_getTreeIconOpenStateName', function() {
+                return 'open';
+            });
+        });
+
+        afterEach(function() {
+            result = null;
+        });
+
+        it('should return category icon for closed state', function() {
+            result = view._getTreeNodeIconName('category', {
+                state: 'closed'
+            });
+
+            expect(result).toBe('closed');
+        });
+
+        it('should return category icon for open state', function() {
+            result = view._getTreeNodeIconName('category', {
+                state: 'open'
+            });
+
+            expect(result).toBe('open');
+        });
+
+        it('should return product icon', function() {
+            result = view._getTreeNodeIconName('product', {});
+
+            expect(result).toBe('list-alt');
+        });
+
+        it('should return showMore icon', function() {
+            result = view._getTreeNodeIconName('showMore', {});
+
+            expect(result).toBe('empty');
+        });
+    });
+
+    describe('_getTreeIconOpenStateName()', function() {
+        it('should return tree icon for open state', function() {
+            expect(view._getTreeIconOpenStateName()).toBe('folder-open-o');
+        });
+    });
+
+    describe('_getTreeIconClosedStateName()', function() {
+        it('should return tree icon for closed state', function() {
+            expect(view._getTreeIconClosedStateName()).toBe('folder');
+        });
+    });
+
+    describe('_getTreeIconHeight()', function() {
+        beforeEach(function() {
+            view.treeConfig = {
+                iconHeight: 16
+            };
+        });
+
+        it('should return icon height 12 for list-alt icons', function() {
+            expect(view._getTreeIconHeight('list-alt', {})).toBe(12);
+        });
+
+        it('should return icon height 16 for other icons', function() {
+            expect(view._getTreeIconHeight('folder', {})).toBe(16);
+        });
+    });
+
+    describe('_getTreeIconWidth()', function() {
+        beforeEach(function() {
+            view.treeConfig = {
+                iconWidth: 16
+            };
+        });
+
+        it('should return a width of 16', function() {
+            expect(view._getTreeNodeSpriteSheetId('', '', {})).toBe('prodCatTS');
+        });
+    });
+
+    describe('_getTreeNodeSpriteSheetId()', function() {
+        it('should return tree icon for closed state', function() {
+            expect(view._getTreeIconClosedStateName()).toBe('folder');
+        });
+    });
+
+    describe('_onTreeNodeItemClicked()', function() {
+        var target;
+        beforeEach(function() {
+            sinon.collection.stub(view, '_onTreeNodeCategoryClicked', $.noop);
+            sinon.collection.stub(view, '_onTreeNodeIconClicked', $.noop);
+            sinon.collection.stub(view, '_onTreeNodeNameClicked', $.noop);
+            view.game = {
+                _view: view
+            };
+        });
+
+        afterEach(function() {
+            target = null;
+        });
+
+        it('should call _onTreeNodeCategoryClicked when item type is category', function() {
+            target = {
+                _itemType: 'category'
+            };
+            view._onTreeNodeItemClicked(target);
+
+            expect(view._onTreeNodeCategoryClicked).toHaveBeenCalledWith(target, false);
+        });
+
+        it('should call _onTreeNodeCategoryClicked when item type is showMore', function() {
+            target = {
+                _itemType: 'showMore'
+            };
+            view._onTreeNodeItemClicked(target);
+
+            expect(view._onTreeNodeCategoryClicked).toHaveBeenCalledWith(target, false);
+        });
+
+        it('should call _onTreeNodeNameClicked when item type is not category nor showMore', function() {
+            target = {
+                _itemType: 'product'
+            };
+            view._onTreeNodeItemClicked(target);
+
+            expect(view._onTreeNodeNameClicked).toHaveBeenCalledWith(target);
+        });
+    });
+
+    describe('_onTreeNodeIconClicked()', function() {
+        var target;
+        beforeEach(function() {
+            sinon.collection.stub(view, '_fetchRecord', $.noop);
+            target = {
+                _itemId: 'prod1'
+            };
+        });
+
+        afterEach(function() {
+            target = null;
+        });
+
+        it('should call _fetchRecord with itemId', function() {
+            view._onTreeNodeIconClicked(target);
+
+            expect(view._fetchRecord).toHaveBeenCalledWith('prod1');
+        });
+    });
+
+    describe('_onTreeNodeNameClicked()', function() {
+        var target;
+        beforeEach(function() {
+            sinon.collection.stub(view, '_fetchRecord', $.noop);
+            target = {
+                _itemId: 'prod2'
+            };
+        });
+
+        afterEach(function() {
+            target = null;
+        });
+
+        it('should call _fetchRecord with itemId', function() {
+            view._onTreeNodeNameClicked(target);
+
+            expect(view._fetchRecord).toHaveBeenCalledWith('prod2');
+        });
+    });
+
+    describe('_getPhaserCanvasId()', function() {
+        beforeEach(function() {
+            view.cid = 123;
+        });
+
+        it('should return a width of 16', function() {
+            expect(view._getPhaserCanvasId()).toBe('product-catalog-canvas-123');
+        });
+    });
+
+    describe('getPhaserGameConfig()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_getPhaserCanvasId', function() {
+                return 'product-catalog-canvas-123';
+            });
+            sinon.collection.stub(view, '_getPhaserGameConfig', function(cfg) {
+                return cfg;
+            });
+            view.$.restore();
+            sinon.collection.stub(view, '$', function() {
+                return {
+                    width: function() {
+                        return 250;
+                    },
+                    off: $.noop
+                };
+            });
+            window.Phaser = {
+                CANVAS: 'canvas'
+            };
+        });
+        afterEach(function() {
+            delete window.Phaser;
+        });
+
+        it('should return a phaser config object', function() {
+            expect(view.getPhaserGameConfig()).toEqual({
+                height: 260,
+                parent: 'product-catalog-canvas-123',
+                renderer: 'canvas',
+                transparent: true,
+                width: 250
+            });
+        });
+    });
+
+    describe('_getPhaserGameConfig()', function() {
+        var cfg;
+        beforeEach(function() {
+            cfg = {
+                test1: 'hello'
+            };
+        });
+
+        afterEach(function() {
+            cfg = null;
+        });
+
+        it('should return the same object', function() {
+            expect(view._getPhaserGameConfig(cfg)).toBe(cfg);
+        });
+    });
+
+    describe('getStates()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_getBootState', function() {
+                return 'bootState';
+            });
+            sinon.collection.stub(view, '_getLoadState', function() {
+                return 'loadState';
+            });
+            sinon.collection.stub(view, '_getTreeState', function() {
+                return 'treeState';
+            });
+            sinon.collection.stub(view, '_getAdditionalStates', function(states) {
+                return states;
+            });
+        });
+
+        it('should call _getBootState', function() {
+            view.getStates();
+
+            expect(view._getBootState).toHaveBeenCalled();
+        });
+
+        it('should call _getLoadState', function() {
+            view.getStates();
+
+            expect(view._getLoadState).toHaveBeenCalled();
+        });
+
+        it('should call _getTreeState', function() {
+            view.getStates();
+
+            expect(view._getTreeState).toHaveBeenCalled();
+        });
+
+        it('should return the states object', function() {
+            expect(view.getStates()).toEqual({
+                boot: 'bootState',
+                load: 'loadState',
+                tree: 'treeState'
+            });
+        });
+    });
+
+    describe('_getAdditionalStates()', function() {
+        var states;
+        beforeEach(function() {
+            states = {
+                test1: 'hello'
+            };
+        });
+
+        afterEach(function() {
+            states = null;
+        });
+
+        it('should return the states object', function() {
+            expect(view._getAdditionalStates(states)).toBe(states);
+        });
+    });
+
     describe('_fetchMoreRecords()', function() {
         beforeEach(function() {
             sinon.collection.stub(app.api, 'buildURL', function(term) {
@@ -478,13 +868,13 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
     });
 
-    describe('_fetchProductTemplate()', function() {
+    describe('_fetchRecord()', function() {
         beforeEach(function() {
             sinon.collection.stub(app.api, 'buildURL', function(id) {
                 return 'ProductTemplates/' + id;
             });
             sinon.collection.stub(app.api, 'call', function() {});
-            view._fetchProductTemplate('test', {});
+            view._fetchRecord('test', {});
         });
 
         it('should call app.api.buildURL', function() {
@@ -496,7 +886,17 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
     });
 
-    describe('_sendItemToQuote()', function() {
+    describe('getFetchRecordModule()', function() {
+        beforeEach(function() {
+            view.treeModule = 'Products';
+        });
+
+        it('should return the treeModule', function() {
+            expect(view.getFetchRecordModule()).toBe('Products');
+        });
+    });
+
+    describe('_sendItemToRecord()', function() {
         var productTemplateData;
 
         beforeEach(function() {
@@ -509,7 +909,37 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
             };
             sinon.collection.stub(app.controller.context, 'trigger', function() {});
 
-            view._sendItemToQuote(productTemplateData);
+            view._sendItemToRecord(productTemplateData);
+        });
+
+        afterEach(function() {
+            productTemplateData = null;
+        });
+
+        it('should trigger context event', function() {
+            var viewDetails = view.closestComponent('record') ?
+                view.closestComponent('record') :
+                this.closestComponent('create');
+
+            if (!_.isUndefined(viewDetails)) {
+                expect(app.controller.context.trigger)
+                    .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add');
+            }
+        });
+    });
+
+    describe('_massageDataBeforeSendingToRecord()', function() {
+        var productTemplateData;
+        beforeEach(function() {
+            productTemplateData = {
+                id: 'prodTemplateId',
+                name: 'prodTemplateName',
+                date_entered: 'yesterday',
+                date_modified: 'today',
+                pricing_formula: 'ProfitMargin'
+            };
+
+            view._massageDataBeforeSendingToRecord(productTemplateData);
         });
 
         afterEach(function() {
@@ -547,30 +977,36 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         it('should remove pricing_formula', function() {
             expect(productTemplateData.pricing_formula).toBeUndefined();
         });
-
-        it('should trigger context event', function() {
-            var viewDetails = view.closestComponent('record') ?
-                view.closestComponent('record') :
-                this.closestComponent('create');
-
-            if (!_.isUndefined(viewDetails)) {
-                expect(app.controller.context.trigger)
-                    .toHaveBeenCalledWith(viewDetails.cid + ':productCatalogDashlet:add');
-            }
-        });
     });
 
     describe('_openItemInDrawer()', function() {
+        var openStub;
+        var ptModel;
         beforeEach(function() {
-            // todo add tests for this fn here
+            openStub = sinon.collection.stub();
+            ptModel = app.data.createBean('ProductTemplates');
+            sinon.collection.stub(app.data, 'createBean', function() {
+                return ptModel;
+            });
+            app.drawer = {
+                open: openStub
+            };
+            view._openItemInDrawer({});
         });
 
         afterEach(function() {
-
+            openStub = null;
+            delete app.drawer;
         });
 
-        it('', function() {
-
+        it('should call app.drawer.open', function() {
+            expect(openStub).toHaveBeenCalledWith({
+                layout: 'product-catalog-dashlet-drawer-record',
+                context: {
+                    module: 'ProductTemplates',
+                    model: ptModel
+                }
+            });
         });
     });
 
