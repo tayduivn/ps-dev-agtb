@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets
+@dashboard @dashlets @job4
 Feature: Dashboard main functionality verification
 
   Background:
@@ -32,7 +32,7 @@ Feature: Dashboard main functionality verification
       | fieldName | value                   |
       | name      | Accounts List Dashboard |
 
-  @create_dashboard @add_dashlet @delete_dashboard @pr
+  @create_dashboard @add_dashlet @delete_dashboard @pr @job6
   Scenario: List View > Create Dashboard > Add Dashlets > Save > Delete Dashboard
     Given Accounts records exist:
       | *name |

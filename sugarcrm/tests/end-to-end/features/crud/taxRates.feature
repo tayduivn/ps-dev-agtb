@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_taxRates
+@crud_modules_taxRates @job1
 Feature: TaxRates module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list @T_34357
+  @list
   Scenario: Tax Rates > List View > Preview
     Given TaxRates records exist:
       | *name | list_order | status | value |
@@ -38,7 +38,7 @@ Feature: TaxRates module verification
       | value      | 10.51  |
 
 
-  @list-search @T_34391
+  @list-search
   Scenario: Tax Rates > List View > Filter > Search main input
     Given TaxRates records exist:
       | *name      | status   | list_order | value |
@@ -65,7 +65,7 @@ Feature: TaxRates module verification
       | value      | 3.33       |
 
 
-  @list-edit @T_34392
+  @list-edit
   Scenario: TaxRates > List View > Inline Edit
     Given TaxRates records exist:
       | *name | list_order | status | value |
@@ -95,7 +95,7 @@ Feature: TaxRates module verification
       | list_order | 5            |
       | value      | 3.33         |
 
-  @list-delete @T_34393
+  @list-delete
   Scenario: TaxRates > List View > Delete
     Given TaxRates records exist:
       | *name | list_order | status | value |
@@ -111,7 +111,7 @@ Feature: TaxRates module verification
     Then I should see #TaxRatesList view
     Then I should not see *Alex1 in #TaxRatesList.ListView
 
-  @delete @T_34358
+  @delete
   Scenario: Tax Rates > Record View > Delete
     Given TaxRates records exist:
       | *name | list_order | status | value |
@@ -136,7 +136,7 @@ Feature: TaxRates module verification
     Then I should see #TaxRatesList.ListView view
     Then I should not see *Alex1 in #TaxRatesList.ListView
 
-  @copy_cancel @T_34359
+  @copy_cancel
   Scenario: Tax Rates > Record View > Copy > Cancel
     Given TaxRates records exist:
       | *name | list_order | status | value |
@@ -163,8 +163,7 @@ Feature: TaxRates module verification
       | list_order | 4      |
       | value      | 10.51  |
 
-
-  @copy_save @T_34359
+  @copy_save
   Scenario: Tax Rates > Record View > Copy > Save
     Given TaxRates records exist:
       | *name | list_order | status | value |
@@ -201,7 +200,7 @@ Feature: TaxRates module verification
       | list_order | 5        |
       | value      | 5.52     |
 
-  @create @T_30166
+  @create
   Scenario: Tax Rates > Create
     Given I open about view and login
     When I go to "TaxRates" url

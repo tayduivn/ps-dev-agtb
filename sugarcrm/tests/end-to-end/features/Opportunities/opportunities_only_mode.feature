@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @Opportunities
+@modules @Opportunities @job4
 Feature: Opportunities Only mode
 
   Background:

@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@quotes
+@quotes @job3
 Feature: Create Quote From RLI
 
   Background:
     Given I use default account
     Given I launch App
 
-  @generate_quote_from_rli @T_34170 @T_34171 @T_34172 @T_34173 @T_18085 @T_18402 @T_19050
+  @generate_quote_from_rli
   Scenario: Quotes > Generate Quote from RLI > Save
     # Create RLI
     Given RevenueLineItems records exist:

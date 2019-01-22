@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_shippingProviders
+@crud_modules_shippingProviders @job6
 Feature: ShippingProviders module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list @T_34360
+  @list
   Scenario: Shippers > List View > Preview
     Given  Shippers records exist:
       | *name | list_order | status |
@@ -35,7 +35,7 @@ Feature: ShippingProviders module verification
       | status     | Active |
       | list_order | 4      |
 
-  @list-search @T_34388
+  @list-search
   Scenario: Shippers > List View > Filter > Search main input
     Given Shippers records exist:
       | *name      | status   | list_order |
@@ -61,7 +61,7 @@ Feature: ShippingProviders module verification
       | list_order | 6          |
 
 
-  @list-edit @T_34389
+  @list-edit
   Scenario: Shippers > List View > Inline Edit
     Given Shippers records exist:
       | *name | list_order | status |
@@ -88,7 +88,7 @@ Feature: ShippingProviders module verification
       | name       | Alex1 edited |
       | list_order | 5            |
 
-  @list-delete @T_34390
+  @list-delete
   Scenario: Shippers > List View > Delete
     Given Shippers records exist:
       | *name | list_order | status |
@@ -105,7 +105,7 @@ Feature: ShippingProviders module verification
     Then I should not see *Alex1 in #ShippersList.ListView
 
 
-  @delete @T_34361
+  @delete
   Scenario: Shipping Providers > Record View > Delete
     Given  Shippers records exist:
       | *name | list_order | description   |
@@ -130,7 +130,7 @@ Feature: ShippingProviders module verification
     Then I should see #ShippersList.ListView view
     Then I should not see *Alex1 in #ShippersList.ListView
 
-  @copy_cancel @T_34362
+  @copy_cancel
   Scenario: Shipping Providers > Record View > Copy > Cancel
     Given Shippers records exist:
       | *name | list_order | status |
@@ -158,7 +158,7 @@ Feature: ShippingProviders module verification
       | list_order | 4      |
 
 
-  @copy_save @T_34362
+  @copy_save
   Scenario: Shipping Providers > Record View > Copy > Confirm
     Given Shippers records exist:
       | *name | list_order | status |
@@ -193,7 +193,7 @@ Feature: ShippingProviders module verification
       | status     | Inactive |
       | list_order | 5        |
 
-  @create @T_34363
+  @create
   Scenario: Shipping Providers > Create Record > Cancel/Save
     Given I open about view and login
     When I go to "Shippers" url

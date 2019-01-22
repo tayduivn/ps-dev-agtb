@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @quotes-group
+@modules @quotes-group @job1
 Feature: Create Opportunity from Quote
 
   Background:
     Given I use default account
     Given I launch App
 
-  @create_opportunity_from_quote @T_33332
+  @create_opportunity_from_quote
   Scenario: Quotes > Record view > Create Opportunity from Quote
     # Create a quote
     Given Quotes records exist:
@@ -57,7 +57,7 @@ Feature: Create Opportunity from Quote
       | opportunity_type | New Business |
 
 
-  @create_opportunity_from_quote @T_33332 @pr
+  @create_opportunity_from_quote @pr
   Scenario: Quotes > Record view > Create Opportunity from Quote while quote is in different currency
     # Create a quote
     Given Quotes records exist:

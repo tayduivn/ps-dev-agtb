@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_productCategories
+@crud_modules_productCategories @job5
 Feature: productCategories module verification
 
   Background:

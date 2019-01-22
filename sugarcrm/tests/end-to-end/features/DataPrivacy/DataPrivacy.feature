@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@data_privacy
+@data_privacy @job3
 Feature: Data Privacy module verification
 
   Background:

@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@product_catalog_quick_picks_daslet
+@product_catalog_quick_picks_daslet @job5
 Feature: Product Catalog Quick Picks Dashlet
 
   Background:

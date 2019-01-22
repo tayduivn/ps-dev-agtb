@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@copy_quotes @pr
+@copy_quotes @pr @job6
 Feature: Copy Quote E2E testing
 
   Background:

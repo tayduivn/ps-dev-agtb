@@ -7,14 +7,13 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @Opportunity
+@modules @Opportunity @job3
 Feature: RLI module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @T_27794
   Scenario: Opportunities >  Verify that RLIs with closed lost sales stage are not included in the Opportunity rollup total
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -44,7 +43,7 @@ Feature: RLI module verification
       | best_case  | $0.00 |
       | worst_case | $0.00 |
 
-  @T_26017
+
   Scenario Outline: Opportunities > Verify that Status of the opportunity is changed to closed won/lost if all RLIs linked to the opportunity have sales stage "Close won/lost"
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -76,7 +75,7 @@ Feature: RLI module verification
       | Closed Lost   | Closed Lost |
       | Qualification | In Progress |
 
-  @T_18030
+
   Scenario Outline: Opportunities > Verify that changing account on opportunity should cascade down to all RLIs linked to this opportunity
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -133,7 +132,7 @@ Feature: RLI module verification
       | First_Account | Second_Account |
       | Account_1     | #@##_acc_%^&   |
 
-  @T_18905
+
   Scenario Outline: Opportunities > Verify Opportunity cannot be deleted in the record view if sales stage of one or more RLIs is closed won
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage        | quantity |

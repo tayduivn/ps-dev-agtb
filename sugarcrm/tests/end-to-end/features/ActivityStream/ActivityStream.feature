@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@activity_stream
+@activity_stream @job2
 Feature: Activity Stream Feature verification
 
   Background:

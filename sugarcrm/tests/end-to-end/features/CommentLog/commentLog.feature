@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@CommentLog
+@CommentLog @job3
 Feature: CommentLog in record view
 
   Background:

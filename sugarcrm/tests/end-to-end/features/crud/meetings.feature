@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_meetings
+@crud_modules_meetings @job3
 Feature: Meetings module verification
 
   Background:

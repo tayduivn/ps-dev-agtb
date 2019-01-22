@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_products
+@crud_modules_products @job6
 Feature: Products module verification
 
   Background:

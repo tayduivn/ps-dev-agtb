@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_quotes
+@crud_modules_quotes @job3
 Feature: Quotes module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list-preview @T_32765
+  @list-preview
   Scenario: Quotes > List View > Preview
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed |
@@ -55,7 +55,7 @@ Feature: Quotes module verification
       | shipping                   | $0.00               |
       | total                      | $784.00             |
 
-  @list-search @T_34376
+  @list-search
   Scenario: Quotes > List View > Filter > Search main input
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed |
@@ -74,7 +74,7 @@ Feature: Quotes module verification
       | name                       | Quote_2    |
       | date_quote_expected_closed | 11/19/2020 |
 
-  @delete @T_34377
+  @delete
   Scenario: Quotes > Record View > Delete > Cancel/Confirm
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed |
@@ -101,7 +101,7 @@ Feature: Quotes module verification
     Then I should see #QuotesList.ListView view
     Then I should not see *Quote_2 in #QuotesList.ListView
 
-  @edit-cancel @T_34378
+  @edit-cancel
   Scenario: Quotes > Record View > Edit > Cancel
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed | quote_stage |
@@ -137,7 +137,7 @@ Feature: Quotes module verification
       | date_quote_expected_closed | 10/19/2017  |
       | billing_account_name       | Acc_1       |
 
-  @edit-save @T_34378
+  @edit-save
   Scenario: Quotes > Record View > Edit > Save
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed | quote_stage |
@@ -174,7 +174,7 @@ Feature: Quotes module verification
       | billing_account_name       | Acc_2      |
 
 
-  @create_cancel_save @T_34379
+  @create_cancel_save
   Scenario: Quotes > Create > Cancel/Save
     Given Accounts records exist:
       | *name     | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |

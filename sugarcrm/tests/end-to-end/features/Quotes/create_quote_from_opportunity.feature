@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@quotes
+@quotes @job2
 Feature: Generate Quote From RLI subpanel in Opportunity record view
 
   Background:

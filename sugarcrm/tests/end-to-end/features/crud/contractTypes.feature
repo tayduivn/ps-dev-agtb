@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_contractTypes
+@crud_modules_contractTypes @job4
 Feature: Contract Types module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list @T_34370
+  @list
   Scenario: Contract Types > List View > Preview
     Given ContractTypes records exist:
       | *name | list_order |
@@ -32,7 +32,7 @@ Feature: Contract Types module verification
       | name       | Alex1 |
       | list_order | 4     |
 
-  @list-search @T_34394
+  @list-search
   Scenario: Contract Types > List View > Filter > Search main input
     Given ContractTypes records exist:
       | *name           |  list_order |
@@ -57,7 +57,7 @@ Feature: Contract Types module verification
       | list_order | 6               |
 
 
-  @list-edit @T_34395
+  @list-edit
   Scenario: Contract Types > List View > Inline Edit
     Given ContractTypes records exist:
       | *name | list_order |
@@ -84,7 +84,7 @@ Feature: Contract Types module verification
       | name       | Alex1 edited |
       | list_order | 5            |
 
-  @list-delete @T_34396
+  @list-delete
   Scenario: ContractTypes > List View > Delete
     Given ContractTypes records exist:
       | *name | list_order |
@@ -100,7 +100,7 @@ Feature: Contract Types module verification
     Then I should see #ContractTypesList view
     Then I should not see *Alex1 in #ContractTypesList.ListView
 
-  @delete @T_34372
+  @delete
   Scenario: Contract Types > Record View > Delete
     Given ContractTypes records exist:
       | *name | list_order |
@@ -125,7 +125,7 @@ Feature: Contract Types module verification
     Then I should see #ContractTypesList.ListView view
     Then I should not see *Alex1 in #ContractTypesList.ListView
 
-  @copy_cancel @T_34373
+  @copy_cancel
   Scenario: Contract Types > Record View > Copy > Cancel
     Given ContractTypes records exist:
       | *name | list_order |
@@ -151,7 +151,7 @@ Feature: Contract Types module verification
       | list_order | 4     |
 
 
-  @copy_save @T_34373
+  @copy_save
   Scenario: Contract Types > Record View > Copy > Save
     Given ContractTypes records exist:
       | *name | list_order |
@@ -177,7 +177,7 @@ Feature: Contract Types module verification
       | list_order | 5     |
 
 
-  @create @T_31013
+  @create
   Scenario: Contract Types > Create Record > Cancel/Save
     Given I open about view and login
     When I go to "ContractTypes" url

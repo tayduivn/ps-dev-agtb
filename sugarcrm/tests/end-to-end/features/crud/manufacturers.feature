@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_manufacturers
+@crud_modules_manufacturers @job2
 Feature: Manufacturers module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list @T_34364
+  @list
   Scenario: Manufacturers > List View > Preview
     Given  Manufacturers records exist:
       | *name | list_order | status |
@@ -33,7 +33,7 @@ Feature: Manufacturers module verification
       | status     | Active |
       | list_order | 4      |
 
-  @list-search @T_34385
+  @list-search
   Scenario: Manufacturers > List View > Filter > Search main input
     Given Manufacturers records exist:
       | *name           | status   | list_order |
@@ -59,7 +59,7 @@ Feature: Manufacturers module verification
       | list_order | 6               |
 
 
-  @list-edit @T_34386
+  @list-edit
   Scenario: Manufacturers > List View > Inline Edit
     Given Manufacturers records exist:
       | *name | list_order | status |
@@ -86,7 +86,7 @@ Feature: Manufacturers module verification
       | name       | Alex1 edited |
       | list_order | 5            |
 
-  @list-delete @T_34387
+  @list-delete
   Scenario: Manufacturers > List View > Delete
     Given Manufacturers records exist:
       | *name | list_order | status |
@@ -102,7 +102,7 @@ Feature: Manufacturers module verification
     Then I should see #ManufacturersList view
     Then I should not see *Alex1 in #ManufacturersList.ListView
 
-  @delete @T_34365
+  @delete
   Scenario: Manufacturers > Record View > Delete
     Given  Manufacturers records exist:
       | *name | list_order | status |
@@ -126,7 +126,7 @@ Feature: Manufacturers module verification
     Then I should see #ManufacturersList.ListView view
     Then I should not see *Alex1 in #ManufacturersList.ListView
 
-  @copy_cancel @T_34366
+  @copy_cancel
   Scenario: Manufacturers > Record View > Copy > Cancel
     Given  Manufacturers records exist:
       | *name | list_order | status |
@@ -154,7 +154,7 @@ Feature: Manufacturers module verification
       | list_order | 4      |
 
 
-  @copy_save @T_34366
+  @copy_save
   Scenario: Manufacturers > Record View > Copy > Save
     Given  Manufacturers records exist:
       | *name | list_order | status |
@@ -190,7 +190,7 @@ Feature: Manufacturers module verification
       | list_order | 5        |
 
 
-  @create @T_34367
+  @create
   Scenario: Manufacturers > Create record
     Given I open about view and login
     When I go to "Manufacturers" url

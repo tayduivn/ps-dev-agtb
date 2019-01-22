@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @rli
+@modules @rli @job6
 Feature: RLI module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @T_17776 @T_18187 @pr
+  @pr
   Scenario: RLI > Verify that corresponding fields are auto populated when select product in the RLI edit mode
     # Create Product
     Given ProductTemplates records exist:

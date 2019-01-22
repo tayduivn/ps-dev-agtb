@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_reports
+@crud_modules_reports @job4
 Feature: Reports module verification
 
   Background:

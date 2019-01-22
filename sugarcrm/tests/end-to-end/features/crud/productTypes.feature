@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_productTypes
+@crud_modules_productTypes @job2
 Feature: productTypes module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list @T_34397
+  @list
   Scenario: Product Types > List View > Preview
     Given ProductTypes records exist:
       | *name | list_order | description   |
@@ -33,7 +33,7 @@ Feature: productTypes module verification
       | description | Alex New Type |
       | list_order  | 4             |
 
-  @list-search @T_34398
+  @list-search
   Scenario: Product Types > List View > Filter > Search main input
     Given ProductTypes records exist:
       | *name          | list_order | description |
@@ -58,8 +58,7 @@ Feature: productTypes module verification
       | description | 6              |
       | list_order  | 6              |
 
-
-  @list-edit @T_34399
+  @list-edit
   Scenario: Product Types > List View > Inline Edit
     Given ProductTypes records exist:
       | *name | list_order | description |
@@ -86,7 +85,7 @@ Feature: productTypes module verification
       | name       | Alex1 edited |
       | list_order | 5            |
 
-  @list-delete @T_34400
+  @list-delete
   Scenario: Product Types > List View > Delete
     Given ProductTypes records exist:
       | *name | list_order | status | description |
@@ -102,7 +101,7 @@ Feature: productTypes module verification
     Then I should see #ProductTypesList view
     Then I should not see *Alex1 in #ProductTypesList.ListView
 
-  @delete @T_34401
+  @delete
   Scenario: Product Type > Record View > Delete
     Given  ProductTypes records exist:
       | *name | list_order | description   |
@@ -117,7 +116,7 @@ Feature: productTypes module verification
     Then I should see #ProductTypesList.ListView view
     Then I should not see *Alex1 in #ProductTypesList.ListView
 
-  @copy @T_34402
+  @copy
   Scenario: Product Type > Copy > Copy record from Record View
     Given  ProductTypes records exist:
       | *name | list_order | description   |
@@ -155,7 +154,7 @@ Feature: productTypes module verification
       | description | Great Type |
       | list_order  | 5          |
 
-  @create @T_34403
+  @create
   Scenario: Product Type > Create record
     Given I open about view and login
     When I go to "ProductTypes" url

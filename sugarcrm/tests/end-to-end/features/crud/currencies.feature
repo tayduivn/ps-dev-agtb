@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_currencies
+@crud_modules_currencies @job5
 Feature: Currrencies module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list @T_34375
+  @list
   Scenario: Currencies > List View > Preview
     Given I open about view and login
     When I go to "Currencies" url
@@ -39,7 +39,7 @@ Feature: Currrencies module verification
       | conversion_rate | 1.25   |
       | status          | Active |
 
-  @list-edit @T_34384
+  @list-edit
   Scenario: Currencies > List View > Inline Edit > Cancel/Save
     Given I open about view and login
     When I go to "Currencies" url
@@ -76,7 +76,7 @@ Feature: Currrencies module verification
       | conversion_rate | 1.5          |
       | status          | Inactive     |
 
-  @edit_cancel @T_32764
+  @edit_cancel
   Scenario: Currencies > Record view > Edit > Cancel
     Given I open about view and login
     When I go to "Currencies" url
@@ -109,7 +109,7 @@ Feature: Currrencies module verification
       | conversion_rate | 1.25   |
 
 
-  @edit_save @T_32764
+  @edit_save
   Scenario: Currencies > Record view > Edit > Save
     Given I open about view and login
     When I go to "Currencies" url
@@ -142,7 +142,7 @@ Feature: Currrencies module verification
       | conversion_rate | 1.5      |
 
 
-  @create @T_34374
+  @create
   Scenario: Currencies > Create record
     Given I open about view and login
     When I go to "Currencies" url
@@ -165,7 +165,7 @@ Feature: Currrencies module verification
       | status          | Active |
 
 
-  @crate_iso4217 @T_34345
+  @crate_iso4217
   Scenario: Currencies > Create record with iso4217 code
     Given I open about view and login
     When I go to "Currencies" url

@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@quotes
+@quotes @job5
 Feature: Verification of Copy Quote functionality for the cases when
     quote contains a large number of QLIs linked to it.
 

@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@subpanels @create_quote
+@subpanels @create_quote @job4
 Feature: Create Quote record from subpanel
 
   Background:

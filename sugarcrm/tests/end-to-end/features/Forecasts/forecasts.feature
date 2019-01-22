@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules_forecasts
+@modules_forecasts @job6
 Feature: Forecasts module
 
   Background:

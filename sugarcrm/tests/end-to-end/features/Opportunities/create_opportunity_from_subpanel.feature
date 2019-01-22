@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@subpanels @create_opportunity
+@subpanels @create_opportunity @job2
 Feature: Subpanel Support
 
   Background:

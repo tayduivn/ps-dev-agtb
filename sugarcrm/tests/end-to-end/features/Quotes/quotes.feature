@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@quotes
+@quotes @job5
 Feature: Quotes module E2E testing
 
   Background:

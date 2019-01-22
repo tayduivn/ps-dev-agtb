@@ -13,7 +13,7 @@ Feature: Summary Of Open Cases by Priority Verification.
   Background:
     Given I am logged in
 
-  @e2e
+  @e2e @job2
   Scenario: Cases > Verify the number of open cases in the Summary of Open Cases by Priority Dashlet.
     Given Cases records exist:
       | *name | priority | status        |

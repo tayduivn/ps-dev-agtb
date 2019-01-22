@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_revenueLineItems
+@crud_modules_revenueLineItems @job5
 Feature: Revenue Line Items module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list-preview @T_34545
+  @list-preview
   Scenario Outline: Revenue Line Items > List View > Preview
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity   |
@@ -50,7 +50,7 @@ Feature: Revenue Line Items module verification
       | 200    | $200.00         | 2000 | $2,000.00     | $40.00             | 5.00     |
       | 400    | $400.00         | 4000 | $4,000.00     | $10.00             | 40.00    |
 
-  @list-search @T_34546
+  @list-search
   Scenario: Revenue Line Items > List View > Filter > Search main input
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
@@ -98,7 +98,7 @@ Feature: Revenue Line Items module verification
       | name        | RLI_1 edited |
       | date_closed | 12/12/2018   |
 
-  @list-delete @T_34548
+  @list-delete
   Scenario: Revenue Line Items > List View > Delete
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity   |
@@ -117,7 +117,7 @@ Feature: Revenue Line Items module verification
     Then I should see #RevenueLineItemsList view
     Then I should not see *RLI_1 in #RevenueLineItemsList.ListView
 
-  @delete @T_34552
+  @delete
   Scenario: Revenue Line Items > Record View > Delete > Cancel/Confirm
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
@@ -144,7 +144,7 @@ Feature: Revenue Line Items module verification
     Then I should see #RevenueLineItemsList.ListView view
     Then I should not see *RLI_1 in #RevenueLineItemsList.ListView
 
-  @copy @T_34553
+  @copy
   Scenario: Revenue Line Items > Record view > Copy > Cancel
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
@@ -174,7 +174,7 @@ Feature: Revenue Line Items module verification
       | date_closed | 10/19/2018  |
       | likely_case | $300.00     |
 
-  @copy @T_34553
+  @copy
   Scenario: Revenue Line Items > Record view > Copy > Save
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
@@ -206,7 +206,7 @@ Feature: Revenue Line Items module verification
       | date_closed | 11/01/2018    |
       | likely_case | $400.00       |
 
-  @edit-cancel @T_34554
+  @edit-cancel
   Scenario: Revenue Line Items > Record View > Edit > Cancel
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
@@ -236,7 +236,7 @@ Feature: Revenue Line Items module verification
       | likely_case | $300.00    |
       | date_closed | 10/19/2018 |
 
-  @edit-save @T_34554
+  @edit-save
   Scenario: Revenue Line Items > Record View > Edit > Save
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
@@ -273,7 +273,7 @@ Feature: Revenue Line Items module verification
       | best_case   | $600.00    |
       | worst_case  | $300.00    |
 
-  @create_cancel_save @T_34555
+  @create_cancel_save
   Scenario: Revenue Line Items > Create > Cancel/Save
     Given Opportunities records exist:
       | name  |

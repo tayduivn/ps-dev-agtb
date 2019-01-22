@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_calls
+@crud_modules_calls @job2
 Feature: Calls module verification
 
   Background:

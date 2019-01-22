@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_contracts
+@crud_modules_contracts @job3
 Feature: Contracts module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list @T_34335
+  @list
   Scenario: Contracts > List View > Preview
     Given Contracts records exist:
       | *name       | status     |
@@ -35,7 +35,7 @@ Feature: Contracts module verification
       | name      | Contracts_1 |
       | status    | In Progress |
 
-  @list-search @T_34369
+  @list-search
   Scenario: Contracts > List View > Filter > Search main input
     Given Contracts records exist:
       | *name       | status     | start_date                | end_date                  |
@@ -61,7 +61,7 @@ Feature: Contracts module verification
       | start_date | 10/19/2017  |
       | end_date   | 11/19/2017  |
 
-  @list-edit @T_34342
+  @list-edit
   Scenario: Contracts > List View > Inline Edit
     Given Contracts records exist:
       | *name      | status     | start_date                | end_date                  |
@@ -94,7 +94,7 @@ Feature: Contracts module verification
       | start_date | 11/10/2020        |
       | end_date   | 12/10/2020        |
 
-  @list-delete @T_34344
+  @list-delete
   Scenario: Contracts > List View > Delete
     Given Contracts records exist:
       | *name      | status     | start_date                | end_date                  |
@@ -113,7 +113,7 @@ Feature: Contracts module verification
     Then I should see #ContractsList view
     Then I should not see *Contract_1 in #ContractsList.ListView
 
-  @delete @T_34341
+  @delete
   Scenario: Contracts >  Record View > Delete
     Given Contracts records exist:
       | *name      | status     | start_date                | end_date                  |
@@ -141,7 +141,7 @@ Feature: Contracts module verification
     Then I should see #ContractsList.ListView view
     Then I should not see *Contract_3 in #ContractsList.ListView
 
-  @copy @T_34340
+  @copy
   Scenario: Contracts > Record view > Copy > Cancel
     Given Contracts records exist:
       | *name      | status     | start_date                | end_date                  |
@@ -171,7 +171,7 @@ Feature: Contracts module verification
       | start_date | 09/19/2017  |
       | end_date   | 10/19/2017  |
 
-  @copy @T_34340
+  @copy
   Scenario: Contracts > Record view > Copy > Save
     Given Contracts records exist:
       | *name      | status     | start_date                | end_date                  |
@@ -201,7 +201,7 @@ Feature: Contracts module verification
       | start_date | 09/19/2018 |
       | end_date   | 10/19/2018 |
 
-  @edit_cancel @T_34334
+  @edit_cancel
   Scenario: Contracts > Record View > Edit > Cancel
     Given Contracts records exist:
       | *name      | status     | start_date                | end_date                  | reference_code |
@@ -231,7 +231,7 @@ Feature: Contracts module verification
       | description    |           |
       | reference_code | #123_Test |
 
-  @edit_save @T_34334
+  @edit_save
   Scenario: Contracts > Record View > Edit > Save
     Given Contracts records exist:
       | *name      | status     | start_date                | end_date                  |
@@ -267,7 +267,7 @@ Feature: Contracts module verification
       | fieldName | value       |
       | name      | Contract_34 |
 
-  @create @T_30161
+  @create
   Scenario: Contracts > Create record > Cancel/Save
     Given ContractTypes records exist:
       | *name | list_order |

@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_opportunities
+@crud_modules_opportunities @job4
 Feature: Opportunities
 
   Background:
