@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@quotes @job5
+@quotes
 Feature: Verification of Copy Quote functionality for the cases when
     quote contains a large number of QLIs linked to it.
 
@@ -26,7 +26,7 @@ Feature: Verification of Copy Quote functionality for the cases when
     # 5. Check the alert message properties
     # 6. Verify amounts in Grand Total header of QLI table
 
-  @Copy_Quote
+  @Copy_Quote @job1
   Scenario: Quotes > Copy Quote with 50 QLIs (7 by 7 + 1 )
     # 1. Generate quote record linked to the account
     Given Quotes records exist:
@@ -126,7 +126,7 @@ Feature: Verification of Copy Quote functionality for the cases when
     # 5. Check the alert message properties
     # 6. Verify amounts in Grand Total header of QLI table
 
-  @Copy_Quote
+  @Copy_Quote @job1
   Scenario: Quotes > Copy Quote with 50 QLIs (1 by 50 )
     # 1. Generate quote record linked to the account
     Given Quotes records exist:
@@ -191,7 +191,7 @@ Feature: Verification of Copy Quote functionality for the cases when
     # 5. Check the alert message properties
     # 6. Verify amounts in Grand Total header of QLI table
 
-  @Copy_Quote
+  @Copy_Quote @job2
   Scenario: Quotes > Copy Quote with 50 groupless QLIs
       # 1. Generate quote record with 50 group-less QLIs
     Given Quotes records exist:
@@ -256,7 +256,7 @@ Feature: Verification of Copy Quote functionality for the cases when
     # 5. Check the alert message properties
     # 6. Verify amounts in Grand Total header of QLI table
 
-  @Copy_Quote
+  @Copy_Quote @job5
   Scenario: Quotes > Copy Quote with 75 QLIs (5 gr. by 10 QLIs + 1 gr by 25 QLIs)
       # 1. Generate quote record with 75 QLIs  ( 5 group of 10 + 1 group of 25)
     Given Quotes records exist:
