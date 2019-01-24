@@ -208,6 +208,3 @@ if (!isset($dictionary['tracker_perf']['fields'])) {
 if (!isset($dictionary['tracker_queries']['fields'])) {
     require "modules/Trackers/tracker_queriesMetaData.php";
 }
-if (!isset($dictionary['tracker_tracker_queries']['fields'])) {
-    require "modules/Trackers/tracker_tracker_queriesMetaData.php";
-}

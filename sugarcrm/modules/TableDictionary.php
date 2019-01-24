@@ -78,6 +78,7 @@ include 'metadata/contacts_dataprivacyMetaData.php';
 include 'metadata/leads_dataprivacyMetaData.php';
 include 'metadata/prospects_dataprivacyMetaData.php';
 include 'metadata/accounts_dataprivacyMetaData.php';
+require 'modules/Trackers/tracker_tracker_queriesMetaData.php';
 
 //ACL RELATIONSHIPS
 include("metadata/acl_roles_actionsMetaData.php");
