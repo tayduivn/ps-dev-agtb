@@ -46,6 +46,7 @@
             "custom/",
             "data/",
             "include/",
+            "install/",
             "jssource/",
             "modules/",
             "ModuleInstall/",

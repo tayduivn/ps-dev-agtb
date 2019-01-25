@@ -182,5 +182,8 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/{old}/modules/pmse_Emails_Templates' => 1,
 'sugarcrm/tests/{old}/modules/pmse_Inbox' => 1,
 'sugarcrm/tests/{old}/modules/pmse_Project' =>1,
+
+// Out of the box Business Process Management data
+'sugarcrm/install/BusinessProcesses' => 1,
 );
 $build = 'pro';

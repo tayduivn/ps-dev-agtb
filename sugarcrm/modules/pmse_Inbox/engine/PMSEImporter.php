@@ -30,6 +30,13 @@ class PMSEImporter
      * @access private
      */
     protected $bean;
+
+    /**
+     * The module for the child importer bean
+     * @var string
+     */
+    protected $beanModule;
+
     /**
      * @var $id
      * @access private
@@ -65,13 +72,96 @@ class PMSEImporter
     protected $dependencyKeys = [];
 
     /**
+     * Options that can be set on this importer to handle during saving of project
+     * data
+     * @var array
+     */
+    protected $options = [];
+
+    /**
+     * Template method that allows child classes to define things to be done
+     * on construct.
+     */
+    protected function initialize()
+    {
+    }
+
+    public function __construct()
+    {
+        $msg = 'Constructors for PMSE Importers will be deprecated in a future release. ' .
+               'Please use $this->getBean() when a process bean is needed.';
+        LoggerManager::getLogger()->deprecated($msg);
+        $this->setBean();
+        $this->initialize();
+    }
+
+    /**
+     * Sets a single option and value into this object
+     * @param string $key A string option key
+     * @param mixed $val A value for this option
+     * @return PMSEImporter
+     */
+    public function setOption($key, $val)
+    {
+        $this->options[$key] = $val;
+        return $this;
+    }
+
+    /**
+     * Gets a single option by key, or a default value if key is not found
+     * @param string $key The value for the option key
+     * @param mixed $default A default if the key is not found
+     * @return mixed
+     */
+    public function getOption($key, $default = null)
+    {
+        return array_key_exists($key, $this->options) ? $this->options[$key] : $default;
+    }
+
+    /**
+     * Sets a collection of options onto this object, or merges options based on
+     * $merge
+     * @param array $options A key/value hash of option keys and values
+     * @param boolean $merge Flag that determines merging or overriding
+     * @return BusinessProcessInstaller
+     */
+    public function setOptions(array $options, $merge = false)
+    {
+        $this->options = $merge ? array_merge($this->options, $options) : $options;
+        return $this;
+    }
+
+    /**
+     * Gets the current option stack
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
      * Get class Bean.
      * @codeCoverageIgnore
      * @return object
      */
     public function getBean()
     {
+        if (empty($this->bean)) {
+            $this->setBean();
+        }
+
         return $this->bean;
+    }
+
+    /**
+     * Gets the bean ID
+     * @codeCoverageIgnore
+     * @return string
+     */
+    public function getBeanId()
+    {
+        return $this->getBean()->id;
     }
 
     /**
@@ -80,9 +170,15 @@ class PMSEImporter
      * @param object $bean
      * @return void
      */
-    public function setBean($bean)
+    public function setBean(SugarBean $bean = null)
     {
-        $this->bean = $bean;
+        // If presented $bean is null, but we have not beanModule
+        // Then let the $bean property of this class be null
+        if ($bean === null && !empty($this->beanModule)) {
+            $this->bean = BeanFactory::newBean($this->beanModule);
+        } else {
+            $this->bean = $bean;
+        }
     }
 
     /**
@@ -148,8 +244,9 @@ class PMSEImporter
      */
     public function importProject($file, $options = [])
     {
-        $_data = $this->getDataFile($file);
-        if ($this->isPAOldVersionFile($_data)) {
+        $data = $this->getDataFile($file);
+
+        if ($this->isPAOldVersionFile($data)) {
             LoggerManager::getLogger()->fatal('PA Unsupported file. The version of this file is not currently supported.');
             $sugarApiExceptionRequestMethodFailure = new SugarApiExceptionRequestMethodFailure(
                 'ERROR_PA_UNSUPPORTED_FILE'
@@ -157,8 +254,21 @@ class PMSEImporter
             PMSELogger::getInstance()->alert($sugarApiExceptionRequestMethodFailure->getMessage());
             throw $sugarApiExceptionRequestMethodFailure;
         }
-        $project = json_decode($_data, true);
 
+        $project = json_decode($data, true);
+
+        return $this->importProjectFromData($project, $options);
+    }
+
+    /**
+     * Imports a project from the data in the import file, after it has been
+     * decoded.
+     * @param array $project Decoded project file data
+     * @param array $options Additional options passed to the importer
+     * @return array Success flag and id of new record if successful
+     */
+    public function importProjectFromData(array $project, array $options = [])
+    {
         if (!empty($project['dependencies'])) {
             if (!empty($options['selectedIds'])) {
                 $this->importDependencies($project['dependencies'], $options['selectedIds']);
@@ -179,6 +289,7 @@ class PMSEImporter
             PMSELogger::getInstance()->alert($sugarApiExceptionRequestMethodFailure->getMessage());
             throw $sugarApiExceptionRequestMethodFailure;
         }
+
         return $result;
     }
 
@@ -199,6 +310,7 @@ class PMSEImporter
                     continue;
                 }
                 $importer = PMSEImporterFactory::getImporter($type);
+                $importer->setOptions($this->getOptions());
                 $result = $this->processImport($importer, $def);
                 $newId = $result['id'];
 
@@ -401,16 +513,56 @@ class PMSEImporter
      */
     public function getDataFile($file)
     {
-        //return file_get_contents($file);
+        $ul = new UploadFile();
+        $ul->temp_file_location = $file;
+        return $ul->get_file_contents();
+    }
 
-        $_file = new UploadFile();
+    /**
+     * Gets the name of the project from the project data. Unless the keepName
+     * option is set this will try to create a revision number on the name if the
+     * name exists in the system already.
+     * @param array $projectData The project data array
+     * @return string
+     */
+    protected function getProjectName(array $projectData)
+    {
+        $name = !empty($projectData[$this->suffix . 'name']) ? $projectData[$this->suffix . 'name'] : $projectData[$this->name];
 
-        //get the file location
-        $_file->temp_file_location = $file;
+        if ($this->getOption('keepName', false) === false) {
+            $name = $this->getNameWithSuffix($name);
+        }
 
-        $_data = $_file->get_file_contents();
+        return $name;
+    }
 
-        return $_data;
+    /**
+     * Gets the current user object
+     * @return User
+     */
+    protected function getCurrentUser()
+    {
+        global $current_user;
+        return $current_user;
+    }
+
+    /**
+     * Handles saving the project bean as well as tagging the bean
+     * @param array $projectData The project data
+     */
+    protected function handleProjectBeanSave($projectData)
+    {
+        // Load up the bean with the project data
+        $this->loadBeanFromArray($this->getBean(), $projectData);
+
+        // Get the ID of the bean we just saved
+        $this->getBean()->save();
+
+        // Save has to happen first in case it is a new bean, so that
+        // proper relationships can be made
+        if (isset($projectData['tag'])) {
+            $this->addTagsToBean($this->getBean(), $projectData['tag']);
+        }
     }
 
     /**
@@ -420,32 +572,68 @@ class PMSEImporter
      */
     public function saveProjectData($projectData)
     {
-        global $current_user;
-        $result = array('success' => false);
+        $result = ['success' => false];
+
         //Unset common fields
-        $projectData = PMSEEngineUtils::unsetCommonFields($projectData, array('name', 'description'));
-        //unset($projectData['assigned_user_id']);
+        $except = $this->getAllFieldExceptions(['name', 'description']);
+        $projectData = PMSEEngineUtils::unsetCommonFields($projectData, $except);
+
         if (!isset($projectData['assigned_user_id'])) {
-            $projectData['assigned_user_id'] = $current_user->id;
+            $projectData['assigned_user_id'] = $this->getCurrentUser()->id;
         }
-        //Check Name of project
-        if (isset($projectData[$this->suffix . 'name']) && !empty($projectData[$this->suffix . 'name'])) {
-            $name = $this->getNameWithSuffix($projectData[$this->suffix . 'name']);
-        } else {
-            $name = $this->getNameWithSuffix($projectData[$this->name]);
-        }
-        $projectData[$this->name] = $name;
-        foreach ($projectData as $key => $field) {
-            $this->bean->$key = $field;
-        }
-        //$this->bean->new_with_id = true;
-        //$this->bean->validateUniqueUid();
-        $new_id = $this->bean->save();
-        if (!$this->bean->in_save) {
+
+        // Load the proper name for this project
+        $projectData[$this->name] = $this->getProjectName($projectData);
+
+        // Handle the project bean save
+        $this->handleProjectBeanSave($projectData);
+
+        // If we are successful, add that to the result
+        if (!$this->getBean()->in_save) {
             $result['success'] = true;
-            $result['id'] = $new_id;
+            $result['id'] = $this->getBeanId();
         }
+
         return $result;
+    }
+
+    /**
+     * Loads a bean from an array of data.
+     * @param SugarBean $bean The SugarBean object to load
+     * @param array $data Key/value hash of data to load onto the bean
+     */
+    protected function loadBeanFromArray(SugarBean $bean, array $data)
+    {
+        foreach ($data as $k => $v) {
+            $bean->$k = $v;
+        }
+
+        if (!empty($bean->id)) {
+            $bean->new_with_id = true;
+        }
+    }
+
+    /**
+     * Adds tags related to the bean, if the bean is taggable
+     * @param SugarBean $bean The Process Bean
+     * @param array $tags Array of tags as a TagVal.lowercase => TagVal map
+     */
+    protected function addTagsToBean(SugarBean $bean, array $tags)
+    {
+        if (($field = $bean->getTagField()) !== null) {
+            $link = $bean->getFieldDefinition($field)['link'];
+
+            // Load the tag relationship
+            if ($bean->load_relationship($link)) {
+                $sft = new SugarFieldTag('tag');
+                $rel = [];
+                foreach ($tags as $tag) {
+                    $rel[] = $sft->getTagBean($tag);
+                }
+
+                $sft->addTagsToBean($bean, $rel, $link, $tags);
+            }
+        }
     }
 
     /**
@@ -456,8 +644,8 @@ class PMSEImporter
     public function getNameWithSuffix($name)
     {
         $nums = array();
-        $where = $this->bean->table_name . '.' . $this->name . " LIKE " . $this->bean->db->quoted($name . "%");
-        $rows = $this->bean->get_full_list($this->name, $where);
+        $where = $this->getBean()->table_name . '.' . $this->name . " LIKE " . $this->getBean()->db->quoted($name . "%");
+        $rows = $this->getBean()->get_full_list($this->name, $where);
         if (!is_null($rows)) {
             foreach ($rows as $row) {
                 $names[] = $row->{$this->name};
@@ -479,8 +667,39 @@ class PMSEImporter
         return $newName;
     }
 
+    /**
+     * Gets a list of exception fields for use in unsetting commone fields. If
+     * the keepIds option is set, this will add the `id` attribute to the list
+     * of exceptions for unsetting.
+     * @param array $except Array of fields for exception
+     * @return array
+     */
+    protected function getAllFieldExceptions(array $except = [])
+    {
+        // If additional exceptions were added as an option...
+        $addExcept = $this->getOption('exceptUnsetFields', []);
+
+        // Keep ID if that is being asked for
+        if ($this->getOption('keepIds')) {
+            $addExcept[] = 'id';
+        }
+
+        // ... merge those with the passed in exceptions
+        return array_merge($except, $addExcept);
+    }
+
+    /**
+     * Unsets commonly set fields from import data. All field unsetting can be
+     * overridden with either explicit setting of the `$except` argument or through
+     * setting of the `exceptUnsetFields` option.
+     * @param array $projectData Project data array
+     * @param array $except Fields to be excepted from unsetting
+     * @return array
+     */
     public function unsetCommonFields($projectData, $except = array())
     {
+        $except = $this->getAllFieldExceptions($except);
+
         $special_fields = array(
             'id',
             'date_entered',
@@ -501,12 +720,14 @@ class PMSEImporter
             'prj_id',
             'pro_id'
         );
-        //UNSET common fields
+
+        // Loop and unset unless fields are excepted
         foreach ($projectData as $key => $value) {
-            if (in_array($key, $special_fields)) {
+            if (in_array($key, $special_fields) && !in_array($key, $except)) {
                 unset($projectData[$key]);
             }
         }
+
         return $projectData;
     }
 }

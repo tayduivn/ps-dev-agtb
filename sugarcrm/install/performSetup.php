@@ -585,6 +585,14 @@ if ($_SESSION['demoData'] != 'no') {
 }
 installLog("done populating the db with seed data");
 
+//BEGIN SUGARCRM flav=ent ONLY
+installLog('Installing Business Process Management designs');
+
+require 'install/installBusinessProcesses.php';
+
+installLog('Completed installation of Business Process Management designs');
+//END SUGARCRM flav=ent ONLY
+
 if ((!empty($_SESSION['fts_type']) || !empty($_SESSION['setup_fts_type'])) &&
     (empty($_SESSION['setup_fts_skip']))
 ) {

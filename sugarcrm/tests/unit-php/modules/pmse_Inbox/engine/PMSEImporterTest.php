@@ -53,6 +53,79 @@ class PMSEImporterTest extends TestCase
     }
 
     /**
+     * @covers PMSEImporter::setOption
+     * @covers PMSEImporter::getOption
+     */
+    public function testSetAndGetOption()
+    {
+        // Add some options to test with
+        $importer = ProcessManager\Factory::getPMSEObject('PMSEImporter');
+        $importer->setOption('foo', 'bar');
+        $importer->setOption('baz', 'zim');
+
+        // Test collecting options
+        $this->assertSame('bar', $importer->getOption('foo'));
+        $this->assertSame('zim', $importer->getOption('baz'));
+
+        // Test defaults
+        $this->assertNull($importer->getOption('bad_name'));
+        $this->assertSame(false, $importer->getOption('bad_name', false));
+        $this->assertSame('testy', $importer->getOption('bad_name', 'testy'));
+    }
+
+    /**
+     * @covers PMSEImporter::setOptions
+     * @covers PMSEImporter::getOption
+     * @covers PMSEImporter::getOptions
+     */
+    public function testSetAndGetOptions()
+    {
+        // Add some options to test with
+        $importer = ProcessManager\Factory::getPMSEObject('PMSEImporter');
+        $importer->setOption('foo', 'bar');
+
+        // Test collecting options
+        $this->assertSame('bar', $importer->getOption('foo'));
+
+        // Set new options that will override
+        $importer->setOptions([
+            'bar' => 'baz',
+            'boo' => 'box',
+        ]);
+
+        // Test options were overridden
+        $this->assertNull($importer->getOption('foo'));
+
+        // Test our options being set
+        $this->assertSame('baz', $importer->getOption('bar'));
+        $this->assertSame('box', $importer->getOption('boo'));
+
+        // Test appending options
+        $importer->setOptions([
+            'fox' => 'sox',
+            'egg' => 'meg',
+        ], true);
+
+        // Test our options were kept
+        $this->assertSame('baz', $importer->getOption('bar'));
+        $this->assertSame('box', $importer->getOption('boo'));
+
+        // Test new options were set
+        $this->assertSame('sox', $importer->getOption('fox'));
+        $this->assertSame('meg', $importer->getOption('egg'));
+
+        // For testing getOptions
+        $options = [
+            'bar' => 'baz',
+            'boo' => 'box',
+            'fox' => 'sox',
+            'egg' => 'meg',
+        ];
+
+        $this->assertSame($options, $importer->getOptions());
+    }
+
+    /**
      * @covers PMSEImporter::importDependencies
      */
     public function testImportDependencies()
@@ -81,34 +154,58 @@ class PMSEImporterTest extends TestCase
         $this->assertArrayHasKey('oldId1', $dependencyKeys);
     }
 
-    /**
-     * @covers PMSEImporter::processImport
-     */
-    public function testProcessImport()
+    public function saveProjectDataProvider()
     {
-        $importer = ProcessManager\Factory::getPMSEObject('PMSEImporter');
-        $etImporterMock = $this->getMockBuilder('PMSEEmailTemplateImporter')
-            ->setMethods(array(
-                'getBean',
-                'unsetCommonFields',
-                'getNameWithSuffix',
-                'saveProjectActivitiesData',
-                'saveProjectEventsData',
-                'saveProjectGatewaysData',
-                'saveProjectElementsData',
-                'saveProjectFlowsData',
-                'processDefaultFlows',
-            ))
-            ->getMock();
+        return [
+            [
+                'keepIds' => false,
+                'beanId' => 'new-et-id-1',
+                'projectId' => 'old-prj-id-1',
+                'expect' => 'new-et-id-1',
+            ],
+            [
+                'keepIds' => true,
+                'beanId' => 'new-et-id-2',
+                'projectId' => 'old-prj-id-2',
+                'expect' => 'old-prj-id-2',
+            ],
+        ];
+    }
 
-        $beanMock = $this->createPartialMock('pmse_Emails_Templates', array('get_full_list', 'save', 'in_save'));
-        $beanMock->method('save')
-            ->willReturn(array('id'=> 'newId', 'success' => true));
+    /**
+     * @covers PMSEImporter::saveProjectData
+     * @dataProvider saveProjectDataProvider
+     */
+    public function testSaveProjectData($keepIds, $beanId, $projectId, $expect)
+    {
+        // Mock an Email Template bean
+        $bean = $this->createPartialMock('pmse_Emails_Templates', ['save']);
+        $bean->id = $beanId;
 
-        $etImporterMock->setBean($beanMock);
-        $def = array('id' => 'oldId', 'name' => 'et');
-        $result = $importer->processImport($etImporterMock, $def);
+        // Get the Email Template importer for testing
+        $importer = ProcessManager\Factory::getPMSEObject('PMSEEmailTemplateImporter');
+
+        // Set the bean and some options onto the importer
+        $importer->setBean($bean);
+        $importer->setOptions(
+            [
+                'keepName' => true,
+                'keepIds' => $keepIds,
+            ]
+        );
+
+        // Run it, testing for a NEW id from the bean
+        $result = $importer->saveProjectData(
+            [
+                'id' => $projectId,
+                'name' => 'et',
+            ]
+        );
+
+        // Assertions
+        $this->assertArrayHasKey('success', $result);
         $this->assertTrue($result['success']);
         $this->assertArrayHasKey('id', $result);
+        $this->assertSame($result['id'], $expect);
     }
 }

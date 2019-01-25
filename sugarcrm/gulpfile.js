@@ -488,7 +488,11 @@ gulp.task('check-license', function(done) {
             // checksum lists
             'md5',
             // YAML files
-            'yml'
+            'yml',
+            // Business Process Management Suite files
+            'bpm',
+            'pbr',
+            'pet'
         ],
         licenseFile: 'LICENSE',
         // Add paths you want to exclude in the whiteList file.
