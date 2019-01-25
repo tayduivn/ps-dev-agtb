@@ -21,7 +21,6 @@ class SugarFoldersTest extends TestCase
     var $emails = null;
     private $toDelete = [];
 
-
 	public function setUp()
     {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -340,6 +339,55 @@ class SugarFoldersTest extends TestCase
         $this->toDelete['folders_rel'] = ['id' => $guid];
         $result = $sf->deleteChildrenCascade($id);
         $this->assertFalse($result);
+    }
+
+    public function testUpdateFolderCountQueries()
+    {
+        $id = create_guid();
+        $sf = new SugarFolder();
+        $fields = [
+            'record' => '',
+            'name' => '',
+            'parent_folder' => '',
+            'team_id' => '',
+            'team_set_id' => '',
+        ];
+        $sf->has_child = false;
+        $sf->parent_folder = $id;
+
+        $sf->db->getConnection()->insert('folders', [
+            'id' => $id,
+            'parent_folder' => 'none',
+            'deleted' => 0,
+            'created_by' => 'now()',
+            'modified_by' => 'now()',
+            'has_child' => 2,
+        ]);
+        $this->toDelete['`folders`'] = ['id' => $id];
+
+        $sf->updateFolder($fields);
+        $result = $sf->db->getConnection()
+            ->executeQuery("SELECT has_child FROM folders WHERE id = ?", [$id])
+            ->fetchColumn();
+        $this->assertEquals(2, $result);
+
+        $guid = create_guid();
+        $sf->db->getConnection()->insert('folders', [
+            'id' => $guid,
+            'parent_folder' => $id,
+            'deleted' => 0,
+            'created_by' => 'now()',
+            'modified_by' => 'now()',
+            'has_child' => 1,
+        ]);
+        $this->toDelete['folders'] = ['id' => $guid];
+
+        $sf->parent_folder = $id;
+        $sf->updateFolder($fields);
+        $result = $sf->db->getConnection()
+            ->executeQuery("SELECT has_child FROM folders WHERE id = ?", [$id])
+            ->fetchColumn();
+        $this->assertEquals(0, $result);
     }
 
     function _createEmailObject($additionalParams = array() )

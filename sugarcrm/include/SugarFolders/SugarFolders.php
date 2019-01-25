@@ -11,6 +11,7 @@
  */
 
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\FetchMode;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 require_once("vendor/ytree/Tree.php");
@@ -1090,40 +1091,43 @@ ENDW;
         );
 	}
 
-
-	function updateFolder($fields) {
-		global $current_user;
-
-		$this->dynamic_query = $this->db->quote($this->dynamic_query);
-		$id = $fields['record'];
-		$name = $fields['name'];
-		$parent_folder = $fields['parent_folder'];
-		$team_id = $fields['team_id'];
-		$team_set_id = $fields['team_set_id'];
-		// first do the retrieve
-		$this->retrieve($id);
-		if ($this->has_child) {
-			$childrenArray = array();
-			$this->findAllChildren($id, $childrenArray);
-			if (in_array($parent_folder, $childrenArray)) {
-				return array('status' => "failed", 'message' => "Can not add this folder to its children");
-			}
-		}
-		// update has_child to 0 for this parent folder if this is the only child it has
-        $count = $this->db->getConnection()->executeQuery(
-            sprintf('SELECT COUNT(*) FROM %s WHERE parent_folder = ? AND deleted = 0', $this->table),
-            [$this->parent_folder]
-        )->fetchColumn();
-        if ($count == 1) {
+    /**
+     * @param array $fields
+     * @return array
+     * @throws DBALException
+     */
+    public function updateFolder($fields)
+    {
+        $this->dynamic_query = $this->db->quote($this->dynamic_query);
+        $id = $fields['record'];
+        $name = $fields['name'];
+        $parent_folder = $fields['parent_folder'];
+        $team_id = $fields['team_id'];
+        $team_set_id = $fields['team_set_id'];
+        // first do the retrieve
+        $this->retrieve($id);
+        if ($this->has_child) {
+            $childrenArray = [];
+            $this->findAllChildren($id, $childrenArray);
+            if (in_array($parent_folder, $childrenArray)) {
+                return ['status' => "failed", 'message' => "Can not add this folder to its children"];
+            }
+        }
+        // update has_child to 0 for this parent folder if this is the only child it has
+        $connection = $this->db->getConnection();
+        $platform = $connection->getDatabasePlatform();
+        $query = $platform->modifyLimitQuery(
+            sprintf('SELECT NULL FROM %s WHERE parent_folder = ? AND deleted = 0', $this->table),
+            2
+        );
+        $result = $connection->executeQuery($query, [$this->parent_folder])->fetchAll(FetchMode::COLUMN);
+        if (count($result) == 1) {
             $this->db->getConnection()->update($this->table, ['has_child' => 0], ['id' => $this->parent_folder]);
-		} // if
-
-
-		$this->name = $name;
-		$this->parent_folder = $parent_folder;
-		$this->team_id = $team_id;
-		$this->team_set_id = $team_set_id;
-
+        } // if
+        $this->name = $name;
+        $this->parent_folder = $parent_folder;
+        $this->team_id = $team_id;
+        $this->team_set_id = $team_set_id;
         $values = $this->getFieldValues([
             'dynamic_query',
             'parent_folder',
@@ -1132,12 +1136,11 @@ ENDW;
             'modified_by',
         ]);
         $this->db->updateParams($this->table, $this->fields, $values, ['id' => $this->id]);
-		if (!empty($this->parent_folder)) {
+        if (!empty($this->parent_folder)) {
             $this->db->getConnection()->update($this->table, ['has_child' => 1], ['id' => $this->parent_folder]);
-		} // if
-		return array('status' => "done");
-
-	} // fn
+        } // if
+        return ['status' => "done"];
+    } // fn
 
 	function findAllChildren($folderId, &$childrenArray) {
         $conn = $this->db->getConnection();
