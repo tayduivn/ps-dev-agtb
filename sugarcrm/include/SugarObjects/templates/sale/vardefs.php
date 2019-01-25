@@ -167,7 +167,6 @@ $vardefs = array(
     'uses' => array(
         'taggable',
         'currency',
-        'commentlog',
     ),
     'duplicate_check' => array(
         'enabled' => true,

@@ -1033,6 +1033,10 @@ $dictionary['Quote'] = array(
     'duplicate_check' => array(
         'enabled' => false,
     ),
+    'ignore_templates' => array(
+        // FIXME: Disable commentlog on Quotes until we can handle collection resets of bundles
+        'commentlog',
+    ),
 );
 VardefManager::createVardef(
     'Quotes',
@@ -1042,8 +1046,6 @@ VardefManager::createVardef(
         'assignable',
         'team_security',
         'currency',
-        // FIXME: Disable commentlog on Quotes until we can handle collection resets of bundles
-        //'commentlog',
     )
 );
 

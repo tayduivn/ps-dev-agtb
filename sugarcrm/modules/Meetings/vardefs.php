@@ -761,7 +761,6 @@ VardefManager::createVardef('Meetings', 'Meeting', array(
     'default',
     'assignable',
     'team_security',
-    'commentlog',
 ));
 
 //boost value for full text search

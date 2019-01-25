@@ -313,6 +313,7 @@ $vardefs = array(
         'following',
         'favorite',
         'taggable',
+        'commentlog',
         //BEGIN SUGARCRM flav=ent ONLY
         'lockable_fields',
         //END SUGARCRM flav=ent ONLY

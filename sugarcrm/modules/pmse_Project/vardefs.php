@@ -292,7 +292,6 @@ $dictionary['pmse_Project'] = array(
         'basic',
         'team_security',
         'assignable',
-        'commentlog',
         'taggable',
     ),
 );

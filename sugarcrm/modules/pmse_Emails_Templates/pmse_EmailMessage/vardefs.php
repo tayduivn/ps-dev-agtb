@@ -86,6 +86,7 @@ $dictionary['pmse_EmailMessage'] = array(
     'ignore_templates' => array(
         'taggable',
         'lockable_fields',
+        'commentlog',
     ),
 );
 

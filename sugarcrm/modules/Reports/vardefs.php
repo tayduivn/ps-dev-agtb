@@ -164,6 +164,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'ignore_templates' => array(
         'following',
         'lockable_fields',
+        'commentlog',
     ),
 );
 

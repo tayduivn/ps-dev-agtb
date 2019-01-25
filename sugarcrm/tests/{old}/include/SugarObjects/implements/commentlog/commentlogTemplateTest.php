@@ -38,28 +38,28 @@ class commentlogTemplateTest extends TestCase
     public function hasCommentLogFieldProvider(): array
     {
         return array(
-            array('Accounts', true), // company
-            array('Bugs', true), // issue
-            array('Calls', true), // explicitly included in vardefs
-            array('Cases', true), // issue
-            array('Contacts', true), // person
-            array('Contracts', true), // explicitly included in vardefs
-            array('DataPrivacy', true), // issue
+            array('Accounts', true),
+            array('Bugs', true),
+            array('Calls', true),
+            array('Cases', true),
+            array('Contacts', true),
+            array('Contracts', true),
+            array('DataPrivacy', true),
             array('KBArticles', false),
-            array('KBContents', false),
+            array('KBContents', true),
             array('KBContentTemplates', false),
             array('KBDocuments', false),
-            array('Leads', true), // person
-            array('Meetings', true), // explicitly included in vardefs
-            array('Notes', true), // explicitly included in vardefs
+            array('Leads', true),
+            array('Meetings', true),
+            array('Notes', true),
             array('Opportunities', true),
             array('ProductCategories', false),
             // FIXME: re-enable once commentlog is enabled in Quotes
-            // array('Quotes', true), // explicitly included in vardefs
+            // array('Quotes', true),
             //BEGIN SUGARCRM flav=ent ONLY
-            array('RevenueLineItems', true), // explicitly included in vardefs
+            array('RevenueLineItems', true),
             //END SUGARCRM flav=ent ONLY
-            array('Tasks', true), // explicitly included in vardefs
+            array('Tasks', true),
         );
     }
 }

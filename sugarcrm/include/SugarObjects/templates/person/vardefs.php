@@ -469,7 +469,6 @@ $vardefs =array(
 'uses' => array(
     'email_address',
     'taggable',
-    'commentlog',
 ),
 'relationships'=>array(
 ),

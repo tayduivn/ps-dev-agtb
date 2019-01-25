@@ -736,6 +736,7 @@ $dictionary['pmse_BpmFlow'] = array(
     'ignore_templates' => array(
         'taggable',
         'lockable_fields',
+        'commentlog',
     ),
     'uses' => array(
         'basic',

@@ -297,7 +297,6 @@ $dictionary['pmse_Business_Rules'] = array(
         'basic',
         'team_security',
         'assignable',
-        'commentlog',
         'taggable',
     ),
 );

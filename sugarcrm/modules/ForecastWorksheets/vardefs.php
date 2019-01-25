@@ -576,6 +576,7 @@ $dictionary['ForecastWorksheet'] = array(
     // default instead of basic.
     'ignore_templates' => array(
         'taggable',
+        'commentlog',
     ),
 );
 

@@ -109,6 +109,7 @@ $dictionary['ReportSchedule'] = array(
     ),
     'ignore_templates' => array(
         'taggable',
+        'commentlog',
     ),
     'acls' => array('SugarACLStatic' => true),
 );

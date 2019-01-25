@@ -423,7 +423,6 @@ VardefManager::createVardef(
         'default',
         'assignable',
         'team_security',
-        'commentlog',
     )
 );
 
