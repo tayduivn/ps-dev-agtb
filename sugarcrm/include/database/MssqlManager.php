@@ -1145,13 +1145,8 @@ WHERE TABLE_NAME = ?
         return $this->fetchOne($sql);
     }
 
-
-
     /**
-     * @see DBManager::changeColumnSQL()
-     *
-     * MSSQL uses a different syntax than MySQL for table altering that is
-     * not quite as simplistic to implement...
+     * {@inheritDoc}
      */
     protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
     {

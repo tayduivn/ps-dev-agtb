@@ -187,8 +187,6 @@ class DBManagerTest extends TestCase
                 )
             );
         $this->assertTrue(in_array($tablename,$this->_db->getTablesArray()));
-
-        $this->dropTableName($tablename);
     }
 
     public function testRepairTableNoChanges()
@@ -419,8 +417,6 @@ class DBManagerTest extends TestCase
 
         $repair = $this->_db->repairTableParams($tableName, $params, $indexes, true);
         $this->assertEmpty($repair, "Unexpected repairs: " . $repair);
-
-        $this->dropTableName($tableName);
     }
 
     /**
@@ -524,8 +520,6 @@ class DBManagerTest extends TestCase
         $this->assertArrayHasKey('bar', $cols);
         $this->assertEquals('bar', $cols['bar']['name']);
         $this->assertEquals($this->_db->getColumnType('int'), $cols['bar']['type']);
-
-        $this->dropTableName($tableName);
     }
 
     public function testRepairTableParamsAddIndex()
@@ -589,8 +583,6 @@ class DBManagerTest extends TestCase
         $this->assertArrayHasKey('bazz', $cols);
         $this->assertEquals('bazz', $cols['bazz']['name']);
         $this->assertEquals($this->_db->getColumnType('int'), $cols['bazz']['type']);
-
-        $this->dropTableName($tableName);
     }
 
     public function testRepairTableParamsAddIndexAndData()
@@ -624,8 +616,6 @@ class DBManagerTest extends TestCase
         $this->assertArrayHasKey('test_index', $idx);
         $this->assertContains('foo', $idx['test_index']['fields']);
         $this->assertContains('bar', $idx['test_index']['fields']);
-
-        $this->dropTableName($tableName);
     }
 
     public function testCompareFieldInTables()
@@ -657,9 +647,6 @@ class DBManagerTest extends TestCase
             'foo', $tablename1, $tablename2);
 
         $this->assertEquals($res['msg'],'match');
-
-        $this->dropTableName($tablename1);
-        $this->dropTableName($tablename2);
     }
 
     public function testCompareFieldInTablesNotInTable1()
@@ -690,9 +677,6 @@ class DBManagerTest extends TestCase
         $res = $this->_db->compareFieldInTables(
             'foo', $tablename1, $tablename2);
         $this->assertEquals($res['msg'],'not_exists_table1');
-
-        $this->dropTableName($tablename1);
-        $this->dropTableName($tablename2);
     }
 
     public function testCompareFieldInTablesNotInTable2()
@@ -724,9 +708,6 @@ class DBManagerTest extends TestCase
             'foo', $tablename1, $tablename2);
 
         $this->assertEquals($res['msg'],'not_exists_table2');
-
-        $this->dropTableName($tablename1);
-        $this->dropTableName($tablename2);
     }
 
     public function testCompareFieldInTablesFieldsDoNotMatch()
@@ -757,9 +738,6 @@ class DBManagerTest extends TestCase
             'foo', $tablename1, $tablename2);
 
         $this->assertEquals($res['msg'],'no_match');
-
-        $this->dropTableName($tablename1);
-        $this->dropTableName($tablename2);
     }
 
     public function testAddIndexes()
@@ -825,9 +803,6 @@ class DBManagerTest extends TestCase
             'idx_foo', $tablename1, $tablename2);
 
         $this->assertEquals($res['msg'],'match');
-
-        $this->dropTableName($tablename1);
-        $this->dropTableName($tablename2);
     }
 
     public function testDropIndexes()
@@ -907,9 +882,6 @@ class DBManagerTest extends TestCase
             'idx_foo', $tablename1, $tablename2);
 
         $this->assertEquals('not_exists_table2', $res['msg']);
-
-        $this->dropTableName($tablename1);
-        $this->dropTableName($tablename2);
     }
 
     public function testModifyIndexes()
@@ -995,9 +967,6 @@ class DBManagerTest extends TestCase
             'idx_foo', $tablename1, $tablename2);
 
         $this->assertEquals($res['msg'],'match');
-
-        $this->dropTableName($tablename1);
-        $this->dropTableName($tablename2);
     }
 
     public function providerRepairIndexes()
@@ -1173,68 +1142,108 @@ class DBManagerTest extends TestCase
             'foobar', $tablename1, $tablename2);
 
         $this->assertEquals($res['msg'],'match');
-
-        $this->dropTableName($tablename1);
-        $this->dropTableName($tablename2);
     }
 
-    public function alterColumnDataProvider()
+    public static function alterColumnDataProvider()
     {
-        return array(
-            array(
-                 1,
-                'target' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '255', 'required' => true, 'default' => 'sugar'),
-                'temp' => array ('name' => 'foobar', 'type' => 'int')                           // Check if type conversion works
-            ),
-            array(
-                2,
-                'target' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '255', 'default' => 'kilroy'),
-                'temp' => array ('name' => 'foobar', 'type' => 'double', 'default' => '99999')  // Check if default gets replaced
-            ),
-            array(
-                3,
-                'target' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '255'),
-                'temp' => array ('name' => 'foobar', 'type' => 'double', 'default' => '99999')  // Check if default gets dropped
-            ),
-            array(
-                4,
-                'target' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '255', 'required' => true, 'default' => 'sweet'),
-                'temp' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '1500',)      // Check varchar shortening
-            ),
-            array(
-                5,
-                'target' => array ('name' => 'foobar', 'type' => 'longtext', 'required' => true),
-                'temp' => array ('name' => 'foobar', 'type' => 'text', 'default' => 'dextrose') // Check clob(65k) to clob(2M or so) conversion
-            ),
-            array(
-                6,
-                'target' => array ('name' => 'foobar', 'type' => 'double', 'required' => true),
-                'temp' => array ('name' => 'foobar', 'type' => 'int', 'default' => 0)           // Check int to double change
-            ),
-        );
+        yield 'type conversion' => [
+            'target' => [
+                'name' => 'foobar',
+                'type' => 'varchar',
+                'len' => 255,
+                'required' => true,
+                'default' => 'sugar',
+            ],
+            'temp' => [
+                'name' => 'foobar',
+                'type' => 'int',
+            ],
+        ];
+
+        yield 'modify default' => [
+            'target' => [
+                'name' => 'foobar',
+                'type' => 'varchar',
+                'len' => 255,
+                'default' => 'kilroy',
+            ],
+            'temp' => [
+                'name' => 'foobar',
+                'type' => 'double',
+                'default' => '99999',
+            ],
+        ];
+
+        yield 'drop default' => [
+            'target' => [
+                'name' => 'foobar',
+                'type' => 'varchar',
+                'len' => 255,
+            ],
+            'temp' => [
+                'name' => 'foobar',
+                'type' => 'double',
+                'default' => '99999',
+            ],
+        ];
+
+        // cannot reliably shrink columns in Oracle
+        if (!DBManagerFactory::getInstance() instanceof OracleManager) {
+            yield 'varchar shortening' => [
+                'target' => [
+                    'name' => 'foobar',
+                    'type' => 'varchar',
+                    'len' => 255,
+                    'required' => true,
+                    'default' => 'sweet',
+                ],
+                'temp' => [
+                    'name' => 'foobar',
+                    'type' => 'varchar',
+                    'len' => 1500,
+                ],
+            ];
+            yield 'clob(65K) to clob(2M) conversion' => [
+                'target' => [
+                    'name' => 'foobar',
+                    'type' => 'longtext',
+                    'required' => true,
+                ],
+                'temp' => [
+                    'name' => 'foobar',
+                    'type' => 'text',
+                    'default' => 'dextrose',
+                ],
+            ];
+        }
+
+        yield 'int-to-double' => [
+            'target' => [
+                'name' => 'foobar',
+                'type' => 'double',
+                'required' => true,
+            ],
+            'temp' => [
+                'name' => 'foobar',
+                'type' => 'int',
+                'default' => 0,
+            ],
+        ];
     }
-
-
 
     /**
      * @dataProvider alterColumnDataProvider
-     * @param  $i
-     * @param  $target
-     * @param  $temp
-     * @return void
+     * @param mixed[] $target
+     * @param mixed[] $temp
      */
-    public function testAlterColumn($i, $target, $temp)
+    public function testAlterColumn(array $target, array $temp)
     {
-        if ($this->_db instanceof OracleManager && ($i == 4 || $i == 5)) {
-            $this->markTestSkipped("Cannot reliably shrink columns in Oracle");
-        }
-
         $foo_col = array ('name' => 'foo', 'type' => 'varchar', 'len' => '255'); // Common column between tables
 
-        $tablebase = 'testac_'. mt_rand() . '_';
+        $tablebase = 'alter_column_';
 
-        $t1 = $tablebase . $i .'A';
-        $t2 = $tablebase . $i .'B';
+        $t1 = $tablebase . 'A';
+        $t2 = $tablebase . 'B';
         $this->createTableParams(  $t1,
                                         array('foo' => $foo_col, 'foobar' => $target),
                                         array());
@@ -1255,9 +1264,35 @@ class DBManagerTest extends TestCase
         $this->assertEquals('match', $res['msg'],
                             "testAlterColumn table columns don't match while they should for table $t1 and $t2: "
                             . print_r($res,true) );
+    }
 
-        $this->dropTableName($t1);
-        $this->dropTableName($t2);
+    public function testAlterColumnWithIndex()
+    {
+        $this->createTableParams('alter_column_with_index', [
+            'name' => [
+                'name' => 'name',
+                'type' => 'varchar',
+                'len' => 16,
+            ],
+        ], [
+            [
+                'type' => 'index',
+                'name' => 'idx_alt_col_idx_name',
+                'fields' => ['name'],
+            ],
+        ]);
+
+        $columns = $this->_db->get_columns('alter_column_with_index');
+        $this->assertEquals(16, $columns['name']['len']);
+
+        $this->_db->alterColumn('alter_column_with_index', [
+            'name' => 'name',
+            'type' => 'varchar',
+            'len' => 20,
+        ]);
+
+        $columns = $this->_db->get_columns('alter_column_with_index');
+        $this->assertEquals(20, $columns['name']['len']);
     }
 
     public function testOracleAlterVarchar2ToNumber()
@@ -1457,8 +1492,6 @@ SQL;
             );
 
         $this->assertTrue($this->_db->tableExists($tablename));
-
-        $this->dropTableName($tablename);
     }
 
     public function testVersion()
@@ -1483,8 +1516,6 @@ SQL;
             );
 
         $this->assertTrue(in_array($tablename,$this->_db->getTablesArray()));
-
-        $this->dropTableName($tablename);
     }
 
     public function providerCompareVardefs()
@@ -1962,46 +1993,34 @@ SQL;
 
     public function testTextSizeHandling()
     {
-        $tablename = 'testTextSize';// . mt_rand();
-        $fielddefs = array(
-                        'id' =>
-                            array (
-                            'name' => 'id',
-                            'required'=>true,
-                            'type' => 'id',
-                            ),
-                        'test' => array (
-                            'name' => 'test',
-                            'type' => 'longtext',
-                            //'len' => '255',
-                            ),
-                        'dummy' => array (
-                            'name' => 'dummy',
-                            'type' => 'longtext',
-                            //'len' => '255',
-                            ),
-                        );
+        $tablename = 'testTextSize';
+        $fielddefs = [
+            'id' => [
+                'name' => 'id',
+                'required' => true,
+                'type' => 'id',
+            ],
+            'test' => [
+                'name' => 'test',
+                'type' => 'longtext',
+            ],
+            'dummy' => [
+                'name' => 'dummy',
+                'type' => 'longtext',
+            ],
+        ];
 
         $this->createTableParams($tablename, $fielddefs, array());
-        $basestr = '0123456789abcdefghijklmnopqrstuvwxyz';
-        $str = $basestr;
-        while(strlen($str) < 159900)
-        {
-            $str .= $basestr;
-        }
 
-        for($i = 0; $i < 50; $i++)
-        {
-            $str .= $basestr;
-            $size = strlen($str);
-            $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str));
+        $str = str_repeat('x', 131072);
 
-            $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
-            $strresult = $this->_db->getOne($select);
+        $size = strlen($str);
+        $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str));
 
-			$this->assertNotEmpty($strresult, "Failed to read data just written to temp table");
-            $this->assertEquals(0, mb_strpos($str, $strresult), "String returned from temp table did not match data just written");
-        }
+        $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
+        $strresult = $this->_db->getOne($select);
+
+        $this->assertEquals(0, mb_strpos($str, $strresult), "String returned from temp table did not match data just written");
     }
 
     public function testGetIndicesContainsPrimary()
@@ -3574,20 +3593,15 @@ SQL;
     public function testNumberOfColumns()
     {
         $tablename = 'test' . date("YmdHis");
-        $this->_db->createTableParams($tablename,
-            array(
-                'foo' => array (
-                    'name' => 'foo',
-                    'type' => 'varchar',
-                    'len' => '255',
-                ),
-            ),
-            array()
-        );
+        $this->createTableParams($tablename, [
+            'foo' => [
+                'name' => 'foo',
+                'type' => 'varchar',
+                'len' => 255,
+            ],
+        ], []);
 
         $this->assertEquals($this->_db->number_of_columns($tablename),1);
-
-        $this->_db->dropTableName($tablename);
     }
 
     public function testGetColumns()

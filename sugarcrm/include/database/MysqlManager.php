@@ -605,9 +605,9 @@ WHERE TABLE_SCHEMA = ?
 			return "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}";
 	}
 
-	/**
-	 * @see DBManager::changeColumnSQL()
-	 */
+    /**
+     * {@inheritDoc}
+     */
 	protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
 	{
 		$columns = array();

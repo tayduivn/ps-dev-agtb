@@ -433,8 +433,7 @@ EOSQL;
     /**
      * Override method to add support for detecting and dropping fulltext indices.
      *
-     * @see DBManager::changeColumnSQL()
-     * @see MssqlHelper::changeColumnSQL()
+     * {@inheritDoc}
      */
     protected function changeColumnSQL($tablename,$fieldDefs, $action, $ignoreRequired = false)
     {

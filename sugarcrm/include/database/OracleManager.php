@@ -1136,17 +1136,16 @@ WHERE OWNER = ?
         return '';
 	}
 
-	/**
-     * @see DBManager::changeColumnSQL()
-     *
-     * Oracle's ALTER TABLE syntax is a bit different from the other rdbmss
+    /**
+     * {@inheritDoc}
      */
     protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
     {
         $tablename = strtoupper($tablename);
         $action = strtoupper($action);
 
-        $columns = "";
+        $pre = $post = [];
+
         if ($this->isFieldArray($fieldDefs)) {
             /**
              *jc: if we are dropping columns we do not need the
@@ -1168,6 +1167,15 @@ WHERE OWNER = ?
         } else {
             $columns = $this->changeOneColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
 
+            if ($action == 'MODIFY') {
+                $indices = $this->getColumnFunctionalIndices($tablename, $fieldDefs['name']);
+
+                foreach ($indices as $index) {
+                    $pre[]  = $this->add_drop_constraint($tablename, $index, true);
+                    $post[] = $this->add_drop_constraint($tablename, $index);
+                }
+            }
+
             if ($action == 'DROP') {
                 $action = 'DROP COLUMN';
             }
@@ -1177,9 +1185,32 @@ WHERE OWNER = ?
             return $columns;
         }
 
-        return ($columns == '' || empty($columns))
-            ? ""
-            : "ALTER TABLE $tablename $action $columns";
+        if (!$columns) {
+            return '';
+        }
+
+        $statements = array_merge($pre, ["ALTER TABLE $tablename $action $columns"], $post);
+
+        if (count($statements) === 1) {
+            return $statements[0];
+        }
+
+        return $statements;
+    }
+
+    /**
+     * Returns definitions of functional indices which include the given column
+     *
+     * @param string $table Table name
+     * @param string $column Column name
+     *
+     * @return mixed[][]
+     */
+    public function getColumnFunctionalIndices(string $table, string $column) : array
+    {
+        return array_filter($this->get_indices($table), function (array $index) use ($column) {
+            return in_array(sprintf('upper(%s)', $column), $index['fields'], true);
+        });
     }
 
 	/**

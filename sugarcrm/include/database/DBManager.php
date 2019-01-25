@@ -1707,6 +1707,8 @@ abstract class DBManager implements LoggerAwareInterface
 	 */
 	public function dropTableName($name)
 	{
+        unset(self::$table_descriptions[$name]);
+
 		$sql = $this->dropTableNameSQL($name);
 		return $this->query($sql,true,"Error dropping table $name:");
 	}
@@ -4534,7 +4536,7 @@ abstract class DBManager implements LoggerAwareInterface
 	 * @param array  $fieldDefs
 	 * @param string $action
 	 * @param bool   $ignoreRequired Optional, true if we should ignor this being a required field
-	 * @return string|array
+     * @return string|string[]
 	 */
 	abstract protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false);
 

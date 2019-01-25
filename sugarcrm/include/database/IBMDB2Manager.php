@@ -997,9 +997,9 @@ public function convert($string, $type, array $additional_parameters = array())
 		return $sql;
 	}
 
-	/**+
-	 * @see DBManager::changeColumnSQL()
-	 */
+    /**
+     * {@inheritDoc}
+     */
 	protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
 	{
 		$action = strtoupper($action);
