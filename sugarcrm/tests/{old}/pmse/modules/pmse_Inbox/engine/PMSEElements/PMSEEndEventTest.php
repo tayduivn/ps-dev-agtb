@@ -27,7 +27,7 @@ class PMSEEndEventTest extends TestCase
     public function testRunCloseCase()
     {
         $this->endEvent = $this->getMockBuilder('PMSEEndEvent')
-            ->setMethods(array('countNumberOpenThreads'))
+            ->setMethods(array('hasMultipleOpenThreads'))
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -35,11 +35,9 @@ class PMSEEndEventTest extends TestCase
             ->setMethods(array('closeThreadByCaseIndex', 'closeCase'))
             ->getMock();
 
-        $count = 1;
-       
         $this->endEvent->expects($this->once())
-            ->method('countNumberOpenThreads')
-            ->will($this->returnValue($count));
+            ->method('hasMultipleOpenThreads')
+            ->will($this->returnValue(false));
         
         $caseFlowHandlerMock->expects($this->once())
             ->method('closeCase');
@@ -64,7 +62,7 @@ class PMSEEndEventTest extends TestCase
     public function testRunCloseThread()
     {
         $this->endEvent = $this->getMockBuilder('PMSEEndEvent')
-            ->setMethods(array('countNumberOpenThreads'))
+            ->setMethods(array('hasMultipleOpenThreads'))
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -72,11 +70,9 @@ class PMSEEndEventTest extends TestCase
             ->setMethods(array('closeThreadByCaseIndex', 'closeCase'))
             ->getMock();
 
-        $count = 2;
-       
         $this->endEvent->expects($this->once())
-            ->method('countNumberOpenThreads')
-            ->will($this->returnValue($count));
+            ->method('hasMultipleOpenThreads')
+            ->will($this->returnValue(true));
         
         $caseFlowHandlerMock->expects($this->once())
             ->method('closeThreadByCaseIndex');

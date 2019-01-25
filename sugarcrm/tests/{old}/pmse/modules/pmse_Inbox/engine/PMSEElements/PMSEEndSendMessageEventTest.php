@@ -26,13 +26,13 @@ class PMSEEndSendMessageEventTest extends TestCase
     public function testRun()
     {
         $this->endSendMessageEvent = $this->getMockBuilder('PMSEEndSendMessageEvent')
-            ->setMethods(array('prepareResponse', 'closeCase', 'countNumberOpenThreads'))
+            ->setMethods(array('prepareResponse', 'closeCase', 'hasMultipleOpenThreads'))
             ->disableOriginalConstructor()
             ->getMock();
         
         $this->endSendMessageEvent->expects($this->once())
-            ->method('countNumberOpenThreads')
-            ->will($this->returnValue(2));
+            ->method('hasMultipleOpenThreads')
+            ->will($this->returnValue(true));
 
         $emailHandler = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
