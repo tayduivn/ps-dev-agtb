@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
 
 class SugarFoldersTest extends TestCase
@@ -18,6 +19,7 @@ class SugarFoldersTest extends TestCase
 	var $additionalFolders = null;
     var $_user = null;
     var $emails = null;
+    private $toDelete = [];
 
 
 	public function setUp()
@@ -48,6 +50,8 @@ class SugarFoldersTest extends TestCase
             $GLOBALS['db']->query("DELETE FROM emails WHERE id='$emailID'");
 
         unset($this->folder);
+
+        $this->cleanupCreatedRecords();
 
         SugarTestHelper::tearDown();
     }
@@ -309,6 +313,35 @@ class SugarFoldersTest extends TestCase
     }
     //END SUGARCRM flav=ent ONLY
 
+    public function testDeleteChildrenCascadeCountQueries()
+    {
+        $id = create_guid();
+        $guid = create_guid();
+        $sf = new SugarFolder();
+        $result = $sf->deleteChildrenCascade($id);
+        $this->assertTrue($result);
+
+        $sf->db->getConnection()->insert('inbound_email', [
+            'id' => $guid,
+            'groupfolder_id' => $id,
+            'deleted' => 0,
+        ]);
+        $this->toDelete['inbound_email'] = ['id' => $guid];
+        $result = $sf->deleteChildrenCascade($id);
+        $this->assertFalse($result);
+        $this->cleanupCreatedRecords();
+
+        $sf->db->getConnection()->insert('folders_rel', [
+            'id' => $guid,
+            'polymorphic_module' => 'Emails',
+            'polymorphic_id' => 'foo',
+            'folder_id' => $id,
+        ]);
+        $this->toDelete['folders_rel'] = ['id' => $guid];
+        $result = $sf->deleteChildrenCascade($id);
+        $this->assertFalse($result);
+    }
+
     function _createEmailObject($additionalParams = array() )
     {
         global $timedate;
@@ -341,5 +374,16 @@ class SugarFoldersTest extends TestCase
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$folder_id}'");
         $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$folder_id}'");
+    }
+
+    private function cleanupCreatedRecords()
+    {
+        /** @var Connection $conn */
+        $conn = $GLOBALS['db']->getConnection();
+        // delete previously created records
+        foreach ($this->toDelete as $table => $fields) {
+            $conn->delete($table, $fields);
+            unset($this->toDelete[$table]);
+        }
     }
 }

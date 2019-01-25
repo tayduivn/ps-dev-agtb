@@ -924,33 +924,34 @@ ENDW;
 		return false;
 	}
 
-	/**
-	 * Deletes all children in a cascade
-	 * @param string $id ID of parent
-	 * @return bool True on success
-	 */
-	function deleteChildrenCascade($id) {
-		global $current_user;
-
+    /**
+     * Deletes all children in a cascade
+     * @param string $id ID of parent
+     * @return bool True on success
+     */
+    public function deleteChildrenCascade($id)
+    {
+        global $current_user;
         $conn = $this->db->getConnection();
-		$canContinue = true;
-        $count = $conn->executeQuery(
-            'SELECT count(*) FROM inbound_email WHERE groupfolder_id = ? and deleted = 0',
-            [$id]
-        )->fetchColumn();
-        if ($count > 0) {
-			return false;
-		} // if
-
-        $count = $conn->executeQuery(
-            "SELECT count(*) c FROM folders_rel where polymorphic_module = 'Emails' and folder_id = ? and deleted = 0",
-            [$id]
-        )->fetchColumn();
-        if ($count > 0) {
-			return false;
-		} // if
-
+        $platform = $conn->getDatabasePlatform();
+        $query = $platform->modifyLimitQuery(
+            "SELECT NULL FROM inbound_email WHERE groupfolder_id = ? and deleted = 0",
+            1
+        );
+        $result = $conn->executeQuery($query, [$id])->fetchColumn();
+        if ($result !== false) {
+            return false;
+        } // if
+        $query = $platform->modifyLimitQuery(
+            "SELECT NULL FROM folders_rel where polymorphic_module = ? and folder_id = ? and deleted = 0",
+            1
+        );
+        $result = $conn->executeQuery($query, ['Emails', $id])->fetchColumn();
+        if ($result !== false) {
+            return false;
+        } // if
         $doesFolderHaveChild = $conn->executeQuery('SELECT has_child FROM folders WHERE id = ?', [$id])->fetchColumn();
+        $canContinue = true;
         if ($doesFolderHaveChild == 1) {
             $subFolderStmt = $conn->executeQuery(
                 'SELECT id FROM folders WHERE parent_folder = ?',
@@ -960,8 +961,7 @@ ENDW;
                 $canContinue = $this->deleteChildrenCascade($subFolder['id']);
             }
         }
-
-		if ($canContinue) {
+        if ($canContinue) {
             // flag deleted
             $update = $conn->createQueryBuilder()
                 ->update('folders')
@@ -977,9 +977,10 @@ ENDW;
             $conn->update('folders_rel', ['deleted' => 1], ['folder_id' => $id]);
             // delete subscriptions
             $conn->delete('folders_subscriptions', ['folder_id' => $id]);
-		}
-		return $canContinue;
-	}
+        }
+        
+        return $canContinue;
+    }
 
     /**
      * Return the default mapping values.
