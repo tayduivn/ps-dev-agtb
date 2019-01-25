@@ -37,41 +37,6 @@ class IBMDB2ManagerTest extends TestCase
     }
 
     /**
-     * Testing that FTS index dropped if dropTable had been called for its table
-     * @ticket CRYS-463
-     */
-    public function testFTSIndexDropWhileTableDropping()
-    {
-        $table = create_guid();
-
-        $indexOk = array(
-            'name' => create_guid(),
-            'type' => 'fulltext',
-            'fields' => array('description'),
-            'message_locale' => 'EN_US',
-        );
-        $indexBad = array(
-            'name' => create_guid(),
-            'type' => 'index',
-            'fields' => array('id'),
-        );
-
-        $account = $this->createMock('Account');
-        $account->expects($this->any())->method('getTableName')->will($this->returnValue($table));
-
-        $db = $this->createPartialMock(get_class($this->_db), array('get_indices', 'dropIndexes', 'dropTableName'));
-        $db->expects($this->once())->method('get_indices')->with($this->equalTo($table))->will($this->returnValue(array(
-            $indexOk['name'] => $indexOk,
-            $indexBad['name'] => $indexBad,
-        )));
-        $db->expects($this->once())->method('dropIndexes')->with($this->equalTo($table), $this->equalTo(array($indexOk)), $this->equalTo(true));
-        // stop parent::dropTable call
-        $db->expects($this->any())->method('dropTableName');
-
-        $db->dropTable($account);
-    }
-
-    /**
      * Testing that get_indices selects FTS indices too
      * @ticket CRYS-463
      */
@@ -79,13 +44,10 @@ class IBMDB2ManagerTest extends TestCase
     {
         $db = $this->createPartialMock('IBMDB2Manager', array(
             'populate_index_data',
-            'populate_fulltext_index_data',
         ));
 
         $db->expects($this->once())
             ->method('populate_index_data');
-        $db->expects($this->once())
-            ->method('populate_fulltext_index_data');
 
         $db->get_indices('mytable');
     }

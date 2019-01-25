@@ -145,21 +145,6 @@ EOQ;
 
 }
 
-if ($db->supports('fulltext')) {
-    if($db->full_text_indexing_installed()){
-        $FTSData = $mod_strings['LBL_FTS_INSTALLED'];
-    }else{
-        $FTSData = "<span class='stop'><b>{$mod_strings['LBL_FTS_INSTALLED_ERR1']}</b>  <br>{$mod_strings['LBL_FTS_INSTALLED_ERR2']}</span>";
-    }
-$out .=<<<EOQ
-            <tr>
-                <td></td>
-                <td><b>{$mod_strings['LBL_FTS']} </b></td>
-                <td>{$FTSData}</td>
-            </tr>
-EOQ;
-}
-
 if(isset($_SESSION['install_type'])  && !empty($_SESSION['install_type'])  && $_SESSION['install_type']=='custom'){
 $out .=<<<EOQ
 

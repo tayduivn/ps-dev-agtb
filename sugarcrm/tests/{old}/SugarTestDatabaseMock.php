@@ -272,8 +272,6 @@ class SugarTestDatabaseMock extends DBManager
     public function getDbInfo() {}
     public function userExists($username) { return true; }
     public function createDbUser($database_name, $host_name, $user, $password) {}
-    public function full_text_indexing_installed() { return true; }
-    public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array()) {}
     public function installConfig() {}
     public function getFromDummyTable() {}
     public function getGuidSQL() {}

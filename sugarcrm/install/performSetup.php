@@ -206,11 +206,6 @@ Activity::disable();
 // Disable processes for the time being
 Registry\Registry::getInstance()->set('setup:disable_processes', true);
 //END SUGARCRM flav=ent ONLY
-//If this is MIcrosoft install and FTS is enabled, then fire index wake up method to prime the indexing service.
-if ($db->supports('fulltext') && $db->full_text_indexing_installed()) {
-    installLog("Enabling fulltext indexing");
-    $db->full_text_indexing_setup();
-}
 
 /**
  * loop through all the Beans and create their tables

@@ -3518,15 +3518,6 @@ function upgradeModulesForTeam() {
 		}
 	}
 
-	function check_FTS(){
-		//check to see if FTS is installed
-		global $sugar_config;
-		if(is_callable(array($GLOBALS['db'], "supports")) && $GLOBALS['db']->supports('fulltext') && $GLOBALS['db']->full_text_indexing_installed()) {
-            return true;
-		}
-		return false;
-	}
-
     /**
      * convertImageToText
      * @deprecated

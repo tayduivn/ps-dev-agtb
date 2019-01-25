@@ -234,7 +234,6 @@ abstract class DBManager implements LoggerAwareInterface
 	 * select_rows		Can report row count for SELECT
 	 * 					implement getRowCount()
 	 * case_sensitive	Supports case-sensitive text columns
-	 * fulltext			Supports fulltext search indexes
 	 * inline_keys		Supports defining keys together with the table
 	 * auto_increment_sequence Autoincrement support implemented as sequence
 	 * limit_subquery   Supports LIMIT clauses in subqueries
@@ -1338,10 +1337,6 @@ abstract class DBManager implements LoggerAwareInterface
 
             //Don't attempt to fix the same index twice in one pass;
             if (isset($correctedIndexes[$name]))
-                continue;
-
-            //database helpers do not know how to handle full text indices
-            if ($value['type']=='fulltext')
                 continue;
 
             if ( in_array($value['type'],array('alternate_key','foreign')) )
@@ -3497,15 +3492,6 @@ abstract class DBManager implements LoggerAwareInterface
     }
 
 	/**
-	 * Setup FT indexing
-	 * @abstract
-	 */
-	public function full_text_indexing_setup()
-	{
-		// Most DBs have nothing to setup, so provide default empty function
-	}
-
-	/**
 	 * Quotes a string for storing in the database
 	 * @deprecated
 	 * Return value will be not surrounded by quotes
@@ -3835,50 +3821,6 @@ abstract class DBManager implements LoggerAwareInterface
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Parse fulltext search query with mysql syntax:
-	 *  terms quoted by ""
-	 *  + means the term must be included
-	 *  - means the term must be excluded
-	 *  * or % at the end means wildcard
-	 * @param string $query
-	 * @return array of 3 elements - query terms, mandatory terms and excluded terms
-	 */
-	public function parseFulltextQuery($query)
-	{
-		/* split on space or comma, double quotes with \ for escape */
-		if(strpbrk($query, " ,")) {
-			// ("([^"]*?)"|[^" ,]+)((, )+)?
-			// '/([^" ,]+|".*?[^\\\\]")(,|\s)\s*/'
-			if(!preg_match_all('/("([^"]*?)"|[^"\s,]+)((,\s)+)?/', $query, $m)) {
-				return false;
-			}
-			$qterms = $m[1];
-		} else {
-			$qterms = array($query);
-		}
-		$terms = $must_terms = $not_terms = array();
-		foreach($qterms as $item) {
-			if($item[0] == '"') {
-				$item = trim($item, '"');
-			}
-			if($item[0] == '+') {
-                if (strlen($item) > 1) {
-                    $must_terms[] = substr($item, 1);
-                }
-                continue;
-			}
-			if($item[0] == '-') {
-                if (strlen($item) > 1) {
-				    $not_terms[] = substr($item, 1);
-                }
-                continue;
-			}
-			$terms[] = $item;
-		}
-		return array($terms, $must_terms, $not_terms);
 	}
 
     // Methods to check respective queries
@@ -4625,23 +4567,6 @@ abstract class DBManager implements LoggerAwareInterface
 	 * @param string $password
 	 */
 	abstract public function createDbUser($database_name, $host_name, $user, $password);
-
-	/**
-	 * Check if the database supports fulltext indexing
-	 * Note that database driver can be capable of supporting FT (see supports('fulltext))
-	 * but particular instance can still have it disabled
-	 * @return bool
-	 */
-	abstract public function full_text_indexing_installed();
-
-	/**
-	 * Generate fulltext query from set of terms
-	 * @param string $field Field to search against
-	 * @param array $terms Search terms that may be or not be in the result
-	 * @param array $must_terms Search terms that have to be in the result
-	 * @param array $exclude_terms Search terms that have to be not in the result
-	 */
-	abstract public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array());
 
 	/**
 	 * Get install configuration for this DB

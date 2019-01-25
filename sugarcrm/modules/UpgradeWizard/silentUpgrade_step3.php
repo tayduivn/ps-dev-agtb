@@ -266,10 +266,6 @@ if($ce_to_pro_ent) {
 	logThis(" Start modules/Administration/upgradeTeams.php", $path);
         include('modules/Administration/upgradeTeams.php');
         logThis(" Finish modules/Administration/upgradeTeams.php", $path);
-
-    if(check_FTS()){
-    	$db->full_text_indexing_setup();
-    }
 }
 
 // we need to add templates when either conversion from CE to Pro+, or upgrade of Pro+ flavors from older versions

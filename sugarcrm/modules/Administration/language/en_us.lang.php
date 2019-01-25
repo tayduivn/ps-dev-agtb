@@ -626,7 +626,6 @@ $mod_strings = array (
 	'LBL_REBUILD_EXPRESSIONS_DESC' => 'Rebuilds Sugar Logic functions cache',
 	'LBL_REBUILD_EXPRESSIONS_TITLE' => 'Rebuild Sugar Logic Functions',
 //END SUGARCRM flav=een
-    'LBL_REBUILD_FULL_TEXT_ABORT' => 'Unauthorized Access. Aborting.',
     'LBL_REBUILD_HTACCESS_DESC'=>'Rebuilds .htaccess to limit access to certain files directly',
     'LBL_REBUILD_HTACCESS'=>'Rebuild .htaccess File',
     'LBL_REBUILD_WEBCONFIG_DESC'=>'Rebuilds web.config to limit access to certain files directly',
@@ -975,8 +974,6 @@ expressions in the regex. Regular expressions should not include any delimiters.
 	'LBL_ALL_MODULES'=>'All Modules',
     'LBL_CAMPAIGN_CONFIG_TITLE'=>'Campaign Email Settings',
 	'LBL_CAMPAIGN_CONFIG_DESC'=>'Configure email settings for campaigns',
-    'LBL_REPAIR_ORACLE_FULLTEXT'             => 'Rebuild fulltext indices',
-	'LBL_REPAIR_ORACLE_FULLTEXT_DESC'        => 'Triggers a rebuild of fulltext indices. Oracle 9i owners should run this frequently.',
 	'LBL_REPAIR'=>'Repair',
     'LBL_QR_CBOX_DATAB'=> 'Repair Database',
     'LBL_QR_CBOX_CLEARTPL'=> 'Clear .tpl Files',
