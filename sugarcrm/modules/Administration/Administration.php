@@ -178,56 +178,48 @@ class Administration extends SugarBean {
     /**
      * Save a setting
      *
-     * @param string $category      Category for the config value
-     * @param string $key           Key for the config value
-     * @param string|array $value   Value of the config param
-     * @param string $platform      Which platform this belongs to (API use only, If platform is empty it will not be returned in the API calls)
-     * @return int                  Number of records Returned
+     * @param string $category Category for the config value
+     * @param string $key Key for the config value
+     * @param string|array $value Value of the config param
+     * @param string $platform Which platform this belongs to (API use only, If platform is empty it will not be returned in the API calls)
+     * @return int Number of records Returned
      */
-    public function saveSetting($category, $key, $value, $platform = '') {
+    public function saveSetting($category, $key, $value, $platform = '')
+    {
         // platform is always lower case
         $platform = strtolower($platform);
         $conn = $this->db->getConnection();
-
         $builder = $conn->createQueryBuilder();
         $query = $builder
-            ->select('COUNT(*) AS the_count')
+            ->select('NULL')
             ->from($this->table_name)
-            ->where($this->getConfigWhere($builder, $category, $key, $platform));
-
-        $stmt = $query->execute();
-
-        $row = $stmt->fetch();
-        $row_count = $row['the_count'];
-
+            ->where($this->getConfigWhere($builder, $category, $key, $platform))
+            ->setMaxResults(1);
+        $result = $query->execute()->fetchColumn();
         if (is_array($value)) {
             $value = json_encode($value);
         }
-
-        if($category."_".$key == 'ldap_admin_password' || $category."_".$key == 'proxy_password')
+        if ($category . "_" . $key == 'ldap_admin_password' || $category . "_" . $key == 'proxy_password') {
             $value = $this->encrpyt_before_save($value);
-
+        }
         $builder = $conn->createQueryBuilder();
-        if ($row_count == 0) {
+        if ($result === false) {
             $query = $builder
                 ->insert($this->table_name)
-                ->values(array(
+                ->values([
                     'category' => $builder->createPositionalParameter($category),
                     'name' => $builder->createPositionalParameter($key),
                     'platform' => $builder->createPositionalParameter($platform),
                     'value' => $builder->createPositionalParameter($value),
-                ));
-        }
-        else{
+                ]);
+        } else {
             $query = $builder
                 ->update($this->table_name)
                 ->set('value', $builder->createPositionalParameter($value))
                 ->where($this->getConfigWhere($builder, $category, $key, $platform));
         }
         $result = $query->execute();
-
         sugar_cache_clear('admin_settings_cache');
-
         // check to see if category is a module
         if (!empty($platform)) {
             // we have an api call so lets clear out the cache for the module + platform
@@ -235,13 +227,12 @@ class Administration extends SugarBean {
             // FIXME TY-839 'portal' should be the platform, not category
             if (in_array($category, $moduleList) || $category == 'portal') {
                 $cache_key = "ModuleConfig-" . $category;
-                if($platform != "base")  {
+                if ($platform != "base") {
                     $cache_key .= $platform;
                 }
                 sugar_cache_clear($cache_key);
             }
         }
-
         return $result;
     }
 
