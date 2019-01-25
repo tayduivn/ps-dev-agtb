@@ -331,13 +331,17 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
                 && !empty($_SESSION['oauth2']['token_check_time'])
                 && $_SESSION['oauth2']['token_check_time'] < time()) {
                 // Refresh token needs to be verified
-                global $db;
-
-                $row = $db->fetchOne("SELECT COUNT(id) AS token_count FROM oauth_tokens WHERE id = '".$db->quote($_SESSION['oauth2']['refresh_token'])."'");
-                if (empty($row['token_count'])) {
-                    // No, or 0 token_count, the refresh token is invalid
-                    return NULL;
+                $result = DBManagerFactory::getInstance()->getConnection()
+                    ->executeQuery(
+                        "SELECT NULL FROM oauth_tokens WHERE id = ?",
+                        [$_SESSION['oauth2']['refresh_token']]
+                    )
+                    ->fetchColumn();
+                if ($result === false) {
+                    // the refresh token is invalid
+                    return null;
                 }
+                
                 // Check came out okay, update the token check time
                 $_SESSION['oauth2']['token_check_time'] = time() + self::TOKEN_CHECK_TIME;
             }
