@@ -9,6 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Doctrine\DBAL\DBALException;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 require_once("vendor/ytree/Tree.php");
@@ -117,14 +119,24 @@ class SugarFolder {
         );
 	}
 
-	function checkEmailExistForFolder($id) {
-        $count = $this->db->getConnection()->executeQuery(
-            "SELECT COUNT(*) FROM folders_rel"
-            . " WHERE polymorphic_module = 'Emails' AND polymorphic_id = ? AND folder_id = ?",
-            [$id, $this->id]
-        )->fetchColumn();
-        return $count > 0;
-	}
+    /**
+     * @param string $id
+     * @return bool
+     * @throws DBALException
+     */
+    public function checkEmailExistForFolder($id)
+    {
+        $connection = $this->db->getConnection();
+        $platform = $connection->getDatabasePlatform();
+        $query = $platform->modifyLimitQuery(
+            "SELECT NULL FROM folders_rel"
+            . " WHERE polymorphic_module = ? AND polymorphic_id = ? AND folder_id = ?",
+            1
+        );
+        $result = $connection->executeQuery($query, ['Emails', $id, $this->id])->fetchColumn();
+        return $result !== false;
+    }
+
 	/**
 	 * Moves beans from one folder to another folder
 	 * @param string fromFolder GUID of source folder
