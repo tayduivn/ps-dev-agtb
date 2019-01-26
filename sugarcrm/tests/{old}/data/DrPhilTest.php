@@ -180,6 +180,10 @@ class DrPhilTest extends TestCase
                 );
             }
         }
+
+        foreach ($bean->getIndices() as $key => $definition) {
+            $this->checkIndexDefinition($definition, $moduleName, $key);
+        }
     }
 
     /**
@@ -205,6 +209,12 @@ class DrPhilTest extends TestCase
                     SugarTestReflection::callProtectedMethod($db, 'isNullable', array($def)),
                     'Field for primary key shouldn\'t be nullable'
                 );
+            }
+        }
+
+        if (isset($metadata['indices'])) {
+            foreach ($metadata['indices'] as $key => $definition) {
+                $this->checkIndexDefinition($definition, $table, $key);
             }
         }
     }
@@ -287,6 +297,15 @@ class DrPhilTest extends TestCase
                 $key
             ));
         }
+    }
+
+    private function checkIndexDefinition(array $definition, string $table, $key) : void
+    {
+        $this->assertArrayHasKey(
+            'name',
+            $definition,
+            sprintf('Definition for index #%s on %s is missing name', $key, $table)
+        );
     }
 
     /**

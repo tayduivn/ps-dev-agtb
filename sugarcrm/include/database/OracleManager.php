@@ -1569,7 +1569,7 @@ LEFT JOIN all_constraints c
         // constraints as indices
         case 'unique':
             if ($drop)
-                $sql = "ALTER TABLE {$table} DROP UNIQUE ({$fields})";
+                $sql = "ALTER TABLE {$table} DROP CONSTRAINT {$name}";
             else
                 $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE ({$fields})";
             break;
