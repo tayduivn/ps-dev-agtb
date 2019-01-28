@@ -116,7 +116,7 @@
         "ramsey/uuid": "3.8.0",
         "ruflin/elastica" : "6.0.1",
         "aws/aws-sdk-php": "3.55.3",
-        "sugarcrm/identity-provider": "1.4.2",
+        "sugarcrm/identity-provider": "1.5.0",
         "symfony/cache": "v3.4.16",
         "symfony/console": "v3.4.16",
         "symfony/framework-bundle": "v3.4.16",
