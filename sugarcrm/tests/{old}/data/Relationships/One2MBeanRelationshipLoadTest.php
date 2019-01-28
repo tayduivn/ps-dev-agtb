@@ -96,7 +96,7 @@ class One2MBeanRelationshipLoadTest extends TestCase
             $relId2 => ['id' => $relId2, 'opportunities__name' => 'Opportunity2'],
             $relId1 => ['id' => $relId1, 'opportunities__name' => 'Opportunity1'],
         ];
-        $this->assertEquals($expected, $opportunities['rows']);
+        $this->assertArraySubset($expected, $opportunities['rows']);
         $this->assertEquals(array_keys($expected), array_keys($opportunities['rows']));
     }
 

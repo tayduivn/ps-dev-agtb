@@ -1143,6 +1143,32 @@ class SugarBeanTest extends TestCase
             return $row['field_name'] === $field;
         });
     }
+
+    /**
+     * @covers ::fill_in_link_field
+     */
+    public function testFillInLinkField_SetOwnerId()
+    {
+        $account = SugarTestAccountUtilities::createAccount('', [
+            'assigned_user_id' => 'assigned_user_id1',
+        ]);
+        $contact = SugarTestContactUtilities::createContact();
+        $contact->load_relationship('accounts');
+        $contact->accounts->add($account);
+
+        $contact = BeanFactory::retrieveBean($contact->module_name, $contact->id, [
+            'use_cache' => false,
+            'disable_row_level_security' => true,
+        ]);
+        $fieldDef = $contact->getFieldDefinition('account_id');
+        $contact->fill_in_link_field('account_id', $fieldDef);
+        $this->assertEquals($account->id, $contact->account_id);
+        $this->assertEquals(
+            'assigned_user_id1',
+            $contact->account_id_owner,
+            'Expected related record owner id to be set along with the related record\'s field value'
+        );
+    }
 }
 
 class BeanMockTestObjectName extends SugarBean

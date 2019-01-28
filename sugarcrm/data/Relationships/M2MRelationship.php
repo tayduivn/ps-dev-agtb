@@ -568,6 +568,11 @@ class M2MRelationship extends SugarRelationship
             $query->select()->addField("$rel_table.$field");
         }
 
+        $ownerField = $relatedSeed->getOwnerField();
+        if ($ownerField) {
+            $query->select([[$ownerField, 'related_owner_id']]);
+        }
+
         $query->where()->equals("$rel_table.$knownKey", $link->getFocus()->id);
         $this->buildSugarQueryRoleWhere($query, $rel_table);
 

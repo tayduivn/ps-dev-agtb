@@ -5944,10 +5944,14 @@ class SugarBean
         if (!empty($relateFieldDef['link'])) {
             $link = $relateFieldDef['link'];
             if ($this->load_relationship($link)) {
-                $recordIds = $this->$link->get();
+                $rows = $this->$link->rows;
+                $recordIds = array_keys($rows);
                 $recordId = array_shift($recordIds);
                 if ($recordId) {
                     $this->$idName = $recordId;
+                    if (!empty($rows[$recordId]['related_owner_id'])) {
+                        $this->{$idName . '_owner'} = $rows[$recordId]['related_owner_id'];
+                    }
                 } else {
                     $this->$idName = '' ; // match up with null value in $this->populateFromRow()
                 }

@@ -27,8 +27,14 @@ class M2MRelationshipLoadTest extends TestCase
         SugarTestHelper::setUp('current_user');
         self::$contact = SugarTestContactUtilities::createContact();
         self::$opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        self::$opportunity->assigned_user_id = 'assigned_user_id1';
+        self::$opportunity->save();
         self::$opportunity2 = SugarTestOpportunityUtilities::createOpportunity();
+        self::$opportunity2->assigned_user_id = 'assigned_user_id1';
+        self::$opportunity2->save();
         self::$opportunity3 = SugarTestOpportunityUtilities::createOpportunity();
+        self::$opportunity3->assigned_user_id = 'assigned_user_id1';
+        self::$opportunity3->save();
 
         self::$opportunity->load_relationship('contacts');
         self::$opportunity2->load_relationship('contacts');
@@ -97,7 +103,7 @@ class M2MRelationshipLoadTest extends TestCase
             $relId1 => ['id' => $relId1, 'contact_role' => 'test1'],
         ];
         $opportunities = self::$contact->opportunities->query(['orderby' => 'contact_role DESC']);
-        $this->assertEquals(
+        $this->assertArraySubset(
             $expected,
             $opportunities['rows']
         );
@@ -129,6 +135,23 @@ class M2MRelationshipLoadTest extends TestCase
             ['limit' => -1, 'offset' => 0]
         );
         $this->assertCount(2, $opportunities['rows'], 'Limit = -1 means that no limit is set');
+    }
+
+    /**
+     * @covers ::getSugarQuery
+     */
+    public function testRelatedOwnerId()
+    {
+        $opportunities = self::$contact->opportunities->query(
+            ['limit' => 1, 'offset' => 0]
+        );
+        $relId = key($opportunities['rows']);
+
+        $this->assertEquals(
+            'assigned_user_id1',
+            $opportunities['rows'][$relId]['related_owner_id'],
+            'Expected related_owner_id to be added to the list of related fields in the select'
+        );
     }
 
     /**
