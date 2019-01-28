@@ -16,9 +16,10 @@ $dictionary['pmse_Business_Rules'] = array(
     'audited' => false,
     'activity_enabled' => true,
     'duplicate_merge' => true,
-    'unified_search' => true,
-    'full_text_search' => true,
-    'unified_search_default_enabled' => true,
+    // Will be uncommented when BR-6677 is merged
+    //'unified_search' => true,
+    //'full_text_search' => true,
+    //'unified_search_default_enabled' => true,
     'fields' => array(
         'name' => array(
             'name' => 'name',
