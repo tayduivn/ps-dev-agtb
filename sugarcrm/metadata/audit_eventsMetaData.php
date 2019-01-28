@@ -63,5 +63,12 @@ $dictionary['audit_events'] = array(
                 'date_created',
             ),
         ),
+        array(
+            'name' => 'idx_modulename',
+            'type' => 'index',
+            'fields' => array(
+                'module_name',
+            ),
+        ),
     ),
 );
