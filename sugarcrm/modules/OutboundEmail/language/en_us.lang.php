@@ -33,4 +33,5 @@ $mod_strings = array(
     'LBL_REPLY_TO_EMAIL_ADDRESSES' => 'Reply-To Email Addresses',
     'LBL_REPLY_TO_EMAIL_ADDRESS_ID' => 'Reply-To Email Address ID',
     'LBL_REPLY_TO_EMAIL_ADDRESS' => 'Reply-To Email Address',
+    'LBL_PRIMARY_TEAM' => 'Primary Team',
 );

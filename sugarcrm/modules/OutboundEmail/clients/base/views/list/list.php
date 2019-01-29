@@ -47,6 +47,7 @@ $viewdefs['OutboundEmail']['base']['view']['list'] = array(
                     'name' => 'team_name',
                     'enabled' => true,
                     'default' => true,
+                    'label' => 'LBL_PRIMARY_TEAM',
                 ),
             ),
         ),
