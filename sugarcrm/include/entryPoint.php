@@ -193,7 +193,6 @@ if (!isset ($_SERVER['REQUEST_URI'])) {
 
 $current_user = BeanFactory::newBean('Users');
 $current_entity = null;
-$system_config = Administration::getSettings();
 
     if (!$GLOBALS['sugar_config']['activity_streams_enabled']) {
         Activity::disable();

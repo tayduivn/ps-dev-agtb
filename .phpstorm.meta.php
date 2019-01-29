@@ -10,13 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
-
 /**
  * @see https://confluence.jetbrains.com/display/PhpStorm/PhpStorm+Advanced+Metadata
  */
 namespace PHPSTORM_META {
+    use PHPUnit\Framework\TestCase;
+    use Psr\Container\ContainerInterface;
+
     override(TestCase::createMock(0), map([
         '' => '@|PHPUnit_Framework_MockObject_MockObject',
     ]));

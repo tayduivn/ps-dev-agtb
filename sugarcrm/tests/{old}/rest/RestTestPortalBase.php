@@ -25,16 +25,14 @@ class RestTestPortalBase extends RestTestBase
     public function setUp()
     {
         // Setup the original settings
-        if (empty($GLOBALS['system_config']->settings)) {
-            $GLOBALS['system_config']->retrieveSettings();
+        $system_config = Administration::getSettings();
+
+        if (isset($system_config->settings['supportPortal_RegCreatedBy'])) {
+            $this->originalSetting['portaluserid'] = $system_config->settings['supportPortal_RegCreatedBy'];
         }
         
-        if (isset($GLOBALS['system_config']->settings['supportPortal_RegCreatedBy'])) {
-            $this->originalSetting['portaluserid'] = $GLOBALS['system_config']->settings['supportPortal_RegCreatedBy'];
-        }
-        
-        if (isset($GLOBALS['system_config']->settings['portal_on'])) {
-            $this->originalSetting['portalon'] = $GLOBALS['system_config']->settings['portal_on'];
+        if (isset($system_config->settings['portal_on'])) {
+            $this->originalSetting['portalon'] = $system_config->settings['portal_on'];
         }
         
         parent::setUp();
@@ -42,17 +40,16 @@ class RestTestPortalBase extends RestTestBase
         // Make the current user a portal only user
         $this->_user->portal_only = '1';
         $this->_user->save();
-        
+
         // Reset the support portal user id to the newly created user id        
-        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
-        
+        $system_config->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
+
         $this->role = $this->_getPortalACLRole();
         if (!($this->_user->check_role_membership($this->role->name))) {
             $this->_user->load_relationship('aclroles');
             $this->_user->aclroles->add($this->role);
             $this->_user->save();
         }
-
 
         // A little bit destructive, but necessary.
         $GLOBALS['db']->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
@@ -120,12 +117,15 @@ class RestTestPortalBase extends RestTestBase
         // reset the config table back to what it was originally, default if nothing was there
         $portalUserId = isset($this->originalSetting['portaluserid']) ? $this->originalSetting['portaluserid'] : '';
         $portalOn = empty($this->originalSetting['portalon']) ? '0' : '1';
-        $GLOBALS['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $portalUserId);
-        $GLOBALS['system_config']->saveSetting('portal', 'on', $portalOn);
+
+        $system_config = new Administration();
+
+        $system_config->saveSetting('supportPortal', 'RegCreatedBy', $portalUserId);
+        $system_config->saveSetting('portal', 'on', $portalOn);
+
         $GLOBALS['db']->commit();
         parent::tearDown();
     }
-
 
     protected function _restLogin($username = '', $password = '', $platform = 'base')
     {

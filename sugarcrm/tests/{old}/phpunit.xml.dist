@@ -112,6 +112,7 @@
             <!-- <file>./rest/RestCurrentUserPortalTest.php</file> -->
             <!-- <file>./rest/RestCurrentUserTest.php</file> -->
             <!-- <file>./rest/RestMassUpdateTest.php</file> -->
+            <file>./rest/RestBug57835Test.php</file>
             <file>./rest/RestPortalLoginTest.php</file>
             <file>./rest/RestPortalMetadataBWCTest.php</file>
             <!-- <file>./rest/RestPortalMetadataviewDefsTest.php</file> -->

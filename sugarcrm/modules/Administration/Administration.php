@@ -377,7 +377,7 @@ class Administration extends SugarBean {
 
     /**
      * Return Administration object with filled in settings
-     * @param string $category
+     * @param string|false $category
      * @param bool $clean
      * @return Administration
      */

@@ -52,8 +52,10 @@ class RestBug57835Test extends RestTestPortalBase
         $this->testapiuser->portal_only = true;
         $this->testapiuser->status = 'Active';
         $this->testapiuser->save();
+
         // unset the default configsetting for the portal user
-        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
+        (new Administration())->saveSetting('supportPortal', 'RegCreatedBy', '');
+
         $GLOBALS['db']->commit();
 
         $args = array(
@@ -66,6 +68,5 @@ class RestBug57835Test extends RestTestPortalBase
         );
         $reply = $this->_restCall('oauth2/token',json_encode($args));
         $this->assertEquals('portal_not_configured',$reply['reply']['error']);
-                                                          
     }
 }

@@ -38,8 +38,11 @@ class RestLoginTest extends RestTestBase
                 $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '".$this->apiuser->id."'");
             }
         }
-        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
-        $GLOBALS ['system_config']->saveSetting('portal', 'on', 0);
+
+        $system_config = new Administration();
+        $system_config->saveSetting('supportPortal', 'RegCreatedBy', '');
+        $system_config->saveSetting('portal', 'on', 0);
+
         $GLOBALS['db']->commit();
     }
 

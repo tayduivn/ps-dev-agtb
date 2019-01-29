@@ -20,10 +20,6 @@ class SugarApplicationTest extends TestCase
 
     public function setUp()
     {
-        $startTime = microtime();
-        $system_config = new Administration();
-        $system_config->retrieveSettings();
-        $GLOBALS['system_config'] = $system_config;
         $this->_app = $this->getMockBuilder('SugarApplication')
             ->setMethods(null)
             ->getMock();
@@ -53,23 +49,6 @@ class SugarApplicationTest extends TestCase
 
     public function tearDown()
     {
-        /*
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['moduleList']);
-        unset($GLOBALS['request_string']);
-        unset($GLOBALS['adminOnlyList']);
-        unset($GLOBALS['modListHeader']);
-        unset($GLOBALS['modInvisList']);
-        unset($GLOBALS['app_strings']);
-        unset($GLOBALS['system_config']);
-        unset($GLOBALS['app_list_strings']);
-        unset($GLOBALS['mod_strings']);
-        unset($GLOBALS['theme']);
-        unset($GLOBALS['image_path']);
-        unset($GLOBALS['starttTime']);
-        unset($GLOBALS['sugar_version']);
-        unset($GLOBALS['sugar_flavor']);
-        */
         $GLOBALS['current_language'] = $GLOBALS['sugar_config']['default_language'];
 
         if ( isset($this->prevRefererList)) {

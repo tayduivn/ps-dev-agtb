@@ -168,9 +168,6 @@ class DBManagerFactory
                 if (empty($instanceName) && empty($GLOBALS['db'])) {
                     $GLOBALS['db'] = self::$instances[$instanceName];
                 }
-                if (empty($instanceName) && !empty($GLOBALS['system_config']) && $GLOBALS['system_config'] instanceof Administration && empty($GLOBALS['system_config']->db)) {
-                    $GLOBALS['system_config']->db = self::$instances[$instanceName];
-                }
 //BEGIN SUGARCRM flav=ent ONLY
             }
 //END SUGARCRM flav=ent ONLY
@@ -270,11 +267,7 @@ class DBManagerFactory
         self::$instances = array();
         BeanFactory::clearCache();
         $GLOBALS['db'] = null;
-        if (!empty($GLOBALS['system_config']) && $GLOBALS['system_config'] instanceof Administration) {
-            $GLOBALS['system_config']->db = null;
-        }
     }
-
 
     /**
      * Get DB manager class name by type name

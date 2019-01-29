@@ -13,16 +13,6 @@
 
 class RestPortalLoginTest extends RestTestPortalBase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-    
     /**
      * @group rest
      */
@@ -50,7 +40,6 @@ class RestPortalLoginTest extends RestTestPortalBase
 
         $refreshToken = $reply['reply']['refresh_token'];
 
-        
         $args = array(
             'grant_type' => 'refresh_token',
             'refresh_token' => $refreshToken,
@@ -73,6 +62,5 @@ class RestPortalLoginTest extends RestTestPortalBase
         $this->authToken = $reply2['reply']['access_token'];
         $replyPing = $this->_restCall('ping');
         $this->assertEquals('pong',$replyPing['reply']);
-                                                          
     }
 }

@@ -577,13 +577,16 @@ EOF;
         if (empty($GLOBALS['current_user']->id)) {
             $GLOBALS['app_strings']['NTC_WELCOME'] = '';
         }
-        if (!empty($GLOBALS['system_config']->settings['system_name'])) {
-            $GLOBALS['app_strings']['LBL_BROWSER_TITLE'] = $GLOBALS['system_config']->settings['system_name'];
+
+        $system_config = Administration::getSettings('system');
+
+        if (!empty($system_config->settings['system_name'])) {
+            $GLOBALS['app_strings']['LBL_BROWSER_TITLE'] = $system_config->settings['system_name'];
         }
+
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], $this->controller->module);
     }
-
 
     /**
      * checkDatabaseVersion

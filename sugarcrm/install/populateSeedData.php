@@ -931,9 +931,6 @@ echo '.';
 
 //BEGIN SUGARCRM flav=ent ONLY
 //enable portal
-$system_config = new Administration();
-$system_config->retrieveSettings();
-$GLOBALS['system_config'] = $system_config;
 $installerStrings = $GLOBALS['mod_strings'];
 $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ModuleBuilder');
 include('modules/ModuleBuilder/parsers/parser.portalconfig.php');

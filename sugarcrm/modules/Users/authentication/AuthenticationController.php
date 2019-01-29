@@ -48,12 +48,11 @@ class AuthenticationController implements LoggerAwareInterface
 	 * Creates an instance of the authentication controller and loads it
 	 *
      * @param STRING $type - the authentication Controller - default to IdMSugarAuthenticate
-	 * @return AuthenticationController -
 	 */
     public function __construct($type = 'IdMSugarAuthenticate')
 	{
         if ((empty($type) || $type == 'IdMSugarAuthenticate')
-            && !empty($GLOBALS['system_config']->settings['system_ldap_enabled'])
+            && !empty(Administration::getSettings('system')->settings['system_ldap_enabled'])
             && empty($_SESSION['sugar_user'])
         ) {
             $type = 'IdMLDAPAuthenticate';
@@ -69,7 +68,6 @@ class AuthenticationController implements LoggerAwareInterface
 
         $this->authController = new $type();
 	}
-
 
     /**
      * Returns an instance of the authentication controller

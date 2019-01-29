@@ -446,7 +446,9 @@ class UserViewHelper {
             $this->ss->assign('EXTERNAL_AUTH_CLASS', $sugar_config['authenticationClass']);
             $authclass = $sugar_config['authenticationClass'];
         }else{
-            if(!empty($GLOBALS['system_config']->settings['system_ldap_enabled'])){
+            $system_config = Administration::getSettings('system');
+
+            if (!empty($system_config->settings['system_ldap_enabled'])) {
                 $this->ss->assign('EXTERNAL_AUTH_CLASS_1', translate('LBL_LDAP','Users'));
                 $this->ss
                         ->assign('EXTERNAL_AUTH_CLASS', translate('LBL_LDAP_AUTHENTICATION','Users'));

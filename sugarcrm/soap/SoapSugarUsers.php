@@ -62,7 +62,7 @@ $server->register(
  *      created.  Error is set if there was any error during creation.
  */
 function login($user_auth, $application){
-	global $sugar_config, $system_config;
+    global $sugar_config;
 
 	$error = new SoapError();
 	$user = BeanFactory::newBean('Users');
