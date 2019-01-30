@@ -96,4 +96,23 @@ class SoapHelperWebServicesTest extends TestCase
             ['salutation', false],
         ];
     }
+
+    /**
+     * @covers ::decrypt_tripledes
+     * @dataProvider tripledesDecryptProvider
+     */
+    public function testDecryptTripledes(string $expected, string $data, string $key)
+    {
+        $key = substr(md5($key), 0, 24);
+        $iv = 'password';
+        $this->assertEquals($expected, \SoapHelperWebServices::decrypt_tripledes($data, $key, $iv));
+    }
+
+    public function tripledesDecryptProvider()
+    {
+        return [
+            ['this is a test', '232c4daa440989ec433ec701d06bcd92', '123456789012345678901234'],
+            ['Hello word', 'baa6d122523d31b0bf5be57999525e0b', '123456789012345678901234'],
+        ];
+    }
 }

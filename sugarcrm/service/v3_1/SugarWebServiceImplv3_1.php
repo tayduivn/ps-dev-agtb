@@ -178,7 +178,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         global $current_user;
 
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->set_entry');
-        if (self::$helperObject->isLogLevelDebug()) {
+        if ($GLOBALS['log']->wouldLog('debug')) {
             $GLOBALS['log']->debug('SoapHelperWebServices->set_entry - input data is ' . var_export($name_value_list, true));
         } // if
         $error = new SoapError();
@@ -357,7 +357,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
             self::$helperObject->setFaultObject($error);
             return;
-        } elseif (extension_loaded('mcrypt') && !$authController->authController instanceof OAuth2Authenticate) {
+        } elseif (!$authController->authController instanceof OAuth2Authenticate) {
             $password = self::$helperObject->decrypt_string($user_auth['password']);
             if($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id']))
                 $success = true;

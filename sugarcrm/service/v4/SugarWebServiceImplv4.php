@@ -88,8 +88,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
             self::$helperObject->setFaultObject($error);
             return;
-        } elseif (extension_loaded('mcrypt')
-            && $authController->authController instanceof IdMLDAPAuthenticate
+        } elseif ($authController->authController instanceof IdMLDAPAuthenticate
             && (empty($user_auth['encryption']) || $user_auth['encryption'] !== 'PLAIN')
         ) {
             $password = self::$helperObject->decrypt_string($user_auth['password']);

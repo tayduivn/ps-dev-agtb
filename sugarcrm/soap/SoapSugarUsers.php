@@ -94,14 +94,14 @@ function login($user_auth, $application){
 			LogicHook::initialize();
 			$GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
 			return array('id'=>-1, 'error'=>$error);
-    } elseif (extension_loaded('mcrypt')) {
-		$password = decrypt_string($user_auth['password']);
+    } else {
+        $password = decrypt_string($user_auth['password']);
         $authController = AuthenticationController::getInstance();
         $authController->loggedIn = false; // reset login attempt to try again with decrypted password
-		if($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id'])){
-			$success = true;
-		} // if
-	} // else if
+        if ($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id'])) {
+            $success = true;
+        }
+    }
 
 	if($success){
 		session_start();
