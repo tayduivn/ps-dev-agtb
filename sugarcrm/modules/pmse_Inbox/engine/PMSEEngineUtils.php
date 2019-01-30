@@ -1132,7 +1132,6 @@ class PMSEEngineUtils
             'assigned_user_name_owner',
             'assigned_user_name_mod',
             'tags',
-            'tag',
             'tag_lower',
             'tag_link',
             'tn_name',

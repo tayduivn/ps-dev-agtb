@@ -22,25 +22,29 @@ use Sugarcrm\Sugarcrm\ProcessManager;
 class PMSEExporter
 {
     /**
-     * @var $bean
-     * @access private
+     * The process bean
+     * @var SugarBean
      */
     protected $bean;
+
     /**
-     * @var $id
-     * @access private
+     * The module for the child importer bean
+     * @var string
      */
-    protected $id;
+    protected $beanModule;
+
     /**
      * @var $uid
      * @access private
      */
     protected $uid;
+
     /**
      * @var $name
      * @access private
      */
     protected $name;
+
     /**
      * @var $extension
      * @access private
@@ -57,14 +61,51 @@ class PMSEExporter
     ];
 
     /**
+     * Constructor, will be deprecated in a future release
+     */
+    public function __construct()
+    {
+        $this->deprecateConstructor();
+    }
+
+    /**
+     * Deprecation notice for all constructors
+     */
+    protected function deprecateConstructor()
+    {
+        $msg = 'Constructors for PMSE Exporters will be deprecated in a future release. ' .
+               'Please use $this->getBean() when a process bean is needed.';
+        LoggerManager::getLogger()->deprecated($msg);
+        $this->setBean();
+    }
+
+    /**
      * Set Bean.
      * @codeCoverageIgnore
-     * @param object $bean
+     * @param SugarBean $bean
      * @return void
      */
-    public function setBean($bean)
+    public function setBean(SugarBean $bean = null)
     {
-        $this->bean = $bean;
+        if ($bean === null) {
+            $this->bean = BeanFactory::newBean($this->beanModule);
+        } else {
+            $this->bean = $bean;
+        }
+    }
+
+    /**
+     * Get class Bean.
+     * @codeCoverageIgnore
+     * @return object
+     */
+    public function getBean()
+    {
+        if (empty($this->bean)) {
+            $this->setBean();
+        }
+
+        return $this->bean;
     }
 
     /**
@@ -109,7 +150,7 @@ class PMSEExporter
         $projectContent = $this->getProject(array('id' => $id));
 
         // add dependencies when exporting a process definition
-        if ($this->bean instanceof pmse_Project) {
+        if ($this->getBean() instanceof pmse_Project) {
             $projectContent = $this->addDependencies($projectContent);
         }
 
@@ -221,6 +262,32 @@ class PMSEExporter
     }
 
     /**
+     * Gets data for a bean, and tags on that bean as well
+     * @param SugarBean $bean The process bean
+     * @return array
+     */
+    protected function getBeanData(SugarBean $bean)
+    {
+        // If there is a fetched row for this bean, grab the data
+        if ($bean->fetched_row !== false) {
+            $ret = (array) $bean->fetched_row;
+
+            // Add tags as a collection property of the bean
+            if (($tags = $bean->getTags()) !== []) {
+                // Collect them in a way the importer can handle
+                foreach ($tags as $tag) {
+                    $ret['tag'][$tag->name_lower] = $tag->getRecordName();
+                }
+            }
+
+            // Send it back
+            return $ret;
+        }
+
+        return [];
+    }
+
+    /**
      * Method to retrieve a record of the database to export.
      * @param array $args
      * @return array
@@ -229,13 +296,19 @@ class PMSEExporter
     {
         $this->retrieveBean($args);
 
-        if ($this->bean->fetched_row != false) {
+        if (($data = $this->getBeanData($this->getBean())) !== []) {
+            $ret = [];
+
+            // Some imports have a specific format and won't want metadata, so
+            // only add metadata if we are not explicitly asking to omit it
             if (empty($args['project_only'])) {
                 // send both metadata and project as requested
-                return array('metadata' => $this->getMetadata(), 'project' => $this->bean->fetched_row);
+                $ret['metadata'] = $this->getMetadata();
             }
-            // because import has a specific format and it doesn't want metadata or project
-            return array('project' => $this->bean->fetched_row);
+
+            $ret['project'] = $data;
+
+            return $ret;
         } else {
             return array('error' => true);
         }
@@ -243,8 +316,9 @@ class PMSEExporter
 
     public function retrieveBean($args)
     {
-        return $this->bean->retrieve($args['id']);
+        return $this->getBean()->retrieve($args['id']);
     }
+
     /**
      * Method to retrieve a metadata
      * @return object
@@ -252,8 +326,8 @@ class PMSEExporter
     public function getMetadata()
     {
         global $sugar_flavor, $sugar_version, $sugar_config;
-        $toolName = 'ProcessAuthor';
-        $toolVersion = '2.0';
+        $toolName = 'SugarCRM Business Process Management Suite';
+        $toolVersion = '0.1';
         $metadataObject = array();
         $metadataObject['SugarCRMFlavor'] = $sugar_flavor;
         $metadataObject['SugarCRMVersion'] = $sugar_version;

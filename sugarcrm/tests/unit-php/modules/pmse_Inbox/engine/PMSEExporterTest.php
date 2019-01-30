@@ -22,26 +22,64 @@ use PHPUnit\Framework\TestCase;
 class PMSEExporterTest extends TestCase
 {
     /**
+     * Utility method to assemble a bean expectation
+     * @return SugarBean
+     */
+    protected function getBeanForTags()
+    {
+        $tag1 = $this->createMock('Tag');
+        $tag1->method('getRecordName')->willReturn('Tag 1');
+        $tag1->id = 'tag1';
+        $tag1->name = 'Tag 1';
+        $tag1->name_lower = 'tag 1';
+
+        $tag2 = $this->createMock('Tag');
+        $tag2->method('getRecordName')->willReturn('Tag 2');
+        $tag2->id = 'tag2';
+        $tag2->name = 'Tag 2';
+        $tag2->name_lower = 'tag 2';
+
+        $bean = $this->createMock('pmse_Project');
+        $bean->fetched_row = [
+            'id' => 'asdf',
+            'name' => 'project def',
+        ];
+
+        $bean->method('getTags')
+             ->willReturn([
+                $tag1->id => $tag1,
+                $tag2->id => $tag2,
+             ]);
+
+        return $bean;
+    }
+
+    /**
      * @covers ::getProject
      */
     public function testGetProject()
     {
-        $exporterMock = $this->getMockBuilder('PMSEExporter')
-            ->setMethods(array( 'retrieveBean', 'getMetadata'))
+        $exporter = $this->getMockBuilder('PMSEExporter')
+            ->setMethods(array('retrieveBean', 'getMetadata', 'getBean'))
             ->disableOriginalConstructor()
             ->getMock();
 
-        $bean = new \stdClass();
-        $bean->fetched_row = array('id' => 'asdf', 'name' => 'project def');
-        $exporterMock->setBean($bean);
+        $exporter->method('getBean')
+                 ->will($this->returnValue($this->getBeanForTags()));
 
-        $result = $exporterMock->getProject(array('id'=>'1234'));
+        $result = $exporter->getProject(array('id'=>'1234'));
         $this->assertArrayHasKey('metadata', $result);
         $this->assertArrayHasKey('project', $result);
+        $this->assertArrayHasKey('tag', $result['project']);
+        $this->assertArrayHasKey('tag 1', $result['project']['tag']);
+        $this->assertSame($result['project']['tag']['tag 1'], 'Tag 1');
 
-        $result = $exporterMock->getProject(array('id' => '1234', 'project_only' => true));
+        $result = $exporter->getProject(array('id' => '1234', 'project_only' => true));
         $this->assertArrayNotHasKey('metadata', $result);
         $this->assertArrayHasKey('project', $result);
+        $this->assertArrayHasKey('tag', $result['project']);
+        $this->assertArrayHasKey('tag 2', $result['project']['tag']);
+        $this->assertSame($result['project']['tag']['tag 2'], 'Tag 2');
     }
 
     /**
@@ -52,12 +90,12 @@ class PMSEExporterTest extends TestCase
      */
     public function testGetExporter($type, $instance)
     {
-        $exporterMock = new \PMSEExporter();
-        $exporter = $exporterMock->getExporter($type);
+        $exporter = new \PMSEExporter();
+        $exporter = $exporter->getExporter($type);
 
         $this->assertInstanceOf($instance, $exporter);
     }
-    
+
     public function getExporterData()
     {
         return [

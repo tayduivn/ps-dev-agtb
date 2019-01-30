@@ -8385,6 +8385,29 @@ class SugarBean
         return null;
     }
 
+    /**
+     * Gets tag beans for a bean
+     * @return SugarBean[]
+     */
+    public function getTags()
+    {
+        // Prepare the return
+        $tags = [];
+
+        // If this record implements tags, get them
+        if (($tag = $this->getTagField()) !== null) {
+            $link = $this->getFieldDefinition($tag)['link'];
+
+            // Load the tag relationship
+            if ($this->load_relationship($link)) {
+                // Get the tags for this record if there are any
+                $tags = $this->$link->getBeans();
+            }
+        }
+
+        // Send them back
+        return $tags;
+    }
 
     /**
      * calls beans SugarEmailAddress object to populate the fetched row with the latest email address information
