@@ -135,9 +135,11 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 
             $tablename = $meta['table'];
 			$fielddefs = $meta['fields'];
-            $indices = isset($meta['indices']) ? $meta['indices'] : [];
+            $definedIndices = $meta['indices'] ?? [];
+            $deployedIndices = $indices[$tablename] ?? [];
 			$engine = isset($meta['engine'])?$meta['engine']:null;
-			$sql .= $db->repairTableParams($tablename, $fielddefs, $indices, $execute, $engine);
+            $sql .= $db->repairTableParams($tablename, $fielddefs, $definedIndices, $execute, $engine);
+            $sql .= $db->alterTableIndices($tablename, $fielddefs, $definedIndices, $deployedIndices, $execute);
 			$repairedTables[$tablename] = true;
 		}
 
