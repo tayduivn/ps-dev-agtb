@@ -26,7 +26,7 @@ describe("Base.View.Preview", function() {
                 "labels": true,
                 "labelsOnTop": false,
                 "placeholders":true,
-                "fields": ["description","case_number","type"]
+                'fields': ['description', 'case_number', 'type', []] // empty array is a filler field
             }, {
                 "name": "panel_hidden",
                 "hide": true,
@@ -35,10 +35,11 @@ describe("Base.View.Preview", function() {
                 "fields": ["created_by","date_entered","date_modified","modified_user_id"]
             }]
         }, "Cases");
+        SugarTest.loadHandlebarsTemplate('preview', 'view', 'base');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
         layout = SugarTest.createLayout('base', "Cases", "preview");
-        preview = SugarTest.createView("base", "Cases", "preview", null, null);
+        preview = SugarTest.createView('base', 'Cases', 'preview', {}, null);
         preview.layout = layout;
         app = SugarTest.app;
         meta = app.metadata.getView('Cases', 'record');
@@ -306,5 +307,12 @@ describe("Base.View.Preview", function() {
             expect(currModule).toBeDefined();
             expect(currModule).toEqual(models[0].module);
         });
+    });
+
+    it('should not show filler fields', function() {
+        preview.render();
+        // We should get 8 fields here because we start with 11 fields but favorite, following
+        // and filler fields get removed
+        expect(_.size(preview.fields)).toEqual(8);
     });
 });
