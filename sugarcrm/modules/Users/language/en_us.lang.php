@@ -292,7 +292,7 @@ $mod_strings = array (
 	'LBL_PROVIDE_USERNAME_AND_EMAIL' 	=> 'Provide both a valid User Name and an Email Address.',
     'LBL_FORGOTPASSORD_NOT_ENABLED' 	=> 'This is currently not enabled. Please contact your administrator.',
 	'LBL_PUBLISH_KEY'					=> 'Publish Key',
-
+    'LBL_SITE_USER_ID' => 'Hash of site_url and user_id',
     'LBL_QUOTAS'                        => 'Quotas',
     'LBL_FORECASTS'                     => 'Forecasts',
     'LBL_WORKSHEETS'                    => 'Worksheets',

@@ -605,6 +605,7 @@ class CurrentUserApi extends SugarApi
         if($user_data['is_manager']) {
             $user_data['is_top_level_manager'] = User::isTopLevelManager($current_user->id);
         }
+        $user_data['site_user_id'] = $current_user->site_user_id;
 
         // Email addresses
         $fieldDef = $current_user->getFieldDefinition('email');

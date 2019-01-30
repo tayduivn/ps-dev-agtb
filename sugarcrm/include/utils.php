@@ -5896,3 +5896,14 @@ function validate_ip($clientIp, $sessionIp)
     return $isValidIP;
 
 }
+
+/**
+ * Generate sha256 hash with $site_url as salt
+ * @param string $str String to be hashed
+ * @return string Hash value
+ */
+function getSiteHash(string $str): string
+{
+    $url = Container::getInstance()->get(SugarConfig::class)->get('site_url');
+    return hash('sha256', $url . $str);
+}

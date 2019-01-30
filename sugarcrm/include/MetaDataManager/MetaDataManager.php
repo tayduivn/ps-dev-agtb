@@ -2122,6 +2122,11 @@ class MetaDataManager implements LoggerAwareInterface
         //Property 'on' of category 'portal' must be a boolean.
         $data['portal_active'] = !empty($admin->settings['portal_on']);
         //END SUGARCRM flav=ent ONLY
+
+        // needed for Pendo analytics
+        if (!empty($admin->settings['site_id'])) {
+            $data['site_id'] = $admin->settings['site_id'];
+        }
         return $data;
     }
 

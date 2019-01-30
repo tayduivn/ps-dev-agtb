@@ -1379,6 +1379,11 @@ function update_license_settings($users, $expire_date, $key)
             'config',
             ['value' => $key, 'category' => 'license', 'name' => 'key']
         );
+
+    $connection->insert(
+        'config',
+        ['value' => getSiteHash($key), 'category' => 'site', 'name' => 'id']
+    );
 }
 
   //END SUGARCRM lic=sub ONLY

@@ -1003,6 +1003,17 @@ $dictionary['User'] = array(
             'relationship' => 'users_acl_role_sets',
             'source' => 'non-db',
         ),
+        // site_user_id is used as an analytics id
+        'site_user_id' => array(
+            'name' => 'site_user_id',
+            'vname' => 'LBL_SITE_USER_ID',
+            'type' => 'varchar',
+            'len' => '64',
+            'reportable' => false,
+            'importable' => false,
+            'studio' => array('editview' => false, 'detailview' => false, 'listview' => false, 'searchview'=>false, 'related' => false),
+            'readonly' => true,
+        ),
     ) ,
     'name_format_map' => array(
         'f' => 'first_name',

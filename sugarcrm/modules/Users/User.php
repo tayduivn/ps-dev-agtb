@@ -75,6 +75,7 @@ class User extends Person {
 	var $user_preferences;
 
 	var $importable = true;
+    public $site_user_id;
 
     static protected $demoUsers = array(
         'jim',
@@ -653,6 +654,14 @@ class User extends Person {
 
         // track the current reports to id to be able to use it if it has changed
         $old_reports_to_id = isset($this->fetched_row['reports_to_id']) ? $this->fetched_row['reports_to_id'] : '';
+
+        if (empty($this->site_user_id)) {
+            if (!$this->id) {
+                $this->id = create_guid();
+                $this->new_with_id = true;
+            }
+            $this->site_user_id = getSiteHash($this->id);
+        }
 
 		parent::save($check_notify);
 
