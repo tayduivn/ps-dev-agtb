@@ -137,6 +137,9 @@ class RelateApi extends FilterApi {
             $args['fields'] = $this->normalizeFields($args['fields'], $options['displayParams']);
         }
 
+        if (isset($options['relate_collections'])) {
+            $options = $this->removeRelateCollectionsFromSelect($options);
+        }
 
         $q = self::getQueryObject($linkSeed, $options);
 
