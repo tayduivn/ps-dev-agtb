@@ -50,6 +50,7 @@ describe('includes.javascript.pmse.activity', function() {
             act_field_module: 'mock_act_field_module',
             act_fields: 'mock_act_fields',
             act_last_user_assigned: null,
+            act_params: null,
             act_readonly_fields: [],
             act_reassign: 0,
             act_reassign_team: null,
@@ -145,6 +146,7 @@ describe('includes.javascript.pmse.activity', function() {
         app = null;
         mockActivity = null;
         mockValidationTools = null;
+        mockAPIData = null;
         sinon.collection.restore();
 
         // Restore the global variables
@@ -340,6 +342,7 @@ describe('includes.javascript.pmse.activity', function() {
             // Mocking field creation for adding a 'tasks' record
             // with only required fields filled in
             mockAPIData.act_field_module = 'tasks';
+            mockAPIData.act_params = '{"module":"tasks"}';
 
             // Declaring the URL that our mock for buildURL will return, so that we can change it as needed
             urlToReturn = 'correct_endpoint';
@@ -385,10 +388,17 @@ describe('includes.javascript.pmse.activity', function() {
             urlToReturn = null;
         });
 
-        it('should build the correct URL to check the addRelatedRecord endpoint with', function() {
+        it('should build the correct URL for related records', function() {
             mockActivity.callbackFunctionForAddRelatedRecordAction(mockAPIData, mockActivity, mockValidationTools);
             expect(App.api.buildURL).toHaveBeenCalledWith(
                 'pmse_Project/CrmData/addRelatedRecord/tasks?base_module=mock_act_field_module');
+        });
+
+        it('should build the correct URL for related related records', function() {
+            mockAPIData.act_params = '{"module":"accounts","chainedRelationship":{"module":"contacts"}}';
+            mockActivity.callbackFunctionForAddRelatedRecordAction(mockAPIData, mockActivity, mockValidationTools);
+            expect(App.api.buildURL).toHaveBeenCalledWith(
+                'pmse_Project/CrmData/addRelatedRecord/contacts?base_module=mock_act_field_module');
         });
 
         it('should call validateNumberOfEdges with the correct max/min number of incoming/outgoing edges', function() {

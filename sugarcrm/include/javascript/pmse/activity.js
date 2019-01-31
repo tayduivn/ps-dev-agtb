@@ -3236,8 +3236,13 @@ AdamActivity.prototype.callbackFunctionForChangeFieldAction = function(data, ele
  * @param {Object} validationTools is a collection of utility functions for validating element data
  */
 AdamActivity.prototype.callbackFunctionForAddRelatedRecordAction = function(data, element, validationTools) {
+    var actModule = data.act_field_module;
+    var actParams = data.act_params ? JSON.parse(data.act_params) : null;
+    if (actParams && actParams.chainedRelationship) {
+        actModule = actParams.chainedRelationship.module;
+    }
     var url = App.api.buildURL('pmse_Project/CrmData/addRelatedRecord/' +
-        data.act_field_module + '?base_module=' + validationTools.getTargetModule());
+        actModule + '?base_module=' + validationTools.getTargetModule());
     var options = {
         'bulk': 'validate_element_settings'
     };
