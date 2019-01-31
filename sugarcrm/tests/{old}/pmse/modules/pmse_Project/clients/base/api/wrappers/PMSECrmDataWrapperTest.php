@@ -16,6 +16,30 @@ use PHPUnit\Framework\TestCase;
 class PMSECrmDataWrapperTest extends TestCase
 {
     /**
+     * List of items to delete at the end of the test
+     * @var array
+     */
+    protected $deleteAssets = [];
+
+    /**
+     * The index for the number of records
+     * @var integer
+     */
+    protected $recordIndex = 0;
+
+    /**
+     * Mock project ID
+     * @var string
+     */
+    protected $prjId = 'test-project-1';
+
+    /**
+     * Module used for testing
+     * @var string
+     */
+    protected $testModule = 'Cases';
+
+    /**
      * @var PMSECrmDataWrapper
      */
     protected $object;
@@ -50,6 +74,7 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     protected function setUp()
     {
+        SugarTestHelper::setUp('current_user', ['save' => false, 'is_admin' => 1]);
         $this->originals['current_user'] = $GLOBALS['current_user'];
         $this->originals['db'] = $GLOBALS['db'];
 
@@ -256,6 +281,25 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     protected function tearDown()
     {
+        $allIds = [];
+        $db = DBManagerFactory::getInstance();
+
+        // Delete harness data
+        foreach ($this->deleteAssets as $table => $ids) {
+            // For use in clearing out tag bean rel
+            $allIds = array_merge($allIds, $ids);
+
+            // Handle deletes
+            $sql = "DELETE FROM $table WHERE id IN ('" . implode("','", $ids). "')";
+            $db->query($sql);
+        }
+
+        // Delete tag relationships
+        $ids = "'" . implode("','", $allIds) . "'";
+        $sql = "DELETE FROM tag_bean_rel WHERE tag_id IN ($ids) OR bean_id IN ($ids)";
+        $db->query($sql);
+
+        // Reset variables
         foreach($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;
         }
@@ -597,56 +641,129 @@ class PMSECrmDataWrapperTest extends TestCase
     }
 
     /**
+     * Gets a tag record
+     * @return Tag
+     */
+    protected function getNewTagRecord()
+    {
+        // Create the record
+        $tag = BeanFactory::getBean('Tags');
+        $tag->name = 'BPM Test Tag ' . $this->getNextRecordIndex();
+        $tag->verifiedUnique = true;
+        $tag->save();
+
+        // Add it to the delete list
+        $this->addBeanToDeleteAssets($tag);
+
+        return $tag;
+    }
+
+    /**
+     * Gets a new business rule record
+     * @return pmse_Business_Rule
+     */
+    protected function getNewBusinessRuleRecord()
+    {
+        $bean = BeanFactory::getBean('pmse_Business_Rules');
+        $bean->name = 'BPM Test BR ' . $this->getNextRecordIndex();
+        $bean->rst_module = $this->testModule;
+        $bean->save();
+
+        // Add it to the delete list
+        $this->addBeanToDeleteAssets($bean);
+
+        return $bean;
+    }
+
+    /**
+     * Gets a new email template record
+     * @return pmse_Email_Template
+     */
+    protected function getNewEmailTemplateRecord()
+    {
+        $bean = BeanFactory::getBean('pmse_Emails_Templates');
+        $bean->name = 'BPM Test ET ' . $this->getNextRecordIndex();
+        $bean->base_module = $this->testModule;
+        $bean->save();
+
+        // Add it to the delete list
+        $this->addBeanToDeleteAssets($bean);
+
+        return $bean;
+    }
+
+    /**
+     * Gets a new project record
+     * @return pmse_Project
+     */
+    protected function getNewProjectRecord()
+    {
+        $bean = BeanFactory::getBean('pmse_Project');
+        $bean->name = 'BPM Test Project ' . $this->getNextRecordIndex();
+        $bean->prj_module = $this->testModule;
+        $bean->save();
+
+        // Add it to the delete list
+        $this->addBeanToDeleteAssets($bean);
+
+        return $bean;
+    }
+
+    /**
+     * Increments the record index and returns the incremented value
+     * @return int
+     */
+    protected function getNextRecordIndex()
+    {
+        return ++$this->recordIndex;
+    }
+
+    /**
+     * Tracks which beans were added so that they can be deleted later
+     * @param SugarBean $bean
+     */
+    protected function addBeanToDeleteAssets(SugarBean $bean)
+    {
+        $this->deleteAssets[$bean->getTableName()][] = $bean->id;
+    }
+
+    /**
      * @covers PMSECrmDataWrapper::retrieveRuleSets
      */
     public function testRetrieveRuleSets()
     {
-        $this->projectBean->expects($this->any())
-            ->method('retrieve')
-            ->will($this->returnValue(true));
+        // Tag records needed for tagging business rules
+        $tag1 = $this->getNewTagRecord();
+        $tag2 = $this->getNewTagRecord();
+        $tag3 = $this->getNewTagRecord();
 
-        $this->processDefinitionBean->expects($this->any())
-            ->method('retrieve_by_string_fields')
-            ->will($this->returnValue(
-                array(
-                    json_decode('{"pro_module":"leads"}')
-                )
-            ));
+        // Business Rule records needed for testing
+        $br1 = $this->getNewBusinessRuleRecord();
+        $br2 = $this->getNewBusinessRuleRecord();
 
-        $this->ruleSetBean->expects($this->any())
-            ->method('get_full_list')
-//            ->with($this->equalTo('Nombre'));
-            ->will($this->returnValue(array(
-                    (object) array("id" => "abcdeff", "name" => "Test RuleSet"),
-                    (object) array("id" => "abcdefg", "name" => "Test RuleSet 01"),
-                    (object) array("id" => "abcdefh", "name" => "Test RuleSet 02"),
-                    (object) array("id" => "abcdefi", "name" => "Test RuleSet 03"),
-                    (object) array("id" => "abcdefj", "name" => "Test RuleSet 04"),
-                )
-            ));
+        // Tagging of ONE business rule record
+        $br1->load_relationship('tag_link');
+        $br1->tag_link->add($tag1);
+        $br1->tag_link->add($tag2);
+        $br1->tag_link->add($tag3);
 
-        $expectedResult = array(
-            array("value" => "abcdeff", "text" => "Test RuleSet"),
-            array("value" => "abcdefg", "text" => "Test RuleSet 01"),
-            array("value" => "abcdefh", "text" => "Test RuleSet 02"),
-            array("value" => "abcdefi", "text" => "Test RuleSet 03"),
-            array("value" => "abcdefj", "text" => "Test RuleSet 04"),
-        );
+        // Project record needed for processing the query
+        $prj = $this->getNewProjectRecord();
 
+        $wrapper = $this->getMockBuilder('PMSECrmDataWrapper')
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->projectBean->id = '1';
-        $this->processDefinitionBean->pro_module = 'Leads';
+        $data = $wrapper->retrieveRuleSets($prj->id);
 
-        $this->object->setBeanList($this->beanList);
-        $this->object->setProcessDefinition($this->processDefinitionBean);
-        $this->object->setProjectBean($this->projectBean);
-        $this->object->setRuleSetBean($this->ruleSetBean);
-        $result = $this->object->retrieveRuleSets('');
-        $this->beanList = array('leads' => 'Leads');
-        $this->object->setBeanList($this->beanList);
-        $result = $this->object->retrieveRuleSets('');
-//        var_dump($result);
-        $this->assertEquals($expectedResult, $result);
+        // Test that we have two rows in the result, and that they are in the
+        // right order
+        $this->assertCount(2, $data);
+        $this->assertSame($data[0]['value'], $br1->id);
+        $this->assertSame($data[0]['text'], $br1->name);
+        $this->assertSame($data[1]['value'], $br2->id);
+        $this->assertSame($data[1]['text'], $br2->name);
     }
 
     /**
@@ -714,59 +831,63 @@ class PMSECrmDataWrapperTest extends TestCase
 
     /**
      * @covers PMSECrmDataWrapper::retrieveEmailTemplates
-     * @todo   Implement testRetrieveEmailTemplates().
      */
     public function testRetrieveEmailTemplates()
     {
-        $res= array(
-            array("value" => "abcdeff", "text" => "Test Email Template"),
-            array("value" => "abcdefg", "text" => "Test Email Template 01"),
-            array("value" => "abcdefh", "text" => "Test Email Template 02"),
-            array("value" => "abcdefi", "text" => "Test Email Template 03"),
-            array("value" => "abcdefj", "text" => "Test Email Template 04"),
-        );
+        // Tag records needed for tagging business rules
+        $tag1 = $this->getNewTagRecord();
+        $tag2 = $this->getNewTagRecord();
+        $tag3 = $this->getNewTagRecord();
 
-        $emailBeanMock = $this->getMockBuilder('pmse_Emails_Templates')
-                ->disableAutoload()
-                ->setMethods(array('get_full_list'))
-                ->getMock();
-        $testModule = 'Leads';
+        // Email Template records needed for testing
+        $et1 = $this->getNewEmailTemplateRecord();
+        $et2 = $this->getNewEmailTemplateRecord();
+        $et3 = $this->getNewEmailTemplateRecord();
+        $et4 = $this->getNewEmailTemplateRecord();
 
-        $emailBeanMock->expects($this->any())
-            ->method('get_full_list')
-            ->with('', "base_module = '$testModule'" )
-            ->will($this->returnValue(array(
-                    (object) array("id" => "abcdeff", "name" => "Test Email Template"),
-                    (object) array("id" => "abcdefg", "name" => "Test Email Template 01"),
-                    (object) array("id" => "abcdefh", "name" => "Test Email Template 02"),
-                    (object) array("id" => "abcdefi", "name" => "Test Email Template 03"),
-                    (object) array("id" => "abcdefj", "name" => "Test Email Template 04"),
-                )
-            ));
-        $this->object->setEmailTemplateBean($emailBeanMock);
-        $result = $this->object->retrieveEmailTemplates($testModule);
-        $this->assertEquals($res, $result);
+        // Tagging of TWO email template records
+        $et1->load_relationship('tag_link');
+        $et1->tag_link->add($tag1);
+        $et1->tag_link->add($tag2);
+
+        $et2->load_relationship('tag_link');
+        $et2->tag_link->add($tag2);
+        $et2->tag_link->add($tag3);
+
+        $wrapper = $this->getMockBuilder('PMSECrmDataWrapper')
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $data = $wrapper->retrieveEmailTemplates($this->testModule);
+
+        // Test that we have four rows in the result, and that they are in the
+        // right order
+        $this->assertCount(4, $data);
+        $this->assertSame($data[0]['value'], $et1->id);
+        $this->assertSame($data[0]['text'], $et1->name);
+        $this->assertSame($data[1]['value'], $et2->id);
+        $this->assertSame($data[1]['text'], $et2->name);
+        $this->assertSame($data[2]['value'], $et3->id);
+        $this->assertSame($data[2]['text'], $et3->name);
+        $this->assertSame($data[3]['value'], $et4->id);
+        $this->assertSame($data[3]['text'], $et4->name);
     }
 
     public function testRetrieveEmailTemplatesWithoutModule()
     {
-        $emailBeanMock = $this->createPartialMock('pmse_Emails_Templates', array('get_full_list'));
-        $testModule = null;
+        // Email Template records needed for testing
+        $et1 = $this->getNewEmailTemplateRecord();
+        $et2 = $this->getNewEmailTemplateRecord();
 
-        $emailBeanMock->expects($this->any())
-            ->method('get_full_list')
-            ->with('', "base_module = '$testModule'" )
-            ->will($this->returnValue(array(
-                    (object) array("id" => "abcdeff", "name" => "Test Email Template"),
-                    (object) array("id" => "abcdefg", "name" => "Test Email Template 01"),
-                    (object) array("id" => "abcdefh", "name" => "Test Email Template 02"),
-                    (object) array("id" => "abcdefi", "name" => "Test Email Template 03"),
-                    (object) array("id" => "abcdefj", "name" => "Test Email Template 04"),
-                )
-            ));
-        $this->object->setEmailTemplateBean($emailBeanMock);
-        $result = $this->object->retrieveEmailTemplates($testModule);
-        $this->assertEquals(array(), $result);
+        $wrapper = $this->getMockBuilder('PMSECrmDataWrapper')
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $data = $wrapper->retrieveEmailTemplates(null);
+
+        $this->assertEquals([], $data);
     }
 
     /**
@@ -1318,8 +1439,10 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $filter = 'ProjectTask';
 
-        global $beanList;
-        $beanList = array('Leads' => array(), 'ProjectTask' => array());
+        $this->object->setBeanList([
+            'Leads' => [],
+            'ProjectTask' => [],
+        ]);
 
         $result = $this->object->retrieveRelatedModules($filter);
         $this->assertCount(4, $result);
@@ -1368,9 +1491,10 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $filter = 'ProjectTask';
 
-        global $beanList;
-        $beanList = array('Leads', 'ProjectTask');
-
+        $this->object->setBeanList([
+            'Leads',
+            'ProjectTask',
+        ]);
         $result = $this->object->retrieveRelatedModules($filter);
         $this->assertCount(1, $result);
     }
@@ -1713,9 +1837,7 @@ class PMSECrmDataWrapperTest extends TestCase
                 'rhs_module' => 'All'
             )));
 
-        global $beanList;
-        $beanList = array();
-
+        $this->object->setBeanList([]);
         $this->object->addRelatedRecord("Leads");
     }
 
@@ -1784,8 +1906,12 @@ class PMSECrmDataWrapperTest extends TestCase
             ->method('fieldTodo')
             ->will($this->returnValue(false));
 
-        global $beanList, $app_list_strings;
-        $beanList = array('Notes' => array());
+        global $app_list_strings;
+
+        $this->object->setBeanList([
+            'Notes' => [],
+        ]);
+
         $app_list_strings = array(
             'listOptions' => array()
         );
@@ -1863,8 +1989,12 @@ class PMSECrmDataWrapperTest extends TestCase
             ->method('fieldTodo')
             ->will($this->returnValue(false));
 
-        global $beanList, $app_list_strings;
-        $beanList = array('Notes' => array());
+        global $app_list_strings;
+
+        $this->object->setBeanList([
+            'Notes' => [],
+        ]);
+
         $app_list_strings = array(
             'listOptions' => array()
         );
