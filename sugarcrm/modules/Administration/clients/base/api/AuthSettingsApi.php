@@ -297,7 +297,9 @@ class AuthSettingsApi extends SugarApi
         switch ($mode) {
             case 'time':
                 return [
-                    'time' => $passConfig['userexpirationtime'] * $passConfig['userexpirationtype'] * 3600 * 24,
+                    'time' =>
+                        intval($passConfig['userexpirationtime']) *
+                        intval($passConfig['userexpirationtype']) * 3600 * 24,
                     'attempt' => 0,
                 ];
             case 'upon_logins':
