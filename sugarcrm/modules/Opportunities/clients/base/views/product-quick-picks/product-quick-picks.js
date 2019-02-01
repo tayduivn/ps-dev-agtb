@@ -334,6 +334,10 @@
     tabSwitcher: function(event) {
         this.dataFetched = false;
         this._super('tabSwitcher', [event]);
+        //Resetting pageNumClicked on switching back to Favorites tab
+        if (this.activeTab === 'favorites') {
+            this.pageNumClicked = 1;
+        }
         this.loadData();
     },
 

@@ -800,4 +800,120 @@ describe('Base.Fields.Currency', function() {
             });
         });
     });
+
+    describe('handleCurrencyFieldChange', function() {
+        var field;
+        var modelSetSpy;
+        var renderStub;
+        var modelGetStub;
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'detail',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            renderStub = sinon.collection.stub();
+            modelSetSpy = sinon.collection.spy(field.model, 'set');
+            sinon.collection.stub(model, 'get', function() {
+                return 100;
+            });
+            sinon.collection.stub(field,'updateModelWithValue', function() {});
+            sinon.collection.stub(field.view, 'getField', function() {
+                return {
+                    render: renderStub
+                };
+            });
+            sinon.stub(app.metadata, 'getCurrency', function() {
+                return {
+                    'conversion_rate': '0.900'
+                };
+            });
+        });
+
+        afterEach(function() {
+            field = null;
+            renderStub = null;
+            modelGetStub = null;
+            modelSetSpy = null;
+            app.metadata.getCurrency.restore();
+        });
+
+        it('should assign currency Id to _lastCurrencyId', function() {
+            field._lastCurrencyId = '-99';
+            var currencyId = '2';
+            field.handleCurrencyFieldChange(model, currencyId, {});
+            expect(field._lastCurrencyId).toEqual(currencyId);
+        });
+
+        it('should not set base rate field in the model when options.revert is true', function() {
+            field.handleCurrencyFieldChange(model, '-99', {revert: true});
+            expect(modelSetSpy).not.toHaveBeenCalled();
+        });
+
+        it('should set base rate field in the model with conversion rate', function() {
+            field.handleCurrencyFieldChange(model, '-99', {});
+            expect(modelSetSpy).toHaveBeenCalledWith('base_rate', app.metadata.getCurrency().conversion_rate,
+                {silent: true});
+        });
+
+        it('should call render function when base rate is defined', function() {
+            field.handleCurrencyFieldChange(model, '-99', {});
+            expect(field.view.getField).toHaveBeenCalled();
+            expect(renderStub).toHaveBeenCalled();
+        });
+
+        it('should call updateModelWithValue with the name field from the model', function() {
+            field.handleCurrencyFieldChange(model, '-99', {});
+            expect(model.get).toHaveBeenCalled();
+            expect(field.updateModelWithValue).toHaveBeenCalledWith(model, '-99', 100);
+        });
+    });
+
+    describe('updateModelWithValue', function() {
+        var field;
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'detail',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            modelSetSpy = sinon.collection.spy(field.model, 'set');
+            sinon.collection.stub(field,'_deferModelChange', function() {});
+            sandbox.stub(app.currency, 'convertAmount', function() {
+                return 90;
+            });
+
+            field.updateModelWithValue(model, '-99', 100);
+        });
+
+        afterEach(function() {
+            modelSetSpy = null;
+            field = null;
+        });
+
+        it('should call _deferModelChange', function() {
+            expect(field._deferModelChange).toHaveBeenCalled();
+        });
+
+        it('should call convertAmount and set the converted amount in the model', function() {
+            expect(modelSetSpy).toHaveBeenCalledWith(field.name, app.currency.convertAmount(), {silent: true});
+        });
+
+    });
 });

@@ -71,4 +71,15 @@
         return app.currency.formatAmountLocale(value, convertedCurrencyId);
     },
 
+
+    /**
+     * @inheritdoc
+     */
+    updateModelWithValue: function(model, currencyId, val) {
+        // Convert the discount amount value only if it is not in %
+        // Other values will be converted as usual
+        if (val && !(this.name === 'discount_amount' && this.model.get('discount_select'))) {
+            this._super('updateModelWithValue',[model, currencyId, val]);
+        }
+    }
 })

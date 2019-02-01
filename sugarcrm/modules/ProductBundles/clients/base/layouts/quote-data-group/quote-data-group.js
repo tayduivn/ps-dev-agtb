@@ -83,6 +83,7 @@
                 currency_id: model.get('currency_id'),
                 base_rate: model.get('base_rate')
             });
+            this._render();
         }, this);
     },
 
