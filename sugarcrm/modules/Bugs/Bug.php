@@ -53,6 +53,7 @@ class Bug extends SugarBean {
 	var $product_category;
     //BEGIN SUGARCRM flav=ent ONLY
     public $follow_up_datetime;
+    public $resolved_datetime;
     //END SUGARCRM flav=ent ONLY
 
 	//END Additional fields being added to Bug Tracker

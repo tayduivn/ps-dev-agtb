@@ -29,6 +29,7 @@ class aCase extends Basic
 
     //BEGIN SUGARCRM flav=ent ONLY
     public $follow_up_datetime;
+    public $resolved_datetime;
     //END SUGARCRM flav=ent ONLY
 
     var $created_by;
@@ -100,7 +101,22 @@ class aCase extends Basic
     var $new_schema = true;
 
 
-
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Set resolved_datetime to current time when a case is resolved
+     *
+     * @see parent::save()
+     */
+    public function save($check_notify = false)
+    {
+        if (in_array($this->status, ['Closed', 'Rejected', 'Duplicate'])) {
+            if (empty($this->resolved_datetime)) {
+                $this->resolved_datetime = TimeDate::getInstance()->nowDb();
+            }
+        }
+        return parent::save($check_notify);
+    }
+    //END SUGARCRM flav=ent ONLY
 
 
     function get_summary_text()

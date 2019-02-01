@@ -31,46 +31,34 @@ class IssueTemplateTest extends TestCase
         \MetaDataManager::resetManagers();
     }
 
-    public function hasFollowUpDateFieldProvider(): array
+    public function checkModuleHasFieldsProvider(): array
     {
         return [
-            ['Bugs'],
-            ['Cases'],
-            ['DataPrivacy'],
-        ];
-    }
-
-    public function hasNoFollowUpDateFieldProvider(): array
-    {
-        return [
-            ['Accounts'], // not an issue type module
-            ['Contacts'], // not an issue type module
+            ['Bugs', 'follow_up_datetime', true],
+            ['Bugs', 'resolved_datetime', true],
+            ['Cases', 'follow_up_datetime', true],
+            ['Cases', 'resolved_datetime', true],
+            ['DataPrivacy', 'follow_up_datetime', true],
+            ['DataPrivacy', 'resolved_datetime', true],
+            ['Accounts', 'follow_up_datetime', false],
+            ['Accounts', 'resolved_datetime', false],
+            ['Contacts', 'follow_up_datetime', false],
+            ['Contacts', 'resolved_datetime', false],
         ];
     }
 
     /**
-     * Checks that modules that should have follow_up_datetime as a field do.
+     * Checks that modules should have certain issue type fields.
      *
-     * @param string $module The module we would like to check for whether
-     *   follow_up_datetime exists.
-     * @dataProvider hasFollowUpDateFieldProvider
+     * @param string $module The module we would like to check fields
+     * @param string $field The field to be checked
+     * @param bool $hasField Whether the module should has the field beening checked
+     * @dataProvider checkModuleHasFieldsProvider
      */
-    public function testCheckModuleHasFollowUpDateField(string $module)
+    public function testCheckModuleHasFields(string $module, string $field, bool $hasField)
     {
-        $this->assertArrayHasKey('follow_up_datetime', (\BeanFactory::newBean($module))->field_defs);
-    }
-
-    /**
-     * Checks that modules that should not have follow_up_datetime as a field
-     * do not.
-     *
-     * @param string $module The module we would like to check for whether
-     *   follow_up_datetime exists.
-     * @dataProvider hasNoFollowUpDateFieldProvider
-     */
-    public function testCheckModuleHasNoFollowUpDateField(string $module)
-    {
-        $this->assertArrayNotHasKey('follow_up_datetime', (\BeanFactory::newBean($module))->field_defs);
+        $field_defs = \BeanFactory::newBean($module)->field_defs;
+        $this->assertSame($hasField, array_key_exists($field, $field_defs));
     }
 
     /**

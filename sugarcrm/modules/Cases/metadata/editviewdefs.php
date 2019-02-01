@@ -63,6 +63,9 @@ $viewdefs['Cases']['EditView'] = array(
 	      'name' => 'resolution',
 	      'nl2br' => true,
 	    ),
+        //BEGIN SUGARCRM flav=ent ONLY
+        'resolved_datetime',
+        //END SUGARCRM flav=ent ONLY
 	  ),
 
 	  //BEGIN SUGARCRM flav=ent ONLY

@@ -31,6 +31,7 @@ $mod_strings = array (
   'LBL_WORK_LOG' => 'Work Log:',
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_FOLLOW_UP_DATETIME' => 'Follow Up Date',
+    'LBL_RESOLVED_DATETIME' => 'Resolved Date',
     //END SUGARCRM flav=ent ONLY
   'LBL_CREATED_BY' => 'Created by:',
   'LBL_DATE_CREATED' => 'Date Created:',

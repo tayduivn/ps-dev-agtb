@@ -40,6 +40,9 @@ $viewdefs[$module_name]['DetailView'] = array(
         array(
             'follow_up_datetime',
         ),
+        array (
+            'resolved_datetime',
+        ),
         //END SUGARCRM flav=ent ONLY
   array (
 	array (
