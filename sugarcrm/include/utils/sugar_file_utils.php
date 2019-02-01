@@ -139,7 +139,7 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
 function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_include_path=false, $context=null){
 
     $dir = dirname($filename);
-    $temp = @tempnam($dir, 'temp');
+    $temp = @tempnam(sys_get_temp_dir(), 'temp');
 
     if ($temp === false || !($f = @fopen($temp, $mode))) {
         // delete the file created by tempnam
@@ -155,7 +155,7 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
 
     fwrite($f, $data);
     fclose($f);
-
+    sugar_chmod($temp);
     if (!@rename($temp, $filename))
     {
         @unlink($filename);
@@ -165,11 +165,8 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
             @unlink($temp);
             trigger_error("sugar_file_put_contents_atomic() : fatal rename failure '$temp' -> '$filename'", E_USER_ERROR);
         }
-    }
-
-    if(file_exists($filename))
-    {
-        return sugar_chmod($filename);
+    } else {
+        return file_exists($filename);
     }
 
     return false;
