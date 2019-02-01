@@ -2601,8 +2601,7 @@ class HealthCheckScanner
         $foundInfo = array();
 
         $fileContentsLined = file($file);
-        $pattern = "#$pattern#";
-        $linesFound = preg_grep(preg_quote($pattern), $fileContentsLined);
+        $linesFound = preg_grep('/' . preg_quote($pattern, '/') . '/', $fileContentsLined);
 
         if (count($linesFound) > 0) {
 
