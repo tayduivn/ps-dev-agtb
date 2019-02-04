@@ -2551,7 +2551,7 @@ abstract class DBManager implements LoggerAwareInterface
 	}
 
     /**
-     * Called in SearchForm and QuickSearch and overriden in OracleManager to 
+     * Called in SearchForm and QuickSearch and overriden in OracleManager to
      * support case insensitive search.
      *
      * @param  string $name column name
@@ -3419,8 +3419,9 @@ abstract class DBManager implements LoggerAwareInterface
                 if (!($this->_emptyValue($before_value,$field_type) && $this->_emptyValue($after_value,$field_type))) {
                     $change = false;
 
-                    $check_before = is_object($before_value)?$before_value:trim($before_value);
-                    $check_after = is_object($after_value)?$after_value:trim($after_value);
+                    // Only scalar values should be run through trim()
+                    $check_before = !is_scalar($before_value)?$before_value:trim($before_value);
+                    $check_after = !is_scalar($after_value)?$after_value:trim($after_value);
                     if ($check_before !== $check_after) {
                         // Bug #42475: Don't directly compare numeric values, instead do the subtract and see if the comparison comes out to be "close enough", it is necessary for floating point numbers.
                         // Manual merge of fix 95727f2eed44852f1b6bce9a9eccbe065fe6249f from DBHelper

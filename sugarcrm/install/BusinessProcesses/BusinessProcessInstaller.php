@@ -18,6 +18,12 @@ use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 class BusinessProcessInstaller
 {
     /**
+     * List of files that have been installed
+     * @var array
+     */
+    protected $installedFiles = [];
+
+    /**
      * List of files to be read for installation
      * @var array
      */
@@ -133,6 +139,57 @@ class BusinessProcessInstaller
     }
 
     /**
+     * Checks if a given id for an extension file is installed
+     * @param string $ext The extension file type
+     * @param string $id The ID of the record in the file
+     * @return boolean
+     */
+    protected function isInstalled(string $ext, string $id)
+    {
+        return !empty($this->installed[$ext][$id]);
+    }
+
+    /**
+     * Marks a given id for an extension file as installed
+     * @param string $ext The extension file type
+     * @param string $id The ID of the record in the file
+     */
+    protected function markInstalled(string $ext, string $id)
+    {
+        $this->installed[$ext][$id] = true;
+    }
+
+    /**
+     * Marks a file installed. Used for deleting installed files after
+     * the process is done.
+     * @param string $file Path to the file
+     * @return BusinessProcessInstaller
+     */
+    protected function markFileInstalled($file)
+    {
+        $this->installedFiles[$file] = $file;
+        return $this;
+    }
+
+    /**
+     * Returns the list of installed files by type
+     * @return array
+     */
+    public function getInstalledFiles()
+    {
+        return $this->installedFiles;
+    }
+
+    /**
+     * Appends a list of installed elements onto the installed stack
+     * @param array $installed List of installed elements to append
+     */
+    protected function appendInstalled(array $installed)
+    {
+        $this->installed = array_merge($this->installed, $installed);
+    }
+
+    /**
      * Runs through each install file by type and calls the proper importer to
      * do the actual importing of the data
      * @return BusinessProcessInstaller
@@ -162,9 +219,9 @@ class BusinessProcessInstaller
                 $id = $data['project']['id'];
 
                 // If we have not already processed this data file, import it
-                if (empty($this->installed[$ext][$id])) {
+                if (!$this->isInstalled($ext, $id)) {
                     // Mark this one as done now
-                    $this->installed[$ext][$id] = true;
+                    $this->markInstalled($ext, $id);
 
                     // Load the importer that is needed
                     $importer = $this->getImporter($this->importerTypes[$ext]);
@@ -190,7 +247,8 @@ class BusinessProcessInstaller
                         // If we were successful then we will have an ID of the
                         // project that was imported
                         if (isset($result['id'])) {
-                            $this->installed[$ext][$result['id']] = true;
+                            $this->markInstalled($ext, $result['id']);
+                            $this->markFileInstalled($file);
                         }
                     } catch (Exception $e) {
                         // Log the failure to this object
@@ -199,7 +257,8 @@ class BusinessProcessInstaller
                         // Log to the installer
                         installLog(
                             sprintf(
-                                'Process Import for %s \'%s\' (ID: %s) failed',
+                                'Process Import of file %s for %s \'%s\' (ID: %s) failed',
+                                $file,
                                 $ext,
                                 $data['name'],
                                 $data['id']
@@ -207,7 +266,9 @@ class BusinessProcessInstaller
                         );
                     }
 
-                    $this->installed = array_merge($this->installed, $dependencyMap);
+                    $this->appendInstalled($dependencyMap);
+                } else {
+                    $this->markFileInstalled($file);
                 }
             }
         }
@@ -356,7 +417,22 @@ class BusinessProcessInstaller
     }
 
     /**
-     * Saves what was done to the database\
+     * Gets whatever is currently installed by the installer
+     * @return array
+     */
+    public function getInstalledData()
+    {
+        $admin = Container::getInstance()->get(Administration::class);
+        $admin->retrieveSettings($this->settings['category'], true);
+        if (empty($admin->settings[$this->settings['category'] . '_' . $this->settings['key']])) {
+            return [];
+        }
+
+        return $admin->settings[$this->settings['category'] . '_' . $this->settings['key']];
+    }
+
+    /**
+     * Saves what was done to the database
      * @return int
      */
     public function save()
@@ -367,6 +443,17 @@ class BusinessProcessInstaller
             $this->settings['key'],
             $this->installed
         );
+    }
+
+    /**
+     * This just updates the internal cache to prevent records that have been
+     * installed already from being added again
+     * @return BusinessProcessInstaller
+     */
+    public function prepareUpgrade()
+    {
+        $this->appendInstalled($this->getInstalledData());
+        return $this;
     }
 
     /**
@@ -408,15 +495,35 @@ class BusinessProcessInstaller
     public function cleanup() : BusinessProcessInstaller
     {
         // Delete the installation data files
-        foreach ($this->installFiles as $ext => $files) {
-            foreach ($files as $file) {
-                if (unlink($file)) {
-                    $this->cleanupCount++;
-                }
+        foreach ($this->getInstalledFiles() as $file) {
+            if (unlink($file)) {
+                $this->cleanupCount++;
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Collects the loggable results for logging
+     * @return array
+     */
+    public function getInstallTotalsLog()
+    {
+        $ret = [];
+
+        foreach ($this->exts as $type => $ext) {
+            $count = $this->getFinalCount($ext);
+            $ret[] = "Process Design $type installations: $count";
+        }
+
+        if (($fails = $this->getFinalCount('failures')) !== 0) {
+            $ret[] = "Process Design installation failures: $fails";
+        }
+
+        $ret[] = "Process Design files cleaned up: {$this->cleanupCount}";
+
+        return $ret;
     }
 
     /**
@@ -425,16 +532,9 @@ class BusinessProcessInstaller
      */
     public function logInstallTotals() : BusinessProcessInstaller
     {
-        foreach ($this->exts as $type => $ext) {
-            $count = $this->getFinalCount($ext);
-            installLog("Process Design $type installations: $count");
+        foreach ($this->getInstallTotalsLog() as $entry) {
+            installLog($entry);
         }
-
-        if (($fails = $this->getFinalCount('failures')) !== 0) {
-            installLog("Process Design installation failures: $fails");
-        }
-
-        installLog("Process Design files cleaned up: {$this->cleanupCount}");
 
         return $this;
     }
