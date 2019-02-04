@@ -19,8 +19,7 @@ class RepairDatabaseTest extends TestCase
     public function setUp()
     {
         $this->db = DBManagerFactory::getInstance();
-        if($this->db->dbType == 'mysql')
-        {
+        if ($this->db->dbType == 'mysql') {
             $sql =  'ALTER TABLE meetings MODIFY COLUMN status varchar(100) NULL DEFAULT \'Test\'';
             $sql2 = 'ALTER TABLE calls MODIFY COLUMN status varchar(100) NULL DEFAULT \'Test\'';
             $sql3 = 'ALTER TABLE tasks MODIFY COLUMN status varchar(100) NULL DEFAULT \'Test\'';
@@ -39,8 +38,7 @@ class RepairDatabaseTest extends TestCase
 
     public function tearDown()
     {
-        if($this->db->dbType == 'mysql')
-        {
+        if ($this->db->dbType == 'mysql') {
             $sql = "ALTER TABLE meetings MODIFY COLUMN status varchar(100) NULL DEFAULT 'Planned'";
             $sql2 = "ALTER TABLE calls MODIFY COLUMN status varchar(100) NULL DEFAULT 'Planned'";
             $sql3 = "ALTER TABLE tasks MODIFY COLUMN status varchar(100) NULL DEFAULT 'Not Started'";
@@ -56,8 +54,7 @@ class RepairDatabaseTest extends TestCase
 
 public function testRepairTableParams()
 {
-	    if($this->db->dbType != 'mysql')
-	    {
+        if ($this->db->dbType != 'mysql') {
 	       $this->markTestSkipped('Skip if not mysql db');
 	       return;	
 	    }
@@ -76,7 +73,7 @@ public function testRepairTableParams()
 	    $this->assertTrue(!empty($result));	    
 	    $this->assertRegExp('/ALTER TABLE tasks\s+?modify column status varchar\(100\)  DEFAULT \'Not Started\' NULL/i', $result);
 
-        $def = $GLOBALS['dictionary']['accounts_contacts'];
+        $def = $GLOBALS['dictionary']['email_addr_bean_rel'];
         $result = $this->db->repairTableParams($def['table'], $def['fields'], $def['indices'], false, $defs['engine'] ?? null);
         $this->assertRegExp('/ALTER TABLE email_addr_bean_rel\s+ADD INDEX idx_email_address_id \(email_address_id\)/i', $result);
 }
@@ -102,7 +99,7 @@ private function getRepairTableParamsResult($bean)
         }
         
         
-	    $result = $this->db->repairTableParams($tablename, $fielddefs, $new_indices, false, $engine);
+        $result = $this->db->repairTableParams($tablename, $fielddefs, $new_indices, false, $engine);
 	    return $result;	
 }
 }
