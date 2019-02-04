@@ -3105,22 +3105,20 @@ function decodeJavascriptUTF8($str)
 }
 
 /**
- * Will check if a given PHP version string is supported (tested on this ver),
- * unsupported (results unknown), or invalid (something will break on this
- * ver).  Do not pass in any pararameter to default to a check against the
- * current environment's PHP version.
+ * Will check if a given PHP version string is supported.
+ * Do not pass in any parameter to default to a check against the current environment's PHP version.
  *
- * @return 1 implies supported, -1 implies unsupported
+ * @param string $version The version to check
+ *
+ * @return int 1 implies supported, -1 implies unsupported
  */
-function check_php_version($sys_php_version = '')
+function check_php_version(string $version = PHP_VERSION)
 {
-    $sys_php_version = empty($sys_php_version) ? constant('PHP_VERSION') : $sys_php_version;
-
-    if (version_compare($sys_php_version, '7.1.0', '<')) {
+    if (version_compare($version, '7.1.0', '<')) {
         return -1;
     }
 
-    if (version_compare($sys_php_version, '7.3.0-dev', '>=')) {
+    if (version_compare($version, '7.4.0-dev', '>=')) {
         return -1;
     }
 
