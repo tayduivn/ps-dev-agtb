@@ -14,40 +14,45 @@ use PHPUnit\Framework\TestCase;
 
 class RepairDatabaseTest extends TestCase
 {
-var $db;	
-	
-public function setUp()
-{
-	$this->markTestIncomplete('Skip for now');	
-    $this->db = DBManagerFactory::getInstance();	
-    if($this->db->dbType == 'mysql')
+    private $db;
+
+    public function setUp()
     {
-       $sql =  'ALTER TABLE meetings ALTER COLUMN status SET DEFAULT NULL';
-       $sql2 = 'ALTER TABLE calls ALTER COLUMN status SET DEFAULT NULL';
-       $sql3 = 'ALTER TABLE tasks ALTER COLUMN status SET DEFAULT NULL';
+        $this->db = DBManagerFactory::getInstance();
+        if($this->db->dbType == 'mysql')
+        {
+            $sql =  'ALTER TABLE meetings MODIFY COLUMN status varchar(100) NULL DEFAULT \'Test\'';
+            $sql2 = 'ALTER TABLE calls MODIFY COLUMN status varchar(100) NULL DEFAULT \'Test\'';
+            $sql3 = 'ALTER TABLE tasks MODIFY COLUMN status varchar(100) NULL DEFAULT \'Test\'';
+            $sql4 = 'ALTER TABLE email_addr_bean_rel DROP INDEX idx_email_address_id';
 
-	   //Run the SQL
-	   $this->db->query($sql);  
-	   $this->db->query($sql2);  
-	   $this->db->query($sql3);       
+            //Run the SQL
+            $this->db->query($sql);
+            $this->db->query($sql2);
+            $this->db->query($sql3);
+            $this->db->query($sql4);
+            $this->db->commit();
+        }
+
+
     }
-    
-         
-}	
 
-public function tearDown()
-{
-	if($this->db->dbType == 'mysql')
-    {	
-    	$sql = "ALTER TABLE meetings ALTER COLUMN status SET DEFAULT 'Planned'";
-    	$sql2 = "ALTER TABLE calls ALTER COLUMN status SET DEFAULT 'Planned'";
-    	$sql3 = "ALTER TABLE tasks ALTER COLUMN status SET DEFAULT 'Not Started'";
-	    //Run the SQL
-	    $this->db->query($sql);
-	    $this->db->query($sql2); 
-	    $this->db->query($sql3);      	
-    }   	
-}
+    public function tearDown()
+    {
+        if($this->db->dbType == 'mysql')
+        {
+            $sql = "ALTER TABLE meetings MODIFY COLUMN status varchar(100) NULL DEFAULT 'Planned'";
+            $sql2 = "ALTER TABLE calls MODIFY COLUMN status varchar(100) NULL DEFAULT 'Planned'";
+            $sql3 = "ALTER TABLE tasks MODIFY COLUMN status varchar(100) NULL DEFAULT 'Not Started'";
+            $sql4 = 'ALTER TABLE email_addr_bean_rel ADD INDEX idx_email_address_id (email_address_id)';
+            //Run the SQL
+            $this->db->query($sql);
+            $this->db->query($sql2);
+            $this->db->query($sql3);
+            $this->db->query($sql4);
+            $this->db->commit();
+        }
+    }
 
 public function testRepairTableParams()
 {
@@ -61,18 +66,19 @@ public function testRepairTableParams()
 	    $result = $this->getRepairTableParamsResult($bean);
 	    $this->assertRegExp('/ALTER TABLE meetings\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i', $result);
 	    
-	    /*
 	    $bean = new Call();
 	    $result = $this->getRepairTableParamsResult($bean);
 	    $this->assertTrue(!empty($result));
 	    $this->assertRegExp('/ALTER TABLE calls\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i', $result);
-	    */
-	    
+
 	    $bean = new Task();
 	    $result = $this->getRepairTableParamsResult($bean);
 	    $this->assertTrue(!empty($result));	    
 	    $this->assertRegExp('/ALTER TABLE tasks\s+?modify column status varchar\(100\)  DEFAULT \'Not Started\' NULL/i', $result);
- 
+
+        $def = $GLOBALS['dictionary']['accounts_contacts'];
+        $result = $this->db->repairTableParams($def['table'], $def['fields'], $def['indices'], false, $defs['engine'] ?? null);
+        $this->assertRegExp('/ALTER TABLE email_addr_bean_rel\s+ADD INDEX idx_email_address_id \(email_address_id\)/i', $result);
 }
 
 private function getRepairTableParamsResult($bean)
@@ -96,7 +102,7 @@ private function getRepairTableParamsResult($bean)
         }
         
         
-	    $result = $this->db->repairTableParams($bean->table_name, $fielddefs, $new_indices, false, $engine);
+	    $result = $this->db->repairTableParams($tablename, $fielddefs, $new_indices, false, $engine);
 	    return $result;	
 }
 }
