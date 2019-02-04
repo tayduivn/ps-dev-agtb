@@ -78,12 +78,13 @@ class ACLAction  extends SugarBean
             foreach($ACLActions[$type]['actions'] as $action_name =>$action_def){
 
                 $action = BeanFactory::newBean('ACLActions');
-                $query = "SELECT * FROM " . $action->table_name . " WHERE name='$action_name' AND category = '$category' AND acltype='$type' and deleted=0";
-                $result = $db->query($query);
-                //only add if an action with that name and category don't exist
-                $row=$db->fetchByAssoc($result);
-                if ($row != null) {
-                    $action->mark_deleted($row['id']);
+                $id = $db->getConnection()
+                    ->executeQuery(
+                        "SELECT id FROM {$action->table_name} WHERE name=? AND category=? AND acltype=? and deleted=0",
+                        [$action_name, $category, $type]
+                    )->fetchColumn();
+                if (false !== $id) {
+                    $action->mark_deleted($id);
                 }
             }
         }else{
