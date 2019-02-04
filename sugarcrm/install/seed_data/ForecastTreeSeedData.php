@@ -56,8 +56,17 @@ class ForecastTreeSeedData {
         {
             $parent_id = empty($row['parent_id']) ? '' : $row['parent_id'];
             $assigned_user_id = empty($row['assigned_user_id']) ? '1' : $row['assigned_user_id'];
-            $query = "INSERT INTO forecast_tree (id, name, hierarchy_type, user_id, parent_id) VALUES ('{$row['id']}', '{$row['name']}', 'products', '{$assigned_user_id}', '{$parent_id}')";
-            $GLOBALS['db']->query($query);
+            $GLOBALS['db']->getConnection()
+                ->insert(
+                    'forecast_tree',
+                    [
+                        'id' => $row['id'],
+                        'name' => $row['name'],
+                        'hierarchy_type' => 'products',
+                        'user_id' => $assigned_user_id,
+                        'parent_id' => $parent_id,
+                    ]
+                );
         }
     }
 
