@@ -68,6 +68,34 @@ class DrPhilTest extends TestCase
         ],
     ];
 
+    /**
+     * Link fields that would fail the check that there is only one link field per relationship side.
+     * This is a temporary list which contains references to existing metadata and will be removed in the future.
+     * Developers MUST NOT add new items to the list. If the newly added metadata fails the test,
+     * the metadata should be fixed instead.
+     */
+    private const LINKS_ON_SAME_REL_SIDE_EXCEPTIONS = [
+        'Leads' => [
+            'contact_leads' => ['contacts', 'contact'],
+        ],
+        'ProjectTask' => [
+            'projects_project_tasks' => ['projects', 'project_name_link'],
+        ],
+        'Contacts' => [
+            'contact_direct_reports' => ['reports_to_link', 'direct_reports'],
+            'contact_tasks' => ['tasks', 'all_tasks'],
+        ],
+        'Accounts' => [
+            'member_accounts' => ['members', 'member_of'],
+        ],
+        'Tasks' => [
+            'projects_tasks' => ['projects', 'project'],
+        ],
+        'ProductCategories' => [
+            'member_categories' => ['parent_category', 'categories'],
+        ],
+    ];
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanList');
@@ -389,24 +417,7 @@ class DrPhilTest extends TestCase
     public static function provideLinkFields()
     {
         $moduleList = self::getValidModules();
-
         $linkFields = array();
-
-        $oneWayRelationships = array(
-            'activities',
-            'created_by_link',
-            'modified_user_link',
-            'assigned_user_link',
-            'teams',
-            'emails',
-            'email_addresses_primary',
-            'email_addresses',
-            'team_link',
-            'team_count_link',
-            'favorite_link',
-            'following_link',
-        );
-
         foreach ( $moduleList as $module ) {
             $bean = self::getSeedBean($module);
             if (!is_array($bean->field_defs)) {
@@ -415,11 +426,6 @@ class DrPhilTest extends TestCase
 
             foreach ($bean->field_defs as $linkName => $def) {
                 if ($def['type'] != 'link') {
-                    continue;
-                }
-
-                // There are some relationships that don't link both ways
-                if (in_array($linkName,$oneWayRelationships)) {
                     continue;
                 }
 
@@ -446,6 +452,37 @@ class DrPhilTest extends TestCase
 
         $relatedBean = self::getSeedBean($relatedModuleName);
         $this->assertNotNull($relatedBean,"Could not load related module ({$relatedModuleName}) for link {$bean->module_dir}/{$linkName}");
+
+        $linkDef = $bean->field_defs[$linkName];
+        $relationship = $linkDef['relationship'];
+        foreach ($bean->field_defs as $key => $def) {
+            if ($def['type'] !== 'link') {
+                continue;
+            }
+
+            if ($key == $linkName) {
+                continue;
+            }
+
+            if ($relationship !== $def['relationship']) {
+                continue;
+            }
+
+            if (isset($linkDef['side']) && isset($def['side']) && $linkDef['side'] !== $def['side']) {
+                continue;
+            }
+
+            $exceptions = self::LINKS_ON_SAME_REL_SIDE_EXCEPTIONS[$moduleName][$relationship] ?? [];
+            if (in_array($linkName, $exceptions)) {
+                continue;
+            }
+
+            $this->fail(
+                "Only one link field per relationship side is allowed. "
+                    . "Both '$linkName' and '$key' links are referencing the same "
+                    . "relationship '$relationship'."
+            );
+        }
 
         return;
 

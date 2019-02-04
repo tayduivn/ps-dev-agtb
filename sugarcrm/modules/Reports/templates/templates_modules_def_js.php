@@ -158,7 +158,7 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 			    }
 
                 //Allowed fields array with non-db-source
-                $allowed_fields_array = array('full_name', 'default_primary_team');
+                $allowed_fields_array = array('full_name');
 
 			    if(isset($field_def['source']) &&
 			           ($field_def['source'] == 'non-db' && empty($field_def['ext2'])) && $field_def['name'] != 'full_name')
