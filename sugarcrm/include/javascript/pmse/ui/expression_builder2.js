@@ -1198,9 +1198,9 @@ ExpressionControl.prototype._createModulePanel = function () {
                     dependencyHandler: function (dependantField, field, value) {
                         var module = field.getSelectedData();
                         if (module && module.type && module.type == 'many') {
-                            dependantField.setDisabled(false);
+                            dependantField.enable();
                         } else {
-                            dependantField.setDisabled(true);
+                            dependantField.disable();
                         }
                     }
                 },

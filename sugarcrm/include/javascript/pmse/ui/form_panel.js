@@ -1941,7 +1941,6 @@ FormPanelRadio.prototype.init = function(settings) {
     jQuery.extend(true, defaults, settings);
 
     this.setOptions(defaults.options)
-        .setDisabled(defaults.disabled)
         .setValue(defaults.value !== undefined ? defaults.value : this._value);
 };
 
@@ -1958,20 +1957,34 @@ FormPanelRadio.prototype._setValueToControl = function (value) {
     return this;
 };
 
-FormPanelRadio.prototype.setDisabled = function (value) {
-    this._disabled = !!value;
+/**
+ * Disables a radio button
+ */
+FormPanelRadio.prototype.disable = function () {
     for (var i = 0; i < this._htmlControl.length; i++) {
         var label = jQuery(this._htmlControl[i]);
         var input = label.find('input').get(0);
-        if (this._disabled) {
-            label.addClass('adam-disabled');
-            input.checked = false;
-        } else {
-            label.removeClass('adam-disabled');
-        }
-        input.disabled = this._disabled;
+
+        label.addClass('adam-disabled');
+        input.checked = false;
+        input.disabled = true;
     }
-    return this;
+
+    FormPanelItem.prototype.disable.call(this);
+};
+
+/**
+ * Enables a radio button
+ */
+FormPanelRadio.prototype.enable = function () {
+    for (var i = 0; i < this._htmlControl.length; i++) {
+        var label = jQuery(this._htmlControl[i]);
+        var input = label.find('input').get(0);
+
+        label.removeClass('adam-disabled');
+        input.disabled = false;
+    }
+    FormPanelItem.prototype.enable.call(this);
 };
 
 FormPanelRadio.prototype.setValue = function (value) {
