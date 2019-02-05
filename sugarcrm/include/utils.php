@@ -3118,6 +3118,12 @@ function check_php_version(string $version = PHP_VERSION)
         return -1;
     }
 
+    if (version_compare($version, '7.2.0-dev', '>=')
+        && version_compare($version, '7.3.0', '<')
+    ) {
+        return -1;
+    }
+
     if (version_compare($version, '7.4.0-dev', '>=')) {
         return -1;
     }
