@@ -481,6 +481,11 @@ function get_sugar_config_defaults()
         ],
         'marketing_extras_enabled' => true,
         'marketing_extras_url' => 'https://marketing.sugarcrm.com/content',
+        'analytics' => array(
+            'enabled' => true,
+            'connector' => 'Pendo',
+            'id' => '1dd345e9-b638-4bd2-7bfb-147a937d4728',
+        ),
     );
 
     if (empty($locale)) {
