@@ -402,10 +402,12 @@ class PMSEEmailHandler
         $beans = $this->getRelatedModuleObject()->getChainedRelationshipBeans([$bean], $entry);
 
         foreach ($beans as $b) {
-            $item = new stdClass();
-            $item->name = $b->$field;
-            $item->address = $b->$field;
-            $res[] = $item;
+            if (!empty($b->$field)) {
+                $item = new stdClass();
+                $item->name = $b->$field;
+                $item->address = $b->$field;
+                $res[] = $item;
+            }
         }
         return $res;
     }
