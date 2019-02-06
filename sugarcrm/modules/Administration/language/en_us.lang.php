@@ -1269,16 +1269,16 @@ Any integrations that rely on this platform will stop working.',
 
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_PMSE_ADMIN_TITLE_SETTINGS' => 'Settings',
-    'LBL_PMSE_ADMIN_DESC_SETTINGS' => 'Configure Advanced Workflow settings.',
 
     'LBL_PMSE_ADMIN_TITLE_ENGINELOGS' => 'Log Viewer',
-    'LBL_PMSE_ADMIN_DESC_ENGINELOGS' => 'Access the Advanced Workflow log.',
+    'LBL_PMSE_ADMIN_DESC_ENGINELOGS_1' => 'Access the ',
+    'LBL_PMSE_ADMIN_DESC_ENGINELOGS_2' => ' log.',
 
     'LBL_PMSE_ADMIN_TITLE_CASESLIST' => 'Process Management',
     'LBL_PMSE_ADMIN_DESC_CASESLIST' => 'View all open and running Processes in the system.',
-
-    'LBL_PMSE_ADMIN_TITLE_MODULE' => 'Advanced Workflow',
-    'LBL_PMSE_ADMIN_DESC_MODULE' => 'Configure Advanced Workflow settings and view logs. Manage all BPM processes for all users via Process Management.',
+    
+    'LBL_PMSE_ADMIN_DESC_MODULE_1' => 'Configure ',
+    'LBL_PMSE_ADMIN_DESC_MODULE_2' => ' settings and view logs. Manage all BPM processes for all users via Process Management.',
     //END SUGARCRM flav=ent ONLY
 
     'LBL_MANAGE_QUOTES_TITLE' => 'Quotes Configuration',

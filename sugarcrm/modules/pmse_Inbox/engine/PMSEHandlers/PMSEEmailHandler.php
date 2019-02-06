@@ -517,7 +517,7 @@ class PMSEEmailHandler
     public function addEmailToQueue($id)
     {
         $job = BeanFactory::newBean('SchedulersJobs');
-        $job->name = "Advanced Workflow Email Queue";
+        $job->name = "SugarBPM Email Queue";
         $job->target = "class::SugarJobSendAWFEmail";
         $job->data = json_encode(array('id' => $id));
 

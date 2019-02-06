@@ -505,7 +505,7 @@ class PMSEHistoryLogWrapper
 
     /**
      * Get the relevant fields in the result array to the proper values
-     * in the case of a generic Advanced Workflow user
+     * in the case of a generic SugarBPM user
      * @param array &$entry
      */
     private function setProcessUser(&$entry)

@@ -56,7 +56,7 @@ class ConfiguratorController extends SugarController
         'commentlog_maxchars',
 
         //BEGIN SUGARCRM flav=ent ONLY
-        // Advanced Workflow settings
+        // SugarBPM settings
         'processes_auto_validate_on_import',
         'processes_auto_validate_on_autosave',
         'processes_auto_save_interval',

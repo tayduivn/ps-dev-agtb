@@ -242,7 +242,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     public function doDataConvert()
     {
         $this->resetForecastData('Opportunities');
-        
+
         // fix the reports
         SugarAutoLoader::load('modules/Opportunities/include/OpportunityReports.php');
         $reports = new OpportunityReports();
@@ -500,7 +500,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $this->deleteRevenueLineItemsRelatedTriggers();
         $this->deleteRevenueLineItemWorkFlowEmailTemplates();
 
-        // Advanced Workflow RLI Definitions need to be disabled
+        // Sugar Workflow RLI Definitions need to be disabled
         $this->disableRevenueLineItemsProcessDefinitions();
 
         parent::processWorkFlows();

@@ -32,7 +32,7 @@ class SugarJobSendAWFEmail implements RunnableSchedulerJob
     }
 
     /**
-     * Executes a job to send queued emails for Advanced Workflow
+     * Executes a job to send queued emails for SugarBPM
      * @param string $data Json string containing the ID of the Email Message bean
      * @return bool
      */

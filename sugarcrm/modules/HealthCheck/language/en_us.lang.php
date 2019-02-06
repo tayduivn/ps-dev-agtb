@@ -21,7 +21,7 @@ $mod_strings = array(
     'LBL_LOGMETA' => 'Log meta',
     'LBL_ERROR' => 'Error',
 
-    // Failure handling in Advanced Workflow upgraders
+    // Failure handling in SugarBPM upgraders
     'LBL_PA_UNSERIALIZE_DATA_FAILURE' => 'Serialized data could not be unserialized',
     'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
 
@@ -130,9 +130,9 @@ $mod_strings = array(
     'LBL_SCAN_516_LOG' => 'Previously removed files found referenced in: %s',
     'LBL_SCAN_517_LOG' => 'Incompatible Integration - %s %s',
     'LBL_SCAN_540_LOG' => 'Incompatible Integration Data Reset - %s %s',
-    'LBL_SCAN_541_LOG' => 'Invalid Advanced Workflow Serialization - %s invalid serialization(s) in the %s column of the %s table:  %s.',
-    'LBL_SCAN_542_LOG' => 'Invalid Advanced Workflow Field Use - %s invalid field(s) used in %s.',
-    'LBL_SCAN_545_LOG' => 'Advanced Workflow Partially Locked Field Group - Field %4$s locked in group %s in Process Definition %s for the %s module.',
+    'LBL_SCAN_541_LOG' => 'Invalid SugarBPM Serialization - %s invalid serialization(s) in the %s column of the %s table:  %s.',
+    'LBL_SCAN_542_LOG' => 'Invalid SugarBPM Field Use - %s invalid field(s) used in %s.',
+    'LBL_SCAN_545_LOG' => 'SugarBPM Partially Locked Field Group - Field %4$s locked in group %s in Process Definition %s for the %s module.',
     'LBL_SCAN_546_LOG' => 'Custom Knowledge Base TinyMCE config',
     'LBL_SCAN_547_LOG' => 'Use of removed `resetLoadFlag` signature in %s',
     'LBL_SCAN_548_LOG' => 'Use of deprecated `initButtons` method in %s',
@@ -237,9 +237,9 @@ $mod_strings = array(
     'LBL_SCAN_535_TITLE' => 'Unsupported method call: %s()',
     'LBL_SCAN_536_TITLE' => 'Unsupported property access: $%s',
     'LBL_SCAN_540_TITLE' => 'Incompatible Integration Data Reset - %s %s',
-    'LBL_SCAN_541_TITLE' => 'Invalid Advanced Workflow Serialization - %s invalid serialization(s) in the %s column of the %s table: %s',
-    'LBL_SCAN_542_TITLE' => 'Invalid Advanced Workflow Field Use - %s invalid field(s) used in %s.',
-    'LBL_SCAN_545_TITLE' => 'Advanced Workflow Partially Locked Field Group - %3$s module: Group %s is partially locked in Process Definition %s.',
+    'LBL_SCAN_541_TITLE' => 'Invalid SugarBPM Serialization - %s invalid serialization(s) in the %s column of the %s table: %s',
+    'LBL_SCAN_542_TITLE' => 'Invalid SugarBPM Field Use - %s invalid field(s) used in %s.',
+    'LBL_SCAN_545_TITLE' => 'SugarBPM Partially Locked Field Group - %3$s module: Group %s is partially locked in Process Definition %s.',
     'LBL_SCAN_546_TITLE' => 'Custom Knowledge Base TinyMCE config',
     'LBL_SCAN_547_TITLE' => 'Use of removed `resetLoadFlag` signature in %s',
     'LBL_SCAN_548_TITLE' => 'Use of deprecated `initButtons` method in %s',

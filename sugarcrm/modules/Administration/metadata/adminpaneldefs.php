@@ -252,17 +252,29 @@ $admin_option_defs = array(
         'EngineLogs' => array(
             'EngineLogs',
             'LBL_PMSE_ADMIN_TITLE_ENGINELOGS',
-            'LBL_PMSE_ADMIN_DESC_ENGINELOGS',
+            // Some language strings that contain parts that do not need translation are
+            // broken into pieces to support assembly in the template
+            [
+                'LBL_PMSE_ADMIN_DESC_ENGINELOGS_1',
+                'SugarBPM<sup class="trademark">TM</sup>',
+                'LBL_PMSE_ADMIN_DESC_ENGINELOGS_2',
+            ],
             'javascript:parent.SUGAR.App.router.navigate("pmse_Inbox/layout/logView", {trigger: true});',
         ),
     )
 );
 $admin_group_header []= array(
-    'LBL_PMSE_ADMIN_TITLE_MODULE',
+    'SugarBPM<sup class="heading">TM</sup>',
     '',
     false,
     $admin_option_defs,
-    'LBL_PMSE_ADMIN_DESC_MODULE'
+    // Some language strings that contain parts that do not need translation are
+    // broken into pieces to support assembly in the template
+    [
+        'LBL_PMSE_ADMIN_DESC_MODULE_1',
+        'SugarBPM<sup class="trademark">TM</sup>',
+        'LBL_PMSE_ADMIN_DESC_MODULE_2',
+    ],
 );
 //END SUGARCRM flav=ent ONLY
 

@@ -5027,7 +5027,7 @@ Sincerely, SugarCRM',
     'LBL_INACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL' => 'Team Tasks',
 
     //Audit subjects
-    'LBL_AUDIT_SUBJECT_ADVANCED-WORKFLOW' => 'Advanced Workflow',
+    'LBL_AUDIT_SUBJECT_ADVANCED-WORKFLOW' => 'SugarBPM',
     'LBL_AUDIT_SUBJECT_API-BWC' => 'BWC UI',
     'LBL_AUDIT_SUBJECT_API-REST' => 'REST API',
     'LBL_AUDIT_SUBJECT_API-RPC' => 'SOAP or Old REST API',
@@ -5377,23 +5377,26 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 //BEGIN SUGARCRM flav=ent ONLY
     //PMSE Processes
     'LBL_PMSE_PROCESSES_DASHLET' => 'Processes',
-    'LBL_PMSE_PROCESSES_DASHLET_DESCRIPTION' => 'Processes dashlet displays the templates that can be used inside of Advanced Workflow.',
+    // SugarBPM should be SugarBPM<sup class="trademark>TM</sup> here, but we don't have a mechanism on the front end to
+    // not escape HTML in a dynamic list collection. So for now, this, and the next three instances of SugarBPM, must
+    // stay plain.
+    'LBL_PMSE_PROCESSES_DASHLET_DESCRIPTION' => 'Processes dashlet displays the templates that can be used inside of SugarBPM.',
 
     //PMSE Process Definitions Dashlet
     'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET' => 'Process Definitions',
-    'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET_DESCRIPTION' => 'Process Definitions dashlet displays the templates that can be used inside of Advanced Workflow.',
+    'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET_DESCRIPTION' => 'Process Definitions dashlet displays the templates that can be used inside of SugarBPM.',
     'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD' => 'Create Process Definition',
     'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD' => 'Import Process Definitions',
 
     //PMSE Process Business Rules
     'LBL_PMSE_BUSINESS_RULES_DASHLET' => 'Process Business Rules',
-    'LBL_PMSE_BUSINESS_RULES_DASHLET_DESCRIPTION' => 'Process Business Rules dashlet displays the templates that can be used inside of Advanced Workflow.',
+    'LBL_PMSE_BUSINESS_RULES_DASHLET_DESCRIPTION' => 'Process Business Rules dashlet displays the templates that can be used inside of SugarBPM.',
     'LNK_PMSE_BUSINESS_RULES_NEW_RECORD' => 'Create Process Business Rule',
     'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD' => 'Import Process Business Rules',
 
     //PMSE Email Templates Dashlet
     'LBL_PMSE_EMAIL_TEMPLATES_DASHLET' => 'Process Email Templates',
-    'LBL_PMSE_EMAIL_TEMPLATES_DASHLET_DESCRIPTION' => 'Process Email Templates dashlet displays the templates that can be used inside of Advanced Workflow.',
+    'LBL_PMSE_EMAIL_TEMPLATES_DASHLET_DESCRIPTION' => 'Process Email Templates dashlet displays the templates that can be used inside of SugarBPM.',
     'LNK_PMSE_EMAIL_TEMPLATES_NEW_RECORD' => 'Create Process Email Template',
     'LNK_PMSE_EMAIL_TEMPLATES_IMPORT_RECORD' => 'Import Process Email Templates',
 
@@ -5417,7 +5420,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PMSE_CANCELLED_STATUS' => 'Cancelled',
     'LBL_PMSE_TERMINATED_STATUS' => 'Terminated',
     'LBL_PMSE_ERROR_STATUS' => 'Error',
-    'LBL_PMSE_SETTINGS' => 'Advanced Workflow Settings',
+    'LBL_PMSE_SETTINGS' => 'SugarBPM Settings',
 
     'LBL_PRO_DISABLE_CONFIRMATION' => 'Are you sure you want to disable this record?',
     'LBL_PRO_ENABLE_CONFIRMATION' => 'Are you sure you want to enable this record?',
@@ -5442,7 +5445,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
 
-    // Failure handling in Advanced Workflow upgraders
+    // Failure handling in SugarBPM upgraders
     'LBL_PA_UNSERIALIZE_DATA_FAILURE' => 'Serialized data could not be unserialized',
     'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
 

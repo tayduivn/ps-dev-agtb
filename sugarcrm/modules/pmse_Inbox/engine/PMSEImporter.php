@@ -482,7 +482,7 @@ class PMSEImporter
             foreach ($locked as $group => $fields) {
                 if ($total[$group] > count($fields)) {
                     // found a failure
-                    $msg =  'Advanced Workflow Partially Locked Field Group - Field '
+                    $msg =  "SugarBPM\u{2122}" . ' Partially Locked Field Group - Field '
                         . implode(', ', $fields) . ' locked in group ' . $group . '.';
                     LoggerManager::getLogger()->fatal($msg);
                     $sugarApiExceptionError = new SugarApiExceptionError(

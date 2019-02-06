@@ -80,18 +80,18 @@
 		<td width='35%'>
 			<input type='text' name='system_name' value='{$settings.system_name}'>
 		</td>
-    
-        
+
+
         <td  scope="row" nowrap>{$MOD.LBL_USE_REAL_NAMES}: &nbsp;{sugar_help text=$MOD.LBL_USE_REAL_NAMES_DESC}</td>
         {if !empty($config.use_real_names)}
             {assign var='use_real_names' value='CHECKED'}
-        {else} 
+        {else}
             {assign var='use_real_names' value=''}
-        {/if}  
-        <td >  
+        {/if}
+        <td>
             <input type='hidden' name='use_real_names' value='false'>
             <input name='use_real_names'  type="checkbox" value="true" {$use_real_names}>
-        </td>  
+        </td>
     </tr>
     <tr>
         <td  scope="row" width='12%' nowrap>
@@ -145,7 +145,7 @@
             <input type='hidden' name='enable_action_menu' value='false'>
             <input name='enable_action_menu'  type="checkbox" value="true" {$enable_action_menu}>
         </td>
-        
+
         <td  scope="row">{$MOD.LOCK_SUBPANELS}: &nbsp;{sugar_help text=$MOD.LBL_LOCK_SUBPANELS_DESC}</td>
         <td  >
             {if !empty($config.lock_subpanels)}
@@ -286,7 +286,8 @@
 <!--//BEGIN SUGARCRM flav=ent ONLY -->
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
-		<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_TITLE}</h4></th>
+        <!-- This heading is hard coded because it is NOT intended to be translatable or dynamic -->
+        <th align="left" scope="row" colspan="4"><h4>SugarBPM<sup class="heading">TM</sup></h4></th>
 	</tr>
 	<tr>
 		<td width="25%" scope="row">{$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_AUTO_SAVE_INTERVAL}:&nbsp;{sugar_help text=$MOD.LBL_ADVANCED_WORKFLOW_SETTINGS_AUTO_SAVE_INTERVAL_HELP}</td>

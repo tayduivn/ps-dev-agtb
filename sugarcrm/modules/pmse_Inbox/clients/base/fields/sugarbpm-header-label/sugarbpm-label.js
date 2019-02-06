@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,22 +8,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\Sugarcrm\Security\Subject;
-
-use Sugarcrm\Sugarcrm\Security\Subject;
-
 /**
- * Advanced Workflow subject
+ * Label for trademarked `SugarBPM` term.
  */
-final class AdvancedWorkflow extends Bean
-{
-    /**
-     * {@inheritDoc}
-     */
-    public function jsonSerialize()
-    {
-        $parent = parent::jsonSerialize();
-        $child = ['_type' => 'advanced-workflow'];
-        return array_merge($parent, $child);
-    }
-}
+({
+    extendsFrom: 'LabelField'
+})

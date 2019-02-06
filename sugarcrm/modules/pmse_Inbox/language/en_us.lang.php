@@ -40,7 +40,7 @@ $mod_strings = array (
     'LBL_PMSE_HISTORY_LOG_NO_YET_STARTED' => '(not yet started)',
     'LBL_PMSE_HISTORY_LOG_FLOW' => 'has been assigned to continue the task',
 
-    'LBL_PMSE_HISTORY_LOG_START_EVENT' => "%s a(n) %s record, which caused Advanced Workflow to trigger a Process #%s",
+    'LBL_PMSE_HISTORY_LOG_START_EVENT' => '%s a(n) %s record, which caused SugarBPM<sup class="trademark">TM</sup> to trigger a Process #%s',
     'LBL_PMSE_HISTORY_LOG_GATEWAY'  => "The %s %s %s was evaluated and routed to the next task(s)",
     'LBL_PMSE_HISTORY_LOG_EVENT'  => "The %s Event %s was %s",
     'LBL_PMSE_HISTORY_LOG_END_EVENT'  => "End",
@@ -94,7 +94,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_CURRENT' => 'Current',
     'LBL_PMSE_LABEL_OVERDUE' => 'Overdue',
     'LBL_PMSE_LABEL_PROCESS' => 'Process',
-    'LBL_PMSE_LABEL_PROCESS_AUTHOR' => 'Advanced Workflow',
+    'LBL_PMSE_LABEL_PROCESS_AUTHOR' => 'SugarBPM<sup class="trademark">TM</sup>',
     'LBL_PMSE_LABEL_UNASSIGNED' => 'Unassigned',
 
     'LBL_RECORD_NAME'  => "Record Name",
@@ -121,7 +121,7 @@ $mod_strings = array (
     'LBL_PMSE_HISTORY_STATUS_ERROR' => 'Process has encountered an Error.',
     'LBL_PMSE_TITLE_IMAGE_GENERATOR' => 'Process #%s: Current Status',
     'LBL_PMSE_TITLE_IMAGE_GENERATOR_OBJ' => 'Process #{{id}}: Current Status',
-    'LBL_PMSE_TITLE_LOG_VIEWER' => 'Advanced Workflow Log Viewer',
+    'LBL_PMSE_TITLE_LOG_VIEWER' => 'Log Viewer',
     'LBL_PMSE_TITLE_PROCESS_NOTES' => 'Process Notes',
 
     'LBL_PMSE_MY_PROCESSES' => 'My Processes',

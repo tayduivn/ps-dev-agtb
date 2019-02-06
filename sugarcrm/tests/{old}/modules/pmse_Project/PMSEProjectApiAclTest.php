@@ -15,7 +15,7 @@ use Sugarcrm\Sugarcrm\ProcessManager;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit test class to cover ACL testing for Advanced Workflow Apis
+ * Unit test class to cover ACL testing for SugarBPM Apis
  */
 class PMSEProjectApiAclTest extends TestCase
 {

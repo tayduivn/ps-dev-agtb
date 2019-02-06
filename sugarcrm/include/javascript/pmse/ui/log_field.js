@@ -131,7 +131,7 @@ LogField.prototype.createHTML = function () {
     if (this.script){
         logPicture = this.createHTMLElement('div');
         logPicture.className = this.picture;
-        logPicture.innerHTML = 'AW';
+        logPicture.innerHTML = 'PM';
     } else {
         logPicture = this.createHTMLElement('img');
         logPicture.style.cssFloat = "left";
