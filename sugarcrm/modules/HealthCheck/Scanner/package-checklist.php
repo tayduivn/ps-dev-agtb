@@ -427,4 +427,14 @@ return array(
             'version' => '99999999',
         ],
     ],
+    'uRecordButtons' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'uUserUtils' => [
+        [
+            'version' => '*',
+        ],
+    ],
 );
