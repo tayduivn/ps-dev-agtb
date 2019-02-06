@@ -614,11 +614,23 @@ PMSE.ElementHelper.prototype.fieldDependencyHandler = function(dependantField, f
     var name = dependantField.getName();
     if (this._mode == 'EmailPickerField' && name != 'emailAddressField' &&
         (field._disabled ||
-            !value ||
-            value == PROJECT_MODULE ||
-            field.getSelectedData().type == 'one')) {
+        !value ||
+        value == PROJECT_MODULE ||
+        field.getSelectedData().type == 'one')) {
         if (!dependantField._disabled) {
             dependantField.disable();
+        }
+    } else if (name == 'emailAddressField' && field.getName() == 'related' &&
+        value === '' && !_.isUndefined(dependantField.getForm().getItem('module').getSelectedData())) {
+        // handle edge case when user unselects related module dropdown we want to populate email address
+        // field using parent module
+        module = PROJECT_MODULE;
+        var form = dependantField.getForm();
+        var moduleField = form.getItem('module');
+        value = moduleField.getSelectedData().module_name;
+        field = form.getItem('related');
+        if (dependantField._disabled) {
+            dependantField.enable();
         }
     } else {
         if (dependantField._disabled) {
