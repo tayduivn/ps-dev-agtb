@@ -1029,21 +1029,21 @@ class SugarBean
      * Optionally, you can filter the returned list of field definitions by
      * field type, name, etc (any property).
      *
-     * @param string $property Field def property to filter by (e.g. type).
-     * @param array $filter An array of values to filter the returned
-     *   field definitions.
+     * @param string|null $property Field def property to filter by (e.g. type).
+     * @param array $filter An array of values to filter the returned field definitions.
      * @return array Field definitions.
      */
-    public function getFieldDefinitions($property = '', $filter = array())
+    public function getFieldDefinitions(?string $property = null, array $filter = array()) : array
     {
+        $definitions = $this->field_defs ?? [];
+
         if (empty($property) || empty($filter)) {
-            return $this->field_defs;
+            return $definitions;
         }
 
-        $fields = array_filter($this->field_defs, function($def) use ($property, $filter) {
-            return (isset($def[$property]) && in_array($def[$property], $filter));
+        return array_filter($definitions, function (array $def) use ($property, $filter) : bool {
+            return isset($def[$property]) && in_array($def[$property], $filter);
         });
-        return $fields;
     }
 
     /**
@@ -1051,7 +1051,7 @@ class SugarBean
      *
      * The definitions were loaded in the constructor.
      *
-     * @return Array Index definitions.
+     * @return array Index definitions.
      *
      * Internal function, do not override.
      */
@@ -1096,7 +1096,7 @@ class SugarBean
      * The definitions were loaded in the constructor.
      *
      * @param string field name,
-     * @return Array Field properties or boolean false if the field doesn't exist
+     * @return array|false Field properties or boolean false if the field doesn't exist
      *
      * Internal function, do not override.
      */
@@ -1113,7 +1113,7 @@ class SugarBean
      *
      * The definitions were loaded in the constructor.
      *
-     * @return Array Field properties.
+     * @return array Field properties.
      *
      * Internal function, do not override.
      */
@@ -1145,8 +1145,8 @@ class SugarBean
      * When a row of data is fetched using the bean, all fields are created as variables in the context
      * of the bean and then fetched values are set in these variables.
      *
-     * @param string field name,
-     * @return varies Field value.
+     * @param string $name Field name
+     * @return mixed
      *
      * Internal function, do not override.
      */

@@ -17,22 +17,10 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug43471Test extends TestCase
 {
-    private $_tablename;
-    private $_old_installing;
-
-    public function setUp()
-    {
-        $this->accountMockBean = $this->createMock('TestBean');
-        $this->_tablename = 'test' . date("YmdHis");
-    }
-
     public function testDynamicFieldsRepairCustomFields()
     {
-        $bean = $this->accountMockBean;
-
-        /** @var $df DynamicField */
-        $df = $this->createPartialMock('DynamicField', array('createCustomTable'));
-        $bean->table_name = $this->_tablename;
+        $bean = $this->createMock(Company::class);
+        $bean->table_name = 'test' . date("YmdHis");
         $bean->field_defs = array (
               'id' =>
               array (
@@ -80,6 +68,8 @@ class Bug43471Test extends TestCase
                 'custom_module' => 'Accounts',
               ),
             );
+
+        $df = $this->createPartialMock(DynamicField::class, ['createCustomTable']);
         $df->setup($bean);
         $df->expects($this->any())
                 ->method('createCustomTable')
@@ -95,21 +85,10 @@ class Bug43471Test extends TestCase
                     'len' => '255',
                     ),
                 )));
-        // set the mock db manager (no longer a helper)
-        $db = $GLOBALS['db'];
-        $GLOBALS['db'] = $helper;
+
+        SugarTestHelper::setUp('mock_db', $helper);
 
         $repair = $df->repairCustomFields(false);
         $this->assertEquals("", $repair);
-
-        // reset the db
-        $GLOBALS['db'] = $db;
     }
-}
-
-
-// test bean class
-
-// Account is used to store account information.
-class TestBean extends Company {
 }

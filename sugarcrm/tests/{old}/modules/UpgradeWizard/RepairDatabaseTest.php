@@ -102,4 +102,31 @@ private function getRepairTableParamsResult($bean)
         $result = $this->db->repairTableParams($tablename, $fielddefs, $new_indices, false, $engine);
 	    return $result;	
 }
+
+    public function testRepairCustomTable() : void
+    {
+        global $db;
+
+        SugarTestHelper::setUpCustomField('Accounts', [
+            'name' => 'test_c',
+            'type' => 'varchar',
+        ]);
+
+        $this->assertArrayHasKey('test_c', $db->get_columns('accounts_cstm'));
+
+        $db->query(
+            $db->dropColumnSQL('accounts_cstm', [
+                'name' => 'test_c',
+                'type' => 'varchar',
+            ])
+        );
+
+        $this->assertArrayNotHasKey('test_c', $db->get_columns('accounts_cstm'));
+
+        $df = new DynamicField('Accounts');
+        $df->setup(BeanFactory::newBean('Accounts'));
+        $df->repairCustomFields();
+
+        $this->assertArrayHasKey('test_c', $db->get_columns('accounts_cstm'));
+    }
 }

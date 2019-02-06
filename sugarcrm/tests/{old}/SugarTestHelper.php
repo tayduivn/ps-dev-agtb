@@ -53,6 +53,7 @@ if (basename(getcwd()) == '{old}' || !is_file('include/entryPoint.php')) {
 global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList, $bwcModules, $sugar_version, $sugar_flavor;
 require_once 'include/entryPoint.php';
 require_once 'include/utils/layout_utils.php';
+require_once 'modules/DynamicFields/FieldCases.php';
 
 chdir(sugar_root_dir());
 

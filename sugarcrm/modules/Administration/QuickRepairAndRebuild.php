@@ -177,6 +177,8 @@ class RepairAndClear
         $GLOBALS['reload_vardefs'] = true;
         $hideModuleMenu = true;
 		include_once('modules/Administration/repairDatabase.php');
+
+        return $sql ?? null;
 	}
 
     /**
@@ -602,6 +604,10 @@ class RepairAndClear
 	//
 	private function _clearCache($thedir, $extension)
 	{
+        if (!file_exists($thedir)) {
+            return;
+        }
+
         if ($current = @opendir($thedir)) {
             while (false !== ($children = readdir($current))) {
                 if ($children != "." && $children != "..") {

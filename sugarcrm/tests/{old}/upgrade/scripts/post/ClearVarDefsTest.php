@@ -24,6 +24,8 @@ class ClearVarDefsTest extends TestCase
 
     public function setUp()
     {
+        $user = $this->createMock(User::class, ['getFieldDefinitions']);
+
         global $beanList, $dictionary;
         SugarTestHelper::setUp('files');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +33,7 @@ class ClearVarDefsTest extends TestCase
         SugarTestHelper::setUp('current_user', array(false, true));
         $beanList = array(
             self::MODULE => 'PreScriptBean',
-            'Users' => 'ClearVardefsMockUser'
+            'Users' => get_class($user),
         );
         $dictionary[self::MODULE] = array(
             'relationships' => array(
@@ -190,12 +192,4 @@ class PreScriptBean extends SugarBean
     public $object_name = ClearVarDefsTest::MODULE;
 
     public $module_name = ClearVarDefsTest::MODULE;
-}
-
-
-class ClearVardefsMockUser extends User
-{
-    public function getFieldDefinitions($property = '', $filter = array()) {
-        return array();
-    }
 }
