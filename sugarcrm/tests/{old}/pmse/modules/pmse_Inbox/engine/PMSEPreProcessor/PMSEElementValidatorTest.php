@@ -270,7 +270,7 @@ class PMSEElementValidatorTest extends TestCase
             ->getMock();
 
         $sugarQueryObjectMock = $this->getMockBuilder('SugarQuery')
-                ->setMethods(array('from', 'distinct', 'where', 'equals', 'query', 'execute'))
+                ->setMethods(array('from', 'distinct', 'where', 'equals', 'query', 'getOne'))
                 ->getMock();
 
         $sugarQueryObjectMock->expects($this->atLeastOnce())
@@ -288,8 +288,8 @@ class PMSEElementValidatorTest extends TestCase
         $arrayDupli = array('id' => '999000');
 
         $sugarQueryObjectMock->expects($this->any())
-            ->method('execute')
-            ->will($this->returnValue($arrayDupli));
+            ->method('getOne')
+            ->will($this->returnValue(null));
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
@@ -330,7 +330,7 @@ class PMSEElementValidatorTest extends TestCase
             ->getMock();
 
         $sugarQueryObjectMock = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('from', 'distinct', 'where', 'equals', 'query', 'execute'))
+            ->setMethods(array('from', 'distinct', 'where', 'equals', 'query', 'getOne'))
             ->getMock();
 
         $sugarQueryObjectMock->expects($this->atLeastOnce())
@@ -346,7 +346,7 @@ class PMSEElementValidatorTest extends TestCase
             ->will($this->returnValue($sugarQueryObjectMock));
 
         $sugarQueryObjectMock->expects($this->any())
-            ->method('execute')
+            ->method('getOne')
             ->will($this->returnValue(false));
 
         $loggerMock = $this->getMockBuilder('PMSELogger')

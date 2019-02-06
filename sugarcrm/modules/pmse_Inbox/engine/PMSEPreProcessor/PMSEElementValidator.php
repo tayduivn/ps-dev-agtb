@@ -219,12 +219,9 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function isCaseDuplicated($bean, $flowData, $processFinished = false)
     {
-        $fields = array(
-            'pro_id',
-        );
         $q = $this->getSugarQueryObject();
+        $q->select()->fieldRaw('NULL');
         $q->from($this->getBeanFlow(), array('add_deleted' => true));
-        $q->distinct(true);
         $q->where()
             ->equals('cas_sugar_object_id', $bean->id)
             ->equals('cas_sugar_module', $bean->module_name)
@@ -232,17 +229,15 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
 
         if ($processFinished) {
             $q->where()
-                ->notIn('cas_flow_status', array('CLOSED', 'TERMINATED', 'ERROR'));
+                ->in('cas_flow_status', array('IN PROGRESS', 'COMPLETED'));
         } else {
             $q->where()
                 ->equals('cas_index', 1);
         }
 
-        $q->select($fields);
+        $result = $q->getOne();
 
-        $rows = $q->execute();
-
-        if (!empty($rows)) {
+        if ($result !== false) {
             if (!$processFinished) {
                 $this->getLogger()->debug("Start Event {$bean->id} already exists");
             }
