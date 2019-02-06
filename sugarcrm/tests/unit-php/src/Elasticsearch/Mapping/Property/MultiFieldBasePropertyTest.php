@@ -107,7 +107,24 @@ class MultiFieldBasePropertyTest extends TestCase
         $this->expectExceptionMessage("Field 'foobar' already exists as multi field");
 
         $field = new MultiFieldBaseProperty();
-        $field->addField('foobar', new MultiFieldProperty());
-        $field->addField('foobar', new MultiFieldProperty());
+        $property = new MultiFieldProperty();
+        $field->addField('foobar', $property);
+        $property->setType('keyword');
+        $field->addField('foobar', $property);
+    }
+
+    /**
+     * @covers ::addField
+     * @covers ::getMapping
+     * @dataProvider providerTestAddField
+     */
+    public function testAddFieldOnExistingFieldWithSameProperties($fields, $expected)
+    {
+        $field = new MultiFieldBaseProperty();
+        foreach ($fields as $name => $property) {
+            $field->addField($name, $property);
+            $field->addField($name, $property);
+        }
+        $this->assertSame($expected, $field->getMapping());
     }
 }

@@ -111,7 +111,7 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
         $mapping->addCommonField('owner_id', 'owner', $property);
 
         //BEGIN SUGARCRM flav=ent ONLY
-        if ($this->tbaConfig->implementsTBA($this->bean->module_dir)) {
+        if ($this->implementsTBA()) {
             $tbaVisibility = new TeamBasedACLVisibility($this->bean);
             $tbaVisibility->elasticBuildMapping($mapping, $provider);
         }
@@ -139,7 +139,7 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
             $result[$ownerField] = 'id';
         }
         //BEGIN SUGARCRM flav=ent ONLY
-        if ($this->tbaConfig->implementsTBA($this->bean->module_dir)) {
+        if ($this->implementsTBA()) {
             $tbaVisibility = new TeamBasedACLVisibility($this->bean);
             $result = array_merge($result, $tbaVisibility->elasticGetBeanIndexFields($module, $provider));
         }
@@ -165,5 +165,13 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
             //END SUGARCRM flav=ent ONLY
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function implementsTBA()
+    {
+        return TeamBasedACLConfigurator::implementsTBA($this->bean->module_dir);
     }
 }

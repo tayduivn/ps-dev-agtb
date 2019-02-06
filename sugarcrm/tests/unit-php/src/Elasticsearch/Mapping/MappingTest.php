@@ -340,8 +340,10 @@ class MappingTest extends TestCase
         $this->expectExceptionMessage("Field 'multi1' already exists as multi field");
 
         $mapping = new Mapping('FooBar');
-        $mapping->addMultiField('field1', 'multi1', new MultiFieldProperty());
-        $mapping->addMultiField('field1', 'multi1', new MultiFieldProperty());
+        $property = new MultiFieldProperty();
+        $mapping->addMultiField('field1', 'multi1', $property);
+        $property->setType('keyword');
+        $mapping->addMultiField('field1', 'multi1', $property);
     }
 
     /**
