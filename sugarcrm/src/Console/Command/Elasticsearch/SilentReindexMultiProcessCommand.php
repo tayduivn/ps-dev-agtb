@@ -134,6 +134,7 @@ class SilentReindexMultiProcessCommand extends Command implements InstanceModeIn
             $start = time();
             // run indivdual process for $bucketId
             $this->writeln("bucket $bucketId: starting consuming fts_queue ...");
+            $this->reportIndexingStart($modules);
             $total = $this->consumeQueueForBucketId($bucketId);
             $duration = time() - $start;
             $this->writeln("bucket $bucketId: reindexing is completed, total records: $total; duration: $duration");
@@ -142,8 +143,8 @@ class SilentReindexMultiProcessCommand extends Command implements InstanceModeIn
             // set Elastic mapping and fill up fts_queue
             $this->writeln("Setup elastic indices ...");
             if ($this->setupElastic($modules, $clearData)) {
-                // disable refresh rate and replica
-                $this->disableRefreshAndReplicas($modules);
+                // disable refresh interval and replica
+                $this->reportIndexingStart($modules);
 
                 // create FTS queue
                 $this->createFTSQueue($modules, $numProcesses);
@@ -190,9 +191,9 @@ class SilentReindexMultiProcessCommand extends Command implements InstanceModeIn
             } else {
                 throw new RuntimeException("something is wrong, check sugarcrm.log");
             }
+            $this->reportIndexingDone();
             $duration = time() - $start;
             $this->writeln("Reindexing complete, duration: $duration seconds");
-            $this->enableRefreshAndReplicas($modules);
         }
     }
 
@@ -237,23 +238,20 @@ class SilentReindexMultiProcessCommand extends Command implements InstanceModeIn
     }
 
     /**
-     * enable Elastic's refresh and replica
-     * @param array $modules
-     */
-    protected function enableRefreshAndReplicas(array $modules)
-    {
-        $this->container->indexManager->enableRefresh($modules);
-        $this->container->indexManager->enableReplicas($modules);
-    }
-
-    /**
      * disable Elastic's refresh and replica
      * @param array $modules
      */
-    protected function disableRefreshAndReplicas(array $modules)
+    protected function reportIndexingStart(array $modules)
     {
-        $this->container->indexManager->disableRefresh($modules);
-        $this->container->indexManager->disableReplicas($modules);
+        $this->container->indexManager->reportIndexingStart($modules);
+    }
+
+    /**
+     * report indexing is done
+     */
+    protected function reportIndexingDone()
+    {
+        $this->container->indexManager->reportIndexingDone();
     }
 
     /**

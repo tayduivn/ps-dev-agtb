@@ -153,24 +153,15 @@ class QueueManager
      */
     public function reportIndexingDone()
     {
-        $this->enableRefresh();
-        $this->enableReplicas();
+        $this->container->indexManager->reportIndexingDone();
     }
 
     /**
-     * Enable refresh interval
+     * disable refresh interval and replica
      */
-    protected function enableRefresh()
+    protected function reportIndexingStart(array $modules = [])
     {
-        $this->container->indexManager->enableRefresh();
-    }
-
-    /**
-     * Enable replicas
-     */
-    protected function enableReplicas()
-    {
-        $this->container->indexManager->enableReplicas();
+        $this->container->indexManager->reportIndexingStart($modules);
     }
 
     /**
@@ -392,6 +383,7 @@ class QueueManager
     /**
      * Consume records from database queue for given module
      * @param string $module
+     * @param int $bucketId
      * @return array
      */
     public function consumeModuleFromQueue(string $module, int $bucketId = self::DEFAULT_BUCKET_ID) : array
@@ -776,7 +768,7 @@ class QueueManager
 
     /**
      * Consume all records from database queue, option to process $bucketId
-     * @param $bucketId
+     * @param int $bucketId
      * @return int, number of records have been processed
      */
     public function consumeQueue(int $bucketId = self::DEFAULT_BUCKET_ID) : int

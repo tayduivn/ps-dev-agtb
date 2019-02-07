@@ -82,7 +82,22 @@ class IndexManager
      *
      * @var int|string
      */
-    protected $reindexRefreshInterval = '1s';
+    protected $reindexRefreshInterval = '-1';
+
+    /**
+     * enable refresh_interval when performing indexing.
+     * if false, reindex_refresh_interval will be set value $reindexRefreshInterval
+     * if true, reindex_refresh_interval will be set to '-1', i.e. self::DISABLE_REFRESH_REPLICA
+     * The value will be reset back to $reindexRefreshInterval once indexing is done
+     *
+     *
+     * This can be configured by using the following parameter:
+     * `$sugar_config['full_text_engine']['Elastic']['enable_refresh_interval_indexing']`
+     *
+     * @var bool
+     */
+    protected $enableRefreshIntervalIndexing = false;
+
 
     /**
      * During indexing documents are sent to each replica node on which the
@@ -125,6 +140,15 @@ class IndexManager
             throw new IndexManagerException("Index refresh_interval needs to be an int or string");
         }
         $this->reindexRefreshInterval = $interval;
+    }
+
+    /**
+     * Set enable  refresh interval flag
+     * @param int|string $enable
+     */
+    public function setEnableRefreshIntervalIndexing($enable)
+    {
+        $this->enableRefreshIntervalIndexing = isTruthy($enable);
     }
 
     /**
@@ -172,8 +196,7 @@ class IndexManager
             return false;
         }
 
-        $this->disableRefresh($modules);
-        $this->disableReplicas($modules);
+        $this->reportIndexingStart($modules);
         $this->container->queueManager->reindexModules($modules);
 
         return true;
@@ -557,8 +580,12 @@ class IndexManager
      */
     public function enableRefresh()
     {
+        $status = [];
+        if (!$this->enableRefreshIntervalIndexing) {
+            return $status;
+        }
+
         $modules = $this->getAllEnabledModules();
-        $status = array();
         foreach ($this->getManagedIndices($modules) as $index) {
             $status[$index->getName()] = $this->enableIndexRefresh($index)->getStatus();
         }
@@ -576,7 +603,11 @@ class IndexManager
      */
     public function disableRefresh(array $modules)
     {
-        $status = array();
+        $status = [];
+        if (!$this->enableRefreshIntervalIndexing) {
+            return $status;
+        }
+
         foreach ($this->getManagedIndices($modules) as $index) {
             $status[$index->getName()] = $this->setIndexRefresh($index, $this->reindexRefreshInterval)->getStatus();
         }
@@ -603,6 +634,42 @@ class IndexManager
             $status[$index->getName()] = $this->enableIndexReplicas($index)->getStatus();
         }
         return $status;
+    }
+
+    /**
+     * Although the queue can be used at any given point in time, we want to
+     * be able to be notified from the scheduler when nothing is left in the
+     * queue. This is our sign to do some housekeeping regarding bulk indexing
+     * operations like refresh_interval and/or replica tuning.
+     *
+     * Both the non-replica reindex settings as well as refresh_interval should
+     * be carefully configured when using live reindexing as both values will
+     * only be restored when the queue is reported as empty. Optionally if due
+     * to circumstances the queue doesn't get empty (i.e. async modules, or
+     * live reindexing) CLI commands are available for prematurely force the
+     * proper refresh_interval/replica settings.
+     */
+    public function reportIndexingDone()
+    {
+        $this->enableRefresh();
+        $this->enableReplicas();
+    }
+
+    /**
+     * disable refresh interval and replica
+     * @param array $modules
+     */
+    public function reportIndexingStart(array $modules = [])
+    {
+        $allModules = $this->getAllEnabledModules();
+        if (empty($modules)) {
+            $modules = $allModules;
+        } else {
+            $modules = array_intersect($modules, $allModules);
+        }
+
+        $this->disableRefresh($modules);
+        $this->disableReplicas($modules);
     }
 
     /**
