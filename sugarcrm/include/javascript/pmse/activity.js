@@ -3216,6 +3216,11 @@ AdamActivity.prototype.callbackFunctionForAssignUserAction = function(data, elem
  */
 AdamActivity.prototype.callbackFunctionForChangeFieldAction = function(data, element, validationTools) {
     var criteria = [];
+    var actModule = data.act_field_module;
+    var actParams = data.act_params ? JSON.parse(data.act_params) : null;
+    if (actParams && actParams.chainedRelationship) {
+        actModule = actParams.chainedRelationship.module;
+    }
 
     // Validate the number of incoming and outgoing edges
     validationTools.validateNumberOfEdges(1, null, 1, null, element);
@@ -3225,7 +3230,7 @@ AdamActivity.prototype.callbackFunctionForChangeFieldAction = function(data, ele
         criteria = JSON.parse(data.act_fields);
     }
     for (var i = 0; i < criteria.length; i++) {
-        validationTools.validateAtom(data.act_field_module, criteria[i].field, null, element, validationTools);
+        validationTools.validateAtom(actModule, criteria[i].field, null, element, validationTools);
     }
 };
 
