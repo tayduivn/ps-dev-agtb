@@ -1119,6 +1119,17 @@
             // remove the deleted group's model from the main bundles
             bundles.remove(deletedGroup.model);
 
+            if (bundles._linkedCollections &&
+                bundles._linkedCollections.product_bundles &&
+                bundles._linkedCollections.product_bundles._delete &&
+                bundles._linkedCollections.product_bundles._delete.length) {
+                // clear out the bundles linkedCollections delete
+                var del = bundles._linkedCollections.product_bundles._delete;
+                bundles._linkedCollections.product_bundles._delete = _.reject(del, function(model) {
+                    return model.cid === deletedGroup.model.cid;
+                });
+            }
+
             // dispose the group
             deletedGroup.dispose();
             // remove the component from the layout
