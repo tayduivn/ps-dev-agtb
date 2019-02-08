@@ -1350,3 +1350,166 @@ Feature: Quotes module E2E testing
       | deal_tot  | 2.00% $36.00 |
       | new_sub   | $1,764.00    |
       | total     | $1,764.00    |
+
+
+  @quote_discount_amount @job3
+  Scenario: Quotes > Verify that discount amount is recalculated properly when currency of the quote record or QLI record is changed
+    # Generate quote record
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_1 | 2020-10-19T19:20:22+00:00  | Negotiation |
+    # Generate account and link it to the quote
+    And Accounts records exist related via billing_accounts link to *Quote_1:
+      | name  | billing_address_street | billing_address_city | billing_address_state | billing_address_postalcode | billing_address_country |
+      | Acc_1 | 10050 N Wolfe Rd       | Cupertino            | CA                    | 95014                      | USA                     |
+    # Generate 2 products in the Product Catalog
+    And ProductTemplates records exist:
+      | *      | name             | discount_price | cost_price | list_price | quantity |
+      | Prod_1 | 100 USD - 90 EUR | 100            | 100        | 100        | 1        |
+      | Prod_2 | 100 USD - 50 JPY | 100            | 100        | 100        | 1        |
+
+    Given I open about view and login
+    # Add EUR currency
+    When I add new currency
+      | iso4217 | conversion_rate |
+      | EUR     | 0.9             |
+    # Add JPY currency
+    And I add new currency
+      | iso4217 | conversion_rate |
+      | JPY     | 0.5             |
+
+    # Update currency of the first product in Product Catalog
+    When I update ProductTemplates *Prod_1 with the following values:
+      | currency_id |
+      | € (EUR)     |
+
+    # Update currency of the second product in Product Catalog
+    And I update ProductTemplates *Prod_2 with the following values:
+      | currency_id |
+      | ¥ (JPY)     |
+
+    # Navigate to quote record view
+    When I choose Quotes in modules menu
+    When I select *Quote_1 in #QuotesList.ListView
+
+    # Add First QLI from Prod_1
+    When I choose createLineItem on QLI section on #Quote_1Record view
+    When I provide input for #Quote_1Record.QliTable.QliRecord view
+      | *     | product_template_name | discount_select | discount_amount |
+      | QLI_1 | 100 USD - 90 EUR      | € Euro          | 10.00           |
+    When I click on save button on QLI #Quote_1Record.QliTable.QliRecord record
+    When I close alert
+
+    # Add Second QLI from Prod_2
+    When I choose createLineItem on QLI section on #Quote_1Record view
+    When I provide input for #Quote_1Record.QliTable.QliRecord view
+      | *     | product_template_name | discount_select | discount_amount |
+      | QLI_2 | 100 USD - 50 JPY      | ¥ Yen           | 10.00           |
+    When I click on save button on QLI #Quote_1Record.QliTable.QliRecord record
+    When I close alert
+
+    # Verify Grand Total in QLI table header bar
+    Then I verify fields on QLI total header on #Quote_1Record view
+      | fieldName | value         |
+      | deal_tot  | 15.56% $31.11 |
+      | new_sub   | $168.89       |
+      | total     | $168.89       |
+
+    # Change currency of the quote record to EUR
+    When I click Edit button on #Quote_1Record header
+    When I toggle Quote_Settings panel on #Quote_1Record.RecordView view
+    When I provide input for #Quote_1Record.RecordView view
+      | currency_id |
+      | € (EUR)     |
+
+    # Verify First QLI amounts
+    Then I verify fields on #QLI_1QLIRecord
+      | fieldName       | value  |
+      | discount_price  | €90.00 |
+      | discount_amount | €10.00 |
+      | total_amount    | €80.00 |
+
+    # Verify Second QLI amounts
+    Then I verify fields on #QLI_2QLIRecord
+      | fieldName       | value        |
+      | discount_price  | ¥50.00€90.00 |
+      | discount_amount | ¥10.00€18.00 |
+      | total_amount    | ¥40.00€72.00 |
+
+    # Verify Grand Total in QLI table header bar
+    Then I verify fields on QLI total header on #Quote_1Record view
+      | fieldName | value         |
+      | deal_tot  | 15.56% €28.00 |
+      | new_sub   | €152.00       |
+      | total     | €152.00       |
+
+    # Change currency of the quote record again to JPY
+    When I provide input for #Quote_1Record.RecordView view
+      | currency_id |
+      | ¥ (JPY)     |
+
+    # Verify First QLI amounts
+    Then I verify fields on #QLI_1QLIRecord
+      | fieldName       | value        |
+      | discount_price  | €90.00¥50.00 |
+      | discount_amount | €10.00¥5.56  |
+      | total_amount    | €80.00¥44.44 |
+
+    # Verify Second QLI amounts
+    Then I verify fields on #QLI_2QLIRecord
+      | fieldName       | value  |
+      | discount_price  | ¥50.00 |
+      | discount_amount | ¥10.00 |
+      | total_amount    | ¥40.00 |
+
+    # Verify Grand Total in QLI table header bar
+    Then I verify fields on QLI total header on #Quote_1Record view
+      | fieldName | value         |
+      | deal_tot  | 15.56% ¥15.56 |
+      | new_sub   | ¥84.44        |
+      | total     | ¥84.44        |
+
+    # Save quote
+    When I click Save button on #QuotesRecord header
+    When I close alert
+
+    # Change discount type (from amount to percentage) and update currency of the QLI_1
+    When I choose editLineItem on #QLI_1QLIRecord
+    When I provide input for #QLI_1QLIRecord view
+      | discount_select | currency_id |
+      | % Percent       | $ (USD)     |
+
+    # Save QLI changes
+    When I click on save button on QLI #QLI_1QLIRecord record
+    When I close alert
+
+    # Verify First QLI amounts
+    Then I verify fields on #QLI_1QLIRecord
+      | fieldName       | value         |
+      | discount_price  | $100.00¥50.00 |
+      | discount_amount | 10.00%        |
+      | total_amount    | $90.00¥45.00  |
+
+    # Verify Grand Total in QLI table header bar
+    Then I verify fields on QLI total header on #Quote_1Record view
+      | fieldName | value         |
+      | deal_tot  | 15.00% ¥15.00 |
+      | new_sub   | ¥85.00        |
+      | total     | ¥85.00        |
+
+    # Change currency of the QLI_1
+    When I choose editLineItem on #QLI_1QLIRecord
+    When I provide input for #QLI_1QLIRecord view
+      | currency_id |
+      | € (EUR)     |
+
+    # Save QLI changes
+    When I click on save button on QLI #QLI_1QLIRecord record
+    When I close alert
+
+    # Verify that percentage of the discount is not converted when currency is changed
+    Then I verify fields on #QLI_1QLIRecord
+      | fieldName       | value        |
+      | discount_price  | €90.00¥50.00 |
+      | discount_amount | 10.00%       |
+      | total_amount    | €81.00¥45.00 |
