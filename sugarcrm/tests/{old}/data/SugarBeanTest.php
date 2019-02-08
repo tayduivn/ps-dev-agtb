@@ -1149,8 +1149,9 @@ class SugarBeanTest extends TestCase
      */
     public function testFillInLinkField_SetOwnerId()
     {
+        $assignedUserId = create_guid();
         $account = SugarTestAccountUtilities::createAccount('', [
-            'assigned_user_id' => 'assigned_user_id1',
+            'assigned_user_id' => $assignedUserId,
         ]);
         $contact = SugarTestContactUtilities::createContact();
         $contact->load_relationship('accounts');
@@ -1164,7 +1165,7 @@ class SugarBeanTest extends TestCase
         $contact->fill_in_link_field('account_id', $fieldDef);
         $this->assertEquals($account->id, $contact->account_id);
         $this->assertEquals(
-            'assigned_user_id1',
+            $assignedUserId,
             $contact->account_id_owner,
             'Expected related record owner id to be set along with the related record\'s field value'
         );
