@@ -11,6 +11,7 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @group ApiTests
@@ -21,9 +22,12 @@ class RelateApiTest extends TestCase
     public $contacts = array();
     public $roles = array();
     public $opportunities = array();
+    public $opp_contacts = array();
 
     /** @var  RelateApi */
     public $relateApi;
+
+    private $db = null;
 
     public function setUp() {
         SugarTestHelper::setUp("current_user");
@@ -52,6 +56,8 @@ class RelateApiTest extends TestCase
         $contact->save();
         $this->contacts[] = $contact;
         $opportunity->contacts->add($contact);
+        $this->opp_contacts[] = $contact;
+
         $contact = SugarTestContactUtilities::createContact();
         $contact->opportunity_role = 'A';
         $contact->first_name = 'RelateApi setUp';
@@ -59,6 +65,8 @@ class RelateApiTest extends TestCase
         $contact->save();
         $this->contacts[] = $contact;
         $opportunity->contacts->add($contact);
+        $this->opp_contacts[] = $contact;
+
         $contact = SugarTestContactUtilities::createContact();
         $contact->opportunity_role = 'B';
         $contact->first_name = 'RelateApi setUp';
@@ -66,8 +74,13 @@ class RelateApiTest extends TestCase
         $contact->save();
         $this->contacts[] = $contact;
         $opportunity->contacts->add($contact);
+        $this->opp_contacts[] = $contact;
+
         $opportunity->save();
         $this->opportunities[] = $opportunity;
+
+        $db = DBManagerFactory::getInstance();
+        $this->db = $db;
     }
 
     public function tearDown() {
@@ -247,6 +260,75 @@ class RelateApiTest extends TestCase
 
         $this->assertEquals(3, count($reply['records']), 'Should return three records');
         $this->assertEquals($contact_id, $reply['records'][0]['id'], 'Should be in desc order');
+    }
+
+    /**
+     * Test subpanel list should not contain duplicate records.
+     */
+    public function testFilterRelated()
+    {
+        $fieldParams = array(
+            'id' => array (
+                'name' => 'id',
+                'type' => 'id',
+                'len' => 36,
+            ),
+            'pd_id' => array (
+                'name' => 'pd_id',
+                'type' => 'id',
+                'len' => 36,
+            ),
+            'bean_id' => array (
+                'name' => 'bean_id',
+                'type' => 'id',
+                'len' => 36,
+            ),
+            'bean_module' => array (
+                'name' => 'bean_module',
+                'type' => 'varchar',
+                'len' => 100,
+            ),
+        );
+
+        // we have three contacts in $this->opp_contacts
+        foreach ($this->opp_contacts as $contact) {
+            $i = 0;
+            // insert twice to locked_field_bean_rel for each Contact
+            while ($i++ < 2) {
+                $this->db->insertParams('locked_field_bean_rel', $fieldParams, array(
+                    'id' => Uuid::uuid1(),
+                    'pd_id' => Uuid::uuid1(),
+                    'bean_id' => $contact->id,
+                    'bean_module' => 'Contacts',
+                ));
+            }
+        }
+
+        $args = array(
+            'module' => 'Opportunities',
+            'record' => $this->opportunities[0]->id,
+            'view' => 'subpanel',
+            'link_name' => 'contacts',
+            'fields' => 'id, name',
+            'max_num' => 2,
+            'erased_fields' => true,
+        );
+        $serviceMock = new RelateApiServiceMockUp();
+        $reply = $this->relateApi->filterRelated(
+            $serviceMock,
+            $args
+        );
+        $this->assertArrayHasKey('records', $reply);
+        $this->assertEquals(2, count($reply['records']));
+
+        // test offset
+        $args['offset'] = 2;
+        $reply = $this->relateApi->filterRelated(
+            $serviceMock,
+            $args
+        );
+        $this->assertArrayHasKey('records', $reply);
+        $this->assertEquals(1, count($reply['records']));
     }
 
     /**

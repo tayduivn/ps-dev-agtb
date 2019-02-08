@@ -678,6 +678,10 @@ class FilterApi extends SugarApi
             $queryOptions['skipFixQuery'] = true;
         }
 
+        if (!empty($options['skipFixQuery'])) {
+            $queryOptions['skipFixQuery'] = true;
+        }
+
         $fetched = $seed->fetchFromQuery($q, $fields, $queryOptions);
 
         list($beans, $rows, $distinctCompensation) = $this->parseQueryResults($fetched);

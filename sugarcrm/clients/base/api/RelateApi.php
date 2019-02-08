@@ -159,6 +159,14 @@ class RelateApi extends FilterApi {
         if (!sizeof($q->order_by)) {
             self::addOrderBy($q, $this->defaultOrderBy);
         }
+
+        if (isset($options['relate_collections'])) {
+            $options = $this->removeRelateCollectionsFromSelect($options);
+            if (!empty($args['erased_fields'])) {
+                $options['skipFixQuery'] = true;
+            }
+        }
+
         return array($args, $q, $options, $linkSeed);
     }
 
