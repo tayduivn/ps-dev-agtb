@@ -123,23 +123,35 @@ export class KbCategoriesListView extends BaseView {
         return rows.value.length;
     }
 
-    public getListItem (conditions) {
+    /**
+     * Returns a list item or creates one if it does not exist
+     *
+     * @param {Object} conditions The record ID or other conditions of the list item to return
+     */
+    public getListItem(conditions) {
         let keys = _.keys(conditions);
+        let listItems;
+        let listViewItem;
 
         if (keys.length !== 1 || !_.includes(['id', 'index', 'current'], keys[0])) {
             return null;
-        } else {
-            let listItems = _.filter(this.listItems, conditions),
-                listViewItem = listItems.length ? listItems[0] : null;
-
-            if (!listViewItem) {
-                listViewItem = this.createListItem(conditions);
-            }
-            return listViewItem;
         }
+
+        listItems = _.filter(this.listItems, conditions);
+        listViewItem = listItems.length ? listItems[0] : null;
+
+        if (!listViewItem) {
+            listViewItem = this.createListItem(conditions);
+        }
+        return listViewItem;
     }
 
-    public createListItem (conditions) {
+    /**
+     * Creates and returns a list item based on conditions
+     *
+     * @param {Object} conditions The record ID or other conditions of the list item to return
+     */
+    public createListItem(conditions) {
 
         if (!(conditions || conditions.id)) {
             return null;
