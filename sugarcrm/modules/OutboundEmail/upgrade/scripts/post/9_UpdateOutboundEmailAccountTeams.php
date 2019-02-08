@@ -55,7 +55,14 @@ class SugarUpgradeUpdateOutboundEmailAccountTeams extends UpgradeDBScript
             } else {
                 $teamId = $row['team_id'];
                 // team set does not exist until the user creates a record using private team
-                $teamSetId = empty($row['team_set_id']) ? $row['team_id'] : $row['team_set_id'];
+                if (empty($row['team_set_id'])) {
+                    $teamSetId = $row['team_id'];
+                    // This ensures that the team set exists.
+                    $teamSet = BeanFactory::newBean('TeamSets');
+                    $teamSet->addTeams($teamId);
+                } else {
+                    $teamSetId = $row['team_set_id'];
+                }
             }
 
             // update team and team_set
