@@ -42,7 +42,7 @@ class TestReflection
      *
      * @param Object $object THe Class we are trying to set a property on
      * @param string $property The name of the property
-     * @param string $value The value for the property
+     * @param mixed $value The value for the property
      */
     public static function setProtectedValue($object, $property, $value)
     {

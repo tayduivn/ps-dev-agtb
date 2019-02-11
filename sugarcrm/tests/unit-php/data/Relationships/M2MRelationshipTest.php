@@ -12,8 +12,10 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\Relationships;
 
+use M2MRelationship;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \M2MRelationship
@@ -155,8 +157,8 @@ class M2MRelationshipTest extends TestCase
      */
     public function testSetNewPrimaryFlagDoesNotSet()
     {
-        /** @var \M2MRelationship|MockObject $relationship */
-        $relationship = $this->getMockBuilder(\M2MRelationship::class)
+        /** @var M2MRelationship|MockObject $relationship */
+        $relationship = $this->getMockBuilder(M2MRelationship::class)
             ->setMethods(['getLinkedDefForModuleByRelationship', 'removeRow'])
             ->setConstructorArgs([$this->def])
             ->getMock();
@@ -177,5 +179,69 @@ class M2MRelationshipTest extends TestCase
         $result = $relationship->remove($lhs, $rhs);
 
         $this->assertTrue($result);
+    }
+
+    /**
+     * @covers ::remove
+     * @covers Link2::resetLoaded
+     */
+    public function testRemove()
+    {
+        /** @var M2MRelationship|MockObject $relationship */
+        $relationship = $this->getMockBuilder(M2MRelationship::class)
+            ->setMethods(['getLinkedDefForModuleByRelationship', 'removeRow'])
+            ->setConstructorArgs([$this->def])
+            ->getMock();
+
+        /** @var \Link2|MockObject $leftLink */
+        $leftLink = $this->createPartialMock(\Link2::class, ['query']);
+        TestReflection::setProtectedValue($relationship, 'lhsLink', 'leftLink');
+
+        /** @var \Link2|MockObject $rightLink */
+        $rightLink = $this->createPartialMock(\Link2::class, ['query']);
+        TestReflection::setProtectedValue($relationship, 'rhsLink', 'rightLink');
+
+        $lhs = $this->createPartialMock(\SugarBean::class, ['call_custom_logic']);
+        $lhs->leftLink = $leftLink;
+        $lhs->id = 'lhs';
+
+        $rhs = $this->createPartialMock(\SugarBean::class, ['call_custom_logic']);
+        $rhs->rightLink = $rightLink;
+        $rhs->id = 'rhs';
+
+        $rightLinkRows = ['foo'];
+        $leftLinkRows = ['bar'];
+
+        TestReflection::setProtectedValue($rightLink, 'rows', $rightLinkRows);
+        TestReflection::setProtectedValue($leftLink, 'rows', $leftLinkRows);
+
+        // call_custom_logic should be able to get "rows" property from Link2
+        $rhs->expects($this->at(0))
+            ->method('call_custom_logic')
+            ->with('before_relationship_delete')
+            ->willReturnCallback(function ($hookName) use ($rightLink, $rightLinkRows) {
+                $this->assertSame($rightLinkRows, $rightLink->rows);
+            });
+        $rhs->expects($this->at(1))
+            ->method('call_custom_logic')
+            ->with('after_relationship_delete')
+            ->willReturnCallback(function ($hookName) use ($rightLink, $rightLinkRows) {
+                $this->assertSame($rightLinkRows, $rightLink->rows);
+            });
+
+        $lhs->expects($this->at(0))
+            ->method('call_custom_logic')
+            ->with('before_relationship_delete')
+            ->willReturnCallback(function ($hookName) use ($leftLink, $leftLinkRows) {
+                $this->assertSame($leftLinkRows, $leftLink->rows);
+            });
+        $lhs->expects($this->at(1))
+            ->method('call_custom_logic')
+            ->with('after_relationship_delete')
+            ->willReturnCallback(function ($hookName) use ($leftLink, $leftLinkRows) {
+                $this->assertSame($leftLinkRows, $leftLink->rows);
+            });
+
+        $relationship->remove($lhs, $rhs);
     }
 }
