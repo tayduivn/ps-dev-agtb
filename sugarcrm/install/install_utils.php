@@ -1264,6 +1264,7 @@ function create_default_users(){
     global $setup_site_admin_user_name;
     global $create_default_user;
     global $sugar_config;
+    global $setup_site_admin_email;
 
     require_once('install/UserDemoData.php');
 
@@ -1281,6 +1282,12 @@ function create_default_users(){
     $user->email = '';
     $user->picture = UserDemoData::_copy_user_image($user->id);
     $user->save();
+
+    if (!empty($setup_site_admin_email)) {
+        $user->emailAddress->addAddress($setup_site_admin_email, true);
+        $user->emailAddress->save($user->id, $user->module_dir);
+    }
+
     //Bug#53793: Keep default current user in the global variable in order to store 'created_by' info as default user
     //           while installation is proceed.
     $GLOBALS['current_user'] = $user;
