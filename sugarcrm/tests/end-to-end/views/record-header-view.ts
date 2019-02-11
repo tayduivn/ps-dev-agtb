@@ -67,6 +67,9 @@ export default class RecordHeaderView extends BaseView {
                 'createlocalization': 'a[name="create_localization_button"]:not(.hide)',
                 'createrevision': 'a[name="create_revision_button"]:not(.hide)',
                 'createcategory': 'a[name="add_node_button"]:not(.hide)',
+
+                // Cases
+                'createarticle': 'a[name="create_button"]:not(.hide)',
             },
 
             title: {

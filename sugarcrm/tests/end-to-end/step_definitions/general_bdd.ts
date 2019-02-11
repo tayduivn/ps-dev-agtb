@@ -37,7 +37,7 @@ const launchApp = async function (launch: string, schemesList: string): Promise<
 };
 
 When(/^I update (\w+) \*(\w+) with the following values:$/,
-    async function (module, name: string, table: TableDefinition) {
+    async function (module: string, name: string, table: TableDefinition) {
         // TODO: In the future we should check the current route and if we are already on the correct module/record
         await chooseModule(module);
         let view = await seedbed.components[`${module}List`].ListView;
