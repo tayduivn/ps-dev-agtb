@@ -198,8 +198,8 @@ Feature: Knowledge Base module verification
       | *    | name | status    |
       | KB_1 | KB_1 | In Review |
     When I provide input for #KBContentsDrawer.RecordView view
-      | *    | kbdocument_body | tag         | active_date | exp_date   | kbsapprover_name | kbscase_name | category_name |
-      | KB_1 | New Article     | kb, seedbed | 12/20/2020  | 12/20/2021 | uFirst_1 uLast_1 | Case0        | Category 123  |
+      | *    | kbdocument_body | tag          | active_date | exp_date   | kbsapprover_name | kbscase_name | category_name |
+      | KB_1 | New Article     | kb, article1 | 12/20/2020  | 12/20/2021 | uFirst_1 uLast_1 | Case0        | Category 123  |
     When I click Save button on #KBContentsDrawer header
     When I close alert
     Then I should see *KB_1 in #KBContentsList.ListView
@@ -218,7 +218,7 @@ Feature: Knowledge Base module verification
       | kbscase_name     | Case0            |
       | exp_date         | 12/20/2021       |
       | active_date      | 12/20/2020       |
-      | tag              | kb,seedbed       |
+      | tag              | article1,kb      |
 
   @record_localization @job6
   Scenario: Knowledge Base > Localization
