@@ -1513,3 +1513,66 @@ Feature: Quotes module E2E testing
       | discount_price  | €90.00¥50.00 |
       | discount_amount | 10.00%       |
       | total_amount    | €81.00¥45.00 |
+
+  @quote_delete_group @quote_currency
+  Scenario: Quotes > Verify there is no JS error when quote currency is changed after group is deleted
+    # Generate quote record
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_1 | 2020-10-19T19:20:22+00:00  | Negotiation |
+    # Generate account and link it to the quote
+    And Accounts records exist related via billing_accounts link to *Quote_1:
+      | name  | billing_address_street | billing_address_city | billing_address_state | billing_address_postalcode | billing_address_country |
+      | Acc_1 | 10050 N Wolfe Rd       | Cupertino            | CA                    | 95014                      | USA                     |
+    # Create a product bundle
+    And ProductBundles records exist related via product_bundles link to *Quote_1:
+      | *name |
+      | Gr_1  |
+    # Add QLI
+    And Products records exist related via products link:
+      | *name | discount_price | discount_amount | quantity |
+      | QLI_1 | 100            | 2               | 2        |
+      | QLI_2 | 200            | 2               | 3        |
+
+    Given I open about view and login
+    # Add EUR currency
+    When I add new currency
+      | iso4217 | conversion_rate |
+      | EUR     | 0.9             |
+
+    # Navigate to quote record view
+    When I choose Quotes in modules menu
+    When I select *Quote_1 in #QuotesList.ListView
+
+    # Verify Grand Total in QLI table header bar BEFORE deleting the group
+    Then I verify fields on QLI total header on #Quote_1Record view
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | total     | $784.00      |
+
+    # Delete group
+    When I choose deleteGroup on #Gr_1GroupRecord
+    When I Confirm confirmation alert
+    When I close alert
+
+    # Verify Grand Total in QLI table header bar AFTER deleting the group
+    Then I verify fields on QLI total header on #Quote_1Record view
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | total     | $784.00      |
+
+    # Change currency of the quote record to EUR
+    When I click Edit button on #Quote_1Record header
+    When I toggle Quote_Settings panel on #Quote_1Record.RecordView view
+    When I provide input for #Quote_1Record.RecordView view
+      | currency_id |
+      | € (EUR)     |
+
+    # Verify Grand Total in QLI table header bar AFTER currency is changed
+    Then I verify fields on QLI total header on #Quote_1Record view
+      | fieldName | value        |
+      | deal_tot  | 2.00% €14.40 |
+      | new_sub   | €705.60      |
+      | total     | €705.60      |
