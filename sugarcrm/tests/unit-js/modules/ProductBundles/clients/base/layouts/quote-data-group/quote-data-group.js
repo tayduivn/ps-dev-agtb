@@ -16,6 +16,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
     var layoutGroupId;
     var initializeOptions;
     var parentContext;
+    var parentContextModel;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -24,6 +25,13 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
 
         parentContext = app.context.getContext({module: 'Quotes'});
         parentContext.prepare(true);
+
+        parentContextModel = app.data.createBean('Quotes', {
+            id: 'test1'
+        });
+        parentContext.set('model', parentContextModel);
+        sinon.collection.spy(parentContextModel, 'on');
+        sinon.collection.spy(parentContextModel, 'off');
 
         layoutModel = new Backbone.Model({
             id: layoutGroupId,
@@ -68,6 +76,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         sinon.collection.restore();
         layout.dispose();
         layout = null;
+        parentContextModel = null;
     });
 
     describe('initialize()', function() {
@@ -113,6 +122,12 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
             sinon.collection.stub(layout.model, 'on');
             layout.bindDataChange();
             expect(layout.model.on).toHaveBeenCalledWith('change:product_bundle_items', layout.render, layout);
+        });
+
+        it('should add listener for parent context model change:currency_id', function() {
+            layout.bindDataChange();
+
+            expect(parentContextModel.on).toHaveBeenCalledWith('change:currency_id');
         });
     });
 
@@ -307,6 +322,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
                 name: 'quote-data-group-list'
             };
             layout.quoteDataGroupList = quoteDataGroupList;
+            layout._dispose();
         });
 
         afterEach(function() {
@@ -314,9 +330,11 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         });
 
         it('should set quoteDataGroupList during addComponent', function() {
-            layout._dispose();
-
             expect(layout.quoteDataGroupList).toBeNull();
+        });
+
+        it('should remove listener for parent context model change:currency_id', function() {
+            expect(parentContextModel.off).toHaveBeenCalledWith('change:currency_id');
         });
     });
 });

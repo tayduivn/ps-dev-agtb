@@ -171,7 +171,13 @@
      * @inheritdoc
      */
     _dispose: function() {
+        var model;
         this.quoteDataGroupList = null;
+
+        if (this.context && this.context.parent && this.context.parent.has('model')) {
+            model = this.context.parent.get('model');
+            model.off('change:currency_id', null, this);
+        }
 
         this._super('_dispose');
     }
