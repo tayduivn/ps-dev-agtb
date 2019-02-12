@@ -151,7 +151,10 @@ class SugarView
         $this->preDisplay($params);
         $this->displayErrors($params);
         $this->display($params);
-        $this->addAnalytics();
+        // add analytics to html pages
+        if ($this->_getOption('show_javascript')) {
+            $this->addAnalytics();
+        }
 
         if ( !empty($this->module) ) {
             $GLOBALS['logic_hook']->call_custom_logic($this->module, 'after_ui_frame');
