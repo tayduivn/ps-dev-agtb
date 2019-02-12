@@ -387,5 +387,59 @@ describe('commentlog field', function() {
 
             expect(field.msgs[0].href).toEqual('#212');
         });
+
+        it('should not have dangerous chars in it', function() {
+            var modelAttr = {
+                'created_by_name': 'Bat Man',
+                'date_entered': '2018-08-29T22:52:17+00:00',
+                'entry': '<a>&',
+                'created_by': '212',
+            };
+
+            var bean = app.data.createBean(fieldName, modelAttr);
+            var coll = app.data.createMixedBeanCollection([], collOptions);
+            coll.add(bean);
+            field.model.set(fieldName, coll);
+            field.showCommentLog();
+
+            expect(field.msgs[0].entry instanceof Handlebars.SafeString).toBeTruthy();
+            expect(field.msgs[0].entry.toString()).toEqual('&lt;a&gt;&amp;');
+        });
+
+        it('should contain html links', function() {
+            var modelAttr = {
+                'created_by_name': 'Bat Man',
+                'date_entered': '2018-08-29T22:52:17+00:00',
+                'entry': 'Site: www.sugarcrm.com',
+                'created_by': '212',
+            };
+
+            var bean = app.data.createBean(fieldName, modelAttr);
+            var coll = app.data.createMixedBeanCollection([], collOptions);
+            coll.add(bean);
+            field.model.set(fieldName, coll);
+            field.showCommentLog();
+            var expected =
+                'Site: <a href="http://www.sugarcrm.com" target="_blank" rel="noopener">www.sugarcrm.com</a>';
+            expect(field.msgs[0].entry.toString()).toEqual(expected);
+        });
+    });
+
+    describe('_escapeValue', function() {
+        it('should escape dangerous chars', function() {
+            var badText = '<>`""';
+            var result = field._escapeValue(badText);
+            var expected = '&lt;&gt;&#x60;&quot;&quot;';
+            expect(result).toEqual(expected);
+        });
+    });
+
+    describe('_insertHtmlLinks', function() {
+        it('replaces text links with html links', function() {
+            var comment = 'www.sugarcrm.com';
+            var result = field._insertHtmlLinks(comment);
+            var expected = '<a href="http://www.sugarcrm.com" target="_blank" rel="noopener">www.sugarcrm.com</a>';
+            expect(result).toEqual(expected);
+        });
     });
 });

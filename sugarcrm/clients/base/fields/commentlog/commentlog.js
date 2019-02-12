@@ -99,15 +99,21 @@
                     this.collapsedEntries[id] = true;
                 }
 
+                var entry = this._escapeValue(commentModel.get('entry'));
+                var entryShort = this._getShortComment(entry);
+                var showShort = entry !== entryShort;
+
+                entry = this._insertHtmlLinks(entry);
+                entryShort = this._insertHtmlLinks(entryShort);
+
                 var msg = {
                     id: commentModel.get('id'),
-                    entry: commentModel.get('entry'),
-                    entryShort: this._getShortComment(commentModel.get('entry')),
+                    entry: new Handlebars.SafeString(entry),
+                    entryShort: new Handlebars.SafeString(entryShort),
                     created_by_name: commentModel.get('created_by_name'),
                     collapsed: this.collapsedEntries[id],
+                    showShort: showShort,
                 };
-
-                msg.showShort = msg.entry !== msg.entryShort;
 
                 // to date display format
                 var enteredDate = app.date(commentModel.get('date_entered'));
@@ -153,6 +159,40 @@
         }
 
         return comment;
+    },
+
+    /**
+     * Escapes any dangerous values from the string
+     *
+     * @param {string} comment The comment entry
+     * @return {string} The escaped string
+     * @private
+     */
+    _escapeValue: function(comment) {
+        return Handlebars.Utils.escapeExpression(comment);
+    },
+
+    /**
+     * Replaces any text urls with html links
+     *
+     * @param {string} comment The comment entry
+     * @return {string} The entry with html for any links
+     * @private
+     */
+    _insertHtmlLinks: function(string) {
+        // http://, https://, ftp://
+        var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+
+        // www. sans http:// or https://
+        var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+
+        // Email addresses
+        var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
+
+        return string
+            .replace(urlPattern, '<a href="$&" target="_blank" rel="noopener">$&</a>')
+            .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank" rel="noopener">$2</a>')
+            .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
     },
 
     /**
