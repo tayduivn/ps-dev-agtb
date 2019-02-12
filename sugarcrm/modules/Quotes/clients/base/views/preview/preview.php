@@ -45,6 +45,7 @@ $viewdefs['Quotes']['base']['view']['preview'] = array(
                 'billing_account_name',
                 'billing_contact_name',
                 array(
+                    'name' => 'billing_address_fieldset',
                     'inline' => false,
                     'type' => 'fieldset',
                     'label' => 'LBL_BILLING_ADDRESS_STREET',
@@ -98,6 +99,7 @@ $viewdefs['Quotes']['base']['view']['preview'] = array(
                 'shipping_account_name',
                 'shipping_contact_name',
                 array(
+                    'name' => 'shipping_address_fieldset',
                     'inline' => false,
                     'type' => 'fieldset',
                     'label' => 'LBL_SHIPPING_ADDRESS_STREET',
