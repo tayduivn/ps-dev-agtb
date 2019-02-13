@@ -363,7 +363,7 @@ class SugarFoldersTest extends TestCase
             'modified_by' => 'now()',
             'has_child' => 2,
         ]);
-        $this->toDelete['`folders`'] = ['id' => $id];
+        $this->toDelete['folders'] = ['id' => $id];
 
         $sf->updateFolder($fields);
         $result = $sf->db->getConnection()
