@@ -1514,7 +1514,7 @@ Feature: Quotes module E2E testing
       | discount_amount | 10.00%       |
       | total_amount    | €81.00¥45.00 |
 
-  @quote_delete_group @quote_currency
+  @quote_delete_group @quote_currency @job5
   Scenario: Quotes > Verify there is no JS error when quote currency is changed after group is deleted
     # Generate quote record
     Given Quotes records exist:
@@ -1563,12 +1563,14 @@ Feature: Quotes module E2E testing
       | new_sub   | $784.00      |
       | total     | $784.00      |
 
-    # Change currency of the quote record to EUR
+    # Change quote currency to EUR
     When I click Edit button on #Quote_1Record header
     When I toggle Quote_Settings panel on #Quote_1Record.RecordView view
     When I provide input for #Quote_1Record.RecordView view
       | currency_id |
       | € (EUR)     |
+    When I click Save button on #Quote_1Record header
+    When I close alert
 
     # Verify Grand Total in QLI table header bar AFTER currency is changed
     Then I verify fields on QLI total header on #Quote_1Record view
@@ -1576,3 +1578,36 @@ Feature: Quotes module E2E testing
       | deal_tot  | 2.00% €14.40 |
       | new_sub   | €705.60      |
       | total     | €705.60      |
+
+    # Toggle two QLI items: one from 'Group 0' and one from 'Group 2'
+    When I toggle #QLI_1QLIRecord
+    When I toggle #QLI_2QLIRecord
+
+    # Group Selected items to generate a new group and give a name to a new group
+    When I choose GroupSelected from #Quote_1Record.QliTable
+    When I provide input for #Quote_1Record.QliTable.GroupRecord view
+      | *        | name      |
+      | NewGroup | New Group |
+    When I click on save button on Group #NewGroupGroupRecord record
+    When I close alert
+
+    # Change quote currency to USD
+    When I click Edit button on #Quote_1Record header
+    When I provide input for #Quote_1Record.RecordView view
+      | currency_id |
+      | $ (USD)     |
+    When I click Save button on #Quote_1Record header
+    When I close alert
+
+    # Verify new group's name and group total
+    Then I verify fields on #NewGroupGroupRecord
+      | fieldName | value     |
+      | new_sub   | $784.00   |
+      | name      | New Group |
+
+    # Verify Grand Total in QLI table header bar AFTER creating the group
+    Then I verify fields on QLI total header on #Quote_1Record view
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | total     | $784.00      |
