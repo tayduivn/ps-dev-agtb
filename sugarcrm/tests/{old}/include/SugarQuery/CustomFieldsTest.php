@@ -89,8 +89,9 @@ class CustomFieldsTest extends TestCase
 
         $query = $this->createQuery();
         $query->select('custom_relate_name_c');
+        $query->orderBy('name', 'ASC');
 
-        $this->assertSame([
+        $this->assertArraySubset([
             self::$accounts['Account #1']->id => [
                 'custom_relate_name_c' => 'Account #2',
                 'custom_relate_name_c_owner' => $current_user->id,
