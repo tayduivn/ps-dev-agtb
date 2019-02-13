@@ -108,15 +108,16 @@ class SugarLocalUserProvider implements UserProviderInterface
             throw new UsernameNotFoundException('User was not found by provided name identifier');
         }
 
-        if ($sugarUser->status != User::USER_STATUS_ACTIVE) {
-            throw new InactiveUserException('Inactive user');
+        $sugarUser->emailAddress->handleLegacyRetrieve($sugarUser);
+
+        if ($sugarUser->status !== User::USER_STATUS_ACTIVE) {
+            throw new InactiveUserException('Inactive user', 0, null, $sugarUser);
         }
 
         if (!empty($sugarUser->is_group) || !empty($sugarUser->portal_only)) {
             throw new InvalidUserException('Portal or group user can not log in.');
         }
 
-        $sugarUser->emailAddress->handleLegacyRetrieve($sugarUser);
         $user = new User($nameIdentifier, $sugarUser->user_hash);
         $user->setSugarUser($sugarUser);
 

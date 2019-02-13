@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -74,6 +75,13 @@ class SugarOIDCUserChecker extends UserChecker
                 $userAttributes
             );
             $sugarUser = $this->localUserProvider->createUser($userAttributes['user_name'], $userAttributes);
+        } catch (InactiveUserException $e) {
+            $sugarUser = $e->getSugarUser();
+            if (!$sugarUser || $userAttributes['status'] !== User::USER_STATUS_ACTIVE) {
+                throw $e;
+            }
+
+            $this->setUserData($sugarUser, $userAttributes);
         }
         $user->setSugarUser($sugarUser);
     }

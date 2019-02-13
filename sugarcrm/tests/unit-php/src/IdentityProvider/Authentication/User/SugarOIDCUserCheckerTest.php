@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
@@ -67,6 +68,10 @@ class SugarOIDCUserCheckerTest extends TestCase
         $this->emailAddress = $this->createMock(\EmailAddress::class);
         $this->sugarUser->emailAddress = $this->emailAddress;
         $this->user->method('isCredentialsNonExpired')->willReturn(true);
+
+        $this->sugarUser->db = $this->getMockBuilder('\DBManager')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
     }
 
     /**
@@ -90,11 +95,6 @@ class SugarOIDCUserCheckerTest extends TestCase
             ->with($oidc['identify']['value'], $oidc['identify']['field'])
             ->willReturn($this->foundUser);
         $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
-
-        $dbManager = $this->getMockBuilder('\DBManager')
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->sugarUser->db = $dbManager;
 
         foreach (array_diff_key($old, ['email' => 1]) as $field => $value) {
             $this->sugarUser->{$field} = $value;
@@ -195,11 +195,6 @@ class SugarOIDCUserCheckerTest extends TestCase
             ->willReturn($this->foundUser);
         $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
 
-        $dbManager = $this->getMockBuilder('\DBManager')
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->sugarUser->db = $dbManager;
-
         foreach ($old as $field => $value) {
             $this->sugarUser->{$field} = $value;
         }
@@ -299,11 +294,6 @@ class SugarOIDCUserCheckerTest extends TestCase
             ->with($oidc['identify']['value'], $oidc['identify']['field'])
             ->willReturn($this->foundUser);
         $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
-
-        $dbManager = $this->getMockBuilder('\DBManager')
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->sugarUser->db = $dbManager;
 
         foreach ($old as $field => $value) {
             $this->sugarUser->{$field} = $value;
@@ -451,6 +441,101 @@ class SugarOIDCUserCheckerTest extends TestCase
                                 ->with('test', $expectedAttributes)
                                 ->willReturn($this->sugarUser);
         $this->user->expects($this->once())->method('setSugarUser')->with($this->sugarUser);
+        $this->userChecker->checkPostAuth($this->user);
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     */
+    public function testCheckPostAuthWithInactiveUserInSugarAndActiveInCloud(): void
+    {
+        $this->user->expects($this->exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([$this->equalTo('oidc_data')], [$this->equalTo('oidc_identify')])
+            ->willReturnOnConsecutiveCalls(
+                ['user_name' => 'test', 'status' => 'Active'],
+                ['field' => 'id', 'value' => 'seed_sally_id']
+            );
+        $this->user->method('getSrn')->willReturn('srn:cluster:idm:eu:0000000001:user:seed_sally_id');
+        $this->sugarUser->expects($this->once())->method('getFieldDefinitions')->willReturn([
+            'user_name' => [
+                'name' => 'user_name',
+                'type' => 'username',
+                'dbType' => 'varchar',
+                'len' => '60',
+            ],
+            'status' => [
+                'name' => 'status',
+                'type' => 'status',
+                'dbType' => 'varchar',
+                'len' => '60',
+            ],
+        ]);
+
+        $this->sugarUser->status = 'Inactive';
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->with('seed_sally_id', 'id')
+            ->willThrowException(new InactiveUserException('', 0, null, $this->sugarUser));
+
+        $this->user->expects($this->once())->method('setSugarUser')->with($this->sugarUser);
+        $this->userChecker->checkPostAuth($this->user);
+
+        $this->assertEquals(User::USER_STATUS_ACTIVE, $this->sugarUser->status);
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     *
+     * @expectedException Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException
+     */
+    public function testCheckPostAuthWithInactiveUserInSugarAndInactiveInCloud(): void
+    {
+        $this->user->expects($this->exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([$this->equalTo('oidc_data')], [$this->equalTo('oidc_identify')])
+            ->willReturnOnConsecutiveCalls(
+                ['user_name' => 'test', 'status' => 'Inactive'],
+                ['field' => 'id', 'value' => 'seed_sally_id']
+            );
+        $this->user->method('getSrn')->willReturn('srn:cluster:idm:eu:0000000001:user:seed_sally_id');
+
+        $this->sugarUser->status = 'Inactive';
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->with('seed_sally_id', 'id')
+            ->willThrowException(new InactiveUserException('', 0, null, $this->sugarUser));
+
+        $this->user->expects($this->never())->method('setSugarUser');
+        $this->userChecker->checkPostAuth($this->user);
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     *
+     * @expectedException Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException
+     */
+    public function testCheckPostAuthWithInactiveUserInSugarNoUserInException(): void
+    {
+        $this->user->expects($this->exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([$this->equalTo('oidc_data')], [$this->equalTo('oidc_identify')])
+            ->willReturnOnConsecutiveCalls(
+                ['user_name' => 'test', 'status' => 'Active'],
+                ['field' => 'id', 'value' => 'seed_sally_id']
+            );
+        $this->user->method('getSrn')->willReturn('srn:cluster:idm:eu:0000000001:user:seed_sally_id');
+
+        $this->sugarUser->status = 'Inactive';
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->with('seed_sally_id', 'id')
+            ->willThrowException(new InactiveUserException('', 0, null, null));
+
+        $this->user->expects($this->never())->method('setSugarUser');
         $this->userChecker->checkPostAuth($this->user);
     }
 }

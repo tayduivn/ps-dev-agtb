@@ -320,7 +320,7 @@ class SugarLocalUserProviderTest extends TestCase
 
         $this->user->is_group = 0;
         $this->user->portal_only = 0;
-        $this->user->status = 0;
+        $this->user->status = 'Active';
         $this->user->user_hash = 'user_hash';
 
         $this->userProvider->refreshUser($user);
