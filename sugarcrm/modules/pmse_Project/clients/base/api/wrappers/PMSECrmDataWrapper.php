@@ -1387,39 +1387,30 @@ SQL;
         try {
             global $db;
 
-            //$get_projID_query = "select prj_id from bpmn_project where prj_uid = '$res->targetProcess'";
             $get_projID_query = "select id from pmse_project where id = " . $db->quoted($res->targetProcess);
             $result = $db->Query($get_projID_query);
             $row = $db->fetchByAssoc($result);
-//            $projId = $row['prj_id'];
             $projId = $row['id'];
 
-            //$get_proID_query = "select pro_id from bpmn_process where prj_id = $projId";
             $get_proID_query = "select id from pmse_bpmn_process where prj_id = " . $db->quoted($projId);
             $result = $db->Query($get_proID_query);
             $row = $db->fetchByAssoc($result);
-//            $proId = $row['pro_id'];
             $proId = $row['id'];
 
-            //$get_actIds = "select act_id from bpm_activity_definition where pro_id = $proId;";
             $get_actIds = "select id from pmse_bpm_activity_definition where pro_id = " . $db->quoted($proId);
             $result = $db->Query($get_actIds);
             $row = $db->fetchByAssoc($result);
             $activity = array();
             while (is_array($row)) {
-//                $activity[$row['act_id']] = '';
                 $activity[$row['id']] = '';
                 $row = $db->fetchByAssoc($result);
             }
 
-//            $get_act_types = "select act_id, act_script_type from bpmn_activity where pro_id = $proId;";
             $get_act_types = "select id, act_script_type from pmse_bpmn_activity where pro_id = " .
                 $db->quoted($proId);
             $result = $db->Query($get_act_types);
             $row = $db->fetchByAssoc($result);
             while (is_array($row)) {
-//                if (isset($activity[$row['act_id']])) {
-//                    $activity[$row['act_id']] = $row['act_script_type'];
                 if (isset($activity[$row['id']])) {
                     $activity[$row['id']] = $row['act_script_type'];
                 }
@@ -1460,29 +1451,24 @@ SQL;
                 $resultUpdate = $db->Query($update_activity);
             }
             //cleaning gateways
-            //$clear_gatewayConditions = "update bpmn_flow set flo_condition = '' where flo_element_origin in (select gat_id from bpmn_gateway where prj_id = $projId)";
-            $clear_gatewayConditions = "update pmse_bpmn_flow set flo_condition = '' where flo_element_origin in (select id from pmse_bpmn_gateway where id = '$projId')";
-            $resultUpdate = $db->Query($clear_gatewayConditions);
+            $db->getConnection()
+                ->executeUpdate(
+                    "UPDATE pmse_bpmn_flow 
+                    SET flo_condition = '' 
+                    WHERE flo_element_origin IN (SELECT id FROM pmse_bpmn_gateway WHERE id = ?)",
+                    [$projId]
+                );
             //cleaning other events not email type
-//            $update_evendef1 = "update bpm_event_definition set evn_module = '$res->newModule', evn_criteria = '', evn_params = '' where evn_id in (select evn_id from bpmn_event where evn_behavior = 'CATCH' and prj_id = $projId and evn_type = 'INTERMEDIATE');";
-            $update_evendef1 = "update pmse_bpm_event_definition set evn_module = '$res->newModule', evn_criteria = '', evn_params = '' where id in (select id from pmse_bpmn_event where evn_behavior = 'CATCH' and prj_id = '$projId' and evn_type = 'INTERMEDIATE');";
-            $resultUpdate = $db->Query($update_evendef1);
-            //cleaning start events
-            /* $update_evendef2 = "update bpm_event_definition set evn_module = '$res->newModule', evn_criteria = '[]' where pro_id = $proId and evn_type = 'START';";
-              $resultUpdate = $db->Query($update_evendef2);
-
-              $get_event_name = "select evn_name from bpmn_event where pro_id = $proId and evn_type = 'START';";
-              $result = $db->Query($get_event_name);
-              $row = $db->fetchByAssoc($result);
-
-              $changedEventName = $row['evn_name'];
-              $newModule = substr($res->newModule, 0, -1);
-              $targetModule = substr($res->targetModule, 0, -1);
-              $changedEventName = str_replace($targetModule, $newModule, $changedEventName);
-              $messageEvent = strtoupper($newModule);
-
-              $update_event = "update bpmn_event set evn_name = '$changedEventName', evn_message = '$messageEvent' where pro_id = $proId and evn_type = 'START';";
-              $resultUpdate = $db->Query($update_event); */
+            $db->getConnection()
+                ->executeUpdate(
+                    "UPDATE pmse_bpm_event_definition 
+                    SET evn_module = ?, evn_criteria = '', evn_params = ''
+                    WHERE id IN (
+                      SELECT id FROM pmse_bpmn_event 
+                      WHERE evn_behavior = 'CATCH' AND prj_id = ? AND evn_type = 'INTERMEDIATE'
+                    )",
+                    [$res->newModule, $projId]
+                );
 
             $res->success = true;
         } catch (Exception $ex) {
