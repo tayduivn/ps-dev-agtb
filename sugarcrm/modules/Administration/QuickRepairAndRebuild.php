@@ -40,6 +40,21 @@ class RepairAndClear
      */
     protected $called = array();
 
+    /**
+     * @var callable
+     */
+    private $statementObserver;
+
+    /**
+     * Sets the callback function which will be invoked with every executed SQL statement
+     *
+     * @param callable $statementObserver
+     */
+    public function setStatementObserver(callable $statementObserver) : void
+    {
+        $this->statementObserver = $statementObserver;
+    }
+
     public function repairAndClearAll($selected_actions, $modules, $autoexecute=false, $show_output=true, $metadata_sections=false)
     {
         global $mod_strings;
@@ -176,9 +191,8 @@ class RepairAndClear
 		$_REQUEST['execute']=$this->execute;
         $GLOBALS['reload_vardefs'] = true;
         $hideModuleMenu = true;
-		include_once('modules/Administration/repairDatabase.php');
 
-        return $sql ?? null;
+        require 'modules/Administration/repairDatabase.php';
 	}
 
     /**

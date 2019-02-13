@@ -27,11 +27,10 @@ class SugarUpgradeRebuild extends UpgradeScript
         $rac->clearVardefs();
         $rac->rebuildExtensions();
         $rac->clearExternalAPICache();
-        $sql = $rac->repairDatabase();
-
-        if (trim($sql) != '') {
-            $this->log('Running sql: ' . $sql);
-        }
+        $rac->setStatementObserver(function (?string $statement) : void {
+            $this->log('Running sql: ' . $statement);
+        });
+        $rac->repairDatabase();
 
         if (!empty($rac->module_list)) {
             $this->log('Verifying audit tables for modules: ' . implode(',', $rac->module_list));

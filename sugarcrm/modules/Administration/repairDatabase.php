@@ -17,6 +17,35 @@ if (ini_get('max_execution_time') > 0 && ini_get('max_execution_time') < 3600) {
 
 $db = DBManagerFactory::getInstance();
 
+$statements = [];
+
+$collectors = [
+    // by default, collect all statements in an array to display later
+    function (?string $statement) use (&$statements) : void {
+        $statements[] = $statement;
+    },
+];
+
+
+// if running as part of the Quick Repair and Rebuild process, wrap the statement observer
+if (isset($this->statementObserver)) {
+    $collectors[] = function (?string $statement) : void {
+        ($this->statementObserver)($statement);
+    };
+}
+
+$collect = function (?string $statement) use (&$collectors) : void {
+    $statement = trim($statement);
+
+    if ($statement === '') {
+        return;
+    }
+
+    foreach ($collectors as $collector) {
+        $collector($statement);
+    }
+};
+
 if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_module($current_user)) {
 	isset($_REQUEST['execute'])? $execute=$_REQUEST['execute'] : $execute= false;
 	$export = false;
@@ -72,8 +101,6 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 			ob_flush();
 		}
 
-		$sql = '';
-
 		VardefManager::clearVardef();
 		$repairedTables = array();
 
@@ -92,18 +119,21 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
                     // Example Beans are MergeRecord and EmptyBean
                     if ($tableName && !isset($repairedTables[$tableName])) {
                         $tableExists = $db->tableExists($tableName);
-                        $sql .= $db->repairTable($focus, $execute);
+                        $statement = $db->repairTable($focus, $execute);
+                        $collect($statement);
+
                         // repair table indices only in case if the table previously existed, otherwise the table
                         // has already been created with indices despite skip_index_rebuild
                         if ($tableExists) {
                             $compareIndices = isset($indices[$tableName]) ? $indices[$tableName] : array();
-                            $sql .= $db->alterTableIndices(
+                            $statement = $db->alterTableIndices(
                                 $tableName,
                                 $focus->getFieldDefinitions(),
                                 $focus->getIndices(),
                                 $compareIndices,
                                 $execute
                             );
+                            $collect($statement);
                         }
                         $repairedTables[$focus->table_name] = true;
                     }
@@ -114,8 +144,16 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
                     $df->bean = $focus;
 
                     $customTableName = $focus->get_custom_table_name();
-                    $sql .= $df->repairCustomFields($execute);
-                    $sql .= $df->repairIndices($indices[$customTableName] ?? [], $execute);
+                    $tableExists = $db->tableExists($customTableName);
+                    $statement = $df->repairCustomFields($execute);
+                    $collect($statement);
+
+                    // repair table indices only in the case if the table previously existed, otherwise the table
+                    // has already been created with indices despite skip_index_rebuild
+                    if ($tableExists) {
+                        $statement = $df->repairIndices($indices[$customTableName] ?? [], $execute);
+                        $collect($statement);
+                    }
 
                     $repairedTables[$customTableName] = true;
 				}
@@ -133,19 +171,30 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
                 continue;
             }
 
-            $tablename = $meta['table'];
+            $tableName = $meta['table'];
 			$fielddefs = $meta['fields'];
             $definedIndices = $meta['indices'] ?? [];
-            $deployedIndices = $indices[$tablename] ?? [];
+            $deployedIndices = $indices[$tableName] ?? [];
 			$engine = isset($meta['engine'])?$meta['engine']:null;
-            $sql .= $db->repairTableParams($tablename, $fielddefs, $definedIndices, $execute, $engine);
-            $sql .= $db->alterTableIndices($tablename, $fielddefs, $definedIndices, $deployedIndices, $execute);
-			$repairedTables[$tablename] = true;
+            $tableExists = $db->tableExists($tableName);
+            $statement = $db->repairTableParams($tableName, $fielddefs, $definedIndices, $execute, $engine);
+            $collect($statement);
+
+            // repair table indices only in the case if the table previously existed, otherwise the table
+            // has already been created with indices despite skip_index_rebuild
+            if ($tableExists) {
+                $statement = $db->alterTableIndices($tableName, $fielddefs, $definedIndices, $deployedIndices, $execute);
+                $collect($statement);
+            }
+
+            $repairedTables[$tableName] = true;
 		}
 
 		$dictionary = $olddictionary;
 
         $db->setOption('skip_index_rebuild', false);
+
+        $sql = implode('', $statements);
 
 		if (empty ($_REQUEST['repair_silent'])) {
 			echo "<script type=\"text/javascript\">document.getElementById('rdloading').style.display = \"none\";</script>";
