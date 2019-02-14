@@ -163,6 +163,10 @@ $config['blackList']['corp'] = array(
 'sugarcrm/modules/Connectors/connectors/sources/ext/rest/insideview'=>1,
 'sugarcrm/modules/Connectors/connectors/sources/ext/eapm/facebook'=>1,
 
+// Customer Service (ENT and above)
+'sugarcrm/modules/BusinessCenters' => 1,
+'sugarcrm/tests/{old}/modules/BusinessCenters/' => 1,
+
 'sugarcrm/modules/pmse_Business_Rules'=>1,
 'sugarcrm/modules/pmse_Emails_Templates'=>1,
 'sugarcrm/modules/pmse_Inbox'=>1,

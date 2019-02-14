@@ -76,6 +76,7 @@ $app_list_strings = array (
     'pmse_Project' => 'Process Definitions',
     'pmse_Business_Rules' => 'Process Business Rules',
     'pmse_Emails_Templates' => 'Process Email Templates',
+    'BusinessCenters' => 'Business Centers',
 //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
@@ -133,6 +134,9 @@ $app_list_strings = array (
         'Tasks' => 'Ts',
         'Dashboards' => 'Ds',
         'DataPrivacy' => 'DP',
+        //BEGIN SUGARCRM flav=ent ONLY
+        'BusinessCenters' => 'BC',
+        //END SUGARCRM flav=ent ONLY
     ),
 
   'moduleListSingular' =>
@@ -199,6 +203,7 @@ $app_list_strings = array (
     'pmse_Project' => 'Process Definition',
     'pmse_Business_Rules' => 'Process Business Rule',
     'pmse_Emails_Templates' => 'Process Email Template',
+    'BusinessCenters' => 'Business Center',
     //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow',
     'EAPM' => 'External Account',
@@ -5450,6 +5455,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_LOCKED_FIELD_RECORD_VIEW_TOOLTIP' => 'This field is locked because it is involved in a running process.',
     'LBL_LOCKED_FIELD_RECORD_VIEW_WARNING' => 'This record is participating in a process and may contain some locked fields.',
     // @codingStandardsIgnoreEnd
+
+    'LBL_BUSINESS_CENTER' => 'Business Center',
 //END SUGARCRM flav=ent ONLY
 
     //Tag Strings

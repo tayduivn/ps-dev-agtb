@@ -494,6 +494,7 @@ $enabled_tabs[] = 'pmse_Project';
 $enabled_tabs[] = 'pmse_Inbox';
 $enabled_tabs[] = 'pmse_Business_Rules';
 $enabled_tabs[] = 'pmse_Emails_Templates';
+$enabled_tabs[] = 'BusinessCenters';
 
 if ($_SESSION['demoData'] != 'no') {
     $enabled_tabs[] = 'Bugs';

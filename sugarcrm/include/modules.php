@@ -39,6 +39,7 @@ $moduleList[] = 'pmse_Project';
 $moduleList[] = 'pmse_Inbox';
 $moduleList[] = 'pmse_Business_Rules';
 $moduleList[] = 'pmse_Emails_Templates';
+$moduleList[] = 'BusinessCenters';
 //END SUGARCRM flav=ent ONLY
 
 $moduleList[] = 'Documents';
@@ -203,6 +204,7 @@ $beanList['pmse_BpmConfig'] = 'pmse_BpmConfig';
 $beanList['pmse_BpmGroup'] = 'pmse_BpmGroup';
 $beanList['pmse_BpmGroupUser'] = 'pmse_BpmGroupUser';
 $beanList['pmse_EmailMessage'] = 'pmse_EmailMessage';
+$beanList['BusinessCenters'] = 'BusinessCenter';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
 //BEGIN SUGARCRM flav=int ONLY
@@ -371,6 +373,7 @@ $beanFiles['pmse_BpmConfig'] = 'modules/pmse_Project/pmse_BpmConfig/pmse_BpmConf
 $beanFiles['pmse_BpmGroup'] = 'modules/pmse_Project/pmse_BpmGroup/pmse_BpmGroup.php';
 $beanFiles['pmse_BpmGroupUser'] = 'modules/pmse_Project/pmse_BpmGroupUser/pmse_BpmGroupUser.php';
 $beanFiles['pmse_EmailMessage'] = 'modules/pmse_Emails_Templates/pmse_EmailMessage/pmse_EmailMessage.php';
+$beanFiles['BusinessCenter'] = 'modules/BusinessCenters/BusinessCenter.php';
 //END SUGARCRM flav=ent ONLY
 
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
