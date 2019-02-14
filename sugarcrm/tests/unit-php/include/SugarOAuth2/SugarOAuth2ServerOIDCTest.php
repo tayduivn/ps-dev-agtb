@@ -19,6 +19,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManage
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\IdmNonrecoverableException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
@@ -410,6 +411,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      * @covers ::verifyAccessToken
      * @covers ::setPlatform
      * @expectedException \OAuth2AuthenticateException
+     * @expectedExceptionMessage invalid_grant
      */
     public function testVerifyAccessTokenWithAuthenticationException()
     {
@@ -425,6 +427,32 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                 $this->assertInstanceOf(IntrospectToken::class, $token);
                 $this->assertEquals('testPlatform', $token->getAttribute('platform'));
                 throw new AuthenticationException();
+            }
+        );
+
+        $this->oAuth2Server->setPlatform('testPlatform');
+        $this->oAuth2Server->verifyAccessToken($this->stsAccessToken);
+    }
+
+    /**
+     * @covers ::verifyAccessToken
+     * @expectedException \OAuth2AuthenticateException
+     * @expectedExceptionMessage idm_nonrecoverable_error
+     */
+    public function testVerifyAccessTokenWithNonrecoverableException(): void
+    {
+        $this->oAuth2Server->expects($this->once())->method('getAuthProviderBuilder')->willReturnCallback(
+            function ($config) {
+                $this->assertInstanceOf(Config::class, $config);
+                return $this->authProviderBuilder;
+            }
+        );
+
+        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
+            function ($token) {
+                $this->assertInstanceOf(IntrospectToken::class, $token);
+                $this->assertEquals('testPlatform', $token->getAttribute('platform'));
+                throw new IdmNonrecoverableException('None recoverable');
             }
         );
 

@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Provider;
 use League\OAuth2\Client\Token\AccessToken;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\IdmNonrecoverableException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
@@ -26,6 +27,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 
 /**
@@ -362,6 +364,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     ],
                 ],
                 'exceptionMessage' => $scopeExceptionMessage,
+                'expectedException' => IdmNonrecoverableException::class,
             ],
             'scopeIsEmpty' => [
                 'response' => [
@@ -373,6 +376,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => '',
                 ],
                 'exceptionMessage' => $scopeExceptionMessage,
+                'expectedException' => IdmNonrecoverableException::class,
             ],
             'scopeHasNoCrmScope' => [
                 'response' => [
@@ -384,6 +388,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => 'offline',
                 ],
                 'exceptionMessage' => $scopeExceptionMessage,
+                'expectedException' => IdmNonrecoverableException::class,
             ],
             'scopeHasNoCrmScopeButHasTwoOther' => [
                 'response' => [
@@ -395,6 +400,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => 'offline foo.bar',
                 ],
                 'exceptionMessage' => $scopeExceptionMessage,
+                'expectedException' => IdmNonrecoverableException::class,
             ],
             'scopesDelimitedIncorrectly' => [
                 'response' => [
@@ -404,6 +410,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => 'offline,https://apis.sugarcrm.com/auth/crm',
                 ],
                 'exceptionMessage' => $scopeExceptionMessage,
+                'expectedException' => IdmNonrecoverableException::class,
             ],
             'tidIsEmpty' => [
                 'response' => [
@@ -416,6 +423,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
                 ],
                 'exceptionMessage' => $tidExceptionMessage,
+                'expectedException' => IdmNonrecoverableException::class,
             ],
             'tidHasOtherTid' => [
                 'response' => [
@@ -427,6 +435,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
                 ],
                 'exceptionMessage' => $tidExceptionMessage,
+                'expectedException' => IdmNonrecoverableException::class,
             ],
             'noSub' => [
                 'response' => [
@@ -437,6 +446,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
                 ],
                 'exceptionMessage' => $subEmptyExceptionMessage,
+                'expectedException' => AuthenticationException::class,
             ],
             'subIsEmpty' => [
                 'response' => [
@@ -448,6 +458,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
                 ],
                 'exceptionMessage' => $subEmptyExceptionMessage,
+                'expectedException' => AuthenticationException::class,
 
             ],
             'subIsInvalid' => [
@@ -460,6 +471,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
                 ],
                 'exceptionMessage' => $subSRNExceptionMessage,
+                'expectedException' => AuthenticationException::class,
 
             ],
             'subBelongsOtherTid' => [
@@ -472,15 +484,20 @@ class OIDCAuthenticationProviderTest extends TestCase
                     'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
                 ],
                 'exceptionMessage' => $subExceptionMessage,
+                'expectedException' => IdmNonrecoverableException::class,
             ],
         ];
     }
 
     /**
+     * @param $response
+     * @param $exceptionMessage
+     * @param $expectedException
+     *
      * @covers ::authenticate
      * @dataProvider introspectTokenThrowsProvider
      */
-    public function testIntrospectTokenThrows($response, $exceptionMessage)
+    public function testIntrospectTokenThrows($response, $exceptionMessage, $expectedException)
     {
         $token = new IntrospectToken(
             'token',
@@ -490,11 +507,51 @@ class OIDCAuthenticationProviderTest extends TestCase
 
         $token->setAttribute('platform', 'base');
 
+        $this->expectException($expectedException);
         $this->expectExceptionMessage($exceptionMessage);
         $this->oAuthProvider->expects($this->once())
             ->method('introspectToken')
             ->with('token')
             ->willReturn($response);
+
+        $this->provider->authenticate($token);
+    }
+
+    /**
+     * @covers ::authenticate
+     *
+     * @expectedException Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\IdmNonrecoverableException
+     */
+    public function testIntrospectTokenCheckPostAuthThrowsException(): void
+    {
+        $introspectResult = [
+            'active' => true,
+            'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
+            'client_id' => 'testLocal',
+            'sub' => 'srn:cluster:idm:eu:0000000001:user:seed_sally_id',
+            'exp' => 1507571717,
+            'iat' => 1507535718,
+            'aud' => 'testLocal',
+            'iss' => 'http://sts.sugarcrm.local',
+            'ext' => [
+                'amr' => ['PROVIDER_KEY_SAML'],
+                'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+            ],
+        ];
+
+        $token = new IntrospectToken(
+            'token',
+            'srn:cloud:idp:eu:0000000001:tenant',
+            'https://apis.sugarcrm.com/auth/crm'
+        );
+
+        $token->setAttribute('platform', 'base');
+        $this->userChecker->method('checkPostAuth')->willThrowException(new \InvalidArgumentException());
+
+        $this->oAuthProvider->expects($this->once())
+            ->method('introspectToken')
+            ->with('token')
+            ->willReturn($introspectResult);
 
         $this->provider->authenticate($token);
     }

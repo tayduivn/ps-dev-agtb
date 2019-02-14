@@ -66,6 +66,9 @@
     //Return the user to the login page when the sync fails
     app.events.on('app:sync:error', function(error) {
         if (error.status !== 0) {
+            if (app.config.idmModeEnabled && error.code === 'idm_nonrecoverable_error') {
+                return;
+            }
             backToLogin(true);
         }
         // Sync can fail for many reasons such as server error, bad cache, auth, etc.
@@ -130,7 +133,17 @@
      * 401 Unauthorized error handler. 
      */
     app.error.handleUnauthorizedError = function(error) {
-        processAuthenticatedUserError('unauthorized_request_error', 'LBL_UNAUTHORIZED_TITLE', 'LBL_UNAUTHORIZED');
+        if (app.config.idmModeEnabled && error.code === 'idm_nonrecoverable_error') {
+            app.alert.dismissAll();
+            app.router.logout();
+            alertUser('unauthorized_request_error', 'LBL_UNAUTHORIZED_TITLE', 'LBL_UNAUTHORIZED');
+        } else {
+            processAuthenticatedUserError(
+                'unauthorized_request_error',
+                'LBL_UNAUTHORIZED_TITLE',
+                'LBL_UNAUTHORIZED'
+            );
+        }
     };
 
     /**

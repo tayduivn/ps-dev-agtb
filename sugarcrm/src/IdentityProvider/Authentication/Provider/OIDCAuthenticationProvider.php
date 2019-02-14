@@ -18,6 +18,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use Sugarcrm\IdentityProvider\Authentication\UserMapping\MappingInterface;
 use Sugarcrm\IdentityProvider\STS\EndpointInterface;
 use Sugarcrm\IdentityProvider\Srn\Converter;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\IdmNonrecoverableException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
@@ -188,7 +189,7 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
 
         $resultScopes = explode($this->oAuthProvider->getScopeSeparator(), $result['scope'] ?? '');
         if (!in_array($token->getCrmOAuthScope(), $resultScopes)) {
-            throw new AuthenticationException(
+            throw new IdmNonrecoverableException(
                 sprintf('Access token should contain %s scope', $token->getCrmOAuthScope())
             );
         }
@@ -207,7 +208,7 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         }
 
         if (isset($result['ext']['tid']) && $token->getTenant() != $result['ext']['tid']) {
-            throw new AuthenticationException(
+            throw new IdmNonrecoverableException(
                 sprintf('Access token does not belong to tenant %s', $token->getTenant())
             );
         }
@@ -215,7 +216,7 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         $userSRN = Converter::fromString($result['sub'] ?? '');
         $tenantSRN = Converter::fromString($token->getTenant());
         if ($userSRN->getTenantId() != $tenantSRN->getTenantId()) {
-            throw new AuthenticationException(
+            throw new IdmNonrecoverableException(
                 sprintf('Access token claims should belong to tenant %s', $token->getTenant())
             );
         }
@@ -227,7 +228,11 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         foreach ($result as $key => $value) {
             $user->setAttribute($key, $value);
         }
-        $this->userChecker->checkPostAuth($user);
+        try {
+            $this->userChecker->checkPostAuth($user);
+        } catch (\Exception $e) {
+            throw new IdmNonrecoverableException($e->getMessage());
+        }
 
         $resultToken->setUser($user);
         $resultToken->setAuthenticated(true);
