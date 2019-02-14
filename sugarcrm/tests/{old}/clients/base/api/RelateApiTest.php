@@ -262,6 +262,7 @@ class RelateApiTest extends TestCase
         $this->assertEquals($contact_id, $reply['records'][0]['id'], 'Should be in desc order');
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Test subpanel list should not contain duplicate records.
      */
@@ -330,6 +331,7 @@ class RelateApiTest extends TestCase
         $this->assertArrayHasKey('records', $reply);
         $this->assertEquals(1, count($reply['records']));
     }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * Related records should be accessible for record owner
