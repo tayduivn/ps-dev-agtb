@@ -83,7 +83,9 @@
      * This is caused by attempt to login with invalid creds. 
      */
     app.error.handleNeedLoginError = function(error) {
-        processAuthenticatedUserError('needs_login_error' , 'LBL_INVALID_CREDS_TITLE', error.message);
+        backToLogin(true);
+        // Login can fail for many reasons such as lock out, bad credentials, etc. Server message provides details.
+        alertUser('needs_login_error', 'LBL_INVALID_CREDS_TITLE', error.message);
     };
 
     /**
