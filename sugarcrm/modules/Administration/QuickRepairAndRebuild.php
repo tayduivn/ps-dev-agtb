@@ -88,8 +88,6 @@ class RepairAndClear
             case 'repairDatabase':
                 if(in_array($mod_strings['LBL_ALL_MODULES'], $this->module_list)) {
                     $this->repairDatabase();
-                    // Mark this as called so it doesn't get ran again
-                    $this->called[$current_action] = true;
                 } else {
                     $this->repairDatabaseSelectModules();
                 }
@@ -184,6 +182,8 @@ class RepairAndClear
         if (isset($this->called['repairDatabase'])) {
             return;
         }
+
+        $this->called['repairDatabase'] = true;
 
 		global $dictionary, $mod_strings;
 		if(false == $this->show_output)
