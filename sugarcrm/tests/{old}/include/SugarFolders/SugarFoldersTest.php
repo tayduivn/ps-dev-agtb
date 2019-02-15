@@ -361,7 +361,7 @@ class SugarFoldersTest extends TestCase
             'deleted' => 0,
             'created_by' => 'now()',
             'modified_by' => 'now()',
-            'has_child' => 2,
+            'has_child' => 0,
         ]);
         $this->toDelete['folders'] = ['id' => $id];
 
@@ -369,7 +369,7 @@ class SugarFoldersTest extends TestCase
         $result = $sf->db->getConnection()
             ->executeQuery("SELECT has_child FROM folders WHERE id = ?", [$id])
             ->fetchColumn();
-        $this->assertEquals(2, $result);
+        $this->assertEquals(0, $result);
 
         $guid = create_guid();
         $sf->db->getConnection()->insert('folders', [
