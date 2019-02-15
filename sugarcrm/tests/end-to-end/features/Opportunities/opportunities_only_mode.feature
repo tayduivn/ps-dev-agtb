@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @Opportunities @job4
+@modules @Opportunities
 Feature: Opportunities Only mode
 
   Background:
     Given I use default account
     Given I launch App
 
-  @oppsPlusRLIs_2_opps_conversion
+  @oppsPlusRLIs_2_opps_conversion @job4
   Scenario: Opportunities Only Mode > Create Opportunity > Cancel/Save
     Given Accounts records exist:
       | *name |
@@ -95,7 +95,7 @@ Feature: Opportunities Only mode
       | date_closed  | 12/12/2020  |
       | sales_status | In Progress |
 
-  @oppsPlusRLIs_2_opps_conversion
+  @oppsPlusRLIs_2_opps_conversion @job5
   Scenario: Opportunities > Verify Opps + RLI to Opps Only conversion
     Given Accounts records exist:
       | *name |
@@ -172,7 +172,7 @@ Feature: Opportunities Only mode
       | date_closed  | 12/12/2020     |
       | sales_status | In Progress    |
 
-  @oppsPlusRLIs_2_opps_conversion
+  @oppsPlusRLIs_2_opps_conversion @job1
   Scenario Outline: Verify Opps + RLI to Opps Only conversion > Closed Won/Lost case
     Given Accounts records exist:
       | *name |

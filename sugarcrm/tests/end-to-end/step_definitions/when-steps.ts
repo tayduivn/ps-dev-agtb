@@ -491,7 +491,7 @@ When(/^I configure Opportunities mode$/, async function (table: TableDefinition)
     let data = table.rowsHash();
     await updateOpportunityConfig(data);
 
-}, {waitForApp: false});
+}, {waitForApp: true});
 
 When(/^I add new currency$/, async function (data: TableDefinition) {
 
