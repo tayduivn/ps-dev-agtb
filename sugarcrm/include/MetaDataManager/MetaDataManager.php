@@ -2215,9 +2215,12 @@ class MetaDataManager implements LoggerAwareInterface
 
         //BEGIN SUGARCRM flav=ent ONLY
         // SugarBPM settings
-        $configs['autoValidateProcessesOnImport'] = $sugarConfig['processes_auto_validate_on_import'];
-        $configs['autoValidateProcessesOnAutosave'] = $sugarConfig['processes_auto_validate_on_autosave'];
-        $configs['processDesignerAutosaveInterval'] = $sugarConfig['processes_auto_save_interval'];
+        $configs['autoValidateProcessesOnImport'] = isset($sugarConfig['processes_auto_validate_on_import']) ?
+            $sugarConfig['processes_auto_validate_on_import'] : true;
+        $configs['autoValidateProcessesOnAutosave'] = isset($sugarConfig['processes_auto_validate_on_autosave']) ?
+            $sugarConfig['processes_auto_validate_on_autosave'] : true;
+        $configs['processDesignerAutosaveInterval'] = isset($sugarConfig['processes_auto_save_interval']) ?
+            $sugarConfig['processes_auto_save_interval'] : 30000;
         //END SUGARCRM flav=ent ONLY
 
         return $configs;
