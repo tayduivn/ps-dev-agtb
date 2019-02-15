@@ -129,6 +129,14 @@ $vardefs = array (
             'comment' => 'Date when an issue is resolved',
             'audited' => true,
         ),
+        'time_to_resolution' => array(
+            'name' => 'time_to_resolution',
+            'vname' => 'LBL_TIME_TO_RESOLUTION',
+            'type' => 'int',
+            'comment' => 'How long it took to resolve this issue, in minutes',
+            'audited' => true,
+            'readonly' => true,
+        ),
         //END SUGARCRM flav=ent ONLY
 	),
 	'indices'=>array(

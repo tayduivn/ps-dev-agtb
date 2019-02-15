@@ -21,13 +21,19 @@ use PHPUnit\Framework\TestCase;
  */
 class IssueTemplateTest extends TestCase
 {
+    private $bean;
+    private $manager;
+
     public function setUp()
     {
+        $this->bean = \SugarTestCaseUtilities::createCase();
         $this->manager = \MetaDataManager::getManager();
     }
 
     public function tearDown()
     {
+        \SugarTestCaseUtilities::removeAllCreatedCases();
+        unset($this->bean);
         \MetaDataManager::resetManagers();
     }
 
@@ -36,14 +42,19 @@ class IssueTemplateTest extends TestCase
         return [
             ['Bugs', 'follow_up_datetime', true],
             ['Bugs', 'resolved_datetime', true],
+            ['Bugs', 'time_to_resolution', true],
             ['Cases', 'follow_up_datetime', true],
             ['Cases', 'resolved_datetime', true],
+            ['Cases', 'time_to_resolution', true],
             ['DataPrivacy', 'follow_up_datetime', true],
             ['DataPrivacy', 'resolved_datetime', true],
+            ['DataPrivacy', 'time_to_resolution', true],
             ['Accounts', 'follow_up_datetime', false],
             ['Accounts', 'resolved_datetime', false],
+            ['Accounts', 'time_to_resolution', false],
             ['Contacts', 'follow_up_datetime', false],
             ['Contacts', 'resolved_datetime', false],
+            ['Contacts', 'time_to_resolution', false],
         ];
     }
 
@@ -52,7 +63,7 @@ class IssueTemplateTest extends TestCase
      *
      * @param string $module The module we would like to check fields
      * @param string $field The field to be checked
-     * @param bool $hasField Whether the module should has the field beening checked
+     * @param bool $hasField Whether the module should have the field being checked
      * @dataProvider checkModuleHasFieldsProvider
      */
     public function testCheckModuleHasFields(string $module, string $field, bool $hasField)
@@ -74,8 +85,29 @@ class IssueTemplateTest extends TestCase
         $this->assertContains('follow_up_datetime', $this->manager->getModuleViewFields($module, 'record'));
     }
 
-
     public function hasFollowUpDateFieldOnRecordViewProvider(): array
+    {
+        return [
+            ['Bugs'],
+            ['Cases'],
+            ['DataPrivacy'],
+        ];
+    }
+
+    /**
+     * Checks that modules that should have time_to_resolution on the record
+     * view do so.
+     *
+     * @param string $module The module for which we would like to check that
+     *   time_to_resolution is on the record view.
+     * @dataProvider hasTimeToResolutionFieldOnRecordViewProvider
+     */
+    public function testCheckModuleHasTimeToResolutionFieldOnRecordView(string $module)
+    {
+        $this->assertContains('time_to_resolution', $this->manager->getModuleViewFields($module, 'record'));
+    }
+
+    public function hasTimeToResolutionFieldOnRecordViewProvider(): array
     {
         return [
             ['Bugs'],
@@ -102,6 +134,52 @@ class IssueTemplateTest extends TestCase
         return [
             ['Accounts'], // not an issue type module
             ['Contacts'], // not an issue type module
+        ];
+    }
+
+    /**
+     * Checks that modules that should not have time_to_resolution on the
+     * record view do not.
+     *
+     * @param string $module The module we would like to verify does not
+     *   have time_to_resolution on its record view.
+     * @dataProvider hasNoTimeToResolutionFieldOnRecordViewProvider
+     */
+    public function testCheckModulesHasNoTimeToResolutionFieldOnRecordView(string $module)
+    {
+        $this->assertNotContains('time_to_resolution', $this->manager->getModuleViewFields($module, 'record'));
+    }
+
+    public function hasNoTimeToResolutionFieldOnRecordViewProvider(): array
+    {
+        return [
+            ['Accounts'], // not an issue type module
+            ['Contacts'], // not an issue type module
+        ];
+    }
+
+    /**
+     * Ensure that calling save on a newly resolved Issue calculates its
+     * resolution time.
+     * @dataProvider providerSaveUpdatesResolutionTime
+     */
+    public function testSaveUpdatesResolutionTime(string $entered, string $resolved, int $expected)
+    {
+        $this->bean->fetched_row = array('status' => 'New');
+        $this->bean->status = 'Rejected';
+        $this->bean->date_entered = $entered;
+        $this->bean->resolved_datetime = $resolved;
+        unset($this->bean->time_to_resolution);
+
+        $this->bean->save();
+
+        $this->assertEquals($expected, $this->bean->time_to_resolution);
+    }
+
+    public function providerSaveUpdatesResolutionTime(): array
+    {
+        return [
+            ['2019-05-05 5:50:00', '2019-05-05 5:55:00', 5],
         ];
     }
 }

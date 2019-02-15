@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// Bug report bean
-class Bug extends SugarBean {
+/**
+ * Class Bug
+ */
+class Bug extends Issue
+{
 	// Stored fields
 	var $id;
-	var $date_entered;
 	var $date_modified;
 	var $modified_user_id;
 	var $assigned_user_id;
@@ -22,7 +24,6 @@ class Bug extends SugarBean {
 	var $bug_number;
 	var $description;
 	var $name;
-	var $status;
 	var $priority;
 
 	// These are related
@@ -53,7 +54,6 @@ class Bug extends SugarBean {
 	var $product_category;
     //BEGIN SUGARCRM flav=ent ONLY
     public $follow_up_datetime;
-    public $resolved_datetime;
     //END SUGARCRM flav=ent ONLY
 
 	//END Additional fields being added to Bug Tracker
@@ -91,11 +91,6 @@ class Bug extends SugarBean {
     }
 
 	var $new_schema = true;
-
-	function get_summary_text()
-	{
-		return "$this->name";
-	}
 
 	function create_list_query($order_by, $where, $show_deleted = 0)
 	{

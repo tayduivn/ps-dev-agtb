@@ -93,6 +93,16 @@ $viewdefs['DataPrivacy']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
+                array(
+                    'name' => 'time_to_resolution',
+                    'type' => 'friendly-time',
+                    'readonly' => true,
+                    'label' => 'LBL_TIME_TO_RESOLUTION',
+                    'default' => false,
+                    'enabled' => true,
+                ),
+                //END SUGARCRM flav=ent ONLY
             ),
         ),
     ),

@@ -175,6 +175,13 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 'source',
                 'product_category',
                 'resolution',
+                //BEGIN SUGARCRM flav=ent ONLY
+                array(
+                    'name' => 'time_to_resolution',
+                    'readonly' => true,
+                    'type' => 'friendly-time',
+                ),
+                //END SUGARCRM flav=ent ONLY
                 'assigned_user_name',
                 array(
                     'name' => 'description',

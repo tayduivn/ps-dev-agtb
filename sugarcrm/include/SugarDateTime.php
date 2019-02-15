@@ -84,7 +84,8 @@ class SugarDateTime extends DateTime
 	 * @param string $format Format like in date()
 	 * @param string $time Time to parse
 	 * @param DateTimeZone $timezone
-	 * @return SugarDateTime
+     * @return SugarDateTime|bool The created SugarDateTime object,
+     *   or false on failure.
 	 * @see DateTime::createFromFormat
 	 */
 	public static function createFromFormat($format, $time, $timezone = null)

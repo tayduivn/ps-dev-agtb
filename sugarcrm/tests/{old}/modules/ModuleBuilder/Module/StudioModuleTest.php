@@ -62,7 +62,7 @@ class StudioModuleTest extends TestCase
             array('Accounts', 'company'),
             array('Contacts', 'person'),
             array('Leads', 'person'),
-            array('Cases', 'basic'),
+            array('Cases', 'issue'),
         );
     }
 

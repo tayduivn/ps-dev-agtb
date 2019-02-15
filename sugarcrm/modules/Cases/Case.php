@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// aCase is used to store case information.
-class aCase extends Basic
+/**
+ * Class aCase
+ * aCase is used to store case information.
+ */
+class aCase extends Issue
 {
     // Stored fields
     var $id;
-    var $date_entered;
     var $date_modified;
     var $modified_user_id;
     var $assigned_user_id;
@@ -24,12 +26,10 @@ class aCase extends Basic
     var $resolution;
     var $description;
     var $name;
-    var $status;
     var $priority;
 
     //BEGIN SUGARCRM flav=ent ONLY
     public $follow_up_datetime;
-    public $resolved_datetime;
     //END SUGARCRM flav=ent ONLY
 
     var $created_by;
@@ -100,7 +100,6 @@ class aCase extends Basic
 
     var $new_schema = true;
 
-
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Set resolved_datetime to current time when a case is resolved
@@ -117,12 +116,6 @@ class aCase extends Basic
         return parent::save($check_notify);
     }
     //END SUGARCRM flav=ent ONLY
-
-
-    function get_summary_text()
-    {
-        return "$this->name";
-    }
 
     function listviewACLHelper()
     {

@@ -242,6 +242,9 @@ return new Container([
             throw new ServiceUnavailable($e->getMessage(), 0, $e);
         }
     },
+    \TimeDate::class => function (): \TimeDate {
+        return \TimeDate::getInstance();
+    },
     Validator::class => function () {
         return Validator::getService();
     },
