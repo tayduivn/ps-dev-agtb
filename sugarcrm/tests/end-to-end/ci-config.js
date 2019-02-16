@@ -29,9 +29,9 @@ let attrs = [
     '--cfg', `${CUKES_PATH}/config-ci.js`,
 ];
 
-// if (!isDaily) {
-//     attrs = [...attrs, '-t', '@pr'];
-// }
+if (!isDaily) {
+    attrs = [...attrs, '-t', '@pr'];
+}
 
 tasks.push({
     name: 'runSugarScenarios',
