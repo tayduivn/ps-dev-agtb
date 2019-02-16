@@ -3128,6 +3128,8 @@ AdamActivity.prototype.getValidationFunction = function() {
                     return this.callbackFunctionForBusinessRuleAction;
                 case 'ASSIGN_USER':
                     return this.callbackFunctionForAssignUserAction;
+                case 'ASSIGN_TEAM':
+                    return this.callbackFunctionForRoundRobinAction;
                 case 'CHANGE_FIELD':
                     return this.callbackFunctionForChangeFieldAction;
                 case 'ADD_RELATED_RECORD':
@@ -3206,6 +3208,21 @@ AdamActivity.prototype.callbackFunctionForAssignUserAction = function(data, elem
 
     // Validate the selected process user
     validationTools.validateAtom('USER_IDENTITY', null, null, data.act_assign_user, element, validationTools);
+};
+
+/**
+ * Validates a round robin action's settings
+ * @param  {Object} data contains the element settings information received from the API call
+ * @param  {Object} element is the element on the canvas that is currently being examined/validated
+ * @param {Object} validationTools is a collection of utility functions for validating element data
+ */
+AdamActivity.prototype.callbackFunctionForRoundRobinAction = function(data, element, validationTools) {
+
+    // Validate the number of incoming and outgoing edges
+    validationTools.validateNumberOfEdges(1, null, 1, null, element);
+
+    // Validate the selected team
+    validationTools.validateAtom('TEAM', null, null, data.act_assign_team, element, validationTools);
 };
 
 /**
