@@ -162,10 +162,11 @@ class RelateApi extends FilterApi {
 
         if (isset($options['relate_collections'])) {
             $options = $this->removeRelateCollectionsFromSelect($options);
-            if (!empty($args['erased_fields'])) {
-                $options['skipFixQuery'] = true;
-            }
         }
+
+        // fixing duplicates in the query is not needed since even if it selects many-to-many related records,
+        // they are still filtered by one primary record, so the subset is at most one-to-many
+        $options['skipFixQuery'] = true;
 
         return array($args, $q, $options, $linkSeed);
     }
