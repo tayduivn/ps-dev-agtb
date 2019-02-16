@@ -287,10 +287,8 @@ class PMSEProjectImporter extends PMSEImporter
             $projectData['prj_uid'] = Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
         }
 
-        // Copied definitions should always be inactive
-        if ($this->getOption('isCopy') === true) {
-            $projectData['prj_status'] = 'INACTIVE';
-        }
+        // Imported/copied/installed process definitions should always be inactive
+        $projectData['prj_status'] = 'INACTIVE';
 
         return $projectData;
     }
