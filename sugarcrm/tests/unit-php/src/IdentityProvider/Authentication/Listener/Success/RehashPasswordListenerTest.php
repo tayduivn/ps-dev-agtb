@@ -13,7 +13,7 @@ namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Suc
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\RehashPasswordListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;

@@ -13,7 +13,7 @@
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider;
 
 use Sugarcrm\IdentityProvider\Srn\Converter;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;

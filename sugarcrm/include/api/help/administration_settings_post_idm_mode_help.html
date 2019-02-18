@@ -33,7 +33,8 @@
         "tid": "srn:cloud:idp:eu:0000000001:tenant",
         "crmOAuthScope": "https://apis.sugarcrm.com/auth/crm",
         "requestedOAuthScopes": ["offline", "https://apis.sugarcrm.com/auth/crm", "profile", "email", "address", "phone"],
-        "cloudConsoleUrl": "http://console.sugarcrm.local"
+        "cloudConsoleUrl": "http://console.sugarcrm.local",
+        "allowedSAs": ["srn:cloud:iam:us-west-2:9999999999:sa:user-sync"]
     }
 }
 </pre>
@@ -68,7 +69,8 @@ Refer to multiverse documenation for parameters explanation.
         "phone"
     ],
     "keySetId": "mangoOIDCKeySet",
-    "urlKeys": "http://sts.sugarcrm.local/keys/mangoOIDCKeySet"
+    "urlKeys": "http://sts.sugarcrm.local/keys/mangoOIDCKeySet",
+    "allowedSAs": ["srn:cloud:iam:us-west-2:9999999999:sa:user-sync"]
 }
 </pre>
 

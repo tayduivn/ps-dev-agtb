@@ -20,7 +20,7 @@ use Sugarcrm\IdentityProvider\STS\EndpointInterface;
 use Sugarcrm\IdentityProvider\Srn\Converter;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\IdmNonrecoverableException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\Checker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
@@ -64,6 +64,11 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
     protected $userMapping;
 
     /**
+     * @var Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\Checker
+     */
+    protected $SAChecker;
+
+    /**
      * List of handlers that can be used to handle tokens.
      * Actually, they correspond to steps of SAML authentication flow.
      *
@@ -87,12 +92,14 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         AbstractProvider $oAuthProvider,
         UserProviderInterface $userProvider,
         UserCheckerInterface $userChecker,
-        MappingInterface $userMapping
+        MappingInterface $userMapping,
+        Checker $SAChecker
     ) {
         $this->oAuthProvider = $oAuthProvider;
         $this->userProvider = $userProvider;
         $this->userChecker = $userChecker;
         $this->userMapping = $userMapping;
+        $this->SAChecker = $SAChecker;
     }
 
     /**
@@ -202,6 +209,11 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         $user = $this->userProvider->loadUserBySrn($result['sub']);
 
         if ($user->isServiceAccount()) {
+            if (!$this->SAChecker->isAllowed($result['sub'])) {
+                throw new AuthenticationException(
+                    sprintf('Service account is not allowed: %s', $result['sub'])
+                );
+            }
             $resultToken->setUser($user);
             $resultToken->setAuthenticated(true);
             return $resultToken;

@@ -13,7 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Subject;
 
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\ServiceAccount;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient;
 use Sugarcrm\Sugarcrm\Security\Subject\IdentityAwareServiceAccount;
 

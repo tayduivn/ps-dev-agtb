@@ -565,6 +565,7 @@ class ConfigTest extends TestCase
                     ],
                     'crmOAuthScope' => '',
                     'requestedOAuthScopes' => [],
+                    'allowedSAs' => [],
                 ],
             ],
             'httpClientNotEmpty' => [
@@ -613,6 +614,7 @@ class ConfigTest extends TestCase
                     ],
                     'crmOAuthScope' => '',
                     'requestedOAuthScopes' => [],
+                    'allowedSAs' => [],
                 ],
             ],
             'cloudConsoleRoutesAreNotEmpty' => [
@@ -668,6 +670,7 @@ class ConfigTest extends TestCase
                     ],
                     'crmOAuthScope' => '',
                     'requestedOAuthScopes' => [],
+                    'allowedSAs' => [],
                 ],
             ],
             'cachingEmpty' => [
@@ -709,6 +712,7 @@ class ConfigTest extends TestCase
                     ],
                     'crmOAuthScope' => '',
                     'requestedOAuthScopes' => [],
+                    'allowedSAs' => [],
                 ],
             ],
             'cachingNotEmpty' => [
@@ -754,6 +758,7 @@ class ConfigTest extends TestCase
                     ],
                     'crmOAuthScope' => '',
                     'requestedOAuthScopes' => [],
+                    'allowedSAs' => [],
                 ],
             ],
             'crmOAuthScopeNotEmpty' => [
@@ -795,6 +800,7 @@ class ConfigTest extends TestCase
                     ],
                     'crmOAuthScope' => 'https://apis.sugarcrm.com/auth/crm',
                     'requestedOAuthScopes' => [],
+                    'allowedSAs' => [],
                 ],
             ],
             'mangoScopesNotEmpty' => [
@@ -850,6 +856,55 @@ class ConfigTest extends TestCase
                         'email',
                         'address',
                         'phone',
+                    ],
+                    'allowedSAs' => [],
+                ],
+            ],
+            'customSAsEnabled' => [
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => true,
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'stsKeySetId' => 'keySetId',
+                        'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                        'allowedSAs' => [
+                            'srn:cloud:iam:us-west-2:9999999999:sa:user-sync',
+                            'srn:cloud:iam:us-west-2:1234567890:sa:custom-sa',
+                        ],
+                    ],
+                    'site_url' => 'http://site.url/',
+                ],
+                'expected' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
+                    'redirectUri' => 'http://site.url/?module=Users&action=OAuth2CodeExchange',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'urlUserInfo' => 'http://sts.sugarcrm.local/userinfo',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/keySetId',
+                    'keySetId' => 'keySetId',
+                    'http_client' => [],
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'cloudConsoleUrl' => '',
+                    'cloudConsoleRoutes' => [],
+                    'caching' => [
+                        'ttl' => [
+                            'introspectToken' => 10,
+                            'userInfo' => 10,
+                            'keySet' => 7 * 24 * 60 * 60,
+                        ],
+                    ],
+                    'crmOAuthScope' => '',
+                    'requestedOAuthScopes' => [],
+                    'allowedSAs' => [
+                        'srn:cloud:iam:us-west-2:9999999999:sa:user-sync',
+                        'srn:cloud:iam:us-west-2:1234567890:sa:custom-sa',
                     ],
                 ],
             ],
@@ -1070,6 +1125,15 @@ class ConfigTest extends TestCase
         return [
             [false],
             [['clientId' => 'mangoOIDCClientId']],
+            [
+                [
+                    'clientId' => 'mangoOIDCClientId',
+                    'allowedSAs' => [
+                        'srn:cloud:iam:us-west-2:9999999999:sa:user-sync',
+                        'srn:cloud:iam:us-west-2:1234567890:sa:custom-sa',
+                    ],
+                ],
+            ],
         ];
     }
 

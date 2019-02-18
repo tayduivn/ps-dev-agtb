@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 use Sugarcrm\IdentityProvider\Authentication\User as IdmUser;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\ServiceAccount;
 
 class User extends IdmUser
 {

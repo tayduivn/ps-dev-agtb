@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Security\Subject;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\ServiceAccount;
 use Sugarcrm\Sugarcrm\Security\Subject;
 
 /**

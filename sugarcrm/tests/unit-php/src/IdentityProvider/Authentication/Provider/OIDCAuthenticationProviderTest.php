@@ -18,7 +18,8 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\IdmNonrecoverableException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount as SA;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\ServiceAccount;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
@@ -67,12 +68,17 @@ class OIDCAuthenticationProviderTest extends TestCase
     protected $userMapping;
 
     /**
+     * @var Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\Checker
+     */
+    protected $SAChecker;
+
+    /**
      * @var null
      */
     protected $user = null;
 
     /**
-     * @var ServiceAccount
+     * @var Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\ServiceAccount
      */
     protected $serviceAccount;
 
@@ -86,13 +92,15 @@ class OIDCAuthenticationProviderTest extends TestCase
         $this->oAuthProvider = $this->createMock(IdmProvider::class);
         $this->oAuthProvider->method('getScopeSeparator')->willReturn(' ');
         $this->userMapping = new User\Mapping\SugarOidcUserMapping();
+        $this->SAChecker = $this->createMock(SA\Checker::class);
         $this->user = new User();
         $this->serviceAccount = new ServiceAccount();
         $this->provider =new OIDCAuthenticationProvider(
             $this->oAuthProvider,
             $this->userProvider,
             $this->userChecker,
-            $this->userMapping
+            $this->userMapping,
+            $this->SAChecker
         );
     }
 
@@ -225,6 +233,10 @@ class OIDCAuthenticationProviderTest extends TestCase
             ->with($introspectResult['sub'])
             ->willReturn($this->serviceAccount);
 
+        $this->SAChecker->expects($this->once())
+            ->method('isAllowed')
+            ->willReturn(true);
+
         $this->oAuthProvider->expects($this->never())->method('getUserInfo');
         $this->userChecker->expects($this->never())->method('checkPostAuth');
 
@@ -235,6 +247,53 @@ class OIDCAuthenticationProviderTest extends TestCase
         $this->assertEquals('base', $resultToken->getAttribute('platform'));
         $this->assertEquals('token', $resultToken->getCredentials());
         $this->assertTrue($resultToken->getUser()->isServiceAccount());
+    }
+
+    /**
+     * @covers ::authenticate
+     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
+     */
+    public function testAuthenticateWithServiceAccountIntrospectTokenException(): void
+    {
+        $introspectResult = [
+            'active' => true,
+            'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
+            'client_id' => 'testLocal',
+            'sub' => 'srn:cluster:iam::9999999999:sa:service_account_id',
+            'exp' => 1507571717,
+            'iat' => 1507535718,
+            'aud' => 'testLocal',
+            'iss' => 'http://sts.sugarcrm.local',
+            'ext' => [
+                'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
+            ],
+        ];
+
+        $token = new IntrospectToken(
+            'token',
+            'srn:cloud:iam:eu:0000000001:tenant',
+            'https://apis.sugarcrm.com/auth/crm'
+        );
+        $token->setAttribute('platform', 'base');
+
+        $this->oAuthProvider->expects($this->once())
+            ->method('introspectToken')
+            ->with('token')
+            ->willReturn($introspectResult);
+
+        $this->userProvider->expects($this->once())
+            ->method('loadUserBySrn')
+            ->with($introspectResult['sub'])
+            ->willReturn($this->serviceAccount);
+
+        $this->SAChecker->expects($this->once())
+            ->method('isAllowed')
+            ->willReturn(false);
+
+        $this->oAuthProvider->expects($this->never())->method('getUserInfo');
+        $this->userChecker->expects($this->never())->method('checkPostAuth');
+
+        $resultToken = $this->provider->authenticate($token);
     }
 
     /**

@@ -103,6 +103,7 @@ class Config
             'caching' => array_replace_recursive($this->getIDMModeDefaultCachingConfig(), $config['caching'] ?? []),
             'crmOAuthScope' => $config['crmOAuthScope'] ?? '',
             'requestedOAuthScopes' => $config['requestedOAuthScopes'] ?? [],
+            'allowedSAs' => $config['allowedSAs'] ?? [],
         ];
 
         if ($stsKeySetId) {

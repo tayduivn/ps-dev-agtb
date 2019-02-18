@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
+namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount;
+
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 class ServiceAccount extends User
 {
