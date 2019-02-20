@@ -127,7 +127,7 @@
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover {
   color: @gray;
-  background-color: @bodyBackground;
+  background-color: @tabBackgroundActive;
   border: 1px solid #ddd;
   border-bottom-color: transparent;
   cursor: default;
@@ -687,6 +687,53 @@
     > .row-fluid.panel_hidden {
       padding: 0 13px;
       box-sizing: border-box;
+    }
+  }
+}
+
+// Tabbed dashboard
+.nav-tabs-indented li.tab:first-child {
+  margin-left: 40px;
+}
+
+li.tab.tab-badgeable {
+  height: 36px;
+  margin-bottom: 0;
+
+  .tab-title {
+    text-align: left;
+    margin-right: 65px;
+  }
+
+  .label {
+    margin: 0 2px;
+  }
+
+  &.active {
+    // Paint over the border (from the ul element) for the active tab only
+    border-bottom: 1px solid @tabBackgroundActive;
+    margin-bottom: -1px;
+  }
+
+  &:not(.active) {
+    background-color: @tabBackgroundInactive;
+  }
+
+  a {
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    min-height: @countBadgeHeight;
+    width: 162px;
+
+    // vertical centering hack for badgeless tabs, based off https://css-tricks.com/centering-in-the-unknown/
+    vertical-align: middle;
+
+    span:first-child::after {
+      content: '';
+      display: inline-block;
+      height: 20px;
     }
   }
 }

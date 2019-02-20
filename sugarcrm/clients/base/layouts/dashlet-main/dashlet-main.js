@@ -31,31 +31,65 @@
             }, this);
             this.model.trigger('setMode', this.context.get("create") ? 'edit' : 'view');
         }
+        if (this.context) {
+            this.context.on('tabbed-dashboard:switch-tab', function(index) {
+                this.setMetadata({tabIndex: index});
+            }, this);
+        }
     },
 
     /**
-     * Replace all components based on the dashboard metadata value
+     * Remove all components from the dashboard.
+     * @private
      */
-    setMetadata: function() {
-        if(!this.model.get("metadata")) return;
-        //Clean all components
+    _cleanComponents: function() {
+        // Clean all components
         _.each(this._components, function(component) {
             component.dispose();
         }, this);
         this._components = [];
         this.$el.children().remove();
+    },
 
-        var components = app.utils.deepCopy(this.model.get("metadata")).components;
+    /**
+     * Replace all components based on the dashboard metadata value
+     * @param {Object} [options] Options.
+     * @param {number} [options.tabIndex=0] Index of the currently active tab.
+     */
+    setMetadata: function(options) {
+        if (!this.model.has('metadata')) {
+            return;
+        }
+
+        this._cleanComponents();
+
+        var metadata = app.utils.deepCopy(this.model.get('metadata'));
+        var tabIndex = 0;
+        if (options && options.tabIndex) {
+            tabIndex = options.tabIndex;
+        }
+
+        var components = metadata.components;
+
+        // if this is a tabbed dashboard, inject the metadata from the currently active tab and mark the active tab
+        if (metadata.tabs) {
+            components = metadata.tabs[tabIndex].components;
+            var tabs = app.utils.deepCopy(metadata.tabs);
+            var tabOptions = {activeTab: tabIndex, tabs: tabs};
+            this.context.trigger('tabbed-dashboard:update', tabOptions);
+        }
+
         _.each(components, function(component, index) {
+            var row = {
+                type: 'dashlet-row',
+                width: component.width,
+                components: component.rows,
+                index: index + '',
+            };
             this.initComponents([{
-                layout: {
-                    type: 'dashlet-row',
-                    width: component.width,
-                    components: component.rows,
-                    index: index + ''
-                }
+                layout: row,
             }]);
-        } , this);
+        }, this);
 
         this.loadData();
         this.render();
