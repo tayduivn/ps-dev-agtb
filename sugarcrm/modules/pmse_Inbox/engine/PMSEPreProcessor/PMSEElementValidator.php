@@ -36,6 +36,41 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
     protected $beanFlow;
 
     /**
+     * Process states used in determining validity of existing processes
+     * @var array
+     */
+    protected $states = [
+        // Open states have a number of values. For example,
+        // Completed means it can start again
+        'open' => [
+            'IN PROGRESS',
+            'COMPLETED',
+            'FORM',
+            'WAITING',
+            'SLEEPING',
+            'QUEUE',
+            'NEW',
+        ],
+        'closed' => [
+            'TERMINATED',
+            'ERROR',
+            'CLOSED',
+            'DELETED',
+            'INVALID',
+        ],
+    ];
+
+    /**
+     * Gets a list of states by type
+     * @param string $state `open` or `closed`
+     * @return array
+     */
+    protected function getStates($state)
+    {
+        return array_key_exists($state, $this->states) ? $this->states[$state] : [];
+    }
+
+    /**
      *
      * @return type
      * @codeCoverageIgnore
@@ -229,7 +264,7 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
 
         if ($processFinished) {
             $q->where()
-                ->in('cas_flow_status', array('IN PROGRESS', 'COMPLETED'));
+                ->in('cas_flow_status', $this->getStates('open'));
         } else {
             $q->where()
                 ->equals('cas_index', 1);
