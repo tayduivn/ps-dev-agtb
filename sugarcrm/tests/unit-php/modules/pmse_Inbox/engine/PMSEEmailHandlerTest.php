@@ -75,6 +75,37 @@ class PMSEEmailHandlerTest extends TestCase
     }
 
     /**
+     * @var array
+     */
+    protected $sugarConfigBackUp;
+
+    /**
+     * @inheritDoc
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        global $sugar_config;
+        $this->sugarConfigBackUp = [];
+        if (!empty($sugar_config) && is_array($sugar_config)) {
+            $this->sugarConfigBackUp = $sugar_config;
+        }
+        $sugar_config = ['pmse_settings_default' => ['logger_level' => 7]];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown()
+    {
+        global $sugar_config;
+
+        $sugar_config = $this->sugarConfigBackUp;
+        parent::tearDown();
+    }
+
+    /**
      * @covers ::isUserActiveForEmail
      * @dataProvider providerIsUserActiveForEmail
      */

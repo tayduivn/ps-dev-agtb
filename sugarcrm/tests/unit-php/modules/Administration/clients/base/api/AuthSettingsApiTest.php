@@ -786,7 +786,7 @@ class AuthSettingsApiTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->sugar_config_bak = $GLOBALS['sugar_config'];
+        $this->sugar_config_bak = $GLOBALS['sugar_config'] ?? [];
         $this->service = $this->createMock(\RestService::class);
         $this->currentUser = $this->createMock(\User::class);
         $this->config = $this->createMock(Authentication\Config::class);

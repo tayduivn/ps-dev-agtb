@@ -56,7 +56,7 @@ class AdministrationApiTest extends TestCase
         $this->configurator = $this->createPartialMock(\Configurator::class, ['handleOverride']);
         $this->configurator->config = [];
 
-        $this->api = $this->createPartialMock(\AdministrationApi::class, ['getConfigurator']);
+        $this->api = $this->createPartialMock(\AdministrationApi::class, ['getConfigurator', 'clearCache']);
         $this->api->method('getConfigurator')->willReturn($this->configurator);
 
         $GLOBALS['current_user'] = $this->currentUser;
@@ -117,6 +117,7 @@ class AdministrationApiTest extends TestCase
         $GLOBALS['current_user']->method('isAdmin')->willReturn(true);
 
         $this->configurator->expects($this->once())->method('handleOverride');
+        $this->api->expects($this->once())->method('clearCache');
 
         $result = $this->api->disableIdmMigration($this->apiService, []);
 

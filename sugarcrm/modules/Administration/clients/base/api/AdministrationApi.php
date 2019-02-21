@@ -600,7 +600,7 @@ class AdministrationApi extends SugarApi
         $configurator->config['maintenanceMode'] = false;
         $configurator->config['idmMigration'] = false;
         $configurator->handleOverride();
-        \MetaDataManager::refreshSectionCache(\MetaDataManager::MM_CONFIG);
+        $this->clearCache();
         return ['success' => 'true'];
     }
 
@@ -612,5 +612,13 @@ class AdministrationApi extends SugarApi
     protected function getConfigurator(): Configurator
     {
         return new Configurator();
+    }
+
+    /**
+     * Clears required metadata cache
+     */
+    protected function clearCache(): void
+    {
+        \MetaDataManager::refreshSectionCache(\MetaDataManager::MM_CONFIG);
     }
 }
