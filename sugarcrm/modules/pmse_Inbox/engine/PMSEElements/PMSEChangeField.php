@@ -202,12 +202,16 @@ class PMSEChangeField extends PMSEScriptTask
                         }
                     }
                     $bean->new_with_id = false;
+
                     // When mutiple PDs are triggered for the same target module, we need to register the dataChanges
                     // for later use as the saveAssociatedBean($bean) will override the original dataChanges in $bean.
-                    if (Registry\Registry::getInstance()->get('cf_data_changes', false) === false &&
-                        isset($bean->dataChanges)) {
-                        Registry\Registry::getInstance()->set('cf_data_changes', $bean->dataChanges);
+                    if ($bean->dataChanges) {
+                        $key = 'bean-data-changes-' . $bean->id;
+                        $dc = Registry\Registry::getInstance()->get($key, []);
+                        $dc = array_merge($dc, $bean->dataChanges);
+                        Registry\Registry::getInstance()->set($key, $dc, true);
                     }
+
                     PMSEEngineUtils::saveAssociatedBean($bean);
                 } else {
                     $this->logger->warning(

@@ -324,16 +324,19 @@ class PMSEFieldParser implements PMSEDataParserInterface
             if (is_array($beans)) {
                 $field = $token[1];
                 foreach ($beans as $bean) {
-                    if (isset($token[2]) &&
-                        ($token[2] == 'changes' ||
-                            $token[2] == 'changes_from' ||
-                            $token[2] == 'changes_to')) {
-                        $dataChanges = isset($bean->dataChanges) ? $bean->dataChanges : null;
-                        $cfDataChanges = Registry\Registry::getInstance()->get('cf_data_changes', false);
-                        if ($cfDataChanges) {
-                            $dataChanges = $cfDataChanges;
-                        }
-                        if (isset($dataChanges) && isset($dataChanges[$field])) {
+                    if (isset($token[2]) && in_array($token[2], ['changes', 'changes_from', 'changes_to'])) {
+                        // Get the bean data changes
+                        $bdc = empty($bean->dataChanges) ? [] : $bean->dataChanges;
+
+                        // Get the registry key of changs for this bean
+                        $key = 'bean-data-changes-' . $bean->id;
+
+                        // Get the registry data changes and merge the bean data changes into it
+                        $rdc = Registry\Registry::getInstance()->get($key, []);
+                        $dataChanges = array_merge($rdc, $bdc);
+
+                        // Handle what is changing and to which
+                        if (isset($dataChanges[$field])) {
                             if ($token[2] == 'changes_from') {
                                 $value = $dataChanges[$field]['before'];
                             } else {

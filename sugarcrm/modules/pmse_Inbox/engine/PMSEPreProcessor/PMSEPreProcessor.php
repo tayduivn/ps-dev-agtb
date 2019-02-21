@@ -335,10 +335,6 @@ class PMSEPreProcessor
                 }
             }
 
-            if (Registry\Registry::getInstance()->get('cf_data_changes', false)) {
-                Registry\Registry::getInstance()->drop('cf_data_changes');
-            }
-
             // Clear validator caches AFTER the loop completes so that the cache
             // is clear for future iterations
             $this->validator->clearValidatorCaches();
@@ -565,7 +561,7 @@ class PMSEPreProcessor
                 rd.rel_element_id = flow.bpmn_id AND
                 flow.cas_flow_status='WAITING' AND
                 flow.cas_sugar_object_id IN (?) AND
-                flow.deleted = 0 
+                flow.deleted = 0
         WHERE
             rd.deleted = 0 AND rd.pro_status != 'INACTIVE' AND (
                 (

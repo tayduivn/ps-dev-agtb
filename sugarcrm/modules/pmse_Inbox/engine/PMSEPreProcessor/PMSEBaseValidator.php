@@ -45,6 +45,17 @@ class PMSEBaseValidator
     protected $validatorName;
 
     /**
+     * Change operators, needed to determine whether to skip termination on new
+     * records
+     * @var array
+     */
+    private $changesValues = [
+        'changes',
+        'changes_from',
+        'changes_to',
+    ];
+
+    /**
      *
      * @return PMSEEvaluator
      * @codeCoverageIgnore
@@ -223,5 +234,60 @@ class PMSEBaseValidator
 
         // And finally, we need to drop our validator key
         $registry->drop($validatorKey);
+    }
+
+    /**
+     * Checks if the current field object is a changes/to/from operation
+     * @param  stdClass $field The field criteria object
+     * @return boolean
+     */
+    public function isChangeOperation(stdClass $field)
+    {
+        return isset($field->expOperator) && in_array($field->expOperator, $this->changesValues);
+    }
+
+    /**
+     * Gets a JSON decode data set from an encoded string
+     * @param string $criteria JSON criteria string
+     * @return mixed
+     */
+    public function getDecodedCriteria(string $criteria)
+    {
+        return json_decode(html_entity_decode($criteria));
+    }
+
+    /**
+     * Takes in an expression and returns a JSON encoded version of it
+     * @param mixed $data Data to be JSON encoded
+     * @return string
+     */
+    public function getEncodedCriteria($data) : string
+    {
+        return json_encode($data);
+    }
+
+    /**
+     * Takes in the criteria JSON, decodes it, checks whether we are in an update
+     * and sets a property on the TERMINATE criteria token to that affect
+     * @param string $criteria The JSON encoded criteria token string
+     * @param array $args The request arguments
+     * @return string
+     */
+    public function validateUpdateState(string $criteria, array $args = []) : string
+    {
+        // Need to check the isUpdate flag that is set by the after_save hook
+        // changes/to/from operations should not be evaluated for new records
+        if (empty($args['isUpdate'])) {
+            return $criteria;
+        }
+
+        $expression = $this->getDecodedCriteria($criteria);
+        foreach ($expression as $k => $field) {
+            if ($this->isChangeOperation($field)) {
+                $expression[$k]->isUpdate = true;
+            }
+        }
+
+        return $this->getEncodedCriteria($expression);
     }
 }

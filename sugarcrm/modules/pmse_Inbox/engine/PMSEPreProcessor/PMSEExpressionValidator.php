@@ -52,14 +52,26 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function validateExpression($bean, $flowData, $request, $paramsRelated = array())
     {
-        // Empty criteria is valid
-        $valid = $flowData['evn_criteria'] === '' || $flowData['evn_criteria'] === '[]';
+        // Start with trimming our criteria for evaluation
+        $criteria = trim($flowData['evn_criteria']);
 
-        // Now check if the evaluation is valid as well
-        if ($valid || $this->getEvaluator()->evaluateExpression(trim($flowData['evn_criteria']), $bean, $paramsRelated)) {
+        // Empty criteria is valid
+        $valid = $criteria === '' || $criteria === '[]';
+
+        // If there is no criteria, we are valid straight away
+        if ($valid) {
             $request->validate();
         } else {
-            $request->invalidate();
+            // If we need to evaluate the criteria then we need to check for if
+            // this is an update to handle changes/to/from
+            $criteria = $this->validateUpdateState($criteria, $request->getArguments());
+
+            // Now check if the evaluation is valid as well
+            if ($this->getEvaluator()->evaluateExpression($criteria, $bean, $paramsRelated)) {
+                $request->validate();
+            } else {
+                $request->invalidate();
+            }
         }
 
         $condition = $this->getEvaluator()->condition();

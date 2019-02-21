@@ -14,7 +14,6 @@ use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Description of PMSECriteriaEvaluator
- * 
  */
 class PMSECriteriaEvaluator
 {
@@ -24,10 +23,9 @@ class PMSECriteriaEvaluator
     {
         $this->expressionEvaluator = ProcessManager\Factory::getPMSEObject('PMSEExpressionEvaluator');
     }
-    
+
     public function isCriteriaToken($token)
     {
-        $result = false;
         $criteriaTypes = array (
             'MODULE',
             'CONTROL',
@@ -37,13 +35,9 @@ class PMSECriteriaEvaluator
             'USER_IDENTITY'
         );
 
-        if (in_array($token->expType, $criteriaTypes)) {
-            $result = true;
-        }
-        
-        return $result;
+        return in_array($token->expType, $criteriaTypes);
     }
-    
+
     public function evaluateCriteriaToken($criteriaToken)
     {
         $resultToken = new stdClass();
@@ -62,7 +56,7 @@ class PMSECriteriaEvaluator
                     $criteriaToken->expOperator,
                     $criteriaToken->expValue,
                     $criteriaToken->expSubtype,
-                    isset($criteriaToken->isTerminateNewBean) ? $criteriaToken->isTerminateNewBean : false
+                    !empty($criteriaToken->isUpdate)
                 );
                 if ($criteriaToken->expRel == 'All') {
                     if (!$resultToken->expValue) {
@@ -81,13 +75,13 @@ class PMSECriteriaEvaluator
                 $criteriaToken->expOperator,
                 $criteriaToken->expValue,
                 $criteriaToken->expSubtype,
-                isset($criteriaToken->isTerminateNewBean) ? $criteriaToken->isTerminateNewBean : false
+                !empty($criteriaToken->isUpdate)
             );
         }
         $this->expressionEvaluator->processTokenAttributes($resultToken);
         return $resultToken;
     }
-    
+
     public function evaluateCriteriaTokenList($tokenArray)
     {
         foreach ($tokenArray as $key => $token) {
