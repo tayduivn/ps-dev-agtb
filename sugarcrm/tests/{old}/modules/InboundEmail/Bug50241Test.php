@@ -17,15 +17,12 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug50241Test extends TestCase
 {
-	protected $ie = null;
-
-	public function setUp()
+    public function testEmailCleanup()
     {
-		$this->ie = new InboundEmail();
-	}
+        if (is_windows()) {
+            $this->markTestSkipped('On Windows, DOMDocument handles whitespaces differently than the test expects');
+        }
 
-	function testEmailCleanup()
-	{
 	    $inStr=<<<EOS
 <head>
 <style><!--
