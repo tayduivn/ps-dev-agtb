@@ -20,6 +20,8 @@ class OutboundEmailVisibility extends SugarVisibility
      */
     public function addVisibilityWhere(&$query)
     {
+        global $current_user;
+
         $db = DBManagerFactory::getInstance();
         $where = '';
         $alias = $this->getOption('table_alias');
@@ -33,9 +35,16 @@ class OutboundEmailVisibility extends SugarVisibility
             $where = "{$alias}.type<>" . $db->quoted(OutboundEmail::TYPE_SYSTEM_OVERRIDE);
         } else {
             // Show the user accounts and the user's own system-override account
-            $where = $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $alias);
-            $where = "({$where} AND {$alias}.type="  .  $db->quoted(OutboundEmail::TYPE_SYSTEM_OVERRIDE) .
-                ") OR {$alias}.type=" . $db->quoted(OutboundEmail::TYPE_USER);
+            $where = $this->bean->getOwnerWhere($current_user->id, $alias);
+            if ($current_user->isAdmin()) {
+                // for admins, we want to show system account as well
+                $where = "({$where} AND {$alias}.type="  .  $db->quoted(OutboundEmail::TYPE_SYSTEM_OVERRIDE) .
+                    ") OR {$alias}.type=" . $db->quoted(OutboundEmail::TYPE_USER) .
+                    " OR {$alias}.type=" . $db->quoted(OutboundEmail::TYPE_SYSTEM);
+            } else {
+                $where = "({$where} AND {$alias}.type="  .  $db->quoted(OutboundEmail::TYPE_SYSTEM_OVERRIDE) .
+                    ") OR {$alias}.type=" . $db->quoted(OutboundEmail::TYPE_USER);
+            }
         }
 
         $query = empty($query) ? $where : "{$query} AND {$where}";
