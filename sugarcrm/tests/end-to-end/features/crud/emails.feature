@@ -190,15 +190,12 @@ Feature: Emails module verification
     Given Accounts records exist:
       | *   | name     | email                           |
       | A_1 | SugarCRM | sugarcrm@sugarcrm.com (primary) |
-      | A_2 | IBM      | ibm@sugarcrm.com (primary)      |
     And Contacts records exist:
       | *   | first_name | last_name | email                       |
       | C_1 | Rich       | Green     | rich@example.org (primary)  |
-      | C_2 | Jorge      | Arroyo    | jorge@example.org (primary) |
     And Leads records exist:
       | *   | first_name | last_name | email                         |
-      | L_1 | Steve      | Parsley   | stive@example.org (primary)   |
-      | L_2 | Sandhya    | Jaideep   | sandhya@example.org (primary) |
+      | L_1 | Steve      | Parsley   | steve@example.org (primary)   |
 
     Given I open about view and login
     When I choose Emails in modules menu
@@ -243,13 +240,6 @@ Feature: Emails module verification
       | description_html | <h1>Lorem ipsum</h1>                         |
       | recipients       | SugarCRM; Cc: Rich Green; Bcc: Steve Parsley |
 
-    # Add more email recipients
-    When I add the following recipients to the email in #EmailsRecord.RecordView
-      | fieldName | value |
-      | To        | *A_2  |
-      | Cc        | *C_2  |
-      | Bcc       | *L_2  |
-
     # Update email subject and body
     When I provide input for #R1Record.RecordView view
       | *  | name                | description_html        |
@@ -263,8 +253,8 @@ Feature: Emails module verification
 
     # Verify that list of recipients is correct
     Then I verify fields on #R1Record.RecordView
-      | fieldName  | value                                                                            |
-      | recipients | SugarCRM, IBM; Cc: Rich Green, Jorge Arroyo; Bcc: Steve Parsley, Sandhya Jaideep |
+      | fieldName  | value                                        |
+      | recipients | SugarCRM; Cc: Rich Green; Bcc: Steve Parsley |
     When I click Cancel button on #EmailsRecord header
 
     # Verify that saved email appears in Account record view > Emails subpanel
