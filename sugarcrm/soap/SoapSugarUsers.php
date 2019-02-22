@@ -98,7 +98,7 @@ function login($user_auth, $application){
         $password = decrypt_string($user_auth['password']);
         $authController = AuthenticationController::getInstance();
         $authController->loggedIn = false; // reset login attempt to try again with decrypted password
-        if ($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id'])) {
+        if ($authController->login($user_auth['user_name'], $password)) {
             $success = true;
         }
     }
@@ -109,6 +109,7 @@ function login($user_auth, $application){
 		//$current_user = $user;
 		login_success();
 		$current_user->loadPreferences();
+        $_SESSION['authenticated_user_id'] = $current_user->id;
 		$_SESSION['is_valid_session']= true;
 		$_SESSION['ip_address'] = query_client_ip();
 		$_SESSION['user_id'] = $current_user->id;
