@@ -273,7 +273,7 @@ class PMSEImporter
             if (!empty($options['selectedIds'])) {
                 $this->importDependencies($project['dependencies'], $options['selectedIds']);
             }
-            $this->matchDependencies($project['dependencies']);
+            $this->matchDependenciesByDefinition($project);
         }
 
         if (!empty($project) && isset($project['project'])) {
@@ -326,9 +326,16 @@ class PMSEImporter
      * Matches process dependencies like business rules and email templates with
      * existing ones in the system according to their definitions
      * @param $dependencies
+     * @deprecated This method will be removed in a future release
      */
     public function matchDependencies($dependencies)
     {
+        SugarLogger::getLogger()->deprecated(
+            sprintf(
+                'This method %s will be removed in a future release',
+                __METHOD__
+            )
+        );
         if ($dependencies['business_rule']) {
             // Create a map of BR definitions -> BR IDs to make matching easier
             $businessRulesByDefinition = $this->mapDefinitionsToIDs($dependencies, 'business_rule');
@@ -338,6 +345,27 @@ class PMSEImporter
             // Create a map of ET definitions -> ET IDs to make matching easier
             $emailTemplatesByDefinition = $this->mapDefinitionsToIDs($dependencies, 'email_template');
             $this->matchDependencyDefinitions($emailTemplatesByDefinition, 'email_template');
+        }
+    }
+
+    /**
+     * Matches process dependencies like business rules and email templates with
+     * existing ones in the system according to their definitions
+     * @param $project array data of the project being imported
+     * @throws SugarQueryException
+     */
+    public function matchDependenciesByDefinition($project)
+    {
+        $dependencies = $project['dependencies'];
+        if (isset($dependencies['business_rule'])) {
+            // Create a map of BR definitions -> BR IDs to make matching easier
+            $businessRulesByDefinition = $this->mapDefinitionsToIDs($dependencies, 'business_rule');
+            $this->matchDependencyDefinitions($businessRulesByDefinition, 'business_rule', $project);
+        }
+        if (isset($dependencies['email_template'])) {
+            // Create a map of ET definitions -> ET IDs to make matching easier
+            $emailTemplatesByDefinition = $this->mapDefinitionsToIDs($dependencies, 'email_template');
+            $this->matchDependencyDefinitions($emailTemplatesByDefinition, 'email_template', $project);
         }
     }
 
@@ -377,31 +405,41 @@ class PMSEImporter
     /**
      * Searches the database to link any process dependencies of the given type
      * to any existing dependency that matches them by definition
-     * @param $dependenciesByDefinition
-     * @param $dependencyType
+     * @param $dependenciesByDefinition array mapping dependency definitions to their IDs
+     * @param $dependencyType string indicating the type of dependency (business rule, email template, etc.)
+     * @param $project array data of the project being imported
      * @throws SugarQueryException
      */
-    public function matchDependencyDefinitions($dependenciesByDefinition, $dependencyType)
+    public function matchDependencyDefinitions($dependenciesByDefinition, $dependencyType, $project = [])
     {
         $q = new SugarQuery();
         switch ($dependencyType) {
             case 'business_rule':
                 $q->select(array('id', 'rst_source_definition'));
                 $q->from(BeanFactory::getBean('pmse_Business_Rules'));
-                $q->where()->in('rst_source_definition', array_keys($dependenciesByDefinition));
+                if (!empty($project['project']['prj_module'])) {
+                    $q->where()->equals('rst_module', $project['project']['prj_module']);
+                }
                 $result = $q->execute();
+                
                 // Match the business rules by definition and set their new ID references
                 foreach ($result as $existingBusinessRule) {
                     $existingBRDef = $existingBusinessRule['rst_source_definition'];
-                    $oldBRId = $dependenciesByDefinition[$existingBRDef];
-                    $newBRId = $existingBusinessRule['id'];
-                    $this->dependencyKeys[$oldBRId] = $newBRId;
+                    if (isset($dependenciesByDefinition[$existingBRDef])) {
+                        $oldBRId = $dependenciesByDefinition[$existingBRDef];
+                        $newBRId = $existingBusinessRule['id'];
+                        $this->dependencyKeys[$oldBRId] = $newBRId;
+                    }
                 }
                 break;
             case 'email_template':
                 $q->select(array('id', 'base_module', 'name', 'description', 'subject', 'body_html'));
                 $q->from(BeanFactory::getBean('pmse_Emails_Templates'));
+                if (!empty($project['project']['prj_module'])) {
+                    $q->where()->equals('base_module', $project['project']['prj_module']);
+                }
                 $result = $q->execute();
+
                 foreach ($result as $existingEmailTemplate) {
                     // Compare the stringified definition of the existing ET with the non-imported
                     // email template dependencies
