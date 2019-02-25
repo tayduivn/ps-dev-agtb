@@ -424,20 +424,27 @@ function checkDownloadKey($data){
 
 	}
 
+    $settings = [
+        // default the number of licensed users to 1 in order to avoid the error message
+        // when the administrator has already logged in but hasn't yet validated the license
+        'users'                     => $data['license_users'] ?? 1,
+        'num_lic_oc'                => $data['license_num_lic_oc'] ?? 0,
+        'num_portal_users'          => $data['license_num_portal_users'] ?? 0,
+        'validation_key'            => $data['license_validation_key'] ?? null,
+        'vk_end_date'               => $data['license_vk_end_date'] ?? null,
+        'expire_date'               => $data['license_expire_date'] ?? null,
+        'last_validation_success'   => TimeDate::getInstance()->nowDb(),
+        'validation_notice'         => '',
+        'enforce_portal_user_limit' => $data['enforce_portal_user_limit'] ?? 0,
+    ];
 
-	$GLOBALS['license']->saveSetting('license', 'users', $data['license_users']);
-	$GLOBALS['license']->saveSetting('license', 'num_lic_oc', (empty($data['license_num_lic_oc']) ? 0 : $data['license_num_lic_oc']));
-	if(empty($data['license_num_portal_users'])) $data['license_num_portal_users'] = 0;
-	$GLOBALS['license']->saveSetting('license', 'num_portal_users', $data['license_num_portal_users']);
-	$GLOBALS['license']->saveSetting('license', 'validation_key', $data['license_validation_key']);
-	$GLOBALS['license']->saveSetting('license', 'vk_end_date', $data['license_vk_end_date']);
-	$GLOBALS['license']->saveSetting('license', 'expire_date', $data['license_expire_date']);
-	$GLOBALS['license']->saveSetting('license', 'last_validation_success', TimeDate::getInstance()->nowDb());
-	$GLOBALS['license']->saveSetting('license', 'validation_notice', '');
-	$GLOBALS['license']->saveSetting('license', 'enforce_portal_user_limit', (isset($data['enforce_portal_user_limit'])&&$data['enforce_portal_user_limit']=='1') ? '1' : '0');
+    if (isset($data['enforce_user_limit'])) {
+        $settings['enforce_user_limit'] = $data['enforce_user_limit'];
+    }
 
-	if(isset($data['enforce_user_limit']))
-		$GLOBALS['license']->saveSetting('license', 'enforce_user_limit', $data['enforce_user_limit']);
+    foreach ($settings as $parameter => $value) {
+        $GLOBALS['license']->saveSetting('license', $parameter, $value);
+    }
 
 	loadLicense(true);
 	return 'Validation Complete';

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'modules/Administration/updater_utils.php';
+
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
@@ -432,6 +434,23 @@ class User extends Person {
 
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
+
+    /**
+     * Returns TRUE if user should complete setup wizard for category
+     *
+     * @param string $category default 'global'
+     * @return bool
+     */
+    public function shouldUserCompleteWizard($category = 'global')
+    {
+        $systemStatus = apiCheckSystemStatus();
+        if ($systemStatus !== true) {
+            // System isn't ok, so no need to configure it
+            return false;
+        }
+        $ut = $this->getPreference('ut', $category);
+        return !filter_var($ut, FILTER_VALIDATE_BOOLEAN);
+    }
 
     /**
      * Interface for the User object to calling the UserPreference::removePreference() method
@@ -2492,7 +2511,9 @@ class User extends Person {
         //Add the tab hash to include the change of tabs (e.g. module order) as a part of the user hash
         $tabs = new TabController();
         $tabHash = $tabs->getMySettingsTabHash();
-        return md5($this->id . $this->hashTS . $tabHash);
+        // User hash must depends on user wizard completion
+        $isUserWizardCompleted = intval($this->shouldUserCompleteWizard());
+        return md5($this->id . $isUserWizardCompleted . $this->hashTS . $tabHash);
     }
 
     public function setupSession() {
