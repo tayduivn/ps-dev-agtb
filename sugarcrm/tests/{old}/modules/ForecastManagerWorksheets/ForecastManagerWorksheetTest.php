@@ -136,13 +136,52 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
+     * Sets up the testSaveManagerDraft function to be used by dependent functions
+     */
+    public function setUpTestSaveManagerDraft()
+    {
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
+
+        $ret = $worksheet->retrieve_by_string_fields(
+            array(
+                'assigned_user_id' => self::$manager->id,
+                'user_id' => self::$user->id,
+                'draft' => 1,
+                'deleted' => 0,
+            )
+        );
+
+        return $ret;
+    }
+
+    /**
+     * Sets up the testCommitManagerHasCommittedUserRow function to be used by dependent functions
+     */
+    public function setUpTestCommitManagerHasCommittedUserRow()
+    {
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
+        $worksheet->commitManagerForecast(self::$manager, self::$timeperiod->id);
+
+        $ret = $worksheet->retrieve_by_string_fields(
+            array(
+                'assigned_user_id' => self::$manager->id,
+                'user_id' => self::$user->id,
+                'draft' => 0,
+                'deleted' => 0,
+            )
+        );
+
+        return $ret;
+    }
+
+    /**
      * @group forecasts
      * @covers ::reporteeForecastRollUp
      */
     public function testSaveManagerDraft()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $ret = $worksheet->reporteeForecastRollUp(self::$user, self::$forecast->toArray());
@@ -168,14 +207,14 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
-     * @depends testSaveManagerDraft
      * @group forecasts
      * @covers ::reporteeForecastRollUp
      */
-    public function testSaveManagerDraftHasCurrencyIdAndBaseRate($worksheet)
+    public function testSaveManagerDraftHasCurrencyIdAndBaseRate()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
+        //Setting up testSaveManagerDraft function
+        $worksheet = $this->setUpTestSaveManagerDraft();
+
         $this->assertNotEmpty($worksheet->currency_id);
         $this->assertEquals('-99', $worksheet->currency_id);
         $this->assertNotEmpty($worksheet->base_rate);
@@ -183,14 +222,11 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
-     * @depends testSaveManagerDraft
      * @group forecasts
      * @covers ::reporteeForecastRollUp
      */
     public function testSaveManagerDraftDoesNotCreateCommittedVersion()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $ret = $worksheet->reporteeForecastRollUp(self::$user, self::$forecast->toArray());
@@ -211,15 +247,12 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
-     * @depends testSaveManagerDraft
      * @dataProvider caseFieldsDataProvider
      * @group forecasts
      * @covers ::reporteeForecastRollUp
      */
     public function testAdjustedCaseValuesEqualStandardCaseValues($field, $adjusted_field)
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
@@ -244,14 +277,11 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
-     * @depends testSaveManagerDraft
      * @group forecasts
      * @covers ::reporteeForecastRollUp
      */
     public function testQuotaWasPulledFromQuotasTable()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
@@ -267,15 +297,12 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
-     * @depends testSaveManagerDraft
      * @group forecasts
      * @return ForecastManagerWorksheet
      * @covers ::commitManagerForecast
      */
     public function testCommitManagerHasCommittedUserRow()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->commitManagerForecast(self::$manager, self::$timeperiod->id);
@@ -299,14 +326,11 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
-     * @depends testCommitManagerHasCommittedUserRow
      * @group forecasts
      * @covers ::commitManagerForecast
      */
-    public function testCommitRecalculatesManagerDirectQuota(ForecastManagerWorksheet $worksheet)
+    public function testCommitRecalculatesManagerDirectQuota()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         // get the direct quota for the manager
         /* @var $quota Quota */
         $quota = BeanFactory::newBean('Quotas');
@@ -324,14 +348,14 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
-     * @depends testCommitManagerHasCommittedUserRow
      * @group forecasts
      * @covers ::reporteeForecastRollUp
      */
-    public function testUserCommitsUpdatesMangerDraftAndUpdatesCommittedVersion(ForecastManagerWorksheet $mgr_worksheet)
+    public function testUserCommitsUpdatesMangerDraftAndUpdatesCommittedVersion()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
+        //Setting up the testCommitManagerHasCommittedUserRow function
+        $mgr_worksheet = $this->setUpTestCommitManagerHasCommittedUserRow();
+
         sleep(2); // we need to wait 2 seconds to get the off set that we need.
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
@@ -360,15 +384,12 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
-     * @depends testCommitManagerHasCommittedUserRow
      * @group forecasts
      * @covers ::retrieve_by_string_fields
      * @covers ::fill_in_additional_detail_fields
      */
     public function testManagerShowHistoryLogIsTrue()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         // load up the draft record for the manager
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
@@ -385,14 +406,11 @@ class ForecastManagerWorksheetTest extends TestCase
     }
 
     /**
-     * @depends testManagerShowHistoryLogIsTrue
      * @group forecasts
      * @covers ::commitManagerForecast
      */
     public function testShowHistoryLogIsZeroWhenAdjustedColumnIsChanged()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         // commit the manager
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
@@ -436,8 +454,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testCommitManagerForecastReturnsFalseWhenUserNotAManager()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $return = $worksheet->commitManagerForecast(self::$user, self::$timeperiod->id);
@@ -451,8 +467,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testManagerQuotaReCalcWorks()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         // from the data created when the class was started, the manager had a rollup quota of 2000, direct 1000,
         // and the user had a quota of 600, so, it should return 1400 as that is the difference
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
@@ -475,8 +489,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testManagerQuotaNoRecalc()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         // from the data created when the class was started, the manager had a quota of 1000
         // and the user had a quota of 600. We are going to set the manager direct to 4000, so
         // that the total is 4600 (2600 over the Rollup of 2000).  It should NOT recalc at that point.
@@ -500,8 +512,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testGetQuota()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array('getBean', 'save'))
             ->getMock();
@@ -542,8 +552,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testCommitQuota()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array('getQuota', 'save'))
             ->getMock();
@@ -580,8 +588,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testRollupDraftToCommittedWorksheetReturnFalse()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $mockManagerWorksheetOne = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array('save', 'toArray'))
             ->getMock();
@@ -652,8 +658,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testRollupDraftToCommittedWorksheet($copyMap, $copyMapExpected)
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $mockManagerWorksheetOne = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array('save', 'toArray'))
             ->getMock();
@@ -740,8 +744,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testCopyValues($fields, $values)
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array('save'))
             ->getMock();
@@ -763,8 +765,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testAssignQuotaReturnFalseWhenUserIsNotManager()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array('save', 'isUserManager'))
             ->getMock();
@@ -784,8 +784,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testAssignQuota()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
                 'save',
@@ -889,8 +887,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function test_AssignQuotaDoesNotUseActivityStreams()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
                 'save',
@@ -974,8 +970,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function test_AssignQuota($current_quota, $new_quota, $expectedActivityMessage)
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         SugarAutoLoader::load('modules/ActivityStream/Activities/ActivityQueueManager.php');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
@@ -1046,8 +1040,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testWorksheetTotalsReturnFalseWithInvalidTimeperiod()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
                 'save',
@@ -1128,8 +1120,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testWorksheetTotals($queryReturn, $expected)
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
                 'save',
@@ -1175,8 +1165,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testUpdateManagerWorksheetQuotaReturnFalseIfUserIsNotManager()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
                 'save',
@@ -1246,8 +1234,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testUpdateManagerWorksheetQuota($retrieve_return, $isDraft, $worksheetQuota, $quota, $expected)
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
                 'save',
@@ -1305,8 +1291,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testGetManagerQuota()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $db = new SugarTestDatabaseMock();
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
@@ -1359,8 +1343,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testGetQuotaSum($rows, $expected)
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $db = new SugarTestDatabaseMock();
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
@@ -1389,8 +1371,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testSetWorksheetArgs()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $args = array(
             'likely_case' => '50.00',
             'best_case' => '50.00',
@@ -1416,8 +1396,6 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testFixTopLevelManagerQuotaRollup()
     {
-        //skipping this test to be fixed later
-        $this->markTestSkipped('must be revisited.');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
             ->setMethods(array(
                 'save',
