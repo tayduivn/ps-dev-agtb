@@ -150,6 +150,11 @@
     moduleIsAvailable: true,
 
     /**
+     * Flag indicates if dashlet filter is accessible.
+     */
+    filterIsAccessible: true,
+
+    /**
      * @inheritdoc
      *
      * Append lastStateID on metadata in order to active user cache.
@@ -262,6 +267,10 @@
                 this.$el.html(this._noAccessTemplate());
                 return false;
             }
+            if (!this.filterIsAccessible) {
+                this._displayNoFilterAccess();
+                return false;
+            }
         });
 
         // the pivot point for the various dashlet paths
@@ -291,7 +300,12 @@
                     }
                     var filter = filters.collection.get(filterId);
                     var filterDef = filter && filter.get('filter_definition');
-                    this._displayDashlet(filterDef);
+                    if (_.isUndefined(filterDef)) {
+                        this.filterIsAccessible = false;
+                        this._displayNoFilterAccess();
+                    } else {
+                        this._displayDashlet(filterDef);
+                    }
                 }, this),
                 error: _.bind(function() {
                     if (this.disposed) {
@@ -301,6 +315,33 @@
                 }, this)
             });
         }
+    },
+
+    /**
+     * Display a message when dashlet filter is not accessible.
+     */
+    _displayNoFilterAccess: function() {
+        var template = app.template.get(this.name + '.nofilteraccess');
+        var noFilterAccessSupportUrl = app.help.getMoreInfoHelpURL('nofilter', 'listviewdashlet');
+        this.$el.html(template({noFilterAccessSupportUrl: noFilterAccessSupportUrl}));
+        var listBottom = this.layout.getComponent('list-bottom');
+        if (listBottom) {
+            listBottom.hide();
+        }
+    },
+
+    /**
+     * @inheritdoc
+     * Don't load data if dashlet filter is not accessible.
+     */
+    loadData: function(options) {
+        if (!this.filterIsAccessible) {
+            if (options && _.isFunction(options.complete)) {
+                options.complete();
+            }
+            return;
+        }
+        this._super('loadData', [options]);
     },
 
     /**
@@ -633,16 +674,6 @@
         if (filterDef) {
             this._applyFilterDef(filterDef);
             this.context.reloadData({'recursive': false});
-        } else {
-            // This case will treat if the user has no access to a shared filtered list,
-            // acl returns true even if the user has no access.
-            var listBottom = this.layout.getComponent('list-bottom');
-            if (listBottom) {
-                // Will rerender the list-bottom component to show the no access support link message,
-                // the message is built in the list-bottom.js file.
-                listBottom.noFilterPermissionSupportUrl = app.help.getMoreInfoHelpURL('nofilter', 'listviewdashlet');
-                listBottom.render();
-            }
         }
         this._startAutoRefresh();
     },

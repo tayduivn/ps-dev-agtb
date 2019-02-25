@@ -179,6 +179,30 @@ describe('Base.View.Dashablelist', function() {
 
                 expect(stubDisplayDashlet).toHaveBeenCalledWith(filterTest.filter_definition);
             });
+
+            it('should not call _super.loadData() when no filter access', function() {
+                var superStub = sinon.collection.stub(view, '_super', function() {});
+                view.filterIsAccessible = false;
+                view.loadData();
+                expect(superStub).not.toHaveBeenCalled();
+            });
+
+            it('should call _displayNoFilterAccess when no filter access', function() {
+                var stubDisplayNoFilterAccess = sinon.collection.stub(view, '_displayNoFilterAccess');
+
+                SugarTest.declareData('base', 'Filters');
+                sinon.collection.stub(app.BeanCollection.prototype, 'fetch', function(options) {
+                    options.success();
+                });
+                view.settings.set('module', moduleName);
+                view.settings.set('filter_id', 'testFilterID');
+                var filters = app.data.createBeanCollection('Filters');
+                filters.setModuleName(moduleName);
+                filters.load();
+                view.initDashlet('view');
+
+                expect(stubDisplayNoFilterAccess).toHaveBeenCalledOnce();
+            });
         });
 
         describe('setting default options', function() {
