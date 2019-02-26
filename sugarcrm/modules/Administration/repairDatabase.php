@@ -194,7 +194,7 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 
         $db->setOption('skip_index_rebuild', false);
 
-        $sql = implode('', $statements);
+        $sql = implode("\n", $statements);
 
 		if (empty ($_REQUEST['repair_silent'])) {
 			echo "<script type=\"text/javascript\">document.getElementById('rdloading').style.display = \"none\";</script>";
