@@ -408,6 +408,37 @@ class SugarOAuth2ServerOIDCTest extends TestCase
     }
 
     /**
+     * @covers ::grantAccessToken
+     */
+    public function testGrantAccessTokenForPortalStore(): void
+    {
+        $this->storage->expects($this->once())
+            ->method('hasPortalStore')
+            ->with('client_id')
+            ->willReturn(true);
+
+        $this->storage->expects($this->once())
+            ->method('checkClientCredentials')
+            ->with($this->inputData['client_id'], $this->inputData['client_secret'])
+            ->willReturn(true);
+
+        $this->storage->expects($this->once())
+            ->method('checkRestrictedGrantType')
+            ->with($this->inputData['client_id'], $this->inputData['grant_type'])
+            ->willReturn(true);
+
+        $this->storage->expects($this->once())
+            ->method('checkUserCredentials')
+            ->with($this->inputData['client_id'], $this->inputData['username'], $this->inputData['password'])
+            ->willReturn(['user_id' => 'seed_sally_id', 'scope' => null]);
+
+        $this->oAuth2Server->method('genAccessToken')-> willReturn('newToken');
+
+        $result = $this->oAuth2Server->grantAccessToken($this->inputData);
+        $this->assertEquals('newToken', $result['access_token']);
+    }
+
+    /**
      * @covers ::verifyAccessToken
      * @covers ::setPlatform
      * @expectedException \OAuth2AuthenticateException

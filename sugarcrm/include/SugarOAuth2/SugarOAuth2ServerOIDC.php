@@ -65,6 +65,9 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
     public function setPlatform($platform)
     {
         $this->platform = $platform;
+        if ($platform && $platform !== 'base') {
+            parent::setPlatform($platform);
+        }
     }
 
     /**
@@ -225,6 +228,10 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
      */
     protected function createAccessToken($client_id, $user_id, $scope = null)
     {
+        if ($this->storage->hasPortalStore($client_id)) {
+            return parent::createAccessToken($client_id, $user_id, $scope);
+        }
+
         $sugarConfig = \SugarConfig::getInstance();
         $idpConfig = new Config($sugarConfig);
         $idmModeConfig = $idpConfig->getIDMModeConfig();

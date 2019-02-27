@@ -40,7 +40,7 @@ class SugarOAuth2StorageOIDCTest extends TestCase
 
         $this->storageMock = $this->getMockBuilder(SugarOAuth2StorageOIDC::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAuthController', 'getTranslatedMessage'])
+            ->setMethods(['getAuthController', 'getTranslatedMessage', 'getPlatformStore', 'getClientDetails'])
             ->getMock();
 
         $this->storageMock->method('getAuthController')->willReturn($this->authController);
@@ -117,5 +117,72 @@ class SugarOAuth2StorageOIDCTest extends TestCase
             )
             ->willThrowException(new AuthenticationException());
         $this->storageMock->checkUserCredentials('sugar', 'user', 'password');
+    }
+
+    /**
+     * @covers ::checkUserCredentials
+     */
+    public function testCheckUserCredentialsPortalStore(): void
+    {
+        $this->storageMock->setPlatform('portal');
+
+        $platformStore = $this->createMock(\SugarOAuth2StoragePortal::class);
+
+        $this->storageMock->expects($this->once())->method('getPlatformStore')->willReturn($platformStore);
+
+        $platformStore->expects($this->once())
+            ->method('checkUserCredentials')
+            ->with($this->storageMock, 'sugar', 'user', 'password');
+
+        $this->storageMock->checkUserCredentials('sugar', 'user', 'password');
+    }
+
+    /**
+     * @return array
+     */
+    public function hasPortalStoreProvider(): array
+    {
+        return [
+            'portalStoreClass' => [
+                'platform' => 'portal',
+                'clientInfo' => null,
+                'expectedResult' => true,
+            ],
+            'noPortalStoreClass' => [
+                'platform' => 'base',
+                'clientInfo' => null,
+                'expectedResult' => false,
+            ],
+            'noPortalStoreClassValidPortalClientInfo' => [
+                'platform' => 'base',
+                'clientInfo' => [
+                    'client_type' => 'support_portal',
+                ],
+                'expectedResult' => true,
+            ],
+            'noPortalStoreClassInvalidPortalClientInfo' => [
+                'platform' => 'base',
+                'clientInfo' => [
+                    'client_type' => 'support_base',
+                ],
+                'expectedResult' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @param $platform
+     * @param $clientInfo
+     * @param $expectedResult
+     *
+     * @covers ::hasPortalStore
+     *
+     * @dataProvider hasPortalStoreProvider
+     */
+    public function testHasPortalStoreWithPlatformStoreClass($platform, $clientInfo, $expectedResult): void
+    {
+        $this->storageMock->setPlatform($platform);
+        $this->storageMock->method('getClientDetails')->willReturn($clientInfo);
+        $this->assertEquals($expectedResult, $this->storageMock->hasPortalStore('client_id'));
     }
 }
