@@ -30,6 +30,7 @@ $mod_strings = array (
   'LBL_ASSIGNED_TO_NAME' => 'User:',  	  
   'LBL_WORK_LOG' => 'Work Log:',
     //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_FOLLOW_UP' => 'Follow Up',
     'LBL_FOLLOW_UP_DATETIME' => 'Follow Up Date',
     'LBL_RESOLVED_DATETIME' => 'Resolved Date',
     'LBL_TIME_TO_RESOLUTION' => 'Time to Resolution',

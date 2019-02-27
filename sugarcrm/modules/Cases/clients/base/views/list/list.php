@@ -88,6 +88,13 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'enabled' => true,
                     'readonly' => true,
                 ),
+                array(
+                    'name' => 'follow_up_datetime',
+                    'type' => 'relative-time',
+                    'label' => 'LBL_FOLLOW_UP',
+                    'default' => false,
+                    'enabled' => true,
+                ),
                 //END SUGARCRM flav=ent ONLY
             ),
         )

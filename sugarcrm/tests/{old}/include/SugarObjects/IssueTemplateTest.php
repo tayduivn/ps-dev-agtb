@@ -73,24 +73,26 @@ class IssueTemplateTest extends TestCase
     }
 
     /**
-     * Checks that modules that should have follow_up_datetime on the record
+     * Checks that modules that should have follow_up_datetime on the given
      * view do so.
      *
      * @param string $module The module for which we would like to check that
-     *   follow_up_datetime is on the record view.
-     * @dataProvider hasFollowUpDateFieldOnRecordViewProvider
+     *   follow_up_datetime is on the given view.
+     * @param string $view The view to check.
+     * @dataProvider hasFollowUpDateFieldOnViewProvider
      */
-    public function testCheckModuleHasFollowUpDateFieldOnRecordView(string $module)
+    public function testCheckModuleHasFollowUpDateFieldOnView(string $module, string $view)
     {
-        $this->assertContains('follow_up_datetime', $this->manager->getModuleViewFields($module, 'record'));
+        $this->assertContains('follow_up_datetime', $this->manager->getModuleViewFields($module, $view));
     }
 
-    public function hasFollowUpDateFieldOnRecordViewProvider(): array
+    public function hasFollowUpDateFieldOnViewProvider(): array
     {
         return [
-            ['Bugs'],
-            ['Cases'],
-            ['DataPrivacy'],
+            ['Bugs', 'record'],
+            ['Cases', 'list'],
+            ['Cases', 'record'],
+            ['DataPrivacy', 'record'],
         ];
     }
 
@@ -124,7 +126,7 @@ class IssueTemplateTest extends TestCase
      *   have follow_up_datetime on its record view.
      * @dataProvider hasNoFollowUpDateFieldOnRecordViewProvider
      */
-    public function testCheckModulesHasNoFollowUpDateFieldOnRecordView(string $module)
+    public function testCheckModulesHasNoFollowUpDateFieldOnView(string $module)
     {
         $this->assertNotContains('follow_up_datetime', $this->manager->getModuleViewFields($module, 'record'));
     }
