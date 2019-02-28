@@ -517,7 +517,7 @@ class SugarBean
         // FIXME: this will be removed, needed for ensuring BeanFactory is always used
         //$this->checkBacktrace();
 
-        global  $dictionary, $current_user;
+        global $dictionary, $current_user, $isModuleInstalling;
 
         $this->db = DBManagerFactory::getInstance();
         if (empty($this->module_name)) {
@@ -557,7 +557,7 @@ class SugarBean
             }
             //END SUGARCRM flav=int ONLY
 
-            $refresh = inDeveloperMode() || !empty($_SESSION['developerMode']) || !empty($GLOBALS['reload_vardefs']);
+            $refresh = inDeveloperMode() || !empty($isModuleInstalling);
 
             if ($refresh && !empty(VardefManager::$inReload["{$this->getModuleName()}:{$this->object_name}"])) {
                 // if we're already reloading this vardef, no need to do it again

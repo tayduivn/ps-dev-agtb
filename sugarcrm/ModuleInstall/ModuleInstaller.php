@@ -2172,6 +2172,10 @@ class ModuleInstaller{
      * bean/module.
      */
     function install_beans($beans){
+        // We need to force reload var def on SugarBean construction
+        // @TODO delete it and figure out how to reload var defs on module installer part
+        global $isModuleInstalling;
+        $isModuleInstalling = true;
         foreach($beans as $bean){
             // This forces new beans to refresh their vardefs because at this
             // point the global dictionary for this object may be set with just
@@ -2189,6 +2193,7 @@ class ModuleInstaller{
             // Return state. Null values essentially unset what wasn't set before
             $GLOBALS['reload_vardefs'] = $rv;
         }
+        $isModuleInstalling = false;
     }
 
     function uninstall_beans($beans){
