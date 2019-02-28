@@ -126,7 +126,13 @@
             }, this);
             if (toggle && availableToggle) {
                 var disabled = !!availableToggle.disabled;
-                temp[toggle] = {toggle: toggle, title: availableToggle.label, 'class': availableToggle.icon, disabled: disabled};
+                temp[toggle] = {
+                    toggle: toggle,
+                    title: availableToggle.label,
+                    class: availableToggle.icon,
+                    css_class: availableToggle.css_class,
+                    disabled: disabled
+                };
             }
         }, this);
 
@@ -165,7 +171,11 @@
         // Only toggle if we click on an inactive button
         if (!$el.hasClass("active")) {
             var data = $el.data();
-            app.user.lastState.set(this.toggleViewLastStateKey, data.view);
+            if (data.view !== 'pipeline') {
+                app.user.lastState.set(this.toggleViewLastStateKey, data.view);
+            } else {
+                app.router.navigate(this.module + '/pipeline', {trigger: true});
+            }
             this.showComponent(data.view);
             this._toggleAria($el);
         }

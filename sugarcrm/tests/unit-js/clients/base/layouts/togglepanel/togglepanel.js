@@ -17,13 +17,19 @@ describe("Base.Layout.Togglepanel", function () {
         app = SugarTest.app;
         getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {
             return {activityStreamEnabled:true};
-    });
+        });
+
+        SugarTest.loadFile('../modules/Dashboards/clients/base/routes', 'routes', 'js', function(d) {
+            eval(d);
+            app.routing.start();
+        });
     });
 
     afterEach(function () {
         getModuleStub.restore();
         app.cache.cutAll();
         app.view.reset();
+        app.router.stop();
         Handlebars.templates = {};
         layout.dispose();
         layout = null;
@@ -73,6 +79,7 @@ describe("Base.Layout.Togglepanel", function () {
                         'name': 'test3',
                         'label': 'test3',
                         'icon': 'icon3',
+                        'css_class': 'testClass',
                         'disabled': true
                     }
                 ],
@@ -109,6 +116,7 @@ describe("Base.Layout.Togglepanel", function () {
                     class: 'icon3',
                     title: 'test3',
                     toggle: 'test3',
+                    css_class: 'testClass',
                     disabled: true
                 }
             ]);
@@ -145,6 +153,60 @@ describe("Base.Layout.Togglepanel", function () {
 
                 nonTogglable.dispose();
                 togglable.dispose();
+            });
+        });
+
+        describe('toggleView', function() {
+            var evt = {
+                currentTarget: 'testTarget'
+            };
+            var lastStateSetStub;
+            beforeEach(function() {
+                sinon.collection.stub(app.router,'navigate', function() {});
+                sinon.collection.stub(layout,'showComponent', function() {});
+                sinon.collection.stub(layout,'_toggleAria', function() {});
+            });
+            afterEach(function() {
+                sinon.collection.restore();
+            });
+            describe('when the data.view is not pipeline', function() {
+                it('should set last state with last state key and data.view', function() {
+                    sinon.collection.stub(layout, '$', function() {
+                        return {
+                            data: function() {
+                                return {
+                                    view: 'list'
+                                };
+                            },
+                            hasClass: function() {
+                                return false;
+                            }
+                        };
+                    });
+                    app.user.lastState.set.restore();
+                    sinon.collection.stub(app.user.lastState, 'set');
+                    layout.toggleView(evt);
+                    expect(app.user.lastState.set).toHaveBeenCalled();
+                });
+            });
+
+            describe('when the data.view is pipeline', function() {
+                it('should route to Opportunities/pipelines records view', function() {
+                    sinon.collection.stub(layout, '$', function() {
+                        return {
+                            data: function() {
+                                return {
+                                    view: 'pipeline'
+                                };
+                            },
+                            hasClass: function() {
+                                return false;
+                            }
+                        };
+                    });
+                    layout.toggleView(evt);
+                    expect(app.router.navigate).toHaveBeenCalledWith(layout.module + '/pipeline', {trigger: true});
+                });
             });
         });
     });

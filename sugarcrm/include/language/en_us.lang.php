@@ -3777,6 +3777,9 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB' => 'Recently Used',
     'LBL_DASHLET_PRODUCT_QUICK_PICKS_FAVORITES_TAB' => 'Favorites',
 
+    // Visual pipeline
+    'LBL_PIPELINE_VIEW_BTN' => 'Visual Pipeline',
+
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DASHLET_CASES_SUMMARY_NAME' => 'Case Summary',
     'LBL_DASHLET_ITERACTIONS_NAME' => 'Interactions',
