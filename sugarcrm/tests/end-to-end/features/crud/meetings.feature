@@ -71,7 +71,7 @@ Feature: Meetings module verification
       | status    | Canceled  |
 
   @list-delete
-  Scenario: Contracts > List View > Delete
+  Scenario: Meetings > List View > Delete
     Given Meetings records exist:
       | *name     | assigned_user_id | date_start                | duration_minutes | reminder_time | email_reminder_time | description           | status  |
       | Meeting_A | 1                | 2020-04-16T14:30:00-07:00 | 45               | 0             | 0                   | Meeting with customer | Planned |

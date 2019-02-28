@@ -108,15 +108,11 @@ Feature: Create Opportunity from Quote
       | name      | Quote_1 |
     When I click show more button on #OpportunitiesRecord view
     Then I verify fields on #OpportunitiesRecord.RecordView
-      | fieldName        | value          |
-      | date_closed      | 10/19/2018     |
-      | account_name     | Acc_1          |
-      | sales_status     | In Progress    |
-      | amount           | €147.50$295.00 |
-      | best_case        | €147.50$295.00 |
-      | worst_case       | €147.50$295.00 |
-      | opportunity_type | New Business   |
-
-
-
-
+      | fieldName        | value           |
+      | date_closed      | 10/19/2018      |
+      | account_name     | Acc_1           |
+      | sales_status     | In Progress     |
+      | amount           | €147.50 $295.00 |
+      | best_case        | €147.50 $295.00 |
+      | worst_case       | €147.50 $295.00 |
+      | opportunity_type | New Business    |

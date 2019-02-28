@@ -9,13 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 import {BaseField} from './base-field';
-import {seedbed} from '@sugarcrm/seedbed';
 
 /**
  * @class FloatField
  * @extends BaseField
  */
-export default class FloatField extends BaseField {
+class FloatField extends BaseField {
 
     constructor(options) {
         super(options);
@@ -42,10 +41,33 @@ export class Detail extends FloatField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'div:not(.pull-right)',
+                original: '.original',
+                converted: '.converted',
+                position: '.pull-right'
             }
         });
+    }
 
+    public async getText(selector: string): Promise<string> {
+
+        /*  Separate original from converted amount in case the amount is represented
+         *  by two numbers: original and converted. (Example: '€90.00 $100.00')
+         */
+        const elementExists = await this.driver.isExisting(this.$('field.converted'));
+
+        if (elementExists) {
+            // Get original amount
+            let valueOriginal: string = await this.driver.getText(this.$('field.original'));
+            // Get converted amount
+            let valueConverted: string = await this.driver.getText(this.$('field.converted'));
+            // Return both values with space in between
+            return valueOriginal.trim() + ' ' + valueConverted.trim();
+
+        } else {
+            let value: string | string [] = await this.driver.getText(this.$('field.selector'));
+            return value.toString().trim();
+        }
     }
 }
 
@@ -56,7 +78,7 @@ export class List extends FloatField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'div',
             }
         });
 

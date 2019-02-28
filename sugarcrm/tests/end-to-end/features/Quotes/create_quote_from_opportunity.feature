@@ -118,7 +118,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | fieldName   | value         |
       | name        | RLI_1         |
       | date_closed | 12/12/2020    |
-      | likely_case | €87.50$175.00 |
+      | likely_case | €87.50 $175.00 |
 
     # 8. Create 'RLI_2' record from RLI subpanel of opportunity record view using RUB currency
     When I open the revenuelineitems subpanel on #Opp_1Record view
@@ -138,7 +138,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | fieldName   | value           |
       | name        | RLI_2           |
       | date_closed | 12/13/2020      |
-      | likely_case | руб127.49$84.99 |
+      | likely_case | руб127.49 $84.99 |
 
     # 10. Create 'RLI_3' record from RLI subpanel of opportunity record view using EUR currency
     When I open the revenuelineitems subpanel on #Opp_1Record view
@@ -158,7 +158,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | fieldName   | value         |
       | name        | RLI_3         |
       | date_closed | 12/14/2020    |
-      | likely_case | €50.00$100.00 |
+      | likely_case | €50.00 $100.00 |
 
     # 12. Create 'RLI_4' record from RLI subpanel of opportunity record view using RUB currency
     When I open the revenuelineitems subpanel on #Opp_1Record view
@@ -178,7 +178,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | fieldName   | value            |
       | name        | RLI_4            |
       | date_closed | 12/11/2020       |
-      | likely_case | руб150.00$100.00 |
+      | likely_case | руб150.00 $100.00 |
 
     # 14. Verify rollup data in Opportunity record view business card
     Then I verify fields on #Opp_1Record.RecordView

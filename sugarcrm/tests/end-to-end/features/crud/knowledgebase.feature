@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_knowledgeBase @pr
+@crud_modules_knowledgeBase
 Feature: Knowledge Base module verification
 
   Background:

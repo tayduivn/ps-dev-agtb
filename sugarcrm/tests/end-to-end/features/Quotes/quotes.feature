@@ -1415,6 +1415,20 @@ Feature: Quotes module E2E testing
       | new_sub   | $168.89       |
       | total     | $168.89       |
 
+    # Verify First QLI amounts
+    Then I verify fields on #QLI_1QLIRecord
+      | fieldName       | value          |
+      | discount_price  | €90.00 $100.00 |
+      | discount_amount | €10.00 $11.11  |
+      | total_amount    | €80.00 $88.89  |
+
+    # Verify Second QLI amounts
+    Then I verify fields on #QLI_2QLIRecord
+      | fieldName       | value          |
+      | discount_price  | ¥50.00 $100.00 |
+      | discount_amount | ¥10.00 $20.00  |
+      | total_amount    | ¥40.00 $80.00  |
+
     # Change currency of the quote record to EUR
     When I click Edit button on #Quote_1Record header
     When I toggle Quote_Settings panel on #Quote_1Record.RecordView view
@@ -1431,10 +1445,10 @@ Feature: Quotes module E2E testing
 
     # Verify Second QLI amounts
     Then I verify fields on #QLI_2QLIRecord
-      | fieldName       | value        |
-      | discount_price  | ¥50.00€90.00 |
-      | discount_amount | ¥10.00€18.00 |
-      | total_amount    | ¥40.00€72.00 |
+      | fieldName       | value         |
+      | discount_price  | ¥50.00 €90.00 |
+      | discount_amount | ¥10.00 €18.00 |
+      | total_amount    | ¥40.00 €72.00 |
 
     # Verify Grand Total in QLI table header bar
     Then I verify fields on QLI total header on #Quote_1Record view
@@ -1450,10 +1464,10 @@ Feature: Quotes module E2E testing
 
     # Verify First QLI amounts
     Then I verify fields on #QLI_1QLIRecord
-      | fieldName       | value        |
-      | discount_price  | €90.00¥50.00 |
-      | discount_amount | €10.00¥5.56  |
-      | total_amount    | €80.00¥44.44 |
+      | fieldName       | value         |
+      | discount_price  | €90.00 ¥50.00 |
+      | discount_amount | €10.00 ¥5.56  |
+      | total_amount    | €80.00 ¥44.44 |
 
     # Verify Second QLI amounts
     Then I verify fields on #QLI_2QLIRecord
@@ -1485,10 +1499,10 @@ Feature: Quotes module E2E testing
 
     # Verify First QLI amounts
     Then I verify fields on #QLI_1QLIRecord
-      | fieldName       | value         |
-      | discount_price  | $100.00¥50.00 |
-      | discount_amount | 10.00%        |
-      | total_amount    | $90.00¥45.00  |
+      | fieldName       | value          |
+      | discount_price  | $100.00 ¥50.00 |
+      | discount_amount | 10.00%         |
+      | total_amount    | $90.00 ¥45.00  |
 
     # Verify Grand Total in QLI table header bar
     Then I verify fields on QLI total header on #Quote_1Record view
@@ -1509,10 +1523,10 @@ Feature: Quotes module E2E testing
 
     # Verify that percentage of the discount is not converted when currency is changed
     Then I verify fields on #QLI_1QLIRecord
-      | fieldName       | value        |
-      | discount_price  | €90.00¥50.00 |
-      | discount_amount | 10.00%       |
-      | total_amount    | €81.00¥45.00 |
+      | fieldName       | value         |
+      | discount_price  | €90.00 ¥50.00 |
+      | discount_amount | 10.00%        |
+      | total_amount    | €81.00 ¥45.00 |
 
   @quote_delete_group @quote_currency @job5
   Scenario: Quotes > Verify there is no JS error when quote currency is changed after group is deleted

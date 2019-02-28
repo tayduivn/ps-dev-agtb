@@ -421,25 +421,25 @@ Feature: Opportunities
 
     Then I should see *RLI1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
     Then I verify fields for *RLI1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName   | value         |
-      | name        | RLI1          |
-      | likely_case | €50.00$100.00 |
-      | best_case   | €50.00$100.00 |
-      | worst_case  | €50.00$100.00 |
+      | fieldName   | value          |
+      | name        | RLI1           |
+      | likely_case | €50.00 $100.00 |
+      | best_case   | €50.00 $100.00 |
+      | worst_case  | €50.00 $100.00 |
 
     Then I should see *RLI2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
     Then I verify fields for *RLI2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName   | value         |
-      | name        | RLI2          |
-      | likely_case | €50.00$100.00 |
-      | best_case   | €50.00$100.00 |
-      | worst_case  | €50.00$100.00 |
+      | fieldName   | value          |
+      | name        | RLI2           |
+      | likely_case | €50.00 $100.00 |
+      | best_case   | €50.00 $100.00 |
+      | worst_case  | €50.00 $100.00 |
 
     Then I should see *RLI3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
     Then I verify fields for *RLI3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName   | value         |
-      | name        | RLI3          |
-      | likely_case | €50.00$100.00 |
-      | best_case   | €50.00$100.00 |
-      | worst_case  | €50.00$100.00 |
+      | fieldName   | value          |
+      | name        | RLI3           |
+      | likely_case | €50.00 $100.00 |
+      | best_case   | €50.00 $100.00 |
+      | worst_case  | €50.00 $100.00 |
 

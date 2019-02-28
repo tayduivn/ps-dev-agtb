@@ -36,7 +36,9 @@ Feature: Forecasts module
     # Log in as sales manager
     When I go to "logout" url
     When I use default account
-    And I open Forecasts view and login
+    Given I open about view and login
+    When I choose Forecasts in modules menu
+    When I wait for 5 seconds
 
     # Select Time Period
     When I provide input for #Forecasts view

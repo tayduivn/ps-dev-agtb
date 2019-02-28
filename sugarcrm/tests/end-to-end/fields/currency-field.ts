@@ -8,7 +8,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import {seedbed} from '@sugarcrm/seedbed';
 import {BaseField} from './base-field';
 
 /**
@@ -31,6 +30,11 @@ class CurrencyField extends BaseField {
     public async setValue(val: any): Promise<void> {
         await this.driver.setValue(this.$('field.selector'), val);
     }
+
+    public async getText(selector: string): Promise<string> {
+        let value: string | string[] = await this.driver.getValue(this.$('field.selector'));
+        return value.toString().trim();
+    }
 }
 
 export class Edit extends CurrencyField {
@@ -40,11 +44,8 @@ export class Edit extends CurrencyField {
     }
 
     public async getText(selector: string): Promise<string> {
-
         let value: string | string[] = await this.driver.getValue(this.$('field.selector'));
-
         return value.toString().trim();
-
     }
 }
 
@@ -93,11 +94,8 @@ export class DetailQLI extends CurrencyField {
     }
 
     public async getText(selector: string): Promise<string> {
-
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
-
         return value.toString().trim();
-
     }
 }
 
@@ -115,11 +113,8 @@ export class QLITableFooterShipping extends CurrencyField {
     }
 
     public async getText(selector: string): Promise<string> {
-
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
-
         return value.toString().trim();
-
     }
 }
 
@@ -139,9 +134,7 @@ export class QLITableFooterOther extends CurrencyField {
     public async getText(selector: string): Promise<string> {
 
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
-
         return value.toString().trim();
-
     }
 }
 
@@ -152,8 +145,10 @@ export class Detail extends CurrencyField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div',
-                input: 'input:not([class *= select2])'
+                selector: '.currency-field',
+                input: 'input:not([class *= select2])',
+                original: '.original',
+                converted: '.converted',
             }
         });
     }
@@ -164,6 +159,28 @@ export class Detail extends CurrencyField {
         await this.driver.click(this.$('field.selector'));
         await this.driver.setValue(this.$('field.input'), val);
         await this.driver.execSync('blurActiveElement');
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        /*
+         * Separate original from converted amount in case the amount is represented
+         * by two numbers: original and converted. (Example: '€90.00 $100.00')
+         */
+        
+        // Check if '.converted' class exists
+        const elementExists = await this.driver.isExisting(this.$('field.converted'));
+        if (elementExists) {
+            // Get original amount
+            let valueOriginal: string = await this.driver.getText(this.$('field.original'));
+            // Get converted amount
+            let valueConverted: string = await this.driver.getText(this.$('field.converted'));
+            // Return both values with space in between
+            return valueOriginal.trim() + ' ' + valueConverted.trim();
+        } else {
+            let value: string | string [] = await this.driver.getText(this.$('field.selector'));
+            return value.toString().trim();
+        }
     }
 }
 

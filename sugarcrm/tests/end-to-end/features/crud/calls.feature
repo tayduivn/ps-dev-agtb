@@ -76,7 +76,7 @@ Feature: Calls module verification
       | status    | Canceled |
 
   @list-delete
-  Scenario: Contracts > List View > Delete
+  Scenario: Calls > List View > Delete
     Given Calls records exist:
       | *name  | assigned_user_id | date_start                | duration_hours | duration_minutes | direction | reminder_time | email_reminder_time | description      | status  |
       | Call_A | 1                | 2020-04-16T14:30:00-07:00 | 0              | 45               | Outbound  | 0             | 0                   | Call to customer | Planned |
