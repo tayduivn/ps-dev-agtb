@@ -14,7 +14,7 @@ Feature: Forecasts module
     Given I use default account
     Given I launch App
 
-  @forecasts_workflow_automation @pr
+  @forecasts_workflow_automation @pr @ci-excluded
   Scenario: Forecasts sales manager to sales rep workflow automation
 
     # Create required records
