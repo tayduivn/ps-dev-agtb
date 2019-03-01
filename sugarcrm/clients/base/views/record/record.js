@@ -1227,6 +1227,32 @@
     },
 
     /**
+     * Verify if the current target is the last one from an address block field.
+     *
+     * @param {View.Field} field Current focused field (field in inline-edit mode).
+     * @param {String} currentTargetName attribute of the current target.
+     *
+     * @return {Boolean} `true` if field is the address block last field, `false` otherwise.
+     **/
+    isLastAddressBlockFieldSetField: function(field, currentTargetName) {
+        var isFieldSet = field.type === 'fieldset';
+        var lastField = _.last(field.fields);
+
+        if (isFieldSet) {
+            if (!lastField) {
+                return false;
+            }
+            // Alternate and shipping address has no name attribute on their last field
+            if (!currentTargetName) {
+                return true;
+            }
+            return lastField.name === currentTargetName;
+        } else {
+            return false;
+        }
+    },
+
+    /**
      * Key handlers for inline edit mode.
      *
      * Jump into the next or prev target field if `tab` key is pressed.
@@ -1239,8 +1265,15 @@
         var whichField = e.shiftKey ? 'prevField' : 'nextField';
 
         if (e.which === 9) { // If tab
-            e.preventDefault();
-            this.nextField(field, whichField);
+            var isFieldSet = field.type === 'fieldset';
+            var isLastAddressBlockFieldSetField = this.isLastAddressBlockFieldSetField(field, e.currentTarget.name);
+            // If the current field is not an address block
+            // or it's the last field of an address block
+            // then jumping to other fields.
+            if (!isFieldSet || isLastAddressBlockFieldSetField) {
+                e.preventDefault();
+                this.nextField(field, whichField);
+            }
             if (field.$el.closest('.headerpane').length > 0) {
                 this.toggleViewButtons(false);
                 this.adjustHeaderpaneFields();
