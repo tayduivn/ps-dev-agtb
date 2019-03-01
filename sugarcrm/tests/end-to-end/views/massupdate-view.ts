@@ -48,13 +48,13 @@ export default class MassupdateView extends BaseView {
     }
 
     /**
-     * Set 'Parent' field value
+     * Set field value
      *
      * @param {string} pValue parent Field Value to Set
      * @param {number} rowNum row number
      * @return {Promise<void>}
      */
-    public async setParentFieldValue(pValue, rowNum) {
+    public async setFieldValue(pValue, rowNum) {
         // Set 'Parent' field value
         await this.driver.click(this.$(`filterBody.fieldToUpdate`, {rowNum}));
         await this.driver.waitForApp();

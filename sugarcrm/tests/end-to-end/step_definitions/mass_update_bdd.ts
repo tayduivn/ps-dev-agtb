@@ -14,7 +14,7 @@ import {Hashmap} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
 import {When, seedbed} from '@sugarcrm/seedbed';
 import AlertCmp from '../components/alert-cmp';
-import {chooseModule, closeAlert, toggleRecord, parseInputArray} from '../step_definitions/general_bdd';
+import {chooseModule, closeAlert, toggleRecord, parseInputArray} from './general_bdd';
 import MassupdateView from '../views/massupdate-view';
 
 When(/^I (perform|cancel) mass update of all (\w+) with the following values:$/,
