@@ -55,5 +55,16 @@
         var listViewMeta = app.metadata.getView(options.module, 'multi-line-list') || {};
         options.meta = _.extend({}, listViewMeta, options.meta || {});
         this._super('initialize', [options]);
+
+        this.events = _.extend({}, this.events, {
+            'click .multi-line-row': 'handleRowClick',
+        });
+    },
+
+    /**
+     * Trigger action when a model row is clicked
+     */
+    handleRowClick: function(event) {
+        // CS-46: update me with real action in future CS ticket
     }
 })
