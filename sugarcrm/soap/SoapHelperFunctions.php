@@ -1029,9 +1029,9 @@ LEFT OUTER JOIN email_addr_bean_rel eabr ON eabr.bean_id = c.id
 WHERE c.first_name = ? AND c.last_name = ? AND c.deleted = 0 AND eabr.id IS NULL
 SQL;
 
-        return $seed->db->getConnection()
-            ->executeQuery($query, [$trimmed_first, $trimmed_last])
-            ->fetchColumn()?? null;
+        $id = $seed->db->getConnection()->executeQuery($query, [$trimmed_first, $trimmed_last])->fetchColumn();
+        // fetchColumn returns FALSE for empty result but NULL is expected
+        return $id ?: null;
     }
 }
 
