@@ -131,7 +131,8 @@
                     title: availableToggle.label,
                     class: availableToggle.icon,
                     css_class: availableToggle.css_class,
-                    disabled: disabled
+                    disabled: disabled,
+                    route: availableToggle.route
                 };
             }
         }, this);
@@ -171,10 +172,10 @@
         // Only toggle if we click on an inactive button
         if (!$el.hasClass("active")) {
             var data = $el.data();
-            if (data.view !== 'pipeline') {
-                app.user.lastState.set(this.toggleViewLastStateKey, data.view);
+            if (data.route) {
+                app.router.navigate(this.module + '/' + data.route, {trigger: true});
             } else {
-                app.router.navigate(this.module + '/pipeline', {trigger: true});
+                app.user.lastState.set(this.toggleViewLastStateKey, data.view);
             }
             this.showComponent(data.view);
             this._toggleAria($el);
@@ -188,7 +189,10 @@
      * @private
      */
     _toggleAria: function(btn) {
-        this.$el.find('.btn').attr('aria-pressed', false);
+        //If the buttons are present on the layout
+        if (this.$el) {
+            this.$('.btn').attr('aria-pressed', false);
+        }
         btn.attr('aria-pressed', true);
     },
 
