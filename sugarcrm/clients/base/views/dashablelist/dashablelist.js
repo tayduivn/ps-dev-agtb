@@ -208,6 +208,15 @@
     },
 
     /**
+     * This method will verify if the current user is the one who created
+     * the filter for the filtered list.
+     * Acl don't work on filters.
+     */
+    isFilterCreatedByCurrentUser: function() {
+        return this.dashModel.get('created_by') === app.user.get('id');
+    },
+
+    /**
      * Must implement this method as a part of the contract with the Dashlet
      * plugin. Kicks off the various paths associated with a dashlet:
      * Configuration, preview, and display.
@@ -300,7 +309,19 @@
                     }
                     var filter = filters.collection.get(filterId);
                     var filterDef = filter && filter.get('filter_definition');
-                    if (_.isUndefined(filterDef)) {
+                    // In case the filter assigned to the list-dashlet is NOT in the filters collection,
+                    // as collection only contains certain number (= max_filters) of entries.
+                    // Will make a separate api call to fetch the specified filter data.
+                    if (!filterDef && this.isFilterCreatedByCurrentUser()) {
+                        var url = app.api.buildURL('Filters/' + filterId, null, null);
+                        app.api.call('read', url, null, {
+                            success: _.bind(function(data) {
+                                filterDef = data.filter_definition;
+                                this.filterIsAccessible = true;
+                                this._displayDashlet(filterDef);
+                            }, this)
+                        });
+                    } else if (_.isUndefined(filterDef)) {
                         this.filterIsAccessible = false;
                         this._displayNoFilterAccess();
                     } else {
@@ -674,6 +695,16 @@
         if (filterDef) {
             this._applyFilterDef(filterDef);
             this.context.reloadData({'recursive': false});
+        } else {
+            // This case will treat if the user has no access to a shared filtered list,
+            // acl returns true even if the user has no access.
+            var listBottom = this.layout.getComponent('list-bottom');
+            if (listBottom && !this.isFilterCreatedByCurrentUser()) {
+                // Will rerender the list-bottom component to show the no access support link message,
+                // the message is built in the list-bottom.js file.
+                listBottom.noFilterPermissionSupportUrl = app.help.getMoreInfoHelpURL('nofilter', 'listviewdashlet');
+                listBottom.render();
+            }
         }
         this._startAutoRefresh();
     },

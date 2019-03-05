@@ -18,8 +18,8 @@
  * @extends View.View
  */
 ({
-    tagName: "span",
-    className: "table-cell",
+    tagName: 'span',
+    className: 'table-cell',
 
     events: {
         'click .choice-filter.choice-filter-clickable': 'handleEditFilter',
@@ -44,8 +44,6 @@
     labelCreateNewFilter:       'LBL_FILTER_CREATE_NEW',
     labelAllRecords:            'LBL_FILTER_ALL_RECORDS',
     labelAllRecordsFormatted:   null,
-
-
     /**
      * @override
      * @param {Object} opts
@@ -54,12 +52,12 @@
         app.view.View.prototype.initialize.call(this, opts);
 
         //Load partials
-        this._select2formatSelectionTemplate = app.template.get("filter-filter-dropdown.selection-partial");
-        this._select2formatResultTemplate = app.template.get("filter-filter-dropdown.result-partial");
+        this._select2formatSelectionTemplate = app.template.get('filter-filter-dropdown.selection-partial');
+        this._select2formatResultTemplate = app.template.get('filter-filter-dropdown.result-partial');
 
-        this.listenTo(this.layout, "filter:select:filter", this.handleSelect);
-        this.listenTo(this.layout, "filter:change:module", this.handleModuleChange);
-        this.listenTo(this.layout, "filter:render:filter", this._renderHtml);
+        this.listenTo(this.layout, 'filter:select:filter', this.handleSelect);
+        this.listenTo(this.layout, 'filter:change:module', this.handleModuleChange);
+        this.listenTo(this.layout, 'filter:render:filter', this._renderHtml);
         this.listenTo(this.layout, 'filter:create:close', this.formatSelection);
     },
 
@@ -76,20 +74,49 @@
             return;
         }
         this._super('_renderHtml');
-
+        this.getModelFilter();
         this.filterList = this.getFilterList();
-
         this._renderDropdown(this.filterList);
     },
 
     /**
-     * Get the list of filters to fill the dropdown
-     * @return {Array}
+     * Adds the actual filter to the dropdown
+     *
+     * @param {Object} model
+     * */
+    addModelFilterToLayoutFilters: function(model) {
+        this.layout.filters.collection.add(model);
+        this.layout.filters.collection.sort();
+        this.layout.selectFilter(model.id);
+    },
+
+    /**
+     * When the filters collection not contains the model filter, fetch and add it to the collection
      */
+    getModelFilter: function() {
+        var modelFilterId = this.model.get('filter_id');
+
+        if (modelFilterId) {
+            var modelFilter = this.layout.filters.collection.findWhere({id: modelFilterId});
+
+            if (!modelFilter) {
+                var url = app.api.buildURL('Filters/' + modelFilterId, null, null);
+                app.api.call('read', url, null, {
+                    success: _.bind(this.addModelFilterToLayoutFilters, this)
+                });
+            }
+        }
+    },
+
+    /**
+     * Get the list of filters from layout.filters.collection for the dropdown
+     *
+     * @return {Array}
+     * */
     getFilterList: function() {
         var filters = [];
         if (this.layout.canCreateFilter()) {
-            filters.push({id: "create", text: app.lang.get(this.labelCreateNewFilter)});
+            filters.push({id: 'create', text: app.lang.get(this.labelCreateNewFilter)});
         }
         if (this.layout.filters.collection.get('all_records') && this.labelAllRecordsFormatted) {
             this.layout.filters.collection.get('all_records').set('name',  this.labelAllRecordsFormatted);
@@ -102,7 +129,7 @@
                 id: model.id,
                 text: this.layout.filters.collection._getTranslatedFilterName(model)
             };
-            if (model.get("editable") === false && !firstNonEditable) {
+            if (model.get('editable') === false && !firstNonEditable) {
                 opts.firstNonUserFilter = true;
                 firstNonEditable = true;
             }
@@ -122,7 +149,7 @@
      */
     _renderDropdown: function(data) {
         var self = this;
-        this.filterNode = this.$(".search-filter");
+        this.filterNode = this.$('.search-filter');
 
         this.filterNode.select2({
             data: data,
@@ -178,11 +205,11 @@
         });
 
         if (!this.filterDropdownEnabled) {
-            this.filterNode.select2("disable");
+            this.filterNode.select2('disable');
         }
 
-        this.filterNode.off("change");
-        this.filterNode.on("change",
+        this.filterNode.off('change');
+        this.filterNode.on('change',
             /**
              * Called when the user selects a filter in the dropdown
              *
@@ -209,26 +236,27 @@
 
     /**
      * Get the dropdown labels for the filter
+     *
      * @param {Object} el
      * @param {Function} callback
-     */
+     * */
     initSelection: function(el, callback) {
-        var data,
-            model,
-            val = el.val();
+        var data;
+        var model;
+        var val = el.val();
 
         if (val === 'create') {
             //It should show `Create`
-            data = {id: "create", text: app.lang.get(this.labelCreateNewFilter)};
+            data = {id: 'create', text: app.lang.get(this.labelCreateNewFilter)};
 
         } else {
             model = this.layout.filters.collection.get(val);
 
             //Fallback to `all_records` filter if not able to retrieve selected filter
             if (!model) {
-                data = {id: "all_records", text: app.lang.get(this.labelAllRecords)};
+                data = {id: 'all_records', text: app.lang.get(this.labelAllRecords)};
 
-            } else if (val === "all_records") {
+            } else if (val === 'all_records') {
                 data = this.formatAllRecordsFilter(null, model);
             } else {
                 data = {id: model.id, text: this.layout.filters.collection._getTranslatedFilterName(model)};
@@ -240,14 +268,15 @@
 
     /**
      * Update the text for the selected filter and returns template
+     *
      * @param {Object} item
      * @return {string}
-     */
+     * */
     formatSelection: function(item) {
-        var ctx = {},
-            safeString,
-            a11yLabel = app.lang.get('LBL_FILTER_CREATE_FILTER'),
-            a11yTabindex = 0;
+        var ctx = {};
+        var safeString;
+        var a11yLabel = app.lang.get('LBL_FILTER_CREATE_FILTER');
+        var a11yTabindex = 0;
 
         //Don't remove this line. We want to update the selected filter name but don't want to change to the filter
         //name displayed in the dropdown
@@ -290,9 +319,10 @@
 
     /**
      * Returns template
+     *
      * @param {Object} option
      * @return {string}
-     */
+     * */
     formatResult: function(option) {
         if (option.id === this.layout.getLastFilter(this.layout.layout.currentModule, this.layout.layoutType)) {
             option.icon = 'fa-check';
@@ -326,10 +356,11 @@
         if (!this.layout.canCreateFilter() || !this.filterDropdownEnabled || this.layout.showingActivities) {
             return false;
         }
-        if (id === "create" || id === 'all_records') {
+        if (id === 'create' || id === 'all_records') {
             return true;
         } else {
-            return !this.layout.filters.collection.get(id) || this.layout.filters.collection.get(id).get('editable') !== false;
+            var filterId = this.layout.filters.collection.get(id);
+            return !filterId || filterId.get('editable') !== false;
         }
     },
 
@@ -350,7 +381,7 @@
      * @param {Object} item
      * @return {Object} item with formatted label
      */
-    formatAllRecordsFilter: function (item, model) {
+    formatAllRecordsFilter: function(item, model) {
         item = item || {id: 'all_records'};
 
         //SP-1819: Seeing "All Leads" instead of "All Records" in sub panel
@@ -383,22 +414,23 @@
             evt.stopPropagation();
         }
 
-        var filterId = this.filterNode.val(),
-            filterModel,
-            a11yTabindex = 0;
+        var filterId = this.filterNode.val();
+        var filterModel;
+        var a11yTabindex = 0;
 
         if (filterId === 'all_records') {
-            // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
+            // Figure out if we have an edit state.
+            // This would mean user was editing the filter so we want him to retrieve
             // the filter form in the state he left it.
-            this.layout.trigger("filter:select:filter", 'create');
+            this.layout.trigger('filter:select:filter', 'create');
             a11yTabindex = 0;
         } else {
             filterModel = this.layout.filters.collection.get(filterId);
             a11yTabindex = -1;
         }
 
-        if (filterModel && filterModel.get("editable") !== false) {
-            this.layout.trigger("filter:create:open", filterModel);
+        if (filterModel && filterModel.get('editable') !== false) {
+            this.layout.trigger('filter:create:open', filterModel);
             a11yTabindex = 0;
         }
 
@@ -411,13 +443,14 @@
      * Handler for when the user selects a module in the filter bar.
      */
     handleModuleChange: function(linkModuleName, linkName) {
-        this.filterDropdownEnabled = (linkName !== "all_modules");
+        this.filterDropdownEnabled = (linkName !== 'all_modules');
     },
 
     /**
      * When a click happens on the close icon, clear the last filter and trigger reinitialize
+     *
      * @param {Event} evt
-     */
+     * */
     handleClearFilter: function(evt) {
         if (evt && evt.type === 'keydown' &&
             !(evt.keyCode === $.ui.keyCode.ENTER ||  evt.keyCode === $.ui.keyCode.SPACE)) {
@@ -447,4 +480,4 @@
         }
         app.view.View.prototype._dispose.call(this);
     }
-})
+});

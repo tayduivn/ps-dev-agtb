@@ -187,9 +187,8 @@ describe('Base.View.Dashablelist', function() {
                 expect(superStub).not.toHaveBeenCalled();
             });
 
-            it('should call _displayNoFilterAccess when no filter access', function() {
+            it('should not call _displayNoFilterAccess when filter limit exceeded and has access', function() {
                 var stubDisplayNoFilterAccess = sinon.collection.stub(view, '_displayNoFilterAccess');
-
                 SugarTest.declareData('base', 'Filters');
                 sinon.collection.stub(app.BeanCollection.prototype, 'fetch', function(options) {
                     options.success();
@@ -200,8 +199,7 @@ describe('Base.View.Dashablelist', function() {
                 filters.setModuleName(moduleName);
                 filters.load();
                 view.initDashlet('view');
-
-                expect(stubDisplayNoFilterAccess).toHaveBeenCalledOnce();
+                expect(stubDisplayNoFilterAccess).not.toHaveBeenCalledOnce();
             });
         });
 
