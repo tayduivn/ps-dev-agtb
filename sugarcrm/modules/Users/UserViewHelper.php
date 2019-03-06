@@ -199,11 +199,13 @@ class UserViewHelper {
      *
      * This function handles setting up the user type dropdown field.  It determines which user types are available for the current user.
      * At the end of the function two Smarty variables (USER_TYPE_DROPDOWN and USER_TYPE_READONLY) are assigned.
+     * Also IDM_MODE_ENABLED Smarty variable is assigned to disable field editing in IDM-mode.
      *
      */
     public function setupUserTypeDropdown() {
         global $current_user;
 
+        $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
 
         //if this is an existing bean and the type is empty, then populate user type
         if(!empty($this->bean->id) && empty($this->bean->user_type))
@@ -275,6 +277,7 @@ class UserViewHelper {
         $this->ss->assign('USER_TYPE_DROPDOWN',$userTypeDropdown);
         $this->ss->assign('USER_TYPE_READONLY',$userTypes[$userType]['label'] . "<input type='hidden' id='UserType' value='{$userType}'><div id='UserTypeDesc'>&nbsp;</div>");
 
+        $this->ss->assign('IDM_MODE_ENABLED', $idpConfig->isIDMModeEnabled());
     }
 
     protected function setupPasswordTab() {
