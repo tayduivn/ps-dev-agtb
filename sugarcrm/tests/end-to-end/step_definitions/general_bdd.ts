@@ -59,15 +59,27 @@ Then(/^(\w+) \*(\w+) should have the following values:$/,
         let rec_view = await seedbed.components[`${name}Record`];
 
         await goToUrl(module + '/' + record.id);
+        await this.driver.waitForApp();
+
         await buttonClicks('show more', rec_view);
+        await this.driver.waitForApp();
+
         if (module === 'Quotes') {
             let rec = await seedbed.components[`${name}Record`].RecordView;
             await rec.expandQuotePanel('Billing_and_Shipping');
             await rec.expandQuotePanel('Quote_Settings');
             await rec.expandQuotePanel('Show_More');
+            await this.driver.waitForApp();
         }
 
         await checkValues(rec_view, table);
+    }, {waitForApp: true}
+);
+
+Then(/^I verify and close alert$/,
+    async function (table: TableDefinition) {
+        await verifyAlertProperties(table);
+        await closeAlert();
     }, {waitForApp: true}
 );
 
@@ -190,14 +202,72 @@ export const checkValues = async function (view: BaseView, data: TableDefinition
     }
 };
 
+/**
+ * Close alert dialog
+ *
+ * @returns {Promise<void>}
+ */
 export const closeAlert = async function () {
     let alert = new AlertCmp({});
     await alert.close();
 };
 
+/**
+ * Confirm or Cancel warning dialog
+ *
+ * @param actionName
+ * @returns {Promise<void>}
+ */
 export const closeWarning  = async function(actionName) {
-    let alert = new AlertCmp({});
+    let alert = new AlertCmp({type: 'warning'});
     await alert.clickButton(actionName);
+};
+
+/**
+ * Verify type of alert and message displayed in the alert dialog
+ *
+ * @param {TableDefinition} data
+ * @returns {Promise<void>}
+ */
+export const verifyAlertProperties = async function (data: TableDefinition) {
+
+    let errors = [];
+    let alert = new AlertCmp({});
+    let actualAlertMessage = await alert.getText();
+    let actualAlertType = await alert.getType();
+
+    let expectedData = data.hashes()[0];
+
+    let expectedAlertMessage = expectedData.message;
+    let expectedAlertType = expectedData.type;
+
+    if (actualAlertMessage !== expectedAlertMessage) {
+        errors.push(
+            [
+                `Expected alert message: ${expectedAlertMessage}`,
+                `\tActual alert message: ${actualAlertMessage}`,
+                `\n`,
+            ].join('\n')
+        )
+    }
+
+    if (actualAlertType !== expectedAlertType) {
+        errors.push(
+            [
+                `Expected alert type: ${expectedAlertType}`,
+                `\tActual alert type: ${actualAlertType}`,
+                `\n`,
+            ].join('\n')
+        )
+    }
+    let message = '';
+    _.each(errors, (item) => {
+        message += item;
+    });
+
+    if (message) {
+        throw new Error(message);
+    }
 };
 
 export const goToUrl = async function (urlHash): Promise<void> {
@@ -218,7 +288,7 @@ export const parseInputArray = async function (arg: string): Promise<any[]> {
             let record = seedbed.cachedRecords.get(sRecord[i].trim().replace('*', ''));
 
             if (!record) {
-                throw new Error(`Record '${arg}' doesn't exist`);
+                throw new Error(`Record with the following ID '${sRecord[i].trim()}' doesn't exist`);
             }
             records.push(record);
         }
@@ -228,3 +298,26 @@ export const parseInputArray = async function (arg: string): Promise<any[]> {
     }
 };
 
+/**
+ * Toggle record(s) specified by record ID in SIDECAR list view
+ *
+ * @param {string} inputIDs string of comma-separated records IDs
+ * @param {ListView} listView module's list view
+ * @returns {Promise<number>} number of selected records
+ */
+export const toggleSpecifiedRecords  = async function (inputIDs: string, listView: ListView): Promise<number> {
+
+    let recordIds = null;
+    recordIds = await parseInputArray(inputIDs);
+
+    // Toggle specific record(s)
+    if (Array.isArray(recordIds)) {
+        for (let i = 0; i < recordIds.length; i++) {
+            await toggleRecord({id: recordIds[i].id}, listView);
+        }
+    } else {
+        await toggleRecord({id: recordIds.id}, listView);
+    }
+
+    return recordIds.length;
+};

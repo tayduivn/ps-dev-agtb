@@ -12,37 +12,16 @@
 import AlertCmp from '../components/alert-cmp';
 import {When} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
-import * as _ from 'lodash';
+import {closeAlert,closeWarning, verifyAlertProperties} from './general_bdd';
 
-    /**
-     * Delete confirmation alert
-     */
     When(/^I (Cancel|Confirm) confirmation alert$/, async function(choice: string) {
-        let alert = new AlertCmp({type: 'warning'});
-        await alert.clickButton(choice.toLowerCase());
+        await closeWarning(choice);
     }, {waitForApp: true});
 
     When(/^I close alert$/, async function() {
-        let alert = new AlertCmp({});
-        await alert.close();
+        await closeAlert();
     }, {waitForApp: true});
 
     When(/^I check alert/, async function(data: TableDefinition) {
-
-        let alert = new AlertCmp();
-        let text = await alert.getText();
-        let messageType = await alert.getType();
-
-        let expectedData: any = data.hashes()[0];
-
-        let message = expectedData.message;
-        let type = expectedData.type;
-
-        if (text !== message) {
-            throw new Error('Expected message: ' + message + ' Actual message: ' + text);
-        }
-
-        if (messageType !== type) {
-            throw new Error('Expected type: ' + type + ' Actual type: ' + messageType);
-        }
+        await verifyAlertProperties(data);
     }, {waitForApp: true});

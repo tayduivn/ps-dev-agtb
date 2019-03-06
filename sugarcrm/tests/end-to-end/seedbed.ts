@@ -33,6 +33,7 @@ import ActivityStreamLayout from './layouts/activity-stream-layout';
 import ModuleMenuCmp from './components/module-menu-cmp';
 import KBViewCategoriesDrawer from './layouts/kb-view-categories-layout';
 import KBSettingsLayout from './layouts/kb-settings-layout';
+import MergeLayout from './layouts/merge-layout';
 
 export default (seedbed: Seedbed) => {
 
@@ -66,7 +67,7 @@ export default (seedbed: Seedbed) => {
 
             seedbed.defineComponent(`${moduleName}List`, ListLayout, {module: moduleName});
 
-            // If module supports "RecordLayout" let's pre-create it
+            // If this module has a record view, create it and any views available from the record view
             if (module.views && module.views.record) {
                 seedbed.defineComponent(`${moduleName}Record`, RecordLayout, {module: moduleName});
                 seedbed.defineComponent(`${moduleName}Drawer`, DrawerLayout, {module: moduleName});
@@ -75,6 +76,7 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`PersonalInfoDrawer`, PersonalInfoDrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`AuditLogDrawer`, AuditLogDrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`BusinessRulesDesign`, BusinessRulesDesignLayout, {module: moduleName});
+                seedbed.defineComponent(`MergeDrawer`, MergeLayout, {module: moduleName});
             }
         });
 

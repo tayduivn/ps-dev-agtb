@@ -13,8 +13,7 @@
 import {Hashmap} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
 import {When, seedbed} from '@sugarcrm/seedbed';
-import AlertCmp from '../components/alert-cmp';
-import {chooseModule, closeAlert, toggleRecord, parseInputArray} from './general_bdd';
+import {chooseModule, closeAlert, toggleRecord, parseInputArray, closeWarning, toggleSpecifiedRecords} from './general_bdd';
 import MassupdateView from '../views/massupdate-view';
 
 When(/^I (perform|cancel) mass update of all (\w+) with the following values:$/,
@@ -83,8 +82,7 @@ const populateMassUpdate = async function (massUpdateView, module, table: TableD
 
         // Dismiss confirmation alert for fields of 'populate_list' type
         if (fieldObject.value.populate_list && (fieldName.indexOf('account_name') !== -1 )) {
-            let alert = new AlertCmp({type: 'warning'});
-            await alert.clickButton('confirm');
+            await closeWarning('Confirm');
         }
     }
 };
@@ -100,17 +98,8 @@ When(/^I (perform|cancel) mass update of (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\])
         const listView = await seedbed.components[`${module}List`].ListView;
         const massUpdateView = await seedbed.components[`${module}List`].MassUpdateView;
 
-        let recordIds = null;
-        recordIds = await parseInputArray(inputIDs);
-
-        // toggle specific record(s)
-        if (!Array.isArray(recordIds)) {
-            await toggleRecord({id: recordIds.id}, listView);
-        } else {
-            for (let i = 0; i < recordIds.length; i++) {
-                await toggleRecord({id: recordIds[i].id}, listView);
-            }
-        }
+        // Toggle selected records
+        await toggleSpecifiedRecords(inputIDs, listView);
 
         // Select mass update action
         await listView.selectAction('Mass Update');
@@ -174,21 +163,8 @@ When(/^I recalculate (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) values in (\w+)$/,
         await seedbed.client.driver.waitForApp();
         const listView = await seedbed.components[`${module}List`].ListView;
 
-        let recordIds = null;
-        recordIds = await parseInputArray(inputIDs);
-
-        // toggle specific record(s)
-        if ( !Array.isArray(recordIds) ) {
-            await toggleRecord({id : recordIds.id}, listView );
-        } else {
-            for ( let i = 0; i < recordIds.length; i++) {
-                await toggleRecord({id : recordIds[i].id}, listView );
-            }
-        }
-
-        // Toggle all records
-        await listView.toggleAll();
-        this.driver.waitForApp();
+        // Toggle selected records
+        await toggleSpecifiedRecords(inputIDs, listView);
 
         // Select Recalculate Values
         await listView.selectAction('Recalculate Values');
