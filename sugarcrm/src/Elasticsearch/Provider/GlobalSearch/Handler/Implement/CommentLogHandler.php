@@ -134,7 +134,6 @@ class CommentLogHandler extends AbstractHandler implements
 
         $searchFieldName = $mapping->getModule() . Mapping::PREFIX_SEP . $this->searchField;
         $mapping->addObjectProperty($searchFieldName, $searchField);
-        $mapping->excludeFromSource($searchFieldName);
     }
 
     /**
