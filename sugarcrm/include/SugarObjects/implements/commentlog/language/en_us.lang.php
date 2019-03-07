@@ -12,5 +12,4 @@
 
 $mod_strings = array(
     'LBL_COMMENTLOG_LINK' => 'Comment Log',
-    'LBL_COMMENTLOG' => 'Comment Log',
 );
