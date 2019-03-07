@@ -63,8 +63,22 @@
 
     /**
      * Trigger action when a model row is clicked
+     *
+     * @param {Object} event Click event that triggers the function
      */
     handleRowClick: function(event) {
-        // CS-46: update me with real action in future CS ticket
+        var modelId = this.$(event.target).closest('.multi-line-row').data('id');
+        var model = _.find(this.collection.models, function(model) {
+            return model.get('id') === modelId;
+        });
+
+        app.drawer.open({
+            layout: 'row-model-data',
+            direction: 'horizontal',
+            context: {
+                model: model,
+                module: model._module
+            }
+        });
     }
 })

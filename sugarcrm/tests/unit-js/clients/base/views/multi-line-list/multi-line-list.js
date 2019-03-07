@@ -63,4 +63,32 @@ describe('Base.View.MultiLineListView', function() {
             }]);
         });
     });
+
+    describe('handleRowClick', function() {
+        it('should open drawer with respective definition', function() {
+            app.drawer = {open: $.noop};
+            var drawerOpenStub = sinon.collection.stub(app.drawer, 'open');
+            var event = {target: 'mockValue'};
+            var model1 = app.data.createBean('Cases', {id: '1234'});
+            var model2 = app.data.createBean('Cases', {id: '9999'});
+            view.collection = app.data.createBeanCollection('Cases', [model1, model2]);
+
+            sinon.collection.stub(view, '$').withArgs('mockValue').returns({
+                closest: sinon.collection.stub().withArgs('.multi-line-row').returns({
+                    data: sinon.collection.stub().withArgs('id').returns('1234')
+                })
+            });
+            view.handleRowClick(event);
+
+            expect(drawerOpenStub).toHaveBeenCalledWith({
+                layout: 'row-model-data',
+                direction: 'horizontal',
+                context: {
+                    model: model1,
+                    module: model1._module
+                }
+            });
+            delete app.drawer;
+        });
+    });
 });

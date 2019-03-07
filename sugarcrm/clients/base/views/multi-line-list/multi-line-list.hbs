@@ -25,7 +25,7 @@
         </thead>
         <tbody>
             {{#each ../collection.models}}
-                <tr class="multi-line-row">
+                <tr class="multi-line-row" data-id={{this.id}}>
                     {{#each ../fields}}
                         <td class="subfields{{#if align}} {{align}}{{/if}}">
                             {{#each subfields}}

@@ -113,7 +113,7 @@
         //open the drawer
         this._animateOpenDrawer(_.bind(function() {
             this._afterOpenActions();
-        }, this));
+        }, this), def);
 
         //load and render new layout in drawer
         component.loadData();
@@ -360,8 +360,9 @@
      *
      * @private
      * @param {Function} callback Called when open animation is finished.
+     * @param {Object} def Definition of the drawer layout.
      */
-    _animateOpenDrawer: function(callback) {
+    _animateOpenDrawer: function(callback, def) {
         if (this._components.length === 0) {
             this._enterState(this.STATES.IDLE);
             return;
@@ -390,10 +391,19 @@
 
         //indicate that it's an active drawer
         drawers.$next.addClass('drawer active');
-        //set the height of the new drawer
-        drawers.$next.css('height', drawerHeight);
-        //set the animation starting point for the new drawer
-        drawers.$next.css('top', aboveWindowTopPos);
+
+        if (def.direction && def.direction === 'horizontal') {
+            //set the starting position on the right for the new drawer
+            drawers.$next.css('left', '100%');
+            drawers.$next.css('width', '75%');
+            $('.drawer-backdrop').css('opacity', '0');
+        } else {
+            //set the height of the new drawer
+            drawers.$next.css('height', drawerHeight);
+            //set the animation starting point for the new drawer
+            drawers.$next.css('top', aboveWindowTopPos);
+        }
+
         //mark the top drawer as inactive
         drawers.$top
             .addClass('inactive')
@@ -416,16 +426,20 @@
                 this.trigger('drawer:resize', drawerHeight);
             });
 
-            //start animation to open the drawer
-            drawers.$next.css('top','');
-            drawers.$top.css('top', bottomDrawerTopPos);
-            if (drawers.$bottom) {
-                drawers.$bottom.css('top', belowWindowTopPos);
-            }
+            if (def.direction && def.direction === 'horizontal') {
+                drawers.$next.css('left', '25%');
+            } else {
+                //start animation to open the drawer
+                drawers.$next.css('top','');
+                drawers.$top.css('top', bottomDrawerTopPos);
+                if (drawers.$bottom) {
+                    drawers.$bottom.css('top', belowWindowTopPos);
+                }
 
-            //resize the visible drawer when the browser resizes
-            if (this._components.length === 1) {
-                $(window).on('resize.drawer', _.bind(this._resizeDrawer, this));
+                //resize the visible drawer when the browser resizes
+                if (this._components.length === 1) {
+                    $(window).on('resize.drawer', _.bind(this._resizeDrawer, this));
+                }
             }
         }, this));
     },
