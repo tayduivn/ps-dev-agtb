@@ -75,7 +75,7 @@ $mod_strings = array (
 	'ERR_RECIPIENT_EMAIL'				=> 'Recipient Email Address',
 	'ERR_SERVER_STATUS'					=> 'Your server status',
 	'ERR_SERVER_SMTP_EMPTY'				=> 'The system is unable to send an email to the user. Please check the Outgoing Mail Configuration in <a href="index.php?module=EmailMan&action=config">Email Settings</a>.',
-    'ERR_CREATE_USER_FOR_IDM_MODE'      => 'New users must be created in Cloud Settings.',
+    'ERR_CREATE_USER_FOR_IDM_MODE'      => 'New users must be created in <a href="{0}" target="_blank">Cloud Settings</a>.',
 
     'LBL_EMAIL_ADDRESS'                 => 'Email Address',
 
@@ -633,7 +633,7 @@ $mod_strings = array (
     'LBL_DETAIL' => 'User Profile',
 
     'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER' =>
-        'Please access Cloud Settings to make changes to read-only fields.',
+        'Please access <a href="%s" target="_blank">Cloud Settings</a> to make changes to read-only fields.',
     'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_REGULAR_USER' =>
         'Please contact your Sugar administrator if you would like to make changes to read-only fields.',
 ); // END STRINGS DEFS

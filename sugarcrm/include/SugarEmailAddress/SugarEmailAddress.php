@@ -13,6 +13,7 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 use Doctrine\DBAL\Connection;
+use Sugarcrm\IdentityProvider\Srn;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
 
 class SugarEmailAddress extends SugarBean
@@ -1169,8 +1170,21 @@ class SugarEmailAddress extends SugarBean
         $disabledForModule = !$skipIdmRestrictions
             && $idmConfig->isIDMModeEnabled()
             && in_array($module, $idmConfig->getIDMModeDisabledModules());
+        $cloudConsoleUrl = '';
+        if ($disabledForModule) {
+            $idmModeConfig = $idmConfig->getIDMModeConfig();
+            $tenantSrn = Srn\Converter::fromString($idmModeConfig['tid']);
+            $srnManagerConfig = [
+                'partition' => $tenantSrn->getPartition(),
+                'region' => $tenantSrn->getRegion(),
+            ];
+            $srnManager = new Srn\Manager($srnManagerConfig);
+            $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $id);
+            $cloudConsoleUrl = $idmConfig->buildCloudConsoleUrl('userProfile', [Srn\Converter::toString($userSrn)]);
+        }
         $this->smarty->assign('idmMode', json_encode([
             'disabledForModule' => $disabledForModule,
+            'cloudConsoleUrl' => $cloudConsoleUrl,
         ]));
 
         // SugarBean shouldn't rely on any request parameters, needs refactoring ...

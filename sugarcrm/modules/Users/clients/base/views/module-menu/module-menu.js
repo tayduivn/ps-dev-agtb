@@ -25,7 +25,9 @@
         if (App.config.idmModeEnabled && (event.target.getAttribute('data-navbar-menu-item') == 'LNK_NEW_USER')) {
             App.alert.show('idm_create_user', {
                 level: 'info',
-                messages: App.lang.get('ERR_CREATE_USER_FOR_IDM_MODE', 'Users')
+                messages: App.lang
+                    .get('ERR_CREATE_USER_FOR_IDM_MODE', 'Users')
+                    .replace('{0}', this.meta.cloudConsoleLink)
             });
         }
         this._super('handleRouteEvent', [event]);
