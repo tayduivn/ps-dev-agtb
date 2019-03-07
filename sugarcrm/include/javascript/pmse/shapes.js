@@ -78,7 +78,7 @@ AdamShape.prototype.setName = function (value) {
 
 AdamShape.prototype.saveProject = function (root, App, w) {
     root.canvas.showModal();
-    App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
+    App.alert.show('upload', {level: 'process', title: 'LBL_LOADING_NO_DOTS', autoClose: false});
     root.canvas.project.save({
         success: function () {
             root.canvas.hideModal();

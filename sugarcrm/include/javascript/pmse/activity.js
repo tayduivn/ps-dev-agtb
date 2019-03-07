@@ -1879,7 +1879,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
         cssStyle : actionCSS,
         handler: function () {
             root.canvas.showModal();
-            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
+            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING_NO_DOTS', autoClose: false});
             root.canvas.project.save({
                 success: function () {
                     root.canvas.hideModal();
@@ -2250,7 +2250,7 @@ AdamActivity.prototype.actionFactory = function(type) {
             self.canvas.project.save();
             w.show();
             w.html.style.display = 'none';
-            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING_NO_DOTS', autoclose: false});
         },
         disabled: !_.isUndefined(actionDef.disabled) ? actionDef.disabled : false
     });
@@ -2456,7 +2456,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                 $(".pmse-form-error")
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
-                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING_NO_DOTS', autoclose: false});
                 var optionType = filterModules.selectedFieldOption(this.html, this.options);
                 filterRelated.setFilterFieldDisable(filterRelated, true);
                 if (!optionType || optionType === 'one') {
@@ -2504,7 +2504,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                 $('.pmse-form-error')
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
-                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING_NO_DOTS', autoclose: false});
                 var optionType = filterModules.selectedFieldOption(this.html, this.options);
                 if (!optionType || optionType === 'one') {
                     filterRelated.setFilterFieldDisable(filterRelated, true);
@@ -2727,7 +2727,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                 $(".pmse-form-error")
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
-                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
+                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING_NO_DOTS', autoClose: false});
                 var optionType = filterModules.selectedFieldOption(this.html, this.options);
                 if (!optionType) {
                     filterModules.setFilterFieldDisable(filterModules, true);
@@ -2772,7 +2772,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                 $('.pmse-form-error')
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
-                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING_NO_DOTS', autoclose: false});
                 if (comboRelated.value) {
                     updater_field.proxy.uid = comboRelated.value;
                     updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + comboRelated.value;

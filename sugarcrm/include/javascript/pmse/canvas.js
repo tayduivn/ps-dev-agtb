@@ -213,7 +213,7 @@ AdamCanvas.prototype.getContextMenu = function () {
     });
 
     fieldsItems = function (value, initial) {
-        App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+        App.alert.show('upload', {level: 'process', title: 'LBL_LOADING_NO_DOTS', autoclose: false});
         var val = new SugarProxy({
             url: 'pmse_Project/CrmData/fields/' + value,
             //restClient: this.canvas.project.restClient,
@@ -266,7 +266,7 @@ AdamCanvas.prototype.getContextMenu = function () {
 
     callbackModule = {
         'loaded' : function (data) {
-            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING_NO_DOTS', autoclose: false});
             //w.style.display = 'none';
             //$('.adam-window').hide();
             var arrOperator = [
