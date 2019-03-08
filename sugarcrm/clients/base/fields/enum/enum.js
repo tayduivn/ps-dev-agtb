@@ -351,12 +351,12 @@
     },
 
     /**
-     * Allow overriding of what module is used for loading the enum options
+     * Allow overriding of what module is used for loading the enum options.
      *
-     * @return {string}
+     * @return {string} The module from which to load the enum options.
      */
     getLoadEnumOptionsModule: function() {
-        return this.module;
+        return this.def.enum_module || this.module;
     },
 
     /**

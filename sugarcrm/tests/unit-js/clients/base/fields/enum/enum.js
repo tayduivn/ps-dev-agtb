@@ -8,11 +8,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("enum field", function() {
-    var app, field, stub_appListStrings,
-        module = 'Contacts',
-        fieldName = 'test_enum',
-        model;
+describe('enum field', function() {
+    var app;
+    var field;
+    var fieldName = 'test_enum';
+    var model;
+    var module = 'Contacts';
+    var options;
+    var stubAppListStrings;
 
     beforeEach(function() {
         Handlebars.templates = {};
@@ -28,9 +31,8 @@ describe("enum field", function() {
         SugarTest.app.data.declareModels();
         model = app.data.createBean(module);
 
-        stub_appListStrings = sinon.stub(app.lang, 'getAppListStrings', function() {
-            return {"":"","Defect":"DefectValue","Feature":"FeatureValue"};
-        });
+        options = {'': '', 'Defect': 'DefectValue', 'Feature': 'FeatureValue'};
+        stubAppListStrings = sinon.stub(app.lang, 'getAppListStrings').returns(options);
 
         if (!$.fn.select2) {
             $.fn.select2 = function(options) {
@@ -54,7 +56,7 @@ describe("enum field", function() {
         Handlebars.templates = {};
         model = null;
         field = null;
-        stub_appListStrings.restore();
+        stubAppListStrings.restore();
         SugarTest.testMetadata.dispose();
     });
 
@@ -204,10 +206,32 @@ describe("enum field", function() {
             expect(select2opts.separator).toEqual('|');
             expect(select2opts.multiple).toBe(true);
         });
-        it("should allow multiselect to be configured via metadata", function(){
-            field = SugarTest.createField("base", fieldName, "enum", "detail", {isMultiSelect: true, options: "bugs_type_dom"});
+
+        it('should allow multiselect to be configured via metadata', function() {
+            field = SugarTest.createField({
+                client: 'base',
+                name: fieldName,
+                type: 'enum',
+                viewName: 'detail',
+                fieldDef: {
+                    container_class: 'my-container-class',
+                    dropdown_class: 'my-dropdown-class',
+                    dropdown_width: 50,
+                    enum_width: 30,
+                    isMultiSelect: true,
+                    options: 'bugs_type_dom',
+                    searchBarThreshold: 12,
+                },
+            });
+
             var select2opts = field.getSelect2Options([]);
+
+            expect(select2opts.containerCssClass).toBe('my-container-class');
+            expect(select2opts.dropdownCss).toEqual({width: 50});
+            expect(select2opts.dropdownCssClass).toBe('my-dropdown-class');
+            expect(select2opts.minimumResultsForSearch).toBe(12);
             expect(select2opts.multiple).toBe(true);
+            expect(select2opts.width).toBe(30);
         });
     });
 
@@ -241,14 +265,6 @@ describe("enum field", function() {
             var expected2 = ["Very", "Weird"];
             expect(field.format(original)).toEqual(expected);
             expect(field.format(original2)).toEqual(expected2);
-        });
-
-        it("should unformat nulls into server equivalent format of array with empty string", function(){
-            // Backbone.js won't sync null values so server doesn't pick up on change and clear multi-select field
-            field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
-            var original = null;
-            var expected = [];
-            expect(field.unformat(original)).toEqual(expected);
         });
 
         it("should format the model's value into a string array when model is updated", function() {
@@ -480,6 +496,241 @@ describe("enum field", function() {
                 expect(field.appendValue).toBeFalsy();
                 expect(field.model.get(fieldName + '_replace')).toBe('0');
             });
+        });
+    });
+
+    describe('direction', function() {
+        var oldDirection;
+
+        beforeEach(function() {
+            field = SugarTest.createField({
+                client: 'base',
+                name: fieldName,
+                type: 'enum',
+            });
+            oldDirection = app.lang.direction;
+        });
+
+        afterEach(function() {
+            app.lang.direction = oldDirection;
+        });
+
+        it('should be undefined if there are no items', function() {
+            field.items = {};
+            expect(field.direction()).toBeUndefined();
+        });
+
+        it('should be undefined if the app direction is ltr', function() {
+            field.items =  {'I am': 'an item'};
+            app.lang.direction = 'ltr';
+
+            expect(field.direction()).toBeUndefined();
+        });
+
+        it('should be rtl if the first item is RTL and the app direction is already rtl', function() {
+            field.items = {'RTL': 'I want to be displayed in RTL'};
+            app.lang.direction = 'rtl';
+            sinon.collection.stub(app.utils, 'isDirectionRTL')
+                .withArgs('I want to be displayed in RTL')
+                .returns(true);
+
+            expect(field.direction()).toEqual('rtl');
+        });
+
+        it('should be ltr otherwise', function() {
+            // note, because this uses _.values on an Object, its results may be inconsistent if some items are meant
+            // to be displayed in RTL and some are meant to be displayed in LTR. Hopefully this is not a situation
+            // which comes up often
+            field.items = {'LTR': 'I want to be displayed in LTR'};
+            app.lang.direction = 'rtl';
+            sinon.collection.stub(app.utils, 'isDirectionRTL')
+                .withArgs('I want to be displayed in LTR')
+                .returns(false);
+
+            expect(field.direction()).toEqual('ltr');
+        });
+    });
+
+    describe('bindKeyDown', function() {
+        var callback;
+        var onStub;
+
+        beforeEach(function() {
+            field = SugarTest.createField({
+                client: 'base',
+                name: fieldName,
+                type: 'enum',
+            });
+            callback = sinon.collection.spy();
+            onStub = sinon.collection.stub();
+        });
+
+        it('should bind the given callback to keydown.record', function() {
+            sinon.collection.stub(field, '$')
+                .withArgs(field.fieldTag)
+                .returns({data: $.noop, on: onStub});
+
+            field.bindKeyDown(callback);
+
+            expect(onStub).toHaveBeenCalledWith('keydown.record', {field: field}, callback);
+        });
+
+        it('should bind events to the focusser and search plugins if they are available', function() {
+            var focuserOnStub = sinon.collection.stub();
+            var searchOnStub = sinon.collection.stub();
+            var dataStub = sinon.collection.stub().withArgs('select2').returns({
+                focusser: {on: focuserOnStub},
+                search: {on: searchOnStub}
+            });
+            sinon.collection.stub(field, '$')
+                .withArgs(field.fieldTag)
+                .returns({
+                    data: dataStub,
+                    on: onStub,
+                });
+
+            field.bindKeyDown(callback);
+
+            expect(focuserOnStub).toHaveBeenCalledWith('keydown.record', {field: field}, callback);
+            expect(searchOnStub).toHaveBeenCalledWith('keydown.record', {field: field}, callback);
+        });
+    });
+
+    describe('focus', function() {
+        var select2Stub;
+
+        beforeEach(function() {
+            field = SugarTest.createField({
+                client: 'base',
+                name: fieldName,
+                type: 'enum',
+            });
+            select2Stub = sinon.collection.stub();
+            sinon.collection.stub(field, '$')
+                .withArgs(field.fieldTag)
+                .returns({select2: select2Stub});
+        });
+
+        using('different field properties',
+        [
+            {
+                action: 'disabled',
+                isMultiSelect: false,
+            },
+            {
+                action: 'list',
+                isMultiSelect: true,
+            }
+        ],
+        function(data) {
+            it('should not open the select2 on disabled or multiselect enums', function() {
+                field.action = data.action;
+                field.def.isMultiSelect = data.isMultiSelect;
+
+                field.focus();
+
+                expect(select2Stub).not.toHaveBeenCalled();
+            });
+        });
+
+        it('should open the select2 on non-disabled, non-multiselect enums', function() {
+            field.action = 'list';
+            field.def.isMultiSelect = false;
+
+            field.focus();
+
+            expect(select2Stub).toHaveBeenCalledWith('open');
+        });
+    });
+
+    describe('getLoadEnumOptionsModule', function() {
+        it('should default to the enum_module', function() {
+            field = SugarTest.createField({
+                client: 'base',
+                name: fieldName,
+                type: 'enum',
+                viewName: 'edit',
+                fieldDef: {enum_module: 'Bugs', options: 'bugs_type_dom'},
+                module: 'Cases',
+            });
+
+            expect(field.getLoadEnumOptionsModule()).toEqual('Bugs');
+        });
+
+        it('should return the field\'s module if there is no enum_module', function() {
+            field = SugarTest.createField({
+                client: 'base',
+                name: fieldName,
+                type: 'enum',
+                viewName: 'edit',
+                fieldDef: {options: 'bugs_type_dom'},
+                module: 'Bugs',
+            });
+
+            expect(field.getLoadEnumOptionsModule()).toEqual('Bugs');
+        });
+    });
+
+    describe('unformat', function() {
+        describe('multiselect', function() {
+            describe('array values', function() {
+                it(
+                    'should strip out invalid keys and preserve input order order when ordered is true in fieldDefs',
+                    function() {
+                        // it's a tad confusing, but "ordered" here really means "not sortable"
+                        field = SugarTest.createField({
+                            client: 'base',
+                            name: fieldName,
+                            type: 'enum',
+                            viewName: 'list',
+                            fieldDef: {isMultiSelect: true, options: 'bugs_type_dom', ordered: true}
+                        });
+                        field.items = options;
+
+                        expect(field.unformat(['Feature', 'Not on the list', 'Defect'])).toEqual(['Feature', 'Defect']);
+                    }
+                );
+
+                it(
+                    'should strip out invalid keys and enforce key order when ordered is false in fieldDefs',
+                    function() {
+                        field = SugarTest.createField({
+                            client: 'base',
+                            name: fieldName,
+                            type: 'enum',
+                            viewName: 'list',
+                            fieldDef: {isMultiSelect: true, options: 'bugs_type_dom', ordered: false},
+                        });
+                        field.items = options;
+
+                        expect(field.unformat(['Feature', 'Not on the list', 'Defect'])).toEqual(['Defect', 'Feature']);
+                    }
+                );
+            });
+
+            it('should unformat nulls into server equivalent format of empty array', function() {
+                // Backbone.js won't sync null values so server doesn't pick up on change and clear multi-select field
+                field = SugarTest.createField({
+                    client: 'base',
+                    name: fieldName,
+                    type: 'enum',
+                    viewName: 'list',
+                    fieldDef: {isMultiSelect: true, options: 'bugs_type_dom'}
+                });
+                var original = null;
+                var expected = [];
+                expect(field.unformat(original)).toEqual(expected);
+            });
+        });
+
+        it('should just return the given value for non-multiselect enums', function() {
+            field = SugarTest.createField({
+                client: 'base',
+                name: fieldName,
+                type: 'enum',
+            });
+
+            expect(field.unformat('a value')).toEqual('a value');
         });
     });
 });

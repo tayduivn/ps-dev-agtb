@@ -229,6 +229,11 @@
       white-space: nowrap;
       position: relative;
       vertical-align: middle;
+
+      &.pill {
+        // overrule the width: 100% above
+        width: inherit;
+      }
     }
 
     &.subfields {
