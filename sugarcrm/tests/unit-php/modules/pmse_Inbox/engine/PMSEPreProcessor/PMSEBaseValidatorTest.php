@@ -216,8 +216,8 @@ class PMSEBaseValidatorTest extends TestCase
      */
     public function testIsChangeOperation($field, $expect)
     {
-        $tv = new \PMSETerminateValidator;
-        $actual = $tv->isChangeOperation($field);
+        $bv = new \PMSEBaseValidator;
+        $actual = $bv->isChangeOperation($field);
         $this->assertSame($expect, $actual);
     }
 
@@ -246,8 +246,8 @@ class PMSEBaseValidatorTest extends TestCase
      */
     public function testGetDecodedCriteria($criteria, $expect)
     {
-        $tv = new \PMSETerminateValidator;
-        $actual = $tv->getDecodedCriteria($criteria);
+        $bv = new \PMSEBaseValidator;
+        $actual = $bv->getDecodedCriteria($criteria);
         $this->assertEquals($expect, $actual);
     }
 
@@ -259,8 +259,8 @@ class PMSEBaseValidatorTest extends TestCase
      */
     public function testGetEncodeCriteria($expect, $criteria)
     {
-        $tv = new \PMSETerminateValidator;
-        $actual = $tv->getEncodedCriteria($criteria);
+        $bv = new \PMSEBaseValidator;
+        $actual = $bv->getEncodedCriteria($criteria);
         $this->assertSame($expect, $actual);
     }
 
@@ -303,8 +303,67 @@ class PMSEBaseValidatorTest extends TestCase
      */
     public function testValidateUpdateState($criteria, $args, $expect)
     {
-        $tv = new \PMSETerminateValidator;
-        $actual = $tv->validateUpdateState($criteria, $args);
+        $bv = new \PMSEBaseValidator;
+        $actual = $bv->validateUpdateState($criteria, $args);
+        $this->assertSame($expect, $actual);
+    }
+
+    public function hasAnyOrAllTypeOperationProvider()
+    {
+        return [
+            // No criteria
+            [
+                'criteria' => '',
+                'expect' => false,
+            ],
+            // Empty criteria
+            [
+                'criteria' => '[]',
+                'expect' => false,
+            ],
+            // Non matching criteria #1
+            [
+                'criteria' => '[{"foo":"Any"}]',
+                'expect' => false,
+            ],
+            // Non matching criteria #2
+            [
+                'criteria' => '[{"expRel":"Foo"}]',
+                'expect' => false,
+            ],
+            // Match All #1
+            [
+                'criteria' => '[{"expRel":"All"}]',
+                'expect' => true,
+            ],
+            // Match All #2
+            [
+                'criteria' => '[{"foo":"Any"},{"expRel":"Foo"},{"expRel":"All"}]',
+                'expect' => true,
+            ],
+            // Match Any #1
+            [
+                'criteria' => '[{"expRel":"Any"}]',
+                'expect' => true,
+            ],
+            // Match Any #2
+            [
+                'criteria' => '[{"foo":"All"},{"expRel":"Any"},{"expRel":"Foo"}]',
+                'expect' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::hasAnyOrAllTypeOperation
+     * @param string $criteria Input criteria
+     * @param bool $expect Expectation
+     * @dataProvider hasAnyOrAllTypeOperationProvider
+     */
+    public function testHasAnyOrAllTypeOperation(string $criteria, bool $expect)
+    {
+        $bv = new \PMSEBaseValidator;
+        $actual = $bv->hasAnyOrAllTypeOperation($criteria);
         $this->assertSame($expect, $actual);
     }
 }

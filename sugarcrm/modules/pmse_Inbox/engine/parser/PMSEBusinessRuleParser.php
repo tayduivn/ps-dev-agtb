@@ -16,7 +16,7 @@
  * this token includes a new element that contains the current value of the case
  *
  */
-class PMSEBusinessRuleParser implements PMSEDataParserInterface
+class PMSEBusinessRuleParser extends PMSEAbstractDataParser implements PMSEDataParserInterface
 {
     private $evaluatedBean;
     private $currentUser;

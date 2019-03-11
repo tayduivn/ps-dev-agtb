@@ -16,7 +16,7 @@
  * according to the type of evaluation you want returns current value or null
  *
  */
-class PMSEFormResponseParser implements PMSEDataParserInterface
+class PMSEFormResponseParser extends PMSEAbstractDataParser implements PMSEDataParserInterface
 {
     /**
      * Object Bean

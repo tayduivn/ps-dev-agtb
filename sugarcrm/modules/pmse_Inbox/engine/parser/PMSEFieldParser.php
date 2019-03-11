@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\ProcessManager\Registry;
  * if there is a date data type used the classes TimeDate()
  *
  */
-class PMSEFieldParser implements PMSEDataParserInterface
+class PMSEFieldParser extends PMSEAbstractDataParser implements PMSEDataParserInterface
 {
     /**
      * Object Bean
@@ -171,59 +171,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
     {
         $tokenArray = array($criteriaToken->expModule, $criteriaToken->expField, $criteriaToken->expOperator);
         $criteriaToken->currentValue = $this->parseTokenValue($tokenArray, $params);
-        /*
-        if (isset($criteriaToken->valType) && $criteriaToken->valType == 'MODULE') {
-            $tokenArray = array($criteriaToken->valModule, $criteriaToken->valField, $criteriaToken->expOperator);
-            $criteriaToken->expValue = $this->parseTokenValue($tokenArray);
-        } else {
-        */
-            $criteriaToken->expValue = $this->setExpValueFromCriteria($criteriaToken);
-        /*
-        }
-        */
-
-        /*
-        // We need to check to see if the evaluated bean (sometimes the target
-        // and sometimes the related bean) is the right bean to work on
-        $eBean = $this->evaluatedBean;
-        if (isset($eBean->field_defs[$criteriaToken->expField])) {
-            // We are good to go, so set the working bean as the evaluated bean
-            $workingBean = $eBean;
-        } else {
-            // Evaluted bean is not the right bea, so prepare to log some relevant
-            // information, starting with the module name we failed on
-            $eModule = $eBean->getModuleName();
-
-            // Write a simple message to log, to start with
-            $msg = "Could not find {$criteriaToken->expField} on the target module $eModule";
-
-            // Look at the related bean, since that could be what we are after
-            // since the target bean is NOT what we are after
-            $rBean = $this->getRelatedBean($criteriaToken->expModule);
-
-            // Is there a related module?
-            if ($rBean !== null) {
-                // Does *it* have the field we are looking for?
-                if (isset($rBean->field_defs[$criteriaToken->expField])) {
-                    // The related bean is the one we want, so set THAT as the working bean
-                    $workingBean = $rBean;
-                } else {
-                    // We will need this for a bit of enhanced logging
-                    $rModule = $rBean->getModuleName();
-                    $msg .= " or the related module $rModule";
-
-                    // Log this as an alert, since this is fairly high priority
-                    PMSELogger::getInstance()->warning($msg);
-                    return $criteriaToken;
-                }
-            } else {
-                // A null related bean means we have nothing further to do, so
-                // log this the same as above and return
-                PMSELogger::getInstance()->warning($msg);
-                return $criteriaToken;
-            }
-        }
-        */
+        $criteriaToken->expValue = $this->setExpValueFromCriteria($criteriaToken);
 
         // Use the working bean now to get what we are after
         if (isset($criteriaToken->expField)) {
@@ -292,8 +240,12 @@ class PMSEFieldParser implements PMSEDataParserInterface
     public function getRelatedBean($link)
     {
         if (empty($this->relatedBeans[$link])) {
+            // There are times when the process bean is not the bean needed for
+            // evaluations
+            $bean = $this->getBeanForEvaluation();
+
             // Get and set the related bean since we don't have it yet
-            $this->relatedBeans[$link] = $this->getRelatedModuleObject()->getRelatedModuleBeans($this->evaluatedBean, $link);
+            $this->relatedBeans[$link] = $this->getRelatedModuleObject()->getRelatedModuleBeans($bean, $link);
         }
 
         return $this->relatedBeans[$link];
@@ -451,4 +403,25 @@ class PMSEFieldParser implements PMSEDataParserInterface
             $this->currentUser->reports_to_id : $token->expValue;
     }
 
+    /**
+     * Gets the proper bean to work on for evaluation
+     * @return SugarBean
+     */
+    protected function getBeanForEvaluation()
+    {
+        // This is simply a shortcut to make lines shorter
+        $ct = $this->criteriaToken;
+
+        // These items are set onto the token in {{@see PMSEBaseValidator::updateRelateCriteria}}
+        if (!empty($ct->expBeanModule) && !empty($ct->expBeanId)) {
+            if (isset($ct->expLinkName) && $ct->expLinkName === $ct->expModule) {
+                $bean = BeanFactory::retrieveBean($ct->expBeanModule, $ct->expBeanId);
+                if ($bean) {
+                    return $bean;
+                }
+            }
+        }
+
+        return $this->evaluatedBean;
+    }
 }

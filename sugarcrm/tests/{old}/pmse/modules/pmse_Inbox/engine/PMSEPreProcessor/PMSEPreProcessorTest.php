@@ -187,22 +187,28 @@ class PMSEPreProcessorTest extends TestCase
                 ])
                 ->getMock();
 
+        $flowData = [
+            [
+                'bpmn_type' => 'bpmEvent',
+                'bpmn_id'=>'event_0',
+                'cas_id' => 1,
+                // Added so that subject data setter doesn't die
+                'prj_id' => 'foo',
+                'pro_id' => 'bar',
+            ],
+        ];
+
         $preProcessorMock->expects($this->any())
                 ->method('processBean')
                 ->will($this->returnValue($beanMock));
 
-        $preProcessorMock->expects($this->once())
+        $preProcessorMock->expects($this->any())
                 ->method('getFlowDataList')
-                ->will($this->returnValue([
-                    [
-                        'bpmn_type' => 'bpmEvent',
-                        'bpmn_id'=>'event_0',
-                        'cas_id' => 1,
-                        // Added so that subject data setter doesn't die
-                        'prj_id' => 'foo',
-                        'pro_id' => 'bar',
-                    ],
-                ]));
+                ->will($this->returnValue($flowData));
+
+        $preProcessorMock->expects($this->any())
+                ->method('processFlowData')
+                ->will($this->returnValue($flowData[0]));
 
         $validatorMock = $this->getMockBuilder('PMSEValidator')
                 ->disableOriginalConstructor()
@@ -258,22 +264,27 @@ class PMSEPreProcessorTest extends TestCase
                 ])
                 ->getMock();
 
+        $flowData = [
+            [
+                'bpmn_type' => 'bpmEvent',
+                'bpmn_id'=>'event_0',
+                'cas_id' => 1,
+                // Added so that subject data setter doesn't die
+                'prj_id' => 'foo',
+                'pro_id' => 'bar',
+            ],
+        ];
         $preProcessorMock->expects($this->any())
                 ->method('processBean')
                 ->will($this->returnValue($beanMock));
 
-        $preProcessorMock->expects($this->once())
+        $preProcessorMock->expects($this->any())
                 ->method('getFlowDataList')
-                ->will($this->returnValue([
-                    [
-                        'bpmn_type' => 'bpmEvent',
-                        'bpmn_id'=>'event_0',
-                        'cas_id' => 1,
-                        // Added so that subject data setter doesn't die
-                        'prj_id' => 'foo',
-                        'pro_id' => 'bar',
-                    ],
-                ]));
+                ->will($this->returnValue($flowData));
+
+        $preProcessorMock->expects($this->any())
+                ->method('processFlowData')
+                ->will($this->returnValue($flowData[0]));
 
         $validatorMock = $this->getMockBuilder('PMSEValidator')
                 ->disableOriginalConstructor()

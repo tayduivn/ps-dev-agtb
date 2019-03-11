@@ -31,6 +31,7 @@ class PMSETerminateValidatorTest extends TestCase
                     'rel_process_module' => 'Accounts',
                     'rel_element_relationship' => '',
                     'rel_element_module' => 'Accounts',
+                    'pro_terminate_variables' => '',
                 ],
                 'expect' => [],
             ],
@@ -41,6 +42,7 @@ class PMSETerminateValidatorTest extends TestCase
                     'rel_process_module' => 'Accounts',
                     'rel_element_relationship' => 'accounts_cases',
                     'rel_element_module' => 'Cases',
+                    'pro_terminate_variables' => '',
                 ],
                 'expect' => [],
             ],
@@ -51,6 +53,7 @@ class PMSETerminateValidatorTest extends TestCase
                     'rel_process_module' => 'Accounts',
                     'rel_element_relationship' => 'accounts_cases',
                     'rel_element_module' => 'Cases',
+                    'pro_terminate_variables' => '',
                 ],
                 'expect' => [
                     'replace_fields' => [

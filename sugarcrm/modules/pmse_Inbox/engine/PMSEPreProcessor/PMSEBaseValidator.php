@@ -290,4 +290,86 @@ class PMSEBaseValidator
 
         return $this->getEncodedCriteria($expression);
     }
+
+    /**
+     * Determines if the expression is for an Any or All type related evaluation
+     * @param string $criteria JSON criteria string
+     * @return boolean
+     */
+    public function hasAnyOrAllTypeOperation(string $criteria)
+    {
+        $expressions = $this->getDecodedCriteria($criteria);
+
+        // An empty expression can't be any or all
+        if (empty($expressions)) {
+            return false;
+        }
+
+        foreach ($expressions as $expression) {
+            if (!empty($expression->expRel) && in_array($expression->expRel, ['Any', 'All'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Updates evaluation criteria so that parsers can do their thing later on
+     * @param array $flowData The current flow data set
+     * @param PMSERequest $request The request object
+     * @param array $props Additional flow data properties to update
+     * @return array
+     */
+    protected function updateRelateCriteria(array $flowData, PMSERequest $request, array $props = [])
+    {
+        // We will always need evn_criteria for this operation. Other validators
+        // might need additional properties to be handled, like in the case of
+        // Terminates, which also need pro_terminate_variables handled. But those
+        // validators can choose which, if any, additional properties to handle.
+        $props = array_merge(['evn_criteria'], $props);
+
+        // Make sure that all data on the flow is set as needed
+        $flowData = $this->ensureFlowDataHasTargetBeanData($flowData, $request->getBean());
+
+        foreach ($props as $prop) {
+            $expressions = $this->getDecodedCriteria(trim($flowData[$prop]));
+            foreach ($expressions as $key => $expression) {
+                if (!empty($expression->expRel) && in_array($expression->expRel, ['Any', 'All'])) {
+                    $expressions[$key]->expBeanModule = $flowData['cas_sugar_module'];
+                    $expressions[$key]->expBeanId = $flowData['cas_sugar_object_id'];
+                    $expressions[$key]->expLinkName = $expression->expModule;
+                }
+            }
+
+            $flowData[$prop] = $this->getEncodedCriteria($expressions);
+        }
+
+        $request->setFlowData($flowData);
+        return $flowData;
+    }
+
+    /**
+     * Ensures that necessary data about the parent record is in the flow data.
+     *
+     * This is necessary since terminate definitions weren't getting this until
+     * it was too late to use the expression.
+     * @param array $flowData The flow data to massage if needed
+     * @param SugarBean $bean The process bean
+     * @return array
+     */
+    protected function ensureFlowDataHasTargetBeanData(array $flowData, SugarBean $bean)
+    {
+        if (empty($flowData['cas_sugar_module']) || empty($flowData['cas_sugar_object_id'])) {
+            if (!PMSEEngineUtils::isTargetModule($flowData, $bean)) {
+                $parent = PMSEEngineUtils::getParentBean($flowData, $bean);
+                if ($parent) {
+                    $flowData['cas_sugar_module'] = $parent->getModuleName();
+                    $flowData['cas_sugar_object_id'] = $parent->id;
+                }
+            }
+        }
+
+        return $flowData;
+    }
 }

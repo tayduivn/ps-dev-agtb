@@ -34,6 +34,13 @@ class PMSETerminateValidator extends PMSEBaseValidator implements PMSEValidate
         $flowData = $request->getFlowData();
         if ($flowData['evn_id'] == 'TERMINATE') {
             $paramsRelated = $this->validateParamsRelated($bean, $flowData);
+
+            // If there is a need to update the relate criteria, do that here
+            if (!empty($paramsRelated['updateRelateCriteria'])) {
+                $flowData = $this->updateRelateCriteria($flowData, $request, ['pro_terminate_variables']);
+                unset($paramsRelated['updateRelateCriteria']);
+            }
+
             $this->validateExpression($bean, $flowData, $request, $paramsRelated);
         }
         return $request;
@@ -81,11 +88,15 @@ class PMSETerminateValidator extends PMSEBaseValidator implements PMSEValidate
     {
         $paramsRelated = array();
         if (!PMSEEngineUtils::isTargetModule($flowData, $bean)) {
-            $paramsRelated = array(
-                'replace_fields' => array(
-                    $flowData['rel_element_relationship'] => $flowData['rel_element_module']
-                )
-            );
+            if ($this->hasAnyOrAllTypeOperation(trim($flowData['pro_terminate_variables']))) {
+                $paramsRelated['updateRelateCriteria'] = true;
+            } else {
+                $paramsRelated = array(
+                    'replace_fields' => array(
+                        $flowData['rel_element_relationship'] => $flowData['rel_element_module'],
+                    ),
+                );
+            }
         }
 
         $this->getLogger()->debug("Parameters related returned :" . print_r($paramsRelated, true));

@@ -34,6 +34,13 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
         $flowData = $request->getFlowData();
         if ($flowData['evn_id'] != 'TERMINATE') {
             $paramsRelated = $this->validateParamsRelated($bean, $flowData, $request);
+
+            // If there is a need to update the relate criteria, do that here
+            if (!empty($paramsRelated['updateRelateCriteria'])) {
+                $flowData = $this->updateRelateCriteria($flowData, $request);
+                unset($paramsRelated['updateRelateCriteria']);
+            }
+
             if ($request->isValid()) {
                 $this->validateExpression($bean, $flowData, $request, $paramsRelated);
             }
@@ -90,12 +97,21 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
     {
         $paramsRelated = array();
         if ($request->getExternalAction() == 'EVALUATE_RELATED_MODULE') {
+            // If this expression is for a waiting event with criteria on a related
+            // record then evaluation is different when doing an ANY or ALL criteria
+            // evaluation. In this case the bean needs to be the target bean and
+            // we should NOT replace any fields.
             if ($this->hasValidRelationship($bean, $flowData)) {
-                $paramsRelated = array(
-                    'replace_fields' => array(
-                        $flowData['rel_element_relationship'] => $flowData['rel_element_module']
-                    )
-                );
+                // Check if this is an ANY or ALL type operation
+                if ($this->hasAnyOrAllTypeOperation(trim($flowData['evn_criteria']))) {
+                    $paramsRelated['updateRelateCriteria'] = true;
+                } else {
+                    $paramsRelated = array(
+                        'replace_fields' => array(
+                            $flowData['rel_element_relationship'] => $flowData['rel_element_module'],
+                        ),
+                    );
+                }
             } else {
                 $request->invalidate();
             }

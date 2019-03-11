@@ -18,7 +18,7 @@
  * and in each group there current_user,owner and supervisor
  *
  */
-class PMSEUserRoleParser implements PMSEDataParserInterface
+class PMSEUserRoleParser extends PMSEAbstractDataParser implements PMSEDataParserInterface
 {
     /**
      * Object bean
