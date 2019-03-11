@@ -93,8 +93,11 @@ export class Edit extends BaseField {
     public async setValue(val: any): Promise<void> {
         await this.driver.click(this.$('field.selector'));
         await this.driver.setValue(this.inputSelector, val);
+        // Forcing the pause to wait for the select2 debounce after text entry
+        await this.driver.pause(500);
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${val}`);
+        await this.driver.waitForApp();
     }
 }
 

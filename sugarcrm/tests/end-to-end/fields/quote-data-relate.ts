@@ -46,6 +46,8 @@ export class Edit extends BaseField {
 
         await this.driver.click(this.$('field.selector'));
         await this.driver.setValue(this.inputSelector, val);
+        // Forcing the pause to wait for the select2 debounce after text entry
+        await this.driver.pause(500);
         await this.driver.waitForApp();
 
         const elementExists = await this.driver.isExisting(`${this.itemSelector}${val}`);
@@ -56,7 +58,6 @@ export class Edit extends BaseField {
             await this.driver.click(`${this.newItemSelector}`);
         }
     }
-
 }
 
 export class List extends RelateList {
