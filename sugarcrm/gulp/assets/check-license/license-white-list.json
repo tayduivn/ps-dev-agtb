@@ -36,6 +36,8 @@
     "include/javascript/yui/",
     "include/javascript/yui3/",
     "include/javascript/clipboardjs/clipboard.min.js",
+    "include/javascript/single-spa/single-spa.js",
+    "include/javascript/systemjs/system.js",
     "include/php-sql-parser.php",
     "include/SugarTheme/cssmin.php",
     "jssource/Minifier.php",

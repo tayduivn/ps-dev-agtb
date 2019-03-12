@@ -247,6 +247,10 @@
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/nprogress/nprogress.js' => 'include/javascript/sugar_sidecar.min.js',
+                   // External app/MFE support
+                   'include/javascript/systemjs/system.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/sugar7/external-apps.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/single-spa/single-spa.js' => 'include/javascript/sugar_sidecar.min.js',
 
                    'include/javascript/select2/language.js' => 'include/javascript/sugar_sidecar.min.js',
                    'sidecar/node_modules/moment/min/locales.min.js' => 'include/javascript/sugar_sidecar.min.js',
@@ -332,7 +336,7 @@
                     'include/javascript/tinymce4/jquery.tinymce.min.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/mousetrap/mousetrap.min.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/clipboardjs/clipboard.min.js' => 'include/javascript/sugar_sidecar.min.js',
-                )
+               )
            ),
 
             $sugar_grp_sugar7 = array(
