@@ -44,10 +44,22 @@ class RecentApiTest extends TestCase
 
     public function testFilterModules()
     {
+        global $current_user;
+        $account = SugarTestAccountUtilities::createAccount();
+        $employee = BeanFactory::getBean('Employees', $current_user->id);
+
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $this->api->api = $service;
+
+        $date = '2014-01-01 00:00:00';
+
+        $this->trackAction($account, $date);
+        $this->trackAction($employee, $date);
+
         // Employees module is currently handled in a special way, so test it explicitly
-        $modules = array('Accounts', 'Employees', 'NonExistingModule');
+        $options = array('moduleList' => array('Accounts', 'Employees', 'NonExistingModule'), 'limit' => 10);
         $api = new RecentApi();
-        $filtered = SugarTestReflection::callProtectedMethod($api, 'filterModules', array($modules));
+        $filtered = SugarTestReflection::callProtectedMethod($api, 'filterModules', array($options));
 
         $this->assertContains('Accounts', $filtered);
         $this->assertContains('Employees', $filtered);
@@ -95,9 +107,11 @@ class RecentApiTest extends TestCase
         $this->trackAction($contact, '2014-01-01 00:00:00');
 
         $response = $this->api->getRecentlyViewed($service, array(
-            'module_list' => $contact->module_name,
-            'erased_fields' => true,
-        ));
+                'module_list' => $contact->module_name,
+                'erased_fields' => true,
+                'limit' => 10,
+            )
+        );
 
         $this->assertArraySubset([
             'records' => [

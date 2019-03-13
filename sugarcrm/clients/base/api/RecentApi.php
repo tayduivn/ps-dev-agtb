@@ -79,13 +79,13 @@ class RecentApi extends SugarApi
      * Filters the list of modules to the ones that the user has access to and
      * that exist on the moduleList.
      *
-     * @param array $modules Modules list.
+     * @param array $options API options, including moduleList.
      * @param string $acl (optional) ACL action to check, default is `list`.
      * @return array Filtered modules list.
      */
-    private function filterModules(array $modules, $acl = 'list')
+    private function filterModules(array $options, $acl = 'list')
     {
-        return array_filter($modules, function ($module) use ($acl) {
+        return array_filter($options['moduleList'], function ($module) use ($acl) {
             if (in_array($module, $GLOBALS['moduleList']) || $module === 'Employees') {
                 $seed = BeanFactory::newBean($module);
                 return $seed && $seed->ACLAccess($acl);
@@ -108,58 +108,69 @@ class RecentApi extends SugarApi
 
         $options = $this->parseArguments($args);
 
-        $moduleList = $this->filterModules($options['moduleList'], $acl);
+        $moduleList = $this->filterModules($options, $acl);
+
         if (empty($moduleList)) {
             return array('next_offset' => -1 , 'records' => array());
         }
 
-        if (count($moduleList) === 1) {
-            $moduleName = $moduleList[0];
-            $seed = BeanFactory::newBean($moduleName);
-            $mainQuery = $this->getRecentlyViewedQueryObject($seed, $options);
-            $mainQuery->orderByRaw('MAX(tracker.date_modified)', 'DESC');
-
-        } else {
-            $mainQuery = new SugarQuery();
-            foreach ($moduleList as $moduleName) {
-                $seed = BeanFactory::newBean($moduleName);
-                $mainQuery->union($this->getRecentlyViewedQueryObject($seed, $options), true);
-            }
-            $mainQuery->orderByRaw('last_viewed_date', 'DESC');
+        $tracker = BeanFactory::newBean('Trackers');
+        $query = new SugarQuery();
+        $query->from($tracker);
+        $query->select(['module_name', 'item_id']);
+        $query->where()->queryAnd()->equals('visible', 1);
+        $query->where()->queryAnd()->equals('user_id', $this->getUserBean()->id);
+        $query->where()->queryAnd()->in('module_name', $moduleList);
+        foreach ($query->select()->select as $field) {
+            $query->groupBy($field->table . '.' . $field->field);
         }
-
-        // Add an extra record to the limit so we can detect if there are more records to be found.
-        $mainQuery->limit($options['limit'] + 1);
-        $mainQuery->offset($options['offset']);
+        $query->select->fieldRaw('MAX(date_modified) last_viewed_date');
+        if (!empty($options['date'])) {
+            $td = new SugarDateTime();
+            $td->modify($options['date']);
+            $query->where()->queryAnd()->gte('tracker.date_modified', $td->asDb());
+        }
+        $query->limit($options['limit'] + 1);
+        $query->orderByRaw('last_viewed_date', 'DESC');
+        $results = $query->execute();
 
         $data = $beans = array();
+        $data['records'] = [];
         $data['next_offset'] = -1;
+        $subGroups = [];
 
+        foreach ($results as $key => $row) {
+            $subGroups[$row['module_name']][] = $row['item_id'];
+        }
+
+        if (empty($subGroups)) {
+            return array('next_offset' => -1 , 'records' => array());
+        }
+
+        global $timedate;
+        $db = DBManagerFactory::getInstance();
         // 'Cause last_viewed_date is an alias (not a real field), we need to
         // temporarily store its values and append it later to each recently
         // viewed record
         $lastViewedDates = array();
-
-        $results = $mainQuery->execute();
-        $db = DBManagerFactory::getInstance();
-        foreach ($results as $idx => $recent) {
-            if ($idx == $options['limit']) {
-                $data['next_offset'] = (int) ($options['limit'] + $options['offset']);
-                break;
+        foreach ($subGroups as $module => $ids) {
+            $seed = BeanFactory::newBean($module);
+            $query = $this->getRecentlyViewedQueryObject($seed, $ids);
+            $beans = $seed->fetchFromQuery($query, ['name', 'id'], $options);
+            foreach ($results as $key => $row) {
+                if (!empty($beans[$row['item_id']])) {
+                    if ($key == $options['limit']) {
+                        $data['next_offset'] = (int) ($options['limit'] + $options['offset']);
+                        break;
+                    }
+                    $data['records'][$key] = $beans[$row['item_id']];
+                    $lastViewedDates[$row['item_id']] = $db->fromConvert($row['last_viewed_date'], 'datetime');
+                }
             }
-
-            $seed = BeanFactory::getBean($recent['module_name'], $recent['id'], array(
-                'erased_fields' => !empty($args['erased_fields']),
-            ));
-            $lastViewedDates[$seed->id] = $db->fromConvert($recent['last_viewed_date'], 'datetime');
-            $beans[$seed->id] = $seed;
         }
 
-        $data['records'] = $this->formatBeans($api, $args, $beans);
+        $data['records'] = $this->formatBeans($api, $args, $data['records']);
 
-        global $timedate;
-
-        // Append last_viewed_date to each recently viewed record
         foreach($data['records'] as &$record) {
             $record['_last_viewed_date'] = $timedate->asIso($timedate->fromDb($lastViewedDates[$record['id']]));
         }
@@ -172,40 +183,14 @@ class RecentApi extends SugarApi
      * module.
      *
      * @param SugarBean $seed Instance of current bean.
-     * @param array $options Prepared options.
+     * @param array $ids List of Bean IDs.
      * @return SugarQuery query to execute.
      */
-    protected function getRecentlyViewedQueryObject(SugarBean $seed, array $options)
+    protected function getRecentlyViewedQueryObject(SugarBean $seed, array $ids)
     {
-        $currentUser = $this->getUserBean();
-
         $query = new SugarQuery();
         $query->from($seed);
-
-        // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
-
-        // Since tracker relationships don't actually exist, we're gonna have to add a direct join
-        $join = $query->joinTable('tracker');
-        $join->on()->equalsField('tracker.item_id', $query->from->getTableName() . '.id')
-            ->equals('tracker.module_name', $query->from->module_name)
-            ->equals('tracker.user_id', $currentUser->id);
-
-        $query->select(array('id', array('tracker.module_name', 'module_name')));
-
-        if (!empty($options['date'])) {
-            $td = new SugarDateTime();
-            $td->modify($options['date']);
-            $query->where()->queryAnd()->gte('tracker.date_modified', $td->asDb());
-        }
-
-        // We should only show recent items that are visible
-        $query->where()->queryAnd()->equals('tracker.visible', 1);
-
-        foreach ($query->select()->select as $v) {
-            $query->groupBy($v->table . '.' . $v->field);
-        }
-
-        $query->select()->fieldRaw('MAX(tracker.date_modified)', 'last_viewed_date');
+        $query->where()->in('id', $ids);
 
         return $query;
     }
