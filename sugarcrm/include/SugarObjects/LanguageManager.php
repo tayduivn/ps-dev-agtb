@@ -311,7 +311,7 @@ class LanguageManager
         $jsLangVersion = (int) ($configurator->config['js_lang_version'] ?? 0);
         $jsLangVersion++;
         $configurator->config['js_lang_version'] = $jsLangVersion;
-        $configurator->saveConfig();
+        $configurator->handleOverride();
         SugarConfig::getInstance()->clearCache();
     }
 
