@@ -150,7 +150,13 @@ function export($type, $records = null, $members = false, $sample = false)
             true,
             $app_strings['ERR_EXPORT_TYPE'] . $type . ": <BR>." . $query
         );
-        $sample = $focus->_get_num_rows_in_query($query) < 1;
+        
+        $q = new SugarQuery();
+        $q->from($focus)
+            ->limit(1);
+        $q->select->selectReset()->fieldRaw('NULL');
+        $countResult = $q->execute();
+        $sample = count($countResult) < 1;
     } else {
         $result = $db->query($query, true, $app_strings['ERR_EXPORT_TYPE'] . $type . ": <BR>." . $query);
     }
