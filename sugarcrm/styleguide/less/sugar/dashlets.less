@@ -885,3 +885,33 @@
     }
   }
 }
+
+// record view dashlet
+.dashlet-title.record-toolbar {
+  padding-top: 11px;
+  padding-bottom: 11px;
+
+  .record-cell {
+    padding-left: 20px;
+  }
+
+  .record-cell[data-type="avatar"],
+    .record-cell[data-type="image"] {
+    padding: 2px 0 0 20px;
+    margin-right: 20px;
+
+    .image_rounded img {
+      border: 2px solid rgba(0, 0, 0, 0.4);
+      border-radius: 23px;
+    }
+  }
+
+  .table-cell-wrapper {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 19px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

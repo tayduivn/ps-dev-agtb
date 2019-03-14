@@ -3731,9 +3731,13 @@ Sincerely, SugarCRM',
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Lists records from a particular module according to criteria you define.',
+    'LBL_DASHLET_RECORDVIEW_NAME' => 'Record View',
+    'LBL_DASHLET_RECORDVIEW_DESCRIPTION' => 'Displays a record from a particular module.',
+
     'LBL_DASHLET_MODULE_UNAVAILABLE' => 'Data not available. You do not have permission to access this module.' .
         " \nPlease update or remove this dashlet.",
     'TPL_DASHLET_MY_MODULE' => 'My {{module}}',
+    'LBL_DASHLET_PICK_A_RECORD' => 'No record selected for display',
 
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account.',

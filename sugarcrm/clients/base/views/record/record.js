@@ -436,6 +436,9 @@
         }
     },
 
+    /**
+     * Assign events to button clicks.
+     */
     delegateButtonEvents: function() {
         this.context.on('button:edit_button:click', this.editClicked, this);
         this.context.on('button:save_button:click', this.saveClicked, this);

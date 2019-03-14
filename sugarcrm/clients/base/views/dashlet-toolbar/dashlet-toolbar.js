@@ -29,6 +29,13 @@
         'hidden.bs.dropdown': '_toggleAria'
     },
 
+    /**
+     * List of fields to display in the header.
+     *
+     * @property {Object[]|null}
+     */
+    headerFields: null,
+
     initialize: function(options) {
         _.extend(options.meta, app.metadata.getView(null, 'dashlet-toolbar'), options.meta.toolbar);
         app.view.View.prototype.initialize.call(this, options);
@@ -41,6 +48,20 @@
          * @type {boolean}
          */
         this.canEdit = app.acl.hasAccessToModel('edit', model) || false;
+    },
+
+    /**
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this._super('bindDataChange');
+        this.context.on('dashlet:toolbar:change', function(headerFields, dashletModel) {
+            this.headerFields = headerFields;
+            if (dashletModel) {
+                this.dashletModel = dashletModel;
+            }
+            this.render();
+        }, this);
     },
 
     /**
@@ -86,6 +107,11 @@
         this.layout.viewReport();
     },
 
+    /**
+     * Edit the dashlet.
+     *
+     * @param {Event} evt The click event.
+     */
     editClicked: function(evt) {
         this.layout.editDashlet();
     },
