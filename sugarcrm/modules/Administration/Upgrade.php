@@ -123,10 +123,6 @@ if(strpos($server_software,'Microsoft-IIS') === false) {
 	<td> <?php echo $mod_strings['LBL_REPAIR_ROLES_DESC'] ; ?> </td>
 </tr>
 <!--//BEGIN SUGARCRM flav=ent ONLY -->
-<tr>
-	<td scope="row"><?php echo SugarThemeRegistry::current()->getImage('Repair','align="absmiddle" border="0"', null,null,'.gif',$mod_strings['LBL_REPAIR_ORACLE_VARCHAR']); ?>&nbsp;<a href="./index.php?module=Administration&action=RepairOracleVarcharColumns"><?php echo $mod_strings['LBL_REPAIR_ORACLE_VARCHAR']; ?></a></td>
-	<td> <?php echo $mod_strings['LBL_REPAIR_ORACLE_VARCHAR_DESC'] ; ?> </td>
-</tr>
 <?php echo $str1; ?>
 <!--//END SUGARCRM flav=ent ONLY -->
 <tr>
