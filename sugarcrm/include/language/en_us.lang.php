@@ -158,6 +158,7 @@ $app_list_strings = array (
     'Calendar' => 'Calendar',
     'Leads' => 'Lead',
     'Manufacturers' => 'Manufacturer',
+    'VisualPipeline' => 'VisualPipeline',
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
     'Products' => 'Quoted Line Item',

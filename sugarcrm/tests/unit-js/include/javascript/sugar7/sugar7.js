@@ -29,6 +29,33 @@ describe('Sugar7.Routes', function() {
         app.router.stop();
     });
 
+    describe('Visual Pipeline Route', function() {
+        var mockKey = 'foo:key';
+        var oldIsSynced;
+
+        beforeEach(function() {
+            oldIsSynced = app.isSynced;
+            app.isSynced = true;
+
+            sinon.collection.stub(app.router, 'hasAccessToModule').returns(true);
+            sinon.collection.stub(app.api, 'isAuthenticated').returns(true);
+            sinon.collection.stub(app, 'sync');
+            buildKeyStub.returns(mockKey);
+        });
+
+        afterEach(function() {
+            app.isSynced = oldIsSynced;
+        });
+
+        it('should load the pipeline view', function() {
+            app.router.navigate('Opportunities/pipeline', {trigger: true});
+            expect(app.controller.loadView).toHaveBeenCalledWith({
+                module: 'Opportunities',
+                layout: 'pipeline-records'
+            });
+        });
+    });
+
     describe('Routes', function() {
         var mockKey = 'foo:key',
             oldIsSynced;

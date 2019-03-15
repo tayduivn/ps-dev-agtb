@@ -10,14 +10,14 @@
  */
 
 /**
- * @class View.Layouts.Base.OpportunitiesPipelineRecordsLayout
- * @alias SUGAR.App.view.layouts.BaseOpportunitiesPipelineRecordsLayout
+ * @class View.Layouts.Base.PipelineRecordsLayout
+ * @alias SUGAR.App.view.layouts.BasePipelineRecordsLayout
  */
 ({
     className: 'pipeline-records',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);

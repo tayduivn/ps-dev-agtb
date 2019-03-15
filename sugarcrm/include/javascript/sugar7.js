@@ -18,6 +18,7 @@
     var bwcRedirectRoutes = [
         'config',
         'create',
+        'pipeline',
         'editAllRecurrences',
         'layout',
         'list',
@@ -368,6 +369,16 @@
                     app.controller.loadView({
                         layout: 'config-drawer',
                         module: module
+                    });
+                }
+            },
+            {
+                name: 'pipelineView',
+                route: ':module/pipeline',
+                callback: function(module) {
+                    app.controller.loadView({
+                        module: module,
+                        layout: 'pipeline-records'
                     });
                 }
             },

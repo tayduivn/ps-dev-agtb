@@ -169,13 +169,13 @@ describe("Base.Layout.Togglepanel", function () {
             afterEach(function() {
                 sinon.collection.restore();
             });
-            describe('when the data.view is not pipeline', function() {
+            describe('when the data.route is not pipeline', function() {
                 it('should set last state with last state key and data.view', function() {
                     sinon.collection.stub(layout, '$', function() {
                         return {
                             data: function() {
                                 return {
-                                    view: 'list'
+                                    route: ''
                                 };
                             },
                             hasClass: function() {
@@ -190,13 +190,13 @@ describe("Base.Layout.Togglepanel", function () {
                 });
             });
 
-            describe('when the data.view is pipeline', function() {
+            describe('when the data.route is pipeline', function() {
                 it('should route to Opportunities/pipelines records view', function() {
                     sinon.collection.stub(layout, '$', function() {
                         return {
                             data: function() {
                                 return {
-                                    view: 'pipeline'
+                                    route: 'pipeline'
                                 };
                             },
                             hasClass: function() {

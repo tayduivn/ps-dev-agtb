@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Opportunities']['base']['layout']['records'] = array(
+$viewdefs['Leads']['base']['layout']['records'] = array(
     'components' => array(
         array(
             'layout' => array(
