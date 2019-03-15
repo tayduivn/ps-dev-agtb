@@ -193,10 +193,17 @@ logThis("*** UpgradeWizard variables updated  ", $path);
 
 $current_user = new User();
 $user_name = $argv[4];
-$q = "select id from users where user_name = '" . $user_name . "' and is_admin=1";
-$result = $db->query($q, false);
-$logged_user = $db->fetchByAssoc($result);
-$current_user->retrieve($logged_user['id']);
+$q = <<<SQL
+SELECT id FROM users WHERE user_name = ? AND is_admin = 1
+SQL;
+
+$adminId = $db->getConnection()
+    ->executeQuery(
+        $q,
+        [$user_name]
+    )->fetchColumn();
+
+$current_user->retrieve($adminId);
 $configOptions = $sugar_config['dbconfig'];
 
 //repair tabledictionary.ext.php file if needed

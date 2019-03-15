@@ -77,11 +77,18 @@ $configOptions = $sugar_config['dbconfig'];
 	//////////////////////////////////////////////////////////////////////////////
 	//Adding admin user to the silent upgrade
 	 $current_user = new User();
-	 $user_name = $argv[4];
-	 $q = "select id from users where user_name = '" . $user_name . "' and is_admin=1";
-	 $result = $db->query($q, false);
-	 $logged_user = $db->fetchByAssoc($result);
-	 $current_user->retrieve($logged_user['id']);
+$user_name = $argv[4];
+$q = <<<SQL
+SELECT id FROM users WHERE user_name = ? AND is_admin = 1
+SQL;
+
+$adminId = $db->getConnection()
+    ->executeQuery(
+        $q,
+        [$user_name]
+    )->fetchColumn();
+
+$current_user->retrieve($adminId);
 /////retrieve admin user
 
 $unzip_dir = sugar_cached("upgrades/temp");

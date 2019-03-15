@@ -180,14 +180,20 @@ $current_user = new User();
 if(isset($argv[4])) {
     //if being used for internal upgrades avoid admin user verification
 	$user_name = $argv[4];
-	$q = "select id from users where user_name = '" . $user_name . "' and is_admin=1";
-	$result = $db->query($q, false);
-	$logged_user = $db->fetchByAssoc($result);
+    $q = <<<SQL
+SELECT id FROM users WHERE user_name = ? AND is_admin=1
+SQL;
+
+    $adminId = $db->getConnection()
+        ->executeQuery(
+            $q,
+            [$user_name]
+        )->fetchColumn();
 /////retrieve admin user
-	if(empty($logged_user['id']) && $logged_user['id'] != null){
-	   	echo "FAILURE: Not an admin user in users table. Please provide an admin user\n";
-		exit(1);
-	}
+    if (false === $adminId) {
+        echo "FAILURE: Not an admin user in users table. Please provide an admin user\n";
+        exit(1);
+    }
 } else {
 		echo "*******************************************************************************\n";
 		echo "*** ERROR: 4th parameter must be a valid admin user.\n";
