@@ -29,7 +29,6 @@ $moduleList[] = 'Emails';
 $moduleList[] = 'Campaigns';
 $moduleList[] = 'Prospects';
 $moduleList[] = 'ProspectLists';
-
 $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
 $moduleList[] = 'Forecasts';
@@ -442,7 +441,7 @@ $modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'pmse_EmailMessage',
     //END SUGARCRM flav=ent ONLY
     'ReportSchedules',
-    );
+);
 $adminOnlyList = array(
                     //module => list of actions  (all says all actions are admin only)
                    //'Administration'=>array('all'=>1, 'SupportPortal'=>'allow'),
@@ -718,6 +717,9 @@ $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
+$moduleList[] = 'VisualPipeline';
+$beanList['VisualPipeline']  = 'VisualPipeline';
+$beanFiles['VisualPipeline'] = 'modules/VisualPipeline/VisualPipeline.php';
 
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';

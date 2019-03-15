@@ -43,6 +43,7 @@ $app_list_strings = array (
     'ForecastWorksheets' => 'Forecast Worksheets',
     'ForecastManagerWorksheets' => 'Forecast Manager Worksheets',
     'MergeRecords'=>'Merge Records',
+      'VisualPipeline'=>'Visual Pipeline',
     'Quotas' => 'Quotas',
     'Teams' => 'Teams',
     'TeamNotices' => 'Team Notices',
@@ -2173,6 +2174,11 @@ $app_list_strings = array (
         '604800' => 'Weekly',
         '1209600' => 'Every 2 Weeks',
         '2419200' => 'Every 4 Weeks',
+    ),
+    'pipeline_records_per_column' => array(
+        '10' => '10',
+        '15' => '15',
+        '20' => '20',
     ),
 );
 

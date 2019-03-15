@@ -1007,6 +1007,13 @@ $GLOBALS['mod_strings']  = $installerStrings;
 
     echo '.';
 
+    installLog("DemoData: VisualPipeline");
+    VisualPipelineSeedData::populateSeedData();
+
+    installLog("DemoData: Done VisualPipeline");
+
+    echo '.';
+
 installLog("DemoData: Data Privacy");
 
 $userSally = BeanFactory::getBean('Users', 'seed_sally_id');
