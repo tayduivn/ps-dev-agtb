@@ -68,16 +68,14 @@
      */
     handleRowClick: function(event) {
         var modelId = this.$(event.target).closest('.multi-line-row').data('id');
-        var model = _.find(this.collection.models, function(model) {
-            return model.get('id') === modelId;
-        });
+        var model = this.collection.get(modelId);
 
         app.drawer.open({
             layout: 'row-model-data',
             direction: 'horizontal',
             context: {
                 model: model,
-                module: model._module
+                module: model.get('_module')
             }
         });
     }

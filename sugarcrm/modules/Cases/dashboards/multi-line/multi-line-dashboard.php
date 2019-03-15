@@ -11,19 +11,26 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['row-model-data'] = array(
-    'components' => array(
+return array(
+    'metadata' =>
+    array(
+        'components' =>
         array(
-            'layout' => array(
-                'type' => 'default',
-                'name' => 'sidebar',
-                'components' => array(
+            array(
+                'rows' =>
+                array(
                     array(
-                        'layout' => 'dashboard',
-                        'loadModule' => 'Dashboards',
+                        array(
+                            // TODO: add dashlet
+                        ),
+                        array(
+                            // TODO: add dashlet
+                        ),
                     ),
                 ),
+                'width' => 12,
             ),
         ),
     ),
+    'name' => 'LBL_CASES_MULTI_LINE_DASHBOARD',
 );

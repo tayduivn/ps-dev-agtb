@@ -157,6 +157,53 @@ describe('Dashboards.Base.Layout.Dashboard', function() {
         });
     });
 
+    describe('Multi-line Dashboard', function() {
+        var apiStub;
+        var parentLayout;
+        var parentModule;
+
+        beforeEach(function() {
+            apiStub = sandbox.stub(app.api, 'records', function(method, module, data, params, callbacks, options) {
+                callbacks.success();
+                callbacks.complete();
+            });
+
+            parentModule = 'Cases';
+            context = new app.Context({
+                module: parentModule,
+                layout: 'multi-line'
+            });
+            parentLayout = app.view.createLayout({
+                name: 'records',
+                type: 'records',
+                module: parentModule,
+                context: context
+            });
+            layout = SugarTest.createLayout('base', 'Dashboards', 'dashboard', null,
+                parentLayout.context.getChildContext({
+                    module: 'Dashboards'
+                }), true);
+            layout.context.parent = context;
+            sandbox.stub(layout, '_renderEmptyTemplate');
+            parentLayout.addComponent(layout);
+        });
+
+        afterEach(function() {
+            parentLayout.dispose();
+            parentModule = null;
+        });
+
+        it('should fetch multi-line dashboard', function() {
+            sandbox.stub(layout.context.parent, 'isDataFetched').returns(true);
+            layout.navigateLayout('new-fake-id-value');
+
+            expect(apiStub).toHaveBeenCalledWith('read', 'Dashboards', {
+                view_name: 'multi-line',
+                id: 'new-fake-id-value'
+            });
+        });
+    });
+
     describe('initialize', function() {
         describe('Home dashboard', function() {
             var keyStub;

@@ -510,6 +510,10 @@
             headerPane = {
                 view: 'search-dashboard-headerpane'
             };
+        } else if (layout.context && layout.context.parent &&
+            layout.context.parent.get('layout') === 'multi-line') {
+            // don't show headerpane for multi-line dashboards
+            headerPane = {};
         } else {
             headerPane = {
                 view: 'dashboard-headerpane',

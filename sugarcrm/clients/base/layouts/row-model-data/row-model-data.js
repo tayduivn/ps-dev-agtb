@@ -14,10 +14,15 @@
  * @extends View.Layout
  */
 ({
-    plugins: ['ShortcutSession'],
-
-    shortcuts: [
-        // to-do: replace shortcut events in future CS tickets
-        'Create:Cancel',
-    ]
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        if (options.context && options.context.parent) {
+            // we need to make sure layout is correct
+            // dashboards are selected based on parent's layout
+            options.context.parent.set('layout', 'multi-line');
+        }
+        this._super('initialize', [options]);
+    }
 })

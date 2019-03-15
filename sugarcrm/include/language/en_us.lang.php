@@ -2154,6 +2154,7 @@ $app_list_strings = array (
         'record' => 'Record',
         'records' => 'List',
         'activities' => 'Activity Stream',
+        'multi-line' => 'Multi-line List',
     ),
     'reportschedule_time_interval_dom' => array(
         '3600' => 'Hourly',
