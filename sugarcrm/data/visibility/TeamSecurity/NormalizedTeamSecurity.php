@@ -74,7 +74,11 @@ class NormalizedTeamSecurity extends SugarVisibility implements StrategyInterfac
 
         if ($usePrefetch) {
             if ($count) {
-                return implode(',', array_map(array($this->bean->db, 'quoted'), $teamSets));
+                $quotedTeamSets = [];
+                foreach ($teamSets as $teamSet) {
+                    $quotedTeamSets[] = $this->bean->db->quoted($teamSet);
+                }
+                return implode(',', $quotedTeamSets);
             } else {
                 return 'NULL';
             }
