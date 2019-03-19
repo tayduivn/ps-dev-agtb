@@ -151,6 +151,16 @@ describe("Taggable Plugin", function() {
 
             expect($('<div></div>').append(actual).html()).toBe(expected);
         });
+
+        it('should replace "LBL_NO_DATA_AVAILABLE_NO_PERIOD"', function() {
+            var str = 'foo @[Accounts:1234:LBL_NO_DATA_AVAILABLE_NO_PERIOD]';
+            var expected = 'foo ' +
+                '<span class="label label-Accounts sugar_tag">' +
+                '<a href="#Accounts/1234">LBL_NO_DATA_AVAILABLE_NO_PERIOD</a></span>';
+            var actual = plugin.formatTags(str);
+
+            expect($('<div></div>').append(actual).html()).toBe(expected);
+        });
     });
 
     describe("_searchForTags", function() {
@@ -448,6 +458,29 @@ describe("Taggable Plugin", function() {
                 result = plugin._filterOutDuplicateTags(tags);
 
             expect(JSON.stringify(result)).toBe(JSON.stringify(expected));
+        });
+    });
+
+    describe('getCurrentSearchTerm', function() {
+        using('different textarea values', [
+            {
+                value: '@hello', caretPosition: 5, expected: '@hello',
+            },
+            {
+                value: 'hello', caretPosition: 4, expected: '',
+            },
+            {
+                value: '@hello @', caretPosition: 7, expected: '@',
+            },
+            {
+                value: '@hello @', caretPosition: 5, expected: '@hello',
+            },
+        ], function(data) {
+            it('should get correct searchTerms', function() {
+                var $input = $('<textarea>' + data.value + '</textarea>');
+                plugin.taggableCursorPosition = data.caretPosition;
+                expect(plugin.getCurrentSearchTerm($input)).toEqual(data.expected);
+            });
         });
     });
 });

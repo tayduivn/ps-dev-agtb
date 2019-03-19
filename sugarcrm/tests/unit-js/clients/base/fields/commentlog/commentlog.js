@@ -43,6 +43,10 @@ describe('commentlog field', function() {
         sinon.collection.restore();
     });
 
+    it('should contain the taggable plugin', function() {
+        expect(field.plugins).toContain('Taggable');
+    });
+
     describe('Detailed View Behavior', function() {
         beforeEach(function() {
             field.tplName = 'detail';
@@ -421,6 +425,24 @@ describe('commentlog field', function() {
             field.showCommentLog();
             var expected =
                 'Site: <a href="http://www.sugarcrm.com" target="_blank" rel="noopener">www.sugarcrm.com</a>';
+            expect(field.msgs[0].entry.toString()).toEqual(expected);
+        });
+
+        it('should allow @mention tags', function() {
+            var modelAttr = {
+                'created_by_name': 'Bat Man',
+                'date_entered': '2018-08-29T22:52:17+00:00',
+                'entry': '@[Users:seed_sally_id:Sally Bronson]',
+                'created_by': '212',
+            };
+            var bean = app.data.createBean(fieldName, modelAttr);
+            var coll = app.data.createMixedBeanCollection([], collOptions);
+            coll.add(bean);
+            field.model.set(fieldName, coll);
+            field.showCommentLog();
+            var expected =
+                '<span class="label label-Employees sugar_tag">' +
+                '<a href="#Employees/seed_sally_id">Sally Bronson</a></span>';
             expect(field.msgs[0].entry.toString()).toEqual(expected);
         });
     });

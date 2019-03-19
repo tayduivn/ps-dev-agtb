@@ -5505,6 +5505,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     // Comment Log
     'LBL_COMMENT_LOG_SHOW_MORE' => 'Show more...',
     'LBL_COMMENT_LOG_SHOW_LESS' => 'Show less...',
+    'LBL_NO_DATA_AVAILABLE_NO_PERIOD' => 'No data available',
 );
 
 $app_list_strings['activity_user_options'] = array (

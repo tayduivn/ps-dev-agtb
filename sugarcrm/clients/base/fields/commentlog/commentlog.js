@@ -16,6 +16,8 @@
 ({
     fieldTag: 'textarea',
 
+    plugins: ['Taggable'],
+
     /**
      * @inheritdoc
      */
@@ -43,6 +45,7 @@
         this._super('initialize', [options]);
         this.collapsedEntries = {};
         this._initSettings();
+        this.setTaggableRecord(this.context.get('module'), this.context.get('modelId'));
     },
 
     /**
@@ -105,6 +108,9 @@
 
                 entry = this._insertHtmlLinks(entry);
                 entryShort = this._insertHtmlLinks(entryShort);
+
+                entry = this.formatTags(entry);
+                entryShort = this.formatTags(entryShort);
 
                 var msg = {
                     id: commentModel.get('id'),
@@ -222,7 +228,6 @@
         }
 
         var el = this.$el.find(this.fieldTag);
-
         var self = this;
 
         el.on('change', function() {
@@ -241,9 +246,8 @@
                     _link: 'commentlog_link',
                 });
 
-                collectionField.add(self._newEntryModel);
+                collectionField.add(self._newEntryModel, {silent: true});
             }
-
             self._newEntryModel.set('entry', value);
         });
     },
@@ -266,5 +270,5 @@
                 this.render();
             }, this);
         }
-    },
+    }
 })
