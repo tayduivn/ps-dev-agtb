@@ -67,6 +67,7 @@ class AdministrationViewEnablewirelessmodules extends SugarView
             'pmse_Project',
             'KBContents',
             'DataPrivacy',
+            'ProductBundles',
         );
 
         // replicate the essential part of the behavior of the private loadMapping() method in SugarController
