@@ -1416,6 +1416,229 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->object->updateProcessDefinitions($args);
     }
 
+    public function testClearAccordingProcessDefinitionsBusinessRule()
+    {
+        $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
+            ->disableOriginalConstructor()
+            ->setMethods(array('retrieveFields'))
+            ->getMock();
+
+        global $db;
+        $orgDb = $db;
+
+        $db = $this->getMockBuilder('DBHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(array('Query', 'fetchByAssoc', 'quoted', 'getConnection'))
+            ->getMock();
+
+        $act01 = array(
+            'id' => 'act01',
+            'act_script_type' => 'BUSINESS_RULE',
+        );
+
+        $db->expects($this->at(5))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue($act01));
+
+        $db->expects($this->at(6))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue(false));
+
+        $act02 = array(
+            'id' => 'act01',
+            'act_script_type' => 'BUSINESS_RULE',
+        );
+
+        $db->expects($this->at(8))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue($act02));
+        $db->expects($this->at(9))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue(false));
+
+        $db->expects($this->atLeastOnce())
+            ->method('getConnection')
+            ->will($this->returnValue($orgDb->getConnection()));
+
+        $args = array(
+            'pro_old_module' => 'Leads',
+            'pro_new_module' => 'Leads',
+            'pro_module' => 'Leads',
+            'filter' => 'Leads',
+        );
+
+        $this->object->clearAccordingProcessDefinitions($args);
+    }
+
+    public function testClearAccordingProcessDefinitionsAssignTeam()
+    {
+        $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
+            ->disableOriginalConstructor()
+            ->setMethods(array('retrieveFields'))
+            ->getMock();
+
+        global $db;
+        $orgDb = $db;
+
+        $db = $this->getMockBuilder('DBHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(array('Query', 'fetchByAssoc', 'quoted', 'getConnection'))
+            ->getMock();
+
+        $act01 = array(
+            'id' => 'act01',
+            'act_script_type' => 'ASSIGN_TEAM',
+        );
+
+        $db->expects($this->at(5))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue($act01));
+
+        $db->expects($this->at(6))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue(false));
+
+        $act02 = array(
+            'id' => 'act01',
+            'act_script_type' => 'ASSIGN_TEAM',
+        );
+
+        $db->expects($this->at(8))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue($act02));
+        $db->expects($this->at(9))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue(false));
+
+        $db->expects($this->atLeastOnce())
+            ->method('getConnection')
+            ->will($this->returnValue($orgDb->getConnection()));
+
+        $args = array(
+            'pro_old_module' => 'Leads',
+            'pro_new_module' => 'Leads',
+            'pro_module' => 'Leads',
+            'filter' => 'Leads',
+        );
+
+        $this->object->clearAccordingProcessDefinitions($args);
+    }
+
+    public function testClearAccordingProcessDefinitionsChangeField()
+    {
+        $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
+            ->disableOriginalConstructor()
+            ->setMethods(array('retrieveFields'))
+            ->getMock();
+
+        $result = new stdClass();
+        $result->result = array();
+
+        $this->object->expects($this->any())
+            ->method('retrieveFields')
+            ->will($this->returnValue($result));
+
+        global $db;
+        $orgDb = $db;
+
+        $db = $this->getMockBuilder('DBHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(array('Query', 'fetchByAssoc', 'quoted', 'getConnection'))
+            ->getMock();
+
+        $act01 = array(
+            'id' => 'act01',
+            'act_script_type' => 'CHANGE_FIELD',
+        );
+
+        $db->expects($this->at(5))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue($act01));
+
+        $db->expects($this->at(6))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue(false));
+
+        $act02 = array(
+            'id' => 'act01',
+            'act_script_type' => 'CHANGE_FIELD',
+        );
+
+        $db->expects($this->at(8))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue($act02));
+        $db->expects($this->at(9))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue(false));
+
+        $db->expects($this->atLeastOnce())
+            ->method('getConnection')
+            ->will($this->returnValue($orgDb->getConnection()));
+
+        $args = array(
+            'pro_old_module' => 'Leads',
+            'pro_new_module' => 'Leads',
+            'pro_module' => 'Leads',
+            'filter' => 'Leads',
+        );
+
+        $this->object->clearAccordingProcessDefinitions($args);
+    }
+
+    public function testClearAccordingProcessDefinitionsAssignUser()
+    {
+        $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
+            ->disableOriginalConstructor()
+            ->setMethods(array('retrieveFields'))
+            ->getMock();
+
+        global $db;
+        $orgDb = $db;
+
+        $db = $this->getMockBuilder('DBHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(array('Query', 'fetchByAssoc', 'quoted', 'getConnection'))
+            ->getMock();
+
+        $act01 = array(
+            'id' => 'act01',
+            'act_script_type' => 'ASSIGN_USER',
+        );
+
+        $db->expects($this->at(5))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue($act01));
+
+        $db->expects($this->at(6))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue(false));
+
+        $act02 = array(
+            'id' => 'act01',
+            'act_script_type' => 'ASSIGN_USER',
+        );
+
+        $db->expects($this->at(8))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue($act02));
+        $db->expects($this->at(9))
+                ->method('fetchByAssoc')
+                ->will($this->returnValue(false));
+
+        $db->expects($this->atLeastOnce())
+            ->method('getConnection')
+            ->will($this->returnValue($orgDb->getConnection()));
+
+        $args = array(
+            'pro_old_module' => 'Leads',
+            'pro_new_module' => 'Leads',
+            'pro_module' => 'Leads',
+            'filter' => 'Leads',
+        );
+
+        $this->object->clearAccordingProcessDefinitions($args);
+    }
+
     public function testAddRelatedRecordWithoutFields()
     {
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')

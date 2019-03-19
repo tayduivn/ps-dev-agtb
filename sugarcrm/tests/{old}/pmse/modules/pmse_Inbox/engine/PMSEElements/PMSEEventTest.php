@@ -12,6 +12,7 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Doctrine\DBAL\Connection;
 
 class PMSEEventTest extends TestCase
 {
@@ -43,6 +44,40 @@ class PMSEEventTest extends TestCase
      * @var PMSEElement
      */
     protected $event;
+
+    /**
+     * @var array threads for test
+     */
+    protected static $threads = [];
+
+    public static function setUpBeforeClass()
+    {
+        // test threads for testCheckIfExistEventBased
+        $thread1 = BeanFactory::newBean('pmse_BpmThread');
+        $thread1->cas_id = 1;
+        $thread1->cas_thread_index = 1;
+        $thread1->cas_thread_parent = 1;
+        $thread1->cas_flow_index = 1;
+        $thread1->save();
+        self::$threads[] = $thread1->id;
+
+        $thread2 = BeanFactory::newBean('pmse_BpmThread');
+        $thread2->cas_id = 1;
+        $thread2->cas_thread_index = 2;
+        $thread2->cas_thread_parent = 1;
+        $thread2->cas_flow_index = 1;
+        $thread2->save();
+        self::$threads[] = $thread2->id;
+    }
+
+    public static function tearDownAfterClass()
+    {
+        if (count(self::$threads)) {
+            $conn = DBManagerFactory::getConnection();
+            $query = 'DELETE FROM pmse_bpm_thread WHERE id IN (?)';
+            $conn->executeUpdate($query, [self::$threads], [Connection::PARAM_STR_ARRAY]);
+        }
+    }
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -215,7 +250,7 @@ class PMSEEventTest extends TestCase
         $beanCase = new stdClass();
         $beanCase->cas_id = 1;
         $beanCase->cas_index = 1;
-        $beanCase->cas_previous = 0;
+        $beanCase->cas_previous = 1;
         $beanCase->bpmn_type = 'bpmnFlow';
         $beanCase->bpmn_id = 'j89s239s823d';
 
@@ -228,11 +263,11 @@ class PMSEEventTest extends TestCase
         $this->caseFlowMock->expects($this->atLeastOnce())
                 ->method('get_list')
                 ->will($this->returnValue($resultCaseMock));
-        
+
         $this->caseFlowMock->expects($this->atLeastOnce())
-                ->method('retrieve_by_string_fields')
-                ->will($this->returnValue($beanCase));
-        
+            ->method('retrieve_by_string_fields')
+            ->will($this->returnValue($beanCase));
+
         $this->caseFlowMock->cas_id = 1;
         $this->caseFlowMock->cas_index = 1;
         $this->caseFlowMock->cas_previous = 0;
@@ -244,60 +279,28 @@ class PMSEEventTest extends TestCase
             ->will($this->returnValue($this->caseFlowMock));
         
         $dbHandlerMock = $this->getMockBuilder('DBHandler')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(array('quoted', 'getConnection'))
             ->getMock();
-        
-        $dbHandlerMock->expects($this->at(0))
-            ->method('Query')            
-            ->will($this->returnValue(array()));
-        
-        $rowThread = array(
-            'cas_index' => 1,
-            'cas_thread_index' => 2,
-            'cas_thread_parent' => 1,
-            'cas_flow_index' => 1
-        );
 
-        $dbHandlerMock->expects($this->at(1))
-            ->method('fetchByAssoc')
-            ->with(array())
-            ->will($this->returnValue($rowThread));
-
-        $dbHandlerMock->expects($this->at(2))
-            ->method('Query')
-            ->will($this->returnValue(array()));
-        
-        $dbHandlerMock->expects($this->at(3))
-            ->method('fetchByAssoc')
-            ->with(array())
-            ->will($this->returnValue(array()));
-            
-        $dbHandlerMock->expects($this->at(4))
-            ->method('Query')
-            ->will($this->returnValue(array()));
-        
-        $row = array(
-            'cas_index' => 2,
-            'cas_thread_index' => 2,
-            'cas_thread_parent' => 1,
-            'cas_flow_index' => 1
-        );
-        
-        $dbHandlerMock->expects($this->at(5))
-            ->method('fetchByAssoc')
-            ->with(array())
-            ->will($this->returnValue($row));
-        
         $this->caseFlowHandlerMock->expects($this->exactly(2))
             ->method('closeThreadByThreadIndex');
-                
+
         $this->event->setCaseFlowHandler($this->caseFlowHandlerMock);
         $this->event->setDbHandler($dbHandlerMock);
         
         $casId = 1;
         $casIndex = 5;
         $isEventBased = true;
-        
+
+        $dbHandlerMock->expects($this->any())
+            ->method('quoted')
+            ->willReturnCallback(function ($str) {
+                return $GLOBALS['db']->quoted($str);
+            });
+        $dbHandlerMock->expects($this->atLeastOnce())
+            ->method('getConnection')
+            ->will($this->returnValue($GLOBALS['db']->getConnection()));
+
         $expected = true;
         $result = $this->event->checkIfExistEventBased($casId, $casIndex, $isEventBased);
         $this->assertEquals ($expected, $result);        
