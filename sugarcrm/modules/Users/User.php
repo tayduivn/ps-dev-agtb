@@ -2427,7 +2427,7 @@ class User extends Person {
      * @todo loop through vardefs instead
      * @internal runs into an issue when populating from field_defs for users - corrupts user prefs
      */
-    public function populateFromRow(array $row, $convert = false)
+    public function populateFromRow(array $row, $convert = false, $getMoreData = true)
     {
         unset($row['user_preferences']);
         return parent::populateFromRow($row, $convert);

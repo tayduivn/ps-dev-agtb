@@ -613,7 +613,7 @@ class OutboundEmail extends SugarBean
      * @uses OutboundEmail::populateFromUser() to set `name`, `email_address`, and `email_address_id` from the current
      * user's data when populating the system configuration and the user is allowed to use the system configuration.
      */
-    public function populateFromRow(array $row, $convert = false)
+    public function populateFromRow(array $row, $convert = false, $getMoreData = true)
     {
         $row = parent::populateFromRow($row, $convert);
 

@@ -3802,12 +3802,17 @@ class SugarBean
     /**
      * Sets value from fetched row into the bean.
      *
+     * Introducing new parameter, $getMoreData, some times,
+     * the deep retrieval data could be done in batch fashion,
+     * so it could be ignore
+     *
      * @param array $row Fetched row
      * @param bool $convert Apply convertField to fields
+     * @param bool $getMoreData Need Retrieve more data
      *
      * Internal function, do not override.
      */
-    public function populateFromRow(array $row, $convert = false)
+    public function populateFromRow(array $row, $convert = false, $getMoreData = true)
     {
         global $locale;
 

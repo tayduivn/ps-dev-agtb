@@ -2236,11 +2236,13 @@ class Email extends SugarBean {
     /**
      * {@inheritDoc}
      */
-    public function populateFromRow(array $row, $convert = false)
+    public function populateFromRow(array $row, $convert = false, $getMoreData = true)
     {
         $row = parent::populateFromRow($row, $convert);
 
-        $this->loadAdditionalEmailData();
+        if ($getMoreData) {
+            $this->loadAdditionalEmailData();
+        }
 
         return $row;
     }

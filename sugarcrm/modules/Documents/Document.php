@@ -76,7 +76,7 @@ class Document extends SugarBean {
     /**
      * {@inheritDoc}
      */
-    public function populateFromRow(array $row, $convert = false)
+    public function populateFromRow(array $row, $convert = false, $getMoreData = true)
     {
         $row = parent::populateFromRow($row, $convert);
 
