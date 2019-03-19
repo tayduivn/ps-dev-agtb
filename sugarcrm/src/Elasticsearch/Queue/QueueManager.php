@@ -311,8 +311,11 @@ class QueueManager
     {
         $sql = sprintf('DELETE FROM %s ', self::FTS_QUEUE);
         if ($modules) {
-            $modules = array_map(array($this->db, 'quoted'), $modules);
-            $sql .= sprintf(' WHERE bean_module IN (%s)', implode(',', $modules));
+            $quotedModules = [];
+            foreach ($modules as $module) {
+                $quotedModules[] = $this->db->quoted($module);
+            }
+            $sql .= sprintf(' WHERE bean_module IN (%s)', implode(',', $quotedModules));
         }
         $this->db->query($sql);
     }
