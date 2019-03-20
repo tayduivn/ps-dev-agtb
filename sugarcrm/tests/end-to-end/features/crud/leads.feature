@@ -17,8 +17,8 @@ Feature: Leads module verification
   @list @preview
   Scenario: Leads > List View > Preview
     Given Leads records exist:
-      | *    | first_name | last_name | account_name   | title             | phone_mobile   | phone_work     | primary_address  | primary_address_city | primary_address_state | primary_address_postalcode | email            |
-      | John | John       | Barlow    | John's Account | Software Engineer | (746) 079-5067 | (408) 536-6312 | 10050 N Wolfe Rd | Cupertino            | California            | 95014                      | John@example.org |
+      | *    | first_name | last_name | account_name   | title             | phone_mobile   | phone_work     | primary_address_street | primary_address_city | primary_address_state | primary_address_postalcode | email            |
+      | John | John       | Barlow    | John's Account | Software Engineer | (746) 079-5067 | (408) 536-6312 | 10050 N Wolfe Rd       | Cupertino            | California            | 95014                      | John@example.org |
     Given I open about view and login
     When I choose Leads in modules menu
     Then I should see *John in #LeadsList.ListView
@@ -57,7 +57,7 @@ Feature: Leads module verification
       | status       | New              |
 
   @list-edit
-  Scenario: Contracts > List View > Inline Edit
+  Scenario: Leads > List View > Inline Edit
     Given Leads records exist:
       | *      | first_name | last_name | account_name   | title             | email                        |
       | Lead_1 | John       | Barlow    | John's Account | Software Engineer | lead_1@example.net (primary) |
@@ -220,20 +220,20 @@ Feature: Leads module verification
     When I choose Leads in modules menu
     When I click Create button on #LeadsList header
     When I provide input for #LeadsDrawer.HeaderView view
-      | *        | first_name | last_name |
+      | *      | first_name | last_name |
       | Lead_1 | Novak      | Djokovic  |
     When I provide input for #LeadsDrawer.RecordView view
-      | *        | title                              | phone_mobile | website    |
+      | *      | title                              | phone_mobile | website    |
       | Lead_1 | Serbian professional tennis player | 888-233-3221 | www.ND.com |
     # Cancel Lead creation
     When I click Cancel button on #LeadsDrawer header
     Then I should see #LeadsList.ListView view
     When I click Create button on #LeadsList header
     When I provide input for #LeadsDrawer.HeaderView view
-      | *        | salutation | first_name | last_name |
+      | *      | salutation | first_name | last_name |
       | Lead_1 | Mr.        | Novak      | Djokovic  |
     When I provide input for #LeadsDrawer.RecordView view
-      | *        | title                              | phone_mobile | website               | account_name    |
+      | *      | title                              | phone_mobile | website               | account_name    |
       | Lead_1 | Serbian professional tennis player | 888-233-3221 | novakdjokovic.com/en/ | Novak's Account |
     # Save Lead record
     When I click Save button on #LeadsDrawer header

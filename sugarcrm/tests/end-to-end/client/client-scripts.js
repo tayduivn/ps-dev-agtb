@@ -63,4 +63,12 @@ module.exports = {
         var oFrame = document.querySelector('[data-name=' + iFrameName + '] iframe');
         return oFrame.contentDocument.body.innerHTML;
     },
+
+    /**
+     * Get current module
+     *
+     */
+    getCurrentModule: function() {
+        return App.controller.context.get('module');
+    },
 };

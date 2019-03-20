@@ -78,7 +78,7 @@ When(/^I open actions menu in (#[a-zA-Z]\w+)$/,
     }, {waitForApp: true});
 
 /**
- * Choose Actions menu options
+ * Choose action from actions menu
  *
  * @example "I choose Delete from actions menu in #Account_ARecord"
  */

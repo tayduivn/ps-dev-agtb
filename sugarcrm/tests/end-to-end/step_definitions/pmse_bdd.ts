@@ -20,7 +20,7 @@ import BaseView from '../views/base-view';
 import * as _ from 'lodash';
 import AlertCmp from '../components/alert-cmp';
 import BusinessRulesDesign from '../layouts/business-rules-record-layout';
-import {chooseModule, chooseRecord, buttonClicks, goToUrl} from "./general_bdd";
+import {chooseModule, chooseRecord, recordViewHeaderButtonClicks, goToUrl} from "./general_bdd";
 
 When(/^I begin designing pmse_Business_Rules \*(\w+)$/,
     async function(name: string) {
@@ -30,8 +30,8 @@ When(/^I begin designing pmse_Business_Rules \*(\w+)$/,
         let record = await seedbed.cachedRecords.get(name);
         await chooseRecord({id : record.id}, view );
         let rec_view = await seedbed.components[`${name}Record`];
-        await buttonClicks('actions', rec_view);
-        await buttonClicks('design_pbr', rec_view);
+        await recordViewHeaderButtonClicks('actions', rec_view);
+        await recordViewHeaderButtonClicks('design_pbr', rec_view);
         await seedbed.client.driver.waitForApp();
     }, {waitForApp: true}
 );

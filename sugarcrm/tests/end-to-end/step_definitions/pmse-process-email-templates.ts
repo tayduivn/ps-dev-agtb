@@ -17,7 +17,7 @@ import ListView from '../views/list-view';
 import PmseEtDesign from '../views/pmse-et-design';
 import PmseEtFieldSelect from '../views/pmse-et-compose-varbook-list';
 import * as _ from 'lodash';
-import {chooseModule, chooseRecord, buttonClicks, checkValues} from "./general_bdd";
+import {chooseModule, chooseRecord, recordViewHeaderButtonClicks, checkValues} from "./general_bdd";
 
 Given(/^I design (\w+) \*(\w+)/,
     async function(module: string, name: string) {
@@ -27,8 +27,8 @@ Given(/^I design (\w+) \*(\w+)/,
         let record = await seedbed.cachedRecords.get(name);
         await chooseRecord({id: record.id}, view);
         let rec_view = await seedbed.components[`${name}Record`];
-        await buttonClicks('actions', rec_view);
-        await buttonClicks('design_pet', rec_view);
+        await recordViewHeaderButtonClicks('actions', rec_view);
+        await recordViewHeaderButtonClicks('design_pet', rec_view);
         await seedbed.client.driver.waitForApp();
 }, {waitForApp: true});
 
@@ -95,7 +95,7 @@ When(/^a placeholder is inserted in the (subject|content) \*(\w+) record from mo
         await petSelectField.selectFieldOption(selectedModule, table['rawTable'][1][1], table['rawTable'][1][2]);
         await seedbed.client.driver.waitForApp();
 
-        await buttonClicks('done', rec_view);
+        await recordViewHeaderButtonClicks('done', rec_view);
         await seedbed.client.driver.waitForApp();
 }, {waitForApp: true});
 
@@ -117,7 +117,7 @@ When(/^a link placeholder is inserted in the content \*(\w+) record:$/,
         await petSelectLink.selectRecordLink(table['rawTable'][1][0]);
         await seedbed.client.driver.waitForApp();
 
-        await buttonClicks('select', rec_view);
+        await recordViewHeaderButtonClicks('select', rec_view);
         await seedbed.client.driver.waitForApp();
 }, {waitForApp: true});
 
@@ -126,6 +126,6 @@ Then(/^(\w+) \*(\w+) should have the values:$/,
         let record = await seedbed.cachedRecords.get(recordName);
         let rec_view = await seedbed.components[`${recordName}Record`];
         await checkValues(rec_view, table);
-        await buttonClicks('cancel', rec_view);
+        await recordViewHeaderButtonClicks('cancel', rec_view);
     }, {waitForApp: true}
 );

@@ -40,7 +40,12 @@ export default class SubpanelLayout extends ListView {
                     plusButton: '.subpanel-controls .fa.fa-plus',
                     toggleMenuButton: '.subpanel-controls .fa.fa-caret-down',
                 },
-                linkRecordMenuItem: '.dropdown-menu .panel-top a',
+                /* Index is needed for 'Select From Reports' subpanel action in Target List:
+                 1: - Link Existing Record
+                 2: - Select from Reports 
+                */
+                selectSubpanelAction: '.subpanel-controls li:nth-child({{index}}) a',
+
             },
             massupdate: {
                 toggleMassUpdate: '.fieldset.actions.actionmenu.list.btn-group .btn.dropdown-toggle',
@@ -82,8 +87,8 @@ export default class SubpanelLayout extends ListView {
         await this.driver.click(selector);
     }
 
-    public async selectMenuItem(): Promise<any> {
-        let selector = this.$('header.linkRecordMenuItem');
+    public async selectMenuItem(index): Promise<any> {
+        let selector = this.$(`header.selectSubpanelAction`, {index});
         await this.driver.scroll(selector);
         await this.driver.click(selector);
     }

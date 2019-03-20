@@ -8,11 +8,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import {seedbed} from '@sugarcrm/seedbed';
 import {BaseField} from './base-field';
 
 /**
- * @class CopyField
+ * @class BoolField
  * @extends BaseField
  */
 export default class BoolField extends BaseField {
@@ -28,13 +27,18 @@ export default class BoolField extends BaseField {
         });
     }
 
-    public async setValue(val: any): Promise<void> {
-        await this.driver.scroll(this.$('field.selector'));
-        await this.driver.click(this.$('field.selector'));
+    public async setValue(val: string): Promise<void> {
+
+        let curValue = await this.driver.isSelected(this.$('field.selector'));
+        // Toggle value only if current check box state is not equal to new state
+        if ( val.toLowerCase() !== curValue.toString() ) {
+            await this.driver.scroll(this.$('field.selector'));
+            await this.driver.click(this.$('field.selector'));
+        }
     }
 
     public async getText(selector: string): Promise<string> {
-        let value: boolean =  await this.driver.isSelected(selector);
+        let value: boolean =  await this.driver.isSelected(this.$('field.selector'));
         return value.toString();
     }
 }

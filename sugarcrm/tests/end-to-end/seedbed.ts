@@ -256,6 +256,44 @@ export default (seedbed: Seedbed) => {
         }
     });
 
+    /**
+     *  This method addresses new Leads record's creation when prospect is converted to lead. This
+     *  allows to refer to created lead record by record ID
+     */
+    seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
+
+        if (req.method === 'POST' && /(\/Leads\?relate_to=Prospects)/.test(req.url)) {
+
+            let responseRecord = JSON.parse(data.buffer.toString());
+
+            // We try to find cached record without 'recordId'.
+            let recordInfo = _.find(seedbed.cucumber.scenario.recordsInfo, _recordInfo => !_recordInfo.recordId);
+
+            // save record in cachedRecords by uid if such record is found
+            if (recordInfo && recordInfo.uid) {
+
+                seedbed.cachedRecords.push(recordInfo.uid, {
+                    input: recordInfo.input,
+                    id: responseRecord.id,
+                    module: 'Leads',
+                });
+
+                recordInfo.recordId = recordInfo.uid;
+
+                seedbed.defineComponent(`${recordInfo.uid}Preview`, PreviewLayout, {
+                    module: 'Leads',
+                    id: responseRecord.id
+                });
+
+                seedbed.defineComponent(`${recordInfo.uid}Record`, RecordLayout, {
+                    module: 'Leads',
+                    id: responseRecord.id
+                });
+            }
+        }
+    });
+
+
     seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
 
         if (req.method === 'POST' && /(\/opportunity)/.test(req.url)) {

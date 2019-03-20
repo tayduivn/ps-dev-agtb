@@ -51,6 +51,16 @@ export default class extends BaseView {
                     'View Templates': 'a[data-navbar-menu-item="LNK_LIST_KBCONTENT_TEMPLATES"]',
                     'View Categories': 'a[data-navbar-menu-item="LNK_LIST_KBCATEGORIES"]',
                     'Settings': 'a[data-navbar-menu-item="LNK_KNOWLEDGE_BASE_ADMIN_MENU"]',
+
+                    //Prospects (Targets)
+                    'Create Target': 'a[data-navbar-menu-item="LNK_NEW_PROSPECT"]',
+                    'Create Target From vCard': 'a[data-navbar-menu-item="LNK_IMPORT_VCARD"]',
+                    'View Targets': 'a[data-navbar-menu-item="LNK_PROSPECT_LIST"]',
+                    'Import Targets': 'a[data-navbar-menu-item="LNK_IMPORT_PROSPECTS"]',
+
+                    //Prospect Lists (Target Lists)
+                    'Create Target List': 'a[data-navbar-menu-item="LNK_NEW_PROSPECT_LIST"]',
+                    'View Target Lists': 'a[data-navbar-menu-item="LNK_PROSPECT_LIST_LIST"]',
                 },
             }
         };

@@ -22,12 +22,13 @@ export default class FilterView extends BaseView {
 
     protected fieldToUpdateItem: string;
     protected itemSelector: String;
+    protected inputSelector: String;
 
     constructor(options) {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.search-filter',
+            $: '',
             searchField: '.search-name',
             filter: '.search-filter .select2-choice-type',
             activitystream: '.fa.fa-clock-o',
@@ -46,6 +47,14 @@ export default class FilterView extends BaseView {
                     removeRow: '.fa.fa-minus',
                 },
             },
+            // Add to Target List
+            filterHeader: {
+                $: '.massaddtolist',
+                create: 'a[name="create_button"]',
+                cancel: '.cancel_button',
+                update: 'a[name="update_button"]',
+            },
+            selectExistingList: '.filter-body.clearfix .controls .edit',
         });
 
         this.globalSelectors = {
@@ -61,6 +70,7 @@ export default class FilterView extends BaseView {
 
         this.itemSelector = '.select2-result=';
         this.fieldToUpdateItem = '.select2-result-label=';
+        this.inputSelector = '.select2-input.select2-focused';
     }
 
     private globalSelectors: any;
@@ -222,4 +232,30 @@ export default class FilterView extends BaseView {
         let selector = this.$(`filterBody`, {rowNum});
         return await this.driver.isElementExist(selector);
     }
+
+    public async performTargetListAction(actionToPerform: string) {
+        let selector = this.$(`filterHeader.${actionToPerform}`);
+        await this.driver.click(selector);
+    }
+
+    /**
+     * Select existing target list when adding records to Target List from the list view
+     *
+     * @param {string} prospectListName Target List Name
+     * @returns {Promise<void>}
+     */
+    public async selectExistingTargetList(prospectListName: string) {
+
+        // Click Inside relate field to expand it
+        let selector = this.$(`selectExistingList`);
+        await this.driver.click(selector);
+        // Type existing target list name
+        await this.driver.setValue(this.inputSelector, prospectListName);
+        await this.driver.waitForApp();
+        // Click on matching value
+        await this.driver.click(`${this.fieldToUpdateItem}${prospectListName}`);
+        await this.driver.waitForApp();
+    }
+
+
 }

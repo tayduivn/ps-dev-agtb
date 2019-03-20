@@ -12,7 +12,7 @@
 
 import {Hashmap, When, seedbed, Then} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
-import {chooseModule, closeAlert, closeWarning, parseInputArray} from './general_bdd';
+import {chooseModule, closeAlert, closeWarning, getCurrentModule, parseInputArray} from './general_bdd';
 import * as _ from 'lodash';
 import FilterView from '../views/filter-view';
 
@@ -229,7 +229,10 @@ When(/^I (edit|reset) custom filter '([^"]*)' on the (\w+) list view with the fo
 Then(/^I should (not )?see (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) on (\w+) list view$/,
     async function(not, inputIDs: string, module: string) {
 
-        await chooseModule(module);
+        let currentModule = await getCurrentModule();
+        if (currentModule !== module ) {
+            await chooseModule(module);
+        }
         // Get ListView
         const listView = await seedbed.components[`${module}List`].ListView;
 

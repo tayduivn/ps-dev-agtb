@@ -68,6 +68,9 @@ export default class RecordHeaderView extends BaseView {
                 'createrevision': 'a[name="create_revision_button"]:not(.hide)',
                 'createcategory': 'a[name="add_node_button"]:not(.hide)',
 
+                // Prospects (Targets) module controls
+                'converttarget': 'a[name="convert_button"]:not(.hide)',
+
                 // Cases
                 'createarticle': 'a[name="create_button"]:not(.hide)',
             },

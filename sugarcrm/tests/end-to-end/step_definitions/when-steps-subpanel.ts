@@ -12,9 +12,8 @@
 import {When} from '@sugarcrm/seedbed';
 import {seedbed} from '@sugarcrm/seedbed/seedbed';
 import RecordLayout from '../layouts/record-layout';
-import AlertCmp from '../components/alert-cmp';
 import * as _ from 'lodash';
-import {closeAlert, closeWarning} from '../step_definitions/general_bdd';
+import {closeAlert, closeWarning} from './general_bdd';
 
 /**
  * Open the specified subpanel on a specified record view
@@ -39,7 +38,7 @@ When(/^I (create_new|link_existing) record from (\S+) subpanel on (#\S+) view$/,
         if (actionName === 'create_new') {
             await recordLayout.SubpanelsLayout.createRecord(subpanelName);
         } else if (actionName === 'link_existing') {
-            await recordLayout.SubpanelsLayout.linkRecord(subpanelName);
+            await recordLayout.SubpanelsLayout.linkRecord(subpanelName, 1);
         }
     }, {waitForApp: true});
 
@@ -65,7 +64,7 @@ When(/^I link existing record (\*[a-zA-Z](?:\w|\S)*) to (\S+) subpanel on (#\S+)
         await this.driver.waitForApp();
 
         // Select 'Link Existing' action from the subpanel
-        await recordLayout.SubpanelsLayout.linkRecord(subpanelName);
+        await recordLayout.SubpanelsLayout.linkRecord(subpanelName, 1);
         await this.driver.waitForApp();
 
         // Toggle checkbox in Search And Add Drawer
@@ -79,6 +78,39 @@ When(/^I link existing record (\*[a-zA-Z](?:\w|\S)*) to (\S+) subpanel on (#\S+)
 
         // Close Alert
         await closeAlert();
+    }, {waitForApp: true});
+
+/**
+ *  Add records returned by report to subpanel in Target List record view
+ *  
+ *  @example
+ *  When I link accounts returned by 'Accounts By Type By Industry' report to #PRL_1Record target list
+ */
+When(/^I link (\S+) returned by '([a-zA-Z][a-zA-Z ]+)' report to (#\S+) target list$/,
+    async function(
+
+        subpanelName: string,
+        reportName: string,
+        recordLayout: RecordLayout,
+
+    ): Promise<void> {
+
+        // Open subpanel
+        await recordLayout.SubpanelsLayout.openSubpanel(subpanelName);
+        await this.driver.waitForApp();
+
+        // Select 'Select from Reports' action from the subpanel
+        await recordLayout.SubpanelsLayout.linkRecord(subpanelName, 2);
+        await this.driver.waitForApp();
+
+        // Search report by name in the list off available reports
+        await seedbed.components["ReportsSearchAndSelect"].FilterView.setSearchField(reportName);
+        await this.driver.waitForApp();
+
+        // Select report in 'Search And Select Report' drawer
+        await seedbed.components["ReportsSearchAndSelect"].selectReportByName(reportName);
+        await this.driver.waitForApp();
+
     }, {waitForApp: true});
 
 /**

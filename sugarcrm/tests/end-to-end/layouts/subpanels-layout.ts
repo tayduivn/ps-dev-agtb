@@ -52,13 +52,13 @@ export default class SubpanelsLayout extends BaseView {
         await subpanel.createRecord();
     }
 
-    public async linkRecord(subpanelName: string): Promise<any> {
+    public async linkRecord(subpanelName: string, index: number): Promise<any> {
         let subpanel = this.subpanels[subpanelName];
         if (!subpanel) {
             throw new Error('Subpanel ' + subpanelName + ' does not exist!');
         }
         await subpanel.openActionsMenu();
-        await subpanel.selectMenuItem();
+        await subpanel.selectMenuItem(index);
     }
 
 

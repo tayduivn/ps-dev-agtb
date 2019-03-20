@@ -21,7 +21,7 @@ import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import {updateForecastConfig} from "./steps-helper";
 import AlertCmp from '../components/alert-cmp';
 import {updateOpportunityConfig} from './steps-helper';
-import {toggleRecord, parseInputArray, chooseModule, closeAlert} from './general_bdd';
+import {chooseRecord,toggleRecord, parseInputArray, chooseModule, closeAlert} from './general_bdd';
 import ActivityStream from '../layouts/activity-stream-layout';
 
 /**
@@ -665,4 +665,20 @@ When(/^I comment on the top activity in (#\S+)$/, async function (layout: Activi
         i++;
     }
 }, {waitForApp: false});
+
+/**
+ *  Open record view of the specified record
+ *
+ *  @example
+ *  When I open ProspectLists *PRL_1 record view
+ */
+When(/^I open (\w+) \*(\w+) record view$/,
+    async function (module, name: string) {
+        // TODO: In the future we should check the current route and if we are already on the correct module/record
+        await chooseModule(module);
+        let view = await seedbed.components[`${module}List`].ListView;
+        let record = await seedbed.cachedRecords.get(name);
+        await chooseRecord({id: record.id}, view);
+    }, {waitForApp: true}
+);
 

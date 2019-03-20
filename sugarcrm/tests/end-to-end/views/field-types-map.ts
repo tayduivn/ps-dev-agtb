@@ -18,7 +18,6 @@ import * as FloatField from '../fields/float-field';
 import * as DateField from '../fields/date-field';
 import * as RelateField from '../fields/relate-field';
 import * as QuoteDataRelateField from '../fields/quote-data-relate';
-import * as CopyField from '../fields/copy-field';
 import * as CurrencyField from '../fields/currency-field';
 import * as UrlField from '../fields/url-field';
 import * as FullnameField from '../fields/fullname-field';
@@ -61,9 +60,9 @@ export const FIELD_TYPES__MAP = {
     relate: RelateField,
     taxrate: RelateField,
     'quote-data-relate': QuoteDataRelateField,
-    checkbox: CopyField,
+    checkbox: BoolField,
     bool: BoolField,
-    copy: CopyField,
+    copy: BoolField,
     currency: CurrencyField,
     email: EmailField,
     'currency-type-dropdown': EnumField,

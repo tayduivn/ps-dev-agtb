@@ -62,7 +62,6 @@ export class Detail extends BaseField {
     public async getText(selector: string): Promise<string> {
 
         let value: string | string[] = await this.driver.getText(selector);
-
         return value.toString().trim();
     }
 
@@ -85,8 +84,7 @@ export class List extends BaseField {
                 selector: 'div.ellipsis_inline'
             }
         });
-
     }
 }
 
-export const Preview = Detail;
+export const Preview = List;

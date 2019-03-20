@@ -41,6 +41,7 @@ export default class ListView extends BaseListView {
                     'Export': 'a[name="export_button"]:not(.hide)',
                     'Mass Update': 'a[name="massupdate_button"]:not(.hide)',
                     'Merge': 'a[name="merge_button"]:not(.hide)',
+                    'Add To Target List': 'a[name="addtolist_button"]:not(.hide)',
                     'Recalculate Values': 'a[name="calc_field_button"]:not(.hide)',
                  }
             });
