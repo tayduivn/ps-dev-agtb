@@ -4107,15 +4107,12 @@ function sugarArrayMergeRecursive($gimp, $dom)
 {
     if (is_array($gimp) && is_array($dom)) {
         foreach ($dom as $domKey => $domVal) {
-            if (array_key_exists($domKey, $gimp)) {
-                if (is_array($domVal) && is_array($gimp[$domKey])) {
-                    $gimp[$domKey] = sugarArrayMergeRecursive($gimp[$domKey], $domVal);
-                } else {
-                    $gimp[$domKey] = $domVal;
-                }
-            } else {
-                $gimp[$domKey] = $domVal;
+            $areVariablesArray = array_key_exists($domKey, $gimp) && is_array($domVal) && is_array($gimp[$domKey]);
+            if ($areVariablesArray && (isArrayAssociative($domVal) || isArrayAssociative($gimp[$domKey]))) {
+                $gimp[$domKey] = sugarArrayMergeRecursive($gimp[$domKey], $domVal);
+                continue;
             }
+            $gimp[$domKey] = $domVal;
         }
     }
     // if the passed value for gimp isn't an array, then return the $dom
@@ -4123,6 +4120,16 @@ function sugarArrayMergeRecursive($gimp, $dom)
         return $dom;
 
     return $gimp;
+}
+
+/**
+ * Is array associative?
+ * @param array $array
+ * @return bool
+ */
+function isArrayAssociative(array $array): bool
+{
+    return !empty($array) && array_keys($array) !== range(0, count($array) - 1);
 }
 
 /**
