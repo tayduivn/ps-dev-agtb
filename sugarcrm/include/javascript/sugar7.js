@@ -376,6 +376,11 @@
                 name: 'pipelineView',
                 route: ':module/pipeline',
                 callback: function(module) {
+                    if (!app.acl.hasAccessToModel('list', this.model)) {
+                        app.error.handleHttpError({status: 404});
+                        return;
+                    }
+
                     app.controller.loadView({
                         module: module,
                         layout: 'pipeline-records'

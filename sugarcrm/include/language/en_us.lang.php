@@ -3785,7 +3785,10 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_PRODUCT_QUICK_PICKS_FAVORITES_TAB' => 'Favorites',
 
     // Visual pipeline
+    'LBL_LIST_VIEW__NAME' => 'List View',
+    'LBL_PIPELINE_VIEW_NAME' => 'Pipeline View',
     'LBL_PIPELINE_VIEW_BTN' => 'Visual Pipeline',
+    'LBL_PIPELINE_VIEW_TAB_NAME' => 'Pipeline by ',
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DASHLET_CASES_SUMMARY_NAME' => 'Case Summary',

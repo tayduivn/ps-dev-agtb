@@ -9,11 +9,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe("Base.Layout.Togglepanel", function () {
+describe('Base.Layout.Togglepanel', function() {
 
     var app, layout, getModuleStub;
 
-    beforeEach(function () {
+    beforeEach(function() {
         app = SugarTest.app;
         getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {
             return {activityStreamEnabled:true};
@@ -25,7 +25,7 @@ describe("Base.Layout.Togglepanel", function () {
         });
     });
 
-    afterEach(function () {
+    afterEach(function() {
         getModuleStub.restore();
         app.cache.cutAll();
         app.view.reset();
@@ -35,33 +35,33 @@ describe("Base.Layout.Togglepanel", function () {
         layout = null;
     });
 
-    describe("Toggle Panel", function () {
+    describe('Toggle Panel', function() {
         var oLastState;
-        beforeEach(function () {
+        beforeEach(function() {
             var meta = {
             }
             oLastState = app.user.lastState;
             app.user.lastState = {
-                key: function(){},
-              get: function(){},
-                set: function(){},
-                register: function(){}
+                key: function() {},
+                get: function() {},
+                set: function() {},
+                register: function() {}
             };
             var stub = sinon.stub(app.user.lastState);
-            layout = SugarTest.createLayout("base", "Accounts", "togglepanel", meta);
+            layout = SugarTest.createLayout('base', 'Accounts', 'togglepanel', meta);
         });
-        afterEach(function () {
+        afterEach(function() {
             app.user.lastState = oLastState;
         });
-        it("should initialize", function () {
-            var processToggleSpy = sinon.stub(layout, 'processToggles', function () {
+        it('should initialize', function() {
+            var processToggleSpy = sinon.stub(layout, 'processToggles', function() {
             });
             var options = {};
             layout.initialize(options);
             expect(layout.componentsList).toEqual({});
             expect(processToggleSpy).toHaveBeenCalled();
         });
-        it("should process toggles", function () {
+        it('should process toggles', function() {
             var options = {};
             var meta = {
                 'availableToggles': [
@@ -121,7 +121,7 @@ describe("Base.Layout.Togglepanel", function () {
                 }
             ]);
         });
-        it('should add toggle components to the togglable component lists', function () {
+        it('should add toggle components to the togglable component lists', function() {
             var mockComponent = app.view.createView({type: 'test1', name: 'test1'});
             layout.options.meta.availableToggles = [
                 {
@@ -170,7 +170,7 @@ describe("Base.Layout.Togglepanel", function () {
                 sinon.collection.restore();
             });
             describe('when the data.route is not pipeline', function() {
-                it('should set last state with last state key and data.view', function() {
+                it('should set last state with last state key and data.route', function() {
                     sinon.collection.stub(layout, '$', function() {
                         return {
                             data: function() {

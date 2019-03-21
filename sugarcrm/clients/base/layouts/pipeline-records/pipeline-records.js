@@ -21,24 +21,35 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.pipelineModules = app.metadata.getModule('VisualPipeline', 'config').enabled_modules || [];
+    },
 
-        this.alerts = {
-            showNoAccessError: function() {
-                if (!this instanceof app.view.View) {
-                    app.logger.error('This method should be invoked by Function.prototype.call(), passing in as' +
-                        'argument an instance of this view.');
-                    return;
-                }
-                // dismiss the default error
-                app.alert.dismiss('data:sync:error');
-                // display no access error
-                app.alert.show('server-error', {
-                    level: 'warning',
-                    title: 'ERR_NO_VIEW_ACCESS_TITLE',
-                    messages: app.utils.formatString(app.lang.get('ERR_NO_VIEW_ACCESS_MSG'), [this.module]),
-                    autoclose: true
-                });
-            }
+    /**
+     * Loads data for a particular user and renders the pipelineType on callback success
+     * @param options
+     */
+    loadData: function(options) {
+        var filter = {
+            '$or': [
+                {'assigned_user_id': {'$equals': app.user.get('id')}}
+            ]
         };
+
+        this.collection.setOption('filter', filter);
+        this.collection.setOption('params', {order_by: 'date_modified:DESC'});
+        this.collection.setOption('limit', 2); // At most 2 rows - default config and user config (if any).
+        this.collection.fetch(
+            {
+                success: _.bind(this.setPipelineType, this)
+            }
+        );
+    },
+
+    /**
+     * Calls the render method
+     * @param data
+     */
+    setPipelineType: function(data) {
+        this.render();
     }
 })
