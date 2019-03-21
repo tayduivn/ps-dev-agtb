@@ -65,30 +65,286 @@ describe('Base.View.MultiLineListView', function() {
     });
 
     describe('handleRowClick', function() {
-        it('should open drawer with respective definition', function() {
-            app.drawer = {open: $.noop};
-            var drawerOpenStub = sinon.collection.stub(app.drawer, 'open');
-            var event = {target: 'mockValue'};
-            var model1 = app.data.createBean('Cases', {id: '1234'});
-            var model2 = app.data.createBean('Cases', {id: '9999'});
-            view.collection = app.data.createBeanCollection('Cases', [model1, model2]);
+        var $el;
+        var target = 'targetValue';
+        var event = {target: target};
+        var clearModelStub;
+        var setModelStub;
 
-            sinon.collection.stub(view, '$').withArgs('mockValue').returns({
-                closest: sinon.collection.stub().withArgs('.multi-line-row').returns({
-                    data: sinon.collection.stub().withArgs('id').returns('1234')
-                })
-            });
+        beforeEach(function() {
+            $el = {
+                closest: $.noop
+            };
+            sinon.collection.stub(view, '$').withArgs(target).returns($el);
+            app.drawer = {
+                open: sinon.collection.stub(),
+                closeImmediately: sinon.collection.stub(),
+                count: sinon.collection.stub(),
+            };
+            clearModelStub = sinon.collection.stub(view, '_clearDrawerModelId');
+            setModelStub = sinon.collection.stub(view, '_setDrawerModelId');
+        });
+
+        afterEach(function() {
+            $el = null;
+            delete app.drawer;
+        });
+
+        it('should not take any action when event trigger by dropdown toggle', function() {
+            var closestStub = sinon.collection.stub($el, 'closest');
+
+            sinon.collection.stub(view, 'isDropdownToggle').withArgs($el).returns(true);
             view.handleRowClick(event);
 
-            expect(drawerOpenStub).toHaveBeenCalledWith({
-                layout: 'row-model-data',
-                direction: 'horizontal',
-                context: {
-                    model: model1,
-                    module: model1._module
+            // Method not try to get closest row model id to proceed further action
+            expect(closestStub).not.toHaveBeenCalled();
+            expect(app.drawer.open).not.toHaveBeenCalled();
+            expect(app.drawer.closeImmediately).not.toHaveBeenCalled();
+            expect(clearModelStub).not.toHaveBeenCalled();
+            expect(setModelStub).not.toHaveBeenCalled();
+        });
+
+        it('should not take any action when any action dropdowns are open', function() {
+            var closestStub = sinon.collection.stub($el, 'closest');
+
+            sinon.collection.stub(view, 'isDropdownToggle').withArgs($el).returns(false);
+            sinon.collection.stub(view, 'isActionsDropdownOpen').returns(true);
+            view.handleRowClick(event);
+
+            // Method not try to get closest row model id to proceed further action
+            expect(closestStub).not.toHaveBeenCalled();
+            expect(app.drawer.open).not.toHaveBeenCalled();
+            expect(app.drawer.closeImmediately).not.toHaveBeenCalled();
+            expect(clearModelStub).not.toHaveBeenCalled();
+            expect(setModelStub).not.toHaveBeenCalled();
+        });
+
+        describe('open drawer', function() {
+            var model1;
+            var model2;
+
+            beforeEach(function() {
+                model1 = app.data.createBean('Cases', {id: '1234'});
+                model2 = app.data.createBean('Cases', {id: '9999'});
+                view.collection = app.data.createBeanCollection('Cases', [model1, model2]);
+
+                sinon.collection.stub(view, 'isDropdownToggle').withArgs($el).returns(false);
+                sinon.collection.stub(view, 'isActionsDropdownOpen').returns(false);
+            });
+
+            it('should open drawer when no existing drawer open', function() {
+                sinon.collection.stub($el, 'closest').withArgs('.multi-line-row').returns({
+                    data: sinon.collection.stub().withArgs('id').returns('1234')
+                });
+                app.drawer.count.returns(0);
+
+                view.handleRowClick(event);
+
+                expect(app.drawer.closeImmediately).not.toHaveBeenCalled();
+                expect(clearModelStub).not.toHaveBeenCalled();
+                expect(app.drawer.open).toHaveBeenCalledWith({
+                    layout: 'row-model-data',
+                    direction: 'horizontal',
+                    context: {
+                        model: model1,
+                        module: model1.get('_module')
+                    }
+                });
+                expect(setModelStub).toHaveBeenCalledWith('1234');
+            });
+
+            it('should close existing drawer different row is click', function() {
+                view.drawerModelId = '9999';
+                sinon.collection.stub($el, 'closest').withArgs('.multi-line-row').returns({
+                    data: sinon.collection.stub().withArgs('id').returns('1234')
+                });
+                app.drawer.count.returns(1);
+
+                view.handleRowClick(event);
+
+                expect(app.drawer.closeImmediately).toHaveBeenCalled();
+                expect(clearModelStub).toHaveBeenCalled();
+            });
+
+            it('should not close existing drawer same row is click', function() {
+                view.drawerModelId = '1234';
+                sinon.collection.stub($el, 'closest').withArgs('.multi-line-row').returns({
+                    data: sinon.collection.stub().withArgs('id').returns('1234')
+                });
+                app.drawer.count.returns(1);
+
+                view.handleRowClick(event);
+
+                expect(app.drawer.closeImmediately).not.toHaveBeenCalled();
+                expect(clearModelStub).not.toHaveBeenCalled();
+                expect(app.drawer.open).not.toHaveBeenCalledWith();
+                expect(setModelStub).not.toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('addActions', function() {
+        beforeEach(function() {
+            view.leftColumns = [];
+        });
+
+        it('should not add field to leftColunms when meta is empty', function() {
+            view.addActions(undefined);
+            expect(view.leftColumns.length).toBe(0);
+        });
+
+        it('should not add field to leftColunms when rowactions is empty', function() {
+            view.addActions({
+                rowactions: undefined
+            });
+            expect(view.leftColumns.length).toBe(0);
+        });
+
+        it('should add field to leftColunms when meta', function() {
+            var actions = ['action1', 'action2'];
+            var cssClass = 'dummy_class';
+            var label = 'LBL_DUMMY_LABLE';
+
+            var expectedFieldMeta = {
+                'type': 'fieldset',
+                'css_class': 'overflow-visible',
+                'fields': [
+                    {
+                        'type': 'rowactions',
+                        'no_default_action': true,
+                        'label': label,
+                        'css_class': cssClass,
+                        'buttons': actions
+                    }
+                ]
+            };
+
+            view.addActions({
+                rowactions: {
+                    actions: actions,
+                    css_class: cssClass,
+                    label: label
                 }
             });
-            delete app.drawer;
+
+            expect(view.leftColumns.length).toBe(1);
+            expect(view.leftColumns[0]).toEqual(expectedFieldMeta);
+        });
+    });
+
+    describe('_setDrawerModelId', function() {
+        it('should set drawer model id', function() {
+            var id = '1234';
+
+            expect(view.drawerModelId).toBe(null);
+
+            view._setDrawerModelId(id);
+            expect(view.drawerModelId).toBe(id);
+        });
+    });
+
+    describe('_clearDrawerModelId', function() {
+        it('should reset drawer model id to null', function() {
+            var id = '9999';
+
+            view._setDrawerModelId(id);
+            expect(view.drawerModelId).toBe(id);
+
+            view._clearDrawerModelId();
+            expect(view.drawerModelId).toBe(null);
+        });
+    });
+
+    describe('isActionDropdownOpen', function() {
+        it('should return true when any elements match with selector', function() {
+            var selector = '.fieldset.actions.list.btn-group.open';
+            sinon.collection.stub(view, '$').withArgs(selector).returns({length: 1});
+
+            expect(view.isActionsDropdownOpen()).toBe(true);
+        });
+
+        it('should return false when no element matchs with selector', function() {
+            var selector = '.fieldset.actions.list.btn-group.open';
+            sinon.collection.stub(view, '$').withArgs(selector).returns({length: 0});
+
+            expect(view.isActionsDropdownOpen()).toBe(false);
+        });
+    });
+
+    describe('isDropdownToggle', function() {
+        it('should return true when element has the dropdown-toggle class', function() {
+            var $el = {
+                hasClass: sinon.collection.stub().withArgs('dropdown-toggle').returns(true)
+            };
+
+            expect(view.isDropdownToggle($el)).toBe(true);
+        });
+
+        it('should return true when any parents of element has the dropdown-toggle class', function() {
+            var $el = {
+                hasClass: sinon.collection.stub().withArgs('dropdown-toggle').returns(false),
+                parent: sinon.collection.stub().returns({
+                    hasClass: sinon.collection.stub().withArgs('dropdown-toggle').returns(true)
+                })
+            };
+
+            expect(view.isDropdownToggle($el)).toBe(true);
+        });
+
+        it('should return false when neither the element nor its parents has the dropdown-toggle class', function() {
+            var $el = {
+                hasClass: sinon.collection.stub().withArgs('dropdown-toggle').returns(false),
+                parent: sinon.collection.stub().returns({
+                    hasClass: sinon.collection.stub().withArgs('dropdown-toggle').returns(false)
+                })
+            };
+
+            expect(view.isDropdownToggle($el)).toBe(false);
+        });
+    });
+
+    describe('updateDropdownDirection', function() {
+        var $buttonGroup;
+        var jQueryMock;
+        var target = 'targetValue';
+        var event = {currentTarget: target};
+
+        beforeEach(function() {
+            $buttonGroup = {
+                height: sinon.collection.stub().returns(100),
+                children: sinon.collection.stub().withArgs('ul').returns({
+                    first: sinon.collection.stub().returns({
+                        height: sinon.collection.stub().returns(100)
+                    })
+                }), // height of button group + children = 200
+                offset: sinon.collection.stub(), // offset position determine dropup class
+                toggleClass: sinon.collection.stub()
+            };
+            jQueryMock = sinon.collection.stub(view, '$');
+            jQueryMock.withArgs('targetValue').returns({
+                first: sinon.collection.stub().returns($buttonGroup)
+            });
+            sinon.collection.stub(window, '$').withArgs(window).returns({
+                // windowHeight(865) - padding(65) = 800, making offset 600 as break point
+                height: sinon.collection.stub().returns(865)
+            });
+        });
+
+        afterEach(function() {
+            $buttonGroup = null;
+            jQueryMock = null;
+        });
+
+        it('should not update $buttonGroup with dropup class when dropdown menu not out of window', function() {
+            $buttonGroup.offset.returns({top: 600});
+            view.updateDropdownDirection(event);
+            expect($buttonGroup.toggleClass).not.toHaveBeenCalled();
+        });
+
+        it('should update $buttonGroup with dropup class when dropdown menu would be out of window', function() {
+            $buttonGroup.offset.returns({top: 601});
+            view.updateDropdownDirection(event);
+            expect($buttonGroup.toggleClass).toHaveBeenCalledWith('dropup');
         });
     });
 });

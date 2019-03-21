@@ -386,9 +386,6 @@
             app.$contentEl.addClass('noscroll');
         }
 
-        //add the expand tab and the backdrop to the top drawer
-        this._createTabAndBackdrop(drawers.$next, drawers.$top);
-
         //indicate that it's an active drawer
         drawers.$next.addClass('drawer active');
 
@@ -396,8 +393,10 @@
             //set the starting position on the right for the new drawer
             drawers.$next.css('left', '100%');
             drawers.$next.css('width', '75%');
-            $('.drawer-backdrop').css('opacity', '0');
         } else {
+            //add the expand tab and the backdrop to the top drawer
+            this._createTabAndBackdrop(drawers.$next, drawers.$top);
+
             //set the height of the new drawer
             drawers.$next.css('height', drawerHeight);
             //set the animation starting point for the new drawer

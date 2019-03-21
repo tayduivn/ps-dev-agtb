@@ -546,3 +546,26 @@
     border-radius: 0 3px 3px 0;
   }
 }
+
+.multi-line-row {
+  .left-column {
+    text-align: center;
+
+    .actions {
+      .dropdown-menu {
+        left: 0;
+        right: auto;
+        top: 28px;
+        text-align: left;
+      }
+
+      &.dropup .dropdown-menu {
+        top: auto;
+      }
+
+      .dropdown-toggle {
+        border: @borderWidget;
+      }
+    }
+  }
+}
