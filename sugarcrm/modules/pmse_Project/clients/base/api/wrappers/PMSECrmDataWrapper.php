@@ -930,23 +930,19 @@ class PMSECrmDataWrapper implements PMSEObservable
     /**
      * Retrieve list of Users
      * @param string $filter
-     * @return object
+     * @return array
      */
     public function retrieveUsers($filter = '')
     {
-        //$beanFactory = $this->getBeanFactory();
-        $res = new stdClass();
-        $res->search = $filter;
-        $res->success = true;
-        $output = array();
-        $where = 'users.deleted = 0 ';
-        $where .= ' AND users.status = \'Active\' ';
-        $where .= ' AND NOT (users.is_group = 1 OR users.portal_only = 1)';
-
+        $output = [];
+        $where = <<<SQL
+users.deleted = 0 AND users.status = 'Active' AND NOT (users.is_group = 1 OR users.portal_only = 1)
+SQL;
         if (!empty($filter)) {
-            $where .= ' AND (users.first_name LIKE \'%' . $filter . '%\' ';
-            $where .= 'OR users.last_name LIKE \'%' . $filter . '%\' ';
-            $where .= 'OR users.user_name LIKE \'%' . $filter . '%\' )';
+            $filterWhere = <<<'SQL'
+ AND (users.first_name LIKE %1$s OR users.last_name LIKE %1%s OR users.user_name LIKE %1$s )
+SQL;
+            $where .= sprintf($filterWhere, $this->usersBean->db->quoted("%{$filter}%"));
         }
 
         $order = 'users.first_name, users.last_name';
@@ -954,15 +950,13 @@ class PMSECrmDataWrapper implements PMSEObservable
         $usersData = $this->usersBean->get_full_list($order, $where);
         if (is_array($usersData)) {
             foreach ($usersData as $user) {
-                $userTmp = array();
+                $userTmp = [];
                 $userTmp['value'] = $user->id;
                 $userFullName = $this->teamsBean->getDisplayName($user->first_name, $user->last_name);
                 $userTmp['text'] = $userFullName;
-
                 $output[] = $userTmp;
             }
         }
-        $res->result = $output;
         return $output;
     }
 
