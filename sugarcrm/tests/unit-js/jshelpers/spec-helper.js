@@ -13,32 +13,98 @@ var SugarTest = {};
 
 (function(test) {
 
+    /**
+     * Storage object for key-value pairs.
+     *
+     * @type {Object}
+     */
     test.storage = {};
+
+    /**
+     * Interface for key-value pair storage engine.
+     */
     test.keyValueStore = {
+        /**
+         * Set a key-value pair in storage.
+         *
+         * @param {*} key Key.
+         * @param {*} value Value.
+         */
         set: function(key, value) {
             test.storage[key] = value;
         },
+
+        /**
+         * Add the given value to the existing value in storage.
+         *
+         * @param key Key.
+         * @param value Value to add to the existing value.
+         */
         add: function(key, value) {
             test.storage[key] += value;
         },
+
+        /**
+         * Retrieve a value from storage.
+         *
+         * @param key The key to look up.
+         * @return {*} The corresponding value in storage.
+         */
         get: function(key) {
             return test.storage[key];
         },
+
+        /**
+         * Check if a truthy value is stored under the given key.
+         *
+         * @param key The key to look up.
+         * @return {boolean} true if a truthy value is stored under the given
+         *   key, false otherwise.
+         */
         has: function(key) {
             return test.storage[key] ? true : false;
         },
+
+        /**
+         * Remove the value associated with the given key from storage.
+         *
+         * @param key Key.
+         */
         cut: function(key) {
             delete test.storage[key];
         },
+
+        /**
+         * Clear out all values from storage.
+         */
         cutAll: function() {
             test.storage = {};
         },
+
+        /**
+         * Retrieve the entire storage object.
+         *
+         * @return {Object} The entire storage object.
+         */
         getAll: function() {
             return test.storage;
         }
     };
 
+    /**
+     * Fetch a file via AJAX and return its contents.
+     *
+     * @param {string} path Path to the directory containing the desired file.
+     * @param {string} file Name of the desired file (excluding extension).
+     * @param {string} ext File extension (not including the period).
+     * @param {Function} parseData Transformation to apply to the file.
+     * @param {string} [dataType='text'] Expected data type. See $.ajax
+     *   documentation for valid types.
+     * @return {*} The contents of the file, as transformed by parseData.
+     */
     test.loadFile = function(path, file, ext, parseData, dataType) {
+        // FIXME: figure out why there's a near-identical version of this function in component-helper.js
+        // It's actually *functionally* identical, there's just a slight difference in where url is defined
         dataType = dataType || 'text';
 
         var fileContent = null;
@@ -59,13 +125,29 @@ var SugarTest = {};
         return fileContent;
     };
 
+    /**
+     * Load a fixture file and return its contents.
+     *
+     * @param {string} file Name of the fixture file (excl. extension).
+     * @param {string} [fixturePath='./fixtures'] Path to the fixture
+     *   directory, relative to "unit-js".
+     * @return {*} The contents of the fixture file.
+     */
     test.loadFixture = function(file, fixturePath) {
+        // FIXME: figure out why there's an identical version of this function in component-helper.js
         return test.loadFile(fixturePath || "../fixtures", file, "json", function(data) { return data; }, "json");
     };
 
-    // Only certain tests want seeded meta data so those suites can
-    // load this in there respective beforeEach:
-    // SugarTest.seedMetadata();
+    /**
+     * Load the metadata fixture into SugarTest.metadata.
+     * Only certain tests want seeded metadata so those suites can
+     * load this in their respective beforeEach calls.
+     *
+     * @param {boolean} useJSMetadata If true, use the JS version of the
+     *   metadata.
+     * @param {string} fixturePath Path to the fixtures directory, relative to
+     *   "unit-js".
+     */
     test.seedMetadata = function(useJSMetadata, fixturePath) {
         var meta, labels, jssource;
 
@@ -95,6 +177,10 @@ var SugarTest = {};
     };
 
     test._appInitialized = false;
+
+    /**
+     * Call SUGAR.App.init if this has not already been done.
+     */
     test.seedApp = function() {
         if (this._appInitialized) {
             // Force the clipboard to be reinitialized since it is disposed
@@ -109,6 +195,9 @@ var SugarTest = {};
         this._appInitialized = true;
     };
 
+    /**
+     * Create a fake server and assign it to SugarTest.server.
+     */
     test.seedFakeServer = function() {
         SugarTest.server = sinon.fakeServer.create();
     };
@@ -118,6 +207,10 @@ var SugarTest = {};
     test.resetWaitFlag = function() { this.waitFlag = false; };
     test.setWaitFlag = function() { this.waitFlag = true; };
     test.components = [];
+
+    /**
+     * Clean up after test execution.
+     */
     test.dispose = function() {
         // TODO: app.destroy works incorrectly
         //if (this.app) this.app.destroy();
@@ -136,6 +229,14 @@ var SugarTest = {};
         }
     };
 
+    /**
+     * Create a component of the specified type.
+     *
+     * @param {string} type Type of component to create (Layout/View/Field).
+     *   Make sure to capitalize the first letter.
+     * @param {Object} params Parameters to pass the creation function.
+     * @return {*} The created component.
+     */
     test.createComponent = function(type, params) {
         var c = this.app.view["create" + type](params);
         if (type === 'Layout') {
