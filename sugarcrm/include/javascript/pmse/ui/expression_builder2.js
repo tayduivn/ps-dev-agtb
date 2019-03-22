@@ -1202,6 +1202,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                         } else {
                             dependantField.disable();
                         }
+                        dependantField.setValue('');
                     }
                 },
                 {

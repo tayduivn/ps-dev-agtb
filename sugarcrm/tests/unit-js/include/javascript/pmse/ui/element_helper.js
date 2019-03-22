@@ -151,19 +151,40 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
     });
 
     describe('processValueDependency', function() {
-        var parentField = new FormPanelDropdown({
-            _name: 'field'
-        });
-        var dependantField = new FormPanelText({
-            _name: 'value',
-            _label: 'Value',
-        });
-        var operatorField = new FormPanelDropdown({
-            _name: 'operator'
-        });
-        operatorField.html = {innerHTML: '<div/>'};
-        operatorField._htmlControl[0] = document.createElement('select');
-        var form = new FormPanel();
+        var parentField;
+        var dependantField;
+        var operatorField;
+        var form;
+        var body;
+        var moduleField;
+        var optionOne;
+        var optionTwo;
+        var optionThree;
+        var radioAll;
+        var radioAny;
+        var items;
+        var ret = new FormPanelDate();
+
+        var checkProcessValueDependency = function(addChanges, disableField) {
+            body.appendChild(radioAll);
+            body.appendChild(radioAny);
+            body[1] = radioAll;
+            body[2] = radioAny;
+
+            form._htmlBody = body;
+            form._htmlBody.length = 3;
+            form.id = 'form-module-field-evaluation';
+            form.getItem('module').html = body[0];
+
+            helper._parent = new ExpressionControl({});
+            helper._parent._name = 'evn_criteria';
+            helper.processValueDependency(dependantField, parentField, operatorField, 'date', undefined, form);
+            var operatorExist = checkOperator(operatorField, 'changes_to');
+
+            expect(operatorExist).toEqual(addChanges);
+            expect(parentField._disabled).toEqual(disableField);
+        };
+
         var checkOperator = function(operatorField, operator) {
             var op = false;
             if (operatorField._htmlControl && operatorField._htmlControl[0]) {
@@ -178,20 +199,123 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
         };
         var ret = new FormPanelDate();
         beforeEach(function() {
+            parentField = new FormPanelDropdown({
+                _name: 'field'
+            });
+
+            dependantField = new FormPanelText({
+                _name: 'value',
+                _label: 'Value',
+                id: '123'
+            });
+
+            operatorField = new FormPanelDropdown({
+                _name: 'operator'
+            });
+
+            operatorField.html = {innerHTML: '<div/>'};
+            operatorField._htmlControl[0] = document.createElement('select');
+
+            form = new FormPanel();
+
+            items = [
+                {type: 'dropdown', name: 'module', dependantFields: ['rel', 'field']},
+                {type: 'radiobutton', name: 'rel'},
+                {type: 'dropdown', name: 'field'},
+                {type: 'dropdown', name: 'operator'},
+                {type: 'text', name: 'value', id: '123'}
+            ];
+            for (var i = 0; i < items.length; i++) {
+                form.addItem(items[i]);
+            }
+
+            form.getItem('module').addOption({module: 'Tasks', type: '<Tasks>', value: 'Tasks'});
+            form.getItem('module').addOption({module: 'Accounts', type: 'one', value: 'accounts'});
+            form.getItem('module').addOption({module: 'Calls', type: 'many', value: 'calls'});
+
+            body = document.createElement('div');
+            moduleField = document.createElement('select');
+
+            optionOne = document.createElement('option');
+            $(optionOne).data('data', {module: 'Tasks', type: '<Tasks>', value: 'Tasks'});
+            optionTwo = document.createElement('option');
+            $(optionTwo).data('data', {module: 'Accounts', type: 'one', value: 'accounts'});
+            optionThree = document.createElement('option');
+            $(optionThree).data('data', {module: 'Calls', type: 'many', value: 'calls'});
+
+            optionOne.setAttribute('value', 'Tasks');
+            optionTwo.setAttribute('value', 'Accounts');
+            optionThree.setAttribute('value', 'Calls');
+
+            moduleField.appendChild(optionOne);
+            moduleField.appendChild(optionTwo);
+            moduleField.appendChild(optionThree);
+            body.appendChild(moduleField);
+            body[0] = moduleField;
+
+            radioAll = document.createElement('input');
+            radioAll.setAttribute('type', 'radio');
+            radioAll.setAttribute('value', 'All');
+            radioAny = document.createElement('input');
+            radioAny.setAttribute('type', 'radio');
+            radioAny.setAttribute('value', 'Any');
+
             sinon.collection.stub(FormPanel.prototype, '_createField').returns(ret);
         });
-        it('Check to include changes_to operators for date/datetime fields', function() {
-            helper._parent = new ExpressionControl({});
-            helper._parent._name = 'evn_criteria';
-            helper.processValueDependency(dependantField, parentField, operatorField, 'date', null, form);
-            var operatorExist = checkOperator(operatorField, 'changes_to');
-            expect(operatorExist).toEqual(true);
 
-            helper._parent._name = 'pro_terminate_variables';
-            helper.processValueDependency(dependantField, parentField, operatorField, 'datetime', null, form);
-            operatorExist = checkOperator(operatorField, 'changes_to');
-            expect(operatorExist).toEqual(true);
+        it('Include changes operator and enable field when a target module is chosen', function() {
+
+            // Tasks module is chosen that is a target (base) module
+            optionOne.setAttribute('selected', true);
+            parentField._attributes = {base_module: 'Tasks'};
+
+            // addChanges = true, disableField = false
+            checkProcessValueDependency(true, false);
+        });
+
+        it('Include changes operator and enable field when an one related module is chosen', function() {
+
+            // Accounts module is chosen that is an one related module to Tasks (base module)
+            optionTwo.setAttribute('selected', true);
+            parentField._attributes = {base_module: 'Tasks'};
+
+            // addChanges = true, disableField = false
+            checkProcessValueDependency(true, false);
+        });
+
+        it('Exclude changes operator/disable field when many related module/no related record is chosen', function() {
+
+            // Calls module is chosen that is a many related module to Tasks (base module)
+            // and no related record is chosen
+            optionThree.setAttribute('selected', true);
+            parentField._attributes = {base_module: 'Tasks'};
+
+            // addChanges = false, disableField = true
+            checkProcessValueDependency(false, true);
+        });
+
+        it('Include changes operator/enable field when many related module/any related records are chosen', function() {
+
+            // Calls module is chosen that is a many related module to Tasks (base module)
+            // and ANY related records are chosen
+            optionThree.setAttribute('selected', true);
+            parentField._attributes = {base_module: 'Tasks'};
+            radioAny.setAttribute('checked', true);
+
+            // addChanges = true, disableField = false
+            checkProcessValueDependency(true, false);
+        });
+
+        it('Exclude changes operator/enable field when many related module/all related records are chosen', function() {
+
+            // Tasks module is chosen that is a many related module to Tasks (base module)
+            // and ALL related records are chosen
+            optionThree.setAttribute('selected', true);
+            parentField._attributes = {base_module: 'Tasks'};
+            radioAll.setAttribute('checked', true);
+
+            // addChanges = false, disableField = false
+            checkProcessValueDependency(false, false);
         });
     });
-
 });

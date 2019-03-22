@@ -2057,6 +2057,24 @@ FormPanelRadio.prototype._createControl = function () {
     return this;
 };
 
+/**
+ * Radio button event handler 
+ *
+ * @return {Object} Object that calls this function
+ */
+FormPanelRadio.prototype.fireDependentFields = function() {
+    var dependantField, moduleField, option;
+    if (this._form && this._form._htmlBody && this._form._htmlBody[0]) {
+        option = PMSE.ElementHelper.prototype._getSelectedOption.call(this, this._form);
+        moduleField = this._form.getItem('module');
+        dependantField = this._form.getItem('field');
+        if (dependantField && moduleField && option) {
+            dependantField._fireDependencyHandler(moduleField, option.value);
+        }
+    }
+    return this;
+};
+
 //FormPanelCheckbox
 var FormPanelCheckbox = function (settings) {
     FormPanelField.call(this, settings);
