@@ -212,6 +212,9 @@ describe('SugarCharts', function() {
         var getAppListStringsStub = sandbox.stub(app.lang, 'getAppListStrings', function() {
             return {on: 'Foo', off: 'Bar'};
         });
+        var userDateFormatStub = sinon.stub(app.date, 'getUserDateFormat', function() {
+            return 'MM/DD/YYYY';
+        });
 
         var values;
 
@@ -238,6 +241,11 @@ describe('SugarCharts', function() {
         label = 'Undefined';
         values = SUGAR.charts.getValues(label, def, type, enums);
         expect(values).toEqual(['']);
+
+        type = 'date';
+        label = '09/20/2017';
+        values = SUGAR.charts.getValues(label, def, type, enums);
+        expect(values).toEqual(['2017-09-20']);
 
         sinon.collection.spy(SUGAR.charts, 'getDateValues');
 

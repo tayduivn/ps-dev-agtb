@@ -838,6 +838,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     case 'radioenum':
                         values.push(enums[def.table_key + ':' + def.name][label]);
                         break;
+                    case 'date':
+                        // convert to server format before sending
+                        var date = new App.date(label, App.date.getUserDateFormat());
+                        values.push(date.formatServer(true));
+                        break;
                     default:
                         // returns [label]
                         values.push(label);
