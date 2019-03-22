@@ -629,19 +629,27 @@ class PMSEEngineApi extends SugarApi
         $time_data = $GLOBALS['timedate'];
         global $current_user;
         global $db;
-        $res = array(); //new stdClass();
-        $res['success'] = true;
-        $get_actIds = "SELECT pmse_inbox.name,pmse_inbox.cas_id,cas_user_id,cas_delegate_date, cas_due_date, act_expected_time, act_assignment_method, act_assign_team, cas_index, act_assignment_method FROM pmse_inbox
-                        LEFT JOIN pmse_bpm_flow ON pmse_inbox.cas_id = pmse_bpm_flow.cas_id
-                        LEFT JOIN pmse_bpmn_activity ON pmse_bpm_flow.bpmn_type = 'bpmnActivity' and pmse_bpm_flow.bpmn_id  = pmse_bpmn_activity.id
-                        INNER JOIN pmse_bpm_activity_definition ON pmse_bpmn_activity.id = pmse_bpm_activity_definition.id
-                        WHERE pmse_inbox.cas_id = " . $args['cas_id'] . " AND cas_flow_status = 'FORM';";
-        $result = $db->query($get_actIds);
-        $tmpArray = array();
 
-        while ($row = $db->fetchByAssoc($result)) {
+        $query = <<<SQL
+SELECT pmse_inbox.name, pmse_inbox.cas_id, cas_user_id, cas_delegate_date, cas_due_date, act_expected_time,
+act_assignment_method, act_assign_team, cas_index, act_assignment_method
+FROM pmse_inbox
+LEFT JOIN pmse_bpm_flow ON pmse_inbox.cas_id = pmse_bpm_flow.cas_id
+LEFT JOIN pmse_bpmn_activity ON pmse_bpm_flow.bpmn_type='bpmnActivity' AND pmse_bpm_flow.bpmn_id=pmse_bpmn_activity.id
+INNER JOIN pmse_bpm_activity_definition ON pmse_bpmn_activity.id = pmse_bpm_activity_definition.id
+WHERE pmse_inbox.cas_id = ? AND cas_flow_status = 'FORM'
+SQL;
+
+        $stmt = $db->getConnection()
+            ->executeQuery(
+                $query,
+                [$args['cas_id']]
+            );
+
+        $results = [];
+        foreach ($stmt as $row) {
             $time = json_decode(base64_decode($row['act_expected_time']));
-            $tmpArray[] = array(
+            $results[] = array(
                 'act_name' => $row['act_name'],
                 'cas_id' => $row['cas_id'],
                 'cas_user_id' => $row['cas_user_id'],
@@ -654,8 +662,7 @@ class PMSEEngineApi extends SugarApi
                 'act_expected_time' => $time->time . ' ' . $time->unit,
             );
         }
-        $res['result'] = $tmpArray;
-        return $res;
+        return ['results' => $results, 'success' => true];
     }
 
     /**
