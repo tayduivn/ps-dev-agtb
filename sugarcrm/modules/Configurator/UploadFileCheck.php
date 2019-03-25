@@ -10,6 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+// functionality is restricted for regular users
+if (!is_admin($GLOBALS['current_user'])) {
+    sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
+}
 
 global $sugar_config;
 $supportedExtensions = array('jpg', 'png', 'jpeg');
