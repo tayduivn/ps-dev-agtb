@@ -69,7 +69,7 @@ class TabController
             if (!empty($trimmed_tabs)) {
                 // TODO: decode JSON rather than base64
                 $tabs = base64_decode($tabs);
-                $tabs = unserialize($tabs);
+                $tabs = unserialize($tabs, ['allowed_classes' => false]);
                 //Ensure modules saved in the prefences exist.
                 foreach ($tabs as $id => $tab) {
 					if (!in_array($tab, $moduleList))
