@@ -667,7 +667,10 @@ SQL;
 
     /**
      * Method that returns the user roles as Sugar
-     * @return object
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     * @throws Exception
      */
     public function userListByTeam(ServiceBase $api, array $args)
     {
@@ -676,15 +679,21 @@ SQL;
         global $db;
         $res = array(); //new stdClass();
         $res['success'] = true;
-        $teams = (isset($args['id']) && !empty($args['id'])) ? "AND teams.id ='" . $args['id'] . "'" : '';
+        $teams = !empty($args['id']) ? 'AND teams.id = ?' : '';
         $get_actIds = "SELECT DISTINCT(users.id) as id,first_name,last_name  FROM teams
                         LEFT JOIN team_memberships ON team_id = teams.id
                         INNER JOIN users ON users.id = team_memberships.user_id
-                        WHERE private = 0 " . $teams;
-        $result = $db->query($get_actIds);
+                        WHERE private = 0 $teams";
+
+        $params = [];
+        if (!empty($args['id'])) {
+            $params = [$args['id']];
+        }
+        $result= $db->getConnection()->executeQuery($get_actIds, $params);
+
         $tmpArray = array();
 
-        while ($row = $db->fetchByAssoc($result)) {
+        foreach ($result as $row) {
             $tmpArray[$row['id']] = $row['first_name'] . ' ' . $row['last_name'];
         }
         $res['result'] = $tmpArray;
