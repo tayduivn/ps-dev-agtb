@@ -95,7 +95,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 
     if ($response_data || !$sclient->getError()) {
 		$serializedResultData = sugarDecode($key,$encodedResult);
-		$resultData = unserialize($serializedResultData);
+        $resultData = unserialize($serializedResultData, ['allowed_classes' => false]);
         if($response_data && empty($resultData))
 		{
 			$resultData = array();
@@ -367,7 +367,10 @@ function authenticateDownloadKey()
     }
 
     // Decode the received validation key and compare with current settings
-    $og = unserialize(sugarDecode('validation', $licenseSettings['license_validation_key']));
+    $og = unserialize(
+        sugarDecode('validation', $licenseSettings['license_validation_key']),
+        ['allowed_classes' => false]
+    );
 
     foreach ($og as $name => $value) {
         if ($name === 'license_num_lic_oc') {
@@ -646,7 +649,10 @@ function apiLoadSystemStatus($forceReload = false)
 	    $administration = Administration::getSettings('system');
         // key defined in Adminitration::retrieveSettings(): $key = $row['category'] . '_' . $row['name'];
         if (!empty($administration->settings['system_api_system_status'])) {
-            $systemStatus = unserialize(base64_decode($administration->settings['system_api_system_status']));
+            $systemStatus = unserialize(
+                base64_decode($administration->settings['system_api_system_status']),
+                ['allowed_classes' => false]
+            );
         }
     } else {
         // if it's not an array and is truthy, comvert it to true
