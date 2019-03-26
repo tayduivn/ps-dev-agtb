@@ -78,7 +78,7 @@ if(!empty($license->settings['license_latest_versions'])){
 
 	$encodedVersions = $license->settings['license_latest_versions'];
 
-	$versions = unserialize(base64_decode( $encodedVersions));
+    $versions = unserialize(base64_decode($encodedVersions), ['allowed_classes' => false]);
 	include('sugar_version.php');
 	if(!empty($versions)){
 		foreach($versions as $version){
