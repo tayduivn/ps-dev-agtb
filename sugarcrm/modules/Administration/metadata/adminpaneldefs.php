@@ -70,7 +70,7 @@ $admin_option_defs['Administration']['documentation']= array('OnlineDocumentatio
         'javascript:void window.open("index.php?module=Administration&action=SupportPortal&view=documentation&help_module=Administration&edition='.$sugar_flavor.'&key='.$server_unique_key.'&language='.$current_language.'", "helpwin","width=600,height=600,status=0,resizable=1,scrollbars=1,toolbar=0,location=0")');
 if(!empty($license->settings['license_latest_versions'])){
 	$encodedVersions = $license->settings['license_latest_versions'];
-	$versions = unserialize(base64_decode( $encodedVersions));
+    $versions = unserialize(base64_decode($encodedVersions), ['allowed_classes' => false]);
 	include('sugar_version.php');
 	if(!empty($versions)){
 		foreach($versions as $version){
