@@ -11,6 +11,7 @@
  */
 namespace Sugarcrm\Sugarcrm\Audit\Formatter;
 
+use DateTime;
 use Sugarcrm\Sugarcrm\Audit\Formatter;
 
 class Date implements Formatter
@@ -36,7 +37,9 @@ class Date implements Formatter
     {
         if ($value) {
             $obj = $this->timedate->fromDbType($value, $type);
-            $value = $this->timedate->asIso($obj);
+            if ($obj instanceof DateTime) {
+                $value = $this->timedate->asIso($obj);
+            }
         }
 
         return $value;

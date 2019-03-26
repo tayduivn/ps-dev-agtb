@@ -17,6 +17,7 @@ class ImportFieldSanitizeTest extends TestCase
     protected function setUp()
     {
         $this->_ifs = new ImportFieldSanitize();
+        $this->_ifs->timezone = 'Europe/Minsk';
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $beanList = array();
         require('include/modules.php');

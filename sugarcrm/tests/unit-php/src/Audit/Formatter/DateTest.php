@@ -12,8 +12,10 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Audit\Formatter;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Formatter\Date;
+use TimeDate;
 
 /**
  *
@@ -99,5 +101,33 @@ class DateTest extends TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @covers ::formatRows
+     */
+    public function testFormatRowsCantConvertFromDbFormat()
+    {
+        /** @var TimeDate | MockObject $tdMock */
+        $tdMock = $this->createMock(\TimeDate::class);
+
+        $tdMock->expects($this->exactly(2))
+            ->method('fromDbType')
+            ->willReturn(false);
+
+        $tdMock->expects($this->never())
+            ->method('asIso');
+
+        $rows = $rowsBeforeChange = [[
+                'field_name' => 'repeat_until',
+                'data_type' => 'date',
+                'before' => '2011/10/05',
+                'after' => '2018/02/27',
+        ]];
+
+        $dateFormatter = new Date($tdMock);
+        $dateFormatter->formatRows($rows);
+
+        $this->assertSame($rowsBeforeChange, $rows);
     }
 }

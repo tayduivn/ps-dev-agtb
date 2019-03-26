@@ -1926,6 +1926,7 @@ class SugarBean
         }
 
         $this->populateFetchedEmail('bean_field');
+        $this->fixUpFormatting();
         $this->commitAuditedStateChanges(null);
         $this->saveData($isUpdate, $check_notify);
 
@@ -2068,8 +2069,6 @@ class SugarBean
         $this->in_save = true;
         // cn: SECURITY - strip XSS potential vectors
         $this->cleanBean();
-        // This is used so custom/3rd-party code can be upgraded with fewer issues, this will be removed in a future release
-        $this->fixUpFormatting();
         global $timedate;
         global $current_user, $action;
 
