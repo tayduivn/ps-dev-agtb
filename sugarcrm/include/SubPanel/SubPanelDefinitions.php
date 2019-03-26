@@ -902,7 +902,7 @@ class SubPanelDefinitions
 				if (!empty($hidden_subpanels)){
 					//decode and unserialize to retrieve the array
 					$hidden_subpanels = base64_decode($hidden_subpanels);
-					$hidden_subpanels = unserialize($hidden_subpanels);
+                    $hidden_subpanels = unserialize($hidden_subpanels, ['allowed_classes' => false]);
 
 					//Ensure modules saved in the preferences exist.
 					//get user preference
