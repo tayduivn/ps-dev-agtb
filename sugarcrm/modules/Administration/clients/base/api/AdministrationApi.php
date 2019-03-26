@@ -582,6 +582,9 @@ class AdministrationApi extends SugarApi
         $configurator->config['maintenanceMode'] = true;
         $configurator->config['idmMigration'] = true;
         $configurator->handleOverride();
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate('config_override.php', true);
+        }
         return ['success' => 'true'];
     }
 
@@ -601,6 +604,9 @@ class AdministrationApi extends SugarApi
         $configurator->config['idmMigration'] = false;
         $configurator->handleOverride();
         $this->clearCache();
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate('config_override.php', true);
+        }
         return ['success' => 'true'];
     }
 
