@@ -180,7 +180,24 @@ describe('SugarCharts', function() {
         expect(values[0]).toBe('2017-03-01');
         expect(values[1]).toBe('2017-03-31');
         expect(values[2]).toBe('month');
-        //TODO: test the other date formats?
+
+        values = SUGAR.charts.getDateValues('2017', 'fiscalYear');
+        expect(values[0]).toBe('2017-1-1');
+        expect(values[1]).toBe('2017-12-31');
+        expect(values[2]).toBe('fiscalYear');
+
+        values = SUGAR.charts.getDateValues('Q1 2017', 'fiscalQuarter');
+        expect(values[0]).toBe('2017-1-1');
+        expect(values[1]).toBe('2017-3-31');
+        expect(values[2]).toBe('fiscalQuarter');
+
+        values = SUGAR.charts.getDateValues('2017-12-31', 'day');
+        expect(values[0]).toBe('2017-12-31');
+
+        values = SUGAR.charts.getDateValues('', 'month');
+        expect(values[0]).toBe('');
+        expect(values[1]).toBe('');
+        expect(values[2]).toBe('month');
     });
 
     it('should return a values array when getValues is called', function() {
