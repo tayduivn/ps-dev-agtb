@@ -380,7 +380,6 @@ function get_sugar_config_defaults()
     'default_navigation_paradigm' => 'gm',
     'admin_access_control' => false,
       'use_common_ml_dir'	=> false,
-      'common_ml_dir' => '',
     'vcal_time' => '2',
     'calendar' => array(
       'default_view' => 'week',
