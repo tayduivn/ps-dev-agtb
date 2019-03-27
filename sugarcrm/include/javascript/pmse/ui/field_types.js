@@ -2689,7 +2689,7 @@ SearchableCombobox.prototype.getSelectedText = function () {
     if (this.controlObject) {
         data = $(this.controlObject).select2("data");
     }
-    return data.text || "";
+    return data && data.text ? data.text : '';
 };
 
 SearchableCombobox.prototype._openSearchMore = function() {

@@ -193,6 +193,7 @@ $mod_strings = array (
     'LBL_PMSE_FORM_OPTION_SUPERVISOR' => 'Supervisor',
     'LBL_PMSE_FORM_OPTION_CREATED_BY_USER' => 'Created by User',
     'LBL_PMSE_FORM_OPTION_LAST_MODIFIED_USER' => 'Last Modified by User',
+    'LBL_PMSE_FORM_OPTION_SYSTEM_EMAIL' => 'System Email',
 
     'LBL_PMSE_FORM_TITLE_BUSINESS_RULE' => 'Business Rule',
     'LBL_PMSE_LABEL_RULE' => 'Rule',

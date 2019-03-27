@@ -408,7 +408,7 @@ describe('includes.javascript.pmse.event', function() {
             event.setEventMarker('MESSAGE');
             event.setBehavior('throw');
 
-            sinon.collection.stub(event, 'validateSendMessageCriteriaBoxes');
+            sinon.collection.stub(event, 'validateSendMessageData');
         });
 
         it('should call validateNumberOfEdges with the correct max/min number of incoming/outgoing edges', function() {
@@ -416,16 +416,9 @@ describe('includes.javascript.pmse.event', function() {
             expect(mockValidationTools.validateNumberOfEdges).toHaveBeenCalledWith(1, null, 1, 1, event);
         });
 
-        it('should call validationTools.validateAtom to check the email template with the correct data', function() {
-            mockAPIData.evn_criteria = '6b9f5cae-c332-11e8-be1b-6003089fe26e';
+        it('should call validateSendMessageData with the correct data', function() {
             event.callbackFunctionForSendMessageEvent(mockAPIData, event, mockValidationTools);
-            expect(mockValidationTools.validateAtom).toHaveBeenCalledWith('TEMPLATE', null, null,
-                '6b9f5cae-c332-11e8-be1b-6003089fe26e', event, mockValidationTools);
-        });
-
-        it('should call validateSendMessageCriteriaBoxes with the correct data', function() {
-            event.callbackFunctionForSendMessageEvent(mockAPIData, event, mockValidationTools);
-            expect(event.validateSendMessageCriteriaBoxes).toHaveBeenCalledWith(mockAPIData, event,
+            expect(event.validateSendMessageData).toHaveBeenCalledWith(mockAPIData, event,
                 mockValidationTools);
         });
     });
@@ -435,7 +428,7 @@ describe('includes.javascript.pmse.event', function() {
 
         beforeEach(function() {
             event.setEventType('end');
-            sinon.collection.stub(event, 'validateSendMessageCriteriaBoxes');
+            sinon.collection.stub(event, 'validateSendMessageData');
         });
 
         it('should call validateNumberOfEdges with the correct max/min number of incoming/outgoing edges', function() {
@@ -448,18 +441,11 @@ describe('includes.javascript.pmse.event', function() {
                 event.setEventMarker('MESSAGE');
             });
 
-            it('should call validateAtom with the correct data', function() {
-                mockAPIData.evn_criteria = '6b9f5cae-c332-11e8-be1b-6003089fe26e';
+            it('should call validateSendMessageData', function() {
                 event.callbackFunctionForEndEvent(mockAPIData, event, mockValidationTools);
-                expect(mockValidationTools.validateAtom).toHaveBeenCalledWith('TEMPLATE', null, null,
-                    '6b9f5cae-c332-11e8-be1b-6003089fe26e', event, mockValidationTools);
+                expect(event.validateSendMessageData).toHaveBeenCalledWith(mockAPIData, event, mockValidationTools);
             });
 
-            it('should call validateSendMessageCriteriaBoxes with the correct data', function() {
-                event.callbackFunctionForEndEvent(mockAPIData, event, mockValidationTools);
-                expect(event.validateSendMessageCriteriaBoxes).toHaveBeenCalledWith(mockAPIData, event,
-                    mockValidationTools);
-            });
         });
 
         describe('for do-nothing end events', function() {
@@ -602,11 +588,50 @@ describe('includes.javascript.pmse.event', function() {
         });
     });
 
+    // Test that send message data fields are properly validated
+    describe('validateSendMessageData', function() {
+
+        var mockCriteria;
+        var mockCriteriaParsed;
+
+        beforeEach(function() {
+            mockCriteria = '{"from":{"name":"Chris Olliver","id":"seed_chris_id"}}';
+            mockAPIData.evn_params = mockCriteria;
+
+            sinon.collection.stub(event, 'validateSendMessageCriteriaBoxes');
+        });
+
+        it('should validate that the email template is set', function() {
+            mockAPIData.evn_criteria = '6b9f5cae-c332-11e8-be1b-6003089fe26e';
+            event.callbackFunctionForSendMessageEvent(mockAPIData, event, mockValidationTools);
+            expect(mockValidationTools.validateAtom).toHaveBeenCalledWith('TEMPLATE', null, null,
+                '6b9f5cae-c332-11e8-be1b-6003089fe26e', event, mockValidationTools);
+        });
+
+        it('should validate that the "From" field is set when it is set', function() {
+            event.callbackFunctionForSendMessageEvent(mockAPIData, event, mockValidationTools);
+            expect(mockValidationTools.createWarning).not.toHaveBeenCalled();
+        });
+
+        it('should trigger a warning if the "From" field is not set', function() {
+            mockAPIData.evn_params = '{"from":{"name": null,"id": null}}';
+            event.callbackFunctionForSendMessageEvent(mockAPIData, event, mockValidationTools);
+            expect(mockValidationTools.createWarning).toHaveBeenCalled();
+        });
+
+        it('should call validateSendMessageCriteriaBoxes with the correct data', function() {
+            mockCriteriaParsed = JSON.parse(mockCriteria);
+            event.callbackFunctionForSendMessageEvent(mockAPIData, event, mockValidationTools);
+            expect(event.validateSendMessageCriteriaBoxes).toHaveBeenCalledWith(event,
+                mockValidationTools, mockCriteriaParsed);
+        });
+    });
+
     // Test that send message event criteria boxes are properly validated
     describe('validateSendMessageCriteriaBoxes', function() {
 
         var mockCriteriaWithTo;
-        var mockCriteriaWithoutTo;
+        var mockParsedCriteriaWithTo;
         var mockParsedTo;
         var mockParsedCC;
         var mockParsedBCC;
@@ -635,6 +660,7 @@ describe('includes.javascript.pmse.event', function() {
                 '"user":"who",' +
                 '"label":"User who last modified the %MODULE%",' +
                 '"filter":{}}]}';
+            mockParsedCriteriaWithTo = JSON.parse(mockCriteriaWithTo);
 
             mockParsedTo = [{
                 type: 'user',
@@ -670,20 +696,20 @@ describe('includes.javascript.pmse.event', function() {
         });
 
         it('should generate a warning if the "To:" field is empty', function() {
-            event.validateSendMessageCriteriaBoxes(mockAPIData, event, mockValidationTools);
+            event.validateSendMessageCriteriaBoxes(event, mockValidationTools, []);
             expect(mockValidationTools.createWarning).toHaveBeenCalledWith(event,
                 'LBL_PMSE_ERROR_FIELD_REQUIRED', 'To');
         });
 
         it('should not generate a warning if the "To:" field has content', function() {
             mockAPIData.evn_params = mockCriteriaWithTo;
-            event.validateSendMessageCriteriaBoxes(mockAPIData, event, mockValidationTools);
+            event.validateSendMessageCriteriaBoxes(event, mockValidationTools, mockParsedCriteriaWithTo);
             expect(mockValidationTools.createWarning).not.toHaveBeenCalled();
         });
 
         it('should call validateCriteriaBoxAtoms with the correct data for each criteria/recipients box', function() {
             mockAPIData.evn_params = mockCriteriaWithTo;
-            event.validateSendMessageCriteriaBoxes(mockAPIData, event, mockValidationTools);
+            event.validateSendMessageCriteriaBoxes(event, mockValidationTools, mockParsedCriteriaWithTo);
             expect(event.validateCriteriaBoxAtoms).toHaveBeenCalledWith(event, mockValidationTools,
                 mockParsedTo, true);
             expect(event.validateCriteriaBoxAtoms).toHaveBeenCalledWith(event, mockValidationTools,
