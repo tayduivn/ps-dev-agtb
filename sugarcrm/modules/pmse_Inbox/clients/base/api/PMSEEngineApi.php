@@ -965,26 +965,21 @@ class PMSEEngineApi extends SugarApi
         $q = new SugarQuery();
         $q->from($beanInbox, $queryOptions);
         $q->distinct(false);
-        $q->where()
-                ->equals('cas_status', 'IN PROGRESS');
+        $q->where()->equals('cas_status', 'IN PROGRESS');
 
         $q->select($fields);
         if ($args['module_list'] == 'all' && !empty($args['q'])) {
-            $q->where()->queryAnd()
-                ->addRaw("pmse_inbox.pro_title LIKE '%" . $args['q'] . "%' ");
-        } else if (!empty($args['q'])){
-            switch($args['module_list']){
+            $q->where()->contains('pmse_inbox.pro_title', $args['q']);
+        } elseif (!empty($args['q'])) {
+            switch ($args['module_list']) {
                 case translate('LBL_CAS_ID', 'pmse_Inbox'):
-                $q->where()->queryAnd()
-                    ->addRaw("pmse_inbox.cas_id = " . $db->quoted($args['q']));
+                    $q->where()->equals('pmse_inbox.cas_id', $args['q']);
                     break;
                 case translate('LBL_PROCESS_DEFINITION_NAME', 'pmse_Inbox'):
-                $q->where()->queryAnd()
-                    ->addRaw("pmse_inbox.pro_title LIKE '%" . $args['q'] . "%'");
+                    $q->where()->contains('pmse_inbox.pro_title', $args['q']);
                     break;
                 case translate('LBL_OWNER', 'pmse_Inbox'):
-                    $q->where()->queryAnd()
-                        ->addRaw("pmse_inbox.cas_init_user LIKE '%" . $args['q'] . "%'");
+                    $q->where()->contains('pmse_inbox.cas_init_user', $args['q']);
                     break;
             }
         }
