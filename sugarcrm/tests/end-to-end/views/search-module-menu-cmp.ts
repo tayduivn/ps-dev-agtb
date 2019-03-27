@@ -124,7 +124,7 @@ export default class SearchModuleMenuCmp extends BaseView {
         /** Then remove the enclosing parenthesises */
         let strOnlyNumPart = await rawNum.replace(/\s*\((\d+)\)\s*/, '$1');
         /** convert str to number: */
-        let numResult: number = Number(strOnlyNumPart);
+        let numResult: number = (Number(strOnlyNumPart)).valueOf();
         /** Now only the pure number part is returned */
         return Promise.resolve(numResult);
     }
@@ -159,7 +159,7 @@ export default class SearchModuleMenuCmp extends BaseView {
     /**
      * Perform Global Search against eash test case from the data table.
      */
-    public async searchOnTableData(oneRow: any): Promise<string> {
+    public async searchOnTableData(oneRow: any): Promise<Object> {
         let failureMessage = '';
         let testCaseTitle = oneRow['testCaseTitle'];
         let modulesList = oneRow['modulesToSearch'];

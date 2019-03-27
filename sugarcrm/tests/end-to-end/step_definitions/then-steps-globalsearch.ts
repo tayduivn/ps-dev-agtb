@@ -19,7 +19,7 @@ Then(/I should be able to perform global search against each test case from the 
     let exceptionsArray: Array<Object> = [];
 
     for (let oneRow of tableFields ) {
-        let oneResult: object = await searchMenu.searchOnTableData( oneRow );
+        let oneResult: any = await searchMenu.searchOnTableData( oneRow );
         let errCount: number = oneResult.messages.length;
         // console.log('One test case error count: ' + errCount);
         if ( errCount !== 0 ) {
