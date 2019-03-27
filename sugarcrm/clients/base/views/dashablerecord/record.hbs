@@ -10,11 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="dashablerecord dashlet-unordered-list">
-    <div class="dashlet-tabs tab{{tabs.length}}">
-        {{{tabsHtml}}}
-    </div>
-    <div class="tab-content">
-        {{{tabContentHtml}}}
-    </div>
+<div>
+    {{#if enableHeaderPane}}
+        {{partial 'headerpane' ../this view=../this}}
+    {{/if}}
+    {{partial 'businesscard' this view=this}}
 </div>

@@ -10,12 +10,16 @@
  */
 describe("Base.View.ListBottom", function () {
     var view, app;
+    var bottomView;
+    var layout;
 
     beforeEach(function () {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'list-bottom');
         view = SugarTest.createView("base", "Opportunities", "list", null, null);
         app = SUGAR.App;
+        layout = app.view.createLayout({type: 'base'});
+        bottomView = SugarTest.createView('base', 'Opportunities', 'list-bottom', null, null, false, layout);
     });
 
     afterEach(function () {
@@ -24,6 +28,10 @@ describe("Base.View.ListBottom", function () {
         app.view.reset();
         Handlebars.templates = {};
         view = null;
+        bottomView.dispose();
+        layout.dispose();
+        bottomView = null;
+        layout = null;
     });
 
     it('should module names start with lowercase letters', function() {
@@ -33,5 +41,12 @@ describe("Base.View.ListBottom", function () {
         });
         expect(view.showMoreLabel).toEqual(showMoreLabel);
 
+    });
+
+    it('should not set show more label if collection is not available', function() {
+        bottomView.showMoreLabel = 'oldlabel';
+        bottomView.collection = null;
+        bottomView.setShowMoreLabel();
+        expect(bottomView.showMoreLabel).toEqual('oldlabel');
     });
 });

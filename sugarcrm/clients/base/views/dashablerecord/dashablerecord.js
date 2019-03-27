@@ -41,6 +41,7 @@
         'Editable',
         'ToggleMoreLess',
         'Dashlet',
+        'Pagination',
     ],
 
     /**
@@ -88,7 +89,9 @@
      *
      * @property {Object}
      */
-    _defaultSettings: {},
+    _defaultSettings: {
+        limit: 5, // for tabs with list view
+    },
 
     /**
      * Denotes the mode of operation for the dashlet:
@@ -133,6 +136,15 @@
 
         this._noAccessTemplate = app.template.get(this.name + '.noaccess');
         this._pickARecordTemplate = app.template.get(this.name + '.pick-a-record');
+        this._recordsTemplate = app.template.get(this.name + '.records');
+        this._recordTemplate = app.template.get(this.name + '.record');
+        this._tabsTemplate = app.template.get(this.name + '.tabs');
+
+        // listen to tab events
+        this.events = _.extend(this.events || {}, {
+            'click [class*="orderBy"]': 'setOrderBy',
+            'click [data-action=tab-switcher]': 'tabSwitcher'
+        });
 
         // FIXME CS-55: disable this code
         this.toggleFields(this.editableFields, false);
@@ -167,6 +179,296 @@
                 this._injectRecordHeader(this.model);
             }
         });
+
+        this._initTabs();
+    },
+
+    /**
+     * Initialize tabs.
+     *
+     * @private
+     */
+    _initTabs: function() {
+        this.tabs = [];
+        _.each(this.meta.tabs, function(tab, index) {
+            if (tab.active) {
+                this.settings.set('activeTab', index);
+            }
+
+            if (tab.link) {
+                var collection = this._createCollection(tab);
+                if (_.isNull(collection)) {
+                    return;
+                }
+
+                this.tabs[index] = tab;
+                this.tabs[index].collection = collection;
+                this.tabs[index].relate = _.isObject(collection.link);
+                this.tabs[index].include_child_items = tab.include_child_items || false;
+                this.tabs[index].collection.display_columns = [{
+                    fields: this._getColumnsForTab(tab),
+                    module: tab.module
+                }];
+                this.tabs[index].collection.orderBy = tab.order_by || {};
+            } else {
+                this.tabs[index] = tab;
+            }
+        }, this);
+
+        if (this.tabs.length === 1) {
+            // don't show tabs if there is only one
+            this.tabs = [];
+        }
+    },
+
+    /**
+     * Event handler for tab switcher.
+     *
+     * @param {Event} event Click event.
+     */
+    tabSwitcher: function(event) {
+        var index = this.$(event.currentTarget).data('index');
+        if (index === this.settings.get('activeTab')) {
+            return;
+        }
+
+        this.settings.set('activeTab', index);
+        this.collection = this.tabs[index].collection || null;
+        this.context.set('collection', this.collection);
+
+        if (this.collection && !this.collection.dataFetched) {
+            this._loadDataForTabs([this.tabs[index]]);
+        } else {
+            this.render();
+        }
+    },
+
+    /**
+     * Set order by on collection.
+     * The event is canceled if an element being dragged is found.
+     *
+     * @param {Event} event jQuery event object.
+     */
+    setOrderBy: function(event) {
+        var $target = $(event.currentTarget);
+
+        if ($target.find('ui-draggable-dragging').length) {
+            return;
+        }
+
+        var tab = this.tabs[this.settings.get('activeTab')];
+        var collection = tab.collection;
+        // first check if alternate orderby is set for column
+        var orderBy = $target.data('orderby');
+        // if no alternate orderby, use the field name
+        if (!orderBy) {
+            orderBy = $target.data('fieldname');
+        }
+        if (!_.isEmpty(orderBy) && !app.acl.hasAccess('read', tab.module, app.user.get('id'), orderBy)) {
+            // no read access to the orderBy field, don't bother to reload data
+            return;
+        }
+        // if same field just flip
+        if (orderBy === tab.order_by.field) {
+            tab.order_by.direction = tab.order_by.direction === 'desc' ? 'asc' : 'desc';
+        } else {
+            tab.order_by.field = orderBy;
+            tab.order_by.direction = 'desc';
+        }
+
+        collection.orderBy = tab.order_by;
+        collection.resetPagination();
+        this._loadDataForTabs([tab]);
+    },
+
+    /**
+     * Create collection based on tab properties and current context.
+     *
+     * @param {Object} tab Tab properties.
+     * @return {Data.BeanCollection|null} A new instance of bean collection or `null`
+     *   if we cannot access module metadata.
+     * @private
+     */
+    _createCollection: function(tab) {
+        var meta = app.metadata.getModule(this.module);
+        if (_.isUndefined(meta)) {
+            return null;
+        }
+        var options = {};
+        if (meta.fields[tab.link] && meta.fields[tab.link].type === 'link') {
+            options = {
+                link: {
+                    name: tab.link,
+                    bean: this.model
+                }
+            };
+        }
+        var collection = app.data.createBeanCollection(tab.module, [], options);
+        return collection;
+    },
+
+    /**
+     * Retrieve collection options for a specific tab.
+     *
+     * @param {Object} tab The tab.
+     * @return {Object} Collection options.
+     * @return {number} return.limit The number of records to retrieve.
+     * @return {Object} return.params Additional parameters to the API call.
+     * @return {Object|null} return.fields Specifies the fields on each
+     * requested model.
+     * @private
+     */
+    _getCollectionOptions: function(tab) {
+        var options = {
+            limit: tab.limit || this.settings.get('limit'),
+            relate: tab.relate,
+            params: {
+                order_by: !_.isEmpty(tab.order_by) ? tab.order_by.field + ':' + tab.order_by.direction : null,
+                include_child_items: tab.include_child_items || null
+            },
+            fields: tab.fields || null
+        };
+
+        return options;
+    },
+
+    /**
+     * Retrieve pagination options for current tab. Called by 'Pagination' plugin.
+     *
+     * @return {Object} Pagination options.
+     */
+    getPaginationOptions: function() {
+        return this._getCollectionOptions(this.tabs[this.settings.get('activeTab')]);
+    },
+
+    /**
+     * Fetch data for tabs.
+     *
+     * @param {Object} [options={}] Options that are passed to collection/model's
+     *   fetch method.
+     */
+    loadData: function(options) {
+        if (this.disposed || this._mode === 'config') {
+            return;
+        }
+        this._super('loadData', [options]);
+        this._loadDataForTabs(this.tabs, options);
+    },
+
+    /**
+     * Load data for passed set of tabs.
+     *
+     * @param {Object[]} tabs Set of tabs to update.
+     * @param {Object} [options={}] load options.
+     * @private
+     */
+    _loadDataForTabs: function(tabs, options) {
+        options = options || {};
+        var self = this;
+        var loadDataRequests = [];
+        _.each(tabs, function(tab, index) {
+            if (!tab.collection) {
+                return;
+            }
+            loadDataRequests.push(function(callback) {
+                tab.collection.setOption(self._getCollectionOptions(tab));
+                tab.collection.fetch({
+                    complete: function() {
+                        tab.collection.dataFetched = true;
+                        callback(null);
+                    }
+                });
+            });
+        }, this);
+        if (!_.isEmpty(loadDataRequests)) {
+            async.parallel(loadDataRequests, function() {
+                if (self.disposed) {
+                    return;
+                }
+                self.collection = self.tabs[self.settings.get('activeTab')].collection;
+                self.context.set('collection', self.collection);
+                self.render();
+
+                if (_.isFunction(options.complete)) {
+                    options.complete.call(self);
+                }
+            });
+        }
+    },
+
+    /**
+     * Get the fields metadata for a tab.
+     *
+     * @param {Object} tab The tab.
+     * @return {Object[]} The fields metadata or an empty array.
+     * @private
+     */
+    _getFieldMetaForTab: function(tab) {
+        var meta = app.metadata.getView(tab.module, 'list') || {};
+        return this._getFieldMetaForView(meta);
+    },
+
+    /**
+     * Get the columns to display for a tab.
+     *
+     * @param tab {Object} Tab to display.
+     * @return {Object[]} Array of objects defining the field metadata for
+     *   each column.
+     * @private
+     */
+    _getColumnsForTab: function(tab) {
+        var columns = [];
+        var fields = this._getFieldMetaForTab(tab);
+        var moduleMeta = app.metadata.getModule(tab.module);
+
+        _.each(tab.fields, function(name) {
+            var field = _.find(fields, function(field) {
+                return field.name === name;
+            }, this);
+
+            // field may not be in module's list view metadata
+            field = field || app.metadata._patchFields(tab.module, moduleMeta, [name]);
+
+            // handle setting of the sortable flag on the list
+            // this will not always be true
+            var sortableFlag;
+            var fieldDef = moduleMeta.fields[field.name];
+
+            // if the module's field def says nothing about the sortability, then
+            // assume it's ok to sort
+            if (_.isUndefined(fieldDef) || _.isUndefined(fieldDef.sortable)) {
+                sortableFlag = true;
+            } else {
+                // Get what the field def says it is supposed to do
+                sortableFlag = !!fieldDef.sortable;
+            }
+
+            var column = _.extend({sortable: sortableFlag}, field);
+            columns.push(column);
+        }, this);
+
+        return columns;
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * New model related properties are injected into each model.
+     */
+    _renderHtml: function() {
+        if (this.meta.config) {
+            this._super('_renderHtml');
+            return;
+        }
+
+        this.tabsHtml = this._tabsTemplate(this);
+        var tab = this.tabs[this.settings.get('activeTab')];
+        this.tabContentHtml = tab && tab.collection ? this._recordsTemplate(this) : this._recordTemplate(this);
+        var listBottom = this.layout.getComponent('list-bottom');
+        if (listBottom) {
+            tab && tab.collection ? listBottom.show() : listBottom.hide();
+        }
+        this._super('_renderHtml');
     },
 
     /**
@@ -210,6 +512,7 @@
         this.model && this.model.abortFetchRequest();
         this.stopListening(this.model);
         this.model = model;
+        this._initTabs();
     },
 
     /**
@@ -235,6 +538,12 @@
      * @private
      */
     _initializeSettings: function() {
+        var settings = _.extend(
+            {},
+            this._defaultSettings,
+            this.settings.attributes
+        );
+        this.settings.set(settings);
         this._setDefaultModule();
         if (!this.settings.get('label')) {
             this.settings.set('label', 'LBL_MODULE_NAME');
