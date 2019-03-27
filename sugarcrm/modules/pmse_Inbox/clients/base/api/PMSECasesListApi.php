@@ -426,7 +426,7 @@ class PMSECasesListApi extends FilterApi
         $q->where()->addRaw("pdef.pro_status <> 'INACTIVE'");
 
         if ($filter !== 'all') {
-            $q->where()->addRaw("pdef.prj_id = '" . $filter . "'");
+            $q->where()->equals('pdef.prj_id', $filter);
         }
 
         $data_bean = $q->execute();
