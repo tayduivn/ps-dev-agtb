@@ -34,6 +34,7 @@ import ModuleMenuCmp from './components/module-menu-cmp';
 import KBViewCategoriesDrawer from './layouts/kb-view-categories-layout';
 import KBSettingsLayout from './layouts/kb-settings-layout';
 import MergeLayout from './layouts/merge-layout';
+import HistoricalSummaryDrawerLayout from './layouts/historical-summary-layout';
 
 export default (seedbed: Seedbed) => {
 
@@ -74,6 +75,7 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`${moduleName}SearchAndAdd`, SearchAndAddLayout, {module: moduleName});
                 seedbed.defineComponent(`${moduleName}SearchAndSelect`, SearchAndSelectLayout, {module: moduleName});
                 seedbed.defineComponent(`PersonalInfoDrawer`, PersonalInfoDrawerLayout, {module: moduleName});
+                seedbed.defineComponent(`${moduleName}HistoricalSummary`, HistoricalSummaryDrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`AuditLogDrawer`, AuditLogDrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`BusinessRulesDesign`, BusinessRulesDesignLayout, {module: moduleName});
                 seedbed.defineComponent(`MergeDrawer`, MergeLayout, {module: moduleName});

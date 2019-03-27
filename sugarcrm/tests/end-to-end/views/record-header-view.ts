@@ -55,6 +55,7 @@ export default class RecordHeaderView extends BaseView {
                 'design_pet':'a[name="design_emailtemplates"]:not(.hide)',
                 'select':'a[name="select_button"]:not(.hide)',
                 'togglesidepanel': '.btn.btn-invisible.sidebar-toggle',
+                'historicalsummary': 'a[name="historical_summary_button"]:not(.hide)',
 
                 // Forecasts module controls
                 'commit':'a[name="commit_button"]:not(.hide)',
