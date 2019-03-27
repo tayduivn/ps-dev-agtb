@@ -146,6 +146,7 @@
         options.meta = _.extend(
             {},
             options.meta,
+            app.metadata.getView(options.meta.module, 'recorddashlet') ||
             app.metadata.getView(options.meta.module, 'record')
         );
 
@@ -197,10 +198,10 @@
             this.layout.context.on('dashablerecord:config:tabs:change', function(newTabs) {
                 this.meta.tabs = newTabs;
                 this._initTabs(newTabs);
+                this._updateViewToCurrentTab();
                 this.render();
             }, this);
 
-            this.switchModel(app.data.createBean(this.context.get('module')));
             this.layout.context.trigger('dashablerecord:config:tabs:change', this.meta.tabs);
         }
 
@@ -284,7 +285,6 @@
                 configTab.link = '';
                 configTab.module = this._baseModule;
             } else if (this._getTabType(tab) === 'record') {
-                // FIXME CS-54: Vishal might want to change stuff here
                 configTab.link = tab;
                 configTab.module = this._getRelatedModule(tab);
             } else {
@@ -334,15 +334,44 @@
             }
 
             this.settings.set('activeTab', index);
+            var tab = this.tabs[index];
+            this.currentTab = tab;
             this.collection = this.tabs[index].collection || null;
             this.context.set('collection', this.collection);
+            this._updateViewToCurrentTab();
 
-            if (this.collection && !this.collection.dataFetched && !this.tabs[index].skipFetch && !this.meta.pseudo) {
-                this._loadDataForTabs([this.tabs[index]]);
+            if (this.collection && !this.collection.dataFetched && !tab.skipFetch && !this.meta.pseudo) {
+                this._loadDataForTabs([tab]);
             } else {
                 this.render();
             }
         }
+    },
+
+    /**
+     * Update the view with tab data at the view level so that the
+     * templates can reference the correct meta, model and module
+     *
+     * @private
+     */
+    _updateViewToCurrentTab: function() {
+        var tab = this.currentTab;
+        if (!tab) {
+            return;
+        }
+        this.model = tab.model;
+        var linkName = tab.link;
+        if (linkName) {
+            this.module = linkName === this._baseModule ? tab.module : tab.relatedModule;
+        } else {
+            this.module = tab.module;
+        }
+        this.meta = _.extend(this.meta, tab.meta);
+        this._buildGridsFromPanelsMetadata();
+        this.collection = tab.collection || null;
+        this.context.set('model', this.model, {silent: true});
+        this._prepareHeader(this.meta.panels);
+        // TODO update this.collection as well as part of CS-63?
     },
 
     /**
@@ -450,7 +479,7 @@
      *   fetch method.
      */
     loadData: function(options) {
-        if (this.disposed || this._mode === 'config') {
+        if (this.disposed || this._mode === 'config' || this._mode === 'preview') {
             return;
         }
         this._super('loadData', [options]);
@@ -465,8 +494,8 @@
      * @private
      */
     _loadDataForTabs: function(tabs, options) {
-        // don't load data on the pseudo config dashlet
-        if (this.meta.pseudo) {
+        // don't load data on the pseudo config  or preview dashlet
+        if (this.meta.pseudo || this._mode === 'preview') {
             return;
         }
 
@@ -570,10 +599,19 @@
 
         this.tabsHtml = this._tabsTemplate(this);
 
-        var tab = this.tabs[this.settings.get('activeTab')];
+        var tab = this.currentTab;
 
-        this.tabContentHtml = tab && tab.type === 'list' ? this._recordsTemplate(this) : this._recordTemplate(this);
+        var tabType = tab && tab.type;
 
+        this.tabContentHtml = tabType === 'list' ? this._recordsTemplate(this) : this._recordTemplate(this);
+
+        // Link to studio if showing a single record
+        if (this.meta.pseudo && tabType === 'record') {
+            this.showStudioText = true;
+            this.linkToStudio = '#bwc/index.php?module=ModuleBuilder&action=index&type=studio';
+        } else {
+            this.showStudioText = false;
+        }
         this._showHideListBottom(tab);
 
         this._super('_renderHtml');
@@ -585,7 +623,7 @@
      * Listen to change:model event to populate this dashlet with a new bean.
      */
     bindDataChange: function() {
-        this.context.on('change:model', function(model) {
+        this.context.on('change:model', function(ctx, model) {
             this.switchModel(model);
 
             this._injectRecordHeader(model);
@@ -824,6 +862,9 @@
      * @private
      */
     _injectRecordHeader: function(model) {
+        if (this.meta && this.meta.pseudo) {
+            return;
+        }
         // inject header content into dashlet toolbar
         var dashletToolbar = this.layout && this.layout.getComponent('dashlet-toolbar');
         if (dashletToolbar) {
@@ -880,6 +921,7 @@
         _.each(dashletTabs, function(tab, index) {
             if (tab.active) {
                 this.settings.set('activeTab', index);
+                this.currentTab = tab;
             }
 
             tab.type = tab.type || this._getTabType(tab.link);
@@ -889,21 +931,33 @@
                     return;
                 }
 
-                this.tabs[index] = tab;
-                this.tabs[index].collection = collection;
-                this.tabs[index].relate = _.isObject(collection.link);
-                this.tabs[index].include_child_items = tab.include_child_items || false;
-                this.tabs[index].collection.display_columns = [{
+                tab.collection = collection;
+                tab.relate = _.isObject(collection.link);
+                tab.include_child_items = tab.include_child_items || false;
+                tab.collection.display_columns = [{
                     fields: this._getColumnsForTab(tab),
                     module: tab.module
                 }];
-                this.tabs[index].collection.orderBy = tab.order_by || {};
-            } else {
+                tab.collection.orderBy = tab.order_by || {};
+                this.tabs[index] = tab;
+            } else if (tab.type === 'record') {
+                // Single record (record view tab)
+                var module = tab.link && tab.link === this._baseModule ? tab.module : tab.relatedModule;
+                var linkName = tab.link;
+                if (linkName) {
+                    module = linkName === this._baseModule ? tab.module : tab.relatedModule;
+                } else {
+                    module = tab.module;
+                }
+                tab.meta = app.metadata.getView(module, 'recorddashlet') || app.metadata.getView(module, 'record');
+                // TODO need the correct ID here
+                tab.model = app.data.createBean(module);
                 this.tabs[index] = tab;
             }
         }, this);
 
         if (this.tabs.length === 1) {
+            this.currentTab = this.tabs[0];
             // don't show tabs if there is only one
             this.tabs = [];
         }

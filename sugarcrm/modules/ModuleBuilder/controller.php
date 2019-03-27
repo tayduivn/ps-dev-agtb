@@ -110,6 +110,7 @@ class ModuleBuilderController extends SugarController
                 case MB_DETAILVIEW :
                 case MB_QUICKCREATE :
                 case MB_RECORDVIEW :
+                case MB_RECORDDASHLETVIEW:
                 case MB_WIRELESSEDITVIEW :
                 case MB_WIRELESSDETAILVIEW :
                     $this->view = 'layoutView';
@@ -368,7 +369,7 @@ class ModuleBuilderController extends SugarController
         if ($viewModule && !empty($_REQUEST ['labelValue'])) {
             $_REQUEST ["label_" . $_REQUEST ['label']] = $_REQUEST ['labelValue'];
 
-            // Since the following loop will change aspects of the $_REQUEST 
+            // Since the following loop will change aspects of the $_REQUEST
             // array read it into a copy to preserve state on $_REQUEST
             $req = $_REQUEST;
             $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
@@ -377,7 +378,7 @@ class ModuleBuilderController extends SugarController
                 $req['view_module'] = $key;
                 $parser = new ParserLabel($req['view_module'], $packageName);
                 $parser->handleSave($req, $GLOBALS['current_language']);
-                
+
                 // Clear the language cache to make sure the view picks up the latest
                 $cache_key = LanguageManager::getLanguageCacheKey($req['view_module'], $GLOBALS['current_language']);
                 sugar_cache_clear($cache_key);
@@ -467,7 +468,7 @@ class ModuleBuilderController extends SugarController
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->formula));
                 }
 
-                // But only if there are related modules to work on, otherwise 
+                // But only if there are related modules to work on, otherwise
                 // we end up handling these processes for ALL THE MODULES
                 if ($relatedMods) {
                     $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'rebuildExtensions'), array_values($relatedMods), true, false);
@@ -949,9 +950,9 @@ class ModuleBuilderController extends SugarController
             $subpanelName = (!empty ($_REQUEST ['subpanel'])) ? $_REQUEST ['subpanel'] : null;
             $parser = ParserFactory::getParser($_REQUEST ['view'], $_REQUEST ['view_module'], $packageName, $subpanelName);
             $this->view = 'listView';
-            
+
             // To make sure that dashlets can render customized list views on BWC
-            // modules, we need to save list customizations for BWC modules in 
+            // modules, we need to save list customizations for BWC modules in
             // the new style as well.
             if (isModuleBWC($_REQUEST['view_module']) && empty($packageName) && empty($subpanelName)) {
                 $sidecarListParser = new SidecarListLayoutMetaDataParser(MB_SIDECARLISTVIEW, $_REQUEST['view_module'], null, 'base');

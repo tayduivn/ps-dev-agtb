@@ -69,6 +69,7 @@ abstract class AbstractMetaDataImplementation
     MB_DETAILVIEW               => 'viewdefs',
     MB_QUICKCREATE              => 'viewdefs',
     MB_RECORDVIEW               => 'viewdefs',
+    MB_RECORDDASHLETVIEW        => 'viewdefs',
     MB_WIRELESSEDITVIEW         => 'viewdefs',
     MB_WIRELESSDETAILVIEW       => 'viewdefs',
     MB_WIRELESSLISTVIEW         => 'viewdefs',
@@ -86,7 +87,7 @@ abstract class AbstractMetaDataImplementation
     /**
      * Returns an array of modules affected by this object. In almost all cases
      * this will be a single array. For subpanels, it will be more than one.
-     * 
+     *
      * @return array List of modules changed within this object
      */
     public function getAffectedModules()

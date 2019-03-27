@@ -99,6 +99,7 @@ class MetaDataFiles
         MB_DETAILVIEW             => 'detailviewdefs' ,
         MB_QUICKCREATE            => 'quickcreatedefs',
         MB_RECORDVIEW             => 'record',
+        MB_RECORDDASHLETVIEW      => 'recorddashlet',
         MB_SIDECARPOPUPVIEW       => 'selection-list',
         MB_SIDECARDUPECHECKVIEW   => 'dupecheck-list',
         MB_WIRELESSEDITVIEW       => 'edit' ,
@@ -132,6 +133,7 @@ class MetaDataFiles
         MB_DETAILVIEW  => 'DetailView' ,
         MB_QUICKCREATE => 'QuickCreate',
         MB_RECORDVIEW  => array('base', 'view', 'record'),
+        MB_RECORDDASHLETVIEW  => array('base', 'view', 'recorddashlet'),
 
         MB_WIRELESSEDITVIEW => array('mobile','view','edit'),
         MB_WIRELESSDETAILVIEW => array('mobile','view','detail'),
@@ -884,7 +886,7 @@ class MetaDataFiles
                     $basePath .= '/' . $context->getHash();
                 }
                 sugar_mkdir($basePath,null,true);
-    
+
                 $output = "<?php\n\$clientCache['".$module."']['".$platforms[0]."']['".$type."'] = ".var_export($moduleResults,true).";\n\n";
                 sugar_file_put_contents_atomic($basePath.'/'.$type.'.php', $output);
             }

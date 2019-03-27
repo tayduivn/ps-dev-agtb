@@ -5532,6 +5532,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_COMMENT_LOG_SHOW_MORE' => 'Show more...',
     'LBL_COMMENT_LOG_SHOW_LESS' => 'Show less...',
     'LBL_NO_DATA_AVAILABLE_NO_PERIOD' => 'No data available',
+
+    // Customer Service
+    'LBL_EDIT_IN_STUDIO' => 'Use Studio to edit record view dashlet layout by going to ' .
+        'Studio > {{module}} > Layouts > Record Dashlet View. <a href={{linkToStudio}}>Edit in Studio</a>.',
 );
 
 $app_list_strings['activity_user_options'] = array (

@@ -188,9 +188,9 @@ describe('Base.View.Dashablerecord', function() {
             var renderStub = sinon.collection.stub(view, 'render');
             var triggerStub = sinon.collection.stub(dashletToolbarContext, 'trigger');
             var model = app.data.createBean(moduleName);
-
+            view.meta = {};
             view.bindDataChange();
-            view.context.trigger('change:model', model);
+            view.context.trigger('change:model', view.context, model);
 
             expect(switchModelStub).toHaveBeenCalledWith(model);
             expect(triggerStub).toHaveBeenCalledWith(
@@ -343,6 +343,25 @@ describe('Base.View.Dashablerecord', function() {
             ];
             view._initTabs();
             expect(view.tabs).toEqual([]);
+            expect(view.currentTab).not.toBeUndefined();
+        });
+
+        it('should set up the tab with template required properties', function() {
+            view.meta.tabs = [
+                {
+                    link: '',
+                    module: 'Cases'
+                },
+                {
+                    link: 'Cases',
+                    module: 'Cases'
+                }
+            ];
+
+            view._initTabs();
+            var tab = view.tabs[0];
+            expect(tab.meta).not.toBeUndefined();
+            expect(tab.model).toEqual(jasmine.any(app.Bean));
         });
     });
 
@@ -604,6 +623,28 @@ describe('Base.View.Dashablerecord', function() {
                 }
             ]);
             expect(view.settings.has('I')).toBeFalsy();
+        });
+    });
+
+    describe('_updateViewToCurrentTab', function() {
+        it('should set the view data', function()  {
+            var model = app.data.createBean(moduleName);
+            view.meta = {oldMeta: 'somethingOld', panels: []};
+            view.currentTab = {
+                model: model,
+                link: '',
+                module: moduleName,
+                meta: {panels: [{fields: []}]},
+            };
+
+            view._updateViewToCurrentTab();
+            expect(view.model).toEqual(model);
+            expect(view.module).toEqual(moduleName);
+            expect(view.meta).toEqual({
+                oldMeta: 'somethingOld',
+                panels: [{fields: [], labels: true, grid: []}]
+            });
+            expect(view.context.get('model')).toEqual(model);
         });
     });
 });

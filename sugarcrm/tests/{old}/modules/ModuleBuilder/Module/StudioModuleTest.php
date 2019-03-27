@@ -54,6 +54,19 @@ class StudioModuleTest extends TestCase
         }
     }
 
+    public function testGetViewsForCasesHasRecordDashlet()
+    {
+        $sm = new StudioModule('Cases');
+        $views = $sm->getViews();
+        $defs = array_values($views);
+        $expectedDef = [
+            'name' => 'LBL_RECORDDASHLETVIEW',
+            'type' => 'recorddashletview',
+            'image' => 'RecordDashletView',
+        ];
+        $this->assertEquals($expectedDef, $defs[2]);
+    }
+
     public function providerGetType()
     {
         return array(

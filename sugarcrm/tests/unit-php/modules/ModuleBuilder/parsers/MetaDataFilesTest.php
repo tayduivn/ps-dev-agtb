@@ -15,7 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\modules\ModuleBuilder\parsers;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass \ViewModulefields
+ * @coversDefaultClass MetaDataFiles
  */
 class MetaDataFilesTest extends TestCase
 {
@@ -132,7 +132,7 @@ class MetaDataFilesTest extends TestCase
      * @param array $entry
      *
      * @dataProvider displayParamsProvider
-     * @covers ::isValidStudioField
+     * @covers ::buildModuleClientCache
      */
     public function testbuildModuleClientCacheMergesDisplayParams(array $entry)
     {
@@ -151,6 +151,15 @@ class MetaDataFilesTest extends TestCase
         );
 
         $this->assertEquals($entry['expected'], $result);
+    }
+
+    /**
+     * @covers ::getNames
+     */
+    public function testNamesIncludesRecordDashlet()
+    {
+        $names =  MetaDataFilesTestMock::getNames();
+        $this->assertEquals('recorddashlet', $names[MB_RECORDDASHLETVIEW]);
     }
 }
 

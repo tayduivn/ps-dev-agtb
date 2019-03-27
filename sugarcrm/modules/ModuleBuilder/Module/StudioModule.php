@@ -66,7 +66,7 @@ class StudioModule
 
     /**
      * Class constructor
-     * 
+     *
      * @param string $module The name of the module to base this object on
      */
     public function __construct($module, $seed = null)
@@ -146,15 +146,21 @@ class StudioModule
                     'image' => 'ListView',
                     'path'  => "modules/{$this->module}/clients/base/views/list/list.php",
                 ),
+                array(
+                    'name'  => translate('LBL_RECORDDASHLETVIEW'),
+                    'type'  => MB_RECORDDASHLETVIEW,
+                    'image' => 'RecordDashletView',
+                    'path'  => "modules/{$this->module}/clients/base/views/recorddashlet/recorddashlet.php",
+                ),
             );
         }
     }
 
     /**
-     * Gets the name of this module. Some modules have naming inconsistencies 
+     * Gets the name of this module. Some modules have naming inconsistencies
      * such as Bug Tracker and Bugs which causes warnings in Relationships
      * Added to resolve bug #20257
-     * 
+     *
      * @return string
      */
     public function getModuleName()
@@ -162,7 +168,7 @@ class StudioModule
         $modules_with_odd_names = array(
             'Bug Tracker'=>'Bugs'
         );
-        
+
         if (isset($modules_with_odd_names[$this->name])) {
             return $modules_with_odd_names[$this->name];
         }
@@ -176,7 +182,7 @@ class StudioModule
      * Custom modules extend one of these standard SugarObject types, so the type can be determined from their parent
      * Standard module types can be determined simply from the module name - 'bugs' for example is of type 'issue'
      * If all else fails, fall back on type 'basic'...
-     * 
+     *
      * @return string Module's type
      */
     public function getType()
@@ -210,8 +216,8 @@ class StudioModule
             return strtolower($type);
         }
 
-        // If a standard module then just look up its type - type is implicit 
-        // for standard modules. Perhaps one day we will make it explicit, just 
+        // If a standard module then just look up its type - type is implicit
+        // for standard modules. Perhaps one day we will make it explicit, just
         // as we have done for custom modules...
         $types = array(
             'Accounts' => 'company' ,
@@ -231,7 +237,7 @@ class StudioModule
 
     /**
      * Return the fields for this module as sourced from the SugarBean
-     * 
+     *
      * @return Array of fields
      */
 
@@ -242,7 +248,7 @@ class StudioModule
 
     /**
      * Gets all nodes for this module for use in rendering studio
-     * 
+     *
      * @return array
      */
     public function getNodes()
@@ -261,7 +267,7 @@ class StudioModule
 
     /**
      * Gets specific nodes and actions related to this module
-     * 
+     *
      * @return array
      */
     public function getModule()
@@ -269,12 +275,12 @@ class StudioModule
         $sources = array(
             translate('LBL_LABELS') => array(
                 'action' => "module=ModuleBuilder&action=editLabels&view_module={$this->module}",
-                'imageTitle' => 'Labels', 
+                'imageTitle' => 'Labels',
                 'help' => 'labelsBtn',
             ),
             translate('LBL_FIELDS') => array(
                 'action' => "module=ModuleBuilder&action=modulefields&view_package=studio&view_module={$this->module}",
-                'imageTitle' => 'Fields', 
+                'imageTitle' => 'Fields',
                 'help' => 'fieldsBtn',
             ),
             translate('LBL_RELATIONSHIPS') => array(
@@ -283,9 +289,9 @@ class StudioModule
                 'help' => 'relationshipsBtn',
             ),
             translate('LBL_LAYOUTS') => array(
-                'children' => 'getLayouts', 
-                'action' => "module=ModuleBuilder&action=wizard&view=layouts&view_module={$this->module}", 
-                'imageTitle' => 'Layouts', 
+                'children' => 'getLayouts',
+                'action' => "module=ModuleBuilder&action=wizard&view=layouts&view_module={$this->module}",
+                'imageTitle' => 'Layouts',
                 'help' => 'layoutsBtn',
             ),
             translate('LBL_SUBPANELS') => array(
@@ -293,7 +299,7 @@ class StudioModule
                 'action' => "module=ModuleBuilder&action=wizard&view=subpanels&view_module={$this->module}",
                 'imageTitle' => 'Subpanels',
                 'help' => 'subpanelsBtn',
-            ), 
+            ),
         );
         if (self::isMobileLayoutsSupported($this->module)) {
             $sources[translate('LBL_WIRELESSLAYOUTS')] = array(
@@ -332,7 +338,7 @@ class StudioModule
 
     /**
      * Gets views for this module
-     * 
+     *
      * @return array
      */
     public function getViews()
@@ -353,7 +359,7 @@ class StudioModule
 
     /**
      * Gets layouts for this module
-     * 
+     *
      * @return array
      */
     public function getLayouts()
@@ -411,7 +417,7 @@ class StudioModule
 
     /**
      * Gets wiresless layouts for this module
-     * 
+     *
      * @return array
      */
     public function getWirelessLayouts()
@@ -446,7 +452,7 @@ class StudioModule
 
     /**
      * Gets appropriate search layouts for the module
-     * 
+     *
      * @return array
      */
     public function getSearch()
@@ -466,11 +472,11 @@ class StudioModule
                     $name = str_replace(' ', '', $title);
                 }
                 $nodes[$title] = array(
-                    'name' => $title, 
-                    'action' => "module=ModuleBuilder&action=editLayout&view={$view}&view_module={$this->module}", 
-                    'imageTitle' => $title, 
-                    'imageName' => $name, 
-                    'help' => "{$name}Btn", 
+                    'name' => $title,
+                    'action' => "module=ModuleBuilder&action=editLayout&view={$view}&view_module={$this->module}",
+                    'imageTitle' => $title,
+                    'imageName' => $name,
+                    'help' => "{$name}Btn",
                     'size' => '48',
                 );
             } catch (Exception $e) {
@@ -484,7 +490,7 @@ class StudioModule
     /**
      * Return an object containing all the relationships participated in by this
      * module
-     * 
+     *
      * @return AbstractRelationships Set of relationships
      */
     public function getRelationships($relationshipName = "")
@@ -494,7 +500,7 @@ class StudioModule
 
     /**
      * Gets the collection of portal layouts for this module, if they exist
-     * 
+     *
      * @return array
      */
     public function getPortal()
@@ -516,7 +522,7 @@ class StudioModule
 
     /**
      * Gets a list of subpanels used by the current module
-     * 
+     *
      * @return array
      */
     public function getSubpanels()
@@ -620,7 +626,7 @@ class StudioModule
 
     /**
      * Gets modules and subpanels related the given one
-     * 
+     *
      * @param string $sourceModule The name of the module
      * @return array
      */
@@ -676,7 +682,7 @@ class StudioModule
 
     /**
      * Removes a field from the layouts that it is on
-     * 
+     *
      * @param string $fieldName The name of the field to remove
      */
     public function removeFieldFromLayouts($fieldName)
@@ -756,7 +762,7 @@ class StudioModule
 
     /**
      * Gets the type for a view
-     * 
+     *
      * @param string $view The view to get the type from
      * @return string
      */

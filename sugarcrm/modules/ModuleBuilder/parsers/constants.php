@@ -57,6 +57,7 @@ define('MB_PORTALSEARCHVIEW', 'portalsearchview');
 define('MB_PORTAL', 'portal');
 //END SUGARCRM flav=ent ONLY
 define('MB_RECORDVIEW', 'recordview');
+define('MB_RECORDDASHLETVIEW', 'recorddashletview');
 define('MB_FILTERVIEW', 'filter');
 define('MB_BWCFILTERVIEW', 'searchfields');
 define('MB_DROPDOWN', 'dropdown');
