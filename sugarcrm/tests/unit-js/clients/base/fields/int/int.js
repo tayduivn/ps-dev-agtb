@@ -10,7 +10,8 @@
  */
 describe('Base.Fields.Int', function() {
 
-    var app, field;
+    var app;
+    var field;
 
     describe('default field definition', function() {
         beforeEach(function() {
@@ -27,23 +28,27 @@ describe('Base.Fields.Int', function() {
 
         it('should format/unformat the value based on user preferences', function() {
 
-            var preferenceStub = sinon.collection.stub(app.user, 'getPreference'),
-                value = 123456.502;
+            var preferenceStub = sinon.collection.stub(app.user, 'getPreference');
+            var value = 123456.502;
+
+            expect(field.format(999.9)).toEqual('999.9');
+            expect(field.format(9999.99)).toEqual('9,999.99');
 
             // this is to make sure that test still fails if we are relying on a
             // /possible system default precision set to 0
             preferenceStub.withArgs('decimal_precision').returns(4);
-
             preferenceStub.withArgs('number_grouping_separator').returns('.');
             preferenceStub.withArgs('decimal_separator').returns(',');
 
-            expect(field.format(value)).toEqual('123.457');
+            expect(field.format(999.9)).toEqual('999,9');
+
+            expect(field.format(value)).toEqual('123.456,502');
             expect(field.unformat('123.457')).toEqual(123457);
 
             preferenceStub.withArgs('number_grouping_separator').returns(',');
             preferenceStub.withArgs('decimal_separator').returns('.');
 
-            expect(field.format(value)).toEqual('123,457');
+            expect(field.format(value)).toEqual('123,456.502');
             expect(field.unformat('123,457')).toEqual(123457);
         });
 
@@ -117,8 +122,8 @@ describe('Base.Fields.Int', function() {
 
         it('should format the value not based on user preferences', function() {
 
-            var preferenceStub = sinon.collection.stub(app.user, 'getPreference'),
-                value = 123456.502;
+            var preferenceStub = sinon.collection.stub(app.user, 'getPreference');
+            var value = 123456.502;
 
             // this is to make sure that test still fails if we are relying on
             // a possible system default precision set to 0
@@ -127,7 +132,7 @@ describe('Base.Fields.Int', function() {
             preferenceStub.withArgs('number_grouping_separator').returns('.');
             preferenceStub.withArgs('decimal_separator').returns(',');
 
-            expect(field.format(value)).toEqual('123457');
+            expect(field.format(value)).toEqual('123456502');
             // unformat should still be based on user preferences, since the
             // user might paste a number from other app
             expect(field.unformat('123.456,502')).toEqual(123456.502);
@@ -136,8 +141,9 @@ describe('Base.Fields.Int', function() {
             preferenceStub.withArgs('number_grouping_separator').returns(',');
             preferenceStub.withArgs('decimal_separator').returns('.');
 
-            expect(field.unformat('123,456.502')).toEqual(123456.502);
+            expect(field.format('123456.502')).toEqual('123456502');
             expect(field.unformat('123456.502')).toEqual(123456.502);
+            expect(field.unformat('123,456.502')).toEqual(123456.502);
 
         });
     });

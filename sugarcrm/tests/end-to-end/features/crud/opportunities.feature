@@ -409,7 +409,7 @@ Feature: Opportunities
       | name         | CreateOpportunityTest |
       | best_case    | $300.00               |
       | amount       | $300.00               |
-      | worst_case   | $300.00               |
+      | worst_case   | $600.00               |
       | date_closed  | 12/12/2022            |
       | sales_status | In Progress           |
 

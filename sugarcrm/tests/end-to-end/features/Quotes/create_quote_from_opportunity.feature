@@ -108,16 +108,16 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | RLI_1 | RLI_1 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *     | date_closed | discount_price | quantity | currency_id | discount_amount |
-      | RLI_1 | 12/12/2020  | 175.00         | 3.75     | € (EUR)     | 75.34           |
+      | RLI_1 | 12/12/2020  | 175.00         | 3        | € (EUR)     | 75.34           |
     When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
 
     # 7. Verify 'RLI_1' data in RLI subpanel of Opportunity record view
     When I open the revenuelineitems subpanel on #Opp_1Record view
     Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName   | value         |
-      | name        | RLI_1         |
-      | date_closed | 12/12/2020    |
+      | fieldName   | value          |
+      | name        | RLI_1          |
+      | date_closed | 12/12/2020     |
       | likely_case | €87.50 $175.00 |
 
     # 8. Create 'RLI_2' record from RLI subpanel of opportunity record view using RUB currency
@@ -128,7 +128,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | RLI_2 | RLI_2 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *     | date_closed | discount_price | quantity | currency_id | discount_amount |
-      | RLI_2 | 12/13/2020  | 84.99          | 50.7     | руб (RUB)   | 84.99           |
+      | RLI_2 | 12/13/2020  | 84.99          | 50       | руб (RUB)   | 84.99           |
     When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
 
@@ -155,9 +155,9 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     # 11. Verify 'RLI_3' data in RLI subpanel of Opportunity record view
     When I open the revenuelineitems subpanel on #Opp_1Record view
     Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName   | value         |
-      | name        | RLI_3         |
-      | date_closed | 12/14/2020    |
+      | fieldName   | value          |
+      | name        | RLI_3          |
+      | date_closed | 12/14/2020     |
       | likely_case | €50.00 $100.00 |
 
     # 12. Create 'RLI_4' record from RLI subpanel of opportunity record view using RUB currency
@@ -249,11 +249,11 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     # 20. Verify that numbers in Grand Total header are correct
     Then I verify fields on QLI total header on #QuotesRecord view
       | fieldName | value         |
-      | deal_tot  | 4.01% $207.34 |
-      | new_sub   | $4,957.90     |
+      | deal_tot  | 4.17% $207.34 |
+      | new_sub   | $4,767.16     |
       | tax       | $0.00         |
       | shipping  | $0.00         |
-      | total     | $4,957.90     |
+      | total     | $4,767.16     |
 
     # 21. Verify data in Quotes subpanel of Opportunity record view
     When I choose Opportunities in modules menu
@@ -263,7 +263,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | fieldName                  | value         |
       | name                       | SugarCRM Inc. |
       | date_quote_expected_closed | 12/12/2020    |
-      | total_usdollar             | $4,957.90     |
+      | total_usdollar             | $4,767.16     |
 
     # 22. Verify that all 4 RLIs have link to generated quote in the list view
     Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems

@@ -1119,12 +1119,12 @@ Feature: Quotes module E2E testing
     When I choose to addLineItem to #MyGroup1GroupRecord
     When I provide input for #Quote_3Record.QliTable.QliRecord view
       | *     | quantity | product_template_name | discount_price | discount_amount |
-      | QLI_1 | 3.5      | Prod_1                | 175            | 4.75            |
+      | QLI_1 | 3.0      | Prod_1                | 175            | 4.75            |
     When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
     When I close alert
     Then I verify fields on #MyGroup1GroupRecord
       | fieldName | value   |
-      | new_sub   | $583.41 |
+      | new_sub   | $500.06 |
 
     # 8. Add a new QLI to group 'Group 2'
     When I choose to addLineItem to #MyGroup2GroupRecord
@@ -1157,7 +1157,7 @@ Feature: Quotes module E2E testing
     # 12. Verify newly generated 'Group 3' sub-total
     Then I verify fields on #MyGroup3GroupRecord
       | fieldName | value   |
-      | new_sub   | $779.41 |
+      | new_sub   | $696.06 |
 
     # 13. Toggle two QLI items: one from 'Group 0' and one from 'Group 2'
     When I toggle #QLI_2QLIRecord
@@ -1196,11 +1196,11 @@ Feature: Quotes module E2E testing
     # 18. Verify that all amounts in QLI Grand Total bar are calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value        |
-      | deal_tot  | 3.04% $49.09 |
-      | new_sub   | $1,563.41    |
-      | tax       | $156.34      |
+      | deal_tot  | 2.95% $44.94 |
+      | new_sub   | $1,480.06    |
+      | tax       | $148.01      |
       | shipping  | $280.25      |
-      | total     | $2,000.00    |
+      | total     | $1,908.32    |
 
     # 19. Delete group 'Group 3' and confirm
     When I choose deleteGroup on #MyGroup3GroupRecord
@@ -1214,11 +1214,11 @@ Feature: Quotes module E2E testing
     #  (Note: Items are moved to groupless section of QLI table when a group is deleted but Grand Totals stay the same)
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value        |
-      | deal_tot  | 3.04% $49.09 |
-      | new_sub   | $1,563.41    |
-      | tax       | $156.34      |
+      | deal_tot  | 2.95% $44.94 |
+      | new_sub   | $1,480.06    |
+      | tax       | $148.01      |
       | shipping  | $280.25      |
-      | total     | $2,000.00    |
+      | total     | $1,908.32    |
 
     # 22. Toggle all items in QLI table
     When I toggle all items in #Quote_3Record.QliTable

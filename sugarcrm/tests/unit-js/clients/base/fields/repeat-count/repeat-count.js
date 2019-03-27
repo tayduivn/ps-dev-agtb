@@ -59,9 +59,9 @@ describe('View.Fields.Base.RepeatCountField', function() {
 
     describe('unformatting the value for storage', function() {
         // `unformat` should only accept strings
-        using('values', ['0', '4', '4.2'], function(value) {
+        using('values', ['0', '4', '4.2', '111.9', '11.99'], function(value) {
             it('should return an integer', function() {
-                expect(field.unformat(value)).toBe(parseInt(value, 10));
+                expect(field.unformat(value)).toBe(parseFloat(value));
             });
         });
 
