@@ -8,12 +8,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
-Represents header view PageObject
- */
+
 import BaseView from './base-view';
 import {seedbed} from '@sugarcrm/seedbed';
+
 /**
+ * Represents header view PageObject.
+ *
  * @class RecordHeaderView
  * @extends BaseView
  */
@@ -25,55 +26,72 @@ export default class RecordHeaderView extends BaseView {
         this.selectors = this.mergeSelectors({
             $: '.headerpane',
             buttons: {
-                'create': 'a[name="create_button"]:not(.hide)',
-                'copy': 'a[name="duplicate_button"]:not(.hide)',
+                // common buttons and actions
+                'actions': '.actions:not([style*="display: none"]) a.btn.dropdown-toggle',
+                'add': 'a[name="link_button"]:not(.hide)',
+                'auditlog': 'a[name="audit_button"]:not(.hide)',
                 'cancel': 'a[name="cancel_button"]:not(.hide)',
                 'close': 'a[name="close"]:not(.hide)',
-                'add': 'a[name="link_button"]:not(.hide)',
-                'save': 'a[name="save_button"]:not(.hide)',
-                'edit': 'a[name="edit_button"]:not(.hide)',
+                'closebutton': 'a[name="close_button"]:not(.hide)',
+                'copy': 'a[name="duplicate_button"]:not(.hide)',
+                'create': 'a[name="create_button"]:not(.hide)',
                 'delete': 'a[name="delete_button"]:not(.hide)',
-                'createopportunity': 'a[name="convert_to_opportunity_button"]:not(.hide)',
-                'generatequote': 'a[name="convert_to_quote_button"]:not(.hide)',
-                'convert': 'a[name="lead_convert_button"]:not(.hide)',
-                'actions': '.actions:not([style*="display: none"]) a.btn.dropdown-toggle',
-                'reply': 'a[name="reply_button"]:not(.hide)',
-                'eraseandcomplete': 'a[name="erase_complete_button"]:not(.hide)',
-                'complete': 'a[name="complete_button"]:not(.hide)',
-                'markforerasure': 'a[name="mark_for_erasure_button"]:not(.hide)',
-                'reject': 'a[name="reject_button"]:not(.hide)',
+                'done': 'a[name="done_button"]:not(.hide)',
+                'edit': 'a[name="edit_button"]:not(.hide)',
+                'historicalsummary': 'a[name="historical_summary_button"]:not(.hide)',
+                'save': 'a[name="save_button"]:not(.hide)',
+                'select': 'a[name="select_button"]:not(.hide)',
+                'togglesidepanel': '.btn.btn-invisible.sidebar-toggle',
+                'viewpersonalinfo': 'a[name="view_pii_button"]:not(.hide)',
+
+                // Calls, Meetings, and Tasks
+                'closeandcreatenew': 'a[name="record-close-new"]:not(.hide)',
                 'closecall': 'a[name="record-close"]:not(.hide)',
                 'closemeeting': 'a[name="record-close"]:not(.hide)',
-                'closeandcreatenew':'a[name="record-close-new"]:not(.hide)',
-                'viewpersonalinfo':'a[name="view_pii_button"]:not(.hide)',
-                'auditlog':'a[name="audit_button"]:not(.hide)',
-                'closebutton': 'a[name="close_button"]:not(.hide)',
-                'add2quote':'a[name="add_to_quote_button"]:not(.hide)',
-                'emailquote' : '.dropdown-inset a[data-action="email"]',
-                'done': 'a[name="done_button"]:not(.hide)',
-                'design_pbr':'a[name="design_businessrules"]:not(.hide)',
-                'design_pet':'a[name="design_emailtemplates"]:not(.hide)',
-                'select':'a[name="select_button"]:not(.hide)',
-                'togglesidepanel': '.btn.btn-invisible.sidebar-toggle',
-                'historicalsummary': 'a[name="historical_summary_button"]:not(.hide)',
+
+                // Cases module controls
+                'createarticle': 'a[name="create_button"]:not(.hide)',
+
+                // Data Privacy module controls
+                'complete': 'a[name="complete_button"]:not(.hide)',
+                'eraseandcomplete': 'a[name="erase_complete_button"]:not(.hide)',
+                'markforerasure': 'a[name="mark_for_erasure_button"]:not(.hide)',
+                'reject': 'a[name="reject_button"]:not(.hide)',
+
+                // Emails module controls
+                'reply': 'a[name="reply_button"]:not(.hide)',
 
                 // Forecasts module controls
-                'commit':'a[name="commit_button"]:not(.hide)',
-                'savedraft':'a[name="save_draft_button"]:not(.hide)',
-                'exportcsv':'a[name="export_button"]:not(.hide)',
-                'settings':'a[name="settings_button"]:not(.hide)',
                 'assignquota': 'a[name="assign_quota"]:not(.hide)',
+                'commit': 'a[name="commit_button"]:not(.hide)',
+                'exportcsv': 'a[name="export_button"]:not(.hide)',
+                'savedraft': 'a[name="save_draft_button"]:not(.hide)',
+                'settings': 'a[name="settings_button"]:not(.hide)',
 
                 // Knowledge Base controls
+                'createcategory': 'a[name="add_node_button"]:not(.hide)',
                 'createlocalization': 'a[name="create_localization_button"]:not(.hide)',
                 'createrevision': 'a[name="create_revision_button"]:not(.hide)',
-                'createcategory': 'a[name="add_node_button"]:not(.hide)',
+
+                // Leads module controls
+                'convert': 'a[name="lead_convert_button"]:not(.hide)',
+
+                // ProductTemplates module controls
+                'add2quote': 'a[name="add_to_quote_button"]:not(.hide)',
 
                 // Prospects (Targets) module controls
                 'converttarget': 'a[name="convert_button"]:not(.hide)',
 
-                // Cases
-                'createarticle': 'a[name="create_button"]:not(.hide)',
+                // Quotes module controls
+                'createopportunity': 'a[name="convert_to_opportunity_button"]:not(.hide)',
+                'emailquote': '.dropdown-inset a[data-action="email"]',
+
+                // Revenue Line Items module controls (ENT+ only)
+                'generatequote': 'a[name="convert_to_quote_button"]:not(.hide)',
+
+                // SugarBPM controls
+                'design_pbr': 'a[name="design_businessrules"]:not(.hide)',
+                'design_pet': 'a[name="design_emailtemplates"]:not(.hide)',
             },
 
             title: {
