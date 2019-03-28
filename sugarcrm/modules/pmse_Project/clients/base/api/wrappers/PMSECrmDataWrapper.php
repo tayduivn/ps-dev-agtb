@@ -2032,8 +2032,10 @@ SQL;
         $this->sugarQueryObject->from($caseBean, array('alias' => 'a'));
         $this->sugarQueryObject->joinTable('pmse_bpm_flow', array('joinType' => 'LEFT', 'alias' => 'b'))
             ->on()->equalsField('a.cas_id', 'b.cas_id');
-        $this->sugarQueryObject->where()->queryAnd()
-            ->addRaw("b.cas_id = $casID and a.cas_index = $casIndex");
+        $this->sugarQueryObject->where()
+            ->equals('b.cas_id', $casID)
+            ->equals('b.cas_index', $casIndex);
+
         $rows = $this->sugarQueryObject->execute();
 
 

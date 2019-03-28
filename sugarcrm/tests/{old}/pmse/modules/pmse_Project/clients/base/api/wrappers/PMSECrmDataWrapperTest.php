@@ -1141,11 +1141,15 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $queryAndMock = $this->createPartialMock(SugarQuery::class, array('addRaw'));
 
-        $whereMock = $this->createPartialMock(SugarQuery::class, array('queryAnd'));
+        $whereMock = $this->createPartialMock(SugarQuery::class, array('queryAnd', 'equals'));
         $whereMock->expects($this->any())
             ->method('queryAnd')
             ->will($this->returnValue($queryAndMock)
         );
+
+        $whereMock->expects($this->any())
+            ->method('equals')
+            ->will($this->returnValue($whereMock));
 
         $this->sugarQueryMock->expects($this->any())
             ->method('execute')
