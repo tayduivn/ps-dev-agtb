@@ -1,4 +1,4 @@
-@pr @stress-test @xxx
+@pr @stress-test @xxx @job2
 Feature: Global Search
 
   Background:
