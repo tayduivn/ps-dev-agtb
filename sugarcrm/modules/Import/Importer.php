@@ -1311,6 +1311,9 @@ class Importer
             $address['reply_to_address'],
             $address['invalid_email'],
             $address['opt_out'],
+            // `email_id` should be `null` unless the intent is to mutate the `email_address`, as this allows the email
+            // address to be changed. For example, changing `salez@sugarcrm.com` to `sales@sugarcrm.com` for all records
+            // linked to `salez@sugarcrm.com`. This is not the typical desire.
             $address['email_id']
         );
 

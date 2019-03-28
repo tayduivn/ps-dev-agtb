@@ -203,6 +203,11 @@ class SugarFieldEmail extends SugarFieldBase
                 false,
                 $row['invalid_email'],
                 $row['opt_out'],
+                // It's safe to call `SugarEmailAddress::addAddress` with the email address ID here because we are
+                // simply populating the email addresses for read access. This avoids making extra queries to fetch the
+                // ID for each email address. You would want to pass `null` if your intention is to write changes to an
+                // email address, so that `SugarEmailAddress::addAddress` correctly determines if the email address is
+                // or isn't new.
                 $row['id'],
                 false
             );

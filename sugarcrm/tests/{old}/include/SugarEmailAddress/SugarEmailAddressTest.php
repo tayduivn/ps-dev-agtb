@@ -388,4 +388,150 @@ class SugarEmailAddressTest extends TestCase
         $this->assertTrue($q->select->checkField('invalid_email', $table), 'invalid_email should be selected');
         //Note: Not sure how to test that the fields from the join are added to the select clause.
     }
+
+    /**
+     * @covers SugarEmailAddress::populateAddresses
+     * @covers SugarEmailAddress::addAddress
+     * @covers SugarEmailAddress::getEmailGUID
+     * @covers SugarEmailAddress::getGuid
+     */
+    public function testPopulateAddresses_CreatesNewEmailAddress()
+    {
+        $address1 = Uuid::uuid4() . '@example.com';
+        $ea = SugarTestEmailAddressUtilities::createEmailAddress($address1);
+
+        $bean = BeanFactory::newBean('Contacts');
+        $bean->emailAddress->addAddress($address1);
+
+        $this->assertCount(
+            1,
+            $bean->emailAddress->addresses,
+            'The bean should have one email address'
+        );
+
+        $address2 = Uuid::uuid4() . '@example.com';
+
+        // Change the bean's email address.
+        // The ID and email address are not in sync. The address is different. The ID is still passed but it is ignored.
+        $_POST['Contacts_email_widget_id'] = $_REQUEST['Contacts_email_widget_id'] = 0;
+        $_POST['emailAddressWidget'] = $_REQUEST['emailAddressWidget'] = 1;
+        $_POST['useEmailWidget'] = $_REQUEST['useEmailWidget'] = true;
+        $_POST['Contacts0emailAddress0'] = $_REQUEST['Contacts0emailAddress0'] = $address2;
+        $_POST['Contacts0emailAddressId0'] = $_REQUEST['Contacts0emailAddressId0'] = $ea->id;
+        $_POST['Contacts0emailAddressVerifiedFlag0'] = $_REQUEST['Contacts0emailAddressVerifiedFlag0'] = true;
+        $_POST['Contacts0emailAddressVerifiedValue0'] = $_REQUEST['Contacts0emailAddressVerifiedValue0'] = $address2;
+
+        $bean->emailAddress->populateAddresses($bean->id, $bean->module_name);
+
+        unset($_POST['Contacts_email_widget_id']);
+        unset($_REQUEST['Contacts_email_widget_id']);
+        unset($_POST['emailAddressWidget']);
+        unset($_REQUEST['emailAddressWidget']);
+        unset($_POST['useEmailWidget']);
+        unset($_REQUEST['useEmailWidget']);
+        unset($_POST['Contacts0emailAddress0']);
+        unset($_REQUEST['Contacts0emailAddress0']);
+        unset($_POST['Contacts0emailAddressId0']);
+        unset($_REQUEST['Contacts0emailAddressId0']);
+        unset($_POST['Contacts0emailAddressVerifiedFlag0']);
+        unset($_REQUEST['Contacts0emailAddressVerifiedFlag0']);
+        unset($_POST['Contacts0emailAddressVerifiedValue0']);
+        unset($_REQUEST['Contacts0emailAddressVerifiedValue0']);
+
+        // Make sure we can clean up the new email address.
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress($address2);
+
+        $this->assertCount(
+            1,
+            $bean->emailAddress->addresses,
+            'The bean should still have one email address'
+        );
+        $this->assertNotEquals(
+            $address1,
+            $bean->emailAddress->addresses[0]['email_address'],
+            'The email address should not be address1'
+        );
+        $this->assertNotEquals(
+            $ea->id,
+            $bean->emailAddress->addresses[0]['email_address_id'],
+            'The email address should not be the same as the old one'
+        );
+        $this->assertEquals(
+            $address2,
+            $bean->emailAddress->addresses[0]['email_address'],
+            'The email address should be address2'
+        );
+    }
+
+    /**
+     * @covers SugarEmailAddress::populateAddresses
+     * @covers SugarEmailAddress::addAddress
+     * @covers SugarEmailAddress::getEmailGUID
+     * @covers SugarEmailAddress::getGuid
+     */
+    public function testPopulateAddresses_UpdatesExistingEmailAddress()
+    {
+        $address = Uuid::uuid4() . '@example.com';
+        $ea = SugarTestEmailAddressUtilities::createEmailAddress($address);
+
+        $bean = BeanFactory::newBean('Contacts');
+        $bean->emailAddress->addAddress($address);
+
+        $this->assertCount(
+            1,
+            $bean->emailAddress->addresses,
+            'The bean should have one email address'
+        );
+
+        // Change the bean's email address.
+        // The ID and email address are not in sync. The address is different. The ID is still passed but it is ignored.
+        $_POST['Contacts_email_widget_id'] = $_REQUEST['Contacts_email_widget_id'] = 0;
+        $_POST['emailAddressWidget'] = $_REQUEST['emailAddressWidget'] = 1;
+        $_POST['useEmailWidget'] = $_REQUEST['useEmailWidget'] = true;
+        $_POST['Contacts0emailAddress0'] = $_REQUEST['Contacts0emailAddress0'] = $address;
+        $_POST['Contacts0emailAddressId0'] = $_REQUEST['Contacts0emailAddressId0'] = $ea->id;
+        $_POST['Contacts0emailAddressInvalidFlag'] = $_REQUEST['Contacts0emailAddressInvalidFlag'] = ['Contacts0emailAddress0'];
+        $_POST['Contacts0emailAddressVerifiedFlag0'] = $_REQUEST['Contacts0emailAddressVerifiedFlag0'] = true;
+        $_POST['Contacts0emailAddressVerifiedValue0'] = $_REQUEST['Contacts0emailAddressVerifiedValue0'] = $address;
+
+        $bean->emailAddress->populateAddresses($bean->id, $bean->module_name);
+
+        unset($_POST['Contacts_email_widget_id']);
+        unset($_REQUEST['Contacts_email_widget_id']);
+        unset($_POST['emailAddressWidget']);
+        unset($_REQUEST['emailAddressWidget']);
+        unset($_POST['useEmailWidget']);
+        unset($_REQUEST['useEmailWidget']);
+        unset($_POST['Contacts0emailAddress0']);
+        unset($_REQUEST['Contacts0emailAddress0']);
+        unset($_POST['Contacts0emailAddressId0']);
+        unset($_REQUEST['Contacts0emailAddressId0']);
+        unset($_POST['Contacts0emailAddressInvalidFlag']);
+        unset($_REQUEST['Contacts0emailAddressInvalidFlag']);
+        unset($_POST['Contacts0emailAddressVerifiedFlag0']);
+        unset($_REQUEST['Contacts0emailAddressVerifiedFlag0']);
+        unset($_POST['Contacts0emailAddressVerifiedValue0']);
+        unset($_REQUEST['Contacts0emailAddressVerifiedValue0']);
+
+        $this->assertCount(
+            1,
+            $bean->emailAddress->addresses,
+            'The bean should still have one email address'
+        );
+        $this->assertEquals(
+            $ea->id,
+            $bean->emailAddress->addresses[0]['email_address_id'],
+            'The email address should be the same'
+        );
+        $this->assertEquals(
+            $address,
+            $bean->emailAddress->addresses[0]['email_address'],
+            'The email address should still be address'
+        );
+        $this->assertEquals(
+            1,
+            $bean->emailAddress->addresses[0]['invalid_email'],
+            'The email address should be invalid'
+        );
+    }
 }
