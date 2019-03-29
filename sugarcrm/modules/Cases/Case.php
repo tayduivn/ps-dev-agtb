@@ -40,6 +40,10 @@ class aCase extends Issue
     var $bug_id;
     var $account_name;
     var $account_id;
+    //BEGIN SUGARCRM flav=ent ONLY
+    public $business_center_name;
+    public $business_center_id;
+    //END SUGARCRM flav=ent ONLY
     var $contact_id;
     var $task_id;
     var $note_id;
@@ -81,6 +85,9 @@ class aCase extends Issue
         'meeting_id'=>'meetings',
         'call_id'=>'calls',
         'email_id'=>'emails',
+        //BEGIN SUGARCRM flav=ent ONLY
+        'business_center_id'=>'business_centers',
+        //END SUGARCRM flav=ent ONLY
     );
 
 
@@ -103,6 +110,7 @@ class aCase extends Issue
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Set resolved_datetime to current time when a case is resolved
+     * Set business_center_id to the same as related account when not provided
      *
      * @see parent::save()
      */
@@ -111,6 +119,12 @@ class aCase extends Issue
         if (in_array($this->status, ['Closed', 'Rejected', 'Duplicate'])) {
             if (empty($this->resolved_datetime)) {
                 $this->resolved_datetime = TimeDate::getInstance()->nowDb();
+            }
+        }
+        if (empty($this->business_center_id)) {
+            $related_account = BeanFactory::retrieveBean('Accounts', $this->account_id);
+            if (!empty($related_account) && !empty($related_account->business_center_id)) {
+                $this->business_center_id = $related_account->business_center_id;
             }
         }
         return parent::save($check_notify);

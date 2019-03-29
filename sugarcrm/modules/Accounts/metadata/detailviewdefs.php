@@ -79,6 +79,7 @@ $viewdefs['Accounts']['DetailView'] = array(
             'comment' => 'Service level for this company',
             'label' => 'LBL_SERVICE_LEVEL',
           ),
+          'business_center_name',
         ),
         //END SUGARCRM flav=ent ONLY
 

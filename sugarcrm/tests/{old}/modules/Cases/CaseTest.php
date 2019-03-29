@@ -25,6 +25,7 @@ class CaseTest extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestCaseUtilities::removeAllCreatedCases();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
     /**
@@ -49,6 +50,38 @@ class CaseTest extends TestCase
             ['Pending Input', true],
             ['Rejected', false],
             ['Duplicate', false],
+        ];
+    }
+
+    /**
+     * Test whether save method update business center from related account when empty
+     * @param null|string $businessCenterId The id of business center
+     * @param string $accountId The id of account
+     * @param null|string $relatedBusinessCenterId The id of business center on a related account
+     * @param null|string $expectedBusinessCenterId The expected id of business center on the case
+     * @dataProvider updateBusinessCenterOnSaveProvider
+     */
+    public function testUpdateBusinessCenterOnSave(?string $businessCenterId, string $accountId, ?string $relatedBusinessCenterId, ?string $expectedBusinessCenterId)
+    {
+        $this->relatedAccount = SugarTestAccountUtilities::createAccount(null, [
+            'id' => $accountId,
+            'business_center_id' => $relatedBusinessCenterId,
+        ]);
+        $this->relatedAccount->save();
+        $this->case = SugarTestCaseUtilities::createCase(null, [
+            'account_id' => $accountId,
+            'business_center_id' => $businessCenterId,
+        ]);
+        $this->case->save();
+        $this->assertSame($this->case->business_center_id, $expectedBusinessCenterId);
+    }
+
+    public function updateBusinessCenterOnSaveProvider(): array
+    {
+        return [
+            ['1234', '9999', '4321', '1234'],
+            [null, '9999', '4321', '4321'],
+            [null, '9999', null, null],
         ];
     }
 }

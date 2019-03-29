@@ -170,6 +170,7 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 'priority',
                 'account_name',
                 //BEGIN SUGARCRM flav=ent ONLY
+                'business_center_name',
                 'portal_viewable',
                 //END SUGARCRM flav=ent ONLY
                 'type',

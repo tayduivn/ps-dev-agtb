@@ -5458,6 +5458,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     // @codingStandardsIgnoreEnd
 
     'LBL_BUSINESS_CENTER' => 'Business Center',
+    'LBL_BUSINESS_CENTER_ID' => 'Business Center ID',
+    'LBL_BUSINESS_CENTER_NAME' => 'Business Center Name',
 //END SUGARCRM flav=ent ONLY
 
     //Tag Strings

@@ -88,6 +88,28 @@ $dictionary['BusinessCenter'] = array(
 
         // BUSINESS HOURS FIELDS - TO BE ADDED
     ),
+// BEGIN SUGARCRM flav=ent ONLY
+    'relationships' => array(
+        'business_center_accounts' => array(
+            'lhs_module' => 'BusinessCenters',
+            'lhs_table' => 'business_centers',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Accounts',
+            'rhs_table' => 'accounts',
+            'rhs_key' => 'business_center_id',
+            'relationship_type' => 'one-to-many',
+        ),
+        'business_center_cases' => array(
+            'lhs_module' => 'BusinessCenters',
+            'lhs_table' => 'business_centers',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Cases',
+            'rhs_table' => 'cases',
+            'rhs_key' => 'business_center_id',
+            'relationship_type' => 'one-to-many',
+        ),
+    ),
+// END SUGARCRM flav=ent ONLY
     'acls' => array(
         'SugarACLAdminOnly' => true,
     ),

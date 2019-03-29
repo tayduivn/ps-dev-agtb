@@ -40,6 +40,12 @@ $viewdefs['Cases']['DetailView'] = array(
           'account_name',
 	  ),
 
+        //BEGIN SUGARCRM flav=ent ONLY
+        array (
+            'business_center_name',
+        ),
+        //END SUGARCRM flav=ent ONLY
+
 	  array (
 
 	    array (
