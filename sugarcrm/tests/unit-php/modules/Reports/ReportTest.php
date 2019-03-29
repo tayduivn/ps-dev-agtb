@@ -52,4 +52,56 @@ class ReportTest extends TestCase
         $report->focus = $account;
         $report->$method();
     }
+
+    /**
+     * test data provider
+     * @return array
+     */
+    public function providerTestFixGroupLabels()
+    {
+        return array(
+            array(
+                array(
+                    'group_defs' => array(0 => array('name' => 'phone_alternate', 'label' => 'Alternate Phone')),
+                    'summary_columns' => array(0 => array('name' => 'phone_alternate', 'label' => 'XYZ')),
+                ),
+                'XYZ',
+            ),
+            array(
+                array(
+                    'group_defs' => array(0 => array('name' => 'phone_alternate', 'label' => 'Alternate Phone', 'qualifier' => 'a')),
+                    'summary_columns' => array(0 => array('name' => 'phone_alternate', 'label' => 'XYZ')),
+                ),
+                'Alternate Phone',
+            ),
+            array(
+                array(
+                    'group_defs' => array(0 => array('name' => 'phone_alternate', 'label' => 'Alternate Phone', 'qualifier' => 'a')),
+                    'summary_columns' => array(0 => array('name' => 'phone_alternate', 'label' => 'XYZ', 'qualifier' => 'a')),
+                ),
+                'XYZ',
+            ),
+            array(
+                array(
+                    'group_defs' => array(0 => array('name' => 'phone_alternate', 'label' => 'Alternate Phone', 'qualifier' => 'a')),
+                    'summary_columns' => array(0 => array('name' => 'phone_alternate', 'label' => 'XYZ', 'qualifier' => 'b')),
+                ),
+                'Alternate Phone',
+            ),
+        );
+    }
+
+    /**
+     * @covers ::fixGroupLabels
+     * @param array $reportDef report definitions
+     * @param string $expected The expected label
+     * @dataProvider providerTestFixGroupLabels
+     */
+    public function testFixGroupLabels($reportDef, $expected)
+    {
+        $report = $this->createPartialMock('\Report', ['create_where']);
+        $report->report_def = $reportDef;
+        $report->fixGroupLabels();
+        $this->assertSame($expected, $report->report_def['group_defs'][0]['label']);
+    }
 }

@@ -2917,4 +2917,29 @@ class Report
         }
         return $recordCount;
     }
+
+    /**
+     * Use summary_columns labels to override the ones in group_defs
+     */
+    public function fixGroupLabels()
+    {
+        // Summary labels are customizable. Summary label should be used instead of group label
+        if (isset($this->report_def['summary_columns']) && isset($this->report_def['group_defs'])) {
+            for ($i = 0; $i < count($this->report_def['group_defs']); $i++) {
+                $isValid = true;
+                if (isset($this->report_def['group_defs'][$i]['qualifier'])) {
+                    if (!isset($this->report_def['summary_columns'][$i]['qualifier'])) {
+                        $isValid = false;
+                    } elseif ($this->report_def['group_defs'][$i]['qualifier'] != $this->report_def['summary_columns'][$i]['qualifier']) {
+                        $isValid = false;
+                    }
+                }
+                if ($this->report_def['group_defs'][$i]['name'] == $this->report_def['summary_columns'][$i]['name']
+                    && isset($this->report_def['summary_columns'][$i]['label'])
+                    && $isValid) {
+                    $this->report_def['group_defs'][$i]['label'] = $this->report_def['summary_columns'][$i]['label'];
+                }
+            }
+        }
+    }
 }
