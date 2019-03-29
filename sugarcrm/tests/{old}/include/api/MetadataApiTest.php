@@ -143,7 +143,7 @@ class MetadataApiTest extends TestCase
      */
     public function testGetLanguage()
     {
-        $result = $this->api->getLanguage($this->serviceMock, array('lang' => 'en'));
+        $result = $this->api->getLanguage($this->serviceMock, array('lang' => 'en_us'));
 
         $this->assertNotEmpty($result);
         $this->assertJson($result);
@@ -168,7 +168,7 @@ class MetadataApiTest extends TestCase
      */
     public function testGetPublicLanguage()
     {
-        $result = $this->api->getPublicLanguage($this->serviceMock, array('lang' => 'en'));
+        $result = $this->api->getPublicLanguage($this->serviceMock, array('lang' => 'en_us'));
 
         $this->assertNotEmpty($result);
         $this->assertJson($result);

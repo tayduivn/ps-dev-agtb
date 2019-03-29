@@ -19,8 +19,11 @@
 
 use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Language;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 function make_sugar_config(&$sugar_config)
 {
@@ -973,6 +976,14 @@ function return_app_list_strings_language($language, $useCache = true)
 
     //Merge language files together
     foreach ($langs as $key => $lang) {
+
+        $violations = Validator::getService()->validate($language, new Language());
+        if ($violations->count() > 0) {
+            throw new ViolationException(
+                'Violation for language value',
+                $violations
+            );
+        }
 
         $app_list_strings_state = $app_list_strings;
             foreach(SugarAutoLoader::existing(

@@ -21,18 +21,32 @@ use Sugarcrm\Sugarcrm\MetaData\ViewdefManager;
 class ViewdefManagerTest extends TestCase
 {
     protected $filesToRemove = array();
+    private $sugarConfig;
+    private $config;
 
     protected function setUp()
     {
         \SugarAutoLoader::load('include/utils.php');
         require 'include/modules.php';
         $GLOBALS['log'] = \LoggerManager::getLogger('SugarCRM');
+        $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
+        $GLOBALS['sugar_config'] = [
+            'languages' => [
+                'en_us' => 'English (US)',
+            ],
+        ];
+
+        $this->config = \SugarConfig::getInstance();
+        $this->config->clearCache();
+
         $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us', false);
         $GLOBALS['bwcModules'] = $bwcModules;
     }
 
     protected function tearDown()
     {
+        $GLOBALS['sugar_config'] = $this->sugarConfig;
+        $this->config->clearCache();
         foreach ($this->filesToRemove as $file) {
             if (file_exists($file)) {
                 unlink($file);

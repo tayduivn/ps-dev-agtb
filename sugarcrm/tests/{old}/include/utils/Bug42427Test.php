@@ -17,14 +17,24 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug42427Test extends TestCase
 {
+    private $configBackup = [];
+
     public function setUp()
     {
+        global $sugar_config;
+        \SugarConfig::getInstance()->clearCache();
+        $this->configBackup['languages'] = $GLOBALS['sugar_config']['languages'];
+        $GLOBALS['sugar_config']['languages'] = [
+            'en_us' => 'English (US)',
+            'fr_test' => 'Test Lang',
+            'de_test' => 'Another test Lang',
+        ];
         sugar_cache_clear('app_list_strings.en_us');
         sugar_cache_clear('app_list_strings.fr_test');
         sugar_cache_clear('app_list_strings.de_test');
 
-        if ( isset($sugar_config['default_language']) ) {
-            $this->_backup_default_language = $sugar_config['default_language'];
+        if (isset($sugar_config['default_language'])) {
+            $this->configBackup['backup_default_language'] = $sugar_config['default_language'];
         }
     }
 
@@ -37,9 +47,11 @@ class Bug42427Test extends TestCase
         sugar_cache_clear('app_list_strings.fr_test');
         sugar_cache_clear('app_list_strings.de_test');
 
-        if ( isset($this->_backup_default_language) ) {
-            $sugar_config['default_language'] = $this->_backup_default_language;
+        if (isset($this->configBackup['backup_default_language'])) {
+            $sugar_config['default_language'] = $this->configBackup['backup_default_language'];
         }
+        $GLOBALS['sugar_config']['languages'] = $this->configBackup['languages'];
+        \SugarConfig::getInstance()->clearCache();
     }
 
     public function testWillLoadEnUsStringIfDefaultLanguageIsNotEnUs()

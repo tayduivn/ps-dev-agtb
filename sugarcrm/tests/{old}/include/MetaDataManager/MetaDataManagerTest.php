@@ -131,6 +131,7 @@ class MetaDataManagerTest extends TestCase
             'whiskey' => 'Whiskey Language',
             'awesome' => 'Awesome Sauce',
             'br_ikea' => 'Ikead an idea',
+            'en_us' => 'English (US)',
         );
 
         $GLOBALS['sugar_config']['disabled_languages'] = "whiskey,br_ikea";

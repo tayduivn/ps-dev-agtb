@@ -20,9 +20,17 @@ class AppListStringsTest extends TestCase
     private $temp_files = array();
 
     protected $created_files = array();
+    private $configBackup = [];
 
     public function setUp()
     {
+        \SugarConfig::getInstance()->clearCache();
+        // Backup current language settings so manipulation can be tested
+        $this->configBackup['languages'] = $GLOBALS['sugar_config']['languages'];
+        $GLOBALS['sugar_config']['languages'] = [
+            'en_us' => 'English (US)',
+            'fr_test' => 'Test Lang',
+        ];
         if (!is_dir('custom/include/language'))
             @mkdir('custom/include/language', 0777, true);
 
@@ -38,6 +46,8 @@ class AppListStringsTest extends TestCase
             $this->restore_or_delete('custom/include/language/en_us.lang.php');
             $this->restore_or_delete('custom/include/language/fr_test.lang.php');
         }
+        $GLOBALS['sugar_config']['languages'] = $this->configBackup['languages'];
+        \SugarConfig::getInstance()->clearCache();
     }
 
     public function testAppListStringsLanguage()
