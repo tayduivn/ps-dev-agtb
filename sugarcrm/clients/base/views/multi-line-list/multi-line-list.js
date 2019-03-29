@@ -50,11 +50,21 @@
     drawerModelId: null,
 
     /**
+     * Event handlers for left row actions.
+     */
+    contextEvents: {
+        'list:openrow:fire': 'openClicked',
+        'list:editrow:fire': 'editClicked',
+        'list:copyrow:fire': 'copyClicked'
+    },
+
+    /**
      * @override
      */
     initialize: function(options) {
+        var defaultMeta = app.metadata.getView(null, 'multi-line-list') || {};
         var listViewMeta = app.metadata.getView(options.module, 'multi-line-list') || {};
-        options.meta = _.extend({}, listViewMeta, options.meta || {});
+        options.meta = _.extend({}, defaultMeta, listViewMeta, options.meta || {});
 
         this._super('initialize', [options]);
 
@@ -107,6 +117,45 @@
             });
             this._setDrawerModelId(modelId);
         }
+    },
+
+    /**
+     * Open record view in edit mode when 'edit in new tab' is clicked.
+     *
+     * @param {Backbone.Model} model Selected row's model.
+     */
+    editClicked: function(model) {
+        var route = app.router.buildRoute(model.module, model.id, 'edit');
+        window.open('#' + route, '_blank');
+    },
+
+    /**
+     * Open record view when 'open in new tab' is clicked.
+     *
+     * @param {Backbone.Model} model Selected row's model.
+     */
+    openClicked: function(model) {
+        var route = app.router.buildRoute(model.module, model.id);
+        window.open('#' + route, '_blank');
+    },
+
+    /**
+     * Copy record url to clipboard when 'copy url' is clicked.
+     *
+     * This function is adaped from: https://gist.github.com/Chalarangelo/4ff1e8c0ec03d9294628efbae49216db
+     * @param {Backbone.Model} model Selected row's model.
+     */
+    copyClicked: function(model) {
+        var route = app.router.buildRoute(model.module, model.id);
+        var el = document.createElement('textarea');
+        el.value = app.utils.getSiteUrl() + '#' + route;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
     },
 
     /**

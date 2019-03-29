@@ -49,8 +49,23 @@ describe('Base.View.MultiLineListView', function() {
                 }
             ];
 
-            sinon.collection.stub(app.metadata, 'getView')
-                .withArgs('Cases', 'multi-line-list')
+            var rowactions = {
+                'actions': [
+                    {
+                        'type': 'rowaction',
+                        'label': 'LBL_EDIT_IN_NEW_TAB',
+                        'tooltip': 'LBL_EDIT_IN_NEW_TAB',
+                        'event': 'list:editrow:fire',
+                        'icon': 'fa-edit',
+                        'acl_action': 'edit',
+                    }
+                ]
+            };
+
+            var getViewStub = sinon.collection.stub(app.metadata, 'getView');
+            getViewStub.withArgs(null, 'multi-line-list')
+                .returns({rowactions: rowactions});
+            getViewStub.withArgs('Cases', 'multi-line-list')
                 .returns({panels: panels});
 
             view.initialize({
@@ -59,8 +74,36 @@ describe('Base.View.MultiLineListView', function() {
 
             expect(initializedStub).toHaveBeenCalledWith('initialize', [{
                 module: 'Cases',
-                meta: {panels: panels},
+                meta: {rowactions: rowactions, panels: panels},
             }]);
+        });
+    });
+
+    describe('rowactions', function() {
+        var model;
+
+        beforeEach(function() {
+            model = app.data.createBean('Cases', {id: 'my_case_id'});
+            app.routing.start();
+        });
+
+        afterEach(function() {
+            app.router.stop();
+            model = null;
+        });
+
+        it('should open record view in edit mode', function() {
+            var buildRouteStub = sinon.collection.stub(app.router, 'buildRoute').returns('Cases/my_case_id/edit');
+            var openStub = sinon.collection.stub(window, 'open');
+            view.editClicked(model);
+            expect(openStub).toHaveBeenCalledWith('#Cases/my_case_id/edit', '_blank');
+        });
+
+        it('should open record view in view mode', function() {
+            var buildRouteStub = sinon.collection.stub(app.router, 'buildRoute').returns('Cases/my_case_id');
+            var openStub = sinon.collection.stub(window, 'open');
+            view.openClicked(model);
+            expect(openStub).toHaveBeenCalledWith('#Cases/my_case_id', '_blank');
         });
     });
 
