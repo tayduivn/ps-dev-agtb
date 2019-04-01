@@ -165,7 +165,7 @@ $config['blackList']['corp'] = array(
 
 // Customer Service (ENT and above)
 'sugarcrm/modules/BusinessCenters' => 1,
-'sugarcrm/tests/{old}/modules/BusinessCenters/' => 1,
+'sugarcrm/tests/{old}/modules/BusinessCenters' => 1,
 
 'sugarcrm/modules/pmse_Business_Rules'=>1,
 'sugarcrm/modules/pmse_Emails_Templates'=>1,
