@@ -3473,7 +3473,7 @@ class SugarBean
     {
 
         $query = new SugarQuery();
-        $query->from($this, $options);
+        $query->from($this);
         $query->where()->equals('id',$id);
 
         // Pass this in so fetchFromQuery mutates $this instead of grabbing a fresh bean

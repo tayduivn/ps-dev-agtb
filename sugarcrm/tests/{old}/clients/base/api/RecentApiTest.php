@@ -57,9 +57,9 @@ class RecentApiTest extends TestCase
         $this->trackAction($employee, $date);
 
         // Employees module is currently handled in a special way, so test it explicitly
-        $options = array('moduleList' => array('Accounts', 'Employees', 'NonExistingModule'), 'limit' => 10);
+        $modules = array('Accounts', 'Employees', 'NonExistingModule');
         $api = new RecentApi();
-        $filtered = SugarTestReflection::callProtectedMethod($api, 'filterModules', array($options));
+        $filtered = SugarTestReflection::callProtectedMethod($api, 'filterModules', array($modules));
 
         $this->assertContains('Accounts', $filtered);
         $this->assertContains('Employees', $filtered);
@@ -109,7 +109,6 @@ class RecentApiTest extends TestCase
         $response = $this->api->getRecentlyViewed($service, array(
                 'module_list' => $contact->module_name,
                 'erased_fields' => true,
-                'limit' => 10,
             )
         );
 
