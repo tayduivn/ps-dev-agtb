@@ -1284,11 +1284,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                 key: pickLabel(d.label),
                                 values: isDiscreteData ?
                                     d.values.map(function(e, j) {
-                                        return {x: i + 1, y: parseFloat(e)};
-                                    }) :
+                                        return {x: i + 1, y: parseFloat(e), label: pickValueLabel(this, j)};
+                                    }, d) :
                                     d.values.map(function(e, j) {
-                                        return {x: j + 1, y: parseFloat(e)};
-                                    })
+                                        return {x: j + 1, y: parseFloat(e), label: pickValueLabel(this, j)};
+                                    }, d)
                             };
                         });
                         break;

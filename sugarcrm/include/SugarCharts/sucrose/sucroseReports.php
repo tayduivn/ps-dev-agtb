@@ -205,7 +205,7 @@ class sucroseReports extends sucrose
 
             $label = $total;
             if ($this->isCurrencyReportGroupTotal($dataset)) {
-                $label = currency_format_number($total, array(
+                $label = currency_format_number($this->chart_properties['thousands'] ? $total / 1000 : $total, array(
                     'currency_symbol' => $this->currency_symbol,
                     'decimals' => ($this->chart_properties['thousands'] ? 0 : null),
                 ));

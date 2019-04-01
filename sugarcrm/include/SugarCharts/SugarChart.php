@@ -347,6 +347,11 @@ class SugarChart
         $data = $this->tab('<group>', $tablevel);
         $data .= $this->tabValue('title', $title, $tablevel+1);
         $data .= $this->tabValue('value', $value, $tablevel+1);
+
+        // if 'thousands' is true, we need to divide it by 1000 and add 'K'
+        if (!empty($this->chart_properties['thousands']) && !empty($label) && is_numeric($label)) {
+            $label = $this->formatNumber($label / 1000) . $GLOBALS['app_strings']['LBL_THOUSANDS_SYMBOL'];
+        }
         $data .= $this->tabValue('label', $label, $tablevel+1);
         $data .= $this->tab('<link>' . $link . '</link>', $tablevel+1);
         $data .= $this->tab('</group>', $tablevel);
