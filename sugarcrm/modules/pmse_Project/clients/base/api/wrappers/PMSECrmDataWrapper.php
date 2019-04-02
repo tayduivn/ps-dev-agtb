@@ -1079,7 +1079,6 @@ SQL;
      */
     public function retrieveActivities($filter = '')
     {
-        //$activityBean = new BpmnActivity();
         $activityBean = $this->getActivityBean();
         $fields = array(
             'act_uid',
@@ -1090,62 +1089,33 @@ SQL;
 
         switch (strtolower($filter)) {
             case 'user':
-//                $where = 'pmse_bpmn_activity.act_task_type=\'USERTASK\'';
-//                $joinedTables = array(
-//                    array('INNER', 'pmse_bpm_activity_definition', 'pmse_bpm_activity_definition.id=pmse_bpmn_activity.id'),
-//                    array('INNER', 'pmse_bpm_dynamic_forms', 'pmse_bpm_dynamic_forms.dyn_uid=pmse_bpm_activity_definition.act_type')
-//                );
-//                $select = array('pmse_bpmn_activity.*');
-                $where = "a.act_task_type='USERTASK'";
                 $this->sugarQueryObject->joinTable('pmse_bpm_activity_definition', array('alias' => 'b'))
                     ->on()->equalsField('b.id', 'a.id');
                 $this->sugarQueryObject->joinTable('pmse_bpm_dynamic_forms', array('alias' => 'c'))
                     ->on()->equalsField('c.dyn_uid', 'b.act_type');
+                $this->sugarQueryObject
+                    ->where()
+                    ->equals('a.act_task_type', 'USERTASK');
                 break;
             case 'script':
-//                $where = 'pmse_bpmn_activity.act_task_type=\'SCRIPTTASK\'';
-//                $joinedTables = array(
-//                    array('INNER', 'pmse_bpm_activity_definition', 'pmse_bpm_activity_definition.id=pmse_bpmn_activity.id')
-//                );
-//                $select = array('pmse_bpmn_activity.*');
-                $where = "a.act_task_type='SCRIPTTASK'";
                 $this->sugarQueryObject->joinTable('pmse_bpm_activity_definition', array('alias' => 'b'))
                     ->on()->equalsField('b.id', 'a.id');
+                $this->sugarQueryObject
+                    ->where()
+                    ->equals('a.act_task_type', 'SCRIPTTASK');
                 break;
             case '':
-                $where = '';
-//                $joinedTables = array();
-//                $select = array();
                 break;
             default:
-                $where = 'a.act_task_type=\'USERTASK\' AND a.prj_id=\'' . $filter . '\'';
-//                $joinedTables = array(
-//                    array('INNER', 'pmse_bpm_activity_definition', 'pmse_bpm_activity_definition.id=pmse_bpmn_activity.id'),
-//                    array('INNER', 'pmse_bpm_dynamic_forms', 'pmse_bpm_dynamic_forms.dyn_uid=pmse_bpm_activity_definition.act_type'),
-//                    array('INNER', 'pmse_project', 'pmse_project.id=pmse_bpmn_activity.prj_id')
-//                );
-//                $select = array('pmse_bpmn_activity.*');
-//                $where = "a.act_task_type='USERTASK' AND d.id='" . $filter . "'";
-//                $this->sugarQueryObject->joinRaw(
-//                    "INNER JOIN pmse_bpm_activity_definition b ON (b.id=a.id)",
-//                    array('alias' => 'b')
-//                );
-//                $this->sugarQueryObject->joinRaw(
-//                    "INNER JOIN pmse_bpm_dynamic_forms c ON (c.dyn_uid=b.act_type)",
-//                    array('alias' => 'c')
-//                );
-                // replaced the a.prj_id for the c.prj_id field in the last join in order to remove duplicate rows
-                // $this->sugarQueryObject->joinRaw("INNER JOIN pmse_project d ON (d.id=a.prj_id)", array('alias' => 'd'));
-                // $this->sugarQueryObject->joinRaw("INNER JOIN pmse_project d ON (d.id=c.prj_id)", array('alias' => 'd'));
+                $this->sugarQueryObject
+                    ->where()
+                    ->equals('a.act_task_type', 'USERTASK')
+                    ->equals('a.prj_id', $filter);
                 break;
         }
-        $this->sugarQueryObject->where()->queryAnd()
-            ->addRaw($where);
         // TODO add debug log here
         $activityList = $this->sugarQueryObject->execute();
 
-//        $activityList = $this->getSelectRows($activityBean,'', $where, 0, -1, -1, $select, $joinedTables);
-//        $activityList = $activityList['rowList'];
         $output = array();
         foreach ($activityList as $activity) {
             $tmpACtivity = array();
@@ -1153,7 +1123,6 @@ SQL;
             $tmpACtivity['text'] = $activity['name'];
             $output[] = $tmpACtivity;
         }
-        //$res->result = $output;
         return $output;
     }
 
