@@ -234,15 +234,15 @@ Feature: Prospects module verification
       | Contacts Created by User by Month | Count of Contacts by Country |
 
 
-  @add_leads_found_by_report @pr @stress-test
+  @add_leads_found_by_report @pr
   Scenario Outline: Prospect Lists > Subpanel > Add Leads from report
     Given ProspectLists records exist:
       | *name | description     | list_type     | domain_name  |
       | PRL_1 | Prospect List 1 | exempt_domain | sugarcrm.com |
 
     And 3 Leads records exist:
-      | *            | first_name    | last_name     | phone_work     | title               | email                              | lead_source |
-      | Le_{{index}} | Lead{{index}} | Lead{{index}} | (408) 536-0002 | Architect {{index}} | Le_{{index}}@example.net (primary) | Cold Call   |
+      | *            | first_name    | last_name     | phone_work     | title               | email                              | lead_source | status |
+      | Le_{{index}} | Lead{{index}} | Lead{{index}} | (408) 536-0002 | Architect {{index}} | Le_{{index}}@example.net (primary) | Cold Call   | New    |
     And Leads records exist:
       | *    | first_name | last_name | phone_work     | title       | email                      | lead_source | status |
       | Le_4 | Lead4      | Lead4     | (408) 536-0002 | Architect 4 | Le_4@example.net (primary) | Employee    | Dead   |
@@ -255,15 +255,9 @@ Feature: Prospects module verification
     Then I verify number of records in #PRL_1Record.SubpanelsLayout.subpanels.leads is 0
 
     When I link leads returned by '<report2>' report to #PRL_1Record target list
-    # Verify number of records in Leads subpanel
-    Then I should see *Le_1 in #PRL_1Record.SubpanelsLayout.subpanels.leads
-    And I should see *Le_2 in #PRL_1Record.SubpanelsLayout.subpanels.leads
-    And I should see *Le_3 in #PRL_1Record.SubpanelsLayout.subpanels.leads
-
-    When I link leads returned by '<report3>' report to #PRL_1Record target list
     Then I verify and close alert
       | type    | message                             |
-      | Success | Success 3 records have been linked. |
+      | Success | Success 4 records have been linked. |
 
     # Verify number of records in Leads subpanel
     Then I should see *Le_1 in #PRL_1Record.SubpanelsLayout.subpanels.leads
@@ -272,8 +266,8 @@ Feature: Prospects module verification
     And I should see *Le_4 in #PRL_1Record.SubpanelsLayout.subpanels.leads
 
     Examples:
-      | report1                 | report2       | report3              |
-      | Leads Converted by User | My Open Leads | Leads By Lead Source |
+      | report1                 | report2              |
+      | Leads Converted by User | Leads By Lead Source |
 
 
   @add_accounts_found_by_report
