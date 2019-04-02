@@ -332,58 +332,6 @@ class PMSECrmDataWrapperTest extends TestCase
     }
 
     /**
-     * @covers PMSECrmDataWrapper::retrieveEmails
-     * @todo   Implement testAddRelatedRecord().
-     */
-    public function testRetrieveEmailsWithFilter()
-    {
-        $sampleModule = 'Opportunities';
-        // setting up the inbound email bean
-        $inboundEmailBean = $this->getMockBuilder('InboundEmail')
-                ->setMethods(array('email2init'))
-                ->getMock();
-
-        $dbHandler = $this->getMockBuilder('db')
-                ->setMethods(array('limitQuery', 'fetchByAssoc'))
-                ->getMock();
-
-        //fictional rowdata returned from the database
-        $testRows = array(
-            array('first_name' => 'Aldo', 'last_name'=>'Rayne', 'email_address'=>'arayne@example.com', 'id'=>null),
-            array('first_name' => 'Dominic', 'last_name'=>'Margarete', 'email_address'=>'dmargarete@example.com', 'id'=>'2'),
-            array('first_name' => 'Bridgitte', 'last_name'=>'Hammershmack', 'email_address'=>'bhammer@example.com', 'id'=>'3'),
-        );
-        // expect just one query call
-        $dbHandler->expects($this->exactly(1))
-                ->method('limitQuery')
-                ->will($this->returnValue($testRows));
-
-        //expect
-        $dbHandler->expects($this->any())
-                ->method('fetchByAssoc')
-                ->will($this->onConsecutiveCalls($testRows[0], $testRows[1], $testRows[2]));
-
-        $inboundEmailBean->db = $dbHandler;
-        $this->object->setInboundEmailBean($inboundEmailBean);
-
-        // setting up the email bean
-        $emailBean = $this->getMockBuilder('Email')
-                ->disableOriginalConstructor()
-                ->setMethods(array('email2init'))
-                ->getMock();
-        $this->object->setEmailBean($emailBean);
-
-        $expectedResult = array(
-            array ('fullName' => 'Aldo Rayne', 'emailAddress' => 'arayne@example.com', 'id'=>null),
-            array ('fullName' => 'Dominic Margarete', 'emailAddress' => 'dmargarete@example.com', 'id'=>'2'),
-            array ('fullName' => 'Bridgitte Hammershmack', 'emailAddress' => 'bhammer@example.com', 'id'=>'3'),
-        );
-
-        $result = $this->object->retrieveEmails($sampleModule);
-        $this->assertEquals($expectedResult, $result);
-    }
-
-    /**
      * @covers PMSECrmDataWrapper::retrieveDynaforms
      */
     public function testRetrieveDynaforms()

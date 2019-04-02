@@ -824,38 +824,52 @@ class PMSECrmDataWrapper implements PMSEObservable
         $ie = $this->getInboundEmailBean();
         $ie->email = $email;
 
-        $query = "SELECT users.id, users.first_name, users.last_name, eabr.primary_address, ea.email_address,
-        		  	'Users' module FROM users JOIN email_addr_bean_rel eabr ON
-        		  	(users.id = eabr.bean_id and eabr.deleted=0) JOIN email_addresses ea ON
-        		  	(eabr.email_address_id = ea.id)  WHERE (users.deleted = 0 AND eabr.primary_address = 1)
-        		  	AND (first_name LIKE '$filter%' OR last_name LIKE '$filter%' OR email_address LIKE '$filter%')
-				  	UNION ALL
-					SELECT contacts.id, contacts.first_name, contacts.last_name, eabr.primary_address,
-					ea.email_address, 'Contacts' module FROM contacts JOIN email_addr_bean_rel eabr ON
-					(contacts.id = eabr.bean_id and eabr.deleted=0) JOIN email_addresses ea ON
-					(eabr.email_address_id = ea.id)  WHERE (contacts.deleted = 0 AND eabr.primary_address = 1)
-					AND (first_name LIKE '$filter%' OR last_name LIKE '$filter%' OR email_address LIKE '$filter%')
-					UNION ALL
-					SELECT leads.id, leads.first_name, leads.last_name, eabr.primary_address, ea.email_address,
-					'Leads' module FROM leads JOIN email_addr_bean_rel eabr ON
-					(leads.id = eabr.bean_id and eabr.deleted=0) JOIN email_addresses ea ON
-					(eabr.email_address_id = ea.id)  WHERE (leads.deleted = 0 AND eabr.primary_address = 1)
-					AND (first_name LIKE '$filter%' OR last_name LIKE '$filter%' OR email_address LIKE '$filter%')
-					UNION ALL
-					SELECT prospects.id, prospects.first_name, prospects.last_name, eabr.primary_address,
-					ea.email_address, 'Prospects' module FROM prospects JOIN email_addr_bean_rel eabr ON
-					(prospects.id = eabr.bean_id and eabr.deleted=0) JOIN email_addresses ea ON
-					(eabr.email_address_id = ea.id)  WHERE (prospects.deleted = 0 AND eabr.primary_address = 1)
-					AND (first_name LIKE '$filter%' OR last_name LIKE '$filter%' OR email_address LIKE '$filter%')
-					UNION ALL
-					SELECT accounts.id, '' first_name, accounts.name last_name, eabr.primary_address,
-					ea.email_address, 'Accounts' module FROM accounts JOIN email_addr_bean_rel eabr ON
-					(accounts.id = eabr.bean_id and eabr.deleted=0) JOIN email_addresses ea ON
-					(eabr.email_address_id = ea.id)  WHERE (accounts.deleted = 0 AND eabr.primary_address = 1)
-					AND (email_address LIKE '$filter%' OR name LIKE '$filter%')";
-        $r = $ie->db->limitQuery($query, 0, 25, true);
+        $query = <<<SQL
+SELECT users.id, users.first_name, users.last_name, eabr.primary_address, ea.email_address, 'Users' module 
+FROM users
+JOIN email_addr_bean_rel eabr ON (users.id = eabr.bean_id AND eabr.deleted=0)
+JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
+WHERE (users.deleted = 0 AND eabr.primary_address = 1)
+AND (first_name LIKE :filter OR last_name LIKE :filter OR email_address LIKE :filter)
+UNION ALL
+SELECT contacts.id, contacts.first_name, contacts.last_name, eabr.primary_address, ea.email_address, 'Contacts' module 
+FROM contacts
+JOIN email_addr_bean_rel eabr ON(contacts.id = eabr.bean_id AND eabr.deleted=0)
+JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
+WHERE (contacts.deleted = 0 AND eabr.primary_address = 1)
+AND (first_name LIKE :filter OR last_name LIKE :filter OR email_address LIKE :filter)
+UNION ALL
+SELECT leads.id, leads.first_name, leads.last_name, eabr.primary_address, ea.email_address, 'Leads' module
+FROM leads
+JOIN email_addr_bean_rel eabr ON(leads.id = eabr.bean_id AND eabr.deleted=0)
+JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
+WHERE (leads.deleted = 0 AND eabr.primary_address = 1)
+AND (first_name LIKE :filter OR last_name LIKE :filter OR email_address LIKE :filter)
+UNION ALL
+SELECT prospects.id, prospects.first_name, prospects.last_name, eabr.primary_address, ea.email_address, 
+'Prospects' module FROM prospects 
+JOIN email_addr_bean_rel eabr ON(prospects.id = eabr.bean_id AND eabr.deleted=0)
+JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
+WHERE (prospects.deleted = 0 AND eabr.primary_address = 1)
+AND (first_name LIKE :filter OR last_name LIKE :filter OR email_address LIKE :filter)
+UNION ALL
+SELECT accounts.id, '' first_name, accounts.name last_name, eabr.primary_address, ea.email_address, 'Accounts' module 
+FROM accounts
+JOIN email_addr_bean_rel eabr ON (accounts.id = eabr.bean_id AND eabr.deleted=0)
+JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
+WHERE (accounts.deleted = 0 AND eabr.primary_address = 1) AND (email_address LIKE :filter OR name LIKE :filter)
+SQL;
+        $query = $this->db->getConnection()
+            ->getDatabasePlatform()
+            ->modifyLimitQuery($query, 0, 25);
 
-        while ($a = $ie->db->fetchByAssoc($r)) {
+        $stmt = $this->db->getConnection()
+            ->executeQuery(
+                $query,
+                ['filter' => $filter . '%']
+            );
+
+        foreach ($stmt as $a) {
             $person = array();
             $person['fullName'] = $a['first_name'] . ' ' . $a['last_name'];
             $person['emailAddress'] = $a['email_address'];
