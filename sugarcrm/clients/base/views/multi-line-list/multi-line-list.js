@@ -112,7 +112,8 @@
                 direction: 'horizontal',
                 context: {
                     model: model,
-                    module: model.get('_module')
+                    module: model.get('_module'),
+                    layout: 'multi-line'
                 }
             });
             this._setDrawerModelId(modelId);

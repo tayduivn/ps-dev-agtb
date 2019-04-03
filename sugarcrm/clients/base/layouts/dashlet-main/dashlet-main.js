@@ -80,15 +80,20 @@
         }
 
         _.each(components, function(component, index) {
-            var row = {
-                type: 'dashlet-row',
-                width: component.width,
-                components: component.rows,
-                index: index + '',
-            };
-            this.initComponents([{
-                layout: row,
-            }]);
+            if (component.rows) {
+                var row = {
+                    type: 'dashlet-row',
+                    width: component.width,
+                    components: component.rows,
+                    index: index + '',
+                };
+                this.initComponents([{
+                    layout: row,
+                }]);
+            } else {
+                // if 'rows' not defined, we assume its a non-dashlet component and display it as is
+                this.initComponents([component]);
+            }
         }, this);
 
         this.loadData();

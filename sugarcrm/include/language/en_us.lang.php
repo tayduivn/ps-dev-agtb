@@ -4874,6 +4874,12 @@ Sincerely, SugarCRM',
     'LBL_PORTAL_OFFLINE' =>'Sorry the application is not available at this time. Please contact the site administrator.',
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
     //end portal
+
+    // for customer service
+    // labels and final names TBD!
+    'LBL_AGENT_WORKBENCH' => 'Agent Workbench',
+    'LBL_AGENT_WORKBENCH_OVERVIEW' => 'Overview',
+
     //END SUGARCRM flav=ent ONLY
 
     //First time login wizard

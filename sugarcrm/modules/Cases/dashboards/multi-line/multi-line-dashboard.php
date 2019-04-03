@@ -11,26 +11,79 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-return array(
-    'metadata' =>
-    array(
-        'components' =>
-        array(
-            array(
-                'rows' =>
-                array(
-                    array(
-                        array(
-                            // TODO: add dashlet
-                        ),
-                        array(
-                            // TODO: add dashlet
-                        ),
-                    ),
-                ),
+return [
+    'metadata' => [
+        'components' => [
+            [
+                'rows' => [
+                    [
+                        [
+                            'view' => [
+                                'type' => 'dashablerecord',
+                                'module' => 'Cases',
+                                'tabs' => [
+                                    [
+                                        'active' => true,
+                                        'label' => 'LBL_MODULE_NAME_SINGULAR',
+                                        'link' => '',
+                                        'module' => 'Cases',
+                                    ],
+                                    [
+                                        'active' => false,
+                                        'link' => 'tasks',
+                                        'module' => 'Tasks',
+                                        'order_by' => [
+                                            'field' => 'date_entered',
+                                            'direction' => 'desc',
+                                        ],
+                                        'limit' => 5,
+                                        'fields' => [
+                                            'name',
+                                            'assigned_user_name',
+                                            'date_entered',
+                                        ],
+                                    ],
+                                    [
+                                        'active' => false,
+                                        'link' => 'contacts',
+                                        'module' => 'Contacts',
+                                        'order_by' => [
+                                            'field' => 'date_entered',
+                                            'direction' => 'desc',
+                                        ],
+                                        'limit' => 5,
+                                        'fields' => [
+                                            'name',
+                                            'assigned_user_name',
+                                            'date_entered',
+                                        ],
+                                    ],
+                                    [
+                                        'active' => false,
+                                        'link' => 'documents',
+                                        'module' => 'Documents',
+                                        'order_by' => [
+                                            'field' => 'active_date',
+                                            'direction' => 'desc',
+                                        ],
+                                        'limit' => 5,
+                                        'fields' => [
+                                            'document_name',
+                                            'active_date',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'context' => [
+                                'module' => 'Cases',
+                             ],
+                            'width' => 6,
+                        ],
+                    ],
+                ],
                 'width' => 12,
-            ),
-        ),
-    ),
+            ],
+        ],
+    ],
     'name' => 'LBL_CASES_MULTI_LINE_DASHBOARD',
-);
+];

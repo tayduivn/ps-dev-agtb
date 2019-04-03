@@ -190,7 +190,8 @@ describe('Base.View.MultiLineListView', function() {
                     direction: 'horizontal',
                     context: {
                         model: model1,
-                        module: model1.get('_module')
+                        module: model1.get('_module'),
+                        layout: 'multi-line'
                     }
                 });
                 expect(setModelStub).toHaveBeenCalledWith('1234');

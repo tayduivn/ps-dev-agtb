@@ -18,11 +18,9 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        if (options.context && options.context.parent) {
-            // we need to make sure layout is correct
-            // dashboards are selected based on parent's layout
-            options.context.parent.set('layout', 'multi-line');
-        }
         this._super('initialize', [options]);
+        this.context.set('layout', options.context.get('layout') || 'multi-line');
+        this.context.set('rowModel', options.context.get('model'));
+        this.context = this.context.getChildContext({});
     }
 })

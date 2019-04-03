@@ -216,6 +216,23 @@
             }
         });
 
+        // set model if rowModel exists, eg, in multi-line dashboard
+        if (this.context.parent && this.context.parent.parent) {
+            var model = this.context.parent.parent.get('rowModel');
+            if (model && model.get('_module') === this.module) {
+                model = app.data.createBean(this.module, {id: model.get('id')});
+                model.fetch({
+                    showAlerts: true,
+                    success: _.bind(function(model) {
+                        model.module = this.module;
+                        this.switchModel(model);
+                        this._injectRecordHeader(model);
+                        this.render();
+                    }, this)
+                });
+            }
+        }
+
         this._initTabs();
     },
 
