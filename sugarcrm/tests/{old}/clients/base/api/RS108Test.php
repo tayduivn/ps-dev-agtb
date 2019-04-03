@@ -11,6 +11,7 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
 
 /**
  * RS-108
@@ -87,14 +88,14 @@ class RS108Test extends TestCase
 
     /**
      * We should get exception if file doesn't exist
-     *
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testGetTempImageWithoutTempId()
     {
         if (is_file($this->file)) {
             unlink($this->file);
         }
+        $this->expectException(ViolationException::class);
+
         $api = new FileTempApi();
         $api->getTempImage($this->service, array(
                 'module' => 'Users',
