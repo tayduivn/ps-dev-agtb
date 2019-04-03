@@ -55,7 +55,7 @@ $dictionary['fts_queue'] = array(
             ),
         ),
         array(
-            'name' => 'idx_bean_id',
+            'name' => 'idx_fts_queue_bean_id',
             'type' => 'index',
             'fields' => array(
                 'bean_id',
