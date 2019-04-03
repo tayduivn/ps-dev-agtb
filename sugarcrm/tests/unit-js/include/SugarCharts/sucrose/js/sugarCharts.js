@@ -93,6 +93,10 @@ describe('SugarCharts', function() {
         var labels = ['Foo', 'Bar'];
         var label = SUGAR.charts.extractGroupLabel(state, labels);
         expect(label).toBe('Bar');
+
+        state = {groupIndex: 1, pointIndex: 0};
+        label = SUGAR.charts.extractGroupLabel(state, labels);
+        expect(label).toBe('Foo');
     });
 
     it('should return a grouping definition when getGrouping is called', function() {
