@@ -23,6 +23,12 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 class BusinessCenterTest extends TestCase
 {
     /**
+     * Local cache that holds ids for table names that need hard deleting
+     * @var array
+     */
+    private static $deleteCache = [];
+
+    /**
      * BusinessCenter bean
      * @var BusinessCenter
      */
@@ -41,11 +47,27 @@ class BusinessCenterTest extends TestCase
     {
         \SugarTestHelper::init();
         static::$bc = static::getDecoratedBusinessCenterBean();
+        static::relateBusinessCenterToHolidays(static::$bc);
         static::$recordViewDefs = \MetaDataManager::getManager()->getModuleViewFields('BusinessCenters', 'record');
     }
 
     public static function tearDownAfterClass()
     {
+        $db = \DBManagerFactory::getInstance();
+        foreach (static::$deleteCache as $table => $ids) {
+            $in = "'" . implode("','", $ids) . "'";
+            $sql = "DELETE FROM $table WHERE id IN ($in)";
+            $db->query($sql);
+        }
+
+        // Now delete the related records
+        static::$bc->load_relationship('business_holidays');
+        $relTable = static::$bc->business_holidays->getRelationshipObject()->getRelationshipTable();
+        if ($relTable) {
+            $sql = "DELETE FROM $relTable WHERE business_center_id = " . $db->quoted(static::$bc->id);
+            $db->query($sql);
+        }
+
         \MetaDataManager::resetManagers();
         \SugarTestHelper::tearDown();
     }
@@ -473,12 +495,407 @@ class BusinessCenterTest extends TestCase
     }
 
     /**
+     * Provider for ::testGetIncrementedBusinessDatetime
+     * @return array
+     */
+    public function getIncrementedBusinessDatetimeProvider()
+    {
+        return [
+            // Tuesday, before open should land on the same day
+            [
+                'date' => '4/9/2019 04:47:00',
+                'interval' => 4,
+                'unit' => 'hours',
+                'expect' => '2019-04-09T13:30:00-04:00',
+            ],
+            // Tuesday, holiday, no daylight savings
+            [
+                'date' => '12/24/2019 16:15:00',
+                'interval' => 18,
+                'unit' => 'hours',
+                'expect' => '2019-12-26T17:15:00-05:00',
+            ],
+            // Monday, start on closed day, in Daylight Savings
+            [
+                'date' => '4/8/2019 16:15:00',
+                'interval' => 6,
+                'unit' => 'hours',
+                'expect' => '2019-04-09T15:30:00-04:00',
+            ],
+            // Friday, after hours, land on next day
+            [
+                'date' => '2/15/2019 21:05:23',
+                'interval' => 2.5,
+                'unit' => 'hours',
+                'expect' => '2019-02-16T13:15:00-05:00',
+            ],
+            // Saturday, after hours, during Daylight Savings cutover
+            [
+                'date' => '3/9/2019 14:45:18',
+                'interval' => 4,
+                'unit' => 'hours',
+                'expect' => '2019-03-12T13:30:00-04:00',
+            ],
+            // Day test, with a holiday
+            [
+                'date' => '12/24/2019 16:15:00',
+                'interval' => 2,
+                'unit' => 'days',
+                'expect' => '2019-12-27T17:15:00-05:00',
+            ],
+            // Day test, with an extended holiday and days closed
+            [
+                'date' => '11/27/2019 19:35:00',
+                'interval' => 2,
+                'unit' => 'days',
+                'expect' => '2019-12-03T17:00:00-05:00',
+            ],
+            // Tuesday, day test, before open time
+            [
+                'date' => '5/14/2019 06:22:00',
+                'interval' => 2,
+                'unit' => 'days',
+                'expect' => '2019-05-15T19:30:00-04:00',
+            ],
+            // Bad unit send back what was presented
+            [
+                'date' => '5/14/2019 06:22:00',
+                'interval' => 2,
+                'unit' => 'day',
+                'expect' => '2019-05-14T06:22:00-04:00',
+            ],
+            // No interval send back what was presented
+            [
+                'date' => '11/27/2019 19:35:00',
+                'interval' => 0,
+                'unit' => 'days',
+                'expect' => '2019-11-27T19:35:00-05:00',
+            ],
+        ];
+    }
+
+    /**
+     * Tests getting an incremented time
+     * @covers ::getIncrementedBusinessDatetime
+     * @dataProvider getIncrementedBusinessDatetimeProvider
+     * @group BCCalculations
+     * @param string $date The date string to use for an input
+     * @param float $interval The interval to get the new date based on
+     * @param string $unit Either hours or days
+     * @param string $expect The expected date, an ISO8601 version of the new date
+     */
+    public function testGetIncrementedBusinessDatetime($date, $interval, $unit, $expect)
+    {
+        $actual = static::$bc->getIncrementedBusinessDatetime($date, $interval, $unit);
+        $this->assertSame($expect, $actual);
+    }
+
+    /**
+     * Provider for ::testGetHolidays
+     * @return array
+     */
+    public function getHolidaysProvider()
+    {
+        return [
+            [
+                'from' => '1/1/2019',
+                'to' => '1/1/2020',
+                'count' => 8,
+                'clear' => true,
+                'key' => '2019-11-29',
+            ],
+            [
+                'from' => '11/28/2019',
+                'to' => '11/29/2019',
+                'count' => 2,
+                'clear' => true,
+                'key' => '2019-11-28',
+            ],
+            [
+                'from' => '12/1/2019',
+                'to' => '1/1/2020',
+                'count' => 3,
+                'clear' => true,
+                'key' => '2020-01-01',
+            ],
+            [
+                'from' => '1/2/2020',
+                'to' => '1/31/2020',
+                'count' => 1,
+                'clear' => false,
+                'key' => '2020-01-01',
+            ],
+            [
+                'from' => '1/10/2020',
+                'to' => '1/14/2020',
+                'count' => 1,
+                'clear' => false,
+                'key' => '2020-01-01',
+            ],
+            [
+                'from' => '2/1/2020',
+                'to' => '3/1/2020',
+                'count' => 0,
+                'clear' => false,
+                'key' => '',
+            ],
+        ];
+    }
+
+    /**
+     * Tests getting holidays for a date range
+     * @covers ::getHolidays
+     * @dataProvider getHolidaysProvider
+     * @group BCCalculations
+     * @param string $from The date to get holidays from
+     * @param string $to The date to get holidays to
+     * @param int $count Expected count of rows in the array
+     * @param bool $clear Should we clear the cache as a part of the test
+     * @param string $key If provided, a key expected to be found in the holidays array
+     */
+    public function testGetHolidays($from, $to, $count, $clear, $key)
+    {
+        $fromDT = new \SugarDateTime($from);
+        $toDT = new \SugarDateTime($to);
+
+        $actual = static::$bc->getHolidays($fromDT, $toDT, $clear);
+        $this->assertCount($count, $actual);
+
+        if ($key) {
+            $this->assertArrayHasKey($key, $actual);
+        }
+    }
+
+    /**
+     * Provider for ::testGetOpenTimeElements ::testGetCloseTimeElements
+     * @return array
+     */
+    public function getTimeElementsProvider()
+    {
+        return [
+            // Closed day expects 0 for open and close elements
+            [
+                'day' => 'su',
+                'expect' => [
+                    'open' => [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'sunday',
+                'expect' => [
+                    'open' => [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'm',
+                'expect' => [
+                    'open' => [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'monday',
+                'expect' => [
+                    'open' => [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                ],
+            ],
+            [
+                'day' => 't',
+                'expect' => [
+                    'open' => [
+                        'hour' => 9,
+                        'minutes' => 30,
+                    ],
+                    'close' =>  [
+                        'hour' => 17,
+                        'minutes' => 0,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'tuesday',
+                'expect' => [
+                    'open' => [
+                        'hour' => 9,
+                        'minutes' => 30,
+                    ],
+                    'close' =>  [
+                        'hour' => 17,
+                        'minutes' => 0,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'w',
+                'expect' => [
+                    'open' => [
+                        'hour' => 7,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 19,
+                        'minutes' => 30,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'wednesday',
+                'expect' => [
+                    'open' => [
+                        'hour' => 7,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 19,
+                        'minutes' => 30,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'th',
+                'expect' => [
+                    'open' => [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 23,
+                        'minutes' => 59,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'thursday',
+                'expect' => [
+                    'open' => [
+                        'hour' => 0,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 23,
+                        'minutes' => 59,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'f',
+                'expect' => [
+                    'open' => [
+                        'hour' => 8,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 17,
+                        'minutes' => 15,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'friday',
+                'expect' => [
+                    'open' => [
+                        'hour' => 8,
+                        'minutes' => 0,
+                    ],
+                    'close' =>  [
+                        'hour' => 17,
+                        'minutes' => 15,
+                    ],
+                ],
+            ],
+            [
+                'day' => 's',
+                'expect' => [
+                    'open' => [
+                        'hour' => 10,
+                        'minutes' => 45,
+                    ],
+                    'close' =>  [
+                        'hour' => 14,
+                        'minutes' => 30,
+                    ],
+                ],
+            ],
+            [
+                'day' => 'saturday',
+                'expect' => [
+                    'open' => [
+                        'hour' => 10,
+                        'minutes' => 45,
+                    ],
+                    'close' =>  [
+                        'hour' => 14,
+                        'minutes' => 30,
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Gets the open time elements for the day
+     * @covers ::getOpenTimeElements
+     * @dataProvider getTimeElementsProvider
+     * @param string $day Day name or shortcode
+     * @param array $expect
+     */
+    public function testGetOpenTimeElements($day, $expect)
+    {
+        $actual = static::$bc->getOpenTimeElements($day);
+        $this->assertSame($expect['open'], $actual);
+    }
+
+    /**
+     * Gets the close time elements for the day
+     * @covers ::getCloseTimeElements
+     * @dataProvider getTimeElementsProvider
+     * @param string $day Day name or shortcode
+     * @param array $expect
+     */
+    public function testGetCloseTimeElements($day, $expect)
+    {
+        $actual = static::$bc->getCloseTimeElements($day);
+        $this->assertSame($expect['close'], $actual);
+    }
+
+    /**
      * Utility method to get the bean we need for testing
      * @return BusinessCenter
      */
     private static function getDecoratedBusinessCenterBean()
     {
         $bean = new \BusinessCenter;
+        $bean->name = 'Test Business Center';
+
+        // Needed for time based calculations
+        $bean->timezone = 'America/New_York';
 
         // Start with explicit open markers
         $bean->is_open_sunday = 0;
@@ -507,9 +924,63 @@ class BusinessCenterTest extends TestCase
         $bean->saturday_close_hour = '14';
         $bean->saturday_close_minutes = '30';
 
+        // So we have an actual record to be able to get joined records on
+        $bean->save();
+
         // Simulates a retrieve of the record
         $bean->fill_in_additional_detail_fields();
 
+        static::addBeanToDeleteList($bean);
+
         return $bean;
+    }
+
+    /**
+     * Creates several holidays and relates them to the test business center
+     * @param BusinessCenter $bc The test business center
+     */
+    private static function relateBusinessCenterToHolidays(\BusinessCenter $bc)
+    {
+        $dates = [
+            1 => '2019-01-01',
+            2 => '2019-05-27',
+            3 => '2019-07-04',
+            4 => '2019-11-28',
+            5 => '2019-11-29',
+            6 => '2019-12-25',
+            7 => '2019-12-31',
+            8 => '2020-01-01',
+        ];
+
+        // Holder for adding relationships
+        $ids = [];
+
+        for ($i = 1; $i < 9; $i++) {
+            // Set up the holiday record
+            $h = new \Holiday;
+            $h->name = 'Business Center Holiday Test ' . $i;
+            $h->holiday_date = $dates[$i];
+            $h->related_module = 'BusinessCenters';
+            $h->related_module_id = $bc->id;
+
+            // Save it
+            $h->save();
+
+            // Register it for delete
+            static::addBeanToDeleteList($h);
+
+            // Relate it
+            $h->load_relationship('business_holidays');
+            $h->business_holidays->add($bc->id);
+        }
+    }
+
+    /**
+     * Adds a bean id to the delete list for cleanup
+     * @param SugarBean $bean The bean to delete
+     */
+    private static function addBeanToDeleteList(\SugarBean $bean)
+    {
+        static::$deleteCache[$bean->getTableName()][$bean->id] = $bean->id;
     }
 }

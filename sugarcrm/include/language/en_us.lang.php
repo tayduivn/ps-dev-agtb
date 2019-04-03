@@ -119,6 +119,7 @@ $app_list_strings = array (
     'DataPrivacy' => 'Data Privacy',
     'ReportSchedules' => 'Report Schedules',
     'CommentLog' => 'Comment Log',
+    'Holidays' => 'Holidays',
   ),
 
     'moduleIconList' =>
@@ -245,6 +246,7 @@ $app_list_strings = array (
     'EmailParticipants' => 'Email Participant',
     'DataPrivacy' => 'Data Privacy',
     'ReportSchedules' => 'Report Schedule',
+    'Holidays' => 'Holiday',
   ),
 
 /*

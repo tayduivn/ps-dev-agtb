@@ -134,6 +134,34 @@ class BusinessCenter extends Basic
     ];
 
     /**
+     * A list of related holidays
+     * @var array
+     */
+    protected $holidays = [];
+
+    /**
+     * Determines whether we need to recollect the holidays for this business
+     * center
+     * @var string
+     */
+    protected $holidaysCacheKey = '';
+
+    /**
+     * Mapping of supported interval units to methods and expected types for each
+     * @var array
+     */
+    protected $intervalUnits = [
+        'hours' => [
+            'method' => 'getBusinessDatetimeFromInterval',
+            'type' => 'float',
+        ],
+        'days' => [
+            'method' => 'getBusinessDateFromInterval',
+            'type' => 'int',
+        ],
+    ];
+
+    /**
      * {@inheritDoc}
      */
     public function bean_implements($interface)
@@ -167,6 +195,8 @@ class BusinessCenter extends Basic
     public function setDayDefaults($day)
     {
         if ($this->isOpen($day)) {
+            // Needed for the assembly of the day property below
+            $day = $this->getNormalizedDay($day);
             foreach ($this->timeBases as $type => $data) {
                 foreach ($data as $time => $value) {
                     $prop = sprintf('%s_%s_%s', $day, $type, $time);
@@ -244,9 +274,11 @@ class BusinessCenter extends Basic
     /**
      * Gets the open or close time for a day for this business center
      * @param string $day Day of the week, or shortcode
-     * @return string|null
+     * @param string $type `open` or `close`
+     * @param bool $asParts Whether to return the hours and minutes as array
+     * @return string[]|string|null
      */
-    public function getTimeForTypeOnDay(string $day, string $type)
+    public function getTimeForTypeOnDay(string $day, string $type, bool $asParts = false)
     {
         $type = trim(strtolower($type));
         if ($type !== 'open' && $type !== 'close') {
@@ -255,7 +287,15 @@ class BusinessCenter extends Basic
 
         $day = $this->getNormalizedDay($day);
         $prop = $this->getTimeProp($day, $type);
-        return $this->$prop;
+
+        // If we want the parts, send those back, otherwise send back the
+        // assembled string property
+        return $asParts ?
+            [
+                'hour' => (int) $this->{$prop . '_hour'},
+                'minutes' => (int) $this->{$prop . '_minutes'},
+            ] :
+            $this->$prop;
     }
 
     /**
@@ -340,5 +380,354 @@ class BusinessCenter extends Basic
 
         // Get a 2 precision rounded float value for the diff
         return round($hoursDiff + (($cm - $om) / 60), 2);
+    }
+
+    /**
+     * Gets a datetime stamp for the close of business after `$interval` number
+     * of days from a date given as a SugarDateTime object
+     * @param \SugarDateTime $sdt Datetime object that contains the from date
+     * @param int|integer $interval Number of days to use in the calculation
+     * @return string
+     */
+    protected function getBusinessDateFromInterval(\SugarDateTime $sdt, int $interval = 1)
+    {
+        // Needed for tracking if we should increment the date the first time through
+        $first = true;
+
+        while (true) {
+            // If we are open handle incrementing from here, otherwise move to
+            // the next day and try again
+            if ($this->isOpenDate($sdt, true)) {
+                // If there are days left, decrement and move on
+                if ($interval > 0) {
+                    // Since a business day is always at least one day, if
+                    // this is the first time through and the date is open, move
+                    // to the next day
+                    if ($first) {
+                        $sdt = $this->setDateToNextOpenTime($sdt);
+                        $first = false;
+                    }
+
+                    // Knock one day off the interval
+                    $interval--;
+                }
+
+                // When we reach no more days left in the interval, set the date
+                // to the closed time for that day and send the datetime back
+                if ($interval === 0) {
+                    $sdt = $this->setCloseTimeOnDate($sdt);
+                    return $sdt->format(DateTime::ATOM);
+                }
+            } else {
+                // First pass was not open, so mark that we have handled the first
+                // day and move on
+                if ($first) {
+                    $first = false;
+                }
+            }
+
+            // Move to the next day
+            $sdt = $this->setDateToNextOpenTime($sdt);
+        }
+    }
+
+    /**
+     * Gets a datetime stamp for the close of business after `$interval` number
+     * of hours from a datetime given as a SugarDateTime object
+     * @param \SugarDateTime $sdt Datetime object that contains the from date and time
+     * @param float $interval Number of hours to use in the calculation
+     * @return string
+     */
+    protected function getBusinessDatetimeFromInterval(\SugarDateTime $sdt, float $interval = 0.1)
+    {
+        while (true) {
+            // If we are open, specifically at this time, start working
+            if ($this->isOpenDate($sdt, true)) {
+                $timeLeftInDay = $this->getTimeLeftInDay($sdt);
+
+                // If the time left in the day is more than the interval, add the
+                // interval to the date object and send it back, since that means we
+                // are covered for today
+                if ($timeLeftInDay >= $interval) {
+                    $hours = intval($interval);
+                    $mins = ($interval - $hours) * 60;
+                    $sdt = $sdt->get("$hours hours $mins minutes");
+
+                    return $sdt->format(DateTime::ATOM);
+                }
+
+                // Decrement the interval by time left in the day and recalculate
+                $interval -= $timeLeftInDay;
+            }
+
+            $sdt = $this->setDateToNextOpenTime($sdt);
+        }
+    }
+
+    /**
+     * Gets a DB date time string of the date that is `$interval` hours greater
+     * than `$datetime`
+     * @param string $datetime A date string
+     * @param float|int $interval Interval of hours
+     * @param string $unit For now we only support hours
+     * @return string DB Formatted date string
+     */
+    public function getIncrementedBusinessDatetime(string $datetime, $interval = 0, $unit = 'hours')
+    {
+        // Everything hinges on a DateTime object, so set that up straight away
+        $sdt = new \SugarDateTime(
+            $datetime,
+            empty($this->timezone) ? null : new \DateTimeZone($this->timezone)
+        );
+
+        // If we receive a unit we do not expect, or we get a 0 value interval,
+        // send back what was given
+        if (!isset($this->intervalUnits[$unit]) || floatval($interval) === 0.0) {
+            return $sdt->format(DateTime::ATOM);
+        }
+
+        // Typing is important here
+        settype($interval, $this->intervalUnits[$unit]['type']);
+        return $this->{$this->intervalUnits[$unit]['method']}($sdt, $interval);
+    }
+
+    /**
+     * Gets the remaining time left for a business center on a given date
+     * @param \SugarDateTime $sdt The configured SugarDateTime object
+     * @return float
+     */
+    protected function getTimeLeftInDay(\SugarDateTime $sdt)
+    {
+        // How many hours is this bc open from the presented date
+        $c = $this->getCloseTimeElements($sdt->day_of_week_long);
+        $ch = $c['hour'];
+        $cm = $c['minutes'];
+
+        // Subtract the remaining hours from the interval
+        $dh = $sdt->getHour();
+        $dm = $sdt->getMinute();
+
+        // Hours are easiest, so start with those
+        $hoursDiff = $ch - $dh;
+
+        // If close is 59 then move the close to 0 and add an hour
+        if ($cm === 59) {
+            $cm = 0;
+            $hoursDiff += 1;
+        }
+
+        // If the date minutes are greater than the close minutes, adjust the
+        // hours and minutes to account for it
+        if ($dm > $cm) {
+            // Reduce the hours by one
+            $hoursDiff -= 1;
+
+            // And add an hours worth of minutes to the close
+            $cm += 60;
+        }
+
+        // Get a 2 precision rounded float value for the diff
+        return round($hoursDiff + (($cm - $dm) / 60), 2);
+    }
+
+    /**
+     * Sets the date object used in calculations to the next opening day and
+     * time for the Business Center
+     * @param \SugarDateTime $sdt
+     * @return SugarDateTime
+     */
+    protected function setDateToNextOpenTime(\SugarDateTime $sdt, bool $checkTime = false)
+    {
+        // See if datetime is before before opening on this date
+        $next = $this->setOpenTimeOnDate(clone $sdt);
+        if ($next > $sdt) {
+            return $next;
+        }
+
+        // Get the next open business day
+        $sdt = $this->getNextOpenDay($sdt->get('tomorrow'), $checkTime);
+
+        return $this->setOpenTimeOnDate($sdt);
+    }
+
+    /**
+     * Sets the open time for a business center on a date object
+     * @param \SugarDateTime $sdt SugarDateTime object
+     * @return SugarDateTime A date time object with the open time set for this business center
+     */
+    protected function setOpenTimeOnDate(\SugarDateTime $sdt)
+    {
+        return $this->setTimeOnDate($sdt, 'open');
+    }
+
+    /**
+     * Sets the close time for a business center on a date object
+     * @param \SugarDateTime $date The date time object
+     * @return SugarDateTime A date time object with the closed time set for this business center
+     */
+    protected function setCloseTimeOnDate(\SugarDateTime $sdt)
+    {
+        return $this->setTimeOnDate($sdt, 'close');
+    }
+
+    /**
+     * Sets the open or close time for a business center on a date object
+     * @param \SugarDateTime $date The date time object
+     * @return SugarDateTime A date time object with the proper time set for this business center
+     */
+    protected function setTimeOnDate(\SugarDateTime $sdt, $type)
+    {
+        if ($type !== 'open' && $type !== 'close') {
+            return $sdt;
+        }
+
+        // Not entirely necessary to mutate the string name for the method, but
+        // it feels right
+        $method = 'get' . ucfirst(strtolower($type)) . 'TimeElements';
+        $e = $this->$method($sdt->day_of_week_long);
+
+        // Set the time stamp on our date object to the close time
+        $date = clone $sdt;
+        $date->setTime($e['hour'], $e['minutes']);
+
+        return $date;
+    }
+
+    /**
+     * Checks openness of a day/date and returns the next open date
+     * @param SugarDateTime $sdt SugarDateTime object
+     * @param bool $checkTime Flag that tells downstream methods whether to account for time on a date
+     * @return SugarDateTime Modified SugarDateTime object if the next open day
+     */
+    protected function getNextOpenDay(\SugarDateTime $sdt, bool $checkTime = false)
+    {
+        while ($this->isOpenDate($sdt, $checkTime) === false) {
+            $sdt = $sdt->get('tomorrow');
+        }
+
+        return $sdt;
+    }
+
+    /**
+     * Gets the list of related holidays for this business center
+     * @param SugarDateTime $fromDate DateTime object for the from date
+     * @param SugarDateTime|null $toDate DateTime object for the to date
+     * @param bool $fresh Cache clearing indicator
+     * @return array
+     */
+    public function getHolidays(\SugarDateTime $fromDate, \SugarDateTime $toDate = null, bool $fresh = false)
+    {
+        // Used for both the from in collection and caching
+        $from = (clone $fromDate)->modify('first day of this month')->format('Y-m-d');
+
+        // If we have the related holiday list already, send it back
+        if (empty($this->holidays) || $fresh || $this->holidaysCacheKey !== $from) {
+            // Reset the internal cache
+            $this->holidays = [];
+
+            // Reset the cache key
+            $this->holidaysCacheKey = $from;
+
+            // If we can't load the relationship then assume there are no related
+            // holidays
+            if (!$this->load_relationship('business_holidays')) {
+                return [];
+            }
+
+            // If there is no toDate then set one for one year later
+            if ($toDate === null) {
+                $toDate = $fromDate->get('1 year');
+            }
+
+            // Get our to for the between parameters
+            $to = (clone $toDate)->modify('last day of this month')->format('Y-m-d');
+
+            $holidays = $this->business_holidays->getBeans([
+                'where' => [
+                    'lhs_field' => 'holiday_date',
+                    'operator' => 'BETWEEN',
+                    'rhs_value' => ['min' => $from, 'max' => $to],
+                ],
+            ]);
+
+            foreach ($holidays as $holiday) {
+                if ($holiday->related_module === 'BusinessCenters') {
+                    $sdt = new \SugarDateTime($holiday->holiday_date);
+                    $this->holidays[$sdt->format('Y-m-d')] = $holiday->name;
+                }
+            }
+        }
+
+        return $this->holidays;
+    }
+
+    /**
+     * Gets the hours open for an actual date
+     * @param SugarDateTime $sdt Configured SugarDateTime object
+     * @return float
+     */
+    protected function getHoursOpenForDate(\SugarDateTime $sdt)
+    {
+        if ($this->isOpenDate($sdt)) {
+            return $this->getHoursOpenForDay($sdt->day_of_week_long);
+        }
+
+        return 0.00;
+    }
+
+    /**
+     * Checks if this business center is open on a given date
+     * @param SugarDateTime $date SugarDateTime object
+     * @param bool $checkTime If true, will check the time on the date object too
+     * @return boolean
+     */
+    protected function isOpenDate(\SugarDateTime $date, bool $checkTime = false)
+    {
+        // First check the day of the week, since that is simple
+        $day = $date->day_of_week_long;
+        if (!$this->isOpen($day)) {
+            return false;
+        }
+
+        // Now get the related holidays for this business center and see if the
+        // date is a holiday
+        $checkDate = $date->format('Y-m-d');
+        $holidays = $this->getHolidays($date);
+        if (isset($holidays[$checkDate])) {
+            return false;
+        }
+
+        if ($checkTime) {
+            // Now check the time for this business center against the time on the
+            // date object
+            $open = $this->setOpenTimeOnDate(clone $date);
+            $close = $this->setCloseTimeOnDate($date);
+
+            // If the date is the same or bigger than open, and the same or less
+            // than close then it is open
+            return $open <= $date && $date <= $close;
+        }
+
+        return true;
+    }
+
+    /**
+     * Gets the open time elements for a day for this business center
+     * @param string $day Day of the week, or shortcode
+     * @return string[]|null
+     */
+    public function getOpenTimeElements(string $day)
+    {
+        return $this->getTimeForTypeOnDay($day, 'open', true);
+    }
+
+    /**
+     * Gets the close time elements for a day for this business center
+     * @param string $day Day of the week, or shortcode
+     * @return string[]|null
+     */
+    public function getCloseTimeElements(string $day)
+    {
+        return $this->getTimeForTypeOnDay($day, 'close', true);
     }
 }

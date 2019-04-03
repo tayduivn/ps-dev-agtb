@@ -66,4 +66,10 @@ $mod_strings = [
     'LBL_LIST_FORM_TITLE' => 'Business Center List',
 
     'LBL_RECORD_BUSINESS_HOURS_PANEL_HEADER' => 'Business Hours',
+
+    'LBL_BUSINESS_HOLIDAYS' => 'Business Holidays',
+
+    'LBL_HOLIDAYS_SUBPANEL_TITLE' => 'Business Holidays',
+    'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Business Center Accounts',
+    'LBL_CASES_SUBPANEL_TITLE' => 'Business Center Cases',
 ];

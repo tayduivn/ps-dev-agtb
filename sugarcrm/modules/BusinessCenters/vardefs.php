@@ -492,6 +492,33 @@ $dictionary['BusinessCenter'] = [
             'merge_filter' => 'enabled',
             'audited' => true,
         ],
+        'business_holidays' => [
+            'name' => 'business_holidays',
+            'type' => 'link',
+            'relationship' => 'business_centers_holidays',
+            'source'=>'non-db',
+            'vname'=>'LBL_BUSINESS_HOLIDAYS',
+            'module'=>'Holidays',
+            'bean_name'=>'Holiday',
+        ],
+        'business_center_accounts' => [
+            'name' => 'business_center_accounts',
+            'type' => 'link',
+            'relationship' => 'business_center_accounts',
+            'source' => 'non-db',
+            'vname' => 'LBL_BUSINESS_CENTER_ACCOUNTS',
+            'module' => 'Accounts',
+            'bean_name' => 'Account',
+        ],
+        'business_center_cases' => [
+            'name' => 'business_center_cases',
+            'type' => 'link',
+            'relationship' => 'business_center_cases',
+            'source' => 'non-db',
+            'vname' => 'LBL_BUSINESS_CENTER_CASES',
+            'module' => 'Cases',
+            'bean_name' => 'aCase',
+        ],
     ],
     'relationships' => [
         'business_center_accounts' => [
@@ -514,7 +541,9 @@ $dictionary['BusinessCenter'] = [
         ],
     ],
     'acls' => [
-        'SugarACLAdminOnly' => true,
+        'SugarACLAdminOnly' => [
+            'allowUserRead' => true,
+        ],
     ],
     'uses' => ['basic', 'assignable', 'team_security'],
 ];

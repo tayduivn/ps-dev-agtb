@@ -118,6 +118,9 @@ include "metadata/team_sets_usersMetaData.php";
 //BEGIN SUGARCRM flav=ent ONLY
 // Locked fields
 include "metadata/locked_field_bean_relMetaData.php";
+
+// Holidays to Business Centers relationship
+include 'metadata/business_centers_holidaysMetaData.php';
 //END SUGARCRM flav=ent ONLY
 
 // Commentlog relation field

@@ -167,6 +167,10 @@ $config['blackList']['corp'] = array(
 'sugarcrm/modules/BusinessCenters' => 1,
 'sugarcrm/tests/{old}/modules/BusinessCenters' => 1,
 
+// Business Center holidays relationship
+'sugarcrm/metadata/business_centers_holidaysMetaData.php' => 1,
+
+// SugarBPM
 'sugarcrm/modules/pmse_Business_Rules'=>1,
 'sugarcrm/modules/pmse_Emails_Templates'=>1,
 'sugarcrm/modules/pmse_Inbox'=>1,
@@ -179,5 +183,8 @@ $config['blackList']['corp'] = array(
 
 'sugarcrm/src/ProcessManager' => 1,
 'sugarcrm/tests/{old}/src/ProcessManager' => 1,
+
+// Out of the box Business Process Management data
+'sugarcrm/install/BusinessProcesses' => 1,
 );
 $build = 'corp';
