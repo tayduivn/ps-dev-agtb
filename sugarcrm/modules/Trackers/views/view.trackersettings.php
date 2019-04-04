@@ -60,8 +60,9 @@ class TrackersViewTrackersettings extends SugarView
                       if(empty($_POST[$entry['name']])) {
                         $admin->saveSetting('tracker', $entry['name'], 1);
                       }	else {
-                        $db = DBManagerFactory::getInstance();
-                        $db->query("DELETE FROM config WHERE category = 'tracker' and name = '" . $entry['name'] . "'");
+                            DBManagerFactory::getInstance()
+                                ->getConnection()
+                                ->delete('config', ['category' => 'tracker', 'name' => $entry['name']]);
                       }
                   }
                } //foreach
