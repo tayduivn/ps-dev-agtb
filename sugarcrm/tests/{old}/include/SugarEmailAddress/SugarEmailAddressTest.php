@@ -128,6 +128,25 @@ class SugarEmailAddressTest extends TestCase
     }
 
     /**
+     * @covers ::addAddress
+     * @covers ::isValidEmail
+     * @covers ::boolVal
+     * @covers ::getEmailGUID
+     */
+    public function testAddresses_WithDifferentCapitalizationAreSeenAsDuplicates()
+    {
+        // make sure that initially there are no addresses
+        $this->assertCount(0, $this->ea->addresses);
+
+        $this->ea->addAddress('test@example.com');
+        $this->ea->addAddress('Test@EXAMPLE.com');
+
+        // make sure duplicate address is replaced
+        $this->assertCount(1, $this->ea->addresses);
+        $this->assertSame('Test@EXAMPLE.com', $this->ea->addresses[0]['email_address']);
+    }
+
+    /**
      * @covers ::handleLegacySave
      */
     public function testEmail1SavesWhenEmailIsEmpty()

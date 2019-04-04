@@ -721,7 +721,7 @@ class SugarEmailAddress extends SugarBean
 
         $key = false;
         foreach ($this->addresses as $k => $address) {
-            if ($address['email_address'] == $addr) {
+            if (strtoupper($address['email_address']) === strtoupper($new_address['email_address'])) {
                 $key = $k;
 
                 $diffCount = array_diff_assoc($new_address, $address);
