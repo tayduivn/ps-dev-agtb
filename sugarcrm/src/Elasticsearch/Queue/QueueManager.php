@@ -309,14 +309,19 @@ class QueueManager
      */
     public function resetQueue(array $modules = array())
     {
-        $sql = sprintf('DELETE FROM %s ', self::FTS_QUEUE);
-        if ($modules) {
-            $quotedModules = [];
-            foreach ($modules as $module) {
-                $quotedModules[] = $this->db->quoted($module);
-            }
-            $sql .= sprintf(' WHERE bean_module IN (%s)', implode(',', $quotedModules));
+        if (empty($modules)) {
+            // TRUNCATE should be the first query in the transaction in DB2
+            $this->db->commit();
+            $this->db->query($this->db->truncateTableSQL(self::FTS_QUEUE));
+            $this->db->commit();
+            return;
         }
+        $sql = sprintf('DELETE FROM %s ', self::FTS_QUEUE);
+        $quotedModules = [];
+        foreach ($modules as $module) {
+            $quotedModules[] = $this->db->quoted($module);
+        }
+        $sql .= sprintf(' WHERE bean_module IN (%s)', implode(',', $quotedModules));
         $this->db->query($sql);
     }
 
