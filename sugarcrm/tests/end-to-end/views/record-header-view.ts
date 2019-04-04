@@ -43,6 +43,7 @@ export default class RecordHeaderView extends BaseView {
                 'select': 'a[name="select_button"]:not(.hide)',
                 'togglesidepanel': '.btn.btn-invisible.sidebar-toggle',
                 'viewpersonalinfo': 'a[name="view_pii_button"]:not(.hide)',
+                'share': 'a[name="share"]:not(.hide)',
 
                 // Calls, Meetings, and Tasks
                 'closeandcreatenew': 'a[name="record-close-new"]:not(.hide)',
