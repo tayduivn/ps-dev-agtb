@@ -128,25 +128,6 @@ class Configurator
                 continue;
             }
 
-            // This kind of validation needs to move to a dedicated validator
-            // around `$sugar_config` in the first place. Keeping it in here
-            // until this validation can be handled in a generic way.
-			if ($key === "logger_file_ext") {
-
-                // Validate logger file extension format
-                if (!preg_match('/^.([A-Za-z]+)$/', $value, $ext)) {
-                    $GLOBALS['log']->security("Invalid log file extension format, expecting .xxx format, '$value' given");
-                    continue;
-                }
-
-                // Check logger file extension against bad extensions
-                $ext = strtolower($ext[1]);
-                if (in_array($ext, $this->config['upload_badext'])) {
-                    $GLOBALS['log']->security("Invalid log file extension: trying to use bad file extension '$value'.");
-                    continue;
-                }
-            }
-
             // Validate logger file name
             if ($key === "logger_file_name" && strcmp(trim($value), '') == 0) {
                 $GLOBALS['log']->error("Invalid log file name: Log file name should not blank.");
@@ -416,10 +397,8 @@ class Configurator
 					elseif(preg_match("/log4php.appender.A2.File=/", $value)){
 						$ext = preg_split("/\./",$property);
 						if(preg_match( "/^\./", $property)){ //begins with .
-							setDeepArrayValue($this->config, 'logger_file_ext', isset($ext[2]) ? '.' . rtrim( $ext[2]):'.log');
 							setDeepArrayValue($this->config, 'logger_file_name', rtrim( ".".$ext[1]));
 						}else{
-							setDeepArrayValue($this->config, 'logger_file_ext', isset($ext[1]) ? '.' . rtrim( $ext[1]):'.log');
 							setDeepArrayValue($this->config, 'logger_file_name', rtrim( $ext[0] ));
 						}
 					}elseif(preg_match("/log4php.appender.A2.layout.DateFormat=/",$value)){
@@ -443,7 +422,6 @@ class Configurator
 		if (!isset($this->config['logger']) || empty($this->config['logger'])) {
 			$this->config['logger'] = array (
 			'file' => array(
-				'ext' => '.log',
 				'name' => 'sugarcrm',
 				'dateFormat' => '%c',
 				'maxSize' => '10MB',

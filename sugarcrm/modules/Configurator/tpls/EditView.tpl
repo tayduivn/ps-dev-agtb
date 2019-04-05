@@ -433,8 +433,6 @@
 	<tr>
 		<td  scope="row" valign='middle'>{$MOD.LBL_LOGGER_FILENAME} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 		<td   valign='middle' ><input type='text' name = 'logger_file_name'  value="{$config.logger.file.name}"></td>
-		<td  scope="row">{$MOD.LBL_LOGGER_FILE_EXTENSION} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
-		<td ><input name ="logger_file_ext" type="text" size="5" value="{$config.logger.file.ext}"></td>
 		<td scope="row">{$MOD.LBL_LOGGER_FILENAME_SUFFIX}</td>
 		<td ><select name = "logger_file_suffix" selected='{$config.logger.file.suffix}'>{$filename_suffix}</select></td>
 	</tr>

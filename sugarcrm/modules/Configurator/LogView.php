@@ -50,7 +50,6 @@ define('LOG_DATA', 4);
 
 // bug 53041 - now that we are respecting file name suffixes for log files, we need to get the log file name properly
 $config = SugarConfig::getInstance();
-$ext = $config->get('logger.file.ext');
 $logfile = $config->get('logger.file.name');
 $log_dir = $config->get('log_dir');
 $log_dir = $log_dir . (empty($log_dir)?'':'/');
@@ -61,7 +60,7 @@ if( !empty($file_suffix) )
     $date_suffix = "_" . date(str_replace("%", "", $file_suffix));
 }
 
-$logFile = $log_dir . $logfile . $date_suffix . $ext;
+$logFile = $log_dir . $logfile . $date_suffix . '.log';
 
 if (!file_exists($logFile)) {
 	die('No Log File');

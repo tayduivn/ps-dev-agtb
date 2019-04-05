@@ -156,7 +156,6 @@ class SugarLoggerTest extends TestCase
         $file_name = $config->get('logger.file.name');
         $log_dir = $config->get('log_dir');
         $log_dir = $log_dir . (empty($log_dir)?'':'/');
-        $ext = $config->get('logger.file.ext');
 
         $file_suffix = $config->get('logger.file.suffix');
         //reviewing the suffix in the global configuration stores in the valid format
@@ -171,7 +170,7 @@ class SugarLoggerTest extends TestCase
         if( !empty( $file_suffix ) )
             $suffix_date_part = "_" . date(str_replace("%", "", $file_suffix));
 
-        $full_path = $log_dir . $file_name . $suffix_date_part . $ext;
+        $full_path = $log_dir . $file_name . $suffix_date_part . '.log';
         $logger = new SugarLogger;
         //Asserting the file format the tester expects with the file format from the SugarLogger
         $this->assertEquals($full_path, $logger->getLogFileNameWithPath(), "SugarLogger generates invalid log file format");

@@ -246,7 +246,6 @@ class ConfigTest extends TestCase
                     'log_dir' => '.',
                     'logger' => array(
                         'file' => array(
-                            'ext' => '.log',
                             'name' => 'sugarcrm',
                             'dateFormat' => '%c',
                             'suffix' => '%Y_%m_%d',
@@ -260,7 +259,6 @@ class ConfigTest extends TestCase
                             'type' => 'file',
                             'level' => Logger::ALERT,
                             'params' => array(
-                                'ext' => '.log',
                                 'name' => 'sugarcrm',
                                 'dateFormat' => '%c',
                                 'suffix' => '%Y_%m_%d',

@@ -774,7 +774,6 @@ function handleSugarConfig() {
     $sugar_config['logger']	= array(
         'level' => $setup_site_log_level,
         'file' => array(
-            'ext' => '.log',
             'name' => 'sugarcrm',
             'dateFormat' => '%c',
             'maxSize' => '10MB',

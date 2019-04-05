@@ -195,7 +195,6 @@ $mod_strings = array (
     'ERR_ALERT_FILE_UPLOAD' => 'Error during the upload of the image.',
     'LBL_LOGGER'=>'Logger Settings',
 	'LBL_LOGGER_FILENAME'=>'Log File Name',
-	'LBL_LOGGER_FILE_EXTENSION'=>'Extension',
 	'LBL_LOGGER_MAX_LOG_SIZE'=>'Maximum log size',
 	'LBL_LOGGER_DEFAULT_DATE_FORMAT'=>'Default date format',
 	'LBL_LOGGER_LOG_LEVEL'=>'Log Level',

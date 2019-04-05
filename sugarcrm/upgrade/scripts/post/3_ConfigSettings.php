@@ -37,7 +37,6 @@ class SugarUpgradeConfigSettings extends UpgradeScript
 				'level'=>'fatal',
 				'file' =>
 				array (
-						'ext' => '.log',
 						'name' => 'sugarcrm',
 						'dateFormat' => '%c',
 						'maxSize' => '10MB',
