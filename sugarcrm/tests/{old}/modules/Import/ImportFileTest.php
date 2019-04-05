@@ -11,6 +11,7 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
 
 class ImportFileTest extends TestCase
 {
@@ -47,6 +48,7 @@ class ImportFileTest extends TestCase
 
     public function testLoadNonExistantFile()
     {
+        $this->expectException(ViolationException::class);
         $importFile = new ImportFile(ImportCacheFiles::getImportDir().'/thisfileisntthere'.date("YmdHis").'.csv',',','"');
         $this->assertFalse($importFile->fileExists());
     }
