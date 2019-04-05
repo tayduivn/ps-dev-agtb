@@ -130,6 +130,12 @@ When(/^I perform out of range merge of (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) r
     }, {waitForApp: true}
 );
 
+/**
+ *  Remove primary or FIRST secondary record prior to proceeding with merge operation
+ *
+ *  @examples
+ *  When I remove primary record before merge of Leads [*L_1, *L_2, *L_3, *L_4] records
+ */
 When(/^I remove (primary|secondary) record before merge of (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records$/,
     async function (action: string, module: string, inputIDs: string) {
 
@@ -152,10 +158,19 @@ When(/^I remove (primary|secondary) record before merge of (\w+) (\[(?:\*\w+)(?:
     }, {waitForApp: true}
 );
 
+/**
+ *
+ * Change primary record's value prior to proceeding with merge operation
+ *
+ * @param {MergeLayout} mergeDrawer
+ * @param {string} module
+ * @param {TableDefinition} table
+ * @returns {Promise<void>}
+ */
 const populateMergeData = async function (mergeDrawer: MergeLayout, module: string, table: TableDefinition) {
     const rows = table.rows();
 
-    // Populate mass update with data from the table
+    // Update specified field's values
     for (let i = 0; i < rows.length; i++) {
 
         let row = rows[i];
@@ -167,6 +182,14 @@ const populateMergeData = async function (mergeDrawer: MergeLayout, module: stri
     }
 };
 
+/**
+ *  Set Primary field values prior to proceeding with the merge
+ *
+ * @param {MergeLayout} mergeDrawer
+ * @param module
+ * @param {TableDefinition} table
+ * @returns {Promise<void>}
+ */
 const changePrimaryField = async function (mergeDrawer: MergeLayout, module, table: TableDefinition) {
     const rows = table.rows();
 
@@ -181,6 +204,11 @@ const changePrimaryField = async function (mergeDrawer: MergeLayout, module, tab
     }
 };
 
+/**
+ * Proceed with the merge and dismiss all messages displayed during and right after the merge process completes
+ *
+ * @returns {Promise<void>}
+ */
 const performMerge = async function () {
 
     // Proceed with the merge
@@ -192,6 +220,13 @@ const performMerge = async function () {
     await seedbed.client.driver.waitForApp();
 };
 
+/**
+ * Cancel merge process and un-check all records in the list view previously selected for merging
+ *
+ * @param {string} inputIDs
+ * @param {ListView} listView
+ * @returns {Promise<void>}
+ */
 const cancelMerge = async function (inputIDs: string, listView: ListView) {
 
     // Cancel the merge process
@@ -201,8 +236,17 @@ const cancelMerge = async function (inputIDs: string, listView: ListView) {
     await toggleSpecifiedRecords(inputIDs, listView);
 };
 
+/**
+ * Proceed with or cancel merge process
+ *
+ * @param {string} inputIDs
+ * @param {ListView} listView
+ * @param {string} button
+ * @returns {Promise<void>}
+ */
 const executeSelectedAction = async function (inputIDs: string, listView: ListView, button: string) {
         switch (button) {
+
             // Proceed with the merge
             case 'perform':
                 await performMerge();
@@ -218,6 +262,15 @@ const executeSelectedAction = async function (inputIDs: string, listView: ListVi
     }
 }
 
+/**
+ *
+ * Remove record from merge in the Merge drawer
+ *
+ * Note: This method only applicable for the case when 3, 4 or 5 (Max) records are selected to be merged
+ *
+ * @param action
+ * @returns {Promise<void>}
+ */
 const removeRecordFromMerge = async function (action) {
 
     // Remove record from merge

@@ -16,6 +16,14 @@ import {When, seedbed} from '@sugarcrm/seedbed';
 import {chooseModule, closeAlert, toggleRecord, parseInputArray, closeWarning, toggleSpecifiedRecords} from './general_bdd';
 import MassupdateView from '../views/massupdate-view';
 
+/**
+ *  Perform (or cancel) mass update of all records present on the list view
+ *
+ *  @example
+ *  When I perform mass update of all Quotes with the following values:
+ *      | fieldName                  | value           |
+ *      | quote_stage                | Closed Accepted |
+ */
 When(/^I (perform|cancel) mass update of all (\w+) with the following values:$/,
     async function (button: string, module, table: TableDefinition) {
         await chooseModule(module);
@@ -49,6 +57,14 @@ When(/^I (perform|cancel) mass update of all (\w+) with the following values:$/,
     }, {waitForApp: true}
 );
 
+/**
+ * Populate mass update information based on specified values
+ *
+ * @param massUpdateView
+ * @param module
+ * @param {TableDefinition} table
+ * @returns {Promise<void>}
+ */
 const populateMassUpdate = async function (massUpdateView, module, table: TableDefinition) {
     const rows = table.rows();
 
@@ -87,10 +103,27 @@ const populateMassUpdate = async function (massUpdateView, module, table: TableD
     }
 };
 
+/**
+ * Click mass update (or cancel) button
+ *
+ * @param {string} btnName
+ * @param {MassupdateView} view
+ * @returns {Promise<any>}
+ */
 const buttonClickMassUpdate = async function (btnName: string, view: MassupdateView) {
     return view.performAction(btnName.toLowerCase());
 };
 
+/**
+ * Perform (or cancel) mass update of selected records
+ *
+ *  @example
+ *  When I perform mass update of Quotes [*Q_1, *Q_2, *Q_4] with the following values:
+ *      | fieldName                  | value           |
+ *      | quote_stage                | Closed Accepted |
+ *      | date_quote_expected_closed | 12/31/2020      |
+ *
+ */
 When(/^I (perform|cancel) mass update of (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) with the following values:$/,
     async function(button: string, module, inputIDs: string, table: TableDefinition) {
 
@@ -127,6 +160,9 @@ When(/^I (perform|cancel) mass update of (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\])
 
 /**
  *  Recalculate values for all records in the List view
+ *
+ *  @examples
+ *  When I recalculate all values in Quotes
  */
 When(/^I recalculate all values in (\w+)$/,
     async function (module) {
@@ -153,8 +189,10 @@ When(/^I recalculate all values in (\w+)$/,
 
 /**
  *  Recalculate values for specific records in the List view
+ *
+ *  @examples
+ *  When I recalculate [*Q_1, *Q_2, *Q_4] values in Quotes
  */
-
 When(/^I recalculate (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) values in (\w+)$/,
     async function (inputIDs: string, module) {
 

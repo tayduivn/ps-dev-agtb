@@ -145,7 +145,7 @@ const populateFilter = async function (filterView: FilterView, module: string, t
 /**
  * Hide, apply, or delete existing custom filter in the list view
  *
- * @example
+ *  @example
  *  When I hide custom filter 'New Filter 1' on the Quotes list view
  */
 When(/^I (hide|apply|delete) custom filter '([^"]*)' on the (\w+) list view$/,
@@ -185,7 +185,7 @@ When(/^I (hide|apply|delete) custom filter '([^"]*)' on the (\w+) list view$/,
 /**
  * Edit or Reset existing custom filter
  *
- * @example
+ *  @example
  *  When I edit custom filter 'New Filter 1' on the Accounts list view with the following values:
  *      | fieldName    | filter_operator | filter_value |
  *      | account_type | is any of       | Competitor   |
@@ -222,8 +222,8 @@ When(/^I (edit|reset) custom filter '([^"]*)' on the (\w+) list view with the fo
  *  Verify if record(s) present/not present on the list view
  *
  *  @example
- *   Then I should see [*Q_3, *Q_4] on Quotes list view
- *   And I should not see [*Q_1, *Q_2] on Quotes list view
+ *  Then I should see [*Q_3, *Q_4] on Quotes list view
+ *  And I should not see [*Q_1, *Q_2] on Quotes list view
  *
  */
 Then(/^I should (not )?see (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) on (\w+) list view$/,
