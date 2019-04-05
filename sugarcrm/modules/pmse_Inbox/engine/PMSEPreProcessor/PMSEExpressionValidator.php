@@ -166,7 +166,7 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
         // We don't need the entire retrieved bean for this operation...
         $seedBean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
 
-        if (is_null($seedBean) || empty($seedBean->id)) {
+        if (is_null($seedBean) || empty($seedBean->id) || empty($bean->id)) {
             return false;
         }
 
@@ -174,6 +174,7 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
         $relField = $flowData['rel_element_relationship'];
         $hasRel = $seedBean->load_relationship($relField);
 
+        $return = false;
         // If there is a seed bean and there is a valid relationship...
         if ($seedBean->id && $hasRel) {
             // Get the row for this relationship by query instead through beans
@@ -187,12 +188,14 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
             );
 
             // use load() since getQuery() is deprecated
-            $rows = $seedBean->$relField->getRelationshipObject()->load($seedBean->$relField, $relWhere);
-
-            $row = $rows['rows'];
-
-            // And verify that the relationship is actually valid record to record
-            $return = $row && key($row) == $bean->id;
+            $results = $seedBean->$relField->getRelationshipObject()->load($seedBean->$relField, $relWhere);
+            
+            $rows = !empty($results['rows']) ? $results['rows'] : [];
+            if (count($rows) > 0) {
+                // And verify that the relationship is actually valid record to record
+                $id = key($rows);
+                $return = $id === $bean->id;
+            }
         } else {
             // Otherwise just return whether there is a relationship
             $return = $hasRel;
