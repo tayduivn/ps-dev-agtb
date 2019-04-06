@@ -178,7 +178,7 @@ export default class SearchModuleMenuCmp extends BaseView {
             await this.toggleMenu();
        }
 
-        /** first splict the "modulesList" into seperate modules names and store in array */
+        /** first split the "modulesList" into separate modules names and store in array */
         let modulesArray = modulesList.split(',');
 
         for (let i in modulesArray) {
