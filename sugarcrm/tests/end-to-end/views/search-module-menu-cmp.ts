@@ -142,7 +142,6 @@ export default class SearchModuleMenuCmp extends BaseView {
      */
     public async isHighLightedItem(oneItem: string): Promise<boolean> {
         let currentLocator = '//div[@class = "typeahead-wrapper"]/descendant::strong[text()="' + oneItem + '"]';
-        let curError: any = {};
         let currentCheckResult = await this.driver.isElementExist( currentLocator);
         return Promise.resolve(currentCheckResult);
     }
@@ -199,7 +198,8 @@ export default class SearchModuleMenuCmp extends BaseView {
         /** after typing in the tag name, type in the text to search if there is any */
         await this.typeSearchText(targetText);
         /** The following is to wait a few seconds for the type-ahead drop-down to show up since somehow calling "await this.driver.waitForApp()" does not work here. */
-        await this.driver.pause(3000);
+        await this.driver.pause(1000);
+        await this.driver.waitForApp();
 
         /** Now the type-ahead drop-down should be showing up ready to be checked */
         if (highlightlist.trim().length > 0) {
