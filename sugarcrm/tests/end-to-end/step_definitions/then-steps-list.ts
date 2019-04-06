@@ -60,7 +60,7 @@ Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
 
 Then(/^I should be redirected to \"(.*)\" route/,
     async function(expectedRoute: string): Promise<void> {
-        thenStepsHelper.checkUrlHash(expectedRoute);
+        await thenStepsHelper.checkUrlHash(expectedRoute);
     });
 
 Then<

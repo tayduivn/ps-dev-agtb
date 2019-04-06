@@ -17,16 +17,17 @@ Feature: Reports module verification
   @list-method
   Scenario: Reports > List View
     Given Reports records exist:
-      | *name     | module    |
-      | Report_A  | Accounts  |
+      | *name    | module   |
+      | Report_A | Accounts |
     Given I open about view and login
     When I choose Reports in modules menu
     Then I should see *Report_A in #ReportsList.ListView
     Then I verify fields for *Report_A in #ReportsList.ListView
-      | fieldName    | value    |
-      | name         | Report_A |
-#    When I click Create button on #ReportsList header
-#    Then I should be redirected to "bwc/index.php?module=Reports&report_module=&action=index&page=report&Create_Custom_Report=Create+Custom+Report&bwcRedirect=1" route
+      | fieldName | value    |
+      | name      | Report_A |
+    When I click Create button on #ReportsList header
+    Then I should be redirected to "bwc/index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report" route
+
 
   @list-preview @list-preview-description
   Scenario: Reports > List View > Preview > Check fields
@@ -41,12 +42,12 @@ Feature: Reports module verification
       | fieldName   | value |
       | description | abc   |
 
-  @list-edit
-  Scenario: Reports > List View > Inline Edit
+  @list-edit-new-report
+  Scenario: Reports > List View > Inline Edit > Save
     Given Reports records exist:
-      | *name     | module    | report_type |
-      | Report_A  | Accounts  | tabular     |
-      | Report_B  | Accounts  | tabular     |
+      | *name    | module   | report_type |
+      | Report_A | Accounts | tabular     |
+      | Report_B | Accounts | tabular     |
     Given I open about view and login
     When I choose Reports in modules menu
     When I click on Edit button for *Report_A in #ReportsList.ListView
@@ -55,5 +56,31 @@ Feature: Reports module verification
       | name      | Report_A_edited |
     When I click on Save button for *Report_A in #ReportsList.ListView
     Then I verify fields for *Report_A in #ReportsList.ListView
-      | fieldName    | value           |
-      | name         | Report_A_edited |
+      | fieldName | value           |
+      | name      | Report_A_edited |
+
+
+  @list-edit-existing-report
+  Scenario Outline: Existing Report > List View > Inline Edit > Cancel
+    Given I open about view and login
+    # Filter report by name
+    When I filter for the Reports record *report1 named "<reportName>"
+    # Edit existing report
+    When I click on Edit button for *report1 in #ReportsList.ListView
+    When I set values for *report1 in #ReportsList.ListView
+      | fieldName | value           |
+      | name      | New Report Name |
+    # Cancel editing
+    When I click on Cancel button for *report1 in #ReportsList.ListView
+    Then I verify fields for *report1 in #ReportsList.ListView
+      | fieldName | value        |
+      | name      | <reportName> |
+
+    Examples:
+      | reportName             |
+      | All Open Opportunities |
+
+
+
+
+

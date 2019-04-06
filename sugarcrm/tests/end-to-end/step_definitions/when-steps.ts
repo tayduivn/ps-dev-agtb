@@ -682,3 +682,38 @@ When(/^I open (\w+) \*(\w+) record view$/,
     }, {waitForApp: true}
 );
 
+/**
+ *  Filter specified record by name and assign record id
+ *
+ *  Note: Mostly used in the Reports module to assign id to OOTB report
+ *
+ *  @example
+ *  When I filter Reports record *report1 named "All Open Opportunities"
+ *
+ */
+When(/^I filter for the (\w+) record \*(\w+) named "([^"]*)"$/,
+    async function (module: string, uid: string, recordName: string) {
+
+        await chooseModule(module);
+
+        // Filter list view by the specified record name
+        const filterView = await seedbed.components[`${module}List`].FilterView;
+        await filterView.setSearchField(recordName);
+        await this.driver.waitForApp();
+
+        // Get found record id
+        let argumentsArray = [];
+        argumentsArray.push(recordName);
+        argumentsArray.push(module);
+        let result = await seedbed.client.driver.execAsync('getRecordIDByName', argumentsArray);
+        let recordID = result.value;
+
+        // Add record id to the global array of all records with uid using user-provided record identifier
+        seedbed.cachedRecords.push(uid,
+            {
+                id: recordID,
+                module: module,
+            });
+
+    }, {waitForApp: true}
+);

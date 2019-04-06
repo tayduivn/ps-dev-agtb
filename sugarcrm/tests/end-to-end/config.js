@@ -98,7 +98,8 @@ var config = {
 
     // Seedbed client configuration that is passed to init scripts by proxy
     timeouts: {
-        maxTimeoutCatchValue: 1300
+        maxTimeoutCatchValue: 1300,
+        maxWait: 120000,
     },
 
     responsePayloads: {},

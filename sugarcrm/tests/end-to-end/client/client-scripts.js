@@ -71,4 +71,30 @@ module.exports = {
     getCurrentModule: function() {
         return App.controller.context.get('module');
     },
+
+    /**
+     * Get record id from the record name
+     *
+     * @param recordName
+     * @param module
+     * @param cb
+     */
+    getRecordIDByName: function(recordName, module, cb) {
+        App.api.call(
+            'read',
+            App.api.buildURL(
+                module,
+                'read',
+                null,
+                {fields: 'id, name', filter: [{name: {'$equals': recordName}}]}
+            ),
+            null,
+            null,
+            {
+                success: function(r) {
+                    cb(r.records[0].id);
+                }
+            }
+        );
+    }
 };
