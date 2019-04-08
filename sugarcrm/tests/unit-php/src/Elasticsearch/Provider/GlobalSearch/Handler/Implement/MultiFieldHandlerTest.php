@@ -338,6 +338,7 @@ class MultiFieldHandlerTest extends TestCase
                             //    'store' => true,
                             //),
                         ),
+                        'doc_values' => false,
                     ),
                     'description' => array(
                         'type' => 'keyword',
@@ -345,6 +346,7 @@ class MultiFieldHandlerTest extends TestCase
                         'copy_to' => array(
                             'Accounts__description',
                         ),
+                        'doc_values' => false,
                     ),
                 ),
             ),
@@ -639,6 +641,7 @@ class MultiFieldHandlerTest extends TestCase
                             //    'store' => true,
                             //),
                         ),
+                        'doc_values' => false,
                     ),
                     'description' => array(
                         'type' => 'keyword',
@@ -646,6 +649,7 @@ class MultiFieldHandlerTest extends TestCase
                         'copy_to' => array(
                             'Accounts__description',
                         ),
+                        'doc_values' => false,
                     ),
                 ),
             ),
@@ -675,6 +679,7 @@ class MultiFieldHandlerTest extends TestCase
                             //    'store' => true,
                             //),
                         ),
+                        'doc_values' => false,
                     ),
                     'body' => array(
                         'type' => 'keyword',
@@ -682,6 +687,7 @@ class MultiFieldHandlerTest extends TestCase
                         'copy_to' => array(
                             'KBContents__body',
                         ),
+                        'doc_values' => false,
                     ),
                 ),
             ),

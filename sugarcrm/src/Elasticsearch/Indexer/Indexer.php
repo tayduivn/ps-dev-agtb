@@ -69,6 +69,16 @@ class Indexer
     protected $db;
 
     /**
+     * long text type
+     * @var array
+     */
+    protected $longFieldTypes = array(
+        'text',
+        'longtext',
+        'htmleditable_tinymce',
+    );
+
+    /**
      * Ctor
      * @param array $config
      * @param Container $container
@@ -328,9 +338,9 @@ class Indexer
 
         // Populate field data from bean for bean index fields
         $data = array();
-        foreach (array_keys($fields) as $field) {
+        foreach ($fields as $field => $type) {
             if (isset($bean->$field)) {
-                if (is_string($bean->$field)) {
+                if (is_string($bean->$field) && !in_array($type, $this->longFieldTypes)) {
                     $data[$field] = mb_strcut($this->decodeBeanField($bean->$field), 0, self::MAX_SIZE_OF_TEXT);
                 } else {
                     $data[$field] = $this->decodeBeanField($bean->$field);
