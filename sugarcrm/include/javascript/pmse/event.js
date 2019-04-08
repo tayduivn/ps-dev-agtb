@@ -901,6 +901,10 @@ AdamEvent.prototype._makeCriteriaField = function() {
                             dataURL: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
                             dataRoot: 'result',
                             fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                            fieldDataURLAttr: {
+                                // RM = Received Message
+                                call_type: 'RM'
+                            },
                             fieldDataRoot: 'result'
                         },
                         user: {
@@ -1069,6 +1073,10 @@ AdamEvent.prototype.createConfigureAction = function () {
                             textField: "text",
                             valueField: "value",
                             fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                            fieldDataURLAttr: {
+                                // ST = Start
+                                call_type: 'ST'
+                            },
                             fieldDataRoot: 'result',
                             fieldTextField: "text",
                             fieldValueField: "value",

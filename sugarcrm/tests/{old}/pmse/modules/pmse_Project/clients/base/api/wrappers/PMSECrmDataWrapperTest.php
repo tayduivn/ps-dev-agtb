@@ -1597,4 +1597,126 @@ class PMSECrmDataWrapperTest extends TestCase
         $result = $this->object->getRelatedSearch($filter, $args);
         $this->assertEquals(array(), $result);
     }
+
+    /**
+     * @covers PMSECrmDataWrapper::retrieveFields
+     * @dataProvider getRetrieveFieldsData
+     * @param $action
+     * @param $count
+     * @param $containOrNot1
+     * @param $containOrNot2
+     */
+    public function testRetrieveFields($action, $count, $containsOrNot1 = [], $containsOrNot2 = [])
+    {
+        $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $GLOBALS['app_list_strings']['moduleList'] = array();
+        $this->object->setBeanList(array('Emails' => 'Email'));
+
+        $output = $this->object->retrieveFields('Emails', null, $action, 'Emails');
+        $fields = $this->getOutputFields($output['result']);
+        $this->assertEquals(count($fields), $count);
+        $this->verifySupportedFields($containsOrNot1, $fields);
+        $this->verifySupportedFields($containsOrNot2, $fields);
+    }
+
+    public function getRetrieveFieldsData()
+    {
+        return [
+            [
+                'action' => 'CF',
+                'count' => 2,
+                'containsOrNot1' => [
+                    'containsOrNot' => true,
+                    'field' => 'assigned_user_id',
+                    'message' => 'assigned_user_id should be a supported field in CF.',
+                ],
+                'containsOrNot2' => [
+                    'containsOrNot' => true,
+                    'field' => 'teams',
+                    'message' => 'teams should be a supported field in CF.',
+                ],
+            ],
+            [
+                'action' => 'BR',
+                'count' => 1,
+                'containsOrNot1' => [
+                    'containsOrNot' => true,
+                    'field' => 'assigned_user_id',
+                    'message' => 'assigned_user_id should be a supported field in BR.',
+                ],
+            ],
+            [
+                'action' => 'AC',
+                'count' => 0,
+            ],
+            [
+                'action' => 'RR',
+                'count' => 0,
+            ],
+            [
+                'action' => 'PD',
+                'count' => 9,
+                'containsOrNot1' => [
+                    'containsOrNot' => true,
+                    'field' => 'direction',
+                    'message' => 'direction should be a supported field in PD.',
+                ],
+                'containsOrNot2' => [
+                    'containsOrNot' => false,
+                    'field' => 'type',
+                    'message' => 'type should not be a supported field in PD.',
+                ],
+            ],
+            [
+                'action' => 'BRR',
+                'count' => 9,
+                'containsOrNot1' => [
+                    'containsOrNot' => true,
+                    'field' => 'direction',
+                    'message' => 'direction should be a supported field in BRR.',
+                ],
+                'containsOrNot2' => [
+                    'containsOrNot' => false,
+                    'field' => 'type',
+                    'message' => 'type should not be a supported field in BRR.',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Verify supported fields
+     * @params array
+     * @params array
+     */
+    protected function verifySupportedFields($containsOrNot, $fields)
+    {
+        if (!empty($containsOrNot)) {
+            if ($containsOrNot['containsOrNot'] === true) {
+                $this->assertContains($containsOrNot['field'], $fields, $containsOrNot['message']);
+            } else {
+                $this->assertNotContains($containsOrNot['field'], $fields, $containsOrNot['message']);
+            }
+        }
+    }
+
+    /**
+     * Get output fields
+     * @params array
+     * @return array
+     */
+    protected function getOutputFields($result)
+    {
+        $fields = array();
+        if (!empty($result)) {
+            foreach ($result as $field) {
+                $fields[] = $field['value'];
+            }
+        }
+        return $fields;
+    }
 }

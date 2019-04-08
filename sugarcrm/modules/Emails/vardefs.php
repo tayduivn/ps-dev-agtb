@@ -943,6 +943,67 @@ $dictionary['Email'] = array(
         'following',
         'taggable',
     ),
+    'processes' => array(
+        // Forcefully enable this module even if it is marked as invalid by the engine
+        'enabled' => true,
+        // If types is left off, that means this module supports all actions with all of its fields
+        // If the types property is supplied, it will give explicit instructions to the engine by type
+        'types' => array(
+            // Change Field actions should expose teams and assigned user
+            'CF' => array(
+                'teams',
+                'assigned_user_id',
+            ),
+            // Business Rules should expose assigned user for conclusions
+            'BR' => array(
+                'assigned_user_id',
+            ),
+            // No fields are supported for Add Related Record action
+            'AC' => array(),
+            // No fields are supported for Process Definition (designer canvas) action
+            'RR' => array(),
+            // No fields are supported for Requird Fields in Activity action
+            'RQF' => array(),
+            // No fields are supported for Readonly Fields in Activity action
+            'ROF' => array(),
+            // Exposed fields for Process Definitions
+            'PD' => array(
+                'created_by',
+                'date_entered',
+                'date_modified',
+                'date_sent',
+                'direction',
+                'modified_user_id',
+                'reply_to_status',
+                'state',
+                'name',
+            ),
+            // Exposed fields for Business Rules conditions
+            'BRR' => array(
+                'created_by',
+                'date_entered',
+                'date_modified',
+                'date_sent',
+                'direction',
+                'modified_user_id',
+                'reply_to_status',
+                'state',
+                'name',
+            ),
+            // Exposed fields for Email Templates
+            'ET' => array(
+                'created_by',
+                'date_entered',
+                'date_modified',
+                'date_sent',
+                'direction',
+                'modified_user_id',
+                'reply_to_status',
+                'state',
+                'name',
+            ),
+        ),
+    ),
 );
 
 VardefManager::createVardef(

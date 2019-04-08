@@ -1199,4 +1199,17 @@ class VardefManager{
 
         return true;
     }
+
+    /**
+     * Get a particular property of the module
+     *
+     * @param  $module
+     * @param  $property
+     * @return Mixed returns a list of all elements in the module's property if the property is found
+     */
+    public static function getModuleProperty($module, $property, $default = null)
+    {
+        global $dictionary;
+        return $dictionary[$module][$property] ?? $default;
+    }
 }

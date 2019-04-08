@@ -1251,6 +1251,11 @@ ExpressionControl.prototype._createModulePanel = function () {
     }
     if (settings) {
         moduleField = this._evaluationPanels.module.getItem("module");
+        moduleField._attributes = moduleField._attributes || {};
+        var callType = this.getCallType(settings);
+        if (callType !== null) {
+            moduleField._attributes = _.extend(moduleField._attributes, {call_type: callType});
+        }
         moduleField.setDataURL(settings.dataURL)
             .setDataRoot(settings.dataRoot)
             .setLabelField(settings.textField)
@@ -1262,6 +1267,23 @@ ExpressionControl.prototype._createModulePanel = function () {
         this._evaluationPanel.disable();
     }
     return this._evaluationPanels.module;
+};
+
+/**
+ * Gets the call type
+ *
+ * @param {object} The evaluation settings
+ * @return {string} A call type
+ */
+ExpressionControl.prototype.getCallType = function (settings) {
+    var ret = null;
+    var ct;
+    if (settings.fieldDataURLAttr && settings.fieldDataURLAttr.call_type) {
+        ct = settings.fieldDataURLAttr.call_type;
+        // return empty string for Start or Gateway
+        ret = (ct === 'ST' || ct === 'GT') ? '' : ct;
+    }
+    return ret;
 };
 
 ExpressionControl.prototype._createFormResponsePanel = function () {

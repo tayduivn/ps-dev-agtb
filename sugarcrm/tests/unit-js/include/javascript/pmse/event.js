@@ -168,6 +168,9 @@ describe('includes.javascript.pmse.event', function() {
                         dataURL: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
                         dataRoot: 'result',
                         fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                        fieldDataURLAttr: {
+                            call_type: 'RM'
+                        },
                         fieldDataRoot: 'result'
                     },
                     user: {

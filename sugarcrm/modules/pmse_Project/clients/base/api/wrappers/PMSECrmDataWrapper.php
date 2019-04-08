@@ -1045,7 +1045,7 @@ SQL;
      */
     public function retrieveModules($filter = '')
     {
-        $moduleList = PMSEEngineUtils::getStudioModules();
+        $moduleList = PMSEEngineUtils::getModules();
         $output = array();
         foreach ($moduleList as $module) {
             if (!empty($module->name) && (empty($filter) || stripos($module->name, $filter) !== false)) {
@@ -1562,7 +1562,8 @@ SQL;
 
         foreach ($fieldsData as $field) {
             $tmpField = array();
-            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type))) {
+            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type)) &&
+                PMSEEngineUtils::isSupportedField($moduleBean->object_name, $field['name'], $type)) {
                 // If this is a locked field list AND this field is part of a group
                 if ($type === 'RR' && !empty($field['group'])) {
                     // If the group field for this field exists in vardefs then we can skip this field

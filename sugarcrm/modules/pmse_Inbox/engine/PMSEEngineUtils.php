@@ -20,6 +20,7 @@ use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\SugarBPM;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 /**
  * Class contains utilities as encoder and decoders for codes url, remove bound fields,
@@ -146,7 +147,8 @@ class PMSEEngineUtils
         'localizations',
         'revisions',
         'attachments',
-        'usefulness'
+        'usefulness',
+        'archived_emails',
     );
 
     /**
@@ -1188,6 +1190,57 @@ class PMSEEngineUtils
     }
 
     /**
+     * Determines whether a module is a supported module
+     *
+     * @param string $module module name
+     * @return boolean
+     */
+    public static function isSupportedModule($module)
+    {
+        $prop = VardefManager::getModuleProperty($module, 'processes');
+
+        if (isset($prop) && !empty($prop['enabled'])) {
+            $request = InputValidation::getService();
+            $type = $request->getValidInputRequest('call_type', null, '');
+            if ($type === '' || !empty($prop['types'][$type])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determines whether a field is a supported field
+     *
+     * @param string $module module name
+     * @param string $field supported field name
+     * @param string $type supported field type
+     * @return boolean
+     */
+    public static function isSupportedField($module, $field, $type = '')
+    {
+        $prop = VardefManager::getModuleProperty($module, 'processes');
+
+        // If $prop is empty, assume the module is enabled and all things are enabled
+        // unless the engine module validator says otherwise (default case)
+        if (empty($prop)) {
+            return true;
+        }
+
+        if (!empty($prop['enabled'])) {
+            // If there is no type property, or there is one and it is defined
+            // Then look for the field
+            if (!isset($prop['types'][$type]) || in_array($field, $prop['types'][$type])) {
+                return true;
+            }
+        }
+
+        // All other cases assume the field is not supported for this type of action
+        return false;
+    }
+
+    /**
      * Determines the validity of a field used in a process definition, business
      * rule, action element, etc.
      * @param array $def The field def
@@ -1420,10 +1473,53 @@ class PMSEEngineUtils
         return $moduleList;
     }
 
-    public static function getSupportedModules ($type = '') {
+    /**
+     * Gets All Modules
+     * @return $allModules
+     */
+    public static function getAllModules()
+    {
+        global $current_user, $beanList, $moduleList;
+
+        $access = $current_user->getDeveloperModules();
+        $allModules = array();
+        foreach ($moduleList as $module) {
+            if (isset($beanList[$module]) && in_array($module, $access)) {
+                $allModules[$module] = $beanList[$module];
+            }
+        }
+        return $allModules;
+    }
+
+    /**
+     * Gets Modules
+     * @param String $type
+     * @return Array
+     */
+    public static function getModules($type = '')
+    {
+        $moduleList = self::getStudioModules($type);
+        $allModules = self::getAllModules();
+        $nonStudioModules = array_diff_key($allModules, $moduleList);
+        foreach ($nonStudioModules as $name => $objectName) {
+            VardefManager::loadVardef($name, $objectName);
+            if (self::isSupportedModule($objectName)) {
+                $moduleList[$name] = StudioModuleFactory::getStudioModule($name);
+            }
+        }
+        return $moduleList;
+    }
+
+    /**
+     * Gets Supported Modules
+     * @param String $type
+     * @return Array
+     */
+    public static function getSupportedModules($type = '')
+    {
         if (!isset(self::$supportedModules[$type])) {
             self::$supportedModules[$type] = array();
-            $moduleList = self::getStudioModules($type);
+            $moduleList = self::getModules($type);
             foreach ($moduleList as $key => $module) {
                 self::$supportedModules[$type][] = $module->module;
             }
