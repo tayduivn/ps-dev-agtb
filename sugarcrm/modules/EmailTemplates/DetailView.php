@@ -26,6 +26,7 @@ if(isset($_SESSION['EMAILTEMPLATE_FROM_LIST_VIEW']))
 global $app_strings;
 global $mod_strings;
 
+/** @var EmailTemplate $focus */
 $focus = BeanFactory::newBean('EmailTemplates');
 
 $detailView = new DetailView();
@@ -104,7 +105,7 @@ $xtpl->assign("ID", $focus->id);
 $xtpl->assign("CREATED_BY", $focus->created_by_name);
 $xtpl->assign("MODIFIED_BY", $focus->modified_by_name);
 //if text only is set to true, then make sure input is checked and value set to 1
-if(isset($focus->text_only) && $focus->text_only){
+if ($focus->text_only || $focus->isForgotPasswordTemplate()) {
     $xtpl->assign("TEXT_ONLY_CHECKED","CHECKED");
 }
 $xtpl->assign("NAME", $focus->name);

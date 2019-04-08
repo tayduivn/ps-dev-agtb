@@ -2150,24 +2150,25 @@ class User extends Person {
     }
 
     /**
-     * Send new password or link to user
+     * Send new password or link to user. Does not support HTML body due to security reasons.
      *
      * @param string $templateId     Id of email template
      * @param array  $additionalData additional params: link, url, password
      * @return array status: true|false, message: error message, if status = false and message = '' it means that send method has returned false
      */
-    public function sendEmailForPassword($templateId, array $additionalData = array()) {
+    public function sendEmailForPassword($templateId, array $additionalData = array())
+    {
         global $current_user,
                $app_strings;
 
         $mod_strings = return_module_language('', 'Users');
 
-        $result = array(
-            'status'  => false,
+        $result = [
+            'status' => false,
             'message' => ''
-        );
+        ];
 
-        $emailTemplate                             = BeanFactory::newBean('EmailTemplates');
+        $emailTemplate = BeanFactory::newBean('EmailTemplates');
         $emailTemplate->disable_row_level_security = true;
 
         if ($emailTemplate->retrieve($templateId) == '') {
@@ -2176,18 +2177,6 @@ class User extends Person {
         }
 
         $emailTemplate->body = $this->replaceInstanceVariablesInEmailTemplates($emailTemplate->body, $additionalData);
-
-        // in case the email is text-only and $emailTemplate->body_html is not empty, use a local variable for the HTML
-        // part to ignore the body_html property and prevent changing it on the EmailTemplate object
-        $htmlBody = null;
-
-        if ($emailTemplate->text_only != 1) {
-            $emailTemplate->body_html = $this->replaceInstanceVariablesInEmailTemplates(
-                $emailTemplate->body_html,
-                $additionalData
-            );
-            $htmlBody                 = $emailTemplate->body_html;
-        }
 
         try {
             $mailer = MailerFactory::getSystemDefaultMailer();
@@ -2198,16 +2187,12 @@ class User extends Person {
             // set the plain-text body
             $mailer->setTextBody($emailTemplate->body);
 
-            // set the HTML body... it will be null in the text-only case, but that's okay
-            $mailer->setHtmlBody($htmlBody);
-
             // make sure there is at least one message part (but only if the current user is an admin)...
 
-            // even though $htmlBody is already set, resetting it verifies that $mailer actually got it
+            // even though $textBody is already set, resetting it verifies that $mailer actually got it
             $textBody = $mailer->getTextBody();
-            $htmlBody = $mailer->getHtmlBody();
 
-            if ($current_user->is_admin && !$mailer->hasMessagePart($textBody) && !$mailer->hasMessagePart($htmlBody)) {
+            if ($current_user->is_admin && !$mailer->hasMessagePart($textBody)) {
                 throw new MailerException("No email body was provided", MailerException::InvalidMessageBody);
             }
 

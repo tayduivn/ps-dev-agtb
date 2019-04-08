@@ -27,6 +27,8 @@ if (!isset($_REQUEST['campaign_id']) || empty($_REQUEST['campaign_id'])) {
 if (!isset($_REQUEST['inboundEmail']) || empty($_REQUEST['inboundEmail'])) {
     $inboundEmail=false;
 }
+
+/** @var EmailTemplate $focus */
 $focus = BeanFactory::newBean('EmailTemplates');
 
 if(isset($_REQUEST['record'])) {
@@ -173,8 +175,12 @@ if( $focus->published == 'on')
 {
 $xtpl->assign("PUBLISHED","CHECKED");
 }
+
+$isForgotPasswordEmail = $focus->isForgotPasswordTemplate();
+$xtpl->assign("TEXTONLY_DISABLED", $isForgotPasswordEmail ? 'DISABLED' : '');
+
 //if text only is set to true, then make sure input is checked and value set to 1
-if(isset($focus->text_only) && $focus->text_only){
+if ($focus->text_only || $isForgotPasswordEmail) {
     $xtpl->assign("TEXTONLY_CHECKED","CHECKED");
     $xtpl->assign("TEXTONLY_VALUE","1");
 }else{//set value to 0
