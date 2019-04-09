@@ -36,32 +36,38 @@
             console.log('skipping external app sync for public metadata');
             return Promise.resolve();
         }
-        return new Promise(function(r, e) {
-            fetch('http://localhost:8080/manifest.json', {mode: 'cors'}).then(
-                function(response) {
-                    response.json().then(function(manifest) {
-                        console.log('manifest- ', manifest);
-                        _.each(manifest.layouts, function(def) {
-                            if (def.module && def.layout) {
-                                addCompToLayout(metadata, def.module, def.layout, {
-                                    'view': {
-                                        'type': 'external-app',
-                                        'name': manifest.name,
-                                        'src': manifest.src
-                                    }
-                                });
-                            }
-                            ;
+
+        if (app.config.externalManifestUrl && app.config.externalManifestUrl !== '') {
+            return new Promise(function(r, e) {
+
+                fetch(app.config.externalManifestUrl, {mode: 'cors'}).then(
+                    function(response) {
+                        response.json().then(function(manifest) {
+                            _.each(manifest.layouts, function(def) {
+                                if (def.module && def.layout) {
+                                    addCompToLayout(metadata, def.module, def.layout, {
+                                        'view': {
+                                            'type': 'external-app',
+                                            'name': manifest.name,
+                                            'src': manifest.src
+                                        }
+                                    });
+                                }
+                                ;
+                            });
+                            r();
+                        }).catch(function(error) {
+                            e(error);
                         });
-                        r();
-                    }).catch(function(error) {
-                        e(error);
-                    });
-                }
-            ).catch(function(error) {
-                console.log(error, 'error fetching external app manifest');
-                r();
+                    }
+                ).catch(function(error) {
+                    console.log(error, 'error fetching external app manifest');
+                    r();
+                });
+
             });
-        });
+        } else {
+            return Promise.resolve();
+        }
     });
 })(SUGAR.App);

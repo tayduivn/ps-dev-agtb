@@ -281,6 +281,7 @@ class MetaDataManager implements LoggerAwareInterface
             'merge_relate_update_timeout' => true,
             'merge_relate_max_attempt' => true,
         ),
+        'external_manifest_url' => true,
         'default_decimal_seperator' => true,
         'default_number_grouping_seperator' => true,
         'default_currency_significant_digits' => true,
