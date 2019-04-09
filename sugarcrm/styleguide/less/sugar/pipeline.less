@@ -13,66 +13,68 @@
 }
 
 .pipeline-records {
-  .search-name {
-    display: none;
-  }
+  .main-pane {
+    .headerpane {
+      border-bottom: 1px solid darken(@grayLighter, 10%);
+      top: 32px;
 
-  .headerpane {
-    border-bottom: none;
+      .btn-toolbar {
+        padding: 24px 24px 0 0;
+      }
 
-    .headerpaneContainer {
-      min-height: 55px;
-      border-bottom: 1px solid #ddd;
-      padding: 10px;
-      border-top: none;
-
-      .nav-tabs {
-        margin-bottom: 0;
-        padding-top: 26px;
-        min-height: 39px;
+      .headerpaneContainer {
+        min-height: 55px;
         border-bottom: none;
+        border-top: none;
 
-        &.pull-left {
-          .tab {
-            margin-left: 20px;
+        .nav-tabs {
+          margin-bottom: 0;
+          padding-top: 26px;
+          min-height: 39px;
+          border-bottom: none;
 
-            &:not(:first-child) {
-              min-width: 200px;
-              width: 200px;
-            }
+          &.pull-left {
+            .tab {
+              margin-left: 20px;
 
-            .stageButton {
-              height: 40px;
-              margin-left: 2px;
-              margin-right: 2px;
-              border-radius: 5px 5px 0 0;
-              line-height: 33px;
-              font-size: 12px;
-              outline: none;
-
-              &.selected {
-                background-color: #efefef;
-                background-image: -moz-linear-gradient(top, #fff, #efefef);
-                background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#efefef));
-                background-image: -webkit-linear-gradient(top, #fff, #efefef);
-                background-image: -o-linear-gradient(top, #fff, #efefef);
-                background-image: linear-gradient(to bottom, #fff, #efefef);
-                border-bottom: none;
+              &:not(:first-child) {
+                min-width: 200px;
+                width: 200px;
               }
 
-              &.input[type=radio] {
-                display: none;
+              .stageButton {
+                height: 40px;
+                margin-left: 2px;
+                margin-right: 2px;
+                border-radius: 5px 5px 0 0;
+                line-height: 33px;
+                font-size: 12px;
+                outline: none;
+
+                &.selected {
+                  background-color: @grayLighter;
+                  background-image: -moz-linear-gradient(top, @white, @grayLighter);
+                  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@white), to(@grayLighter));
+                  background-image: -webkit-linear-gradient(top, @white, @grayLighter);
+                  background-image: -o-linear-gradient(top, @white, @grayLighter);
+                  background-image: linear-gradient(to bottom, @white, @grayLighter);
+                  border-bottom: none;
+                }
+
+                &.input[type=radio] {
+                  display: none;
+                }
               }
             }
           }
-        }
 
-        .pull-right {
-          margin-right: 20px;
-          font-size: 20px;
+          .pull-right {
+            margin-right: 20px;
+            font-size: 20px;
 
-          .btn-group a > .fa {
-            color: #555;
+            .btn-group a > .fa {
+              color: @gray;
+            }
           }
         }
       }
