@@ -48,11 +48,19 @@ class IdmProviderTest extends TestCase
      */
     protected $sugarCache;
 
+    /** @var array */
+    protected $beanList;
+
     /**
      * @inheritdoc
      */
     protected function setUp()
     {
+        $this->beanList = isset($GLOBALS['beanList']) ? $GLOBALS['beanList'] : null;
+        $GLOBALS['beanList'] = [
+            'Administration' => MockAdministration::class,
+        ];
+
         $this->requestFactory = $this->getMockBuilder(RequestFactory::class)
                                      ->disableOriginalConstructor()
                                      ->setMethods(['getRequestWithOptions'])
@@ -89,6 +97,16 @@ class IdmProviderTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function tearDown()
+    {
+        $GLOBALS['beanList'] = $this->beanList;
+        parent::tearDown();
+    }
+
     public function getRequiredOptionsProvider()
     {
         return [
@@ -798,5 +816,124 @@ class IdmProviderTest extends TestCase
         $this->sugarCache->expects($this->never())->method('set');
 
         $provider->getUserInfo($token);
+    }
+
+    /**
+     * @return array
+     * @see testProviderHttpClientProxy
+     */
+    public function getHttpClientProxy(): array
+    {
+        return [
+            'proxyBase' => [
+                'adminSettings' => [
+                    'proxy_on' => 1,
+                    'proxy_host' => 'proxy.host.local',
+                    'proxy_port' => '9180',
+                ],
+                'expectsProxy' => 'proxy.host.local:9180',
+            ],
+            'proxyWithAuth' => [
+                'adminSettings' => [
+                    'proxy_on' => 1,
+                    'proxy_host' => 'proxy.host.local',
+                    'proxy_port' => '9180',
+                    'proxy_auth' => true,
+                    'proxy_username' => 'proxyUserName',
+                    'proxy_password' => 'proxyPassword',
+                ],
+                'expectsProxy' => 'proxyUserName:proxyPassword@proxy.host.local:9180',
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::createHttpClient
+     * @param array $adminSettings
+     * @param string $expectsProxy
+     * @dataProvider getHttpClientProxy
+     */
+    public function testProviderHttpClientProxy(array $adminSettings, string $expectsProxy): void
+    {
+        MockAdministration::$willReturn = $adminSettings;
+
+        $provider = $this->getMockBuilder(IdmProvider::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([[
+                'clientId' => 'test',
+                'clientSecret' => 'testSecret',
+                'redirectUri' => '',
+                'urlAuthorize' => '',
+                'urlAccessToken' => 'http://testUrlAccessToken',
+                'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+                'urlUserInfo' => 'http:://testUrlUserInfo',
+                'keySetId' => 'test',
+                'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                'idpUrl' => 'http://idp.test',
+            ]])
+            ->setMethods(['verifyGrant'])
+            ->getMock();
+
+        $httpClient = $provider->getHttpClient();
+        $config = $httpClient->getConfig();
+
+        $this->assertArrayHasKey('proxy', $config);
+        $this->assertEquals($expectsProxy, $config['proxy']);
+
+        $this->assertGreaterThanOrEqual(1, count(MockAdministration::$call));
+        $this->assertEquals('proxy', MockAdministration::$call[0][0]);
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::createHttpClient
+     */
+    public function testProviderHttpClientWithoutProxy(): void
+    {
+        MockAdministration::$willReturn = [
+            'proxy_on' => false,
+            'proxy_host' => 'proxy.host.local',
+            'proxy_port' => '9180',
+        ];
+
+        $provider = $this->getMockBuilder(IdmProvider::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([[
+                'clientId' => 'test',
+                'clientSecret' => 'testSecret',
+                'redirectUri' => '',
+                'urlAuthorize' => '',
+                'urlAccessToken' => 'http://testUrlAccessToken',
+                'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+                'urlUserInfo' => 'http:://testUrlUserInfo',
+                'keySetId' => 'test',
+                'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                'idpUrl' => 'http://idp.test',
+            ]])
+            ->setMethods(['verifyGrant'])
+            ->getMock();
+
+        $httpClient = $provider->getHttpClient();
+        $config = $httpClient->getConfig();
+
+        $this->assertArrayNotHasKey('proxy', $config);
+        $this->assertGreaterThanOrEqual(1, count(MockAdministration::$call));
+        $this->assertEquals('proxy', MockAdministration::$call[0][0]);
+    }
+}
+
+class MockAdministration
+{
+    static public $call = [];
+    static public $willReturn = [];
+
+    public $settings = [];
+
+    public function retrieveSettings($category = false, $clean = false)
+    {
+        static::$call[] = [$category, $clean];
+        $this->settings = static::$willReturn;
+        return $this;
     }
 }

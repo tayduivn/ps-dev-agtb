@@ -21,6 +21,25 @@ use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager
  */
 class AuthProviderManagerBuilderTest extends TestCase
 {
+
+    /** @var array */
+    protected $beanList;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->beanList = isset($GLOBALS['beanList']) ? $GLOBALS['beanList'] : null;
+        $GLOBALS['beanList'] = [
+            'Administration' => MockAdministration::class,
+        ];
+    }
+
+    protected function tearDown()
+    {
+        $GLOBALS['beanList'] = $this->beanList;
+        parent::tearDown();
+    }
+
     /**
      * @covers ::buildAuthProviders
      */
@@ -387,5 +406,14 @@ class AuthProviderManagerBuilderTest extends TestCase
             ],
         ];
         return $sugar_config;
+    }
+}
+
+class MockAdministration
+{
+    public $settings = [];
+    public function retrieveSettings($category = false, $clean = false)
+    {
+        return $this;
     }
 }

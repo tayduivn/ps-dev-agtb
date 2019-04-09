@@ -365,10 +365,32 @@ class IdmProvider extends BasicGenericProvider
         );
 
         $options['handler'] = $handlerStack;
+        $proxyConfig = $this->getHTTPClientProxy();
+        if (!empty($proxyConfig)) {
+            $options['proxy'] = $proxyConfig;
+        }
 
         return new HttpClient(
             array_intersect_key($options, array_flip($this->getAllowedClientOptions($options)))
         );
+    }
+
+    /**
+     * Return HTTP client proxy
+     *
+     * @return string
+     */
+    protected function getHTTPClientProxy(): string
+    {
+        $url = '';
+        $config = \Administration::getSettings('proxy');
+        if (!empty($config->settings) && !empty($config->settings['proxy_on'])) {
+            $url = $config->settings['proxy_host'] . ':' . $config->settings['proxy_port'];
+            if (!empty($config->settings['proxy_auth'])) {
+                $url = $config->settings['proxy_username'] . ':' . $config->settings['proxy_password'] . '@' . $url;
+            }
+        }
+        return $url;
     }
 
     /**
