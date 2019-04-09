@@ -66,6 +66,8 @@
         var listViewMeta = app.metadata.getView(options.module, 'multi-line-list') || {};
         options.meta = _.extend({}, defaultMeta, listViewMeta, options.meta || {});
 
+        this._setCollectionOption(options);
+
         this._super('initialize', [options]);
 
         this.leftColumns = [];
@@ -82,6 +84,26 @@
         this.events = _.extend({}, this.events, leftColumnsEvents, {
             'click .multi-line-row': 'handleRowClick',
         });
+    },
+
+    /**
+     * Set collection option and filterDef
+     *
+     * @param {Object} options object for the view
+     */
+    _setCollectionOption: function(options) {
+        var collection = options.context.get('collection');
+        if (!collection) {
+            collection = app.data.createBeanCollection(options.module);
+            options.context.set({collection: collection});
+        }
+        var meta = options.meta || {};
+        if (meta.collectionOptions) {
+            collection.setOption(meta.collectionOptions);
+        }
+        if (meta.filterDef) {
+            collection.filterDef = meta.filterDef;
+        }
     },
 
     /**

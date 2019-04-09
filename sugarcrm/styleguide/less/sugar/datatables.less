@@ -236,12 +236,6 @@
       }
     }
 
-    &.subfields {
-      > span:not(.overflow-visible) {
-        display: block;
-      }
-    }
-
     .btn-toolbar {
       margin: -5px 0 -10px;
     }
@@ -1392,6 +1386,36 @@ div.audit-email {
 
       i {
         font-size: 14px;
+      }
+    }
+  }
+}
+
+/* Multi-line-list */
+.dataTable.multi-line-table {
+  th {
+    font-size: 13px;
+    font-weight: bold;
+    padding: 2px 4px;
+    background-color: @contentBackground;
+  }
+
+  td {
+    &.subfields {
+      font-size: 13px;
+      vertical-align: top;
+      padding: 2px;
+      overflow: hidden;
+
+      .subfield {
+        height: 20px;
+        padding: 2px;
+
+        .label {
+          border: none;
+          line-height: 16px;
+          font-size: 13px;
+        }
       }
     }
   }

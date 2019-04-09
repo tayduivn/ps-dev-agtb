@@ -25,6 +25,7 @@ describe('Base.View.MultiLineListView', function() {
     describe('initialize', function() {
         it('should initialize with module-specified view metadata', function() {
             var initializedStub = sinon.collection.stub(view, '_super');
+            var getStub = sinon.collection.stub().returns(true);
             var panels = [
                 {
                     'label': 'LBL_PANEL_1',
@@ -70,11 +71,13 @@ describe('Base.View.MultiLineListView', function() {
 
             view.initialize({
                 module: 'Cases',
+                context: {get: getStub},
             });
 
             expect(initializedStub).toHaveBeenCalledWith('initialize', [{
                 module: 'Cases',
                 meta: {rowactions: rowactions, panels: panels},
+                context: {get: getStub},
             }]);
         });
     });
@@ -389,6 +392,62 @@ describe('Base.View.MultiLineListView', function() {
             $buttonGroup.offset.returns({top: 601});
             view.updateDropdownDirection(event);
             expect($buttonGroup.toggleClass).toHaveBeenCalledWith('dropup');
+        });
+    });
+
+    describe('_setCollectionOption', function() {
+        var options;
+
+        beforeEach(function() {
+            options = {
+                module: 'Cases',
+                context: {
+                    get: sinon.collection.stub(),
+                    set: sinon.collection.stub(),
+                },
+            };
+        });
+
+        afterEach(function() {
+            options = null;
+        });
+
+        it('should create and set collection on context', function() {
+            var mockCollection = {whateverProp: 'whateverValue'};
+            var createCollectionStub = sinon.collection.stub(app.data, 'createBeanCollection');
+            options.context.get.withArgs('collection').returns(undefined);
+
+            view._setCollectionOption(options);
+            expect(createCollectionStub).toHaveBeenCalledWith('Cases');
+            expect(options.context.set).toHaveBeenCalled();
+        });
+
+        it('should not set collection option and filterDef when not available', function() {
+            var mockCollection = {
+                whateverProp: 'whateverValue',
+                setOption: sinon.collection.stub(),
+            };
+            options.context.get.withArgs('collection').returns(mockCollection);
+
+            view._setCollectionOption(options);
+            expect(mockCollection.setOption).not.toHaveBeenCalled();
+            expect(mockCollection.filterDef).toBeUndefined();
+        });
+
+        it('should set collection option and filterDef when available', function() {
+            var mockCollection = {
+                whateverProp: 'whateverValue',
+                setOption: sinon.collection.stub(),
+            };
+            options.context.get.withArgs('collection').returns(mockCollection);
+            options.meta = {
+                collectionOptions: {sampleProps: 'sampleValue'},
+                filterDef: {fakeFilterDef: 'fakeFilterValue'},
+            };
+
+            view._setCollectionOption(options);
+            expect(mockCollection.setOption).toHaveBeenCalledWith({sampleProps: 'sampleValue'});
+            expect(mockCollection.filterDef).toEqual({fakeFilterDef: 'fakeFilterValue'});
         });
     });
 });

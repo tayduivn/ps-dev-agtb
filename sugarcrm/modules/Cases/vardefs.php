@@ -58,6 +58,23 @@ $dictionary['Case'] = array(
             'comment' => 'The account to which the case is associated',
         ),
 // BEGIN SUGARCRM flav=ent ONLY
+        'service_level' => array(
+            'name' => 'service_level',
+            'rname' => 'service_level',
+            'id_name' => 'account_id',
+            'vname' => 'LBL_SERVICE_LEVEL',
+            'type' => 'relate',
+            'link' => 'accounts',
+            'table' => 'accounts',
+            'join_name' => 'accounts',
+            'isnull' => 'true',
+            'module' => 'Accounts',
+            'source' => 'non-db',
+            'reportable' => false,
+            'massupdate' => false,
+            'comment' => 'Service level of the associated account of case',
+            'readonly' => true,
+        ),
         'business_center_name' => array(
             'name' => 'business_center_name',
             'rname' => 'name',

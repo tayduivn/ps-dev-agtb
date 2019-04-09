@@ -11,11 +11,11 @@
  */
 --}}
 {{#each meta.panels}}
-    <table class="table table-striped dataTable">
+    <table class="table table-striped dataTable multi-line-table">
         <thead>
             <tr>
                 {{#each ../leftColumns}}
-                    <th class='left-column'></th>
+                    <th class="cell-xxsmall"></th>
                 {{/each}}
                 {{#each fields}}
                     <th class="{{#if widthClass}} {{widthClass}}{{/if}}"
@@ -37,7 +37,9 @@
                     {{#each ../fields}}
                         <td class="subfields{{#if align}} {{align}}{{/if}}">
                             {{#each subfields}}
-                                {{field ../../../../this model=../../this template=../../../../viewName}}
+                                <div class="subfield">
+                                    {{field ../../../../this model=../../this template=../../../../viewName}}
+                                </div>
                             {{/each}}
                         </td>
                     {{/each}}

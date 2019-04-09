@@ -89,6 +89,20 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'readonly' => true,
                 ),
                 array(
+                    'name' => 'business_center_name',
+                    'label' => 'LBL_TIME_TO_RESOLUTION',
+                    'default' => false,
+                    'enabled' => true,
+                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'service_level',
+                    'label' => 'LBL_TIME_TO_RESOLUTION',
+                    'default' => false,
+                    'enabled' => true,
+                    'readonly' => true,
+                ),
+                array(
                     'name' => 'follow_up_datetime',
                     'type' => 'relative-time',
                     'label' => 'LBL_FOLLOW_UP',
