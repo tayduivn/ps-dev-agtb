@@ -173,6 +173,9 @@ class SaveTest extends TestCase
         $current_user->retrieve($current_user->id);
         $user2->retrieve($user2->id);
 
+        $currentUserIndex = ($ea->id == $current_user->emailAddress->addresses[0]['email_address_id']) ? 0 : 1;
+        $user2Index = ($ea->id == $user2->emailAddress->addresses[0]['email_address_id']) ? 0 : 1;
+
         $this->assertCount(
             2,
             $current_user->emailAddress->addresses,
@@ -180,7 +183,7 @@ class SaveTest extends TestCase
         );
         $this->assertEquals(
             1,
-            $current_user->emailAddress->addresses[1]['invalid_email'],
+            $current_user->emailAddress->addresses[$currentUserIndex]['invalid_email'],
             'The email address should be have been marked invalid'
         );
 
@@ -205,24 +208,24 @@ class SaveTest extends TestCase
         );
         $this->assertEquals(
             0,
-            $user2->emailAddress->addresses[1]['invalid_email'],
+            $user2->emailAddress->addresses[$user2Index]['invalid_email'],
             'The email address should not have been changed'
         );
         $this->assertEquals(
             $ea->id,
-            $user2->emailAddress->addresses[1]['email_address_id'],
+            $user2->emailAddress->addresses[$user2Index]['email_address_id'],
             'user2 should still be linked to address1'
         );
         $this->assertEquals(
             $address1,
-            $user2->emailAddress->addresses[1]['email_address'],
+            $user2->emailAddress->addresses[$user2Index]['email_address'],
             'user2 should still have address1'
         );
 
         // None of user2's email addresses should be address2.
         foreach ($user2->emailAddress->addresses as $address) {
             $this->assertNotEquals(
-                $current_user->emailAddress->addresses[1]['email_address_id'],
+                $current_user->emailAddress->addresses[$user2Index]['email_address_id'],
                 $address['email_address_id'],
                 "user2 should not be linked to {$address2}"
             );
@@ -304,6 +307,9 @@ class SaveTest extends TestCase
         $current_user->retrieve($current_user->id);
         $user2->retrieve($user2->id);
 
+        $currentUserIndex = ($ea->id == $current_user->emailAddress->addresses[0]['email_address_id']) ? 0 : 1;
+        $user2Index = ($ea->id == $user2->emailAddress->addresses[0]['email_address_id']) ? 0 : 1;
+
         $this->assertCount(
             2,
             $current_user->emailAddress->addresses,
@@ -311,17 +317,17 @@ class SaveTest extends TestCase
         );
         $this->assertEquals(
             $ea->id,
-            $current_user->emailAddress->addresses[1]['email_address_id'],
+            $current_user->emailAddress->addresses[$currentUserIndex]['email_address_id'],
             'The current user should still be linked to address'
         );
         $this->assertEquals(
             $address,
-            $current_user->emailAddress->addresses[1]['email_address'],
+            $current_user->emailAddress->addresses[$currentUserIndex]['email_address'],
             'The current user should still have address'
         );
         $this->assertEquals(
             1,
-            $current_user->emailAddress->addresses[1]['invalid_email'],
+            $current_user->emailAddress->addresses[$currentUserIndex]['invalid_email'],
             'The email address should be have been marked invalid for the current user'
         );
 
@@ -332,17 +338,17 @@ class SaveTest extends TestCase
         );
         $this->assertEquals(
             $ea->id,
-            $user2->emailAddress->addresses[1]['email_address_id'],
+            $user2->emailAddress->addresses[$user2Index]['email_address_id'],
             'user2 should still be linked to address'
         );
         $this->assertEquals(
             $address,
-            $user2->emailAddress->addresses[1]['email_address'],
+            $user2->emailAddress->addresses[$user2Index]['email_address'],
             'user2 should still have address'
         );
         $this->assertEquals(
             1,
-            $user2->emailAddress->addresses[1]['invalid_email'],
+            $user2->emailAddress->addresses[$user2Index]['invalid_email'],
             'The email address should be have been marked invalid for user2'
         );
     }
