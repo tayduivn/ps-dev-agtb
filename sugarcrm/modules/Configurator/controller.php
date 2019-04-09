@@ -74,26 +74,6 @@ class ConfiguratorController extends SugarController
         $this->view = 'fontmanager';
     }
 
-    /**
-     * Delete a font and go back to the font manager
-     */
-    function action_deleteFont(){
-        global $current_user;
-        if(!is_admin($current_user)){
-            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
-        }
-        $urlSTR = 'index.php?module=Configurator&action=FontManager';
-        $filename = $this->request->getValidInputRequest('filename', 'Assert\File');
-        if ($filename) {
-            $fontManager = new FontManager();
-            $fontManager->filename = $filename;
-            if(!$fontManager->deleteFont()){
-                $urlSTR .='&error='.urlencode(implode("<br>",$fontManager->errors));
-            }
-        }
-        header("Location: $urlSTR");
-    }
-
     function action_listview(){
         global $current_user;
         if(!is_admin($current_user)){
