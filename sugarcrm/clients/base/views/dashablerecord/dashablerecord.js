@@ -187,7 +187,7 @@
     /**
      * @override
      */
-    delegateButtonEvents() {
+    delegateButtonEvents: function() {
         // don't do anything, we don't have any of the buttons from the regular record view
         // For CS-55 we may want to change that.
     },
