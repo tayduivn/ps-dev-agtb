@@ -796,6 +796,10 @@ class HealthCheckScanner
 
         $this->verifyUtf8mb4MaximumRowSizeLimit($collationTarget);
 
+        // Make sure ActivityStreamPurger is not installed as a Module Loadable Package.
+        // If so, It has to be Uninstalled - It is now a Sugar OOTB Scheduled job.
+        $this->verifyActivityStreamPurgerNotInstalledAsMLP();
+
         // Check global hooks
         $this->log("Checking global hooks");
         $hook_files = array();
@@ -5014,6 +5018,23 @@ ENDP;
                 $this->log("Failed trying to drop temporary table: {$tempTableName}");
                 $this->updateStatus('cannotRemoveTemporaryTable', $tempTableName);
             }
+        }
+    }
+
+    /**
+     * We need to make sure we don't collide with a version of the ActivityStreamPurger that was available as a Module
+     * Loadable Package. This Sugar OOTB scheduler version is based on, and replaces that MLP version. It needs to be
+     * removed prior to upgrade.
+     */
+    protected function verifyActivityStreamPurgerNotInstalledAsMLP()
+    {
+        $this->log('Verify the ActivityStreamPurger has not been previously installed as a Module Loadable Package');
+
+        $idName = 'activitystreampurger';  // 'id_name' name of the ActivityStreamPurger MLP
+        $uh = new UpgradeHistory();
+        $uhRecord = $uh->findInstalledVersion($idName);
+        if (!empty($uhRecord)) {
+            $this->updateStatus('activityStreamPurgerInstalledAsMlp', $idName);
         }
     }
 

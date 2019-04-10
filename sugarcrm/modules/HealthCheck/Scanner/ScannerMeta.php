@@ -612,6 +612,13 @@ class HealthCheckScannerMeta
             'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Cannot_Perform_Collation_Conversion_On_Table/',
             //@codingStandardsIgnoreEnd
         ),
+        581 => array(
+            'report' => 'activityStreamPurgerInstalledAsMlp',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Activity_Stream_Purger_Installed_As_Mlp/',
+            //@codingStandardsIgnoreEnd
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(

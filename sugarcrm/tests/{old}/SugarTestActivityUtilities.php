@@ -15,11 +15,14 @@ class SugarTestActivityUtilities
 {
     private static $_createdActivities = array();
 
-    public static function createUnsavedActivity($new_id = '')
+    public static function createUnsavedActivity($new_id = '', $activityValues = array())
     {
         $time = mt_rand();
         $data = array('value' => 'SugarActivity' . $time);
         $activity = BeanFactory::newBean('Activities');
+        foreach ($activityValues as $property => $value) {
+            $activity->$property = $value;
+        }
         $activity->data = $data;
         if (!empty($new_id)) {
             $activity->new_with_id = true;
@@ -28,10 +31,10 @@ class SugarTestActivityUtilities
         return $activity;
     }
 
-    public static function createActivity($new_id = '')
+    public static function createActivity($new_id = '', $activityValues = array())
     {
         Activity::enable();
-        $activity = self::createUnsavedActivity($new_id);
+        $activity = self::createUnsavedActivity($new_id, $activityValues);
         $activity->save();
         Activity::restoreToPreviousState();
         $GLOBALS['db']->commit();
@@ -72,5 +75,16 @@ class SugarTestActivityUtilities
             $activity_ids[] = $activity->id;
         }
         return $activity_ids;
+    }
+
+    public static function activityExists($id, $deleted = false)
+    {
+        $sql = "SELECT id FROM activities WHERE id='{$id}'";
+        if (!$deleted) {
+            $sql .= ' AND deleted=0';
+        }
+        $result = $GLOBALS['db']->query($sql);
+        $row = $GLOBALS['db']->fetchByAssoc($result);
+        return !empty($row['id']);
     }
 }
