@@ -368,6 +368,9 @@ VardefManager::createVardef('Cases', 'Case', array(
 //defined in the field_arrays.php file
 $dictionary['Case']['fields']['name']['importable'] = 'required';
 
+//need to handle large mail
+$dictionary['Case']['fields']['description']['dbtype'] = 'longtext';
+
 //boost value for full text search
 $dictionary['Case']['fields']['name']['full_text_search']['boost'] = 1.53;
 $dictionary['Case']['fields']['case_number']['full_text_search']['boost'] = 1.29;
