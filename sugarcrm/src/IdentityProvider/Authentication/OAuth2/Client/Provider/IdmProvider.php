@@ -137,7 +137,7 @@ class IdmProvider extends BasicGenericProvider
      */
     protected function getAllowedClientOptions(array $options)
     {
-        return array_merge(parent::getAllowedClientOptions($options), ['handler']);
+        return array_merge(parent::getAllowedClientOptions($options), ['handler', 'verify']);
     }
 
     /**
@@ -368,6 +368,10 @@ class IdmProvider extends BasicGenericProvider
         $proxyConfig = $this->getHTTPClientProxy();
         if (!empty($proxyConfig)) {
             $options['proxy'] = $proxyConfig;
+        }
+
+        if (isset($config['http_client']['verify'])) {
+            $options['verify'] = $config['http_client']['verify'];
         }
 
         return new HttpClient(
