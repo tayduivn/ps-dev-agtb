@@ -57,6 +57,9 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
   * for 510, added:
   * dceActionCleanup.php
   */
+if (in_array('phar', stream_get_wrappers())) {
+    stream_wrapper_unregister('phar');
+}
 
 $GLOBALS['starttTime'] = microtime(true);
 
