@@ -39,7 +39,13 @@ $viewdefs['Users']['EditView'] = array(
                       'customCode' =>
                           '{if $IS_ADMIN && !$IDM_MODE_ENABLED}{$USER_TYPE_DROPDOWN}{else}{$USER_TYPE_READONLY}{/if}',
                       ),
+                array(
+                    'name' => 'license_type',
+                    'customCode' =>
+                        '{if $IS_ADMIN}{$LICENSE_TYPE_DROPDOWN}{else}{$LICENSE_TYPE_READONLY}{/if}',
+                    ),
                 ),
+
             array('picture'),
         ),
         'LBL_EMPLOYEE_INFORMATION' => array(

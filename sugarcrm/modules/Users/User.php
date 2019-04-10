@@ -79,6 +79,13 @@ class User extends Person {
 	var $importable = true;
     public $site_user_id;
 
+    /**
+     * @var string, license type associated with the user
+     */
+    public $license_type;
+
+    const DEFAULT_LICENSE_TYPE = 'CURRENT';
+
     static protected $demoUsers = array(
         'jim',
         'jane',
@@ -2733,5 +2740,21 @@ class User extends Person {
         parent::mark_deleted($id);
 
         Container::getInstance()->get(Listener::class)->userDeleted($id);
+    }
+
+    /**
+     * set license type
+     * @param string $type
+     */
+    public function setLicenseType(string $type = self::DEFAULT_LICENSE_TYPE)
+    {
+        if (empty($this->license_type)) {
+            $this->license_type = self::DEFAULT_LICENSE_TYPE;
+        }
+
+        global $current_user;
+        if (is_admin($current_user)) {
+            $this->license_type = $type;
+        }
     }
 }

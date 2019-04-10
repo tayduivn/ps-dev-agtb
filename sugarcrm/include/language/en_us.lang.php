@@ -599,6 +599,11 @@ $app_list_strings = array (
     'RegularUser' => 'Regular User',
     'Administrator' => 'Administrator',
   ),
+  'license_type_dom' =>
+    array (
+        'CURRENT' => 'current product',
+        'SERVICE_CLOUD' => 'Service Cloud',
+    ),
   'user_status_dom' =>
   array (
     'Active' => 'Active',

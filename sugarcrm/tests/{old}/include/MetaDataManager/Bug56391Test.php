@@ -92,6 +92,7 @@ class Bug56391Test extends TestCase
                                     'reports_to_link' => array( 'write' => 'no', 'create' => 'no', ),
                                     'is_admin' => array('write' => 'no', 'create' => 'no',  ),
                                     'last_login' => array( 'read' => 'no', 'write' => 'no', 'create' => 'no',  ),
+            'license_type' => array('write' => 'no', 'create' => 'no'),
                                 );
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);

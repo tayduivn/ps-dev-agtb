@@ -81,6 +81,7 @@ class UserViewHelper {
         $this->assignUserTypes();
         $this->setupButtonsAndTabs();
         $this->setupUserTypeDropdown();
+        $this->setupLicenseTypeDropdown();
         $this->setupPasswordTab();
         $this->setupEmailSettings();
         $this->setupAdvancedTab();
@@ -278,6 +279,70 @@ class UserViewHelper {
         $this->ss->assign('USER_TYPE_READONLY',$userTypes[$userType]['label'] . "<input type='hidden' id='UserType' value='{$userType}'><div id='UserTypeDesc'>&nbsp;</div>");
 
         $this->ss->assign('IDM_MODE_ENABLED', $idpConfig->isIDMModeEnabled());
+    }
+
+    /**
+     * setupLicenseTypeDropdown
+     *
+     * This function handles setting up the license type dropdown field.  It determines which license types are available for the current user.
+     * At the end of the function two Smarty variables (LICENSE_TYPE_DROPDOWN and LICENSE_TYPE_READONLY) are assigned.
+     *
+     */
+    public function setupLicenseTypeDropdown()
+    {
+        //if this is an existing bean and license type is empty, then populate default license type
+        if (!empty($this->bean->id) && empty($this->bean->license_type)) {
+            $this->bean->setLicenseType();
+        }
+
+        $licenseType = $this->bean->license_type;
+
+        // TBD, determine if service cloud is entitled
+        $licenseTypes = array(
+            'SERVICE_CLOUD' => array(
+                'label' => translate('LBL_LICENSE_SERVICE_CLOUD', 'Users'),
+                'description' => translate('LBL_LICENSE_SERVICE_CLOUD', 'Users'),
+            ),
+            User::DEFAULT_LICENSE_TYPE => array(
+                'label' => translate('LBL_LICENSE_CURRENT_PROD', 'Users'),
+                'description' => translate('LBL_LICENSE_CURRENT_PROD', 'Users'),
+            ),
+        );
+
+        // get from entitlement list
+        if ($this->ss->get_template_vars('IS_SUPER_ADMIN')) {
+            $availableLicenseTypes = array(
+                'Service Cloud',
+                User::DEFAULT_LICENSE_TYPE,
+            );
+        } else {
+            $availableLicenseTypes = [$licenseType];
+        }
+
+
+        $licenseTypesDropdown = '<select id="LicenseType" name="LicenseType" ';
+        if (count($availableLicenseTypes) == 1) {
+            $licenseTypesDropdown .= ' disabled ';
+        }
+        $licenseTypesDropdown .= '>';
+
+        $setSelected = !empty($this->bean->id);
+
+        foreach ($availableLicenseTypes as $currType) {
+            if ($setSelected && $currType == $licenseType) {
+                $licenseTypesDropdown .= '<option value="'.$currType.'" SELECTED>'.$licenseTypes[$currType]['label'].'</option>';
+            } else {
+                $licenseTypesDropdown .= '<option value="'.$currType.'">'.$licenseTypes[$currType]['label'].'</option>';
+            }
+        }
+        $licenseTypesDropdown .= '</select><div id="LicenseTypeDesc">&nbsp;</div>';
+
+        $this->ss->assign('LICENSE_TYPE_DROPDOWN', $licenseTypesDropdown);
+        $this->ss->assign(
+            'LICENSE_TYPE_READONLY',
+            $licenseTypes[$licenseType]['label']
+            . "<input type='hidden' id='LicenseType' value='{$licenseType}'><div id='LicenseTypeDesc'>&nbsp;</div>"
+        );
     }
 
     protected function setupPasswordTab() {

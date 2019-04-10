@@ -424,6 +424,17 @@ $dictionary['User'] = array(
             'reportable' => false,
             'studio' => array('formula' => false),
         ),
+        'license_type' => array(
+            'name' => 'license_type',
+            'vname' => 'LBL_LICENSE_TYPE',
+            'type' => 'varchar',
+            'len' => '50',
+            'options' => 'license_type_dom',
+     //       'source' => 'non-db',
+            'import' => false,
+            'reportable' => false,
+            'studio' => array('formula' => false),
+        ),
         'default_team' => array(
             'name' => 'default_team',
             'vname' => 'LBL_DEFAULT_TEAM',
