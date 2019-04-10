@@ -840,7 +840,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         break;
                     case 'date':
                         // convert to server format before sending
-                        var date = new App.date(label, App.date.getUserDateFormat());
+                        var date = new this.sugarApp.date(label, this.sugarApp.date.getUserDateFormat());
                         values.push(date.formatServer(true));
                         break;
                     default:
