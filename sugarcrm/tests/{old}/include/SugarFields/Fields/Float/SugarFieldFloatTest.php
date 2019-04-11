@@ -194,44 +194,4 @@ class SugarFieldFloatTest extends TestCase
             );
         }
     }
-
-    public function dataProviderFixForWholeNumbers()
-    {
-        return array(
-            array('$equals', 10),
-            array('$not_equals', 10),
-            array('$between', array(10, 100)),
-            array('$lt', 10),
-            array('$lte', 10),
-            array('$gt', 10),
-            array('$gte', 10),
-        );
-    }
-
-    /**
-     *
-     * @dataProvider dataProviderFixForWholeNumbers
-     * @param String $op                The Filer Operation
-     * @param Number $value             The Value we are looking for
-     */
-    public function testFixForFilterForWholeNumbers($op, $value)
-    {
-        $bean = BeanFactory::newBean('RevenueLineItems');
-
-        /* @var $where SugarQuery_Builder_Where */
-        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /* @var $bean RevenueLineItem */
-        $q = new SugarQuery();
-        $q->from($bean);
-
-        $field = new SugarFieldFloat('float');
-
-        $ret = $field->fixForFilter($value, 'unit_test', $bean, $q, $where, $op);
-
-        // should always return true
-        $this->assertTrue($ret);
-    }
 }
