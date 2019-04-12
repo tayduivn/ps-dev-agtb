@@ -170,7 +170,7 @@
     toggleView: function (e) {
         var $el = this.$(e.currentTarget);
         // Only toggle if we click on an inactive button
-        if (!$el.hasClass("active")) {
+        if (!$el.hasClass('active')) {
             var data = $el.data();
             if (data.route) {
                 app.router.navigate(this.module + '/' + data.route, {trigger: true});

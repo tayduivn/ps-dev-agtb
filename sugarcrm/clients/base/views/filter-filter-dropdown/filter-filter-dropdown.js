@@ -121,26 +121,30 @@
         if (this.layout.canCreateFilter()) {
             filters.push({id: 'create', text: app.lang.get(this.labelCreateNewFilter)});
         }
-        if (this.layout.filters.collection.get('all_records') && this.labelAllRecordsFormatted) {
-            this.layout.filters.collection.get('all_records').set('name', this.labelAllRecordsFormatted);
-            this.layout.filters.collection.sort();
-        }
-        // This flag is used to determine when we have to add the border top (to separate categories)
-        var firstNonEditable = false;
-        this.layout.filters.collection.each(function(model) {
-            var creator = model.get('created_by');
-            if (!creator || creator === app.user.get('id')) {
-                var opts = {
-                    id: model.id,
-                    text: this.layout.filters.collection._getTranslatedFilterName(model)
-                };
-                if (model.get('editable') === false && !firstNonEditable) {
-                    opts.firstNonUserFilter = true;
-                    firstNonEditable = true;
-                }
-                filters.push(opts);
+
+        if (this.layout.filters && this.layout.filters.collection) {
+            var allRecordsFilter = this.layout.filters.collection.get('all_records');
+            if (allRecordsFilter && this.labelAllRecordsFormatted) {
+                allRecordsFilter.set('name', this.labelAllRecordsFormatted);
+                this.layout.filters.collection.sort();
             }
-        }, this);
+            // This flag is used to determine when we have to add the border top (to separate categories)
+            var firstNonEditable = false;
+            this.layout.filters.collection.each(function(model) {
+                var creator = model.get('created_by');
+                if (!creator || creator === app.user.get('id')) {
+                    var opts = {
+                        id: model.id,
+                        text: this.layout.filters.collection._getTranslatedFilterName(model)
+                    };
+                    if (model.get('editable') === false && !firstNonEditable) {
+                        opts.firstNonUserFilter = true;
+                        firstNonEditable = true;
+                    }
+                    filters.push(opts);
+                }
+            }, this);
+        }
 
         return filters;
     },

@@ -20,9 +20,6 @@
             {{/each}}
         </ul>
         <div class="pull-right btn-toolbar">
-            {{#each meta.buttons}}
-                {{field ../this}}
-            {{/each}}
             <div class="btn-group" data-toggle="buttons-radio">
                 <a type="button" class="btn active" data-view="pipeline" data-mode="view"
                    rel="tooltip" title="" track="click:pipeline" data-original-title="{{str 'LBL_PIPELINE_VIEW_NAME'}}" tabindex="-1"
@@ -34,6 +31,9 @@
                     <i class="fa fa-table"></i>
                 </a>
             </div>
+            {{#each meta.buttons}}
+                {{field ../this}}
+            {{/each}}
         </div>
     </div>
 </div>

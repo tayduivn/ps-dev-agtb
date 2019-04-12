@@ -38,18 +38,6 @@
         this.collection.setOption('filter', filter);
         this.collection.setOption('params', {order_by: 'date_modified:DESC'});
         this.collection.setOption('limit', 2); // At most 2 rows - default config and user config (if any).
-        this.collection.fetch(
-            {
-                success: _.bind(this.setPipelineType, this)
-            }
-        );
-    },
-
-    /**
-     * Calls the render method
-     * @param data
-     */
-    setPipelineType: function(data) {
-        this.render();
+        this.collection.fetch();
     }
 })

@@ -81,13 +81,4 @@ describe('Base.Layouts.PipelineRecords', function() {
             expect(layout.collection.fetch).toHaveBeenCalled();
         });
     });
-
-    describe('setPipelineType()', function() {
-        it('should call render', function() {
-            sinon.collection.stub(layout, 'render');
-            layout.setPipelineType();
-
-            expect(layout.render).toHaveBeenCalled();
-        });
-    });
 });

@@ -98,10 +98,24 @@ class VisualPipelineDefaults
                 'Tasks' => array(
                     'contact_name',
                     'parent_name',
-                    'due_date',
+                    'date_due',
                 ),
             ),
             'records_per_column' => '10',
+            'header_colors' => array(
+                '#36850F',
+                '#ED0C0D',
+                '#5122FC',
+                '#AB172C',
+                '#90299E',
+                '#00856F',
+                '#016FAA',
+                '#BC3CCD',
+                '#BD5800',
+                '#1202F5',
+                '#757575',
+                '#4A4A4A',
+            ),
         );
     }
 }
