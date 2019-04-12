@@ -138,7 +138,7 @@ class Config
 
         $additional = array_merge($additional, array_map('urlencode', $parts));
 
-        return join('/', array_merge([$serverUrl], $additional));
+        return join('/', array_merge([$serverUrl], $additional)) . '?tenant_hint=' . urlencode($config['tid']);
     }
 
     /**

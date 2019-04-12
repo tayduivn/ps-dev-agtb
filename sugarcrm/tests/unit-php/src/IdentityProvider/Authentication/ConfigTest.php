@@ -1008,8 +1008,9 @@ class ConfigTest extends TestCase
                     'cloudConsoleRoutes' => [
                         'userManagement' => '/management/users/',
                     ],
+                    'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://console.sugarcrm.local/management/users',
+                'http://console.sugarcrm.local/management/users?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
             ],
             'path-key-not-found' => [
                 'some-unknown-route',
@@ -1017,8 +1018,9 @@ class ConfigTest extends TestCase
                 [
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     'cloudConsoleRoutes' => [],
+                    'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://console.sugarcrm.local',
+                'http://console.sugarcrm.local?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
             ],
             'path-key-found-and-3-parts-exist' => [
                 'userManagement',
@@ -1032,8 +1034,9 @@ class ConfigTest extends TestCase
                     'cloudConsoleRoutes' => [
                         'userManagement' => 'management/users',
                     ],
+                    'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://foo.bar/management/users/a/some-id/policies',
+                'http://foo.bar/management/users/a/some-id/policies?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
             ],
             'no-parts-url-has-slashes' => [
                 'userManagement',
@@ -1041,8 +1044,9 @@ class ConfigTest extends TestCase
                 [
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local//',
                     'cloudConsoleRoutes' => [],
+                    'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://console.sugarcrm.local',
+                'http://console.sugarcrm.local?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
             ],
             'parts-with-non-url-characters' => [
                 'userManagement',
@@ -1053,8 +1057,9 @@ class ConfigTest extends TestCase
                 [
                     'cloudConsoleUrl' => 'http://foo.bar',
                     'cloudConsoleRoutes' => [],
+                    'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://foo.bar/user/%D0%98%D0%BC%D1%8F',
+                'http://foo.bar/user/%D0%98%D0%BC%D1%8F?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
             ],
         ];
     }

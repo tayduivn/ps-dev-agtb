@@ -247,7 +247,9 @@ class MetaDataManagerTest extends TestCase
                     ],
                     'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
                     'idmModeEnabled' => true,
-                    'cloudConsoleForgotPasswordUrl' => 'http://console.sugarcrm.local/forgot-password/' . urlencode('srn:cloud:iam:eu:0000000001:tenant'),
+                    'cloudConsoleForgotPasswordUrl' => 'http://console.sugarcrm.local/forgot-password/'
+                        . urlencode('srn:cloud:iam:eu:0000000001:tenant') . '?tenant_hint='
+                        . urlencode('srn:cloud:iam:eu:0000000001:tenant'),
                     'stsUrl' => 'http://sts.sugarcrm.local',
                     'tenant' => 'srn:cloud:iam:eu:0000000001:tenant',
                     'externalLoginSameWindow' => true,
