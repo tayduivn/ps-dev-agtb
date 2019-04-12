@@ -65,9 +65,13 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'workflow' => false,
         ),
         'sales_stage' => array(
+            'calculated' => true,
+            'enforced' => true,
+            'formula' => 'opportunitySalesStage($revenuelineitems, "sales_stage")',
+            'readonly' => true,
             'audited' => false,
             'required' => false,
-            'studio' => false,
+            'studio' => true,
             'massupdate' => false,
             'reportable' => false,
             'workflow' => false,
@@ -124,7 +128,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
      */
     public function doMetadataConvert()
     {
-        // always runt he parent first, since we need to fix the vardefs before doing the viewdefs
+        // always run the parent first, since we need to fix the vardefs before doing the viewdefs
         parent::doMetadataConvert();
 
         // fix the view defs now

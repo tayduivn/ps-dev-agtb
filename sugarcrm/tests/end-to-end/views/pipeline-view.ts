@@ -26,7 +26,7 @@ export default class PipelineView extends BaseListView {
         this.selectors = this.mergeSelectors({
             $: '',
             pipelineByTime: '.stageButton[data-pipeline="date_closed"]',
-            pipelineByStatus: '.stageButton[data-pipeline="sales_status"]',
+            pipelineByStage: '.stageButton[data-pipeline="sales_stage"]',
             content: {
                 $: '.main-content',
             },

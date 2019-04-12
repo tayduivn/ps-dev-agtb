@@ -23,6 +23,21 @@ Feature: Pipeline View feature
     When I select VisualPipeline in #OpportunitiesList.FilterView
     Then I should be redirected to "Opportunities/pipeline" route
 
+    # Switch tab in opportunities pipeline view
+    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+
+    # Verify column headers in Pipeline By Stage tab
+    Then I verify pipeline column headers in #OpportunitiesPipelineView view
+      | value                |
+      | Prospecting          |
+      | Qualification        |
+      | Needs Analysis       |
+      | Value Proposition    |
+      | Id. Decision Makers  |
+      | Perception Analysis  |
+      | Proposal/Price Quote |
+      | Negotiation/Review   |
+
     # Create New opportunity while in pipeline view
     When I click pipelineCreate button on #OpportunitiesList header
     When I provide input for #OpportunitiesDrawer.HeaderView view
@@ -34,23 +49,9 @@ Feature: Pipeline View feature
     # Provide input for the first (default) RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
       | *name | date_closed | best_case | sales_stage   | quantity | likely_case |
-      | RLI1  | 04/19/2019  | 300       | Qualification | 5        | 2000        |
+      | RLI1  | 04/19/2020  | 300       | Qualification | 5        | 2000        |
     When I click Save button on #OpportunitiesDrawer header
     When I close alert
-
-    # Switch tab in opportunities pipeline view
-    When I select pipelineByStatus tab in #OpportunitiesPipelineView view
-
-    # Verify column headers in Pipeline By Status tab
-    Then I verify pipeline column headers in #OpportunitiesPipelineView view
-      | value       |
-      | New         |
-      | In Progress |
-      | Closed Won  |
-      | Closed Lost |
-
-    # Switch tab in opportunities pipeline view
-    When I select pipelineByTime tab in #OpportunitiesPipelineView view
 
     # Filter specific record
     When I search for "CreateOpportunityTest" in #OpportunitiesList.FilterView view
@@ -60,37 +61,14 @@ Feature: Pipeline View feature
       | value                 |
       | CreateOpportunityTest |
       | Acc_1                 |
-      | 04/19/2019            |
+      | 04/19/2020            |
       | $2,000.00             |
 
     # Delete record in pipeline view
     When I delete *Opp_1 in #OpportunitiesPipelineView view
 
+    # Switch tab in opportunities pipeline view
+    When I select pipelineByTime tab in #OpportunitiesPipelineView view
+
     # Navigate to the list view
     When I select ListView in #OpportunitiesList.FilterView
-
-
-  @pipelineView_leads
-  Scenario: Leads > Pipeline View
-    Given Leads records exist:
-      | *      | first_name | last_name | account_name   | title                      | email                        |
-      | Lead_1 | Rafael     | Nadal     | Rafa's Account | Professional Tennis Player | lead_1@example.net (primary) |
-    When I choose Leads in modules menu
-    When I select VisualPipeline in #LeadsList.FilterView
-    Then I verify pipeline column headers in #LeadsPipelineView view
-      | value      |
-      | New        |
-      | Assigned   |
-      | In Process |
-      | Converted  |
-      | Recycled   |
-      | Dead       |
-
-    # Filter specific record
-    When I search for "Rafael Nadal" in #LeadsList.FilterView view
-
-    # Verify record's tile information
-    Then I verify *Lead_1 tile field values in #LeadsPipelineView view
-      | value          |
-      | Rafael Nadal   |
-      | Rafa's Account |

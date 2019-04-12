@@ -62,7 +62,7 @@ class VisualPipelineDefaults
             ),
             'table_header' => array(
                 'Cases' => 'status',
-                'Opportunities' => 'sales_status',
+                'Opportunities' => 'sales_stage',
                 'Tasks' => 'status',
             ),
             'hidden_values' => array(

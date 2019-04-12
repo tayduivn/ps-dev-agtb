@@ -27,44 +27,24 @@
         if (ctxModel && ctxModel.get('pipeline_type') === 'date_closed') {
             var $ulEl = this.$(ui.item).parent('ul');
             var dateData = $ulEl.data('column-name');
-            var dateClosed = app.date(dateData)
+            var dateClosed = app.date(dateData, 'MMMM YYYY')
                 .endOf('month')
-                .format(app.user.getPreference('date_pref'));
-
-            if (dateClosed.indexOf('T') !== -1) {
-                dateClosed = dateClosed.split('T')[0];
-            }
+                .formatUser(true);
 
             model.set('date_closed', dateClosed);
-        }
-
-        var config = app.metadata.getModule(this.module, 'config');
-        if (config.opps_view_by === 'Opportunities') {
-            model.save({}, {
-                success: function(model) {
-                    self._super('render');
-                    self.postRender();
-                },
-                error: function(data) {
-                    self._super('render');
-                    self.postRender();
-                }
-            });
         } else {
-            var parameters = {
-                id: model.get('id'),
-                date_closed: model.get('date_closed')
-            };
-
-            app.api.call('update', app.api.buildURL('Opportunities', 'updateOpportunityCloseDate'), parameters, {
-                success: function(data) {
-                    var literal = model.toJSON();
-                    literal = self.addTileVisualIndicator([literal]);
-                    model.set('tileVisualIndicator', literal[0].tileVisualIndicator);
-                    self._super('render');
-                    self.postRender();
-                }
-            });
+            model.set(this.headerField, this.$(ui.item).parent('ul').data('column-name'));
         }
+
+        model.save({}, {
+            success: function(model) {
+                self._super('render');
+                self.postRender();
+            },
+            error: function(data) {
+                self._super('render');
+                self.postRender();
+            }
+        });
     }
 });

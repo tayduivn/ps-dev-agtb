@@ -18,9 +18,9 @@ import {closeAlert, closeWarning} from './general_bdd';
  *  Select tab in Opportunities pipeline view
  *
  *  @example
- *  When I select pipelineByStatus tab in #OpportunitiesPipelineView view
+ *  When I select pipelineByStage tab in #OpportunitiesPipelineView view
  */
-When(/^I select (pipelineByTime|pipelineByStatus) tab in (#\S+) view$/,
+When(/^I select (pipelineByTime|pipelineByStage) tab in (#\S+) view$/,
     async function (tabName: string, view: PipelineView): Promise<void> {
 
         await view.selectTab(tabName);

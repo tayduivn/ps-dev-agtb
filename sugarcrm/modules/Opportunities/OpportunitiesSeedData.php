@@ -273,13 +273,21 @@ class OpportunitiesSeedData {
         $opp_date_closed = '';
         $opp_date_closed_timestamp = 0;
 
+        $oppFieldDefs = $opp->getFieldDefinitions();
+        $oppSalesStageFieldDef = $oppFieldDefs['sales_stage'];
 
-        //SugarBean::enterOperation('saving_related');
+        $defaultSalesStage = isset($oppFieldDefs['default']) ? $oppFieldDefs['default'] : $app_list_strings['sales_stage_dom'][0];
+        $salesStageStageOptions = $app_list_strings['sales_stage_dom'];
+        $latestRliSalesStageIndex = 0;
+        $latestRliSalesStageKey = '';
+
         while($rlis_created < $rlis_to_create) {
-            $amount = rand(1000, 7500);
-            $rand_best_worst = rand(100, 900);
+
+
+            $amount = mt_rand(1000, 7500);
+            $rand_best_worst = mt_rand(100, 900);
             $doPT = false;
-            $quantity = rand(1, 100);
+            $quantity = mt_rand(1, 100);
             $cost_price = $amount/2;
             $list_price = $amount;
             $discount_price = ($amount / $quantity);
@@ -291,7 +299,7 @@ class OpportunitiesSeedData {
                 $list_price = $pt['list_price'];
                 $discount_price = ($pt['discount_price'] / $quantity);
                 $amount = $pt['discount_price'];
-                $rand_best_worst = rand(100, $cost_price);
+                $rand_best_worst = mt_rand(100, $cost_price);
             }
 
             $rli->team_id = $opp->team_id;
@@ -361,7 +369,14 @@ class OpportunitiesSeedData {
             $rli->date_modified = $now;
             $rli->modified_user_id = $opp->modified_user_id;
             $rli->created_by = $opp->created_by;
-            //$rli->save();
+
+            //Determine the latest sales stage based on index of sales stage dom
+            $currentSalesStageIndex = array_search($rli->sales_stage, array_keys($salesStageStageOptions));
+            if ($currentSalesStageIndex >= $latestRliSalesStageIndex) {
+                $latestRliSalesStageIndex = $currentSalesStageIndex;
+                $latestRliSalesStageKey = $rli->sales_stage;
+            }
+
             $values = $rli->toArray(true);
 
             $sqlValues = array();
@@ -415,6 +430,17 @@ class OpportunitiesSeedData {
             } else {
                 $opp->sales_status = Opportunity::STATUS_CLOSED_WON;
             }
+        }
+
+        //populate sales stage data
+        if ($rlis_to_create === 0) {
+            $opp->sales_stage = $defaultSalesStage;
+        } elseif ($closeLost === $rlis_to_create) {
+            $opp->sales_stage = Opportunity::STATUS_CLOSED_LOST;
+        } elseif ($closedWon + $closedLost === $rlis_to_create) {
+            $opp->sales_stage = Opportunity::STATUS_CLOSED_WON;
+        } else {
+            $opp->sales_stage = $latestRliSalesStageKey;
         }
 
         $opp->name .= ' - ' . $opp_units . ' Units';

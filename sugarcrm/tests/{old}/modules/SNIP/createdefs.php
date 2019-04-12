@@ -35,7 +35,7 @@ $createdef['cases@testsugar.info']['Cases'] = array(
 $createdef['opp@testsugar.info']['Opportunities'] = array(
         'fields' => array(
             'name' => '{from_name}',
-            'sales_stage' => '{email_id}',
+            'next_step' => '{email_id}',
             'date_entered' => '{date}',
             'description' => '{description} {email_id} {message_id} {subject} {from}',
         ),
