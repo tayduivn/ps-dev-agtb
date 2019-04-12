@@ -14,6 +14,7 @@ describe('Base.View.Dashablerecord', function() {
     var dashboard;
     var dashletToolbar;
     var dashletToolbarContext;
+    var getComponentStub;
     var layout;
     var layoutName = 'dashlet';
     var moduleName = 'Cases'; // important: visible is true in metadata.json for Cases, so we can select it as a module
@@ -72,6 +73,7 @@ describe('Base.View.Dashablerecord', function() {
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'tabs');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'record');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'records');
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'dashlet-config');
 
         SugarTest.testMetadata.addViewDefinition(
             'record',
@@ -116,9 +118,8 @@ describe('Base.View.Dashablerecord', function() {
 
         dashletToolbarContext = new app.Context();
         dashletToolbar = {context: dashletToolbarContext, editClicked: sinon.collection.stub()};
-        sinon.collection.stub(layout, 'getComponent')
-            .withArgs('dashlet-toolbar')
-            .returns(dashletToolbar);
+        getComponentStub = sinon.collection.stub(layout, 'getComponent');
+        getComponentStub.withArgs('dashlet-toolbar').returns(dashletToolbar);
     });
 
     afterEach(function() {
@@ -156,6 +157,29 @@ describe('Base.View.Dashablerecord', function() {
             view.settings.trigger('change:module', app.data.createBean('Home'), 'Cases');
             expect(view.dashModel.get('module')).toEqual('Cases');
         });
+
+        describe('pseudo dashlet', function() {
+            describe('tab change', function() {
+                it('should rerender when the tabs are changed', function() {
+                    var renderStub = sinon.collection.stub(view, 'render');
+                    view.meta.pseudo = true;
+                    var tab = {
+                        label: 'This Case',
+                        link: 'Cases',
+                        module: 'Cases',
+                        relatedModule: 'This Case',
+                        skipFetch: true
+                    };
+
+                    view.initDashlet('main');
+                    view.meta.tabs = [tab];
+
+                    expect(view.meta.tabs).toEqual([tab]);
+                    expect(renderStub).toHaveBeenCalled();
+                });
+            });
+        });
+
     });
 
     describe('bindDataChange', function() {
@@ -267,6 +291,10 @@ describe('Base.View.Dashablerecord', function() {
     });
 
     describe('_initTabs', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_getTabsFromSettings').returns(null);
+        });
+
         it('should create tabs from metadata', function() {
             var createCollectionStub = sinon.collection.stub(view, '_createCollection').returns({
                 link: {name: 'contacts'}
@@ -291,7 +319,10 @@ describe('Base.View.Dashablerecord', function() {
                     limit: 10,
                 }
             ];
+            view._baseModule = 'Cases';
+
             view._initTabs();
+
             expect(view.tabs.length).toEqual(2);
             expect(view.tabs[0].module).toBe('Cases');
             expect(view.tabs[0].link).toBe('');
@@ -302,13 +333,28 @@ describe('Base.View.Dashablerecord', function() {
             expect(view.tabs[1].collection).toBeDefined();
             expect(view.tabs[1].collection.display_columns).toBeDefined();
         });
+
+        it('should not show any tabs if only one exists', function() {
+            view.meta.tabs = [
+                {
+                    link: '',
+                    module: 'Cases'
+                }
+            ];
+            view._initTabs();
+            expect(view.tabs).toEqual([]);
+        });
     });
 
     describe('tabSwitcher', function() {
-        it('should change tab', function() {
-            var jDataStub = sinon.collection.stub($.fn, 'data').returns(1);
-            var loadDataForTabsStub = sinon.collection.stub(view, '_loadDataForTabs');
-            var tab1Collection = app.data.createBeanCollection('Contacts');
+        var jDataStub;
+        var loadDataForTabsStub;
+        var tab1Collection;
+
+        beforeEach(function() {
+            jDataStub = sinon.collection.stub($.fn, 'data').returns(1);
+            loadDataForTabsStub = sinon.collection.stub(view, '_loadDataForTabs');
+            tab1Collection = app.data.createBeanCollection('Contacts');
             tab1Collection.dataFetched = false;
             tab1Collection.display_columns = {};
             view.tabs = [
@@ -316,11 +362,43 @@ describe('Base.View.Dashablerecord', function() {
                 {
                     collection: tab1Collection
                 }
-            ],
+            ];
+        });
+
+        it('should change tab', function() {
             view.tabSwitcher({currentTarget: '#tab1'});
+
             expect(view.settings.get('activeTab')).toEqual(1);
             expect(view.collection).toBe(tab1Collection);
             expect(loadDataForTabsStub).toHaveBeenCalledWith([view.tabs[1]]);
+        });
+
+        describe('config mode', function() {
+            var renderStub;
+
+            beforeEach(function() {
+                renderStub = sinon.collection.stub(view, 'render');
+                view.initDashlet('config');
+
+            });
+
+            it('should not render if the active tab is the one that was clicked', function() {
+                view.activeConfigTab = 1;
+
+                view.tabSwitcher({currentTarget: '#tab1'});
+
+                expect(view.activeConfigTab).toEqual(1);
+                expect(renderStub).not.toHaveBeenCalled();
+            });
+
+            it('should re-render if an inactive tab was clicked', function() {
+                view.activeConfigTab = 0;
+
+                view.tabSwitcher({currentTarget: '#tab1'});
+
+                expect(view.activeConfigTab).toEqual(1);
+                expect(renderStub).toHaveBeenCalled();
+            });
         });
     });
 
@@ -337,7 +415,7 @@ describe('Base.View.Dashablerecord', function() {
                     collection: collection,
                     order_by: orderBy
                 }
-            ],
+            ];
             view.settings.set('activeTab', 0);
             view.setOrderBy({currentTarget: '#tab0'});
             expect(collection.orderBy).toEqual({field: 'name', direction: 'desc'});
@@ -358,9 +436,41 @@ describe('Base.View.Dashablerecord', function() {
         });
     });
 
+    describe('getPaginationOptions', function() {
+        it('should get the pagination options', function() {
+            view.tabs = [
+                {
+                    limit: 5,
+                    relate: 'accounts',
+                    order_by: {direction: 'asc', field: 'name'},
+                    include_child_items: false,
+                    fields: ['name']
+                }
+            ];
+            view.settings.set('activeTab', 0);
+
+            var result = view.getPaginationOptions();
+
+            expect(result).toEqual({
+                limit: 5,
+                relate: 'accounts',
+                params: {
+                    order_by: 'name:asc',
+                    include_child_items: null
+                },
+                fields: ['name']
+            });
+        });
+    });
+
     describe('_loadDataForTabs', function() {
+        var asyncParallelStub;
+
+        beforeEach(function() {
+            asyncParallelStub = sinon.collection.stub(async, 'parallel');
+        });
+
         it('should load data for tabs', function() {
-            var asyncParallelStub = sinon.collection.stub(async, 'parallel');
             var collection = app.data.createBeanCollection('Contacts');
             var tabs = [
                 {collection: app.data.createBeanCollection('Contacts')},
@@ -369,10 +479,18 @@ describe('Base.View.Dashablerecord', function() {
             view._loadDataForTabs(tabs);
             expect(asyncParallelStub.lastCall.args[0].length).toEqual(2);
         });
+
+        it('should not do anything on the pseudo config dashlet', function() {
+            view.meta.pseudo = true;
+
+            view._loadDataForTabs([{}]);
+
+            expect(asyncParallelStub).not.toHaveBeenCalled();
+        });
     });
 
     describe('_getColumnsForTab', function() {
-        it('should return dislay columns for tab', function() {
+        it('should return display columns for tab', function() {
             var getModuleStub = sinon.collection.stub(app.metadata, 'getModule').returns({
                 fields: {subject: {}}
             });
@@ -381,6 +499,111 @@ describe('Base.View.Dashablerecord', function() {
             );
             var tab = {fields: ['subject'], module: 'Tasks'};
             expect(view._getColumnsForTab(tab)).toEqual([{name: 'subject', sortable: true}]);
+        });
+    });
+
+    describe('pseudo dashlet', function() {
+        it('should be added on init in config mode', function() {
+            var initComponentsStub = sinon.collection.stub(view.layout, 'initComponents');
+            var dummyContext = {prepare: sinon.collection.stub()};
+            sinon.collection.stub(view.context, 'getChildContext').returns(dummyContext);
+            var dummyDashletConfiguration = {trigger: sinon.collection.stub()};
+            var closestComponentStub = sinon.collection.stub(view, 'closestComponent');
+            closestComponentStub.withArgs('dashletconfiguration')
+                .returns(dummyDashletConfiguration);
+            getComponentStub
+                .withArgs('dashlet')
+                .returns({context: {trigger: sinon.collection.stub()}});
+
+            view.model = app.data.createBean(moduleName);
+            view.initDashlet('config');
+            view.settings.set('tabs', ['Cases', 'accounts']);
+
+            view.layout.trigger('init');
+
+            expect(dummyContext.prepare).toHaveBeenCalled();
+            expect(initComponentsStub).toHaveBeenCalledWith(
+                [{
+                    layout: {
+                        type: 'dashlet',
+                        css_class: 'dashlets',
+                        config: false,
+                        preview: false,
+                        module: 'Cases',
+                        context: view.context,
+                        components: [
+                            {
+                                name: view.name,
+                                type: view.type,
+                                context: dummyContext,
+                                preview: true,
+                                module: 'Cases',
+                                custom_toolbar: 'no',
+                                view: {
+                                    module: 'Cases',
+                                    name: view.name,
+                                    type: view.type,
+                                    preview: true,
+                                    context: dummyContext,
+                                    custom_toolbar: 'no',
+                                    tabs: [
+                                        {link: '', module: 'Cases'}, // This Case
+                                        {link: 'accounts', module: 'Accounts'} // linked Account
+                                        // FIXME: this will change when we support list view config
+                                    ],
+                                    pseudo: true,
+                                }
+                            }
+                        ],
+                        pseudo: true
+                    }
+                }],
+                view.context
+            );
+        });
+    });
+
+    describe('dashletconfig:save event', function() {
+        it('should only save a whitelisted list of settings', function() {
+            var dummyDashletConfiguration = {trigger: sinon.collection.stub()};
+            var closestComponentStub = sinon.collection.stub(view, 'closestComponent');
+            closestComponentStub.withArgs('dashletconfiguration')
+                .returns(dummyDashletConfiguration);
+            view.settings.set('base_module', 'Cases');
+            view.initDashlet('config');
+
+            view.settings.set(
+                {
+                    activeTab: 1,
+                    label: 'I am a record view dashlet',
+                    tabs: ['Cases', 'accounts'],
+                    I: 'should not be in the result'
+                },
+                {silent: true}
+            );
+
+            view.layout.triggerBefore('dashletconfig:save');
+
+            expect(view.settings.get('activeTab')).toEqual(0); // resets to initial tab on config change
+            expect(view.settings.get('base_module')).toEqual(moduleName);
+            expect(view.settings.get('label')).toEqual('I am a record view dashlet');
+            expect(view.settings.get('tabs')).toEqual([
+                {
+                    type: 'record',
+                    label: 'TPL_DASHLET_RECORDVIEW_THIS_RECORD_TYPE',
+                    module: 'Cases',
+                    relatedModule: 'TPL_DASHLET_RECORDVIEW_THIS_RECORD_TYPE',
+                    link: 'Cases'
+                },
+                {
+                    type: 'record',
+                    label: 'LBL_ACCOUNT',
+                    module: 'Cases',
+                    relatedModule: 'Accounts',
+                    link: 'accounts'
+                }
+            ]);
+            expect(view.settings.has('I')).toBeFalsy();
         });
     });
 });

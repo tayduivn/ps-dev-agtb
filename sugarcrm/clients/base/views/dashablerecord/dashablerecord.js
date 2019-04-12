@@ -8,6 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 /**
  * Dashablerecord is a dashlet representation of a module record view. Users
  * can build dashlets of this type for any accessible and approved module.
@@ -33,6 +34,7 @@
      * * Pii removed (no PII drawer)
      * * Audit removed (no Audit Log drawer)
      * * FindDuplicates removed (no find-duplicate button)
+     * * Pagination added (used by the list view tabs)
      */
     plugins: [
         'SugarLogic',
@@ -69,7 +71,18 @@
     ],
 
     /**
+     * List of modules that should not be available as tabs
+     *
+     * @property {string[]}
+     */
+    tabBlacklist: [
+        'Tags',
+    ],
+
+    /**
      * Flag indicates if a module is available for display.
+     *
+     * @property {boolean}
      */
     moduleIsAvailable: true,
 
@@ -114,6 +127,16 @@
      * @property {number}
      */
     _avatarSize: 28,
+
+    /**
+     * Cap on the maximum number of tabs allowed.
+     *
+     * @property {Object}
+     */
+    _tabLimit: {
+        number: 6,
+        label: 'LBL_SIX'
+    },
 
     /**
      * @inheritdoc
@@ -162,14 +185,27 @@
     initDashlet: function(viewName) {
         this._mode = viewName;
         this._initializeSettings();
+
+        // always save the host dashboard's module
+        // (this might be different from the "base record type")
+        this._baseModule = this.settings.get('base_module') || this.model.module || this.model.get('module');
+
         if (this._mode === 'config') {
             this._configureDashlet();
-            this.settings.on('change:module', function(model, moduleName) {
-                this.dashModel.set('module', moduleName);
+        } else if (this.meta.pseudo) {
+            // re-render the pseudo-dashlet in the configuration whenever the set of selected tabs or its order changes
+            this.layout.context.on('dashablerecord:config:tabs:change', function(newTabs) {
+                this.meta.tabs = newTabs;
+                this._initTabs(newTabs);
+                this.render();
             }, this);
+
+            this.switchModel(app.data.createBean(this.context.get('module')));
+            this.layout.context.trigger('dashablerecord:config:tabs:change', this.meta.tabs);
         }
 
         this.before('render', function() {
+            // ACL check
             if (!this.moduleIsAvailable || !this.model) {
                 return this._noAccess();
             }
@@ -184,41 +220,80 @@
     },
 
     /**
-     * Initialize tabs.
+     * Inject the pseudo dashlet (a configuration pane) into the
+     * dashletconfiguration layout.
      *
      * @private
      */
-    _initTabs: function() {
-        this.tabs = [];
-        _.each(this.meta.tabs, function(tab, index) {
-            if (tab.active) {
-                this.settings.set('activeTab', index);
+    _addPseudoDashlet: function() {
+        var pseudoDashlet = this.layout.getComponent('dashlet');
+        if (pseudoDashlet && pseudoDashlet.meta && pseudoDashlet.meta.pseudo) {
+            return;
+        }
+
+        var metadata = {
+            component: this.type,
+            name: this.type,
+            type: this.type,
+            module: this._baseModule,
+            config: [],
+            preview: []
+        };
+
+        var newContext = this.context.getChildContext();
+        newContext.prepare(); // try to avoid the pagination plugin complaining about collection not being defined
+        var component = {
+            name: metadata.component,
+            type: metadata.type,
+            preview: true,
+            context: newContext,
+            module: metadata.module,
+            custom_toolbar: 'no'
+        };
+        component.view = _.extend({module: metadata.module}, metadata.preview, component);
+        component.view.tabs = [];
+        component.view.pseudo = true;
+
+        var settingsTabs = this.settings.get('tabs');
+        _.each(settingsTabs, function(tab) {
+            var configTab = {};
+
+            // handle full-object tabs
+            if (!_.isUndefined(tab.link) && !_.isFunction(tab.link)) {
+                tab = link;
             }
 
-            if (tab.link) {
-                var collection = this._createCollection(tab);
-                if (_.isNull(collection)) {
-                    return;
-                }
-
-                this.tabs[index] = tab;
-                this.tabs[index].collection = collection;
-                this.tabs[index].relate = _.isObject(collection.link);
-                this.tabs[index].include_child_items = tab.include_child_items || false;
-                this.tabs[index].collection.display_columns = [{
-                    fields: this._getColumnsForTab(tab),
-                    module: tab.module
-                }];
-                this.tabs[index].collection.orderBy = tab.order_by || {};
+            if (tab === this._baseModule) {
+                configTab.link = '';
+                configTab.module = this._baseModule;
+            } else if (this._getTabType(tab) === 'record') {
+                // FIXME CS-54: Vishal might want to change stuff here
+                configTab.link = tab;
+                configTab.module = this._getRelatedModule(tab);
             } else {
-                this.tabs[index] = tab;
+                // FIXME CS-63: LIST VIEW CHANGES HERE
+                configTab.module = this._getRelatedModule(tab);
+                configTab.limit = this._defaultSettings.limit;
+                configTab.collection = app.data.createBeanCollection(configTab.module);
+                configTab.skipFetch = true;
             }
+
+            component.view.tabs.push(configTab);
         }, this);
 
-        if (this.tabs.length === 1) {
-            // don't show tabs if there is only one
-            this.tabs = [];
-        }
+        var layout = {
+            type: 'dashlet',
+            css_class: 'dashlets',
+            config: false,
+            preview: false,
+            module: metadata.module,
+            context: this.context,
+            components: [
+                component
+            ],
+            pseudo: true
+        };
+        this.layout.initComponents([{layout: layout}], this.context);
     },
 
     /**
@@ -228,18 +303,28 @@
      */
     tabSwitcher: function(event) {
         var index = this.$(event.currentTarget).data('index');
-        if (index === this.settings.get('activeTab')) {
-            return;
-        }
 
-        this.settings.set('activeTab', index);
-        this.collection = this.tabs[index].collection || null;
-        this.context.set('collection', this.collection);
+        if (this._mode === 'config') {
+            if (index === this.activeConfigTab) {
+                return;
+            }
 
-        if (this.collection && !this.collection.dataFetched) {
-            this._loadDataForTabs([this.tabs[index]]);
-        } else {
+            this.activeConfigTab = index;
             this.render();
+        } else {
+            if (index === this.settings.get('activeTab')) {
+                return;
+            }
+
+            this.settings.set('activeTab', index);
+            this.collection = this.tabs[index].collection || null;
+            this.context.set('collection', this.collection);
+
+            if (this.collection && !this.collection.dataFetched && !this.tabs[index].skipFetch && !this.meta.pseudo) {
+                this._loadDataForTabs([this.tabs[index]]);
+            } else {
+                this.render();
+            }
         }
     },
 
@@ -363,11 +448,16 @@
      * @private
      */
     _loadDataForTabs: function(tabs, options) {
+        // don't load data on the pseudo config dashlet
+        if (this.meta.pseudo) {
+            return;
+        }
+
         options = options || {};
         var self = this;
         var loadDataRequests = [];
         _.each(tabs, function(tab, index) {
-            if (!tab.collection) {
+            if (!tab.collection || tab.skipFetch) {
                 return;
             }
             loadDataRequests.push(function(callback) {
@@ -462,12 +552,13 @@
         }
 
         this.tabsHtml = this._tabsTemplate(this);
+
         var tab = this.tabs[this.settings.get('activeTab')];
-        this.tabContentHtml = tab && tab.collection ? this._recordsTemplate(this) : this._recordTemplate(this);
-        var listBottom = this.layout.getComponent('list-bottom');
-        if (listBottom) {
-            tab && tab.collection ? listBottom.show() : listBottom.hide();
-        }
+
+        this.tabContentHtml = tab && tab.type === 'list' ? this._recordsTemplate(this) : this._recordTemplate(this);
+
+        this._showHideListBottom(tab);
+
         this._super('_renderHtml');
     },
 
@@ -561,7 +652,14 @@
      */
     _setDefaultModule: function() {
         var availableModules = this._getAvailableModules();
+        var metadata = app.metadata.getModule(this.model.module);
+        var fields = metadata && metadata.fields;
         var module = this.settings.get('module') || this.context.get('module');
+
+        // note: the module in the settings might actually be the name of a link field
+        if (fields && this._isALink(module, fields)) {
+            module = fields[module].module;
+        }
 
         if (module in availableModules) {
             this.settings.set('module', module);
@@ -589,12 +687,24 @@
      */
     _configureDashlet: function() {
         var availableModules = this._getAvailableModules();
+        var validTabs = this._getValidTabs(_.keys(availableModules));
+
         _.each(this._getFieldMetaForView(this.meta), function(field) {
-            if (field.name === 'module') {
+            if (field.name === 'module' || field.name === 'tabs') {
                 // load the list of available modules into the metadata
-                field.options = availableModules;
+                field.options = validTabs;
+                field.default = this.module;
             }
-        });
+        }, this);
+
+        this.listenTo(this.layout, 'init', this._addPseudoDashlet);
+
+        // load the previously selected tabs by default
+        var initialTabs = this.settings.get('tabs') || [this.settings.get('module')];
+        this.settings.set('tabs', initialTabs);
+
+        this._bindSettingsEvents();
+        this._bindSaveEvents();
     },
 
     /**
@@ -632,7 +742,7 @@
      */
     _getFieldMetaForView: function(meta) {
         meta = _.isObject(meta) ? meta : {};
-        return !_.isUndefined(meta.panels) ? _.flatten(_.pluck(meta.panels, 'fields')) : [];
+        return _.compact(!_.isUndefined(meta.panels) ? _.flatten(_.pluck(meta.panels, 'fields')) : []);
     },
 
     /**
@@ -704,4 +814,434 @@
             toolbarCtx.trigger('dashlet:toolbar:change', this._headerFields, model);
         }
     },
+
+    /**
+     * Reset the configuration tabs after a base record type switch.
+     *
+     * @private
+     */
+    _resetConfigTabs: function() {
+        this.activeConfigTab = 0;
+    },
+
+    /**
+     * Gets the dashletconfiguration layout.
+     *
+     * @return {View.Layout} The dashletconfiguration layout.
+     * @private
+     */
+    _getDashletConfiguration: function() {
+        return this.closestComponent('dashletconfiguration');
+    },
+
+    /**
+     * Turn the dashlet configuration save button on or off.
+     *
+     * @param {bool} enabled true to enable and false to disable.
+     * @private
+     */
+    _toggleDashletSaveButton: function(enabled) {
+        this._getDashletConfiguration().trigger('dashletconfig:save:toggle', enabled);
+    },
+
+    /**
+     * Initialize tabs.
+     *
+     * @param {Object[]} [newTabs] List of new tabs.
+     * @private
+     */
+    _initTabs: function(newTabs) {
+        this.tabs = [];
+
+        var dashletTabs;
+        if (this._mode === 'config') {
+            dashletTabs = this.meta.tabs;
+        } else {
+            dashletTabs = newTabs || this._getTabsFromSettings() || this.meta.tabs;
+        }
+
+        _.each(dashletTabs, function(tab, index) {
+            if (tab.active) {
+                this.settings.set('activeTab', index);
+            }
+
+            tab.type = tab.type || this._getTabType(tab.link);
+            if (tab.type === 'list') {
+                var collection = this._createCollection(tab);
+                if (_.isNull(collection)) {
+                    return;
+                }
+
+                this.tabs[index] = tab;
+                this.tabs[index].collection = collection;
+                this.tabs[index].relate = _.isObject(collection.link);
+                this.tabs[index].include_child_items = tab.include_child_items || false;
+                this.tabs[index].collection.display_columns = [{
+                    fields: this._getColumnsForTab(tab),
+                    module: tab.module
+                }];
+                this.tabs[index].collection.orderBy = tab.order_by || {};
+            } else {
+                this.tabs[index] = tab;
+            }
+        }, this);
+
+        if (this.tabs.length === 1) {
+            // don't show tabs if there is only one
+            this.tabs = [];
+        }
+    },
+
+    /**
+     * Given a list of tab names (either base module or a link field name),
+     * return a list of tabs suitable for rendering.
+     *
+     * @param {string[]} tablist List of tabs (base module or link name).
+     * @param {Object} [options] Additional tab options (to be applied to every
+     *   tab.)
+     * @return {Object[]} The list of tab objects.
+     * @private
+     */
+    _generateConfigTabs: function(tablist, options) {
+        if (_.isEmpty(tablist)) {
+            return [];
+        }
+
+        options = options || {};
+
+        return _.map(tablist, function(tab) {
+            var link = tab;
+            if (_.isObject(tab)) {
+                link = tab.link || tab.module;
+            }
+
+            var tabType = this._getTabType(link);
+            var relatedModule = this._getRelatedModule(link);
+
+            var baseOptions = {
+                type: tabType,
+                label: this._getLinkLabel(link),
+                module: this._baseModule,
+                relatedModule: relatedModule,
+                link: link
+            };
+
+            // FIXME CS-63: we'll probably want to do this differently later
+            if (tabType === 'list') {
+                baseOptions.fields = _.pluck(app.metadata.getView(relatedModule, 'list').panels[0].fields, 'name');
+                baseOptions.limit = this._defaultSettings.limit;
+                baseOptions.skipFetch = true;
+            }
+
+            return _.extend(baseOptions, options);
+        }, this);
+    },
+
+    /**
+     * Determine whether a tab for the given link name is a list type or a
+     * record type.
+     *
+     * @param {string} linkName The link name.
+     * @return {string} "list" if this tab should be a list view and "record"
+     *   otherwise.
+     * @private
+     */
+    _getTabType: function(linkName) {
+        return app.data.canHaveMany(this._baseModule, linkName) ? 'list' : 'record';
+    },
+
+    /**
+     * Get the link label for the given link field name.
+     *
+     * @param {string} linkName Name of the link field.
+     * @return {string}
+     * @private
+     */
+    _getLinkLabel: function(linkName) {
+        if (linkName === this._baseModule) {
+            return this._getBaseRecordLabel();
+        }
+
+        var fields = this._getBaseModuleFields();
+        var linkField = fields[linkName];
+        var module = this._getModuleFromLinkField(linkField);
+
+        return app.lang.get(
+            linkField.vname,
+            [this._baseModule, module]
+        );
+    },
+
+    /**
+     * Get the related module given a link name,
+     * relative to the base module.
+     *
+     * If given the base module, just return that.
+     *
+     * @param {string} linkName Link field name.
+     * @return {string} Name of the related module.
+     * @private
+     */
+    _getRelatedModule: function(linkName) {
+        if (linkName === this._baseModule) {
+            return this._getBaseRecordLabel();
+        }
+
+        return this._getModuleFromLinkField(this._getBaseModuleFields()[linkName]);
+    },
+
+    /**
+     * Get the module from a link field.
+     *
+     * @param {Object} linkField The link field vardef.
+     * @return {string} The name of the module.
+     * @private
+     */
+    _getModuleFromLinkField: function(linkField) {
+        if (!linkField || !linkField.name) {
+            return '';
+        }
+
+        if (linkField.module) {
+            return linkField.module;
+        }
+
+        // a lot of link fields don't actually have a module on them (look at the Accounts vardef for proof)
+        // in that case, determine the module from the relationship rather than the link
+        return app.data.getRelatedModule(this._baseModule, linkField.name);
+    },
+
+    /**
+     * For the pseudo dashlet, get a list of tabs to show from the config
+     * settings.
+     *
+     * @return {Object[]} List of dashlet tabs as retrieved from settings.
+     * @private
+     */
+    _getTabsFromSettings: function() {
+        var tabs = [];
+        var tabSettings = this.settings.get('tabs');
+
+        _.each(tabSettings, function(tab) {
+            var tabType;
+            var relatedModule;
+
+            // convert from full tab object to just the name
+            if (_.isObject(tab)) {
+                if (!_.isUndefined(tab.link) && tab.module && tab.module === this._baseModule) {
+                    tab = this._baseModule;
+                } else if (tab.link) {
+                    tab = tab.link;
+                }
+            }
+
+            // determine the related module and tab type (record/list)
+            if (tab === this._baseModule) {
+                relatedModule = this._baseModule;
+                tabType = 'record';
+            } else {
+                relatedModule = this._getRelatedModule(tab);
+                tabType = this._getTabType(tab);
+            }
+
+            // set up the dashlet based on its type
+            var dashletTab;
+            if (tabType === 'list') {
+                // FIXME CS-63: This is obviously mostly wrong
+                dashletTab = {
+                    fields: ['name'],
+                    limit: this.settings.get('limit'),
+                    link: tab,
+                    module: relatedModule,
+                    order_by: {},
+                };
+            } else if (tabType === 'record') {
+                dashletTab = {
+                    label: 'LBL_MODULE_NAME_SINGULAR',
+                    module: relatedModule
+                };
+            }
+            dashletTab.type = tabType;
+
+            tabs.push(dashletTab);
+        }, this);
+
+        // default to making the first tab active
+        if (tabs.length >= 1) {
+            tabs[0].active = true;
+        }
+
+        return tabs;
+    },
+
+    /**
+     * Check if the given string corresponds to a link field.
+     *
+     * @param {string} str The name to check.
+     * @param {Object} fields The fielddefs for the module to check.
+     * @return {boolean} true if the given name corresponds to a link field,
+     *   false otherwise.
+     * @private
+     */
+    _isALink: function(str, fields) {
+        return !!(fields[str] && fields[str].type === 'link');
+    },
+
+    /**
+     * Get a translated label of the form "This <module>"
+     * for the base module.
+     *
+     * @return {string}
+     * @private
+     */
+    _getBaseRecordLabel: function() {
+        return app.lang.get(
+            'TPL_DASHLET_RECORDVIEW_THIS_RECORD_TYPE',
+            null,
+            {moduleSingular: app.lang.getModuleName(this._baseModule)}
+        );
+    },
+
+    /**
+     * Get the list of acceptable tabs filtered across available modules,
+     * which are related to the base module.
+     *
+     * @param {string[]} availableModules The list of available modules.
+     * @return {Object} A mapping of link field names to display link labels.
+     * @private
+     */
+    _getValidTabs: function(availableModules) {
+        var baseRecordTypes = {};
+
+        // get the "This Account" label
+        baseRecordTypes[this._baseModule] = this._getBaseRecordLabel();
+
+        // find the related module for each link field and make sure we can use it
+        var linkFields = this._getBaseModuleLinks();
+        _.each(linkFields, function(linkField) {
+            var relatedModule = app.data.getRelatedModule(this._baseModule, linkField.name);
+
+            if (!_.contains(availableModules, relatedModule) || _.contains(this.tabBlacklist, relatedModule)) {
+                return;
+            }
+
+            baseRecordTypes[linkField.name] = this._getLinkLabel(linkField.name);
+        }, this);
+
+        return baseRecordTypes;
+    },
+
+    /**
+     * In config mode, bind events that occur when the configuration options
+     * are (about to be) saved.
+     *
+     * @private
+     */
+    _bindSaveEvents: function() {
+        this.layout.before('dashletconfig:save', function() {
+            // save the dashlet tabs settings in full, not the strings-only version
+            var tabNames = this.settings.get('tabs');
+
+            var settings = {
+                activeTab: 0, // reset to initial tab
+                base_module: this._baseModule,
+                label: this.settings.get('label'),
+                tabs: this._generateConfigTabs(tabNames)
+            };
+
+            // don't save unwanted record view metadata into the dashlet. Just whitelist what we need.
+            this.settings.clear({silent: true});
+
+            // FIXME CS-63: when we do the list view config we'll probably want to do this differently
+            this.settings.set(settings, {silent: true});
+        }, this);
+    },
+
+    /**
+     * In config mode, bind events that occur when the configuration options
+     * change.
+     *
+     * @private
+     */
+    _bindSettingsEvents: function() {
+        this.settings.on('change:module', function(model, moduleName) {
+            this.dashModel.set('module', moduleName);
+
+            // clear out any previously selected tabs, except for the new base record type
+            this._resetConfigTabs();
+            this.settings.set('tabs', [moduleName]);
+        }, this);
+
+        this.settings.on('change:tabs', function(model, tabs) {
+            // show warning message if too many tabs
+            if (tabs && tabs.length > this._tabLimit.number) {
+                this._showTooManyTabsWarning();
+            }
+
+            // disable save button on both 0 and too many tabs
+            var enableSaveButton = tabs && tabs.length && tabs.length <= this._tabLimit.number;
+            this._toggleDashletSaveButton(enableSaveButton);
+
+            // for rendering the tabs in the config
+            var configTabs = this._generateConfigTabs(tabs || [], {skipFetch: true});
+            var configDashletLayout = this.layout.getComponent('dashlet');
+            configDashletLayout.context.trigger('dashablerecord:config:tabs:change', configTabs);
+        }, this);
+    },
+
+    /**
+     * Show a warning that there are too many tabs selected.
+     *
+     * @private
+     */
+    _showTooManyTabsWarning: function() {
+        app.alert.show('too_many_tabs', {
+            level: 'warning',
+            messages: app.lang.get(
+                'TPL_DASHLET_RECORDVIEW_TOO_MANY_TABS',
+                null,
+                {num: this._tabLimit.number, numWord: app.lang.get(this._tabLimit.label)}
+            )
+        });
+    },
+
+    /**
+     * Return the fielddefs from the base module.
+     *
+     * @return {Object} Fielddefs from the base module.
+     * @private
+     */
+    _getBaseModuleFields: function() {
+        if (this._baseModuleFields) {
+            return this._baseModuleFields;
+        }
+
+        this._baseModuleFields = app.metadata.getModule(this._baseModule).fields;
+        return this._baseModuleFields;
+    },
+
+    /**
+     * Get all fields of type link from the base module.
+     *
+     * @return {Object[]} List of base module fields of type link.
+     * @private
+     */
+    _getBaseModuleLinks: function() {
+        return _.filter(this._getBaseModuleFields(), function(field) {
+            return field.type && field.type === 'link';
+        });
+    },
+
+    /**
+     * Show or hide the list-bottom component depending on the tab type.
+     *
+     * @param {Object} tab Tab to be shown.
+     * @private
+     */
+    _showHideListBottom: function(tab) {
+        var listBottom = this.layout.getComponent('list-bottom');
+        if (listBottom) {
+            tab && tab.type === 'list' ? listBottom.show() : listBottom.hide();
+        }
+    }
 })

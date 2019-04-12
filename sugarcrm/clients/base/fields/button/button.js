@@ -60,6 +60,12 @@
     getFieldElement: function() {
         return this.$(this.fieldTag);
     },
+
+    /**
+     * Enable or disable this button.
+     * @param {boolean} [disable=true] If true, disable. If false, enable.
+     * @inheritdoc
+     */
     setDisabled: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
         this.def.css_class = this.def.css_class || '';

@@ -18,30 +18,41 @@ $viewdefs['base']['view']['dashablerecord'] = array(
             'label' => 'LBL_DASHLET_RECORDVIEW_NAME',
             'description' => 'LBL_DASHLET_RECORDVIEW_DESCRIPTION',
             'filter' => array(
-                'view' => ['record', 'Home'],
+                'view' => ['record'],
             ),
             'config' => [],
+            // FIXME: I probably have to update this too
             'preview' => array(
                 'module' => 'Accounts',
                 'label' => 'LBL_MODULE_NAME',
             ),
         ),
     ],
+    // Used for configuration rather than the actual dashlet appearance
     'panels' => [
-        array(
+        [
             'name' => 'dashlet_settings',
-            'columns' => 2,
+            'columns' => 1,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
-                array(
+                [
                     'name' => 'module',
-                    'label' => 'LBL_MODULE',
                     'type' => 'enum',
-                    'span' => 12,
+                    'label' => 'LBL_DASHLET_RECORDVIEW_BASE_RECORD_TYPE',
+                    'span' => 6,
                     'sort_alpha' => true,
-                ),
+                ],
+                [
+                    'name' => 'tabs',
+                    'label' => 'LBL_DASHLET_RECORDVIEW_TABS',
+                    'type' => 'enum',
+                    'span' => 6,
+                    'isMultiSelect' => true,
+                    'sort_alpha' => true,
+                    'ordered' => true,
+                ],
             ],
-        ),
+        ],
     ],
 );

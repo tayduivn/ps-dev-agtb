@@ -3736,8 +3736,17 @@ Sincerely, SugarCRM',
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Lists records from a particular module according to criteria you define.',
+
+    // Record view dashlet
     'LBL_DASHLET_RECORDVIEW_NAME' => 'Record View',
-    'LBL_DASHLET_RECORDVIEW_DESCRIPTION' => 'Displays a record from a particular module.',
+    'LBL_DASHLET_RECORDVIEW_DESCRIPTION' => 'Displays a record and optionally related records in tabs.',
+    'LBL_DASHLET_RECORDVIEW_BASE_RECORD_TYPE' => 'Base Record Type',
+    'TPL_DASHLET_RECORDVIEW_THIS_RECORD_TYPE' => 'This {{moduleSingular}}',
+    'LBL_DASHLET_RECORDVIEW_TABS' => 'Tabs',
+    'LBL_DASHLET_RECORDVIEW_BASIC_LAYOUT_PREVIEW' => 'Basic Layout Preview',
+    'TPL_DASHLET_RECORDVIEW_TOO_MANY_TABS' => 'Warning, only {{numWord}} ({{num}}) modules may be displayed in tabs. ' .
+        'Please remove one or more modules before adding any others.',
+    'LBL_SIX' => 'six', // record view dashlet tab limit
 
     'LBL_DASHLET_MODULE_UNAVAILABLE' => 'Data not available. You do not have permission to access this module.' .
         " \nPlease update or remove this dashlet.",

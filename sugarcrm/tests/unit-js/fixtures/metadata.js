@@ -112,6 +112,18 @@ fixtures.metadata = {
         }
     },
     "relationships": {
+        contacts_cases: {
+            lhs_module: 'Contacts',
+            lhs_table: 'contacts',
+            lhs_key: 'id',
+            rhs_module: 'Cases',
+            rhs_table: 'cases',
+            rhs_key: 'id',
+            relationship_type: 'many-to-many',
+            join_table: 'contacts_cases',
+            join_key_lhs: 'contact_id',
+            join_key_rhs: 'case_id'
+        },
         "contacts_accounts": {
             lhs_module:"Accounts",
             rhs_module:"Contacts"
@@ -163,6 +175,15 @@ fixtures.metadata = {
             join_key_rhs: 'email_id',
             join_key_lhs: 'bean_id',
             relationship_role_column: 'bean_module'
+        },
+        account_cases: {
+            lhs_module: 'Accounts',
+            lhs_table: 'accounts',
+            lhs_key: 'id',
+            rhs_module: 'Cases',
+            rhs_table: 'cases',
+            rhs_key: 'account_id',
+            relationship_type: 'one-to-many'
         }
     },
     "currencies": {
@@ -253,6 +274,15 @@ fixtures.metadata = {
                     name: 'commentlog',
                     type: 'collection',
                 },
+                accounts: {
+                    name: 'accounts',
+                    type: 'link',
+                    relationship: 'account_cases',
+                    link_type: 'one',
+                    side: 'right',
+                    source: 'non-db',
+                    vname: 'LBL_ACCOUNT'
+                },
                 "account_id": {
                     "name": "account_id",
                     "type": "id"
@@ -269,6 +299,12 @@ fixtures.metadata = {
                 profile_picture_guid: {
                     type: 'file_temp',
                     name: 'profile_picture_guid'
+                contacts: {
+                    name: 'contacts',
+                    type: 'link',
+                    relationship: 'contacts_cases',
+                    source: 'non-db',
+                    vname: 'LBL_CONTACTS'
                 }
             },
             "views": {
