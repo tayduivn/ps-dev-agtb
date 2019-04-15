@@ -40,11 +40,6 @@ final class AnnotationListener implements TestListener
         if ($this->hasNoCoversAnnotation($test->getAnnotations())) {
             $this->raiseFailure($test, 'Missing @covers annotation', $time);
         }
-
-        // check for @coversDefaultClass
-        if ($this->hasNoCoversDefaultClass($test->getAnnotations())) {
-            $this->raiseFailure($test, 'Missing @coversDefaultClass annotation', $time);
-        }
     }
 
     /**
@@ -73,18 +68,6 @@ final class AnnotationListener implements TestListener
             empty($annotations['class']['coversNothing']) &&
             empty($annotations['method']['covers']) &&
             empty($annotations['method']['coversNothing'])
-        );
-    }
-
-    /**
-     * Check if annotations has @coversDefaultClass
-     * @param array $annotations
-     * @return bool
-     */
-    private function hasNoCoversDefaultClass(array $annotations) : bool
-    {
-        return (
-            empty($annotations['class']['coversDefaultClass'])
         );
     }
 }

@@ -412,7 +412,7 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
         return SugarTestReflection::callProtectedMethod($sut, 'isStockComposer');
     }
 
-    public function testStockFilesAreRegognized()
+    public function testStockFilesAreRecognized()
     {
         $sut = $this->getMockSut(null, array(
             'source_dir' => SUGAR_BASE_DIR,
