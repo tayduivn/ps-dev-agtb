@@ -70,7 +70,6 @@ class HistoryApi extends RelateApi
         'description',
         'date_entered',
         'date_modified',
-        'related_contact',
         'assigned_user_name',
         'assigned_user_id',
     );
@@ -113,27 +112,39 @@ class HistoryApi extends RelateApi
             throw new SugarApiExceptionInvalidParameter("Module List is empty, must contain: Meetings, Calls, Notes, Tasks, or Emails");
         }
 
+        $fieldWhiteList = [];
+        foreach ($this->moduleList as $link_name => $module) {
+            $seed = BeanFactory::newBean($module);
+            $fieldWhiteList = array_merge($fieldWhiteList, array_fill_keys(array_keys($seed->field_defs), true));
+        }
+
         $query = new SugarQuery();
         $api->action = 'list';
-        $orderBy = array();
 
         // modules is a char field used for sorting on module name
         // it is added to the select below, it can be sorted on but needs to be removed from
         // the arguments to allow it to be maintained throughout the code
+        // Also check that at least one module has order by field
         $removedModuleDirection = false;
         if (!empty($args['order_by'])) {
-            $orderBy = explode(',', $args['order_by']);
-            foreach ($orderBy as $key => $list) {
-                list($field, $direction) = explode(':', $list);
+            $args['order_by'] = $this->getOrderByFromArgs($args);
+            foreach ($args['order_by'] as $parsedOrderByKey => $parsedOrderBy) {
+                list($parsedOrderByFieldName, $parsedOrderByDirection) = $parsedOrderBy;
                 // `picture` is considered the same field as `module` because it
                 // corresponds to the module icon.
-                if ($field === 'module' || $field === 'picture') {
-                    unset($orderBy[$key]);
-                    $removedModuleDirection = !empty($direction) ? $direction : 'DESC';
+                if ($parsedOrderByFieldName === 'module' || $parsedOrderByFieldName === 'picture') {
+                    $removedModuleDirection = $parsedOrderByDirection;
+                    unset($args['order_by'][$parsedOrderByKey]);
+                    continue;
+                }
+                if (!array_key_exists($parsedOrderByFieldName, $fieldWhiteList)) {
+                    throw new SugarApiExceptionInvalidParameter(
+                        sprintf('no one module has order by field: %s', $parsedOrderByFieldName)
+                    );
                 }
             }
-            $args['order_by'] = implode(',', $orderBy);
-            $orderBy[] = "module:{$removedModuleDirection}";
+        } else {
+            $args['order_by'] = [];
         }
 
         if (!empty($args['fields'])) {
@@ -143,10 +154,9 @@ class HistoryApi extends RelateApi
         }
 
         if (!empty($args['order_by']) || !empty($args['fields'])) {
-            $args = $this->scrubFields($args);
+            $args = $this->scrubFields($args, $fieldWhiteList);
         }
 
-        unset($args['order_by']);
         foreach ($this->moduleList as $link_name => $module) {
             $args['filter'] = array();
             $savedFields = $args['fields'];
@@ -169,7 +179,7 @@ class HistoryApi extends RelateApi
             list($args, $q, $options) = $this->filterRelatedSetup($api, $args);
             $q->select()->selectReset();
             $q->orderByReset(); // ORACLE doesn't allow order by in UNION queries
-            if (!empty($args['placeholder_fields'])) {
+            if (!empty($args['placeholder_fields'][$module])) {
                 $newFields = array_merge($args['placeholder_fields'][$module], $fields);
             } else {
                 $newFields = $fields;
@@ -203,30 +213,29 @@ class HistoryApi extends RelateApi
             $args['fields'] = $savedFields;
         }
 
-        if (!empty($orderBy)) {
-            if ($removedModuleDirection !== false) {
-                $orderBy[] = "module:{$removedModuleDirection}";
+        if (!empty($args['order_by']) || $removedModuleDirection !== false) {
+            foreach ($args['order_by'] as $parsedOrderBy) {
+                $query->orderBy($parsedOrderBy[0], $parsedOrderBy[1]);
             }
-            foreach ($orderBy as $order) {
-                $ordering = explode(':', $order);
-                if (count($ordering) > 1) {
-                    $query->orderByRaw("{$ordering[0]}", "{$ordering[1]}");
-                } else {
-                    $query->orderByRaw("{$ordering[0]}");
-                }
+            if ($removedModuleDirection !== false) {
+                $query->orderByRaw('module', $removedModuleDirection);
             }
         } else {
-            $query->orderByRaw('date_modified');
+            $query->orderBy('date_modified');
         }
 
         return $this->runQuery($api, $args, $query, $options);
     }
 
-    protected function scrubFields(array $args)
+    /**
+     * @param array $args
+     * @param array $fieldWhiteList
+     * @return array
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected function scrubFields(array $args, array $fieldWhiteList)
     {
-        $filters = !empty($args['order_by']) ? explode(',', $args['order_by']) : array();
-        foreach ($filters as $filter) {
-            $order_by = explode(':', $filter);
+        foreach ($args['order_by'] as $order_by) {
             foreach ($this->moduleList as $module_name) {
                 $seed = BeanFactory::newBean($module_name);
                 if (!isset($seed->field_defs[$order_by[0]])) {
@@ -243,6 +252,9 @@ class HistoryApi extends RelateApi
 
         $fields = !empty($args['fields']) ? explode(',', $args['fields']) : array();
         foreach ($fields as $key => $field) {
+            if (!array_key_exists($field, $fieldWhiteList)) {
+                throw new SugarApiExceptionInvalidParameter(sprintf('no one module has select field: %s', $field));
+            }
             foreach ($this->moduleList as $module_name) {
                 $seed = BeanFactory::newBean($module_name);
                 if (!isset($seed->field_defs[$field])) {
