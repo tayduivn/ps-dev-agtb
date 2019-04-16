@@ -69,7 +69,6 @@ describe('Base.View.Dashablerecord', function() {
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'businesscard');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'headerpane');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'noaccess');
-        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'pick-a-record');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'tabs');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'record');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'records');
@@ -180,6 +179,45 @@ describe('Base.View.Dashablerecord', function() {
             });
         });
 
+        describe('with a rowModel', function() {
+            var rowModel;
+            var newModel;
+
+            beforeEach(function() {
+                rowModel = app.data.createBean(moduleName, {id: 'an id'});
+                view.context.parent.parent = new app.Context();
+                view.context.parent.parent.set('rowModel', rowModel);
+                newModel = {fetch: sinon.collection.stub()};
+            });
+
+            describe('with the base record', function() {
+                it('should fetch and then re-render the full rowModel', function() {
+                    sinon.collection.stub(app.data, 'createBean')
+                        .withArgs(moduleName, {id: rowModel.get('id')})
+                        .returns(newModel);
+                    newModel.fetch.yieldsTo('success', newModel);
+                    var renderNewModelStub = sinon.collection.stub(view, 'renderNewModel');
+
+                    view.initDashlet('main');
+
+                    expect(newModel.fetch).toHaveBeenCalledOnce();
+                    expect(renderNewModelStub).toHaveBeenCalledWith(newModel);
+                });
+            });
+
+            describe('with a non-base record', function() {
+                it('should fetch the related model', function() {
+                    var createRelatedBeanStub = sinon.collection.stub(app.data, 'createRelatedBean');
+                    createRelatedBeanStub.withArgs(rowModel, 'related-account-id', 'accounts').returns(newModel);
+                    view.settings.set('tabs', ['accounts']);
+                    rowModel.set('accounts', {id: 'related-account-id'}, {silent: true});
+
+                    view.initDashlet('main');
+
+                    expect(newModel.fetch).toHaveBeenCalled();
+                });
+            });
+        });
     });
 
     describe('bindDataChange', function() {
@@ -239,17 +277,15 @@ describe('Base.View.Dashablerecord', function() {
 
     describe('rendering', function() {
         var unavailableModuleMsg = 'This module is not available';
-        var pickARecordMsg = 'Pick a record';
 
         beforeEach(function() {
             var langStub = sinon.collection.stub(app.lang, 'get');
             langStub.withArgs('LBL_DASHLET_MODULE_UNAVAILABLE')
                 .returns(unavailableModuleMsg);
-            langStub.withArgs('LBL_DASHLET_PICK_A_RECORD')
-                .returns(pickARecordMsg);
         });
 
-        it('should show the no access template if the module is not available', function() {
+        // FIXME: re-enable once CS-78 is in
+        /*it('should show the no access template if the module is not available', function() {
             view.moduleIsAvailable = false;
 
             view.render();
@@ -264,29 +300,28 @@ describe('Base.View.Dashablerecord', function() {
             view.render();
 
             expect(view.$('.block-footer').text().trim()).toEqual(unavailableModuleMsg);
-        });
+        });*/
 
-        it('should update the toolbar header if the dashlet is in main mode', function() {
-            view.moduleIsAvailable = true;
-            view.model = app.data.createBean(view.module, {name: 'Test'});
-            view.model.dataFetched = true;
-            view.settings.set('module', moduleName);
-            view.initDashlet('main');
-            var triggerStub = sinon.collection.stub(dashletToolbarContext, 'trigger');
+        describe('main mode', function() {
+            beforeEach(function() {
+                view.moduleIsAvailable = true;
+                view.model = app.data.createBean(view.module, {name: 'Test'});
+                view.model.dataFetched = true;
+                view.settings.set('module', moduleName);
+                view.settings.set('tabs', [moduleName]);
+                view.settings.set('activeTab', 0);
+                view._initTabs();
+            });
 
-            view.render();
+            it('should update the toolbar header', function() {
+                view.initDashlet('main');
+                var triggerStub = sinon.collection.stub(dashletToolbarContext, 'trigger');
 
-            // we test the precise field list elsewhere, no need to do it again here
-            expect(triggerStub).toHaveBeenCalledWith('dashlet:toolbar:change');
-        });
+                view.render();
 
-        it('should show the pick-a-record template if we are showing the wrong module', function() {
-            view.initDashlet('main');
-            view.model = app.data.createBean('Bugs');
-
-            view.render();
-
-            expect(view.$('.block-footer').text().trim()).toEqual(pickARecordMsg);
+                // we test the precise field list elsewhere, no need to do it again here
+                expect(triggerStub).toHaveBeenCalledWith('dashlet:toolbar:change');
+            });
         });
     });
 
@@ -611,14 +646,12 @@ describe('Base.View.Dashablerecord', function() {
                     type: 'record',
                     label: 'TPL_DASHLET_RECORDVIEW_THIS_RECORD_TYPE',
                     module: 'Cases',
-                    relatedModule: 'TPL_DASHLET_RECORDVIEW_THIS_RECORD_TYPE',
                     link: 'Cases'
                 },
                 {
                     type: 'record',
                     label: 'LBL_ACCOUNT',
-                    module: 'Cases',
-                    relatedModule: 'Accounts',
+                    module: 'Accounts',
                     link: 'accounts'
                 }
             ]);
@@ -626,10 +659,24 @@ describe('Base.View.Dashablerecord', function() {
         });
     });
 
+    describe('renderNewModel', function() {
+        it('should switch the model and then re-render', function() {
+            var switchModelStub = sinon.collection.stub(view, 'switchModel');
+            var renderStub = sinon.collection.stub(view, 'render');
+            view.initDashlet('main');
+
+            var newBean = app.data.createBean('Accounts');
+            view.renderNewModel(newBean);
+
+            expect(switchModelStub).toHaveBeenCalledWith(newBean);
+            expect(renderStub).toHaveBeenCalled();
+        });
+    });
+
     describe('_updateViewToCurrentTab', function() {
         it('should set the view data', function()  {
             var model = app.data.createBean(moduleName);
-            view.meta = {oldMeta: 'somethingOld', panels: []};
+            view._defaultBaseMeta = {oldMeta: 'somethingOld', panels: []};
             view.currentTab = {
                 model: model,
                 link: '',
@@ -640,10 +687,12 @@ describe('Base.View.Dashablerecord', function() {
             view._updateViewToCurrentTab();
             expect(view.model).toEqual(model);
             expect(view.module).toEqual(moduleName);
-            expect(view.meta).toEqual({
+            expect(view.meta.oldMeta).toEqual('somethingOld');
+            expect(view.meta.panels).toEqual([{fields: [], labels: true, grid: []}]);
+            /*expect(view.meta).toEqual({
                 oldMeta: 'somethingOld',
                 panels: [{fields: [], labels: true, grid: []}]
-            });
+            });*/
             expect(view.context.get('model')).toEqual(model);
         });
     });

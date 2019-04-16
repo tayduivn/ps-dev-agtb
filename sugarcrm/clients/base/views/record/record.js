@@ -452,7 +452,8 @@
         if (this.meta && this.meta.panels) {
             this._initTabsAndPanels();
         }
-
+        // it seems like this.fields gets set somewhere here...
+        // but that makes no sense.
         app.view.View.prototype._render.call(this);
 
         if (this.context.get('record_label')) {

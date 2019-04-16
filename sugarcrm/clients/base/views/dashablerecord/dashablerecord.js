@@ -143,23 +143,12 @@
      */
     initialize: function(options) {
         // bolt record view metadata for the given module onto the dashlet
-        options.meta = _.extend(
-            {},
-            options.meta,
-            app.metadata.getView(options.meta.module, 'recorddashlet') ||
-            app.metadata.getView(options.meta.module, 'record')
-        );
-
-        // split out the headerpane if necessary, and remove unwanted fields
-        // we need to inject these into the toolbar
-        if (options.meta.panels) {
-            this._prepareHeader(options.meta.panels);
-        }
+        this._defaultBaseMeta = options.meta;
+        options.meta = this._extendMeta({module: options.meta.module, type: 'record'});
 
         this._super('initialize', [options]);
 
         this._noAccessTemplate = app.template.get(this.name + '.noaccess');
-        this._pickARecordTemplate = app.template.get(this.name + '.pick-a-record');
         this._recordsTemplate = app.template.get(this.name + '.records');
         this._recordTemplate = app.template.get(this.name + '.record');
         this._tabsTemplate = app.template.get(this.name + '.tabs');
@@ -176,6 +165,38 @@
     },
 
     /**
+     * Extend this dashlet's metadata with that of the record view
+     * (or, if available, its recorddashlet view) metadata.
+     * Also mutate the panel metadata to handle its headerpane.
+     *
+     * @param {Object} tab Target tab.
+     * @return {Object} The extended metadata.
+     * @private
+     */
+    _extendMeta: function(tab) {
+        var desiredMeta;
+        if (tab.type === 'record') {
+            desiredMeta = app.metadata.getView(tab.module, 'recorddashlet') || this._getRecordMeta(tab.module);
+        } else {
+            desiredMeta = app.metadata.getView(tab.module, 'list');
+        }
+        var newMeta = _.extend(
+            {},
+            this._defaultBaseMeta,
+            desiredMeta,
+            tab.meta
+        );
+
+        // split out the headerpane if necessary, and remove unwanted fields
+        // we need to inject these into the toolbar
+        if (newMeta.panels) {
+            this._prepareHeader(newMeta.panels);
+        }
+
+        return newMeta;
+    },
+
+    /**
      * Must implement this method as a part of the contract with the Dashlet
      * plugin. Kicks off the various paths associated with a dashlet:
      * Configuration, preview, and display.
@@ -189,7 +210,10 @@
 
         // always save the host dashboard's module
         // (this might be different from the "base record type")
-        this._baseModule = this.settings.get('base_module') || this.model.module || this.model.get('module');
+        this._baseModule = this.settings.get('base_module') ||
+            this.settings.get('module') ||
+            this.model.module ||
+            this.model.get('module');
 
         if (this._mode === 'config') {
             this._configureDashlet();
@@ -203,38 +227,176 @@
             }, this);
 
             this.layout.context.trigger('dashablerecord:config:tabs:change', this.meta.tabs);
+        } else {
+            this._initTabs();
         }
 
         this.before('render', function() {
-            // ACL check
-            if (!this.moduleIsAvailable || !this.model) {
+            // ACL check // FIXME: disabled until CS-78 gets in
+            /*if (!this.moduleIsAvailable || !this.model) {
                 return this._noAccess();
+            }*/
+
+            var activeTab = this._getActiveTab();
+            if (!activeTab) {
+                return;
             }
 
-            if (this._mode === 'main' && this.model && this.model.module === this.module && this.model.dataFetched) {
-                // ensure the header is populated with the relevant data if we already have it
-                this._injectRecordHeader(this.model);
+            if (activeTab.type === 'record') {
+                if (
+                    this._mode === 'main' &&
+                    this.model &&
+                    this.model.module === this.module &&
+                    this.model.dataFetched
+                ) {
+                    // ensure the header is populated with the relevant data if we already have it
+                    this._injectRecordHeader(this.model);
+                }
             }
         });
 
         // set model if rowModel exists, eg, in multi-line dashboard
-        if (this.context.parent && this.context.parent.parent) {
-            var model = this.context.parent.parent.get('rowModel');
-            if (model && model.get('_module') === this.module) {
-                model = app.data.createBean(this.module, {id: model.get('id')});
-                model.fetch({
-                    showAlerts: true,
-                    success: _.bind(function(model) {
-                        model.module = this.module;
-                        this.switchModel(model);
-                        this._injectRecordHeader(model);
-                        this.render();
-                    }, this)
-                });
+        if (this._hasRowModel()) {
+            this._loadRowModel();
+        }
+    },
+
+    /**
+     * Gets the currently active tab object.
+     *
+     * @return {Object|undefined} The currently active tab object, or the
+     *   first configured tab if it exists, or else `undefined`.
+     * @private
+     */
+    _getActiveTab: function() {
+        if (this.tabs && this.tabs.length) {
+            var activeTabIndex = this.settings.get('activeTab') || 0;
+            return this.tabs[activeTabIndex];
+        }
+
+        if (this.settings.has('tabs')) {
+            var tab = this.settings.get('tabs')[0];
+            if (_.isString(tab)) {
+                return {
+                    link: tab,
+                    module: this._getRelatedModule(tab),
+                    type: this._getTabType(tab)
+                };
             }
+            return tab;
+        }
+    },
+
+    /**
+     * Gets the currently active link.
+     *
+     * @return {string} The link name of the active tab/module.
+     * @private
+     */
+    _getActiveLink: function() {
+        var activeTab = this._getActiveTab();
+
+        if (_.isString(activeTab) && !_.isEmpty(activeTab)) {
+            // base record case
+            return activeTab;
+        } else if (activeTab && _.isString(activeTab.link)) {
+            return activeTab.link;
+        }
+
+        // default fallback
+        return this.settings.get('base_module') || this.settings.get('module');
+    },
+
+    /**
+     * Gets the module for the currently active tab (or displayed module if
+     * there is only a single "tab" configured).
+     *
+     * @return {string} Name of the active module.
+     * @private
+     */
+    _getActiveModule: function() {
+        if (this.tabs && this.tabs.length) {
+            var activeTabIndex = this.settings.get('activeTab') || 0;
+            return this.tabs[activeTabIndex].module;
+        }
+
+        // simulate active tab
+        var link = this._getActiveLink();
+        if (this._isLinkToBaseRecord(link)) {
+            return this._baseModule;
+        }
+
+        var linkField = this._getBaseModuleFields()[link];
+        return this._getModuleFromLinkField(linkField);
+    },
+
+    /**
+     * Loads the row model, or the bean related to it, into the active tab.
+     * Do not use on list view tabs.
+     *
+     * @private
+     */
+    _loadRowModel: function() {
+        var model;
+
+        var link = this._getActiveLink();
+        var isBaseRecord = this._isLinkToBaseRecord(link);
+        var activeModule = this._getActiveModule();
+        var tabType = this._getTabType(link);
+
+        if (tabType === 'record') {
+            var rowModel = this._getRowModel();
+            var module = activeModule;
+
+            // check what tab we're on to determine which model to load
+            // note that it's not enough to just check if the module of the tab is the same as the base module,
+            // because a module can be related to itself, eg. Accounts->member_of
+            if (isBaseRecord) {
+                model = app.data.createBean(module, {id: rowModel.get('id')});
+            } else {
+                // fetch the associated model
+                model = app.data.createRelatedBean(
+                    rowModel,
+                    rowModel.get(link).id,
+                    link
+                );
+            }
+
+            model.fetch({
+                showAlerts: true,
+                success: _.bind(function(model) {
+                    model.module = module;
+                    this.renderNewModel(model);
+                }, this)
+            });
+        } else {
+            throw new Error('Do not call _loadRowModel on list view tabs');
         }
 
         this._initTabs();
+    },
+
+    /**
+     * Switch to a new model and then re-render.
+     *
+     * @param {Data.Bean} model The next model.
+     */
+    renderNewModel: function(model) {
+        this.switchModel(model);
+        this._injectRecordHeader(model);
+        this.render();
+    },
+
+    /**
+     * Returns true if the name of the given link should be interpreted as a
+     * "link" to the base record.
+     *
+     * @param {string} link Name of the link to check.
+     * @return {boolean} `true` if this link refers to the base record type.
+     * @private
+     */
+    _isLinkToBaseRecord: function(link) {
+        return link === '' || link === this._baseModule;
     },
 
     /**
@@ -278,9 +440,10 @@
 
             // handle full-object tabs
             if (!_.isUndefined(tab.link) && !_.isFunction(tab.link)) {
-                tab = link;
+                tab = tab.link;
             }
 
+            configTab.link = tab;
             if (tab === this._baseModule) {
                 configTab.link = '';
                 configTab.module = this._baseModule;
@@ -329,6 +492,7 @@
             this.activeConfigTab = index;
             this.render();
         } else {
+            // main dashlet mode, both for the normal dashlet and the pseudo dashlet
             if (index === this.settings.get('activeTab')) {
                 return;
             }
@@ -342,6 +506,14 @@
 
             if (this.collection && !this.collection.dataFetched && !tab.skipFetch && !this.meta.pseudo) {
                 this._loadDataForTabs([tab]);
+            } else if (tab.type === 'record') {
+                tab.model.module = tab.module;
+                tab.model.fetch({
+                    showAlerts: true,
+                    success: _.bind(function() {
+                        this.render();
+                    }, this)
+                });
             } else {
                 this.render();
             }
@@ -359,14 +531,15 @@
         if (!tab) {
             return;
         }
+
+        // FIXME: wondering if we should use switchModel here, or ditch that and just copy aspects of it to here
         this.model = tab.model;
-        var linkName = tab.link;
-        if (linkName) {
-            this.module = linkName === this._baseModule ? tab.module : tab.relatedModule;
-        } else {
-            this.module = tab.module;
-        }
-        this.meta = _.extend(this.meta, tab.meta);
+        this.module = tab.module;
+        this.context.set('module', this.module);
+        this.meta = this._extendMeta(tab);
+        this.modulePlural = app.lang.getAppListStrings('moduleList')[this.module] || this.module;
+        this.moduleSingular = app.lang.getAppListStrings('moduleListSingular')[this.module] || this.modulePlural;
+
         this._buildGridsFromPanelsMetadata();
         this.collection = tab.collection || null;
         this.context.set('model', this.model, {silent: true});
@@ -421,21 +594,53 @@
      * @private
      */
     _createCollection: function(tab) {
-        var meta = app.metadata.getModule(this.module);
+        var meta = app.metadata.getModule(tab.module);
         if (_.isUndefined(meta)) {
             return null;
         }
+
+        // on the multi-line list view, the first time the collections are created this.model is from Home
+        // (i.e. it's the dashboard model). This causes fetching to complain.
+        var modelToUse = this._getRowModel() || this.model;
+
         var options = {};
         if (meta.fields[tab.link] && meta.fields[tab.link].type === 'link') {
             options = {
                 link: {
                     name: tab.link,
-                    bean: this.model
+                    bean: modelToUse
                 }
             };
         }
-        var collection = app.data.createBeanCollection(tab.module, [], options);
-        return collection;
+        return app.data.createBeanCollection(tab.module, [], options);
+    },
+
+    /**
+     * Get the row model from row-model-data.
+     *
+     * @return {Data.Bean|undefined} The rowModel, if it exists.
+     * @private
+     */
+    _getRowModel: function() {
+        if (this._contextModel) {
+            return this._contextModel;
+        } else if (this._hasRowModel()) {
+            this._contextModel = this.context.parent.parent.get('rowModel');
+            return this._contextModel;
+        }
+    },
+
+    /**
+     * Determine if we have a rowModel or not.
+     *
+     * @return {boolean} `true` if we have a rowModel. `false` otherwise.
+     * @private
+     */
+    _hasRowModel: function() {
+        return this.context &&
+            this.context.parent &&
+            this.context.parent.parent &&
+            this.context.parent.parent.has('rowModel');
     },
 
     /**
@@ -450,7 +655,7 @@
      * @private
      */
     _getCollectionOptions: function(tab) {
-        var options = {
+        return {
             limit: tab.limit || this.settings.get('limit'),
             relate: tab.relate,
             params: {
@@ -459,8 +664,6 @@
             },
             fields: tab.fields || null
         };
-
-        return options;
     },
 
     /**
@@ -503,7 +706,15 @@
         var self = this;
         var loadDataRequests = [];
         _.each(tabs, function(tab, index) {
-            if (!tab.collection || tab.skipFetch) {
+            if (
+                !tab.collection ||
+                tab.skipFetch ||
+                (
+                    tab.collection.link &&
+                    tab.collection.link.bean &&
+                    tab.collection.link.bean.has('view_name')
+                )
+            ) {
                 return;
             }
             loadDataRequests.push(function(callback) {
@@ -523,6 +734,7 @@
                 }
                 self.collection = self.tabs[self.settings.get('activeTab')].collection;
                 self.context.set('collection', self.collection);
+
                 self.render();
 
                 if (_.isFunction(options.complete)) {
@@ -540,6 +752,7 @@
      * @private
      */
     _getFieldMetaForTab: function(tab) {
+        // FIXME: this function needs to be renamed as it only applies to list view tabs
         var meta = app.metadata.getView(tab.module, 'list') || {};
         return this._getFieldMetaForView(meta);
     },
@@ -602,7 +815,6 @@
         var tab = this.currentTab;
 
         var tabType = tab && tab.type;
-
         this.tabContentHtml = tabType === 'list' ? this._recordsTemplate(this) : this._recordTemplate(this);
 
         // Link to studio if showing a single record
@@ -625,9 +837,7 @@
     bindDataChange: function() {
         this.context.on('change:model', function(ctx, model) {
             this.switchModel(model);
-
             this._injectRecordHeader(model);
-
             this.render();
         }, this);
     },
@@ -658,21 +868,11 @@
         this.model && this.model.abortFetchRequest();
         this.stopListening(this.model);
         this.model = model;
-        this._initTabs();
-    },
-
-    /**
-     * @inheritdoc
-     *
-     * Show the "pick-a-record" template if our current model is from the
-     * wrong module.
-     */
-    _render: function() {
-        if (this.model.module !== this.module && this._mode !== 'config') {
-            this.$el.html(this._pickARecordTemplate());
-            return;
+        if (this.module !== this.model.module) {
+            this.module = this.model.module;
+            this.meta = this._extendMeta({type: 'record', module: this.module});
         }
-        this._super('_render');
+        this._initTabs();
     },
 
     /**
@@ -694,6 +894,9 @@
         if (!this.settings.get('label')) {
             this.settings.set('label', 'LBL_MODULE_NAME');
         }
+        if (!this.settings.has('tabs') && this.meta.tabs) {
+            this.settings.set('tabs', this.meta.tabs);
+        }
     },
 
     /**
@@ -713,6 +916,7 @@
 
         // note: the module in the settings might actually be the name of a link field
         if (fields && this._isALink(module, fields)) {
+            // FIXME: I might actually have to call _getModuleFromLink or whatever here
             module = fields[module].module;
         }
 
@@ -829,6 +1033,7 @@
      * @private
      */
     _prepareHeader: function(panels) {
+        this._headerFields = this._headerFields || [];
         var headerIndex = _.findIndex(panels, function(panel) {
             return panel.header === true;
         });
@@ -849,7 +1054,7 @@
                 }
             }, this);
         }
-        this._headerFields = fields || [];
+        this._headerFields = fields || this._headerFields;
         this._injectRecordHeader();
     },
 
@@ -939,19 +1144,24 @@
                     module: tab.module
                 }];
                 tab.collection.orderBy = tab.order_by || {};
+                tab.model = app.data.createBean(tab.module);
                 this.tabs[index] = tab;
             } else if (tab.type === 'record') {
                 // Single record (record view tab)
-                var module = tab.link && tab.link === this._baseModule ? tab.module : tab.relatedModule;
-                var linkName = tab.link;
-                if (linkName) {
-                    module = linkName === this._baseModule ? tab.module : tab.relatedModule;
-                } else {
-                    module = tab.module;
-                }
+                var module = tab.module;
                 tab.meta = app.metadata.getView(module, 'recorddashlet') || app.metadata.getView(module, 'record');
-                // TODO need the correct ID here
-                tab.model = app.data.createBean(module);
+                if (tab.isBaseModule) {
+                    tab.model = this.model;
+                } else {
+                    var linked = this.model.get(tab.link);
+                    if (linked && linked.id) {
+                        tab.model = app.data.createRelatedBean(this.model, linked.id, tab.link);
+                    } else {
+                        // rowModel case
+                        tab.model = app.data.createBean(tab.module); // just to hold it over for now
+                    }
+                }
+
                 this.tabs[index] = tab;
             }
         }, this);
@@ -992,8 +1202,7 @@
             var baseOptions = {
                 type: tabType,
                 label: this._getLinkLabel(link),
-                module: this._baseModule,
-                relatedModule: relatedModule,
+                module: relatedModule,
                 link: link
             };
 
@@ -1029,7 +1238,7 @@
      * @private
      */
     _getLinkLabel: function(linkName) {
-        if (linkName === this._baseModule) {
+        if (this._isLinkToBaseRecord(linkName)) {
             return this._getBaseRecordLabel();
         }
 
@@ -1044,7 +1253,26 @@
     },
 
     /**
-     * Get the related module given a link name,
+     * Get the related module's label given a link name,
+     * relative to the base module.
+     *
+     * If given the base module, just return the
+     * label corresponding to that.
+     *
+     * @param {string} linkName Link field name.
+     * @return {string} Name of the related module.
+     * @private
+     */
+    _getRelatedModuleLabel: function(linkName) {
+        if (this._isLinkToBaseRecord(linkName)) {
+            return this._getBaseRecordLabel();
+        }
+
+        return this._getRelatedModule(linkName);
+    },
+
+    /**
+     * Get the related module name given a link name,
      * relative to the base module.
      *
      * If given the base module, just return that.
@@ -1054,11 +1282,11 @@
      * @private
      */
     _getRelatedModule: function(linkName) {
-        if (linkName === this._baseModule) {
-            return this._getBaseRecordLabel();
+        if (this._isLinkToBaseRecord(linkName)) {
+            return this._baseModule;
         }
 
-        return this._getModuleFromLinkField(this._getBaseModuleFields()[linkName]);
+        return this. _getModuleFromLinkField(this._getBaseModuleFields()[linkName]);
     },
 
     /**
@@ -1107,12 +1335,15 @@
             }
 
             // determine the related module and tab type (record/list)
+            var isBaseModule;
             if (tab === this._baseModule) {
                 relatedModule = this._baseModule;
                 tabType = 'record';
+                isBaseModule = true;
             } else {
                 relatedModule = this._getRelatedModule(tab);
                 tabType = this._getTabType(tab);
+                isBaseModule = false;
             }
 
             // set up the dashlet based on its type
@@ -1120,16 +1351,19 @@
             if (tabType === 'list') {
                 // FIXME CS-63: This is obviously mostly wrong
                 dashletTab = {
-                    fields: ['name'],
                     limit: this.settings.get('limit'),
                     link: tab,
                     module: relatedModule,
                     order_by: {},
+                    isBaseModule: false
                 };
+                dashletTab.fields = _.pluck(this._getFieldMetaForTab(dashletTab), 'name');
             } else if (tabType === 'record') {
                 dashletTab = {
                     label: 'LBL_MODULE_NAME_SINGULAR',
-                    module: relatedModule
+                    module: relatedModule,
+                    isBaseModule: isBaseModule,
+                    link: tab
                 };
             }
             dashletTab.type = tabType;
@@ -1217,7 +1451,7 @@
                 activeTab: 0, // reset to initial tab
                 base_module: this._baseModule,
                 label: this.settings.get('label'),
-                tabs: this._generateConfigTabs(tabNames)
+                tabs: this._generateConfigTabs(tabNames) // needed because list view tabs need additional configuration
             };
 
             // don't save unwanted record view metadata into the dashlet. Just whitelist what we need.

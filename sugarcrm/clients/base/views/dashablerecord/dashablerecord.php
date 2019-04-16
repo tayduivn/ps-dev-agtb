@@ -21,7 +21,7 @@ $viewdefs['base']['view']['dashablerecord'] = array(
                 'view' => ['record'],
             ),
             'config' => [],
-            // FIXME: I probably have to update this too
+            // FIXME: see if it's safe to erase this
             'preview' => array(
                 'module' => 'Accounts',
                 'label' => 'LBL_MODULE_NAME',

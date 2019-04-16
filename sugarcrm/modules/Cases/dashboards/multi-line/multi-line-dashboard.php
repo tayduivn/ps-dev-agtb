@@ -16,6 +16,7 @@ return [
         'components' => [
             [
                 'rows' => [
+                    // row 1
                     [
                         [
                             'view' => [
@@ -77,6 +78,20 @@ return [
                             'context' => [
                                 'module' => 'Cases',
                              ],
+                            'width' => 6,
+                        ],
+                    ],
+                    // row 2
+                    [
+                        [
+                            'view' => [
+                                'type' => 'dashablerecord',
+                                'module' => 'Cases',
+                                'tabs' => ['accounts'],
+                            ],
+                            'context' => [
+                                'module' => 'Cases',
+                            ],
                             'width' => 6,
                         ],
                     ],
