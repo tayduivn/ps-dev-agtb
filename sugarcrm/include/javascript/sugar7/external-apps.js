@@ -36,35 +36,84 @@
             console.log('skipping external app sync for public metadata');
             return Promise.resolve();
         }
-
         if (app.config.externalManifestUrl && app.config.externalManifestUrl !== '') {
-            return new Promise(function(r, e) {
-
-                fetch(app.config.externalManifestUrl, {mode: 'cors'}).then(
+            var iframeOrigin = app.config.externalManifestUrl.match(/^.+\:\/\/[^\/]+/)[0];
+            var getManifest = function(onSuccess, onError, onLogin) {
+                fetch(app.config.externalManifestUrl, {
+                    headers: {'Accept': 'application/json'},
+                    credentials: 'include'
+                }).then(
                     function(response) {
                         response.json().then(function(manifest) {
-                            _.each(manifest.layouts, function(def) {
-                                if (def.module && def.layout) {
-                                    addCompToLayout(metadata, def.module, def.layout, {
-                                        'view': {
-                                            'type': 'external-app',
-                                            'name': manifest.name,
-                                            'src': manifest.src
-                                        }
-                                    });
-                                }
-                                ;
-                            });
-                            r();
+                            console.log('manifest', manifest);
+                            if (manifest.loginRedirect && onLogin) {
+                                onLogin(manifest.loginRedirect);
+                            } else {
+                                onSuccess(manifest);
+                            }
                         }).catch(function(error) {
-                            e(error);
+                            onError(error);
                         });
                     }
                 ).catch(function(error) {
-                    console.log(error, 'error fetching external app manifest');
-                    r();
+                    onError(error);
                 });
+            };
 
+            return new Promise(function(res, error) {
+                var handleManifest = function(manifest) {
+                    _.each(manifest.layouts, function(def) {
+                        if (def.module && def.layout) {
+                            addCompToLayout(metadata, def.module, def.layout, {
+                                'view': {
+                                    'type': 'external-app',
+                                    'name': manifest.name,
+                                    'src': manifest.src
+                                }
+                            });
+                        }
+                    });
+                    res();
+                };
+
+                getManifest(handleManifest, error, function(loginUrl) {
+                    var iframe = document.createElement('iframe');
+
+                    var cleanup = function() {
+                        iframe.parentElement.removeChild(iframe);
+                        window.removeEventListener('message', eventCallback);
+                    };
+
+                    var eventCallback = function(event) {
+                        // TODO: Verify the manifest service origin instead of assuming any
+                        // origin besides the one we are on is correct
+                        if (event.origin === iframeOrigin) {
+                            console.log('Event origin was ' + event.origin);
+                            console.log(`iframeOrigin was ${iframeOrigin}`);
+                            cleanup();
+                            //After the iframe event callback, we need to load the manifest again but this time expect to get data.
+                            getManifest(handleManifest, e, function(url) {
+                                error('Unable to authenticate with manifest service: Second Login URL:' + url);
+                            });
+                        }
+                    };
+
+                    iframe.onload = function() {
+                        console.log('loaded before we got the event');
+                        cleanup();
+                        res();
+                    };
+                    iframe.src = loginUrl;
+                    iframe.style = 'display:none;\n' +
+                        '                        position: absolute;\n' +
+                        '                        width: 500px;\n' +
+                        '                        height: 500px;\n' +
+                        '                        top: calc(50% - 250px);\n' +
+                        '                        left: calc(50% - 250px);';
+
+                    window.addEventListener('message', eventCallback);
+                    document.body.appendChild(iframe);
+                });
             });
         } else {
             return Promise.resolve();
