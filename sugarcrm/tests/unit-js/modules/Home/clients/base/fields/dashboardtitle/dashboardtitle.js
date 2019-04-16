@@ -79,6 +79,9 @@ describe('Home.Base.Field.Dashboardtitle', function() {
             var parentStub = {
                 getChildContext: function() {
                     return contextBro;
+                },
+                get: function() {
+                    return 'record';
                 }
             };
 

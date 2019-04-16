@@ -311,7 +311,8 @@
             app.router.navigate(route, {trigger: true});
             return;
         }
-        var contextBro = this.context.parent.getChildContext({module: 'Home'});
+        var contextBro = this.context.parent && this.context.parent.get('layout') === 'multi-line' ?
+            this.context.parent : this.context.parent.getChildContext({module: 'Home'});
         switch (change) {
             case 'delete':
                 contextBro.get('collection').remove(model);

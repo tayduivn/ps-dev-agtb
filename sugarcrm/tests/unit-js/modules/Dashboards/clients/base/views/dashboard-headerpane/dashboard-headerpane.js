@@ -94,6 +94,9 @@ describe('Dashboards.Base.View.DashboardHeaderpane', function() {
             view.context.parent = {
                 getChildContext: function() {
                     return contextBro;
+                },
+                get: function() {
+                    return 'record';
                 }
             };
             view.layout = {
@@ -123,7 +126,6 @@ describe('Dashboards.Base.View.DashboardHeaderpane', function() {
         it('should save the new Home Dashboard model and navigate to it', function() {
             var navigateStub = sandbox.stub(app.router, 'navigate');
 
-            view.context.parent = null;
             prefill.set('dashboard_module', 'Home');
             sandbox.stub(app.router, 'buildRoute')
                 .withArgs(view.module, prefill.get('id')).returns('NewModelRoute');
@@ -238,6 +240,9 @@ describe('Dashboards.Base.View.DashboardHeaderpane', function() {
             view.context.parent = {
                 getChildContext: function() {
                     return contextBro;
+                },
+                get: function() {
+                    return 'record';
                 }
             };
             view.layout = {

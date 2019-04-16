@@ -21,6 +21,6 @@
         this._super('initialize', [options]);
         this.context.set('layout', options.context.get('layout') || 'multi-line');
         this.context.set('rowModel', options.context.get('model'));
-        this.context = this.context.getChildContext({});
+        this.context = this.context.getChildContext({layout: this.context.get('layout')});
     }
 })

@@ -15,8 +15,9 @@ $viewdefs['base']['layout']['row-model-data'] = array(
     'components' => array(
         array(
             'layout' => array(
-                'type' => 'default',
-                'name' => 'sidebar',
+                'type' => 'base',
+                'name' => 'row-model-data',
+                'css_class' => 'row-model-data dashboard-pane',
                 'components' => array(
                     array(
                         'layout' => 'dashboard',

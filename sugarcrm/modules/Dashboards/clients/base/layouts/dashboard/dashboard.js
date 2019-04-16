@@ -149,11 +149,11 @@
     _getDashboardModelAttributes: function() {
         var ctx = this.context && this.context.parent || this.context;
         var dashboardModule = ctx.get('module');
-
+        var viewName = dashboardModule === 'Home' ? '' : ctx.get('layout');
         return {
             'assigned_user_id': app.user.id,
             'dashboard_module': dashboardModule,
-            'view_name': dashboardModule === 'Home' ? '' : ctx.get('layout')
+            'view_name': viewName
         };
     },
 
@@ -510,10 +510,6 @@
             headerPane = {
                 view: 'search-dashboard-headerpane'
             };
-        } else if (layout.context && layout.context.parent &&
-            layout.context.parent.get('layout') === 'multi-line') {
-            // don't show headerpane for multi-line dashboards
-            headerPane = {};
         } else {
             headerPane = {
                 view: 'dashboard-headerpane',
@@ -683,8 +679,8 @@
             apiModule: 'Dashboards',
             module: 'Home',
             dashboardModule: module,
-            maxColumns: (module === 'Home') ? 3 : 1,
-            minColumnSpanSize: (module === 'Home') ? 4 : 12,
+            maxColumns: (module === 'Home') ? 3 : (layoutName === 'multi-line' ? 2 : 1),
+            minColumnSpanSize: (module === 'Home') ? 4 : (layoutName === 'multi-line' ? 6 : 12),
             defaults: {
                 view_name: layoutName
             },
