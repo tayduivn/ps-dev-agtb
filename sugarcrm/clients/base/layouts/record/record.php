@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 $viewdefs['base']['layout']['record'] = array(
     'components' => array(
         array(
@@ -74,8 +72,7 @@ $viewdefs['base']['layout']['record'] = array(
                                             ),
                                             array(
                                                 'layout' => 'activitystream',
-                                                'context' =>
-                                                array(
+                                                'context' => array(
                                                     'module' => 'Activities',
                                                 ),
                                             ),
@@ -90,22 +87,57 @@ $viewdefs['base']['layout']['record'] = array(
                     ),
                     array(
                         'layout' => array(
-                            'type' => 'base',
+                            'type' => 'tabbed-layout',
                             'name' => 'dashboard-pane',
-                            'css_class' => 'dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => array(
-                                        'type' => 'dashboard',
-                                        'last_state' => array(
-                                            'id' => 'last-visit',
-                                        )
+                                        'type' => 'base',
+                                        'label' => 'LBL_DASHBOARDS',
+                                        'notabs' => true,
+                                        'css_class' => 'dashboard-pane',
+                                        'components' => array(
+                                            array(
+                                                'layout' => array(
+                                                    'label' => 'Dashboards',
+                                                    'type' => 'dashboard',
+                                                    'last_state' => array(
+                                                        'id' => 'last-visit',
+                                                    ),
+                                                ),
+                                                'context' => array(
+                                                    'forceNew' => true,
+                                                    'module' => 'Home',
+                                                ),
+                                                'loadModule' => 'Dashboards',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                                // todo: REMOVE THESE ABOUT LINKS BEFORE MERGE
+                                array(
+                                    'view' => array(
+                                        'label' => 'LNK_ABOUT',
+                                        'type' => 'about-copyright',
+                                        'module' => 'Home',
                                     ),
                                     'context' => array(
                                         'forceNew' => true,
                                         'module' => 'Home',
+                                        'skipFetch' => true,
                                     ),
-                                    'loadModule' => 'Dashboards',
+                                ),
+                                array(
+                                    'view' => array(
+                                        'label' => 'LNK_ABOUT',
+                                        'type' => 'about-copyright',
+                                        'module' => 'Home',
+                                    ),
+                                    'context' => array(
+                                        'forceNew' => true,
+                                        'module' => 'Home',
+                                        'skipFetch' => true,
+                                    ),
                                 ),
                             ),
                         ),

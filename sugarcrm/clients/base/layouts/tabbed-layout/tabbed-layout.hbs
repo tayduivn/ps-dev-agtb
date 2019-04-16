@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="tabbable">
-    <ul class="nav nav-tabs related-tabs{{#if options.meta.notabs}} hide{{/if}}">
-    </ul>
+<div class="tabbable{{#if meta.notabs}} hide-tabs{{/if}}">
+    <div class="tabs">
+        <ul class="nav nav-tabs related-tabs{{#if meta.notabs}} hide{{/if}}">
+        </ul>
+    </div>
     <div class="tab-content">
     </div>
 </div>
