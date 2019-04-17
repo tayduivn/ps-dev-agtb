@@ -106,6 +106,9 @@ export default class RecordHeaderView extends BaseView {
 
                 // Home Dashboard control
                 'addbutton': 'a[name="add_button"]:not(.hide)',
+
+                //Pipeline View
+                'pipelinecreate': 'a[name="pipeline_create_button"]:not(.hide)',
             },
 
             title: {

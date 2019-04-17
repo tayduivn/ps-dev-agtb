@@ -19,7 +19,6 @@ import RecordLayout from '../layouts/record-layout';
 import AuditLogDrawerLayout from '../layouts/audit-log-drawer-layout';
 import {headerButtonClick, auditLogVerification, personalInfoDrawerVerification} from './steps-utils';
 import ActivityStreamLayout from '../layouts/activity-stream-layout';
-import {chooseModule} from '../step_definitions/general_bdd';
 
 /**
  * Check whether the cached view is visible
@@ -248,3 +247,4 @@ Then(/^I verify that (\S+) element from (#\S+) still looks like (.*)$/,
         let view = component.type ? component.defaultView : component;
         await stepsHelper.verifyElementByImage(view, fileName, selector);
     }, {waitForApp: true});
+

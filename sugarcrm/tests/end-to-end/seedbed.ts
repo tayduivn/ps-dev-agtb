@@ -35,6 +35,7 @@ import KBViewCategoriesDrawer from './layouts/kb-view-categories-layout';
 import KBSettingsLayout from './layouts/kb-settings-layout';
 import MergeLayout from './layouts/merge-layout';
 import HistoricalSummaryDrawerLayout from './layouts/historical-summary-layout';
+import PipelineView from './views/pipeline-view';
 
 export default (seedbed: Seedbed) => {
 
@@ -79,6 +80,7 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`AuditLogDrawer`, AuditLogDrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`BusinessRulesDesign`, BusinessRulesDesignLayout, {module: moduleName});
                 seedbed.defineComponent(`MergeDrawer`, MergeLayout, {module: moduleName});
+                seedbed.defineComponent(`${moduleName}PipelineView`, PipelineView, {module: moduleName});
             }
         });
 

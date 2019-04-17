@@ -57,7 +57,7 @@ When(/^I choose (\w+) in modules menu(?: and select "([^"]*)" menu item)?$/,
  * Select item from cached View
  */
 When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-    async function (record: { id: string }, view: ListView) {
+    async function (record: { id: string }, view: any) {
         let listItem = view.getListItem({id: record.id});
         await listItem.clickListItem();
     }, {waitForApp: true});
