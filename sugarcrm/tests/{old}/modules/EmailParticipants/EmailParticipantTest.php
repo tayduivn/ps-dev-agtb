@@ -28,8 +28,10 @@ class EmailParticipantTest extends TestCase
         // Clean up any dangling beans that need to be resaved.
         SugarRelationship::resaveRelatedBeans(false);
 
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestEmailUtilities::removeAllCreatedEmails();
+        SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
     }
 
     public function saveEmailTextProvider()
@@ -100,5 +102,149 @@ class EmailParticipantTest extends TestCase
 
         $email->retrieveEmailText();
         $this->assertEmpty($email->to_addrs_names);
+    }
+
+    public function checkIfEmployeeProvider()
+    {
+        return [
+            'parent_type_is_contacts' => [
+                'SugarTestContactUtilities',
+                'createContact',
+                'Contacts',
+                false,
+            ],
+            'parent_type_is_users' => [
+                'SugarTestUserUtilities',
+                'createAnonymousUser',
+                'Users',
+                true,
+            ],
+            'parent_type_is_employees' => [
+                'SugarTestUserUtilities',
+                'createAnonymousUser',
+                'Employees',
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider checkIfEmployeeProvider
+     * @covers ::isAnEmployee
+     */
+    public function testIsAnEmployee_WithParent($beanCreateClass, $beanCreateMethod, $module, $expected)
+    {
+        $bean = call_user_func([$beanCreateClass, $beanCreateMethod]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $email->load_relationship('to');
+
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        $ep->parent_type = $module;
+        $ep->parent_id = $bean->id;
+        $ep->email_address_id = $bean->emailAddress->addresses[0]['email_address_id'];
+
+        BeanFactory::registerBean($ep);
+        $email->to->add($ep);
+        $email->state = Email::STATE_ARCHIVED;
+        $email->save();
+
+        $actual = $ep->isAnEmployee();
+
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @covers ::isAnEmployee
+     * @covers SugarEmailAddress::getEmployeesWithEmailAddress
+     */
+    public function testIsAnEmployee_WithoutParent_EmailAddressBelongsToAnEmployee()
+    {
+        $bean = SugarTestUserUtilities::createAnonymousUser();
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $email->load_relationship('to');
+
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        $ep->email_address_id = $bean->emailAddress->addresses[0]['email_address_id'];
+
+        BeanFactory::registerBean($ep);
+        $email->to->add($ep);
+        $email->state = Email::STATE_ARCHIVED;
+        $email->save();
+
+        $actual = $ep->isAnEmployee();
+
+        $this->assertTrue($actual);
+    }
+
+    public function specialUserNameProvider()
+    {
+        $portal = new ParserModifyPortalConfig();
+
+        return [
+            'snip_user' => [
+                SugarSNIP::getInstance()->getSnipUser(),
+            ],
+            'portal_user' => [
+                $portal->getPortalUser(),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider specialUserNameProvider
+     * @covers ::isAnEmployee
+     * @covers SugarEmailAddress::getEmployeesWithEmailAddress
+     */
+    public function testIsAnEmployee_WithoutParent_EmailAddressBelongsToSpecialUser($user)
+    {
+        // Link an email address to the special user.
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($user, $address);
+
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $email->load_relationship('to');
+
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        $ep->email_address_id = $address->id;
+
+        BeanFactory::registerBean($ep);
+        $email->to->add($ep);
+        $email->state = Email::STATE_ARCHIVED;
+        $email->save();
+
+        $actual = $ep->isAnEmployee();
+
+        $this->assertFalse($actual);
+    }
+
+    /**
+     * @covers ::isAnEmployee
+     * @covers SugarEmailAddress::getEmployeesWithEmailAddress
+     */
+    public function testIsAnEmployee_WithoutParent_EmailAddressDoesNotBelongToAnEmployee()
+    {
+        $bean = SugarTestContactUtilities::createContact();
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $email->load_relationship('to');
+
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        $ep->email_address_id = $bean->emailAddress->addresses[0]['email_address_id'];
+
+        BeanFactory::registerBean($ep);
+        $email->to->add($ep);
+        $email->state = Email::STATE_ARCHIVED;
+        $email->save();
+
+        $result = $ep->isAnEmployee();
+
+        $this->assertFalse($result, 'isAnEmployee: NonEmployee tested true');
     }
 }

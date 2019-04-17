@@ -1162,6 +1162,13 @@ $app_list_strings = array (
         'Archived' => 'Archived',
     ),
 
+    'dom_email_direction' => array(
+        'Unknown' => 'Unknown',
+        'Outbound' => 'Outbound',
+        'Inbound' => 'Inbound',
+        'Internal' => 'Internal',
+    ),
+
     'scheduler_status_dom' =>
         array (
         'Active' => 'Active',

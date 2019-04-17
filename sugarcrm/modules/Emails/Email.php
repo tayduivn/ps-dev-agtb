@@ -18,6 +18,11 @@ class Email extends SugarBean {
     const STATE_DRAFT = 'Draft';
     const STATE_ARCHIVED = 'Archived';
 
+    const DIRECTION_UNKNOWN = 'Unknown';
+    const DIRECTION_OUTBOUND = 'Outbound';
+    const DIRECTION_INBOUND = 'Inbound';
+    const DIRECTION_INTERNAL = 'Internal';
+
     /**
      * A flag to toggle when synchronizing the email's sender and recipients. See
      * {@link Email::synchronizeEmailParticipants()} for a full description.
@@ -350,6 +355,17 @@ class Email extends SugarBean {
      * @var string
      */
     public $state;
+
+    /**
+     * Tells the whether the email is considered inbound or outbound.
+     *
+     * Emails sent by an employee to other employees are internal. Emails sent by an employee to at least one
+     * non-employee are outbound. Emails sent by a non-employee are inbound. All other emails have an unknown direction.
+     *
+     * @var string Possible values: {@link Email::DIRECTION_UNKNOWN}, {@link Email::DIRECTION_OUTBOUND},
+     * {@link Email::DIRECTION_INBOUND}, {@link Email::DIRECTION_INTERNAL}
+     */
+    public $direction;
 
 	/**
 	 * sole constructor
@@ -1513,6 +1529,9 @@ class Email extends SugarBean {
             // archived email.
             $this->saveEmailAddresses();
 
+            // Set the direction after the sender and recipients have been linked by `Email::saveEmailAddresses()`.
+            $this->direction = $this->getDirection();
+
 			$parentSaveResult = parent::save($check_notify);
 
             // Add the current user as the sender when the email is a draft.
@@ -2301,7 +2320,41 @@ class Email extends SugarBean {
         );
     }
 
-	/**
+    /**
+     * Returns the direction of the email based on its sender and recipients.
+     *
+     * @return string
+     * @throws SugarException
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function getDirection()
+    {
+        // The direction cannot be changed.
+        if (!empty($this->fetched_row['direction']) && $this->fetched_row['direction'] !== static::DIRECTION_UNKNOWN) {
+            return $this->fetched_row['direction'];
+        }
+
+        // Drafts can be ignored because their direction will be set at send-time.
+        if ($this->state === static::STATE_DRAFT) {
+            return static::DIRECTION_UNKNOWN;
+        }
+
+        $sender = $this->getSender();
+
+        // There is no way of knowing the direction if the sender isn't known.
+        if (!$sender) {
+            return static::DIRECTION_UNKNOWN;
+        }
+
+        if ($sender->isAnEmployee()) {
+            return $this->isToEmployeesOnly() ? static::DIRECTION_INTERNAL : static::DIRECTION_OUTBOUND;
+        }
+
+        // The sender isn't an employee.
+        return static::DIRECTION_INBOUND;
+    }
+
+    /**
 	 * creates the standard "Forward" info at the top of the forwarded message
      *
      * @deprecated The BWC Emails UI is no longer being used.
@@ -4648,12 +4701,8 @@ eoq;
 
         $q = new SugarQuery();
         $q->from($seed);
-        // Must add the fields to select before calling SugarBean::fetchFromQuery() so that the email_address_used
-        // field is in SugarQuery::$joinLinkToKey. Otherwise, the joins that SugarQuery::joinSubpanel() adds will be
-        // replaced by new joins when the email_address_used field is added in SugarBean::fetchFromQuery(), and the
-        // the new joins will not include the role column for address_type, which is very important.
         $q->select($fields);
-        $q->joinSubpanel($this, $role);
+        $q->where()->equals('email_id', $this->id)->equals('address_type', $role);
         // Must also pass the fields here -- even though they have already been added to the query -- because
         // SugarBean::fetchFromQuery() will add all of the fields in the vardefs if we don't.
         $beans = $seed->fetchFromQuery($q, $fields);
@@ -4662,6 +4711,42 @@ eoq;
         // need to do this if they care. Existing use cases don't require it. Should use cases emerge that do, then
         // we can add the field mapping here.
         return $beans;
+    }
+
+    /**
+     * Returns the sender or null if there isn't one.
+     *
+     * @return null|EmailParticipant
+     * @throws SugarException
+     */
+    protected function getSender()
+    {
+        $from = $this->getParticipants('from');
+        return array_shift($from);
+    }
+
+    /**
+     * Are all recipients employees?
+     *
+     * Returns true if all recipients are employees. Returns false if even one recipient is not an employee.
+     *
+     * @return bool
+     * @throws SugarException
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function isToEmployeesOnly()
+    {
+        foreach (['to', 'cc', 'bcc'] as $linkName) {
+            $participants = $this->getParticipants($linkName);
+
+            foreach ($participants as $participant) {
+                if (!$participant->isAnEmployee()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**

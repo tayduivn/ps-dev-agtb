@@ -81,6 +81,7 @@ class SugarACLEmailsTest extends TestCase
             ['cc'],
             ['bcc'],
             ['attachments'],
+            ['direction'],
         ];
     }
 
@@ -251,6 +252,10 @@ class SugarACLEmailsTest extends TestCase
             [
                 'attachments',
                 true,
+            ],
+            [
+                'direction',
+                false,
             ],
         ];
     }

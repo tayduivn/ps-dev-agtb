@@ -464,6 +464,20 @@ $dictionary['Email'] = array(
             'reportable' => false,
             'comment' => 'ID of Sugar object referenced by parent_type',
         ),
+        'direction' => array(
+            'name' => 'direction',
+            'vname' => 'LBL_EMAIL_DIRECTION',
+            'type' => 'enum',
+            'options' => 'dom_email_direction',
+            'len' => 20,
+            'required' => true,
+            'isnull' => false,
+            'default' => 'Unknown',
+            'massupdate' => false,
+            'comment' => 'Email direction is one of Unknown, Outbound, Inbound, Internal',
+            'reportable' => true,
+            'mandatory_fetch' => true,
+        ),
         /* relationship collection attributes */
         /* added to support InboundEmail */
         'accounts' => array(

@@ -86,6 +86,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
+        $this->assertSame(Email::DIRECTION_OUTBOUND, $record['direction'], 'From user to contact and account');
 
         $expected = [
             [
@@ -196,6 +197,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             $record['outbound_email_id'],
             'Should use the specified configuration'
         );
+        $this->assertSame(Email::DIRECTION_UNKNOWN, $record['direction'], 'Drafts use default direction');
 
         $expected = [
             [
@@ -305,6 +307,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             $record['outbound_email_id'],
             'The configuration did not match expectations after create'
         );
+        $this->assertSame(Email::DIRECTION_UNKNOWN, $record['direction'], 'Drafts use default direction');
 
         $expected = [
             [
@@ -372,6 +375,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             $record['outbound_email_id'],
             'The configuration should have changed'
         );
+        $this->assertSame(Email::DIRECTION_UNKNOWN, $record['direction'], 'Direction should not change');
 
         $expected = [
             [
@@ -478,6 +482,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after create');
         $this->assertTrue(empty($record['outbound_email_id']), 'No configuration was specified during create');
+        $this->assertSame(Email::DIRECTION_UNKNOWN, $record['direction'], 'Drafts use default direction');
 
         $expected = [
             [
@@ -560,6 +565,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             $record['outbound_email_id'],
             "Should use the user's system override configuration"
         );
+        $this->assertSame(Email::DIRECTION_OUTBOUND, $record['direction'], 'From user to account and lead');
 
         $expected = [
             [
@@ -662,6 +668,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
+        $this->assertSame(Email::DIRECTION_OUTBOUND, $record['direction'], 'From user to contacts');
 
         $this->assertSame(
             static::$systemConfiguration->id,
@@ -771,9 +778,226 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
         $this->assertSame($repliedToEmail->id, $record['reply_to_id'], 'Should contain id of Email being replied to');
+        $this->assertSame(Email::DIRECTION_OUTBOUND, $record['direction'], 'From user to contact');
 
         $repliedToEmail = $repliedToEmail->retrieve($repliedToEmail->id);
         $this->assertEquals('1', $repliedToEmail->reply_to_status, 'reply_to_status value should be True');
+    }
+
+    /**
+     * An email is inbound when it is sent by a non-employee.
+     *
+     * @covers ::createRecord
+     * @covers ::isValidStateTransition
+     * @covers ::getRelatedRecordArguments
+     * @covers ::linkRelatedRecords
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testCreateArchivedEmailSentByNonEmployee()
+    {
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $contact1 = SugarTestContactUtilities::createContact();
+        $contact2 = SugarTestContactUtilities::createContact();
+
+        $args = [
+            'state' => Email::STATE_ARCHIVED,
+            'from' => [
+                'create' => [
+                    $this->createEmailParticipant($contact1),
+                ],
+            ],
+            'to' => [
+                'create' => [
+                    $this->createEmailParticipant($user),
+                ],
+            ],
+            'cc' => [
+                'create' => [
+                    $this->createEmailParticipant($contact2),
+                ],
+            ],
+        ];
+        $record = $this->createRecord($args);
+        $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
+        $this->assertSame(Email::DIRECTION_INBOUND, $record['direction'], 'From contact to user and contact');
+
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from',
+                'parent' => [
+                    'type' => $contact1->getModuleName(),
+                    'id' => $contact1->id,
+                    'name' => $contact1->name,
+                ],
+                'parent_name' => $contact1->name,
+                'email_addresses' => [
+                    'id' => $contact1->emailAddress->getGuid($contact1->email1),
+                    'email_address' => $contact1->email1,
+                ],
+                'email_address_id' => $contact1->emailAddress->getGuid($contact1->email1),
+                'email_address' => $contact1->email1,
+            ],
+        ];
+        $collection = $this->getCollection($record['id'], 'from_collection');
+        $this->assertRecords($expected, $collection, 'The sender did not match expectations');
+
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to',
+                'parent' => [
+                    'type' => $user->getModuleName(),
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ],
+                'parent_name' => $user->name,
+                'email_addresses' => [
+                    'id' => $user->emailAddress->getGuid($user->email1),
+                    'email_address' => $user->email1,
+                ],
+                'email_address_id' => $user->emailAddress->getGuid($user->email1),
+                'email_address' => $user->email1,
+            ],
+        ];
+        $collection = $this->getCollection($record['id'], 'to_collection');
+        $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
+
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'cc',
+                'parent' => [
+                    'type' => $contact2->getModuleName(),
+                    'id' => $contact2->id,
+                    'name' => $contact2->name,
+                ],
+                'parent_name' => $contact2->name,
+                'email_addresses' => [
+                    'id' => $contact2->emailAddress->getGuid($contact2->email1),
+                    'email_address' => $contact2->email1,
+                ],
+                'email_address_id' => $contact2->emailAddress->getGuid($contact2->email1),
+                'email_address' => $contact2->email1,
+            ],
+        ];
+        $collection = $this->getCollection($record['id'], 'cc_collection');
+        $this->assertRecords($expected, $collection, 'The CC field did not match expectations');
+
+        $bean = $this->retrieveEmailText($record['id']);
+        $this->assertEquals("{$contact1->name} <{$contact1->email1}>", $bean->from_addr_name);
+        $this->assertEquals("{$user->name} <{$user->email1}>", $bean->to_addrs_names);
+        $this->assertEquals("{$contact2->name} <{$contact2->email1}>", $bean->cc_addrs_names);
+    }
+
+    /**
+     * An email is internal when it is sent by an employee to only employees.
+     *
+     * @covers ::createRecord
+     * @covers ::isValidStateTransition
+     * @covers ::getRelatedRecordArguments
+     * @covers ::linkRelatedRecords
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testCreateArchivedEmailSentInternally()
+    {
+        $user1 = SugarTestUserUtilities::createAnonymousUser();
+        $user2 = SugarTestUserUtilities::createAnonymousUser();
+        $user3 = SugarTestUserUtilities::createAnonymousUser();
+
+        $args = [
+            'state' => Email::STATE_ARCHIVED,
+            'from' => [
+                'create' => [
+                    $this->createEmailParticipant($user1),
+                ],
+            ],
+            'to' => [
+                'create' => [
+                    $this->createEmailParticipant($user2),
+                ],
+            ],
+            'cc' => [
+                'create' => [
+                    $this->createEmailParticipant($user3),
+                ],
+            ],
+        ];
+        $record = $this->createRecord($args);
+        $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
+        $this->assertSame(Email::DIRECTION_INTERNAL, $record['direction'], 'From user to users');
+
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from',
+                'parent' => [
+                    'type' => $user1->getModuleName(),
+                    'id' => $user1->id,
+                    'name' => $user1->name,
+                ],
+                'parent_name' => $user1->name,
+                'email_addresses' => [
+                    'id' => $user1->emailAddress->getGuid($user1->email1),
+                    'email_address' => $user1->email1,
+                ],
+                'email_address_id' => $user1->emailAddress->getGuid($user1->email1),
+                'email_address' => $user1->email1,
+            ],
+        ];
+        $collection = $this->getCollection($record['id'], 'from_collection');
+        $this->assertRecords($expected, $collection, 'The sender did not match expectations');
+
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to',
+                'parent' => [
+                    'type' => $user2->getModuleName(),
+                    'id' => $user2->id,
+                    'name' => $user2->name,
+                ],
+                'parent_name' => $user2->name,
+                'email_addresses' => [
+                    'id' => $user2->emailAddress->getGuid($user2->email1),
+                    'email_address' => $user2->email1,
+                ],
+                'email_address_id' => $user2->emailAddress->getGuid($user2->email1),
+                'email_address' => $user2->email1,
+            ],
+        ];
+        $collection = $this->getCollection($record['id'], 'to_collection');
+        $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
+
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'cc',
+                'parent' => [
+                    'type' => $user3->getModuleName(),
+                    'id' => $user3->id,
+                    'name' => $user3->name,
+                ],
+                'parent_name' => $user3->name,
+                'email_addresses' => [
+                    'id' => $user3->emailAddress->getGuid($user3->email1),
+                    'email_address' => $user3->email1,
+                ],
+                'email_address_id' => $user3->emailAddress->getGuid($user3->email1),
+                'email_address' => $user3->email1,
+            ],
+        ];
+        $collection = $this->getCollection($record['id'], 'cc_collection');
+        $this->assertRecords($expected, $collection, 'The CC field did not match expectations');
+
+        $bean = $this->retrieveEmailText($record['id']);
+        $this->assertEquals("{$user1->name} <{$user1->email1}>", $bean->from_addr_name);
+        $this->assertEquals("{$user2->name} <{$user2->email1}>", $bean->to_addrs_names);
+        $this->assertEquals("{$user3->name} <{$user3->email1}>", $bean->cc_addrs_names);
     }
 
     private function emailAddrsToArray($emailAddrs)

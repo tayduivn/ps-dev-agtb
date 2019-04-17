@@ -21,6 +21,7 @@ $viewdefs['Emails']['base']['filter']['default'] = array(
         ),
         'assigned_user_name' => array(),
         'parent_name' => array(),
+        'direction' => array(),
         'tag' => array(),
         'mailbox_name' => array(),
         'total_attachments' => array(),

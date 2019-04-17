@@ -71,6 +71,46 @@ class SugarEmailAddress extends SugarBean
     }
 
     /**
+     * Returns the IDs of employees with the email address matching the given ID.
+     *
+     * The employees may or may not be actual users.
+     *
+     * @param string $emailAddressId
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public static function getEmployeesWithEmailAddress(string $emailAddressId)
+    {
+        $ids = [];
+
+        if (empty($emailAddressId)) {
+            return $ids;
+        }
+
+        $conn = DBManagerFactory::getInstance()->getConnection();
+        $sql = 'SELECT u.id FROM users u' .
+            ' INNER JOIN email_addr_bean_rel eabr ON eabr.bean_id = u.id' .
+            ' INNER JOIN email_addresses ea ON ea.id = eabr.email_address_id' .
+            ' WHERE ea.id = ? AND (eabr.bean_module = ? OR eabr.bean_module = ?) AND u.deleted = 0' .
+            ' AND (u.user_name <> ? AND u.user_name <> ?)' .
+            ' AND ea.deleted = 0 AND eabr.deleted = 0';
+        $args = [
+            $emailAddressId,
+            'Users',
+            'Employees',
+            'SugarCustomerSupportPortalUser',
+            SugarSNIP::SNIP_USER,
+        ];
+        $stmt = $conn->executeQuery($sql, $args);
+
+        while ($row = $stmt->fetch()) {
+            $ids[] = $row['id'];
+        }
+
+        return $ids;
+    }
+
+    /**
      * Gets a hashed string representation of an addresses array. This is used in
      * {@see handleLegacySave} for comparison of various address collections to
      * determine which one needs to be saved.
