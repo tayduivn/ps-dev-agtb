@@ -61,18 +61,32 @@
             };
 
             return new Promise(function(res, error) {
-                var handleManifest = function(manifest) {
-                    _.each(manifest.layouts, function(def) {
-                        if (def.module && def.layout) {
-                            addCompToLayout(metadata, def.module, def.layout, {
-                                view: {
-                                    type: 'external-app',
-                                    name: manifest.name,
-                                    src: manifest.src
-                                }
+                var fetchProjLayout = function(project) {
+                    fetch(project.src, {mode: 'cors'}).then(
+                        function(response) {
+                            response.json().then(function(manifest) {
+                                _.each(manifest.layouts, function(def) {
+                                    if (def.module && def.layout) {
+                                        addCompToLayout(metadata, def.module, def.layout, {
+                                            'view': {
+                                                'type': 'external-app',
+                                                'name': manifest.name,
+                                                'src': manifest.src
+                                            }
+                                        });
+                                    }
+                                });
+                            }).catch(function(error) {
+                                console.error(error);
                             });
-                        }
+                        });
+                };
+
+                var handleManifest = function(manifest) {
+                    _.each(manifest.projects, function(proj) {
+                        fetchProjLayout(proj);
                     });
+
                     res();
                 };
 
