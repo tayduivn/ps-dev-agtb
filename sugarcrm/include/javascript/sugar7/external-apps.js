@@ -96,7 +96,8 @@
                             console.log('Event origin was ' + event.origin);
                             console.log(`iframeOrigin was ${iframeOrigin}`);
                             cleanup();
-                            //After the iframe event callback, we need to load the manifest again but this time expect to get data.
+                            // After the iframe event callback, we need to load the manifest again
+                            // but this time expect to get data.
                             getManifest(handleManifest, onError, function(url) {
                                 error('Unable to authenticate with manifest service: Second Login URL:' + url);
                             });
