@@ -18,7 +18,14 @@ class SugarTestCaseUtilities
     private function __construct()
     {}
 
-    public static function createCase($id = '', $caseValues = array())
+    /**
+     * Create and save a new aCase bean.
+     *
+     * @param string $id ID of the record, defaults to ''.
+     * @param array $caseValues Key-value mapping of values to preassign.
+     * @return aCase The created case.
+     */
+    public static function createCase($id = '', $caseValues = [])
     {
         $time = mt_rand();
         $case = new aCase();
@@ -49,6 +56,10 @@ class SugarTestCaseUtilities
             self::$_createdCases[] = $case;
         } // foreach
     } // fn
+
+    /**
+     * Hard-delete all cases created with createCase.
+     */
     public static function removeAllCreatedCases()
     {
         $case_ids = self::getCreatedCaseIds();

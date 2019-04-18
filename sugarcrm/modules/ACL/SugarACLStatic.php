@@ -93,9 +93,10 @@ class SugarACLStatic extends SugarACLStrategy
     );
     /**
      * Check access to fields
-     * @param string $module
-     * @param string $action
-     * @param array $context
+     * @param string $module Module name.
+     * @param string $action Action name.
+     * @param array $context Additional options.
+     * @return bool True if access granted. False if access denied.
      */
     protected function fieldACL($module, $action, $context)
     {

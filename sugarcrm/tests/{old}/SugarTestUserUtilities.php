@@ -19,7 +19,12 @@ class SugarTestUserUtilities
     private function __construct() {}
 
     /**
-     * @return User
+     * Create an anonymous User.
+     *
+     * @param bool $save If true, save the created User.
+     * @param int $is_admin If 1, make this an administrator.
+     * @param array $fields Fields to assign to the User bean.
+     * @return User The created user.
      */
     public static function createAnonymousUser($save = true, $is_admin=0, $fields=array())
     {

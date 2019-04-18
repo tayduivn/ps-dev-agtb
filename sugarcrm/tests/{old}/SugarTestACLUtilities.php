@@ -14,19 +14,31 @@ class SugarTestACLUtilities
 {
     public static $_createdRoles = array();
     public static $_modules = array();
+    public static $objects = [];
 
     private function __construct() {}
 
     /**
-     * Create a Role for use in a Unit Test
-     * @param  string    $name           - name of the role
-     * @param  array     $allowedModules - modules you want to give access to
-     * @param  array     $allowedActions - actions user is allowed to have
-     * @param  array     $ownerActions   - any owner actions [Edit Owner, etc] the user needs
-     * @return SugarBean role
+     * Create a Role for use in a Unit Test.
+     *
+     * @param string $name Name of the role.
+     * @param array $allowedModules Modules you want to give access to.
+     * @param array $allowedActions Actions user is allowed to have.
+     * @param array $ownerActions Any owner actions [Edit Owner, etc] the user needs.
+     * @param string $type Type of role. Defaults to "module".
+     * @param bool $applyRestrictions If false, do not apply any restrictions.
+     *   Useful if you want to use this Role only for field-level ACL's.
+     *   Defaults to true.
+     * @return SugarBean The created Role.
      */
-    public static function createRole($name, $allowedModules, $allowedActions, $ownerActions = array(), $type = 'module')
-    {
+    public static function createRole(
+        $name,
+        $allowedModules,
+        $allowedActions,
+        $ownerActions = [],
+        $type = 'module',
+        bool $applyRestrictions = true
+    ) {
         self::$_modules = array_merge($allowedModules, self::$_modules);
 
         $role = new ACLRole();
@@ -36,52 +48,67 @@ class SugarTestACLUtilities
         $db = DBManagerFactory::getInstance();
         $db->commit();
 
-        $roleActions = $role->getRoleActions($role->id);
-        foreach ($roleActions as $moduleName => $actions) {
-            // enable allowed modules
-            if (isset($actions[$type]['access']['id']) && !in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions[$type]['access']['id'], ACL_ALLOW_DISABLED);
-            } elseif (isset($actions[$type]['access']['id']) && in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions[$type]['access']['id'], ACL_ALLOW_ENABLED);
-            } else {
-                foreach ($actions as $action => $actionName) {
-                    if (isset($actions[$action]['access']['id'])) {
-                        $role->setAction($role->id, $actions[$action]['access']['id'], ACL_ALLOW_DISABLED);
+        if ($applyRestrictions) {
+            $roleActions = $role->getRoleActions($role->id);
+            foreach ($roleActions as $moduleName => $actions) {
+                // enable allowed modules
+                if (isset($actions[$type]['access']['id']) && !in_array($moduleName, $allowedModules)) {
+                    $role->setAction($role->id, $actions[$type]['access']['id'], ACL_ALLOW_DISABLED);
+                } elseif (isset($actions[$type]['access']['id']) && in_array($moduleName, $allowedModules)) {
+                    $role->setAction($role->id, $actions[$type]['access']['id'], ACL_ALLOW_ENABLED);
+                } else {
+                    foreach ($actions as $action => $actionName) {
+                        if (isset($actions[$action]['access']['id'])) {
+                            $role->setAction($role->id, $actions[$action]['access']['id'], ACL_ALLOW_DISABLED);
+                        }
                     }
                 }
-            }
 
-            if (in_array($moduleName, $allowedModules)) {
-                foreach ($actions[$type] as $actionName => $action) {
-                    if (in_array($actionName, $allowedActions) && in_array($actionName, $ownerActions)) {
-                        $aclAllow = ACL_ALLOW_OWNER;
-                    } elseif (in_array($actionName, $allowedActions)) {
-                        $aclAllow = ACL_ALLOW_ALL;
-                    } else {
-                        $aclAllow = ACL_ALLOW_NONE;
+                if (in_array($moduleName, $allowedModules)) {
+                    foreach ($actions[$type] as $actionName => $action) {
+                        if (in_array($actionName, $allowedActions) && in_array($actionName, $ownerActions)) {
+                            $aclAllow = ACL_ALLOW_OWNER;
+                        } elseif (in_array($actionName, $allowedActions)) {
+                            $aclAllow = ACL_ALLOW_ALL;
+                        } else {
+                            $aclAllow = ACL_ALLOW_NONE;
+                        }
+
+                        $role->setAction($role->id, $action['id'], $aclAllow);
                     }
-
-                    $role->setAction($role->id, $action['id'], $aclAllow);
                 }
             }
         }
+
         self::$_createdRoles[] = $role;
 
         return $role;
     }
 
     /**
-     * Create a field
-     * @param  string    $role_id      - the role to add this to
-     * @param  string    $module       - the module that has the field
-     * @param  string    $field_name   - the field name to apply the access to
-     * @param  int       $access_level - the access level from ACLField/actiondefs.php
-     * @return SugarBean field
+     * Restrict access to a field.
+     *
+     * @param string $role_id The role to add this to.
+     * @param string $module The module that has the field.
+     * @param string $field_name The field name to apply the access to.
+     * @param int $access_level The access level from ACLField/actiondefs.php.
+     * @param ?string $objectName Name of the object corresponding to the given
+     *   module, if it differs from the module name.
+     * @return SugarBean The created field.
      */
-    public static function createField($role_id, $module, $field_name, $access_level)
-    {
+    public static function createField(
+        $role_id,
+        $module,
+        $field_name,
+        $access_level,
+        string $objectName = ''
+    ) {
         self::$_modules[] = $module;
-        // set the name field as Read Only
+
+        if (!empty($objectName)) {
+            self::$objects[$module] = $objectName;
+        }
+
         $aclField = new ACLField();
         $aclField->setAccessControl($module, $role_id, $field_name, $access_level);
 
@@ -89,23 +116,41 @@ class SugarTestACLUtilities
     }
 
     /**
-     * Give the Global current user a role
-     * @param  SugarBean $role
+     * Give a user a role.
+     *
+     * @param SugarBean $role Role bean.
+     * @param User The User to give the role to. Defaults to current_user.
      * @return null
      */
-    public static function setupUser($role)
+    public static function setupUser($role, \User $user = null, bool $clearACLCache = true)
     {
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
+        global $current_user;
+
+        if (empty($user)) {
+            $oldCurrentUser = $current_user;
+            $user = $current_user;
         }
 
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        BeanFactory::newBean('ACLFields')->clearACLCache();
+        if (!($user->check_role_membership($role->name))) {
+            $user->load_relationship('aclroles');
+            $user->aclroles->add($role);
+            $user->save();
+        }
+
+        $id = $user->id;
+        $current_user = BeanFactory::getBean('Users', $id);
+
+        if ($clearACLCache) {
+            BeanFactory::newBean('ACLFields')->clearACLCache();
+        }
+
         foreach (self::$_modules AS $module) {
-            ACLField::loadUserFields($module, $module, $GLOBALS['current_user']->id, true );
+            $object = self::$objects[$module] ?? $module;
+            ACLField::loadUserFields($module, $object, $current_user->id, true);
+        }
+
+        if (isset($oldCurrentUser)) {
+            $current_user = $oldCurrentUser;
         }
     }
 
