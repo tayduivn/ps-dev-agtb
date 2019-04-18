@@ -94,7 +94,7 @@
                         // origin besides the one we are on is correct
                         if (event.origin === iframeOrigin) {
                             console.log('Event origin was ' + event.origin);
-                            console.log(`iframeOrigin was ${iframeOrigin}`);
+                            console.log('iframeOrigin was ' + iframeOrigin);
                             cleanup();
                             // After the iframe event callback, we need to load the manifest again
                             // but this time expect to get data.
