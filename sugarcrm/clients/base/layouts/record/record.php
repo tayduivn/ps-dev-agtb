@@ -114,31 +114,6 @@ $viewdefs['base']['layout']['record'] = array(
                                         ),
                                     ),
                                 ),
-                                // todo: REMOVE THESE ABOUT LINKS BEFORE MERGE
-                                array(
-                                    'view' => array(
-                                        'label' => 'LNK_ABOUT',
-                                        'type' => 'about-copyright',
-                                        'module' => 'Home',
-                                    ),
-                                    'context' => array(
-                                        'forceNew' => true,
-                                        'module' => 'Home',
-                                        'skipFetch' => true,
-                                    ),
-                                ),
-                                array(
-                                    'view' => array(
-                                        'label' => 'LNK_ABOUT',
-                                        'type' => 'about-copyright',
-                                        'module' => 'Home',
-                                    ),
-                                    'context' => array(
-                                        'forceNew' => true,
-                                        'module' => 'Home',
-                                        'skipFetch' => true,
-                                    ),
-                                ),
                             ),
                         ),
                     ),
