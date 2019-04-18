@@ -36,6 +36,7 @@
             console.log('skipping external app sync for public metadata');
             return Promise.resolve();
         }
+
         if (app.config.externalManifestUrl && app.config.externalManifestUrl !== '') {
             var iframeOrigin = app.config.externalManifestUrl.match(/^.+\:\/\/[^\/]+/)[0];
             var getManifest = function(onSuccess, onError, onLogin) {
@@ -45,7 +46,6 @@
                 }).then(
                     function(response) {
                         response.json().then(function(manifest) {
-                            console.log('manifest', manifest);
                             if (manifest.loginRedirect && onLogin) {
                                 onLogin(manifest.loginRedirect);
                             } else {
@@ -65,10 +65,10 @@
                     _.each(manifest.layouts, function(def) {
                         if (def.module && def.layout) {
                             addCompToLayout(metadata, def.module, def.layout, {
-                                'view': {
-                                    'type': 'external-app',
-                                    'name': manifest.name,
-                                    'src': manifest.src
+                                view: {
+                                    type: 'external-app',
+                                    name: manifest.name,
+                                    src: manifest.src
                                 }
                             });
                         }
@@ -76,7 +76,12 @@
                     res();
                 };
 
-                getManifest(handleManifest, error, function(loginUrl) {
+                var onError = function(err) {
+                    app.logger.error(err.message);
+                    res();
+                };
+
+                getManifest(handleManifest, onError, function(loginUrl) {
                     var iframe = document.createElement('iframe');
 
                     var cleanup = function() {
@@ -92,7 +97,7 @@
                             console.log(`iframeOrigin was ${iframeOrigin}`);
                             cleanup();
                             //After the iframe event callback, we need to load the manifest again but this time expect to get data.
-                            getManifest(handleManifest, e, function(url) {
+                            getManifest(handleManifest, onError, function(url) {
                                 error('Unable to authenticate with manifest service: Second Login URL:' + url);
                             });
                         }
@@ -105,11 +110,11 @@
                     };
                     iframe.src = loginUrl;
                     iframe.style = 'display:none;\n' +
-                        '                        position: absolute;\n' +
-                        '                        width: 500px;\n' +
-                        '                        height: 500px;\n' +
-                        '                        top: calc(50% - 250px);\n' +
-                        '                        left: calc(50% - 250px);';
+                        'position: absolute;\n' +
+                        'width: 500px;\n' +
+                        'height: 500px;\n' +
+                        'top: calc(50% - 250px);\n' +
+                        'left: calc(50% - 250px);';
 
                     window.addEventListener('message', eventCallback);
                     document.body.appendChild(iframe);

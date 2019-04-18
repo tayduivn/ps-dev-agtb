@@ -18,7 +18,7 @@
     app: null,
     mounted: false,
     rendered: false,
-    className: "external-app-interface",
+    className: 'external-app-interface',
 
     /**
      * Initializing the SingleSpa, using systemJs getting hold of the needed information of the MFE.
@@ -41,8 +41,9 @@
                     app.log.error('Unable to load external module from ' + url);
                 }
                 //Check if the export was under 'default' rather than at the top level of the module
-                for (let i = 0; i < 3; i++) {
-                    const props = Object.getOwnPropertyNames(mod).filter(name => name.substr(0, 2) !== "__");
+                for (var i = 0; i < 3; i++) {
+                    const props = Object.getOwnPropertyNames(mod)
+                        .filter(name => name.substr(0, 2) !== '__');
                     if (mod.default && (props.length === 1 || mod.__useDefault)) {
                         mod = mod.default;
                     } else {
