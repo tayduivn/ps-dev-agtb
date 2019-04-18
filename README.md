@@ -101,3 +101,15 @@ docker run -it --rm \
     -v /host/build/destination:/build \
     sugarmake clean
 ```
+
+### Skipping Code Standards Check
+
+To avoid running code standards on a new vendored JavaScript library, please do the following:
+* Fork https://github.com/sugarcrm/sugar-lint-rules
+* Add the affected path to `excludeFiles` in jscs/Mango/jscsrc.json
+* Make a PR with these changes
+* Merge this PR. Ask RM for permission if necessary
+* Request that the EA team rebuild the "sugar-lint-rules" Docker container
+* Retest your original Mango PR if necessary
+
+Note: sugarcrm/.jscsrc.json in the Mango repository is NOT used by PR Tester at this time.
