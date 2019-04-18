@@ -673,8 +673,8 @@ describe('Dashboards.Base.Layout.Dashboard', function() {
             sandbox.stub(app.metadata, 'getLayout').withArgs(parentModule, 'list-dashboard').returns(null);
             sandbox.stub(app.template, 'getLayout')
                 .withArgs('dashboard.dashboard-empty').returns(function() {
-                return 'Empty Dashboard';
-            });
+                    return 'Empty Dashboard';
+                });
             layout.$el.html = sandbox.stub();
 
             layout.setDefaultDashboard();
@@ -747,6 +747,188 @@ describe('Dashboards.Base.Layout.Dashboard', function() {
             layout.handleSave();
 
             expect(alertStub).toHaveBeenCalled();
+        });
+    });
+
+    describe('FilterSharing', function() {
+        var Bean = SUGAR.App.Bean;
+        var mockMeta = {
+            components: [{
+                rows: [
+                    [{
+                        width: 12,
+                        context: {
+                            module: 'Accounts'
+                        },
+                        view: {
+                            label: 'Filtered Accounts',
+                            type: 'dashablelist',
+                            module: 'Accounts',
+                            last_state: {
+                                id: 'dashable-list'
+                            },
+                            intelligent: 0,
+                            limit: 5,
+                            filter_id: 'ba87e3c0-6ff5-11e9-bce2-10ddb1df9244',
+                            display_columns: ['name', 'phone_office', 'assigned_user_name', 'email']
+                        }
+                    }]
+                ],
+                width: 12
+            }]
+        };
+        var dashboardTeams = [{
+            name: 'Administrator',
+            name_2: '',
+            id: '4b0f0c96-6fe4-11e9-84d2-10ddb1df9244'
+        }, {
+            name: 'Jim',
+            name_2: 'Brennan',
+            id: '4dc2d31e-6fe4-11e9-9341-10ddb1df9244'
+        }, {
+            name: 'Will',
+            name_2: 'Westin',
+            id: '4e790e04-6fe4-11e9-93cc-10ddb1df9244'
+        }];
+        var filterData;
+        var returnValue;
+
+        beforeEach(function() {
+            filterData = {
+                name: 'testfilter',
+                id: 'ba87e3c0-6ff5-11e9-bce2-10ddb1df9244',
+                created_by: '1',
+                created_by_name: 'Administrator',
+                team_name: [{
+                    id: '1',
+                    name: 'Global',
+                    name_2: ''
+                }, {
+                    name: 'Administrator',
+                    name_2: '',
+                    id: '4b0f0c96-6fe4-11e9-84d2-10ddb1df9244'
+                }, {
+                    name: 'Jim',
+                    name_2: 'Brennan',
+                    id: '4dc2d31e-6fe4-11e9-9341-10ddb1df9244'
+                }],
+                assigned_user_id: '',
+                assigned_user_name: ''
+            };
+            context = new app.Context({
+                module: 'Dashboards',
+                layout: 'dashboard'
+            });
+            returnValue = {
+                Contacts: {
+                    filters: {
+                        basic: {
+                            meta: {
+                                filters: [
+                                    {id: 'all_records'},
+                                    {id: 'assigned_to_me'},
+                                    {id: 'favorites'}
+                                ]
+                            }
+                        }
+                    }
+                }
+            };
+            layout = SugarTest.createLayout('base', 'Dashboards', 'dashboard', null, context, true);
+            SugarTest.loadPlugin('FilterSharing');
+            SugarTest.app.plugins.attach(layout, 'layout');
+            SugarTest.seedMetadata(true);
+        });
+
+        afterEach(function() {
+            filterData = null;
+            sinon.collection.restore();
+        });
+
+        it('should identify the layout as a dashboard', function() {
+            expect(layout.isDashboard()).toEqual(true);
+        });
+
+        it('should be able to verify if a filter is custom or not', function() {
+            sinon.collection.stub(app.metadata, 'getModules').returns(returnValue);
+            expect(layout.isCustomFilter('assigned_to_me')).toEqual(false);
+            expect(layout.isCustomFilter('ba87e3c0-6ff5-11e9-bce2-10ddb1df9244')).toEqual(true);
+        });
+
+        it('should be able to get metadata filter ids from meta', function() {
+            sinon.collection.stub(app.metadata, 'getModules').returns(returnValue);
+            expect(layout.getMetadataFilterIds()).toEqual(['all_records','assigned_to_me','favorites']);
+        });
+
+        it('should be able to get metadata filter ids from model', function() {
+            returnValue = {Contacts: {}, Accounts: {}};
+            sinon.collection.stub(app.metadata, 'getModules').returns(returnValue);
+            expect(layout.getMetadataFilterIds()).toEqual([]);
+        });
+
+        it('should be able to verify if a dashlet is a list view dashlet', function() {
+            var dashlet = mockMeta.components[0].rows[0][0];
+            var filterid = dashlet.view.filter_id;
+
+            dashlet.view.type = 'chart';
+            expect(layout.isFilteredListViewDashlet(dashlet)).toBeFalsy();
+
+            delete dashlet.view.filter_id;
+            dashlet.view.type = 'dashablelist';
+            expect(layout.isFilteredListViewDashlet(dashlet)).toBeFalsy();
+
+            dashlet.view.filter_id = filterid;
+            expect(layout.isFilteredListViewDashlet(dashlet)).toEqual(true);
+        });
+
+        it('should find the custom filer id placed on a list view dashlet', function() {
+            layout.model.set({
+                metadata: mockMeta,
+                team_name: dashboardTeams,
+                assigned_user_id: '1'
+            });
+            expect(layout.getListViewFilterIds()).toEqual(['ba87e3c0-6ff5-11e9-bce2-10ddb1df9244']);
+        });
+
+        it('should remove the global team from a shared filter', function() {
+            var filterModel = layout.getPrivateFilter(filterData);
+            var teams = filterModel.get('team_name');
+            var globalTeam = _.findWhere(teams, {id: '1'});
+            expect(globalTeam).toBeFalsy();
+        });
+
+        it('should update the list view dashlet filter with the teams the dashboard is shared with', function() {
+            var filterModel = layout.getPrivateFilter(filterData);
+            var hasBeenModified = layout.updateFilterTeams(filterModel, dashboardTeams);
+
+            expect(hasBeenModified).toBeTruthy();
+            expect(filterModel.get('team_name')).toEqual(dashboardTeams);
+
+            hasBeenModified = layout.updateFilterTeams(filterModel, dashboardTeams[0]);
+            expect(hasBeenModified).toBeTruthy();
+            expect(filterModel.get('team_name')).toEqual(dashboardTeams[0]);
+        });
+
+        it('should not update the list view dashlet filter with when there are no changes', function() {
+            filterData.team_name = dashboardTeams;
+            var filterModel = layout.getPrivateFilter(filterData);
+            var hasBeenModified = layout.updateFilterTeams(filterModel, dashboardTeams);
+
+            expect(hasBeenModified).toBeFalsy();
+            expect(filterModel.get('team_name')).toEqual(dashboardTeams);
+        });
+
+        it('should save a filter that has been updated with the teams shared with', function() {
+            var filterModel = new Bean(filterData);
+            sinon.collection.stub(layout, 'getPrivateFilter', function() {
+                return filterModel;
+            });
+            var saveStub = sinon.collection.stub(filterModel, 'save');
+            layout.updateListViewFilters({
+                dashboardTeams: dashboardTeams,
+                assignedUserId: '1'
+            }, filterData);
+            expect(saveStub).toHaveBeenCalled();
         });
     });
 });

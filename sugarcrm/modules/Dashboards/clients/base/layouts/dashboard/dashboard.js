@@ -59,6 +59,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        this.plugins = _.union((this.plugins || []), ['FilterSharing']);
         var context = options.context;
         var module = context.parent && context.parent.get('module') || context.get('module');
 
@@ -787,6 +788,7 @@
             },
             success: _.bind(function() {
                 this.model.unset('updated');
+                this.triggerListviewFilterUpdate();
                 if (this.context.get('create')) {
                     // We have a parent context only for dashboards in the RHS.
                     if (this.context.parent) {

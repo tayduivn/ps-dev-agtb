@@ -13,7 +13,7 @@ describe('Base.View.FilterFilterDropdown', function() {
     var parentLayout;
     var filterpanel;
 
-    beforeEach(function () {
+    beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-filter-dropdown');
@@ -42,7 +42,7 @@ describe('Base.View.FilterFilterDropdown', function() {
         sinonSandbox = sinon.sandbox.create();
     });
 
-    afterEach(function () {
+    afterEach(function() {
         sinon.collection.restore();
         sinonSandbox.restore();
         view.dispose();
@@ -70,10 +70,54 @@ describe('Base.View.FilterFilterDropdown', function() {
 
     });
 
-    describe('handleModuleChange', function(){
+    describe('isFilterEditable', function() {
 
-        it('should disable filter dropdown when All Records is selected', function(){
-            sinonSandbox.stub(app.metadata, 'getModule', function() { return {isBwcEnabled: false}; });
+        beforeEach(function() {
+            view.layout.filters.collection.add({id: 'test_id', name: 'TEST', created_by: 'test'});
+            view.layout.filters.collection.add({id: 'test_id_2', name: 'TEST_2', created_by: 'test_2'});
+            view.layout.filters.collection.add({
+                id: 'test_not_editable',
+                name: 'TEST_3', created_by: 'test_3',
+                editable: false
+            });
+            app.user.set('id', 'test_2');
+        });
+
+        it('should not be able to create filter nor to have access to activities should return false', function() {
+            sinonSandbox.stub(view.layout, 'canCreateFilter').returns(false);
+            view.layout.showingActivities = false;
+            view.filterDropdownEnabled = true;
+
+            expect(view.isFilterEditable('all_records')).toBeFalsy();
+        });
+
+        it('should return true all_records and create', function() {
+            expect(view.isFilterEditable('create')).toBeTruthy();
+            expect(view.isFilterEditable('create')).not.toBeFalsy();
+            expect(view.isFilterEditable('all_records')).toBeTruthy();
+            expect(view.isFilterEditable('all_records')).not.toBeFalsy();
+        });
+
+        it('should not have access to model and return true in order to create', function() {
+            view.layout.filters.collection.remove({id: 'test_id', name: 'TEST', created_by: 'test'});
+
+            expect(view.isFilterEditable('test_id')).toBeTruthy();
+        });
+
+        it('should not be editable and return false', function() {
+            expect(view.isFilterEditable('test_not_editable')).toBeFalsy();
+        });
+
+        it('should be editable if created by current user', function() {
+            expect(view.isFilterEditable('test_id_2')).toBeTruthy();
+            expect(view.isFilterEditable('test_id')).toBeFalsy();
+        });
+    });
+
+    describe('handleModuleChange', function() {
+
+        it('should disable filter dropdown when All Records is selected', function() {
+            sinonSandbox.stub(app.metadata, 'getModule', function() {return {isBwcEnabled: false};});
             expect(view.filterDropdownEnabled).toBeTruthy();
             view.layout.trigger("filter:change:module", "ALL_RECORDS", "all_modules");
             expect(view.filterDropdownEnabled).toBeFalsy();
@@ -87,16 +131,16 @@ describe('Base.View.FilterFilterDropdown', function() {
 
         beforeEach(function() {
             view.layout.filters.collection.add({id: 'all_records', name: 'ALL_RECORDS', editable: false});
-            view.layout.filters.collection.add({id: 'test_id', name: 'TEST' });
-            view.layout.filters.collection.add({id: 'test_id_2', name: 'TEST_2' });
+            view.layout.filters.collection.add({id: 'test_id', name: 'TEST'});
+            view.layout.filters.collection.add({id: 'test_id_2', name: 'TEST_2'});
         });
 
         it('should return filter list with translated labels', function() {
-            sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return false; });
+            sinonSandbox.stub(view.layout, 'canCreateFilter', function() {return false;});
             expected = [
                 {id: 'test_id', text: app.lang.get('TEST')},
                 {id: 'test_id_2', text: app.lang.get('TEST_2')},
-                {id: 'all_records', text: app.lang.get('ALL_RECORDS'),  firstNonUserFilter: true}
+                {id: 'all_records', text: app.lang.get('ALL_RECORDS'), firstNonUserFilter: true}
             ];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
@@ -104,24 +148,61 @@ describe('Base.View.FilterFilterDropdown', function() {
 
         it('should allow to override "all_records" filter', function() {
             view.labelAllRecordsFormatted = 'LBL_FILTER_ALL_DUPLICATES';
-            sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return false; });
+            sinonSandbox.stub(view.layout, 'canCreateFilter', function() {return false;});
             sinonSandbox.stub(view.layout.filters, 'sort');
             expected = [
-                { id: 'test_id', text: app.lang.get('TEST')},
-                { id: 'test_id_2', text: app.lang.get('TEST_2')},
-                { id: 'all_records', text: app.lang.get('LBL_FILTER_ALL_DUPLICATES'), firstNonUserFilter: true}
+                {id: 'test_id', text: app.lang.get('TEST')},
+                {id: 'test_id_2', text: app.lang.get('TEST_2')},
+                {id: 'all_records', text: app.lang.get('LBL_FILTER_ALL_DUPLICATES'), firstNonUserFilter: true}
             ];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
         });
 
         it('should return filter list (including create) with translated labels', function() {
-            sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return true; });
+            sinonSandbox.stub(view.layout, 'canCreateFilter', function() {return true;});
             expected = [
-                { id: 'create', text: app.lang.get('LBL_FILTER_CREATE_NEW')},
-                { id: 'test_id', text: app.lang.get('TEST')},
-                { id: 'test_id_2', text: app.lang.get('TEST_2')},
-                { id: 'all_records', text: app.lang.get('ALL_RECORDS'), firstNonUserFilter: true}
+                {id: 'create', text: app.lang.get('LBL_FILTER_CREATE_NEW')},
+                {id: 'test_id', text: app.lang.get('TEST')},
+                {id: 'test_id_2', text: app.lang.get('TEST_2')},
+                {id: 'all_records', text: app.lang.get('ALL_RECORDS'), firstNonUserFilter: true}
+            ];
+            filterList = view.getFilterList();
+            expect(filterList).toEqual(expected);
+        });
+
+        it('should allow the use of user created filters', function() {
+            app.user.set('id', 'seed_max');
+            view.layout.filters.collection.add({
+                id: 'max_filter',
+                name: 'Filter created by Max',
+                created_by: 'seed_max'
+            });
+            sinonSandbox.stub(view.layout, 'canCreateFilter', function() {return true;});
+            expected = [
+                {id: 'create', text: app.lang.get('LBL_FILTER_CREATE_NEW')},
+                {id: 'max_filter', text: app.lang.get('Filter created by Max')},
+                {id: 'test_id', text: app.lang.get('TEST')},
+                {id: 'test_id_2', text: app.lang.get('TEST_2')},
+                {id: 'all_records', text: app.lang.get('ALL_RECORDS'), firstNonUserFilter: true}
+            ];
+            filterList = view.getFilterList();
+            expect(filterList).toEqual(expected);
+        });
+
+        it('should not allow the use of user created filters', function() {
+            app.user.set('id', 'seed_jim');
+            view.layout.filters.collection.add({
+                id: 'max_filter',
+                name: 'Filter created by Max',
+                created_by: 'seed_max'
+            });
+            sinonSandbox.stub(view.layout, 'canCreateFilter', function() {return true;});
+            expected = [
+                {id: 'create', text: app.lang.get('LBL_FILTER_CREATE_NEW')},
+                {id: 'test_id', text: app.lang.get('TEST')},
+                {id: 'test_id_2', text: app.lang.get('TEST_2')},
+                {id: 'all_records', text: app.lang.get('ALL_RECORDS'), firstNonUserFilter: true}
             ];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
@@ -155,7 +236,7 @@ describe('Base.View.FilterFilterDropdown', function() {
             it('should get selected filter', function() {
                 var $input = $('<input type="text">').val('test_id'),
                     callback = sinon.stub(),
-                    expected = { id: 'test_id', text: app.lang.get('TEST')};
+                    expected = {id: 'test_id', text: app.lang.get('TEST')};
 
                 view.initSelection($input, callback);
 
@@ -178,7 +259,7 @@ describe('Base.View.FilterFilterDropdown', function() {
             it('should get all_records filter with basic label', function() {
                 var $input = $('<input type="text">').val('all_records'),
                     callback = sinon.stub(),
-                    expected = { id: 'all_records', text: app.lang.get('LBL_FILTER_ALL_RECORDS')};
+                    expected = {id: 'all_records', text: app.lang.get('LBL_FILTER_ALL_RECORDS')};
 
                 view.initSelection($input, callback);
 
@@ -207,7 +288,7 @@ describe('Base.View.FilterFilterDropdown', function() {
                 };
             });
             it('should format the filter dropdown on left', function() {
-                var expected = {label: app.lang.get("LBL_FILTER"), enabled: view.filterDropdownEnabled };
+                var expected = {label: app.lang.get('LBL_FILTER'), enabled: view.filterDropdownEnabled};
 
                 expect(view.formatSelection({id: 'test', text: 'TEST'})).toEqual(expected);
                 expect(toggleFilterCursorStub).toHaveBeenCalled();
@@ -309,9 +390,9 @@ describe('Base.View.FilterFilterDropdown', function() {
         });
 
         it('should formatResult for selected filter', function() {
-            sinonSandbox.stub(layout, 'getLastFilter', function() { return 'last_filter'; });
+            sinonSandbox.stub(layout, 'getLastFilter', function() {return 'last_filter';});
             //Template replacement
-            view._select2formatResultTemplate = function(val) { return val; };
+            view._select2formatResultTemplate = function(val) {return val;};
 
             expect(view.formatResult({id: 'test', text: 'TEST'}))
                 .toEqual({id: 'test', text: 'TEST', icon: undefined});
@@ -324,9 +405,9 @@ describe('Base.View.FilterFilterDropdown', function() {
         });
 
         it('should formatResultCssClass (add css class to visually add borders and separate categories)', function() {
-            sinonSandbox.stub(layout, 'getLastFilter', function() { return 'last_filter'; });
+            sinonSandbox.stub(layout, 'getLastFilter', function() {return 'last_filter';});
             //Template replacement
-            view._select2formatResultTemplate = function(val) { return val; };
+            view._select2formatResultTemplate = function(val) {return val;};
 
             expect(view.formatResultCssClass({id: 'test', text: 'TEST'}))
                 .toBeUndefined();
@@ -345,7 +426,7 @@ describe('Base.View.FilterFilterDropdown', function() {
         var triggerStub;
         beforeEach(function() {
             view.filterNode = $('');
-            sinonSandbox.stub(view.filterNode, 'val', function() { return filterId; });
+            sinonSandbox.stub(view.filterNode, 'val', function() {return filterId;});
             view.layout.filters.collection.add({id: 'test_id'});
             triggerStub = sinonSandbox.stub(layout, 'trigger');
         });
@@ -375,23 +456,23 @@ describe('Base.View.FilterFilterDropdown', function() {
             expect(triggerStub).not.toHaveBeenCalled();
         });
         using('space or enter', [
-                $.ui.keyCode.ENTER,
-                $.ui.keyCode.SPACE
-            ], function(key) {
-                it('should prevent default behavior, stop propagation and trigger a change on key press', function() {
-                    var evt = {
-                        type: 'keydown',
-                        keyCode: key,
-                        which: key,
-                        stopPropagation: sinon.spy(),
-                        preventDefault: sinon.spy(),
-                    };
-                    view.handleEditFilter(evt);
-                    expect(evt.stopPropagation).toHaveBeenCalled();
-                    expect(evt.preventDefault).toHaveBeenCalled();
-                    expect(triggerStub).toHaveBeenCalled();
-                });
+            $.ui.keyCode.ENTER,
+            $.ui.keyCode.SPACE
+        ], function(key) {
+            it('should prevent default behavior, stop propagation and trigger a change on key press', function() {
+                var evt = {
+                    type: 'keydown',
+                    keyCode: key,
+                    which: key,
+                    stopPropagation: sinon.spy(),
+                    preventDefault: sinon.spy(),
+                };
+                view.handleEditFilter(evt);
+                expect(evt.stopPropagation).toHaveBeenCalled();
+                expect(evt.preventDefault).toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalled();
             });
+        });
     });
 
     describe('handleClearFilter', function() {

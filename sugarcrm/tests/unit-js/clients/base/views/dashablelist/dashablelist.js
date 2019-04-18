@@ -96,6 +96,14 @@ describe('Base.View.Dashablelist', function() {
         expect(view.getLinkedFields(relateModule)).toEqual({'a': 'a'});
     });
 
+    it('should call _displayDashlet', function() {
+        var stubDisplayDashlet = sinon.collection.stub(view, '_displayDashlet');
+        var data = {'filter_definition': {'name': {'$starts': 'A'}}};
+
+        view.triggerDashletSetup(data);
+        expect(stubDisplayDashlet).toHaveBeenCalledWith(data.filter_definition);
+    });
+
     describe('initialize the dashlet', function() {
         describe('init dashlet workflow', function() {
             var stubInitializeSettings,

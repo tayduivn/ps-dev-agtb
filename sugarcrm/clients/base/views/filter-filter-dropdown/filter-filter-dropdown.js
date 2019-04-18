@@ -40,10 +40,10 @@
      *                              allowed to override it because of the context. For instance, `dupecheck-list` view
      *                              wants to display `All duplicates` instead of `All <Module>s`
      */
-    labelDropdownTitle:         'LBL_FILTER',
-    labelCreateNewFilter:       'LBL_FILTER_CREATE_NEW',
-    labelAllRecords:            'LBL_FILTER_ALL_RECORDS',
-    labelAllRecordsFormatted:   null,
+    labelDropdownTitle: 'LBL_FILTER',
+    labelCreateNewFilter: 'LBL_FILTER_CREATE_NEW',
+    labelAllRecords: 'LBL_FILTER_ALL_RECORDS',
+    labelAllRecordsFormatted: null,
     /**
      * @override
      * @param {Object} opts
@@ -102,7 +102,10 @@
             if (!modelFilter) {
                 var url = app.api.buildURL('Filters/' + modelFilterId, null, null);
                 app.api.call('read', url, null, {
-                    success: _.bind(this.addModelFilterToLayoutFilters, this)
+                    success: _.bind(this.addModelFilterToLayoutFilters, this),
+                    error: function() {
+                        app.logger.error('Filter can not be read, thus is not shared. Filter id: ' + filterId);
+                    }
                 });
             }
         }
@@ -119,21 +122,24 @@
             filters.push({id: 'create', text: app.lang.get(this.labelCreateNewFilter)});
         }
         if (this.layout.filters.collection.get('all_records') && this.labelAllRecordsFormatted) {
-            this.layout.filters.collection.get('all_records').set('name',  this.labelAllRecordsFormatted);
+            this.layout.filters.collection.get('all_records').set('name', this.labelAllRecordsFormatted);
             this.layout.filters.collection.sort();
         }
         // This flag is used to determine when we have to add the border top (to separate categories)
         var firstNonEditable = false;
         this.layout.filters.collection.each(function(model) {
-            var opts = {
-                id: model.id,
-                text: this.layout.filters.collection._getTranslatedFilterName(model)
-            };
-            if (model.get('editable') === false && !firstNonEditable) {
-                opts.firstNonUserFilter = true;
-                firstNonEditable = true;
+            var creator = model.get('created_by');
+            if (!creator || creator === app.user.get('id')) {
+                var opts = {
+                    id: model.id,
+                    text: this.layout.filters.collection._getTranslatedFilterName(model)
+                };
+                if (model.get('editable') === false && !firstNonEditable) {
+                    opts.firstNonUserFilter = true;
+                    firstNonEditable = true;
+                }
+                filters.push(opts);
             }
-            filters.push(opts);
         }, this);
 
         return filters;
@@ -342,8 +348,8 @@
      * @return {string} css class to attach
      */
     formatResultCssClass: function(item) {
-        if (item.id === 'create') { return 'select2-result-border-bottom'; }
-        if (item.firstNonUserFilter) { return 'select2-result-border-top'; }
+        if (item.id === 'create') {return 'select2-result-border-bottom';}
+        if (item.firstNonUserFilter) {return 'select2-result-border-top';}
     },
 
     /**
@@ -359,8 +365,15 @@
         if (id === 'create' || id === 'all_records') {
             return true;
         } else {
-            var filterId = this.layout.filters.collection.get(id);
-            return !filterId || filterId.get('editable') !== false;
+            var filterModel = this.layout.filters.collection.get(id);
+            if (filterModel) {
+                var isEditable = filterModel.get('editable') !== false;
+                var creator = filterModel.get('created_by');
+                var hasOwnership = creator ? creator === app.user.get('id') : true;
+                return isEditable && hasOwnership;
+            } else {
+                return true;
+            }
         }
     },
 
@@ -453,7 +466,7 @@
      * */
     handleClearFilter: function(evt) {
         if (evt && evt.type === 'keydown' &&
-            !(evt.keyCode === $.ui.keyCode.ENTER ||  evt.keyCode === $.ui.keyCode.SPACE)) {
+            !(evt.keyCode === $.ui.keyCode.ENTER || evt.keyCode === $.ui.keyCode.SPACE)) {
             return;
         }
 
