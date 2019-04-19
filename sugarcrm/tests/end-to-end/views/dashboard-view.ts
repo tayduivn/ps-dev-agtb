@@ -29,6 +29,7 @@ export default class DashboardView extends BaseView {
                 adddashlet: '.add-dashlet .fa.fa-plus'
             },
             elements: {
+                HomeDashboard: '',
                 dashlet: '.dashlets.row-fluid',
                 FirstDashlet: '.row-fluid[name="dashlet_00"]',
                 SecondDashlet: '.row-fluid[name="dashlet_01"]',

@@ -80,6 +80,8 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`AuditLogDrawer`, AuditLogDrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`BusinessRulesDesign`, BusinessRulesDesignLayout, {module: moduleName});
                 seedbed.defineComponent(`MergeDrawer`, MergeLayout, {module: moduleName});
+                seedbed.defineComponent(`Dashboard`, DashboardLayout, {module: 'Dashboards'});
+                seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
                 seedbed.defineComponent(`${moduleName}PipelineView`, PipelineView, {module: moduleName});
             }
         });

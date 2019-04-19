@@ -695,7 +695,9 @@ When(/^I open (\w+) \*(\w+) record view$/,
 When(/^I filter for the (\w+) record \*(\w+) named "([^"]*)"$/,
     async function (module: string, uid: string, recordName: string) {
 
-        await chooseModule(module);
+        if (module !== 'Dashboards') {
+            await chooseModule(module);
+        }
 
         // Filter list view by the specified record name
         const filterView = await seedbed.components[`${module}List`].FilterView;

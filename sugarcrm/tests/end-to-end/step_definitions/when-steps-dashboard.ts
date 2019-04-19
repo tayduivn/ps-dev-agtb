@@ -110,10 +110,14 @@ When(/^I click (Cog) in (#\S+)$/,
 /**
  * Create or cancel creation of new dashboard
  *
- * @example When I create new dashboard
+ * @example
+ * When I create new dashboard with two column layout
+ *       | *   | name            |
+ *       | D_1 | <dashboardName> |
+ *
  */
-When(/^I (create|cancel creation of) new dashboard$/,
-    async function (action: string, data: TableDefinition): Promise<void> {
+When(/^I (create|cancel creation of) new dashboard(?: with (one|two|three) column layout)?$/,
+    async function (action: string, dashboardLayout: string, data: TableDefinition): Promise<void> {
         let dashboard = await seedbed.components[`Dashboard`];
         let dashboardHeaderView = await seedbed.components[`Dashboard`].HeaderView;
 
@@ -137,6 +141,12 @@ When(/^I (create|cancel creation of) new dashboard$/,
         };
 
         await dashboardHeaderView.setFieldsValue(inputData);
+
+        // Select home dashboard layout
+        if (dashboardLayout) {
+            await dashboardHeaderView.clickButton(`${dashboardLayout}ColumnLayout`);
+            await closeWarning('confirm');
+        }
 
         switch (action ) {
             case 'create':

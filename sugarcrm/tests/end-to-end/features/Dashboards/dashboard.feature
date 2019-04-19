@@ -97,25 +97,15 @@ Feature: Dashboard main functionality verification
       | fieldName | value                |
       | name      | RecordView Dashboard |
 
-
-  @pr
+  @homeDashboard_create  @add_dashlet
   Scenario: Home > Create Dashboard > Add Dashlets > Save > Delete Dashboard
-    Given Accounts records exist:
-      | *name |
-      | A1    |
     Given I open about view and login
     When I go to "Home" url
 
     # Create new dashboard > Save
-    When I click AddButton button on #HomeList header
-    When I provide input for #Dashboard.HeaderView view
-      | *      | name               |
-      | DaBo_1 | New Home Dashboard |
-    When I click threeColumnLayout button on #Dashboard header
-    When I Confirm confirmation alert
-
-    When I click Save button on #Dashboard header
-    When I close alert
+    When I create new dashboard with three column layout
+      | *           | name          |
+      | DashboardID | New Dashboard |
 
     # Add multiple dashlets to various columns of home dashboard
     When I add MyActivityStream dashlet to #Dashboard at column 1
@@ -136,8 +126,8 @@ Feature: Dashboard main functionality verification
 
     # Verify that new dashboard is created
     Then I verify fields on #Dashboard.HeaderView
-      | fieldName | value              |
-      | name      | New Home Dashboard |
+      | fieldName | value         |
+      | name      | New Dashboard |
 
     # Delete home dashboard
     When I delete dashboard

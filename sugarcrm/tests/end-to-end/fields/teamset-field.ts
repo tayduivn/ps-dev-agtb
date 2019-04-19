@@ -43,7 +43,10 @@ export class Edit extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}]',
             field: {
-                selector: '.select2-container.select2',
+                selector: '.control-group:last-child .select2-container.select2',
+                plus: '.btn.first .fa.fa-plus',
+                minus: '.control-group:last-child .fa-minus',
+                star: '.control-group:last-child .fa-star'
             }
         });
 
@@ -52,12 +55,32 @@ export class Edit extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
-        await this.driver.click(this.$('field.selector'));
-        await this.driver.waitForApp();
-        await this.driver.setValue(this.inputSelector, val);
-        await this.driver.waitForApp();
-        await this.driver.click(`${this.itemSelector}${val}`);
-        await this.driver.waitForApp();
+
+        let action = val.split(':').shift().trim().toLowerCase();
+        let value = val.split(':').pop().trim();
+
+        // Add another team field by click on the plus button
+       switch (action)  {
+           case 'add':
+                await this.driver.click(this.$('field.plus'));
+           case 'edit':
+                await this.driver.click(this.$('field.selector'));
+                await this.driver.waitForApp();
+                await this.driver.setValue(this.inputSelector, value);
+               await this.driver.waitForApp();
+                await this.driver.click(`${this.itemSelector}${value}`);
+               await this.driver.waitForApp();
+                break;
+           case 'delete':
+               await this.driver.click(this.$('field.minus'));
+               await this.driver.waitForApp();
+               break;
+           case 'primary':
+               await this.driver.click(this.$('field.star'));
+               break;
+           default:
+               throw new Error(`Not recognized action: ${action} !`)
+       }
     }
 }
 
