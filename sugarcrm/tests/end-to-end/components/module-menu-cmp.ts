@@ -38,6 +38,11 @@ export default class extends BaseView {
                 moduleItems: {
                     $: '.dropdown.active',
                     caret: ' .fa.fa-caret-down',
+                    // Home Module menu selectors
+                    'Create Dashboard': 'a[data-navbar-menu-item="LBL_CREATE_DASHBOARD_MENU"]',
+                    'Activity Stream': 'a[data-navbar-menu-item="LBL_ACTIVITIES"]',
+                    'Manage Dashboards': 'a[data-navbar-menu-item="LBL_MANAGE_DASHBOARDS"]',
+
                     // Acounts Module menu selectors
                     'Create Account': 'a[data-navbar-menu-item="LNK_NEW_ACCOUNT"]',
                     'View Accounts': 'a[data-navbar-menu-item="LNK_ACCOUNT_LIST"]',

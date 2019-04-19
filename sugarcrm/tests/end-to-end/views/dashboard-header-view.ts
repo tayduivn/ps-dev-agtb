@@ -33,6 +33,11 @@ export default class DashboardHeaderView extends BaseView {
                 delete: 'a[name="delete_button"]',
                 edit_save: 'a[name="save_button"]',
                 edit_cancel: 'a[name="cancel_button"]',
+
+                // Various layout buttons while creating home dashboard
+                onecolumnlayout: '.fa-list-alt',
+                twocolumnlayout: '.fa-columns',
+                threecolumnlayout: '.fa-table',
             }
         });
     }

@@ -93,6 +93,9 @@ export default class RecordHeaderView extends BaseView {
                 // SugarBPM controls
                 'design_pbr': 'a[name="design_businessrules"]:not(.hide)',
                 'design_pet': 'a[name="design_emailtemplates"]:not(.hide)',
+
+                // Home Dashboard controls
+                'addbutton': 'a[name="add_button"]:not(.hide)',
             },
 
             title: {

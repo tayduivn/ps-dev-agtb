@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import {seedbed} from '@sugarcrm/seedbed';
+
 import {BaseField} from './base-field';
 
 /**
@@ -35,9 +35,7 @@ export default class TextField extends BaseField {
     public async getText(selector: string): Promise<string> {
 
         let value: string | string[] = await this.driver.getValue(this.$('field.selector'));
-
         return value.toString().trim();
-
     }
 }
 
@@ -54,15 +52,12 @@ export class Detail extends TextField {
                 selector: 'div'
             }
         });
-
     }
 
     public async getText(selector: string): Promise<string> {
 
         let value: string | string[] = await this.driver.getText(this.$('field'));
-
         return value.toString().trim();
-
     }
 }
 
@@ -76,15 +71,12 @@ export class List extends TextField {
                 selector: 'span'
             }
         });
-
     }
 
     public async getText(selector: string): Promise<string> {
 
         let value: string | string[] = await this.driver.getText(this.$('field'));
-
         return value.toString().trim();
-
     }
 
 }

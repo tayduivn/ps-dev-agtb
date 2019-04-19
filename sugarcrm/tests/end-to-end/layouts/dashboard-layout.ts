@@ -38,7 +38,7 @@ export default class DashboardLayout extends BaseView {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.side.sidebar-content',
+            $: '',
         });
 
         this.type = 'dashboard';

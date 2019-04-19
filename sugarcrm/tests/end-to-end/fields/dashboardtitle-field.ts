@@ -26,7 +26,27 @@ export class Detail extends BaseField {
         });
     }
 
-    public async getText(): Promise<string> {
-        return await this.driver.getText(this.$(`field.selector`));
+    public async getText(selector: string): Promise<string> {
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+        return value.toString().trim();
     }
+}
+
+export class HomeDashboardDetail extends BaseField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: '.ellipsis_inline',
+            }
+        });
+    }
+
+    public async getText(selector: string): Promise<string> {
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+        return value.toString().trim();
+    }
+
 }

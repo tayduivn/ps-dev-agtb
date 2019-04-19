@@ -25,7 +25,7 @@ export default class DashboardView extends BaseView {
         this.selectors = this.mergeSelectors({
             $: '.dashboard',
             buttons: {
-                newrow: '.add-row.empty',
+                newrow: '.row-fluid[name="dashlet_last_{{index}}0"] .add-row.empty',
                 adddashlet: '.add-dashlet .fa.fa-plus'
             },
             elements: {
@@ -35,4 +35,17 @@ export default class DashboardView extends BaseView {
             }
         });
     }
+
+    /**
+     * Click + button on the specified column when adding dashlet to the dashboard
+     *
+     * @param {string} buttonName
+     * @param {number} index
+     * @returns {Promise<void>}
+     */
+    public async clickPlusButton(buttonName: string, index: number) {
+        let selector = this.$(`buttons.newrow`, {index});
+        await this.driver.click(selector);
+    }
+
 }

@@ -14,7 +14,7 @@ import BaseView from '../views/base-view';
 import DashletView from '../views/dashlet-view';
 import DashboardLayout from '../layouts/dashboard-layout';
 import {TableDefinition} from 'cucumber';
-import {closeAlert, closeWarning} from '../step_definitions/general_bdd';
+import {closeAlert, closeWarning, recordViewHeaderButtonClicks} from './general_bdd';
 import {openMenuAndCheck} from './when-steps-record-header';
 
 /**
@@ -32,8 +32,8 @@ When(/^I click (NewRow|AddDashlet) in (#\S+)$/,
  *
  * @example "I add KBArticles dashlet to #Dashborad"
  */
-When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)?$/,
-    async function (shortDashletName: String, dashboard: DashboardLayout, data: TableDefinition): Promise<void> {
+When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)(?: at column (1|2|3))?$/,
+    async function (shortDashletName: String, dashboard: DashboardLayout, column?: number, data?: TableDefinition): Promise<void> {
         const dashletNamesMap = {
             ListView: 'List View',
             KBArticles: 'Most Useful Published Knowledge Base Articles',
@@ -58,12 +58,16 @@ When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)?$/,
             throw new Error(`Dashlet with the name ${shortDashletName} is not found!`);
         }
 
+        if (!column) {
+            column = 1;
+        }
+
         // Open Dashboard dropdown and select edit
         await openMenuAndCheck(dashboard, false);
         await dashboard.HeaderView.clickButton('edit');
 
         // Add New Row
-        await dashboard.DashboardView.clickButton('NewRow');
+        await dashboard.DashboardView.clickPlusButton('NewRow',column - 1);
         await this.driver.waitForApp();
 
         // Click + to add a new dashlet
