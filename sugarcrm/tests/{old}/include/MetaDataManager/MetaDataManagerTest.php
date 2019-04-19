@@ -63,6 +63,28 @@ class MetaDataManagerTest extends TestCase
         AuthenticationControllerMock::clearInstance();
     }
 
+    public function testGetServerInfo()
+    {
+        // Server Info that should exist in all flavors and platforms
+        $keys = [
+            'flavor',
+            'version',
+            'build',
+            'marketing_version',
+            'product_name',
+            'site_id',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'portal_active',
+            //END SUGARCRM flav=ent ONLY
+        ];
+
+        // Run the test
+        $info = $this->mm->getServerInfo();
+        foreach ($keys as $key) {
+            $this->assertArrayHasKey($key, $info);
+        }
+    }
+
     public function testGetAllLanguages()
     {
         $languages = $this->mm->getAllLanguages();
@@ -250,7 +272,7 @@ class MetaDataManagerTest extends TestCase
         if (!empty($administration->settings['system_name'])) {
             $expectedConfigs['systemName'] = $administration->settings['system_name'];
         }
-    
+
         $manager = $this->createPartialMock('MetadataManagerMock', array('getSugarConfig'));
         $manager->expects($this->any())
             ->method('getSugarConfig')

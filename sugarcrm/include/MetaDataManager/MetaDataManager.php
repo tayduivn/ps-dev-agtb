@@ -2075,12 +2075,7 @@ class MetaDataManager implements LoggerAwareInterface
         $data['version'] = $this->getInstanceVersionValue('sugar_version');
         $data['build'] = $this->getInstanceVersionValue('sugar_build');
         $data['marketing_version'] = $this->getInstanceVersionValue('sugar_mar_version');
-        /*
-        $data['flavor'] = $GLOBALS['sugar_flavor'];
-        $data['version'] = $GLOBALS['sugar_version'];
-        $data['build'] = $GLOBALS['sugar_build'];
-        $data['marketing_version'] = $GLOBALS['sugar_mar_version'];
-        */
+
         // Product Name for Professional edition.
         $data['product_name'] = "SugarCRM Professional";
         //BEGIN SUGARCRM flav=ent ONLY
@@ -2122,14 +2117,13 @@ class MetaDataManager implements LoggerAwareInterface
 
         //BEGIN SUGARCRM flav=ent ONLY
         //Adds the portal status to the server info collection.
-        $admin = Administration::getSettings();
         //Property 'on' of category 'portal' must be a boolean.
-        $data['portal_active'] = !empty($admin->settings['portal_on']);
+        $data['portal_active'] = !empty($system_config->settings['portal_on']);
         //END SUGARCRM flav=ent ONLY
 
-        // needed for Pendo analytics
-        if (!empty($admin->settings['site_id'])) {
-            $data['site_id'] = $admin->settings['site_id'];
+        // Needed for Pendo analytics
+        if (!empty($system_config->settings['site_id'])) {
+            $data['site_id'] = $system_config->settings['site_id'];
         }
         return $data;
     }
