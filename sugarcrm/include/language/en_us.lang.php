@@ -2746,8 +2746,8 @@ $app_strings = array (
     'ERR_NEED_ACTIVE_SESSION' => 'An active session is required to export content.',
     'ERR_NO_HEADER_ID' => 'This feature is unavailable in this theme.',
     'ERR_NOT_ADMIN' => "Unauthorized access to administration.",
-    'ERR_DISABLED_FOR_IDM_MODE' => 'Password Management is only available in Cloud Settings.',
-    'ERR_GOTO_CLOUD_CONSOLE' => 'Please go to the <a href="%s" target="_blank">Cloud Settings</a>.',
+    'ERR_PASSWORD_MANAGEMENT_DISABLED_FOR_IDM_MODE' =>
+        'Password Management is only available in <a href="%s" target="_blank">Cloud Settings</a>.',
     'ERR_UPDATE_PERSON_PRIMARY_EMAIL_IN_IDM_MODE' => 'Please contact your Sugar administrator if you would like to make changes to read-only fields.',
     'ERR_UPDATE_PERSON_PRIMARY_EMAIL_IN_IDM_MODE_ADMIN' => 'Please access <a href="{0}" target="_blank">Cloud Settings</a> to make changes to read-only fields.',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Missing required field:',

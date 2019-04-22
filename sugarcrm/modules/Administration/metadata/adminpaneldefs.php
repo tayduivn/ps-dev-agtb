@@ -25,9 +25,14 @@ $idmModeConfig = $idpConfig->getIDMModeConfig();
 if ($idpConfig->isIDMModeEnabled()) {
     $passwordManagerUrl = $idpConfig->buildCloudConsoleUrl('passwordManagement');
     $passwordManagerTarget = '_blank';
+    $passwordManagerLink = str_replace(
+        '"',
+        "\\'",
+        sprintf($GLOBALS['app_strings']['ERR_PASSWORD_MANAGEMENT_DISABLED_FOR_IDM_MODE'], $passwordManagerUrl)
+    );
     $passwordManagerOnClick = sprintf(
         'onclick = "app.alert.show(\'disabled-for-idm-mode\', {level: \'info\', messages: \'%s\'});"',
-        $GLOBALS['app_strings']['ERR_DISABLED_FOR_IDM_MODE']
+        $passwordManagerLink
     );
 } else {
     $passwordManagerUrl = './index.php?module=Administration&action=PasswordManager';
