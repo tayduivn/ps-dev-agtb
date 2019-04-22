@@ -9,14 +9,67 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.VisualPipeline.ConfigPaneView
+ * @alias SUGAR.App.view.views.BaseVisualConfigPanelView
+ * @extends View.Fields.Base.BaseField
+ */
 ({
     extendsFrom: 'BaseConfigPanelView',
+
+    selectedModules: [],
+
+    activeTabIndex: 0,
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
-        console.log('init ConfigPanelView');
         this._super('initialize', [options]);
+        this.customizeMetaFields();
     },
+
+    /**
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this.collection.on('add remove reset', this.render, this);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    render: function() {
+        this._super('render');
+        this.$('#tabs').tabs({
+            active: this.context.get('activeTabIndex')
+        });
+
+        //event used in tile preview
+        this.context.trigger('pipeline:config:tabs-initialized');
+    },
+
+    /**
+     *  Adds the fields to the module into a two column layout
+     */
+    customizeMetaFields: function() {
+        var twoColumns = [];
+        var customizedFields = []; // To use as row in the UI
+
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(field) {
+                if (field.twoColumns) {
+                    twoColumns.push(field);
+                    if (twoColumns.length === 2) {
+                        customizedFields.push(twoColumns);
+                        twoColumns = [];
+                    }
+                } else {
+                    customizedFields.push([field]);
+                }
+            }, this);
+        }, this);
+
+        this.meta.customizedFields = customizedFields;
+    }
 })

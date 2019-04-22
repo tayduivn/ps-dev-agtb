@@ -13,6 +13,9 @@
 $viewdefs['VisualPipeline']['base']['layout']['config-drawer-content'] = array(
     'components' => array(
         array(
+            'view' => 'pipeline-modules',
+        ),
+        array(
             'view' => 'config-visual-pipeline',
         ),
     ),

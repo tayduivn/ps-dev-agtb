@@ -15,9 +15,6 @@ describe("Base.Layout.Filterpanel", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
-        getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {
-            return {activityStreamEnabled: activityStreamEnabled};
-        });
     });
 
     afterEach(function() {
@@ -33,6 +30,9 @@ describe("Base.Layout.Filterpanel", function(){
     describe("Filter Panel", function() {
         var oLastState;
         beforeEach(function() {
+            getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {
+                return {activityStreamEnabled: activityStreamEnabled};
+            });
             oLastState = app.user.lastState;
             app.user.lastState = {
                 key: function(){},
@@ -149,8 +149,11 @@ describe("Base.Layout.Filterpanel", function(){
         });
     });
 
-    describe('disableActivityStreamToggle', function(){
-        it('should set activity stream toggle to inactive when activity stream not enabled', function(){
+    describe('disableActivityStreamToggle', function() {
+        it('should set activity stream toggle to inactive when activity stream not enabled', function() {
+            getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {
+                return {activityStreamEnabled: activityStreamEnabled};
+            });
             var meta = {'availableToggles': [
                 {'name': 'list', 'icon': 'fa fa-table', 'label': 'LBL_LISTVIEW'},
                 {'name': 'activitystream', 'icon': 'fa fa-clock-o', 'label': 'LBL_ACTIVITY_STREAM'}
@@ -176,4 +179,39 @@ describe("Base.Layout.Filterpanel", function(){
         });
 
     });
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    describe('disablePipelineToggle', function() {
+        it('should set pipeline toggle to inactive when pipeline not enabled for module', function() {
+            var meta = {'availableToggles': [
+                {'name': 'pipeline', 'label': 'LBL_PIPELINE_VIEW_BTN', 'route': 'pipeline'},
+                {'name': 'list', 'icon': 'fa fa-table', 'label': 'LBL_LISTVIEW'},
+                {'name': 'activitystream', 'icon': 'fa fa-clock-o', 'label': 'LBL_ACTIVITY_STREAM'}
+            ], 'components': [
+                {'layout': 'filter', 'targetEl': '.filter', 'position': 'prepend'},
+                {'view': 'filter-actions', 'targetEl': '.filter-options'},
+                {'view': 'filter-rows', 'targetEl': '.filter-options'},
+                {'layout': 'activitystream', 'context': {'module': 'Activities'}},
+                {'layout': 'list'}
+            ]};
+
+            sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    is_setup: false
+                };
+            });
+
+            layout = SugarTest.createLayout('base', 'Leads', 'filterpanel', meta);
+
+            var pipelineToggle = _.find(layout.meta.availableToggles, function(toggle) {
+                return toggle.name === 'pipeline';
+            });
+
+            expect(pipelineToggle.disabled).toEqual(true);
+            expect(pipelineToggle.label).toEqual('LBL_VISUAL_PIPELINE_DISABLED');
+
+            app.metadata.getModule.restore();
+        });
+    });
+    //END SUGARCRM flav=ent ONLY
 });

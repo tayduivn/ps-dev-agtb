@@ -356,6 +356,11 @@ $opps_config = OpportunitiesDefaults::setupOpportunitiesSettings();
 
 unset($opps_config);
 
+//BEGIN SUGARCRM flav=ent ONLY
+//Install Visual Pipeline configuration
+$visualPipelineConfig = VisualPipelineDefaults::setupPipelineSettings();
+//END SUGARCRM flav=ent ONLY
+
 installerHook('pre_createUsers');
 if ($new_tables) {
     echo $line_entry_format . $mod_strings['LBL_PERFORM_DEFAULT_USERS'] . $line_exit_format;

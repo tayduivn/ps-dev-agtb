@@ -42,7 +42,7 @@
 
         ctxCollection.filterDef = filterDef;
         ctxCollection.origFilterDef = origFilterDef;
-        this.context.trigger('filterChanged', filterDef);
+        this.context.trigger('pipeline:recordlist:filter:changed', filterDef);
     },
 
     /**

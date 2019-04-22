@@ -43,7 +43,7 @@ $viewdefs['Cases']['base']['layout']['records'] = array(
                                             //BEGIN SUGARCRM flav=ent ONLY
                                             array(
                                                 'name' => 'pipeline',
-                                                'icon' => 'fa-filter',
+                                                'icon' => 'fa-align-left',
                                                 'label' => 'LBL_PIPELINE_VIEW_BTN',
                                                 'css_class' => 'pipeline-view-button',
                                                 'route' => 'pipeline',

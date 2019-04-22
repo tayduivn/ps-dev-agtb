@@ -36,8 +36,8 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         sinon.collection.stub(app.metadata, 'getModule').withArgs('VisualPipeline', 'config').returns(
             {
                 table_header: {
-                    Leads: 'status',
-                    Opportunities: 'sales_status',
+                    Leads: 'date_closed',
+                    Opportunities: 'status'
                 },
                 header_colors: ['#FFFFFF', '#000000']
             }
@@ -53,6 +53,9 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                 },
                 sales_status: {
                     options: 'sales_status_dom'
+                },
+                status: {
+                    options: 'status'
                 },
                 dupeTest: {
                     type: 'test'
@@ -82,8 +85,35 @@ describe('Base.Views.PipelineRecordlistContent', function() {
             expect(app.metadata.getModule).toHaveBeenCalledWith('VisualPipeline', 'config');
         });
 
+        it('should initialize view.pipelineFilters with []', function() {
+            expect(view.pipelineFilters).toEqual([]);
+        });
+
+        it('should initialize view.hiddenHeaderValues with []', function() {
+            expect(view.hiddenHeaderValues).toEqual([]);
+        });
+
         it('should initialize view.action as list', function() {
             expect(view.action).toEqual('list');
+        });
+    });
+
+    describe('bindDataChange', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'resizeContainer', function() {});
+            sinon.collection.stub(window, 'addEventListener', function() {});
+            view.bindDataChange();
+
+        });
+        it('should call view.context.on', function() {
+            expect(view.context.on).toHaveBeenCalledWith('pipeline:recordlist:model:created');
+            expect(view.context.on).toHaveBeenCalledWith('pipeline:recordlist:filter:changed');
+            expect(view.context.on).toHaveBeenCalledWith('button:delete_button:click');
+            expect(view.context.on).toHaveBeenCalledWith('pipeline:recordlist:resizeContent');
+        });
+
+        it('should call window.addEventListener with resize', function() {
+            expect(window.addEventListener).toHaveBeenCalledWith('resize', view.resizeContainerHandler);
         });
     });
 
@@ -142,39 +172,109 @@ describe('Base.Views.PipelineRecordlistContent', function() {
     });
 
     describe('setResultsPerPageColumn', function() {
+        var resultsNum;
+        beforeEach(function() {
+            view.module = 'Leads';
+        });
         describe('when records_per_column is a number', function() {
             it('should assign records_per_column to resultsPerPageColumn', function() {
                 view.resultsPerPageColumn = undefined;
+                resultsNum = undefined;
                 view.pipelineConfig = {
-                    records_per_column: 20
+                    records_per_column: {
+                        Leads: 20
+                    }
                 };
 
-                view.setResultsPerPageColumn();
+                view.setResultsPerPageColumn(resultsNum);
                 expect(view.resultsPerPageColumn).toBe(20);
+            });
+
+            it('should assign resultsNum to resultsPerPageColumn', function() {
+                view.resultsPerPageColumn = undefined;
+                resultsNum = 50;
+                view.pipelineConfig = {
+                    records_per_column: {
+                        Leads: 20
+                    }
+                };
+
+                view.setResultsPerPageColumn(resultsNum);
+                expect(view.resultsPerPageColumn).toBe(50);
             });
         });
 
         describe('when records_per_column is a not number', function() {
             it('should not assign records_per_column to resultsPerPageColumn', function() {
-                view.resultsPerPageColumn = undefined;
+                view.resultsPerPageColumn = 7;
+                resultsNum = undefined;
+                view.pipelineConfig = {
+                    records_per_column: {
+                        Leads: 'test'
+                    }
+                };
+
+                view.setResultsPerPageColumn(resultsNum);
+                expect(view.resultsPerPageColumn).toBe(7);
+            });
+        });
+
+        describe('when records_per_column is a numeric string', function() {
+            it('should not assign records_per_column to resultsPerPageColumn', function() {
+                view.resultsPerPageColumn = 7;
+                resultsNum = undefined;
+                view.pipelineConfig = {
+                    records_per_column: {
+                        Leads: '15'
+                    }
+                };
+
+                view.setResultsPerPageColumn(resultsNum);
+                expect(view.resultsPerPageColumn).toBe(15);
+            });
+        });
+
+        describe('when records_per_column is a not defined', function() {
+            it('should not assign records_per_column to resultsPerPageColumn', function() {
+                view.resultsPerPageColumn = 7;
                 view.pipelineConfig = {
                     records_per_column: 'test'
                 };
 
-                view.setResultsPerPageColumn();
-                expect(view.resultsPerPageColumn).toBe(undefined);
+                view.setResultsPerPageColumn(resultsNum);
+                expect(view.resultsPerPageColumn).toBe(7);
             });
         });
     });
 
     describe('setHiddenHeaderValues', function() {
+        var hiddenValues;
+        beforeEach(function() {
+            view.module = 'Opportunities';
+        });
         describe('when view.pipelineConfig.hiddenValues is empty', function() {
             it('should not assign view.pipelineConfig.hiddenValues to view.hiddenHeaderValues', function() {
                 view.hiddenHeaderValues = undefined;
+                hiddenValues = [];
                 view.pipelineConfig = {
-                    hidden_values: []
+                    hidden_values: {
+                        Tasks: []
+                    }
                 };
-                view.setHiddenHeaderValues();
+                view.setHiddenHeaderValues(hiddenValues);
+
+                expect(view.hiddenHeaderValues).toBe(undefined);
+            });
+
+            it('should not assign view.pipelineConfig.hiddenValues to view.hiddenHeaderValues', function() {
+                view.hiddenHeaderValues = undefined;
+                hiddenValues = [];
+                view.pipelineConfig = {
+                    hidden_values: {
+                        Opportunities: []
+                    }
+                };
+                view.setHiddenHeaderValues(hiddenValues);
 
                 expect(view.hiddenHeaderValues).toBe(undefined);
             });
@@ -183,6 +283,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         describe('when view.pipelineConfig.hiddenValues is not empty', function() {
             it('should not assign view.pipelineConfig.hiddenValues to view.hiddenHeaderValues', function() {
                 view.hiddenHeaderValues = undefined;
+                hiddenValues = undefined;
                 view.pipelineConfig = {
                     hidden_values: {
                         Cases: [],
@@ -190,9 +291,24 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                         Opportunities: ['Closed Won', 'Closed Lost']
                     }
                 };
-                view.setHiddenHeaderValues();
+                view.setHiddenHeaderValues(hiddenValues);
 
-                expect(view.hiddenHeaderValues).toBe(view.pipelineConfig.hidden_values);
+                expect(view.hiddenHeaderValues).toEqual(['Closed Won', 'Closed Lost']);
+            });
+
+            it('should not assign hiddenValues to view.hiddenHeaderValues', function() {
+                view.hiddenHeaderValues = undefined;
+                hiddenValues = ['Test1', 'Test2'];
+                view.pipelineConfig = {
+                    hidden_values: {
+                        Cases: [],
+                        Leads: [],
+                        Opportunities: ['Closed Won', 'Closed Lost']
+                    }
+                };
+                view.setHiddenHeaderValues(hiddenValues);
+
+                expect(view.hiddenHeaderValues).toEqual(['Test1', 'Test2']);
             });
         });
     });
@@ -279,22 +395,40 @@ describe('Base.Views.PipelineRecordlistContent', function() {
     describe('getTableHeader', function() {
         var headerColors;
         beforeEach(function() {
+            view.recordsToDisplay = [];
             sinon.collection.stub(view, 'getColumnColors', function() {
-                return ['#FFFFFF', '#000000'];
+                return ['#FFFFFF', '#000000', '#FFFFFF', '#000000', '#FFFFFF', '#000000'];
             });
             headerColors = view.getColumnColors();
         });
 
         it('should call the view.getColumnColors', function() {
+            view.module = 'Opportunities';
+            view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
             view.getTableHeader();
 
             expect(view.getColumnColors).toHaveBeenCalled();
         });
 
+        it('should update view.hasAccessToView', function() {
+            view.module = 'Opportunities';
+            view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
+            view.getTableHeader();
+
+            expect(view.hasAccessToView).toBeTruthy();
+        });
+
+        it('should call view._super with render', function() {
+            view.module = 'Opportunities';
+            view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
+            view.getTableHeader();
+
+            expect(view._super).toHaveBeenCalledWith('render');
+        });
+
         describe('when pipeline_type is not date_closed', function() {
             var headerField;
-
-            it('should assign headerField to view.headerField', function() {
+            beforeEach(function() {
                 sinon.collection.stub(view.context, 'get', function() {
                     return {
                         get: function() {
@@ -302,24 +436,20 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                         }
                     };
                 });
-                headerField = view.context.get('model').get('pipeline');
+            });
+
+            it('should assign headerField to view.headerField', function() {
+                view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
                 view.getTableHeader();
 
-                expect(view.headerField).toEqual(headerField);
+                expect(view.headerField).toEqual('status');
             });
 
             describe('when app.acl.hasAccessToModel is false', function() {
                 it('should call view.context.trigger to have been called with open:config:fired', function() {
-                    sinon.collection.stub(view.context, 'get', function() {
-                        return {
-                            get: function() {
-                                return 'sales_status';
-                            }
-                        };
-                    });
+                    view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
 
-                    headerField = view.context.get('model').get('pipeline_type');
-                    sinon.collection.stub(app.acl, 'hasAccessToModel').withArgs('read', view.model, headerField)
+                    sinon.collection.stub(app.acl, 'hasAccessToModel').withArgs('read', view.model, 'status')
                         .returns(false);
                     sinon.collection.stub(view.context, 'trigger', function() {});
                     view.getTableHeader();
@@ -330,16 +460,9 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
             describe('when app.acl.hasAccessToModel is true', function() {
                 it('should not call view.context.trigger to have been called with open:config:fired', function() {
-                    sinon.collection.stub(view.context, 'get', function() {
-                        return {
-                            get: function() {
-                                return 'sales_status';
-                            }
-                        };
-                    });
+                    view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
 
-                    headerField = view.context.get('model').get('pipeline_type');
-                    sinon.collection.stub(app.acl, 'hasAccessToModel').withArgs('read', view.model, headerField)
+                    sinon.collection.stub(app.acl, 'hasAccessToModel').withArgs('read', view.model, 'status')
                         .returns(true);
                     sinon.collection.stub(view.context, 'trigger', function() {});
                     view.getTableHeader();
@@ -349,13 +472,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
                 describe('when headerField is defined', function() {
                     beforeEach(function() {
-                        sinon.collection.stub(view.context, 'get', function() {
-                            return {
-                                get: function() {
-                                    return 'sales_status';
-                                }
-                            };
-                        });
+                        view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
 
                         view.recordsToDisplay = [];
                     });
@@ -399,6 +516,46 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                         });
                     });
                 });
+            });
+        });
+
+        describe('when pipeline_type is date_closed', function() {
+            beforeEach(function() {
+                view.module = 'Leads';
+                view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
+
+                sinon.collection.stub(view.context, 'get', function() {
+                    return {
+                        get: function() {
+                            return 'date_closed';
+                        }
+                    };
+                });
+            });
+            it('should set view.headerField as date_closed', function() {
+                view.getTableHeader();
+
+                expect(view.headerField).toEqual('date_closed');
+            });
+
+            it('should populate view.recordsToDisplay', function() {
+                view.monthsToDisplay = 6;
+                view.getTableHeader();
+
+                expect(view.recordsToDisplay.length).toEqual(6);
+            });
+
+            it('should call app.date with view.startDate', function() {
+                view.monthsToDisplay = 6;
+                sinon.collection.stub(app, 'date', function() {
+                    return {
+                        add: sinon.collection.stub(),
+                        format: sinon.collection.stub()
+                    };
+                });
+                view.getTableHeader();
+
+                expect(app.date).toHaveBeenCalledWith(view.startDate);
             });
         });
     });
@@ -465,9 +622,15 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
     describe('postRender', function() {
         beforeEach(function() {
+            sinon.collection.stub(view, 'resizeContainer', function() {});
             sinon.collection.stub(view, 'buildDraggable', function() {});
             sinon.collection.stub(view, 'bindScroll', function() {});
             view.postRender();
+        });
+
+        it('should call resizeContainer function', function() {
+
+            expect(view.resizeContainer).toHaveBeenCalled();
         });
 
         it('should call buildDraggable function', function() {
@@ -883,6 +1046,43 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         });
     });
 
+    describe('resizeContainer', function() {
+        var height;
+        beforeEach(function() {
+            sinon.collection.stub(view.$el, 'parents', function() {
+                return {
+                    height: function() {
+                        return 500;
+                    },
+                    find: function() {
+                        return {
+                            height: function() {
+                                return 200;
+                            }
+                        };
+                    }
+                };
+            });
+            sinon.collection.stub(view.$el, 'height', function() {});
+            sinon.collection.stub(jQuery.fn, 'height', function() {});
+
+            view.resizeContainer();
+            height = (view.$el.parents('.main-pane').height() -
+                view.$el.parents('.main-pane').find('.search-filter').height());
+        });
+
+        it('should height to be 300', function() {
+
+            expect(height).toEqual(300);
+        });
+
+        it('should set height for my-pipeline-content element', function() {
+
+            expect(view.$el.height).toHaveBeenCalledWith('300px');
+            expect(jQuery.fn.height).toHaveBeenCalledWith('150px');
+        });
+    });
+
     describe('buildDraggable', function() {
         var addClassStub;
         var findStub;
@@ -1106,89 +1306,11 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
     describe('bindScroll', function() {
         it('should bind scroll to the .my-pipeline-content element', function() {
-            sinon.collection.stub(jQuery.fn, 'bind', function() {});
+            sinon.collection.stub(view, 'listScrolled', function() {});
+            sinon.collection.stub(view.$el, 'on', function() {});
             view.bindScroll();
 
-            expect(jQuery.fn.bind).toHaveBeenCalled();
-        });
-    });
-
-    describe('listScrolled', function() {
-        var evt;
-        var elem;
-        beforeEach(function() {
-            evt = {
-                preventDefault: $.noop,
-                currentTarget: 'button[name=testBtn]',
-            };
-
-            sinon.collection.stub(view, 'buildRecordsList', function() {});
-        });
-
-        describe('when view.moreData is false', function() {
-            it('should not call view.buildRecordsList method', function() {
-                view.moreData = false;
-                sinon.collection.stub(view, '$', function() {
-                    return {
-                        0: {
-                            scrollHeight: 50
-                        },
-                        scrollTop: function() {
-                            return 30;
-                        },
-                        outerHeight: function() {
-                            return 40;
-                        }
-                    };
-                });
-                view.listScrolled(evt);
-
-                expect(view.buildRecordsList).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('when view.moreData is true but scroll is at bottom', function() {
-            it('should not call view.buildRecordsList method', function() {
-                view.moreData = true;
-                sinon.collection.stub(view, '$', function() {
-                    return {
-                        0: {
-                            scrollHeight: 50
-                        },
-                        scrollTop: function() {
-                            return 30;
-                        },
-                        outerHeight: function() {
-                            return 5;
-                        }
-                    };
-                });
-                view.listScrolled(evt);
-
-                expect(view.buildRecordsList).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('when view.moreData is true and scroll is not at bottom', function() {
-            it('should call view.buildRecordsList method', function() {
-                view.moreData = true;
-                sinon.collection.stub(view, '$', function() {
-                    return {
-                        0: {
-                            scrollHeight: 50
-                        },
-                        scrollTop: function() {
-                            return 30;
-                        },
-                        outerHeight: function() {
-                            return 40;
-                        }
-                    };
-                });
-                view.listScrolled(evt);
-
-                expect(view.buildRecordsList).toHaveBeenCalled();
-            });
+            expect(view.$el.on).toHaveBeenCalledWith('scroll');
         });
     });
 
@@ -1451,6 +1573,36 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         it('should call view.loadData method', function() {
 
             expect(view.loadData).toHaveBeenCalled();
+        });
+    });
+
+    describe('_dispose', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view.context, 'off', function() {});
+            sinon.collection.stub(view.$el, 'off', function() {});
+            sinon.collection.stub(window, 'removeEventListener', function() {});
+            view._dispose();
+        });
+
+        it('should call view.context.off method', function() {
+            expect(view.context.off).toHaveBeenCalledWith('pipeline:recordlist:model:created');
+            expect(view.context.off).toHaveBeenCalledWith('pipeline:recordlist:filter:changed');
+            expect(view.context.off).toHaveBeenCalledWith('button:delete_button:click');
+            expect(view.context.off).toHaveBeenCalledWith('pipeline:recordlist:resizeContent');
+        });
+
+        it('should call window.removeEventListener with resize and view.resizeContainerHandler', function() {
+
+            expect(window.removeEventListener).toHaveBeenCalledWith('resize', view.resizeContainerHandler);
+        });
+
+        it('should call view.$el.off method with scroll', function() {
+
+            expect(view.$el.off).toHaveBeenCalledWith('scroll');
+        });
+
+        it('should call view._super wtih _dispose', function() {
+            expect(view._super).toHaveBeenCalledWith('_dispose');
         });
     });
 });

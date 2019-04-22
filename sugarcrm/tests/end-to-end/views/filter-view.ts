@@ -33,7 +33,7 @@ export default class FilterView extends BaseView {
             filter: '.search-filter .select2-choice-type',
             activitystream: '.fa.fa-clock-o',
             listview: '.fa.fa-table',
-            visualpipeline: '.fa-filter',
+            visualpipeline: '.fa-align-left',
             createButton: '.choice-filter',
             closeFilterButton: '.choice-filter-clickable .choice-filter-close',
             editFilterButton: '.choice-filter-clickable .choice-filter-label',

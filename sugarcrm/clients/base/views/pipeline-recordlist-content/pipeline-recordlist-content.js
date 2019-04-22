@@ -64,9 +64,12 @@
     bindDataChange: function() {
         this._super('bindDataChange');
 
-        this.context.on('newModelCreated', this.addModelToCollection, this);
-        this.context.on('filterChanged', this.buildFilters, this);
+        this.context.on('pipeline:recordlist:model:created', this.addModelToCollection, this);
+        this.context.on('pipeline:recordlist:filter:changed', this.buildFilters, this);
         this.context.on('button:delete_button:click', this.deleteRecord, this);
+        this.context.on('pipeline:recordlist:resizeContent', this.resizeContainer, this);
+        this.resizeContainerHandler = _.bind(this.resizeContainer, this);
+        window.addEventListener('resize', this.resizeContainerHandler);
     },
 
     /**
@@ -97,7 +100,8 @@
      * @param {integer} resultsNum
      */
     setResultsPerPageColumn: function(resultsNum) {
-        resultsNum = resultsNum || this.pipelineConfig.records_per_column;
+        var recordsPerColumn = this.pipelineConfig.records_per_column[this.module];
+        resultsNum = resultsNum || recordsPerColumn;
         var results = parseInt(resultsNum);
         if (!isNaN(results)) {
             this.resultsPerPageColumn = results;
@@ -110,7 +114,7 @@
      */
     setHiddenHeaderValues: function(hiddenValues) {
         hiddenValues =
-            hiddenValues || this.pipelineConfig.hidden_values || [];
+            hiddenValues || this.pipelineConfig.hidden_values[this.module] || [];
         if (_.isEmpty(hiddenValues)) {
             return;
         }
@@ -149,8 +153,8 @@
     getTableHeader: function() {
         var headerColors = this.getColumnColors();
 
-        if ((this.context.get('model').get('pipeline_type') !== 'date_closed')) {
-            var headerField = this.context.get('model').get('pipeline_type');
+        if (this.context.get('model').get('pipeline_type') !== 'date_closed') {
+            var headerField = this.pipelineConfig.table_header[this.module] || '';
 
             if (!app.acl.hasAccessToModel('read', this.model, headerField)) {
                 this.context.trigger('open:config:fired');
@@ -169,6 +173,7 @@
                     var items = _.difference(options, this.hiddenHeaderValues);
                     _.each(options, function(option, key) {
                         var index = _.indexOf(items, option);
+                        index = index <= 11 ? index : index % 12;
                         if (!_.isEmpty(key) && (_.indexOf(this.hiddenHeaderValues, key) === -1)) {
                             this.recordsToDisplay.push({
                                 'headerName': option,
@@ -243,6 +248,7 @@
      * Calls methods to add draggable action to the tile and bind scroll to the view
      */
     postRender: function() {
+        this.resizeContainer();
         this.buildDraggable();
         this.bindScroll();
     },
@@ -419,6 +425,15 @@
         });
     },
 
+    resizeContainer: function() {
+        var $parent = this.$el.parents('.main-pane');
+        var $searchFilter = $parent.find('.search-filter');
+        var height = $parent.height() - $searchFilter.height();
+
+        this.$el.height(height + 'px');
+        this.$('.pipeline-column').height((height - 150) + 'px');
+    },
+
     /**
      * Gives the ability for a tile to be dragged and moved to other columns on the page
      */
@@ -549,7 +564,7 @@
      * Binds scroll to the recordlist pane
      */
     bindScroll: function() {
-        this.$('.my-pipeline-content').bind('scroll', _.bind(this.listScrolled, this));
+        this.$el.on('scroll', _.bind(this.listScrolled, this));
     },
 
     /**
@@ -558,7 +573,7 @@
      * @param event
      */
     listScrolled: function(event) {
-        var elem = this.$(event.currentTarget);
+        var elem = $(event.currentTarget);
         var isAtBottom = (elem[0].scrollHeight - elem.scrollTop()) <= elem.outerHeight();
 
         if (isAtBottom && this.moreData) {
@@ -672,4 +687,20 @@
         this.offset = 0;
         this.loadData();
     },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        window.removeEventListener('resize', this.resizeContainerHandler);
+
+        this.context.off('pipeline:recordlist:model:created', null, this);
+        this.context.off('pipeline:recordlist:filter:changed', null, this);
+        this.context.off('button:delete_button:click', null, this);
+        this.context.off('pipeline:recordlist:resizeContent', null, this);
+
+        this.$el.off('scroll');
+
+        this._super('_dispose');
+    }
 })

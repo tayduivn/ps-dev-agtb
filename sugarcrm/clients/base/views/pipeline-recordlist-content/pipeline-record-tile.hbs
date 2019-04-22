@@ -18,7 +18,7 @@
                 <div class='tile-header portlet-header'>
                     <div class='name ellipsis_inline pull-left'>
                         {{#each fields}}
-                            {{field ../../../view model=../../../model template='list'}}
+                            <a href="#{{buildRoute module=../../../model.attributes._module id=../../../model.attributes.id}}">{{field ../../../view model=../../../model template='list'}}</a>
                         {{/each}}
                     </div>
                     <div class='pull-right'>

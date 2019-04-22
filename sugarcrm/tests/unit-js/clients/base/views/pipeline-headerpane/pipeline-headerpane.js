@@ -121,7 +121,7 @@ describe('Base.Views.PipelineHeaderpane', function() {
             hasClassStub.returns(true);
             view.changePipeline(evt);
 
-            expect(view.context.trigger).not.toHaveBeenCalledWith('filterChanged');
+            expect(view.context.trigger).not.toHaveBeenCalledWith('pipeline:recordlist:filter:changed');
         });
 
         describe('when pipeline view is not already selected', function() {
@@ -163,7 +163,8 @@ describe('Base.Views.PipelineHeaderpane', function() {
             });
 
             it('should trigger view.context', function() {
-                expect(view.context.trigger).toHaveBeenCalledWith('filterChanged');
+
+                expect(view.context.trigger).toHaveBeenCalledWith('pipeline:recordlist:filter:changed');
             });
         });
     });

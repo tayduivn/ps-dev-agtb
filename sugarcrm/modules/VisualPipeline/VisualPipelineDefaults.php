@@ -38,10 +38,10 @@ class VisualPipelineDefaults
     }
 
     /**
-     * Returns the default values for Forecasts to use
+     * Returns the default values for Visual Pipelines to use
      *
      * @param int $isSetup pass in if you want is_setup to be 1 or 0, 0 by default
-     * @return array default config settings for Forecasts to use
+     * @return array default config settings for Visual Pipelines to use
      */
     public static function getDefaults($isSetup = 0)
     {
@@ -50,7 +50,7 @@ class VisualPipelineDefaults
             $isSetup = 0;
         }
 
-        // default forecast config setup
+        // default visual pipeline config setup
         return array(
             // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
             'is_setup' => $isSetup,
@@ -101,20 +101,25 @@ class VisualPipelineDefaults
                     'date_due',
                 ),
             ),
-            'records_per_column' => '10',
+            'records_per_column' => array(
+                'Cases' => '10',
+                'Leads' => '10',
+                'Opportunities' => '10',
+                'Tasks' => '10',
+            ),
             'header_colors' => array(
                 '#36850F',
-                '#ED0C0D',
-                '#5122FC',
-                '#AB172C',
-                '#90299E',
+                '#0679C8',
+                '#AB173C',
+                '#854EDB',
                 '#00856F',
                 '#016FAA',
                 '#BC3CCD',
                 '#BD5800',
                 '#1202F5',
-                '#757575',
-                '#4A4A4A',
+                '#E61718',
+                '#717171',
+                '#222222',
             ),
         );
     }

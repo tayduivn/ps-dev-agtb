@@ -35,7 +35,7 @@
         if (this.module === 'Opportunities') {
             this.context.get('model').set('pipeline_type', 'date_closed');
         } else {
-            this.context.get('model').set('pipeline_type', 'status');
+            this.context.get('model').set('pipeline_type', this.table_header);
         }
     },
 
@@ -52,7 +52,7 @@
         this.$(event.currentTarget).addClass('selected');
         var pipelineType = this.$(event.currentTarget).data('pipeline');
         this.context.get('model').set('pipeline_type', pipelineType);
-        this.context.trigger('filterChanged');
+        this.context.trigger('pipeline:recordlist:filter:changed');
     },
 
     /**
@@ -67,7 +67,7 @@
             }
         }, _.bind(function(context, model) {
             if (model && model.dataFetched) {
-                this.context.trigger('newModelCreated', model);
+                this.context.trigger('pipeline:recordlist:model:created', model);
             }
         }, this));
     }

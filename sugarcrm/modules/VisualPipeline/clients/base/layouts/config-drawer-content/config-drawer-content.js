@@ -17,4 +17,11 @@
 ({
     extendsFrom: 'BaseConfigDrawerContentLayout',
 
+    /**
+     * @inheritdoc
+     */
+    _render: function() {
+        this._super('_render');
+        this.$el.addClass('record-panel');
+    }
 })

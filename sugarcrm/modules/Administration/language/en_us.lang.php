@@ -1260,6 +1260,14 @@ Any integrations that rely on this platform will stop working.',
     'LBL_MANAGE_QUOTES_TITLE' => 'Quotes Configuration',
     'LBL_MANAGE_QUOTES' => 'Configure the quotes worksheet layout',
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_PIPELINE_LINK_NAME' => 'Visual Pipeline Settings',
+    'LBL_PIPELINE_LINK_DESCRIPTION' => 'Configure Visual Pipeline',
+    'LBL_PIPELINE_SECTION_HEADER' => 'Visual Pipeline Settings',
+    'LBL_PIPELINE_DEFAULT_SETTING_TITLE' => 'Visual Pipeline Settings',
+    'LBL_PIPELINE_SECTION_DESCRIPTION' => 'Configure Visual Pipeline',
+    //END SUGARCRM flav=ent ONLY
+
     // Cloud Insights
     'LBL_SUGAR_CLOUD_TITLE' => 'SugarCloud',
     'LBL_SUGAR_CLOUD_DESC' => 'View information about your instance(s) on SugarCloud.',

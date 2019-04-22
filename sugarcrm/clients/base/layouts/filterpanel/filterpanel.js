@@ -65,6 +65,10 @@
         var moduleMeta = app.metadata.getModule(opts.module) || {};
         this.disableActivityStreamToggle(opts.module, moduleMeta, opts.meta || {});
 
+        //BEGIN SUGARCRM flav=ent ONLY
+        this.disablePipelineToggle(opts.module, moduleMeta, opts.meta || {});
+        //END SUGARCRM flav=ent ONLY
+
         this.on("filterpanel:change:module", function(module, link) {
             this.currentModule = module;
             this.currentLink = link;
@@ -176,6 +180,27 @@
             });
         }
     },
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Disables the pipeline toggle if not enabled for a module
+     * @param {string} moduleName The name of the module
+     * @param {Object} moduleMeta The metadata for the module
+     * @param {Object} viewMeta The metadata for the component
+     */
+    disablePipelineToggle: function(moduleName, moduleMeta, viewMeta) {
+        var pipelineConfig = app.metadata.getModule('VisualPipeline', 'config') || {};
+        var enableModules = pipelineConfig.enabled_modules || [];
+        if (enableModules.length === 0 || enableModules.indexOf(moduleName) < 0) {
+            _.each(viewMeta.availableToggles, function(toggle) {
+                if (toggle.name === 'pipeline') {
+                    toggle.disabled = true;
+                    toggle.label = 'LBL_VISUAL_PIPELINE_DISABLED';
+                }
+            });
+        }
+    },
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * @override

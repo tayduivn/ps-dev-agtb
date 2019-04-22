@@ -38,7 +38,7 @@ $viewdefs['VisualPipeline']['base']['layout']['config-drawer'] = array(
                             'name' => 'side-pane',
                             'components' => array(
                                 array(
-                                    'view' => 'config-drawer-howto',
+                                    'view' => 'config-preview-content',
                                 ),
                             ),
                         ),

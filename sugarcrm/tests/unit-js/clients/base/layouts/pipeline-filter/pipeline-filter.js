@@ -134,11 +134,11 @@ describe('Base.Layouts.PipelineFilter', function() {
             expect(ctxCollection.origFilterDef).toEqual(def);
         });
 
-        it('should call layout.context.trigger with filterChanged and filterDef', function() {
+        it('should call layout.context.trigger with pipeline:recordlist:filter:changed and filterDef', function() {
             layout.filterPipeline(query, def);
             var filterDef = layout.buildFilterDef(def, query, layout.context);
 
-            expect(layout.context.trigger).toHaveBeenCalledWith('filterChanged', filterDef);
+            expect(layout.context.trigger).toHaveBeenCalledWith('pipeline:recordlist:filter:changed', filterDef);
         });
     });
 

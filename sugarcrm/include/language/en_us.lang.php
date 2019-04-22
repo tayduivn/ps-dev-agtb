@@ -43,7 +43,9 @@ $app_list_strings = array (
     'ForecastWorksheets' => 'Forecast Worksheets',
     'ForecastManagerWorksheets' => 'Forecast Manager Worksheets',
     'MergeRecords'=>'Merge Records',
+      //BEGIN SUGARCRM flav=ent ONLY
       'VisualPipeline'=>'Visual Pipeline',
+      //END SUGARCRM flav=ent ONLY
     'Quotas' => 'Quotas',
     'Teams' => 'Teams',
     'TeamNotices' => 'Team Notices',
@@ -158,7 +160,9 @@ $app_list_strings = array (
     'Calendar' => 'Calendar',
     'Leads' => 'Lead',
     'Manufacturers' => 'Manufacturer',
+//BEGIN SUGARCRM flav=ent ONLY
     'VisualPipeline' => 'VisualPipeline',
+//END SUGARCRM flav=ent ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
     'Products' => 'Quoted Line Item',
@@ -2176,11 +2180,13 @@ $app_list_strings = array (
         '1209600' => 'Every 2 Weeks',
         '2419200' => 'Every 4 Weeks',
     ),
+//BEGIN SUGARCRM flav=ent ONLY
     'pipeline_records_per_column' => array(
         '10' => '10',
         '15' => '15',
         '20' => '20',
     ),
+//END SUGARCRM flav=ent ONLY
 );
 
 $app_strings = array (
@@ -3784,11 +3790,13 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_PRODUCT_QUICK_PICKS_RECENT_TAB' => 'Recently Used',
     'LBL_DASHLET_PRODUCT_QUICK_PICKS_FAVORITES_TAB' => 'Favorites',
 
-    // Visual pipeline
+    //BEGIN SUGARCRM flav=ent ONLY
     'LBL_LIST_VIEW__NAME' => 'List View',
     'LBL_PIPELINE_VIEW_NAME' => 'Pipeline View',
     'LBL_PIPELINE_VIEW_BTN' => 'Visual Pipeline',
     'LBL_PIPELINE_VIEW_TAB_NAME' => 'Pipeline by ',
+    'LBL_VISUAL_PIPELINE_DISABLED' => 'Visual Pipeline is not enabled',
+    //END SUGARCRM flav=ent ONLY
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DASHLET_CASES_SUMMARY_NAME' => 'Case Summary',

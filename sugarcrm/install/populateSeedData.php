@@ -1007,12 +1007,14 @@ $GLOBALS['mod_strings']  = $installerStrings;
 
     echo '.';
 
+//BEGIN SUGARCRM flav=ent ONLY
     installLog("DemoData: VisualPipeline");
     VisualPipelineSeedData::populateSeedData();
 
     installLog("DemoData: Done VisualPipeline");
 
     echo '.';
+//END SUGARCRM flav=ent ONLY
 
 installLog("DemoData: Data Privacy");
 

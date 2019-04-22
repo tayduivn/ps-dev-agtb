@@ -307,6 +307,24 @@ $admin_group_header []= array(
 
 
 
+//BEGIN SUGARCRM flav=ent ONLY
+$admin_option_defs = array();
+$admin_option_defs['Administration']['PipelineSettingsPanel'] = array(
+    'Administration',
+    'LBL_PIPELINE_LINK_NAME',
+    'LBL_PIPELINE_LINK_DESCRIPTION',
+    'javascript:parent.SUGAR.App.router.navigate("VisualPipeline/config", {trigger: true});',
+);
+
+$admin_group_header[] = array(
+    'LBL_PIPELINE_SECTION_HEADER',
+    '',
+    false,
+    $admin_option_defs,
+    'LBL_PIPELINE_SECTION_DESCRIPTION',
+);
+//END SUGARCRM flav=ent ONLY
+
 if(SugarAutoLoader::existing('custom/modules/Administration/Ext/Administration/administration.ext.php')){
 	include('custom/modules/Administration/Ext/Administration/administration.ext.php');
 }
