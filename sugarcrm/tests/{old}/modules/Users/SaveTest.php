@@ -59,33 +59,6 @@ class SaveTest extends TestCase
         $this->assertEquals(array('Home' => 'Home', 'Leads' => 'Leads'), $this->tabs->get_user_tabs($focus));
     }
 
-    /**
-     * @dataProvider saveLicenseTypeProvider
-     */
-    public function testSaveLicenseType(string $licenseType, bool $isAdmin, string $expected)
-    {
-        $this->current_user = SugarTestHelper::setUp('current_user', array(true, $isAdmin));
-
-        $current_user = $this->current_user;
-        $_POST['record'] = $current_user->id;
-        $_POST['LicenseType'] = $licenseType;
-        include 'modules/Users/Save.php';
-
-        $record = BeanFactory::getBean('Users', $current_user->id);
-
-        $this->assertEquals($expected, $record->license_type);
-    }
-
-    public function saveLicenseTypeProvider()
-    {
-        return [
-            ['CURRENT', true, 'CURRENT'],
-            ['SERVICE_CLOUD', true, 'SERVICE_CLOUD'],
-            ['CURRENT', false, 'CURRENT'],
-            ['SERVICE_CLOUD', false, 'CURRENT'],
-        ];
-    }
-
     public function testSaveOfOutboundEmailSystemOverrideConfiguration()
     {
         $current_user = $GLOBALS['current_user'];
@@ -378,5 +351,33 @@ class SaveTest extends TestCase
             $user2->emailAddress->addresses[$user2Index]['invalid_email'],
             'The email address should be have been marked invalid for user2'
         );
+    }
+
+    /**
+     * @dataProvider saveLicenseTypeProvider
+     */
+    public function testSaveLicenseType(string $licenseType, bool $isAdmin, string $expected)
+    {
+        $currUser = $GLOBALS['current_user'];
+        $current_user = SugarTestHelper::setUp('current_user', array(true, $isAdmin));
+
+        $_POST['record'] = $current_user->id;
+        $_POST['LicenseType'] = $licenseType;
+        include 'modules/Users/Save.php';
+
+        $record = BeanFactory::getBean('Users', $current_user->id);
+
+        $GLOBALS['current_user'] = $currUser;
+        $this->assertEquals($expected, $record->license_type);
+    }
+
+    public function saveLicenseTypeProvider()
+    {
+        return [
+            ['CURRENT', true, 'CURRENT'],
+            ['SERVICE_CLOUD', true, 'SERVICE_CLOUD'],
+            ['CURRENT', false, 'CURRENT'],
+            ['SERVICE_CLOUD', false, 'CURRENT'],
+        ];
     }
 }

@@ -312,7 +312,7 @@ class UserViewHelper {
         // get from entitlement list
         if ($this->ss->get_template_vars('IS_SUPER_ADMIN')) {
             $availableLicenseTypes = array(
-                'Service Cloud',
+                'SERVICE_CLOUD',
                 User::DEFAULT_LICENSE_TYPE,
             );
         } else {
