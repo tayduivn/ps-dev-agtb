@@ -180,28 +180,15 @@ class EmailParticipantTest extends TestCase
         $this->assertTrue($actual);
     }
 
-    public function specialUserNameProvider()
-    {
-        $portal = new ParserModifyPortalConfig();
-
-        return [
-            'snip_user' => [
-                SugarSNIP::getInstance()->getSnipUser(),
-            ],
-            'portal_user' => [
-                $portal->getPortalUser(),
-            ],
-        ];
-    }
-
     /**
-     * @dataProvider specialUserNameProvider
      * @covers ::isAnEmployee
      * @covers SugarEmailAddress::getEmployeesWithEmailAddress
      */
-    public function testIsAnEmployee_WithoutParent_EmailAddressBelongsToSpecialUser($user)
+    public function testIsAnEmployee_WithoutParent_EmailAddressBelongsToSnipUser()
     {
-        // Link an email address to the special user.
+        $user = SugarSNIP::getInstance()->getSnipUser();
+
+        // Link an email address to the user.
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         SugarTestEmailAddressUtilities::addAddressToPerson($user, $address);
 
@@ -222,6 +209,39 @@ class EmailParticipantTest extends TestCase
 
         $this->assertFalse($actual);
     }
+
+    // BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @covers ::isAnEmployee
+     * @covers SugarEmailAddress::getEmployeesWithEmailAddress
+     */
+    public function testIsAnEmployee_WithoutParent_EmailAddressBelongsToPortalAdmin()
+    {
+        $portal = new ParserModifyPortalConfig();
+        $user = $portal->getPortalUser();
+
+        // Link an email address to the user.
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($user, $address);
+
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $email->load_relationship('to');
+
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        $ep->email_address_id = $address->id;
+
+        BeanFactory::registerBean($ep);
+        $email->to->add($ep);
+        $email->state = Email::STATE_ARCHIVED;
+        $email->save();
+
+        $actual = $ep->isAnEmployee();
+
+        $this->assertFalse($actual);
+    }
+    // END SUGARCRM flav=ent ONLY
 
     /**
      * @covers ::isAnEmployee
