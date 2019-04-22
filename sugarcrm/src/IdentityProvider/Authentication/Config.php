@@ -434,7 +434,7 @@ class Config
             'ttl' => [
                 'introspectToken' => 10, // 10 seconds for introspecting user token
                 'userInfo' => 10, // 10 seconds for requesting user info
-                'keySet' => 7 * 24 * 60 * 60, // 7 days for requesting keySet for Mango client
+                'keySet' => 24 * 60 * 60, // 24 hours for requesting keySet for Mango client
             ],
         ];
     }

@@ -251,7 +251,7 @@ class IdmProvider extends BasicGenericProvider
      */
     public function getKeySet()
     {
-        $cacheKey = 'oidc_key_set';
+        $cacheKey = 'oidc_key_set_' . $this->keySetId;
         $keySet = $this->getCache($cacheKey);
         if (is_null($keySet)) {
             $accessToken = $this->getAccessToken('client_credentials', ['scope' => 'hydra.keys.get']);

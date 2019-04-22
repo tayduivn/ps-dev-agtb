@@ -455,7 +455,7 @@ class IdmProviderTest extends TestCase
 
         $this->sugarCache->expects($this->once())
             ->method('get')
-            ->with('oidc_key_set')
+            ->with('oidc_key_set_testSet')
             ->willReturn(null);
 
         $provider->expects($this->once())
@@ -479,7 +479,7 @@ class IdmProviderTest extends TestCase
 
         $this->sugarCache->expects($this->once())
                          ->method('set')
-                         ->with('oidc_key_set', $expectedKeys['keys'], 3600);
+                         ->with('oidc_key_set_testSet', $expectedKeys['keys'], 3600);
 
         $this->assertEquals($expectedResult, $provider->getKeySet());
     }
@@ -497,7 +497,7 @@ class IdmProviderTest extends TestCase
         $provider->method('getSugarCache')->willReturn($this->sugarCache);
 
         $this->sugarCache->method('get')
-            ->with('oidc_key_set')
+            ->with('oidc_key_set_testSet')
             ->willReturn([['private'], ['public']]);
 
         $provider->expects($this->never())->method('getAccessToken');

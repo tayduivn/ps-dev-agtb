@@ -560,7 +560,7 @@ class ConfigTest extends TestCase
                         'ttl' => [
                             'introspectToken' => 10,
                             'userInfo' => 10,
-                            'keySet' => 7 * 24 * 60 * 60,
+                            'keySet' => 24 * 60 * 60,
                         ],
                     ],
                     'crmOAuthScope' => '',
@@ -609,7 +609,7 @@ class ConfigTest extends TestCase
                         'ttl' => [
                             'introspectToken' => 10,
                             'userInfo' => 10,
-                            'keySet' => 7 * 24 * 60 * 60,
+                            'keySet' => 24 * 60 * 60,
                         ],
                     ],
                     'crmOAuthScope' => '',
@@ -665,7 +665,7 @@ class ConfigTest extends TestCase
                         'ttl' => [
                             'introspectToken' => 10,
                             'userInfo' => 10,
-                            'keySet' => 7 * 24 * 60 * 60,
+                            'keySet' => 24 * 60 * 60,
                         ],
                     ],
                     'crmOAuthScope' => '',
@@ -707,7 +707,7 @@ class ConfigTest extends TestCase
                         'ttl' => [
                             'introspectToken' => 10,
                             'userInfo' => 10,
-                            'keySet' => 7 * 24 * 60 * 60,
+                            'keySet' => 24 * 60 * 60,
                         ],
                     ],
                     'crmOAuthScope' => '',
@@ -753,7 +753,7 @@ class ConfigTest extends TestCase
                         'ttl' => [
                             'introspectToken' => 20,
                             'userInfo' => 10,
-                            'keySet' => 7 * 24 * 60 * 60,
+                            'keySet' => 24 * 60 * 60,
                         ],
                     ],
                     'crmOAuthScope' => '',
@@ -795,7 +795,7 @@ class ConfigTest extends TestCase
                         'ttl' => [
                             'introspectToken' => 10,
                             'userInfo' => 10,
-                            'keySet' => 7 * 24 * 60 * 60,
+                            'keySet' => 24 * 60 * 60,
                         ],
                     ],
                     'crmOAuthScope' => 'https://apis.sugarcrm.com/auth/crm',
@@ -845,7 +845,7 @@ class ConfigTest extends TestCase
                         'ttl' => [
                             'introspectToken' => 10,
                             'userInfo' => 10,
-                            'keySet' => 7 * 24 * 60 * 60,
+                            'keySet' => 24 * 60 * 60,
                         ],
                     ],
                     'crmOAuthScope' => '',
@@ -897,7 +897,7 @@ class ConfigTest extends TestCase
                         'ttl' => [
                             'introspectToken' => 10,
                             'userInfo' => 10,
-                            'keySet' => 7 * 24 * 60 * 60,
+                            'keySet' => 24 * 60 * 60,
                         ],
                     ],
                     'crmOAuthScope' => '',
