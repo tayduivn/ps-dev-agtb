@@ -25,8 +25,9 @@ Feature: Reports module verification
     Then I verify fields for *Report_A in #ReportsList.ListView
       | fieldName | value    |
       | name      | Report_A |
-    When I click Create button on #ReportsList header
-    Then I should be redirected to "bwc/index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report" route
+#    TODO: reenable last2 commented lines after AT-244 is fixed
+#    When I click Create button on #ReportsList header
+#    Then I should be redirected to "bwc/index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report" route
 
 
   @list-preview @list-preview-description
