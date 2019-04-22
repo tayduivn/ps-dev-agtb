@@ -29,6 +29,32 @@ class SugarConfigTest extends TestCase
         $GLOBALS['sugar_config'] = $this->_old_sugar_config;
     }
 
+    public function defaultConfigValuesProvider()
+    {
+        return [
+            [
+                'key' => 'preview_edit',
+                'value' => true,
+            ],
+            [
+                'key' => 'cache_dir',
+                'value' => 'cache/',
+            ],
+        ];
+    }
+
+    /**
+     * Tests OOTB config values
+     * @param string $key
+     * @param mixed $value
+     * @dataProvider defaultConfigValuesProvider
+     */
+    public function testDefaultConfigValues($key, $value)
+    {
+        $this->assertArrayHasKey($key, $this->_old_sugar_config);
+        $this->assertSame($this->_old_sugar_config[$key], $value);
+    }
+
     /**
      * Stores a key/value pair in the config
      *

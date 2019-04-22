@@ -339,7 +339,7 @@ function get_sugar_config_defaults()
     'lock_default_user_name' => false,
     'log_memory_usage' => false,
     'portal_view' => 'single_user',
-    'preview_edit' => false,
+    'preview_edit' => true,
     'resource_management' => array (
         'special_query_limit' => 50000,
         'special_query_modules' => array('Reports', 'Export', 'Import', 'Administration', 'Sync'),
