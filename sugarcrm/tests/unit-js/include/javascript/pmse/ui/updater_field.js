@@ -58,4 +58,36 @@ describe('includes.javascript.pmse.ui.updater_field', function() {
             expect(panelType).toEqual(['Date', 'Datetime']);
         });
     });
+
+    describe('DateUpdaterItem', function() {
+        describe('init', function() {
+            var dateUpdaterItemMock;
+            it('should correctly set the flags to include business center variable options if true', function() {
+                dateUpdaterItemMock = new DateUpdaterItem({
+                    options: {
+                        businessHours: {
+                            show: true,
+                            targetModuleBC: true,
+                            selectedModuleBC: 'Cases'
+                        }
+                    }
+                });
+                expect(dateUpdaterItemMock._businessHours.targetModuleBC).toBe(true);
+                expect(dateUpdaterItemMock._businessHours.selectedModuleBC).toBe('Cases');
+            });
+            it('should correctly set the flags to not include business center variable options if false', function() {
+                dateUpdaterItemMock = new DateUpdaterItem({
+                    options: {
+                        businessHours: {
+                            show: true,
+                            targetModuleBC: false,
+                            selectedModuleBC: ''
+                        }
+                    }
+                });
+                expect(dateUpdaterItemMock._businessHours.targetModuleBC).toBe(false);
+                expect(dateUpdaterItemMock._businessHours.selectedModuleBC).toBe('');
+            });
+        });
+    });
 });

@@ -625,7 +625,12 @@ UpdaterField.prototype.setOperatorPanelForm = function(self, field, fieldType, c
             } else {
                 constantPanelCfg = {
                     datetime: true,
-                    timespan: true
+                    timespan: true,
+                    businessHours: {
+                        show: field._businessHours.show,
+                        targetModuleBC: field._businessHours.targetModuleBC,
+                        selectedModuleBC: field._businessHours.selectedModuleBC
+                    }
                 };
             }
             self._datePanel.setOperators({
@@ -1894,6 +1899,7 @@ TextUpdaterItem.prototype._createControl = function () {
 //DateUpdaterItem
 var DateUpdaterItem = function (settings) {
     UpdaterItem.call(this, settings);
+    this._businessHours = null;
     DateUpdaterItem.prototype.init.call(this, settings);
 };
 
@@ -1909,6 +1915,7 @@ DateUpdaterItem.prototype.init = function (settings) {
     jQuery.extend(true, defaults, settings);
 
     this.setValue(defaults.value);
+    this.setBusinessHoursOptions(defaults.options);
 };
 
 DateUpdaterItem.prototype._setValueToControl = function (value) {
@@ -1946,6 +1953,24 @@ DateUpdaterItem.prototype.setValue = function (value) {
         this._setValueToControl(value);
     }
     this._value = value;
+    return this;
+};
+
+/**
+ * Initializes the business hours settings for this DateUpdater
+ * @param options array of options provided to the constructor settings
+ * @return {DateUpdaterItem} this
+ */
+DateUpdaterItem.prototype.setBusinessHoursOptions = function(options) {
+    if (options && options.businessHours) {
+        this._businessHours = options.businessHours;
+    } else {
+        this._businessHours = {
+            show: false,
+            targetModuleBC: false,
+            selectedModuleBC: ''
+        };
+    }
     return this;
 };
 

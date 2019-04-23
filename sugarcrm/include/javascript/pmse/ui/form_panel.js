@@ -942,6 +942,12 @@ FormPanelHidden.prototype.createHTML = function () {
     return this;
 };
 
+/**
+ * Disables the reset of a FormPanelHidden field, preventing
+ * issues when entering multiple items in a criteria box
+ */
+FormPanelHidden.prototype.reset = function () {};
+
 //TextField
 var FormPanelText = function (settings) {
     FormPanelField.call(this, settings);
@@ -2058,7 +2064,7 @@ FormPanelRadio.prototype._createControl = function () {
 };
 
 /**
- * Radio button event handler 
+ * Radio button event handler
  *
  * @return {Object} Object that calls this function
  */

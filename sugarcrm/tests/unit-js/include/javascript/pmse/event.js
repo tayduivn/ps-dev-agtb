@@ -117,6 +117,11 @@ describe('includes.javascript.pmse.event', function() {
             project.process_definition = {pro_module: 'goat'};
 
             // Mock out app functions called below and in makeCriteriaField
+            sinon.collection.stub(App.metadata, 'getModule', function() {
+                return {
+                    fields: {}
+                };
+            });
             sinon.collection.stub(window, 'translate').returns('a');
             sinon.collection.stub(App.date, 'getUserDateFormat').returns('c');
             sinon.collection.stub(App.user, 'getPreference').returns('d');
@@ -203,7 +208,12 @@ describe('includes.javascript.pmse.event', function() {
                 constant:
                     {
                         datetime: true,
-                        timespan: true
+                        timespan: true,
+                        businessHours: {
+                            show: true,
+                            targetModuleBC: false,
+                            selectedModuleBC: ''
+                        }
                     },
                 variable:
                     {

@@ -2493,6 +2493,13 @@ AdamActivity.prototype.getAction = function(type, w) {
                     success: function(data) {
                         App.alert.dismiss('upload');
                         if (data) {
+                            data.result = setDatetimeFieldsBCOptions({
+                                targetModule: PROJECT_MODULE,
+                                selectedModule: data.name,
+                                fields: data.result,
+                                showTargetModuleOption: true,
+                                showSelectedModuleOption: PROJECT_MODULE !== data.name
+                            });
                             updater_field.setOptions(data.result, true);
                         }
 
@@ -2525,6 +2532,13 @@ AdamActivity.prototype.getAction = function(type, w) {
                         success: function(data) {
                             App.alert.dismiss('upload');
                             if (data) {
+                                data.result = setDatetimeFieldsBCOptions({
+                                    targetModule: PROJECT_MODULE,
+                                    selectedModule: data.name,
+                                    fields: data.result,
+                                    showTargetModuleOption: true,
+                                    showSelectedModuleOption: PROJECT_MODULE !== data.name
+                                });
                                 updater_field.setOptions(data.result);
                             }
 
@@ -2536,6 +2550,13 @@ AdamActivity.prototype.getAction = function(type, w) {
                         success: function(data) {
                             App.alert.dismiss('upload');
                             if (data) {
+                                data.result = setDatetimeFieldsBCOptions({
+                                    targetModule: PROJECT_MODULE,
+                                    selectedModule: data.name,
+                                    fields: data.result,
+                                    showTargetModuleOption: true,
+                                    showSelectedModuleOption: PROJECT_MODULE !== data.name
+                                });
                                 updater_field.setOptions(data.result);
                             }
 
@@ -2697,6 +2718,13 @@ AdamActivity.prototype.getAction = function(type, w) {
                                 updater_field.proxy.getData({call_type: 'CF', base_module: updater_field.proxy.uid}, {
                                     success: function(fields) {
                                         if (fields) {
+                                            fields.result = setDatetimeFieldsBCOptions({
+                                                targetModule: PROJECT_MODULE,
+                                                selectedModule: fields.name,
+                                                fields: fields.result,
+                                                showTargetModuleOption: true,
+                                                showSelectedModuleOption: PROJECT_MODULE !== fields.name
+                                            });
                                             updater_field.setOptions(fields.result);
                                             updater_field.setValue(data.act_fields || null);
                                             updater_field.isValid();
@@ -2762,6 +2790,13 @@ AdamActivity.prototype.getAction = function(type, w) {
                     success: function(data) {
                         App.alert.dismiss('upload');
                         if (data) {
+                            data.result = setDatetimeFieldsBCOptions({
+                                targetModule: PROJECT_MODULE,
+                                selectedModule: data.name,
+                                fields: data.result,
+                                showTargetModuleOption: true,
+                                showSelectedModuleOption: false
+                            });
                             updater_field.setOptions(data.result, true);
                         }
                     }
@@ -2782,6 +2817,13 @@ AdamActivity.prototype.getAction = function(type, w) {
                         success: function(data) {
                             App.alert.dismiss('upload');
                             if (data) {
+                                data.result = setDatetimeFieldsBCOptions({
+                                    targetModule: PROJECT_MODULE,
+                                    selectedModule: data.name,
+                                    fields: data.result,
+                                    showTargetModuleOption: true,
+                                    showSelectedModuleOption: false
+                                });
                                 updater_field.setOptions(data.result);
                             }
 
@@ -2794,6 +2836,13 @@ AdamActivity.prototype.getAction = function(type, w) {
                         success: function(data) {
                             App.alert.dismiss('upload');
                             if (data) {
+                                data.result = setDatetimeFieldsBCOptions({
+                                    targetModule: PROJECT_MODULE,
+                                    selectedModule: data.name,
+                                    fields: data.result,
+                                    showTargetModuleOption: true,
+                                    showSelectedModuleOption: false
+                                });
                                 updater_field.setOptions(data.result);
                             }
 
@@ -2927,6 +2976,13 @@ AdamActivity.prototype.getAction = function(type, w) {
                                 }
                                 updater_field.proxy.getData({base_module: updater_field.proxy.uid}, {
                                     success: function(fields) {
+                                        fields.result = setDatetimeFieldsBCOptions({
+                                            targetModule: PROJECT_MODULE,
+                                            selectedModule: fields.name,
+                                            fields: fields.result,
+                                            showTargetModuleOption: true,
+                                            showSelectedModuleOption: false
+                                        });
                                         updater_field.setOptions(fields.result);
                                         updater_field.setValue(data.act_fields || null);
                                         updater_field.isValid();

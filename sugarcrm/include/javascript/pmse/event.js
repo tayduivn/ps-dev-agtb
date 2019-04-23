@@ -929,7 +929,12 @@ AdamEvent.prototype._makeCriteriaField = function() {
                         constant:
                             {
                                 datetime: true,
-                                timespan: true
+                                timespan: true,
+                                businessHours: {
+                                    show: true,
+                                    targetModuleBC: isRelatedToBusinessCenters(PROJECT_MODULE),
+                                    selectedModuleBC: ''
+                                }
                             },
                         variable:
                             {
