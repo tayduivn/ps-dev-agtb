@@ -44,7 +44,7 @@ class SugarFieldDateTest extends TestCase
         $this->focus = $this->createMock(\SugarBean::class);
         $this->field = new \SugarFieldDate('date');
         $this->settings = new \ImportFieldSanitize();
-        $this->settings->timezone = 'Europe/Minsk';
+        $this->settings->timezone = 'America/Los_Angeles';
     }
 
     public function providerTestImportSanitize()
