@@ -10,15 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success;
+namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDC;
 
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 
 /**
- * Class OIDCSessionListener
+ * Class SessionListener
  * Provides $_SESSION propagation for OIDC user
  */
-class OIDCSessionListener
+class SessionListener
 {
     /**
      * Creates or restore OIDC user session.
@@ -52,6 +52,8 @@ class OIDCSessionListener
             $_SESSION['authenticated_user_id'] = $sugarUser->id;
             $_SESSION['unique_key'] = $sugarConfig->get('unique_key');
             $_SESSION['platform'] = $token->getAttribute('platform');
+            // Special flag to communicate login-action for subsequent listeners in a row
+            $_SESSION['oidc_login_action'] = true;
         }
     }
 

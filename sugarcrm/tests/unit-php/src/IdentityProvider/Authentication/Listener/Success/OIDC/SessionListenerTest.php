@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Suc
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDCSessionListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDC\SessionListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
@@ -22,9 +22,9 @@ use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 require_once 'include/utils/security_utils.php';
 
 /**
- * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDCSessionListener
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDC\SessionListener
  */
-class OIDCSessionListenerTest extends TestCase
+class SessionListenerTest extends TestCase
 {
     /**
      * @var \User|MockObject
@@ -32,7 +32,7 @@ class OIDCSessionListenerTest extends TestCase
     protected $sugarUser;
 
     /**
-     * @var OIDCSessionListener
+     * @var SessionListener
      */
     protected $listener;
 
@@ -98,7 +98,7 @@ class OIDCSessionListenerTest extends TestCase
         $this->sugarConfig = $this->createMock(\SugarConfig::class);
 
         $this->event = new AuthenticationEvent($this->token);
-        $this->listener = $this->getMockBuilder(OIDCSessionListener::class)
+        $this->listener = $this->getMockBuilder(SessionListener::class)
                                ->setMethods(['getSugarConfig'])
                                ->getMock();
         $this->listener->method('getSugarConfig')->willReturn($this->sugarConfig);
@@ -149,6 +149,7 @@ class OIDCSessionListenerTest extends TestCase
         $this->assertEquals(1, $_SESSION['authenticated_user_id']);
         $this->assertEquals('unique_key', $_SESSION['unique_key']);
         $this->assertEquals('opi', $_SESSION['platform']);
+        $this->assertTrue($_SESSION['oidc_login_action']);
     }
 
     /**
@@ -184,5 +185,6 @@ class OIDCSessionListenerTest extends TestCase
         $this->assertEquals(2, $_SESSION['authenticated_user_id']);
         $this->assertEquals('ukey', $_SESSION['unique_key']);
         $this->assertEquals('base', $_SESSION['platform']);
+        $this->assertArrayNotHasKey('oidc_login_action', $_SESSION);
     }
 }
