@@ -110,19 +110,20 @@ class EmailsFilterApi extends FilterApi
             throw new SugarApiExceptionInvalidParameter(static::MACRO_FROM . ' requires an array');
         }
 
-        static $roles = array(
+        static $links = [
             EmailsFilterApi::MACRO_FROM => 'from',
             EmailsFilterApi::MACRO_TO => 'to',
             EmailsFilterApi::MACRO_CC => 'cc',
             EmailsFilterApi::MACRO_BCC => 'bcc',
-        );
+        ];
+        $link = $links[$field];
 
         $fta = $q->getFromAlias();
-        $jta = $q->getJoinTableAlias('emails_email_addr_rel', false, false);
-        $joinParams = array(
-            'alias' => $jta,
-        );
-        $join = isset($q->join[$jta]) ? $q->join[$jta] : $q->joinTable('emails_email_addr_rel', $joinParams);
+        $joinParams = [
+            'joinType' => 'LEFT',
+        ];
+        $join = $q->join($link, $joinParams);
+        $jta = $join->joinName();
         $join->on()->equalsField("{$fta}.id", "{$jta}.email_id");
         $or = $where->queryOr();
 
@@ -133,8 +134,8 @@ class EmailsFilterApi extends FilterApi
                 );
             }
 
-            // The `parent_type` and `parent_id` fields must be defined if the `email_address_id`. The `parent_id` field
-            // must be defined if the `parent_type` is defined. The `parent_type` field must be defined if the
+            // The `parent_type` and `parent_id` fields must be defined if the `email_address_id` isn't. The `parent_id`
+            // field must be defined if the `parent_type` is defined. The `parent_type` field must be defined if the
             // `parent_id` field is defined.
             if (!isset($def['email_address_id']) || isset($def['parent_type']) || isset($def['parent_id'])) {
                 if (!isset($def['parent_type'])) {
@@ -155,7 +156,7 @@ class EmailsFilterApi extends FilterApi
             }
 
             $and = $or->queryAnd();
-            $and->equals("{$jta}.address_type", $roles[$field]);
+            $and->equals("{$jta}.address_type", $link);
 
             if (isset($def['email_address_id'])) {
                 $and->equals("{$jta}.email_address_id", $def['email_address_id']);
