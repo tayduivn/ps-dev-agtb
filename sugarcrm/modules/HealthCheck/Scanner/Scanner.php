@@ -5032,7 +5032,9 @@ ENDP;
 
         $idName = 'activitystreampurger';  // 'id_name' name of the ActivityStreamPurger MLP
         $uh = new UpgradeHistory();
-        $uhRecord = $uh->findInstalledVersion($idName);
+        $query = "SELECT * FROM {$uh->table_name} where id_name = ? AND status = 'installed'";
+        $stmt = $this->db->getConnection()->executeQuery($query, [$idName]);
+        $uhRecord = $stmt->fetch();
         if (!empty($uhRecord)) {
             $this->updateStatus('activityStreamPurgerInstalledAsMlp', $idName);
         }
