@@ -207,7 +207,7 @@ class EmailParticipantTest extends TestCase
 
         $actual = $ep->isAnEmployee();
 
-        $this->assertFalse($actual);
+        $this->assertTrue($actual);
     }
 
     // BEGIN SUGARCRM flav=ent ONLY
@@ -239,7 +239,8 @@ class EmailParticipantTest extends TestCase
 
         $actual = $ep->isAnEmployee();
 
-        $this->assertFalse($actual);
+        // These Special Users are treated as Regular Users
+        $this->assertTrue($actual);
     }
     // END SUGARCRM flav=ent ONLY
 

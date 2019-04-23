@@ -92,14 +92,11 @@ class SugarEmailAddress extends SugarBean
             ' INNER JOIN email_addr_bean_rel eabr ON eabr.bean_id = u.id' .
             ' INNER JOIN email_addresses ea ON ea.id = eabr.email_address_id' .
             ' WHERE ea.id = ? AND (eabr.bean_module = ? OR eabr.bean_module = ?) AND u.deleted = 0' .
-            ' AND (u.user_name <> ? AND u.user_name <> ?)' .
             ' AND ea.deleted = 0 AND eabr.deleted = 0';
         $args = [
             $emailAddressId,
             'Users',
             'Employees',
-            'SugarCustomerSupportPortalUser',
-            SugarSNIP::SNIP_USER,
         ];
         $stmt = $conn->executeQuery($sql, $args);
 
