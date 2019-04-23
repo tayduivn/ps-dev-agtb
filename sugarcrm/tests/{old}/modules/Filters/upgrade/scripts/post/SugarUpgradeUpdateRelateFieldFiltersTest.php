@@ -18,7 +18,38 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarUpgradeUpdateRelateFieldFiltersTest extends TestCase
 {
+    /**
+     * UpgradeScript object to test
+     * @var UpgradeScript
+     */
     private $ug;
+
+    /**
+     * SugarBean needed to test with
+     * @var SugarBean
+     */
+    private $bean;
+
+    /**
+     * Field defs for the bean to test cases with
+     * @var array
+     */
+    private $defs = [
+        'field_a' => [
+            'type' => 'relate',
+        ],
+        'field_b' => [
+            'type' => 'relate',
+        ],
+        'field_x_c' => [
+            'source' => 'custom_fields',
+            'type' => 'id',
+        ],
+        'field_y_c' => [
+            'source' => 'custom_fields',
+            'type' => 'id',
+        ],
+    ];
 
     public function setup()
     {
@@ -30,6 +61,10 @@ class SugarUpgradeUpdateRelateFieldFiltersTest extends TestCase
 
         // Load the upgrader
         $this->ug = (new TestUpgrader($cu))->getScript('post', '5_UpdateRelateFieldFilters');
+
+        // Load the test Empty bean because we need a SugarBean
+        $this->bean = BeanFactory::getBean('Empty');
+        $this->bean->field_defs = $this->defs;
     }
 
     public function tearDown()
@@ -65,6 +100,21 @@ class SugarUpgradeUpdateRelateFieldFiltersTest extends TestCase
                 'json' => '[{"field_b":{"$equals":"id3"}}]',
                 'expect' => '[{"field_b":{"$equals":"id3"}}]',
             ],
+            // Not formatted but doesn't pass criteria, nothing to do
+            [
+                'json' => '[{"field_b":{"$foo":["id3","id6"]}}]',
+                'expect' => '[{"field_b":{"$foo":["id3","id6"]}}]',
+            ],
+            // Custom relate field, array value
+            [
+                'json' => '[{"field_x_c":["id8"]}]',
+                'expect' => '[{"field_x_c":{"$equals":"id8"}}]',
+            ],
+            // Custom relate field, many matched values
+            [
+                'json' => '[{"field_y_c":["id7","id6","id9"]}]',
+                'expect' => '[{"field_y_c":{"$equals":"id7"}}]',
+            ],
         ];
     }
 
@@ -77,18 +127,7 @@ class SugarUpgradeUpdateRelateFieldFiltersTest extends TestCase
      */
     public function testConvertFilter(string $json, string $expect)
     {
-        // Empty bean because we need a SugarBean
-        $bean = BeanFactory::getBean('Empty');
-        $bean->field_defs = [
-            'field_a' => [
-                'type' => 'relate',
-            ],
-            'field_b' => [
-                'type' => 'relate',
-            ],
-        ];
-
-        $actual = $this->ug->convertFilter($json, $bean);
+        $actual = $this->ug->convertFilter($json, $this->bean);
         $this->assertSame($expect, $actual);
     }
 }

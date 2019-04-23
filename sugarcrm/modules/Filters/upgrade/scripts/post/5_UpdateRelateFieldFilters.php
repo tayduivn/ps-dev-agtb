@@ -29,7 +29,8 @@ class SugarUpgradeUpdateRelateFieldFilters extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '9.0.0', '<')) {
+        // Only run this for instances that are coming from 9.0.0 or lower
+        if (version_compare($this->from_version, '9.0.0', '<=')) {
             $this->updateFilterDefs();
         }
     }
@@ -117,18 +118,19 @@ class SugarUpgradeUpdateRelateFieldFilters extends UpgradeScript
         // Decode the row data
         $filters = json_decode($json, true);
 
-        // Traverse each filter
+        // Traverse each filter and if the field type requires conversion, try
+        // to convert it.
         foreach ($filters as $k => $filter) {
-            // And for each filter, look at the field name and filter being applied
             foreach ($filter as $field => $value) {
-                // If the field is a relate type field
-                if (isset($bean->field_defs[$field]['type']) && $bean->field_defs[$field]['type'] === 'relate') {
-                    // If the match value is a string, convert it
+                if ($this->shouldConvert($bean->field_defs[$field] ?? [])) {
+                    // If the match value is a string, convert it since a string
+                    // filter will not contain an operator
                     if (is_string($value)) {
                         $filters[$k][$field] = ['$equals' => $value];
                     } elseif (is_array($value)) {
                         // If the field is an array, grab the first element if the
-                        // key is numeric and 0
+                        // key is numeric and 0. Array values can contain operators
+                        // but the index would be a string, not an integer
                         $key = key($value);
                         if (is_numeric($key) && $key === 0) {
                             $filters[$k][$field] = ['$equals' => $value[0]];
@@ -139,6 +141,32 @@ class SugarUpgradeUpdateRelateFieldFilters extends UpgradeScript
         }
 
         return json_encode($filters);
+    }
+
+    /**
+     * Determines if a field should be considered for conversion. Not all relate
+     * fields are created equal.
+     * @param array $def The field def
+     * @return boolean
+     */
+    public function shouldConvert(array $def)
+    {
+        if (isset($def['type'])) {
+            // OOTB relate fields
+            if ($def['type'] === 'relate') {
+                return true;
+            }
+
+            // Custom relate fields create two fields, and the actual field that
+            // is being used for evaluation is the related id field
+            if ($def['type'] === 'id') {
+                if (isset($def['source']) && $def['source'] === 'custom_fields') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
