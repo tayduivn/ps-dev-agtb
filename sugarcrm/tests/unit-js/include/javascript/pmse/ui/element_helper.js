@@ -165,7 +165,7 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
         var items;
         var ret = new FormPanelDate();
 
-        var checkProcessValueDependency = function(addChanges, disableField) {
+        var checkProcessValueDependency = function(addChanges, disableField, selVal) {
             body.appendChild(radioAll);
             body.appendChild(radioAny);
             body[1] = radioAll;
@@ -178,7 +178,7 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
 
             helper._parent = new ExpressionControl({});
             helper._parent._name = 'evn_criteria';
-            helper.processValueDependency(dependantField, parentField, operatorField, 'date', undefined, form);
+            helper.processValueDependency(dependantField, parentField, operatorField, 'date', selVal, form);
             var operatorExist = checkOperator(operatorField, 'changes_to');
 
             expect(operatorExist).toEqual(addChanges);
@@ -270,7 +270,17 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
             parentField._attributes = {base_module: 'Tasks'};
 
             // addChanges = true, disableField = false
-            checkProcessValueDependency(true, false);
+            checkProcessValueDependency(true, false, undefined);
+        });
+
+        it('Include changes operator and enable field when a target module is chosen for start events', function() {
+
+            // Tasks module is chosen that is a target (base) module
+            optionOne.setAttribute('selected', true);
+            parentField._attributes = {base_module: 'Tasks'};
+
+            // addChanges = false, disableField = false
+            checkProcessValueDependency(false, false, 'allupdates');
         });
 
         it('Include changes operator and enable field when an one related module is chosen', function() {
@@ -280,7 +290,18 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
             parentField._attributes = {base_module: 'Tasks'};
 
             // addChanges = true, disableField = false
-            checkProcessValueDependency(true, false);
+            checkProcessValueDependency(true, false, undefined);
+        });
+
+        it('Include changes operator and enable field when an one related module is chosen\ ' +
+            'for start events', function() {
+
+                // Accounts module is chosen that is an one related module to Tasks (base module)
+                optionTwo.setAttribute('selected', true);
+                parentField._attributes = {base_module: 'Tasks'};
+
+                // addChanges = false, disableField = false
+                checkProcessValueDependency(false, false, 'allupdates');
         });
 
         it('Exclude changes operator/disable field when many related module/no related record is chosen', function() {
@@ -291,7 +312,19 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
             parentField._attributes = {base_module: 'Tasks'};
 
             // addChanges = false, disableField = true
-            checkProcessValueDependency(false, true);
+            checkProcessValueDependency(false, true, undefined);
+        });
+
+        it('Exclude changes operator/disable field when many related module/no related record is chosen\ ' +
+            'for start events', function() {
+
+                // Calls module is chosen that is a many related module to Tasks (base module)
+                // and no related record is chosen
+                optionThree.setAttribute('selected', true);
+                parentField._attributes = {base_module: 'Tasks'};
+
+                // addChanges = false, disableField = true
+                checkProcessValueDependency(false, true, 'updated');
         });
 
         it('Include changes operator/enable field when many related module/any related records are chosen', function() {
@@ -303,7 +336,20 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
             radioAny.setAttribute('checked', true);
 
             // addChanges = true, disableField = false
-            checkProcessValueDependency(true, false);
+            checkProcessValueDependency(true, false, undefined);
+        });
+
+        it('Include changes operator/enable field when many related module/any related records are chosen\ ' +
+            'for start events', function() {
+
+                // Calls module is chosen that is a many related module to Tasks (base module)
+                // and ANY related records are chosen
+                optionThree.setAttribute('selected', true);
+                parentField._attributes = {base_module: 'Tasks'};
+                radioAny.setAttribute('checked', true);
+
+                // addChanges = false, disableField = false
+                checkProcessValueDependency(false, false, 'updated');
         });
 
         it('Exclude changes operator/enable field when many related module/all related records are chosen', function() {
@@ -315,7 +361,20 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
             radioAll.setAttribute('checked', true);
 
             // addChanges = false, disableField = false
-            checkProcessValueDependency(false, false);
+            checkProcessValueDependency(false, false, undefined);
+        });
+
+        it('Exclude changes operator/enable field when many related module/all related records are chosen\ ' +
+            'for start events', function() {
+
+                // Tasks module is chosen that is a many related module to Tasks (base module)
+                // and ALL related records are chosen
+                optionThree.setAttribute('selected', true);
+                parentField._attributes = {base_module: 'Tasks'};
+                radioAll.setAttribute('checked', true);
+
+                // addChanges = false, disableField = false
+                checkProcessValueDependency(false, false, null);
         });
     });
 });

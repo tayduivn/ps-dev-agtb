@@ -302,8 +302,8 @@ PMSE.ElementHelper.prototype._modeShouldDisableFields = function (mode) {
  * @param {Object} control
  * @return {Boolean}
  */
-PMSE.ElementHelper.prototype._controlShouldAddChanges = function (control) {
-    return _.indexOf(['evn_criteria', 'pro_terminate_variables'], control._name) > -1 ? true : false;
+PMSE.ElementHelper.prototype._controlShouldAddChanges = function (control, selVal) {
+    return _.indexOf(['evn_criteria', 'pro_terminate_variables'], control._name) > -1 && _.isUndefined(selVal);
 };
 
 /**
@@ -797,35 +797,34 @@ PMSE.ElementHelper.prototype.processValueDependency = function (dependantField, 
     if (this.EXTRA_OPERATORS[labelField]) {
         operators = operators.concat(this.EXTRA_OPERATORS[labelField]);
     }
-    if (_.isUndefined(selVal)) {
-        if (form && form.id && form.id === 'form-module-field-evaluation') {
-            var option = this._getSelectedOption(form);
-            var expControl = (this._parent) ? this._parent : null;
-            if (!option || this._isBaseModuleOption(option, parentField) ||
-                this._getSelectedModuleRelType(form) === 'one') {
-                parentField.enable();
-                if (this._controlShouldAddChanges(expControl)) {
-                    operators = operators.concat(this.OPERATORS.changes);
-                }
-            } else {
-                var radioIdx = _.findIndex(form._htmlBody, {checked: true});
-                // All or Any radio button is checked
-                if (radioIdx > -1 && form._htmlBody[radioIdx].type === 'radio') {
-                    if (form._htmlBody[radioIdx].value === 'Any') {
-                        parentField.enable();
-                        if (this._controlShouldAddChanges(expControl)) {
-                            operators = operators.concat(this.OPERATORS.changes);
-                        }
-                    } else if (form._htmlBody[radioIdx].value === 'All') {
-                        parentField.enable();
+    if (form && form.id && form.id === 'form-module-field-evaluation') {
+        var option = this._getSelectedOption(form);
+        var expControl = (this._parent) ? this._parent : null;
+        if (!option || this._isBaseModuleOption(option, parentField) ||
+            this._getSelectedModuleRelType(form) === 'one') {
+            parentField.enable();
+            if (this._controlShouldAddChanges(expControl, selVal)) {
+                operators = operators.concat(this.OPERATORS.changes);
+            }
+        } else {
+            var radioIdx = _.findIndex(form._htmlBody, {checked: true});
+            // All or Any radio button is checked
+            if (radioIdx > -1 && form._htmlBody[radioIdx].type === 'radio') {
+                if (form._htmlBody[radioIdx].value === 'Any') {
+                    parentField.enable();
+                    if (this._controlShouldAddChanges(expControl, selVal)) {
+                        operators = operators.concat(this.OPERATORS.changes);
                     }
-                // No radio button is checked
-                } else {
-                    parentField.disable();
+                } else if (form._htmlBody[radioIdx].value === 'All') {
+                    parentField.enable();
                 }
+            // No radio button is checked
+            } else {
+                parentField.disable();
             }
         }
-    } else if (selVal == 'updated' || selVal == 'allupdates') {
+    }
+    if (selVal == 'updated' || selVal == 'allupdates') {
         var url = parentField._dataURL,
             base = parentField._attributes ? parentField._attributes.base_module : false;
         if (url && base && (url.substring(url.length - base.length) === base)) {
