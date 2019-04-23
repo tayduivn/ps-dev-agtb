@@ -942,3 +942,65 @@
   margin-top: 10px;
   margin-right: 10px;
 }
+
+/* Activity Timeline Dashlet */
+.activity-timeline {
+  .timeline-entry {
+    .static-contents {
+      height: 35px;
+      padding: 11px;
+      border-bottom: @borderWidget;
+
+      &.expanded {
+        background-color: #eaf4fd;
+      }
+
+      .content-col {
+        &.record-icon {
+          width: 20px;
+          height: 20px;
+          padding: 6px;
+          margin: 2px;
+          background-color: @blue;
+          border-radius: 50%;
+          text-align: center;
+
+          .fa {
+            color: @white;
+            font-size: 20px;
+            width: 20px;
+          }
+        }
+
+        &.record-text {
+          width: calc(~"100% - 42px");
+          font-size: 12px;
+          line-height: 17px;
+          margin-left: 42px;
+
+          .content-cell {
+            &.primary {
+              color: @grayDarker;
+            }
+
+            &.secondary {
+              color: lighten(@gray, 25%);
+            }
+
+            .row-cell {
+              display: inline-block;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+    }
+
+    .expanded-contents {
+      border-bottom: @borderWidget;
+      padding: 6px;
+    }
+  }
+}

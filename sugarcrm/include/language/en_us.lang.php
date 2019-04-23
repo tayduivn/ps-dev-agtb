@@ -5545,6 +5545,13 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_COPY_EMAIL_ADDRESS_CONFIRMATION_LINK' => 'Copy Confirmation Link',
 
+//BEGIN SUGARCRM flav=ent ONLY
+    // Activity Timeline Dashlet
+    'LBL_ACTIVITY_TIMELINE_DASHLET' => 'Interactions',
+    'TPL_ACTIVITY_TIMELINE_DASHLET' => '{{module}} Interactions',
+    'LBL_ACTIVITY_TIMELINE_DASHLET_DESCRIPTION' => 'Activity Timeline displays Calls, Emails, Meetings, Notes and Tasks related a record',
+//END SUGARCRM flav=ent ONLY
+
     // Comment Log
     'LBL_COMMENT_LOG_SHOW_MORE' => 'Show more...',
     'LBL_COMMENT_LOG_SHOW_LESS' => 'Show less...',
