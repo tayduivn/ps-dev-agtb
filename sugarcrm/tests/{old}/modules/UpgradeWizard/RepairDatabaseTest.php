@@ -103,13 +103,17 @@ private function getRepairTableParamsResult($bean)
 	    return $result;	
 }
 
-    public function testRepairCustomTable() : void
+    /**
+     * @dataProvider typeProvider()
+     */
+    public function testRepairCustomTable(string $type, int $length) : void
     {
         global $db;
 
         SugarTestHelper::setUpCustomField('Accounts', [
             'name' => 'test_c',
-            'type' => 'varchar',
+            'type' => $type,
+            'len' => $length,
         ]);
 
         $this->assertArrayHasKey('test_c', $db->get_columns('accounts_cstm'));
@@ -127,6 +131,19 @@ private function getRepairTableParamsResult($bean)
         $df->setup(BeanFactory::newBean('Accounts'));
         $df->repairCustomFields();
 
-        $this->assertArrayHasKey('test_c', $db->get_columns('accounts_cstm'));
+        $columns = $db->get_columns('accounts_cstm');
+        $this->assertArrayHasKey('test_c', $columns);
+        $this->assertEquals($length, $columns['test_c']['len']);
+    }
+
+    /**
+     * @return mixed[][]
+     */
+    public static function typeProvider() : iterable
+    {
+        return [
+            ['enum', 32],
+            ['image', 50],
+        ];
     }
 }
