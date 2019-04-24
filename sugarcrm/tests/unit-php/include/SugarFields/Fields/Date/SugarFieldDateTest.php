@@ -53,6 +53,16 @@ class SugarFieldDateTest extends TestCase
             'good format' => ['m/d/Y', '03/03/2019', '2019-03-03'],
             'short year syntax, expected long' => ['m/d/Y', '03/03/19', false],
             'wrong date' => ['m/d/Y', 'wrong date', false],
+            'just-after-midnight' => [
+                'm/d/Y H:i:s',
+                '04/23/2019 00:00:01',
+                '2019-04-23',
+            ],
+            'just-before-midnight' => [
+                'm/d/Y H:i:s',
+                '04/23/2019 23:59:59',
+                '2019-04-23',
+            ],
         ];
     }
 

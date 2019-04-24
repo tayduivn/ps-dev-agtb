@@ -466,7 +466,7 @@ class SugarDateTime extends DateTime
 	/**
 	 * Print date in standard DB format
 	 *
-	 * Set $tz parameter to false if you are sure that the date is in UTC.
+     * Set $tz parameter to false in order to prevent timezone conversion to UTC.
 	 *
 	 * @param bool $tz do conversion to UTC
 	 * @return string

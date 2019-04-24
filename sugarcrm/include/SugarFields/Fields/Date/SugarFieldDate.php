@@ -67,8 +67,7 @@ class SugarFieldDate extends SugarFieldDatetime {
         try {
             $date = SugarDateTime::createFromFormat(
                 $settings->dateformat,
-                $value,
-                new DateTimeZone($settings->timezone)
+                $value
             );
             if (intval($date->year) < 100) {
                 return false;
@@ -76,6 +75,7 @@ class SugarFieldDate extends SugarFieldDatetime {
         } catch (Exception $e) {
             return false;
         }
-        return $date->asDbDate();
+
+        return $date->asDbDate(false);
     }
 }
