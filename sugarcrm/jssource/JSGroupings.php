@@ -248,6 +248,7 @@
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/nprogress/nprogress.js' => 'include/javascript/sugar_sidecar.min.js',
                    // External app/MFE support
+                   'sidecar/node_modules/promise-polyfill/dist/polyfill.js'=> 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/systemjs/system.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/external-apps.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/single-spa/single-spa.js' => 'include/javascript/sugar_sidecar.min.js',
