@@ -15,6 +15,7 @@ describe('Base.View.Dashablerecord', function() {
     var dashletToolbar;
     var dashletToolbarContext;
     var getComponentStub;
+    var getComponentStubListBottomReturn;
     var layout;
     var layoutName = 'dashlet';
     var moduleName = 'Cases'; // important: visible is true in metadata.json for Cases, so we can select it as a module
@@ -119,6 +120,8 @@ describe('Base.View.Dashablerecord', function() {
         dashletToolbar = {context: dashletToolbarContext, editClicked: sinon.collection.stub()};
         getComponentStub = sinon.collection.stub(layout, 'getComponent');
         getComponentStub.withArgs('dashlet-toolbar').returns(dashletToolbar);
+        getComponentStubListBottomReturn = {hide: function() {}, show: function() {}};
+        getComponentStub.withArgs('list-bottom').returns(getComponentStubListBottomReturn);
     });
 
     afterEach(function() {
@@ -284,8 +287,7 @@ describe('Base.View.Dashablerecord', function() {
                 .returns(unavailableModuleMsg);
         });
 
-        // FIXME: re-enable once CS-78 is in
-        /*it('should show the no access template if the module is not available', function() {
+        it('should show the no access template if the module is not available', function() {
             view.moduleIsAvailable = false;
 
             view.render();
@@ -300,7 +302,7 @@ describe('Base.View.Dashablerecord', function() {
             view.render();
 
             expect(view.$('.block-footer').text().trim()).toEqual(unavailableModuleMsg);
-        });*/
+        });
 
         describe('main mode', function() {
             beforeEach(function() {
@@ -316,18 +318,29 @@ describe('Base.View.Dashablerecord', function() {
             it('should update the toolbar header', function() {
                 view.initDashlet('main');
                 var triggerStub = sinon.collection.stub(dashletToolbarContext, 'trigger');
-
                 view.render();
-
                 // we test the precise field list elsewhere, no need to do it again here
                 expect(triggerStub).toHaveBeenCalledWith('dashlet:toolbar:change');
+            });
+
+            it('should hide the list-bottom view', function() {
+                view.moduleIsAvailable = false;
+                var _showHideListBottomStub = sinon.collection.stub(view, '_showHideListBottom');
+                view.render();
+
+                expect(_showHideListBottomStub).toHaveBeenCalledWith(null, true);
             });
         });
     });
 
     describe('_initTabs', function() {
+        var hasAccessStub;
         beforeEach(function() {
             sinon.collection.stub(view, '_getTabsFromSettings').returns(null);
+            hasAccessStub = sinon.collection.stub(app.acl, 'hasAccess');
+            hasAccessStub.withArgs('view', 'Cases').returns(true);
+            hasAccessStub.withArgs('view', 'Accounts').returns(false);
+            hasAccessStub.withArgs('view', 'Contacts').returns(true);
         });
 
         it('should create tabs from metadata', function() {
@@ -397,6 +410,38 @@ describe('Base.View.Dashablerecord', function() {
             var tab = view.tabs[0];
             expect(tab.meta).not.toBeUndefined();
             expect(tab.model).toEqual(jasmine.any(app.Bean));
+        });
+
+        it('should set moduleIsAvailable based of ACLs', function() {
+            // Has access
+            view.meta.tabs = [
+                {
+                    module: 'Cases'
+                }
+            ];
+            view._initTabs();
+            expect(view.moduleIsAvailable).toBeTruthy();
+
+            // No access to any tab
+            view.meta.tabs = [
+                {
+                    module: 'Accounts'
+                }
+            ];
+            view._initTabs();
+            expect(view.moduleIsAvailable).toBeFalsy();
+
+            // Access to at least 1 tab
+            view.meta.tabs = [
+                {
+                    module: 'Cases'
+                },
+                {
+                    module: 'Accounts'
+                }
+            ];
+            view._initTabs();
+            expect(view.moduleIsAvailable).toBeTruthy();
         });
     });
 
@@ -694,6 +739,26 @@ describe('Base.View.Dashablerecord', function() {
                 panels: [{fields: [], labels: true, grid: []}]
             });*/
             expect(view.context.get('model')).toEqual(model);
+        });
+    });
+
+    describe('_showHideListBottom', function() {
+        it('should call show() when the tab is a list', function() {
+            sinon.collection.spy(getComponentStubListBottomReturn, 'show');
+            view._showHideListBottom({type: 'list'}, null);
+            expect(getComponentStubListBottomReturn.show).toHaveBeenCalled();
+        });
+
+        it('should call hide() when the tab is a record', function() {
+            sinon.collection.spy(getComponentStubListBottomReturn, 'hide');
+            view._showHideListBottom({type: 'record'}, null);
+            expect(getComponentStubListBottomReturn.hide).toHaveBeenCalled();
+        });
+
+        it('should call hide() when forceHide is true', function() {
+            sinon.collection.spy(getComponentStubListBottomReturn, 'hide');
+            view._showHideListBottom({}, true);
+            expect(getComponentStubListBottomReturn.hide).toHaveBeenCalled();
         });
     });
 });

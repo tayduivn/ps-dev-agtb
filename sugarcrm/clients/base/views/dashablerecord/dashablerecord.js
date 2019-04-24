@@ -232,10 +232,11 @@
         }
 
         this.before('render', function() {
-            // ACL check // FIXME: disabled until CS-78 gets in
-            /*if (!this.moduleIsAvailable || !this.model) {
+            // ACL check
+            if (!this.moduleIsAvailable || !this.model) {
+                this._showHideListBottom(null, true);
                 return this._noAccess();
-            }*/
+            }
 
             var activeTab = this._getActiveTab();
             if (!activeTab) {
@@ -707,6 +708,7 @@
         var loadDataRequests = [];
         _.each(tabs, function(tab, index) {
             if (
+                !tab ||
                 !tab.collection ||
                 tab.skipFetch ||
                 (
@@ -1118,17 +1120,19 @@
 
         var dashletTabs;
         if (this._mode === 'config') {
-            dashletTabs = this.meta.tabs;
+            dashletTabs = this.meta.tabs || [];
         } else {
-            dashletTabs = newTabs || this._getTabsFromSettings() || this.meta.tabs;
+            dashletTabs = newTabs || this._getTabsFromSettings() || this.meta.tabs || [];
         }
 
         _.each(dashletTabs, function(tab, index) {
+            if (!app.acl.hasAccess('view', tab.module)) {
+                return;
+            }
             if (tab.active) {
                 this.settings.set('activeTab', index);
                 this.currentTab = tab;
             }
-
             tab.type = tab.type || this._getTabType(tab.link);
             if (tab.type === 'list') {
                 var collection = this._createCollection(tab);
@@ -1145,7 +1149,6 @@
                 }];
                 tab.collection.orderBy = tab.order_by || {};
                 tab.model = app.data.createBean(tab.module);
-                this.tabs[index] = tab;
             } else if (tab.type === 'record') {
                 // Single record (record view tab)
                 var module = tab.module;
@@ -1161,10 +1164,12 @@
                         tab.model = app.data.createBean(tab.module); // just to hold it over for now
                     }
                 }
-
-                this.tabs[index] = tab;
             }
+            this.tabs[index] = tab;
         }, this);
+
+        // Set this to false if we pruned out all the tabs
+        this.moduleIsAvailable = !((this.tabs.length === 0) && (dashletTabs.length > 0));
 
         if (this.tabs.length === 1) {
             this.currentTab = this.tabs[0];
@@ -1541,11 +1546,17 @@
      * Show or hide the list-bottom component depending on the tab type.
      *
      * @param {Object} tab Tab to be shown.
+     * @param {boolean} forceHide Force the list-bottom component to hide
      * @private
      */
-    _showHideListBottom: function(tab) {
+    _showHideListBottom: function(tab, forceHide) {
         var listBottom = this.layout.getComponent('list-bottom');
-        if (listBottom) {
+        if (!listBottom) {
+            return;
+        }
+        if (forceHide) {
+            listBottom.hide();
+        } else {
             tab && tab.type === 'list' ? listBottom.show() : listBottom.hide();
         }
     }
