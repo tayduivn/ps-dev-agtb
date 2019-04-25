@@ -21,8 +21,9 @@ import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import {updateForecastConfig} from './steps-helper';
 import AlertCmp from '../components/alert-cmp';
 import {updateOpportunityConfig} from './steps-helper';
-import {chooseRecord, toggleRecord, parseInputArray, chooseModule, closeAlert} from './general_bdd';
+import {chooseModule, chooseRecord, closeWarning, closeAlert, parseInputArray, recordViewHeaderButtonClicks, toggleRecord} from './general_bdd';
 import ActivityStream from '../layouts/activity-stream-layout';
+import ImportBpmView from '../views/import-bpm-view';
 
 /**
  * Select module in modules menu
@@ -716,4 +717,78 @@ When(/^I filter for the (\w+) record \*(\w+) named "([^"]*)"$/,
             });
 
     }, {waitForApp: true}
+);
+
+/**
+ *  Upload BPM related file into Sugar (Supported file types: *.bpm, *.pet, *.bpr)
+ *
+ *  @example
+ *  When I create a new record *BP_1 by importing All Modules from "multi-import-all.bpm" file on #pmse_ProjectRecord.ImportBpmView
+ */
+When(/^I create a new record \*(\w+) by importing(?: (Business Rules|Email Templates|All Modules) from)? "(\S+)" file on (#[a-zA-Z](?:\w|\S)*)$/,
+        async function(uid: string, importOptions: string, fileName: string, view: ImportBpmView): Promise<void> {
+
+        const fileType =  fileName.split('.').pop();
+        const folderName = fileType;
+
+        // Choose file
+        await view.importFile(folderName, fileName);
+
+
+        let rec_view = await seedbed.components[`${view.module}Record`];
+
+        // Click Import button and Confirm confirmation alert
+        switch (fileType.toLowerCase()) {
+            case 'bpm':
+
+                // Select import option in case importOptions is specified
+                if (importOptions === 'Business Rules') {
+                    await view.selectImportOptions(ImportBpmView.ImportOptions['BUSINESS_RULES']);
+
+                } else if (importOptions === 'Email Templates') {
+                    await view.selectImportOptions(ImportBpmView.ImportOptions['EMAIL_TEMPLATES']);
+
+                } else if (importOptions === 'All Modules') {
+                    await view.selectImportOptions(ImportBpmView.ImportOptions['BUSINESS_RULES']);
+                    await view.selectImportOptions(ImportBpmView.ImportOptions['EMAIL_TEMPLATES']);
+                }
+
+                await recordViewHeaderButtonClicks('bpm_import_button', rec_view);
+                break;
+
+            case 'pet':
+                await recordViewHeaderButtonClicks('email_template_import_button', rec_view);
+                break ;
+
+            case 'pbr':
+                await recordViewHeaderButtonClicks('business_rules_import_button', rec_view);
+                break;
+
+            default:
+                throw new Error(`The file you try to import is of unknown file type: ${fileType}`);
+        }
+
+        await closeWarning('Confirm');
+        await this.driver.waitForApp();
+        await closeAlert();
+
+        // Get id of jst created record
+        let argumentsArray = [];
+        argumentsArray.push(view.module);
+        let result = await seedbed.client.driver.execAsync('getMostRecentlyCreatedRecord', argumentsArray);
+        let recordID = result.value;
+
+        // Add record id to the global array of all records with uid using user-provided record identifier
+        seedbed.cachedRecords.push(uid,
+            {
+                id: recordID,
+                module: view.module,
+            });
+
+        /* Navigate to the list view after import is complete
+        in case of importing Business Process (aka *.bpm)file */
+        if(fileType.toLowerCase() === 'bpm') {
+            await chooseModule(view.module);
+        }
+    }, { waitForApp: true }
 );

@@ -54,7 +54,7 @@ export default (seedbed: Seedbed) => {
         });
     });
 
-// is called after cukes init, one time
+    // is called after cukes init, one time
     seedbed.addAsyncHandler(seedbed.events.AFTER_INIT, () => {
 
         seedbed.defineComponent(`OpportunityDrawer`, DrawerLayoutOpp, {module: 'Opportunities'});
@@ -337,6 +337,32 @@ export default (seedbed: Seedbed) => {
                 });
             }
         }
+
+        // Scenario: Process Email Templates > Import
+        if (req.method === 'POST' && /(\/file\/emailtemplates_import)/.test(req.url)) {
+
+            let responseRecord = JSON.parse(data.buffer.toString());
+            responseRecord = responseRecord.emailtemplates_import;
+            responseRecord._module = 'pmse_Emails_Templates';
+            seedbed.api.created.push(responseRecord);
+        }
+        // Scenario: Process Business Rules > Import
+        if (req.method === 'POST' && /(\/file\/businessrules_import)/.test(req.url)) {
+
+            let responseRecord = JSON.parse(data.buffer.toString());
+            responseRecord = responseRecord.businessrules_import;
+            responseRecord._module = 'pmse_Business_Rules';
+            seedbed.api.created.push(responseRecord);
+        }
+        //  Scenario: Process Definition > Import
+        if (req.method === 'POST' && /(\/file\/project_import)/.test(req.url)) {
+
+            let reg = new RegExp(/&quot;/gi);
+            let responseRecord = JSON.parse(data.buffer.toString().replace(reg, '"'));
+            responseRecord = responseRecord.project_import;
+            responseRecord._module = 'pmse_Project';
+            seedbed.api.created.push(responseRecord);
+        }
     });
 
 
@@ -403,7 +429,13 @@ export default (seedbed: Seedbed) => {
             _.includes(['POST', 'PUT'], req.method) &&
             !/(oauth2|bulk|filter)/.test(url)) {
 
-            responseData = JSON.parse(data.buffer.toString());
+
+            // Special case: handling server response in case of importing BPM files
+            let reg = new RegExp(/&quot;/gi);
+            const responseString = /\/pmse_Project\/file\/project_import(\?.*|)$/.test(url) ?
+                data.buffer.toString().replace(reg, '"') :
+                data.buffer.toString();
+            responseData = JSON.parse(responseString);
 
             let responseRecord = responseData.related_record || responseData;
 

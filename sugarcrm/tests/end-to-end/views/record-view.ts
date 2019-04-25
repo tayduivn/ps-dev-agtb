@@ -10,7 +10,6 @@
  */
 
 import BaseView from './base-view';
-import {seedbed} from '@sugarcrm/seedbed';
 
 /**
  * Represents Record view.

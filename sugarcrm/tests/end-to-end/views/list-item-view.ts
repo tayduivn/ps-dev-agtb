@@ -45,7 +45,11 @@ export default class ListItemView extends BaseView {
                     convert: '[name="lead_convert_button"]',
                     localization: '[name="create_localization_button"]',
                     revision: '[name="create_revision_button"]',
-                    radio: 'td[data-column="KBContentTemplates_select"] input'
+                    radio: 'td[data-column="KBContentTemplates_select"] input',
+
+                    // Business Process Mangement
+                    enable: '[name="enabled-disabled-button"]',
+                    disable: '[name="enabled-disabled-button"]',
                 },
             },
             buttons: {

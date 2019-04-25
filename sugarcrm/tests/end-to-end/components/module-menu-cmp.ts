@@ -66,6 +66,26 @@ export default class extends BaseView {
                     // Prospect Lists (Target Lists)
                     'Create Target List': 'a[data-navbar-menu-item="LNK_NEW_PROSPECT_LIST"]',
                     'View Target Lists': 'a[data-navbar-menu-item="LNK_PROSPECT_LIST_LIST"]',
+
+                    // Process Definitions
+                    'Create Process Definition': 'a[data-navbar-menu-item="LNK_NEW_PMSE_PROJECT"]',
+                    'View Process Definitions': 'a[data-navbar-menu-item="LNK_LIST"]',
+                    'Import Process Definitions': 'a[data-navbar-menu-item="LNK_IMPORT_PMSE_PROJECT"]',
+
+                    // Process Email Templates
+                    'Create Process Email Template': 'a[data-navbar-menu-item="LNK_NEW_PMSE_EMAILS_TEMPLATES"]',
+                    'View Process Email Templates': 'a[data-navbar-menu-item="LNK_LIST"]',
+                    'Import Process Email Templates': 'a[data-navbar-menu-item="LNK_IMPORT_PMSE_EMAILS_TEMPLATES"]',
+
+                    // Process Business Rules
+                    'Create Process Business Rule': 'a[data-navbar-menu-item="LNK_NEW_PMSE_BUSINESS_RULES"]',
+                    'View Process Business Rules': 'a[data-navbar-menu-item="LNK_LIST"]',
+                    'Import Process Business Rules': 'a[data-navbar-menu-item="LNK_IMPORT_PMSE_BUSINESS_RULES"]',
+
+                    // Processes
+                    'View Processes': 'a[data-navbar-menu-item="LNK_LIST"]',
+                    'Process Management': 'a[data-navbar-menu-item="LNK_PMSE_INBOX_PROCESS_MANAGEMENT"]',
+                    'Unattended Processes': 'a[data-navbar-menu-item="LNK_PMSE_INBOX_UNATTENDED_PROCESSES"]',
                 },
             }
         };

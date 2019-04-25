@@ -98,7 +98,7 @@ Feature: Dashboard main functionality verification
       | name      | RecordView Dashboard |
 
 
-  @pr @xxx
+  @pr
   Scenario: Home > Create Dashboard > Add Dashlets > Save > Delete Dashboard
     Given Accounts records exist:
       | *name |

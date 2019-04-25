@@ -90,11 +90,21 @@ export default class RecordHeaderView extends BaseView {
                 // Revenue Line Items module controls (ENT+ only)
                 'generatequote': 'a[name="convert_to_quote_button"]:not(.hide)',
 
-                // SugarBPM controls
+                // Sugar BPM controls
                 'design_pbr': 'a[name="design_businessrules"]:not(.hide)',
                 'design_pet': 'a[name="design_emailtemplates"]:not(.hide)',
+                'bpm_cancel_button': 'a[name="project_cancel_button"]:not(.hide)',
+                'bpm_import_button': 'a[name="project_finish_button"]:not(.hide)',
 
-                // Home Dashboard controls
+                // Process Email template
+                'email_template_cancel_button': 'a[name="emailtemplates_cancel_button"]:not(.hide)',
+                'email_template_import_button': 'a[name="emailtemplates_finish_button"]:not(.hide)',
+
+                // Business Rules
+                'business_rules_cancel_button': 'a[name="businessrules_cancel_button"]:not(.hide)',
+                'business_rules_import_button': 'a[name="businessrules_finish_button"]:not(.hide)',
+
+                // Home Dashboard control
                 'addbutton': 'a[name="add_button"]:not(.hide)',
             },
 

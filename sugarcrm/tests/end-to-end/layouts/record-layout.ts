@@ -11,6 +11,7 @@
 import HeaderView from '../views/record-header-view';
 import BaseView from '../views/base-view';
 import RecordView from '../views/record-view';
+import ImportBpmView from '../views/import-bpm-view';
 import SubpanelsLayout from '../layouts/subpanels-layout';
 import QliTable from '../views/qli-table';
 
@@ -28,6 +29,8 @@ export default class RecordLayout extends BaseView {
     protected type: string;
     public RecordView: RecordView;
     public defaultView: RecordView;
+    public ImportBpmView: ImportBpmView;
+
 
     public id: string;
 
@@ -55,6 +58,10 @@ export default class RecordLayout extends BaseView {
         });
 
         this.HeaderView = this.createComponent<HeaderView>(HeaderView, {
+            module: options.module,
+        });
+
+        this.ImportBpmView = this.createComponent<ImportBpmView>(ImportBpmView, {
             module: options.module,
         });
 

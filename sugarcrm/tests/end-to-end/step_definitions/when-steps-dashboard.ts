@@ -155,9 +155,9 @@ When(/^I (create|cancel creation of) new dashboard$/,
     }, {waitForApp: true});
 
 /**
- * Delete dashboard
+ *  Delete dashboard
  *
- * @example When I delete dashboard
+ *  @example When I delete dashboard
  */
 When(/^I delete dashboard$/,
     async function (): Promise<void> {

@@ -75,9 +75,9 @@ module.exports = {
     /**
      * Get record id from the record name
      *
-     * @param recordName
-     * @param module
-     * @param cb
+     * @param {string} recordName Record Name
+     * @param {string} module Module name
+     * @param {Function} cb Callback function
      */
     getRecordIDByName: function(recordName, module, cb) {
         App.api.call(
@@ -87,6 +87,31 @@ module.exports = {
                 'read',
                 null,
                 {fields: 'id, name', filter: [{name: {'$equals': recordName}}]}
+            ),
+            null,
+            null,
+            {
+                success: function(r) {
+                    cb(r.records[0].id);
+                }
+            }
+        );
+    },
+
+    /**
+     * Get most recent created record
+     *
+     * @param {string} module Module name
+     * @param {Function} cb Callback function
+     */
+    getMostRecentlyCreatedRecord: function(module, cb) {
+        App.api.call(
+            'read',
+            App.api.buildURL(
+                module,
+                'read',
+                null,
+                {fields: 'id, name', order_by: 'date_entered:desc'}
             ),
             null,
             null,
