@@ -86,6 +86,11 @@ export default class extends BaseView {
                     'View Processes': 'a[data-navbar-menu-item="LNK_LIST"]',
                     'Process Management': 'a[data-navbar-menu-item="LNK_PMSE_INBOX_PROCESS_MANAGEMENT"]',
                     'Unattended Processes': 'a[data-navbar-menu-item="LNK_PMSE_INBOX_UNATTENDED_PROCESSES"]',
+
+                    // Tags
+                    'Create Tag': 'a[data-navbar-menu-item="LNK_NEW_TAG"]',
+                    'View Tags': 'a[data-navbar-menu-item="LNK_TAG_LIST"]',
+                    'Import Tags': 'a[data-navbar-menu-item="LNK_IMPORT_TAGS"]',
                 },
             }
         };
