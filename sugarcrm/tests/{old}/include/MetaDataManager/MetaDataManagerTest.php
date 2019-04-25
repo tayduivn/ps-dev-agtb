@@ -864,6 +864,15 @@ PLATFORMS;
         );
     }
 
+    public function testGetFilterModulesFlag()
+    {
+        $mm = $this->createPartialMock('MetaDataManager', []);
+        $this->assertTrue(SugarTestReflection::callProtectedMethod($mm, 'getFilterModulesFlag'));
+        $defualtContext = SugarTestReflection::callProtectedMethod($mm, 'getDefaultContext');
+        $this->assertFalse(SugarTestReflection::callProtectedMethod($mm, 'getFilterModulesFlag', [$defualtContext]));
+        $userContextMock = $this->createPartialMock('MetaDataContextUser', []);
+        $this->assertTrue(SugarTestReflection::callProtectedMethod($mm, 'getFilterModulesFlag', [$userContextMock]));
+    }
 
 
 // BEGIN SUGARCRM flav=ent ONLY

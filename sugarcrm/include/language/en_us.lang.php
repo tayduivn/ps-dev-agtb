@@ -608,8 +608,8 @@ $app_list_strings = array (
   ),
   'license_type_dom' =>
     array (
-        'CURRENT' => 'current product',
-        'SERVICE_CLOUD' => 'Service Cloud',
+        'CURRENT' => 'Current Product',
+        'SUGAR_SERVE' => 'Sugar Serve',
     ),
   'user_status_dom' =>
   array (

@@ -1,0 +1,121 @@
+{
+    "MODULES": {
+        "BusinessCenters": [
+            "SUGAR_SERVE"
+        ],
+        "Leads": [
+            "CURRENT"
+        ],
+        "Campaigns": [
+            "CURRENT"
+        ],
+        "CampaignLog": [
+            "CURRENT"
+        ],
+        "CampaignTrackers": [
+            "CURRENT"
+        ],
+        "ProspectLists": [
+            "CURRENT"
+        ],
+        "Prospects": [
+            "CURRENT"
+        ],
+        "Opportunities": [
+            "CURRENT"
+        ],
+        "RevenueLineItems": [
+            "CURRENT"
+        ],
+        "Forecasts": [
+            "CURRENT"
+        ],
+        "ForecastManagerWorksheets": [
+            "CURRENT"
+        ],
+        "ForecastWorksheets": [
+            "CURRENT"
+        ],
+        "Quotas": [
+            "CURRENT"
+        ],
+        "Quotes": [
+            "CURRENT"
+        ],
+        "Products": [
+            "CURRENT"
+        ],
+        "Shippers": [
+            "CURRENT"
+        ],
+        "TaxRates": [
+            "CURRENT"
+        ],
+        "Contracts": [
+            "CURRENT"
+        ],
+        "ContractTypes": [
+            "CURRENT"
+        ],
+        "Project": [
+            "CURRENT"
+        ],
+        "ProjectTask": [
+            "CURRENT"
+        ],
+        "WorkFlow": [
+            "CURRENT"
+        ],
+        "WorkFlowActionShells": [
+            "CURRENT"
+        ],
+        "WorkFlowActions": [
+            "CURRENT"
+        ],
+        "WorkFlowAlertShells": [
+            "CURRENT"
+        ],
+        "WorkFlowAlerts": [
+            "CURRENT"
+        ],
+        "WorkFlowTriggerShells": [
+            "CURRENT"
+        ],
+        "EmailMan": [
+            "CURRENT"
+        ],
+        "EmailMarketing": [
+            "CURRENT"
+        ]
+    },
+    "DASHLETS": {
+        "activity-timeline": [
+            "SUGAR_SERVE"
+        ],
+        "commentlog-dashlet": [
+            "SUGAR_SERVE"
+        ],
+        "dashablerecord": [
+            "SUGAR_SERVE"
+        ]
+    },
+    "RECORDS": {
+        "Dashboards": {
+            "c108bb4a-775a-11e9-b570-f218983a1c3e": ["SUGAR_SERVE"]
+        },
+        "Reports": {
+            "field1": ["SUGAR_SERVE"],
+            "field2": ["SUGAR_SERVE"]
+        }
+    },
+    "FIELDS": {
+        "MODULE_NAME1": {
+            "field1": ["SUGAR_SERVE"],
+            "field2": ["SUGAR_SERVE"]
+        },
+        "MODULE_NAME2": {
+            "field1": ["SUGAR_SERVE"],
+            "field2": ["SUGAR_SERVE"]
+        }
+    }
+}

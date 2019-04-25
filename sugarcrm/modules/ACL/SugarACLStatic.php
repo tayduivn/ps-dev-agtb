@@ -22,6 +22,16 @@ class SugarACLStatic extends SugarACLStrategy
      */
     public function checkAccess($module, $action, $context)
     {
+        // Check if this module is license type controlled
+
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
+        if (!SugarACL::allowModuleAccess($module)) {
+            return false;
+        }
+
         // Check if we have to apply team security based on ACLs
         // If user had admin rights then team security is disabled
         if($action == "team_security") {

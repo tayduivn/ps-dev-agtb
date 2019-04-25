@@ -427,10 +427,9 @@ $dictionary['User'] = array(
         'license_type' => array(
             'name' => 'license_type',
             'vname' => 'LBL_LICENSE_TYPE',
-            'type' => 'varchar',
-            'len' => '50',
+            'type' => 'json',
+            'dbType' => 'text',
             'options' => 'license_type_dom',
-     //       'source' => 'non-db',
             'import' => false,
             'reportable' => false,
             'studio' => array('formula' => false),

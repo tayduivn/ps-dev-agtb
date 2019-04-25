@@ -9,6 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
@@ -36,12 +38,22 @@ class MySugar{
 				&& !in_array($this->type, $GLOBALS['modInvisList']))
 				&& (!in_array('Activities', $GLOBALS['moduleList']))){
 			$displayDashlet = false;
-		}
-		else {
-		    $displayDashlet = SugarACL::checkAccess($this->type, 'list', array("owner_override" => true));
-		}
+        } elseif (!$this->allowedToAccessDashlet($this->type)) {
+            $displayDashlet = false;
+        } else {
+            $displayDashlet = SugarACL::checkAccess($this->type, 'list', array("owner_override" => true));
+        }
 
 		return $displayDashlet;
+    }
+
+    /**
+     * @param string $dashletLabel
+     * @return bool
+     */
+    protected function allowedToAccessDashlet(string $module) : bool
+    {
+        return AccessControlManager::instance()->allowModuleAccess($module);
     }
 
 	function addDashlet(){

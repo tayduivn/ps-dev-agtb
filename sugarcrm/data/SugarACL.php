@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 
 /**
  * Generic ACL implementation
@@ -18,6 +19,11 @@
 class SugarACL
 {
     static $acls = array();
+
+    /**
+     * @var AccessControlManager
+     */
+    public static $accessControlMgr = null;
 
     // Access levels for field
     // matches ACLField::hasAccess returns for compatibility
@@ -125,6 +131,9 @@ class SugarACL
      */
     public static function checkField($module, $field, $action,  $context = array())
     {
+        if (!self::allowFieldAccess($module, $field)) {
+            return false;
+        }
         $context['field'] = strtolower($field);
         $context['action'] = $action;
         return self::checkAccess($module, "field", $context);
@@ -163,9 +172,51 @@ class SugarACL
                 return false;
             }
         }
+
+        // Check if this row is license type controlled
+
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
+        if (!self::allowModuleAccess($module)) {
+            return false;
+        }
+
         return true;
     }
 
+    /**
+     * check allow access with license type
+     * @param string $module
+     * @return bool
+     */
+    public static function allowModuleAccess(string $module)
+    {
+        self::initAccessControlManager();
+        return self::$accessControlMgr->allowModuleAccess($module);
+    }
+
+    /**
+     * check allow field access with license type
+     * @param string $module
+     * @return bool
+     */
+    protected static function allowFieldAccess(string $module, string $field)
+    {
+        self::initAccessControlManager();
+        return self::$accessControlMgr->allowFieldAccess($module, $field);
+    }
+
+    /**
+     * init AccessControlManager
+     */
+    protected static function initAccessControlManager()
+    {
+        if (self::$accessControlMgr == null) {
+            self::$accessControlMgr = AccessControlManager::instance();
+        }
+    }
     /**
      * Get list of disabled modules
      * @param array $list Module list
@@ -290,7 +341,7 @@ class SugarACL
         } else {
             foreach(self::$acls[$module] as $acl) {
                 foreach($acl->checkFieldList($module, $check_fields, $min_access, $context) as $key => $access) {
-                    if(!$access) {
+                    if (!$access || !self::allowFieldAccess($module, $key)) {
                         // if have no access, blank or remove field value
                         if(empty($options['blank_value'])) {
                         	unset($list[$key]);
@@ -317,13 +368,28 @@ class SugarACL
      */
     public static function getUserAccess($module, $access_list = array(), $context = array())
     {
-        if(!isset(self::$acls[$module])) {
-        	self::loadACLs($module, $context);
-        }
         if(empty($access_list)) {
             $access_list = self::$all_access;
         }
         $access = $access_list;
+
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
+
+        // check license type first
+        if (!self::allowModuleAccess($module)) {
+            foreach ($access as $key => $value) {
+                $access[$key] = false;
+            }
+            return $access;
+        }
+
+        if (!isset(self::$acls[$module])) {
+            self::loadACLs($module, $context);
+        }
+
         foreach(self::$acls[$module] as $acl) {
             $acl_access = $acl->getUserAccess($module, $access_list, $context);
             foreach($acl_access as $name => $value) {

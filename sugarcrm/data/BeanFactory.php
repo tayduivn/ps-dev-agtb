@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 
 /**
  * Factory to create SugarBeans
@@ -47,6 +48,11 @@ class BeanFactory {
     {
         if (!$id) {
             return self::newBean($module);
+        }
+
+        // add access control
+        if (!AccessControlManager::instance()->allowRecordAccess($module, $id)) {
+            throw new Exception('this record is not accessable for your license type');
         }
 
     	// Check if params is an array, if not use old arguments

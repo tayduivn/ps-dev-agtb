@@ -12,6 +12,7 @@
  */
 
 use Doctrine\DBAL\FetchMode;
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 
 class FilterApi extends SugarApi
 {
@@ -699,6 +700,15 @@ class FilterApi extends SugarApi
 
         $data = array();
         $data['next_offset'] = -1;
+
+        // filter out un-accessable records
+        foreach ($beans as $bean_id => $bean) {
+            if (!empty($args['module'])) {
+                if (!AccessControlManager::instance()->allowRecordAccess($args['module'], $bean_id)) {
+                    unset($beans[$bean_id]);
+                }
+            }
+        }
 
         // Get the related bean options to be able to handle related collections, like
         // in tags. Do this early, before beans in the collection are mutated

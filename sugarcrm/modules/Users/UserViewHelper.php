@@ -290,37 +290,23 @@ class UserViewHelper {
      */
     public function setupLicenseTypeDropdown()
     {
-        //if this is an existing bean and license type is empty, then populate default license type
-        if (!empty($this->bean->id) && empty($this->bean->license_type)) {
-            $this->bean->setLicenseType();
-        }
+        $licenseType = $this->bean->getLicenseType();
 
-        $licenseType = $this->bean->license_type;
+        global $app_list_strings;
+        $licenseTypes = $app_list_strings['license_type_dom'];
 
-        // TBD, determine if service cloud is entitled
-        $licenseTypes = array(
-            'SERVICE_CLOUD' => array(
-                'label' => translate('LBL_LICENSE_SERVICE_CLOUD', 'Users'),
-                'description' => translate('LBL_LICENSE_SERVICE_CLOUD', 'Users'),
-            ),
-            User::DEFAULT_LICENSE_TYPE => array(
-                'label' => translate('LBL_LICENSE_CURRENT_PROD', 'Users'),
-                'description' => translate('LBL_LICENSE_CURRENT_PROD', 'Users'),
-            ),
-        );
-
-        // get from entitlement list
+        // TBD get from entitlement list
         if ($this->ss->get_template_vars('IS_SUPER_ADMIN')) {
-            $availableLicenseTypes = array(
-                'SERVICE_CLOUD',
+            $availableLicenseTypes = [
+                'SUGAR_SERVE',
                 User::DEFAULT_LICENSE_TYPE,
-            );
+            ];
         } else {
-            $availableLicenseTypes = [$licenseType];
+            $availableLicenseTypes = $licenseType;
         }
 
-
-        $licenseTypesDropdown = '<select id="LicenseType" name="LicenseType" ';
+        // multi-selection
+        $licenseTypesDropdown = '<select multiple="true" id="LicenseType" name="LicenseTypes[]" ';
         if (count($availableLicenseTypes) == 1) {
             $licenseTypesDropdown .= ' disabled ';
         }
@@ -329,18 +315,22 @@ class UserViewHelper {
         $setSelected = !empty($this->bean->id);
 
         foreach ($availableLicenseTypes as $currType) {
-            if ($setSelected && $currType == $licenseType) {
-                $licenseTypesDropdown .= '<option value="'.$currType.'" SELECTED>'.$licenseTypes[$currType]['label'].'</option>';
+            if ($setSelected && in_array($currType, $licenseType)) {
+                $licenseTypesDropdown .= '<option value="'.$currType.'" SELECTED>'.$licenseTypes[$currType].'</option>';
             } else {
-                $licenseTypesDropdown .= '<option value="'.$currType.'">'.$licenseTypes[$currType]['label'].'</option>';
+                $licenseTypesDropdown .= '<option value="'.$currType.'">'.$licenseTypes[$currType].'</option>';
             }
         }
         $licenseTypesDropdown .= '</select><div id="LicenseTypeDesc">&nbsp;</div>';
 
+        $licenseTypesInString = '';
+        foreach ($licenseType as $key) {
+            $licenseTypesInString .= $licenseTypes[$key] . '</BR>';
+        }
         $this->ss->assign('LICENSE_TYPE_DROPDOWN', $licenseTypesDropdown);
         $this->ss->assign(
             'LICENSE_TYPE_READONLY',
-            $licenseTypes[$licenseType]['label']
+            $licenseTypesInString
             . "<input type='hidden' id='LicenseType' value='{$licenseType}'><div id='LicenseTypeDesc'>&nbsp;</div>"
         );
     }

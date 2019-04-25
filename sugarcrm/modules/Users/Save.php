@@ -189,9 +189,9 @@ if (!$focus->is_group && !$focus->portal_only) {
         $focus->setAdmin(false);
     }
 
-    // set License type
-    if (!empty($_POST['LicenseType'])) {
-        $focus->setLicenseType($_POST['LicenseType']);
+    // set License types
+    if (!empty($_POST['LicenseTypes'])) {
+        $focus->setLicenseType($_POST['LicenseTypes']);
     }
 
     if (empty($_POST['receive_notifications'])) {

@@ -11,6 +11,7 @@
  */
 
 
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 
 class DashletsDialog {
 	var $dashlets = array();
@@ -105,15 +106,17 @@ class DashletsDialog {
                 }
 				else{
                 	$displayDashlet = true;
-                	//check ACL ACCESS
-                	if(!empty($dashletMeta[$files['class']]['module'])) {
-                	    if(!SugarACL::checkAccess($dashletMeta[$files['class']]['module'], 'view', array('owner_override' => true))) {
-                	        $displayDashlet = false;
-                	    }
-                	    if(!SugarACL::checkAccess($dashletMeta[$files['class']]['module'], 'list', array('owner_override' => true))) {
-                	        $displayDashlet = false;
-                	    }
-                	}
+                    //check ACL ACCESS
+                    if (!empty($dashletMeta[$files['class']]['module'])) {
+                        $relModule = $dashletMeta[$files['class']]['module'];
+                        if (!SugarACL::checkAccess($relModule, 'view', array('owner_override' => true))) {
+                            $displayDashlet = false;
+                        } elseif (!SugarACL::checkAccess($relModule, 'list', array('owner_override' => true))) {
+                            $displayDashlet = false;
+                        } elseif (!AccessControlManager::instance()->allowModuleAccess($relModule)) {
+                            $displayDashlet = false;
+                        }
+                    }
                 }
 
                 if ($dashletMeta[$files['class']]['category'] == 'Charts'){

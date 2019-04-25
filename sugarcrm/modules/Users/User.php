@@ -2743,18 +2743,33 @@ class User extends Person {
     }
 
     /**
-     * set license type
-     * @param string $type
+     * set license types, it stored in json-encoded string
+     * @param array $types, array of types to pass in
      */
-    public function setLicenseType(string $type = self::DEFAULT_LICENSE_TYPE)
+    public function setLicenseType(array $types = [])
     {
         if (empty($this->license_type)) {
-            $this->license_type = self::DEFAULT_LICENSE_TYPE;
+            $this->license_type = json_encode([self::DEFAULT_LICENSE_TYPE]);
         }
 
         global $current_user;
-        if (is_admin($current_user)) {
-            $this->license_type = $type;
+        if (is_admin($current_user) && !empty($types)) {
+            $this->license_type = json_encode($types);
         }
+    }
+
+    /**
+     * get license type. json-decoded to array
+     * @return array
+     */
+    public function getLicenseType()
+    {
+        if (empty($this->license_type)) {
+            // TBD, to get license type based on subscription
+            // especially need to handle Sugar Serve only subscription
+            return [self::DEFAULT_LICENSE_TYPE];
+        }
+
+        return json_decode($this->license_type, true);
     }
 }

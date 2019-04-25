@@ -11,6 +11,7 @@
  */
 
 
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
@@ -64,6 +65,8 @@ class SugarApplication
      */
     function execute()
     {
+        // TBD, need to final tuning the accessing
+        AccessControlManager::instance()->allowAdminOverride(true);
         global $sugar_config;
         if (!empty($sugar_config['default_module'])) {
             $this->default_module = $sugar_config['default_module'];

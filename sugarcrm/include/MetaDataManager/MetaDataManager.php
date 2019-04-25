@@ -14,6 +14,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 use Sugarcrm\Sugarcrm\MetaData\RefreshQueue;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
@@ -402,6 +403,36 @@ class MetaDataManager implements LoggerAwareInterface
     );
 
     /**
+     * acl values for blocked access
+     * @var array
+     */
+    protected $aclWithNoAccess = [
+        'access' => 'no',
+        'view' => 'no',
+        'list' => 'no',
+        'edit' => 'no',
+        'delete' => 'no',
+        'import' => 'no',
+        'export' => 'no',
+        'massupdate'  => 'no',
+    ];
+
+    /**
+     * access acl values for full access
+     * @var array
+     */
+    protected $aclWithFullAccess = [
+        'access' => 'yes',
+        'view' => 'yes',
+        'list' => 'yes',
+        'edit' => 'yes',
+        'delete' => 'yes',
+        'import' => 'yes',
+        'export' => 'yes',
+        'massupdate'  => 'yes',
+    ];
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility
      * string indicator and loads the appropriate metadata section list.
      *
@@ -772,12 +803,8 @@ class MetaDataManager implements LoggerAwareInterface
      */
     public function getModulesData(MetaDataContextInterface $context = null)
     {
-        $filterModules = false;
-        // BEGIN SUGARCRM flav=ent ONLY
-        if (SugarConfig::getInstance()->get('roleBasedViews') && !($context instanceof MetaDataContextDefault)) {
-            $filterModules = true;
-        }
-        // END SUGARCRM flav=ent ONLY
+        $filterModules = $this->getFilterModulesFlag($context);
+
         if (!isset($this->data['full_module_list'])) {
             $this->data['full_module_list'] = $this->getModuleList($filterModules);
         }
@@ -993,10 +1020,10 @@ class MetaDataManager implements LoggerAwareInterface
         $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
         $outputAcl['developer'] = ($userObject->isDeveloperForModule($module)) ? 'yes' : 'no';
 
-        if (!SugarACL::moduleSupportsACL($module)) {
-            foreach (array('access', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate') as $action) {
-                $outputAcl[$action] = 'yes';
-            }
+        if (!AccessControlManager::instance()->allowModuleAccess($module)) {
+            $outputAcl = array_merge($outputAcl, $this->aclWithNoAccess);
+        } elseif (!SugarACL::moduleSupportsACL($module)) {
+            $outputAcl = array_merge($outputAcl, $this->aclWithFullAccess);
         } else {
             $context = array(
                 'user' => $userObject,
@@ -2471,7 +2498,7 @@ class MetaDataManager implements LoggerAwareInterface
         $data = $this->loadAndCacheMetadata($args, $intialContext, $isDefaultContext && $ignoreCache);
 
         // Get our metadata if a users specific context was provided
-        if (!$this->public && !$isDefaultContext) {
+        if (!$this->public && !($context instanceof MetaDataContextDefault)) {
             $contextData = $this->loadAndCacheMetadata(false, $context, $ignoreCache, $data['_hash']);
             $data = array_merge($data, $contextData);
         }
@@ -2889,6 +2916,22 @@ class MetaDataManager implements LoggerAwareInterface
     }
 
     /**
+     * get filter module flag
+     * @param MetaDataContextInterface $context
+     * @return bool
+     */
+    protected function getFilterModulesFlag(MetaDataContextInterface $context = null)
+    {
+        $filterModules = false;
+
+        if (!($context instanceof MetaDataContextDefault)) {
+            $filterModules = true;
+        }
+
+        return $filterModules;
+    }
+
+    /**
      * Gets full module list and data for each module and uses that data to
      * populate the modules/full_module_list section of the metadata
      *
@@ -2898,12 +2941,8 @@ class MetaDataManager implements LoggerAwareInterface
      */
     public function populateModules($data, MetaDataContextInterface $context = null)
     {
-        $filterModules = false;
-        // BEGIN SUGARCRM flav=ent ONLY
-        if (SugarConfig::getInstance()->get('roleBasedViews') && !($context instanceof MetaDataContextDefault)) {
-            $filterModules = true;
-        }
-        // END SUGARCRM flav=ent ONLY
+        $filterModules = $this->getFilterModulesFlag($context);
+
         $this->data['full_module_list'] = $data['full_module_list'] = $this->getModuleList($filterModules);
         $this->data['modules'] = $data['modules'] = $this->getModulesData($context);
         $data['modules_info'] = $this->getModulesInfo(array(), $context);
@@ -2940,12 +2979,8 @@ class MetaDataManager implements LoggerAwareInterface
     {
         global $moduleList;
 
-        $filterModules = false;
-        // BEGIN SUGARCRM flav=ent ONLY
-        if (SugarConfig::getInstance()->get('roleBasedViews') && !($context instanceof MetaDataContextDefault)) {
-            $filterModules = true;
-        }
-        // END SUGARCRM flav=ent ONLY
+        $filterModules = $this->getFilterModulesFlag($context);
+
         $fullModuleList = $this->getFullModuleList($filterModules);
 
         $modulesInfo = array();
@@ -3074,12 +3109,10 @@ class MetaDataManager implements LoggerAwareInterface
      */
     public function getFilteredModuleList($list)
     {
-        // BEGIN SUGARCRM flav=ent ONLY
         $user = $this->getCurrentUser();
-        if (!empty($user->id) && !empty($GLOBALS['sugar_config']['roleBasedViews']) && !$this->public) {
+        if (!empty($user->id) && !$this->public) {
             $list = SugarACL::filterModuleList($list);
         }
-        // END SUGARCRM flav=ent ONLY
 
         return $list;
     }

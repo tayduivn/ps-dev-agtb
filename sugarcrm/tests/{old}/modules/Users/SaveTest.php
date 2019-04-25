@@ -356,28 +356,28 @@ class SaveTest extends TestCase
     /**
      * @dataProvider saveLicenseTypeProvider
      */
-    public function testSaveLicenseType(string $licenseType, bool $isAdmin, string $expected)
+    public function testSetLicenseType(array $licenseType, bool $isAdmin, array $expected)
     {
         $currUser = $GLOBALS['current_user'];
         $current_user = SugarTestHelper::setUp('current_user', array(true, $isAdmin));
 
         $_POST['record'] = $current_user->id;
-        $_POST['LicenseType'] = $licenseType;
+        $_POST['LicenseTypes'] = $licenseType;
         include 'modules/Users/Save.php';
 
         $record = BeanFactory::getBean('Users', $current_user->id);
 
         $GLOBALS['current_user'] = $currUser;
-        $this->assertEquals($expected, $record->license_type);
+        $this->assertEquals($expected, $record->getLicenseType());
     }
 
     public function saveLicenseTypeProvider()
     {
         return [
-            ['CURRENT', true, 'CURRENT'],
-            ['SERVICE_CLOUD', true, 'SERVICE_CLOUD'],
-            ['CURRENT', false, 'CURRENT'],
-            ['SERVICE_CLOUD', false, 'CURRENT'],
+            [['CURRENT'], true, ['CURRENT']],
+            [['SUGAR_SERVE', 'CURRENT'], true, ['SUGAR_SERVE', 'CURRENT']],
+            [['CURRENT'], false, ['CURRENT']],
+            [['SUGAR_SERVE'], false, ['CURRENT']],
         ];
     }
 }
