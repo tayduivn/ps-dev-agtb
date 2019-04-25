@@ -11,22 +11,22 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['view']['dashablerecord'] = array(
+$viewdefs['base']['view']['dashablerecord'] = [
     'template' => 'record',
     'dashlets' => [
-        array(
+        [
             'label' => 'LBL_DASHLET_RECORDVIEW_NAME',
             'description' => 'LBL_DASHLET_RECORDVIEW_DESCRIPTION',
-            'filter' => array(
+            'filter' => [
                 'view' => ['record'],
-            ),
+            ],
             'config' => [],
             // FIXME: see if it's safe to erase this
-            'preview' => array(
+            'preview' => [
                 'module' => 'Accounts',
                 'label' => 'LBL_MODULE_NAME',
-            ),
-        ),
+            ],
+        ],
     ],
     // Used for configuration rather than the actual dashlet appearance
     'panels' => [
@@ -36,15 +36,15 @@ $viewdefs['base']['view']['dashablerecord'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
+//                [
+//                    'name' => 'module',
+//                    'type' => 'enum',
+//                    'label' => 'LBL_DASHLET_RECORDVIEW_BASE_RECORD_TYPE',
+//                    'span' => 6,
+//                    'sort_alpha' => true,
+//                ],
                 [
-                    'name' => 'module',
-                    'type' => 'enum',
-                    'label' => 'LBL_DASHLET_RECORDVIEW_BASE_RECORD_TYPE',
-                    'span' => 6,
-                    'sort_alpha' => true,
-                ],
-                [
-                    'name' => 'tabs',
+                    'name' => 'tab_list',
                     'label' => 'LBL_DASHLET_RECORDVIEW_TABS',
                     'type' => 'enum',
                     'span' => 6,
@@ -55,4 +55,40 @@ $viewdefs['base']['view']['dashablerecord'] = array(
             ],
         ],
     ],
-);
+    'listsettings' => [
+        'panels' => [
+            [
+                'name' => 'dashlet_settings',
+                'columns' => 2,
+                'labelsOnTop' => true,
+                'placeholders' => true,
+                'fields' => [
+                    [
+                        'name' => 'fields',
+                        'label' => 'LBL_COLUMNS',
+                        'type' => 'enum',
+                        'isMultiSelect' => true,
+                        'ordered' => true,
+                        'span' => 12,
+                        'hasBlank' => true,
+                        'options' => ['' => ''],
+                    ],
+                    [
+                        'name' => 'limit',
+                        'label' => 'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS',
+                        'type' => 'enum',
+                        'options' => 'dashlet_limit_options',
+                        'span' => 12,
+                    ],
+                    [
+                        'name' => 'auto_refresh',
+                        'label' => 'Auto Refresh',
+                        'type' => 'enum',
+                        'options' => 'sugar7_dashlet_auto_refresh_options',
+                        'span' => 12,
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

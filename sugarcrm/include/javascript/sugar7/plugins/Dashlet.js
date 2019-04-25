@@ -55,6 +55,7 @@
                     delete settings.panels;
                     delete settings.action;
                     delete settings.dependencies;
+                    delete settings.buttons;
                     this.settings = new Dashlet(settings);
                     if (settings.module) {
                         this.model = this.context.parent.get("model");

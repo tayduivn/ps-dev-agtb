@@ -74,6 +74,12 @@ return [
                                         ],
                                     ],
                                 ],
+                                'tab_list' => [
+                                    'Cases',
+                                    'tasks',
+                                    'contacts',
+                                    'documents',
+                                ],
                             ],
                             'context' => [
                                 'module' => 'Cases',
@@ -87,7 +93,15 @@ return [
                             'view' => [
                                 'type' => 'dashablerecord',
                                 'module' => 'Cases',
-                                'tabs' => ['accounts'],
+                                'tabs' => [
+                                    [
+                                        'module' => 'Accounts',
+                                        'link' => 'accounts',
+                                    ],
+                                ],
+                                'tab_list' => [
+                                    'accounts',
+                                ],
                             ],
                             'context' => [
                                 'module' => 'Cases',

@@ -10,10 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
+{{#if showTabs}}
 <div class="dashlet-tabs-row">
     {{#each this.tabs}}
         {{#if this}}
-        <div class="dashlet-tab{{#eq ../settings.attributes.activeTab @index}} active{{/eq}}">
+            <div class="dashlet-tab{{#eq ../../settings.attributes.activeTabIndex @index}} active{{/eq}}">
             <a data-toggle="tab" data-action="tab-switcher" data-index="{{@index}}">
                 {{#if label}}
                     {{str label module}}
@@ -29,3 +30,4 @@
         {{/if}}
     {{/each}}
 </div>
+{{/if}}
