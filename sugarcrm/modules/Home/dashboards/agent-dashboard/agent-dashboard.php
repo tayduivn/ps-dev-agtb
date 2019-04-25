@@ -33,6 +33,60 @@ return [
             // TAB 2
             [
                 'name' => 'LBL_CASES',
+                'badges' => [
+                    [
+                        'type' => 'record-count',
+                        'module' => 'Cases',
+                        // TODO: use new filter operators in CS-86
+                        'filter' => [
+                            [
+                                'follow_up_datetime' => [
+                                    '$lt' => '$nowTime',
+                                ],
+                            ],
+                            [
+                                'status' => [
+                                    '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
+                                ],
+                            ],
+                        ],
+                        'cssClass' => 'case-expired',
+                    ],
+                    [
+                        'type' => 'record-count',
+                        'module' => 'Cases',
+                        'filter' => [
+                            [
+                                'follow_up_datetime' => [
+                                    '$between' => ['$nowTime', '$tomorrowTime'],
+                                ],
+                            ],
+                            [
+                                'status' => [
+                                    '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
+                                ],
+                            ],
+                        ],
+                        'cssClass' => 'case-soon',
+                    ],
+                    [
+                        'type' => 'record-count',
+                        'module' => 'Cases',
+                        'filter' => [
+                            [
+                                'follow_up_datetime' => [
+                                    '$gt' => '$tomorrowTime',
+                                ],
+                            ],
+                            [
+                                'status' => [
+                                    '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
+                                ],
+                            ],
+                        ],
+                        'cssClass' => 'case-future',
+                    ],
+                ],
                 'components' => [
                     [
                         'context' => [
