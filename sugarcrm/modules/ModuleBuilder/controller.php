@@ -85,22 +85,9 @@ class ModuleBuilderController extends SugarController
     public function process()
     {
         $GLOBALS ['log']->info(get_class($this) . ":");
-        global $current_user;
-
-        // Handle BC for studio help
         $this->normalizeModStrings();
-
-        $access = $current_user->getDeveloperModules();
-            if ($current_user->isAdmin() || ($current_user->isDeveloperForAnyModule() && !isset($_REQUEST['view_module']) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package')) ||
-                (isset($_REQUEST['view_module']) && (in_array($_REQUEST['view_module'], $access) || empty($_REQUEST['view_module']))) ||
-                (isset($_REQUEST['type']) && (($_REQUEST['type'] == 'dropdowns' && $current_user->isDeveloperForAnyModule()) ||
-                    ($_REQUEST['type'] == 'studio' && displayStudioForCurrentUser() == true))) ||
-                (isset($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == 'jslang' && $current_user->isDeveloperForAnyModule())
-            ) {
-                $this->hasAccess = true;
-            } else {
-                $this->hasAccess = false;
-            }
+        $viewModule = $_REQUEST['view_module']?? null;
+        $this->hasAccess = $this->hasAccessToAction($GLOBALS['current_user'], $viewModule);
         parent::process();
     }
 
@@ -1245,5 +1232,20 @@ class ModuleBuilderController extends SugarController
                 $GLOBALS['log']->warning('ModuleBuilder deleted a temp file: ' . $filePath);
             }
         }
+    }
+
+    /**
+     * Check if user has access to current action
+     */
+    private function hasAccessToAction(User $user, ?string $viewModule) : bool
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+        if (!empty($viewModule)) {
+            return $user->isDeveloperForModule($viewModule);
+        }
+
+        return $user->isDeveloperForAnyModule();
     }
 }
