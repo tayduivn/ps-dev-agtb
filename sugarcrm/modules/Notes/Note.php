@@ -51,6 +51,8 @@ class Note extends SugarBean
     var $object_name = "Note";
     var $importable = true;
 
+    public $entry_source = 'internal';
+
     // This is used to retrieve related fields from form posts.
     var $additional_column_fields = array(
         'contact_name',
@@ -298,5 +300,20 @@ class Note extends SugarBean
     public function getUploadId()
     {
         return !empty($this->upload_id) ? $this->upload_id : $this->id;
+    }
+
+    /**
+     * Provides the dropdown list elements needed for the `entry_source`. This is
+     * a system status so it should not be editable in the dropdownlist editor,
+     * thus it is wrapped in a function. However, the values should be localizable
+     * hence the use of labels.
+     * @return array
+     */
+    public function getSourceTypes()
+    {
+        return [
+            'external' => translate('LBL_SOURCE_EXTERNAL', 'Notes'),
+            'internal' => translate('LBL_SOURCE_INTERNAL', 'Notes'),
+        ];
     }
 }

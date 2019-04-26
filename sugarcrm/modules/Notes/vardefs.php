@@ -453,6 +453,20 @@ $dictionary['Note'] = array(
         'source' => 'non-db',
         'reportable' => false
     ),
+    'entry_source' => array(
+        'name' => 'entry_source',
+        'vname' => 'LBL_ENTRY_SOURCE',
+        'type' => 'enum',
+        'function' => 'getSourceType',
+        'function_bean' => 'Notes',
+        'len' => '255',
+        'default' => 'internal',
+        'comment' => 'Determines if a record was created internal to the system or external to the system',
+        'readonly' => true,
+        'studio' => false,
+        'processes' => true,
+    ),
+
     ),
     'relationships'=>array(
     )
