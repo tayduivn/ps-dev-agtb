@@ -38,14 +38,20 @@ class TrackersViewTrackersettings extends SugarView
     	   translate('LBL_TRACKER_SETTINGS','Administration'),
     	   );
     }
-    
- 	/** 
+
+    /**
      * @see SugarView::display()
      */
- 	public function display()
+    public function display()
     {
         global $mod_strings, $app_strings;
-        
+        global $current_user;
+
+        if (!$current_user->isAdmin()) {
+            ACLController::displayNoAccess();
+            sugar_die('');
+        }
+
         $admin = Administration::getSettings();
         
         require('modules/Trackers/config.php');
