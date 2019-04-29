@@ -64,6 +64,53 @@ class EmailsFilterApi extends FilterApi
     }
 
     /**
+     * Handles the from_collection, to_collection, cc_collection, and bcc_collection fields for filtering.
+     *
+     * {@inheritdoc}
+     */
+    protected static function addFieldFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter, $field)
+    {
+        static $macros = [
+            'from_collection' => EmailsFilterApi::MACRO_FROM,
+            'to_collection' => EmailsFilterApi::MACRO_TO,
+            'cc_collection' => EmailsFilterApi::MACRO_CC,
+            'bcc_collection' => EmailsFilterApi::MACRO_BCC,
+        ];
+        switch ($field) {
+            case 'from_collection':
+            case 'to_collection':
+            case 'cc_collection':
+            case 'bcc_collection':
+                if (!is_array($filter)) {
+                    throw new SugarApiExceptionInvalidParameter("No operators defined for {$field}");
+                }
+
+                if (!array_key_exists('$in', $filter)) {
+                    throw new SugarApiExceptionInvalidParameter("{$field} requires the use of the \$in operator");
+                }
+
+                $supportedOperators = ['$in'];
+                $unsupportedOperators = array_diff(array_keys($filter), $supportedOperators);
+
+                if (!empty($unsupportedOperators)) {
+                    throw new SugarApiExceptionInvalidParameter(
+                        "{$field} does not support these operators: " . implode(', ', $unsupportedOperators)
+                    );
+                }
+
+                $macro = $macros[$field];
+
+                foreach ($supportedOperators as $op) {
+                    static::addParticipantFilter($q, $where, $filter[$op], $macro);
+                }
+
+                break;
+            default:
+                parent::addFieldFilter($q, $where, $filter, $field);
+        }
+    }
+
+    /**
      * This function adds a from, to, cc, or bcc filter to the sugar query based on the value of `$field`.
      *
      * <code>
@@ -103,6 +150,7 @@ class EmailsFilterApi extends FilterApi
      * @param array $filter
      * @param string $field The filter to use: $from, $to, $cc, or $bcc.
      * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarQueryException
      */
     protected static function addParticipantFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter, $field)
     {

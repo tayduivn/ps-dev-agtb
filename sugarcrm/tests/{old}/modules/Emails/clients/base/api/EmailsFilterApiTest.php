@@ -78,6 +78,7 @@ class EmailsFilterApiTest extends TestCase
      * @covers ::filterListSetup
      * @covers ::addFilters
      * @covers ::addFilter
+     * @covers ::addFieldFilter
      * @covers ::addParticipantFilter
      * @covers ::runQuery
      */
@@ -87,10 +88,10 @@ class EmailsFilterApiTest extends TestCase
         $contact = SugarTestContactUtilities::createContact();
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
-        // Archived email sent by the current user to $contact.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
+            'name' => 'Archived email sent by the current user to $contact',
         ];
         $email1 = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email1->load_relationship('from');
@@ -99,10 +100,10 @@ class EmailsFilterApiTest extends TestCase
         $email1->to->add($this->createEmailParticipant($contact));
         $email1->save();
 
-        // Archived email sent by the current user to $user and $contact.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
+            'name' => 'Archived email sent by the current user to $user and $contact',
         ];
         $email2 = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email2->load_relationship('from');
@@ -113,19 +114,19 @@ class EmailsFilterApiTest extends TestCase
         $email2->cc->add($this->createEmailParticipant($contact));
         $email2->save();
 
-        // Draft email owned by the current user.
         $data = [
             'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
+            'name' => 'Draft email owned by the current user',
         ];
         $email3 = SugarTestEmailUtilities::createEmail('', $data);
         $email3->load_relationship('to');
         $email3->to->add($this->createEmailParticipant($user));
 
-        // Draft email owned by the current user to be sent to $contact.
         $data = [
             'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
+            'name' => 'Draft email owned by the current user to be sent to $contact',
         ];
         $email4 = SugarTestEmailUtilities::createEmail('', $data);
         $email4->load_relationship('from');
@@ -133,10 +134,10 @@ class EmailsFilterApiTest extends TestCase
         $email4->load_relationship('cc');
         $email4->cc->add($this->createEmailParticipant($contact));
 
-        // Archived email sent by $user to the current user.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $user->id,
+            'name' => 'Archived email sent by $user to the current user',
         ];
         $email5 = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email5->load_relationship('from');
@@ -145,10 +146,10 @@ class EmailsFilterApiTest extends TestCase
         $email5->to->add($this->createEmailParticipant($GLOBALS['current_user']));
         $email5->save();
 
-        // Archived email sent by $contact to $user and the current user.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
+            'name' => 'Archived email sent by $contact to $user and the current user',
         ];
         $email6 = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email6->load_relationship('from');
@@ -159,10 +160,10 @@ class EmailsFilterApiTest extends TestCase
         $email6->bcc->add($this->createEmailParticipant($GLOBALS['current_user']));
         $email6->save();
 
-        // Archived email sent by the current user to an email address.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
+            'name' => 'Archived email sent by the current user to an email address',
         ];
         $email7 = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email7->load_relationship('from');
@@ -171,10 +172,10 @@ class EmailsFilterApiTest extends TestCase
         $email7->to->add($this->createEmailParticipant(null, $address));
         $email7->save();
 
-        // Archived email sent by the contact to the user with the specified email address.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $user->id,
+            'name' => 'Archived email sent by the contact to the user with the specified email address',
         ];
         $email8 = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email8->load_relationship('from');
@@ -183,115 +184,28 @@ class EmailsFilterApiTest extends TestCase
         $email8->to->add($this->createEmailParticipant($user, $address));
         $email8->save();
 
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$from' => [
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => '$current_user_id',
-                        ],
-                    ],
-                ],
-            ],
-            'fields' => 'id,parent_name',
-            'order_by' => 'parent_name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(5, $response['records'], 'All emails where the current user is the sender');
-
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$from' => [
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => '$current_user_id',
-                        ],
-                    ],
-                ],
-                [
-                    'state' => [
-                        '$in' => ['Archived'],
-                    ],
-                ],
-            ],
-            'fields' => 'id,parent_name',
-            'order_by' => 'parent_name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(3, $response['records'], 'All archived emails sent by the current user');
-
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$from' => [
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => '$current_user_id',
-                        ],
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => $user->id,
-                        ],
-                    ],
-                ],
-                [
-                    'state' => [
-                        '$in' => ['Archived'],
-                    ],
-                ],
-            ],
-            'fields' => 'id,parent_name',
-            'order_by' => 'parent_name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(4, $response['records'], 'All archived emails sent by the current user or other user');
-
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$from' => [
-                        [
-                            'parent_type' => 'Contacts',
-                            'parent_id' => $contact->id,
-                        ],
-                    ],
-                ],
-            ],
-            'fields' => 'id,parent_name',
-            'order_by' => 'parent_name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(2, $response['records'], 'All emails sent by the contact');
-
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$or' => [
-                        [
-                            '$to' => [
-                                [
-                                    'parent_type' => 'Users',
-                                    'parent_id' => '$current_user_id',
-                                ],
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => '$current_user_id',
                             ],
                         ],
-                        [
-                            '$cc' => [
-                                [
-                                    'parent_type' => 'Users',
-                                    'parent_id' => '$current_user_id',
-                                ],
-                            ],
-                        ],
-                        [
-                            '$bcc' => [
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'parent_name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
                                 [
                                     'parent_type' => 'Users',
                                     'parent_id' => '$current_user_id',
@@ -300,49 +214,119 @@ class EmailsFilterApiTest extends TestCase
                         ],
                     ],
                 ],
-                [
-                    'state' => [
-                        '$in' => ['Archived'],
+                'fields' => 'id,name',
+                'order_by' => 'parent_name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(5, $response['records'], "{$desc}: All emails where the current user is the sender");
+
+            $expected = [$email1->id, $email2->id, $email3->id, $email4->id, $email7->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails where the current user is the sender: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => '$current_user_id',
+                            ],
+                        ],
+                    ],
+                    [
+                        'state' => [
+                            '$in' => ['Archived'],
+                        ],
                     ],
                 ],
+                'fields' => 'id,name',
+                'order_by' => 'parent_name:ASC',
             ],
-            'fields' => 'id,parent_name',
-            'order_by' => 'parent_name:ASC',
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'state' => [
+                            '$in' => ['Archived'],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
         ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(2, $response['records'], 'All archived emails received by the current user');
 
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$or' => [
-                        [
-                            '$to' => [
-                                [
-                                    'parent_type' => 'Users',
-                                    'parent_id' => '$current_user_id',
-                                ],
-                                [
-                                    'parent_type' => 'Users',
-                                    'parent_id' => $user->id,
-                                ],
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(3, $response['records'], "{$desc}: All archived emails sent by the current user");
+
+            $expected = [$email1->id, $email2->id, $email7->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All archived emails sent by the current user: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => '$current_user_id',
+                            ],
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => $user->id,
                             ],
                         ],
-                        [
-                            '$cc' => [
-                                [
-                                    'parent_type' => 'Users',
-                                    'parent_id' => '$current_user_id',
-                                ],
-                                [
-                                    'parent_type' => 'Users',
-                                    'parent_id' => $user->id,
-                                ],
-                            ],
+                    ],
+                    [
+                        'state' => [
+                            '$in' => ['Archived'],
                         ],
-                        [
-                            '$bcc' => [
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
                                 [
                                     'parent_type' => 'Users',
                                     'parent_id' => '$current_user_id',
@@ -354,45 +338,683 @@ class EmailsFilterApiTest extends TestCase
                             ],
                         ],
                     ],
+                    [
+                        'state' => [
+                            '$in' => ['Archived'],
+                        ],
+                    ],
                 ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
             ],
-            'fields' => 'id,parent_name',
-            'order_by' => 'parent_name:ASC',
         ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(5, $response['records'], 'All emails received by the current user or $user');
 
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$or' => [
-                        [
-                            '$from' => [
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(
+                4,
+                $response['records'],
+                "{$desc}: All archived emails sent by the current user or other user"
+            );
+
+            $expected = [$email1->id, $email2->id, $email5->id, $email7->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All archived emails sent by the current user or other user: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Contacts',
+                                'parent_id' => $contact->id,
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
+                                [
+                                    'parent_type' => 'Contacts',
+                                    'parent_id' => $contact->id,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(2, $response['records'], "{$desc}: All emails sent by the contact");
+
+            $expected = [$email6->id, $email8->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails sent by the contact: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                '$to' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => '$current_user_id',
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$cc' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => '$current_user_id',
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$bcc' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => '$current_user_id',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'state' => [
+                            '$in' => ['Archived'],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                'to_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => '$current_user_id',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'cc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => '$current_user_id',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'bcc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => '$current_user_id',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'state' => [
+                            '$in' => ['Archived'],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(2, $response['records'], "{$desc}: All archived emails received by the current user");
+
+            $expected = [$email5->id, $email6->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All archived emails received by the current user: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                '$to' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => '$current_user_id',
+                                    ],
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => $user->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$cc' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => '$current_user_id',
+                                    ],
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => $user->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$bcc' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => '$current_user_id',
+                                    ],
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => $user->id,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                'to_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => '$current_user_id',
+                                        ],
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => $user->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'cc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => '$current_user_id',
+                                        ],
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => $user->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'bcc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => '$current_user_id',
+                                        ],
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => $user->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(5, $response['records'], "{$desc}: All emails received by the current user or \$user");
+
+            $expected = [$email2->id, $email3->id, $email5->id, $email6->id, $email8->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails received by the current user or \$user: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                '$from' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => '$current_user_id',
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$to' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$cc' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$bcc' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                'from_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => '$current_user_id',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'to_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'cc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'bcc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(
+                5,
+                $response['records'],
+                "{$desc}: All emails sent by the current user or to the contact"
+            );
+
+            $expected = [$email1->id, $email2->id, $email3->id, $email4->id, $email7->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails sent by the current user or to the contact: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                '$to' => [
+                                    [
+                                        'email_address_id' => $address->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$cc' => [
+                                    [
+                                        'email_address_id' => $address->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$bcc' => [
+                                    [
+                                        'email_address_id' => $address->id,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                'to_collection' => [
+                                    '$in' => [
+                                        [
+                                            'email_address_id' => $address->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'cc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'email_address_id' => $address->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'bcc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'email_address_id' => $address->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(2, $response['records'], "{$desc}: All emails sent to the email address");
+
+            $expected = [$email7->id, $email8->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails sent to the email address: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                '$to' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => $user->id,
+                                        'email_address_id' => $address->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$cc' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => $user->id,
+                                        'email_address_id' => $address->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$bcc' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => $user->id,
+                                        'email_address_id' => $address->id,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$or' => [
+                            [
+                                'to_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => $user->id,
+                                            'email_address_id' => $address->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'cc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => $user->id,
+                                            'email_address_id' => $address->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'bcc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => $user->id,
+                                            'email_address_id' => $address->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(
+                1,
+                $response['records'],
+                "{$desc}: All emails sent to the user with the specified email address"
+            );
+
+            $expected = [$email8->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails sent to the user with the specified email address: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => '$current_user_id',
+                            ],
+                        ],
+                    ],
+                    [
+                        '$to' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => $user->id,
+                            ],
+                            [
+                                'parent_type' => 'Contacts',
+                                'parent_id' => $contact->id,
+                            ],
+                        ],
+                    ],
+                    [
+                        '$cc' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => $user->id,
+                            ],
+                            [
+                                'parent_type' => 'Contacts',
+                                'parent_id' => $contact->id,
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
                                 [
                                     'parent_type' => 'Users',
                                     'parent_id' => '$current_user_id',
                                 ],
                             ],
                         ],
-                        [
-                            '$to' => [
+                    ],
+                    [
+                        'to_collection' => [
+                            '$in' => [
                                 [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
+                                    'parent_type' => 'Users',
+                                    'parent_id' => $user->id,
                                 ],
-                            ],
-                        ],
-                        [
-                            '$cc' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
-                                ],
-                            ],
-                        ],
-                        [
-                            '$bcc' => [
                                 [
                                     'parent_type' => 'Contacts',
                                     'parent_id' => $contact->id,
@@ -400,156 +1022,84 @@ class EmailsFilterApiTest extends TestCase
                             ],
                         ],
                     ],
-                ],
-            ],
-            'fields' => 'id,parent_name',
-            'order_by' => 'parent_name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(5, $response['records'], 'All emails sent by the current user or to the contact');
-
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$or' => [
-                        [
-                            '$to' => [
-                                [
-                                    'email_address_id' => $address->id,
-                                ],
-                            ],
-                        ],
-                        [
-                            '$cc' => [
-                                [
-                                    'email_address_id' => $address->id,
-                                ],
-                            ],
-                        ],
-                        [
-                            '$bcc' => [
-                                [
-                                    'email_address_id' => $address->id,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'fields' => 'id,parent_name',
-            'order_by' => 'parent_name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(2, $response['records'], 'All emails sent to the email address');
-
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$or' => [
-                        [
-                            '$to' => [
+                    [
+                        'cc_collection' => [
+                            '$in' => [
                                 [
                                     'parent_type' => 'Users',
                                     'parent_id' => $user->id,
-                                    'email_address_id' => $address->id,
                                 ],
-                            ],
-                        ],
-                        [
-                            '$cc' => [
-                                [
-                                    'parent_type' => 'Users',
-                                    'parent_id' => $user->id,
-                                    'email_address_id' => $address->id,
-                                ],
-                            ],
-                        ],
-                        [
-                            '$bcc' => [
-                                [
-                                    'parent_type' => 'Users',
-                                    'parent_id' => $user->id,
-                                    'email_address_id' => $address->id,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'fields' => 'id,parent_name',
-            'order_by' => 'parent_name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(1, $response['records'], 'All emails sent to the user with the specified email address');
-
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$from' => [
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => '$current_user_id',
-                        ],
-                    ],
-                ],
-                [
-                    '$to' => [
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => $user->id,
-                        ],
-                    ],
-                ],
-                [
-                    '$cc' => [
-                        [
-                            'parent_type' => 'Contacts',
-                            'parent_id' => $contact->id,
-                        ],
-                    ],
-                ],
-            ],
-            'fields' => 'id,parent_name,to_addrs',
-            'order_by' => 'parent_name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(
-            1,
-            $response['records'],
-            "Single email sent from: current user to: \$user and cc'd to: \$contact"
-        );
-        $this->assertSame(
-            $email2->id,
-            $response['records'][0]['id'],
-            "Specific email sent from: current user to: \$user and cc'd to: \$contact"
-        );
-
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$and' => [
-                        [
-                            '$from' => [
                                 [
                                     'parent_type' => 'Contacts',
                                     'parent_id' => $contact->id,
                                 ],
                             ],
                         ],
-                        [
-                            '$to' => [
-                                [
-                                    'parent_type' => 'Users',
-                                    'parent_id' => $user->id,
-                                ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(
+                1,
+                $response['records'],
+                "{$desc}: All emails sent by the current user to \$user and the contact"
+            );
+
+            $expected = [$email2->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails sent by the current user to \$user and the contact: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => '$current_user_id',
                             ],
                         ],
-                        [
-                            '$bcc' => [
+                    ],
+                    [
+                        '$to' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => $user->id,
+                            ],
+                        ],
+                    ],
+                    [
+                        '$cc' => [
+                            [
+                                'parent_type' => 'Contacts',
+                                'parent_id' => $contact->id,
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
                                 [
                                     'parent_type' => 'Users',
                                     'parent_id' => '$current_user_id',
@@ -557,191 +1107,566 @@ class EmailsFilterApiTest extends TestCase
                             ],
                         ],
                     ],
+                    [
+                        'to_collection' => [
+                            '$in' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => $user->id,
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'cc_collection' => [
+                            '$in' => [
+                                [
+                                    'parent_type' => 'Contacts',
+                                    'parent_id' => $contact->id,
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
             ],
-            'fields' => 'id,parent_name,to_addrs',
-            'order_by' => 'parent_name:ASC',
         ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(
-            1,
-            $response['records'],
-            "Single email sent from: \$contact to: \$user and bcc'd to: Current User"
-        );
-        $this->assertSame(
-            $email6->id,
-            $response['records'][0]['id'],
-            "Specific email sent from: \$contact to: \$user and bcc'd to: Current User"
-        );
 
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$from' => [
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => '$current_user_id',
-                        ],
-                    ],
-                    '$or' => [
-                        [
-                            '$to' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
-                                ],
-                            ],
-                        ],
-                        [
-                            '$cc' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
-                                ],
-                            ],
-                        ],
-                        [
-                            '$bcc' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(3, $response['records'], 'All emails sent by the current user and to the contact');
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
 
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$from' => [
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => '$current_user_id',
-                        ],
-                    ],
-                    '$or' => [
-                        [
-                            '$to' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
-                                ],
-                            ],
-                        ],
-                        [
-                            '$cc' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
-                                ],
-                            ],
-                        ],
-                        [
-                            '$bcc' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
-                                ],
-                            ],
-                        ],
-                    ],
-                    'state' => [
-                        '$in' => ['Archived'],
-                    ],
-                ],
-            ],
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(2, $response['records'], 'All archived emails sent by the current user and to the contact');
+            $this->assertCount(
+                1,
+                $response['records'],
+                "{$desc}: All emails sent by the current user to \$user, copying the contact"
+            );
 
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$from' => [
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => '$current_user_id',
-                        ],
-                    ],
-                    '$to' => [
-                        [
-                            'parent_type' => 'Contacts',
-                            'parent_id' => $contact->id,
-                        ],
-                    ],
-                    'state' => [
-                        '$in' => ['Draft'],
-                    ],
-                ],
-            ],
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(
-            0,
-            $response['records'],
-            'All drafts to be sent by the current user and directly to the contact'
-        );
+            $expected = [$email2->id];
 
-        $args = [
-            'module' => 'Emails',
-            'filter' => [
-                [
-                    '$from' => [
-                        [
-                            'parent_type' => 'Users',
-                            'parent_id' => '$current_user_id',
-                        ],
-                    ],
-                    '$or' => [
-                        [
-                            '$to' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails sent by the current user to \$user, copying the contact: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$and' => [
+                            [
+                                '$from' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$to' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => $user->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$bcc' => [
+                                    [
+                                        'parent_type' => 'Users',
+                                        'parent_id' => '$current_user_id',
+                                    ],
                                 ],
                             ],
                         ],
-                        [
-                            '$cc' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
-                                ],
-                            ],
-                        ],
-                        [
-                            '$bcc' => [
-                                [
-                                    'parent_type' => 'Contacts',
-                                    'parent_id' => $contact->id,
-                                ],
-                            ],
-                        ],
-                    ],
-                    'state' => [
-                        '$in' => ['Draft'],
                     ],
                 ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
             ],
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$and' => [
+                            [
+                                'from_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'to_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => $user->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'bcc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Users',
+                                            'parent_id' => '$current_user_id',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
         ];
-        $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(1, $response['records'], 'All drafts to be sent by the current user and to the contact');
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(
+                1,
+                $response['records'],
+                "{$desc}: All emails sent from the contact to \$user, blind copying the current user"
+            );
+
+            $expected = [$email6->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails sent from the contact to \$user, blind copying the current user: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => '$current_user_id',
+                            ],
+                        ],
+                        '$or' => [
+                            [
+                                '$to' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$cc' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$bcc' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                            ],
+                        ],
+                        '$or' => [
+                            [
+                                'to_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'cc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'bcc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(
+                3,
+                $response['records'],
+                "{$desc}: All emails sent by the current user and to the contact"
+            );
+
+            $expected = [$email1->id, $email2->id, $email4->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All emails sent by the current user and to the contact: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => '$current_user_id',
+                            ],
+                        ],
+                        '$or' => [
+                            [
+                                '$to' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$cc' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$bcc' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'state' => [
+                            '$in' => ['Archived'],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                            ],
+                        ],
+                        '$or' => [
+                            [
+                                'to_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'cc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'bcc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'state' => [
+                            '$in' => ['Archived'],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(
+                2,
+                $response['records'],
+                "{$desc}: All archived emails sent by the current user and to the contact"
+            );
+
+            $expected = [$email1->id, $email2->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All archived emails sent by the current user and to the contact: {$record['name']}"
+                );
+            }
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => '$current_user_id',
+                            ],
+                        ],
+                        '$to' => [
+                            [
+                                'parent_type' => 'Contacts',
+                                'parent_id' => $contact->id,
+                            ],
+                        ],
+                        'state' => [
+                            '$in' => ['Draft'],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                            ],
+                        ],
+                        'to_collection' => [
+                            '$in' => [
+                                [
+                                    'parent_type' => 'Contacts',
+                                    'parent_id' => $contact->id,
+                                ],
+                            ],
+                        ],
+                        'state' => [
+                            '$in' => ['Draft'],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(
+                0,
+                $response['records'],
+                "{$desc}: All drafts to be sent by the current user and directly to the contact"
+            );
+        }
+
+        $shapes = [
+            'uses_macro' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Users',
+                                'parent_id' => '$current_user_id',
+                            ],
+                        ],
+                        '$or' => [
+                            [
+                                '$to' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$cc' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                            [
+                                '$bcc' => [
+                                    [
+                                        'parent_type' => 'Contacts',
+                                        'parent_id' => $contact->id,
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'state' => [
+                            '$in' => ['Draft'],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+            'uses_field_name' => [
+                'module' => 'Emails',
+                'filter' => [
+                    [
+                        'from_collection' => [
+                            '$in' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                            ],
+                        ],
+                        '$or' => [
+                            [
+                                'to_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'cc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'bcc_collection' => [
+                                    '$in' => [
+                                        [
+                                            'parent_type' => 'Contacts',
+                                            'parent_id' => $contact->id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'state' => [
+                            '$in' => ['Draft'],
+                        ],
+                    ],
+                ],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ],
+        ];
+
+        foreach ($shapes as $desc => $args) {
+            $response = $this->api->filterList($this->service, $args);
+
+            $this->assertCount(
+                1,
+                $response['records'],
+                "{$desc}: All drafts to be sent by the current user and to the contact"
+            );
+
+            $expected = [$email4->id];
+
+            foreach ($response['records'] as $record) {
+                $this->assertContains(
+                    $record['id'],
+                    $expected,
+                    "{$desc}: All archived emails sent by the current user and to the contact: {$record['name']}"
+                );
+            }
+        }
     }
 
     public function throwsSugarApiExceptionInvalidParameterProvider()
@@ -799,6 +1724,35 @@ class EmailsFilterApiTest extends TestCase
                         '$from' => [
                             [
                             ],
+                        ],
+                    ],
+                ],
+            ],
+            'operators_are_missing' => [
+                [
+                    [
+                        'from_collection' => [],
+                    ],
+                ],
+            ],
+            '$in_operator_is_missing' => [
+                [
+                    [
+                        'from_collection' => [
+                            '$equals' => Uuid::uuid1(),
+                        ],
+                    ],
+                ],
+            ],
+            'unsupported_operators' => [
+                [
+                    [
+                        'from_collection' => [
+                            '$in' => [
+                                'parent_type' => 'Contacts',
+                                'parent_id' => Uuid::uuid1(),
+                            ],
+                            '$not_equals' => Uuid::uuid1(),
                         ],
                     ],
                 ],

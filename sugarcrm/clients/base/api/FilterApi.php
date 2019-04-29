@@ -954,7 +954,7 @@ class FilterApi extends SugarApi
      * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiExceptionNotAuthorized
      */
-    private static function addFieldFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter, $field)
+    protected static function addFieldFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter, $field)
     {
         static $sfh;
         if (!isset($sfh)) {
