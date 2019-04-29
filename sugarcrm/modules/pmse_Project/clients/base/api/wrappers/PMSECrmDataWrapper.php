@@ -825,14 +825,14 @@ class PMSECrmDataWrapper implements PMSEObservable
         $ie->email = $email;
 
         $query = <<<SQL
-SELECT users.id, users.first_name, users.last_name, eabr.primary_address, ea.email_address, 'Users' module 
+SELECT users.id, users.first_name, users.last_name, eabr.primary_address, ea.email_address, 'Users' module
 FROM users
 JOIN email_addr_bean_rel eabr ON (users.id = eabr.bean_id AND eabr.deleted=0)
 JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
 WHERE (users.deleted = 0 AND eabr.primary_address = 1)
 AND (first_name LIKE :filter OR last_name LIKE :filter OR email_address LIKE :filter)
 UNION ALL
-SELECT contacts.id, contacts.first_name, contacts.last_name, eabr.primary_address, ea.email_address, 'Contacts' module 
+SELECT contacts.id, contacts.first_name, contacts.last_name, eabr.primary_address, ea.email_address, 'Contacts' module
 FROM contacts
 JOIN email_addr_bean_rel eabr ON(contacts.id = eabr.bean_id AND eabr.deleted=0)
 JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
@@ -846,14 +846,14 @@ JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
 WHERE (leads.deleted = 0 AND eabr.primary_address = 1)
 AND (first_name LIKE :filter OR last_name LIKE :filter OR email_address LIKE :filter)
 UNION ALL
-SELECT prospects.id, prospects.first_name, prospects.last_name, eabr.primary_address, ea.email_address, 
+SELECT prospects.id, prospects.first_name, prospects.last_name, eabr.primary_address, ea.email_address,
 'Prospects' module FROM prospects 
 JOIN email_addr_bean_rel eabr ON(prospects.id = eabr.bean_id AND eabr.deleted=0)
 JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
 WHERE (prospects.deleted = 0 AND eabr.primary_address = 1)
 AND (first_name LIKE :filter OR last_name LIKE :filter OR email_address LIKE :filter)
 UNION ALL
-SELECT accounts.id, '' first_name, accounts.name last_name, eabr.primary_address, ea.email_address, 'Accounts' module 
+SELECT accounts.id, '' first_name, accounts.name last_name, eabr.primary_address, ea.email_address, 'Accounts' module
 FROM accounts
 JOIN email_addr_bean_rel eabr ON (accounts.id = eabr.bean_id AND eabr.deleted=0)
 JOIN email_addresses ea ON(eabr.email_address_id = ea.id)
@@ -948,30 +948,44 @@ SQL;
      */
     public function retrieveUsers($filter = '')
     {
-        $output = [];
-        $where = <<<SQL
-users.deleted = 0 AND users.status = 'Active' AND NOT (users.is_group = 1 OR users.portal_only = 1)
-SQL;
+        $users = BeanFactory::newBean('Users');
+        $teams = BeanFactory::newBean('Teams');
+
+        $q = new SugarQuery;
+        $q->from($users);
+        $q->select([
+            'id',
+            'first_name',
+            'last_name',
+        ]);
+        $q->orderBy('first_name', 'ASC')
+            ->orderBy('last_name', 'ASC');
+
+        $q->where()
+            ->equals('status', 'Active')
+            ->notEquals('is_group', 1)
+            ->notEquals('portal_only', 1);
+
         if (!empty($filter)) {
-            $filterWhere = <<<'SQL'
- AND (users.first_name LIKE %1$s OR users.last_name LIKE %1%s OR users.user_name LIKE %1$s )
-SQL;
-            $where .= sprintf($filterWhere, $this->usersBean->db->quoted("%{$filter}%"));
+            $q->where()
+                ->queryOr()
+                ->contains('first_name', $filter)
+                ->contains('last_name', $filter)
+                ->contains('user_name', $filter);
+        }
+        $result = [];
+        $rows = $q->execute();
+        foreach ($rows as $row) {
+            $result[] = [
+                'value' => $row['id'],
+                'text' => $teams->getDisplayName(
+                    $row['first_name'],
+                    $row['last_name']
+                ),
+            ];
         }
 
-        $order = 'users.first_name, users.last_name';
-
-        $usersData = $this->usersBean->get_full_list($order, $where);
-        if (is_array($usersData)) {
-            foreach ($usersData as $user) {
-                $userTmp = [];
-                $userTmp['value'] = $user->id;
-                $userFullName = $this->teamsBean->getDisplayName($user->first_name, $user->last_name);
-                $userTmp['text'] = $userFullName;
-                $output[] = $userTmp;
-            }
-        }
-        return $output;
+        return $result;
     }
 
 
