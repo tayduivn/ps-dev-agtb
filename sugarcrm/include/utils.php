@@ -978,7 +978,7 @@ function return_app_list_strings_language($language, $useCache = true)
     //Merge language files together
     foreach ($langs as $key => $lang) {
 
-        $violations = Validator::getService()->validate($language, new Language());
+        $violations = Validator::getService()->validate($lang, new Language());
         if ($violations->count() > 0) {
             throw new ViolationException(
                 'Violation for language value',
