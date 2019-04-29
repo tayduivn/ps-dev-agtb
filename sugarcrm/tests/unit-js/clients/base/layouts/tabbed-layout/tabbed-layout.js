@@ -227,14 +227,17 @@ describe('Base.Layout.TabbedLayout', function() {
 
     describe('removeComponent()', function() {
         var appendStub;
+        var addClassStub;
         var comp;
         var def;
 
         beforeEach(function() {
             appendStub = sinon.collection.stub();
+            addClassStub = sinon.collection.stub();
             sinon.collection.stub(layout, '$', function() {
                 return {
-                    append: appendStub
+                    append: appendStub,
+                    addClass: addClassStub
                 };
             });
             sinon.collection.stub(app.lang, 'get', function() {
@@ -304,6 +307,17 @@ describe('Base.Layout.TabbedLayout', function() {
             layout._placeComponent(comp, def);
 
             expect(app.lang.get).toHaveBeenCalledWith('testType');
+        });
+
+        it('should add class on UL for name + -tabs', function() {
+            def = {
+                layout: {
+                    label: 'testLabel'
+                }
+            };
+            layout._placeComponent(comp, def);
+
+            expect(addClassStub).toHaveBeenCalledWith(layout.name + '-tabs');
         });
     });
 });

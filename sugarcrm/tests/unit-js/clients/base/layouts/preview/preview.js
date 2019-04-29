@@ -13,6 +13,7 @@ describe('Base.Layout.Preview', function() {
     var drawer;
     var testLayout;
     var module = 'Contacts';
+    var parentLayout;
     var testMeta = {
         lazy_loaded: true,
         components: [
@@ -44,10 +45,21 @@ describe('Base.Layout.Preview', function() {
             }
         };
 
+        parentLayout = SugarTest.createLayout('base', null, 'default', app.controller.context);
         // We need to pass a copy of 'testMeta' since initializing the layout will empty the components array.
         var testMetaCopy = app.utils.deepCopy(testMeta);
 
-        testLayout = SugarTest.createLayout('base', module, 'preview', testMetaCopy, app.controller.context);
+        testLayout = SugarTest.createLayout(
+            'base',
+            module,
+            'preview',
+            testMetaCopy,
+            app.controller.context,
+            false,
+            {
+                layout: parentLayout
+            }
+        );
     });
 
     afterEach(function() {
