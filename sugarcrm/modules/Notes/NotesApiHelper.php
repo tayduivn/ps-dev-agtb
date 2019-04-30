@@ -66,6 +66,6 @@ class NotesApiHelper extends SugarBeanApiHelper
 
         // And related data
         $note->account_id = $contact->account_id;
-        $note->contact_id= $contact->id;
+        $note->contact_id = $contact->id;
     }
 }

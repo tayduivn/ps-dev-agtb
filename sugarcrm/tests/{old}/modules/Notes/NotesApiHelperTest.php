@@ -75,6 +75,11 @@ class NotesApiHelperTest extends TestCase
  */
 class NotesServiceMock extends ServiceBase
 {
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
+    public function execute()
+    {
+    }
+
+    protected function handleException(Exception $exception)
+    {
+    }
 }

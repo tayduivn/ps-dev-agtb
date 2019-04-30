@@ -410,7 +410,7 @@ $dictionary['Note'] = [
             'source' => 'non-db',
             'vname' => 'LBL_TASKS',
         ],
-        'schedulersjobs' =>
+        'schedulersjobs' => [
             'name' => 'schedulersjobs',
             'type' => 'link',
             'relationship' => 'schedulersjob_notes',
@@ -422,7 +422,7 @@ $dictionary['Note'] = [
             'type' => 'link',
             'relationship' => 'contact_notes_parent',
             'source' => 'non-db',
-            'reportable' => false
+            'reportable' => false,
         ],
         'entry_source' => [
             'name' => 'entry_source',
