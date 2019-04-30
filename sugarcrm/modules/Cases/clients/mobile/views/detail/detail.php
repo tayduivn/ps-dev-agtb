@@ -48,6 +48,7 @@ $viewdefs['Cases']['mobile']['view']['detail'] = array(
                 'assigned_user_name',
 
                 'team_name',
+                'commentlog',
             ),
         )
     )
