@@ -242,6 +242,31 @@
     },
 
     /**
+     * Returns the filter definition for the value of this field.
+     */
+    buildFilterDefinition: function() {
+        var collection;
+
+        if (!this.model) {
+            return [];
+        }
+
+        collection = this.model.get(this.name);
+
+        if (!collection) {
+            return [];
+        }
+
+        // Return all of the models in the collection in their current state so
+        // that the _link and parent_name/email_address attributes are stored
+        // in the saved filter definition. This guarantees that the pills will
+        // be displayed correctly when a saved filter is loaded.
+        return collection.map(function(model) {
+            return model.attributes;
+        });
+    },
+
+    /**
      * Decorates recipients that need it.
      *
      * @private

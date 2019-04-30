@@ -1587,6 +1587,28 @@ describe('Base.View.FilterRows', function() {
             expected = { date_created: { $dateRange: 'last_year' } };
             expect(filter).toEqual(expected);
         });
+
+        it('should delegate to the field when it knows how to compile its own value into a filter def', function() {
+            var field = {
+                model: new Backbone.Model(),
+                buildFilterDefinition: sinon.stub().returns('def')
+            };
+
+            $row = $('<div>').data({
+                name: 'description',
+                operator: '$starts',
+                value: 'abc',
+                valueField: field
+            });
+            filter = view.buildRowFilterDef($row);
+
+            expect(field.buildFilterDefinition).toHaveBeenCalled();
+            expect(filter).toEqual({
+                description: {
+                    '$starts': 'def'
+                }
+            });
+        });
     });
 
     describe('saveFilterEditState', function() {

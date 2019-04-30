@@ -15,13 +15,17 @@ describe('Emails.BaseEmailRecipientsField', function() {
     var to;
     var model;
     var sandbox;
+    var parentId1;
+    var emailAddressId1;
+    var parentId2;
+    var emailAddressId2;
 
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
-        var parentId1 = _.uniqueId();
-        var emailAddressId1 = _.uniqueId();
-        var parentId2 = _.uniqueId();
-        var emailAddressId2 = _.uniqueId();
+        parentId1 = _.uniqueId();
+        emailAddressId1 = _.uniqueId();
+        parentId2 = _.uniqueId();
+        emailAddressId2 = _.uniqueId();
 
         SugarTest.testMetadata.init();
 
@@ -159,6 +163,81 @@ describe('Emails.BaseEmailRecipientsField', function() {
             expect(field._decorateInvalidRecipients).toHaveBeenCalledOnce();
             expect(field._enableDragDrop).toHaveBeenCalledOnce();
             expect(field.$(field.fieldTag).select2('data').length).toBe(to.length);
+        });
+    });
+
+    describe('build filter definition', function() {
+        it('should return the value segment of a filter definition', function() {
+            var emailAddressId3 = _.uniqueId();
+            var emailAddressId4 = _.uniqueId();
+            var parentId4 = _.uniqueId();
+            var beanWithNoParent = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                email_address_id: emailAddressId3,
+                email_address: 'foo@test.com',
+                invalid_email: false,
+                opt_out: true
+            });
+            var beanWithNoEmailAddress = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                parent: {
+                    _acl: {},
+                    type: 'Leads',
+                    id: parentId4,
+                    name: 'Tim'
+                },
+                parent_type: 'Leads',
+                parent_id: parentId4,
+                parent_name: 'Tim',
+            });
+            var beanWithInvalidEmailAddress = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                email_address_id: emailAddressId4,
+                email_address: 'fizz@buzz.com',
+                invalid_email: true,
+                opt_out: false
+            });
+            var filterDef;
+
+            field = SugarTest.createField({
+                name: 'to_collection',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+
+            field.model.set('to_collection', to);
+            field.model.get('to_collection').add(beanWithNoParent);
+            field.model.get('to_collection').add(beanWithNoEmailAddress);
+            field.model.get('to_collection').add(beanWithInvalidEmailAddress);
+            field.model.trigger('sync');
+
+            filterDef = field.buildFilterDefinition();
+
+            expect(filterDef.length).toEqual(5);
+
+            expect(filterDef[0].parent_id).toBe(parentId1);
+            expect(filterDef[0].parent_type).toBe('Contacts');
+            expect(filterDef[0].email_address_id).toBe(emailAddressId1);
+
+            expect(filterDef[1].parent_id).toBe(parentId2);
+            expect(filterDef[1].parent_type).toBe('Contacts');
+            expect(filterDef[1].email_address_id).toBe(emailAddressId2);
+
+            expect(filterDef[2].parent_id).toBeUndefined();
+            expect(filterDef[2].parent_type).toBeUndefined();
+            expect(filterDef[2].email_address_id).toBe(emailAddressId3);
+
+            expect(filterDef[3].parent_id).toBe(parentId4);
+            expect(filterDef[3].parent_type).toBe('Leads');
+            expect(filterDef[3].email_address_id).toBeUndefined();
+
+            expect(filterDef[4].parent_id).toBeUndefined();
+            expect(filterDef[4].parent_type).toBeUndefined();
+            expect(filterDef[4].email_address_id).toBe(emailAddressId4);
         });
     });
 

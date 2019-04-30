@@ -690,8 +690,19 @@
      * @param {jQuery} $row The related filter row.
      */
     initValueField: function($row) {
+        var self = this;
         var data = $row.data();
         var operation = data.operatorField.model.get('filter_row_operator');
+
+        // We have always listened to model changes. More recently, we are
+        // listening to attribute changes because collection fields only
+        // trigger attribute change events. We don't want to fire a search
+        // when both the model and attribute change events occur, hence the
+        // debounce.
+        var search = _.debounce(function() {
+            self._updateFilterData($row);
+            self.fireSearch();
+        }, 200);
 
         // Make sure the data attributes contain the right operator selected.
         data.operator = operation;
@@ -768,6 +779,10 @@
 
         var $fieldValue = $row.find('[data-filter=value]');
         $fieldValue.removeClass('hide').empty();
+
+        // Add the field type as an attribute on the HTML element so that it
+        // can be used as a CSS selector.
+        $fieldValue.attr('data-type', fieldType);
 
         //fire the change event as soon as the user start typing
         var _keyUpCallback = function(e) {
@@ -876,7 +891,6 @@
             if ((fieldDef.type === 'relate' || fieldDef.type === 'nestedset') &&
                 !_.isEmpty($row.data('value'))
             ) {
-                var self = this;
                 var findRelatedName = app.data.createBeanCollection(fieldDef.module);
                 var relateOperator = this.isCollectiveValue($row) ? '$in' : '$equals';
                 var relateFilter = [{id: {}}];
@@ -899,10 +913,8 @@
             }
         }
         // When the value change a quicksearch should be fired to update the results
-        this.listenTo(model, "change", function() {
-            this._updateFilterData($row);
-            this.fireSearch();
-        });
+        this.listenTo(model, 'change', search);
+        this.listenTo(model, 'change:' + fieldName, search);
 
         // Manually trigger the filter request if a value has been selected lately
         // This is the case for checkbox fields or enum fields that don't have empty values.
@@ -1047,7 +1059,10 @@
             filter[name] = '';
             return filter;
         } else {
-            if (this.fieldList[name] && _.has(this.fieldList[name], 'dbFields')) {
+            if (!_.isEmpty(data.valueField) && _.isFunction(data.valueField.buildFilterDefinition)) {
+                filter[name] = {};
+                filter[name][operator] = data.valueField.buildFilterDefinition();
+            } else if (this.fieldList[name] && _.has(this.fieldList[name], 'dbFields')) {
                 var subfilters = [];
                 _.each(this.fieldList[name].dbFields, function(dbField) {
                     var filter = {};

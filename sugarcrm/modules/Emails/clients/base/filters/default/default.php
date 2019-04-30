@@ -33,5 +33,17 @@ $viewdefs['Emails']['base']['filter']['default'] = array(
             'predefined_filter' => true,
             'vname' => 'LBL_FAVORITES_FILTER',
         ),
+        'from_collection' => array(
+            'type' => 'email-recipients',
+        ),
+        'to_collection' => array(
+            'type' => 'email-recipients',
+        ),
+        'cc_collection' => array(
+            'type' => 'email-recipients',
+        ),
+        'bcc_collection' => array(
+            'type' => 'email-recipients',
+        ),
     ),
 );
