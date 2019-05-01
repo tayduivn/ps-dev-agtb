@@ -91,6 +91,12 @@ export default class extends BaseView {
                     'Create Tag': 'a[data-navbar-menu-item="LNK_NEW_TAG"]',
                     'View Tags': 'a[data-navbar-menu-item="LNK_TAG_LIST"]',
                     'Import Tags': 'a[data-navbar-menu-item="LNK_IMPORT_TAGS"]',
+
+                    // Tasks
+                    'Create Task': 'a[data-navbar-menu-item="LNK_NEW_TASK"]',
+                    'View Tasks': 'a[data-navbar-menu-item="LNK_TASK_LIST"]',
+                    'Import Tasks': 'a[data-navbar-menu-item="LNK_IMPORT_TASKS"]',
+
                 },
             }
         };

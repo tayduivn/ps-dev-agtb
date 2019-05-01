@@ -43,10 +43,33 @@ export default class DatetimecomboField extends BaseField {
             await this.driver.setValue(this.$('field.date').trim(), date);
         }
         if (time) {
-                await this.driver.click(this.$('field.time'));
-                await this.driver.scroll('li=' + time.trim());
-                await this.driver.click('li=' + time.trim());
+            await this.driver.click(this.$('field.time'));
+            await this.driver.scroll('li=' + time.trim());
+            await this.driver.click('li=' + time.trim());
         }
         await this.driver.click('body');
     }
 }
+
+export class Detail extends DatetimecomboField {
+
+    protected itemSelector: String;
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div'
+            }
+        });
+    }
+
+
+    public async getText(selector: string): Promise<string> {
+        let value: string | string[] = await this.driver.getText(selector);
+        return value.toString().trim();
+    }
+}
+
+export const Preview = Detail;

@@ -136,6 +136,32 @@ When(/^I (copy|cancel copy of) \*(\w+) record in (\w+) record view with the foll
 
 
 /**
+ *  Close specified record in the record view
+ *
+ *  @example
+ *  When I Close *Pr_1 record in Tasks record view
+ */
+When(/^I close \*(\w+) record in (\w+) record view$/,
+    async function (name: string, module: string) {
+        await chooseModule(module);
+
+        let list_view = await seedbed.components[`${module}List`].ListView;
+        let record = await seedbed.cachedRecords.get(name);
+        let listItem = list_view.getListItem({id: record.id});
+
+        // Navigate to record view of specified record
+        await chooseRecord({id: record.id}, list_view);
+        let rec_view = await seedbed.components[`${name}Record`];
+
+        // Click Close button under Actions dropdown
+        await recordViewActionsMenuItemClick('CloseTask', rec_view);
+
+        // Dismiss success alert
+        closeAlert();
+    }, {waitForApp: true}
+);
+
+/**
  *  Verify specified field values of the record in the record view
  *
  *  @example

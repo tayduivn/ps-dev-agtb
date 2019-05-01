@@ -49,6 +49,7 @@ export default class RecordHeaderView extends BaseView {
                 'closeandcreatenew': 'a[name="record-close-new"]:not(.hide)',
                 'closecall': 'a[name="record-close"]:not(.hide)',
                 'closemeeting': 'a[name="record-close"]:not(.hide)',
+                'closetask': 'a[name="record-close"]:not(.hide)',
 
                 // Cases module controls
                 'createarticle': 'a[name="create_button"]:not(.hide)',
