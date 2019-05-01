@@ -129,6 +129,13 @@
     _avatarSize: 28,
 
     /**
+     * Ensures we only bind event listeners once.
+     *
+     * @property {boolean}
+     */
+    _hasDelegated: false,
+
+    /**
      * Cap on the maximum number of tabs allowed.
      *
      * @property {Object}
@@ -159,9 +166,16 @@
             'click [data-action=tab-switcher]': 'tabSwitcher'
         });
 
-        // FIXME CS-55: disable this code
-        this.toggleFields(this.editableFields, false);
-        this.action = 'detail'; // don't allow editing
+        /**
+         * Events to listen to on the dashlet toolbar's context.
+         *
+         * @property {Object}
+         */
+        this._toolbarContextEvents = {
+            'button:edit_button:click': this.editRecord,
+            'button:save_button:click': this.saveClicked,
+            'button:cancel_button:click': this.cancelClicked
+        };
     },
 
     /**
@@ -190,7 +204,7 @@
         // split out the headerpane if necessary, and remove unwanted fields
         // we need to inject these into the toolbar
         if (newMeta.panels) {
-            this._prepareHeader(newMeta.panels);
+            this._prepareHeader(newMeta.panels, newMeta.buttons);
         }
 
         return newMeta;
@@ -533,7 +547,6 @@
             return;
         }
 
-        // FIXME: wondering if we should use switchModel here, or ditch that and just copy aspects of it to here
         this.model = tab.model;
         this.module = tab.module;
         this.context.set('module', this.module);
@@ -544,7 +557,7 @@
         this._buildGridsFromPanelsMetadata();
         this.collection = tab.collection || null;
         this.context.set('model', this.model, {silent: true});
-        this._prepareHeader(this.meta.panels);
+        this._prepareHeader(this.meta.panels, this.meta.buttons);
         // TODO update this.collection as well as part of CS-63?
     },
 
@@ -815,7 +828,6 @@
         this.tabsHtml = this._tabsTemplate(this);
 
         var tab = this.currentTab;
-
         var tabType = tab && tab.type;
         this.tabContentHtml = tabType === 'list' ? this._recordsTemplate(this) : this._recordTemplate(this);
 
@@ -846,10 +858,25 @@
 
     /**
      * @override
+     *
+     * The buttons are actually on the dashlet-toolbar component, so we have to
+     * listen there rather than on the record view dashlet context.
      */
     delegateButtonEvents: function() {
-        // don't do anything, we don't have any of the buttons from the regular record view
-        // For CS-55 we may want to change that.
+        if (this._hasDelegated) {
+            return;
+        }
+
+        var toolbar = this._getToolbar();
+        if (!toolbar) {
+            return;
+        }
+
+        var context = toolbar.context;
+        this._hasDelegated = true;
+        _.each(this._toolbarContextEvents, function(value, key) {
+            context.on(key, value, this);
+        }, this);
     },
 
     /**
@@ -857,7 +884,41 @@
      */
     editClicked: function() {
         // the dashlet toolbar is triggering record view's editClicked, so override it here
-        this.layout.getComponent('dashlet-toolbar').editClicked();
+        this._getToolbar().editClicked();
+    },
+
+    /**
+     * Edit the underlying record (rather than the dashlet itself).
+     */
+    editRecord: function() {
+        this._super('editClicked', arguments);
+    },
+
+    /**
+     * @override
+     *
+     * Propagate button state requests to the dashlet toolbar.
+     */
+    setButtonStates: function(state) {
+        var toolbar = this._getToolbar();
+        toolbar && toolbar.setButtonStates(state);
+    },
+
+    /**
+     * @override
+     *
+     * Do nothing. Dashlets should not affect the route.
+     */
+    setRoute: _.noop,
+
+    /**
+     * Get the dashlet toolbar component.
+     *
+     * @return {View.Layout}
+     * @private
+     */
+    _getToolbar: function() {
+        return this.layout && this.layout.getComponent('dashlet-toolbar');
     },
 
     /**
@@ -1029,17 +1090,23 @@
     },
 
     /**
-     * Prepare the header fields from the given panels.
+     * Prepare the header fields from the given panels and buttons.
      *
      * @param {Object[]} panels Record view panel metadata.
+     * @param {Object[]} buttons Record view button metadata.
      * @private
      */
-    _prepareHeader: function(panels) {
+    _prepareHeader: function(panels, buttons) {
         this._headerFields = this._headerFields || [];
+        this._headerButtons = this._headerButtons || [];
+
+        // find which (if any) of the panels is for the header
         var headerIndex = _.findIndex(panels, function(panel) {
             return panel.header === true;
         });
+
         if (headerIndex !== -1) {
+            // get all the fields we want to show in the header and shrink them down if necessary
             var header = panels.splice(headerIndex, 1)[0];
             var fields = _.filter(header.fields, _.bind(function(field) {
                 return !field.type || !_.includes(this._noshowFields, field.type);
@@ -1055,9 +1122,50 @@
                     field.width = field.width ? Math.min(field.width, this._avatarSize) : this._avatarSize;
                 }
             }, this);
+
+            // tweak the buttons as necessary
+            var desiredButtons = this._getHeaderButtons(buttons);
         }
         this._headerFields = fields || this._headerFields;
+        this._headerButtons = desiredButtons || this._headerButtons;
+
         this._injectRecordHeader();
+    },
+
+    /**
+     * Adjust the given button definitions for appropriate use in the dashlet
+     * toolbar.
+     *
+     * @param {Object[]} buttons List of button fielddefs from metadata.
+     * @return {Object[]} The list of button definitions tweaked for the
+     *   dashlet toolbar.
+     * @private
+     */
+    _getHeaderButtons: function(buttons) {
+        var desiredButtons = [];
+        _.each(buttons, function(button) {
+            var buttonToCheck = button;
+
+            if (button.buttons) { // dropdown
+                button.buttons = _.filter(button.buttons, function(subButton) {
+                    return subButton.name === 'edit_button';
+                });
+
+                if (!button.buttons.length) {
+                    return;
+                }
+
+                buttonToCheck = button.buttons[0];
+            }
+
+            var desiredButtonNames = ['save_button', 'cancel_button', 'edit_button'];
+            if (_.includes(desiredButtonNames, button.name) || button.type === 'actiondropdown') {
+                button.name = 'dashlet_' + button.name;
+                desiredButtons.push(button); // note, save the original button, not the subbutton
+            }
+        });
+
+        return desiredButtons;
     },
 
     /**
@@ -1073,10 +1181,13 @@
             return;
         }
         // inject header content into dashlet toolbar
-        var dashletToolbar = this.layout && this.layout.getComponent('dashlet-toolbar');
+        var dashletToolbar = this._getToolbar();
         if (dashletToolbar) {
+            var buttonsToSend = app.acl.hasAccessToModel('edit', model) ? this._headerButtons : [];
+
             var toolbarCtx = dashletToolbar.context;
-            toolbarCtx.trigger('dashlet:toolbar:change', this._headerFields, model);
+            toolbarCtx.trigger('dashlet:toolbar:change', this._headerFields, buttonsToSend, model, this);
+            this.delegateButtonEvents();
         }
     },
 
@@ -1559,5 +1670,31 @@
         } else {
             tab && tab.type === 'list' ? listBottom.show() : listBottom.hide();
         }
+    },
+
+    /**
+     * Get the collection of record-cell elements in the header.
+     *
+     * @return {jQuery|undefined} The collection of record-cell and btn-toolbar
+     *   elements from the toolbar, or `undefined` if the toolbar is not
+     *   available.
+     * @private
+     */
+    _getRecordCells: function() {
+        var toolbar = this._getToolbar();
+        if (!toolbar) {
+            return;
+        }
+        return toolbar.$('h4.record-toolbar').children('.record-cell, .btn-toolbar');
+    },
+
+    /**
+     * @override
+     *
+     * Get a hardcoded container width for now.
+     */
+    getContainerWidth: function() {
+        // FIXME: see if this hack can be undone.
+        return 230;
     }
 })

@@ -89,6 +89,50 @@ describe('Base.Field.Actiondropdown', function() {
         });
     });
 
+    describe('setDisabled', function() {
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'main_dropdown',
+                'actiondropdown',
+                'detail',
+                {
+                    name: 'main_dropdown',
+                    type: 'actiondropdown',
+                    buttons: [
+                        {
+                            type: 'rowaction',
+                            name: 'test1'
+                        },
+                        {
+                            type: 'rowaction',
+                            name: 'test2'
+                        }
+                    ]
+                },
+                moduleName
+            );
+            field.render();
+        });
+
+        it('should toggle attributes', function() {
+            field.setDisabled(true);
+
+            expect(field.tabIndex).toEqual(-1);
+            var $actionDropDownTag = field.$(field.actionDropDownTag);
+            expect($actionDropDownTag.hasClass('disabled')).toEqual(true);
+            expect($actionDropDownTag.attr('aria-haspopup')).toEqual('false');
+            expect($actionDropDownTag.attr('tabindex')).toEqual('-1');
+
+            field.setDisabled(false);
+            $actionDropDownTag = field.$(field.actionDropDownTag);
+            expect(field.tabIndex).toEqual(0);
+            expect($actionDropDownTag.hasClass('disabled')).toEqual(false);
+            expect($actionDropDownTag.attr('aria-haspopup')).toEqual('true');
+            expect($actionDropDownTag.attr('tabindex')).toEqual('0');
+        });
+    });
+
     describe('switch_on_click', function() {
         beforeEach(function() {
             field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', {

@@ -50,7 +50,24 @@ describe('Base.View.DashletToolbar', function() {
             'base',
             moduleName,
             viewName,
-            {},
+            {
+                buttons: [
+                    {
+                        type: 'dashletaction',
+                        action: 'toggleminify'
+                    },
+                    {
+                        dropdownbuttons: [
+                            {
+                                type: 'dashletaction',
+                                action: 'editClicked',
+                                label: 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                                name: 'edit_button',
+                            }
+                        ]
+                    }
+                ]
+            },
             context,
             false,
             layout
@@ -65,15 +82,45 @@ describe('Base.View.DashletToolbar', function() {
     });
 
     describe('bindDataChange', function() {
-        it('should set the header fields and model on dashlet:toolbar:change', function() {
+        it('should set the header fields, buttons, and model on dashlet:toolbar:change', function() {
             var renderStub = sinon.collection.stub(view, 'render');
-            view.bindDataChange();
             var account = app.data.createBean(moduleName);
 
-            view.context.trigger('dashlet:toolbar:change', [{name: 'myfield'}], account);
+            view.bindDataChange();
+            view.context.trigger(
+                'dashlet:toolbar:change',
+                [{name: 'myfield'}],
+                [
+                    {
+                        name: 'a new button',
+                        type: 'button'
+                    }
+                ],
+                account
+            );
 
             expect(renderStub).toHaveBeenCalled();
             expect(view.headerFields).toEqual([{name: 'myfield'}]);
+            expect(view.buttons).toEqual([
+                {
+                    name: 'a new button',
+                    type: 'button'
+                },
+                {
+                    type: 'dashletaction',
+                    action: 'toggleminify'
+                },
+                {
+                    dropdownbuttons: [
+                        {
+                            type: 'dashletaction',
+                            action: 'editClicked',
+                            label: 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                            name: 'edit_button',
+                        }
+                    ]
+                }
+            ]);
             expect(view.dashletModel).toBe(account);
         });
     });

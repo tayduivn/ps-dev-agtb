@@ -385,10 +385,12 @@
         this._super('setDisabled', [disable]);
         disable = _.isUndefined(disable) ? true : disable;
         this.tabIndex = disable ? -1 : 0;
-        this.$(this.actionDropDownTag)
-            .toggleClass('disabled', disable)
-            .attr('aria-haspopup', !disable)
-            .attr('tabindex', this.tabIndex);
+        if (this.$el) {
+            this.$(this.actionDropDownTag)
+                .toggleClass('disabled', disable)
+                .attr('aria-haspopup', !disable)
+                .attr('tabindex', this.tabIndex);
+        }
     },
 
     /**

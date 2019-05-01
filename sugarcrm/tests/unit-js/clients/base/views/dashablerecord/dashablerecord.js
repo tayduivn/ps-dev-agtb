@@ -20,6 +20,34 @@ describe('Base.View.Dashablerecord', function() {
     var layoutName = 'dashlet';
     var moduleName = 'Cases'; // important: visible is true in metadata.json for Cases, so we can select it as a module
     var recordMeta = {
+        buttons: [
+            {
+                name: 'save_button',
+                type: 'button',
+            },
+            {
+                name: 'a_button_we_dont_want',
+                type: 'button',
+            },
+            {
+                name: 'cancel_button',
+                type: 'button',
+            },
+            {
+                name: 'dropdown',
+                type: 'actiondropdown',
+                buttons: [
+                    {
+                        name: 'action_we_dont_want',
+                        type: 'rowaction',
+                    },
+                    {
+                        name: 'edit_button',
+                        type: 'rowaction',
+                    }
+                ],
+            }
+        ],
         panels: [
             {
                 name: 'panel_header',
@@ -117,7 +145,11 @@ describe('Base.View.Dashablerecord', function() {
         );
 
         dashletToolbarContext = new app.Context();
-        dashletToolbar = {context: dashletToolbarContext, editClicked: sinon.collection.stub()};
+        dashletToolbar = {
+            context: dashletToolbarContext,
+            editClicked: sinon.collection.stub(),
+            setButtonStates: sinon.collection.stub()
+        };
         getComponentStub = sinon.collection.stub(layout, 'getComponent');
         getComponentStub.withArgs('dashlet-toolbar').returns(dashletToolbar);
         getComponentStubListBottomReturn = {hide: function() {}, show: function() {}};
@@ -158,6 +190,41 @@ describe('Base.View.Dashablerecord', function() {
             view.initDashlet('config');
             view.settings.trigger('change:module', app.data.createBean('Home'), 'Cases');
             expect(view.dashModel.get('module')).toEqual('Cases');
+        });
+
+        it('should show a warning if there are too many tabs in configuration mode', function() {
+            view.initDashlet('config');
+            view._tabLimit = {
+                number: 2,
+                label: 'LBL_TWO'
+            };
+            var alertStub = sinon.collection.stub(app.alert, 'show');
+            var langStub = sinon.collection.stub(app.lang, 'get');
+            var msg = 'TWO (2) tabs is the most! You chose too many!';
+            langStub.withArgs('LBL_TWO').returns('TWO');
+            langStub.withArgs(
+                'TPL_DASHLET_RECORDVIEW_TOO_MANY_TABS',
+                null,
+                {num: 2, numWord: 'TWO'}
+            ).returns(msg);
+            sinon.collection.stub(dashletToolbarContext, 'trigger');
+            var dummyDashletConfiguration = {trigger: sinon.collection.stub()};
+            var closestComponentStub = sinon.collection.stub(view, 'closestComponent');
+            closestComponentStub.withArgs('dashletconfiguration')
+                .returns(dummyDashletConfiguration);
+            var dummyConfigDashlet = {context: {trigger: sinon.collection.stub()}};
+            getComponentStub.withArgs('dashlet').returns(dummyConfigDashlet);
+
+            view.settings.trigger('change:tabs', view.model, ['', 'accounts', 'contacts']);
+
+            expect(alertStub).toHaveBeenCalledWith(
+                'too_many_tabs',
+                {
+                    level: 'warning',
+                    messages: msg
+                }
+            );
+            expect(dummyConfigDashlet.context.trigger).toHaveBeenCalledWith('dashablerecord:config:tabs:change');
         });
 
         describe('pseudo dashlet', function() {
@@ -224,35 +291,75 @@ describe('Base.View.Dashablerecord', function() {
     });
 
     describe('bindDataChange', function() {
-        it('should update the model, trigger dashlet:toolbar:change, and then re-render on change:model', function() {
-            var switchModelStub = sinon.collection.stub(view, 'switchModel', function(model) { this.model = model; });
-            var renderStub = sinon.collection.stub(view, 'render');
-            var triggerStub = sinon.collection.stub(dashletToolbarContext, 'trigger');
-            var model = app.data.createBean(moduleName);
+        var renderStub;
+        var switchModelStub;
+        var triggerStub;
+        var model;
+
+        var headerFields = [
+            {
+                name: 'picture',
+                type: 'avatar',
+                size: 'button', // test that we shrank the avatar for the smaller dashlet toolbar
+                height: 28,
+                width: 28, // default the size
+            },
+            {
+                name: 'name',
+                type: 'name',
+                label: 'LBL_SUBJECT',
+            },
+        ];
+
+        var headerButtons = [
+            {
+                name: 'dashlet_save_button',
+                type: 'button'
+            },
+            {
+                name: 'dashlet_cancel_button',
+                type: 'button'
+            },
+            {
+                name: 'dashlet_dropdown',
+                type: 'actiondropdown',
+                buttons: [
+                    {
+                        name: 'edit_button',
+                        type: 'rowaction'
+                    }
+                ]
+            }
+        ];
+
+        beforeEach(function() {
+            switchModelStub = sinon.collection.stub(view, 'switchModel', function(model) { this.model = model; });
+            renderStub = sinon.collection.stub(view, 'render');
+            triggerStub = sinon.collection.stub(dashletToolbarContext, 'trigger');
+            model = app.data.createBean(moduleName);
             view.meta = {};
             view.bindDataChange();
+        });
+
+        it('should update the model, trigger dashlet:toolbar:change, and then re-render on change:model', function() {
             view.context.trigger('change:model', view.context, model);
 
             expect(switchModelStub).toHaveBeenCalledWith(model);
             expect(triggerStub).toHaveBeenCalledWith(
                 'dashlet:toolbar:change',
-                [
-                    {
-                        name: 'picture',
-                        type: 'avatar',
-                        size: 'button', // test that we shrank the avatar for the smaller dashlet toolbar
-                        height: 28,
-                        width: 28, // default the size
-                    },
-                    {
-                        name: 'name',
-                        type: 'name',
-                        label: 'LBL_SUBJECT',
-                    },
-                ],
+                headerFields,
+                headerButtons,
                 model
             );
             expect(renderStub).toHaveBeenCalled();
+        });
+
+        it('should not send any buttons if we lack ACL access', function() {
+            sinon.collection.stub(app.acl, 'hasAccessToModel').withArgs('edit', model).returns(false);
+            view.context.trigger('change:model', view.context, model);
+
+            expect(switchModelStub).toHaveBeenCalledWith(model);
+            expect(triggerStub).toHaveBeenCalledWith('dashlet:toolbar:change', headerFields, [], model);
         });
     });
 
@@ -316,6 +423,7 @@ describe('Base.View.Dashablerecord', function() {
             });
 
             it('should update the toolbar header', function() {
+                sinon.collection.stub(view, 'adjustHeaderpane');
                 view.initDashlet('main');
                 var triggerStub = sinon.collection.stub(dashletToolbarContext, 'trigger');
                 view.render();

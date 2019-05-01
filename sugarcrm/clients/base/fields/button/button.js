@@ -114,6 +114,10 @@
             this.trigger('show');
         }
     },
+
+    /**
+     * Show this button if permissible, otherwise mark it as hidden.
+     */
     show: function() {
         if(this.hasAccess()) {
             this._show();
@@ -121,6 +125,13 @@
             this.isHidden = true;
         }
     },
+
+    /**
+     * Hide this button.
+     *
+     * @return {boolean} `false` if hiding was prevented by a before-event.
+     *   `undefined` otherwise.
+     */
     hide: function() {
         if (this.isHidden !== true) {
             if (!this.triggerBefore("hide")) {
@@ -132,10 +143,11 @@
             this.trigger('hide');
         }
     },
+
     /**
      * Track using the flag that is set on the hide and show from above.
      *
-     * It should check the visivility by isHidden instead of DOM visibility testing
+     * It should check the visibility by isHidden instead of DOM visibility testing
      * since actiondropdown renders its dropdown lazy
      *
      * @return {boolean}
@@ -143,6 +155,7 @@
     isVisible: function() {
         return !this.isHidden;
     },
+
     /**
      * @inheritdoc
      *

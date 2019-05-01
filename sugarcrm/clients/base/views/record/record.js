@@ -705,7 +705,7 @@
      * @protected
      */
     _initButtons: function() {
-        buttons = this.meta.buttons;
+        var buttons = this.meta.buttons;
         _.each(buttons, function(button) {
             this.registerFieldAsButton(button.name);
         }, this);
@@ -725,6 +725,11 @@
         }
     },
 
+    /**
+     * Adds a button field into `this.buttons`.
+     *
+     * @param {string} buttonName Name of the button.
+     */
     registerFieldAsButton: function(buttonName) {
         var button = this.getField(buttonName);
         if (button) {
@@ -887,6 +892,9 @@
         });
     },
 
+    /**
+     * Event handler for click event.
+     */
     editClicked: function() {
         this.setButtonStates(this.STATE.EDIT);
         this.action = 'edit';
@@ -1615,17 +1623,16 @@
      * is set to 100% on view.  On edit, the first field is set to 100%.
      */
     adjustHeaderpaneFields: function() {
-        var $ellipsisCell,
-            ellipsisCellWidth,
-            $recordCells;
+        var $ellipsisCell;
+        var ellipsisCellWidth;
 
         if (this.disposed) {
             return;
         }
 
-        $recordCells = this.$('.headerpane h1').children('.record-cell, .btn-toolbar');
+        var $recordCells = this._getRecordCells();
 
-        if (($recordCells.length > 0) && (this.getContainerWidth() > 0)) {
+        if ($recordCells && ($recordCells.length > 0) && (this.getContainerWidth() > 0)) {
             $ellipsisCell = $(this._getCellToEllipsify($recordCells));
 
             if ($ellipsisCell.length > 0) {
@@ -1642,6 +1649,17 @@
         if (this.layout) {
             this.layout.trigger('headerpane:adjust_fields');
         }
+    },
+
+    /**
+     * Get the collection of headerpane record-cell and btn-toolbar elements.
+     *
+     * @return {jQuery} The collection of headerpane record-cell and
+     *   btn-toolbar elements.
+     * @protected
+     */
+    _getRecordCells: function() {
+        return this.$('.headerpane h1').children('.record-cell, .btn-toolbar');
     },
 
     /**
