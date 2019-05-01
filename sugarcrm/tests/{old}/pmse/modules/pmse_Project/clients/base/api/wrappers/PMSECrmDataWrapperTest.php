@@ -75,6 +75,8 @@ class PMSECrmDataWrapperTest extends TestCase
     protected function setUp()
     {
         SugarTestHelper::setUp('current_user', ['save' => false, 'is_admin' => 1]);
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
         $this->originals['current_user'] = $GLOBALS['current_user'];
         $this->originals['db'] = $GLOBALS['db'];
 
