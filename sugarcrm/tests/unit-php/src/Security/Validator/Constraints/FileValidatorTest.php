@@ -23,6 +23,23 @@ use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintVali
  */
 class FileValidatorTest extends AbstractConstraintValidatorTest
 {
+
+    /**
+     * @var string
+     */
+    protected $customExistedFile;
+
+    /**
+     * {@inheritDoc
+     */
+    protected function tearDown()
+    {
+        if (!empty($this->customExistedFile) && file_exists($this->customExistedFile)) {
+            unlink($this->customExistedFile);
+        }
+        parent::tearDown();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -75,11 +92,6 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testValidValues($value, array $baseDirs, $expected)
     {
-        // skip test if given file does not exist
-        if (!file_exists($value)) {
-            $this->markTestSkipped("File $value does not exist on this system");
-        }
-
         $constraint = new File(array(
             'baseDirs' => $baseDirs,
         ));
@@ -158,5 +170,24 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
                 'file outside basedir',
             ),
         );
+    }
+
+    /**
+     * @covers ::validate
+     */
+    public function testValidateCustomFileExists()
+    {
+        $instanceDir = realpath(SUGAR_BASE_DIR);
+        // Dont move file creation to set up because test bootstrap is run after test object created
+        $this->customExistedFile = $instanceDir . '/custom/fileExist.txt';
+        $constraint = new File([
+            'baseDirs' => [
+                $instanceDir . '/custom',
+            ],
+        ]);
+
+        touch($this->customExistedFile);
+        $this->validator->validate($this->customExistedFile, $constraint);
+        $this->assertNoViolation();
     }
 }
