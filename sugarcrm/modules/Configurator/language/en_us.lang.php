@@ -193,6 +193,7 @@ $mod_strings = array (
     'LBL_ALERT_SIZE_RATIO' => 'The aspect ratio of the image should be between 1:1 and 10:1.  The image will be resized.',
     'LBL_ALERT_SIZE_RATIO_QUOTES' => 'The aspect ratio of the image must be between 3:1 and 20:1.  Upload a new file with this ratio.',
     'ERR_ALERT_FILE_UPLOAD' => 'Error during the upload of the image.',
+    'ERR_ALERT_CUSTOM_IMAGES_PATH' => 'Unable to create directory for images',
     'LBL_LOGGER'=>'Logger Settings',
 	'LBL_LOGGER_FILENAME'=>'Log File Name',
 	'LBL_LOGGER_MAX_LOG_SIZE'=>'Maximum log size',
