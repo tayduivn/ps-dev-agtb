@@ -22,5 +22,20 @@
         this.context.set('layout', options.context.get('layout') || 'multi-line');
         this.context.set('rowModel', options.context.get('model'));
         this.context = this.context.getChildContext({layout: this.context.get('layout')});
+    },
+
+    /**
+     * Change row model.
+     * @param {Object} model The new row model
+     * @return {boolean} true if model changed, otherwise false
+     */
+    setRowModel: function(model) {
+        var dashboard = this.getComponent('row-model-data').getComponent('dashboard');
+        if (dashboard && dashboard.model.mode !== 'edit') {
+            this.context.parent.set('rowModel', model);
+            dashboard.getComponent('dashlet-main').setMetadata();
+            return true;
+        }
+        return false;
     }
 })

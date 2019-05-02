@@ -11,6 +11,8 @@
 
 describe('View.Layouts.Base.RowModelDataLayout', function() {
     var app;
+    var testLayout;
+    var rowModel;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -18,33 +20,60 @@ describe('View.Layouts.Base.RowModelDataLayout', function() {
         SugarTest.loadComponent('base', 'layout', 'row-model-data');
         SugarTest.testMetadata.set();
         app.data.declareModels();
+        rowModel = app.data.createBean('Cases');
+        var context = app.context.getContext();
+        context.set('model', rowModel);
+        context.prepare();
+        testLayout = SugarTest.createLayout('base', null, 'row-model-data', null, context, false);
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         SugarTest.testMetadata.dispose();
+        testLayout.dispose();
+        testLayout = null;
+        rowModel = null;
     });
 
     describe('initialize()', function() {
-        var testLayout;
-        var rowModel;
-
-        beforeEach(function() {
-            rowModel = app.data.createBean('Cases');
-            var context = app.context.getContext();
-            context.set('model', rowModel);
-            context.prepare();
-            testLayout = SugarTest.createLayout('base', null, 'row-model-data', null, context, false);
-        });
-
-        afterEach(function() {
-            testLayout.dispose();
-            testLayout = null;
-            rowModel = null;
-        });
-
         it('will set multi-line layout and rowModel in context', function() {
             expect(testLayout.context.parent.get('layout')).toEqual('multi-line');
             expect(testLayout.context.parent.get('rowModel')).toEqual(rowModel);
+        });
+    });
+
+    describe('setRowModel()', function() {
+        var dashboard;
+        var dashletMain;
+
+        beforeEach(function() {
+            dashletMain = {
+                setMetadata: sinon.collection.stub()
+            };
+            dashboard = {
+                model: {
+                    mode: 'edit'
+                },
+                getComponent: sinon.collection.stub().returns(dashletMain)
+            };
+            var rowModelData = {
+                getComponent: sinon.collection.stub().returns(dashboard)
+            };
+            sinon.collection.stub(testLayout, 'getComponent').returns(rowModelData);
+        });
+
+        it('will set rowModel if not editing', function() {
+            dashboard.model.mode = 'view';
+            var result = testLayout.setRowModel({});
+            expect(result).toBe(true);
+            expect(dashletMain.setMetadata).toHaveBeenCalled();
+        });
+
+        it('will not set rowModel if editing', function() {
+            dashboard.model.mode = 'edit';
+            var result = testLayout.setRowModel({});
+            expect(result).toBe(false);
+            expect(dashletMain.setMetadata).not.toHaveBeenCalled();
         });
     });
 });

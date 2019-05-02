@@ -48,6 +48,7 @@
     extendsFrom: 'ListView',
     className: 'multi-line-list-view',
     drawerModelId: null,
+    sideDrawer: null,
 
     /**
      * Event handlers for left row actions.
@@ -120,26 +121,42 @@
         };
 
         var modelId = $el.closest('.multi-line-row').data('id');
-
-        // close drawer when drawer is open with data from different model
-        if (app.drawer.count() && modelId !== this.drawerModelId) {
-            app.drawer.closeImmediately();
-            this._clearDrawerModelId();
-        }
-
-        if (app.drawer.count() === 0) {
-            var model = this.collection.get(modelId);
-            app.drawer.open({
-                layout: 'row-model-data',
-                direction: 'horizontal',
-                context: {
-                    model: model,
-                    module: model.get('_module'),
-                    layout: 'multi-line'
+        var model = this.collection.get(modelId);
+        var sideDrawer = this._getSideDrawer();
+        if (sideDrawer) {
+            if (!sideDrawer.isOpen()) {
+                sideDrawer.open({
+                    layout: 'row-model-data',
+                    context: {
+                        model: model,
+                        module: model.get('_module'),
+                        layout: 'multi-line'
+                    }
+                });
+                this.drawerModelId = modelId;
+            } else if (this.drawerModelId !== modelId) {
+                var rowModelDataLayout = sideDrawer.getComponent('row-model-data');
+                if (rowModelDataLayout && rowModelDataLayout.setRowModel(model)) {
+                    this.drawerModelId = modelId;
                 }
-            });
-            this._setDrawerModelId(modelId);
+            }
         }
+    },
+
+    /**
+     * Get side drawer.
+     * @return {Object} The side drawer.
+     * @private
+     */
+    _getSideDrawer: function() {
+        if (!this.sideDrawer) {
+            var sideDrawer = this.layout.getComponent('side-drawer');
+            if (sideDrawer) {
+                sideDrawer.config({topPixels: $('#content .headerpane').outerHeight()});
+            }
+            this.sideDrawer = sideDrawer;
+        }
+        return this.sideDrawer;
     },
 
     /**
@@ -206,22 +223,6 @@
             var def = meta.rowactions;
             this.leftColumns.push(_generateMeta(def.label, def.css_class, def.actions));
         }
-    },
-
-    /**
-     * Set drawerModelId
-     *
-     * @param {string} id id of row model data
-     */
-    _setDrawerModelId: function(id) {
-        this.drawerModelId = id;
-    },
-
-    /**
-     * Reset drawerModelId
-     */
-    _clearDrawerModelId: function() {
-        this.drawerModelId = null;
     },
 
     /**

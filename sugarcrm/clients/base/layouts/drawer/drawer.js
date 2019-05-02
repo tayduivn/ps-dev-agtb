@@ -113,7 +113,7 @@
         //open the drawer
         this._animateOpenDrawer(_.bind(function() {
             this._afterOpenActions();
-        }, this), def);
+        }, this));
 
         //load and render new layout in drawer
         component.loadData();
@@ -331,6 +331,8 @@
      * definition. If the parent context is defined, make the new context as a
      * child of the parent context.
      *
+     * NOTE: same function is also used in side-drawer.js to have consistent behavior
+     *
      * @param {Object} def The layout or view definition.
      * @private
      */
@@ -360,9 +362,8 @@
      *
      * @private
      * @param {Function} callback Called when open animation is finished.
-     * @param {Object} def Definition of the drawer layout.
      */
-    _animateOpenDrawer: function(callback, def) {
+    _animateOpenDrawer: function(callback) {
         if (this._components.length === 0) {
             this._enterState(this.STATES.IDLE);
             return;
@@ -381,28 +382,20 @@
 
         if (this._isMainAppContent(drawers.$top)) {
             //make sure that the main application content is set as a drawer
-            drawers.$top.addClass('drawer');
+            drawers.$top.addClass('drawer').trigger('drawer:add');
             $('body').addClass('noscroll');
             app.$contentEl.addClass('noscroll');
         }
 
+        //add the expand tab and the backdrop to the top drawer
+        this._createTabAndBackdrop(drawers.$next, drawers.$top);
+
         //indicate that it's an active drawer
         drawers.$next.addClass('drawer active');
-
-        if (def.direction && def.direction === 'horizontal') {
-            //set the starting position on the right for the new drawer
-            drawers.$next.css('left', '100%');
-            drawers.$next.css('width', '75%');
-        } else {
-            //add the expand tab and the backdrop to the top drawer
-            this._createTabAndBackdrop(drawers.$next, drawers.$top);
-
-            //set the height of the new drawer
-            drawers.$next.css('height', drawerHeight);
-            //set the animation starting point for the new drawer
-            drawers.$next.css('top', aboveWindowTopPos);
-        }
-
+        //set the height of the new drawer
+        drawers.$next.css('height', drawerHeight);
+        //set the animation starting point for the new drawer
+        drawers.$next.css('top', aboveWindowTopPos);
         //mark the top drawer as inactive
         drawers.$top
             .addClass('inactive')
@@ -425,20 +418,16 @@
                 this.trigger('drawer:resize', drawerHeight);
             });
 
-            if (def.direction && def.direction === 'horizontal') {
-                drawers.$next.css('left', '25%');
-            } else {
-                //start animation to open the drawer
-                drawers.$next.css('top','');
-                drawers.$top.css('top', bottomDrawerTopPos);
-                if (drawers.$bottom) {
-                    drawers.$bottom.css('top', belowWindowTopPos);
-                }
+            //start animation to open the drawer
+            drawers.$next.css('top','');
+            drawers.$top.css('top', bottomDrawerTopPos);
+            if (drawers.$bottom) {
+                drawers.$bottom.css('top', belowWindowTopPos);
+            }
 
-                //resize the visible drawer when the browser resizes
-                if (this._components.length === 1) {
-                    $(window).on('resize.drawer', _.bind(this._resizeDrawer, this));
-                }
+            //resize the visible drawer when the browser resizes
+            if (this._components.length === 1) {
+                $(window).on('resize.drawer', _.bind(this._resizeDrawer, this));
             }
         }, this));
     },
@@ -620,7 +609,7 @@
             .off('scroll.prevent'); //remove event handler that prevents scrolling
 
         if (this._isMainAppContent(drawers.$bottom)) {
-            drawers.$bottom.removeClass('drawer active');
+            drawers.$bottom.removeClass('drawer active').trigger('drawer:remove');
             $('body').removeClass('noscroll');
             app.$contentEl.removeClass('noscroll');
         } else {

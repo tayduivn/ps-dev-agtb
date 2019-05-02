@@ -114,44 +114,32 @@ describe('Base.View.MultiLineListView', function() {
         var $el;
         var target = 'targetValue';
         var event = {target: target};
-        var clearModelStub;
-        var setModelStub;
 
         beforeEach(function() {
             $el = {
                 closest: $.noop
             };
             sinon.collection.stub(view, '$').withArgs(target).returns($el);
-            app.drawer = {
-                open: sinon.collection.stub(),
-                closeImmediately: sinon.collection.stub(),
-                count: sinon.collection.stub(),
-            };
-            clearModelStub = sinon.collection.stub(view, '_clearDrawerModelId');
-            setModelStub = sinon.collection.stub(view, '_setDrawerModelId');
         });
 
         afterEach(function() {
             $el = null;
-            delete app.drawer;
         });
 
         it('should not take any action when event trigger by dropdown toggle', function() {
             var closestStub = sinon.collection.stub($el, 'closest');
-
+            var getDrawerStub = sinon.collection.stub(view, '_getSideDrawer');
             sinon.collection.stub(view, 'isDropdownToggle').withArgs($el).returns(true);
             view.handleRowClick(event);
 
             // Method not try to get closest row model id to proceed further action
             expect(closestStub).not.toHaveBeenCalled();
-            expect(app.drawer.open).not.toHaveBeenCalled();
-            expect(app.drawer.closeImmediately).not.toHaveBeenCalled();
-            expect(clearModelStub).not.toHaveBeenCalled();
-            expect(setModelStub).not.toHaveBeenCalled();
+            expect(getDrawerStub).not.toHaveBeenCalled();
         });
 
         it('should not take any action when any action dropdowns are open', function() {
             var closestStub = sinon.collection.stub($el, 'closest');
+            var getDrawerStub = sinon.collection.stub(view, '_getSideDrawer');
 
             sinon.collection.stub(view, 'isDropdownToggle').withArgs($el).returns(false);
             sinon.collection.stub(view, 'isActionsDropdownOpen').returns(true);
@@ -159,58 +147,64 @@ describe('Base.View.MultiLineListView', function() {
 
             // Method not try to get closest row model id to proceed further action
             expect(closestStub).not.toHaveBeenCalled();
-            expect(app.drawer.open).not.toHaveBeenCalled();
-            expect(app.drawer.closeImmediately).not.toHaveBeenCalled();
-            expect(clearModelStub).not.toHaveBeenCalled();
-            expect(setModelStub).not.toHaveBeenCalled();
+            expect(getDrawerStub).not.toHaveBeenCalled();
         });
 
         describe('open drawer', function() {
             var model1;
             var model2;
+            var layout;
 
             beforeEach(function() {
                 model1 = app.data.createBean('Cases', {id: '1234'});
                 model2 = app.data.createBean('Cases', {id: '9999'});
                 view.collection = app.data.createBeanCollection('Cases', [model1, model2]);
-
                 sinon.collection.stub(view, 'isDropdownToggle').withArgs($el).returns(false);
                 sinon.collection.stub(view, 'isActionsDropdownOpen').returns(false);
+                layout = {
+                    setRowModel: sinon.collection.stub().returns(true)
+                };
             });
 
             it('should open drawer when no existing drawer open', function() {
                 sinon.collection.stub($el, 'closest').withArgs('.multi-line-row').returns({
                     data: sinon.collection.stub().withArgs('id').returns('1234')
                 });
-                app.drawer.count.returns(0);
+                var drawer = {
+                    isOpen: function() {
+                        return false;
+                    },
+
+                    open: sinon.collection.stub()
+                };
+                sinon.collection.stub(view, '_getSideDrawer').returns(drawer);
 
                 view.handleRowClick(event);
 
-                expect(app.drawer.closeImmediately).not.toHaveBeenCalled();
-                expect(clearModelStub).not.toHaveBeenCalled();
-                expect(app.drawer.open).toHaveBeenCalledWith({
-                    layout: 'row-model-data',
-                    direction: 'horizontal',
-                    context: {
-                        model: model1,
-                        module: model1.get('_module'),
-                        layout: 'multi-line'
-                    }
-                });
-                expect(setModelStub).toHaveBeenCalledWith('1234');
+                expect(drawer.open.lastCall.args[0].layout).toEqual('row-model-data');
+                expect(drawer.open.lastCall.args[0].context.layout).toEqual('multi-line');
+                expect(view.drawerModelId).toEqual('1234');
             });
 
-            it('should close existing drawer different row is click', function() {
+            it('should change model in context if different row is click', function() {
                 view.drawerModelId = '9999';
                 sinon.collection.stub($el, 'closest').withArgs('.multi-line-row').returns({
                     data: sinon.collection.stub().withArgs('id').returns('1234')
                 });
-                app.drawer.count.returns(1);
+                var drawer = {
+                    isOpen: function() {
+                        return true;
+                    },
+                    getComponent: function() {
+                        return layout;
+                    }
+                };
+                sinon.collection.stub(view, '_getSideDrawer').returns(drawer);
 
                 view.handleRowClick(event);
 
-                expect(app.drawer.closeImmediately).toHaveBeenCalled();
-                expect(clearModelStub).toHaveBeenCalled();
+                expect(layout.setRowModel).toHaveBeenCalled();
+                expect(view.drawerModelId).toEqual('1234');
             });
 
             it('should not close existing drawer same row is click', function() {
@@ -218,14 +212,21 @@ describe('Base.View.MultiLineListView', function() {
                 sinon.collection.stub($el, 'closest').withArgs('.multi-line-row').returns({
                     data: sinon.collection.stub().withArgs('id').returns('1234')
                 });
-                app.drawer.count.returns(1);
+                var drawer = {
+                    isOpen: function() {
+                        return true;
+                    },
+                    open: sinon.collection.stub(),
+                    getComponent: function() {
+                        return layout;
+                    }
+                };
+                sinon.collection.stub(view, '_getSideDrawer').returns(drawer);
 
                 view.handleRowClick(event);
 
-                expect(app.drawer.closeImmediately).not.toHaveBeenCalled();
-                expect(clearModelStub).not.toHaveBeenCalled();
-                expect(app.drawer.open).not.toHaveBeenCalledWith();
-                expect(setModelStub).not.toHaveBeenCalled();
+                expect(drawer.open).not.toHaveBeenCalled();
+                expect(layout.setRowModel).not.toHaveBeenCalled();
             });
         });
     });
@@ -276,29 +277,6 @@ describe('Base.View.MultiLineListView', function() {
 
             expect(view.leftColumns.length).toBe(1);
             expect(view.leftColumns[0]).toEqual(expectedFieldMeta);
-        });
-    });
-
-    describe('_setDrawerModelId', function() {
-        it('should set drawer model id', function() {
-            var id = '1234';
-
-            expect(view.drawerModelId).toBe(null);
-
-            view._setDrawerModelId(id);
-            expect(view.drawerModelId).toBe(id);
-        });
-    });
-
-    describe('_clearDrawerModelId', function() {
-        it('should reset drawer model id to null', function() {
-            var id = '9999';
-
-            view._setDrawerModelId(id);
-            expect(view.drawerModelId).toBe(id);
-
-            view._clearDrawerModelId();
-            expect(view.drawerModelId).toBe(null);
         });
     });
 
