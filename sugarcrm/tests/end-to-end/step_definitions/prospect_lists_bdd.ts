@@ -19,7 +19,7 @@ import {chooseModule, closeAlert, toggleSpecifiedRecords, provideRecordViewInput
  *
  *      @example
  *          When I add Leads [*L_1, *L_2, *L_3] to new target list with the following values:
- *          | *     | name            | 
+ *          | *     | name            |
  *          | PRL_1 | New Target List |
  *
  */
@@ -28,10 +28,10 @@ When(/^I (add|cancel adding) (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) to new targ
 
         const listView = await seedbed.components[`${module}List`].ListView;
         let drawer_view = await seedbed.components[`ProspectListsDrawer`];
-        
-        // Choose module 
+
+        // Choose module
         await chooseModule(module);
-        
+
         // Toggle selected records
         await toggleSpecifiedRecords(inputIDs, listView);
 
@@ -42,12 +42,12 @@ When(/^I (add|cancel adding) (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) to new targ
         // Create New Prospect List
         await seedbed.components[`${module}List`].FilterView.performTargetListAction('create');
         await this.driver.waitForApp();
-        
+
         // Provide record input
         // TODO: currently only Header changes are allowed.
         // TODO: AT-238 is filed to address this limitation
         await provideRecordViewInput(drawer_view.HeaderView, table);
-        
+
         // Save
         await recordViewHeaderButtonClicks('Save', drawer_view);
         await closeAlert();
@@ -68,10 +68,10 @@ When(/^I (add|cancel adding) (\w+) (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) to new targ
 
             case 'cancel adding':
 
-                // Click Cancel 
+                // Click Cancel
                 await seedbed.components[`${module}List`].FilterView.performTargetListAction('cancel');
                 seedbed.client.driver.waitForApp();
-                
+
                 // Uncheck all previously checked records
                 await toggleSpecifiedRecords(inputIDs, listView);
                 break;

@@ -17,7 +17,7 @@ import ListView from '../views/list-view';
 import PmseEtDesign from '../views/pmse-et-design';
 import PmseEtFieldSelect from '../views/pmse-et-compose-varbook-list';
 import * as _ from 'lodash';
-import {chooseModule, chooseRecord, recordViewHeaderButtonClicks, checkValues} from "./general_bdd";
+import {chooseModule, chooseRecord, recordViewHeaderButtonClicks, checkValues} from './general_bdd';
 
 Given(/^I design (\w+) \*(\w+)/,
     async function(module: string, name: string) {
@@ -46,7 +46,7 @@ When(/^a placeholder is inserted in the (subject|content) \*(\w+) record from mo
         seedbed.defineComponent(`${record.id}PmseEtDesign`, PmseEtDesign, {id: 'PmseEtDesign'});
         petDesignView = await seedbed.components[`${record.id}PmseEtDesign`];
 
-        seedbed.defineComponent(`${record.id}PmseEtComposeVarbookList`, PmseEtFieldSelect, {id: 'PmseEtComposeVarbookList',});
+        seedbed.defineComponent(`${record.id}PmseEtComposeVarbookList`, PmseEtFieldSelect, {id: 'PmseEtComposeVarbookList'});
         petSelectField = await seedbed.components[`${record.id}PmseEtComposeVarbookList`];
 
         const linkName = table['rawTable'][1][3];
@@ -104,13 +104,13 @@ When(/^a link placeholder is inserted in the content \*(\w+) record:$/,
         let record = await seedbed.cachedRecords.get(recordName);
         let rec_view = await seedbed.components[`${recordName}Record`];
 
-        seedbed.defineComponent(`${record.id}PmseEtDesign`, PmseEtDesign, {id: 'PmseEtDesign',});
+        seedbed.defineComponent(`${record.id}PmseEtDesign`, PmseEtDesign, {id: 'PmseEtDesign'});
         let petDesignView = await seedbed.components[`${record.id}PmseEtDesign`];
 
         await petDesignView.clickButton('content_link');
         await seedbed.client.driver.waitForApp();
 
-        seedbed.defineComponent(`${record.id}PmseEtComposeVarbookList`, PmseEtFieldSelect, {id: 'PmseEtComposeVarbookList',});
+        seedbed.defineComponent(`${record.id}PmseEtComposeVarbookList`, PmseEtFieldSelect, {id: 'PmseEtComposeVarbookList'});
         let petSelectLink = await seedbed.components[`${record.id}PmseEtComposeVarbookList`];
 
         // Select a link from the table.

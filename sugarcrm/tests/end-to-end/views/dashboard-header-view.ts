@@ -28,7 +28,7 @@ export default class DashboardHeaderView extends BaseView {
                 create: '.btn-toolbar a[name="add_button"]',
                 save: '.btn-toolbar a[name="create_button"]',
                 cancel: '.btn-toolbar a[name="create_cancel_button"]',
-                actions:'.actions:not([style*="display: none"]) a.btn.dropdown-toggle',
+                actions: '.actions:not([style*="display: none"]) a.btn.dropdown-toggle',
                 edit: 'a[name="edit_button"]',
                 delete: 'a[name="delete_button"]',
                 edit_save: 'a[name="save_button"]',

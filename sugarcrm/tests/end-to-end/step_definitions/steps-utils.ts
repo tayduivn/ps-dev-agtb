@@ -124,4 +124,4 @@ export const personalInfoDrawerVerification = async function(layout: PersonalInf
     if (message) {
         throw new Error(message);
     }
-}
+};

@@ -43,7 +43,7 @@ export default class ForecastsBarChartDashlet extends DashletView {
      * @returns {Promise<void>}
      */
     public async selectFromDropdown(field_name: string, val: string, ) {
-        let element = this.$('field.selector',{field_name});
+        let element = this.$('field.selector', {field_name});
         await this.driver.click(element);
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${val}`);

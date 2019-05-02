@@ -28,9 +28,9 @@ export default class DashletView extends BaseView {
                 buttons: {
                     cog: '.btn.btn-invisible.dropdown-toggle',
                 },
-                menuItems:{
+                menuItems: {
                     edit: 'a[name="edit_button"]',
-                    refresh:'a[name="refresh_button"]',
+                    refresh: 'a[name="refresh_button"]',
                     remove: 'a[name="remove_button"]',
                 },
 
@@ -47,6 +47,6 @@ export default class DashletView extends BaseView {
      */
     public async performAction(action) {
         await this.driver.click(this.$(`buttons.cog`));
-        await this.driver.click(this.$(`menuItems.`+ action));
+        await this.driver.click(this.$(`menuItems.` + action));
     }
 }

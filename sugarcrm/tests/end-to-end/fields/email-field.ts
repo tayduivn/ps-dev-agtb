@@ -34,7 +34,7 @@ export default class EmailField extends BaseField {
     public async setValue(val: any): Promise<void> {
 
         let isRemoveButtonExists = await this.driver.isElementExist(this.$('field.remove'));
-        if( isRemoveButtonExists ){
+        if (isRemoveButtonExists) {
             await this.driver.click(this.$('field.remove'));
         }
 

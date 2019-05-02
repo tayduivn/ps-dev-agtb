@@ -12,7 +12,7 @@
 import AlertCmp from '../components/alert-cmp';
 import {When} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
-import {closeAlert,closeWarning, verifyAlertProperties} from './general_bdd';
+import {closeAlert, closeWarning, verifyAlertProperties} from './general_bdd';
 
     When(/^I (Cancel|Confirm) confirmation alert$/, async function(choice: string) {
         await closeWarning(choice);

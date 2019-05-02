@@ -22,7 +22,7 @@ export default class DatetimecomboField extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}]',
             field: {
-                selector:'input[data-type="date"]',
+                selector: 'input[data-type="date"]',
                 date: 'input[data-type="date"]',
                 time: 'input[data-type="time"]',
             }

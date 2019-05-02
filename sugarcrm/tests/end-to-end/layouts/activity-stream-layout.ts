@@ -96,7 +96,7 @@ export default class ActivityStreamLayout extends BaseView {
         await this.driver.keys(value);
         await this.driver.waitForApp();
 
-        selector  = this.$(`comments.replyButton`,{index});
+        selector = this.$(`comments.replyButton`, {index});
         await this.driver.click(selector);
         await this.driver.waitForApp();
     }

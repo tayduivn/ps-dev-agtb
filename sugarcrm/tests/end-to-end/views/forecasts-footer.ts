@@ -22,13 +22,13 @@ export default class ForecastsFooter extends BaseView {
 
         this.selectors = this.mergeSelectors({
             $:  'tfoot',
-            'Displayed Total':{
+            'Displayed Total': {
                 $: '#forecastsWorksheetTotalsFilteredTotals',
                 likely: '.tright.likely_case',
                 best: '.tright.best_case',
                 worst: '.tright.worst_case',
             },
-            'Overall Total':{
+            'Overall Total': {
                 $: '#forecastsWorksheetTotalsOverallTotals',
                 likely: '.tright.likely_case',
                 best: '.tright.best_case',

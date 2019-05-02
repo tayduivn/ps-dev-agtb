@@ -38,7 +38,7 @@ Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
             throw new Error(message);
         }
 
-    },{waitForApp: true});
+    }, {waitForApp: true});
 
 /**
  * Verify record exists on #View

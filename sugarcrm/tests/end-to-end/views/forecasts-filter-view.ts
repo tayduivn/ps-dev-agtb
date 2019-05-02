@@ -14,7 +14,7 @@
  */
 
 import BaseView from './base-view';
-import ForecastSearchFilterDropdownCmp from "../components/forecast-search-filter-dropdown-cmp";
+import ForecastSearchFilterDropdownCmp from '../components/forecast-search-filter-dropdown-cmp';
 
 /**
  * @class ForecastFilterView

@@ -18,7 +18,7 @@ import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 import RecordLayout from '../layouts/record-layout';
 import AuditLogDrawerLayout from '../layouts/audit-log-drawer-layout';
 import {headerButtonClick, auditLogVerification, personalInfoDrawerVerification} from './steps-utils';
-import ActivityStreamLayout from "../layouts/activity-stream-layout";
+import ActivityStreamLayout from '../layouts/activity-stream-layout';
 import {chooseModule} from '../step_definitions/general_bdd';
 
 /**
@@ -161,7 +161,7 @@ Then(/^I verify PII fields in (#\S+) for (#[a-zA-Z](?:\w|\S)*)$/,
         // Select View Personal Info menu item
         await headerButtonClick(recordlayout, 'viewpersonalinfo');
         // Verify field values in Personal Info drawer
-        await personalInfoDrawerVerification(layout,data);
+        await personalInfoDrawerVerification(layout, data);
         // Close Personal Info drawer
         await headerButtonClick(recordlayout, 'closebutton');
 
@@ -214,7 +214,7 @@ Then(/^I verify activities in (#\S+)*$/,
         await this.driver.waitForApp();
 
         for (let i = 1; i <= rows.length; i++) {
-            let expected = rows[i-1][0];
+            let expected = rows[i - 1][0];
             let value = await layout.getMessage(i);
             if (value !== expected) {
                 errors.push(
@@ -223,7 +223,7 @@ Then(/^I verify activities in (#\S+)*$/,
                         `\tActual activity message value: ${value}`,
                         `\n`,
                     ].join('\n')
-                )
+                );
             }
         }
         let message = '';

@@ -31,8 +31,8 @@ export default class ProductCatalogQuickPicksDashlet extends DashletView {
             pagination: {
                 $: '.pagination',
 
-                rightNavArrow:'.nav-next',
-                leftNavArrow:'.nav-previous',
+                rightNavArrow: '.nav-next',
+                leftNavArrow: '.nav-previous',
 
                 leftChevron: '.previous-fav',
                 pageButton: '.paginate-num-button[data-page-id="{{page_num}}"]',

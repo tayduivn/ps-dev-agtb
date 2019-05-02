@@ -18,10 +18,10 @@ import ListView from '../views/list-view';
 import RliTableRecord from '../views/rli-table';
 import SubpanelLayout from '../layouts/subpanel-layout';
 import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
-import {updateForecastConfig} from "./steps-helper";
+import {updateForecastConfig} from './steps-helper';
 import AlertCmp from '../components/alert-cmp';
 import {updateOpportunityConfig} from './steps-helper';
-import {chooseRecord,toggleRecord, parseInputArray, chooseModule, closeAlert} from './general_bdd';
+import {chooseRecord, toggleRecord, parseInputArray, chooseModule, closeAlert} from './general_bdd';
 import ActivityStream from '../layouts/activity-stream-layout';
 
 /**
@@ -545,7 +545,7 @@ When(/^I add new currency$/, async function (data: TableDefinition) {
  *          | Bcc       | *L_1, *L_2] |
  */
 When(/^I add the following recipients to the email in (#\S+)$/,
-    async function (view: RecordView ,table: TableDefinition) {
+    async function (view: RecordView, table: TableDefinition) {
         const listView = await seedbed.components[`EmailsList`].ListView;
 
         // Activate recipients field. This is only needed in existing Email's record view

@@ -11,7 +11,7 @@
 
 import * as _ from 'lodash';
 import ListView from './list-view';
-import ForecastsListItemView from "./forecasts-list-item-view";
+import ForecastsListItemView from './forecasts-list-item-view';
 
 /**
  * Represents Forecasts module Record view.

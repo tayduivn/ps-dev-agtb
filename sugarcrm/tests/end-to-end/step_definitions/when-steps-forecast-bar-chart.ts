@@ -10,7 +10,7 @@
  */
 
 import {When} from '@sugarcrm/seedbed';
-import ForecastsBarChartDashlet from '../views/forecasts-bar-chart-dashlet'
+import ForecastsBarChartDashlet from '../views/forecasts-bar-chart-dashlet';
 
 /**
  * Select item from dataset drop-down in Forecast Bar Chart dashlet

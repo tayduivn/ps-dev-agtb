@@ -38,7 +38,7 @@ export default class KBDetail extends BaseField {
      */
     public async getText(selector: string): Promise<string> {
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
-        return value.toString().replace(/\n/g, " ").trim();
+        return value.toString().replace(/\n/g, ' ').trim();
     }
 }
 

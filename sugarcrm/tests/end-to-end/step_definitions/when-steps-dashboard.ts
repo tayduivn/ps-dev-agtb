@@ -12,7 +12,7 @@
 import {whenStepsHelper, stepsHelper, Utils, When, seedbed} from '@sugarcrm/seedbed';
 import BaseView from '../views/base-view';
 import DashletView from '../views/dashlet-view';
-import DashboardLayout from "../layouts/dashboard-layout";
+import DashboardLayout from '../layouts/dashboard-layout';
 import {TableDefinition} from 'cucumber';
 import {closeAlert, closeWarning} from '../step_definitions/general_bdd';
 import {openMenuAndCheck} from './when-steps-record-header';

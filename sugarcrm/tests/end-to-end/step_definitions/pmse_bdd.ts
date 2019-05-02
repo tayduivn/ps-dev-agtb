@@ -20,7 +20,7 @@ import BaseView from '../views/base-view';
 import * as _ from 'lodash';
 import AlertCmp from '../components/alert-cmp';
 import BusinessRulesDesign from '../layouts/business-rules-record-layout';
-import {chooseModule, chooseRecord, recordViewHeaderButtonClicks, goToUrl} from "./general_bdd";
+import {chooseModule, chooseRecord, recordViewHeaderButtonClicks, goToUrl} from './general_bdd';
 
 When(/^I begin designing pmse_Business_Rules \*(\w+)$/,
     async function(name: string) {
@@ -40,7 +40,7 @@ Then(/^the pmse business rule designer should contain the following values:$/,
     async function(table: TableDefinition) {
         let layout = seedbed.createComponent<BusinessRulesDesign>(
             BusinessRulesDesign,
-            {module:'pmse_Business_Rules'}
+            {module: 'pmse_Business_Rules'}
         );
         await businessRulesVerification(layout, table);
     }, {waitForApp: true}
@@ -86,7 +86,7 @@ const businessRulesVerification = async function (layout: BusinessRulesDesign, d
     if (message) {
         throw new Error(message);
     }
-}
+};
 
 const toArray = async function(values) {
     let array = [];
@@ -96,7 +96,7 @@ const toArray = async function(values) {
         array.push(values);
     }
     return array;
-}
+};
 
 /*
  * Validate value from layout with the expected value

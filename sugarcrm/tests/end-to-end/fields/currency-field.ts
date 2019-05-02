@@ -167,7 +167,7 @@ export class Detail extends CurrencyField {
          * Separate original from converted amount in case the amount is represented
          * by two numbers: original and converted. (Example: '€90.00 $100.00')
          */
-        
+
         // Check if '.converted' class exists
         const elementExists = await this.driver.isExisting(this.$('field.converted'));
         if (elementExists) {

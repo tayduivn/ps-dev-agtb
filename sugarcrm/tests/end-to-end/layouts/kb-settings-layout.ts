@@ -52,20 +52,20 @@ export default class KBSettingsLayout extends ListLayout {
      */
     public async addSupportedLanguage(languageCode: string, languageValue: string, primary: string, index: number) {
 
-        let selector = this.$(`rows.controls.addItem`,{index: index});
+        let selector = this.$(`rows.controls.addItem`, {index: index});
         await this.driver.click(selector);
         await this.driver.waitForApp();
 
-        selector = this.$(`rows.controls.code`,{index: index+1});
+        selector = this.$(`rows.controls.code`, {index: index + 1});
         await this.driver.setValue(selector, languageCode);
         await this.driver.waitForApp();
 
-        selector = this.$(`rows.controls.label`,{index: index+1});
+        selector = this.$(`rows.controls.label`, {index: index + 1});
         await this.driver.setValue(selector, languageValue);
         await this.driver.waitForApp();
 
         if (primary === 'true') {
-            selector = this.$(`rows.controls.favorite`, {index: index+1});
+            selector = this.$(`rows.controls.favorite`, {index: index + 1});
             await this.driver.click(selector);
             await this.driver.waitForApp();
         }
@@ -78,7 +78,7 @@ export default class KBSettingsLayout extends ListLayout {
      * @returns {Promise<any>}
      */
     public async isButtonVisible(index: number) {
-        let selector = this.$(`rows.controls.addItem`,{index: index});
+        let selector = this.$(`rows.controls.addItem`, {index: index});
         return this.driver.isVisible(selector);
     }
 

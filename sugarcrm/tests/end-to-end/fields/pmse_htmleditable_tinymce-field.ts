@@ -26,7 +26,7 @@ export default class HtmleditableTinymceField extends BaseField {
             field: {
                 selector: ''
             },
-            iframe:'iframe',
+            iframe: 'iframe',
            });
     }
 
@@ -34,8 +34,8 @@ export default class HtmleditableTinymceField extends BaseField {
         let iframeSelector = this.$('iframe');
 
         await this.driver.waitForVisible(iframeSelector);
-        let id = await this.driver.getAttribute(iframeSelector,'id');
-        //Execute the client script within the context of the TinyMce iframe
+        let id = await this.driver.getAttribute(iframeSelector, 'id');
+        // Execute the client script within the context of the TinyMce iframe
         await this.driver.frame(id);
         const obj = await seedbed.client.driver.execSync('getValueForTinyMCE');
         await this.driver.frame(null);

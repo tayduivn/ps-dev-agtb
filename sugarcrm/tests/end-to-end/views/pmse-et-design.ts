@@ -29,7 +29,7 @@ export default class PmseEtDesign extends RecordView {
             },
         });
     }
-    public async getField (name, type){
+    public async getField (name, type) {
         if (name === 'body_html') {
             type = 'pmse_htmleditable_tinymce';
         }

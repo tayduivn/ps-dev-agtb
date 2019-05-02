@@ -20,7 +20,7 @@ import {TableDefinition} from 'cucumber';
  *  @example: I verify product *Prod_1 exists in #Dashboard.ProductCatalogQuickPicksDashlet
  */
 Then(/^I verify product (\*[a-zA-Z](?:\w|\S)*) (not )?exists in (#[a-zA-Z](?:\w|\S)*)$/,
-    async function( record:any, not,  view: ProductCatalogQuickPicksDashlet) {
+    async function( record: any, not,  view: ProductCatalogQuickPicksDashlet) {
 
         let isItemExists = await view.isRecordExists(record.id);
 
@@ -60,7 +60,7 @@ Then(/I verify pagination controls in (#[a-zA-Z](?:\w|\S)*)$/,
                             `\t'${value.toString()}'`,
                             `\n`,
                         ].join('\n')
-                )
+                );
             }
         }
 

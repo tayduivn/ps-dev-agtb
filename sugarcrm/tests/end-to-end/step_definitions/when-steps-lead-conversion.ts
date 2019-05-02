@@ -20,7 +20,7 @@ import RecordLayout from '../layouts/record-layout';
  * @example "I click CreateRecord button on #LeadConversionDrawer.OpportunityContent"
  */
 When(/^I click (CreateRecord|Reset|ChevronDown|ChevronUp) button on (#\S+)$/,
-    async function (btnToClick: string, view: LeadConversionView,): Promise<void> {
+    async function (btnToClick: string, view: LeadConversionView): Promise<void> {
         await view.btnClick(btnToClick.toLowerCase());
     }, {waitForApp: true});
 
@@ -30,7 +30,7 @@ When(/^I click (CreateRecord|Reset|ChevronDown|ChevronUp) button on (#\S+)$/,
  * @example "I preview *A1 record on #JohnRecord"
  */
 When(/^I (click|preview) (\*[a-zA-Z](?:\w|\S)*) record on (#\S+)$/,
-    async function (action, record: any, layout:RecordLayout,): Promise<void> {
+    async function (action, record: any, layout: RecordLayout): Promise<void> {
         await layout.performAction(action, record.id, record._module);
     }, {waitForApp: true});
 

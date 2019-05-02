@@ -42,7 +42,7 @@ export default class SubpanelLayout extends ListView {
                 },
                 /* Index is needed for 'Select From Reports' subpanel action in Target List:
                  1: - Link Existing Record
-                 2: - Select from Reports 
+                 2: - Select from Reports
                 */
                 selectSubpanelAction: '.subpanel-controls li:nth-child({{index}}) a',
 

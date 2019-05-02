@@ -11,7 +11,7 @@
 
 import {When} from '@sugarcrm/seedbed';
 import ProductCatalogQuickPicksDashlet from '../views/product-catalog-quick-picks-dashlet-view';
-import DashletView from "../views/dashlet-view";
+import DashletView from '../views/dashlet-view';
 
 /**
  * Switch between tabs in the Product Catalog Quick Picks dashlet
@@ -19,7 +19,7 @@ import DashletView from "../views/dashlet-view";
  * @example "I select Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet"
  */
 When(/^I select (Recently Used|Favorites) tab in (#\S+)$/,
-    async function (action:string, view: ProductCatalogQuickPicksDashlet ): Promise<void> {
+    async function (action: string, view: ProductCatalogQuickPicksDashlet): Promise<void> {
         await view.toggleTabs();
     }, {waitForApp: true});
 
@@ -29,7 +29,7 @@ When(/^I select (Recently Used|Favorites) tab in (#\S+)$/,
  * @example "I click *Prod_1 on Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet"
  */
 When(/^I click (\*[a-zA-Z](?:\w|\S)*) on (Recently Used|Favorites) tab in (#\S+)$/,
-    async function (record: { id: string },tab:string, view: ProductCatalogQuickPicksDashlet ): Promise<void> {
+    async function (record: { id: string }, tab: string, view: ProductCatalogQuickPicksDashlet): Promise<void> {
         await view.clickRecordByID(record.id);
     }, {waitForApp: true});
 
@@ -41,7 +41,7 @@ When(/^I click (\*[a-zA-Z](?:\w|\S)*) on (Recently Used|Favorites) tab in (#\S+)
  * @example "I refresh #Dashboard.ProductCatalogQuickPicksDashlet dashlet"
  */
 When(/^I (edit|refresh|remove) (#\S+) dashlet$/,
-    async function (action:string, view: DashletView ): Promise<void> {
+    async function (action: string, view: DashletView ): Promise<void> {
         await view.performAction(action.toLowerCase());
     }, {waitForApp: true});
 
@@ -53,7 +53,7 @@ When(/^I (edit|refresh|remove) (#\S+) dashlet$/,
 When(/^I go to (next|previous) page in (#\S+)/,
     async function (page: string, view: ProductCatalogQuickPicksDashlet ): Promise<void> {
 
-    switch( page ){
+    switch (page) {
         case 'next':
             await view.clickChevron('rightChevron');
             break;

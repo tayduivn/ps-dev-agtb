@@ -13,7 +13,7 @@
 import {TableDefinition} from 'cucumber';
 import {When, seedbed} from '@sugarcrm/seedbed';
 import {chooseModule, closeAlert, closeWarning, toggleSpecifiedRecords} from './general_bdd';
-import MergeLayout from "../layouts/merge-layout";
+import MergeLayout from '../layouts/merge-layout';
 import ListView from '../views/list-view';
 
 /**
@@ -260,7 +260,7 @@ const executeSelectedAction = async function (inputIDs: string, listView: ListVi
             default:
                 throw new Error('Invalid button name');
     }
-}
+};
 
 /**
  *
@@ -278,4 +278,4 @@ const removeRecordFromMerge = async function (action) {
     await mergeDrawer.removeRecord(action);
     await closeWarning('Confirm');
     seedbed.client.driver.waitForApp();
-}
+};

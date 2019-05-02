@@ -596,7 +596,7 @@ export const verifyAlertProperties = async function (data: TableDefinition) {
                 `\tActual alert message: ${actualAlertMessage}`,
                 `\n`,
             ].join('\n')
-        )
+        );
     }
 
     if (actualAlertType !== expectedAlertType) {
@@ -606,7 +606,7 @@ export const verifyAlertProperties = async function (data: TableDefinition) {
                 `\tActual alert type: ${actualAlertType}`,
                 `\n`,
             ].join('\n')
-        )
+        );
     }
     let message = '';
     _.each(errors, (item) => {
@@ -670,7 +670,7 @@ export const getCurrentModule = async function (): Promise<string> {
     let argumentsArray = [];
     let currentModule = await  seedbed.client.driver.execSync('getCurrentModule', argumentsArray);
     return currentModule.value;
-}
+};
 
 /**
  * Toggle record(s) specified by record identifier in SIDECAR list view
