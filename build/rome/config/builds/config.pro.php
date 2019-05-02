@@ -168,7 +168,9 @@ $config['blackList']['pro'] = array(
 
 // Customer Service (ENT and above)
 'sugarcrm/modules/BusinessCenters' => 1,
+'sugarcrm/tests/unit-js/modules/BusinessCenters' => 1,
 'sugarcrm/tests/{old}/modules/BusinessCenters' => 1,
+'sugarcrm/themes/RacerX/images/icon_BusinessCenters_32.png' => 1,
 
 // Business Center holidays relationship
 'sugarcrm/metadata/business_centers_holidaysMetaData.php' => 1,

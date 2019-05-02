@@ -119,7 +119,7 @@ $viewdefs['BusinessCenters']['base']['view']['record'] = [
         [
             'name' => 'panel_body',
             'label' => 'LBL_RECORD_BODY',
-            'columns' => 3,
+            'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
@@ -127,6 +127,241 @@ $viewdefs['BusinessCenters']['base']['view']['record'] = [
                     'name' => 'timezone',
                     'span' => 12,
                 ],
+            ],
+        ],
+        [
+            'panelDefault' => 'expanded',
+            'name' => 'business_hours',
+            'label' => 'LBL_RECORD_BUSINESS_HOURS_PANEL_HEADER',
+            'columns' => 3,
+            'labelsOnTop' => 1,
+            'placeholders' => 1,
+            'fields' => [
+                // Sunday
+                [
+                    'name' => 'is_open_sunday',
+                    'type' => 'business-day-status',
+                    'default' => 'Closed',
+                    'label' => 'LBL_SUNDAY_HOURS',
+                ],
+                [
+                    'name' => 'sunday_open',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'sunday_open_hour',
+                        'sunday_open_minutes',
+                    ],
+                    'label' => 'LBL_SUNDAY_OPEN_TIME',
+                ],
+                [
+                    'name' => 'sunday_close',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'sunday_close_hour',
+                        'sunday_close_minutes',
+                    ],
+                    'label' => 'LBL_SUNDAY_CLOSE_TIME',
+                ],
+                // Monday
+                [
+                    'name' => 'is_open_monday',
+                    'type' => 'business-day-status',
+                    'default' => 'Open',
+                    'label' => 'LBL_MONDAY_HOURS',
+                ],
+                [
+                    'name' => 'monday_open',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'monday_open_hour',
+                        'monday_open_minutes',
+                    ],
+                    'label' => 'LBL_MONDAY_OPEN_TIME',
+                    'default_times' => [
+                        'hour' => 8,
+                        'minute' => 0,
+                    ],
+                ],
+                [
+                    'name' => 'monday_close',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'monday_close_hour',
+                        'monday_close_minutes',
+                    ],
+                    'label' => 'LBL_MONDAY_CLOSE_TIME',
+                    'default_times' => [
+                        'hour' => 17,
+                        'minute' => 0,
+                    ],
+                ],
+                // Tuesday
+                [
+                    'name' => 'is_open_tuesday',
+                    'type' => 'business-day-status',
+                    'default' => 'Open',
+                    'label' => 'LBL_TUESDAY_HOURS',
+                ],
+                [
+                    'name' => 'tuesday_open',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'tuesday_open_hour',
+                        'tuesday_open_minutes',
+                    ],
+                    'label' => 'LBL_TUESDAY_OPEN_TIME',
+                    'default_times' => [
+                        'hour' => 8,
+                        'minute' => 0,
+                    ],
+                ],
+                [
+                    'name' => 'tuesday_close',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'tuesday_close_hour',
+                        'tuesday_close_minutes',
+                    ],
+                    'label' => 'LBL_TUESDAY_CLOSE_TIME',
+                    'default_times' => [
+                        'hour' => 17,
+                        'minute' => 0,
+                    ],
+                ],
+                // Wednesday
+                [
+                    'name' => 'is_open_wednesday',
+                    'type' => 'business-day-status',
+                    'default' => 'Open',
+                    'label' => 'LBL_WEDNESDAY_HOURS',
+                ],
+                [
+                    'name' => 'wednesday_open',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'wednesday_open_hour',
+                        'wednesday_open_minutes',
+                    ],
+                    'label' => 'LBL_WEDNESDAY_OPEN_TIME',
+                    'default_times' => [
+                        'hour' => 8,
+                        'minute' => 0,
+                    ],
+                ],
+                [
+                    'name' => 'wednesday_close',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'wednesday_close_hour',
+                        'wednesday_close_minutes',
+                    ],
+                    'label' => 'LBL_WEDNESDAY_CLOSE_TIME',
+                    'default_times' => [
+                        'hour' => 17,
+                        'minute' => 0,
+                    ],
+                ],
+                // Thursday
+                [
+                    'name' => 'is_open_thursday',
+                    'type' => 'business-day-status',
+                    'default' => 'Open',
+                    'label' => 'LBL_THURSDAY_HOURS',
+                ],
+                [
+                    'name' => 'thursday_open',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'thursday_open_hour',
+                        'thursday_open_minutes',
+                    ],
+                    'label' => 'LBL_THURSDAY_OPEN_TIME',
+                    'default_times' => [
+                        'hour' => 8,
+                        'minute' => 0,
+                    ],
+                ],
+                [
+                    'name' => 'thursday_close',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'thursday_close_hour',
+                        'thursday_close_minutes',
+                    ],
+                    'label' => 'LBL_THURSDAY_CLOSE_TIME',
+                    'default_times' => [
+                        'hour' => 17,
+                        'minute' => 0,
+                    ],
+                ],
+                // Friday
+                [
+                    'name' => 'is_open_friday',
+                    'type' => 'business-day-status',
+                    'default' => 'Open',
+                    'label' => 'LBL_FRIDAY_HOURS',
+                ],
+                [
+                    'name' => 'friday_open',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'friday_open_hour',
+                        'friday_open_minutes',
+                    ],
+                    'label' => 'LBL_FRIDAY_OPEN_TIME',
+                    'default_times' => [
+                        'hour' => 8,
+                        'minute' => 0,
+                    ],
+                ],
+                [
+                    'name' => 'friday_close',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'friday_close_hour',
+                        'friday_close_minutes',
+                    ],
+                    'label' => 'LBL_FRIDAY_CLOSE_TIME',
+                    'default_times' => [
+                        'hour' => 17,
+                        'minute' => 0,
+                    ],
+                ],
+                // Saturday
+                [
+                    'name' => 'is_open_saturday',
+                    'type' => 'business-day-status',
+                    'default' => 'Closed',
+                    'label' => 'LBL_SATURDAY_HOURS',
+                ],
+                [
+                    'name' => 'saturday_open',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'saturday_open_hour',
+                        'saturday_open_minutes',
+                    ],
+                    'label' => 'LBL_SATURDAY_OPEN_TIME',
+                ],
+                [
+                    'name' => 'saturday_close',
+                    'type' => 'timeselect',
+                    'fields' => [
+                        'saturday_close_hour',
+                        'saturday_close_minutes',
+                    ],
+                    'label' => 'LBL_SATURDAY_CLOSE_TIME',
+                ],
+            ],
+        ],
+        [
+            'name' => 'panel_hidden',
+            'label' => 'LBL_RECORD_SHOWMORE',
+            'hide' => true,
+            'columns' => 2,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => [
                 [
                     'name' => 'address',
                     'type' => 'fieldset',
@@ -204,66 +439,6 @@ $viewdefs['BusinessCenters']['base']['view']['record'] = [
                         ],
                     ],
                 ],
-            ],
-        ],
-        [
-            //'newTab' => false,
-            'panelDefault' => 'expanded',
-            'name' => 'business_hours',
-            'label' => 'LBL_RECORD_BUSINESS_HOURS_PANEL_HEADER',
-            'columns' => 2,
-            'labelsOnTop' => 1,
-            'placeholders' => 1,
-            'fields' => [
-                // Sunday
-                'is_open_sunday',
-                '',
-                'sunday_open_hour',
-                'sunday_open_minutes',
-                'sunday_close_hour',
-                'sunday_close_minutes',
-                // Monday
-                'is_open_monday',
-                '',
-                'monday_open_hour',
-                'monday_open_minutes',
-                'monday_close_hour',
-                'monday_close_minutes',
-                // Tuesday
-                'is_open_tuesday',
-                '',
-                'tuesday_open_hour',
-                'tuesday_open_minutes',
-                'tuesday_close_hour',
-                'tuesday_close_minutes',
-                // Wednesday
-                'is_open_wednesday',
-                '',
-                'wednesday_open_hour',
-                'wednesday_open_minutes',
-                'wednesday_close_hour',
-                'wednesday_close_minutes',
-                // Thursday
-                'is_open_thursday',
-                '',
-                'thursday_open_hour',
-                'thursday_open_minutes',
-                'thursday_close_hour',
-                'thursday_close_minutes',
-                // Friday
-                'is_open_friday',
-                '',
-                'friday_open_hour',
-                'friday_open_minutes',
-                'friday_close_hour',
-                'friday_close_minutes',
-                // Saturday
-                'is_open_saturday',
-                '',
-                'saturday_open_hour',
-                'saturday_open_minutes',
-                'saturday_close_hour',
-                'saturday_close_minutes',
             ],
         ],
     ],

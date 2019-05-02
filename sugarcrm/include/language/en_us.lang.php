@@ -938,6 +938,13 @@ $app_list_strings = array (
         'Medium' => 'Medium',
         'High' => 'High',
     ),
+    //BEGIN SUGARCRM flav=ent ONLY
+    'business_day_status_dom' => [
+        'Open' => 'Open',
+        'Open 24 Hours' => 'Open 24 Hours',
+        'Closed' => 'Closed',
+    ],
+    //END SUGARCRM flav=ent ONLY
   'product_category_default_key' => '',
   'product_category_dom' =>
   array (

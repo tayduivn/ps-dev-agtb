@@ -88,7 +88,7 @@ $dictionary['BusinessCenter'] = [
         // Business Hours
         'is_open_sunday' => [
             'name' => 'is_open_sunday',
-            'vname' => 'LBL_OPEN_SUNDAY',
+            'vname' => 'LBL_SUNDAY_HOURS',
             'type' => 'bool',
             'default' => '0',
             'group' => 'sunday_hours',
@@ -146,9 +146,9 @@ $dictionary['BusinessCenter'] = [
         ],
         'is_open_monday' => [
             'name' => 'is_open_monday',
-            'vname' => 'LBL_OPEN_MONDAY',
+            'vname' => 'LBL_MONDAY_HOURS',
             'type' => 'bool',
-            'default' => '0',
+            'default' => '1',
             'group' => 'monday_hours',
             'comment' => 'Explicit marker for if this business center is open on Monday',
             'duplicate_on_record_copy' => 'no',
@@ -204,9 +204,9 @@ $dictionary['BusinessCenter'] = [
         ],
         'is_open_tuesday' => [
             'name' => 'is_open_tuesday',
-            'vname' => 'LBL_OPEN_TUESDAY',
+            'vname' => 'LBL_TUESDAY_HOURS',
             'type' => 'bool',
-            'default' => '0',
+            'default' => '1',
             'group' => 'tuesday_hours',
             'comment' => 'Explicit marker for if this business center is open on Tuesday',
             'duplicate_on_record_copy' => 'no',
@@ -262,9 +262,9 @@ $dictionary['BusinessCenter'] = [
         ],
         'is_open_wednesday' => [
             'name' => 'is_open_wednesday',
-            'vname' => 'LBL_OPEN_WEDNESDAY',
+            'vname' => 'LBL_WEDNESDAY_HOURS',
             'type' => 'bool',
-            'default' => '0',
+            'default' => '1',
             'group' => 'wednesday_hours',
             'comment' => 'Explicit marker for if this business center is open on Wednesday',
             'duplicate_on_record_copy' => 'no',
@@ -320,9 +320,9 @@ $dictionary['BusinessCenter'] = [
         ],
         'is_open_thursday' => [
             'name' => 'is_open_thursday',
-            'vname' => 'LBL_OPEN_THURSDAY',
+            'vname' => 'LBL_THURSDAY_HOURS',
             'type' => 'bool',
-            'default' => '0',
+            'default' => '1',
             'group' => 'thursday_hours',
             'comment' => 'Explicit marker for if this business center is open on Thursday',
             'duplicate_on_record_copy' => 'no',
@@ -378,9 +378,9 @@ $dictionary['BusinessCenter'] = [
         ],
         'is_open_friday' => [
             'name' => 'is_open_friday',
-            'vname' => 'LBL_OPEN_FRIDAY',
+            'vname' => 'LBL_FRIDAY_HOURS',
             'type' => 'bool',
-            'default' => '0',
+            'default' => '1',
             'group' => 'friday_hours',
             'comment' => 'Explicit marker for if this business center is open on Friday',
             'duplicate_on_record_copy' => 'no',
@@ -436,7 +436,7 @@ $dictionary['BusinessCenter'] = [
         ],
         'is_open_saturday' => [
             'name' => 'is_open_saturday',
-            'vname' => 'LBL_OPEN_SATURDAY',
+            'vname' => 'LBL_SATURDAY_HOURS',
             'type' => 'bool',
             'default' => '0',
             'group' => 'saturday_hours',
