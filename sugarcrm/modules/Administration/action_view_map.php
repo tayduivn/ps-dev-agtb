@@ -19,3 +19,4 @@ $action_view_map['globalsearchsettings'] = 'globalsearchsettings';
 $action_view_map['unifiedsearchsettings'] = 'unifiedsearchsettings';
 $action_view_map['languages'] = 'languages';
 $action_view_map['apiplatforms'] = 'apiplatforms';
+$action_view_map['cloudinsights'] = 'cloudinsights';

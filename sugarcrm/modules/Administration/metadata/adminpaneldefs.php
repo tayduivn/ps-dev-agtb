@@ -14,13 +14,40 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 global $current_user,$admin_group_header;
 
+$config = \SugarConfig::getInstance();
+
+// Needed to see if this is configured for Sugar Cloud Insights
+$insights = $config->get('cloud_insight', []);
+if (!empty($insights['enabled'])) {
+    $admin_option_defs['Administration']['insights'] = [
+        'LeadReports',
+        'LBL_CLOUD_INSIGHTS_ADMIN_TITLE',
+        'LBL_CLOUD_INSIGHTS_ADMIN_DESC',
+        './index.php?module=Administration&action=CloudInsights',
+        null,
+        sprintf(
+            'onclick="return SUGAR.Administration.CloudInsights.LinkToLanding(\'%s\', \'%s\');"',
+            $insights['url'],
+            $insights['key']
+        ),
+    ];
+
+    $admin_group_header[] = [
+        'LBL_SUGAR_CLOUD_TITLE',
+        '',
+        false,
+        $admin_option_defs,
+        'LBL_SUGAR_CLOUD_DESC',
+    ];
+}
+
 //users and security.
 $admin_option_defs=array();
 $admin_option_defs['Users']['user_management']= array('Users','LBL_MANAGE_USERS_TITLE','LBL_MANAGE_USERS','./index.php?module=Users&action=index');
 $admin_option_defs['Users']['roles_management']= array('Roles','LBL_MANAGE_ROLES_TITLE','LBL_MANAGE_ROLES','./index.php?module=ACLRoles&action=index');
 $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS_TITLE','LBL_MANAGE_TEAMS','./index.php?module=Teams&action=index');
 
-$idpConfig = new Authentication\Config(\SugarConfig::getInstance());
+$idpConfig = new Authentication\Config($config);
 $idmModeConfig = $idpConfig->getIDMModeConfig();
 if ($idpConfig->isIDMModeEnabled()) {
     $passwordManagerUrl = $idpConfig->buildCloudConsoleUrl('passwordManagement');
@@ -355,4 +382,3 @@ foreach ($admin_group_header as $key=>$values) {
 
 	}
 }
-?>

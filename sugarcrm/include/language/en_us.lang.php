@@ -2777,6 +2777,7 @@ $app_strings = array (
     'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
     'ERR_DB_QUERY' => '{0}: query failed: {1}',
     'ERR_UW_RETIRED' => 'Upgrade Wizard is not available in this version.',
+    'ERR_NOT_CLOUD_INSTANCE' => 'This instance of Sugar is either not a SugarCloud instance or is not configured for SugarCloud Insights.',
 
 
     'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',

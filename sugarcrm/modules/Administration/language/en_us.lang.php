@@ -1247,11 +1247,20 @@ Any integrations that rely on this platform will stop working.',
 
     'LBL_PMSE_ADMIN_TITLE_CASESLIST' => 'Process Management',
     'LBL_PMSE_ADMIN_DESC_CASESLIST' => 'View all open and running Processes in the system.',
-    
+
     'LBL_PMSE_ADMIN_DESC_MODULE_1' => 'Configure ',
     'LBL_PMSE_ADMIN_DESC_MODULE_2' => ' settings and view logs. Manage all BPM processes for all users via Process Management.',
     //END SUGARCRM flav=ent ONLY
 
     'LBL_MANAGE_QUOTES_TITLE' => 'Quotes Configuration',
     'LBL_MANAGE_QUOTES' => 'Configure the quotes worksheet layout',
+
+    // Cloud Insights
+    'LBL_SUGAR_CLOUD_TITLE' => 'SugarCloud',
+    'LBL_SUGAR_CLOUD_DESC' => 'View information about your instance(s) on SugarCloud.',
+    'LBL_CLOUD_INSIGHTS' => 'SugarCloud Insights',
+    'LBL_CLOUD_INSIGHTS_ADMIN_TITLE' => 'SugarCloud Insights',
+    'LBL_CLOUD_INSIGHTS_ADMIN_DESC' => 'View your organization\'s storage usage, license usage and gain access to logs',
+    'LBL_VIEW_CLOUD_INSIGHTS' => 'View SugarCloud Insights',
+    'LBL_FORM_ACCESS_CLOUD_INSIGHT' => 'Access SugarCloud Insights',
 );
