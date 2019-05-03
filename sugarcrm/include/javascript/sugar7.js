@@ -18,7 +18,9 @@
     var bwcRedirectRoutes = [
         'config',
         'create',
+        //BEGIN SUGARCRM flav=ent ONLY
         'pipeline',
+        //END SUGARCRM flav=ent ONLY
         'editAllRecurrences',
         'layout',
         'list',
@@ -372,6 +374,7 @@
                     });
                 }
             },
+            //BEGIN SUGARCRM flav=ent ONLY
             {
                 name: 'pipelineView',
                 route: ':module/pipeline',
@@ -387,6 +390,7 @@
                     });
                 }
             },
+            //END SUGARCRM flav=ent ONLY
             {
                 name: 'record',
                 route: ':module/:id(/:action)'

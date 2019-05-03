@@ -169,6 +169,8 @@ describe('Base.Layout.Togglepanel', function() {
             afterEach(function() {
                 sinon.collection.restore();
             });
+
+            //BEGIN SUGARCRM flav=ent ONLY
             describe('when the data.route is not pipeline', function() {
                 it('should set last state with last state key and data.route', function() {
                     sinon.collection.stub(layout, '$', function() {
@@ -208,6 +210,7 @@ describe('Base.Layout.Togglepanel', function() {
                     expect(app.router.navigate).toHaveBeenCalledWith(layout.module + '/pipeline', {trigger: true});
                 });
             });
+            //END SUGARCRM flav=ent ONLY
         });
     });
 });

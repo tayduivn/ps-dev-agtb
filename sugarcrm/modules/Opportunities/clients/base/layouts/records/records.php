@@ -36,8 +36,11 @@ $viewdefs['Opportunities']['base']['layout']['records'] = array(
                                             ),
                                         ),
                                         'refresh_button' => true,
+                                        //BEGIN SUGARCRM flav=ent ONLY
                                         'css_class' => 'pipeline-refresh-btn',
+                                        //END SUGARCRM flav=ent ONLY
                                         'availableToggles' => array(
+                                            //BEGIN SUGARCRM flav=ent ONLY
                                             array(
                                                 'name' => 'pipeline',
                                                 'icon' => 'fa-filter',
@@ -45,6 +48,7 @@ $viewdefs['Opportunities']['base']['layout']['records'] = array(
                                                 'css_class' => 'pipeline-view-button',
                                                 'route' => 'pipeline',
                                             ),
+                                            //END SUGARCRM flav=ent ONLY
                                             array(
                                                 'name' => 'list',
                                                 'icon' => 'fa-table',
@@ -76,9 +80,11 @@ $viewdefs['Opportunities']['base']['layout']['records'] = array(
                                             array(
                                                 'layout' => 'list',
                                             ),
+                                            //BEGIN SUGARCRM flav=ent ONLY
                                             array(
                                                 'layout' => 'pipeline',
                                             ),
+                                            //END SUGARCRM flav=ent ONLY
                                         ),
                                     ),
                                 ),
@@ -96,7 +102,7 @@ $viewdefs['Opportunities']['base']['layout']['records'] = array(
                                         'type' => 'dashboard',
                                         'last_state' => array(
                                             'id' => 'last-visit',
-                                        )
+                                        ),
                                     ),
                                     'context' => array(
                                         'forceNew' => true,

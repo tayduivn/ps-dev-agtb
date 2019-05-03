@@ -29,6 +29,7 @@ describe('Sugar7.Routes', function() {
         app.router.stop();
     });
 
+    //BEGIN SUGARCRM flav=ent ONLY
     describe('Visual Pipeline Route', function() {
         var mockKey = 'foo:key';
         var oldIsSynced;
@@ -55,6 +56,7 @@ describe('Sugar7.Routes', function() {
             });
         });
     });
+    //END SUGARCRM flav=ent ONLY
 
     describe('Routes', function() {
         var mockKey = 'foo:key',
