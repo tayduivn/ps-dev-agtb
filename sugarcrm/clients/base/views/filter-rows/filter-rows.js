@@ -1059,9 +1059,9 @@
             filter[name] = '';
             return filter;
         } else {
-            if (!_.isEmpty(data.valueField) && _.isFunction(data.valueField.buildFilterDefinition)) {
+            if (!_.isEmpty(data.valueField) && _.isFunction(data.valueField.delegateBuildFilterDefinition)) {
                 filter[name] = {};
-                filter[name][operator] = data.valueField.buildFilterDefinition();
+                filter[name][operator] = data.valueField.delegateBuildFilterDefinition();
             } else if (this.fieldList[name] && _.has(this.fieldList[name], 'dbFields')) {
                 var subfilters = [];
                 _.each(this.fieldList[name].dbFields, function(dbField) {

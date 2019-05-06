@@ -244,7 +244,7 @@
     /**
      * Returns the filter definition for the value of this field.
      */
-    buildFilterDefinition: function() {
+    delegateBuildFilterDefinition: function() {
         var collection;
 
         if (!this.model) {

@@ -1591,7 +1591,7 @@ describe('Base.View.FilterRows', function() {
         it('should delegate to the field when it knows how to compile its own value into a filter def', function() {
             var field = {
                 model: new Backbone.Model(),
-                buildFilterDefinition: sinon.stub().returns('def')
+                delegateBuildFilterDefinition: sinon.stub().returns('def')
             };
 
             $row = $('<div>').data({
@@ -1602,7 +1602,7 @@ describe('Base.View.FilterRows', function() {
             });
             filter = view.buildRowFilterDef($row);
 
-            expect(field.buildFilterDefinition).toHaveBeenCalled();
+            expect(field.delegateBuildFilterDefinition).toHaveBeenCalled();
             expect(filter).toEqual({
                 description: {
                     '$starts': 'def'

@@ -215,7 +215,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
             field.model.get('to_collection').add(beanWithInvalidEmailAddress);
             field.model.trigger('sync');
 
-            filterDef = field.buildFilterDefinition();
+            filterDef = field.delegateBuildFilterDefinition();
 
             expect(filterDef.length).toEqual(5);
 
