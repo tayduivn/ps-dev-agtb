@@ -129,35 +129,40 @@
             manifestUrl += '/manifest?host=crm';
 
             var getManifest = function(onSuccess, onError, onLogin) {
-                var fetchOptions = {
-                    headers: {
-                        'Accept': 'application/json'
+                $.ajax({
+                    url: manifestUrl,
+                    xhrFields: {
+                        withCredentials: true,
                     },
-                    credentials: 'include'
-                };
-                fetch(manifestUrl, fetchOptions).then(function(response) {
-                        response.json().then(function(manifest) {
-                            if (manifest.loginRedirect && onLogin) {
-                                onLogin(manifest.loginRedirect);
-                            } else {
-                                onSuccess(manifest);
-                            }
-                        }).catch(function(error) {
-                            onError(error);
-                        });
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    crossDomain: true,
+                    success: function(manifest) {
+                        if (manifest.loginRedirect && onLogin) {
+                            onLogin(manifest.loginRedirect);
+                        } else {
+                            onSuccess(manifest);
+                        }
+                    },
+                    error: function(error) {
+                        onError(error);
                     }
-                ).catch(function(error) {
-                    onError(error);
                 });
             };
 
             return new Promise(function(res, error) {
                 var fetchProjLayout = function(project) {
-                    var fetchOptions = {
-                        mode: 'cors'
-                    };
-                    fetch(project.src, fetchOptions).then(function(response) {
-                        response.json().then(function(manifest) {
+
+                    $.ajax({
+                        url: project.src,
+                        dataType: 'json',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        contentType: 'application/json; charset=utf-8',
+                        mode: 'cors',
+                        success: function(manifest) {
                             _.each(manifest.layouts, function(def) {
                                 if (def.module && def.layout) {
                                     addCompToLayout(metadata, def.module, def.layout, {
@@ -168,10 +173,11 @@
                                         }
                                     });
                                 }
-                            }, this);
-                        }).catch(function(error) {
+                            });
+                        },
+                        error: function(error) {
                             console.error(error);
-                        });
+                        }
                     });
                 };
 
@@ -195,11 +201,9 @@
                         window.removeEventListener('message', eventCallback);
                     };
                     var eventCallback = function(event) {
-                        console.log('[ExternalApps] Event origin was ' + event.origin);
-                        console.log('[ExternalApps] iframeOrigin was ' + iframeOrigin);
-
                         // TODO: Verify the manifest service origin instead of assuming any
                         // origin besides the one we are on is correct
+
                         if (event.origin === iframeOrigin) {
                             cleanup();
                             // After the iframe event callback, we need to load the manifest again
