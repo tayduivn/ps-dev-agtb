@@ -148,29 +148,36 @@ function sugar_file_put_contents_atomic($filename, $data)
         $dir = dirname($filename);
     }
 
-    $temp = tempnam($dir, 'sugar');
+    $temp1 = tempnam($dir, 'sugar');
 
-    if ($temp === false) {
+    if ($temp1 === false) {
         return false;
     }
 
-    if (file_put_contents($temp, $data) === false) {
-        unlink($temp);
+    if (file_put_contents($temp1, $data) === false) {
+        unlink($temp1);
 
         return false;
     }
 
-    sugar_chmod($temp);
+    sugar_chmod($temp1);
 
-    if (!@rename($temp, $filename))
-    {
+    //rename() from sys_get_temp_dir() to NFS was causing file corruption (BR-6968)
+    //during the concurrent file writes. $temp2
+    $temp2 = tempnam(dirname($filename), 'sugar');
+
+    if (!rename($temp1, $temp2)) {
+        // cleaning up temp1 file to avoid filling up temp1 dir
+        @unlink($temp1);
+        return false;
+    } elseif (!rename($temp2, $filename)) {
         @unlink($filename);
-        if (!@rename($temp, $filename))
-        {
-            // cleaning up temp file to avoid filling up temp dir
-            @unlink($temp);
-            trigger_error("sugar_file_put_contents_atomic() : fatal rename failure '$temp' -> '$filename'", E_USER_ERROR);
+        if (!rename($temp2, $filename)) {
+            // cleaning up temp2 file to avoid filling up temp1 dir
+            @unlink($temp2);
+            return false;
         }
+        return file_exists($filename);
     } else {
         return file_exists($filename);
     }
