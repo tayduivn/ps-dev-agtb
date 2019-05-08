@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job4
+@dashboard @dashlets @job4 @xxx
 Feature: Shareable Dashboards functionality verification
 
   Background:
@@ -37,8 +37,8 @@ Feature: Shareable Dashboards functionality verification
       | KB Articles |
 
     And I add ListView dashlet to #Dashboard at column 3
-      | label         | module   | limit |
-      | Contacts List | Contacts | 10    |
+      | label       | module   | limit |
+      | KB Articles | Contacts | 10    |
 
     And I add History dashlet to #Dashboard at column 1
       | label          |

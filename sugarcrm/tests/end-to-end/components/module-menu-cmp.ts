@@ -33,7 +33,7 @@ export default class extends BaseView {
                     $: 'a.module-list-link[href="#{{itemName}}"]'
                 },
                 currentItem: 'li.current a[href="#{{itemName}}"]',
-                moreIcon: '.more button',
+                moreIcon: '.more .fa.fa-chevron-down',
 
                 moduleItems: {
                     $: '.dropdown.active',
@@ -139,8 +139,7 @@ export default class extends BaseView {
      * Click on Modules Mege Menu dropdown to show all modules
      */
     public async showAllModules() {
-        await this.driver
-            .click(this.$('moduleList.moreIcon'));
+        await this.driver.click(this.$('moduleList.moreIcon'));
     }
 
     /**

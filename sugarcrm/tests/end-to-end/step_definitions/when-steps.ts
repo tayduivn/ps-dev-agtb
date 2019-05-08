@@ -67,7 +67,7 @@ When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
  */
 When(/^I toggle (checkbox|favorite) for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
     async function (itemName, record: { id: string }, view: ListView) {
-        let listItem = view.getListItem({id: record.id});
+        let listItem = await view.getListItem({id: record.id});
         await listItem.clickItem(itemName);
     }, {waitForApp: true});
 
@@ -123,6 +123,7 @@ When(/^I wait for (\d+) seconds$/,
 When(/^I open ([\w,\/]+) view and login$/,
     async function (module: string): Promise<void> {
         await whenStepsHelper.setUrlHashAndLogin(module);
+        await this.driver.waitForApp();
     }, {waitForApp: true});
 
 When(/^I go to "([^"]*)" url$/,

@@ -365,7 +365,9 @@ export const chooseModule = async function (itemName) {
         await moduleMenuCmp.clickItem(itemName);
         await seedbed.client.driver.waitForApp();
     } else {
+        await seedbed.client.driver.waitForApp();
         await moduleMenuCmp.showAllModules();
+
         isVisible = await moduleMenuCmp.isVisible(itemName);
         if (isVisible) {
             await moduleMenuCmp.clickItem(itemName, true);
