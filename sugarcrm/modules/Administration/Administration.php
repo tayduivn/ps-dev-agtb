@@ -12,6 +12,7 @@
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 
 class Administration extends SugarBean {
     var $settings;
@@ -232,6 +233,16 @@ class Administration extends SugarBean {
                 }
                 sugar_cache_clear($cache_key);
             }
+        }
+
+        // need to update subscription info
+        if ($category === 'license' && $key === 'key') {
+            // This section of code is a portion of the code referred
+            // to as Critical Control Software under the End User
+            // License Agreement.  Neither the Company nor the Users
+            // may modify any portion of the Critical Control Software.
+            SubscriptionManager::instance()->downloadSubscriptionContent($value);
+            //END REQUIRED CODE DO NOT MODIFY
         }
         return $result;
     }

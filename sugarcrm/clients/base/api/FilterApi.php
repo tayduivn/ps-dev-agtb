@@ -704,9 +704,15 @@ class FilterApi extends SugarApi
         // filter out un-accessable records
         foreach ($beans as $bean_id => $bean) {
             if (!empty($args['module'])) {
+                // This section of code is a portion of the code referred
+                // to as Critical Control Software under the End User
+                // License Agreement.  Neither the Company nor the Users
+                // may modify any portion of the Critical Control Software.
+
                 if (!AccessControlManager::instance()->allowRecordAccess($args['module'], $bean_id)) {
                     unset($beans[$bean_id]);
                 }
+                //END REQUIRED CODE DO NOT MODIFY
             }
         }
 

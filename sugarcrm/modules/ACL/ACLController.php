@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
-
 require_once('modules/ACLActions/actiondefs.php');
 class ACLController
 {

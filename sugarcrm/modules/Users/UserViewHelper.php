@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 /**
@@ -290,21 +291,26 @@ class UserViewHelper {
      */
     public function setupLicenseTypeDropdown()
     {
-        $licenseType = $this->bean->getLicenseType();
+        $userLicenseType = SubscriptionManager::instance()->getUserSubscriptions($this->bean);
 
         global $app_list_strings;
         $licenseTypes = $app_list_strings['license_type_dom'];
 
-        // TBD get from entitlement list
-        if ($this->ss->get_template_vars('IS_SUPER_ADMIN')) {
-            $availableLicenseTypes = [
-                'SUGAR_SERVE',
-                User::DEFAULT_LICENSE_TYPE,
-            ];
+        global $current_user;
+        $warningMessage = '';
+        if ($current_user->is_admin) {
+            $availableLicenseTypes = array_keys(SubscriptionManager::instance()->getSystemSubscriptionKeys());
         } else {
-            $availableLicenseTypes = $licenseType;
+            $availableLicenseTypes = $userLicenseType;
+
+            if (empty($userLicenseType)) {
+                $warningMessage = 'Need administrator to assign you a license type';
+            }
         }
 
+        if (empty($availableLicenseTypes)) {
+            $GLOBALS['log']->fatal('no valid license for this instance');
+        }
         // multi-selection
         $licenseTypesDropdown = '<select multiple="true" id="LicenseType" name="LicenseTypes[]" ';
         if (count($availableLicenseTypes) == 1) {
@@ -314,25 +320,35 @@ class UserViewHelper {
 
         $setSelected = !empty($this->bean->id);
 
-        foreach ($availableLicenseTypes as $currType) {
-            if ($setSelected && in_array($currType, $licenseType)) {
-                $licenseTypesDropdown .= '<option value="'.$currType.'" SELECTED>'.$licenseTypes[$currType].'</option>';
+        foreach ($availableLicenseTypes as $type) {
+            if ($setSelected && in_array($type, $userLicenseType)) {
+                $licenseTypesDropdown .= '<option value="' . $type . '" SELECTED>' . $licenseTypes[$type] . '</option>';
             } else {
-                $licenseTypesDropdown .= '<option value="'.$currType.'">'.$licenseTypes[$currType].'</option>';
+                $licenseTypesDropdown .= '<option value="' . $type . '">' . $licenseTypes[$type] . '</option>';
             }
         }
         $licenseTypesDropdown .= '</select><div id="LicenseTypeDesc">&nbsp;</div>';
 
         $licenseTypesInString = '';
-        foreach ($licenseType as $key) {
+        foreach ($userLicenseType as $key) {
             $licenseTypesInString .= $licenseTypes[$key] . '</BR>';
         }
         $this->ss->assign('LICENSE_TYPE_DROPDOWN', $licenseTypesDropdown);
-        $this->ss->assign(
-            'LICENSE_TYPE_READONLY',
-            $licenseTypesInString
-            . "<input type='hidden' id='LicenseType' value='{$licenseType}'><div id='LicenseTypeDesc'>&nbsp;</div>"
-        );
+        $licenseString = json_encode($userLicenseType);
+
+        if (empty($warningMessage)) {
+            $this->ss->assign(
+                'LICENSE_TYPE_READONLY',
+                $licenseTypesInString
+                . "<input type='hidden' id='LicenseType' value='{$licenseString}'><div id='LicenseTypeDesc'>&nbsp;</div>"
+            );
+        } else {
+            $this->ss->assign(
+                'LICENSE_TYPE_READONLY',
+                $warningMessage
+                . "<input type='hidden' id='LicenseType' value='{$licenseString}'><div id='LicenseTypeDesc'>$warningMessage&nbsp;</div>"
+            );
+        }
     }
 
     protected function setupPasswordTab() {

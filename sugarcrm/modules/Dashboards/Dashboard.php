@@ -80,6 +80,10 @@ class Dashboard extends Basic
                     // may modify any portion of the Critical Control Software.
                     if (isset($metadata->components[$component_key]->rows[$row_key][$item_key])) {
                         if (!empty($item->view->type)) {
+                            // This section of code is a portion of the code referred
+                            // to as Critical Control Software under the End User
+                            // License Agreement.  Neither the Company nor the Users
+                            // may modify any portion of the Critical Control Software.
                             $allowAccess = $this->allowedToAccessDashlet($item->view->type);
                             if (!$allowAccess) {
                                 // this is license controled dashlet
@@ -91,6 +95,7 @@ class Dashboard extends Basic
                                     $dirty = true;
                                 }
                             }
+                            //END REQUIRED CODE DO NOT MODIFY
                         }
                     }
                 }
@@ -108,13 +113,19 @@ class Dashboard extends Basic
         return $metadata;
     }
 
+
     /**
      * @param string $dashletLabel
      * @return bool
      */
     protected function allowedToAccessDashlet(string $label) : bool
     {
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
         return AccessControlManager::instance()->allowDashletAccess($label);
+        //END REQUIRED CODE DO NOT MODIFY
     }
 
     /**

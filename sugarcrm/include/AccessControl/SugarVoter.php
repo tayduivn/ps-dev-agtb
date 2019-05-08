@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\AccessControl;
 
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
+
 // This section of code is a portion of the code referred
 // to as Critical Control Software under the End User
 // License Agreement.  Neither the Company nor the Users
@@ -51,16 +53,12 @@ class SugarVoter implements SugarVoterInterface
         }
 
         global $current_user;
-
         if (empty($current_user)) {
             throw new \Exception('User is not logged in');
         }
 
-        // check subscriptions, TBD
-        $subscribed = ['SUGAR_SERVE', 'CURRENT'];
-
-        $userLicenseTypes = $current_user->getLicenseType();
-        $this->subscriptions = array_intersect($subscribed, $userLicenseTypes);
+        // check subscriptions
+        $this->subscriptions = SubscriptionManager::instance()->getUserSubscriptions($current_user);
         return $this->subscriptions;
     }
 
@@ -136,3 +134,4 @@ class SugarVoter implements SugarVoterInterface
         }
     }
 }
+//END REQUIRED CODE DO NOT MODIFY

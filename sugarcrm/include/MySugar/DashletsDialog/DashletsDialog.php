@@ -113,8 +113,13 @@ class DashletsDialog {
                             $displayDashlet = false;
                         } elseif (!SugarACL::checkAccess($relModule, 'list', array('owner_override' => true))) {
                             $displayDashlet = false;
+                            // This section of code is a portion of the code referred
+                            // to as Critical Control Software under the End User
+                            // License Agreement.  Neither the Company nor the Users
+                            // may modify any portion of the Critical Control Software.
                         } elseif (!AccessControlManager::instance()->allowModuleAccess($relModule)) {
                             $displayDashlet = false;
+                            //END REQUIRED CODE DO NOT MODIFY
                         }
                     }
                 }

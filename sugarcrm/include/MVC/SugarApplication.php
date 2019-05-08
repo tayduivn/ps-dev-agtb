@@ -65,8 +65,9 @@ class SugarApplication
      */
     function execute()
     {
-        // TBD, need to final tuning the accessing
+        // need to disable Access Control for BWC modules otherwise admin page will behave strangely
         AccessControlManager::instance()->allowAdminOverride(true);
+
         global $sugar_config;
         if (!empty($sugar_config['default_module'])) {
             $this->default_module = $sugar_config['default_module'];

@@ -616,6 +616,7 @@ $app_list_strings = array (
     array (
         'CURRENT' => 'Current Product',
         'SUGAR_SERVE' => 'Sugar Serve',
+        'SUGAR_SELL' => 'Sugar Sell',
     ),
   'user_status_dom' =>
   array (

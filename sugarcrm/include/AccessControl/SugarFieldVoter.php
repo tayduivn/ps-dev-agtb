@@ -58,3 +58,4 @@ class SugarFieldVoter extends SugarVoter
         return false;
     }
 }
+//END REQUIRED CODE DO NOT MODIFY

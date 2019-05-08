@@ -2748,13 +2748,16 @@ class User extends Person {
      */
     public function setLicenseType(array $types = [])
     {
-        if (empty($this->license_type)) {
-            $this->license_type = json_encode([self::DEFAULT_LICENSE_TYPE]);
-        }
-
         global $current_user;
         if (is_admin($current_user) && !empty($types)) {
-            $this->license_type = json_encode($types);
+            $encodedType = json_encode($types);
+            if ($this->license_type != $encodedType) {
+                // license type changed, need to invalidate metadata cache
+                $metadataMgr = MetaDataManager::getManager();
+                $context = new MetaDataContextUser($this);
+                $metadataMgr->invalidateCache($metadataMgr->getPlatformsWithCaches(), $context);
+                $this->license_type = $encodedType;
+            }
         }
     }
 
@@ -2762,12 +2765,10 @@ class User extends Person {
      * get license type. json-decoded to array
      * @return array
      */
-    public function getLicenseType()
+    public function getLicenseType() : array
     {
         if (empty($this->license_type)) {
-            // TBD, to get license type based on subscription
-            // especially need to handle Sugar Serve only subscription
-            return [self::DEFAULT_LICENSE_TYPE];
+            return [];
         }
 
         return json_decode($this->license_type, true);

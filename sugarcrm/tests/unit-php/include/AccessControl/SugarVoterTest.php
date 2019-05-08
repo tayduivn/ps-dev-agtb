@@ -27,36 +27,6 @@ class SugarVoterTest extends TestCase
     /**
      * @covers ::getCurrentUserSubscriptions
      *
-     * @dataProvider getCurrentUserSubscriptionsProvider
-     */
-    public function testGetCurrentUserSubscriptions($userLicenseType, $expected)
-    {
-        $userMock = $this->getMockBuilder(\User::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getLicenseType'])
-            ->getMock();
-
-        $userMock->expects($this->any())
-            ->method('getLicenseType')
-            ->will($this->returnValue([$userLicenseType]));
-
-        global $current_user;
-        $current_user = $userMock;
-        $voter = new SugarVoter();
-        $this->assertSame($expected, TestReflection::callProtectedMethod($voter, 'getCurrentUserSubscriptions', []));
-    }
-
-    public function getCurrentUserSubscriptionsProvider()
-    {
-        return [
-            ['SUGAR_SERVE', ['SUGAR_SERVE']],
-            ['NOT_SERVICE_CLOUD', []],
-        ];
-    }
-
-    /**
-     * @covers ::getCurrentUserSubscriptions
-     *
      * @expectedException \Exception
      */
     public function testGetCurrentUserSubscriptionsException()

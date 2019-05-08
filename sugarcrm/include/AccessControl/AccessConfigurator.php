@@ -72,22 +72,27 @@ class AccessConfigurator
      */
     public function getAccessControlledList(string $key, bool $useCache = true)
     {
-        $cacheKey = 'ac-' . $key;
-        if ($useCache) {
-            $list = sugar_cache_retrieve($cacheKey);
-            if (!empty($list)) {
-                return $list;
-            }
-        }
+        $cacheKey = 'access_config_data';
 
         if (empty($this->data)) {
+            if ($useCache) {
+                // try cache first
+                $this->data = sugar_cache_retrieve($cacheKey);
+                if (!empty($this->data)) {
+                    if (isset($this->data[$key])) {
+                        return $this->data[$key];
+                    }
+                    return [];
+                }
+            }
+
             $this->data = $this->loadAccessConfig();
+            if ($useCache) {
+                sugar_cache_put($cacheKey, $this->data);
+            }
         }
 
         if (isset($this->data[$key])) {
-            if ($useCache) {
-                sugar_cache_put($cacheKey, $this->data[$key]);
-            }
             return $this->data[$key];
         }
 
@@ -107,7 +112,7 @@ class AccessConfigurator
             return [];
         }
 
-        $cacheKey = 'ac-' . AccessControlManager::MODULES_KEY . '-' . implode('-', $types);
+        $cacheKey = 'ac_' . AccessControlManager::MODULES_KEY . '-' . implode('-', $types);
         if ($useCache) {
             $list = sugar_cache_retrieve($cacheKey);
             if (!empty($list)) {
@@ -150,3 +155,4 @@ class AccessConfigurator
         throw new \Exception("access config file doesn't exist: " . self::ACCESS_CONFIG_FILE);
     }
 }
+//END REQUIRED CODE DO NOT MODIFY

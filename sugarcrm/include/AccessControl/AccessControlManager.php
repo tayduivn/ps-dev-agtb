@@ -271,3 +271,4 @@ class AccessControlManager
         return AccessConfigurator::instance()->getAccessControlledList($key);
     }
 }
+//END REQUIRED CODE DO NOT MODIFY

@@ -51,9 +51,14 @@ class BeanFactory {
         }
 
         // add access control
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
         if (!AccessControlManager::instance()->allowRecordAccess($module, $id)) {
             throw new Exception('this record is not accessable for your license type');
         }
+        //END REQUIRED CODE DO NOT MODIFY
 
     	// Check if params is an array, if not use old arguments
     	if (isset($params) && !is_array($params)) {

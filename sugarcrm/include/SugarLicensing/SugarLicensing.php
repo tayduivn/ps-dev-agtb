@@ -53,9 +53,6 @@ class SugarLicensing
 
         $curl = curl_init();
 
-        // Tell curl to use HTTP POST
-        curl_setopt($curl, CURLOPT_POST, true);
-
         // Tell curl not to return headers, but do return the response
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -91,9 +88,10 @@ class SugarLicensing
      *
      * @param $endpoint
      * @param $payload
+     * @param bool $doDecode
      * @return array
      */
-    public function request($endpoint, $payload)
+    public function request($endpoint, $payload, $doDecode = true)
     {
         // make sure that the first char is a "/"
         if (substr($endpoint, 0, 1) != "/") {
@@ -102,15 +100,22 @@ class SugarLicensing
 
         curl_setopt($this->_curl, CURLOPT_URL, $this->_server . $endpoint);
 
-        if(is_array($payload)) {
-            $payload = json_encode($payload);
-        }
+        if (!empty($payload)) {
+            if (is_array($payload)) {
+                $payload = json_encode($payload);
+            }
 
-        curl_setopt($this->_curl, CURLOPT_POSTFIELDS, $payload);
+            curl_setopt($this->_curl, CURLOPT_POST, true);
+            curl_setopt($this->_curl, CURLOPT_POSTFIELDS, $payload);
+        }
 
         $response = $this->_reqeust();
 
-        return json_decode($response, true);
+        if ($doDecode) {
+            return json_decode($response, true);
+        }
+
+        return $response;
     }
 
     /**

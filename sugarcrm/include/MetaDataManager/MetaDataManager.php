@@ -1020,8 +1020,13 @@ class MetaDataManager implements LoggerAwareInterface
         $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
         $outputAcl['developer'] = ($userObject->isDeveloperForModule($module)) ? 'yes' : 'no';
 
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
         if (!AccessControlManager::instance()->allowModuleAccess($module)) {
             $outputAcl = array_merge($outputAcl, $this->aclWithNoAccess);
+            //END REQUIRED CODE DO NOT MODIFY
         } elseif (!SugarACL::moduleSupportsACL($module)) {
             $outputAcl = array_merge($outputAcl, $this->aclWithFullAccess);
         } else {

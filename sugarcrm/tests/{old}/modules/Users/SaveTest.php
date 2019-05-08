@@ -376,8 +376,9 @@ class SaveTest extends TestCase
         return [
             [['CURRENT'], true, ['CURRENT']],
             [['SUGAR_SERVE', 'CURRENT'], true, ['SUGAR_SERVE', 'CURRENT']],
-            [['CURRENT'], false, ['CURRENT']],
-            [['SUGAR_SERVE'], false, ['CURRENT']],
+            [['CURRENT'], false, []],
+            [['SUGAR_SERVE'], false, []],
+            [[], false, []],
         ];
     }
 }

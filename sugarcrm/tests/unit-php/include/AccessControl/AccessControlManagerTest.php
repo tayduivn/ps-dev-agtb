@@ -221,7 +221,7 @@ class AccessControlManagerTest extends TestCase
                     'dashablerecord' => ['SUGAR_SERVE']
                 ],
                 'commentlog-dashlet',
-                ['SUGAR_SALE'],
+                ['SUGAR_SELL'],
                 false,
             ],
             // not on controlled list
