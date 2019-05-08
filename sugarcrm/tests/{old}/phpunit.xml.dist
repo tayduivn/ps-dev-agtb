@@ -223,6 +223,9 @@
         <testsuite name="Soap Test Suite">
             <directory>./soap/</directory>
         </testsuite>
+        <testsuite name="Customer Service">
+            <directory>./modules/BusinessCenters</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist>

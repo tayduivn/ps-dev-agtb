@@ -72,6 +72,62 @@ class BusinessCenterTest extends TestCase
         \SugarTestHelper::tearDown();
     }
 
+    public function testVardefAndBeanFieldsAlign()
+    {
+        $dayMap = [
+            'sunday',
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+        ];
+
+        // Vardef fields array
+        $fieldDefs = static::$bc->field_defs;
+
+        foreach ($dayMap as $day) {
+            // Fields needed to test for positivity
+            $om = $day . '_open_minutes';
+            $oh = $day . '_open_hour';
+            $cm = $day . '_close_minutes';
+            $ch = $day . '_close_hour';
+
+            // Assertions against the object for properties
+            $this->assertObjectHasAttribute($om, static::$bc);
+            $this->assertObjectHasAttribute($oh, static::$bc);
+            $this->assertObjectHasAttribute($cm, static::$bc);
+            $this->assertObjectHasAttribute($ch, static::$bc);
+
+            // Assertions against the vardef index
+            $this->assertArrayHasKey($om, $fieldDefs);
+            $this->assertArrayHasKey($oh, $fieldDefs);
+            $this->assertArrayHasKey($cm, $fieldDefs);
+            $this->assertArrayHasKey($ch, $fieldDefs);
+
+            // Assertions against the vardef field name
+            $this->assertSame($fieldDefs[$om]['name'], $om);
+            $this->assertSame($fieldDefs[$oh]['name'], $oh);
+            $this->assertSame($fieldDefs[$cm]['name'], $cm);
+            $this->assertSame($fieldDefs[$ch]['name'], $ch);
+
+            // Assertions against the vardef field labels
+            $this->assertSame($fieldDefs[$om]['vname'], 'LBL_' . strtoupper($om));
+            $this->assertSame($fieldDefs[$oh]['vname'], 'LBL_' . strtoupper($oh));
+            $this->assertSame($fieldDefs[$cm]['vname'], 'LBL_' . strtoupper($cm));
+            $this->assertSame($fieldDefs[$ch]['vname'], 'LBL_' . strtoupper($ch));
+
+            // Assertions against the error condition that needed fixing
+            $cm = $day . '_closed_minutes';
+            $ch = $day . '_closed_hour';
+            $this->assertFalse(property_exists(static::$bc, $cm));
+            $this->assertFalse(property_exists(static::$bc, $ch));
+            $this->assertArrayNotHasKey($cm, $fieldDefs);
+            $this->assertArrayNotHasKey($ch, $fieldDefs);
+        }
+    }
+
     /**
      * Provider for ::testHasFields
      * @return array
