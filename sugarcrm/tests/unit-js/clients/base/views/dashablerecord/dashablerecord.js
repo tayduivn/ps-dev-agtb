@@ -322,6 +322,7 @@ describe('Base.View.Dashablerecord', function() {
             triggerStub = sinon.collection.stub(dashletToolbarContext, 'trigger');
             model = app.data.createBean(moduleName);
             view.meta = {};
+            view.tabs = [{type: 'record'}];
             view.bindDataChange();
         });
 

@@ -1190,7 +1190,11 @@
         // inject header content into dashlet toolbar
         var dashletToolbar = this._getToolbar();
         if (dashletToolbar) {
-            var buttonsToSend = app.acl.hasAccessToModel('edit', model) ? this._headerButtons : [];
+            var buttonsToSend = [];
+            var activeTab = this._getActiveTab() || {};
+            if (app.acl.hasAccessToModel('edit', model) && activeTab.type === 'record') {
+                buttonsToSend = this._headerButtons;
+            }
 
             var toolbarCtx = dashletToolbar.context;
             toolbarCtx.trigger('dashlet:toolbar:change', this._headerFields, buttonsToSend, model, this);
@@ -1245,12 +1249,13 @@
                 this.settings.set('activeTab', tab);
             }
             tab.type = tab.type || this._getTabType(tab.link);
+            var module;
             if (tab.type === 'list') {
                 var collection = this._createCollection(tab);
                 if (_.isNull(collection)) {
                     return;
                 }
-                var module = tab.module;
+                module = tab.module;
                 tab.model = app.data.createBean(module);
                 if (tab.fields) {
                     tab.model.set('fields', tab.fields, {silent: true});
@@ -1283,7 +1288,7 @@
                 }
             } else if (tab.type === 'record') {
                 // Single record (record view tab)
-                var module = tab.module;
+                module = tab.module;
                 tab.meta = app.metadata.getView(module, 'recorddashlet') || app.metadata.getView(module, 'record');
                 var model = this._getRowModel() || app.data.createBean(module);
                 if (this.meta.pseudo) {
