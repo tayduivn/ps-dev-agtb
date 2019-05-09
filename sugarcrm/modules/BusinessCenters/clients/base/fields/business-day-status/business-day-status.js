@@ -60,7 +60,7 @@
 
         if (this.model && this.model.isNew()) {
             this.view.once('render', function() {
-                this._handleModelChange(this.model, this.unformat(this.format(this.model.get(this.name))));
+                this._handleModelChange(this.model, this.getValue());
             }, this);
         }
     },
@@ -70,43 +70,53 @@
      */
     bindDataChange: function() {
         this._super('bindDataChange', arguments);
-        this.model.on('change:' + this.name, this._handleModelChange, this);
 
         var changesToTrack = _.map(this._openClosedFields, function(field) {
             return 'change:' + field;
         });
-        this.model.on('sync ' + changesToTrack.join(' '), function(model, value) {
+        this.model.on('sync ' + changesToTrack.join(' '), function() {
             if (this.isOpenAllDay()) {
                 this.model.set(this.name, 2);
                 this.render();
             }
         }, this);
 
-        this.model.once('sync', function(model, value) {
-            this._handleModelChange(this.model, this.unformat(this.format(this.model.get(this.name))));
+        var clearTimeDisplays = _.bind(function() {
+            this._handleModelChange();
         }, this);
+        this.model.on('change:' + this.name, clearTimeDisplays, this);
+        this.model.once('sync', clearTimeDisplays, this);
+        this.model.on('attributes:revert', clearTimeDisplays, this);
     },
 
     /**
      * Update the open/close hours as appropriate.
      *
-     * @param {Data.Bean} model Model.
-     * @param {number} value New value of the business day status.
      * @private
      */
-    _handleModelChange: function(model, value) {
+    _handleModelChange: function() {
+        if (this.disposed) {
+            return;
+        }
+
+        var options = {};
+        var value = this.getValue();
+
         if (this.isOpenAllDayValue(value)) {
             // set the open/close hours to all day as necessary
-            this.model.set(this._openClosedFields[0], this._dayStartEnd.startHour);
-            this.model.set(this._openClosedFields[1], this._dayStartEnd.startMinute);
-            this.model.set(this._openClosedFields[2], this._dayStartEnd.endHour);
-            this.model.set(this._openClosedFields[3], this._dayStartEnd.endMinute);
+            options[this._openClosedFields[0]] = this._dayStartEnd.startHour;
+            options[this._openClosedFields[1]] = this._dayStartEnd.startMinute;
+            options[this._openClosedFields[2]] = this._dayStartEnd.endHour;
+            options[this._openClosedFields[3]] = this._dayStartEnd.endMinute;
+            this.model.set(options);
             this._hideTimeselectFields();
-        } else if (value === 0) {
-            this.model.set(this._openClosedFields[0], null);
-            this.model.set(this._openClosedFields[1], null);
-            this.model.set(this._openClosedFields[2], null);
-            this.model.set(this._openClosedFields[3], null);
+        } else if (this.isClosedValue(value)) {
+            // note that since you can't update to null, we have to make do with all zeroes
+            options[this._openClosedFields[0]] = 0;
+            options[this._openClosedFields[1]] = 0;
+            options[this._openClosedFields[2]] = 0;
+            options[this._openClosedFields[3]] = 0;
+            this.model.set(options);
             this._hideTimeselectFields();
         } else {
             this._showTimeselectFields();
@@ -154,6 +164,37 @@
     },
 
     /**
+     * Get the current numeric status of this business day.
+     *
+     * @return {number} The numeric status (0, 1, or 2).
+     */
+    getValue: function() {
+        return this.unformat(this.format(this.model.get(this.name)));
+    },
+
+    /**
+     * Is this value the special "closed" value?
+     *
+     * @param {*} value The value to check.
+     * @return {boolean} `true` if the given value denotes "closed" and
+     *   `false` otherwise.
+     */
+    isClosedValue: function(value) {
+        return value === 0;
+    },
+
+    /**
+     * Is this value the special "open" value?
+     *
+     * @param {*} value The value to check.
+     * @return {boolean} `true` if the given value denotes "open" and
+     *   `false` otherwise.
+     */
+    isOpenValue: function(value) {
+        return value === 1;
+    },
+
+    /**
      * Is this value the special "open all day" value?
      *
      * Note that "Open 24 Hours" will result in `false`.
@@ -177,7 +218,7 @@
         var openClosedValues = _.map(
             this._openClosedFields,
             function(field) {
-                return parseInt(this.model.get(field), 10);
+                return parseInt(this.model.get(field), 10) || 0;
             },
             this
         );

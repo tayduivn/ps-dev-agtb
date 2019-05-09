@@ -166,6 +166,40 @@ describe('View.Fields.Base.BusinessCenters.BusinessDayStatusField', function() {
         );
     });
 
+    describe('isClosedValue', function() {
+        it('should consider 0 to be closed', function() {
+            expect(field.isClosedValue(0)).toBe(true);
+        });
+
+        using(
+            'different values',
+            // "Closed" deliberately included here to make control flow clearer.
+            [2, 1, 3, -1, null, void 0, true, false, 'Closed'],
+            function(value) {
+                it('should consider everything else to not be closed', function() {
+                    expect(field.isClosedValue(value)).toBe(false);
+                });
+            }
+        );
+    });
+
+    describe('isOpenValue', function() {
+        it('should consider 1 to be open', function() {
+            expect(field.isOpenValue(1)).toBe(true);
+        });
+
+        using(
+            'different values',
+            // "Open" deliberately included here to make control flow clearer.
+            [2, 0, 3, -1, null, void 0, true, false, 'Open'],
+            function(value) {
+                it('should consider everything else to not be open', function() {
+                    expect(field.isOpenValue(value)).toBe(false);
+                });
+            }
+        );
+    });
+
     describe('isOpenAllDayValue', function() {
         it('should consider 2 to be open 24 hours', function() {
             expect(field.isOpenAllDayValue(2)).toBe(true);

@@ -59,9 +59,15 @@
         }
 
         // propagate changes from this field to its component hour and minute fields
-        this.model.on('change:' + this.name, function(model, value) {
+        this.model.on('change:' + this.name, function(model, value, options) {
             if (this.disposed) {
                 return;
+            }
+
+            value = app.date(value);
+            if (!options || options.updateSubFields !== false) {
+                this.model.set(this._hoursField, value.hour());
+                this.model.set(this._minutesField, value.minute());
             }
 
             if (this._inDetailMode()) {
@@ -69,22 +75,14 @@
                 return;
             }
 
-            if (!value) {
-                return;
-            }
-
-            value = app.date(value);
-            this.model.set(this._hoursField, value.hour());
-            this.model.set(this._minutesField, value.minute());
-
             this.$(this.fieldTag).val(this.format(value) || '');
         }, this);
 
         // update this field as the underlying hours and minutes change
         this.model.on('sync change:' + this._hoursField + ' change:' + this._minutesField, function(model, value) {
-            var hour = this.model.get(this._hoursField);
-            var minute = this.model.get(this._minutesField);
-            this.model.set(this.name, {hour: hour, minute: minute});
+            var hour = parseInt(this.model.get(this._hoursField), 10) || 0;
+            var minute = parseInt(this.model.get(this._minutesField), 10) || 0;
+            this.model.set(this.name, {hour: hour, minute: minute}, {updateSubFields: false});
         }, this);
 
         this.view.on('editable:toggle_fields', function() {

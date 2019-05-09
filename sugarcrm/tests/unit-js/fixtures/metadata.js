@@ -887,6 +887,124 @@ fixtures.metadata = {
         "Accounts": {
             fields: {}
         },
+        //BEGIN SUGARCRM flav=ent ONLY
+        BusinessCenters: {
+            fields: {
+                is_open_sunday: {
+                    name: 'is_open_sunday',
+                    type: 'bool'
+                },
+                sunday_open_hour: {
+                    name: 'sunday_open_hour',
+                    type: 'enum'
+                },
+                sunday_open_minutes: {
+                    name: 'sunday_open_minutes',
+                    type: 'enum'
+                },
+                sunday_close_minutes: {
+                    name: 'sunday_close_minutes',
+                    type: 'enum'
+                },
+                is_open_monday: {
+                    name: 'is_open_monday',
+                    type: 'bool'
+                },
+                monday_open_hour: {
+                    name: 'monday_open_hour',
+                    type: 'enum'
+                },
+                monday_open_minutes: {
+                    name: 'monday_open_minutes',
+                    type: 'enum'
+                },
+                monday_close_minutes: {
+                    name: 'monday_close_minutes',
+                    type: 'enum'
+                },
+                is_open_tuesday: {
+                    name: 'is_open_tuesday',
+                    type: 'bool'
+                },
+                tuesday_open_hour: {
+                    name: 'tuesday_open_hour',
+                    type: 'enum'
+                },
+                tuesday_open_minutes: {
+                    name: 'tuesday_open_minutes',
+                    type: 'enum'
+                },
+                tuesday_close_minutes: {
+                    name: 'tuesday_close_minutes',
+                    type: 'enum'
+                },
+                is_open_wednesday: {
+                    name: 'is_open_wednesday',
+                    type: 'bool'
+                },
+                wednesday_open_hour: {
+                    name: 'wednesday_open_hour',
+                    type: 'enum'
+                },
+                wednesday_open_minutes: {
+                    name: 'wednesday_open_minutes',
+                    type: 'enum'
+                },
+                wednesday_close_minutes: {
+                    name: 'wednesday_close_minutes',
+                    type: 'enum'
+                },
+                is_open_thursday: {
+                    name: 'is_open_thursday',
+                    type: 'bool'
+                },
+                thursday_open_hour: {
+                    name: 'thursday_open_hour',
+                    type: 'enum'
+                },
+                thursday_open_minutes: {
+                    name: 'thursday_open_minutes',
+                    type: 'enum'
+                },
+                thursday_close_minutes: {
+                    name: 'thursday_close_minutes',
+                    type: 'enum'
+                },
+                is_open_friday: {
+                    name: 'is_open_friday',
+                    type: 'bool'
+                },
+                friday_open_hour: {
+                    name: 'friday_open_hour',
+                    type: 'enum'
+                },
+                friday_open_minutes: {
+                    name: 'friday_open_minutes',
+                    type: 'enum'
+                },
+                friday_close_minutes: {
+                    name: 'friday_close_minutes',
+                    type: 'enum'
+                },
+                is_open_saturday: {
+                    name: 'is_open_saturday',
+                    type: 'bool'
+                },
+                saturday_open_hour: {
+                    name: 'saturday_open_hour',
+                    type: 'enum'
+                },
+                saturday_open_minutes: {
+                    name: 'saturday_open_minutes',
+                    type: 'enum'
+                },
+                saturday_close_minutes: {
+                    name: 'saturday_close_minutes',
+                    type: 'enum'
+                }
+            }
+        },
+        //END SUGARCRM flav=ent ONLY
         "Home": {
             '_hash': '12345678910Home',
             "fields": {
