@@ -96,7 +96,7 @@
         // open the drawer if not yet
         if (!this.isOpen()) {
             this.currentState = 'opening';
-            this.$el.show('slide', {direction: 'left'}, 800);
+            this.$el.show('slide', {direction: 'right'}, 800);
             this.currentState = 'idle';
         }
 
