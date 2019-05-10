@@ -46,10 +46,53 @@
     /**
      * @inheritdoc
      */
+    getSelect2Options: function(optionsKeys) {
+        optionsKeys = this._super('getSelect2Options', [optionsKeys]);
+
+        if (this.name === 'enabled_modules') {
+            optionsKeys.formatSelection = this.formatSelect2Selection;
+            optionsKeys.formatResult = this.formatSelect2Result;
+        }
+
+        return optionsKeys;
+    },
+
+    /**
+     * Formats a dropdown selection
+     *
+     * @param {Object} state The id and text object
+     * @return {string} HTML to use for the item
+     */
+    formatSelect2Selection: function(state) {
+        return '<span class="enabled-module-item" data-module="' + state.id + '">' + state.text + '</span>';
+    },
+
+    /**
+     * Formats a dropdown result
+     *
+     * @param {Object} state The id and text object
+     * @return {string} HTML to use for the item
+     */
+    formatSelect2Result: function(state) {
+        return '<span class="enabled-module-result-item" data-module="' + state.id + '">' + state.text + '</span>';
+    },
+
+    /**
+     * @inheritdoc
+     */
     _render: function() {
         this._super('_render');
         if (this.name === 'enabled_modules') {
             this.attachEvents();
+        }
+
+        if (this.name === 'enabled_modules') {
+            // add the data module to the li
+            _.each(this.$('.select2-search-choice'), function(el) {
+                var $el = $(el);
+                $el.attr('data-module', $el.find('span').data('module'));
+                $el.addClass('enabled-module-item');
+            }, this);
         }
     },
 
