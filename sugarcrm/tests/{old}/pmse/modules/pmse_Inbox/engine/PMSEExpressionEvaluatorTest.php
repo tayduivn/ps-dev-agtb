@@ -28,6 +28,33 @@ class PMSEExpressionEvaluatorTest extends TestCase
         date_default_timezone_set("America/Phoenix");
     }
 
+    /**
+     * @covers PMSEExpressionEvaluator::executeDateSpanBCOp
+     */
+    public function testExecuteDateSpanBCOp()
+    {
+        $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $bcMock = $this->getMockBuilder('SugarBean')
+            ->setMethods(array('getIncrementedBusinessDatetime'))
+            ->getMock();
+
+        $now = new DateTime();
+        $bcMock->expects($this->once()) // expect getIncrementedBusinessDatetime to be called once
+        ->method('getIncrementedBusinessDatetime')
+            ->willReturn($now->format(DateTime::ATOM));
+
+        // to make BeanFactory::getBean inside executeDateSpanBCOp happy
+        $bcMock->id = 'random_id';
+        $bcMock->module_name = 'BusinessCenters';
+        BeanFactory::registerBean($bcMock);
+
+        $expressionEvaluatorMock->executeDateSpanBCOp($now, '+', '4bh', $bcMock->id);
+    }
+
     public function testEvaluateSingleElementZero()
     {
         $fixture = '[

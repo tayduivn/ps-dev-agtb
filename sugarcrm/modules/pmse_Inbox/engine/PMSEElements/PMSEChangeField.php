@@ -139,6 +139,8 @@ class PMSEChangeField extends PMSEScriptTask
         }
 
         foreach ($beans as $bean) {
+            PMSEEngineUtils::setRegistry($beanModule);
+            PMSEEngineUtils::setRegistry($bean, false);
             if (isset($bean) && is_object($bean)) {
                 if ($act_field_module == $moduleName || $isRelated) {
                     foreach ($fields as $field) {

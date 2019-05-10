@@ -125,7 +125,10 @@ class PMSEExpressionEvaluator
                 $operationGroup,
                 $firstToken->expValue,
                 $token->expValue,
-                $secondToken->expValue
+                $secondToken->expValue,
+                null,
+                false,
+                $secondToken->expBean ?? null
             );
             $this->processTokenAttributes($resultToken);
         }
@@ -143,7 +146,11 @@ class PMSEExpressionEvaluator
                 strtolower($secondTokenExpSubtype)=='datetime') {
                 $key = 'dateDateOp';
             } elseif (strtolower($secondTokenExpSubtype)=='timespan') {
-                $key = 'dateSpanOp';
+                if (PMSEEngineUtils::isForBusinessTimeOp($secondToken->expValue)) {
+                    $key = 'dateSpanBusinessOp';
+                } else {
+                    $key = 'dateSpanOp';
+                }
             }
         } elseif (strtolower($firstTokenExpSubtype)=='timespan') {
             if (strtolower($secondTokenExpSubtype)=='date' ||
@@ -211,7 +218,8 @@ class PMSEExpressionEvaluator
         $operator,
         $secondOperand = null,
         $tokenType = null,
-        $isUpdate = false
+        $isUpdate = false,
+        $secondOperandBean = null
     ) {
         switch ($operation) {
             case 'unary':
@@ -234,6 +242,9 @@ class PMSEExpressionEvaluator
                 break;
             case 'spanDateOp':
                 $result = $this->executeSpanDateOp($firstOperand, $operator, $secondOperand);
+                break;
+            case 'dateSpanBusinessOp':
+                $result = $this->executeDateSpanBCOp($firstOperand, $operator, $secondOperand, $secondOperandBean);
                 break;
             case 'spanSpanOp':
                 $result = $this->executeSpanSpanOp($firstOperand, $operator, $secondOperand);
@@ -474,6 +485,43 @@ class PMSEExpressionEvaluator
             $dateObject->sub($intervalObject);
         }
         return $dateObject;
+    }
+
+    /**
+     * A function that fetches business center related time
+     *
+     * @param $value1 a DateTime object
+     * @param String $operator '+' or '-' (only + is supported at the moment)
+     * @param String $value2 business center based time interval
+     * @param String $bid business center id
+     * @return DateTime The resulting DateTime value
+     */
+    public function executeDateSpanBCOp($value1, String $operator, String $value2, String $bid) : DateTime
+    {
+        $bean = BeanFactory::getBean('BusinessCenters', $bid);
+        if (empty($bean) || empty($bean->id)) {
+            // can't find business center, fail the process
+            throw new PMSEExpressionEvaluationException('Invalid Business Center bean.', func_get_args());
+        }
+
+        $pattern = PMSEEngineUtils::getBusinessTimePattern(false);
+        if (!preg_match($pattern, $value2, $matches)) {
+            throw new PMSEExpressionEvaluationException('Invalid Business Center string: ' . $value2, func_get_args());
+        }
+
+        if ($bean->timezone) {
+            $value1->setTimeZone(new DateTimeZone($bean->timezone)); // convert to business center time zone
+        } else {
+            $value1->setTimeZone(new DateTimeZone(date_default_timezone_get())); // convert to server time zone
+        }
+        $beforeTime = $value1->format('m/d/Y H:i:s');
+        $unit = PMSEEngineUtils::getBusinessTimeUnit($matches[2]);
+        if (empty($unit)) {
+            throw new PMSEExpressionEvaluationException('Invalid Business Center unit:' . $matches[2], func_get_args());
+        }
+
+        $result = $bean->getIncrementedBusinessDatetime($beforeTime, $matches[1], $unit);
+        return new DateTime($result);
     }
 
     /*

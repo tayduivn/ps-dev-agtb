@@ -269,6 +269,13 @@ class PMSEFieldParser extends PMSEAbstractDataParser implements PMSEDataParserIn
             if (!isset($this->beanList[$token[0]]) && empty($params['useEvaluatedBean'])) {
                 // Get the related bean instead
                 $beans = $this->getRelatedBean($token[0]);
+                // Required for wait event timer and business rules to get business center
+                // currently we only support one related bean at one time
+                // business rule conditions may require multiple beans at the same time, which is not supported yet
+                $bean = reset($beans);
+                if (!empty($bean)) {
+                    PMSEEngineUtils::setRegistry($bean, false);
+                }
             } else {
                 $beans = array($this->evaluatedBean);
             }

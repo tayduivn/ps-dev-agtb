@@ -13,6 +13,7 @@
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 class PMSEEngineUtilsTest extends TestCase
 {
@@ -57,6 +58,165 @@ class PMSEEngineUtilsTest extends TestCase
         SugarTestTaskUtilities::removeAllCreatedTasks();
         $this->sugarConfig->clearCache();
         \SugarTestReflection::setProtectedValue($this->object, 'idmConfig', null);
+    }
+
+    public function getBusinessTimePatternProvider()
+    {
+        return [
+            [
+                true,
+                "/\d+bh/",
+            ],
+            [
+                false,
+                "/(\d+)(bh)/",
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getBusinessTimePatternProvider
+     * @covers PMSEEngineUtils::getBusinessTimePattern
+     */
+    public function testGetBusinessTimePattern($checkOnly, $expected)
+    {
+        $val = PMSEEngineUtils::getBusinessTimePattern($checkOnly);
+        $this->assertEquals($expected, $val);
+    }
+
+    public function isForBusinessTimeOpProvider()
+    {
+        return [
+            [
+                '8bh',
+                true,
+            ],
+            [
+                '8h',
+                false,
+            ],
+            [
+                '4d',
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider isForBusinessTimeOpProvider
+     * @covers PMSEEngineUtils::isForBusinessTimeOp
+     */
+    public function testIsForBusinessTimeOp($expValue, $expect)
+    {
+        $val = PMSEEngineUtils::isForBusinessTimeOp($expValue);
+        $this->assertEquals($expect, $val);
+    }
+
+    public function getRegistryKeyProvider()
+    {
+        return [
+            [
+                'target',
+                'id',
+                'pmse_target_bean_id',
+            ],
+            [
+                'target',
+                'type',
+                'pmse_target_bean_type',
+            ],
+            [
+                'related',
+                'id',
+                'pmse_related_bean_id',
+            ],
+            [
+                'related',
+                'type',
+                'pmse_related_bean_type',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getRegistryKeyProvider
+     * @covers PMSEEngineUtils::getRegistryKey
+     */
+    public function testGetRegistryKey($beanType, $regsitryType, $expect)
+    {
+        $val = PMSEEngineUtils::getRegistryKey($beanType, $regsitryType);
+        $this->assertEquals($expect, $val);
+    }
+
+    /**
+     * @covers PMSEEngineUtils::setRegistry
+     */
+    public function testSetRegistry()
+    {
+        $case = SugarTestCaseUtilities::createCase('', ['name' => 'setRegistry Test Case']);
+
+        PMSEEngineUtils::setRegistry($case);
+        $this->assertEquals($case->id, Registry\Registry::getInstance()->get('pmse_target_bean_id'));
+        $this->assertEquals($case->module_dir, Registry\Registry::getInstance()->get('pmse_target_bean_type'));
+
+        PMSEEngineUtils::setRegistry($case, false);
+        $this->assertEquals($case->id, Registry\Registry::getInstance()->get('pmse_related_bean_id'));
+        $this->assertEquals($case->module_dir, Registry\Registry::getInstance()->get('pmse_related_bean_type'));
+    }
+
+    /**
+     * @covers PMSEEngineUtils::dropRegistry
+     */
+    public function testDropRegistry()
+    {
+        $case = SugarTestCaseUtilities::createCase('', ['name' => 'dropRegistry Test Case']);
+
+        PMSEEngineUtils::setRegistry($case);
+        PMSEEngineUtils::setRegistry($case, false);
+
+        PMSEEngineUtils::dropRegistry();
+
+        $this->assertEquals(false, Registry\Registry::getInstance()->has('pmse_target_bean_id'));
+        $this->assertEquals(false, Registry\Registry::getInstance()->has('pmse_target_bean_type'));
+        $this->assertEquals(false, Registry\Registry::getInstance()->has('pmse_related_bean_id'));
+        $this->assertEquals(false, Registry\Registry::getInstance()->has('pmse_related_bean_type'));
+    }
+
+    public function setExpBeanProvider()
+    {
+        return [
+            [
+                'target_module_bc',
+                "target_module_bc_bean_id",
+                'pmse_target_bean_id',
+                'pmse_target_bean_type',
+            ],
+            [
+                'filter_module_bc',
+                "related_module_bc_bean_id",
+                'pmse_related_bean_id',
+                'pmse_related_bean_type',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider setExpBeanProvider
+     * @covers PMSEEngineUtils::setExpBean
+     */
+    public function testSetExpBean($expBean, $beanId, $idKey, $typeKey)
+    {
+        $criteriaToken = new stdClass();
+        $criteriaToken->expBean = $expBean;
+
+        $case = SugarTestCaseUtilities::createCase('', ['name' => 'setExpBean Test Case']);
+        $case->business_center_id = $beanId;
+
+        Registry\Registry::getInstance()->set($idKey, $case->id, true);
+        Registry\Registry::getInstance()->set($typeKey, $case->module_dir, true);
+
+        PMSEEngineUtils::setExpBean($criteriaToken);
+        $this->assertEquals($beanId, $criteriaToken->expBean);
     }
 
     /**

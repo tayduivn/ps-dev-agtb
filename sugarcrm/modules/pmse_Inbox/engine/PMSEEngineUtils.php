@@ -47,6 +47,21 @@ class PMSEEngineUtils
     protected static $idmConfig;
 
     /**
+     * @var array supported business time unit - only business hour (bh) for now
+     */
+    static protected $BusinessCenterTimeUnits = ['bh' => 'hours'];
+
+    /**
+     * @var array support related or target at this moment
+     */
+    static protected $beanTypes = ['related' => 'related', 'target' => 'target'];
+
+    /**
+     * @var array support id and type for now
+     */
+    static protected $registryTypes = ['id' => 'id', 'type' => 'type'];
+
+    /**
      * List of fields across all modules that should always be blacklisted
      * @var array
      */
@@ -200,6 +215,109 @@ class PMSEEngineUtils
      * @var array
      */
     protected static $parentBeanCache = [];
+
+    /**
+     * To check if the given expression value is a business center unit.
+     *
+     * @param String $expValue expression value such as "2bh" or "4h"
+     * @return bool true if business unit, false otherwise
+     */
+    public static function isForBusinessTimeOp(String $expValue) : bool
+    {
+        $pattern = self::getBusinessTimePattern();
+        return preg_match($pattern, $expValue) === 1;
+    }
+
+    /**
+     * @param String $key
+     * @return String
+     */
+    public static function getBusinessTimeUnit(String $key) : String
+    {
+        return self::$BusinessCenterTimeUnits[$key] ?? '';
+    }
+
+    /**
+     * @param bool $checkOnly true if no need to get the matches
+     * @return String
+     */
+    public static function getBusinessTimePattern(bool $checkOnly = true) : String
+    {
+        $bcPattern = implode(array_keys(self::$BusinessCenterTimeUnits));
+        if ($checkOnly) {
+            return "/\d+{$bcPattern}/";
+        } else {
+            return "/(\d+)($bcPattern)/";
+        }
+    }
+
+    /**
+     * @param String $beanType
+     * @param String $registryType
+     * @return String
+     */
+    public static function getRegistryKey(String $beanType, String $registryType) : String
+    {
+        return 'pmse_' . self::$beanTypes[$beanType] . '_bean_' . self::$registryTypes[$registryType];
+    }
+
+    /**
+     * @param SugarBean|null $bean
+     * @param bool $target true if registering a target record, false for related record
+     */
+    public static function setRegistry(SugarBean $bean = null, bool $target = true)
+    {
+        if (empty($bean) || empty($bean->id) || empty($bean->module_dir)) {
+            return;
+        }
+
+        $type = $target ? 'target' : 'related';
+
+        Registry\Registry::getInstance()->set(self::getRegistryKey($type, 'id'), $bean->id, true);
+        Registry\Registry::getInstance()->set(self::getRegistryKey($type, 'type'), $bean->module_dir, true);
+    }
+
+    /**
+     * to drop the registry keys used by business hours
+     */
+    public static function dropRegistry()
+    {
+        foreach (self::$beanTypes as $bType) {
+            foreach (self::$registryTypes as $rType) {
+                $key = self::getRegistryKey($bType, $rType);
+                if (Registry\Registry::getInstance()->has($key)) {
+                    Registry\Registry::getInstance()->drop($key);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get id and module from registry and retrieve the bean's business center id
+     *
+     * @param $criteriaToken
+     */
+    public static function setExpBean($criteriaToken)
+    {
+        if ($criteriaToken->expBean === 'filter_module_bc') {
+            $idKey = PMSEEngineUtils::getRegistryKey('related', 'id');
+            $typeKey = PMSEEngineUtils::getRegistryKey('related', 'type');
+        } elseif ($criteriaToken->expBean === 'target_module_bc') {
+            $idKey = PMSEEngineUtils::getRegistryKey('target', 'id');
+            $typeKey = PMSEEngineUtils::getRegistryKey('target', 'type');
+        } else {
+            return;
+        }
+        $beanId = Registry\Registry::getInstance()->get($idKey);
+        $beanType = Registry\Registry::getInstance()->get($typeKey);
+
+        if ($beanId && $beanType) {
+            $beanObj = BeanFactory::getBean($beanType, $beanId);
+            if ($beanObj && $beanObj->business_center_id) {
+                $criteriaToken->expBean = $beanObj->business_center_id;
+            }
+        }
+    }
 
     /**
      * Method to append the name fields from a bean to an array

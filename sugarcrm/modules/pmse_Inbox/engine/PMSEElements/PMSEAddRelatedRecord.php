@@ -104,6 +104,7 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                             switch ($value->type) {
                                 case 'Date':
                                 case 'Datetime':
+                                    PMSEEngineUtils::setRegistry($bean);
                                     $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
                                     $newValue = $this->getDBDate($value, $finishDate);
                                     break;

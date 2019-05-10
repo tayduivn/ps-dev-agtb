@@ -69,6 +69,7 @@ class PMSETimerEvent extends PMSEIntermediateEvent
                 $moduleName = $flowData['cas_sugar_module'];
                 $object_id = $flowData['cas_sugar_object_id'];
                 $bean = $this->caseFlowHandler->retrieveBean($moduleName, $object_id);
+                PMSEEngineUtils::setRegistry($bean);
                 $dueDate = $this->evaluator->evaluateExpression(
                     $eventDefinition['evn_criteria'],
                     $bean
