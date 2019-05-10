@@ -150,11 +150,7 @@
      */
     _getSideDrawer: function() {
         if (!this.sideDrawer) {
-            var sideDrawer = this.layout.getComponent('side-drawer');
-            if (sideDrawer) {
-                sideDrawer.config({topPixels: $('#content .headerpane').outerHeight()});
-            }
-            this.sideDrawer = sideDrawer;
+            this.sideDrawer = this.layout.getComponent('side-drawer');
         }
         return this.sideDrawer;
     },

@@ -65,8 +65,8 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.$main = app.$contentEl.children().first();
-        this.$main.on('drawer:add', _.bind(this.toggle, this));
-        this.$main.on('drawer:remove', _.bind(this.toggle, this));
+        this.$main.on('drawer:add.sidedrawer', _.bind(this.toggle, this));
+        this.$main.on('drawer:remove.sidedrawer', _.bind(this.toggle, this));
         $(window).on('resize.sidedrawer', _.bind(this._resizeDrawer, this));
     },
 
@@ -75,6 +75,7 @@
      * @param {Object} [configs={}] Drawer configs.
      */
     config: function(configs) {
+        configs = configs || {};
         this.drawerConfigs = _.extend({}, this.drawerConfigs, configs);
         this.$el.css('top', $('#header .navbar').outerHeight() + this.drawerConfigs.topPixels);
         this.$el.css('height', this._determineDrawerHeight());
@@ -96,6 +97,7 @@
         // open the drawer if not yet
         if (!this.isOpen()) {
             this.currentState = 'opening';
+            this.config();
             this.$el.show('slide', {direction: 'right'}, 800);
             this.currentState = 'idle';
         }
@@ -229,8 +231,8 @@
      * @inheritdoc
      */
     _dispose: function() {
-        this.$main.off('drawer:add', this.toggle);
-        this.$main.off('drawer:remove', this.toggle);
+        this.$main.off('drawer:add.sidedrawer');
+        this.$main.off('drawer:remove.sidedrawer');
         $(window).off('resize.sidedrawer');
         this._super('_dispose');
     },
