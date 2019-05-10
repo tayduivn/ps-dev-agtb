@@ -43,6 +43,10 @@
      * Sets up the models for each of the enabled modules from the configs
      */
     loadData: function(options) {
+        if (!this.checkAccess()) {
+            this.blockModule();
+            return;
+        }
         var selectedModules = this.model.get('enabled_modules');
         var tableHeaders = this.model.get('table_header');
         var tileHeaders = this.model.get('tile_header');

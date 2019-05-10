@@ -45,7 +45,11 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 isBwcEnabled: false
             };
         });
+        SugarTest.loadComponent('base', 'layout', 'config-drawer');
         layout = SugarTest.createLayout('base', 'VisualPipeline', 'config-drawer', {}, context, true);
+        sinon.collection.stub(layout, 'checkAccess', function() {
+            return true;
+        });
     });
 
     afterEach(function() {
