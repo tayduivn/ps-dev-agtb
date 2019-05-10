@@ -638,11 +638,13 @@ describe('Base.View.Dashablerecord', function() {
             var getModuleStub = sinon.collection.stub(app.metadata, 'getModule').returns({
                 fields: {contacts: {type: 'link'}}
             });
-            var createCollectionStub = sinon.collection.stub(app.data, 'createBeanCollection');
+            var rowModel = app.data.createBean(moduleName);
+            var rowModelStub = sinon.collection.stub(view, '_getRowModel').returns(rowModel);
+            var createCollectionStub = sinon.collection.stub(app.data, 'createRelatedCollection');
             var tab = {link: 'contacts', module: 'Contacts'};
             view._createCollection(tab);
-            expect(createCollectionStub.lastCall.args[0]).toEqual('Contacts');
-            expect(createCollectionStub.lastCall.args[2].link.name).toEqual('contacts');
+            expect(createCollectionStub.lastCall.args[0]).toEqual(rowModel);
+            expect(createCollectionStub.lastCall.args[1]).toEqual('contacts');
         });
     });
 
@@ -650,7 +652,7 @@ describe('Base.View.Dashablerecord', function() {
         it('should get the pagination options', function() {
             var tab  = {
                 limit: 5,
-                relate: 'accounts',
+                relate: true,
                 order_by: {direction: 'asc', field: 'name'},
                 include_child_items: false,
                 fields: ['name']
@@ -662,7 +664,7 @@ describe('Base.View.Dashablerecord', function() {
 
             expect(result).toEqual({
                 limit: 5,
-                relate: 'accounts',
+                relate: true,
                 params: {
                     order_by: 'name:asc',
                     include_child_items: null

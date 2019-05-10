@@ -584,25 +584,10 @@
      * @private
      */
     _createCollection: function(tab) {
-        var meta = app.metadata.getModule(tab.module);
-        if (_.isUndefined(meta)) {
-            return null;
-        }
-
         // on the multi-line list view, the first time the collections are created this.model is from Home
         // (i.e. it's the dashboard model). This causes fetching to complain.
         var modelToUse = this._getRowModel() || this.model;
-
-        var options = {};
-        if (meta.fields[tab.link] && meta.fields[tab.link].type === 'link') {
-            options = {
-                link: {
-                    name: tab.link,
-                    bean: modelToUse
-                }
-            };
-        }
-        return app.data.createBeanCollection(tab.module, [], options);
+        return app.data.createRelatedCollection(modelToUse, tab.link);
     },
 
     /**
@@ -647,7 +632,7 @@
     _getCollectionOptions: function(tab) {
         return {
             limit: tab.limit || this.settings.get('limit'),
-            relate: tab.relate,
+            relate: true,
             params: {
                 order_by: !_.isEmpty(tab.order_by) ? tab.order_by.field + ':' + tab.order_by.direction : null,
                 include_child_items: tab.include_child_items || null
