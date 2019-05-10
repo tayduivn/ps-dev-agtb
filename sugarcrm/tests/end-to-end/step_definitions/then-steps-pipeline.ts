@@ -13,6 +13,7 @@ import {Then} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
 import pipelineView from '../views/pipeline-view';
+import {parseInputArray} from './general_bdd';
 
 /**
  *  Verify tile content fields value in Pipeline View
@@ -52,6 +53,49 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) tile field values in (#[a-zA-Z](?:\w|\S)*
                         `\t'${expectedValue}'`,
                         `Actual Value`,
                         `\t'${value.toString()}'`,
+                        `\n`,
+                    ].join('\n')
+                )
+            }
+        }
+
+        let message = '';
+        _.each(errors, (item) => {
+            message += item;
+        });
+
+        if (message) {
+            throw new Error(message);
+        }
+    });
+
+
+/**
+ *  Verify if record(s) belong to a particular column
+ *
+ *  @example
+ *  Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+ */
+Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are under "(\w+[\/\s]*\w+)" column in (#[a-zA-Z](?:\w|\S)*) view$/,
+    async function (inputIDs: string, columnName: string, view: any) {
+
+        let value;
+        let errors =[];
+        let recordIds = await parseInputArray(inputIDs);
+
+        let uid = inputIDs.slice(1, inputIDs.length - 1).split(',');
+
+        for (let i = 0; i < recordIds.length; i++) {
+
+            let listItem = await view.getListItem({id: recordIds[i].id});
+            value = await listItem.checkTileViewColumn(columnName);
+
+            if (value === false) {
+                errors.push(
+                    [
+                        `The record '${uid[i]}'`,
+                        `\tis not found under '${columnName}' column`,
+                        `in Tile View`,
                         `\n`,
                     ].join('\n')
                 )
@@ -110,3 +154,47 @@ Then(/^I verify pipeline column headers in (#\S+) view$/,
         }
 
     }, {waitForApp: true});
+
+/**
+ *  Verify tile delete button state
+ *
+ *  @example
+ *    Then I verify *Opp_1 tile delete button state in #OpportunitiesPipelineView view
+ *      | Disabled |
+ *      | false    |
+ */
+Then(/I verify (\*[a-zA-Z](?:\w|\S)*) tile delete button state in (#[a-zA-Z](?:\w|\S)*) view$/,
+    async function (record: { id: string }, view: any, data: TableDefinition) {
+
+        let errors = [];
+        let row = data.rows()[0];
+        let expectedValue  = row[0];
+
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+
+        let listItem = await view.getListItem({id: record.id});
+        let value = await listItem.isDeleteButtonDisabled();
+
+        if (value.toString() != expectedValue) {
+            errors.push(
+                [
+                    `The state of the delete button expected to be`,
+                    `\t'${expectedValue}'`,
+                    `instead of`,
+                    `\t'${value.toString()}'`,
+                    `\n`,
+                ].join('\n')
+            );
+        }
+
+        let message = '';
+        _.each(errors, (item) => {
+            message += item;
+        });
+
+        if (message) {
+            throw new Error(message);
+        }
+    });

@@ -204,8 +204,8 @@ Feature: Calls module verification
       | *name  |
       | Call_B |
     When I provide input for #CallsDrawer.RecordView view
-      | *      | date_start         | date_end                  | description          | parent_name   | direction |
-      | Call_B | 12/01/2020-02:00pm | 12/01/2020-03:00pm (1 hr) | Testing with Seedbed | Account,Acc_1 | Outbound  |
+      | *      | duration                                       | description          | parent_name   | direction |
+      | Call_B | 12/01/2020-02:00pm ~ 12/01/2020-03:00pm (1 hr) | Testing with Seedbed | Account,Acc_1 | Outbound  |
     When I click Save button on #CallsDrawer header
     When I close alert
     # Verify created call
@@ -237,8 +237,8 @@ Feature: Calls module verification
       | *   | name     |
       | C_1 | New Call |
     When I provide input for #CallsDrawer.RecordView view
-      | *   | date_start         | date_end                  | direction | description     | parent_name   |
-      | C_1 | 12/01/2020-02:00pm | 12/01/2020-03:00pm (1 hr) | Outbound  | Testing Seedbed | Account,Acc_1 |
+      | *   | duration                                       | direction | description     | parent_name   |
+      | C_1 | 12/01/2020-02:00pm ~ 12/01/2020-03:00pm (1 hr) | Outbound  | Testing Seedbed | Account,Acc_1 |
     When I click Cancel button on #CallsDrawer header
     Then I should see #CallsList.ListView view
 
@@ -248,8 +248,8 @@ Feature: Calls module verification
       | *   | name     |
       | C_1 | New Call |
     When I provide input for #CallsDrawer.RecordView view
-      | *   | date_start         | date_end                  | direction | description     | parent_name   |
-      | C_1 | 12/01/2020-05:00pm | 12/01/2020-06:00pm (1 hr) | Outbound  | Testing Seedbed | Account,Acc_1 |
+      | *   | duration                                       | direction | description     | parent_name   |
+      | C_1 | 12/01/2020-05:00pm ~ 12/01/2020-06:00pm (1 hr) | Outbound  | Testing Seedbed | Account,Acc_1 |
     When I click Save button on #CallsDrawer header
     When I close alert
     Then I should see #CallsList.ListView view
@@ -287,8 +287,8 @@ Feature: Calls module verification
       | C_1 | New Call |
     # Add Invitees
     When I provide input for #CallsDrawer.RecordView view
-      | *   | date_start         | date_end                  | invitees                                                           |
-      | C_1 | 12/01/2020-02:00pm | 12/01/2020-03:00pm (1 hr) | add: *Contact_1, *Lead_1, *Contact_2, *Lead_2, *Contact_3, *Lead_3 |
+      | *   | duration                                       | invitees                                                           |
+      | C_1 | 12/01/2020-02:00pm ~ 12/01/2020-03:00pm (1 hr) | add: *Contact_1, *Lead_1, *Contact_2, *Lead_2, *Contact_3, *Lead_3 |
     # Save call
     When I click Save button on #CallsDrawer header
     When I close alert

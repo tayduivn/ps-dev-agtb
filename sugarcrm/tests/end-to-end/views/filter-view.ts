@@ -33,7 +33,7 @@ export default class FilterView extends BaseView {
             filter: '.search-filter .select2-choice-type',
             activitystream: '.fa.fa-clock-o',
             listview: '.fa.fa-table',
-            visualpipeline: '.fa-align-left',
+            visualpipeline: '.btn.pipeline-view-button',
             createButton: '.choice-filter',
             closeFilterButton: '.choice-filter-clickable .choice-filter-close',
             editFilterButton: '.choice-filter-clickable .choice-filter-label',
@@ -258,5 +258,15 @@ export default class FilterView extends BaseView {
         await this.driver.waitForApp();
     }
 
-
+    /**
+     * Check state of the button (such as Activities Streams, Pipeline View) in Filter bar
+     *
+     * @param buttonName
+     * @returns {Promise<boolean>}
+     */
+    public async isDisabled(buttonName) {
+        let selector = this.$(buttonName) + '.disabled';
+        let val = await this.driver.isElementExist(selector);
+        return val;
+    }
 }

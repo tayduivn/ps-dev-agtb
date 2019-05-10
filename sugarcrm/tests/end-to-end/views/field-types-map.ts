@@ -41,6 +41,7 @@ import * as HtmleditableTinymceField from '../fields/htmleditable-tinymce-field'
 import * as CommentLogField from '../fields/commentlog-field';
 import * as QuotaPoint from '../fields/quotapoint-field';
 import * as NestedSetField from '../fields/nested-set-field';
+import * as DurationField from '../fields/duration-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -90,4 +91,5 @@ export const FIELD_TYPES__MAP = {
     'pmse_htmleditable_tinymce': HtmleditableTinymceField,
     'commentlog': CommentLogField,
     nestedset: NestedSetField,
+    duration: DurationField,
 };

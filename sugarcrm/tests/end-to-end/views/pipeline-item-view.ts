@@ -30,7 +30,7 @@ export default class PipelineItemView extends BaseView {
             listItem: {
                 listItemName: '.pipeline-tile',
                 buttons: {
-                    delete: '.fa.fa-times',
+                    delete: '.rowaction.btn.delete',
                 },
                 tileName: '.name',
                 tileContent: '.tile-body span:nth-child({{tileContentRow}})'
@@ -49,12 +49,28 @@ export default class PipelineItemView extends BaseView {
      */
     public async clickListItem() {
 
-        let selector = this.$('listItem.listItemName', {id: this.id});
+        let selector = this.$('listItem.tileName', {id: this.id});
         let rowSelector = this.$();
 
         return this.driver
             .execSync('scrollToSelector', [rowSelector])
             .click(selector);
+    }
+
+    /**
+     * Check state of tile delete button
+     *
+     * @returns {Promise<any>}
+     */
+    public async isDeleteButtonDisabled() {
+
+        let selector = this.$('listItem.buttons.delete', {id: this.id}) + '.disabled';
+        let rowSelector = this.$('listItem.tileName');
+
+        await this.driver.moveToObject(rowSelector);
+        await this.driver.waitForApp();
+        let isDisabled = await this.driver.isElementExist(selector);
+        return isDisabled;
     }
 
     /**
@@ -74,7 +90,6 @@ export default class PipelineItemView extends BaseView {
         await this.driver.waitForApp();
     }
 
-
     /**
      * Checks if button is visible
      *
@@ -93,9 +108,10 @@ export default class PipelineItemView extends BaseView {
      */
     public async getTileFieldValue(tileContentRow) {
 
-        let selector = this.$('listItem.tileContent', {id: this.id, tileContentRow} );
+        let selector = this.$('listItem.tileContent', {id: this.id, tileContentRow});
         await this.driver.scroll(selector);
-        return this.driver.getText(selector);
+        let val = await this.driver.getText(selector);
+        return val;
     }
 
     /**
@@ -108,5 +124,21 @@ export default class PipelineItemView extends BaseView {
         let selector = this.$('listItem.tileName', {id: this.id} );
         await this.driver.scroll(selector);
         return this.driver.getText(selector);
+    }
+
+    /**
+     * Check column of specified opportunity record
+     *
+     * @param columnName
+     * @returns {Promise<any>}
+     */
+    public async checkTileViewColumn (columnName) {
+        // construct css part containing specifed column name
+        let columnPart = `.column[data-column-name="${columnName}"]`;
+        // Prepend record css with part containg column name
+        let selector = `${columnPart} ${this.$()}`;
+        // Check if css containing column name exists
+        let value  = await this.driver.isElementExist(selector );
+        return value;
     }
 }

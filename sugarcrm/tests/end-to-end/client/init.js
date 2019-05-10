@@ -75,7 +75,7 @@
 
         options.autoClose = false;
 
-        originalAlertShow.apply(this, args);
+        return originalAlertShow.apply(this, args);
     };
 
 })(SUGAR && SUGAR.App ? SUGAR.App : null);

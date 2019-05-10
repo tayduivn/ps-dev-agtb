@@ -198,8 +198,8 @@ Feature: Meetings module verification
       | *name     |
       | Meeting_B |
     When I provide input for #MeetingsDrawer.RecordView view
-      | *         | date_start         | date_end                  | description          | parent_name   | location  |
-      | Meeting_B | 12/01/2020-02:00pm | 12/01/2020-03:00pm (1 hr) | Testing with Seedbed | Account,Acc_1 | Cupertino |
+      | *         | duration                                       | description          | parent_name   | location  |
+      | Meeting_B | 12/01/2020-02:00pm ~ 12/01/2020-03:00pm (1 hr) | Testing with Seedbed | Account,Acc_1 | Cupertino |
     When I click Save button on #MeetingsDrawer header
     When I close alert
     # Verify created meeting
@@ -240,8 +240,8 @@ Feature: Meetings module verification
       | *   | name        |
       | M_1 | New Meeting |
     When I provide input for #MeetingsDrawer.RecordView view
-      | *   | date_start         | date_end                  | description     |
-      | M_1 | 12/01/2020-05:00pm | 12/01/2020-06:00pm (1 hr) | Testing Seedbed |
+      | *   | duration                                       | description     |
+      | M_1 | 12/01/2020-05:00pm ~ 12/01/2020-06:00pm (1 hr) | Testing Seedbed |
     When I click Save button on #MeetingsDrawer header
     When I close alert
     Then I should see #MeetingsList.ListView view
@@ -278,8 +278,8 @@ Feature: Meetings module verification
       | M_1 | New Meeting |
     # Add Invitees
     When I provide input for #MeetingsDrawer.RecordView view
-      | *   | date_start         | date_end                  | invitees                                                           |
-      | M_1 | 12/01/2020-02:00pm | 12/01/2020-03:00pm (1 hr) | add: *Contact_1, *Lead_1, *Contact_2, *Lead_2, *Contact_3, *Lead_3 |
+      | *   | duration                                       | invitees                                                           |
+      | M_1 | 12/01/2020-02:00pm ~ 12/01/2020-03:00pm (1 hr) | add: *Contact_1, *Lead_1, *Contact_2, *Lead_2, *Contact_3, *Lead_3 |
     # Save Meeting
     When I click Save button on #MeetingsDrawer header
     When I close alert

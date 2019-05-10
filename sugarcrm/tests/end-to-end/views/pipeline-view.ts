@@ -84,4 +84,3 @@ export default class PipelineView extends BaseListView {
         return this.driver.getText(selector);
     }
 }
-

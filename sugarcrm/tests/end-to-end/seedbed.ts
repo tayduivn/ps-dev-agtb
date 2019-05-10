@@ -37,6 +37,7 @@ import KBSettingsLayout from './layouts/kb-settings-layout';
 import MergeLayout from './layouts/merge-layout';
 import HistoricalSummaryDrawerLayout from './layouts/historical-summary-layout';
 import PipelineView from './views/pipeline-view';
+import TileViewSettings from './views/tile-settings-view';
 
 export default (seedbed: Seedbed) => {
 
@@ -86,6 +87,7 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`Dashboard`, DashboardLayout, {module: 'Dashboards'});
                 seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
                 seedbed.defineComponent(`${moduleName}PipelineView`, PipelineView, {module: moduleName});
+                seedbed.defineComponent(`TileViewSettings`, TileViewSettings, {module: moduleName});
             }
         });
 
