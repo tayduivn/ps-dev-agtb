@@ -650,13 +650,16 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         var model;
         beforeEach(function() {
             model = app.data.createBean('Opportunities');
-            collection = {
-                color: '#FFF000',
-                records: {
-                    models: []
-                }
-            };
             literal = [];
+            sinon.collection.stub(view, 'addTileVisualIndicator', function() {
+                return [{
+                    tileVisualIndicator: '#F0F0F0'
+                }];
+            });
+            sinon.collection.stub(view, 'postRender', function() {});
+        });
+
+        it('should add model to the column when visible', function() {
             sinon.collection.stub(view, 'getColumnCollection', function() {
                 return {
                     color: '#FFF000',
@@ -670,46 +673,31 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                     }
                 };
             });
-            sinon.collection.stub(view, 'addTileVisualIndicator', function() {
-                return [{
-                    tileVisualIndicator: '#F0F0F0'
-                }];
-            });
-            sinon.collection.stub(view, 'postRender', function() {});
+
             collection = view.getColumnCollection();
+
             view.addModelToCollection(model);
-        });
-
-        it('should call view.getColumnCollection method', function() {
-
             expect(view.getColumnCollection).toHaveBeenCalled();
-        });
-
-        it('should call view.addTileVisualIndicator method', function() {
-
             expect(view.addTileVisualIndicator).toHaveBeenCalled();
-        });
-
-        it('should set tileVisualIndicator property of model', function() {
-
             expect(model.attributes.tileVisualIndicator).toEqual('#F0F0F0');
-        });
-
-        it('should add new model to the collection', function() {
-            collection.records.models[0] = collection.records.add();
-
-            expect(collection.records.models[0]).toEqual(model);
-        });
-
-        it('should call _super with render', function() {
-
             expect(view._super).toHaveBeenCalledWith('render');
-        });
-
-        it('should call postRender', function() {
-
             expect(view.postRender).toHaveBeenCalled();
         });
+
+        it('should not add model when the column header is not visible', function() {
+            sinon.collection.stub(view, 'getColumnCollection', function() {
+                return null;
+            });
+
+            collection = view.getColumnCollection();
+
+            view.addModelToCollection(model);
+            expect(view.getColumnCollection).toHaveBeenCalled();
+            expect(view.addTileVisualIndicator).not.toHaveBeenCalled();
+            expect(view._super).toHaveBeenCalledWith('render');
+            expect(view.postRender).toHaveBeenCalled();
+        });
+
     });
 
     describe('getColumnCollection', function() {

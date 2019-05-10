@@ -260,10 +260,13 @@
     addModelToCollection: function(model) {
         var collection = this.getColumnCollection(model);
 
-        var literal = this.addTileVisualIndicator([model.toJSON()]);
-        model.set('tileVisualIndicator', literal[0].tileVisualIndicator);
+        if (collection && collection.records) {
+            var literal = this.addTileVisualIndicator([model.toJSON()]);
+            model.set('tileVisualIndicator', literal[0].tileVisualIndicator);
 
-        collection.records.add(model, {at: 0});
+            collection.records.add(model, {at: 0});
+        }
+
         this._super('render');
         this.postRender();
     },
