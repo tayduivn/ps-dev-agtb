@@ -1020,9 +1020,32 @@
         }
     },
 
+    /**
+     * Checks if the given field, represents a temporary file type.
+     *
+     * @param {string} key A field name.
+     * @return {boolean} True if the field is of a temporary file type.
+     */
+    isTemporaryFileType: function(key) {
+        return this.model.fields[key] && this.model.fields[key].type === 'file_temp';
+    },
+
+    /**
+     * Clears a model of any temporary file type field values in order to
+     * avoid sending the same value again with another, successive update.
+     */
+    resetTemporaryFileFields: function() {
+        _.each(Object.keys(this.model.attributes), function(key) {
+            if (this.isTemporaryFileType(key)) {
+                delete this.model.attributes[key];
+            }
+        }, this);
+    },
+
     _saveModel: function() {
         var options,
             successCallback = _.bind(function() {
+                this.resetTemporaryFileFields();
                 // Loop through the visible subpanels and have them sync. This is to update any related
                 // fields to the record that may have been changed on the server on save.
                 _.each(this.context.children, function(child) {

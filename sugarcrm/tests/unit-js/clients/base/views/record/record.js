@@ -1326,4 +1326,25 @@ describe("Record View", function () {
             expect(doValidateStub).toHaveBeenCalledWith({}, jasmine.any(Function));
         });
     });
+
+    describe('temporaryFileFieldChecks', function() {
+        it('should be able to tell if a field is a temporary file field', function() {
+            expect(view.isTemporaryFileType('created_by')).toBe(false);
+            expect(view.isTemporaryFileType('profile_picture_guid')).toBe(true);
+        });
+
+        it('should remove temporary file fields from a model', function() {
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description',
+                profile_picture: '1aebd1d1-5380-4ebd-9b21-bb94ca71a544',
+                profile_picture_guid: '1aebd1d1-5380-4ebd-9b21-bb94ca71a544'
+            });
+
+            expect(view.model.get('profile_picture_guid')).toEqual('1aebd1d1-5380-4ebd-9b21-bb94ca71a544');
+            view.resetTemporaryFileFields();
+            expect(view.model.get('profile_picture_guid')).toBe(undefined);
+        });
+    });
 });

@@ -261,6 +261,14 @@ fixtures.metadata = {
                     "name": "account_name",
                     "id_name": "account_id",
                     "type": "relate"
+                },
+                profile_picture: {
+                    type: 'image',
+                    name: 'profile_picture'
+                },
+                profile_picture_guid: {
+                    type: 'file_temp',
+                    name: 'profile_picture_guid'
                 }
             },
             "views": {
