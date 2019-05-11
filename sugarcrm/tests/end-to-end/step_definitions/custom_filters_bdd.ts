@@ -132,6 +132,7 @@ const populateFilter = async function (filterView: FilterView, module: string, t
                 for (let j = 0; j < filterValues.length; j++) {
                     inputData.push(fieldName, filterValues[j].trim());
                     await filterView.setFieldsValue(inputData);
+                    await seedbed.client.driver.waitForApp();
                 }
             } else if (filterValues.length === 2) {
                 inputData.push(fieldName.concat(min), filterValues[0].trim());

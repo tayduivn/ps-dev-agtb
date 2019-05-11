@@ -34,7 +34,7 @@ Feature: Custom filters
     Then I should see [*Q_1, *Q_2, *Q_3, *Q_4] on Quotes list view
 
 
-  @custom_filter_add @custom_filter_edit
+  @custom_filter_add @custom_filter_edit @pr
   Scenario: Custom list view filter > Add / Edit
     Given Quotes records exist:
       | *name | date_quote_expected_closed | quote_stage     | payment_terms |
