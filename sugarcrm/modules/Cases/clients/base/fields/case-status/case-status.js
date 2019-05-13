@@ -9,11 +9,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * EnumColorcodedField is an enum field that sets a background color
+ * CaseStatusField is an enum field that sets a background color
  * based on its value.
+ * - Background colors will map to default colors based on the order of case status options
+ *   from native Javascript method `Object.keys`.
+ * - For example:
+ *     - if `Object.keys` returns ['New', 'Duplicate', 'Pending Input', 'a_custom_option'],
+ *       the color will be "dark-green, blue, dark-red, purple" respectively.
+ *     - if `Object.keys` returns ['New', 'Duplicate', 'another_custom_option', 'Pending Input', 'a_custom_option']
+ *       the color will be "dark-green, blue, dark-red, purple, dark-teal" respectively.
  *
- * @class View.Fields.Base.EnumColorcodedField
- * @alias SUGAR.App.view.fields.BaseEnumColorcodedField
+ * @class View.Fields.Base.CaseStatusField
+ * @alias SUGAR.App.view.fields.BaseCaseStatusField
  * @extends View.Fields.Base.EnumField
  */
 ({
@@ -28,19 +35,25 @@
     _defaultExtraClasses: ['label', 'pill'],
 
     /**
-     * @inheritdoc
+     * List of default color codes
+     *
+     * @type string[]
+     * @private
      */
-    initialize: function(options) {
-        this._super('initialize', [options]);
-
-        /**
-         * Map of enum keys to CSS class name(s).
-         *
-         * @type {Object}
-         * @private
-         */
-        this._colorCodeClasses = this.def.color_code_classes || {};
-    },
+    _defaultColorCodes: [
+        'dark-green',
+        'blue',
+        'dark-red',
+        'purple',
+        'dark-teal',
+        'dark-blue',
+        'dark-coral',
+        'dark-orange',
+        'bright-blue',
+        'red',
+        'gray-light',
+        'gray-dark'
+    ],
 
     /**
      * @inheritdoc
@@ -81,7 +94,7 @@
     },
 
     /**
-     * Gets color code class based on metadata.
+     * Gets color code class based on default order of case enum options.
      *
      * @return {string} One of the color codes or an empty string
      *   if no color code.
@@ -90,11 +103,12 @@
     _getColorCodeClass: function() {
         var value = this.model.get(this.name);
 
-        if (_.isEmpty(value)) {
+        if (_.isEmpty(value) || !_.isObject(this.items)) {
             return '';
         }
 
-        return this._colorCodeClasses[value] || '';
+        var codeIndex = Object.keys(this.items).indexOf(value) % this._defaultColorCodes.length;
+        return this._defaultColorCodes[codeIndex] || '';
     },
 
     /**
@@ -114,7 +128,7 @@
      * @private
      */
     _clearColorCode: function() {
-        var classes = _.union(_.values(this._colorCodeClasses), this._defaultExtraClasses).join(' ');
+        var classes = _.union(this._defaultColorCodes, this._defaultExtraClasses).join(' ');
         this.$el.removeClass(classes);
     }
 })

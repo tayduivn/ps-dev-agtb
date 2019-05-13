@@ -8,9 +8,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Base.Fields.EnumColorCoded', function() {
+describe('Base.Fields.CaseStatus', function() {
     var app;
-    var domOptionsName = 'case_status_dom';
     var field;
     var fieldName = 'test_enum';
     var model;
@@ -20,29 +19,22 @@ describe('Base.Fields.EnumColorCoded', function() {
         app = SugarTest.app;
         model = app.data.createBean(module);
 
-        field = SugarTest.createField({
-            client: 'base',
-            name: fieldName,
-            type: 'enum-colorcoded',
-            viewName: 'list',
-            fieldDef: {
-                color_code_classes: {
-                    '': '',
-                    'New': 'red',
-                    'Duplicate': 'yellow',
-                },
-                options: domOptionsName,
-            },
-            module: module,
-            model: model,
-        });
+        field = SugarTest.createField(
+            'base',
+            fieldName,
+            'case-status',
+            'list',
+            {},
+            module,
+            model,
+            null,
+            true
+        );
 
-        var stub = sinon.collection.stub(app.lang, 'getAppListStrings');
-        stub.withArgs(domOptionsName)
-            .returns({
-                'New': 'New',
-                'Duplicate': 'Duplicate',
-            });
+        field.items = {
+            'New': 'New',
+            'Duplicate': 'Duplicate',
+        }
     });
 
     afterEach(function() {
@@ -75,7 +67,7 @@ describe('Base.Fields.EnumColorCoded', function() {
 
             var classes = field.$el.attr('class').split(' ');
             expect(classes.length).toEqual(3);
-            expect(classes).toContain('yellow');
+            expect(classes).toContain('blue');
             expect(classes).toContain('label');
             expect(classes).toContain('pill');
 
@@ -85,8 +77,8 @@ describe('Base.Fields.EnumColorCoded', function() {
             field.setColorCoding();
 
             classes = field.$el.attr('class').split(' ');
-            expect(classes).not.toContain('yellow');
-            expect(classes).toContain('red');
+            expect(classes).not.toContain('blue');
+            expect(classes).toContain('dark-green');
             expect(classes).toContain('label');
             expect(classes).toContain('pill');
         });
