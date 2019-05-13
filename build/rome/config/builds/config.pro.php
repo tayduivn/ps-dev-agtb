@@ -195,5 +195,10 @@ $config['blackList']['pro'] = array(
 
 // Out of the box Business Process Management data
 'sugarcrm/install/BusinessProcesses' => 1,
+
+// Commentlog Dashlet
+'sugarcrm/clients/base/views/commentlog-dashlet' => 1,
+'sugarcrm/tests/unit-js/clients/base/views/commentlog-dashlet' => 1,
+'sugarcrm/clients/base/fields/commentlog/dashlet.hbs' => 1,
 );
 $build = 'pro';

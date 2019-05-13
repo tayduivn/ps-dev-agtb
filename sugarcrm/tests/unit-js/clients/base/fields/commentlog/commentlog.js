@@ -47,6 +47,14 @@ describe('commentlog field', function() {
         expect(field.plugins).toContain('Taggable');
     });
 
+    describe('setUpTaggable', function() {
+        it('should call setTaggableRecord', function() {
+            var setTaggableRecordStub = sinon.collection.stub(field, 'setTaggableRecord');
+            field.setUpTaggable();
+            expect(setTaggableRecordStub).toHaveBeenCalled();
+        });
+    });
+
     describe('Detailed View Behavior', function() {
         beforeEach(function() {
             field.tplName = 'detail';
@@ -445,6 +453,22 @@ describe('commentlog field', function() {
                 '<a href="#Employees/seed_sally_id">Sally Bronson</a></span>';
             expect(field.msgs[0].entry.toString()).toEqual(expected);
         });
+
+        using('different collection values',[
+            [false, 0, false],
+            [true, 5, true],
+            [true, -1, false]
+        ], function(dataFetched, nextOffset, expected) {
+            it('should set _showViewAll', function() {
+                var collection = app.data.createBeanCollection('CommentLog');
+                sinon.collection.stub(field, 'getCollection').returns(collection);
+                collection.dataFetched = dataFetched;
+                collection.next_offset = nextOffset;
+                field.showCommentLog();
+                expect(field._showViewAll).toEqual(expected);
+            });
+        });
+
     });
 
     describe('_escapeValue', function() {
@@ -462,6 +486,20 @@ describe('commentlog field', function() {
             var result = field._insertHtmlLinks(comment);
             var expected = '<a href="http://www.sugarcrm.com" target="_blank" rel="noopener">www.sugarcrm.com</a>';
             expect(result).toEqual(expected);
+        });
+    });
+
+    describe('save', function() {
+        it('should blank out textarea and reload data after save', function() {
+            var textarea = $('<textarea>test</textarea>');
+            sinon.collection.stub(field, 'getTextArea').returns(textarea);
+            var newComment = app.data.createBean();
+            sinon.collection.stub(app.data, 'createRelatedBean').returns(newComment);
+            sinon.collection.stub(newComment, 'sync').yieldsTo('success');
+            var loadDataStub = sinon.collection.stub(field.view, 'loadData');
+            field.save();
+            expect(loadDataStub).toHaveBeenCalled();
+            expect(textarea.val()).toEqual('');
         });
     });
 });

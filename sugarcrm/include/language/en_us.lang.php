@@ -3755,6 +3755,14 @@ Sincerely, SugarCRM',
         'Please remove one or more modules before adding any others.',
     'LBL_SIX' => 'six', // record view dashlet tab limit
 
+    //Commentlog Dashlet
+    'LBL_DASHLET_COMMENTLOG_NAME' => 'Comment Log',
+    'LBL_DASHLET_COMMENTLOG_DESCRIPTION' => 'Displays comments for a record',
+    'LBL_COMMENTS_LOG_DASHLET_NO_COMMENTS' => 'No comments available',
+    'LBL_COMMENTS_LOG_DASHLET_BUTTON_ADD' => 'Add',
+    'LBL_COMMENTS_LOG_DASHLET_PLACEHOLDER' => 'Add comment',
+    'LBL_COMMENTS_LOG_DASHLET_VIEW_ALL' => 'View All',
+
     'LBL_DASHLET_MODULE_UNAVAILABLE' => 'Data not available. You do not have permission to access this module.' .
         " \nPlease update or remove this dashlet.",
     'TPL_DASHLET_MY_MODULE' => 'My {{module}}',

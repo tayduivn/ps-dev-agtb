@@ -236,6 +236,9 @@
      * @private
      */
     _resizeDrawer: _.throttle(function() {
+        if (this.disposed) {
+            return;
+        }
         // resize the drawer if it is opened.
         if (this.currentState === 'idle') {
             var drawerHeight = this._determineDrawerHeight();

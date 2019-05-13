@@ -86,6 +86,13 @@ return [
                              ],
                             'width' => 6,
                         ],
+                        [
+                            'view' => [
+                                'type' => 'commentlog-dashlet',
+                                'label' => 'LBL_DASHLET_COMMENTLOG_NAME',
+                            ],
+                            'width' => 6,
+                        ],
                     ],
                     // row 2
                     [

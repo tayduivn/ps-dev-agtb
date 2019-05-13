@@ -22,7 +22,9 @@
      * @inheritdoc
      */
     events: {
-        'click [data-action=toggle]': 'toggleCollapsedEntry'
+        'click [data-action=toggle]': 'toggleCollapsedEntry',
+        'click [data-action=showall]': 'showAll',
+        'click [data-action=save]': 'save',
     },
 
     /**
@@ -45,7 +47,23 @@
         this._super('initialize', [options]);
         this.collapsedEntries = {};
         this._initSettings();
-        this.setTaggableRecord(this.context.get('module'), this.context.get('modelId'));
+        this.setUpTaggable();
+    },
+
+    /**
+     * Set model info to to properly check acl access for mentions
+     */
+    setUpTaggable: function() {
+        var module;
+        var id;
+        if (this.def.dashlet) {
+            module = this.view.collection.link.bean.module;
+            id = this.view.collection.link.bean.id;
+        } else {
+            module = this.context.get('module');
+            id = this.context.get('modelId');
+        }
+        this.setTaggableRecord(module, id);
     },
 
     /**
@@ -61,6 +79,20 @@
         };
         this._settings = _.extend({}, this._defaultSettings, configSettings);
         return this;
+    },
+
+    /**
+     * Get the correct collection depending if this is a collection field
+     * or a dashlet collection
+     *
+     * @return {Data.BeanCollection}
+     */
+    getCollection: function() {
+        if (this.def.dashlet) {
+            return this.view.collection;
+        } else {
+            return this.model.get(this.name);
+        }
     },
 
     /**
@@ -86,11 +118,14 @@
      * when this.getFormattedValue() returns the data format for message.
      */
     showCommentLog: function() {
-        var collection = this.model.get('commentlog');
-
+        var collection = this.getCollection();
         if (!collection) {
             return;
         }
+
+        // Set if we should show the View All button on the dashlet view
+        this._showViewAll = collection.dataFetched && collection.next_offset !== -1;
+
         var comments = collection.models;
 
         if (comments) {
@@ -119,6 +154,7 @@
                     created_by_name: commentModel.get('created_by_name'),
                     collapsed: this.collapsedEntries[id],
                     showShort: showShort,
+                    date_entered: commentModel.get('date_entered'),
                 };
 
                 // to date display format
@@ -212,6 +248,14 @@
     },
 
     /**
+     * Load all comments into the dashlet
+     */
+    showAll: function() {
+        this.showAllClicked = true;
+        this.view.loadData({loadAll: true});
+    },
+
+    /**
      * Called when unformatting the value for storage
      * @param value
      */
@@ -220,14 +264,43 @@
     },
 
     /**
+     * Save a new comment on the dashlet
+     */
+    save: function() {
+        var el = this.getTextArea();
+        var value = this.unformat(el.val());
+        if (_.isEmpty(value)) {
+            return;
+        }
+        var commentBean = app.data.createRelatedBean(this.model, null, 'commentlog_link', {entry: value});
+        var success = _.bind(function() {
+            el.val('');
+            this.view.loadData({loadAll: !!this.showAllClicked});
+        }, this);
+        commentBean.sync('create', commentBean, {success: success, relate: true});
+    },
+
+    /**
+     * Get the comment log textarea
+     *
+     * @return {jQuery} The textarea element
+     */
+    getTextArea: function() {
+        return this.$el.find(this.fieldTag);
+    },
+
+    /**
      * @inheritdoc
      */
     bindDomChange: function() {
+        if (this.def.dashlet) {
+            return;
+        }
         if (!(this.model instanceof Backbone.Model)) {
             return;
         }
 
-        var el = this.$el.find(this.fieldTag);
+        var el = this.getTextArea();
         var self = this;
 
         el.on('change', function() {
@@ -269,6 +342,18 @@
                 }
                 this.render();
             }, this);
+        }
+
+        if (this.def.dashlet) {
+            var collection = this.getCollection();
+            if (collection) {
+                collection.on('sync', function() {
+                    if (this.disposed) {
+                        return;
+                    }
+                    this.render();
+                }, this);
+            }
         }
     }
 })
