@@ -65,8 +65,13 @@
 
         var metadata = app.utils.deepCopy(this.model.get('metadata'));
         var tabIndex = 0;
-        if (options && options.tabIndex) {
+        if (options && !_.isUndefined(options.tabIndex)) {
             tabIndex = options.tabIndex;
+        } else {
+            var tabComp = this.layout.getComponent('tabbed-dashboard');
+            if (tabComp) {
+                tabIndex = tabComp.activeTab;
+            }
         }
 
         var components = metadata.components;

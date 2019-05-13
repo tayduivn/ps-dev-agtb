@@ -22,14 +22,35 @@
     tabs: [],
 
     /**
+     * Hash key for stickness.
+     * @property {string}
+     */
+    lastStateKey: '',
+
+    /**
      * Initialize this component.
      * @param {Object} options Initialization options.
      * @param {Object} options.meta Metadata.
      * @inheritdoc
      */
     initialize: function(options) {
-        this._initTabs(options.meta);
         this._super('initialize', [options]);
+        this._initTabs(options.meta);
+    },
+
+    /**
+     * Build the cache key for last visited tab.
+     *
+     * @return {string} hash key.
+     */
+    getLastStateKey: function() {
+        if (this.lastStateKey) {
+            return this.lastStateKey;
+        }
+
+        var modelId = this.model.get('id');
+        this.lastStateKey = modelId ? modelId + '.' + 'last_tab' : '';
+        return this.lastStateKey;
     },
 
     /**
@@ -59,9 +80,18 @@
      */
     _initTabs: function(options) {
         options = options || {};
+        var lastStateKey = this.getLastStateKey();
+        var lastVisitTab = lastStateKey ? app.user.lastState.get(lastStateKey) : 0;
+
         if (!_.isUndefined(options.activeTab)) {
             this.activeTab = options.activeTab;
+            if (lastStateKey) {
+                app.user.lastState.set(lastStateKey, this.activeTab);
+            }
+        } else if (!_.isUndefined(lastVisitTab)) {
+            this.activeTab = lastVisitTab;
         }
+
         if (!_.isUndefined(options.tabs)) {
             this.tabs = options.tabs;
         }

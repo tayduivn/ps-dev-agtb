@@ -35,6 +35,10 @@ describe('Base.Layout.DashletMain', function() {
         var triggerStub;
 
         beforeEach(function() {
+            layout.layout = {
+                getComponent: $.noop,
+                off: $.noop
+            };
             initComponentsStub = sinon.collection.stub(layout, 'initComponents');
             loadDataStub = sinon.collection.stub(layout, 'loadData');
             renderStub = sinon.collection.stub(layout, 'render');

@@ -11,8 +11,10 @@
 
 describe('Base.View.TabbedDashboardView', function() {
     var view;
+    var app;
 
     beforeEach(function() {
+        app = SugarTest.app;
         view = SugarTest.createView('base', 'Home', 'tabbed-dashboard');
     });
 
@@ -23,6 +25,9 @@ describe('Base.View.TabbedDashboardView', function() {
 
     describe('initialize', function() {
         it('should have tabs based on the given metadata', function() {
+            sinon.collection.stub(view, 'getLastStateKey');
+            sinon.collection.stub(app.user.lastState, 'set');
+
             var tabs = [
                 {name: 'tab 0'},
                 {
@@ -74,6 +79,23 @@ describe('Base.View.TabbedDashboardView', function() {
             var renderStub = sinon.collection.stub(view, 'render');
             view.context.trigger('tabbed-dashboard:update');
             expect(renderStub).toHaveBeenCalled();
+        });
+    });
+
+    describe('_initTabs', function() {
+        it('should set last visited tab as active ', function() {
+            sinon.collection.stub(view, 'getLastStateKey').returns('key');
+            sinon.collection.stub(app.user.lastState, 'get').returns(2);
+            view.activeTab = 1;
+            view._initTabs();
+            expect(view.activeTab).toEqual(2);
+        });
+    });
+
+    describe('getLastStatekey', function() {
+        it('should return a key', function() {
+            view.model.set('id', 'my_dashboard_id');
+            expect(view.getLastStateKey()).toEqual('my_dashboard_id.last_tab');
         });
     });
 });
