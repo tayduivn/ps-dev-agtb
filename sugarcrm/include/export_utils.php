@@ -216,9 +216,15 @@ function exportFromApi($args, $sample = false)
     $db = DBManagerFactory::getInstance();
 
     if ($records) {
+        $records = is_array($records) ? $records : [$records];
         $where = sprintf(
             "{$focus->table_name}.id IN (%s)",
-            implode(',', array_map([$db, 'quoted'], is_array($records) ? $records : [$records]))
+            implode(
+                ',',
+                array_map(function (string $record) use ($db) : string {
+                    return $db->quoted($record);
+                }, $records)
+            )
         );
     } elseif (isset($args['all'])) {
         $where = '';
