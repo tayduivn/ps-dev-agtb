@@ -127,7 +127,6 @@
             <directory>./modules/Accounts/</directory>
             <directory>./modules/Audit/</directory>
             <directory>./modules/Bugs/</directory>
-            <directory>./modules/Cases/</directory>
             <directory>./modules/Contacts/</directory>
             <directory>./modules/Dashboards/</directory>
             <directory>./modules/Documents/</directory>
@@ -225,6 +224,7 @@
         </testsuite>
         <testsuite name="Customer Service">
             <directory>./modules/BusinessCenters</directory>
+            <directory>./modules/Cases/</directory>
         </testsuite>
     </testsuites>
     <filter>
