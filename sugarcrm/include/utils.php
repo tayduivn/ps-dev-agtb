@@ -759,7 +759,7 @@ function get_team_array($add_blank = false)
     } else {
         $query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1, team_memberships t2 ';
         $where = 't1.deleted = 0 and t2.deleted = 0 and t1.id=t2.team_id and t2.user_id = '
-            . "'" . $current_user->id . "'";
+            . $db->quoted($current_user->id);
     }
 
     $team = BeanFactory::newBean('Teams');
