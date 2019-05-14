@@ -38,11 +38,13 @@
 
         _.each(fieldsForTabs, function(field) {
             var fieldLabel = app.lang.getModString(fieldMeta[field].vname, this.module);
-
             var metaObject = {
-                'headerLabel': fieldLabel,
-                'moduleField': field,
-                'tabLabel': app.lang.get('LBL_PIPELINE_VIEW_TAB_NAME', this.module) + fieldLabel,
+                headerLabel: fieldLabel,
+                moduleField: field,
+                tabLabel: app.lang.get('LBL_PIPELINE_VIEW_TAB_NAME', this.module, {
+                    module: this.module,
+                    fieldName: fieldLabel
+                })
             };
             this.tabs.push(metaObject);
         }, this);

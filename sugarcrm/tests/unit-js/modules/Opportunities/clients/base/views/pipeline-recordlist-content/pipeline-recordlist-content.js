@@ -13,26 +13,30 @@
 describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
     var view;
     var app;
-    var layout;
-    var context;
     var viewMeta;
 
     beforeEach(function() {
         app = SUGAR.App;
-        sandbox = sinon.sandbox.create();
         var context = new app.Context({
             module: 'Opportunities',
             model: app.data.createBean('Opportunities'),
-            layout: 'pipeline-records',
+            layout: 'pipeline-records'
         });
         viewMeta = {
             fields: {
                 label: 'LBL_PIPELINE_TYPE',
                 name: 'pipeline_type',
-                type: 'pipeline-type',
+                type: 'pipeline-type'
             }
         };
-        view = SugarTest.createView('base', 'Opportunities', 'pipeline-recordlist-content', viewMeta, context, true);
+        view = SugarTest.createView(
+            'base',
+            'Opportunities',
+            'pipeline-recordlist-content',
+            viewMeta,
+            context,
+            true
+        );
 
         sinon.collection.stub(view.context, 'on', function() {});
         sinon.collection.stub(view, '_super', function() {});
@@ -70,7 +74,7 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                 {
                     table_header: {
                         Leads: 'status',
-                        Opportunities: 'sales_status',
+                        Opportunities: 'sales_status'
                     },
                     header_colors: ['#FFFFFF', '#000000']
                 }

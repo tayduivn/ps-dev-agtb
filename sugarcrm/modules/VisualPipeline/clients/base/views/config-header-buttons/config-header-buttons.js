@@ -23,6 +23,11 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this._viewAlerts = [];
+
+        this.moduleLangObj = {
+            // using "Tile View" for config title
+            module: app.lang.get('LBL_PIPELINE_VIEW_NAME', this.module)
+        };
     },
 
     /**

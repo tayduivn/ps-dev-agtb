@@ -12,7 +12,6 @@
 
 describe('Base.Fields.PipelineType', function() {
     var app;
-    var sandbox;
     var context;
     var model;
     var moduleName;
@@ -20,12 +19,10 @@ describe('Base.Fields.PipelineType', function() {
     var fieldDef;
     var config;
     var fields;
-    var getStub;
     var getModStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        sandbox = sinon.sandbox.create();
         moduleName = 'Tasks';
         model = app.data.createBean(moduleName, {
             id: '123test',
@@ -53,16 +50,22 @@ describe('Base.Fields.PipelineType', function() {
             }
         };
 
-        sinon.collection.stub(app.metadata, 'getModule').withArgs('VisualPipeline').returns(config)
+        sinon.collection.stub(app.metadata, 'getModule')
+            .withArgs('VisualPipeline').returns(config)
             .withArgs('Tasks').returns(fields);
+
         field = SugarTest.createField('base', 'pipeline-type', 'pipeline-type',
             'detail', fieldDef, 'Tasks', model, false);
+
+        sinon.collection.stub(app.lang, 'get')
+            .withArgs('LBL_PIPELINE_VIEW_TAB_NAME', moduleName, {
+                module: moduleName,
+                fieldName: 'Status'
+            }).returns(moduleName + ' by Status');
     });
 
     afterEach(function() {
-        sandbox.restore();
         sinon.collection.restore();
-        getStub = null;
         getModStub = null;
         app = null;
         context = null;
@@ -89,11 +92,10 @@ describe('Base.Fields.PipelineType', function() {
                 {
                     'headerLabel': 'Status',
                     'moduleField': 'status',
-                    'tabLabel': 'Test String Status'
+                    'tabLabel': moduleName + ' by Status'
                 }
             ];
-            getStub = sandbox.stub(app.lang, 'get');
-            getModStub = sandbox.stub(app.lang, 'getModString');
+            getModStub = sinon.collection.stub(app.lang, 'getModString');
         });
 
         afterEach(function() {
@@ -101,7 +103,6 @@ describe('Base.Fields.PipelineType', function() {
         });
 
         it('should push metaObject into field.tabs and set pipelineHeaderLabel', function() {
-            getStub.withArgs('LBL_PIPELINE_VIEW_TAB_NAME', field.module).returns('Test String ');
             getModStub.withArgs('LBL_LIST_ACCEPT_STATUS', field.module).returns('Status');
             field.getTabs();
             expect(field.tabs).toEqual(metaObject);

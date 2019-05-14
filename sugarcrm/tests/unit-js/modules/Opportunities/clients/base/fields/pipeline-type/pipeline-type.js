@@ -12,7 +12,6 @@
 
 describe('Opportunities.Base.Fields.PipelineType', function() {
     var app;
-    var sandbox;
     var context;
     var model;
     var moduleName;
@@ -20,12 +19,10 @@ describe('Opportunities.Base.Fields.PipelineType', function() {
     var fieldDef;
     var config;
     var fields;
-    var getStub;
     var getModStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        sandbox = sinon.sandbox.create();
         moduleName = 'Opportunities';
         model = app.data.createBean(moduleName, {
             id: '123test',
@@ -49,15 +46,23 @@ describe('Opportunities.Base.Fields.PipelineType', function() {
         };
         fields = {
             date_closed: {
-                vname: 'LBL_DATE_CLOSED',
+                vname: 'LBL_DATE_CLOSED'
             },
             sales_status: {
                 vname: 'LBL_SALES_STATUS'
             }
         };
 
-        getStub = sandbox.stub(app.lang, 'get');
-        getModStub = sandbox.stub(app.lang, 'getModString');
+        sinon.collection.stub(app.lang, 'get')
+            .withArgs('LBL_PIPELINE_VIEW_TAB_NAME', 'Opportunities', {
+                module: 'Opportunities',
+                fieldName: 'Status'
+            }).returns('Opportunities by Status')
+            .withArgs('LBL_PIPELINE_VIEW_TAB_NAME', 'Opportunities', {
+                module: 'Opportunities',
+                fieldName: 'Time'
+            }).returns('Opportunities by Time');
+        getModStub = sinon.collection.stub(app.lang, 'getModString');
 
         sinon.collection.stub(app.metadata, 'getModule').withArgs('VisualPipeline').returns(config)
             .withArgs('Opportunities').returns(fields);
@@ -74,9 +79,7 @@ describe('Opportunities.Base.Fields.PipelineType', function() {
     });
 
     afterEach(function() {
-        sandbox.restore();
         sinon.collection.restore();
-        getStub = null;
         getModStub = null;
         app = null;
         context = null;
@@ -94,15 +97,14 @@ describe('Opportunities.Base.Fields.PipelineType', function() {
                 {
                     'headerLabel': 'Time',
                     'moduleField': 'date_closed',
-                    'tabLabel': 'Test String Time'
+                    'tabLabel': 'Opportunities by Time'
                 },
                 {
                     'headerLabel': 'Status',
                     'moduleField': 'sales_status',
-                    'tabLabel': 'Test String Status'
+                    'tabLabel': 'Opportunities by Status'
                 }
             ];
-            getStub.withArgs('LBL_PIPELINE_VIEW_TAB_NAME', field.module).returns('Test String ');
             getModStub.withArgs('LBL_SALES_STATUS', field.module).returns('Status');
         });
 

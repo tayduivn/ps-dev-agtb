@@ -3792,10 +3792,10 @@ Sincerely, SugarCRM',
 
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_LIST_VIEW__NAME' => 'List View',
-    'LBL_PIPELINE_VIEW_NAME' => 'Pipeline View',
-    'LBL_PIPELINE_VIEW_BTN' => 'Visual Pipeline',
-    'LBL_PIPELINE_VIEW_TAB_NAME' => 'Pipeline by ',
-    'LBL_VISUAL_PIPELINE_DISABLED' => 'Visual Pipeline is not enabled',
+    'LBL_PIPELINE_VIEW_NAME' => 'Tile View',
+    'LBL_PIPELINE_VIEW_BTN' => 'Tile View',
+    'LBL_PIPELINE_VIEW_TAB_NAME' => '{{module}} by {{fieldName}}',
+    'LBL_VISUAL_PIPELINE_DISABLED' => 'Tile View is not enabled',
     //END SUGARCRM flav=ent ONLY
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',

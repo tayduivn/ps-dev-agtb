@@ -21,10 +21,16 @@ describe('Base.Fields.Piiname', function() {
         context.set({model: model});
     });
 
+    afterEach(function() {
+        sinon.collection.restore();
+        field.dispose();
+        field = null;
+    });
+
     it('should not format value if parent context does not exist', function() {
         field = SugarTest.createField({
             name: 'piiname',
-            type: 'piiname',
+            type: 'piiname'
         });
         expect(field.format('fieldName')).toEqual('fieldName');
     });
@@ -34,7 +40,7 @@ describe('Base.Fields.Piiname', function() {
         field = SugarTest.createField({
             name: 'piiname',
             type: 'piiname',
-            context: context.getChildContext(),
+            context: context.getChildContext()
         });
         expect(field.format('fieldName')).toEqual('fieldName');
     });
@@ -44,7 +50,7 @@ describe('Base.Fields.Piiname', function() {
         field = SugarTest.createField({
             name: 'piiname',
             type: 'piiname',
-            context: context.getChildContext(),
+            context: context.getChildContext()
         });
         sinon.collection.stub(app.lang, 'get').withArgs('LBL_EMAIL_ADDRESS_PRIMARY').returns('Dummy Email');
         expect(field.format('fieldName')).toEqual('Dummy Email');
