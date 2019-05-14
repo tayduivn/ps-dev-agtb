@@ -299,6 +299,7 @@ fixtures.metadata = {
                 profile_picture_guid: {
                     type: 'file_temp',
                     name: 'profile_picture_guid'
+                },
                 contacts: {
                     name: 'contacts',
                     type: 'link',
