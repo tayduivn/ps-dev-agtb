@@ -291,7 +291,9 @@
      * Shows the loading cell and calls method to fetch all the records to be displayed on the page
      */
     buildRecordsList: function() {
-        this.$('#loadingCell').show();
+        app.alert.show('pipeline-records-loading', {
+            level: 'process'
+        });
         this.getRecords();
     },
 
@@ -402,7 +404,7 @@
         this.moreData = false;
         app.api.call('create', app.api.buildURL(null, 'bulk'), requests, {
             success: function(dataColumns) {
-                self.$('#loadingCell').hide();
+                app.alert.dismiss('pipeline-records-loading');
                 _.each(self.recordsToDisplay, function(column, index) {
                     var records = app.data.createBeanCollection(self.module);
                     if (!_.isEmpty(column.records.models)) {

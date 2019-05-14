@@ -116,14 +116,30 @@
 
       .table-responsive {
         .table {
+          thead th:not(.arrowholder) {
+            min-width: 200px;
+          }
+
           thead th {
-            padding: 5px;
+            padding: 5px 15px;
             text-align: center;
             vertical-align: middle;
 
+            &.arrowholder {
+              max-width: 50px;
+
+              &.left {
+                text-align: left;
+              }
+
+              &.right {
+                text-align: right;
+              }
+            }
+
             .header-column {
               color: @white;
-              width: 250px;
+              width: 100%;
               position: relative;
               text-align: left;
               font-size: 16px;
@@ -148,7 +164,7 @@
           }
 
           td {
-            padding: 5px;
+            padding: 5px 15px;
             text-align: center;
             vertical-align: top;
 
@@ -162,7 +178,7 @@
                 border: 1px solid darken(@grayLighter, 10%);
                 border-radius: 4px;
                 margin: 0 auto 10px;
-                width: 250px;
+                width: 100%;
 
                 .pipeline-tile {
                   cursor: pointer;
@@ -170,9 +186,9 @@
                   .tile-header {
                     font-size: 14px;
                     line-height: 25px;
-                    padding: 0 10px;
-                    background: @white;
+                    padding: 0 15px 0 10px;
                     border-radius: 5px 5px 0 0;
+                    position: relative;
 
                     .pull-right {
                       .delete {
@@ -180,6 +196,7 @@
                         margin: 0;
                         padding: 0;
                         display: none;
+                        border: none;
 
                         i {
                           font-size: 12px;
@@ -188,7 +205,7 @@
                     }
 
                     .name {
-                      max-width: 170px;
+                      max-width: 250px;
                       color: @black;
                     }
                   }
@@ -208,9 +225,11 @@
                   .pipeline-tile {
                     .tile-header {
                       .pull-right {
-                        a.delete {
-                          display: inline-block;
-                          border: none;
+                        .delete {
+                          position: absolute;
+                          top: 2px;
+                          right: 4px;
+                          display: inline;
 
                           &:not(.disabled):hover > i.fa {
                             color: @black;
@@ -220,31 +239,6 @@
                     }
                   }
                 }
-              }
-            }
-          }
-        }
-
-        #loadingCell {
-          display: none;
-          position: absolute;
-          top: 200px;
-          width: 100%;
-
-          .block-footer {
-            border-top: none;
-            margin-top: 100px;
-
-            .loadingContainer {
-              margin: 0 auto;
-              width: 100px;
-              height: 100px;
-              text-align: center;
-
-              .loadingText {
-                color: @textColor;
-                width: 100px;
-                margin-top: 30px;
               }
             }
           }
@@ -290,7 +284,7 @@
         border: 1px solid darken(@grayLighter, 10%);
         border-radius: 5px;
         margin: 0 auto 20px;
-        width: 250px;
+        width: 100%;
         background: darken(@grayLighter, 10%);
         height: 100px;
       }
@@ -361,7 +355,7 @@
       .tile_header {
         font-size: 14px;
         line-height: 25px;
-        padding: 0 10px;
+        padding: 0 15px 0 10px;
         background: @white;
         border-radius: 5px 5px 0 0;
 
@@ -508,160 +502,3 @@
     width: 135px;
   }
 }
-
-@-moz-keyframes spinningH {
-  from {
-    -moz-transform: rotateX(0deg) rotateY(0deg);
-  }
-
-  to {
-    -moz-transform: rotateX(360deg) rotateY(360deg);
-  }
-}
-
-@-webkit-keyframes spinningH {
-  from {
-    -webkit-transform: rotateX(0deg) rotateY(0deg);
-  }
-
-  to {
-    -webkit-transform: rotateX(360deg) rotateY(360deg);
-  }
-}
-
-@-o-keyframes spinningH {
-  from {
-    -o-transform: rotateX(0deg) rotateY(0deg);
-  }
-
-  to {
-    -o-transform: rotateX(360deg) rotateY(360deg);
-  }
-}
-
-@-ms-keyframes spinningH {
-  from {
-    -ms-transform: rotateX(0deg) rotateY(0deg);
-  }
-
-  to {
-    -ms-transform: rotateX(360deg) rotateY(360deg);
-  }
-}
-
-@keyframes spinningH {
-  from {
-    transform: rotateX(0deg) rotateY(0deg);
-  }
-
-  to {
-    transform: rotateX(360deg) rotateY(360deg);
-  }
-}
-
-.animate {
-  -webkit-animation: spinningH 4s infinite linear;
-  -moz-animation: spinningH 4s infinite linear;
-  -o-animation: spinningH 4s infinite linear;
-  -ms-animation: spinningH 4s infinite linear;
-  animation: spinningH 4s infinite linear;
-}
-
-#cube {
-  position: relative;
-  margin: 0 auto;
-  height: 50px;
-  width: 50px;
-  -webkit-transition: -webkit-transform 5s linear;
-  -moz-transition: -moz-transform 5s linear;
-  -o-transition: -o-transform 5s linear;
-  -ms-transition: -ms-transform 5s linear;
-  transition: transform 5s linear;
-  -webkit-transform-style: preserve-3d;
-  -moz-transform-style: preserve-3d;
-  -o-transform-style: preserve-3d;
-  -ms-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-}
-
-#cube > div {
-  position: absolute;
-  padding: 1px;
-  opacity: 1;
-  background-position: center center;
-  background-color: @btnSecondaryBackgroundActive;
-  border-radius: 3px;
-  border: 3px solid @btnSecondaryBackgroundActive;
-}
-
-#cube > div > div.inner {
-  border-radius: 5px;
-  height: 45px;
-  width: 45px;
-}
-
-#cube div:nth-child(1) {
-  -webkit-transform: translateZ(25px);
-  -moz-transform: translateZ(25px);
-  -o-transform: translateZ(25px);
-  -ms-transform: translateZ(25px);
-  transform: translateZ(25px);
-}
-
-#cube div:nth-child(2) {
-  -webkit-transform: rotateY(90deg) translateZ(25px);
-  -moz-transform: rotateY(90deg) translateZ(25px);
-  -o-transform: rotateY(90deg) translateZ(25px);
-  -ms-transform: rotateY(90deg) translateZ(25px);
-  transform: rotateY(90deg) translateZ(25px);
-}
-
-#cube div:nth-child(3) {
-  -webkit-transform: rotateY(180deg) translateZ(25px);
-  -moz-transform: rotateY(180deg) translateZ(25px);
-  -o-transform: rotateY(180deg) translateZ(25px);
-  -ms-transform: rotateY(180deg) translateZ(25px);
-  transform: rotateY(180deg) translateZ(25px);
-}
-
-#cube div:nth-child(4) {
-  -webkit-transform: rotateY(-90deg) translateZ(25px);
-  -moz-transform: rotateY(-90deg) translateZ(25px);
-  -o-transform: rotateY(-90deg) translateZ(25px);
-  -ms-transform: rotateY(-90deg) translateZ(25px);
-  transform: rotateY(-90deg) translateZ(25px);
-}
-
-#cube div:nth-child(5) {
-  -webkit-transform: rotateX(-90deg) translateZ(25px) rotate(180deg);
-  -moz-transform: rotateX(-90deg) translateZ(25px) rotate(180deg);
-  -o-transform: rotateX(-90deg) translateZ(25px) rotate(180deg);
-  -ms-transform: rotateX(-90deg) translateZ(25px) rotate(180deg);
-  transform: rotateX(-90deg) translateZ(25px) rotate(180deg);
-}
-
-#cube div:nth-child(6) {
-  -webkit-transform: rotateX(90deg) translateZ(25px);
-  -moz-transform: rotateX(90deg) translateZ(25px);
-  -o-transform: rotateX(90deg) translateZ(25px);
-  -ms-transform: rotateX(90deg) translateZ(25px);
-  transform: rotateX(90deg) translateZ(25px);
-}
-
-#cube div:nth-child(1) div.inner,
-#cube div:nth-child(3) div.inner {
-  background-color: @red;
-}
-
-#cube div:nth-child(2) div.inner,
-#cube div:nth-child(4) div.inner {
-  background-color: @navbarInverseSearchPlaceholderColor;
-  background-repeat: no-repeat;
-}
-
-#cube div:nth-child(5) div.inner,
-#cube div:nth-child(6) div.inner {
-  background-color: @grayDark;
-  background-repeat: no-repeat;
-}
-

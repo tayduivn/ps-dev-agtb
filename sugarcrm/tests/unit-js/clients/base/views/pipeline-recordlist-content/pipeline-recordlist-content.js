@@ -13,23 +13,21 @@
 describe('Base.Views.PipelineRecordlistContent', function() {
     var view;
     var app;
-    var layout;
     var context;
     var viewMeta;
 
     beforeEach(function() {
         app = SUGAR.App;
-        sandbox = sinon.sandbox.create();
         var context = new app.Context({
             module: 'Opportunities',
             model: app.data.createBean('Opportunities'),
-            layout: 'pipeline-records',
+            layout: 'pipeline-records'
         });
         viewMeta = {
             fields: {
                 label: 'LBL_PIPELINE_TYPE',
                 name: 'pipeline_type',
-                type: 'pipeline-type',
+                type: 'pipeline-type'
             }
         };
         view = SugarTest.createView('base', 'Opportunities', 'pipeline-recordlist-content', viewMeta, context, false);
@@ -123,7 +121,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                 fields: {
                     label: 'LBL_PIPELINE_TYPE',
                     name: 'pipeline_type',
-                    type: 'pipeline-type',
+                    type: 'pipeline-type'
                 },
                 panels: [
                     {
@@ -427,7 +425,6 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         });
 
         describe('when pipeline_type is not date_closed', function() {
-            var headerField;
             beforeEach(function() {
                 sinon.collection.stub(view.context, 'get', function() {
                     return {
@@ -748,20 +745,17 @@ describe('Base.Views.PipelineRecordlistContent', function() {
     });
 
     describe('buildRecordList', function() {
-        var showSpy;
         beforeEach(function() {
-            showSpy = sinon.collection.spy(jQuery.fn, 'show');
+            sinon.collection.stub(app.alert, 'show', $.noop);
             sinon.collection.stub(view, 'getRecords', function() {});
             view.buildRecordsList();
         });
 
         it('should find the #loadingCell element and call show method on it', function() {
-
-            expect(jQuery.fn.show).toHaveBeenCalled();
+            expect(app.alert.show).toHaveBeenCalled();
         });
 
         it('should call the view.getRecords method', function() {
-
             expect(view.getRecords).toHaveBeenCalled();
         });
     });
