@@ -18,7 +18,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                 [
                     'name' => 'case_number',
                     'label' => 'LBL_AGENT_WORKBENCH_NUMBER',
-                    'widthClass' => 'cell-xxsmall',
+                    'width' => 'xsmall',
                     'subfields' => [
                         [
                             'name' => 'case_number',
@@ -32,7 +32,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                 [
                     'name' => 'status',
                     'label' => 'LBL_AGENT_WORKBENCH_PRIORITY_STATUS',
-                    'widthClass' => 'cell-xsmall',
+                    'width' => 'small',
                     'subfields' => [
                         [
                             'name' => 'priority',
@@ -53,7 +53,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                 [
                     'name' => 'follow_up_datetime',
                     'label' => 'LBL_AGENT_WORKBENCH_FOLLOW_UP',
-                    'widthClass' => 'cell-xsmall',
+                    'width' => 'medium',
                     'subfields' => [
                         [
                             'name' => 'follow_up_datetime',
@@ -81,7 +81,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                 [
                     'name' => 'name',
                     'label' => 'LBL_LIST_SUBJECT',
-                    'widthClass' => 'cell-xlarge',
+                    'width' => 'xlarge',
                     'subfields' => [
                         [
                             'name' => 'name',
@@ -96,7 +96,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                 [
                     'name' => 'business_center',
                     'label' => 'LBL_BUSINESS_CENTER',
-                    'widthClass' => 'cell-xsmall',
+                    'width' => 'small',
                     'subfields' => [
                         [
                             'name' => 'business_center_name',
@@ -111,7 +111,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                 [
                     'name' => 'account_name',
                     'label' => 'LBL_ACCOUNT',
-                    'widthClass' => 'cell-small',
+                    'width' => 'medium',
                     'subfields' => [
                         [
                             'name' => 'account_name',
@@ -139,7 +139,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                 [
                     'name' => 'assigned_user_name',
                     'label' => 'LBL_ASSIGNED_TO_NAME',
-                    'widthClass' => 'cell-xsmall',
+                    'width' => 'small',
                     'subfields' => [
                         [
                             'name' => 'assigned_user_name',
