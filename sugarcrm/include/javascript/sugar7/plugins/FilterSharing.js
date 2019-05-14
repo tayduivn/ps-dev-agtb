@@ -162,8 +162,12 @@
 
                     _.each(filterIds, function(filterId) {
                         var url = app.api.buildURL('Filters/' + filterId, null, null);
+                        var filterUsersData = {
+                            assignedUserId: assignedUserId,
+                            dashboardTeams: dashboardTeams
+                        };
                         app.api.call('GET', url, null, {
-                            success: _.bind(this.updateListViewFilters, this, {dashboardTeams, assignedUserId}),
+                            success: _.bind(this.updateListViewFilters, this, filterUsersData),
                             error: function() {
                                 app.logger.error('Filter can not be read, thus is not shared. Filter id: ' + filterId);
                             }
