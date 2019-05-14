@@ -41,7 +41,8 @@ describe('Base.Field.Dashletaction', function() {
                     'type': 'dashletaction',
                     'action': 'test',
                     'params': expectedParams,
-                    'acl_action': 'view'
+                    'acl_action': 'view',
+                    disallowed_layouts: ['row-model-data', 'super-weird-nonexistent-layout']
                 });
                 _.extend(field.view, {
                     test: function(evt, params) {}
@@ -60,6 +61,22 @@ describe('Base.Field.Dashletaction', function() {
                 });
                 field.render();
                 expect(field.isHidden).toBeTruthy();
+            });
+
+            it('should hide action if it is a descendant of a forbidden layout', function() {
+                sinon.collection.stub(field, 'closestComponent')
+                    .withArgs('row-model-data')
+                    .returns({fake: 'component'});
+                field.render();
+                expect(field.isHidden).toBeTruthy();
+            });
+
+            it('should show action if it is not a descendant of any forbidden layouts', function() {
+                var ccStub = sinon.collection.stub(field, 'closestComponent');
+                ccStub.withArgs('row-model-data').returns(undefined);
+                ccStub.withArgs('super-weird-nonexistent-layout').returns(undefined);
+                field.render();
+                expect(field.isHidden).toBeFalsy();
             });
 
             it('should be able to execute the parent view actions', function() {

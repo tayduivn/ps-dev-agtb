@@ -33,8 +33,8 @@
         // we use this wrapper because our spec
         // requires us to set the button.isHidden = true
         // if we don't render it.
-        this.before("render", function() {
-            if (self.hasAccess()) {
+        this.before('render', function() {
+            if (self.hasAccess() && !self.isOnForbiddenLayout()) {
                 this._show();
                 return true;
             }
@@ -196,5 +196,27 @@
         } else {
             return app.acl.hasAccess(acl_action, acl_module);
         }
+    },
+
+    /**
+     * Check if this button is on a forbidden layout.
+     *
+     * @return {boolean} `true` if this button is on a forbidden layout, or if
+     *  it is a descendant of a forbidden layout. `false` otherwise.
+     */
+    isOnForbiddenLayout: function() {
+        if (!this.def || !this.def.disallowed_layouts) {
+            return false;
+        }
+
+        // ban this button if it has any ancestor component with one of the specified name(s)
+        if (_.any(this.def.disallowed_layouts, function(layoutName) {
+            return this.closestComponent(layoutName);
+        }, this)
+        ) {
+            return true;
+        }
+
+        return false;
     }
 })

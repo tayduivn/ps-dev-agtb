@@ -314,4 +314,34 @@ describe("Base.Field.Button", function() {
         field.$('.btn').click();
         expect(called).toBe(true);
     });
+
+    describe('isOnForbiddenLayout', function() {
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'button', 'button', 'edit', {});
+        });
+
+        it('should be falsy if there are no forbidden layouts defined', function() {
+            field.def = null;
+            expect(field.isOnForbiddenLayout()).toBeFalsy();
+            field.def = {};
+            expect(field.isOnForbiddenLayout()).toBeFalsy();
+        });
+
+        it('should be truthy if it is on a forbidden layout', function() {
+            field.def.disallowed_layouts = ['bad-layout'];
+            var closestComponentStub = sinon.stub(field, 'closestComponent');
+            closestComponentStub.withArgs('bad-layout').returns({fake: 'component'});
+            expect(field.isOnForbiddenLayout()).toBeTruthy();
+            closestComponentStub.restore();
+        });
+
+        it('should be falsy if it is not on a forbidden layout', function() {
+            var disallowedLayouts = ['bad-layout-1', 'bad-layout-2'];
+            var closestComponentStub = sinon.stub(field, 'closestComponent');
+            closestComponentStub.withArgs('bad-layout-1').returns(void 0);
+            closestComponentStub.withArgs('bad-layout-2').returns(void 0);
+            expect(field.isOnForbiddenLayout()).toBeFalsy();
+            closestComponentStub.restore();
+        });
+    });
 });
