@@ -58,7 +58,6 @@ class ACLAction  extends SugarBean
                     $action->modified_user_id = 1;
                     $action->created_by = 1;
                     $action->save();
-
                 }
             }
 
