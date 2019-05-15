@@ -222,6 +222,21 @@ class BusinessCenter extends Basic
     }
 
     /**
+     * Checks to see if this business center has any business hours set up.
+     * @return boolean
+     */
+    public function hasBusinessHours()
+    {
+        foreach ($this->dayMap as $day) {
+            if ($this->isOpen($day)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Gets a normalized name of a day
      * @param string $day Either the string name of a day or a mapped shortcut
      * @return string
@@ -465,6 +480,26 @@ class BusinessCenter extends Basic
     }
 
     /**
+     * Determines if a calculation for incremented time can be done on this
+     * business center based on hours of operation, interval and unit.
+     *
+     * In order for a business center to be able to calculate an incremented
+     * timestamp the business center must:
+     *  - Have at least one day of business hours
+     *  - Have an `interval` that is greater than 0
+     *  - Support the `unit` for the increment: hours or days
+     *
+     * @param float|int $interval Interval of hours
+     * @param string $unit For now we only support hours
+     * @return boolean
+     */
+    public function canCalculateIncrement($interval = 0, $unit = 'hours')
+    {
+        return $this->hasBusinessHours() &&
+               floatval($interval) > 0.0 &&
+               isset($this->intervalUnits[$unit]);
+    }
+    /**
      * Gets a DB date time string of the date that is `$interval` hours greater
      * than `$datetime`
      * @param string $datetime A date string
@@ -481,8 +516,9 @@ class BusinessCenter extends Basic
         );
 
         // If we receive a unit we do not expect, or we get a 0 value interval,
-        // send back what was given
-        if (!isset($this->intervalUnits[$unit]) || floatval($interval) === 0.0) {
+        // or if this business center does not have business hours setup then send
+        // back what was given
+        if ($this->canCalculateIncrement($interval, $unit) === false) {
             return $sdt->format(DateTime::ATOM);
         }
 

@@ -942,13 +942,108 @@ class BusinessCenterTest extends TestCase
     }
 
     /**
+     * Tests whether a business center has business hours
+     * @covers ::hasBusinessHours
+     */
+    public function testHasBusinessHours()
+    {
+        // Test false on a new business center with no setup
+        $bc = static::getBusinessCenterBean();
+        $this->assertFalse($bc->hasBusinessHours());
+
+        // Test true on our decorated business center bean
+        $this->assertTrue(static::$bc->hasBusinessHours());
+    }
+
+    /**
+     * Tests that a business center with no business hours returns the input time
+     * unmodified
+     * @covers ::getIncrementedBusinessDatetime
+     */
+    public function testBusinessCenterReturnsInputWhenNotSetup()
+    {
+        $bc = static::getBusinessCenterBean();
+
+        // This is only to ensure consistency in the test suites, since we don't
+        // know what timezone some of our suites run in
+        $bc->timezone = 'America/Los_Angeles';
+
+        $actual = $bc->getIncrementedBusinessDatetime('5/14/2019 06:22:00', 8.0, 'hours');
+        $this->assertSame('2019-05-14T06:22:00-07:00', $actual);
+    }
+
+    /**
+     * Provider for ::testCanCalculateIncrement
+     * @return array
+     */
+    public function canCalculateIncrementProvider()
+    {
+        return [
+            // Tests no business hours set
+            [
+                'open' => false,
+                'interval' => 1,
+                'unit' => 'days',
+                'expect' => false,
+            ],
+            // Tests bad interval
+            [
+                'open' => true,
+                'interval' => 0,
+                'unit' => 'days',
+                'expect' => false,
+            ],
+            // Tests bad unit
+            [
+                'open' => true,
+                'interval' => 0.1,
+                'unit' => 'day',
+                'expect' => false,
+            ],
+            // Tests all good
+            [
+                'open' => true,
+                'interval' => 0.1,
+                'unit' => 'hours',
+                'expect' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Tests if a given business center can calculate increments
+     * @covers ::canCalculateIncrement
+     * @dataProvider canCalculateIncrementProvider
+     * @param boolean $open Flag that tells the test method which business center to use
+     * @param float $interval The interval to increment by
+     * @param string $unit The unit to increment by
+     * @param boolean $expect The expected result
+     */
+    public function testCanCalculateIncrement($open, $interval, $unit, $expect)
+    {
+        $bc = $open ? static::$bc : static::getBusinessCenterBean();
+        $actual = $bc->canCalculateIncrement($interval, $unit);
+        $this->assertSame($expect, $actual);
+    }
+
+    /**
+     * Gets a new, unaltered - except by name - business center bean
+     * @return BusinessCenter
+     */
+    private static function getBusinessCenterBean()
+    {
+        $bean = new \BusinessCenter;
+        $bean->name = 'Test Business Center';
+        return $bean;
+    }
+
+    /**
      * Utility method to get the bean we need for testing
      * @return BusinessCenter
      */
     private static function getDecoratedBusinessCenterBean()
     {
-        $bean = new \BusinessCenter;
-        $bean->name = 'Test Business Center';
+        $bean = static::getBusinessCenterBean();
 
         // Needed for time based calculations
         $bean->timezone = 'America/New_York';
