@@ -95,8 +95,10 @@ return [
                         'view' => 'multi-line-list',
                     ],
                     [
-                        'name' => 'side-drawer',
-                        'layout' => 'side-drawer',
+                        'layout' => [
+                            'name' => 'side-drawer',
+                            'type' => 'side-drawer',
+                        ],
                     ],
                 ],
             ],

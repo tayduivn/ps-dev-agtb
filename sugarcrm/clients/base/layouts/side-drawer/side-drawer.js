@@ -60,6 +60,18 @@
     },
 
     /**
+     * Plugins.
+     * @property {Array}
+     */
+    plugins: ['ShortcutSession'],
+
+    /**
+     * Shortcuts.
+     * @property {Array}
+     */
+    shortcuts: ['SideDrawer:Close'],
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -68,6 +80,20 @@
         this.$main.on('drawer:add.sidedrawer', _.bind(this.toggle, this));
         this.$main.on('drawer:remove.sidedrawer', _.bind(this.toggle, this));
         $(window).on('resize.sidedrawer', _.bind(this._resizeDrawer, this));
+        // register shortcuts to close drawer
+        app.shortcuts.register({
+            id: 'SideDrawer:Close',
+            keys: ['esc', 'mod+alt+l'],
+            component: this,
+            description: 'LBL_SHORTCUT_CLOSE_DRAWER',
+            callOnFocus: true,
+            handler: function() {
+                var $closeButton = this.$('button[data-action="close"]');
+                if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
+                    $closeButton.click();
+                }
+            }
+        });
     },
 
     /**

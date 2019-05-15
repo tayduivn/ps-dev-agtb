@@ -14,7 +14,7 @@ describe('Base.Layout.SideDrawer', function() {
 
     beforeEach(function() {
         SugarTest.loadComponent('base', 'layout', 'side-drawer');
-        drawer = SugarTest.createLayout('base', 'layout', 'side-drawer');
+        drawer = SugarTest.createLayout('base', 'layout', 'side-drawer', {});
         app = SugarTest.app;
     });
 
@@ -108,6 +108,10 @@ describe('Base.Layout.SideDrawer', function() {
             expect(drawer._components.length).toBe(0);
             expect(onCloseCallback.apply).toHaveBeenCalled();
             expect(drawer.currentState).toEqual('');
+        });
+
+        it('should add shortcuts to close drawer', function() {
+            expect(drawer.shortcuts).toContain('SideDrawer:Close');
         });
     });
 
