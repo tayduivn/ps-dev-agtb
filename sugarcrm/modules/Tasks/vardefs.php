@@ -122,6 +122,10 @@ $dictionary['Task'] = array(
             'id_name' => 'parent_id',
             'vname' => 'LBL_LIST_RELATED_TO',
             'type' => 'parent',
+            'related_fields' => array(
+                'parent_id',
+                'parent_type',
+            ),
             'group' => 'parent_name',
             'source' => 'non-db',
             'options' => 'parent_type_display',
@@ -148,6 +152,9 @@ $dictionary['Task'] = array(
                 0 => 'first_name',
                 1 => 'last_name'
             ),
+            'related_fields' => array(
+                'contact_id',
+            ),
             'source' => 'non-db',
             'len' => '510',
             'group' => 'contact_name',
@@ -163,6 +170,9 @@ $dictionary['Task'] = array(
         'contact_phone' => array(
             'name' => 'contact_phone',
             'type' => 'relate',
+            'related_fields' => array(
+                'contact_id',
+            ),
             'source' => 'non-db',
             'link' => 'contacts',
             'module' => 'Contacts',

@@ -97,6 +97,9 @@ $dictionary['Lead'] = array(
             'id_name' => 'reports_to_id',
             'vname' => 'LBL_REPORTS_TO',
             'type' => 'relate',
+            'related_fields' => array(
+                'reports_to_id',
+            ),
             'table' => 'contacts',
             'isnull' => 'true',
             'module' => 'Contacts',
@@ -185,6 +188,9 @@ $dictionary['Lead'] = array(
             'rname' => 'name',
             'id_name' => 'account_id',
             'type' => 'relate',
+            'related_fields' => array(
+                'account_id',
+            ),
             'link' => 'accounts',
             'isnull' => 'true',
             'module' => 'Accounts',
@@ -243,6 +249,9 @@ $dictionary['Lead'] = array(
             'vname' => 'LBL_CONTACT_NAME',
             'join_name' => 'contacts',
             'type' => 'relate',
+            'related_fields' => array(
+                'contact_id',
+            ),
             'link' => 'contacts',
             'table' => 'contacts',
             'isnull' => 'true',
@@ -281,6 +290,9 @@ $dictionary['Lead'] = array(
             'id_name' => 'opportunity_id',
             'vname' => 'LBL_CONVERTED_OPPORTUNITY_NAME',
             'type' => 'relate',
+            'related_fields' => array(
+                'opportunity_id',
+            ),
             'link' => 'opportunity',
             'module' => 'Opportunities',
             'source' => 'non-db',
@@ -313,6 +325,9 @@ $dictionary['Lead'] = array(
             'id_name' => 'campaign_id',
             'vname' => 'LBL_CAMPAIGN',
             'type' => 'relate',
+            'related_fields' => array(
+                'campaign_id',
+            ),
             'link' => 'campaign_leads',
             'table' => 'campaigns',
             'isnull' => 'true',

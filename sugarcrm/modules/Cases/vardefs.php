@@ -26,6 +26,9 @@ $dictionary['Case'] = array(
             'id_name' => 'account_id',
             'vname' => 'LBL_ACCOUNT_NAME',
             'type' => 'relate',
+            'related_fields' => array(
+                'account_id',
+            ),
             'link' => 'accounts',
             'table' => 'accounts',
             'join_name' => 'accounts',

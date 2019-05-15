@@ -61,8 +61,8 @@ $dictionary['Opportunity'] = array(
             'required' => true,
             'importable' => 'required',
             'required' => true,
-            'related_field' => array(
-                'account_id'
+            'related_fields' => array(
+                'account_id',
             ),
             'exportable'=> true,
             'export_link_type' => 'one',//relationship type to be used during export
@@ -100,6 +100,9 @@ $dictionary['Opportunity'] = array(
             'id_name' => 'campaign_id',
             'vname' => 'LBL_CAMPAIGN',
             'type' => 'relate',
+            'related_fields' => array(
+                'campaign_id',
+            ),
             'link' => 'campaign_opportunities',
             'isnull' => true,
             'table' => 'campaigns',
