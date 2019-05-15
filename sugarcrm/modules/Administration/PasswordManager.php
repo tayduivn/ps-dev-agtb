@@ -59,6 +59,11 @@ $samlSigningAlgos = [
     XMLSecurityKey::RSA_SHA256 => 'RSA-SHA256',
     XMLSecurityKey::RSA_SHA512 => 'RSA-SHA512',
 ];
+$ldapEncryptionOptions = [
+    Authentication\Config::LDAP_ENCRYPTION_NONE => $GLOBALS['app_strings']['LBL_NONE'],
+    Authentication\Config::LDAP_ENCRYPTION_TLS => 'TLS',
+    Authentication\Config::LDAP_ENCRYPTION_SSL => 'SSL',
+];
 if (!empty($_POST['saveConfig'])) {
     do {
         if ($_POST['captcha_on'] == '1') {
@@ -264,6 +269,13 @@ $sugar_smarty->assign('SAML_AVAILABLE_SIGNING_ALGOS', $samlSigningAlgos);
 $sugar_smarty->assign('csrf_field_name', \Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator::FORM_TOKEN_FIELD);
 
 $sugar_smarty->assign("LDAP_ENC_KEY_DESC", $config_strings['LBL_LDAP_ENC_KEY_DESC']);
+$sugar_smarty->assign(
+    'LDAP_ENCRYPTION_TYPE_OPTIONS',
+    get_select_options_with_id(
+        $ldapEncryptionOptions,
+        $idpConfig->getLdapConfig()['adapter_config']['encryption'] ?? ''
+    )
+);
 
 $sugar_smarty->assign("settings", $focus->settings);
 

@@ -332,7 +332,7 @@ class ConfigTest extends TestCase
                             'network_timeout' => 60,
                             'timelimit' => 60,
                         ],
-                        'encryption' => 'none',
+                        'encryption' => Config::LDAP_ENCRYPTION_NONE,
                     ],
                     'adapter_connection_protocol_version' => 3,
                     'baseDn' => 'dn',
@@ -350,6 +350,7 @@ class ConfigTest extends TestCase
                     'includeUserDN' => true,
                 ],
                 [
+                    ['ldap_encryption', 'none', 'none'],
                     ['ldap_hostname', '127.0.0.1', '127.0.0.1'],
                     ['ldap_port', 389, 389],
                     ['ldap_base_dn', '', 'dn'],
@@ -392,7 +393,7 @@ class ConfigTest extends TestCase
                             'network_timeout' => 60,
                             'timelimit' => 60,
                         ],
-                        'encryption' => 'ssl',
+                        'encryption' => Config::LDAP_ENCRYPTION_SSL,
                     ],
                     'adapter_connection_protocol_version' => 3,
                     'baseDn' => 'dn',
@@ -410,8 +411,70 @@ class ConfigTest extends TestCase
                     'includeUserDN' => true,
                 ],
                 [
+                    ['ldap_encryption', 'none', 'ssl'],
                     ['ldap_hostname', '127.0.0.1', 'ldaps://127.0.0.1'],
                     ['ldap_port', 389, 636],
+                    ['ldap_base_dn', '', 'dn'],
+                    ['ldap_login_attr', '', 'uidKey'],
+                    ['ldap_login_filter', '', ''],
+                    ['ldap_bind_attr', null, 'ldap_bind_attr'],
+                    ['ldap_auto_create_users', false, true],
+                    ['ldap_authentication', null, true],
+                    ['ldap_admin_user', null, 'admin'],
+                    ['ldap_admin_password', null, 'test'],
+                    ['ldap_group', null, true],
+                    ['ldap_group_name', null, 'group'],
+                    ['ldap_group_dn', null, 'group_dn'],
+                    ['ldap_group_attr', null, 'group_attr'],
+                    ['ldap_group_user_attr', null, 'ldap_group_user_attr'],
+                    ['ldap_group_attr_req_dn', false, '1'],
+                ],
+            ],
+            'LDAP with TLS' => [
+                [
+                    'user' => [
+                        'mapping' => [
+                            'givenName' => 'first_name',
+                            'sn' => 'last_name',
+                            'mail' => 'email1',
+                            'telephoneNumber' => 'phone_work',
+                            'facsimileTelephoneNumber' => 'phone_fax',
+                            'mobile' => 'phone_mobile',
+                            'street' => 'address_street',
+                            'l' => 'address_city',
+                            'st' => 'address_state',
+                            'postalCode' => 'address_postalcode',
+                            'c' => 'address_country',
+                        ],
+                    ],
+                    'adapter_config' => [
+                        'host' => '127.0.0.1',
+                        'port' => 389,
+                        'options' => [
+                            'network_timeout' => 60,
+                            'timelimit' => 60,
+                        ],
+                        'encryption' => Config::LDAP_ENCRYPTION_TLS,
+                    ],
+                    'adapter_connection_protocol_version' => 3,
+                    'baseDn' => 'dn',
+                    'uidKey' => 'uidKey',
+                    'filter' => '({uid_key}={username})',
+                    'dnString' => null,
+                    'entryAttribute' => 'ldap_bind_attr',
+                    'autoCreateUser' => true,
+                    'searchDn' => 'admin',
+                    'searchPassword' => 'test',
+                    'groupMembership' => true,
+                    'groupDn' => 'group,group_dn',
+                    'groupAttribute' => 'group_attr',
+                    'userUniqueAttribute' => 'ldap_group_user_attr',
+                    'includeUserDN' => true,
+                ],
+                [
+                    ['ldap_encryption', 'none', 'tls'],
+                    ['ldap_hostname', '127.0.0.1', '127.0.0.1'],
+                    ['ldap_port', 389, 389],
                     ['ldap_base_dn', '', 'dn'],
                     ['ldap_login_attr', '', 'uidKey'],
                     ['ldap_login_filter', '', ''],
@@ -444,7 +507,7 @@ class ConfigTest extends TestCase
         $config->expects($this->once())
             ->method('isLdapEnabled')
             ->willReturn(true);
-        $config->expects($this->exactly(16))
+        $config->expects($this->exactly(17))
             ->method('getLdapSetting')
             ->willReturnMap($returnValueMap);
 

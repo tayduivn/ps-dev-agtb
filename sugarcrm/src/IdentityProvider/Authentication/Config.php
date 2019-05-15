@@ -22,6 +22,10 @@ use Sugarcrm\IdentityProvider\STS\EndpointService;
  */
 class Config
 {
+    const LDAP_ENCRYPTION_NONE = 'none';
+    const LDAP_ENCRYPTION_SSL = 'ssl';
+    const LDAP_ENCRYPTION_TLS = 'tls';
+
     /**
      * @var \SugarConfig
      */
@@ -310,10 +314,10 @@ class Config
 
         // make sure host is in symfony/ldap format
         $host = $this->getLdapSetting('ldap_hostname', '127.0.0.1');
-        $encryption = 'none';
-        if (strpos($host, 'ldaps://') === 0) {
+        $encryption = $this->getLdapSetting('ldap_encryption', self::LDAP_ENCRYPTION_NONE);
+        if (strpos($host, 'ldaps://') === 0 && $encryption != self::LDAP_ENCRYPTION_TLS) {
             $host = substr($host, strlen('ldaps://'));
-            $encryption = 'ssl';
+            $encryption = self::LDAP_ENCRYPTION_SSL;
         }
 
         $ldap = [

@@ -616,6 +616,18 @@
                                width='100%'>
                             <tr>
                                 <td width='25%' scope="row" valign='top'
+                                    nowrap>{$MOD.LBL_LDAP_ENCRYPTION_TYPE} {sugar_help text=$MOD.LBL_LDAP_ENCRYPTION_TYPE_DESC}
+                                </td>
+                                <td width='25%' align="left" valign='top'>
+                                    <select tabindex='2' id="ldap_encryption" name="ldap_encryption">
+                                        {$LDAP_ENCRYPTION_TYPE_OPTIONS}
+                                    </select>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td width='25%' scope="row" valign='top'
                                     nowrap>{$MOD.LBL_LDAP_SERVER_HOSTNAME} {sugar_help text=$MOD.LBL_LDAP_SERVER_HOSTNAME_DESC}</td>{$settings.proxy_host}
                                 <td width='25%' align="left" valign='top'><input name="ldap_hostname" size='25'
                                                                                  type="text"

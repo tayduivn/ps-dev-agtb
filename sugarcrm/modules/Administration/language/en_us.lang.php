@@ -335,6 +335,7 @@ $mod_strings = array (
     'LBL_LDAP_TITLE'=>'LDAP Support',
     'LBL_LDAP_ENABLE'=>'Enable LDAP Authentication',
     'LBL_LDAP_HELP_TXT'=>'When LDAP authentication is enabled, passwords can only be handled through LDAP. None of the Sugar Password Management feature settings will apply.',
+    'LBL_LDAP_ENCRYPTION_TYPE'=> 'Encryption:',
     'LBL_LDAP_SERVER_HOSTNAME'=> 'Server:',
     'LBL_LDAP_SERVER_PORT'=> 'Port Number:',
     'LBL_LDAP_ADMIN_USER'=> 'User Name:',
@@ -360,9 +361,13 @@ $mod_strings = array (
     'LBL_LDAP_BIND_ATTRIBUTE'=>'Bind Attribute:',
     'LBL_LDAP_BIND_ATTRIBUTE_DESC'=>'For Binding the LDAP User<br>Examples:&nbsp;<b>AD:</b>&nbsp;userPrincipalName,&nbsp;<b>openLDAP:</b>&nbsp;userPrincipalName,&nbsp;<b>Mac&nbsp;OS&nbsp;X:</b>&nbsp;uid ',
     'LBL_LDAP_LOGIN_ATTRIBUTE_DESC'=>'For searching for the LDAP User<br>Examples:<b>AD:</b>&nbsp;userPrincipalName,&nbsp;<b>openLDAP:</b>&nbsp;dn,&nbsp;<b>Mac&nbsp;OS&nbsp;X:</b>&nbsp;dn ',
-    'LBL_LDAP_SERVER_HOSTNAME_DESC'=>'Example: ldap.example.com or ldaps://ldap.example.com for SSL',
-    'LBL_LDAP_SERVER_PORT_DESC'=>'Example: 389 or 636 for SSL',
-	'LBL_LDAP_GROUP_NAME'=>'Group Name:',
+    'LBL_LDAP_ENCRYPTION_TYPE_DESC'=> 'Encryption type affects whether your connection to LDAP server will ' .
+        'be secure or not. Use None for a regular non-secure connection. Use TLS to enforce your regular ' .
+        'connection to be secure. Use SSL for a secure connection over ldaps://',
+    'LBL_LDAP_SERVER_HOSTNAME_DESC'=> 'Please specify only LDAP hostname of IP address. ' .
+        'Example: ldap.example.com, 10.11.45.75',
+    'LBL_LDAP_SERVER_PORT_DESC'=>'Example: 389 for non-secure and TLS. 636 for SSL',
+    'LBL_LDAP_GROUP_NAME'=>'Group Name:',
 	'LBL_LDAP_GROUP_NAME_DESC'=>'Example cn=sugarcrm',
     'LBL_LDAP_USER_DN_DESC'=>'Example: ou=people,dc=example,dc=com',
     'LBL_LDAP_AUTO_CREATE_USERS_DESC'=> 'If an authenticated user does not exist one will be created in Sugar.',
