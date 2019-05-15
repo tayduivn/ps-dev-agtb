@@ -64,7 +64,7 @@ class RS175Test extends TestCase
         $filter1 = SugarTestFilterUtilities::createUserFilter(
             $current_user->id,
             'RS189Filter1',
-            json_encode(array('module' => 'Accounts', 'name' => 'RS189Name1'))
+            json_encode(array(array('module' => 'Accounts', 'name' => 'RS189Name1')))
         );
         $result = $this->api->setUsed(
             self::$rest,
@@ -83,7 +83,7 @@ class RS175Test extends TestCase
         $filter2 = SugarTestFilterUtilities::createUserFilter(
             $current_user->id,
             'RS189Filter2',
-            json_encode(array('module' => 'Accounts', 'name' => 'RS189Name2'))
+            json_encode(array(array('module' => 'Accounts', 'name' => 'RS189Name2')))
         );
         $this->api->setUsed(
             self::$rest,
