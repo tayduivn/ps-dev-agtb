@@ -465,7 +465,7 @@ class BusinessCenter extends Basic
                 // are covered for today
                 if ($timeLeftInDay >= $interval) {
                     $hours = intval($interval);
-                    $mins = ($interval - $hours) * 60;
+                    $mins = intval(($interval - $hours) * 60);
                     $sdt = $sdt->get("$hours hours $mins minutes");
 
                     return $sdt->format(DateTime::ATOM);
