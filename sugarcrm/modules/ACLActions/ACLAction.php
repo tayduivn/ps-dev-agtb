@@ -488,11 +488,11 @@ SQL;
             $query,
             [$user_id, 0]
         );
-        $overridden_actions = [];
+        $actions = [];
         foreach ($stmt as $row) {
-            $overridden_actions[$row['action_id']] = $row;
+            $actions[] = $row;
         }
-        return $overridden_actions;
+        return self::keepMostRestrictiveActions($actions);
     }
 
     private static function getAllActionsWithOverride(array $overridden_actions, string $category, string $type, string $action): array
@@ -553,6 +553,23 @@ SQL;
             }
         }
         return $selected_actions;
+    }
+
+    private static function keepMostRestrictiveActions(array $actions): array
+    {
+        $overridden_actions = [];
+        foreach ($actions as $row) {
+            if (!empty($row['access_override'])) {
+                if (!isset($overridden_actions[$row['action_id']])) {
+                    $overridden_actions[$row['action_id']] = $row;
+                } else {
+                    if ($overridden_actions[$row['action_id']]['access_override'] > $row['access_override']) {
+                        $overridden_actions[$row['action_id']] = $row;
+                    }
+                }
+            }
+        }
+        return $overridden_actions;
     }
 
 
