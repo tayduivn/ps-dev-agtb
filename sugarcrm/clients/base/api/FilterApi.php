@@ -136,17 +136,6 @@ class FilterApi extends SugarApi
     protected static $current_user;
 
     /**
-     * List of Email participant fields and corresponding filter macros
-     * @var array
-     */
-    protected static $participantFieldMacros = [
-        'from_collection' => '$from',
-        'to_collection' => '$to',
-        'cc_collection' => '$cc',
-        'bcc_collection' => '$bcc',
-    ];
-
-    /**
      * List of fields that are mandatory for all filters
      * @var array
      */
@@ -948,7 +937,10 @@ class FilterApi extends SugarApi
      */
     protected static function addFilter($field, $filter, SugarQuery_Builder_Where $where, SugarQuery $q)
     {
-        if ($field == '$or') {
+        // It's an email participant filter if the module is Emails and the field is an email participants operand.
+        if ($q->getFromBean()->getModuleName() === 'Emails' && in_array($field, ['$from', '$to', '$cc', '$bcc'])) {
+            static::addEmailParticipantFilter($q, $where, $filter, $field);
+        } elseif ($field == '$or') {
             static::addFilters($filter, $where->queryOr(), $q);
         } elseif ($field == '$and') {
             static::addFilters($filter, $where->queryAnd(), $q);
@@ -962,10 +954,6 @@ class FilterApi extends SugarApi
             static::addTrackerFilter($q, $where, $filter);
         } elseif ($field == '$following') {
             static::addFollowFilter($q, $where, $filter);
-        } elseif (in_array($field, array_values(static::$participantFieldMacros))) {
-            static::addParticipantFilter($q, $where, $filter, $field);
-        } elseif (!empty(static::$participantFieldMacros[$field])) {
-            static::addParticipantFieldFilter($q, $where, $filter, $field);
         } else {
             static::addFieldFilter($q, $where, $filter, $field);
         }
@@ -997,6 +985,15 @@ class FilterApi extends SugarApi
         if (!empty($fieldInfo['field'])) {
             $field = $fieldInfo['field'];
         }
+
+        // It's an email participant filter if the module is Emails and the field is an email participants field.
+        $fromModule = $q->getFromBean()->getModuleName();
+        $emailParticipantsFields = ['from_collection', 'to_collection', 'cc_collection', 'bcc_collection'];
+        if ($fromModule === 'Emails' && in_array($field, $emailParticipantsFields)) {
+            static::addEmailParticipantFieldFilter($q, $where, $filter, $field);
+            return;
+        }
+
         $fieldType = !empty($fieldInfo['def']['custom_type']) ? $fieldInfo['def']['custom_type'] :
             $fieldInfo['def']['type'];
         $sugarField = $sfh->getSugarField($fieldType);
@@ -1114,33 +1111,46 @@ class FilterApi extends SugarApi
 
     /**
      * Handles the from_collection, to_collection, cc_collection, and bcc_collection fields for filtering.
+     *
      * @param SugarQuery $q
      * @param SugarQuery_Builder_Where $where
-     * @param $filter
-     * @param $field
+     * @param array $filter
+     * @param string $field
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected static function addParticipantFieldFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter, $field)
-    {
+    protected static function addEmailParticipantFieldFilter(
+        SugarQuery $q,
+        SugarQuery_Builder_Where $where,
+        $filter,
+        $field
+    ) {
+        static $operands = [
+            'from_collection' => '$from',
+            'to_collection' => '$to',
+            'cc_collection' => '$cc',
+            'bcc_collection' => '$bcc',
+        ];
+        $operand = $operands[$field];
+
         if (!is_array($filter)) {
-            throw new SugarApiExceptionInvalidParameter("No operators defined for {$field}");
+            throw new SugarApiExceptionInvalidParameter("No operands defined for {$field}");
         }
 
         if (!array_key_exists('$in', $filter)) {
-            throw new SugarApiExceptionInvalidParameter("{$field} requires the use of the \$in operator");
+            throw new SugarApiExceptionInvalidParameter("{$field} requires the use of the \$in operand");
         }
 
-        $supportedOperators = ['$in'];
-        $unsupportedOperators = array_diff(array_keys($filter), $supportedOperators);
+        $supportedOperands = ['$in'];
+        $unsupportedOperands = array_diff(array_keys($filter), $supportedOperands);
 
-        if (!empty($unsupportedOperators)) {
+        if (!empty($unsupportedOperands)) {
             throw new SugarApiExceptionInvalidParameter(
-                "{$field} does not support these operators: " . implode(', ', $unsupportedOperators)
+                "{$field} does not support these operands: " . implode(', ', $unsupportedOperands)
             );
         }
 
-        foreach ($supportedOperators as $op) {
-            static::addParticipantFilter($q, $where, $filter[$op], static::$participantFieldMacros[$field]);
+        foreach ($supportedOperands as $op) {
+            static::addEmailParticipantFilter($q, $where, $filter[$op], $operand);
         }
     }
 
@@ -1307,7 +1317,7 @@ class FilterApi extends SugarApi
      * @throws SugarApiExceptionInvalidParameter
      * @throws SugarQueryException
      */
-    protected static function addParticipantFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter, $field)
+    protected static function addEmailParticipantFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter, $field)
     {
         if (!is_array($filter)) {
             throw new SugarApiExceptionInvalidParameter('$from requires an array');
@@ -1333,7 +1343,7 @@ class FilterApi extends SugarApi
         foreach ($filter as $def) {
             if (!is_array($def)) {
                 throw new SugarApiExceptionInvalidParameter(
-                    "definition for {$field} operator is invalid: must be an array"
+                    "definition for {$field} operand is invalid: must be an array"
                 );
             }
 
@@ -1343,13 +1353,13 @@ class FilterApi extends SugarApi
             if (!isset($def['email_address_id']) || isset($def['parent_type']) || isset($def['parent_id'])) {
                 if (!isset($def['parent_type'])) {
                     throw new SugarApiExceptionInvalidParameter(
-                        "definition for {$field} operator is invalid: parent_type is required"
+                        "definition for {$field} operand is invalid: parent_type is required"
                     );
                 }
 
                 if (!isset($def['parent_id'])) {
                     throw new SugarApiExceptionInvalidParameter(
-                        "definition for {$field} operator is invalid: parent_id is required"
+                        "definition for {$field} operand is invalid: parent_id is required"
                     );
                 }
             }
