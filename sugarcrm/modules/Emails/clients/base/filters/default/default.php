@@ -35,15 +35,23 @@ $viewdefs['Emails']['base']['filter']['default'] = array(
         ),
         'from_collection' => array(
             'type' => 'email-recipients',
+            'decorate_invalid' => false,
+            'decorate_opt_out' => false,
         ),
         'to_collection' => array(
             'type' => 'email-recipients',
+            'decorate_invalid' => false,
+            'decorate_opt_out' => false,
         ),
         'cc_collection' => array(
             'type' => 'email-recipients',
+            'decorate_invalid' => false,
+            'decorate_opt_out' => false,
         ),
         'bcc_collection' => array(
             'type' => 'email-recipients',
+            'decorate_invalid' => false,
+            'decorate_opt_out' => false,
         ),
     ),
 );

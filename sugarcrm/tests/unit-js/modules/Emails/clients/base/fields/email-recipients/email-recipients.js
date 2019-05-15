@@ -443,6 +443,52 @@ describe('Emails.BaseEmailRecipientsField', function() {
             expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
         });
 
+        it('should not decorate invalid recipients', function() {
+            var parentId = _.uniqueId();
+            var invalid = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId,
+                    name: 'Francis Humphrey'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: 'Francis Humphrey',
+                email_address_id: _.uniqueId(),
+                email_address: 'foo',
+                invalid_email: true,
+                opt_out: false
+            });
+            var invalidSelector = '.select2-search-choice [data-invalid="true"]';
+
+            field = SugarTest.createField({
+                name: 'to_collection',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+            field.def.decorate_invalid = false;
+
+            field.model.set('to_collection', to);
+            field.model.trigger('sync');
+
+            field.model.get('to_collection').add(invalid);
+            expect(field.$(invalidSelector).length).toBe(1);
+            expect(field.$('.select2-choice-danger').length).toBe(0);
+            expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(0);
+
+            // Make sure it is still not decorated after a full render.
+            field.render();
+            expect(field.$(invalidSelector).length).toBe(1);
+            expect(field.$('.select2-choice-danger').length).toBe(0);
+            expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(0);
+        });
+
         it('should use the "Value erased" tooltip when the email address is erased', function() {
             var invalidSelector = '.select2-search-choice [data-invalid="true"]';
 
@@ -521,11 +567,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 module: model.module,
                 model: model,
                 context: context,
-                loadFromModule: true,
-                fieldDef: {
-                    decorate_opt_out: false
-                }
+                loadFromModule: true
             });
+            field.def.decorate_opt_out = false;
 
             field.model.set('to_collection', to);
             field.model.trigger('sync');

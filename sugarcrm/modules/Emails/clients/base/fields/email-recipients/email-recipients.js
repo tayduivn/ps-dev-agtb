@@ -243,6 +243,8 @@
 
     /**
      * Returns the filter definition for the value of this field.
+     *
+     * @return {Array}
      */
     delegateBuildFilterDefinition: function() {
         var collection;
@@ -260,7 +262,7 @@
         // Return all of the models in the collection in their current state so
         // that the _link and parent_name/email_address attributes are stored
         // in the saved filter definition. This guarantees that the pills will
-        // be displayed correctly when a saved filter is loaded.
+        // be displayed correctly when a saved or cached filter is loaded.
         return collection.map(function(model) {
             return model.attributes;
         });
@@ -284,6 +286,10 @@
     _decorateInvalidRecipients: function() {
         var self = this;
         var $invalidRecipients = this.$('.select2-search-choice [data-invalid="true"]');
+
+        if (this.def.decorate_invalid === false) {
+            return;
+        }
 
         $invalidRecipients.each(function() {
             var $choice = $(this).closest('.select2-search-choice');
