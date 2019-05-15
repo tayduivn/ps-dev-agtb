@@ -17,18 +17,129 @@ return [
             // TAB 1
             [
                 'name' => 'LBL_AGENT_WORKBENCH_OVERVIEW',
-                'components' => [
-                    [
-                        'rows' => [
+                'components' => [[
+                    'rows' => [
+                        [
                             [
-                                [
-                                    // TODO: add dashlet here
+                                'width' => 4,
+                                'context' => [
+                                    'module' => 'Cases',
+                                ],
+                                'view' => [
+                                    'label' => 'LBL_REPORT_DASHLET_TITLE_135',
+                                    'type' => 'saved-reports-chart',
+                                    'module' => 'Cases',
+                                    'saved_report_id' => 'c290a6da-7606-11e9-a76d-f218983a1c3e',
+                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_135',
+                                ],
+                            ], [
+                                'width' => 4,
+                                'view' => [
+                                    'limit' => '10',
+                                    'date' => 'today',
+                                    'visibility' => 'user',
+                                    'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+                                    'type' => 'planned-activities',
+                                    'module' => null,
+                                    'template' => 'tabbed-dashlet',
+                                ],
+                            ], [
+                                'width' => 4,
+                                'view' => [
+                                    'limit' => 10,
+                                    'visibility' => 'user',
+                                    'label' => 'LBL_ACTIVE_TASKS_DASHLET',
+                                    'type' => 'active-tasks',
+                                    'module' => null,
+                                    'template' => 'tabbed-dashlet',
+                                ],
+                            ],
+                        ], [
+                            [
+                                'width' => 4,
+                                'context' => [
+                                    'module' => 'Cases',
+                                ],
+                                'view' => [
+                                    'label' => 'LBL_REPORT_DASHLET_TITLE_137',
+                                    'type' => 'saved-reports-chart',
+                                    'module' => 'Cases',
+                                    'saved_report_id' => 'c290abda-7606-11e9-9f3e-f218983a1c3e',
+                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_137',
+                                    'chart_type' => 'pie chart',
+                                ],
+                            ], [
+                                'width' => 4,
+                                'context' => [
+                                    'module' => 'Cases',
+                                ],
+                                'view' => [
+                                    'label' => 'LBL_RECENTLY_VIEWED_CASES_DASHLET',
+                                    'type' => 'dashablelist',
+                                    'module' => 'Cases',
+                                    'last_state' => [
+                                        'id' => 'dashable-list',
+                                    ],
+                                    'intelligent' => '0',
+                                    'limit' => 5,
+                                    'filter_id' => 'recently_viewed',
+                                    'display_columns' => ['case_number', 'name', 'account_name', 'priority', 'status', 'assigned_user_name', 'date_modified', 'date_entered', 'team_name', 'time_to_resolution', 'business_center_name', 'service_level', 'follow_up_datetime'],
+                                ],
+                            ], [
+                                'width' => 4,
+                                'context' => [
+                                    'module' => 'Cases',
+                                ],
+                                'view' => [
+                                    'label' => 'LBL_REPORT_DASHLET_TITLE_138',
+                                    'type' => 'saved-reports-chart',
+                                    'module' => 'Cases',
+                                    'saved_report_id' => 'c290ae50-7606-11e9-9cb2-f218983a1c3e',
+                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_138',
+                                    'chart_type' => 'horizontal group by chart',
+                                ],
+                            ],
+                        ], [
+                            [
+                                'width' => 4,
+                                'context' => [
+                                    'module' => 'Cases',
+                                    'link' => null,
+                                ],
+                                'view' => [
+                                    'label' => 'LBL_REPORT_DASHLET_TITLE_12',
+                                    'type' => 'saved-reports-chart',
+                                    'module' => 'Cases',
+                                    'saved_report_id' => 'c2910814-7606-11e9-841e-f218983a1c3e',
+                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_12',
+                                    'chart_type' => 'horizontal group by chart',
+                                ],
+                            ], [
+                                'width' => 4,
+                                'context' => [
+                                    'module' => 'Cases',
+                                ],
+                                'view' => [
+                                    'label' => 'LBL_REPORT_DASHLET_TITLE_132',
+                                    'type' => 'saved-reports-chart',
+                                    'module' => 'Cases',
+                                    'saved_report_id' => 'c2909f50-7606-11e9-b00e-f218983a1c3e',
+                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_132',
+                                ],
+                            ], [
+                                'width' => 4,
+                                'view' => [
+                                    'label' => 'LBL_REPORT_DASHLET_TITLE_139',
+                                    'type' => 'saved-reports-chart',
+                                    'module' => null,
+                                    'saved_report_id' => 'c290b0da-7606-11e9-81f9-f218983a1c3e',
+                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_139',
                                 ],
                             ],
                         ],
-                        'width' => 12,
                     ],
-                ],
+                    'width' => 12,
+                ]],
             ],
             // TAB 2
             [

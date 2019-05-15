@@ -5087,6 +5087,27 @@ Sincerely, SugarCRM',
     'LBL_INACTIVE_TASKS_DASHLET_USER_BUTTON_LABEL' => 'My Tasks',
     'LBL_INACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL' => 'Team Tasks',
 
+    'LBL_RECENTLY_VIEWED_CASES_DASHLET' => 'My Recently Viewed Cases',
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_REPORT_DASHLET_TITLE_12' => 'Open Cases by User by Status',
+    'LBL_REPORT_DASHLET_TITLE_125' => 'New Cases by Business Center by Week',
+    'LBL_REPORT_DASHLET_TITLE_126' => 'Recently Created Cases',
+    'LBL_REPORT_DASHLET_TITLE_127' => 'New Cases by Customer Tier by Week',
+    'LBL_REPORT_DASHLET_TITLE_128' => 'Open Cases by Customer Tier and Priority',
+    'LBL_REPORT_DASHLET_TITLE_129' => 'Total Cases Resolved this Month by Business Center',
+    'LBL_REPORT_DASHLET_TITLE_130' => 'Total Cases Resolved this Month by Agent',
+    'LBL_REPORT_DASHLET_TITLE_131' => 'List of Recently Resolved Cases',
+    'LBL_REPORT_DASHLET_TITLE_132' => 'My Cases Resolved this Month by Week',
+    'LBL_REPORT_DASHLET_TITLE_133' => 'My Cases Due Today and Overdue',
+    'LBL_REPORT_DASHLET_TITLE_134' => 'All Cases Due Today and Overdue',
+    'LBL_REPORT_DASHLET_TITLE_135' => 'My Open Cases by Followup Date',
+    'LBL_REPORT_DASHLET_TITLE_136' => 'All Open Cases by Followup Date',
+    'LBL_REPORT_DASHLET_TITLE_137' => 'My Open Cases by Status',
+    'LBL_REPORT_DASHLET_TITLE_138' => 'My Cases in the Last Week by Status',
+    'LBL_REPORT_DASHLET_TITLE_139' => 'Status of Open Tasks Assigned by Me',
+    //END SUGARCRM flav=ent ONLY
+
     //Audit subjects
     'LBL_AUDIT_SUBJECT_ADVANCED-WORKFLOW' => 'SugarBPM',
     'LBL_AUDIT_SUBJECT_API-BWC' => 'BWC UI',

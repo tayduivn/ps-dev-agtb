@@ -94,4 +94,68 @@ class DashboardTest extends TestCase
         $this->assertEquals($GLOBALS['current_user']->id, $dashboard->assigned_user_id);
         $this->assertEquals($GLOBALS['current_user']->getPrivateTeamID(), $dashboard->team_id);
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Tests that the Agent Workbench overview dashboard exists and
+     * contains what we want it to contain
+     */
+    public function testAgentWorkbenchDashboardExists()
+    {
+        // Test that our dashboard metadata has the id we expect
+        $dashboard = require 'modules/Home/dashboards/agent-dashboard/agent-dashboard.php';
+        $this->assertArrayHasKey('id', $dashboard);
+        $this->assertSame('c108bb4a-775a-11e9-b570-f218983a1c3e', $dashboard['id']);
+
+        // Now get the data from the database
+        $id = $dashboard['id'];
+        $sql = "SELECT name, dashboard_module, metadata FROM dashboards WHERE id = '$id'";
+        $conn = DBManagerFactory::getConnection();
+        $data = $conn->executeQuery($sql)->fetchAll();
+        $this->assertCount(1, $data);
+
+        // Get the first row of data
+        $row = $data[0];
+
+
+        // Verify our name and module
+        $this->assertSame('LBL_AGENT_WORKBENCH', $row['name']);
+        $this->assertSame('Home', $row['dashboard_module']);
+
+        // Now work the metadata for this dashboard
+        $meta = json_decode($row['metadata'], true);
+        $this->assertArrayHasKey('tabs', $meta);
+        $this->assertCount(2, $meta['tabs']);
+
+        $overview = $meta['tabs'][0];
+
+        // Focus on the overview tab for now
+        $this->assertArrayHasKey('name', $overview);
+        $this->assertSame('LBL_AGENT_WORKBENCH_OVERVIEW', $overview['name']);
+
+        $this->assertArrayHasKey('components', $overview);
+        $components = $overview['components'];
+        $this->assertCount(1, $components);
+
+        $component = $components[0];
+        $this->assertArrayHasKey('rows', $component);
+
+        // These are the three rows of three dashlets
+        $rows = $component['rows'];
+        $this->assertCount(3, $rows);
+        $this->assertCount(3, $rows[0]);
+        $this->assertCount(3, $rows[1]);
+        $this->assertCount(3, $rows[2]);
+
+        // Now test one of the dashlets in each row
+        $this->assertSame('c290a6da-7606-11e9-a76d-f218983a1c3e', $rows[0][0]['view']['saved_report_id']);
+        $this->assertSame('LBL_REPORT_DASHLET_TITLE_135', $rows[0][0]['view']['saved_report']);
+
+        $this->assertSame('c290abda-7606-11e9-9f3e-f218983a1c3e', $rows[1][0]['view']['saved_report_id']);
+        $this->assertSame('LBL_REPORT_DASHLET_TITLE_137', $rows[1][0]['view']['saved_report']);
+
+        $this->assertSame('c290b0da-7606-11e9-81f9-f218983a1c3e', $rows[2][2]['view']['saved_report_id']);
+        $this->assertSame('LBL_REPORT_DASHLET_TITLE_139', $rows[2][2]['view']['saved_report']);
+    }
+    //END SUGARCRM flav=ent ONLY
 }
