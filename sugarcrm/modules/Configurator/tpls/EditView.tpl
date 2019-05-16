@@ -453,7 +453,17 @@
 	    <td><a href="index.php?module=Configurator&action=LogView" target="_blank">{$MOD.LBL_LOGVIEW}</a></td>
 	</tr>
 </table>
-
+//BEGIN SUGARCRM flav=ent ONLY
+<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+    <tr>
+        <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_EXTERNAL_SERVICES_SETTINGS}</h4></th>
+    </tr>
+    <tr>
+        <td width="25%" scope="row">{$MOD.LBL_EXTERNAL_SERVICES_URL}</td>
+        <td><input style="width:40%" name="external_services_url" value="{$config.external_services_url}"></td>
+    </tr>
+</table>
+//END SUGARCRM flav=ent ONLY
 
 <div style="padding-top: 2px;">
 <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary"  type="submit" name="save" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " class="button primary"/>

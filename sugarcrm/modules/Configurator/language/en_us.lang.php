@@ -459,6 +459,11 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     //Comment log settings
     'LBL_COMMENT_LOG_SETTINGS' => 'Comment Log Settings',
     'LBL_COMMENT_LOG_MAX_CHARS' => 'Maximum characters to show per comment entry',
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_EXTERNAL_SERVICES_SETTINGS' => 'External Services Settings',
+    'LBL_EXTERNAL_SERVICES_URL' => 'External Services URL',
+    //END SUGARCRM flav=ent ONLY
 );
 
 
