@@ -11,10 +11,34 @@
 describe('Base.View.MultiLineListView', function() {
     var view;
     var app;
+    var panels;
 
     beforeEach(function() {
         view = SugarTest.createView('base', 'Cases', 'multi-line-list');
         app = SUGAR.App;
+        panels = [
+            {
+                'label': 'LBL_PANEL_1',
+                'fields': [
+                    {
+                        'name': 'case_number',
+                        'label': 'LBL_LIST_NUMBER',
+                        'subfields': [
+                            {'name': 'name_1', 'label': 'label_1'},
+                            {'name': 'name_2', 'label': 'label_2'},
+                        ],
+                    },
+                    {
+                        'name': 'status',
+                        'label': 'LBL_STATUS',
+                        'subfields': [
+                            {'name': 'name_3', 'label': 'label_3'},
+                            {'name': 'name_4', 'label': 'label_4'},
+                        ],
+                    }
+                ]
+            }
+        ];
     });
 
     afterEach(function() {
@@ -26,30 +50,6 @@ describe('Base.View.MultiLineListView', function() {
         it('should initialize with module-specified view metadata', function() {
             var initializedStub = sinon.collection.stub(view, '_super');
             var getStub = sinon.collection.stub().returns(true);
-            var panels = [
-                {
-                    'label': 'LBL_PANEL_1',
-                    'fields': [
-                        {
-                            'name': 'case_number',
-                            'label': 'LBL_LIST_NUMBER',
-                            'subfields': [
-                                {'name': 'name_1', 'label': 'label_1'},
-                                {'name': 'name_2', 'label': 'label_2'},
-                            ],
-                        },
-                        {
-                            'name': 'status',
-                            'label': 'LBL_STATUS',
-                            'subfields': [
-                                {'name': 'name_3', 'label': 'label_3'},
-                                {'name': 'name_4', 'label': 'label_4'},
-                            ],
-                        }
-                    ]
-                }
-            ];
-
             var rowactions = {
                 'actions': [
                     {
@@ -79,6 +79,15 @@ describe('Base.View.MultiLineListView', function() {
                 meta: {rowactions: rowactions, panels: panels},
                 context: {get: getStub},
             }]);
+        });
+    });
+
+    describe('_extractFieldNames', function() {
+        it('should return an array of fields', function() {
+            var meta = {panels: panels};
+            var actual = view._extractFieldNames(meta);
+            var expected = ['name_1', 'name_2', 'name_3', 'name_4'];
+            expect(actual).toEqual(expected);
         });
     });
 

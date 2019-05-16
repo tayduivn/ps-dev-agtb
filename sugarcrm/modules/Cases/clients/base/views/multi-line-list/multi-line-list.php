@@ -91,6 +91,12 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                             'enabled' => true,
                             'readonly' => true,
                         ],
+                        [
+                            'name' => 'description',
+                            'default' => true,
+                            'enabled' => true,
+                            'readonly' => true,
+                        ],
                     ],
                 ],
                 [

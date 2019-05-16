@@ -71,6 +71,10 @@
 
         this._super('initialize', [options]);
 
+        // Set fields on context to forcefully load these fields
+        var fields = this._extractFieldNames(this.meta);
+        this.context.set('fields', fields);
+
         this.leftColumns = [];
         this.addActions(this.meta);
 
@@ -85,6 +89,26 @@
         this.events = _.extend({}, this.events, leftColumnsEvents, {
             'click .multi-line-row': 'handleRowClick',
         });
+    },
+
+    /**
+     * Get fields names from metadata
+     *
+     * @param {Object} meta Metadata containing fields on view
+     * @return {Array} Array of fields
+     * @private
+     */
+    _extractFieldNames: function(meta) {
+        var fields = [];
+        _.each(meta.panels, function(panel) {
+            var panelFields = panel.fields;
+            _.each(panelFields, function(fieldDefs) {
+                var subFields = fieldDefs.subfields;
+                fields = _.union(fields, _.pluck(subFields, 'name'));
+            }, this);
+        }, this);
+
+        return fields;
     },
 
     /**
