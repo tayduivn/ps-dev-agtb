@@ -120,17 +120,26 @@
      * @param {Function} onClose Callback method when the drawer closes.
      */
     open: function(def, onClose) {
+        // store the callback function to be called later
+        this.onCloseCallback = onClose;
+
         // open the drawer if not yet
         if (!this.isOpen()) {
             this.currentState = 'opening';
             this.config();
-            this.$el.show('slide', {direction: 'right'}, 800);
+            this.$el.show('slide', {direction: 'right'}, 300, _.bind(this.showComponent, this, def));
             this.currentState = 'idle';
+        } else {
+            this.showComponent(def);
         }
+    },
 
-        // store the callback function to be called later
-        this.onCloseCallback = onClose;
-
+    /**
+     * Show component in this drawer.
+     *
+     * @param {Object} def The component definition.
+     */
+    showComponent: function(def) {
         // remove old content
         if (this._components.length) {
             _.each(this._components, function(component) {
@@ -172,7 +181,7 @@
      */
     close: function() {
         this.currentState = 'closing';
-        this.$el.hide();
+        this.$el.hide('slide', {direction: 'right'}, 300);
         this.currentState = '';
 
         // remove drawer content

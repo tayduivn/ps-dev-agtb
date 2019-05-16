@@ -26,7 +26,6 @@ describe('Base.Layout.SideDrawer', function() {
     describe('open', function() {
         it('should show the drawer if not yet open', function() {
             var elShowStub = sinon.collection.stub(drawer.$el, 'show');
-            var initCompStub = sinon.collection.stub(drawer, '_initializeComponentsFromDefinition');
             drawer.open();
             expect(elShowStub).toHaveBeenCalled();
             expect(drawer.currentState).toEqual('idle');
@@ -34,22 +33,24 @@ describe('Base.Layout.SideDrawer', function() {
 
         it('should not try to show the drawer again if already open', function() {
             var elShowStub = sinon.collection.stub(drawer.$el, 'show');
-            var initCompStub = sinon.collection.stub(drawer, '_initializeComponentsFromDefinition');
+            var showCompStub = sinon.collection.stub(drawer, 'showComponent');
             drawer.currentState = 'idle';
             drawer.open();
             expect(elShowStub).not.toHaveBeenCalled();
             expect(drawer.currentState).toEqual('idle');
+            expect(showCompStub).toHaveBeenCalled();
         });
+    });
 
+    describe('showComponent', function() {
         it('should remove old component', function() {
             var comp = {
                 dispose: sinon.collection.stub()
             };
             var initCompStub = sinon.collection.stub(drawer, '_initializeComponentsFromDefinition');
 
-            drawer.currentState = 'idle';
             drawer._components = [comp];
-            drawer.open();
+            drawer.showComponent();
             expect(comp.dispose).toHaveBeenCalled();
             expect(drawer._components.length).toBe(0);
         });
@@ -64,8 +65,7 @@ describe('Base.Layout.SideDrawer', function() {
                 drawer._components = [comp];
             });
 
-            drawer.currentState = 'idle';
-            drawer.open();
+            drawer.showComponent();
             expect(comp.loadData).toHaveBeenCalled();
             expect(comp.render).toHaveBeenCalled();
         });
