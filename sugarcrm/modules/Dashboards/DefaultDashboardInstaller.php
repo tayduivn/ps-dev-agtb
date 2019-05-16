@@ -43,14 +43,18 @@ class DefaultDashboardInstaller
 
                     $this->setupSavedReportDashlets($dashboardContents['metadata']);
 
-                    $dashboardProperties = array(
+                    $dashboardProperties = [
                         'name' => $dashboardContents['name'],
                         'dashboard_module' => $module,
                         'view_name' => $module !== 'Home' ? $layout : null,
                         'metadata' => json_encode($dashboardContents['metadata']),
                         'default_dashboard' => true,
                         'team_id' => $this->globalTeamId,
-                    );
+                    ];
+                    if (isset($dashboardContents['id'])) {
+                        $dashboardProperties['id'] = $dashboardContents['id'];
+                        $dashboardProperties['new_with_id'] = true;
+                    }
                     $dashboardBean = $this->getNewDashboardBean();
                     $this->storeDashboard($dashboardBean, $dashboardProperties);
                 }

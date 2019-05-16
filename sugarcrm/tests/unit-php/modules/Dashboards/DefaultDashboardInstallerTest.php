@@ -29,9 +29,21 @@ class DefaultDashboardInstallerTest extends TestCase
 
     /**
      * @covers ::buildDashboardsFromFiles
+     * @dataProvider providerBuildDashboardsFromFiles
+     * @param array $fileContents Contents of the default dashboard file.
+     * @param string $dashboardsDir Dashboards directory (relative path).
+     * @param string $dashboardDir Dashboard directory (relative path,
+     *   including $dashboardsDir as a prefix).
+     * @param string $module Module name.
+     * @param array $expected Expected bean properties for the dashboard.
      */
-    public function testBuildDashboardsFromFiles()
-    {
+    public function testBuildDashboardsFromFiles(
+        array $fileContents,
+        string $dashboardsDir,
+        string $dashboardDir,
+        string $module,
+        array $expected
+    ) {
         $defaultDashboardInstaller = $this->getMockBuilder('DefaultDashboardInstaller')
             ->setMethods(array(
                 'getFileContents',
@@ -43,61 +55,98 @@ class DefaultDashboardInstallerTest extends TestCase
             ->getMock();
 
         $defaultDashboardInstaller->method('getFileContents')
-            ->willReturn(array(
-                'name' => 'Dashboard Name',
-                'metadata' => array('metadata' => 'dashboard metadata'),
-            ));
+            ->willReturn($fileContents);
 
         $defaultDashboardInstaller->method('storeDashboard');
 
         $defaultDashboardInstaller->method('getNewDashboardBean')
             ->willReturn('beanStub');
 
-        $defaultDashboardInstaller->expects($this->exactly(2))
+        $defaultDashboardInstaller->expects($this->once())
             ->method('getSubDirs')
             ->will($this->returnCallback(function ($input) {
-                return array($input . 'testview');
+                return [$input . 'testview'];
             }))
-            ->withConsecutive(
-                array('modules/TestModule/dashboards/'),
-                array('modules/Home/dashboards/')
-            );
+            ->with($dashboardsDir);
 
-        $defaultDashboardInstaller->expects($this->exactly(2))
+        $defaultDashboardInstaller->expects($this->once())
             ->method('getPhpFiles')
             ->will($this->returnCallback(function ($input) {
-                return array($input . '/test-dashboard.php');
+                return [$input . '/test-dashboard.php'];
             }))
-            ->withConsecutive(
-                array('modules/TestModule/dashboards/testview'),
-                array('modules/Home/dashboards/testview')
-            );
+            ->with($dashboardDir);
 
-        $expectTestModule = array(
-            'name' => 'Dashboard Name',
+        $defaultDashboardInstaller->expects($this->once())
+            ->method('storeDashboard')
+            ->with($this->equalTo('beanStub'), $this->equalTo($expected));
+
+        $defaultDashboardInstaller->buildDashboardsFromFiles([$module]);
+    }
+
+    public function providerBuildDashboardsFromFiles(): array
+    {
+        // basic dashboard
+        $basicDashboardFileContents = [
+            'name' => 'Test Module Dashboard Name',
+            'metadata' => ['metadata' => 'test module dashboard metadata'],
+        ];
+        $basicDashboardsDir = 'modules/TestModule/dashboards/';
+        $basicDashboardDir = 'modules/TestModule/dashboards/testview';
+        $basicExpected = [
+            'name' => 'Test Module Dashboard Name',
             'dashboard_module' => 'TestModule',
             'view_name' => 'testview',
-            'metadata' => '{"metadata":"dashboard metadata"}',
+            'metadata' => '{"metadata":"test module dashboard metadata"}',
             'default_dashboard' => true,
             'team_id' => '1',
-        );
-        $expectHomeModule = array(
-            'name' => 'Dashboard Name',
+        ];
+
+        // home dashboard
+        $homeDashboardFileContents = [
+            'name' => 'Home Module Dashboard Name',
+            'metadata' => ['metadata' => 'Home module dashboard metadata'],
+        ];
+        $homeDashboardsDir = 'modules/Home/dashboards/';
+        $homeDashboardDir = 'modules/Home/dashboards/testview';
+        $homeExpected = [
+            'name' => 'Home Module Dashboard Name',
             'dashboard_module' => 'Home',
             'view_name' => null,
-            'metadata' => '{"metadata":"dashboard metadata"}',
+            'metadata' => '{"metadata":"Home module dashboard metadata"}',
             'default_dashboard' => true,
             'team_id' => '1',
-        );
+        ];
 
-        $defaultDashboardInstaller->expects($this->exactly(2))
-            ->method('storeDashboard')
-            ->withConsecutive(
-                array($this->equalTo('beanStub'), $this->equalTo($expectTestModule)),
-                array($this->equalTo('beanStub'), $this->equalTo($expectHomeModule))
-            );
+        // dashboard with predefined ID
+        $dashboardWithIDFileContents = [
+            'id' => 'i-am-a-predefined-id',
+            'name' => 'Test Module 2 Dashboard Name',
+            'metadata' => ['metadata' => 'test module 2 dashboard metadata'],
+        ];
+        $dashboardsWithIDsDirectory = 'modules/TestModule2/dashboards/';
+        $dashboardWithIDDirectory = 'modules/TestModule2/dashboards/testview';
+        $idExpected = [
+            'id' => 'i-am-a-predefined-id',
+            'new_with_id' => true,
+            'name' => 'Test Module 2 Dashboard Name',
+            'dashboard_module' => 'TestModule2',
+            'view_name' => 'testview',
+            'metadata' => '{"metadata":"test module 2 dashboard metadata"}',
+            'default_dashboard' => true,
+            'team_id' => '1',
+        ];
 
-        $defaultDashboardInstaller->buildDashboardsFromFiles(array('TestModule', 'Home'));
+        return [
+            [$basicDashboardFileContents, $basicDashboardsDir, $basicDashboardDir, 'TestModule', $basicExpected],
+            [$homeDashboardFileContents, $homeDashboardsDir, $homeDashboardDir, 'Home', $homeExpected],
+            [
+                $dashboardWithIDFileContents,
+                $dashboardsWithIDsDirectory,
+                $dashboardWithIDDirectory,
+                'TestModule2',
+                $idExpected,
+            ],
+        ];
     }
 
     /**
