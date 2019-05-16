@@ -316,4 +316,31 @@ class Note extends SugarBean
             'internal' => translate('LBL_SOURCE_INTERNAL', 'Notes'),
         ];
     }
+
+    /**
+     * Verifies if this note has an attachment
+     * @return bool
+     */
+    public function hasAttachment() : bool
+    {
+        return !empty($this->filename) && !empty($this->id) && file_exists('upload://' . $this->id);
+    }
+
+    /**
+     * Gets this note's attachment information
+     * @return array
+     */
+    public function getAttachment() : array
+    {
+        if ($this->hasAttachment()) {
+            $mimeType = finfo_file(finfo_open(FILEINFO_MIME_TYPE), 'upload://' . $this->id);
+            return [
+                'id' => $this->id,
+                'filename' => $this->filename,
+                'name' => $this->filename,
+                'isImage' => strpos($mimeType, 'image') !== false,
+            ];
+        }
+        return [];
+    }
 }
