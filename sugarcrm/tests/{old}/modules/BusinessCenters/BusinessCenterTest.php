@@ -41,6 +41,20 @@ class BusinessCenterTest extends TestCase
     private static $recordViewDefs = [];
 
     /**
+     * Mapping of days used for some of our tests
+     * @var array
+     */
+    private static $dayMap = [
+        'sunday',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+    ];
+
+    /**
      * Simply loads the environment and sets up some of the needed data
      */
     public static function setupBeforeClass()
@@ -74,20 +88,10 @@ class BusinessCenterTest extends TestCase
 
     public function testVardefAndBeanFieldsAlign()
     {
-        $dayMap = [
-            'sunday',
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-        ];
-
         // Vardef fields array
         $fieldDefs = static::$bc->field_defs;
 
-        foreach ($dayMap as $day) {
+        foreach (static::$dayMap as $day) {
             // Fields needed to test for positivity
             $om = $day . '_open_minutes';
             $oh = $day . '_open_hour';
@@ -1027,13 +1031,22 @@ class BusinessCenterTest extends TestCase
     }
 
     /**
-     * Gets a new, unaltered - except by name - business center bean
+     * Gets a new, stripped down business center bean with just a name
      * @return BusinessCenter
      */
     private static function getBusinessCenterBean()
     {
         $bean = new \BusinessCenter;
         $bean->name = 'Test Business Center';
+
+        // Since M-F are defaulted as open days we need
+        // to force all days closed for the tests that
+        // use this particular business center bean
+        foreach (static::$dayMap as $day) {
+            $prop = 'is_open_' . $day;
+            $bean->$prop = 0;
+        }
+
         return $bean;
     }
 
