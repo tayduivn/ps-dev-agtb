@@ -34,7 +34,7 @@ describe('Base.Fields.CaseStatus', function() {
         field.items = {
             'New': 'New',
             'Duplicate': 'Duplicate',
-        }
+        };
     });
 
     afterEach(function() {
