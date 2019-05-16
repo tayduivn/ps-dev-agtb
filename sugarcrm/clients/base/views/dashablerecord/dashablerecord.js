@@ -159,6 +159,8 @@
      */
     _pseudoDashlet: null,
 
+    dataView: 'recorddashlet',
+
     /**
      * @inheritdoc
      */
@@ -371,6 +373,7 @@
             return;
         }
 
+        rowModel.setOption('view', this.dataView);
         // Always load this to get all relate fields
         // In the future, to support 2 level relationships, we need to
         // also load the first level base model
@@ -1290,6 +1293,7 @@
                 } else {
                     tab.model = app.data.createRelatedBean(model, model.get(tab.link).id, tab.link);
                 }
+                tab.model.setOption('view', this.dataView);
             }
             this.tabs[index] = tab;
         }, this);
