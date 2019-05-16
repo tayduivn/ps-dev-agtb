@@ -148,4 +148,45 @@ class SavedReportTest extends TestCase
         }
         return $def;
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Tests that out of the box reports, by id, exist in the system
+     */
+    public function testStockReportsExistById()
+    {
+        $stockGuids = [
+            'c2908254-7606-11e9-a121-f218983a1c3e' => 'New Cases by Business Center by Week',
+            'c2908fc4-7606-11e9-a83a-f218983a1c3e' => 'Recently Created Cases',
+            'c290929e-7606-11e9-a555-f218983a1c3e' => 'New Cases by Customer Tier by Week',
+            'c290953c-7606-11e9-b083-f218983a1c3e' => 'Open Cases by Customer Tier and Priority',
+            'c29097d0-7606-11e9-ac35-f218983a1c3e' => 'Total Cases Resolved this Month by Business Center',
+            'c2909a50-7606-11e9-914a-f218983a1c3e' => 'Total Cases Resolved this Month by Agent',
+            'c2909cd0-7606-11e9-9955-f218983a1c3e' => 'List of Recently Resolved Cases',
+            'c2909f50-7606-11e9-b00e-f218983a1c3e' => 'My Cases Resolved this Month by Week',
+            'c290a1da-7606-11e9-80e5-f218983a1c3e' => 'My Cases Due Today and Overdue',
+            'c290a45a-7606-11e9-9663-f218983a1c3e' => 'All Cases Due Today and Overdue',
+            'c290a6da-7606-11e9-a76d-f218983a1c3e' => 'My Open Cases by Followup Date',
+            'c290a950-7606-11e9-a526-f218983a1c3e' => 'All Open Cases by Followup Date',
+            'c290abda-7606-11e9-9f3e-f218983a1c3e' => 'My Open Cases by Status',
+            'c290ae50-7606-11e9-9cb2-f218983a1c3e' => 'My Cases in the Last Week by Status',
+            'c290b0da-7606-11e9-81f9-f218983a1c3e' => 'Status of Open Tasks Assigned by Me',
+        ];
+
+        $sql = sprintf(
+            'SELECT id, name FROM saved_reports WHERE id in (%s)',
+            "'" . implode("','", array_keys($stockGuids)) . "'"
+        );
+
+        $conn = DBManagerFactory::getConnection();
+        $data = $conn->executeQuery($sql)->fetchAll();
+
+        $this->assertCount(15, $data);
+
+        foreach ($data as $row) {
+            $this->assertArrayHasKey($row['id'], $stockGuids);
+            $this->assertSame($row['name'], $stockGuids[$row['id']]);
+        }
+    }
+    //END SUGARCRM flav=ent ONLY
 }
