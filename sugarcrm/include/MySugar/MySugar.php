@@ -51,7 +51,7 @@ class MySugar{
      * @param string $dashletLabel
      * @return bool
      */
-    protected function allowedToAccessDashlet(string $module) : bool
+    protected function allowedToAccessDashlet(?string $module) : bool
     {
         return AccessControlManager::instance()->allowModuleAccess($module);
     }

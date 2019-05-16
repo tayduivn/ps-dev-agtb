@@ -231,12 +231,17 @@ class AccessControlManagerTest extends TestCase
                 ['INVLIAD_SERVICE_CLOUD'],
                 false,
             ],
+            [
+                ['MODULE_NAME' => ['SUGAR_SERVE']],
+                null,
+                ['INVLIAD_SERVICE_CLOUD'],
+                true,
+            ],
         ];
     }
 
     /**
      * @covers ::allowFieldAccess
-     * @covers ::allowRecordAccess
      *
      * @dataProvider allowFieldAccessProvider
      */
@@ -300,6 +305,20 @@ class AccessControlManagerTest extends TestCase
                 'field1',
                 ['NOT_SERVICE_CCLOUD'],
                 false,
+            ],
+            [
+                ['MODULE1' => ['field1' => ['SUGAR_SERVE']]],
+                null,
+                'field1',
+                ['SUGAR_SERVE'],
+                true,
+            ],
+            [
+                ['MODULE1' => ['field1' => ['SUGAR_SERVE']]],
+                'MODULE1',
+                null,
+                ['SUGAR_SERVE'],
+                true,
             ],
         ];
     }

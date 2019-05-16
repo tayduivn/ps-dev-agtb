@@ -177,8 +177,11 @@ class AccessControlManager
      * @param array $attributes
      * @return bool
      */
-    public function allowModuleAccess(string $module, array $attributes = ['r'])
+    public function allowModuleAccess(?string $module, array $attributes = ['r'])
     {
+        if (empty($module)) {
+            return true;
+        }
         return $this->allowAccess([self::MODULES_KEY => $module], $attributes);
     }
 
@@ -189,8 +192,11 @@ class AccessControlManager
      * @param array $attributes
      * @return bool
      */
-    public function allowDashletAccess(string $label, array $attributes = ['r'])
+    public function allowDashletAccess(?string $label, array $attributes = ['r'])
     {
+        if (empty($label)) {
+            return true;
+        }
         return $this->allowAccess([self::DASHLETS_KEY => $label], $attributes);
     }
 
@@ -201,8 +207,11 @@ class AccessControlManager
      * @param array $attributes
      * @return bool
      */
-    public function allowRecordAccess(string $module, string $id, array $attributes = ['r'])
+    public function allowRecordAccess(?string $module, ?string $id, array $attributes = ['r'])
     {
+        if (empty($module) || empty($id)) {
+            return true;
+        }
         return $this->allowAccess([self::RECORDS_KEY => [$module => $id]], $attributes);
     }
 
@@ -214,8 +223,11 @@ class AccessControlManager
      * @param array $attributes
      * @return bool
      */
-    public function allowFieldAccess(string $module, string $field, array $attributes = ['r'])
+    public function allowFieldAccess(?string $module, ?string $field, array $attributes = ['r'])
     {
+        if (empty($module) || empty($field)) {
+            return true;
+        }
         return $this->allowAccess([self::FIELDS_KEY => [$module => $field]], $attributes);
     }
 
