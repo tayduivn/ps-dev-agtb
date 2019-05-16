@@ -526,32 +526,6 @@ class Opportunity extends SugarBean
         return $array_assign;
     }
 
-
-    /**
-     * Static helper function for getting releated account info, This will be removed in a future versions
-     * @deprecated
-     */
-    public function get_account_detail($opp_id)
-    {
-        $GLOBALS['log']->deprecated('Opportunity::get_account_detail() has been deprecated in 7.8');
-        $ret_array = array();
-        $db = DBManagerFactory::getInstance();
-        $query = "SELECT acc.id, acc.name, acc.assigned_user_id "
-            . "FROM accounts acc, accounts_opportunities a_o "
-            . "WHERE acc.id=a_o.account_id"
-            . " AND a_o.opportunity_id='$opp_id'"
-            . " AND a_o.deleted=0"
-            . " AND acc.deleted=0";
-        $result = $db->query($query, true, "Error filling in opportunity account details: ");
-        $row = $db->fetchByAssoc($result);
-        if ($row != null) {
-            $ret_array['name'] = $row['name'];
-            $ret_array['id'] = $row['id'];
-            $ret_array['assigned_user_id'] = $row['assigned_user_id'];
-        }
-        return $ret_array;
-    }
-
     /**
      * getClosedStages
      *
