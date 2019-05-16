@@ -95,6 +95,10 @@ export default class RecordHeaderView extends BaseView {
                 'design_pet': 'a[name="design_emailtemplates"]:not(.hide)',
                 'bpm_cancel_button': 'a[name="project_cancel_button"]:not(.hide)',
                 'bpm_import_button': 'a[name="project_finish_button"]:not(.hide)',
+                'approve': 'a[name="approve_button"]:not(.hide)',
+                'status': 'a[name="status"]:not(.hide)',
+                'addnotes': 'a[name="add-notes"]:not(.hide)',
+
 
                 // Process Email template
                 'email_template_cancel_button': 'a[name="emailtemplates_cancel_button"]:not(.hide)',

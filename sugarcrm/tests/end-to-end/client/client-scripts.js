@@ -121,5 +121,16 @@ module.exports = {
                 }
             }
         );
+    },
+
+    /**
+     * Get the URL fragment
+     *
+     * Note: This is mostly needed for pmse_Inbox module which has different list view
+     * based on the URL routing:
+     *
+     */
+    getRouter: function() {
+        return App.router.getFragment();
     }
 };

@@ -50,6 +50,13 @@ export default class ListItemView extends BaseView {
                     // Business Process Mangement
                     enable: '[name="enabled-disabled-button"]',
                     disable: '[name="enabled-disabled-button"]',
+
+                    // Processes
+                    showprocess: '[name="edit_button"]',
+                    viewnotes: '[name="viewNotes"]',
+                    history: '[name="History"]',
+                    selectnewuser: '[name="reassignButton"]',
+                    cancelProcess: '[name="cancelButton"]',
                 },
             },
             buttons: {

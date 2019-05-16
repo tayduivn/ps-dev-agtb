@@ -12,10 +12,10 @@
 import {When, seedbed} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
 import * as _ from 'lodash';
-import AlertCmp from '../components/alert-cmp';
+import {closeAlert, closeWarning} from './general_bdd';
 
 /**
- * Complete or Reject a Data Privacy Request and confirm
+ * Complete or Reject a Data Privacy request and confirm
  *
  * @example When I reject the Data Privacy request on #DP_1Record
  * @example When I complete the Data Privacy request on #dp01Record (complete, non-erasure)
@@ -25,15 +25,10 @@ When(/^I (eraseandcomplete|reject|complete) the Data Privacy request on (#[a-zA-
         await layout.HeaderView.clickButton(action);
         await this.driver.waitForApp();
 
-        // Click Confirm in Confirmation alert
-        let alert = new AlertCmp({type: 'warning'});
-        await alert.clickButton('confirm');
-        await this.driver.waitForApp();
-
-        // Close Confirmation Alert
-        alert = new AlertCmp({});
-        await alert.close();
-        await this.driver.waitForApp();
+        // Confirm request
+        await closeWarning('Confirm');
+        // Close success message
+        await closeAlert();
 
     }, {waitForApp: true});
 

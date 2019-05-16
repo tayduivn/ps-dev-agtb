@@ -29,6 +29,7 @@ import LeadConversionLayout from './layouts/lead-conversion-layout';
 import AuditLogDrawerLayout from './layouts/audit-log-drawer-layout';
 import BusinessRulesDesignLayout from './layouts/business-rules-record-layout';
 import ForecastsListLayout from './layouts/forecasts-layout';
+import BpmWindowView from './views/bpm-window-view';
 import ActivityStreamLayout from './layouts/activity-stream-layout';
 import ModuleMenuCmp from './components/module-menu-cmp';
 import KBViewCategoriesDrawer from './layouts/kb-view-categories-layout';
@@ -61,6 +62,8 @@ export default (seedbed: Seedbed) => {
         seedbed.defineComponent(`OpportunityDrawer`, DrawerLayoutOpp, {module: 'Opportunities'});
 
         seedbed.defineComponent(`Forecasts`, ForecastsListLayout, {module: 'Forecasts'});
+
+        seedbed.defineComponent(`BPM`, BpmWindowView);
 
         seedbed.defineComponent(`moduleMenu`, ModuleMenuCmp, null);
 

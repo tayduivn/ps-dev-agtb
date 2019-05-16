@@ -696,7 +696,14 @@ When(/^I open (\w+) \*(\w+) record view$/,
 When(/^I filter for the (\w+) record \*(\w+) named "([^"]*)"$/,
     async function (module: string, uid: string, recordName: string) {
 
-        if (module !== 'Dashboards') {
+        // Get URL fragment
+        let router = await seedbed.client.driver.execSync('getRouter', []);
+
+        // Choose module for all modules but 3 special cases:
+        // Process Management: 'pmse_Inbox/layout/casesList'
+        // Unattended Cases: 'pmse_Inbox/layout/unattendedCases'
+        // Dashboards: 'Dashboards?moduleName=Home'
+        if (router.value.indexOf('pmse_Inbox/') === -1 && router.value.indexOf('Dashboards?moduleName=Home') === -1 ) {
             await chooseModule(module);
         }
 
@@ -705,11 +712,25 @@ When(/^I filter for the (\w+) record \*(\w+) named "([^"]*)"$/,
         await filterView.setSearchField(recordName);
         await this.driver.waitForApp();
 
-        // Get found record id
         let argumentsArray = [];
-        argumentsArray.push(recordName);
-        argumentsArray.push(module);
-        let result = await seedbed.client.driver.execAsync('getRecordIDByName', argumentsArray);
+
+        // for all modules but all 3 'pmse_Inbox' modules
+        if (router.value.indexOf('pmse_Inbox') === -1) {
+            argumentsArray.push(recordName);
+            argumentsArray.push(module);
+        } else {
+            // Edit module argument for various 'pmse_Inbox' related cases
+            if (router.value === 'pmse_Inbox/layout/casesList') {
+                argumentsArray.push(`${module}/casesList`);
+            } else if (router.value === 'pmse_Inbox/layout/unattendedCases') {
+                argumentsArray.push(`${module}/unattendedCases`);
+            } else {
+                argumentsArray.push(module);
+            }
+        }
+
+        let command = router.value.indexOf('pmse_Inbox') === -1 ? 'getRecordIDByName' : 'getMostRecentlyCreatedRecord';
+        let result = await seedbed.client.driver.execAsync(command, argumentsArray);
         let recordID = result.value;
 
         // Add record id to the global array of all records with uid using user-provided record identifier
@@ -718,6 +739,12 @@ When(/^I filter for the (\w+) record \*(\w+) named "([^"]*)"$/,
                 id: recordID,
                 module: module,
             });
+
+        // Create record layout of the added record
+        seedbed.defineComponent(`${uid}Record`, RecordLayout, {
+            module: module,
+            id: recordID,
+        });
 
     }, {waitForApp: true}
 );
@@ -795,3 +822,4 @@ When(/^I create a new record \*(\w+) by importing(?: (Business Rules|Email Templ
         }
     }, { waitForApp: true }
 );
+

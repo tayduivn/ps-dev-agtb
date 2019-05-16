@@ -10,17 +10,12 @@
  */
 'use strict';
 
-import {givenStepsHelper, whenStepsHelper, stepsHelper, Given} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
-import ModuleMenuCmp from '../components/module-menu-cmp';
-import ListView from '../views/list-view';
-import RecordView from '../views/record-view';
-import {Utils, When, Then, seedbed} from '@sugarcrm/seedbed';
-import BaseView from '../views/base-view';
+import {When, Then, seedbed} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
-import AlertCmp from '../components/alert-cmp';
 import BusinessRulesDesign from '../layouts/business-rules-record-layout';
-import {chooseModule, chooseRecord, recordViewHeaderButtonClicks, goToUrl} from './general_bdd';
+import {chooseModule, chooseRecord, closeAlert, closeWarning, recordViewHeaderButtonClicks} from './general_bdd';
+import BpmWindowCmp from '../components/bpm-window-cmp';
 
 When(/^I begin designing pmse_Business_Rules \*(\w+)$/,
     async function(name: string) {
@@ -45,6 +40,98 @@ Then(/^the pmse business rule designer should contain the following values:$/,
         await businessRulesVerification(layout, table);
     }, {waitForApp: true}
 );
+
+/**
+ *  Close BPM pop-up window
+ *
+ *  @example
+ *  When I close BPM pop-up window
+ */
+When(/^I close BPM pop-up window$/,
+    async function() {
+
+        let bpmWindow = new BpmWindowCmp();
+        await bpmWindow.close();
+    }, {waitForApp: true}
+);
+
+/**
+ * Add note to the process in BPM pop-up window
+ *
+ * @example
+ * When I add the following note to the process in BPM pop-up window:
+ *  | note        |
+ *  | My new Note |
+ */
+When(/^I add the following note to the process in BPM pop-up window:$/,
+    async function(data: TableDefinition) {
+
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+
+        const rows = data.rows();
+        let bpmWindow = new BpmWindowCmp();
+        await bpmWindow.addNote(rows[0][0]);
+    }, {waitForApp: true}
+);
+
+/**
+ *  Verify last note in the BPM pop-up window
+ *
+ *  @example
+ *  Then I verify the last note in BPM pop-up window
+ *      | note                                       |
+ *      | Rejected! Please spend more time fixing it |
+ */
+Then(/^I verify the last note in BPM pop-up window$/,
+    async function(data: TableDefinition) {
+
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+
+        const rows = data.rows();
+        let expectedValue  = rows[0][0];
+        let bpmWindow = new BpmWindowCmp();
+        let actualValue = await bpmWindow.getLastNote();
+        if (expectedValue !== actualValue) {
+            throw new Error(`Expected value '${expectedValue}' does not match actual value '${actualValue}'`);
+        }
+    }, {waitForApp: true}
+);
+
+/**
+ *  Delete last note in the BPM pop-up window
+ *
+ *  @example
+ *  When I delete last note in BPM pop-up window
+ */
+When(/^I delete last note in BPM pop-up window$/,
+    async function() {
+        let bpmWindow = new BpmWindowCmp();
+        await bpmWindow.deleteLastNote();
+    }, {waitForApp: true}
+);
+
+/**
+ * Approve or Reject a Business Process request, close confirmation alert
+ *
+ * @example
+ * When I approve the Business Process request on #DP_1Record
+ *
+ */
+When(/^I (approve|reject) the Business Process request on (#[a-zA-Z](?:\w|\S)*)$/,
+    async function (action: string, layout: any) {
+        await layout.HeaderView.clickButton(action);
+        await this.driver.waitForApp();
+
+        // Confirm request
+        await closeWarning('Confirm');
+        // Close success message
+        await closeAlert();
+
+    }, {waitForApp: true});
 
 /**
  * Verify Business Rules
