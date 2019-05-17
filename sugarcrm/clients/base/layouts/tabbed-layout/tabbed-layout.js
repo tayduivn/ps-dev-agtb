@@ -92,36 +92,6 @@
     /**
      * @inheritdoc
      */
-    addComponent: function(component, def) {
-        this._super('addComponent', [component, def]);
-
-        // If we're using tabs,
-        // and all the components have been added,
-        // and there are more components than maxTabs is set for
-        if (
-            !this.meta.notabs &&
-            this._components.length === this.meta.components.length &&
-            this._components.length > this.maxTabs
-        ) {
-            this._addTabNavControls();
-        }
-    },
-
-    /**
-     * Adds tab navigation controls if needed
-     *
-     * @protected
-     */
-    _addTabNavControls: function() {
-        var $nav = $('<li/>').html('< > X');
-        $nav.addClass('tab-controls');
-
-        this.$('.nav').append($nav);
-    },
-
-    /**
-     * @inheritdoc
-     */
     _placeComponent: function(comp, def) {
         var id = _.uniqueId('record-bottom');
         var compDef = def.layout || def.view || {};
