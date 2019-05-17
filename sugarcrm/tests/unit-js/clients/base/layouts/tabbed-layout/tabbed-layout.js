@@ -76,29 +76,6 @@ describe('Base.Layout.TabbedLayout', function() {
         });
     });
 
-    describe('_placeComponent()', function() {
-        var appendStub;
-
-        beforeEach(function() {
-            appendStub = sinon.collection.stub();
-            sinon.collection.stub(layout, '$', function() {
-                return {
-                    append: appendStub
-                };
-            });
-        });
-
-        afterEach(function() {
-            appendStub = null;
-        });
-
-        it('should append a list element', function() {
-            layout._addTabNavControls();
-
-            expect(appendStub).toHaveBeenCalled();
-        });
-    });
-
     describe('removeComponent()', function() {
         var appendStub;
         var addClassStub;
