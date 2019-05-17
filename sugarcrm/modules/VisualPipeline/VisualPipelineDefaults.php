@@ -57,19 +57,16 @@ class VisualPipelineDefaults
             // which modules can use pipeline
             'enabled_modules' => array(
                 'Cases',
-                'Leads',
                 'Opportunities',
                 'Tasks',
             ),
             'table_header' => array(
                 'Cases' => 'status',
-                'Leads' => 'status',
                 'Opportunities' => 'sales_status',
                 'Tasks' => 'status',
             ),
             'hidden_values' => array(
                 'Cases' => array(),
-                'Leads' => array(),
                 'Opportunities' => array(
                     'Closed Won',
                     'Closed Lost',
@@ -78,7 +75,6 @@ class VisualPipelineDefaults
             ),
             'tile_header' => array(
                 'Cases' => 'name',
-                'Leads' => 'name',
                 'Opportunities' => 'name',
                 'Tasks' => 'name',
             ),
@@ -86,9 +82,6 @@ class VisualPipelineDefaults
                 'Cases' => array(
                     'account_name',
                     'priority',
-                ),
-                'Leads' => array(
-                    'account_name',
                 ),
                 'Opportunities' => array(
                     'account_name',
@@ -103,7 +96,6 @@ class VisualPipelineDefaults
             ),
             'records_per_column' => array(
                 'Cases' => '10',
-                'Leads' => '10',
                 'Opportunities' => '10',
                 'Tasks' => '10',
             ),

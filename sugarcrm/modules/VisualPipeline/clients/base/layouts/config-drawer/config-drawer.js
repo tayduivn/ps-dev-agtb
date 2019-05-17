@@ -19,7 +19,7 @@
 
     plugins: ['ErrorDecoration'],
 
-    supportedModules: ['Opportunities', 'Leads', 'Cases', 'Tasks'],
+    supportedModules: ['Opportunities', 'Cases', 'Tasks'],
 
     fieldsAllowedInTileBody: 5, // Use a number <= than 0 to disable the 'Number of fields allowed in a tile' check.
 
