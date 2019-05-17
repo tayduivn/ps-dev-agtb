@@ -427,6 +427,11 @@ return array(
             'version' => '99999999',
         ],
     ],
+    'SugarChimp' => [
+        [
+            'version' => '*',
+        ],
+    ],
     'uRecordButtons' => [
         [
             'version' => '*',
