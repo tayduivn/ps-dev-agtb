@@ -117,7 +117,7 @@
     };
 
     app.metadata.addSyncTask(function(metadata, options) {
-        var manifestUrl = app.config.externalManifestUrl;
+        var manifestUrl = app.config.externalServicesUrl;
 
         if (options.getPublic) {
             // skipping external app sync for public metadata
@@ -133,6 +133,7 @@
                     url: manifestUrl,
                     xhrFields: {
                         withCredentials: true,
+                        cors: true
                     },
                     contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
