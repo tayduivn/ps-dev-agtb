@@ -522,3 +522,61 @@
     }
   }
 }
+
+.agent_workbench_dashboard {
+  .dashlet-container {
+    overflow-y: auto;
+    height: @workbenchOverviewDashletHeight;
+    max-height: @workbenchOverviewDashletHeight;
+
+    > div {
+      height: 100%;
+
+      .thumbnail.dashlet:not(.collapsed) {
+        display: flex;
+        flex-direction: column;
+        height: ~"calc(@{workbenchOverviewDashletHeight} - 12px)";
+        max-height: ~"calc(@{workbenchOverviewDashletHeight} - 12px)";
+
+        .dashlet-unordered-list.dashablerecord .tab-content {
+          height: 100%;
+        }
+
+        .dashlet-unordered-list:not(.dashablerecord) .tab-content {
+          height: auto;
+        }
+
+        .dashlet-content {
+          display: flex;
+          flex-grow: 1;
+          flex-direction: column;
+
+          .list-view {
+            flex-grow: 1;
+            flex-basis: 1;
+            display: flex;
+            max-height: unset;
+            flex-direction: column;
+          }
+        }
+      }
+    }
+  }
+
+  .thumbnail.dashlet:not(.collapsed) h4.dashlet-title {
+    padding-top: 11px;
+    padding-bottom: 11px;
+  }
+}
+
+.agent_workbench_dashboard .side-drawer {
+  .dashlet-container {
+    height: @workbenchDrawerDashletHeight;
+    max-height: @workbenchDrawerDashletHeight;
+
+    > div .thumbnail.dashlet:not(.collapsed) {
+      height: ~"calc(@{workbenchDrawerDashletHeight} - 12px)";
+      max-height: ~"calc(@{workbenchDrawerDashletHeight} - 12px)";
+    }
+  }
+}

@@ -21,7 +21,7 @@
      * @inheritdoc
      */
     bindDataChange: function() {
-        if(this.model) {
+        if (this.model) {
             this.model.on("change:metadata", this.setMetadata, this);
             this.model.on("change:layout", this.setWidth, this);
             this.model.on("applyDragAndDrop", this.applyDragAndDrop, this);
@@ -112,7 +112,7 @@
         var metadata = this.model.get("metadata"),
             $el = this.$el.children();
 
-        _.each(metadata.components, function(component, index){
+        _.each(metadata.components, function(component, index) {
             $el.get(index).className = $el.get(index).className.replace(/span\d+\s*/, '');
             $($el.get(index)).addClass("span" + component.width);
         }, this);
@@ -130,6 +130,13 @@
         this._super('_render');
         if (this.model.has('css_class')) {
             this.$el.addClass(this.model.get('css_class'));
+        } else {
+            /** For predefined dashlets/dashboard, in case
+            storing css class on model is not possible. */
+            var metadata = this.model.get('metadata');
+            if (metadata && metadata.css_class) {
+                this.$el.addClass(metadata.css_class);
+            }
         }
     },
 

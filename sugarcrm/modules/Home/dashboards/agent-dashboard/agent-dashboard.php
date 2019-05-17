@@ -13,6 +13,7 @@
  */
 return [
     'metadata' => [
+        'css_class' => 'agent_workbench_dashboard',
         'tabs' => [
             // TAB 1
             [
@@ -81,7 +82,7 @@ return [
                                         'id' => 'dashable-list',
                                     ],
                                     'intelligent' => '0',
-                                    'limit' => 5,
+                                    'limit' => 10,
                                     'filter_id' => 'recently_viewed',
                                     'display_columns' => ['case_number', 'name', 'account_name', 'priority', 'status', 'assigned_user_name', 'date_modified', 'date_entered', 'team_name', 'time_to_resolution', 'business_center_name', 'service_level', 'follow_up_datetime'],
                                 ],
