@@ -437,4 +437,9 @@ return array(
             'version' => '*',
         ],
     ],
+    'Net-Results Marketing Automation' => [
+        [
+            'version' => '*',
+        ],
+    ],
 );
