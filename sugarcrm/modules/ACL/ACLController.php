@@ -28,8 +28,7 @@ class ACLController
      */
     public static function checkAccess($category, $action, $is_owner = false, $type = 'module')
     {
-        $access = SugarACL::checkAccess($category, $action, $is_owner?array("owner_override" => true):array());
-        return $access && AccessControlManager::instance()->allowModuleAccess($category);
+        return SugarACL::checkAccess($category, $action, $is_owner ? ["owner_override" => true] : []);
     }
 
     /**

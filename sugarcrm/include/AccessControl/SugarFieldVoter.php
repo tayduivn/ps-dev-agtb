@@ -12,9 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\AccessControl;
 
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 // This section of code is a portion of the code referred
 // to as Critical Control Software under the End User
 // License Agreement.  Neither the Company nor the Users
@@ -36,48 +33,24 @@ class SugarFieldVoter extends SugarVoter
     ];
 
     /**
-     *
-     * $subject is in array format, i.e.
-     * ["FIELDS" => ["MODULE_NAME1" => "field_name"]]
-     *
      * {@inheritdoc}
      */
-    protected function supports($attribute, $subject)
+    public function vote(string $key, string $subject, ?string $value = null) : bool
     {
-        if (!is_array($subject) || count($subject) != 1 || empty(array_keys($subject)[0])) {
-            return false;
+        if (empty($value) || !$this->supports($key)) {
+            return true;
         }
 
-        if (!in_array(array_keys($subject)[0], $this->supportedKeys)) {
-            return false;
-        }
-
-        $module = array_keys($subject[AccessControlManager::FIELDS_KEY])[0];
-        if (!is_string($subject[AccessControlManager::FIELDS_KEY][$module])) {
-            return false;
-        }
-
-        $field = $subject[AccessControlManager::FIELDS_KEY][$module];
-        // check if it is defined
-        if (!isset($this->getProtectedList(AccessControlManager::FIELDS_KEY)[$module][$field])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
-    {
         $entitled = $this->getCurrentUserSubscriptions();
 
-        $module = array_keys($subject[AccessControlManager::FIELDS_KEY])[0];
-        $field = $subject[AccessControlManager::FIELDS_KEY][$module];
+        $module = $subject;
+        $field = $value;
 
-        if (isset($this->getProtectedList(AccessControlManager::FIELDS_KEY)[$module][$field])
-            && array_intersect($entitled, $this->getProtectedList(AccessControlManager::FIELDS_KEY)[$module][$field])
+        if (!isset($this->getProtectedList(AccessControlManager::FIELDS_KEY)[$module][$field])) {
+            return true;
+        }
+
+        if (array_intersect($entitled, $this->getProtectedList(AccessControlManager::FIELDS_KEY)[$module][$field])
         ) {
             return true;
         }

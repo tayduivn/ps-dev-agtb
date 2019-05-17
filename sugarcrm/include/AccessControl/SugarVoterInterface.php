@@ -12,10 +12,19 @@
 
 namespace Sugarcrm\Sugarcrm\AccessControl;
 
-interface SecureObjectInterface
+/**
+ * Interface SugarVoterInterface
+ *
+ * @package Sugarcrm\Sugarcrm\AccessControl
+ */
+Interface SugarVoterInterface
 {
     /**
-     * @return array, array of allowed types
+     *
+     * @param string $key section key in access_config file
+     * @param string $subject
+     * @param null|string $value
+     * @return bool
      */
-    public function allowAccess();
+    public function vote(string $key, string $subject, ?string $value = null) : bool;
 }

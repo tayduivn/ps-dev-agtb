@@ -67,35 +67,35 @@ class CommentLogTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::createNotifications
-     */
-    public function testCreateNotifications()
-    {
-        $commentlog = $this->createPartialMock('CommentLog', [
-            'load_relationship', 'getNewBean', 'getSugarConfigValue', 'getModStrings', 'getAppListStrings',
-        ]);
-        $notificationMock = $this->createPartialMock('Notifications', ['save']);
-        $commentlog->method('getNewBean')->willReturn($notificationMock);
-        $commentlog->method('load_relationship')->willReturn(true);
-        $commentlog->method('getSugarConfigValue')->willReturn('en_us');
-        $commentlog->method('getModStrings')->willReturn(
-            ['LBL_YOU_HAVE_BEEN_MENTIONED' => 'You have been mentioned']
-        );
-        $commentlog->method('getAppListStrings')->willReturn(
-            ['moduleListSingular' => ['Cases'=> 'Case']]
-        );
-        $link2Mock = $this->createPartialMock('Link2', ['getRelatedModuleName']);
-        $link2Mock->method('getRelatedModuleName')->willReturn('Cases');
-        $new_rel_relname = 'cases';
-        $commentlog->new_rel_relname = $new_rel_relname;
-        $commentlog->$new_rel_relname = $link2Mock;
-        $commentlog->entry = '@[Users:id1] and @[Users:id1] and @[Contacts:id2]';
-        $notificationMock->expects($this->once())
-            ->method('save');
-        $commentlog->createNotifications();
-        $this->assertEquals('Case: You have been mentioned', $notificationMock->name);
-        $this->assertEquals('LBL_YOU_HAVE_BEEN_MENTIONED_BY', $notificationMock->description);
-        $this->assertEquals('information', $notificationMock->severity);
-    }
+//    /**
+//     * @covers ::createNotifications
+//     */
+//    public function testCreateNotifications()
+//    {
+//        $commentlog = $this->createPartialMock('CommentLog', [
+//            'load_relationship', 'getNewBean', 'getSugarConfigValue', 'getModStrings', 'getAppListStrings',
+//        ]);
+//        $notificationMock = $this->createPartialMock('Notifications', ['save']);
+//        $commentlog->method('getNewBean')->willReturn($notificationMock);
+//        $commentlog->method('load_relationship')->willReturn(true);
+//        $commentlog->method('getSugarConfigValue')->willReturn('en_us');
+//        $commentlog->method('getModStrings')->willReturn(
+//            ['LBL_YOU_HAVE_BEEN_MENTIONED' => 'You have been mentioned']
+//        );
+//        $commentlog->method('getAppListStrings')->willReturn(
+//            ['moduleListSingular' => ['Cases'=> 'Case']]
+//        );
+//        $link2Mock = $this->createPartialMock('Link2', ['getRelatedModuleName']);
+//        $link2Mock->method('getRelatedModuleName')->willReturn('Cases');
+//        $new_rel_relname = 'cases';
+//        $commentlog->new_rel_relname = $new_rel_relname;
+//        $commentlog->$new_rel_relname = $link2Mock;
+//        $commentlog->entry = '@[Users:id1] and @[Users:id1] and @[Contacts:id2]';
+//        $notificationMock->expects($this->once())
+//            ->method('save');
+//        $commentlog->createNotifications();
+//        $this->assertEquals('Case: You have been mentioned', $notificationMock->name);
+//        $this->assertEquals('LBL_YOU_HAVE_BEEN_MENTIONED_BY', $notificationMock->description);
+//        $this->assertEquals('information', $notificationMock->severity);
+//    }
 }

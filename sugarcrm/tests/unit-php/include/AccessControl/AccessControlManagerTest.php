@@ -13,14 +13,11 @@
 namespace Sugarcrm\SugarcrmTestUnit\inc\AccessControl;
 
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\AccessControl\SecureObjectInterface;
 use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
-use Sugarcrm\Sugarcrm\AccessControl\SecureObjectVoter;
 use Sugarcrm\Sugarcrm\AccessControl\SugarFieldVoter;
 use Sugarcrm\Sugarcrm\AccessControl\SugarRecordVoter;
 use Sugarcrm\Sugarcrm\AccessControl\SugarVoter;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Class AccessControlManagerTest
@@ -34,204 +31,105 @@ class AccessControlManagerTest extends TestCase
      * @covers ::registerVoter
      * @covers ::init
      * @covers ::instance
-     * @covers ::getRegisteredVoters
+     * @covers ::getRegisteredVoter
      * @covers ::__construct
      *
      */
     public function testRegisterVoters()
     {
         $acm = AccessControlManager::instance();
-        $expected = [
-            'SugarVoter' => SugarVoter::class,
-            'SecureRecordVoter' => SugarRecordVoter::class,
-            'SugarFieldVoter' => SugarFieldVoter::class,
-            'SecureObjectVoter' => SecureObjectVoter::class,
-        ];
+        $voter = TestReflection::callProtectedMethod($acm, 'getRegisteredVoter', [AccessControlManager::MODULES_KEY]);
+        $this->assertTrue($voter instanceof SugarVoter);
 
-        $this->assertSame($expected, TestReflection::getProtectedValue($acm, 'voters'));
-        $this->assertNotEmpty(TestReflection::getProtectedValue($acm, 'accessDecisionMgr'));
-        $voters = TestReflection::callProtectedMethod($acm, 'getRegisteredVoters', []);
-        foreach ($voters as $voter) {
-            $this->assertTrue($voter instanceof SecureObjectVoter || $voter instanceof SugarVoter);
-        }
-    }
+        $voter = TestReflection::callProtectedMethod($acm, 'getRegisteredVoter', ['DASHLETS']);
+        $this->assertTrue($voter instanceof SugarVoter);
 
-    /**
-     * @covers ::allowAccess
-     * @dataProvider allowAccessProvider
-     */
-    public function testAllowAccess($access_config, $subject, $entitled, $expected)
-    {
-        $tokenMock = $this->getMockBuilder(TokenInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $voter = TestReflection::callProtectedMethod($acm, 'getRegisteredVoter', ['FIELDS']);
+        $this->assertTrue($voter instanceof SugarFieldVoter);
 
-        $sugarVoter = $this->getMockBuilder(SugarVoter::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getCurrentUserSubscriptions', 'getProtectedList'])
-            ->getMock();
+        $voter = TestReflection::callProtectedMethod($acm, 'getRegisteredVoter', ['RECORDS']);
+        $this->assertTrue($voter instanceof SugarRecordVoter);
 
-        $sugarVoter->expects($this->any())
-            ->method('getCurrentUserSubscriptions')
-            ->will($this->returnValue($entitled));
-
-        $sugarVoter->expects($this->any())
-            ->method('getProtectedList')
-            ->will($this->returnValue($access_config));
-
-        $secureObjVoter = $this->getMockBuilder(SecureObjectVoter::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getCurrentUserSubscriptions'])
-            ->getMock();
-
-        $secureObjVoter->expects($this->any())
-            ->method('getCurrentUserSubscriptions')
-            ->will($this->returnValue($entitled));
-
-        $acmMock = $this->getMockBuilder(AccessControlManager::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getRegisteredVoters', 'getUserToken'])
-            ->getMock();
-
-        $acmMock->expects($this->any())
-            ->method('getRegisteredVoters')
-            ->will($this->returnValue([$secureObjVoter, $sugarVoter]));
-
-        $acmMock->expects($this->any())
-            ->method('getUserToken')
-            ->will($this->returnValue($tokenMock));
-
-        TestReflection::callProtectedMethod($acmMock, 'init', []);
-
-        $this->assertSame($expected, TestReflection::callProtectedMethod($acmMock, 'allowAccess', [$subject]));
-    }
-
-    public function allowAccessProvider()
-    {
-        return [
-            [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                [AccessControlManager::MODULES_KEY => 'MODULE_NAME'],
-                ['SUGAR_SERVE'],
-                true,
-            ],
-            [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                [accessControlManager::MODULES_KEY => 'MODULE_NAME'],
-                [],
-                false,
-            ],
-            [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                [accessControlManager::MODULES_KEY => 'MODULE_NAME'],
-                ['NOT_SERVICE_CLOUD', 'SUGAR_SERVE'],
-                true,
-            ],
-            [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                [accessControlManager::MODULES_KEY => 'MODULE_NAME'],
-                ['INVLIAD_SERVICE_CLOUD'],
-                false,
-            ],
-            [
-                ['ACL_MODULE_NAME' => [['field1' => 'SUGAR_SERVE'], ['field2' =>'SUGAR_SERVE']]],
-                [AccessControlManager::FIELDS_KEY => ['ACL_MODULE_NAME' => 'field1']],
-                ['SUGAR_SERVE'],
-                true,
-            ],
-            [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                $this->getSecureObejectMock(['SUGAR_SERVE']),
-                ['SUGAR_SERVE'],
-                true,
-            ],
-            [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                $this->getSecureObejectMock(['SUGAR_SERVE']),
-                ['INVLIAD_SERVICE_CLOUD'],
-                false,
-            ],
-            [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                $this->getSecureObejectMock([]),
-                ['INVLIAD_SERVICE_CLOUD'],
-                false,
-            ],
-        ];
     }
 
     /**
      * @covers ::allowModuleAccess
-     * @covers ::allowDashletAccess
+     * @covers ::allowAccess
+     * @covers ::isAccessControlled
      *
      * @dataProvider allowModuleAccessProvider
      */
-    public function testAllowModuleAccess($access_config, $subject, $entitled, $expected)
+    public function testAllowModuleAccess($access_config, $notAccessibleList, $module, $entitled, $expected)
     {
-        $tokenMock = $this->getMockBuilder(TokenInterface::class)
+        $sugarVoterMock = $this->getMockBuilder(SugarVoter::class)
             ->disableOriginalConstructor()
+            ->setMethods(['getCurrentUserSubscriptions', 'getNotAccessibleModuleListByLicenseTypes'])
             ->getMock();
 
-        $sugarVoter = $this->getMockBuilder(SugarVoter::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getCurrentUserSubscriptions', 'getProtectedList'])
-            ->getMock();
-
-        $sugarVoter->expects($this->any())
+        $sugarVoterMock->expects($this->any())
             ->method('getCurrentUserSubscriptions')
             ->will($this->returnValue($entitled));
 
-        $sugarVoter->expects($this->any())
-            ->method('getProtectedList')
-            ->will($this->returnValue($access_config));
+        $sugarVoterMock->expects($this->any())
+            ->method('getNotAccessibleModuleListByLicenseTypes')
+            ->will($this->returnValue($notAccessibleList));
 
         $acmMock = $this->getMockBuilder(AccessControlManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRegisteredVoters', 'getUserToken'])
+            ->setMethods(['getRegisteredVoter', 'getAccessControlledList'])
             ->getMock();
 
         $acmMock->expects($this->any())
-            ->method('getRegisteredVoters')
-            ->will($this->returnValue([$sugarVoter]));
+            ->method('getRegisteredVoter')
+            ->will($this->returnValue($sugarVoterMock));
 
         $acmMock->expects($this->any())
-            ->method('getUserToken')
-            ->will($this->returnValue($tokenMock));
+            ->method('getAccessControlledList')
+            ->will($this->returnValue($access_config));
 
         TestReflection::callProtectedMethod($acmMock, 'init', []);
 
-        $this->assertSame($expected, $acmMock->allowModuleAccess($subject));
-        $this->assertSame($expected, $acmMock->allowDashletAccess($subject));
+        $this->assertSame($expected, $acmMock->allowModuleAccess($module));
     }
 
     public function allowModuleAccessProvider()
     {
         return [
+            // entitled has access
             [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                'MODULE_NAME',
+                ['BusinessCenters' => ['SUGAR_SERVE']],
+                ['not_BusinessCenters' => true],
+                'BusinessCenters',
                 ['SUGAR_SERVE'],
                 true,
             ],
+            // no entitlement
             [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                'MODULE_NAME',
+                ['BusinessCenters' => ['SUGAR_SERVE']],
+                ['BusinessCenters' => ['SUGAR_SERVE']],
+                'BusinessCenters',
                 [],
                 false,
             ],
+            // multiple entitlement
             [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                'MODULE_NAME',
+                ['BusinessCenters' => ['SUGAR_SERVE']],
+                ['BusinessCenters' => true],
+                'BusinessCenters',
                 ['NOT_SERVICE_CLOUD', 'SUGAR_SERVE'],
-                true,
-            ],
-            [
-                ['MODULE_NAME' => ['SUGAR_SERVE']],
-                'MODULE_NAME',
-                ['INVLIAD_SERVICE_CLOUD'],
                 false,
             ],
+            // not accessible list is empty
             [
+                ['BusinessCenters' => ['SUGAR_SERVE']],
+                [],
+                'MODULE_NAME_NOT_ON_THE_LIST',
+                ['NOT_SERVICE_CLOUD'],
+                true,
+            ],
+            // null paramenter
+            [
+                ['BusinessCenters' => ['SUGAR_SERVE']],
                 ['MODULE_NAME' => ['SUGAR_SERVE']],
                 null,
                 ['INVLIAD_SERVICE_CLOUD'],
@@ -241,41 +139,150 @@ class AccessControlManagerTest extends TestCase
     }
 
     /**
-     * @covers ::allowFieldAccess
+     * @covers ::allowDashletAccess
+     * @covers ::allowAccess
      *
-     * @dataProvider allowFieldAccessProvider
+     * @dataProvider allowDashletAccessProvider
      */
-    public function testAllowFieldAccess($access_config, $module, $field, $entitled, $expected)
+    public function testAllowDashletccess($access_config, $label, $entitled, $expected)
     {
-        $tokenMock = $this->getMockBuilder(TokenInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $sugarVoter = $this->getMockBuilder(SugarFieldVoter::class)
+        $sugarVoterMock = $this->getMockBuilder(SugarVoter::class)
             ->disableOriginalConstructor()
             ->setMethods(['getCurrentUserSubscriptions', 'getProtectedList'])
             ->getMock();
 
-        $sugarVoter->expects($this->any())
+        $sugarVoterMock->expects($this->any())
             ->method('getCurrentUserSubscriptions')
             ->will($this->returnValue($entitled));
 
-        $sugarVoter->expects($this->any())
+        $sugarVoterMock->expects($this->any())
             ->method('getProtectedList')
             ->will($this->returnValue($access_config));
 
         $acmMock = $this->getMockBuilder(AccessControlManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRegisteredVoters', 'getUserToken'])
+            ->setMethods(['getRegisteredVoter', 'getAccessControlledList'])
             ->getMock();
 
         $acmMock->expects($this->any())
-            ->method('getRegisteredVoters')
-            ->will($this->returnValue([$sugarVoter]));
+            ->method('getRegisteredVoter')
+            ->will($this->returnValue($sugarVoterMock));
 
         $acmMock->expects($this->any())
-            ->method('getUserToken')
-            ->will($this->returnValue($tokenMock));
+            ->method('getAccessControlledList')
+            ->will($this->returnValue($access_config));
+
+        TestReflection::callProtectedMethod($acmMock, 'init', []);
+
+        $this->assertSame($expected, $acmMock->allowDashletAccess($label));
+    }
+
+    public function allowDashletAccessProvider()
+    {
+        return [
+            // entitled has access
+            [
+                [
+                    'activity-timeline' => ['SUGAR_SERVE'],
+                    'commentlog-dashlet' => ['SUGAR_SERVE'],
+                    'dashablerecord' => ['SUGAR_SERVE']
+                ],
+                'activity-timeline',
+                ['SUGAR_SERVE'],
+                true,
+            ],
+            // no entitlement
+            [
+                [
+                    'activity-timeline' => ['SUGAR_SERVE'],
+                    'commentlog-dashlet' => ['SUGAR_SERVE'],
+                    'dashablerecord' => ['SUGAR_SERVE']
+                ],
+                'activity-timeline',
+                [],
+                false,
+            ],
+            // multiple entitlement
+            [
+                [
+                    'activity-timeline' => ['SUGAR_SERVE'],
+                    'commentlog-dashlet' => ['SUGAR_SERVE'],
+                    'dashablerecord' => ['SUGAR_SERVE']
+                ],
+                'commentlog-dashlet',
+                ['NOT_SERVICE_CLOUD', 'SUGAR_SERVE'],
+                true,
+            ],
+            // other entitlement
+            [
+                [
+                    'activity-timeline' => ['SUGAR_SERVE'],
+                    'commentlog-dashlet' => ['SUGAR_SERVE'],
+                    'dashablerecord' => ['SUGAR_SERVE']
+                ],
+                'commentlog-dashlet',
+                ['SUGAR_SALE'],
+                false,
+            ],
+            // not on controlled list
+            [
+                [
+                    'activity-timeline' => ['SUGAR_SERVE'],
+                    'commentlog-dashlet' => ['SUGAR_SERVE'],
+                    'dashablerecord' => ['SUGAR_SERVE']
+                ],
+                'not_controlled_dashlet',
+                ['NOT_SERVICE_CLOUD'],
+                true,
+            ],
+            // null paramenter
+            [
+                [
+                    'activity-timeline' => ['SUGAR_SERVE'],
+                    'commentlog-dashlet' => ['SUGAR_SERVE'],
+                    'dashablerecord' => ['SUGAR_SERVE']
+                ],
+                null,
+                ['SERVICE_CLOUD'],
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::allowFieldAccess
+     * @covers ::allowAccess
+     * @covers ::isAccessControlled
+     *
+     * @dataProvider allowFieldAccessProvider
+     */
+    public function testAllowFieldAccess($access_config, $module, $field, $entitled, $expected)
+    {
+        $sugarVoterMock = $this->getMockBuilder(SugarFieldVoter::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getCurrentUserSubscriptions', 'getProtectedList'])
+            ->getMock();
+
+        $sugarVoterMock->expects($this->any())
+            ->method('getCurrentUserSubscriptions')
+            ->will($this->returnValue($entitled));
+
+        $sugarVoterMock->expects($this->any())
+            ->method('getProtectedList')
+            ->will($this->returnValue($access_config));
+
+        $acmMock = $this->getMockBuilder(AccessControlManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRegisteredVoter', 'getAccessControlledList'])
+            ->getMock();
+
+        $acmMock->expects($this->any())
+            ->method('getRegisteredVoter')
+            ->will($this->returnValue($sugarVoterMock));
+
+        $acmMock->expects($this->any())
+            ->method('getAccessControlledList')
+            ->will($this->returnValue($access_config));
 
         TestReflection::callProtectedMethod($acmMock, 'init', []);
 
@@ -286,36 +293,36 @@ class AccessControlManagerTest extends TestCase
     {
         return [
             [
-                ['MODULE1' => ['field1' => ['SUGAR_SERVE']]],
-                'MODULE1',
+                ['BusinessCenters' => ['field1' => ['SUGAR_SERVE']]],
+                'BusinessCenters',
                 'field1',
                 ['SUGAR_SERVE'],
                 true,
             ],
             [
-                ['MODULE1' => ['field1' => ['SUGAR_SERVE']]],
-                'MODULE1',
+                ['BusinessCenters' => ['field1' => ['SUGAR_SERVE']]],
+                'BusinessCenters',
                 'field1_no_in_the_list',
                 ['SUGAR_SERVE'],
                 true,
             ],
             [
-                ['MODULE1' => ['field1' => ['SUGAR_SERVE']]],
-                'MODULE1',
+                ['BusinessCenters' => ['field1' => ['SUGAR_SERVE']]],
+                'BusinessCenters',
                 'field1',
                 ['NOT_SERVICE_CCLOUD'],
                 false,
             ],
             [
-                ['MODULE1' => ['field1' => ['SUGAR_SERVE']]],
+                ['BusinessCenters' => ['field1' => ['SUGAR_SERVE']]],
                 null,
                 'field1',
                 ['SUGAR_SERVE'],
                 true,
             ],
             [
-                ['MODULE1' => ['field1' => ['SUGAR_SERVE']]],
-                'MODULE1',
+                ['BusinessCenters' => ['field1' => ['SUGAR_SERVE']]],
+                'BusinessCenters',
                 null,
                 ['SUGAR_SERVE'],
                 true,
@@ -323,17 +330,84 @@ class AccessControlManagerTest extends TestCase
         ];
     }
 
-    protected function getSecureObejectMock(array $allowed)
+    /**
+     * @covers ::allowRecordAccess
+     * @covers ::allowAccess
+     * @covers ::isAccessControlled
+     *
+     * @dataProvider allowRecordAccessProvider
+     */
+    public function testAllowRecordAccess($access_config, $module, $id, $entitled, $expected)
     {
-        $mock = $this->getMockBuilder(SecureObjectInterface::class)
+        $sugarVoterMock = $this->getMockBuilder(SugarRecordVoter::class)
             ->disableOriginalConstructor()
-            ->setMethods(['allowAccess', 'getCurrentUserSubscriptions'])
+            ->setMethods(['getCurrentUserSubscriptions', 'getProtectedList'])
             ->getMock();
 
-        $mock->expects($this->any())
-            ->method('allowAccess')
-            ->will($this->returnValue($allowed));
+        $sugarVoterMock->expects($this->any())
+            ->method('getCurrentUserSubscriptions')
+            ->will($this->returnValue($entitled));
 
-        return $mock;
+        $sugarVoterMock->expects($this->any())
+            ->method('getProtectedList')
+            ->will($this->returnValue($access_config));
+
+        $acmMock = $this->getMockBuilder(AccessControlManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRegisteredVoter', 'getAccessControlledList'])
+            ->getMock();
+
+        $acmMock->expects($this->any())
+            ->method('getRegisteredVoter')
+            ->will($this->returnValue($sugarVoterMock));
+
+        $acmMock->expects($this->any())
+            ->method('getAccessControlledList')
+            ->will($this->returnValue($access_config));
+
+        TestReflection::callProtectedMethod($acmMock, 'init', []);
+
+        $this->assertSame($expected, $acmMock->allowRecordAccess($module, $id));
+    }
+
+    public function allowRecordAccessProvider()
+    {
+        return [
+            [
+                ['BusinessCenters' => ['random_id' => ['SUGAR_SERVE']]],
+                'BusinessCenters',
+                'random_id',
+                ['SUGAR_SERVE'],
+                true,
+            ],
+            [
+                ['BusinessCenters' => ['random_id' => ['SUGAR_SERVE']]],
+                'BusinessCenters',
+                'random_id_no_in_the_list',
+                ['SUGAR_SERVE'],
+                true,
+            ],
+            [
+                ['BusinessCenters' => ['random_id' => ['SUGAR_SERVE']]],
+                'BusinessCenters',
+                'random_id',
+                ['NOT_SERVICE_CCLOUD'],
+                false,
+            ],
+            [
+                ['BusinessCenters' => ['random_id' => ['SUGAR_SERVE']]],
+                null,
+                'random_id',
+                ['SUGAR_SERVE'],
+                true,
+            ],
+            [
+                ['BusinessCenters' => ['random_id' => ['SUGAR_SERVE']]],
+                'BusinessCenters',
+                null,
+                ['SUGAR_SERVE'],
+                true,
+            ],
+        ];
     }
 }

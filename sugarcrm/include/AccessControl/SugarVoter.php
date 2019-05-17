@@ -12,9 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\AccessControl;
 
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 // This section of code is a portion of the code referred
 // to as Critical Control Software under the End User
 // License Agreement.  Neither the Company nor the Users
@@ -22,26 +19,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Class SugarVoter, this class does access control to module and dashlet
- * using Symfony's Voter to make decision to access control modules, dashlets and reports
+ *
  * @package Sugarcrm\Sugarcrm\AccessControl
  */
-class SugarVoter extends Voter
+class SugarVoter implements SugarVoterInterface
 {
-    /**
-     * access control configuration file.
-     */
-    const ACCESS_CONFIG_FILE = 'access_config.json';
-    /**
-     * list of valid subscriptions
-     * @var array
-     */
     protected $subscriptions = [];
-
-    /**
-     * access configuration
-     * @var array
-     */
-    protected $access_config = [];
 
     /**
      * supported keys in access_config.php
@@ -89,71 +72,67 @@ class SugarVoter extends Voter
      */
     protected function getProtectedList(string $key)
     {
-        if (empty($this->access_config)) {
-            $this->loadAccessConfig();
-        }
-
-        if (isset($this->access_config[$key])) {
-            return $this->access_config[$key];
-        }
-
-        return [];
+        return AccessConfigurator::instance()->getAccessControlledList($key);
     }
 
     /**
-     * load access config from disk
+     * @return array|mixed
      */
-    protected function loadAccessConfig()
+    protected function getNotAccessibleModuleListByLicenseTypes()
     {
-        if (file_exists(self::ACCESS_CONFIG_FILE)) {
-            $accConfig = file_get_contents(self::ACCESS_CONFIG_FILE);
-            $this->access_config = json_decode($accConfig, true);
-            return;
-        }
-
-        throw new \Exception("access config file doesn't exist: " . self::ACCESS_CONFIG_FILE);
+        $subscriptions = $this->getCurrentUserSubscriptions();
+        return AccessConfigurator::instance()->getNotAcceccibleModuleListByLicenseTypes($subscriptions);
+    }
+    /**
+     * $key
+     * @param string $key section key in access_config file
+     * @return bool
+     */
+    protected function supports(string $key) : bool
+    {
+        return in_array($key, $this->getSupportedKeys());
     }
 
     /**
-     *
-     * $subject is in array format, i.e.
-     * ['MODULE' => 'SECURED_MODULE_NAME']
-     * or
-     * ['DASHLET' => 'SECURED_DASHLET_NAME']
-     *
-     * {@inheritdoc}
+     * get section keys this vote is responsible for
+     * @return array
      */
-    protected function supports($attribute, $subject)
+    protected function getSupportedKeys() : array
     {
-        if (!is_array($subject) || count($subject) != 1 || empty(array_keys($subject)[0])) {
-            return false;
-        }
-
-        $key = array_keys($subject)[0];
-
-        if (!in_array($key, $this->supportedKeys)) {
-            return false;
-        }
-
-        if (!isset($this->getProtectedList($key)[array_values($subject)[0]])) {
-            return false;
-        }
-
-        return true;
+        return $this->supportedKeys;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    public function vote(string $key, string $subject, ?string $value = null) : bool
     {
-        $entitled = $this->getCurrentUserSubscriptions();
-        if (isset($this->getProtectedList(array_keys($subject)[0])[array_values($subject)[0]])
-            && array_intersect($entitled, $this->getProtectedList(array_keys($subject)[0])[array_values($subject)[0]])
-        ) {
+        if (!$this->supports($key)) {
             return true;
         }
 
-        return false;
+        $entitled = $this->getCurrentUserSubscriptions();
+        // no valid subscription
+        if (empty($entitled)) {
+            return false;
+        }
+
+        if ($key === AccessControlManager::MODULES_KEY) {
+            $notAccessibleList = $this->getNotAccessibleModuleListByLicenseTypes();
+            if (empty($notAccessibleList) || !isset($notAccessibleList[$subject])) {
+                return true;
+            }
+
+            return false;
+        }
+
+        if ($key === AccessControlManager::DASHLETS_KEY) {
+            $controlledList = $this->getProtectedList($key);
+            if (!isset($controlledList[$subject]) || array_intersect($entitled, $controlledList[$subject])) {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
