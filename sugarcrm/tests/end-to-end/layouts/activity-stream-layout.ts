@@ -10,6 +10,7 @@
  */
 
 import {BaseView} from '@sugarcrm/seedbed';
+import {KeyCodes} from '../step_definitions/steps-helper';
 /**
  * Represents a Detail/Record page layout.
  *
@@ -70,8 +71,9 @@ export default class ActivityStreamLayout extends BaseView {
         await this.driver.setValue(selector, value);
         await this.driver.waitForApp();
         // The delay is needed to properly reference an existing record in activity message
-        await this.driver.pause(3000);
-        await this.driver.keys('\uE007');
+        await this.driver.pause(2000);
+        // Press Enter
+        await this.driver.keys(KeyCodes.ENTER);
         await this.driver.waitForApp();
         await this.driver.click(this.$(`omnibar.addpost`));
         await this.driver.waitForApp();

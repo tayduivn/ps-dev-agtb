@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {seedbed, When} from '@sugarcrm/seedbed';
+import {seedbed, stepsHelper, When} from '@sugarcrm/seedbed';
 import AdminMenuCmp from '../components/admin-menu-cmp';
 import AdminPanelLayout from '../layouts/admin-panel-layout';
 import BWCEditView from '../views/bwc-edit-view';
@@ -23,6 +23,8 @@ When<string, any>(
         await layout.clickButton(btnName);
         await this.driver.pause(4000);
         await this.driver.frame(null);
+        await this.driver.pause(10000);
+        await stepsHelper.updateMetadata();
     },
     { waitForApp: true }
 );
@@ -135,8 +137,8 @@ export const navigateToFrame = async function (frameName: any) {
 
     if (frameName !== null ) {
         await seedbed.client.driver.waitForVisible(`#${frameName}`);
-        await seedbed.client.driver.pause(1000);
+        await seedbed.client.driver.pause(2000);
     }
     await seedbed.client.driver.frame(frameName);
-    await seedbed.client.driver.pause(2000);
+    await seedbed.client.driver.pause(3000);
 };

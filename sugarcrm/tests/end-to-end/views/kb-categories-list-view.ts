@@ -15,6 +15,7 @@
 import BaseView from './base-view';
 import * as _ from 'lodash';
 import KbListItemView from './kb-categories-list-item-view';
+import {KeyCodes} from '../step_definitions/steps-helper';
 
 /**
  * @class KbCategoriesListView
@@ -56,7 +57,7 @@ export class KbCategoriesListView extends BaseView {
     public async createNewCategory(categoryName: string): Promise<any> {
         await this.driver.keys(categoryName);
         // Press <enter>
-        await this.driver.keys('\uE007');
+        await this.driver.keys(KeyCodes.ENTER);
         await this.driver.waitForApp();
     }
 
@@ -86,7 +87,7 @@ export class KbCategoriesListView extends BaseView {
         await this.driver.click(this.globalSelectors['edit']);
         await this.driver.keys(val);
         // Press enter
-        await this.driver.keys('\uE007');
+        await this.driver.keys(KeyCodes.ENTER);
     }
 
     /**

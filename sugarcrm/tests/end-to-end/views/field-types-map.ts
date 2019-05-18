@@ -42,6 +42,7 @@ import * as HtmleditableTinymceField from '../fields/htmleditable-tinymce-field'
 import * as CommentLogField from '../fields/commentlog-field';
 import * as QuotaPoint from '../fields/quotapoint-field';
 import * as NestedSetField from '../fields/nested-set-field';
+import * as TimeselectField from '../fields/timeselect-field';
 import * as DurationField from '../fields/duration-field';
 
 export const FIELD_TYPES__MAP = {
@@ -94,4 +95,5 @@ export const FIELD_TYPES__MAP = {
     'commentlog': CommentLogField,
     nestedset: NestedSetField,
     duration: DurationField,
+    timeselect: TimeselectField,
 };

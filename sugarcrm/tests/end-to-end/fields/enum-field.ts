@@ -16,7 +16,6 @@ import * as _ from 'lodash';
  * @class EnumField
  * @extends BaseField
  */
-
 export class Edit extends BaseField {
 
     protected itemSelector: String;
@@ -27,7 +26,7 @@ export class Edit extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}]',
             field: {
-                selector: '.select2-container.select2'
+                selector: '.select2-container.select2',
             }
         });
 
@@ -35,7 +34,6 @@ export class Edit extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
-
         await this.driver.click(this.$('field.selector'));
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${val}`);

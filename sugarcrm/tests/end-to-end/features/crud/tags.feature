@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_tags @job4
+@crud_modules_tags @job3
 Feature: Tags module verification
 
   Background:

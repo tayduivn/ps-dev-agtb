@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_contractTypes @job4
+@crud_modules_contractTypes @job1
 Feature: Contract Types module verification
 
   Background:

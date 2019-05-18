@@ -10,6 +10,7 @@
  */
 
 import BaseView from './base-view';
+import {KeyCodes} from '../step_definitions/steps-helper';
 
 /**
  * Represents Global Search page.
@@ -112,7 +113,7 @@ export default class SearchModuleMenuCmp extends BaseView {
         /** First click inside the Global Search input box before press "Enter" key */
         await this.driver.waitForVisibleAndClick(this.locator_fts_input);
         /** Have not figured out how to press enter except for calling the "keys" function and passing in unicode for "Enter" */
-        await this.driver.keys('\uE007');
+        await this.driver.keys(KeyCodes.ENTER);
     }
 
     /**
@@ -266,14 +267,4 @@ export default class SearchModuleMenuCmp extends BaseView {
         await this.clearSearchInputBox();
         return Promise.resolve(currentErr);
     }
-
-
 }
-
-
-
-
-
-
-
-

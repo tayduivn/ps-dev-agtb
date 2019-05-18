@@ -384,12 +384,6 @@ Feature: Customer Service Console Verification
     When I click Save button on #CallsDrawer header
     When I close alert
 
-    # Verify items in the Cases Interactions dashlet list
-    Then I verify list items in #Dashboard.CsCasesInteractionsDashlet
-      | name            | status   |
-      | Call (Held)     | Held     |
-      | Call (Canceled) | Not Held |
-
     # Expand record in the dashlet
     When I expand record *Co_1 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
 
@@ -438,14 +432,6 @@ Feature: Customer Service Console Verification
       | M_2 | 12/01/2020-05:00pm ~ 12/01/2020-06:00pm (1 hr) | Testing with Seedbed |
     When I click Save button on #MeetingsDrawer header
     When I close alert
-
-    # Verify items in the Cases Interactions dashlet list
-    Then I verify list items in #Dashboard.CsCasesInteractionsDashlet
-      | name            | status   |
-      | Meeting 1       | Held     |
-      | Meeting 2       | Not Held |
-      | Call (Held)     | Held     |
-      | Call (Canceled) | Not Held |
 
     # Expand record in the dashlet
     When I expand record *M_1 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList

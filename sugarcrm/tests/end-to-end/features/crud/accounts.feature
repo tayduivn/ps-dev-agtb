@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_accounts @job3
+@crud_modules_accounts @job4
 Feature: Accounts module verification
 
   Background:
