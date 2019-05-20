@@ -75,6 +75,9 @@
         var fields = this._extractFieldNames(this.meta);
         this.context.set('fields', fields);
 
+        this.context.resetLoadFlag();
+        this.context.set('skipFetch', false);
+
         this.leftColumns = [];
         this.addActions(this.meta);
 

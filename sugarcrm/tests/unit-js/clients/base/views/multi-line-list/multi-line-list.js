@@ -80,6 +80,17 @@ describe('Base.View.MultiLineListView', function() {
                 context: {get: getStub},
             }]);
         });
+
+        it('should set skipFetch to false if its true', function() {
+            sinon.collection.stub(view, '_super');
+            sinon.collection.stub(app.metadata, 'getView');
+            sinon.collection.stub(view, '_setCollectionOption');
+            sinon.collection.stub(view, '_extractFieldNames');
+            view.context = app.context.getContext();
+            view.context.set('skipFetch', 'true');
+            view.initialize({module: 'Cases'});
+            expect(view.context.get('skipFetch')).toBeFalsy();
+        });
     });
 
     describe('_extractFieldNames', function() {
