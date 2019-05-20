@@ -113,7 +113,7 @@ return array(
     ],
     'SugarChimp' => [
         [
-            'version' => '7.11.0',
+            'version' => '9.1.0a',
         ],
     ],
     'SugarChimp - Force Sugar 7 Upgrade' => [
@@ -425,11 +425,6 @@ return array(
     'Bug 79365 79076 Workaround' => [
         [
             'version' => '99999999',
-        ],
-    ],
-    'SugarChimp' => [
-        [
-            'version' => '*',
         ],
     ],
     'uRecordButtons' => [
