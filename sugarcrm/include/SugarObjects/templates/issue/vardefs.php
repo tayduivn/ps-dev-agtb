@@ -137,6 +137,16 @@ $vardefs = array (
             'audited' => true,
             'readonly' => true,
         ),
+        'pending_processing' => array(
+            'name' => 'pending_processing',
+            'vname' => 'LBL_PENDING_PROCESSING',
+            'type' => 'bool',
+            'default' => 0,
+            'reportable' => false,
+            'readonly' => true,
+            'studio' => false,
+            'processes' => true,
+        ),
         //END SUGARCRM flav=ent ONLY
 	),
 	'indices'=>array(

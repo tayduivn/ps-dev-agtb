@@ -34,6 +34,7 @@ $mod_strings = array (
     'LBL_FOLLOW_UP_DATETIME' => 'Follow Up Date',
     'LBL_RESOLVED_DATETIME' => 'Resolved Date',
     'LBL_TIME_TO_RESOLUTION' => 'Time to Resolution',
+    'LBL_PENDING_PROCESSING' => 'Pending Processing',
     //END SUGARCRM flav=ent ONLY
   'LBL_CREATED_BY' => 'Created by:',
   'LBL_DATE_CREATED' => 'Date Created:',

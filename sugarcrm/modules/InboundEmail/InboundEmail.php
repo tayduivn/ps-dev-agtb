@@ -2737,6 +2737,9 @@ class InboundEmail extends SugarBean {
 			$email->parent_id = $caseId;
 			// assign the email to the case owner
 			$email->assigned_user_id = $c->assigned_user_id;
+            // Tell the case to recalc its SLAs
+            $c->pending_processing = true;
+            $c->save();
 			$email->save();
 			$GLOBALS['log']->debug('InboundEmail found exactly 1 match for a case: '.$c->name);
 			return true;
@@ -2806,8 +2809,9 @@ class InboundEmail extends SugarBean {
 			$c->priority = 'P1';
 			$c->team_id = $_REQUEST['team_id'];
 			$c->team_set_id = $_REQUEST['team_set_id'];
-//BEGIN SUGARCRM flav=ent ONLY		
+//BEGIN SUGARCRM flav=ent ONLY
             $c->acl_team_set_id = $_REQUEST['acl_team_set_id'];
+            $c->pending_processing = true;
 //END SUGARCRM flav=ent ONLY
 			if(!empty($email->reply_to_email)) {
 				$contactAddr = $email->reply_to_email;

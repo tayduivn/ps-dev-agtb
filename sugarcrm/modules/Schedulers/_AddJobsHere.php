@@ -464,12 +464,12 @@ function cleanOldRecordLists() {
     global $timedate;
 
 	$GLOBALS['log']->info('----->Scheduler fired job of type cleanOldRecordLists()');
-    $delTime = time()-3600; // Nuke anything an hour old. 
+    $delTime = time()-3600; // Nuke anything an hour old.
 
     $hourAgo = $timedate->asDb($timedate->getNow()->modify("-1 hour"));
-    
+
     $db = DBManagerFactory::getInstance();
-    
+
     $query = "DELETE FROM record_list WHERE date_modified < '".$db->quote($hourAgo)."'";
     $db->query($query,true);
 

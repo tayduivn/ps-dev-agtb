@@ -509,6 +509,13 @@ class PMSEExpressionEvaluator
             throw new PMSEExpressionEvaluationException('Invalid Business Center string: ' . $value2, func_get_args());
         }
 
+        // If `$value1` is not a DateTime object then it is either a date string
+        // or the string `'now'`. Both of these strings can be made into a DateTime
+        // object, which we need for the date calculations coming up.
+        if (!$value1 instanceof DateTime) {
+            $value1 = new DateTime($value1);
+        }
+
         if ($bean->timezone) {
             $value1->setTimeZone(new DateTimeZone($bean->timezone)); // convert to business center time zone
         } else {
