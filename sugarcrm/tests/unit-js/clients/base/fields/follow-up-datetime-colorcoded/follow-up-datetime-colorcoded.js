@@ -25,8 +25,8 @@ describe('Base.Fields.FollowUpDatetimeColorCoded', function() {
             viewName: 'list',
             fieldDef: {
                 color_code_classes: {
-                    'overdue': 'red',
-                    'more_than_a_day': '',
+                    'overdue': 'expired',
+                    'more_than_a_day': 'white black-text',
                 },
             },
             module: module,
@@ -57,7 +57,7 @@ describe('Base.Fields.FollowUpDatetimeColorCoded', function() {
 
             var classes = field.$el.attr('class').split(' ');
             expect(classes.length).toEqual(3);
-            expect(classes).toContain('red');
+            expect(classes).toContain('expired');
             expect(classes).toContain('label');
             expect(classes).toContain('pill');
         });
@@ -70,9 +70,11 @@ describe('Base.Fields.FollowUpDatetimeColorCoded', function() {
             field.setColorCoding();
 
             var classes = field.$el.attr('class').split(' ');
-            expect(classes.length).toEqual(2);
+            expect(classes.length).toEqual(4);
             expect(classes).toContain('label');
             expect(classes).toContain('pill');
+            expect(classes).toContain('white');
+            expect(classes).toContain('black-text');
         });
 
         it('should not add any classes if the action is not list', function() {

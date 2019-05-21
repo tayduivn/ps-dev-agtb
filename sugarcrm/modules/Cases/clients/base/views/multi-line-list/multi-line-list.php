@@ -63,9 +63,9 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                             'readonly' => true,
                             'type' => 'follow-up-datetime-colorcoded',
                             'color_code_classes' => [
-                                'overdue' => 'red white-text',
-                                'in_a_day' => 'orange white-text',
-                                'more_than_a_day' => '',
+                                'overdue' => 'expired',
+                                'in_a_day' => 'soon-expired',
+                                'more_than_a_day' => 'white black-text',
                             ],
                         ],
                         [
