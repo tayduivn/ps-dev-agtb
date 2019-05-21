@@ -31,7 +31,7 @@
         _.each(this.meta.fields, function(field) {
             this.pipelineTypes.push(field);
         }, this);
-        //This is temporary and will be removed in the future when we stop using config defaults
+
         if (this.module === 'Opportunities') {
             this.context.get('model').set('pipeline_type', 'date_closed');
         } else {

@@ -93,7 +93,7 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
         $mock->run();
     }
 
-    public function dataProviderFixSalesStageField()
+    public function dataProviderFixSalesStageField_StageStatusNotClosed()
     {
         return array(
             //one rli that is the first index of the sale_stage_dom
@@ -102,26 +102,6 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
                     array('sales_stage' => 'Prospecting', 'date_closed' => '2019-01-01'),
                 ),
                 'Prospecting',
-            ),
-            //all rlis are closed won
-            array(
-                array(
-                    array('sales_stage' => 'Closed Won', 'date_closed' => '2019-01-01'),
-                    array('sales_stage' => 'Closed Won', 'date_closed' => '2019-02-01'),
-                    array('sales_stage' => 'Closed Won', 'date_closed' => '2019-05-01'),
-                    array('sales_stage' => 'Closed Won', 'date_closed' => '2019-03-01'),
-                ),
-                'Closed Won',
-            ),
-            //all rlis are closed lost
-            array(
-                array(
-                    array('sales_stage' => 'Closed Lost', 'date_closed' => '2019-01-01'),
-                    array('sales_stage' => 'Closed Lost', 'date_closed' => '2019-02-01'),
-                    array('sales_stage' => 'Closed Lost', 'date_closed' => '2019-05-01'),
-                    array('sales_stage' => 'Closed Lost', 'date_closed' => '2019-03-01'),
-                ),
-                'Closed Lost',
             ),
             array(
                 array(
@@ -158,11 +138,11 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
     }
 
     /**
-     * @dataProvider dataProviderFixSalesStageField
+     * @dataProvider dataProviderFixSalesStageField_StageStatusNotClosed
      *
      * @covers ::fixSalesStageField
      */
-    public function testFixSalesStageField_UpgradesData($data, $expected)
+    public function testFixSalesStageField_OppSalesStatusNotClosed_UpgradesDataBasedOnRlis($data, $expected)
     {
         $opp1 = SugarTestOpportunityUtilities::createOpportunity();
 
@@ -203,18 +183,23 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
     /**
      * @covers ::fixSalesStageField
      */
-    public function testFixSalesStageField_OppSalesStatusClosed_NoUpdates()
+    public function testFixSalesStageField_OppSalesStatusClosed_UpgradesData()
     {
         //Need to set to Opps view so that the Sales Status field doesn't calculate
         Opportunity::$settings = array(
             'opps_view_by' => 'Opportunities',
         );
 
+        $salesStageInProgress = 'In Progress';
+        $salesStageOption ='Prospecting';
+
         $oppWon = SugarTestOpportunityUtilities::createOpportunity();
+        $oppWon->sales_stage = $salesStageOption;
         $oppWon->sales_status = Opportunity::STATUS_CLOSED_WON;
         $oppWon->save();
 
         $oppLost = SugarTestOpportunityUtilities::createOpportunity();
+        $oppWon->sales_stage = $salesStageOption;
         $oppLost->sales_status = Opportunity::STATUS_CLOSED_LOST;
         $oppLost->save();
 
@@ -231,12 +216,12 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
         $oppBean->retrieve($oppWon->id);
 
         $this->assertSame($oppWon->sales_status, $oppBean->sales_status);
-        $this->assertSame($oppWon->sales_stage, $oppBean->sales_stage);
+        $this->assertSame(Opportunity::STATUS_CLOSED_WON, $oppBean->sales_stage);
 
         $oppBean = BeanFactory::newBean($oppLost->module_name);
         $oppBean->retrieve($oppLost->id);
 
         $this->assertSame($oppLost->sales_status, $oppBean->sales_status);
-        $this->assertSame($oppLost->sales_stage, $oppBean->sales_stage);
+        $this->assertSame(Opportunity::STATUS_CLOSED_LOST, $oppBean->sales_stage);
     }
 }

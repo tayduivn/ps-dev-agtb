@@ -53,85 +53,74 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldData extends UpgradeScript
             $closedLost = $forecastSettings['sales_stage_lost'];
         }
 
-        //Filter out opportunities that are dead or closed
-        $sql = "SELECT id FROM opportunities where sales_status in ('New','In Progress')";
+        //update all closed wons
+        $salesStage = Opportunity::STATUS_CLOSED_WON;
+        $sql = sprintf(
+            'UPDATE opportunities SET sales_stage = %s WHERE sales_status = %s and deleted=0',
+            $this->db->quoted($salesStage),
+            $this->db->quoted($salesStage)
+        );
+        $this->db->query($sql);
+
+        //update all closed lost
+        $salesStage = Opportunity::STATUS_CLOSED_LOST;
+        $sql = sprintf(
+            'UPDATE opportunities SET sales_stage = %s WHERE sales_status = %s and deleted=0',
+            $this->db->quoted($salesStage),
+            $this->db->quoted($salesStage)
+        );
+        $this->db->query($sql);
+
+        //update all active opprorunities
+        $sql = sprintf(
+            'SELECT id FROM opportunities where sales_status in (%s,%s) and deleted=0',
+            $this->db->quoted(Opportunity::STATUS_NEW),
+            $this->db->quoted(Opportunity::STATUS_IN_PROGRESS)
+        );
         $results = $this->db->query($sql);
+
+        //Retrieve the first option of the sales stage dom for default
+        reset($salesStageOptions);
+        $salesStageFirstOption = key($salesStageOptions);
 
         while ($row = $this->db->fetchRow($results)) {
             $opp = BeanFactory::getBean('Opportunities', $row['id']);
-            $salesStage = '';
 
-            $totalRli = count($opp->get_linked_beans('revenuelineitems', 'RevenueLineItems'));
+            //Need to determine the latest sales stage based on dropdown options for sales_stage dom
+            $latestSalesStageIndex = 0;
+            $latestSalesStageKey = $salesStageFirstOption;
 
-            $wonRli = count(
-                $opp->get_linked_beans(
-                    'revenuelineitems',
-                    'RevenueLineItems',
-                    array(),
-                    0,
-                    -1,
-                    0,
-                    "sales_stage in ('" . join("', '", $closedWon) . "')"
-                )
-            );
+            $rli = BeanFactory::newBean('RevenueLineItems');
+            $sq = new SugarQuery();
+            $sq->select('sales_stage');
+            $sq->from($rli)
+                ->where()->equals('opportunity_id', $opp->id);
+            $sq->where()->queryAnd()->addRaw("sales_stage not in ('" . join("', '", $closedLost) . "')");
+            $sq->where()->queryAnd()->addRaw("sales_stage not in ('" . join("', '", $closedWon) . "')");
+            $sq->groupBy('sales_stage');
 
-            $lostRli = count(
-                $opp->get_linked_beans(
-                    'revenuelineitems',
-                    'RevenueLineItems',
-                    array(),
-                    0,
-                    -1,
-                    0,
-                    "sales_stage in ('" . join("', '", $closedLost) . "')"
-                )
-            );
+            if (count($rlis = $sq->execute()) > 0) {
+                foreach ($rlis as $rli) {
+                    $stage = $rli['sales_stage'];
+                    $nextSalesStageOption = array_search(
+                        $stage,
+                        array_keys($salesStageOptions)
+                    );
 
-            if ($totalRli > 0) {
-                if ($lostRli === $totalRli) {
-                    $salesStage = Opportunity::STAGE_CLOSED_LOST;
-                } elseif ($lostRli + $wonRli === $totalRli) {
-                    $salesStage = Opportunity::STAGE_CLOSED_WON;
-                } else {
-                    //Need to determine the latst sales stage based on dropdown options for sales_stage dom
-                    $latestSalesStageIndex = 0;
-                    $latestSalesStageKey = '';
-
-                    $rli = BeanFactory::newBean('RevenueLineItems');
-                    $sq = new SugarQuery();
-                    $sq->select('sales_stage');
-                    $sq->from($rli)
-                        ->where()->equals('opportunity_id', $opp->id);
-                    $sq->where()->queryAnd()->addRaw("sales_stage not in ('" . join("', '", $closedLost) . "')");
-                    $sq->where()->queryAnd()->addRaw("sales_stage not in ('" . join("', '", $closedWon) . "')");
-                    $sq->groupBy('sales_stage');
-
-                    if (count($rlis = $sq->execute()) > 0) {
-                        foreach ($rlis as $rli) {
-                            $stage = $rli['sales_stage'];
-                            $nextSalesStageOption = array_search(
-                                $stage,
-                                array_keys($salesStageOptions)
-                            );
-
-                            if ($nextSalesStageOption >= $latestSalesStageIndex) {
-                                $latestSalesStageIndex = $nextSalesStageOption;
-                                $latestSalesStageKey =  $rli['sales_stage'];
-                            }
-                        }
+                    if ($nextSalesStageOption >= $latestSalesStageIndex) {
+                        $latestSalesStageIndex = $nextSalesStageOption;
+                        $latestSalesStageKey = $rli['sales_stage'];
                     }
-
-                    $salesStage = $latestSalesStageKey;
                 }
-
-                //update the opp with the current sales stage
-                $sql = sprintf(
-                    'UPDATE opportunities SET sales_stage = %s WHERE id = %s',
-                    $this->db->quoted($salesStage),
-                    $this->db->quoted($opp->id)
-                );
-                $this->db->query($sql);
             }
+
+            //update the opp with the current sales stage
+            $sql = sprintf(
+                'UPDATE opportunities SET sales_stage = %s WHERE id = %s',
+                $this->db->quoted($latestSalesStageKey),
+                $this->db->quoted($opp->id)
+            );
+            $this->db->query($sql);
         }
     }
 }

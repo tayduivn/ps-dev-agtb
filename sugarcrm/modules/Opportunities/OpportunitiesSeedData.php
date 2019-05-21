@@ -273,11 +273,16 @@ class OpportunitiesSeedData {
         $opp_date_closed = '';
         $opp_date_closed_timestamp = 0;
 
+        //Retrieve the first option of the sales stage dom for default
+        $salesStageOptions = $app_list_strings['sales_stage_dom'];
+        reset($salesStageOptions);
+        $salesStageFirstOption = key($salesStageOptions);
+
         $oppFieldDefs = $opp->getFieldDefinitions();
         $oppSalesStageFieldDef = $oppFieldDefs['sales_stage'];
 
-        $defaultSalesStage = isset($oppFieldDefs['default']) ? $oppFieldDefs['default'] : $app_list_strings['sales_stage_dom'][0];
-        $salesStageStageOptions = $app_list_strings['sales_stage_dom'];
+        $defaultSalesStage = isset($oppSalesStageFieldDef['default']) ? $oppSalesStageFieldDef['default'] : $salesStageFirstOption;
+
         $latestRliSalesStageIndex = 0;
         $latestRliSalesStageKey = '';
 
@@ -371,7 +376,7 @@ class OpportunitiesSeedData {
             $rli->created_by = $opp->created_by;
 
             //Determine the latest sales stage based on index of sales stage dom
-            $currentSalesStageIndex = array_search($rli->sales_stage, array_keys($salesStageStageOptions));
+            $currentSalesStageIndex = array_search($rli->sales_stage, array_keys($salesStageOptions));
             if ($currentSalesStageIndex >= $latestRliSalesStageIndex) {
                 $latestRliSalesStageIndex = $currentSalesStageIndex;
                 $latestRliSalesStageKey = $rli->sales_stage;
@@ -435,7 +440,7 @@ class OpportunitiesSeedData {
         //populate sales stage data
         if ($rlis_to_create === 0) {
             $opp->sales_stage = $defaultSalesStage;
-        } elseif ($closeLost === $rlis_to_create) {
+        } elseif ($closedLost === $rlis_to_create) {
             $opp->sales_stage = Opportunity::STATUS_CLOSED_LOST;
         } elseif ($closedWon + $closedLost === $rlis_to_create) {
             $opp->sales_stage = Opportunity::STATUS_CLOSED_WON;
