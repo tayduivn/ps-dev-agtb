@@ -34,7 +34,6 @@ export default class PipelineItemView extends BaseView {
                 },
                 tileName: '.name',
                 tileContent: '.tile-body span:nth-child({{tileContentRow}})'
-
             },
         });
 
@@ -67,12 +66,12 @@ export default class PipelineItemView extends BaseView {
     public async clickDeleteButton(itemName) {
 
         let selector = this.$('listItem.buttons.' + itemName.toLowerCase(), {id: this.id});
-        let rowSelector = this.$();
+        let rowSelector = this.$('listItem.tileName');
 
-        await this.clickListItem();
-        return this.driver
-            .execSync('scrollToSelector', [rowSelector])
-            .click(selector);
+        await this.driver.moveToObject(rowSelector);
+        await this.driver.waitForApp();
+        await this.driver.click(selector);
+        await this.driver.waitForApp();
     }
 
 

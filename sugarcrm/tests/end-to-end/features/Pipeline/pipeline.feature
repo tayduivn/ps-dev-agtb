@@ -8,13 +8,13 @@
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
 @job4
-Feature: Pipeline View feature
+Feature: Tile View feature
 
   Background:
     Given I am logged in
 
-  @pipelineView_opportunities
-  Scenario: Opportunities > Pipeline View
+  @pipelineView_opportunities @pr
+  Scenario: Tile View > Opportunities by Sales Stage
     Given Accounts records exist:
       | *name |
       | Acc_1 |
@@ -48,8 +48,8 @@ Feature: Pipeline View feature
       | Opp_1 | Acc_1        |
     # Provide input for the first (default) RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
-      | *name | date_closed | best_case | sales_stage   | quantity | likely_case |
-      | RLI1  | 04/19/2020  | 300       | Qualification | 5        | 2000        |
+      | *name | date_closed | sales_stage   | likely_case |
+      | RLI1  | 04/19/2020  | Qualification | 2000        |
     When I click Save button on #OpportunitiesDrawer header
     When I close alert
 
