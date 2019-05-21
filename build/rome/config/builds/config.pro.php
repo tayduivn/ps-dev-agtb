@@ -166,8 +166,12 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/pmse_Project/pmse_BpmProcessDefinition/LockedFieldsRelatedModulesUtilities.php' => 1,
 'sugarcrm/include/SugarFields/Fields/Locked_fields/SugarFieldLocked_fields.php' => 1,
 
-// Customer Service (ENT and above)
+// Customer Service
+'sugarcrm/clients/base/views/dashablerecord' => 1,
+'sugarcrm/clients/base/views/multi-line-list' => 1,
 'sugarcrm/modules/BusinessCenters' => 1,
+'sugarcrm/tests/unit-js/clients/base/views/dashablerecord' => 1,
+'sugarcrm/tests/unit-js/clients/base/views/multi-line-list' => 1,
 'sugarcrm/tests/unit-js/modules/BusinessCenters' => 1,
 'sugarcrm/tests/{old}/modules/BusinessCenters' => 1,
 'sugarcrm/themes/RacerX/images/icon_BusinessCenters_32.png' => 1,

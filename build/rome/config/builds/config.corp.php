@@ -163,8 +163,12 @@ $config['blackList']['corp'] = array(
 'sugarcrm/modules/Connectors/connectors/sources/ext/rest/insideview'=>1,
 'sugarcrm/modules/Connectors/connectors/sources/ext/eapm/facebook'=>1,
 
-// Customer Service (ENT and above)
+// Customer Service
+'sugarcrm/clients/base/views/dashablerecord' => 1,
+'sugarcrm/clients/base/views/multi-line-list' => 1,
 'sugarcrm/modules/BusinessCenters' => 1,
+'sugarcrm/tests/unit-js/clients/base/views/dashablerecord' => 1,
+'sugarcrm/tests/unit-js/clients/base/views/multi-line-list' => 1,
 'sugarcrm/tests/unit-js/modules/BusinessCenters' => 1,
 'sugarcrm/tests/{old}/modules/BusinessCenters' => 1,
 'sugarcrm/themes/RacerX/images/icon_BusinessCenters_32.png' => 1,
