@@ -236,7 +236,7 @@ class CommentLog extends Basic
                     continue;
                 }
                 $notification = $this->getNewBean('Notifications');
-                $user = BeanFactory::getBean('Users', $userId);
+                $user = $this->getBean('Users', $userId);
                 $userLanguage = !empty($user->preferred_language) ? $user->preferred_language : $defaultLang;
 
                 // we need to create a notification in the mentioned user's language
@@ -266,6 +266,18 @@ class CommentLog extends Basic
     public function getNewBean(string $module): SugarBean
     {
         return BeanFactory::newBean($module);
+    }
+
+    /**
+     * Wrapper for BeanFactory::getBean
+     * @param string $module The module name
+     * @param string $id The record id
+     * @return SugarBean|null
+     * @throws Exception
+     */
+    public function getBean(string $module, string $id): SugarBean
+    {
+        return BeanFactory::getBean($module, $id);
     }
 
     /**
