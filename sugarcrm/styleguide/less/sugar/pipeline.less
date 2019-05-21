@@ -121,7 +121,7 @@
           }
 
           thead th {
-            padding: 5px 15px;
+            padding: 5px;
             text-align: center;
             vertical-align: middle;
 
@@ -164,7 +164,7 @@
           }
 
           td {
-            padding: 5px 15px;
+            padding: 5px;
             text-align: center;
             vertical-align: top;
 
@@ -191,7 +191,7 @@
                     position: relative;
 
                     .pull-right {
-                      .delete {
+                      .btn.delete {
                         background: transparent none;
                         margin: 0;
                         padding: 0;
@@ -204,8 +204,21 @@
                       }
                     }
 
+                    &:hover {
+                      .btn.delete {
+                        position: absolute;
+                        top: 2px;
+                        right: 4px;
+                        display: inline;
+
+                        &:not(.disabled):hover > .fa {
+                          color: @black;
+                        }
+                      }
+                    }
+
                     .name {
-                      max-width: 250px;
+                      max-width: 200px;
                       color: @black;
                     }
                   }
@@ -217,25 +230,6 @@
                     .info-container {
                       width: 100%;
                       margin-left: 10px;
-                    }
-                  }
-                }
-
-                &:hover {
-                  .pipeline-tile {
-                    .tile-header {
-                      .pull-right {
-                        .delete {
-                          position: absolute;
-                          top: 2px;
-                          right: 4px;
-                          display: inline;
-
-                          &:not(.disabled):hover > i.fa {
-                            color: @black;
-                          }
-                        }
-                      }
                     }
                   }
                 }
@@ -304,143 +298,6 @@
         }
       }
 
-      .table-responsive {
-        .table {
-          thead th {
-            padding: 5px;
-            text-align: center;
-            vertical-align: middle;
-
-            .header-column {
-              color: @white;
-              width: 250px;
-              position: relative;
-              text-align: left;
-              font-size: 16px;
-              display: inline-block;
-
-              .header-span {
-                padding: 10px 0 2px 10px;
-                width: 92%;
-                margin: 0;
-
-                .header-text {
-                  border-bottom: 1px solid @white;
-                  font-size: 20px;
-                  padding: 0 0 10px;
-                }
-
-                .total-amount {
-                  padding: 10px 0 0;
-                }
-              }
-            }
-          }
-
-          td {
-            padding: 5px;
-            text-align: center;
-            vertical-align: top;
-
-            .column {
-              list-style-type: none;
-              margin-left: auto;
-              min-height: 100px;
-
-              .tile {
-                text-align: left;
-                border: 1px solid darken(@grayLighter, 10%);
-                border-radius: 4px;
-                margin: 0 auto 10px;
-                width: 250px;
-
-                .pipeline-tile {
-                  cursor: pointer;
-
-                  .tile-header {
-                    font-size: 14px;
-                    line-height: 25px;
-                    padding: 0 10px;
-                    background: @white;
-                    border-radius: 5px 5px 0 0;
-
-                    .pull-right {
-                      .delete {
-                        background: transparent none;
-                        margin: 0;
-                        padding: 0;
-                        display: none;
-
-                        i {
-                          font-size: 12px;
-                        }
-                      }
-                    }
-
-                    .name {
-                      max-width: 170px;
-                      color: @black;
-                    }
-                  }
-
-                  .tile-body {
-                    padding: 0 0 5px;
-                    border-bottom-right-radius: 5px;
-
-                    .info-container {
-                      width: 100%;
-                      margin-left: 10px;
-                    }
-                  }
-                }
-
-                &:hover {
-                  .pipeline-tile {
-                    .tile-header {
-                      .pull-right {
-                        a.delete {
-                          display: inline-block;
-                          border: none;
-
-                          &:not(.disabled):hover > i.fa {
-                            color: @black;
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        #loadingCell {
-          display: none;
-          position: absolute;
-          top: 200px;
-          width: 100%;
-
-          .block-footer {
-            border-top: none;
-            margin-top: 100px;
-
-            .loadingContainer {
-              margin: 0 auto;
-              width: 100px;
-              height: 100px;
-              text-align: center;
-
-              .loadingText {
-                color: @textColor;
-                width: 100px;
-                margin-top: 30px;
-              }
-            }
-          }
-        }
-      }
-
       .inEditMode {
         .tile {
           opacity: 0.5;
@@ -480,7 +337,7 @@
         border: 1px solid darken(@grayLighter, 10%);
         border-radius: 5px;
         margin: 0 auto 20px;
-        width: 250px;
+        width: 100%;
         background: darken(@grayLighter, 10%);
         height: 100px;
       }

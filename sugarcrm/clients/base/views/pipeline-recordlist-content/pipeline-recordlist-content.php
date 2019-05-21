@@ -21,7 +21,6 @@ $viewdefs['base']['view']['pipeline-recordlist-content'] = array(
                     array(
                         'type' => 'actiondropdown',
                         'name' => 'main_dropdown',
-                        'primary' => true,
                         'buttons' =>
                             array(
                                 array(

@@ -88,6 +88,20 @@
                         this.setDisabled(true);
                         button.attr('data-event', '');
                         button.tooltip({title: message});
+
+                        //BEGIN SUGARCRM flav=ent ONLY
+                        if (this.view.name === 'pipeline-recordlist-content') {
+                            var deleteButton = _.find(this.view.nestedFields, function(f) {
+                                return f.cid === this.cid;
+                            }, this);
+                            if (deleteButton) {
+                                deleteButton.options.def.tooltip = message;
+                                deleteButton.def.tooltip = message;
+                                deleteButton.$('a').attr('title', message);
+                                deleteButton.render();
+                            }
+                        }
+                        //END SUGARCRM flav=ent ONLY
                     } else {
                         this.setDisabled(false);
                         button.attr('data-event', this.def.event);

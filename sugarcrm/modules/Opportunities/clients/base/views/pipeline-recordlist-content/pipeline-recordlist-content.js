@@ -17,6 +17,22 @@
 ({
     extendsFrom: 'PipelineRecordlistContentView',
 
+
+    /**
+     * @inheritdoc
+     */
+    getFieldsForFetch: function() {
+        var fields = this._super('getFieldsForFetch');
+        var cfg = app.metadata.getModule('Opportunities', 'config');
+        var newFields = ['closed_revenue_line_items'];
+
+        if (cfg && cfg.opps_view_by) {
+            newFields.push(cfg.opps_view_by === 'RevenueLineItems' ? 'sales_status' : 'sales_stage');
+        }
+
+        return _.union(fields, newFields);
+    },
+
     /**
      * @inheritdoc
      */
