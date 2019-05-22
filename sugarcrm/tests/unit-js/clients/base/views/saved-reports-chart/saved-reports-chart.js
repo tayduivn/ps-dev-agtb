@@ -9,37 +9,61 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Base.View.Saved-Reports-Chart', function() {
-    var view, app, sandbox, context, meta;
-    beforeEach(function() {
-        sandbox = sinon.sandbox.create();
+    var app;
+    var context;
+    var layout;
+    var meta;
+    var view;
 
+    beforeEach(function() {
         app = SugarTest.app;
-        context = app.context.getContext();
+
+        SugarTest.loadPlugin('Dashlet');
+
+        context = new app.Context();
         context.set('model', new Backbone.Model());
         meta = {
             config: false
-        }
+        };
+        context.parent = new app.Context({module: 'Home'});
 
-        view = SugarTest.createView('base', '', 'saved-reports-chart', meta, context, false, null, true);
+        layout = SugarTest.createLayout(
+            'base',
+            'Home',
+            'list',
+            null,
+            context.parent
+        );
+
+        view = SugarTest.createView(
+            'base',
+            'Reports',
+            'saved-reports-chart',
+            meta,
+            context,
+            false,
+            layout,
+            true
+        );
         view.settings = new Backbone.Model({
             saved_report_id: 'a'
         })
     });
 
     afterEach(function() {
-        sandbox.restore();
-        app = undefined;
-        view = undefined;
+        sinon.collection.restore();
+        view.dispose();
+        layout.dispose();
+        app = null;
+        view = null;
+        layout = null;
     });
 
     describe('bindDataChange()', function() {
         var settingsStub;
-        beforeEach(function() {
-            settingsStub = sinon.stub(view.settings, 'on', function() {});
-        });
 
-        afterEach(function() {
-            settingsStub.restore();
+        beforeEach(function() {
+            settingsStub = sinon.collection.stub(view.settings, 'on');
         });
 
         it('should add change event listener on settings only when in config', function() {
@@ -57,6 +81,7 @@ describe('Base.View.Saved-Reports-Chart', function() {
 
     describe('parseAllSavedReports()', function() {
         var opts;
+
         beforeEach(function() {
             opts = {
                 records: [
@@ -65,14 +90,11 @@ describe('Base.View.Saved-Reports-Chart', function() {
                     {id: 'c', name: 'C'}
                 ]
             };
-            sinon.collection.stub(SugarTest.app.acl, 'hasAccess', function(action) {
-                return true;
-            });
+            sinon.collection.stub(SugarTest.app.acl, 'hasAccess').returns(true);
         });
 
         afterEach(function() {
-            opts = undefined;
-            SugarTest.app.acl.hasAccess.restore();
+            opts = null;
         });
 
         it('should build reportOptions correctly', function() {
@@ -83,6 +105,7 @@ describe('Base.View.Saved-Reports-Chart', function() {
 
     describe('setChartParams()', function() {
         var field;
+
         beforeEach(function() {
             SugarTest.loadComponent('base', 'field', 'chart');
             field = SugarTest.createField({
@@ -97,7 +120,7 @@ describe('Base.View.Saved-Reports-Chart', function() {
                 }
             });
 
-            sandbox.spy(field, 'displayNoData');
+            sinon.collection.spy(field, 'displayNoData');
 
             view.chartField = field;
         });
@@ -108,7 +131,6 @@ describe('Base.View.Saved-Reports-Chart', function() {
 
         it('will call displayNoData on chart field when no chart data is returned', function() {
             view.setChartParams('');
-
             expect(field.displayNoData).toHaveBeenCalled();
         });
     });
@@ -117,6 +139,7 @@ describe('Base.View.Saved-Reports-Chart', function() {
         var chartLabels;
         var dashConfig;
         var reportData;
+
         beforeEach(function() {
             chartLabels = context.get('chartLabels');
             dashConfig = context.get('dashConfig');
