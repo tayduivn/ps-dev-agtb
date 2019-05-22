@@ -97,9 +97,9 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = SugarTestRestUtilities::getRestServiceMock();
-        $operand = new EmailParticipants($api, $op, $filter);
+        $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->format();
+        $actual = $operand->format($api);
 
         $expected = [
             [
@@ -176,9 +176,9 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = SugarTestRestUtilities::getRestServiceMock();
-        $operand = new EmailParticipants($api, $op, $filter);
+        $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->format();
+        $actual = $operand->format($api);
 
         $expected = [
             [
@@ -226,9 +226,9 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = SugarTestRestUtilities::getRestServiceMock();
-        $operand = new EmailParticipants($api, $op, $filter);
+        $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->format();
+        $actual = $operand->format($api);
     }
 
     /**
@@ -248,8 +248,8 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = SugarTestRestUtilities::getRestServiceMock();
-        $operand = new EmailParticipants($api, $op, $filter);
+        $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->format();
+        $actual = $operand->format($api);
     }
 }

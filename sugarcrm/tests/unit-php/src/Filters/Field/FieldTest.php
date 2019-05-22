@@ -42,9 +42,9 @@ class FieldTest extends TestCase
     public function testFormat($filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new Field($api, 'name', $filter);
+        $field = new Field('name', $filter);
 
-        $actual = $field->format();
+        $actual = $field->format($api);
 
         $this->assertSame($filter, $actual);
     }
@@ -56,9 +56,9 @@ class FieldTest extends TestCase
     public function testUnformat($filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new Field($api, 'name', $filter);
+        $field = new Field('name', $filter);
 
-        $actual = $field->unformat();
+        $actual = $field->unformat($api);
 
         $this->assertSame($filter, $actual);
     }

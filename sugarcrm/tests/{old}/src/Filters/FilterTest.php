@@ -110,9 +110,9 @@ class FilterTest extends TestCase
         ];
 
         $api = SugarTestRestUtilities::getRestServiceMock();
-        $filter = new Filter($api, 'Emails', $filterDef);
+        $filter = new Filter('Emails', $filterDef);
 
-        $actual = $filter->format();
+        $actual = $filter->format($api);
 
         $expected = [
             [
@@ -379,9 +379,9 @@ class FilterTest extends TestCase
         ];
 
         $api = SugarTestRestUtilities::getRestServiceMock();
-        $filter = new Filter($api, 'Emails', $filterDef);
+        $filter = new Filter('Emails', $filterDef);
 
-        $actual = $filter->unformat();
+        $actual = $filter->unformat($api);
 
         $expected = [
             [
@@ -512,9 +512,9 @@ class FilterTest extends TestCase
         ];
 
         $api = SugarTestRestUtilities::getRestServiceMock();
-        $filter = new Filter($api, 'Emails', $filterDef);
+        $filter = new Filter('Emails', $filterDef);
 
-        $actual = $filter->format();
+        $actual = $filter->format($api);
 
         $expected = [
             [
@@ -768,9 +768,9 @@ class FilterTest extends TestCase
         ];
 
         $api = SugarTestRestUtilities::getRestServiceMock();
-        $filter = new Filter($api, 'Emails', $filterDef);
+        $filter = new Filter('Emails', $filterDef);
 
-        $actual = $filter->unformat();
+        $actual = $filter->unformat($api);
 
         $expected = [
             [

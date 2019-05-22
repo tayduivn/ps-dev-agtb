@@ -25,13 +25,6 @@ use Sugarcrm\Sugarcrm\Filters\Serializable;
 final class EmailParticipants implements Serializable
 {
     /**
-     * The API controller.
-     *
-     * @var ServiceBase
-     */
-    private $api;
-
-    /**
      * The filter definition.
      *
      * @var array
@@ -49,15 +42,13 @@ final class EmailParticipants implements Serializable
     /**
      * Constructor.
      *
-     * @param ServiceBase $api Provides the API context.
      * @param string $operand The operand: $from, $to, $cc, or $bcc.
      * @param array $filter The filter definition.
      *
      * @throws SugarApiExceptionInvalidParameter
      */
-    public function __construct(ServiceBase $api, string $operand, array $filter)
+    public function __construct(string $operand, array $filter)
     {
-        $this->api = $api;
         $this->filter = $filter;
 
         $links = [
@@ -80,13 +71,14 @@ final class EmailParticipants implements Serializable
      * Returns the filter definition after expanding it to include the names and
      * email addresses of each email participant.
      *
+     * @param ServiceBase $api Provides the API context.
+     *
      * @return array
      * @throws SugarApiExceptionNotFound If the parent record or email address can't
      * be found.
      */
-    public function format()
+    public function format(ServiceBase $api)
     {
-        $api = $this->api;
         $options = [
             'display_acl' => true,
             'args' => [
@@ -159,7 +151,7 @@ final class EmailParticipants implements Serializable
                     }
 
                     // Format the email address for API clients.
-                    $helper = ApiHelper::getHelper($this->api, $bean);
+                    $helper = ApiHelper::getHelper($api, $bean);
                     $data = $helper->formatForApi(
                         $bean,
                         ['id', 'email_address'],
@@ -182,9 +174,11 @@ final class EmailParticipants implements Serializable
      * Returns the filter definition after removing the names and email addresses of
      * each email participant.
      *
+     * @param ServiceBase $api Provides the API context.
+     *
      * @return array
      */
-    public function unformat()
+    public function unformat(ServiceBase $api)
     {
         return array_map(
             function ($value) {

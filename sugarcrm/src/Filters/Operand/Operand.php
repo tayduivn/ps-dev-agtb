@@ -21,16 +21,9 @@ use Sugarcrm\Sugarcrm\Filters\Serializable;
 class Operand implements Serializable
 {
     /**
-     * The API controller.
-     *
-     * @var ServiceBase
-     */
-    private $api;
-
-    /**
      * The filter definition.
      *
-     * @var array
+     * @var mixed Typically a string or array.
      */
     private $filter;
 
@@ -44,13 +37,11 @@ class Operand implements Serializable
     /**
      * Constructor.
      *
-     * @param ServiceBase $api Provides the API context.
      * @param string $operand The name of the operand.
-     * @param array $filter The filter definition.
+     * @param mixed $filter The scalar value of the operand or an array.
      */
-    public function __construct(ServiceBase $api, string $operand, array $filter)
+    public function __construct(string $operand, $filter)
     {
-        $this->api = $api;
         $this->operand = $operand;
         $this->filter = $filter;
     }
@@ -58,9 +49,11 @@ class Operand implements Serializable
     /**
      * Returns the filter definition without making any changes.
      *
-     * @return array
+     * @param ServiceBase $api Provides the API context.
+     *
+     * @return mixed
      */
-    public function format()
+    public function format(ServiceBase $api)
     {
         return $this->filter;
     }
@@ -68,9 +61,11 @@ class Operand implements Serializable
     /**
      * Returns the filter definition without making any changes.
      *
-     * @return array
+     * @param ServiceBase $api Provides the API context.
+     *
+     * @return mixed
      */
-    public function unformat()
+    public function unformat(ServiceBase $api)
     {
         return $this->filter;
     }

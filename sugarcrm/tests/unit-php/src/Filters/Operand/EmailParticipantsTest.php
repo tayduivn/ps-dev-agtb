@@ -37,7 +37,7 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $operand = new EmailParticipants($api, '$foo', $filter);
+        $operand = new EmailParticipants('$foo', $filter);
     }
 
     public function operandProvider()
@@ -122,9 +122,9 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $operand = new EmailParticipants($api, $op, $filter);
+        $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->unformat();
+        $actual = $operand->unformat($api);
 
         $expected = [
             [

@@ -25,13 +25,13 @@ class FiltersApiHelper extends SugarBeanApiHelper
         $moduleName = isset($data['module_name']) ? $data['module_name'] : $bean->module_name;
 
         if (isset($data['filter_definition'])) {
-            $filter = new Filter($this->api, $moduleName, $data['filter_definition']);
-            $data['filter_definition'] = $filter->format();
+            $filter = new Filter($moduleName, $data['filter_definition']);
+            $data['filter_definition'] = $filter->format($this->api);
         }
 
         if (isset($data['filter_template'])) {
-            $filter = new Filter($this->api, $moduleName, $data['filter_template']);
-            $data['filter_template'] = $filter->format();
+            $filter = new Filter($moduleName, $data['filter_template']);
+            $data['filter_template'] = $filter->format($this->api);
         }
 
         return $data;
@@ -46,13 +46,13 @@ class FiltersApiHelper extends SugarBeanApiHelper
         $moduleName = isset($submittedData['module_name']) ? $submittedData['module_name'] : $bean->module_name;
 
         if (isset($submittedData['filter_definition'])) {
-            $filter = new Filter($this->api, $moduleName, $submittedData['filter_definition']);
-            $submittedData['filter_definition'] = $filter->unformat();
+            $filter = new Filter($moduleName, $submittedData['filter_definition']);
+            $submittedData['filter_definition'] = $filter->unformat($this->api);
         }
 
         if (isset($submittedData['filter_template'])) {
-            $filter = new Filter($this->api, $moduleName, $submittedData['filter_template']);
-            $submittedData['filter_template'] = $filter->unformat();
+            $filter = new Filter($moduleName, $submittedData['filter_template']);
+            $submittedData['filter_template'] = $filter->unformat($this->api);
         }
 
         return parent::populateFromApi($bean, $submittedData, $options);

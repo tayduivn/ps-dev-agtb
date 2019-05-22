@@ -303,9 +303,9 @@ class FilterTest extends TestCase
     public function testFormat(string $module, array $filterDef, array $expected)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $filter = new Filter($api, $module, $filterDef);
+        $filter = new Filter($module, $filterDef);
 
-        $actual = $filter->format();
+        $actual = $filter->format($api);
 
         $this->assertEquals($expected, $actual);
     }
@@ -322,9 +322,9 @@ class FilterTest extends TestCase
     public function testUnformat(string $module, array $filterDef, array $expected)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $filter = new Filter($api, $module, $filterDef);
+        $filter = new Filter($module, $filterDef);
 
-        $actual = $filter->unformat();
+        $actual = $filter->unformat($api);
 
         $this->assertEquals($expected, $actual);
     }

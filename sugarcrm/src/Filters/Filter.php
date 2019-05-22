@@ -25,13 +25,6 @@ use Sugarcrm\Sugarcrm\Filters\Operand\Operand;
 final class Filter implements Serializable
 {
     /**
-     * The API controller.
-     *
-     * @var ServiceBase
-     */
-    private $api;
-
-    /**
      * The filter definition.
      *
      * @var array
@@ -48,13 +41,11 @@ final class Filter implements Serializable
     /**
      * Constructor.
      *
-     * @param ServiceBase $api Provides the API context.
      * @param string $module The module in which the filter definition is used.
      * @param array $filter A complete filter definition.
      */
-    public function __construct(ServiceBase $api, string $module, array $filter)
+    public function __construct(string $module, array $filter)
     {
-        $this->api = $api;
         $this->module = $module;
         $this->filter = $filter;
     }
@@ -63,14 +54,16 @@ final class Filter implements Serializable
      * Walks the filter definition, formatting each segment, and returns the filter
      * definition formatted for the API client.
      *
+     * @param ServiceBase $api Provides the API context.
+     *
      * @return array
      */
-    public function format()
+    public function format(ServiceBase $api)
     {
         return $this->doFilters(
             $this->filter,
-            function (Serializable $s) {
-                return $s->format();
+            function (Serializable $s) use ($api) {
+                return $s->format($api);
             }
         );
     }
@@ -79,21 +72,22 @@ final class Filter implements Serializable
      * Walks the filter definition, unformatting each segment, and returns the filter
      * definition unformatted for the database.
      *
+     * @param ServiceBase $api Provides the API context.
+     *
      * @return array
      */
-    public function unformat()
+    public function unformat(ServiceBase $api)
     {
         return $this->doFilters(
             $this->filter,
-            function (Serializable $s) {
-                return $s->unformat();
+            function (Serializable $s) use ($api) {
+                return $s->unformat($api);
             }
         );
     }
 
     /**
-     * Walks the filter definition and applies the mode's command(s) to each child
-     * segment.
+     * Walks the filter definition and applies the callback to each child segment.
      *
      * @param array $filters The filter defintion to walk.
      * @param callable $fn The function to apply when a field or operand is
@@ -125,7 +119,7 @@ final class Filter implements Serializable
     }
 
     /**
-     * Applies the mode's command(s) to a segment of a filter definition.
+     * Applies the callback to a segment of a filter definition.
      *
      * @param string $operand The operand or field name to which the filter belongs.
      * @param mixed $filter The filter definition under the operand or field name.
@@ -133,7 +127,7 @@ final class Filter implements Serializable
      * encountered.
      *
      * @return mixed The filter definition resulting from the application of the
-     * mode's command(s).
+     * callback.
      * @throws \SugarApiException The operand and field implementations throw
      * instances of {@link \SugarApiException} implementations.
      */
@@ -148,21 +142,19 @@ final class Filter implements Serializable
             case '$following':
             case '$owner':
             case '$tracker':
-                return $fn(new Operand($this->api, $operand, $filter));
+                return $fn(new Operand($operand, $filter));
             case '$from':
             case '$to':
             case '$cc':
             case '$bcc':
-                return $fn(
-                    new EmailParticipantsOperand($this->api, $operand, $filter)
-                );
+                return $fn(new EmailParticipantsOperand($operand, $filter));
             default:
                 return $this->doField($operand, $filter, $fn);
         }
     }
 
     /**
-     * Applies the mode's command(s) to a field segement of a filter definition.
+     * Applies the callback to a field segement of a filter definition.
      *
      * @param string $field The field name.
      * @param mixed $filter The field segment of a filter definition.
@@ -170,7 +162,7 @@ final class Filter implements Serializable
      * encountered.
      *
      * @return mixed The filter definition resulting from the application of the
-     * mode's command(s).
+     * callback.
      * @throws SugarApiExceptionInvalidParameter
      * @throws \SugarApiException The operand and field implementations throw
      * instances of {@link \SugarApiException} implementations.
@@ -196,9 +188,9 @@ final class Filter implements Serializable
                 );
             }
 
-            return $fn(new EmailParticipantsField($this->api, $field, $filter));
+            return $fn(new EmailParticipantsField($field, $filter));
         }
 
-        return $fn(new Field($this->api, $field, $filter));
+        return $fn(new Field($field, $filter));
     }
 }

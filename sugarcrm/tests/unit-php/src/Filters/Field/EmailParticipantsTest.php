@@ -39,7 +39,7 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new EmailParticipants($api, 'from_collection', $filter);
+        $field = new EmailParticipants('from_collection', $filter);
     }
 
     /**
@@ -65,7 +65,7 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new EmailParticipants($api, 'from_collection', $filter);
+        $field = new EmailParticipants('from_collection', $filter);
     }
 
     /**
@@ -84,7 +84,7 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new EmailParticipants($api, 'foo', $filter);
+        $field = new EmailParticipants('foo', $filter);
     }
 
     public function fieldNameProvider()
@@ -172,9 +172,9 @@ class EmailParticipantsTest extends TestCase
         ];
 
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new EmailParticipants($api, $fieldName, $filter);
+        $field = new EmailParticipants($fieldName, $filter);
 
-        $actual = $field->unformat();
+        $actual = $field->unformat($api);
 
         $expected = [
             '$in' => [

@@ -25,13 +25,6 @@ use Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants as EmailParticipantsOper
 final class EmailParticipants implements Serializable
 {
     /**
-     * The API controller.
-     *
-     * @var ServiceBase
-     */
-    private $api;
-
-    /**
      * The field name: from_collection, to_collection, cc_collection, or
      * bcc_collection.
      *
@@ -56,14 +49,13 @@ final class EmailParticipants implements Serializable
     /**
      * Constructor.
      *
-     * @param ServiceBase $api Provides the API context.
      * @param string $field The name of the field: from_collection, to_collection,
      * cc_collection, or bcc_collection.
      * @param array $filter The filter definition.
      *
      * @throws SugarApiExceptionInvalidParameter
      */
-    public function __construct(ServiceBase $api, string $field, array $filter)
+    public function __construct(string $field, array $filter)
     {
         if (!array_key_exists('$in', $filter)) {
             throw new SugarApiExceptionInvalidParameter(
@@ -84,7 +76,6 @@ final class EmailParticipants implements Serializable
             );
         }
 
-        $this->api = $api;
         $this->field = $field;
         $this->filter = $filter;
 
@@ -108,20 +99,18 @@ final class EmailParticipants implements Serializable
      * Returns the filter definition after expanding it to include the names and
      * email addresses of each email participant.
      *
+     * @param ServiceBase $api Provides the API context.
+     *
      * @return array
      * @throws SugarApiExceptionInvalidParameter
      * @throws \SugarApiExceptionNotFound
      */
-    public function format()
+    public function format(ServiceBase $api)
     {
         // Use a copy of the filter. We want to produce a new array.
         $filter = $this->filter;
-        $operand = new EmailParticipantsOperand(
-            $this->api,
-            $this->operand,
-            $filter['$in']
-        );
-        $filter['$in'] = $operand->format();
+        $operand = new EmailParticipantsOperand($this->operand, $filter['$in']);
+        $filter['$in'] = $operand->format($api);
 
         return $filter;
     }
@@ -130,19 +119,17 @@ final class EmailParticipants implements Serializable
      * Returns the filter definition after removing the names and email addresses of
      * each email participant.
      *
+     * @param ServiceBase $api Provides the API context.
+     *
      * @return array
      * @throws SugarApiExceptionInvalidParameter
      */
-    public function unformat()
+    public function unformat(ServiceBase $api)
     {
         // Use a copy of the filter. We want to produce a new array.
         $filter = $this->filter;
-        $operand = new EmailParticipantsOperand(
-            $this->api,
-            $this->operand,
-            $filter['$in']
-        );
-        $filter['$in'] = $operand->unformat();
+        $operand = new EmailParticipantsOperand($this->operand, $filter['$in']);
+        $filter['$in'] = $operand->unformat($api);
 
         return $filter;
     }

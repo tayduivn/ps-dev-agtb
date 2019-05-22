@@ -24,7 +24,48 @@ class OperandTest extends TestCase
     public function filterProvider()
     {
         return [
-            'last 30 days' => [
+            '$creator: link not specified' => [
+                '$creator',
+                '',
+            ],
+            '$creator: link is _this' => [
+                '$creator',
+                '_this',
+            ],
+            '$creator: link is specified' => [
+                '$creator',
+                'opportunities',
+            ],
+            '$favorite: link not specified' => [
+                '$favorite',
+                '',
+            ],
+            '$favorite: link is _this' => [
+                '$favorite',
+                '_this',
+            ],
+            '$favorite: link is specified' => [
+                '$favorite',
+                'opportunities',
+            ],
+            '$following' => [
+                '$following',
+                '',
+            ],
+            '$owner: link not specified' => [
+                '$owner',
+                '',
+            ],
+            '$owner: link is _this' => [
+                '$owner',
+                '_this',
+            ],
+            '$owner: link is specified' => [
+                '$owner',
+                'opportunities',
+            ],
+            '$tracker' => [
+                '$tracker',
                 '-30 DAY',
             ],
         ];
@@ -34,12 +75,12 @@ class OperandTest extends TestCase
      * @covers ::format
      * @dataProvider filterProvider
      */
-    public function testFormat($filter)
+    public function testFormat(string $operand, $filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $operand = new Operand($api, $filter);
+        $operand = new Operand($operand, $filter);
 
-        $actual = $operand->format();
+        $actual = $operand->format($api);
 
         $this->assertSame($filter, $actual);
     }
@@ -48,12 +89,12 @@ class OperandTest extends TestCase
      * @covers ::unformat
      * @dataProvider filterProvider
      */
-    public function testUnformat($filter)
+    public function testUnformat(string $operand, $filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $operand = new Operand($api, $filter);
+        $operand = new Operand($operand, $filter);
 
-        $actual = $operand->unformat();
+        $actual = $operand->unformat($api);
 
         $this->assertSame($filter, $actual);
     }

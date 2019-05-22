@@ -21,13 +21,6 @@ use Sugarcrm\Sugarcrm\Filters\Serializable;
 class Field implements Serializable
 {
     /**
-     * The API controller.
-     *
-     * @var ServiceBase
-     */
-    private $api;
-
-    /**
      * The field name.
      *
      * @var string
@@ -44,13 +37,11 @@ class Field implements Serializable
     /**
      * Constructor.
      *
-     * @param ServiceBase $api Provides the API context.
      * @param string $field The name of the field.
      * @param mixed $filter The scalar value of the field or an array.
      */
-    public function __construct(ServiceBase $api, string $field, $filter)
+    public function __construct(string $field, $filter)
     {
-        $this->api = $api;
         $this->field = $field;
         $this->filter = $filter;
     }
@@ -58,9 +49,11 @@ class Field implements Serializable
     /**
      * Returns the filter definition without making any changes.
      *
+     * @param ServiceBase $api Provides the API context.
+     *
      * @return mixed
      */
-    public function format()
+    public function format(ServiceBase $api)
     {
         return $this->filter;
     }
@@ -68,9 +61,11 @@ class Field implements Serializable
     /**
      * Returns the filter definition without making any changes.
      *
+     * @param ServiceBase $api Provides the API context.
+     *
      * @return mixed
      */
-    public function unformat()
+    public function unformat(ServiceBase $api)
     {
         return $this->filter;
     }
