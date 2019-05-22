@@ -158,4 +158,46 @@ class DashboardTest extends TestCase
         $this->assertSame('LBL_REPORT_DASHLET_TITLE_139', $rows[2][2]['view']['saved_report']);
     }
     //END SUGARCRM flav=ent ONLY
+
+    /**
+     * @param string $id ID of the OOTB Default Dashboard.
+     * @param string $name Name (actually translatable label) of the dashboard.
+     * @dataProvider providerOOTBDefaultDashboards
+     */
+    public function testOOTBDefaultDashboardsExist(string $id, string $name)
+    {
+        $sql = "SELECT name FROM dashboards WHERE id = '$id'";
+        $conn = DBManagerFactory::getConnection();
+        $data = $conn->executeQuery($sql)->fetchAll();
+        $this->assertCount(1, $data);
+        $actualName = $data[0]['name'];
+        $this->assertSame($name, $actualName);
+    }
+
+    public function providerOOTBDefaultDashboards(): array
+    {
+        return [
+            ['5d673e80-7b52-11e9-833f-f218983a1c3e', 'LBL_BUGS_LIST_DASHBOARD'],
+            ['5d6724f4-7b52-11e9-a725-f218983a1c3e', 'LBL_BUGS_RECORD_DASHBOARD'],
+            ['5d673c00-7b52-11e9-871e-f218983a1c3e', 'LBL_CASES_LIST_DASHBOARD'],
+            ['5d672260-7b52-11e9-93ba-f218983a1c3e', 'LBL_CASES_RECORD_DASHBOARD'],
+            ['5d672a1c-7b52-11e9-8ddb-f218983a1c3e', 'LBL_LEADS_LIST_DASHBOARD'],
+            ['5d670ec4-7b52-11e9-b9e0-f218983a1c3e', 'LBL_LEADS_RECORD_DASHBOARD'],
+            ['5d672ca6-7b52-11e9-a6f5-f218983a1c3e', 'LBL_OPPORTUNITIES_LIST_DASHBOARD'],
+            ['5d671a22-7b52-11e9-b2bc-f218983a1c3e', 'LBL_OPPORTUNITIES_RECORD_DASHBOARD'],
+            ['5d672f44-7b52-11e9-8c60-f218983a1c3e', 'LBL_TARGETS_LIST_DASHBOARD'],
+            ['5d671d06-7b52-11e9-83cf-f218983a1c3e', 'LBL_TARGETS_RECORD_DASHBOARD'],
+            ['5d6731c4-7b52-11e9-ab12-f218983a1c3e', 'LBL_TARGET_LISTS_LIST_DASHBOARD'],
+            ['5d6736ec-7b52-11e9-a00e-f218983a1c3e', 'LBL_QUOTED_LINE_ITEMS_LIST_DASHBOARD'],
+            ['5d673462-7b52-11e9-8929-f218983a1c3e', 'LBL_QUOTES_LIST_DASHBOARD'],
+            ['5d671fae-7b52-11e9-92e0-f218983a1c3e', 'LBL_QUOTES_RECORD_DASHBOARD'],
+            ['5d67396c-7b52-11e9-8826-f218983a1c3e', 'LBL_FORECASTS_DASHBOARD'],
+            // we already test agent workbench above. No need for it here
+
+            //BEGIN SUGARCRM flav=ent ONLY
+            ['5d67410a-7b52-11e9-afc1-f218983a1c3e', 'LBL_REVENUE_LINE_ITEMS_LIST_DASHBOARD'],
+            ['5d672788-7b52-11e9-8440-f218983a1c3e', 'LBL_REVENUE_LINE_ITEMS_RECORD_DASHBOARD'],
+            //END SUGARCRM flav=ent ONLY
+        ];
+    }
 }
