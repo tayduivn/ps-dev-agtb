@@ -3673,6 +3673,7 @@ Sincerely, SugarCRM',
     'LBL_SCHEDULE_MEETING' => 'Schedule Meeting',
     'LBL_CREATE_TASK' => 'Create Task',
     'LBL_REMOVE_FROM_FAVORITES' => 'Remove From My Favorites',
+    'LBL_CREATE_NOTE_OR_ATTACHMENT' => 'Create Note or Attachment',
     //web to lead
     'LBL_GENERATE_WEB_TO_LEAD_FORM' => 'Generate Form',
     'LBL_SAVE_WEB_TO_LEAD_FORM' =>'Save Web To Lead Form',

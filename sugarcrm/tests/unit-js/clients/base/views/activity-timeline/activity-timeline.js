@@ -134,15 +134,6 @@ describe('Base.View.ActivityTimeline', function() {
         });
     });
 
-    describe('_render', function() {
-        it('should hide the OOTB dashlet config icon', function() {
-            var hideDashletConfigStub = sinon.collection.stub(view, '_hideDashletConfig');
-
-            view._render();
-            expect(hideDashletConfigStub).toHaveBeenCalled();
-        });
-    });
-
     describe('_getModuleFieldMeta', function() {
         var getViewMetaStub;
 
@@ -336,6 +327,43 @@ describe('Base.View.ActivityTimeline', function() {
                 view._patchFieldsToModel(model);
                 expect(model.get('fieldsMeta')).toEqual(metaObj.meta);
             });
+        });
+    });
+
+    describe('createRecord', function() {
+        it('should open drawer with linked model', function() {
+            var model = app.data.createBean(moduleName);
+            view.createLinkModel = sinon.collection.stub().returns(model);
+            app.drawer = {
+                open: sinon.collection.stub()
+            };
+            view.createRecord(null, {module: 'Notes', link: 'notes'});
+            expect(app.drawer.open.lastCall.args[0]).toEqual({
+                layout: 'create',
+                context: {
+                    create: true,
+                    module: 'Notes',
+                    model: model
+                }
+            });
+        });
+    });
+
+    describe('reloadData', function() {
+        it('should reset collection and models', function() {
+            var fetchStub = sinon.collection.stub(view, 'fetchModels');
+            view.relatedCollection = {
+                reset: sinon.collection.stub(),
+                resetPagination: sinon.collection.stub()
+            };
+            view.fetchCompleted = true;
+            view.models = [{id: 1}];
+            view.reloadData();
+            expect(view.relatedCollection.reset).toHaveBeenCalled();
+            expect(view.relatedCollection.resetPagination).toHaveBeenCalled();
+            expect(view.fetchCompleted).toBeFalsy();
+            expect(view.models.length).toEqual(0);
+            expect(fetchStub).toHaveBeenCalled();
         });
     });
 });

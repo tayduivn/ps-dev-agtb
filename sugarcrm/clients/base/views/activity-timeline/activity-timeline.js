@@ -16,7 +16,7 @@
  */
 ({
 
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'LinkedModel'],
 
     /**
      * Object icon names for modules
@@ -130,25 +130,6 @@
         _.each(modules, function(module) {
             this.moduleFieldNames[module.module] = module.fields;
         }, this);
-    },
-
-    /**
-     * @inheritdoc
-     *
-     * Hide OOTB config buttion on OOTB dashlet container after render
-     */
-    _render: function() {
-        if (this.$el) {
-            this._super('_render');
-            this._hideDashletConfig();
-        }
-    },
-
-    /**
-     * Hide OOTB config buttion on OOTB dashlet container
-     */
-    _hideDashletConfig: function() {
-        this.$('.activity-timeline').closest('.dashlet').find('.dashlet-header .btn-group').addClass('hide');
     },
 
     /**
@@ -322,4 +303,44 @@
             });
         }
     },
+
+    /**
+     * Reload data.
+     */
+    reloadData: function() {
+        if (this.relatedCollection) {
+            this.relatedCollection.reset([], {silent: true});
+            this.relatedCollection.resetPagination();
+        }
+        this.fetchCompleted = false;
+        this.models = [];
+        this.loadData();
+    },
+
+    /**
+     * Create new record.
+     *
+     * @param {Event} event Click event.
+     * @param {Object} params
+     * @param {string} params.module Module name.
+     * @param {string} params.link Relationship link.
+     */
+    createRecord: function(event, params) {
+        var self = this;
+        var model = this.createLinkModel(this.baseRecord, params.link);
+
+        app.drawer.open({
+            layout: 'create',
+            context: {
+                create: true,
+                module: params.module,
+                model: model
+            }
+        }, function(context, model) {
+            if (!model) {
+                return;
+            }
+            self.reloadData();
+        });
+    }
 })
