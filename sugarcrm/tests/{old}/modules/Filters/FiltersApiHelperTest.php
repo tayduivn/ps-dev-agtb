@@ -46,7 +46,6 @@ class FiltersApiHelperTest extends TestCase
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doFilters
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doFilter
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doOperand
      * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::format
      * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::format
      * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::format
@@ -239,7 +238,6 @@ class FiltersApiHelperTest extends TestCase
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doFilters
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doFilter
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doOperand
      * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::unformat
      * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::unformat
      * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::unformat

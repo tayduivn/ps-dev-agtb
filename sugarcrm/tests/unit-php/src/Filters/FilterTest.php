@@ -295,7 +295,6 @@ class FilterTest extends TestCase
      * @covers ::format
      * @covers ::doFilters
      * @covers ::doFilter
-     * @covers ::doOperand
      * @covers ::doField
      * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::format
      * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::format
@@ -315,7 +314,6 @@ class FilterTest extends TestCase
      * @covers ::unformat
      * @covers ::doFilters
      * @covers ::doFilter
-     * @covers ::doOperand
      * @covers ::doField
      * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::unformat
      * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::unformat
