@@ -5608,6 +5608,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_AGENT_WORKBENCH_NUMBER' => 'Number',
     'LBL_AGENT_WORKBENCH_FOLLOW_UP' => 'Follow Up',
     'LBL_AGENT_WORKBENCH_PRIORITY_STATUS' => 'Priority/Status',
+    'LBL_AGENT_WORKBENCH_SUBJECT_DESCRIPTION' => 'Subject/Description',
 //END SUGARCRM flav=ent ONLY
 );
 

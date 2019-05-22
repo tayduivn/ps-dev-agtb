@@ -80,7 +80,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                 ],
                 [
                     'name' => 'name',
-                    'label' => 'LBL_LIST_SUBJECT',
+                    'label' => 'LBL_AGENT_WORKBENCH_SUBJECT_DESCRIPTION',
                     'width' => 'xlarge',
                     'subfields' => [
                         [
