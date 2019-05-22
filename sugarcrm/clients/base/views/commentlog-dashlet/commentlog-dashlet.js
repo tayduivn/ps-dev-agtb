@@ -37,7 +37,8 @@
     /**
      * Set up the comment log collection when init dashlet
      */
-    initDashlet: function() {
+    initDashlet: function(viewName) {
+        this._mode = viewName;
         this.setUpCollection();
     },
 

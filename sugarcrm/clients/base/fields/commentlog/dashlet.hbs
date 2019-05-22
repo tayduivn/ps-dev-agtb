@@ -48,10 +48,10 @@
             </li>
             {{/each}}
         {{else}}
-            {{#if collection.dataFetched}}
+            {{#if view.collection.dataFetched}}
             <em>{{str "LBL_COMMENTS_LOG_DASHLET_NO_COMMENTS"}}</em>
             {{else}}
-                <div class="block-footer">
+                <div class="block-footer tcenter">
                     {{loading 'LBL_ALERT_TITLE_LOADING'}}
                 </div>
             {{/if}}

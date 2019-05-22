@@ -18,6 +18,7 @@ $viewdefs['base']['view']['commentlog-dashlet'] = [
             'filter' => [
                 'view' => 'record',
             ],
+            'config' => [],
         ],
     ],
     'fields' => [

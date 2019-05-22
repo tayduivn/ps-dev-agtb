@@ -501,5 +501,14 @@ describe('commentlog field', function() {
             expect(loadDataStub).toHaveBeenCalled();
             expect(textarea.val()).toEqual('');
         });
+
+        it('should not work if this is a preview of the dashlet', function() {
+            field.view._mode = 'preview';
+            var bean = app.data.createBean('Commentlog');
+            var syncStub = sinon.collection.stub(bean, 'sync');
+            sinon.collection.stub(app.data, 'createRelatedBean').returns(bean);
+            field.save();
+            expect(syncStub).not.toHaveBeenCalled();
+        });
     });
 });

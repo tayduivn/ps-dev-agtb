@@ -267,6 +267,9 @@
      * Save a new comment on the dashlet
      */
     save: function() {
+        if (this.view._mode === 'preview') {
+            return;
+        }
         var el = this.getTextArea();
         var value = this.unformat(el.val());
         if (_.isEmpty(value)) {
