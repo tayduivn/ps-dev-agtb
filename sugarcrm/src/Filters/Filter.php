@@ -27,7 +27,7 @@ use Sugarcrm\Sugarcrm\Filters\Operand\Tracker;
 /**
  * Formats or unformats a complete filter definition.
  */
-final class Filter implements Filterable
+final class Filter implements Serializable
 {
     /**
      * The API controller.
@@ -46,7 +46,7 @@ final class Filter implements Filterable
     /**
      * `format` or `unformat`. Allows code for walking the filter to be reused for
      * both formatting and unformatting. The mode is used to determine which method
-     * to call on a {@link Filterable} object.
+     * to call on a {@link Serializable} object.
      *
      * @var string
      */
@@ -217,17 +217,17 @@ final class Filter implements Filterable
     }
 
     /**
-     * Applies the mode's command(s) to a {@link Filterable} object.
+     * Applies the mode's command(s) to a {@link Serializable} object.
      *
-     * @param Filterable $operand The operand or field to act upon.
+     * @param Serializable $operand The operand or field to act upon.
      *
      * @return mixed The filter definition resulting from the application of the
      * mode's command(s).
      * @throws SugarApiExceptionRequestMethodFailure If the mode is unknown.
-     * @throws \SugarApiException The {@link Filterable} implementations throw
+     * @throws \SugarApiException The {@link Serializable} implementations throw
      * instances of {@link \SugarApiException} implementations.
      */
-    private function doOperand(Filterable $operand)
+    private function doOperand(Serializable $operand)
     {
         switch ($this->mode) {
             case 'format':

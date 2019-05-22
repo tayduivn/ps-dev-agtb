@@ -13,15 +13,15 @@
 namespace Sugarcrm\Sugarcrm\Filters\Field;
 
 use ServiceBase;
-use Sugarcrm\Sugarcrm\Filters\Filterable;
-use Sugarcrm\Sugarcrm\Filters\FilterableDefaultImplementation;
+use Sugarcrm\Sugarcrm\Filters\Serializable;
+use Sugarcrm\Sugarcrm\Filters\SerializableDefaultImplementation;
 
 /**
  * Formats or unformats a filter for a standard field.
  */
-final class Scalar implements Filterable
+final class Scalar implements Serializable
 {
-    use FilterableDefaultImplementation;
+    use SerializableDefaultImplementation;
 
     /**
      * The API controller.

@@ -13,15 +13,15 @@
 namespace Sugarcrm\Sugarcrm\Filters\Operand;
 
 use ServiceBase;
-use Sugarcrm\Sugarcrm\Filters\Filterable;
-use Sugarcrm\Sugarcrm\Filters\FilterableDefaultImplementation;
+use Sugarcrm\Sugarcrm\Filters\Serializable;
+use Sugarcrm\Sugarcrm\Filters\SerializableDefaultImplementation;
 
 /**
  * Formats or unformats a $favorite filter.
  */
-final class Favorite implements Filterable
+final class Favorite implements Serializable
 {
-    use FilterableDefaultImplementation;
+    use SerializableDefaultImplementation;
 
     /**
      * The API controller.

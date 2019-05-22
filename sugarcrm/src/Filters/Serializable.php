@@ -13,10 +13,10 @@
 namespace Sugarcrm\Sugarcrm\Filters;
 
 /**
- * Filterable defines an interface for whole or parts of a filter definition to be
+ * Serializable defines an interface for whole or parts of a filter definition to be
  * formatted for an API client or database.
  */
-interface Filterable
+interface Serializable
 {
     /**
      * Returns a filter definition formatted for an API client.

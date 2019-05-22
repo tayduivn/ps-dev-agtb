@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Filters\Field;
 
 use ServiceBase;
 use SugarApiExceptionInvalidParameter;
-use Sugarcrm\Sugarcrm\Filters\Filterable;
+use Sugarcrm\Sugarcrm\Filters\Serializable;
 use Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants as EmailParticipantsOperand;
 
 /**
@@ -22,7 +22,7 @@ use Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants as EmailParticipantsOper
  * {@link \Email::$to_collection}, {@link \Email::$cc_collection}, or
  * {@link \Email::$bcc_collection}.
  */
-final class EmailParticipants implements Filterable
+final class EmailParticipants implements Serializable
 {
     /**
      * The API controller.

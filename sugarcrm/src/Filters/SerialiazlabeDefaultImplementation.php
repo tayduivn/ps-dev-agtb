@@ -13,10 +13,10 @@
 namespace Sugarcrm\Sugarcrm\Filters;
 
 /**
- * The default implementation of the {@link Filterable} interface. It simply returns
+ * The default implementation of the {@link Serializable} interface. It simply returns
  * the filter definition without making any changes.
  */
-trait FilterableDefaultImplementation
+trait SerializableDefaultImplementation
 {
     /**
      * The filter definition. Constructor injection is recommended.

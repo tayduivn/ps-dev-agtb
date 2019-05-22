@@ -17,12 +17,12 @@ use BeanFactory;
 use ServiceBase;
 use SugarApiExceptionInvalidParameter;
 use SugarApiExceptionNotFound;
-use Sugarcrm\Sugarcrm\Filters\Filterable;
+use Sugarcrm\Sugarcrm\Filters\Serializable;
 
 /**
  * Formats or unformats a $from, $to, $cc, or $bcc filter.
  */
-final class EmailParticipants implements Filterable
+final class EmailParticipants implements Serializable
 {
     /**
      * The API controller.
