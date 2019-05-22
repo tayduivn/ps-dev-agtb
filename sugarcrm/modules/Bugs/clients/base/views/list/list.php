@@ -85,16 +85,6 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                 ),
-                //BEGIN SUGARCRM flav=ent ONLY
-                array(
-                    'name' => 'time_to_resolution',
-                    'type' => 'friendly-time',
-                    'label' => 'LBL_TIME_TO_RESOLUTION',
-                    'readonly' => true,
-                    'default' => false,
-                    'enabled' => true,
-                ),
-                //END SUGARCRM flav=ent ONLY
             ),
 
         ),

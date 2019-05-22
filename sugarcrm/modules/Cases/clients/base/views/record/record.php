@@ -210,13 +210,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                     'nl2br' => true,
                     'span' => 12,
                 ),
-                //BEGIN SUGARCRM flav=ent ONLY
-                array(
-                    'name' => 'time_to_resolution',
-                    'type' => 'friendly-time',
-                    'readonly' => true,
-                ),
-                //END SUGARCRM flav=ent ONLY
                 array(),
                 array(
                     'name' => 'date_entered_by',

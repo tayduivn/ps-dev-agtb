@@ -176,13 +176,6 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
                     'nl2br' => true,
                     'span' => 12,
                 ),
-                //BEGIN SUGARCRM flav=ent ONLY
-                array(
-                    'name' => 'time_to_resolution',
-                    'readonly' => true,
-                    'type' => 'friendly-time',
-                ),
-                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'work_log',
                     'nl2br' => true,

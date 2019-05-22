@@ -97,28 +97,6 @@ class IssueTemplateTest extends TestCase
     }
 
     /**
-     * Checks that modules that should have time_to_resolution on the record
-     * view do so.
-     *
-     * @param string $module The module for which we would like to check that
-     *   time_to_resolution is on the record view.
-     * @dataProvider hasTimeToResolutionFieldOnRecordViewProvider
-     */
-    public function testCheckModuleHasTimeToResolutionFieldOnRecordView(string $module)
-    {
-        $this->assertContains('time_to_resolution', $this->manager->getModuleViewFields($module, 'record'));
-    }
-
-    public function hasTimeToResolutionFieldOnRecordViewProvider(): array
-    {
-        return [
-            ['Bugs'],
-            ['Cases'],
-            ['DataPrivacy'],
-        ];
-    }
-
-    /**
      * Checks that modules that should not have follow_up_datetime on the
      * record view do not.
      *

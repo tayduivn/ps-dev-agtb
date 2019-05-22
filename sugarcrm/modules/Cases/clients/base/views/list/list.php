@@ -81,30 +81,21 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                 ),
                 //BEGIN SUGARCRM flav=ent ONLY
                 array(
-                    'name' => 'time_to_resolution',
-                    'type' => 'friendly-time',
-                    'label' => 'LBL_TIME_TO_RESOLUTION',
-                    'default' => false,
-                    'enabled' => true,
-                    'readonly' => true,
-                ),
-                array(
                     'name' => 'business_center_name',
-                    'label' => 'LBL_TIME_TO_RESOLUTION',
+                    'label' => 'LBL_BUSINESS_CENTER_NAME',
                     'default' => false,
                     'enabled' => true,
                     'readonly' => true,
                 ),
                 array(
                     'name' => 'service_level',
-                    'label' => 'LBL_TIME_TO_RESOLUTION',
+                    'label' => 'LBL_SERVICE_LEVEL',
                     'default' => false,
                     'enabled' => true,
                     'readonly' => true,
                 ),
                 array(
                     'name' => 'follow_up_datetime',
-                    'type' => 'relative-time',
                     'label' => 'LBL_FOLLOW_UP',
                     'default' => false,
                     'enabled' => true,
