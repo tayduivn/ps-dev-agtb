@@ -127,8 +127,9 @@
      * @param {Array} filterDef
      */
     buildFilters: function(filterDef) {
-        this.offset = 0;
+        this.pipelineType = this.context.get('model').get('pipeline_type');
         this.pipelineFilters = filterDef || [];
+        this.offset = 0;
         this.loadData();
     },
 
@@ -153,7 +154,7 @@
     getTableHeader: function() {
         var headerColors = this.getColumnColors();
 
-        if (this.context.get('model').get('pipeline_type') !== 'date_closed') {
+        if (this.pipelineType !== 'date_closed') {
             var headerField = this.pipelineConfig.table_header[this.module] || '';
 
             if (!app.acl.hasAccessToModel('read', this.model, headerField)) {
@@ -277,8 +278,7 @@
      * @return {*} a collection object
      */
     getColumnCollection: function(model) {
-        var contextModel = this.context.get('model');
-        if (contextModel && contextModel.get('pipeline_type') === 'date_closed') {
+        if (this.pipelineType === 'date_closed') {
             return _.findWhere(this.recordsToDisplay, {
                 headerName: app.date(model.get(this.headerField)).format('MMMM YYYY')
             });
@@ -306,7 +306,7 @@
         var filter = [];
         var filterObj = {};
 
-        if (this.context.get('model').get('pipeline_type') !== 'date_closed') {
+        if (this.pipelineType !== 'date_closed') {
             filterObj[this.headerField] = {'$equals': column.headerKey};
             filter.push(filterObj);
             _.each(this.pipelineFilters, function(filterDef) {
@@ -405,6 +405,11 @@
         app.api.call('create', app.api.buildURL(null, 'bulk'), requests, {
             success: function(dataColumns) {
                 app.alert.dismiss('pipeline-records-loading');
+                if (dataColumns.length !== self.recordsToDisplay.length) {
+                    // the data being returned is not for this view
+                    // user must've clicked several tabs before data finished loading
+                    return;
+                }
                 _.each(self.recordsToDisplay, function(column, index) {
                     var records = app.data.createBeanCollection(self.module);
                     if (!_.isEmpty(column.records.models)) {

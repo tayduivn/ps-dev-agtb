@@ -39,17 +39,24 @@
     saveModel: function(model, ui) {
         var self = this;
         var ctxModel = this.context.get('model');
+        var $ulEl = this.$(ui.item).parent('ul');
+        var headerFieldValue = $ulEl.data('column-name');
 
         if (ctxModel && ctxModel.get('pipeline_type') === 'date_closed') {
-            var $ulEl = this.$(ui.item).parent('ul');
-            var dateData = $ulEl.data('column-name');
-            var dateClosed = app.date(dateData, 'MMMM YYYY')
+            var dateClosed = app.date(headerFieldValue, 'MMMM YYYY')
                 .endOf('month')
                 .formatUser(true);
 
             model.set('date_closed', dateClosed);
         } else {
-            model.set(this.headerField, this.$(ui.item).parent('ul').data('column-name'));
+            model.set(this.headerField, headerFieldValue);
+
+            if (this.headerField === 'sales_stage') {
+                model.set({
+                    probability: app.utils.getProbabilityBySalesStage(headerFieldValue),
+                    commit_stage: app.utils.getCommitStageBySalesStage(headerFieldValue)
+                });
+            }
         }
 
         model.save({}, {

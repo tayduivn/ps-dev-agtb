@@ -1136,6 +1136,48 @@
                 }
 
                 return origin + window.location.pathname;
+            },
+
+            /**
+             * Returns the Probability percent given a sales stage
+             *
+             * @param {string} salesStage The sales stage to check
+             * @return {number|boolean} The whole value of the percent 60 = "60%"
+             */
+            getProbabilityBySalesStage: function(salesStage) {
+                var cfg = app.metadata.getModule('Forecasts', 'config');
+                if (!cfg.is_setup) {
+                    return false;
+                }
+                var salesProb = app.lang.getAppListStrings('sales_probability_dom');
+
+                return salesProb[salesStage];
+            },
+
+            /**
+             * Returns the Commit Stage given a sales stage
+             *
+             * @param {string} salesStage The sales stage to check
+             * @return {string|boolean} The Commit Stage value
+             */
+            getCommitStageBySalesStage: function(salesStage) {
+                var cfg = app.metadata.getModule('Forecasts', 'config');
+                if (!cfg.is_setup) {
+                    return false;
+                }
+                var probability = app.utils.getProbabilityBySalesStage(salesStage);
+                var ranges = cfg[cfg.forecast_ranges + '_ranges'];
+                var stage = '';
+
+                _.find(ranges, function(range, index) {
+                    if (probability >= range.min && probability <= range.max) {
+                        stage = index;
+                        return true;
+                    }
+                    return false;
+                });
+
+                return stage;
             }
         });
     });

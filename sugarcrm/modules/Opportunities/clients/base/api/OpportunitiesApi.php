@@ -40,7 +40,7 @@ class OpportunitiesApi extends ModuleApi
             $data = array();
             $bean = $this->loadBean($api, $args, 'save');
 
-            foreach (['date_closed', 'sales_stage'] as $prop) {
+            foreach (['date_closed', 'sales_stage', 'commit_stage', 'probability'] as $prop) {
                 if (!empty($args[$prop]) && $bean->{$prop} !== $args[$prop]) {
                     $data[$prop] = $args[$prop];
                 }
@@ -67,17 +67,6 @@ class OpportunitiesApi extends ModuleApi
     protected function updateRevenueLineItems($bean, $data)
     {
         Activity::disable();
-
-        $opportunitySettings = Opportunity::getSettings();
-        $forecastSettings = Forecast::getSettings();
-
-        $closedWonStatus = [Opportunity::STATUS_CLOSED_WON];
-        $closedLostStatus = [Opportunity::STATUS_CLOSED_LOST];
-
-        if ($forecastSettings['is_setup']) {
-            $closedWonStatus = $forecastSettings['sales_stage_won'];
-            $closedLostStatus = $forecastSettings['sales_stage_lost'];
-        }
 
         if ($bean && $bean->load_relationship('revenuelineitems')) {
             $rlis = $bean->revenuelineitems->getBeans();

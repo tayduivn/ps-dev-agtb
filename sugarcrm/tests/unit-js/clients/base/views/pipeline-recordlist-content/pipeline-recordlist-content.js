@@ -143,6 +143,8 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                     Opportunities: ['amount']
                 }
             };
+            view.pipelineType = 'date_closed';
+            view.buildTileMeta();
         });
 
         afterEach(function() {
@@ -151,13 +153,10 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         });
 
         it('should call app.metadata.getModule method with view.module and fields', function() {
-            view.buildTileMeta();
-
             expect(app.metadata.getModule).toHaveBeenCalled();
         });
 
         it('should update fields in view.meta.tileDef', function() {
-            view.buildTileMeta();
             expect(view.meta.tileDef.panels[0].fields).toEqual([{
                 type: 'text',
                 name: 'name'
@@ -426,17 +425,11 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
         describe('when pipeline_type is not date_closed', function() {
             beforeEach(function() {
-                sinon.collection.stub(view.context, 'get', function() {
-                    return {
-                        get: function() {
-                            return 'sales_status';
-                        }
-                    };
-                });
+                view.pipelineType = 'sales_status';
+                view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
             });
 
             it('should assign headerField to view.headerField', function() {
-                view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
                 view.getTableHeader();
 
                 expect(view.headerField).toEqual('status');
@@ -444,8 +437,6 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
             describe('when app.acl.hasAccessToModel is false', function() {
                 it('should call view.context.trigger to have been called with open:config:fired', function() {
-                    view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
-
                     sinon.collection.stub(app.acl, 'hasAccessToModel').withArgs('read', view.model, 'status')
                         .returns(false);
                     sinon.collection.stub(view.context, 'trigger', function() {});
@@ -457,8 +448,6 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
             describe('when app.acl.hasAccessToModel is true', function() {
                 it('should not call view.context.trigger to have been called with open:config:fired', function() {
-                    view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
-
                     sinon.collection.stub(app.acl, 'hasAccessToModel').withArgs('read', view.model, 'status')
                         .returns(true);
                     sinon.collection.stub(view.context, 'trigger', function() {});
@@ -469,8 +458,6 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
                 describe('when headerField is defined', function() {
                     beforeEach(function() {
-                        view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
-
                         view.recordsToDisplay = [];
                     });
 
@@ -520,14 +507,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
             beforeEach(function() {
                 view.module = 'Leads';
                 view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
-
-                sinon.collection.stub(view.context, 'get', function() {
-                    return {
-                        get: function() {
-                            return 'date_closed';
-                        }
-                    };
-                });
+                view.pipelineType = 'date_closed';
             });
             it('should set view.headerField as date_closed', function() {
                 view.getTableHeader();
@@ -707,39 +687,17 @@ describe('Base.Views.PipelineRecordlistContent', function() {
             model = null;
         });
 
-        describe('when pipeline_type is not date_closed', function() {
+        describe('when pipeline_type is date_closed', function() {
             it('should check the pipeline-type of the model', function() {
-                sinon.collection.stub(model, 'get', function() {
+                view.pipelineType = 'date_closed';
+                sinon.collection.stub(app, 'date', function() {
                     return {
                         format: function() {}
                     };
                 });
-                sinon.collection.stub(view.context, 'get', function() {
-                    return {
-                        get: function() {
-                            return 'testType';
-                        }
-                    };
-                });
                 view.getColumnCollection(model);
 
-                expect(view.context.get).toHaveBeenCalled();
-            });
-        });
-
-        describe('when pipeline_type is date_closed', function() {
-            it('should check the pipeline-type of the model', function() {
-                sinon.collection.stub(model, 'get', function() {});
-                sinon.collection.stub(view.context, 'get', function() {
-                    return {
-                        get: function() {
-                            return 'date_closed';
-                        }
-                    };
-                });
-                view.getColumnCollection(model);
-
-                expect(view.context.get).toHaveBeenCalled();
+                expect(app.date).toHaveBeenCalled();
             });
         });
     });
@@ -817,17 +775,11 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
         describe('when pipeline_type is date_closed', function() {
             beforeEach(function() {
-                sinon.collection.stub(view.context, 'get', function() {
-                    return {
-                        get: function() {
-                            return 'date_closed';
-                        }
-                    };
-                });
+                view.pipelineType = 'date_closed';
+                view.headerField = 'date_closed';
             });
 
             it('should set the start and end dates in filter', function() {
-                view.headerField = 'date_closed';
                 filter = view.getFilters(column);
 
                 expect(filter[0].date_closed).toEqual({
@@ -839,7 +791,6 @@ describe('Base.Views.PipelineRecordlistContent', function() {
             });
 
             it('should add all the view.pipelineFilters to filter array', function() {
-                view.headerField = 'date_closed';
                 view.pipelineFilters = [
                     {
                         sales_status: {

@@ -31,12 +31,16 @@
         _.each(this.meta.fields, function(field) {
             this.pipelineTypes.push(field);
         }, this);
+        this.pipelineStateKey = app.user.lastState.buildKey('last-tab', 'pipeline', this.module);
 
+        // default to the config-set table header
+        var pipelineType = this.table_header;
         if (this.module === 'Opportunities') {
-            this.context.get('model').set('pipeline_type', 'date_closed');
-        } else {
-            this.context.get('model').set('pipeline_type', this.table_header);
+            // unless we're in Opps then try to set the pipelineType by the last state first
+            pipelineType = app.user.lastState.get(this.pipelineStateKey) || 'date_closed';
         }
+
+        this.context.get('model').set('pipeline_type', pipelineType);
     },
 
     /**
@@ -45,12 +49,18 @@
      * @param event
      */
     changePipeline: function(event) {
-        if (this.$(event.currentTarget).hasClass('selected')) {
+        var $currentTarget = this.$(event.currentTarget);
+        if ($currentTarget.hasClass('selected')) {
             return;
         }
+
         this.$('button[name=pipelineBtn]').removeClass('selected');
-        this.$(event.currentTarget).addClass('selected');
-        var pipelineType = this.$(event.currentTarget).data('pipeline');
+        $currentTarget.addClass('selected');
+        var pipelineType = $currentTarget.data('pipeline');
+
+        // set the new last state
+        app.user.lastState.set(this.pipelineStateKey, pipelineType);
+
         this.context.get('model').set('pipeline_type', pipelineType);
         this.context.trigger('pipeline:recordlist:filter:changed');
         this.context.trigger('filter:clear');
