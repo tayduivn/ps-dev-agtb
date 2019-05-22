@@ -112,6 +112,16 @@
         }, this);
 
         this.listenTo(app.events, 'dashlet:filter:save', this.refreshDropdown);
+        this.context.on('filter:clear', this.clearFilters, this);
+    },
+
+    /**
+     * Clears out any filters and states for the layout
+     */
+    clearFilters: function() {
+        this.context.set('currentFilterId', null);
+        this.clearLastFilter(this.layout.currentModule, this.layoutType);
+        this.layout.trigger('filter:reinitialize');
     },
 
     /**

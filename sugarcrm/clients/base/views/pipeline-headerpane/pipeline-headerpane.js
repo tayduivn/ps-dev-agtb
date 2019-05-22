@@ -53,6 +53,7 @@
         var pipelineType = this.$(event.currentTarget).data('pipeline');
         this.context.get('model').set('pipeline_type', pipelineType);
         this.context.trigger('pipeline:recordlist:filter:changed');
+        this.context.trigger('filter:clear');
     },
 
     /**
