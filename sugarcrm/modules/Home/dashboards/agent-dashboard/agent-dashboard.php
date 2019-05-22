@@ -111,7 +111,7 @@ return [
                                     'label' => 'LBL_REPORT_DASHLET_TITLE_12',
                                     'type' => 'saved-reports-chart',
                                     'module' => 'Cases',
-                                    'saved_report_id' => 'c2910814-7606-11e9-841e-f218983a1c3e',
+                                    'saved_report_id' => '5d6766f8-7b52-11e9-8da8-f218983a1c3e',
                                     'saved_report' => 'LBL_REPORT_DASHLET_TITLE_12',
                                     'chart_type' => 'horizontal group by chart',
                                 ],

@@ -203,6 +203,17 @@ class SavedReportTest extends TestCase
                 '61f5f584-7b40-11e9-9acf-f218983a1c3e' => 'List of Leads with no Consent',
                 '61f5f8fe-7b40-11e9-96c8-f218983a1c3e' => 'Count of Targets by Country',
             ],
+            'old-service' => [
+                '5d675032-7b52-11e9-990d-f218983a1c3e' => 'Open Bugs by User by Status',
+                '5d6752b2-7b52-11e9-acfc-f218983a1c3e' => 'Summary of Bugs by Priority by Week Created',
+                '5d67553c-7b52-11e9-bcf2-f218983a1c3e' => 'Summary of Bugs by Source by Week Created',
+                '5d6757c6-7b52-11e9-9ead-f218983a1c3e' => 'Summary of Bugs by Status by Week Created',
+                '5d675a50-7b52-11e9-83cb-f218983a1c3e' => 'Cases with No Calls, Meetings, Tasks, or Emails',
+                '5d675cda-7b52-11e9-9155-f218983a1c3e' => 'My Open Cases by Priority',
+                '5d675f5a-7b52-11e9-9420-f218983a1c3e' => 'New Cases By Month',
+                '5d6761ee-7b52-11e9-aa07-f218983a1c3e' => 'Open Cases By Month By User',
+                '5d676464-7b52-11e9-90b4-f218983a1c3e' => 'Open Cases by User by Priority',
+            ],
         ];
 
         foreach ($stockGuids as $type => $list) {
