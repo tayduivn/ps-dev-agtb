@@ -48,7 +48,7 @@ class FiltersApiHelperTest extends TestCase
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doField
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doOperand
      * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Scalar::format
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::format
      * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::format
      */
     public function testFormatForApi()
@@ -241,7 +241,7 @@ class FiltersApiHelperTest extends TestCase
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doField
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doOperand
      * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Scalar::unformat
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::unformat
      * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::unformat
      */
     public function testPopulateFromApi()

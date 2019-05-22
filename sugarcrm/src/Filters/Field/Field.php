@@ -14,15 +14,12 @@ namespace Sugarcrm\Sugarcrm\Filters\Field;
 
 use ServiceBase;
 use Sugarcrm\Sugarcrm\Filters\Serializable;
-use Sugarcrm\Sugarcrm\Filters\SerializableDefaultImplementation;
 
 /**
  * Formats or unformats a filter for a standard field.
  */
-final class Scalar implements Serializable
+class Field implements Serializable
 {
-    use SerializableDefaultImplementation;
-
     /**
      * The API controller.
      *
@@ -38,6 +35,13 @@ final class Scalar implements Serializable
     private $field;
 
     /**
+     * The filter definition.
+     *
+     * @var mixed Typically a string or array.
+     */
+    private $filter;
+
+    /**
      * Constructor.
      *
      * @param ServiceBase $api Provides the API context.
@@ -49,5 +53,25 @@ final class Scalar implements Serializable
         $this->api = $api;
         $this->field = $field;
         $this->filter = $filter;
+    }
+
+    /**
+     * Returns the filter definition without making any changes.
+     *
+     * @return mixed
+     */
+    public function format()
+    {
+        return $this->filter;
+    }
+
+    /**
+     * Returns the filter definition without making any changes.
+     *
+     * @return mixed
+     */
+    public function unformat()
+    {
+        return $this->filter;
     }
 }

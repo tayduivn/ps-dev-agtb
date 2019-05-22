@@ -10,28 +10,27 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Filters\Operand;
+namespace Sugarcrm\SugarcrmTests\Filters\Field;
 
 use ServiceBase;
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\Filters\Operand\Creator;
+use Sugarcrm\Sugarcrm\Filters\Field\Field;
 
 /**
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Filters\Operand\Creator
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Filters\Field\Field
  */
-class CreatorTest extends TestCase
+class FieldTest extends TestCase
 {
     public function filterProvider()
     {
         return [
-            'link not specified' => [
-                '',
+            'filter is a string' => [
+                'test',
             ],
-            'link is _this' => [
-                '_this',
-            ],
-            'link is specified' => [
-                'opportunities',
+            'filter is an object' => [
+                [
+                    '$starts' => 'test',
+                ],
             ],
         ];
     }
@@ -43,9 +42,9 @@ class CreatorTest extends TestCase
     public function testFormat($filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $operand = new Creator($api, $filter);
+        $field = new Field($api, 'name', $filter);
 
-        $actual = $operand->format();
+        $actual = $field->format();
 
         $this->assertSame($filter, $actual);
     }
@@ -57,9 +56,9 @@ class CreatorTest extends TestCase
     public function testUnformat($filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $operand = new Creator($api, $filter);
+        $field = new Field($api, 'name', $filter);
 
-        $actual = $operand->unformat();
+        $actual = $field->unformat();
 
         $this->assertSame($filter, $actual);
     }

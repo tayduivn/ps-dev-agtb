@@ -16,13 +16,9 @@ use ServiceBase;
 use SugarApiExceptionInvalidParameter;
 use SugarApiExceptionRequestMethodFailure;
 use Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants as EmailParticipantsField;
-use Sugarcrm\Sugarcrm\Filters\Field\Scalar;
-use Sugarcrm\Sugarcrm\Filters\Operand\Creator;
+use Sugarcrm\Sugarcrm\Filters\Field\Field;
 use Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants as EmailParticipantsOperand;
-use Sugarcrm\Sugarcrm\Filters\Operand\Favorite;
-use Sugarcrm\Sugarcrm\Filters\Operand\Following;
-use Sugarcrm\Sugarcrm\Filters\Operand\Owner;
-use Sugarcrm\Sugarcrm\Filters\Operand\Tracker;
+use Sugarcrm\Sugarcrm\Filters\Operand\Operand;
 
 /**
  * Formats or unformats a complete filter definition.
@@ -156,15 +152,11 @@ final class Filter implements Serializable
             case '$and':
                 return $this->doFilters($filter);
             case '$creator':
-                return $this->doOperand(new Creator($this->api, $filter));
             case '$favorite':
-                return $this->doOperand(new Favorite($this->api, $filter));
             case '$following':
-                return $this->doOperand(new Following($this->api));
             case '$owner':
-                return $this->doOperand(new Owner($this->api, $filter));
             case '$tracker':
-                return $this->doOperand(new Tracker($this->api, $filter));
+                return $this->doOperand(new Operand($this->api, $operand, $filter));
             case '$from':
             case '$to':
             case '$cc':
@@ -210,7 +202,7 @@ final class Filter implements Serializable
 
             $operand = new EmailParticipantsField($this->api, $field, $filter);
         } else {
-            $operand = new Scalar($this->api, $field, $filter);
+            $operand = new Field($this->api, $field, $filter);
         }
 
         return $this->doOperand($operand);

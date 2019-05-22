@@ -297,12 +297,8 @@ class FilterTest extends TestCase
      * @covers ::doFilter
      * @covers ::doOperand
      * @covers ::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Scalar::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Creator::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Favorite::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Following::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Owner::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Tracker::format
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::format
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::format
      * @dataProvider filterProvider
      */
     public function testFormat(string $module, array $filterDef, array $expected)
@@ -321,12 +317,8 @@ class FilterTest extends TestCase
      * @covers ::doFilter
      * @covers ::doOperand
      * @covers ::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Scalar::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Creator::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Favorite::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Following::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Owner::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Tracker::unformat
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::unformat
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::unformat
      * @dataProvider filterProvider
      */
     public function testUnformat(string $module, array $filterDef, array $expected)

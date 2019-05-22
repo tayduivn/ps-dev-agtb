@@ -10,27 +10,22 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Filters\Field;
+namespace Sugarcrm\SugarcrmTests\Filters\Operand;
 
 use ServiceBase;
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\Filters\Field\Scalar;
+use Sugarcrm\Sugarcrm\Filters\Operand\Operand;
 
 /**
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Filters\Field\Scalar
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Filters\Operand\Operand
  */
-class ScalarTest extends TestCase
+class OperandTest extends TestCase
 {
     public function filterProvider()
     {
         return [
-            'filter is a string' => [
-                'test',
-            ],
-            'filter is an object' => [
-                [
-                    '$starts' => 'test',
-                ],
+            'last 30 days' => [
+                '-30 DAY',
             ],
         ];
     }
@@ -42,9 +37,9 @@ class ScalarTest extends TestCase
     public function testFormat($filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new Scalar($api, 'name', $filter);
+        $operand = new Operand($api, $filter);
 
-        $actual = $field->format();
+        $actual = $operand->format();
 
         $this->assertSame($filter, $actual);
     }
@@ -56,9 +51,9 @@ class ScalarTest extends TestCase
     public function testUnformat($filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new Scalar($api, 'name', $filter);
+        $operand = new Operand($api, $filter);
 
-        $actual = $field->unformat();
+        $actual = $operand->unformat();
 
         $this->assertSame($filter, $actual);
     }
