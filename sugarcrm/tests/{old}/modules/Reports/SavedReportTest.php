@@ -156,36 +156,70 @@ class SavedReportTest extends TestCase
     public function testStockReportsExistById()
     {
         $stockGuids = [
-            'c2908254-7606-11e9-a121-f218983a1c3e' => 'New Cases by Business Center by Week',
-            'c2908fc4-7606-11e9-a83a-f218983a1c3e' => 'Recently Created Cases',
-            'c290929e-7606-11e9-a555-f218983a1c3e' => 'New Cases by Customer Tier by Week',
-            'c290953c-7606-11e9-b083-f218983a1c3e' => 'Open Cases by Customer Tier and Priority',
-            'c29097d0-7606-11e9-ac35-f218983a1c3e' => 'Total Cases Resolved this Month by Business Center',
-            'c2909a50-7606-11e9-914a-f218983a1c3e' => 'Total Cases Resolved this Month by Agent',
-            'c2909cd0-7606-11e9-9955-f218983a1c3e' => 'List of Recently Resolved Cases',
-            'c2909f50-7606-11e9-b00e-f218983a1c3e' => 'My Cases Resolved this Month by Week',
-            'c290a1da-7606-11e9-80e5-f218983a1c3e' => 'My Cases Due Today and Overdue',
-            'c290a45a-7606-11e9-9663-f218983a1c3e' => 'All Cases Due Today and Overdue',
-            'c290a6da-7606-11e9-a76d-f218983a1c3e' => 'My Open Cases by Followup Date',
-            'c290a950-7606-11e9-a526-f218983a1c3e' => 'All Open Cases by Followup Date',
-            'c290abda-7606-11e9-9f3e-f218983a1c3e' => 'My Open Cases by Status',
-            'c290ae50-7606-11e9-9cb2-f218983a1c3e' => 'My Cases in the Last Week by Status',
-            'c290b0da-7606-11e9-81f9-f218983a1c3e' => 'Status of Open Tasks Assigned by Me',
+            'sugar-serve' => [
+                'c2908254-7606-11e9-a121-f218983a1c3e' => 'New Cases by Business Center by Week',
+                'c2908fc4-7606-11e9-a83a-f218983a1c3e' => 'Recently Created Cases',
+                'c290929e-7606-11e9-a555-f218983a1c3e' => 'New Cases by Customer Tier by Week',
+                'c290953c-7606-11e9-b083-f218983a1c3e' => 'Open Cases by Customer Tier and Priority',
+                'c29097d0-7606-11e9-ac35-f218983a1c3e' => 'Total Cases Resolved this Month by Business Center',
+                'c2909a50-7606-11e9-914a-f218983a1c3e' => 'Total Cases Resolved this Month by Agent',
+                'c2909cd0-7606-11e9-9955-f218983a1c3e' => 'List of Recently Resolved Cases',
+                'c2909f50-7606-11e9-b00e-f218983a1c3e' => 'My Cases Resolved this Month by Week',
+                'c290a1da-7606-11e9-80e5-f218983a1c3e' => 'My Cases Due Today and Overdue',
+                'c290a45a-7606-11e9-9663-f218983a1c3e' => 'All Cases Due Today and Overdue',
+                'c290a6da-7606-11e9-a76d-f218983a1c3e' => 'My Open Cases by Followup Date',
+                'c290a950-7606-11e9-a526-f218983a1c3e' => 'All Open Cases by Followup Date',
+                'c290abda-7606-11e9-9f3e-f218983a1c3e' => 'My Open Cases by Status',
+                'c290ae50-7606-11e9-9cb2-f218983a1c3e' => 'My Cases in the Last Week by Status',
+                'c290b0da-7606-11e9-81f9-f218983a1c3e' => 'Status of Open Tasks Assigned by Me',
+            ],
+            'ootb-sample' => [
+                'efc0ea32-7905-11e9-8941-f218983a1c3e' => 'Accounts by Assigned to User',
+                'efc0fedc-7905-11e9-a594-f218983a1c3e' => 'Accounts By Type By Industry',
+                'efc101c0-7905-11e9-8a2f-f218983a1c3e' => 'Accounts Created by User by Month',
+                'efc1045e-7905-11e9-ad68-f218983a1c3e' => 'My Customers by Area',
+                'efc106fc-7905-11e9-980e-f218983a1c3e' => 'My New Customer Accounts',
+                'efc10986-7905-11e9-9f44-f218983a1c3e' => 'Open Calls',
+                'efc10c10-7905-11e9-a54a-f218983a1c3e' => 'Upcoming Calls Scheduled by Account',
+                'efc10e90-7905-11e9-89f5-f218983a1c3e' => 'Weekly Calls Held this Quarter by User',
+                'efc11110-7905-11e9-a9d4-f218983a1c3e' => 'Weekly Calls Scheduled this Quarter by User',
+                'efc1139a-7905-11e9-b30a-f218983a1c3e' => 'Contacts Created by User by Month',
+                'efc11610-7905-11e9-917c-f218983a1c3e' => 'Leads By Lead Source',
+                'efc1189a-7905-11e9-921b-f218983a1c3e' => 'Leads Converted - Lost by Month',
+            ],
+            'ent-only-sample' => [
+                'efc14fd6-7905-11e9-949f-f218983a1c3e' => 'Opportunities Created by Lead Source by Month',
+                'efc15260-7905-11e9-82f9-f218983a1c3e' => 'Opportunities with No Calls, Meetings, Tasks, or Emails',
+                'efc154e0-7905-11e9-b436-f218983a1c3e' => 'Pipeline By Team By User',
+                'efc15774-7905-11e9-8553-f218983a1c3e' => 'Pipeline By Type By Team',
+                'efc159f4-7905-11e9-bc5f-f218983a1c3e' => 'Sales per Quarter by Lead Source',
+                'efc15c7e-7905-11e9-a206-f218983a1c3e' => 'Top Sales Reps This Quarter',
+                'efc15efe-7905-11e9-931e-f218983a1c3e' => 'Total Sales by Quarter',
+                'efc1617e-7905-11e9-8280-f218983a1c3e' => 'Total Sales by Quarter by User',
+                'efc16412-7905-11e9-8174-f218983a1c3e' => 'Wins and Losses by Users this Quarter',
+            ],
+            'data-privacy' => [
+                '61f5e80a-7b40-11e9-ad44-f218983a1c3e' => 'Count of Leads (unconverted) by Country',
+                '61f5f584-7b40-11e9-9acf-f218983a1c3e' => 'List of Leads with no Consent',
+                '61f5f8fe-7b40-11e9-96c8-f218983a1c3e' => 'Count of Targets by Country',
+            ],
         ];
 
-        $sql = sprintf(
-            'SELECT id, name FROM saved_reports WHERE id in (%s)',
-            "'" . implode("','", array_keys($stockGuids)) . "'"
-        );
+        foreach ($stockGuids as $type => $list) {
+            $sql = sprintf(
+                'SELECT id, name FROM saved_reports WHERE id in (%s)',
+                "'" . implode("','", array_keys($list)) . "'"
+            );
 
-        $conn = DBManagerFactory::getConnection();
-        $data = $conn->executeQuery($sql)->fetchAll();
+            $conn = DBManagerFactory::getConnection();
+            $data = $conn->executeQuery($sql)->fetchAll();
 
-        $this->assertCount(15, $data);
+            $this->assertCount(15, $data);
 
-        foreach ($data as $row) {
-            $this->assertArrayHasKey($row['id'], $stockGuids);
-            $this->assertSame($row['name'], $stockGuids[$row['id']]);
+            foreach ($data as $row) {
+                $this->assertArrayHasKey($row['id'], $list[$type]);
+                $this->assertSame($row['name'], $list[$row['id']]);
+            }
         }
     }
     //END SUGARCRM flav=ent ONLY
