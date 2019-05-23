@@ -36,16 +36,16 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @covers ::format
+     * @covers ::apiSerialize
      * @covers ::doFilters
      * @covers ::doFilter
      * @covers ::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::format
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::apiSerialize
      */
-    public function testFormatWithAnEmailParticipantsField()
+    public function testApiSerializeWithAnEmailParticipantsField()
     {
         $contact1 = SugarTestContactUtilities::createContact();
         $contact2 = SugarTestContactUtilities::createContact();
@@ -112,7 +112,7 @@ class FilterTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $filter = new Filter('Emails', $filterDef);
 
-        $actual = $filter->format($api);
+        $actual = $filter->apiSerialize($api);
 
         $expected = [
             [
@@ -242,16 +242,16 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @covers ::unformat
+     * @covers ::apiUnserialize
      * @covers ::doFilters
      * @covers ::doFilter
      * @covers ::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::unformat
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::apiUnserialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::apiUnserialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiUnserialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::apiUnserialize
      */
-    public function testUnformatWithAnEmailParticipantsField()
+    public function testApiUnserializeWithAnEmailParticipantsField()
     {
         $filterDef = [
             [
@@ -381,7 +381,7 @@ class FilterTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $filter = new Filter('Emails', $filterDef);
 
-        $actual = $filter->unformat($api);
+        $actual = $filter->apiUnserialize($api);
 
         $expected = [
             [
@@ -445,15 +445,15 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @covers ::format
+     * @covers ::apiSerialize
      * @covers ::doFilters
      * @covers ::doFilter
      * @covers ::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::format
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::apiSerialize
      */
-    public function testFormatWithAnEmailParticipantsOperand()
+    public function testApiSerializeWithAnEmailParticipantsOperand()
     {
         $contact1 = SugarTestContactUtilities::createContact();
         $contact2 = SugarTestContactUtilities::createContact();
@@ -514,7 +514,7 @@ class FilterTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $filter = new Filter('Emails', $filterDef);
 
-        $actual = $filter->format($api);
+        $actual = $filter->apiSerialize($api);
 
         $expected = [
             [
@@ -638,15 +638,15 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @covers ::unformat
+     * @covers ::apiUnserialize
      * @covers ::doFilters
      * @covers ::doFilter
      * @covers ::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::unformat
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::apiUnserialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiUnserialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::apiUnserialize
      */
-    public function testUnformatWithAnEmailParticipantsOperand()
+    public function testApiUnserializeWithAnEmailParticipantsOperand()
     {
         $filterDef = [
             [
@@ -770,7 +770,7 @@ class FilterTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $filter = new Filter('Emails', $filterDef);
 
-        $actual = $filter->unformat($api);
+        $actual = $filter->apiUnserialize($api);
 
         $expected = [
             [

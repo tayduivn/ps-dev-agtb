@@ -36,29 +36,29 @@ class FieldTest extends TestCase
     }
 
     /**
-     * @covers ::format
+     * @covers ::apiSerialize
      * @dataProvider filterProvider
      */
-    public function testFormat($filter)
+    public function testApiSerialize($filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
         $field = new Field('name', $filter);
 
-        $actual = $field->format($api);
+        $actual = $field->apiSerialize($api);
 
         $this->assertSame($filter, $actual);
     }
 
     /**
-     * @covers ::unformat
+     * @covers ::apiUnserialize
      * @dataProvider filterProvider
      */
-    public function testUnformat($filter)
+    public function testApiUnserialize($filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
         $field = new Field('name', $filter);
 
-        $actual = $field->unformat($api);
+        $actual = $field->apiUnserialize($api);
 
         $this->assertSame($filter, $actual);
     }

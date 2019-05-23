@@ -13,12 +13,12 @@
 namespace Sugarcrm\Sugarcrm\Filters\Field;
 
 use ServiceBase;
-use Sugarcrm\Sugarcrm\Filters\Serializable;
+use Sugarcrm\Sugarcrm\Filters\ApiSerializable;
 
 /**
  * Formats or unformats a filter for a standard field.
  */
-class Field implements Serializable
+class Field implements ApiSerializable
 {
     /**
      * The field name.
@@ -53,7 +53,7 @@ class Field implements Serializable
      *
      * @return mixed
      */
-    public function format(ServiceBase $api)
+    public function apiSerialize(ServiceBase $api)
     {
         return $this->filter;
     }
@@ -65,7 +65,7 @@ class Field implements Serializable
      *
      * @return mixed
      */
-    public function unformat(ServiceBase $api)
+    public function apiUnserialize(ServiceBase $api)
     {
         return $this->filter;
     }

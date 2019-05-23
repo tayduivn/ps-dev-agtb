@@ -61,11 +61,11 @@ class EmailParticipantsTest extends TestCase
     }
 
     /**
-     * @covers ::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::format
+     * @covers ::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiSerialize
      * @dataProvider fieldNameProvider
      */
-    public function testFormat(string $fieldName, string $link)
+    public function testApiSerialize(string $fieldName, string $link)
     {
         $contact1 = SugarTestContactUtilities::createContact();
         $emailAddress1 = SugarTestEmailAddressUtilities::createEmailAddress();
@@ -98,7 +98,7 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $field = new EmailParticipants($fieldName, $filter);
 
-        $actual = $field->format($api);
+        $actual = $field->apiSerialize($api);
 
         $expected = [
             '$in' => [
@@ -161,12 +161,14 @@ class EmailParticipantsTest extends TestCase
     }
 
     /**
-     * @covers ::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::format
+     * @covers ::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiSerialize
      * @dataProvider fieldNameProvider
      */
-    public function testFormatWithCurrentUserIdMacro(string $fieldName, string $link)
-    {
+    public function testApiSerializeWithCurrentUserIdMacro(
+        string $fieldName,
+        string $link
+    ) {
         $filter = [
             '$in' => [
                 [
@@ -179,7 +181,7 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $field = new EmailParticipants($fieldName, $filter);
 
-        $actual = $field->format($api);
+        $actual = $field->apiSerialize($api);
 
         $expected = [
             '$in' => [
@@ -213,12 +215,12 @@ class EmailParticipantsTest extends TestCase
     }
 
     /**
-     * @covers ::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::format
+     * @covers ::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiSerialize
      * @dataProvider fieldNameProvider
      * @expectedException \SugarApiExceptionNotFound
      */
-    public function testFormatParentNotFound(string $fieldName, string $link)
+    public function testApiSerializeParentNotFound(string $fieldName, string $link)
     {
         $filter = [
             '$in' => [
@@ -232,17 +234,19 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $field = new EmailParticipants($fieldName, $filter);
 
-        $actual = $field->format($api);
+        $actual = $field->apiSerialize($api);
     }
 
     /**
-     * @covers ::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::format
+     * @covers ::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiSerialize
      * @dataProvider fieldNameProvider
      * @expectedException \SugarApiExceptionNotFound
      */
-    public function testFormatEmailAddressNotFound(string $fieldName, string $link)
-    {
+    public function testApiSerializeEmailAddressNotFound(
+        string $fieldName,
+        string $link
+    ) {
         $filter = [
             '$in' => [
                 [
@@ -254,6 +258,6 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $field = new EmailParticipants($fieldName, $filter);
 
-        $actual = $field->format($api);
+        $actual = $field->apiSerialize($api);
     }
 }

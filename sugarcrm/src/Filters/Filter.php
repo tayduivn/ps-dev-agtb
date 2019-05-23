@@ -22,7 +22,7 @@ use Sugarcrm\Sugarcrm\Filters\Operand\Operand;
 /**
  * Formats or unformats a complete filter definition.
  */
-final class Filter implements Serializable
+final class Filter implements ApiSerializable
 {
     /**
      * The filter definition.
@@ -58,12 +58,12 @@ final class Filter implements Serializable
      *
      * @return array
      */
-    public function format(ServiceBase $api)
+    public function apiSerialize(ServiceBase $api)
     {
         return $this->doFilters(
             $this->filter,
-            function (Serializable $s) use ($api) {
-                return $s->format($api);
+            function (ApiSerializable $serializer) use ($api) {
+                return $serializer->apiSerialize($api);
             }
         );
     }
@@ -76,12 +76,12 @@ final class Filter implements Serializable
      *
      * @return array
      */
-    public function unformat(ServiceBase $api)
+    public function apiUnserialize(ServiceBase $api)
     {
         return $this->doFilters(
             $this->filter,
-            function (Serializable $s) use ($api) {
-                return $s->unformat($api);
+            function (ApiSerializable $serializer) use ($api) {
+                return $serializer->apiUnserialize($api);
             }
         );
     }

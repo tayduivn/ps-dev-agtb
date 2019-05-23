@@ -42,13 +42,13 @@ class FiltersApiHelperTest extends TestCase
 
     /**
      * @covers ::formatForApi
-     * @covers \Sugarcrm\Sugarcrm\Filters\Filter::format
+     * @covers \Sugarcrm\Sugarcrm\Filters\Filter::apiSerialize
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doFilters
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doFilter
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::format
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiSerialize
      */
     public function testFormatForApi()
     {
@@ -234,13 +234,13 @@ class FiltersApiHelperTest extends TestCase
 
     /**
      * @covers ::populateFromApi
-     * @covers \Sugarcrm\Sugarcrm\Filters\Filter::unformat
+     * @covers \Sugarcrm\Sugarcrm\Filters\Filter::apiUnserialize
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doFilters
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doFilter
      * @covers \Sugarcrm\Sugarcrm\Filters\Filter::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::unformat
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\EmailParticipants::apiUnserialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::apiUnserialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiUnserialize
      */
     public function testPopulateFromApi()
     {

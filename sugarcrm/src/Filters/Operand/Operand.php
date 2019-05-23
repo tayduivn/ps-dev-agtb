@@ -13,12 +13,12 @@
 namespace Sugarcrm\Sugarcrm\Filters\Operand;
 
 use ServiceBase;
-use Sugarcrm\Sugarcrm\Filters\Serializable;
+use Sugarcrm\Sugarcrm\Filters\ApiSerializable;
 
 /**
  * Formats or unformats a filter for a standard operand.
  */
-class Operand implements Serializable
+class Operand implements ApiSerializable
 {
     /**
      * The filter definition.
@@ -53,7 +53,7 @@ class Operand implements Serializable
      *
      * @return mixed
      */
-    public function format(ServiceBase $api)
+    public function apiSerialize(ServiceBase $api)
     {
         return $this->filter;
     }
@@ -65,7 +65,7 @@ class Operand implements Serializable
      *
      * @return mixed
      */
-    public function unformat(ServiceBase $api)
+    public function apiUnserialize(ServiceBase $api)
     {
         return $this->filter;
     }

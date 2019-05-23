@@ -61,14 +61,14 @@ class EmailParticipantsTest extends TestCase
     }
 
     /**
-     * @covers ::format
+     * @covers ::apiSerialize
      * @covers \ApiHelper::getHelper
      * @covers \BeanFactory::retrieveBean
      * @covers \SugarBean::getModuleName
      * @covers \SugarBeanApiHelper::formatForApi
      * @dataProvider operandProvider
      */
-    public function testFormat(string $op, string $link)
+    public function testApiSerialize(string $op, string $link)
     {
         $contact1 = SugarTestContactUtilities::createContact();
         $emailAddress1 = SugarTestEmailAddressUtilities::createEmailAddress();
@@ -99,7 +99,7 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->format($api);
+        $actual = $operand->apiSerialize($api);
 
         $expected = [
             [
@@ -160,13 +160,13 @@ class EmailParticipantsTest extends TestCase
     }
 
     /**
-     * @covers ::format
+     * @covers ::apiSerialize
      * @covers \ApiHelper::getHelper
      * @covers \SugarBean::getModuleName
      * @covers \SugarBeanApiHelper::formatForApi
      * @dataProvider operandProvider
      */
-    public function testFormatWithCurrentUserIdMacro(string $op, string $link)
+    public function testApiSerializeWithCurrentUserIdMacro(string $op, string $link)
     {
         $filter = [
             [
@@ -178,7 +178,7 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->format($api);
+        $actual = $operand->apiSerialize($api);
 
         $expected = [
             [
@@ -210,13 +210,13 @@ class EmailParticipantsTest extends TestCase
     }
 
     /**
-     * @covers ::format
+     * @covers ::apiSerialize
      * @covers \ApiHelper::getHelper
      * @covers \BeanFactory::retrieveBean
      * @dataProvider operandProvider
      * @expectedException \SugarApiExceptionNotFound
      */
-    public function testFormatParentNotFound(string $op, string $link)
+    public function testApiSerializeParentNotFound(string $op, string $link)
     {
         $filter = [
             [
@@ -228,18 +228,18 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->format($api);
+        $actual = $operand->apiSerialize($api);
     }
 
     /**
-     * @covers ::format
+     * @covers ::apiSerialize
      * @covers \ApiHelper::getHelper
      * @covers \BeanFactory::retrieveBean
      * @covers \SugarBeanApiHelper::formatForApi
      * @dataProvider operandProvider
      * @expectedException \SugarApiExceptionNotFound
      */
-    public function testFormatEmailAddressNotFound(string $op, string $link)
+    public function testApiSerializeEmailAddressNotFound(string $op, string $link)
     {
         $filter = [
             [
@@ -250,6 +250,6 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->format($api);
+        $actual = $operand->apiSerialize($api);
     }
 }

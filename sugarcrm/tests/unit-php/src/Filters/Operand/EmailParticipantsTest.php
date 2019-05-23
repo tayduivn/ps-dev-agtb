@@ -63,10 +63,10 @@ class EmailParticipantsTest extends TestCase
     }
 
     /**
-     * @covers ::unformat
+     * @covers ::apiUnserialize
      * @dataProvider operandProvider
      */
-    public function testUnformat(string $op, string $link)
+    public function testApiUnserialize(string $op, string $link)
     {
         $filter = [
             [
@@ -124,7 +124,7 @@ class EmailParticipantsTest extends TestCase
         $api = $this->getMockForAbstractClass(ServiceBase::class);
         $operand = new EmailParticipants($op, $filter);
 
-        $actual = $operand->unformat($api);
+        $actual = $operand->apiUnserialize($api);
 
         $expected = [
             [

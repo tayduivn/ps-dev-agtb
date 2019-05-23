@@ -292,39 +292,45 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @covers ::format
+     * @covers ::apiSerialize
      * @covers ::doFilters
      * @covers ::doFilter
      * @covers ::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::format
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::format
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::apiSerialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::apiSerialize
      * @dataProvider filterProvider
      */
-    public function testFormat(string $module, array $filterDef, array $expected)
-    {
+    public function testApiSerialize(
+        string $module,
+        array $filterDef,
+        array $expected
+    ) {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
         $filter = new Filter($module, $filterDef);
 
-        $actual = $filter->format($api);
+        $actual = $filter->apiSerialize($api);
 
         $this->assertEquals($expected, $actual);
     }
 
     /**
-     * @covers ::unformat
+     * @covers ::apiUnserialize
      * @covers ::doFilters
      * @covers ::doFilter
      * @covers ::doField
-     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::unformat
+     * @covers \Sugarcrm\Sugarcrm\Filters\Field\Field::apiUnserialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\Operand::apiUnserialize
      * @dataProvider filterProvider
      */
-    public function testUnformat(string $module, array $filterDef, array $expected)
-    {
+    public function testApiUnserialize(
+        string $module,
+        array $filterDef,
+        array $expected
+    ) {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
         $filter = new Filter($module, $filterDef);
 
-        $actual = $filter->unformat($api);
+        $actual = $filter->apiUnserialize($api);
 
         $this->assertEquals($expected, $actual);
     }

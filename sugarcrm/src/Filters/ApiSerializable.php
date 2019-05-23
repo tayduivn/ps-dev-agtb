@@ -15,10 +15,10 @@ namespace Sugarcrm\Sugarcrm\Filters;
 use ServiceBase;
 
 /**
- * Serializable defines an interface for whole or parts of a filter definition to be
- * formatted for an API client or database.
+ * ApiSerializable defines an interface for whole or parts of a filter definition to
+ * be formatted for an API client or database.
  */
-interface Serializable
+interface ApiSerializable
 {
     /**
      * Returns a filter definition formatted for an API client.
@@ -28,7 +28,7 @@ interface Serializable
      * @return mixed An array representing an entire filter definition or a segment
      * of a filter definition, or a string representing a field's filter value.
      */
-    public function format(ServiceBase $api);
+    public function apiSerialize(ServiceBase $api);
 
     /**
      * Returns a filter definition formatted for persistance in a database.
@@ -38,5 +38,5 @@ interface Serializable
      * @return mixed An array representing an entire filter definition or a segment
      * of a filter definition, or a string representing a field's filter value.
      */
-    public function unformat(ServiceBase $api);
+    public function apiUnserialize(ServiceBase $api);
 }

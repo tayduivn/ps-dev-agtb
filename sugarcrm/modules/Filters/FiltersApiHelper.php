@@ -26,12 +26,12 @@ class FiltersApiHelper extends SugarBeanApiHelper
 
         if (isset($data['filter_definition'])) {
             $filter = new Filter($moduleName, $data['filter_definition']);
-            $data['filter_definition'] = $filter->format($this->api);
+            $data['filter_definition'] = $filter->apiSerialize($this->api);
         }
 
         if (isset($data['filter_template'])) {
             $filter = new Filter($moduleName, $data['filter_template']);
-            $data['filter_template'] = $filter->format($this->api);
+            $data['filter_template'] = $filter->apiSerialize($this->api);
         }
 
         return $data;
@@ -47,12 +47,14 @@ class FiltersApiHelper extends SugarBeanApiHelper
 
         if (isset($submittedData['filter_definition'])) {
             $filter = new Filter($moduleName, $submittedData['filter_definition']);
-            $submittedData['filter_definition'] = $filter->unformat($this->api);
+            $submittedData['filter_definition'] = $filter->apiUnserialize(
+                $this->api
+            );
         }
 
         if (isset($submittedData['filter_template'])) {
             $filter = new Filter($moduleName, $submittedData['filter_template']);
-            $submittedData['filter_template'] = $filter->unformat($this->api);
+            $submittedData['filter_template'] = $filter->apiUnserialize($this->api);
         }
 
         return parent::populateFromApi($bean, $submittedData, $options);

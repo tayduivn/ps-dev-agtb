@@ -110,11 +110,11 @@ class EmailParticipantsTest extends TestCase
     }
 
     /**
-     * @covers ::unformat
-     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants
+     * @covers ::apiUnserialize
+     * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiUnserialize
      * @dataProvider fieldNameProvider
      */
-    public function testUnformat(string $fieldName, string $link)
+    public function testApiUnserialize(string $fieldName, string $link)
     {
         $filter = [
             '$in' => [
@@ -174,7 +174,7 @@ class EmailParticipantsTest extends TestCase
         $api = $this->getMockForAbstractClass(ServiceBase::class);
         $field = new EmailParticipants($fieldName, $filter);
 
-        $actual = $field->unformat($api);
+        $actual = $field->apiUnserialize($api);
 
         $expected = [
             '$in' => [

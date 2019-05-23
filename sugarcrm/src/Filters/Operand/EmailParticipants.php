@@ -17,12 +17,12 @@ use BeanFactory;
 use ServiceBase;
 use SugarApiExceptionInvalidParameter;
 use SugarApiExceptionNotFound;
-use Sugarcrm\Sugarcrm\Filters\Serializable;
+use Sugarcrm\Sugarcrm\Filters\ApiSerializable;
 
 /**
  * Formats or unformats a $from, $to, $cc, or $bcc filter.
  */
-final class EmailParticipants implements Serializable
+final class EmailParticipants implements ApiSerializable
 {
     /**
      * The filter definition.
@@ -77,7 +77,7 @@ final class EmailParticipants implements Serializable
      * @throws SugarApiExceptionNotFound If the parent record or email address can't
      * be found.
      */
-    public function format(ServiceBase $api)
+    public function apiSerialize(ServiceBase $api)
     {
         $options = [
             'display_acl' => true,
@@ -178,7 +178,7 @@ final class EmailParticipants implements Serializable
      *
      * @return array
      */
-    public function unformat(ServiceBase $api)
+    public function apiUnserialize(ServiceBase $api)
     {
         return array_map(
             function ($value) {

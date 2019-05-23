@@ -72,29 +72,29 @@ class OperandTest extends TestCase
     }
 
     /**
-     * @covers ::format
+     * @covers ::apiSerialize
      * @dataProvider filterProvider
      */
-    public function testFormat(string $operand, $filter)
+    public function testApiSerialize(string $operand, $filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
         $operand = new Operand($operand, $filter);
 
-        $actual = $operand->format($api);
+        $actual = $operand->apiSerialize($api);
 
         $this->assertSame($filter, $actual);
     }
 
     /**
-     * @covers ::unformat
+     * @covers ::apiUnserialize
      * @dataProvider filterProvider
      */
-    public function testUnformat(string $operand, $filter)
+    public function testApiUnserialize(string $operand, $filter)
     {
         $api = $this->getMockForAbstractClass(ServiceBase::class);
         $operand = new Operand($operand, $filter);
 
-        $actual = $operand->unformat($api);
+        $actual = $operand->apiUnserialize($api);
 
         $this->assertSame($filter, $actual);
     }

@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Filters\Field;
 
 use ServiceBase;
 use SugarApiExceptionInvalidParameter;
-use Sugarcrm\Sugarcrm\Filters\Serializable;
+use Sugarcrm\Sugarcrm\Filters\ApiSerializable;
 use Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants as EmailParticipantsOperand;
 
 /**
@@ -22,7 +22,7 @@ use Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants as EmailParticipantsOper
  * {@link \Email::$to_collection}, {@link \Email::$cc_collection}, or
  * {@link \Email::$bcc_collection}.
  */
-final class EmailParticipants implements Serializable
+final class EmailParticipants implements ApiSerializable
 {
     /**
      * The field name: from_collection, to_collection, cc_collection, or
@@ -105,12 +105,12 @@ final class EmailParticipants implements Serializable
      * @throws SugarApiExceptionInvalidParameter
      * @throws \SugarApiExceptionNotFound
      */
-    public function format(ServiceBase $api)
+    public function apiSerialize(ServiceBase $api)
     {
         // Use a copy of the filter. We want to produce a new array.
         $filter = $this->filter;
         $operand = new EmailParticipantsOperand($this->operand, $filter['$in']);
-        $filter['$in'] = $operand->format($api);
+        $filter['$in'] = $operand->apiSerialize($api);
 
         return $filter;
     }
@@ -124,12 +124,12 @@ final class EmailParticipants implements Serializable
      * @return array
      * @throws SugarApiExceptionInvalidParameter
      */
-    public function unformat(ServiceBase $api)
+    public function apiUnserialize(ServiceBase $api)
     {
         // Use a copy of the filter. We want to produce a new array.
         $filter = $this->filter;
         $operand = new EmailParticipantsOperand($this->operand, $filter['$in']);
-        $filter['$in'] = $operand->unformat($api);
+        $filter['$in'] = $operand->apiUnserialize($api);
 
         return $filter;
     }
