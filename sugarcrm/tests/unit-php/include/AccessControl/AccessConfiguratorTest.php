@@ -103,9 +103,9 @@ class AccessConfiguratorTest extends TestCase
     }
 
     /**
-     * @covers ::getNotAcceccibleModuleListByLicenseTypes
+     * @covers ::getNotAccessibleRecordListByLicenseTypes
      *
-     * @dataProvider getAccessControlledModuleListProvider
+     * @dataProvider getNotAccessibleRecordListByLicenseTypesProvider
      */
     public function testGetAccessControlledModuleListByTypes($access_config, $types, $expected)
     {
@@ -118,7 +118,94 @@ class AccessConfiguratorTest extends TestCase
             ->method('loadAccessConfig')
             ->will($this->returnValue($access_config));
 
-        $this->assertSame($expected, $configuratorMock->getNotAcceccibleModuleListByLicenseTypes($types, false));
+        $this->assertSame($expected, $configuratorMock->getNotAccessibleRecordListByLicenseTypes($types, false));
+    }
+
+    public function getNotAccessibleRecordListByLicenseTypesProvider()
+    {
+        return [
+            [
+                [
+                    'RECORDS' => [
+                        'Reports' => [
+                            'serve_only_1' => ['SUGAR_SERVE'],
+                            'ent1' => ['CURRENT'],
+                            'ent2' => ['CURRENT'],
+                            'sell_ent' => ['SUGAR_SELL', 'CURRENT'],
+                            'sell_serve' => ['SUGAR_SELL', 'SUGAR_SERVE'],
+                        ],
+                    ],
+                ],
+                ['SUGAR_SERVE'],
+                [
+                    'Reports' => [
+                        'ent1',
+                        'ent2',
+                        'sell_ent',
+                    ],
+                ],
+            ],
+            [
+                [
+                    'RECORDS' => [
+                        'Reports' => [
+                            'serve_only_1' => ['SUGAR_SERVE'],
+                            'ent1' => ['CURRENT'],
+                            'ent2' => ['CURRENT'],
+                            'sell_ent' => ['SUGAR_SELL', 'CURRENT'],
+                            'sell_serve' => ['SUGAR_SELL', 'SUGAR_SERVE'],
+                        ],
+                    ],
+                ],
+                ['SUGAR_SELL'],
+                [
+                    'Reports' => [
+                        'serve_only_1',
+                        'ent1',
+                        'ent2',
+                    ],
+                ],
+            ],
+            [
+                [
+                    'RECORDS' => [
+                        'Reports' => [
+                            'serve_only_1' => ['SUGAR_SERVE'],
+                            'ent1' => ['CURRENT'],
+                            'ent2' => ['CURRENT'],
+                            'sell_ent' => ['SUGAR_SELL', 'CURRENT'],
+                            'sell_serve' => ['SUGAR_SELL', 'SUGAR_SERVE'],
+                        ],
+                    ],
+                ],
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
+                [
+                    'Reports' => [
+                        'ent1',
+                        'ent2',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getNotAccessibleRecordListByLicenseTypes
+     *
+     * @dataProvider getAccessControlledModuleListProvider
+     */
+    public function testGetNotAccessControlledModuleListByTypes($access_config, $types, $expected)
+    {
+        $configuratorMock = $this->getMockBuilder(AccessConfigurator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['loadAccessConfig'])
+            ->getMock();
+
+        $configuratorMock->expects($this->any())
+            ->method('loadAccessConfig')
+            ->will($this->returnValue($access_config));
+
+        $this->assertSame($expected, $configuratorMock->getNotAccessibleModuleListByLicenseTypes($types, false));
     }
 
     public function getAccessControlledModuleListProvider()
@@ -200,12 +287,12 @@ class AccessConfiguratorTest extends TestCase
     }
 
     /**
-     * @covers ::getNotAcceccibleModuleListByLicenseTypes
+     * @covers ::getNotAccessibleModuleListByLicenseTypes
      */
-    public function testGetNotAcceccibleModuleListByLicenseTypes()
+    public function testGetNotAccessibleModuleListByLicenseTypes()
     {
         $this->assertNotEmpty(
-            AccessConfigurator::instance()->getNotAcceccibleModuleListByLicenseTypes(['SUGAR_SERVE'], false)
+            AccessConfigurator::instance()->getNotAccessibleModuleListByLicenseTypes(['SUGAR_SERVE'], false)
         );
     }
 }

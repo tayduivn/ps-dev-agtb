@@ -16,6 +16,7 @@ namespace Sugarcrm\Sugarcrm\AccessControl;
 // to as Critical Control Software under the End User
 // License Agreement.  Neither the Company nor the Users
 // may modify any portion of the Critical Control Software.
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 
 /**
  * Class AccessControlManager
@@ -38,6 +39,12 @@ class AccessControlManager
      * @var bool
      */
     protected $allowAdminOverride = false;
+
+    /**
+     * the flag to indicate in admin tasks, we need to disable access control to the admin to do tasks
+     * @var bool
+     */
+    protected $isAdminWork = false;
 
     /**
      * @var array
@@ -77,6 +84,10 @@ class AccessControlManager
     protected function init()
     {
         $this->registerVoters();
+        // bypassing access check during installation
+        if (isset($GLOBALS['installing']) && $GLOBALS['installing'] === true) {
+            $this->isAdminWork = true;
+        }
     }
 
     /**
@@ -141,20 +152,11 @@ class AccessControlManager
      */
     protected function allowAccess(string $key, string $subject, ?string $value = null) : bool
     {
-        // bypassing access check during installation
-        if (isset($GLOBALS['installing']) && $GLOBALS['installing'] === true) {
+        if ($this->isAdminWork || $this->allowAdminAccess()) {
             return true;
         }
-
-        global $current_user;
-        // admin override
-        if ($this->allowAdminOverride && !empty($current_user) && is_admin($current_user)) {
-            return true;
-        }
-
         return $this->getRegisteredVoter($key)->vote($key, $subject, $value);
     }
-
 
     /**
      * check allow module access
@@ -169,11 +171,18 @@ class AccessControlManager
             return true;
         }
 
+        // check if it is in admin workflow
+        if ($this->isAdminWork) {
+            return true;
+        }
+
+        // check if it is subjected to access control
         if (!$this->isAccessControlled(self::MODULES_KEY, $module)) {
             $this->moduleAclList[$module] = true;
             return true;
         }
 
+        // check memory cache
         if (isset($this->moduleAclList[$module])) {
             return $this->moduleAclList[$module];
         }
@@ -213,6 +222,15 @@ class AccessControlManager
             return true;
         }
 
+        // regular workflow, we need to check record access
+        if (!$this->isAdminWork) {
+            $old = $this->allowAdminOverride;
+            $this->allowAdminOverride = false;
+            $allowed = $this->allowAccess(self::RECORDS_KEY, $module, $id);
+            $this->allowAdminOverride = $old;
+            return $allowed;
+        }
+
         return $this->allowAccess(self::RECORDS_KEY, $module, $id);
     }
 
@@ -247,6 +265,35 @@ class AccessControlManager
     }
 
     /**
+     * allow admin access
+     * @return bool
+     */
+    protected function allowAdminAccess() : bool
+    {
+        global $current_user;
+        // admin override
+        if ($this->allowAdminOverride && !empty($current_user) && is_admin($current_user)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * set is isAdminWork flag, we need to disable access control for admin work
+     * @param bool $adminWork
+     * @return $this
+     */
+    public function setAdminWork(bool $adminWork)
+    {
+        global $current_user;
+        // admin override
+        if (!empty($current_user) && is_admin($current_user)) {
+            $this->isAdminWork = $adminWork;
+        }
+        return $this;
+    }
+
+    /**
      * check if the module is subjected to access control
      *
      * @param string $key
@@ -269,6 +316,25 @@ class AccessControlManager
     protected function getAccessControlledList(string $key) : array
     {
         return AccessConfigurator::instance()->getAccessControlledList($key);
+    }
+
+    /**
+     * get inaccessible records for the given $module
+     * @param null|string $module
+     * @return array|mixed
+     */
+    public function getNotAccessibleRecords(?string $module)
+    {
+        global $current_user;
+        if (empty($current_user) || empty($module)) {
+            return [];
+        }
+        $userLicenseTypes = SubscriptionManager::instance()->getUserSubscriptions($current_user);
+        $inaccessibleList = AccessConfigurator::instance()->getNotAccessibleRecordListByLicenseTypes($userLicenseTypes);
+        if (isset($inaccessibleList[$module])) {
+            return $inaccessibleList[$module];
+        }
+        return [];
     }
 }
 //END REQUIRED CODE DO NOT MODIFY

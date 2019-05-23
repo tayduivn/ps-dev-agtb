@@ -79,7 +79,7 @@ class SugarVoter implements SugarVoterInterface
     protected function getNotAccessibleModuleListByLicenseTypes()
     {
         $subscriptions = $this->getCurrentUserSubscriptions();
-        return AccessConfigurator::instance()->getNotAcceccibleModuleListByLicenseTypes($subscriptions);
+        return AccessConfigurator::instance()->getNotAccessibleModuleListByLicenseTypes($subscriptions);
     }
     /**
      * $key

@@ -110,7 +110,7 @@ class SubscriptionManager
      * get content of subscription, if $useDb is false, it will ignore database and retrieve directly from license server
      *
      * @param $licenseKey license key
-     * @param bool $useDb if true, it will ignore data in config and retrieve directly from license server
+     * @param bool $useDb if false, it will ignore local DB and retrieve data directly from license server
      * @return string
      */
     protected function getSubscriptionContent(string $licenseKey, bool $useDb) : string
@@ -303,7 +303,7 @@ class SubscriptionManager
             }
         }
 
-        throw new \Exception("new license type found!");
+        throw new \Exception('new license type found!');
     }
 }
 //END REQUIRED CODE DO NOT MODIFY

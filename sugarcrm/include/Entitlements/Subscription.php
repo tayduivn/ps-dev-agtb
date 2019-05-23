@@ -180,9 +180,7 @@ class Subscription
         }
 
         $keys = [];
-
         foreach ($subscriptions as $key => $value) {
-            // skip checking expiration date for now
             if (!in_array($key, $this->getAddonProducts())) {
                 $keys[self::SUGAR_BASIC_KEY] = true;
             } else {

@@ -23,6 +23,7 @@ require_once 'include/utils.php';
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
 use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList as ErasureFieldList;
@@ -3342,6 +3343,20 @@ class SugarBean
         // in case if a CHAR ID was fetched from database manually, we need to convert it here in order
         // to make sure it doesn't contain trailing spaces
         $id = $this->db->fromConvert($id, 'id');
+
+        // add access control
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
+        if (!empty($id) && is_string($id)) {
+            if (!AccessControlManager::instance()->allowRecordAccess($this->getModuleName(), $id)) {
+                $GLOBALS['log']->fatal('Not authorized to access record ' . $this->getModuleName() . ':' . $id);
+                $this->id = null;
+                return $this;
+            }
+        }
+        //END REQUIRED CODE DO NOT MODIFY
 
         $custom_logic_arguments['id'] = $id;
         $this->call_custom_logic('before_retrieve', $custom_logic_arguments);

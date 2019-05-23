@@ -399,6 +399,18 @@ class FilterApi extends SugarApi
             self::addOrderBy($query, $this->defaultOrderBy);
         }
 
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
+
+        // add not in filter
+        $inaccessibleList = AccessControlManager::instance()->getNotAccessibleRecords($seed->getModuleName());
+        if (!empty($inaccessibleList)) {
+            self::addFilter('id', ['$not_in' => $inaccessibleList], $query->where(), $query);
+        }
+        //END REQUIRED CODE DO NOT MODIFY
+
         return $query;
     }
 
@@ -700,21 +712,6 @@ class FilterApi extends SugarApi
 
         $data = array();
         $data['next_offset'] = -1;
-
-        // filter out un-accessable records
-        foreach ($beans as $bean_id => $bean) {
-            if (!empty($args['module'])) {
-                // This section of code is a portion of the code referred
-                // to as Critical Control Software under the End User
-                // License Agreement.  Neither the Company nor the Users
-                // may modify any portion of the Critical Control Software.
-
-                if (!AccessControlManager::instance()->allowRecordAccess($args['module'], $bean_id)) {
-                    unset($beans[$bean_id]);
-                }
-                //END REQUIRED CODE DO NOT MODIFY
-            }
-        }
 
         // Get the related bean options to be able to handle related collections, like
         // in tags. Do this early, before beans in the collection are mutated

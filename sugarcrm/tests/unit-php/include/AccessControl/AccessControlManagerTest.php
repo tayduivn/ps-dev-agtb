@@ -49,9 +49,44 @@ class AccessControlManagerTest extends TestCase
 
         $voter = TestReflection::callProtectedMethod($acm, 'getRegisteredVoter', ['RECORDS']);
         $this->assertTrue($voter instanceof SugarRecordVoter);
-
     }
 
+    /**
+     *
+     * @covers ::init
+     * @covers ::setAdminWork
+     * @covers ::__construct
+     *
+     * @dataProvider setAdminWorkProvider
+     *
+     */
+    public function testSetAdminWork(bool $adminwork, $isAdmin, $expected)
+    {
+        $userMock = $this->getMockBuilder(\User::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isAdmin'])
+            ->getMock();
+
+        $userMock->expects($this->any())
+        ->method('isAdmin')
+        ->will($this->returnValue($isAdmin));
+
+        global $current_user;
+        $current_user = $userMock;
+        $acm = AccessControlManager::instance()->setAdminWork($adminwork);
+
+        $this->assertSame($expected, TestReflection::getProtectedValue($acm, 'isAdminWork', []));
+        AccessControlManager::instance()->setAdminWork(false);
+    }
+
+    public function setAdminWorkProvider()
+    {
+        return [
+            [true, true, true],
+            [true, false, false], // not admin, can't set
+            [false, true, false],
+        ];
+    }
     /**
      * @covers ::allowModuleAccess
      * @covers ::allowAccess
@@ -334,11 +369,19 @@ class AccessControlManagerTest extends TestCase
      * @covers ::allowRecordAccess
      * @covers ::allowAccess
      * @covers ::isAccessControlled
+     * @covers ::allowAdminAccess
      *
      * @dataProvider allowRecordAccessProvider
      */
-    public function testAllowRecordAccess($access_config, $module, $id, $entitled, $expected)
+    public function testAllowRecordAccess($access_config, $module, $id, $entitled, $isAdminWork, $allowedAdmin, $expected)
     {
+        $userMock = $this->getMockBuilder(\User::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $userMock->is_admin = true;
+
+        global $current_user;
+        $current_user = $userMock;
         $sugarVoterMock = $this->getMockBuilder(SugarRecordVoter::class)
             ->disableOriginalConstructor()
             ->setMethods(['getCurrentUserSubscriptions', 'getProtectedList'])
@@ -366,6 +409,8 @@ class AccessControlManagerTest extends TestCase
             ->will($this->returnValue($access_config));
 
         TestReflection::callProtectedMethod($acmMock, 'init', []);
+        TestReflection::setProtectedValue($acmMock, 'isAdminWork', $isAdminWork);
+        TestReflection::setProtectedValue($acmMock, 'allowAdminOverride', $allowedAdmin);
 
         $this->assertSame($expected, $acmMock->allowRecordAccess($module, $id));
     }
@@ -378,6 +423,8 @@ class AccessControlManagerTest extends TestCase
                 'BusinessCenters',
                 'random_id',
                 ['SUGAR_SERVE'],
+                false,
+                false,
                 true,
             ],
             [
@@ -385,6 +432,8 @@ class AccessControlManagerTest extends TestCase
                 'BusinessCenters',
                 'random_id_no_in_the_list',
                 ['SUGAR_SERVE'],
+                false,
+                false,
                 true,
             ],
             [
@@ -393,12 +442,16 @@ class AccessControlManagerTest extends TestCase
                 'random_id',
                 ['NOT_SERVICE_CCLOUD'],
                 false,
+                false,
+                false,
             ],
             [
                 ['BusinessCenters' => ['random_id' => ['SUGAR_SERVE']]],
                 null,
                 'random_id',
                 ['SUGAR_SERVE'],
+                false,
+                false,
                 true,
             ],
             [
@@ -406,7 +459,27 @@ class AccessControlManagerTest extends TestCase
                 'BusinessCenters',
                 null,
                 ['SUGAR_SERVE'],
+                false,
+                false,
                 true,
+            ],
+            [
+                ['BusinessCenters' => ['random_id' => ['SUGAR_SERVE', 'SUGAR_SELL']]],
+                'BusinessCenters',
+                'random_id',
+                ['OTHER_LICENSE_TYPE'],
+                true,
+                false,
+                true,
+            ],
+            [
+                ['BusinessCenters' => ['random_id' => ['SUGAR_SERVE', 'SUGAR_SELL']]],
+                'BusinessCenters',
+                'random_id',
+                ['OTHER_LICENSE_TYPE'],
+                false,
+                true,
+                false,
             ],
         ];
     }

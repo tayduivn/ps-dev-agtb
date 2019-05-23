@@ -56,7 +56,7 @@ class BeanFactory {
         // License Agreement.  Neither the Company nor the Users
         // may modify any portion of the Critical Control Software.
         if (!AccessControlManager::instance()->allowRecordAccess($module, $id)) {
-            throw new Exception('this record is not accessable for your license type');
+            throw new SugarApiExceptionNotFound('This record is not found for your license type.');
         }
         //END REQUIRED CODE DO NOT MODIFY
 

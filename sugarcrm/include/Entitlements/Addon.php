@@ -34,6 +34,12 @@ class Addon
         $this->parse($id, $data);
     }
 
+    /**
+     * parse the Addon section
+     * @param string $id
+     * @param array $data
+     * @throws \Exception
+     */
     protected function parse(string $id, array $data)
     {
         if (empty($id)) {

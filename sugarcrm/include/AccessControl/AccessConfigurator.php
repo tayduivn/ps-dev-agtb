@@ -35,6 +35,17 @@ class AccessConfigurator
      */
     protected static $instance;
 
+    /**
+     * inaccessible modules
+     * @var array
+     */
+    protected $inaccessibleModules = [];
+
+    /**
+     * inaccessible records
+     * @var array
+     */
+    protected $inaccessibleRecords = [];
 
     /**
      * access configuration data, cached in memory for session
@@ -106,18 +117,14 @@ class AccessConfigurator
      * @param bool $useCache
      * @return array|mixed
      */
-    public function getNotAcceccibleModuleListByLicenseTypes(array $types, bool $useCache = true)
+    public function getNotAccessibleModuleListByLicenseTypes(array $types, bool $useCache = true)
     {
         if (empty($types)) {
             return [];
         }
 
-        $cacheKey = 'ac_' . AccessControlManager::MODULES_KEY . '-' . implode('-', $types);
-        if ($useCache) {
-            $list = sugar_cache_retrieve($cacheKey);
-            if (!empty($list)) {
-                return $list;
-            }
+        if (!empty($this->inaccessibleModules)) {
+            return $this->inaccessibleModules;
         }
 
         $controlledList = $this->getAccessControlledList(AccessControlManager::MODULES_KEY, $useCache);
@@ -132,10 +139,45 @@ class AccessConfigurator
                 }
             }
         }
-        if ($useCache) {
-            sugar_cache_put($cacheKey, $notAccessibleList);
+
+        $this->inaccessibleModules = $notAccessibleList;
+        return $notAccessibleList;
+    }
+
+    /**
+     * get inaccessable records list by license types
+     *
+     * @param array $types
+     * @param bool $useCache
+     * @return array|mixed
+     */
+    public function getNotAccessibleRecordListByLicenseTypes(array $types, bool $useCache = true)
+    {
+        if (empty($types)) {
+            return [];
         }
 
+        if (!empty($this->inaccessibleRecords)) {
+            return $this->inaccessibleRecords;
+        }
+
+        $controlledList = $this->getAccessControlledList(AccessControlManager::RECORDS_KEY, $useCache);
+
+        $notAccessibleList = [];
+
+        // find out inaccessible records
+        if (!empty($controlledList)) {
+            foreach ($controlledList as $module => $records) {
+                $notAccessibleList[$module] = [];
+                foreach ($records as $id => $allowedTypes) {
+                    if (empty(array_intersect($types, $allowedTypes))) {
+                        $notAccessibleList[$module][] = $id;
+                    }
+                }
+            }
+        }
+
+        $this->inaccessibleRecords = $notAccessibleList;
         return $notAccessibleList;
     }
 
