@@ -718,9 +718,9 @@ $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
 //BEGIN SUGARCRM flav=ent ONLY
-$moduleList[] = 'VisualPipeline';
 $beanList['VisualPipeline']  = 'VisualPipeline';
 $beanFiles['VisualPipeline'] = 'modules/VisualPipeline/VisualPipeline.php';
+$modInvisList[] = 'VisualPipeline';
 //END SUGARCRM flav=ent ONLY
 
 // this module doesn't need a Bean
