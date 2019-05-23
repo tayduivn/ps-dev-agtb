@@ -1685,11 +1685,46 @@
     /**
      * @override
      *
-     * Get a hardcoded container width for now.
+     * Get the available width for fields in the header.
+     * From the full width of the container we need to subtract
+     * the paddings and reserve some space for custom buttons.
+     * The super method relies on functionality that is not present
+     * in the context this component is used in. (`layout.getPaneWidth`)
+     *
+     * @return {number} Returns the numeric width value to be assgined to the title field.
      */
     getContainerWidth: function() {
-        // FIXME: see if this hack can be undone.
-        return 230;
+        var containerWidth = 0;
+        var titleRightIndent = 10;
+        var defaultRecommendedWidth = 230;
+        var btnBar = this.layout.$el.find('.btn-toolbar');
+        var titleBar = this.layout.$el.find('.dashlet-title');
+
+        if (titleBar.length) {
+            var titleBarChildMargins = 0;
+            _.each(titleBar.children(), function(child) {
+                titleBarChildMargins += parseInt($(child).css('marginLeft'), 10) || 0;
+                titleBarChildMargins += parseInt($(child).css('marginRight'), 10) || 0;
+            });
+            containerWidth = titleBar.width() - titleBarChildMargins - titleRightIndent;
+
+            if (btnBar.length) {
+                var buttonsWidth = 0;
+                _.each(btnBar.children(), function(button) {
+                    var $button = $(button);
+                    if ($button.css('display') !== 'none') {
+                        buttonsWidth += $button.outerWidth(true);
+                    }
+                });
+
+                var titleBarRightPadding = parseInt(titleBar.css('paddingRight'), 10) || 0;
+                if (buttonsWidth > titleBarRightPadding) {
+                    containerWidth -= (buttonsWidth - titleBarRightPadding);
+                }
+            }
+        }
+
+        return (containerWidth > 0) ? containerWidth : defaultRecommendedWidth;
     },
 
     /**
