@@ -66,7 +66,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
     /**
      * Gets the maximum span units for for a panel
-     * 
+     *
      * @return int
      */
     public function getMaxSpan()
@@ -75,7 +75,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     }
 
     /**
-     * Sets the fields that are part of fieldsets. This is used when setting 
+     * Sets the fields that are part of fieldsets. This is used when setting
      * available fields.
      */
     protected function setFieldsetMemberFields()
@@ -527,7 +527,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
     /**
      * Sets a base span entry
-     * 
+     *
      * @param string $name The field name to record the span for
      * @param int $value The span value for this field
      */
@@ -619,7 +619,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
     /**
      * Gets current field's span based on the last field and adjust last field's base span if necessary
-     * 
+     *
      * @param array $lastField The last field that was touched
      * @param int $singleSpanUnit The number of spaces occupied by a single span
      * @param int $fieldCount The number of fields in the row of fields
@@ -632,7 +632,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         } else {
             // calculate span of the filler based on span of the field it complements
             if (is_array($lastField) && isset($lastField['name'], $this->baseSpans[$lastField['name']])) {
-                // The span for this field should be the max span 
+                // The span for this field should be the max span
                 // minus the last field span plus a single unit
                 // span
                 $fullBaseSpan = $this->baseSpans[$lastField['name']]['span'] + $this->baseSpans[$lastField['name']]['adjustment'];
@@ -681,7 +681,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         foreach ($panels as $n => $panel) {
             // If we are on a record view we need to hide the header panel from
             // studio. This is to prevent breaking the client side application.
-            if ($this->_view == MB_RECORDVIEW && $n == $this->headerPanelIndex) {
+            if (in_array($this->_view, [MB_RECORDVIEW, MB_RECORDDASHLETVIEW]) && $n == $this->headerPanelIndex) {
                 $this->headerPanelMeta = $panel;
                 continue;
             }
@@ -958,7 +958,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                     }
                 }
 
-                // Now see if this field is inside of a combination field and 
+                // Now see if this field is inside of a combination field and
                 // remove the combination field if it is. This removes the combo
                 // field if a component of the combo field is on the layout.
                 if (!empty($this->fieldsetMemberFields[$remove])) {
@@ -969,9 +969,9 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     }
 
     /**
-     * Removes a field from the available field array. This is a helper method 
+     * Removes a field from the available field array. This is a helper method
      * now since this is handled in more than one place.
-     * 
+     *
      * @param array $availableFields Array of available fields
      * @param string $field Name of the field to remove
      */
@@ -1035,7 +1035,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                     return $field['name'];
                 }
 
-                // This handles non-field fields like favorite and follow that 
+                // This handles non-field fields like favorite and follow that
                 // may not have a name property
                 if (!empty($field['readonly']) && empty($field['name'])) {
                     return $field['type'];
@@ -1099,10 +1099,10 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
         }
     }
-    
+
     /**
      * Gets a field span
-     * 
+     *
      * @param array|string $field A field definition
      * @param integer $singleSpanUnit Default value of span for a single-column unit
      *
