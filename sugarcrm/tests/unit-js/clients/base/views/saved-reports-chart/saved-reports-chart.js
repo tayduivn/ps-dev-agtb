@@ -133,6 +133,75 @@ describe('Base.View.Saved-Reports-Chart', function() {
             view.setChartParams('');
             expect(field.displayNoData).toHaveBeenCalled();
         });
+
+        using(
+            'whether chart was updated',
+            [
+                {updated: false, label: 'Translated Label', x_axis_label: ''},
+                {updated: true, label: 'reportDataLabel', x_axis_label: 'My Group'}
+            ],
+            function(jasmineParams) {
+                it('should set the params', function() {
+                    var oldDirection = app.lang.direction;
+                    app.lang.direction = 'ltr';
+                    var label = 'LBL_MY_TEST_REPORT';
+                    var translation = 'Translated Label';
+                    sinon.collection.stub(app.lang, 'get').withArgs(label, view.module).returns(translation);
+                    view.settings.set('label', label, {silent: true});
+                    var data = {
+                        reportData: {
+                            group_defs: [{name: 'account_type'}, {name: 'industry'}],
+                            label: 'reportDataLabel'
+                        },
+                        chartData: {
+                            label: ['', 'Education'],
+                            values: [{label: 'Customer'}, {label: 'Analyst'}],
+                            properties: [{
+                                groupName: 'My Group',
+                                base_module: 'Accounts',
+                                allow_drillthru: true,
+                                title: 'Title'
+                            }],
+                            vertical: true,
+                            direction: 'ltr'
+                        }
+                    };
+
+                    view.setChartParams(data, jasmineParams.updated);
+
+                    var expected = {
+                        saved_report_id: 'a',
+                        label: jasmineParams.label,
+                        allowScroll: true,
+                        auto_refresh: 0,
+                        colorData: 'class',
+                        config: true,
+                        hideEmptyGroups: true,
+                        reduceXTicks: true,
+                        rotateTicks: true,
+                        show_controls: false,
+                        show_title: false,
+                        show_x_label: false,
+                        show_y_label: false,
+                        showValues: 0,
+                        staggerTicks: true,
+                        wrapTicks: true,
+                        x_axis_label: jasmineParams.x_axis_label,
+                        y_axis_label: '',
+                        chart_type: 'bar chart',
+                        report_title: 'Title',
+                        show_legend: false,
+                        stacked: true,
+                        module: 'Accounts',
+                        allow_drillthru: true,
+                        vertical: true,
+                        direction: 'ltr'
+                    };
+                    expect(view.settings.attributes).toEqual(expected);
+                    app.lang.direction = oldDirection;
+                });
+            }
+        );
     });
 
     describe('getChartState()', function() {
