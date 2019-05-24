@@ -34,6 +34,8 @@ class OpportunitiesApi extends ModuleApi
     {
         $this->requireArgs($args,array('module','record'));
 
+        parent::updateRecord($api, $args);
+
         // BEGIN SUGARCRM flav = ent ONLY
         $settings = Opportunity::getSettings();
         if ($settings['opps_view_by'] === 'RevenueLineItems') {
@@ -52,9 +54,7 @@ class OpportunitiesApi extends ModuleApi
         }
         // END SUGARCRM flav = ent ONLY
 
-        $results = parent::updateRecord($api, $args);
-
-        return $results;
+        return $this->getLoadedAndFormattedBean($api, $args);
     }
 
     // BEGIN SUGARCRM flav = ent ONLY
