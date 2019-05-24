@@ -40,7 +40,9 @@
 							{{#each fields}}
 							<div class="record-cell field-row">
 		        				<div class="field-label ellipsis_inline" data-name="{{../name}}">
-						            {{str  label ../../attributes.moduleName}}
+									{{#unless dismiss_label}}
+										{{str  label ../../../attributes.moduleName}}
+									{{/unless}}
 						        </div>
 		        				<div class="field-value" data-type="{{../type}}" name="{{../name}}" data-name="{{../name}}">
 		            				{{field ../../../this model=../../this template="preview"}}

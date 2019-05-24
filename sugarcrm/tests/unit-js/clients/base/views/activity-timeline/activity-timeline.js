@@ -296,7 +296,7 @@ describe('Base.View.ActivityTimeline', function() {
             ];
 
             view.models = _.map(moduleIcons, function(module) {
-                return app.data.createBean(module.name, {moduleName: module.name});
+                return app.data.createBean(module.name, {_module: module.name});
             });
             view._setIconClass();
 

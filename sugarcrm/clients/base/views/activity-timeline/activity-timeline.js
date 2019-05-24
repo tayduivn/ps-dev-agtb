@@ -235,7 +235,7 @@
     _setIconClass: function() {
         if (this.models) {
             _.each(this.models, function(model) {
-                model.set('icon_class', this.moduleIcons[model.get('moduleName')]);
+                model.set('icon_class', this.moduleIcons[model.get('_module')]);
             }, this);
         }
     },
@@ -290,6 +290,7 @@
             $el.removeClass('fa-chevron-down').addClass('fa-chevron-up');
         } else {
             model.fetch({
+                view: app.metadata.getView(model.get('_module'), 'preview') ? 'preview' : 'record',
                 success: _.bind(function(m) {
                     model.set('fullBeanFetched', true);
                     this._patchFieldsToModel(model);
