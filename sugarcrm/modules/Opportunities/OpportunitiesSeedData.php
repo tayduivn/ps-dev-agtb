@@ -274,9 +274,9 @@ class OpportunitiesSeedData {
         $opp_date_closed_timestamp = 0;
 
         //Retrieve the first option of the sales stage dom for default
-        $salesStageOptions = $app_list_strings['sales_stage_dom'];
-        reset($salesStageOptions);
-        $salesStageFirstOption = key($salesStageOptions);
+        $salesStageDomOptions = $app_list_strings['sales_stage_dom'];
+        reset($salesStageDomOptions);
+        $salesStageFirstOption = key($salesStageDomOptions);
 
         $oppFieldDefs = $opp->getFieldDefinitions();
         $oppSalesStageFieldDef = $oppFieldDefs['sales_stage'];
@@ -287,8 +287,6 @@ class OpportunitiesSeedData {
         $latestRliSalesStageKey = '';
 
         while($rlis_created < $rlis_to_create) {
-
-
             $amount = mt_rand(1000, 7500);
             $rand_best_worst = mt_rand(100, 900);
             $doPT = false;
@@ -338,6 +336,13 @@ class OpportunitiesSeedData {
                     $closedLost++;
                 }
                 $opp->closed_revenue_line_items++;
+            } else {
+                //Determine the latest sales stage based on index of sales stage dom
+                $currentSalesStageIndex = array_search($rli->sales_stage, array_keys($salesStageDomOptions));
+                if ($currentSalesStageIndex >= $latestRliSalesStageIndex) {
+                    $latestRliSalesStageIndex = $currentSalesStageIndex;
+                    $latestRliSalesStageKey = $rli->sales_stage;
+                }
             }
             $rli->commit_stage = $rli->probability >= 70 ? 'include' : 'exclude';
             $rli->date_closed = ($isClosed) ? self::createPastDate() : self::createDate();
@@ -374,13 +379,6 @@ class OpportunitiesSeedData {
             $rli->date_modified = $now;
             $rli->modified_user_id = $opp->modified_user_id;
             $rli->created_by = $opp->created_by;
-
-            //Determine the latest sales stage based on index of sales stage dom
-            $currentSalesStageIndex = array_search($rli->sales_stage, array_keys($salesStageOptions));
-            if ($currentSalesStageIndex >= $latestRliSalesStageIndex) {
-                $latestRliSalesStageIndex = $currentSalesStageIndex;
-                $latestRliSalesStageKey = $rli->sales_stage;
-            }
 
             $values = $rli->toArray(true);
 
@@ -438,11 +436,11 @@ class OpportunitiesSeedData {
         }
 
         //populate sales stage data
-        if ($rlis_to_create === 0) {
+        if ($rlis_created === 0) {
             $opp->sales_stage = $defaultSalesStage;
-        } elseif ($closedLost === $rlis_to_create) {
+        } elseif ($closedLost === $rlis_created) {
             $opp->sales_stage = Opportunity::STATUS_CLOSED_LOST;
-        } elseif ($closedWon + $closedLost === $rlis_to_create) {
+        } elseif (($closedWon + $closedLost) === $rlis_created) {
             $opp->sales_stage = Opportunity::STATUS_CLOSED_WON;
         } else {
             $opp->sales_stage = $latestRliSalesStageKey;
