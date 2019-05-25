@@ -146,10 +146,8 @@ describe('Base.Layout.DashletMain', function() {
             var tab0 = {name: 'tab0', components: [{rows: ['row 1, tab 0', 'row 2, tab 0'], width: 22}]};
             var tab1 = {name: 'tab1', components: [{view: 'multi-line-list'}]};
             var metadata = {tabs: [tab0, tab1]};
-            layout.layout = {
-                getComponent: sinon.collection.stub().returns({
-                    activeTab: currentTab
-                }),
+            layout.context = {
+                get: sinon.collection.stub().returns(currentTab),
                 off: $.noop
             };
             expect(layout.getComponentsFromMetadata(metadata)).toEqual(metadata.tabs [currentTab].components);

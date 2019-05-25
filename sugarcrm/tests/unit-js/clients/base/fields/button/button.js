@@ -328,15 +328,39 @@ describe("Base.Field.Button", function() {
         });
 
         it('should be truthy if it is on a forbidden layout', function() {
-            field.def.disallowed_layouts = ['bad-layout'];
+            field.def.disallowed_layouts = [{'name': 'bad-layout'}];
             var closestComponentStub = sinon.stub(field, 'closestComponent');
             closestComponentStub.withArgs('bad-layout').returns({fake: 'component'});
             expect(field.isOnForbiddenLayout()).toBeTruthy();
             closestComponentStub.restore();
         });
 
+        it('should be truthy if it is on a forbidden dashboard', function() {
+            field.def.disallowed_layouts = [{'name': 'dashboard', 'id': 'bad-id'}];
+            var closestComponentStub = sinon.stub(field, 'closestComponent');
+            closestComponentStub.withArgs('dashboard').returns({
+                model: {
+                    get: function() {return 'bad-id';}
+                }
+            });
+            expect(field.isOnForbiddenLayout()).toBeTruthy();
+            closestComponentStub.restore();
+        });
+
+        it('should be falsy if it is not on a forbidden dashboard', function() {
+            field.def.disallowed_layouts = [{'name': 'dashboard', 'id': 'bad-id'}];
+            var closestComponentStub = sinon.stub(field, 'closestComponent');
+            closestComponentStub.withArgs('dashboard').returns({
+                model: {
+                    get: function() {return 'good-id';}
+                }
+            });
+            expect(field.isOnForbiddenLayout()).toBeFalsy();
+            closestComponentStub.restore();
+        });
+
         it('should be falsy if it is not on a forbidden layout', function() {
-            var disallowedLayouts = ['bad-layout-1', 'bad-layout-2'];
+            var disallowedLayouts = [{'name': 'bad-layout-1'}, {'name': 'bad-layout-2'}];
             var closestComponentStub = sinon.stub(field, 'closestComponent');
             closestComponentStub.withArgs('bad-layout-1').returns(void 0);
             closestComponentStub.withArgs('bad-layout-2').returns(void 0);

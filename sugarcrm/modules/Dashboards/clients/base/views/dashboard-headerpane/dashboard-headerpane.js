@@ -30,7 +30,8 @@
         'click [name=delete_button]': 'deleteClicked',
         'click [name=add_button]': 'addClicked',
         'click [name=collapse_button]': 'collapseClicked',
-        'click [name=expand_button]': 'expandClicked'
+        'click [name=expand_button]': 'expandClicked',
+        'click [data-toggle=dropdown]': 'dropdownClicked',
     },
 
     initialize: function(options) {
@@ -204,6 +205,34 @@
 
     expandClicked: function(evt) {
         this.context.trigger('dashboard:collapse:fire', false);
+    },
+
+    /**
+     * Don't show dropdown for non-dashboard tab.
+     *
+     * @param {Event} evt Triggered mouse event
+     */
+    dropdownClicked: function(evt) {
+        if (!this._isDashboard()) {
+            evt.stopPropagation();
+            return;
+        }
+    },
+
+    /**
+     * Check if this is a tabbed dashboard and active tab is a dashboard.
+     *
+     * @return {bool} True if this is not a tabbed dashboard
+     * or active tab is a dashboard, false otherwise
+     * @private
+     */
+    _isDashboard: function() {
+        var tabs = this.context.get('tabs');
+        if (!tabs) {
+            return true;
+        }
+        var tabIndex = this.context.get('activeTab') || 0;
+        return tabs[tabIndex] && tabs[tabIndex].components && tabs[tabIndex].components[0].rows;
     },
 
     /**

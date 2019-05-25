@@ -42,7 +42,7 @@ describe('Base.Field.Dashletaction', function() {
                     'action': 'test',
                     'params': expectedParams,
                     'acl_action': 'view',
-                    disallowed_layouts: ['row-model-data', 'super-weird-nonexistent-layout']
+                    disallowed_layouts: [{'name': 'row-model-data'}, {'name': 'super-weird-nonexistent-layout'}]
                 });
                 _.extend(field.view, {
                     test: function(evt, params) {}

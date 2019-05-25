@@ -34,6 +34,13 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                     'label' => 'LBL_DUPLICATE_BUTTON',
                     'acl_module' => 'Dashboards',
                     'acl_action' => 'create',
+                    'disallowed_layouts' => [
+                        [
+                            // this is the Agent Workbench
+                            'name' => 'dashboard',
+                            'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
+                        ],
+                    ],
                 ),
             ),
             "showOn" => "view",
@@ -51,6 +58,13 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
             "label"     => "LBL_DELETE_BUTTON_LABEL",
             "css_class" => "btn-danger",
             "showOn" => "edit",
+            'disallowed_layouts' => [
+                [
+                    // this is the Agent Workbench
+                    'name' => 'dashboard',
+                    'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
+                ],
+            ],
         ),
         array(
             "name"      => "save_button",

@@ -61,12 +61,29 @@
     },
 
     /**
+     * Check if a tab is dashboard.
+     *
+     * @param {number} tabIndex The tab's index
+     * @return {bool} True if tab is a dashboard, otherwise false
+     * @private
+     */
+    _isDashboardTab: function(tabIndex) {
+        tabIndex = _.isUndefined(tabIndex) ? this.activeTab : tabIndex;
+        return !_.isUndefined(this.tabs[tabIndex].components.rows);
+    },
+
+    /**
      * Switch the active dashboard based on the clicked tab.
      * @param {Event} event Click event.
      */
     tabClicked: function(event) {
         var index = this.$(event.currentTarget).data('index');
         if (index === this.activeTab) {
+            return;
+        }
+        // can't edit a non-dashboard tab
+        if (this.model.mode === 'edit' && !this._isDashboardTab(index)) {
+            event.stopPropagation();
             return;
         }
 
@@ -94,6 +111,8 @@
 
         if (!_.isUndefined(options.tabs)) {
             this.tabs = options.tabs;
+            this.context.set('tabs', this.tabs);
+            this.context.set('activeTab', this.activeTab);
         }
     },
 

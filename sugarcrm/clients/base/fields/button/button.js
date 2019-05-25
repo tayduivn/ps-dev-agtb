@@ -210,8 +210,9 @@
         }
 
         // ban this button if it has any ancestor component with one of the specified name(s)
-        if (_.any(this.def.disallowed_layouts, function(layoutName) {
-            return this.closestComponent(layoutName);
+        if (_.any(this.def.disallowed_layouts, function(layout) {
+            var comp = this.closestComponent(layout.name);
+            return comp && (_.isUndefined(layout.id) || comp.model.get('id') === layout.id);
         }, this)
         ) {
             return true;

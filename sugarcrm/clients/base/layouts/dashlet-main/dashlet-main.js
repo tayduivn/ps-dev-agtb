@@ -200,8 +200,7 @@
         var component;
         // this is a tabbed dashboard
         if (metadata.tabs) {
-            var tabComp = this.layout.getComponent('tabbed-dashboard');
-            var tabIndex = tabComp ? tabComp.activeTab : 0;
+            var tabIndex = this.context.get('activeTab') || 0;
             component = metadata.tabs[tabIndex].components;
         } else {
             component = metadata.components;

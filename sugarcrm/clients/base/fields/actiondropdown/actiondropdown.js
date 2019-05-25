@@ -178,7 +178,8 @@
             orderedFields = fields || this.fields;
         this.dropdownFields = _.filter(orderedFields, function(field) {
             var actionHidden = (_.isFunction(field.hasAccess) && !field.hasAccess()) ||
-                (_.isFunction(field.isVisible) && !field.isVisible());
+                (_.isFunction(field.isVisible) && !field.isVisible()) ||
+                (_.isFunction(field.isOnForbiddenLayout) && field.isOnForbiddenLayout());
 
             if (actionHidden || (field.type === 'divider' && prevIsDivider)) {
                 return false;

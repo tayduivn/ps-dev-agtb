@@ -98,4 +98,18 @@ describe('Base.View.TabbedDashboardView', function() {
             expect(view.getLastStateKey()).toEqual('my_dashboard_id.last_tab');
         });
     });
+
+    describe('_isDashboardTab', function() {
+        it('should return true for dashboard tab', function() {
+            var tab0 = {name: 'tab0', components: {rows: ['row 1, tab 0', 'row 2, tab 0'], width: 22}};
+            view.tabs = [tab0];
+            expect(view._isDashboardTab(0)).toBeTruthy();
+        });
+
+        it('should return false for non-dashboard tab', function() {
+            var tab1 = {name: 'tab1', components: {view: 'multi-line-list'}};
+            view.tabs = [tab1];
+            expect(view._isDashboardTab(0)).toBeFalsy();
+        });
+    });
 });
