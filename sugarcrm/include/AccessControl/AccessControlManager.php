@@ -200,7 +200,7 @@ class AccessControlManager
      */
     public function allowDashletAccess(?string $label) : bool
     {
-        if (empty($label)) {
+        if (empty($label) || $this->isAdminWork) {
             return true;
         }
         return $this->allowAccess(self::DASHLETS_KEY, $label);
@@ -218,15 +218,15 @@ class AccessControlManager
             return true;
         }
 
+        if ($this->isAdminWork || !$this->isAccessControlled(self::RECORDS_KEY, $module)) {
+            return true;
+        }
+
         // regular workflow, we need to check record access
-        if (!$this->isAdminWork) {
-            if (!$this->isAccessControlled(self::RECORDS_KEY, $module)) {
-                return true;
-            }
-            $old = $this->allowAdminOverride;
+        if ($this->allowAdminOverride) {
             $this->allowAdminOverride = false;
             $allowed = $this->allowAccess(self::RECORDS_KEY, $module, $id);
-            $this->allowAdminOverride = $old;
+            $this->allowAdminOverride = true;
             return $allowed;
         }
 
@@ -247,8 +247,16 @@ class AccessControlManager
             return true;
         }
 
-        if (!$this->isAdminWork && !$this->isAccessControlled(self::FIELDS_KEY, $module)) {
+        if ($this->isAdminWork || !$this->isAccessControlled(self::FIELDS_KEY, $module)) {
             return true;
+        }
+
+        // check field access
+        if ($this->allowAdminOverride) {
+            $this->allowAdminOverride = false;
+            $allowed = $this->allowAccess(self::FIELDS_KEY, $module, $field);
+            $this->allowAdminOverride = true;
+            return $allowed;
         }
 
         return $this->allowAccess(self::FIELDS_KEY, $module, $field);
@@ -303,6 +311,19 @@ class AccessControlManager
     public function getAdminWork() : bool
     {
         return $this->isAdminWork;
+    }
+
+    /**
+     * for quick check if a given module is subject to access controlled,
+     * @param null|string $module
+     * @return bool
+     */
+    public function isFieldAccessControlledModule(?string $module)
+    {
+        if (empty($module)) {
+            return false;
+        }
+        return $this->isAccessControlled(self::FIELDS_KEY, $module);
     }
 
     /**

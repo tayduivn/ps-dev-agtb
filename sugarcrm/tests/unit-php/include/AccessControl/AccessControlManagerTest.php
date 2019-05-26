@@ -363,6 +363,54 @@ class AccessControlManagerTest extends TestCase
     }
 
     /**
+     * @covers ::isFieldAccessControlledModule
+     *
+     * @param $access_config
+     * @param $module
+     * @param $field
+     * @param $entitled
+     * @param $expected
+     *
+     * @dataProvider isFieldAccessControlledModuleProvider
+     */
+    public function testIsFieldAccessControlledModule($access_config, $module, $expected)
+    {
+        $acmMock = $this->getMockBuilder(AccessControlManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAccessControlledList'])
+            ->getMock();
+
+        $acmMock->expects($this->any())
+            ->method('getAccessControlledList')
+            ->will($this->returnValue($access_config));
+
+        TestReflection::callProtectedMethod($acmMock, 'init', []);
+
+        $this->assertSame($expected, $acmMock->isFieldAccessControlledModule($module));
+    }
+
+    public function isFieldAccessControlledModuleProvider()
+    {
+        return [
+            'controlled module' => [
+                ['BusinessCenters' => ['field1' => ['SUGAR_SERVE']]],
+                'BusinessCenters',
+                true,
+            ],
+            'Not controlled module' => [
+                ['BusinessCenters' => ['field1' => ['SUGAR_SERVE']]],
+                'Non_BusinessCenters',
+                false,
+            ],
+            'Null module' => [
+                ['BusinessCenters' => ['field1' => ['SUGAR_SERVE']]],
+                null,
+                false,
+            ],
+        ];
+    }
+
+    /**
      * @covers ::allowRecordAccess
      * @covers ::allowAccess
      * @covers ::isAccessControlled
