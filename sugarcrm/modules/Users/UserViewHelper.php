@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
+use Sugarcrm\Sugarcrm\Entitlements\Subscription;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 /**
@@ -292,20 +293,11 @@ class UserViewHelper {
     public function setupLicenseTypeDropdown()
     {
         $userLicenseType = SubscriptionManager::instance()->getUserSubscriptions($this->bean);
-
-        global $app_list_strings;
-        $licenseTypes = $app_list_strings['license_type_dom'];
-
         global $current_user;
-        $warningMessage = '';
         if ($current_user->is_admin) {
             $availableLicenseTypes = array_keys(SubscriptionManager::instance()->getSystemSubscriptionKeys());
         } else {
             $availableLicenseTypes = $userLicenseType;
-
-            if (empty($userLicenseType)) {
-                $warningMessage = 'Need administrator to assign you a license type';
-            }
         }
 
         if (empty($availableLicenseTypes)) {
@@ -322,33 +314,60 @@ class UserViewHelper {
 
         foreach ($availableLicenseTypes as $type) {
             if ($setSelected && in_array($type, $userLicenseType)) {
-                $licenseTypesDropdown .= '<option value="' . $type . '" SELECTED>' . $licenseTypes[$type] . '</option>';
+                $licenseTypesDropdown .= '<option value="' . $type . '" SELECTED>'
+                    . $this->getLicenseTypeDescription($type) . '</option>';
             } else {
-                $licenseTypesDropdown .= '<option value="' . $type . '">' . $licenseTypes[$type] . '</option>';
+                $licenseTypesDropdown .= '<option value="' . $type . '">'
+                    . $this->getLicenseTypeDescription($type) . '</option>';
             }
         }
         $licenseTypesDropdown .= '</select><div id="LicenseTypeDesc">&nbsp;</div>';
 
         $licenseTypesInString = '';
-        foreach ($userLicenseType as $key) {
-            $licenseTypesInString .= $licenseTypes[$key] . '</BR>';
+        foreach ($userLicenseType as $type) {
+            $licenseTypesInString .= $this->getLicenseTypeDescription($type) . '</BR>';
         }
         $this->ss->assign('LICENSE_TYPE_DROPDOWN', $licenseTypesDropdown);
         $licenseString = json_encode($userLicenseType);
 
-        if (empty($warningMessage)) {
-            $this->ss->assign(
-                'LICENSE_TYPE_READONLY',
-                $licenseTypesInString
-                . "<input type='hidden' id='LicenseType' value='{$licenseString}'><div id='LicenseTypeDesc'>&nbsp;</div>"
-            );
-        } else {
-            $this->ss->assign(
-                'LICENSE_TYPE_READONLY',
-                $warningMessage
-                . "<input type='hidden' id='LicenseType' value='{$licenseString}'><div id='LicenseTypeDesc'>$warningMessage&nbsp;</div>"
-            );
+        $this->ss->assign(
+            'LICENSE_TYPE_READONLY',
+            $licenseTypesInString
+            . "<input type='hidden' id='LicenseType' value='{$licenseString}'><div id='LicenseTypeDesc'>&nbsp;</div>"
+        );
+    }
+
+
+    /**
+     * get license type description
+     * @param string $type
+     * @return string
+     */
+    protected function getLicenseTypeDescription(string $type)
+    {
+        global $current_language;
+        $mod_strings = return_module_language($current_language, 'Users');
+        if ($type === Subscription::SUGAR_SERVE_KEY) {
+            return $mod_strings['LBL_LICENSE_SUGAR_SERVE'];
+        } elseif ($type === Subscription::SUGAR_SELL_KEY) {
+            return $mod_strings['LBL_LICENSE_SUGAR_SELL'];
+        } elseif ($type === Subscription::SUGAR_BASIC_KEY) {
+            global $sugar_flavor;
+            $mod_strings = return_module_language($current_language, 'Home');
+            if (!empty($sugar_flavor)) {
+                if ($sugar_flavor === 'ENT') {
+                    return $mod_strings['LBL_SUGAR_ENTERPRISE'];
+                }
+                if ($sugar_flavor === 'PRO') {
+                    return $mod_strings['LBL_SUGAR_PROFESSIONAL'];
+                }
+                if ($sugar_flavor === 'ULT') {
+                    return $mod_strings['LBL_SUGAR_ULTIMATE'];
+                }
+                return $mod_strings['LBL_LICENSE_CURRENT_PRODUCT'];
+            }
         }
+        return '';
     }
 
     protected function setupPasswordTab() {
