@@ -59,20 +59,9 @@ class SugarForecasting_AbstractForecastTest extends TestCase
 
         return array(
             array('2012-10-15 14:38:42', $timedate->asIso($timedate->fromDb('2012-10-15 14:38:42'), $current_user)), // db format
-            //array('10/15/2012 10:38', $timedate->asIso($timedate->fromDb('2012-10-15 10:38:00'), $current_user)), // from user format
         );
     }
 
-    /**
-     * This is a test to ensure that the current_user is the first element in the array from the getUserReportees function
-     * @group forecasts
-     */
-    public function testGetUserReportees() {
-        global $current_user;
-        $reportees = self::$obj->getUserReportees($current_user->id);
-        $keys = array_keys($reportees);
-        $this->assertEquals($current_user->id, $keys[0]);
-    }
 }
 
 class MockSugarForecasting_Abstract extends SugarForecasting_AbstractForecast
@@ -84,10 +73,6 @@ class MockSugarForecasting_Abstract extends SugarForecasting_AbstractForecast
      */
     public function process()
     {
-    }
-
-    public function getUserReportees($user_id) {
-        return parent::getUserReportees($user_id);
     }
 
     public function convertDateTimeToISO($dt_string)
