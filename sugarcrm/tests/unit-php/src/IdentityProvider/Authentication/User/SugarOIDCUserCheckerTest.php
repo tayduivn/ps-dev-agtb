@@ -413,6 +413,106 @@ class SugarOIDCUserCheckerTest extends TestCase
     /**
      * @covers ::checkPostAuth
      */
+    public function testCheckPostAuthWithOidcUserUpdatedAtLaterThanLastLogin(): void
+    {
+        $this->user->expects($this->once())
+            ->method('hasAttribute')
+            ->withConsecutive([$this->equalTo('updated_at')])
+            ->willReturnOnConsecutiveCalls(true);
+        $this->user->expects($this->exactly(3))
+            ->method('getAttribute')
+            ->withConsecutive(
+                [$this->equalTo('oidc_data')],
+                [$this->equalTo('oidc_identify')],
+                [$this->equalTo('updated_at')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                ['user_name' => 'sally'],
+                ['field' => 'id', 'value' => 'seed_sally_id'],
+                strtotime('2030-12-12 00:00:00')
+            );
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->with('seed_sally_id', 'id')
+            ->willReturn($this->foundUser);
+        $this->sugarUser->last_login = '2010-10-10 00:00:00';
+        $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
+
+        $this->sugarUser->expects($this->once())->method('getFieldDefinitions');
+
+        $this->userChecker->checkPostAuth($this->user);
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     */
+    public function testCheckPostAuthWithOidcUserUpdatedAtEarlierThanLastLogin(): void
+    {
+        $this->user->expects($this->once())
+            ->method('hasAttribute')
+            ->withConsecutive([$this->equalTo('updated_at')])
+            ->willReturnOnConsecutiveCalls(true);
+        $this->user->expects($this->exactly(3))
+            ->method('getAttribute')
+            ->withConsecutive(
+                [$this->equalTo('oidc_data')],
+                [$this->equalTo('oidc_identify')],
+                [$this->equalTo('updated_at')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                ['user_name' => 'sally'],
+                ['field' => 'id', 'value' => 'seed_sally_id'],
+                strtotime('2000-12-12 00:00:00')
+            );
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->with('seed_sally_id', 'id')
+            ->willReturn($this->foundUser);
+        $this->sugarUser->last_login = '2010-10-10 00:00:00';
+        $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
+
+        $this->sugarUser->expects($this->never())->method('getFieldDefinitions');
+
+        $this->userChecker->checkPostAuth($this->user);
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     */
+    public function testCheckPostAuthWithoutOidcUserUpdatedAt(): void
+    {
+        $this->user->expects($this->once())
+            ->method('hasAttribute')
+            ->withConsecutive([$this->equalTo('updated_at')])
+            ->willReturnOnConsecutiveCalls(false);
+        $this->user->expects($this->exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive(
+                [$this->equalTo('oidc_data')],
+                [$this->equalTo('oidc_identify')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                ['user_name' => 'sally'],
+                ['field' => 'id', 'value' => 'seed_sally_id']
+            );
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->with('seed_sally_id', 'id')
+            ->willReturn($this->foundUser);
+        $this->sugarUser->last_login = '2010-10-10 00:00:00';
+        $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
+
+        $this->sugarUser->expects($this->once())->method('getFieldDefinitions');
+
+        $this->userChecker->checkPostAuth($this->user);
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     */
     public function testCheckPostAuthWithNotExistingUser()
     {
         $expectedAttributes = [

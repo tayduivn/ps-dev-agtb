@@ -339,6 +339,7 @@ class OIDCAuthenticationProviderTest extends TestCase
                 'address' => [
                     'street_address' => 'test_street',
                 ],
+                'updated_at' => 123,
             ]);
         $this->userChecker->expects($this->once())->method('checkPostAuth')->with($this->user);
         $resultToken = $this->provider->authenticate($token);
@@ -349,6 +350,7 @@ class OIDCAuthenticationProviderTest extends TestCase
         $this->assertEquals('test_name', $resultToken->getUser()->getAttribute('oidc_data')['user_name']);
         $this->assertEquals('test_street', $resultToken->getUser()->getAttribute('oidc_data')['address_street']);
         $this->assertEquals('seed_sally_id', $resultToken->getUser()->getAttribute('oidc_identify')['value']);
+        $this->assertEquals(123, $resultToken->getUser()->getAttribute('updated_at'));
         foreach ($introspectResult as $key => $expectedValue) {
             $this->assertEquals($expectedValue, $resultToken->getAttribute($key));
         }

@@ -235,6 +235,7 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
 
         $userInfo = $this->oAuthProvider->getUserInfo($accessToken);
         $user->setAttribute('oidc_data', $this->userMapping->map($userInfo));
+        $user->setAttribute('updated_at', $userInfo['updated_at']);
         $user->setAttribute('oidc_identify', $this->userMapping->mapIdentity($result));
 
         foreach ($result as $key => $value) {
