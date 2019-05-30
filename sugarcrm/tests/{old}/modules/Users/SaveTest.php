@@ -368,7 +368,7 @@ class SaveTest extends TestCase
         $record = BeanFactory::getBean('Users', $current_user->id);
 
         $GLOBALS['current_user'] = $currUser;
-        $this->assertEquals($expected, $record->getLicenseType());
+        $this->assertEquals($expected, $record->getLicenseTypes());
     }
 
     public function saveLicenseTypeProvider()

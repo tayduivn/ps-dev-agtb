@@ -932,6 +932,7 @@ expressions in the regex. Regular expressions should not include any delimiters.
     'WARN_LICENSE_SEATS_MAXED'=>  "<b>Warning:</b> The number of active users is already the maximum number of licenses allowed: ",
     'WARN_LICENSE_SEATS_EDIT_USER'=>  "<b>Warning:</b> You will not be able to create additional active users."
         . " Please purchase more subscriptions.",
+    'WARN_LICENSE_TYPE_SEATS_EDIT_USER' => '<b>Warning:</b> You are not able to create additional %s users. Please purchase more subscriptions.',
     'WARN_LICENSE_SEATS_USER_CREATE'=>"<b>Warning:</b> You will not be able to create additional active users."
         . " Please purchase more subscriptions.",
     'WARN_REPAIR_CONFIG' => '<b>Warning:</b> The config.php file needs to be repaired.  Please use the <a href=\'index.php?module=Administration&action=RebuildConfig\'>Rebuild Config File</a> script in the Repair page in the Admin area to repair the config file.',

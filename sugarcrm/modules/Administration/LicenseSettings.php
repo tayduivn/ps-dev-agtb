@@ -19,10 +19,7 @@
 
   //FILE SUGARCRM lic=sub ONLY
 
-
-
-
-
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 
 global $timedate;
 global $mod_strings;
@@ -103,7 +100,10 @@ $manualValidation3 = str_replace(
 );
 $xtpl->assign("MANUAL_VALIDATION3", $manualValidation3);
 
-if(!empty($focus->settings['license_users']))$xtpl->assign("LICENSE_USERS",          $focus->settings['license_users']);
+$totalLicenseUsers = SubscriptionManager::instance()->getTotalNumberOfUsers();
+if (!empty($focus->settings['license_users'])) {
+    $xtpl->assign("LICENSE_USERS", $totalLicenseUsers);
+}
 if(!empty($focus->settings['license_expire_date'])) $xtpl->assign("LICENSE_EXPIRE_DATE",    $timedate->to_display_date( $focus->settings['license_expire_date'], false) );
 if(!empty($focus->settings['license_key']))$xtpl->assign("LICENSE_KEY",            $focus->settings['license_key']);
 if(!empty($focus->settings['license_validation_key']))$xtpl->assign("LICENSE_VALIDATION_KEY",          md5($focus->settings['license_validation_key']));

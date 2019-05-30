@@ -146,14 +146,33 @@ class SubscriptionManager
         $admin->saveSetting('license', 'subscription', $response);
 
         // refresh metadata cache if not in installation time
-        $this->refreshMetadataCache();
+        if (!(isset($GLOBALS['installing'])) || $GLOBALS['installing'] != true) {
+            $this->refreshMetadataCache();
+        }
+
         return $response;
     }
 
+    /**
+     * refresh metadata cache
+     *
+     */
     protected function refreshMetadataCache()
     {
         \MetaDataManager::refreshCache();
-        return;
+    }
+
+    /**
+     * get total number of users
+     * @return int
+     */
+    public function getTotalNumberOfUsers() : int
+    {
+        $total = 0;
+        foreach ($this->getSystemSubscriptions() as $subscripion) {
+            $total += $subscripion['quantity'];
+        }
+        return $total;
     }
 
     /**
@@ -225,7 +244,20 @@ class SubscriptionManager
     }
 
     /**
-     * get user's subscription, it joins system subscription with user's license type
+     * get valid subscription seats by type
+     * @param string $type
+     * @return int
+     */
+    public function getSystemSubscriptionSeatsByType(string $type) : int
+    {
+        $systemSubscriptions = $this->getSystemSubscriptions();
+        if (isset($systemSubscriptions[$type])) {
+            return $systemSubscriptions[$type]['quantity'];
+        }
+        return 0;
+    }
+    /**
+     * get user's subscriptions, it compares system subscriptions with user's license type
      * @param \User $user
      * @return array
      */
@@ -238,7 +270,7 @@ class SubscriptionManager
             return [];
         }
 
-        $userLicenseTypes = $user->getLicenseType();
+        $userLicenseTypes = $user->getLicenseTypes();
         // one prod subscription, license type = current or empty will be using current product
         if (count($systemSubscriptionKeys) === 1) {
             if (empty($userLicenseTypes)) {
@@ -256,7 +288,7 @@ class SubscriptionManager
         // pick up a license type
         if (empty($userLicenseTypes)) {
             // never assigned before, pick up one based on the order in getAllSupportedProducts()
-            return $this->getUserDefaultLicenseTypes($systemSubscriptionKeys);
+            return [$this->getUserDefaultLicenseType()];
         }
 
         // loop through the license keys
@@ -268,19 +300,47 @@ class SubscriptionManager
         }
 
         // assign admin user to default license type, otherwise, an ENT user will get blank license types
-        if (empty($userSubscriptions) && $user->is_admin) {
-            if ($user->is_admin) {
-                return $this->getUserDefaultLicenseTypes($systemSubscriptionKeys);
+        if (empty($userSubscriptions) && is_admin($user)) {
+            return [$this->getUserDefaultLicenseType()];
+        }
+
+        return $userSubscriptions;
+    }
+
+    /**
+     * get user's invalid subscriptions, it compares system subscriptions with user's license type
+     *
+     * @param \User $user
+     * @return array
+     */
+    public function getUserInvalidSubscriptions(\User $user)
+    {
+        // get system subscriptions
+        $systemSubscriptionKeys = $this->getSystemSubscriptionKeys();
+
+        $userLicenseTypes = $user->getLicenseTypes();
+        if (empty($systemSubscriptionKeys)) {
+            return $userLicenseTypes;
+        }
+
+        if (empty($userLicenseTypes)) {
+            return [];
+        }
+
+        $invalidTypes = [];
+        foreach ($userLicenseTypes as $type) {
+            if (!isset($systemSubscriptionKeys[$type])) {
+                $invalidTypes[] = $type;
             }
         }
-        return $userSubscriptions;
+        return $invalidTypes;
     }
 
     /**
      * all supported types, keep the order
      * @return array
      */
-    protected function getAllSupportedProducts()
+    public function getAllSupportedProducts()
     {
         return [
             Subscription::SUGAR_BASIC_KEY,
@@ -291,15 +351,17 @@ class SubscriptionManager
 
     /**
      * get default license type
-     * @return array
+     *
+     * @return string
+     * @throws \Exception
      */
-    protected function getUserDefaultLicenseTypes(array $systemSubscriptionKeys)
+    public function getUserDefaultLicenseType() : string
     {
+        $systemSubscriptionKeys = $this->getSystemSubscriptionKeys();
         $allProducts = $this->getAllSupportedProducts();
         foreach ($allProducts as $type) {
             if (isset($systemSubscriptionKeys[$type])) {
-                $userSubscriptions[] = $type;
-                return $userSubscriptions;
+                return $type;
             }
         }
 

@@ -12,6 +12,8 @@
 
 require_once 'modules/Administration/updater_utils.php';
 
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
+use Sugarcrm\Sugarcrm\Entitlements\Subscription;
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
@@ -599,8 +601,6 @@ class User extends Person {
 		// this will cause the logged in admin to have the licensed user count refreshed
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);
 
-		$query = "SELECT count(id) as total from users WHERE ".self::getLicensedUsersWhere();
-
  	    //BEGIN SUGARCRM lic=sub ONLY
 
 		global $sugar_flavor;
@@ -613,15 +613,9 @@ class User extends Person {
                   && (empty($this->fetched_row)
                       || $this->fetched_row['status'] == 'Inactive'
                       || $this->fetched_row['status'] == '')) {
-                $license_users = $admin->settings['license_users'];
-                $license_seats_needed = -1;
-                if ($license_users != '') {
-                    global $db;
-                    $result = $db->query($query, true, "Error filling in user array: ");
-                    $row = $db->fetchByAssoc($result);
-                    $license_seats_needed = $row['total'] - $license_users;
-                }
-                if ($license_seats_needed >= 0) {
+                $license_seats_needed = 0;
+                $exceededLicenseType = self::getExceededLimitLicenseTypes($license_seats_needed);
+                if ($license_seats_needed > 0) {
                     $GLOBALS['log']->error(
                         'The number of active users is already the maximum number of licenses allowed.'
                         . ' New user cannot be created or activated.'
@@ -636,7 +630,12 @@ class User extends Person {
                         );
                         throw $e;
                     }
-                    $msg = translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration');
+
+                    $typeString = '';
+                    foreach ($exceededLicenseType as $type => $number) {
+                        $typeString .= self::getLicenseTypeDescription($type) . ' ';
+                    }
+                    $msg = sprintf(translate('WARN_LICENSE_TYPE_SEATS_EDIT_USER', 'Administration'), $typeString);
                     if (isset($_REQUEST['action'])
                         && ($_REQUEST['action'] == 'MassUpdate' || $_REQUEST['action'] == 'Save')) {
                         $sv = new SugarView();
@@ -758,6 +757,116 @@ class User extends Person {
 
         return $this->id;
 	}
+
+    /**
+     * get number of users exceed limit by license type
+     * @param int $license_seats_needed total number of license needed
+     * @return array
+     */
+    public static function getExceededLimitLicenseTypes(int &$license_seats_needed) : array
+    {
+        global $db;
+        $sysSubscriptions = SubscriptionManager::instance()->getSystemSubscriptions();
+
+        // check individual license type
+        $query = "SELECT license_type from users WHERE " . User::getLicensedUsersWhere();
+        $result = $db->query($query, true, "Error filling in user array: ");
+        $supportedTypes = SubscriptionManager::instance()->getAllSupportedProducts();
+        $userCountByType = [];
+        foreach ($supportedTypes as $type) {
+            $userCountByType[$type] = 0;
+        }
+        $foundUnknownType = false;
+        $unknownTypes = '';
+        $totalUserCount = 0;
+        while (($row=$db->fetchByAssoc($result, false)) != null) {
+            if (empty($row['license_type'])) {
+                $type = SubscriptionManager::instance()->getUserDefaultLicenseType();
+                if (empty($type) || !in_array($type, $supportedTypes)) {
+                    if (!empty($type)) {
+                        $unknownTypes .= $type . ' ';
+                    }
+                    $foundUnknownType = true;
+                } else {
+                    $userCountByType[$type] += 1;
+                    $totalUserCount += 1;
+                }
+            } else {
+                $types = json_decode($row['license_type'], true);
+                foreach ($types as $type) {
+                    if (empty($type) || !in_array($type, $supportedTypes)) {
+                        $foundUnknownType = true;
+                    } else {
+                        $userCountByType[$type] += 1;
+                        $totalUserCount += 1;
+                    }
+                }
+            }
+        }
+
+        if ($foundUnknownType) {
+            // don't know what to do, skip for now
+            $GLOBALS['log']->fatal('Found unknown type: ' . $unknownTypes);
+        }
+
+        $exceededLimitTypes = [];
+
+        // no subscription
+        if (empty($sysSubscriptions)) {
+            $exceededLimitTypes = $userCountByType;
+            $license_seats_needed = $totalUserCount;
+            return $exceededLimitTypes;
+        }
+
+        foreach ($userCountByType as $licenseType => $count) {
+            if ($count > 0) {
+                if (isset($sysSubscriptions[$licenseType])) {
+                    if ($userCountByType[$licenseType] > $sysSubscriptions[$licenseType]['quantity']) {
+                        $exceededLimitTypes[$licenseType] = $count - $sysSubscriptions[$licenseType]['quantity'];
+                        $license_seats_needed += $exceededLimitTypes[$licenseType];
+                    }
+                } else {
+                    // license expired or switched
+                    $exceededLimitTypes[$licenseType] = $count;
+                    $license_seats_needed += $count;
+                }
+            }
+        }
+
+        return $exceededLimitTypes;
+    }
+
+    /**
+     * get license type description
+     * @param string $type license type
+     * @return string
+     */
+    public static function getLicenseTypeDescription(string $type) : string
+    {
+        global $current_language;
+        $mod_strings = return_module_language($current_language, 'Users');
+        if ($type === Subscription::SUGAR_SERVE_KEY) {
+            return $mod_strings['LBL_LICENSE_SUGAR_SERVE'];
+        } elseif ($type === Subscription::SUGAR_SELL_KEY) {
+            return $mod_strings['LBL_LICENSE_SUGAR_SELL'];
+        } elseif ($type === Subscription::SUGAR_BASIC_KEY) {
+            global $sugar_flavor;
+            $mod_strings = return_module_language($current_language, 'Home');
+            if (!empty($sugar_flavor)) {
+                if ($sugar_flavor === 'ENT') {
+                    return $mod_strings['LBL_SUGAR_ENTERPRISE'];
+                }
+                if ($sugar_flavor === 'PRO') {
+                    return $mod_strings['LBL_SUGAR_PROFESSIONAL'];
+                }
+                if ($sugar_flavor === 'ULT') {
+                    return $mod_strings['LBL_SUGAR_ULTIMATE'];
+                }
+                return $mod_strings['LBL_LICENSE_INVALID_PRODUCT'];
+            }
+        }
+        return '';
+    }
 
 	/**
 	* @return boolean true if the user is a member of the role_name, false otherwise
@@ -2765,7 +2874,7 @@ class User extends Person {
      * get license type. json-decoded to array
      * @return array
      */
-    public function getLicenseType() : array
+    public function getLicenseTypes() : array
     {
         if (empty($this->license_type)) {
             return [];

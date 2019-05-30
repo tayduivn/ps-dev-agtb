@@ -3560,6 +3560,8 @@ Sincerely, SugarCRM',
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'ERROR_LICENSE_SEATS_MAXED'=>
         'Number of active users exceeds License Count limits. Please contact your Administrator.',
+    'ERROR_LICENSE_TYPE_SEATS_MAXED'=>
+        'Number of active %s users exceeds License Count limits. Please contact your Administrator.',
     'ERROR_LICENSE_SEATS_MAXED_ONLY_ADMINS' => 'Only admins may login.',
     'WARN_LICENSE_SEATS_MAXED_ONLY_EXISTING_USERS'=>
         'The User License Count limit has been reached. Only existing users may login.',

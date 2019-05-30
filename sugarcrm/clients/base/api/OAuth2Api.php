@@ -124,6 +124,20 @@ class OAuth2Api extends SugarApi
                 // Let them through
             } else {
                 if ($loginStatus['message'] === 'ERROR_LICENSE_SEATS_MAXED') {
+                    $exceededLicenseTypes = $_SESSION['exceeded_limit_types']
+                        ?? User::getExceededLimitLicenseTypes($seatNeeded);
+                    $msg = '';
+                    $i = 0;
+
+                    foreach ($exceededLicenseTypes as $type => $extraNumbers) {
+                        if ($i > 0) {
+                            $msg .= ' and ';
+                        }
+                        $msg .= User::getLicenseTypeDescription($type) . ' ';
+                        $i++;
+                    }
+
+                    $errorMsg = sprintf(translate('ERROR_LICENSE_TYPE_SEATS_MAXED'), $msg);
                     $GLOBALS['log']->error($loginStatus['message']);
                     $e = new SugarApiExceptionLicenseSeatsNeeded(
                         'ERROR_LICENSE_SEATS_MAXED_ONLY_ADMINS',
@@ -132,6 +146,7 @@ class OAuth2Api extends SugarApi
                         0,
                         'license_seats_needed'
                     );
+                    $e->setMessage($errorMsg);
                     throw $e;
                 }
                 // This is no good, they shouldn't be allowed in.

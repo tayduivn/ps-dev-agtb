@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestUnit\inc\Entitlements;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 use Sugarcrm\Sugarcrm\Entitlements\Subscription;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * Class SubscriptionManagerTest
@@ -29,7 +30,7 @@ class SubscriptionManagerTest extends TestCase
      * @covers ::getSubscription
      * @covers ::instance
      * @covers ::getSystemSubscriptionKeys
-     * @covers ::getUserDefaultLicenseTypes
+     * @covers ::getUserDefaultLicenseType
      * @covers ::getAllSupportedProducts
      *
      * @dataProvider getUserSubscriptionsProvider
@@ -38,11 +39,11 @@ class SubscriptionManagerTest extends TestCase
     {
         $userMock = $this->getMockBuilder(\User::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getLicenseType'])
+            ->setMethods(['getLicenseTypes'])
             ->getMock();
 
         $userMock->expects($this->any())
-            ->method('getLicenseType')
+            ->method('getLicenseTypes')
             ->will($this->returnValue($userLicenseType));
 
         $userMock->is_admin = $isAdmin;
@@ -195,5 +196,180 @@ class SubscriptionManagerTest extends TestCase
             ],
         ];
         // @codingStandardsIgnoreEnd
+    }
+
+    /**
+     * @covers ::getUserInvalidSubscriptions
+     *
+     * @dataProvider getUserValidSubscriptionsProvider
+     */
+    public function testGetUserValidSubscriptions($sysKeys, $userLicenseType, $expected)
+    {
+        $userMock = $this->getMockBuilder(\User::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getLicenseTypes'])
+            ->getMock();
+
+        $userMock->expects($this->any())
+            ->method('getLicenseTypes')
+            ->will($this->returnValue($userLicenseType));
+
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getSystemSubscriptionKeys'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getSystemSubscriptionKeys')
+            ->will($this->returnValue($sysKeys));
+
+        $result = TestReflection::callProtectedMethod($subMock, 'getUserInvalidSubscriptions', [$userMock]);
+        $this->assertSame($expected, $result);
+    }
+
+    public function getUserValidSubscriptionsProvider()
+    {
+        return [
+            [
+                [
+                    'SUGAR_SERVE' => true,
+                    'SUGAR_SELL' => true,
+                ],
+                ['CURRENT'],
+                ['CURRENT'],
+            ],
+            [
+                [
+                    'SUGAR_SERVE' => true,
+                    'CURRENT' => true,
+                ],
+                ['CURRENT'],
+                [],
+            ],
+            [
+                [
+                    'SUGAR_SERVE' => true,
+                    'CURRENT' => true,
+                ],
+                ['SUGAR_SELL', 'CURRENT'],
+                ['SUGAR_SELL'],
+            ],
+            [
+                [],
+                ['SUGAR_SELL'],
+                ['SUGAR_SELL'],
+            ],
+            [
+                [
+                    'SUGAR_SERVE' => true,
+                    'CURRENT' => true,
+                ],
+                [],
+                [],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getTotalNumberOfUsers
+     *
+     * @dataProvider getTotalNumberOfUsersProvider
+     */
+    public function testGetTotalNumberOfUsers($data, $expected)
+    {
+
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getSystemSubscriptions'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getSystemSubscriptions')
+            ->will($this->returnValue($data));
+
+        $this->assertSame($expected, $subMock->getTotalNumberOfUsers());
+    }
+
+    public function getTotalNumberOfUsersProvider()
+    {
+        return [
+            // product is SERVE + ENT
+            [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                    'CURRENT' => ['quantity' => 1000, 'expiration_date' => 1587798000],
+                ],
+                1010,
+            ],
+            // product is SERVE
+            [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                ],
+                10,
+            ],
+            [
+                [],
+                0,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getSystemSubscriptionSeatsByType
+     * @param $data
+     * @param string $type
+     * @param $expected
+     *
+     * @dataProvider getSystemSubscriptionSeatsByTypeProvider
+     */
+    public function testGetSystemSubscriptionSeatsByType(array $data, string $type, $expected)
+    {
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getSystemSubscriptions'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getSystemSubscriptions')
+            ->will($this->returnValue($data));
+
+        $this->assertSame($expected, $subMock->getSystemSubscriptionSeatsByType($type));
+    }
+
+    public function getSystemSubscriptionSeatsByTypeProvider()
+    {
+        return [
+            // product is SERVE + ENT
+            [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                    'CURRENT' => ['quantity' => 1000, 'expiration_date' => 1587798000],
+                ],
+                'SUGAR_SERVE',
+                10,
+            ],
+            [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                    'CURRENT' => ['quantity' => 1000, 'expiration_date' => 1587798000],
+                ],
+                'CURRENT',
+                1000,
+            ],
+            // product is SERVE
+            [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                ],
+                'CURRENT',
+                0,
+            ],
+            [
+                [],
+                'CURRENT',
+                0,
+            ],
+        ];
     }
 }

@@ -304,28 +304,33 @@ class UserViewHelper {
             $GLOBALS['log']->fatal('no valid license for this instance');
         }
         // multi-selection
-        $licenseTypesDropdown = '<select multiple="true" id="LicenseType" name="LicenseTypes[]" ';
+        $licenseTypesDropdown = '<select multiple="true" id="license_type" name="LicenseTypes[]" ';
         if (count($availableLicenseTypes) == 1) {
             $licenseTypesDropdown .= ' disabled ';
         }
         $licenseTypesDropdown .= '>';
 
-        $setSelected = !empty($this->bean->id);
-
         foreach ($availableLicenseTypes as $type) {
-            if ($setSelected && in_array($type, $userLicenseType)) {
+            if (in_array($type, $userLicenseType)) {
                 $licenseTypesDropdown .= '<option value="' . $type . '" SELECTED>'
-                    . $this->getLicenseTypeDescription($type) . '</option>';
+                    . User::getLicenseTypeDescription($type) . '</option>';
             } else {
                 $licenseTypesDropdown .= '<option value="' . $type . '">'
-                    . $this->getLicenseTypeDescription($type) . '</option>';
+                    . User::getLicenseTypeDescription($type) . '</option>';
             }
         }
         $licenseTypesDropdown .= '</select><div id="LicenseTypeDesc">&nbsp;</div>';
 
         $licenseTypesInString = '';
+
+        // display invalid license types in red
         foreach ($userLicenseType as $type) {
-            $licenseTypesInString .= $this->getLicenseTypeDescription($type) . '</BR>';
+            $licenseTypesInString .= User::getLicenseTypeDescription($type) . '</br>';
+        }
+
+        $invalidLicenseTypes = SubscriptionManager::instance()->getUserInvalidSubscriptions($this->bean);
+        foreach ($invalidLicenseTypes as $type) {
+            $licenseTypesInString .= '<p class="error">' . User::getLicenseTypeDescription($type) . '</p>';
         }
         $this->ss->assign('LICENSE_TYPE_DROPDOWN', $licenseTypesDropdown);
         $licenseString = json_encode($userLicenseType);
@@ -335,39 +340,6 @@ class UserViewHelper {
             $licenseTypesInString
             . "<input type='hidden' id='LicenseType' value='{$licenseString}'><div id='LicenseTypeDesc'>&nbsp;</div>"
         );
-    }
-
-
-    /**
-     * get license type description
-     * @param string $type
-     * @return string
-     */
-    protected function getLicenseTypeDescription(string $type)
-    {
-        global $current_language;
-        $mod_strings = return_module_language($current_language, 'Users');
-        if ($type === Subscription::SUGAR_SERVE_KEY) {
-            return $mod_strings['LBL_LICENSE_SUGAR_SERVE'];
-        } elseif ($type === Subscription::SUGAR_SELL_KEY) {
-            return $mod_strings['LBL_LICENSE_SUGAR_SELL'];
-        } elseif ($type === Subscription::SUGAR_BASIC_KEY) {
-            global $sugar_flavor;
-            $mod_strings = return_module_language($current_language, 'Home');
-            if (!empty($sugar_flavor)) {
-                if ($sugar_flavor === 'ENT') {
-                    return $mod_strings['LBL_SUGAR_ENTERPRISE'];
-                }
-                if ($sugar_flavor === 'PRO') {
-                    return $mod_strings['LBL_SUGAR_PROFESSIONAL'];
-                }
-                if ($sugar_flavor === 'ULT') {
-                    return $mod_strings['LBL_SUGAR_ULTIMATE'];
-                }
-                return $mod_strings['LBL_LICENSE_CURRENT_PRODUCT'];
-            }
-        }
-        return '';
     }
 
     protected function setupPasswordTab() {

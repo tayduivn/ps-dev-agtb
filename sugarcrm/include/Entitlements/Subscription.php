@@ -132,7 +132,8 @@ class Subscription
         }
 
         $quantity = $this->quantity_c;
-        if (isset($quantity) && $quantity > 0) {
+        $expirationDate = $this->expiration_date;
+        if (isset($quantity) && $quantity > 0 && $expirationDate - time() > 0) {
             if (isset(self::MAPPING_PRODTEMPLATE_TO_SUBCODE[$prodtemplateId])) {
                 // don't need to go any further
                 $subscriptions[self::MAPPING_PRODTEMPLATE_TO_SUBCODE[$prodtemplateId]] = [
@@ -142,8 +143,7 @@ class Subscription
             } else {
                 // assume it is one of ENT, PRO, ULT, etc
                 // get current product
-                $flavor = $this->getFlavor();
-                $subscriptions[$flavor] = [
+                $subscriptions[self::SUGAR_BASIC_KEY] = [
                     'quantity' => $this->quantity_c,
                     'expiration_date' => $this->expiration_date,
                 ];
@@ -153,8 +153,11 @@ class Subscription
         // check addons, ignore any other addons for now
         foreach ($this->addons as $addonId => $addon) {
             $quantity = $addon->quantity;
+            $expirationDate = $addon->expiration_date;
             if (isset(self::MAPPING_PRODTEMPLATE_TO_SUBCODE[$addonId])
-            && isset($quantity) && $quantity > 0) {
+                && isset($quantity) && $quantity > 0
+                && $expirationDate - time() > 0
+            ) {
                 $subscriptions[self::MAPPING_PRODTEMPLATE_TO_SUBCODE[$addonId]] = [
                     'quantity' => $addon->quantity,
                     'expiration_date' => $addon->expiration_date,
@@ -200,16 +203,6 @@ class Subscription
             Subscription::SUGAR_SELL_KEY,
             Subscription::SUGAR_SERVE_KEY,
         ];
-    }
-
-    /**
-     * get sugar flavor
-     * @return string
-     */
-    protected function getFlavor()
-    {
-        global $sugar_flavor;
-        return (!empty($sugar_flavor)) ? $sugar_flavor : 'Sugar';
     }
 }
 //END REQUIRED CODE DO NOT MODIFY
