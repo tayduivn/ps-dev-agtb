@@ -117,20 +117,20 @@
     };
 
     app.metadata.addSyncTask(function(metadata, options) {
-        var manifestUrl = app.config.externalServicesUrl;
+        var catalogUrl = app.config.externalServicesUrl;
 
         if (options.getPublic) {
             // skipping external app sync for public metadata
             return Promise.resolve();
         }
 
-        if (manifestUrl && manifestUrl !== '') {
-            var iframeOrigin = manifestUrl.match(/^.+\:\/\/[^\/]+/)[0];
-            manifestUrl += '/manifest?host=crm';
+        if (catalogUrl && catalogUrl !== '') {
+            var iframeOrigin = catalogUrl.match(/^.+\:\/\/[^\/]+/)[0];
+            catalogUrl += '/catalog?host=crm';
 
-            var getManifest = function(onSuccess, onError, onLogin) {
+            var getCatalog = function(onSuccess, onError, onLogin) {
                 $.ajax({
-                    url: manifestUrl,
+                    url: catalogUrl,
                     xhrFields: {
                         withCredentials: true,
                         cors: true
@@ -138,11 +138,11 @@
                     contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
                     crossDomain: true,
-                    success: function(manifest) {
-                        if (manifest.loginRedirect && onLogin) {
-                            onLogin(manifest.loginRedirect);
+                    success: function(catalog) {
+                        if (catalog.loginRedirect && onLogin) {
+                            onLogin(catalog.loginRedirect);
                         } else {
-                            onSuccess(manifest);
+                            onSuccess(catalog);
                         }
                     },
                     error: function(error) {
@@ -163,14 +163,14 @@
                         crossDomain: true,
                         contentType: 'application/json; charset=utf-8',
                         mode: 'cors',
-                        success: function(manifest) {
-                            _.each(manifest.layouts, function(def) {
+                        success: function(catalog) {
+                            _.each(catalog.layouts, function(def) {
                                 if (def.module && def.layout) {
                                     addCompToLayout(metadata, def.module, def.layout, {
                                         'view': {
                                             'type': 'external-app',
-                                            'name': manifest.name,
-                                            'src': manifest.src
+                                            'name': catalog.name,
+                                            'src': catalog.src
                                         }
                                     });
                                 }
@@ -182,8 +182,8 @@
                     });
                 };
 
-                var handleManifest = function(manifest) {
-                    _.each(manifest.projects, function(proj) {
+                var handleCatalog = function(catalog) {
+                    _.each(catalog.projects, function(proj) {
                         fetchProjLayout(proj);
                     });
 
@@ -195,22 +195,22 @@
                     res();
                 };
 
-                getManifest(handleManifest, onError, function(loginUrl) {
+                getCatalog(handleCatalog, onError, function(loginUrl) {
                     var iframe = document.createElement('iframe');
                     var cleanup = function() {
                         iframe.parentElement.removeChild(iframe);
                         window.removeEventListener('message', eventCallback);
                     };
                     var eventCallback = function(event) {
-                        // TODO: Verify the manifest service origin instead of assuming any
+                        // TODO: Verify the catalog service origin instead of assuming any
                         // origin besides the one we are on is correct
 
                         if (event.origin === iframeOrigin) {
                             cleanup();
-                            // After the iframe event callback, we need to load the manifest again
+                            // After the iframe event callback, we need to load the catalog again
                             // but this time expect to get data.
-                            getManifest(handleManifest, onError, function(url) {
-                                error('Unable to authenticate with manifest service: Second Login URL:' + url);
+                            getCatalog(handleCatalog, onError, function(url) {
+                                error('Unable to authenticate with catalog service: Second Login URL:' + url);
                             });
                         }
                     };
