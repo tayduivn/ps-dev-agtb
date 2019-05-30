@@ -67,11 +67,8 @@ class RestMetadataTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testMetadataLanguage() {
-        if ( get_class(SugarCache::instance()) == 'SugarCacheAPC' ) {
-            $this->markTestSkipped('This test will not pass with APC enabled.');
-            return;
-        }
+    public function testMetadataLanguage()
+    {
         $langContent = "<?php\n\$app_strings['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'] = 'UnitTest';\n";
 
         $fileLoc = "custom/include/language/en_us.lang.php";

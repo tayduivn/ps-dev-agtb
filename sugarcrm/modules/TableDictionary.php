@@ -109,9 +109,6 @@ include("metadata/metadata_cacheMetaData.php");
 include("metadata/tag_bean_relMetaData.php");
 include("metadata/kbusefulnessMetaData.php");
 
-// SugarCacheDb
-include "metadata/key_value_cacheMetaData.php";
-
 // TeamSecurity Denormalization tables
 include "metadata/team_sets_usersMetaData.php";
 
