@@ -313,7 +313,7 @@ $admin_option_defs['Administration']['PipelineSettingsPanel'] = array(
     'Administration',
     'LBL_PIPELINE_LINK_NAME',
     'LBL_PIPELINE_LINK_DESCRIPTION',
-    'javascript:parent.SUGAR.App.router.navigate("VisualPipeline/config", {trigger: true});',
+    'javascript:void(parent.SUGAR.App.router.navigate("VisualPipeline/config", {trigger: true}));',
 );
 
 $admin_group_header[] = array(
