@@ -461,8 +461,9 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_COMMENT_LOG_MAX_CHARS' => 'Maximum characters to show per comment entry',
 
     //BEGIN SUGARCRM flav=ent ONLY
-    'LBL_EXTERNAL_SERVICES_SETTINGS' => 'External Services Settings',
-    'LBL_EXTERNAL_SERVICES_URL' => 'External Services URL',
+    'LBL_SUGAR_CATALOG_SETTINGS' => 'Sugar Catalog Settings',
+    'LBL_SUGAR_CATALOG_ENABLED' => 'Sugar Catalog Enabled',
+    'LBL_SUGAR_CATALOG_URL' => 'Sugar Catalog URL',
     //END SUGARCRM flav=ent ONLY
 );
 

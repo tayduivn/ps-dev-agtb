@@ -55,7 +55,8 @@ class ConfiguratorController extends SugarController
         'commentlog_maxchars',
 
         //BEGIN SUGARCRM flav=ent ONLY
-        'external_services_url',
+        'catalog_enabled',
+        'catalog_url',
         // SugarBPM settings
         'processes_auto_validate_on_import',
         'processes_auto_validate_on_autosave',

@@ -456,12 +456,23 @@
 //BEGIN SUGARCRM flav=ent ONLY
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
     <tr>
-        <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_EXTERNAL_SERVICES_SETTINGS}</h4></th>
+        <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_SUGAR_CATALOG_SETTINGS}</h4></th>
     </tr>
-    <tr>
-        <td width="25%" scope="row">{$MOD.LBL_EXTERNAL_SERVICES_URL}</td>
-        <td><input style="width:40%" name="external_services_url" value="{$config.external_services_url}"></td>
-    </tr>
+	<tr>
+		<td width="25%" scope="row">{$MOD.LBL_SUGAR_CATALOG_ENABLED}</td>
+		{if !empty($config.catalog_enabled)}
+			{assign var='catalogChecked' value='CHECKED'}
+		{else}
+			{assign var='catalogChecked' value=''}
+		{/if}
+		<td><input type='hidden' name='catalog_enabled' value='false'><input name='catalog_enabled'  type="checkbox" value='true' {$catalogChecked}></td>
+	</tr>
+	{if !empty($config.developerMode)}
+	<tr>
+		<td width="25%" scope="row">{$MOD.LBL_SUGAR_CATALOG_URL}</td>
+		<td><input style="width:40%" name="catalog_url" value="{$config.catalog_url}"></td>
+	</tr>
+	{/if}
 </table>
 //END SUGARCRM flav=ent ONLY
 

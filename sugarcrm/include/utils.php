@@ -88,7 +88,8 @@ function make_sugar_config(&$sugar_config)
     'calculate_response_time' => empty($calculate_response_time) ? true : $calculate_response_time,
     'create_default_user' => empty($create_default_user) ? false : $create_default_user,
     'chartEngine' => 'sucrose',
-    'external_services_url' => '',
+    'catalog_enabled' => false,
+    'catalog_url' => 'https://catalog.services.sugarcrm.com',
     'commentlog' => array(
         'maxchars' => 500,
     ),
@@ -268,7 +269,8 @@ function get_sugar_config_defaults()
     ),
     'create_default_user' => false,
     'chartEngine' => 'sucrose',
-    'external_services_url' => '',
+    'catalog_enabled' => false,
+    'catalog_url' => 'https://catalog.services.sugarcrm.com',
     'date_formats' => array (
     'Y-m-d' => '2010-12-23', 'm-d-Y' => '12-23-2010', 'd-m-Y' => '23-12-2010',
     'Y/m/d' => '2010/12/23', 'm/d/Y' => '12/23/2010', 'd/m/Y' => '23/12/2010',
