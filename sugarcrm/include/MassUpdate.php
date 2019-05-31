@@ -565,6 +565,12 @@ class MassUpdate
                 // already have 'User Type'
                 continue;
             }
+            if ($this->idmConfig->isIDMModeEnabled()
+                && $this->sugarbean->object_name == 'User'
+                && $field['name'] == 'UserType') {
+                // Explicitly disabled for IDM-mode
+                continue;
+            }
 			 if(!isset($banned[$field['name']]) && (!isset($field['massupdate']) || !empty($field['massupdate'])))
 			 {
 				$newhtml = '';

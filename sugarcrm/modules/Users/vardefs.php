@@ -412,7 +412,7 @@ $dictionary['User'] = array(
             'idm_mode_disabled' => true,
         ) ,
         // This is a fake field for the edit view
-        // This field is disabled for IDM-mode in UserViewHelper explicitly.
+        // This field is disabled for IDM-mode in UserViewHelper and MassUpdate explicitly.
         'UserType' => array(
             'name' => 'UserType',
             'vname' => 'LBL_USER_TYPE',
