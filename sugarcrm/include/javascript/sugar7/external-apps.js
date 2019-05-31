@@ -117,7 +117,11 @@
     };
 
     app.metadata.addSyncTask(function(metadata, options) {
-        var catalogUrl = app.config.externalServicesUrl;
+        if (!app.config.catalogEnabled) {
+            // if Sugar Catalog is not enabled, stop execution
+            return;
+        }
+        var catalogUrl = app.config.catalogUrl;
 
         if (options.getPublic) {
             // skipping external app sync for public metadata
