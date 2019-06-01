@@ -19,7 +19,7 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
 
     public function run()
     {
-        if (!$this->toFlavor('ent') || !version_compare($this->from_version, '9.1.0', '<')) {
+        if (!$this->toFlavor('ent') || !version_compare($this->from_version, '9.1.0', '<=')) {
             return;
         }
         SugarAutoLoader::load('modules/VisualPipeline/VisualPipelineDefaults.php');
