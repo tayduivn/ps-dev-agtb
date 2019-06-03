@@ -250,7 +250,7 @@
                    'sidecar/node_modules/promise-polyfill/dist/polyfill.js'=> 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/systemjs/system.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/external-apps.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'include/javascript/single-spa/single-spa.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/single-spa/single-spa.min.js' => 'include/javascript/sugar_sidecar.min.js',
 
                    'include/javascript/select2/language.js' => 'include/javascript/sugar_sidecar.min.js',
                    'sidecar/node_modules/moment/min/locales.min.js' => 'include/javascript/sugar_sidecar.min.js',
