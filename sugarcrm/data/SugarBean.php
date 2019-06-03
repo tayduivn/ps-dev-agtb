@@ -5703,7 +5703,7 @@ class SugarBean
                 }
             }
 
-            $bean->populateFromRow($row);
+            $bean->populateFromRow($row, true);
 
             // panel_name is not a standard SugarBean field but it's used for fetching
             // data for composite subpanels. assign it to the bean manually.
