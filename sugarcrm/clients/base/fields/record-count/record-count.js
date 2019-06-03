@@ -50,6 +50,7 @@
         this.module = options.def.module || '';
         this.filter = options.def.filter || {};
         this.cssClass = options.def.cssClass || '';
+        this.tooltipLabel = options.def.tooltip || '';
     },
 
     /**

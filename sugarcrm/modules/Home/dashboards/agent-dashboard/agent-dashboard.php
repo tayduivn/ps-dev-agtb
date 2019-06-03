@@ -158,11 +158,15 @@ return [
                             ],
                             [
                                 'status' => [
-                                    '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
+                                    '$in' => ['New', 'Assigned', 'Pending Input'],
                                 ],
+                            ],
+                            [
+                                '$owner' => '',
                             ],
                         ],
                         'cssClass' => 'case-expired',
+                        'tooltip' => 'LBL_CASE_OVERDUE',
                     ],
                     [
                         'type' => 'record-count',
@@ -175,11 +179,15 @@ return [
                             ],
                             [
                                 'status' => [
-                                    '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
+                                    '$in' => ['New', 'Assigned', 'Pending Input'],
                                 ],
+                            ],
+                            [
+                                '$owner' => '',
                             ],
                         ],
                         'cssClass' => 'case-soon',
+                        'tooltip' => 'LBL_CASE_DUE_SOON',
                     ],
                     [
                         'type' => 'record-count',
@@ -192,11 +200,15 @@ return [
                             ],
                             [
                                 'status' => [
-                                    '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
+                                    '$in' => ['New', 'Assigned', 'Pending Input'],
                                 ],
+                            ],
+                            [
+                                '$owner' => '',
                             ],
                         ],
                         'cssClass' => 'case-future',
+                        'tooltip' => 'LBL_CASE_DUE_LATER',
                     ],
                 ],
                 'components' => [

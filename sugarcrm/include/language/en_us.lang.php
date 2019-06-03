@@ -4920,6 +4920,9 @@ Sincerely, SugarCRM',
     // labels and final names TBD!
     'LBL_AGENT_WORKBENCH' => 'Agent Workbench',
     'LBL_AGENT_WORKBENCH_OVERVIEW' => 'Overview',
+    'LBL_CASE_OVERDUE' => 'Overdue',
+    'LBL_CASE_DUE_SOON' => 'Due soon',
+    'LBL_CASE_DUE_LATER' => 'Due later',
 
     //END SUGARCRM flav=ent ONLY
 
