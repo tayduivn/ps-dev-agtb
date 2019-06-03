@@ -560,7 +560,7 @@ Feature: Product Catalog Quick Picks Dashlet
     # Select 'Favorites' tab in Product Catalog Quick Picks dashlet
     # Verify number of records in the 'Favorites' tab for another user
 
-  @product_catalog_quick_picks_dashlet @quote_create_view
+  @product_catalog_quick_picks_dashlet @quote_create_view @ci-excluded
   Scenario: Product Catalog Quick Picks Dashlet in Quotes Create View
     # Generate Product records in Product Catalog
     Given ProductTemplates records exist:

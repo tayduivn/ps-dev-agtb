@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job4 @xxx
+@dashboard @dashlets @job4
 Feature: Shareable Dashboards functionality verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @pr
+  @pr @ci-excluded
   Scenario Outline: Home > Shared dashboard
 
     # Create custom user
