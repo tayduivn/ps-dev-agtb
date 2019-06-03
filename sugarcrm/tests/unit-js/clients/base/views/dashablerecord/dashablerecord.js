@@ -249,28 +249,73 @@ describe('Base.View.Dashablerecord', function() {
                 });
             });
         });
+    });
 
-        describe('with a rowModel', function() {
-            var rowModel;
-            var newModel;
+    describe('_getContextModel', function() {
+        it('should clone context models before returning', function() {
+            var cloneStub = sinon.collection.stub(view, '_cloneModel');
+            view._getContextModel();
+            expect(cloneStub).toHaveBeenCalled();
+        });
+    });
 
-            beforeEach(function() {
-                rowModel = app.data.createBean(moduleName, {id: 'an id'});
-                view.context.parent.parent = new app.Context();
-                view.context.parent.parent.set('rowModel', rowModel);
-                rowModel.fetch = sinon.collection.stub();
-            });
+    describe('_loadContextModel', function() {
+        it('should fetch the context model', function() {
+            var contextModel = app.data.createBean(moduleName);
+            var fetchStub = sinon.collection.stub(contextModel, 'fetch');
+            sinon.collection.stub(view, '_getContextModel').returns(contextModel);
+            view._loadContextModel();
+            expect(fetchStub).toHaveBeenCalled();
+        });
+    });
 
-            describe('with the base record', function() {
-                it('should fetch full rowModel', function() {
-                    sinon.collection.stub(view, '_hasRowModel').returns(true);
-                    sinon.collection.stub(view, '_getRowModel').returns(rowModel);
+    describe('_syncIdsToModels', function() {
+        it('should set ids for related record view tab models', function() {
+            var model = app.data.createBean(moduleName, {accounts: {name: 'asdf', id: 'id1'}});
+            view.tabs = [{type: 'record', link: 'accounts', model: null}];
+            sinon.collection.stub(view, '_getContextModel').returns(model);
+            view._syncIdsToModels(model);
+            expect(view.tabs[0].model.get('id')).toEqual('id1');
+        });
+    });
 
-                    view.initDashlet('main');
+    describe('_setDataView', function() {
+        it('should set view option on the model based on metadata existing', function() {
+            var model = app.data.createBean(moduleName);
+            view._setDataView(model);
+            expect(model.getOption('view')).toEqual('record');
+            sinon.collection.stub(app.metadata, 'getView').returns({}); // it returns something
+            view._setDataView(model);
+            expect(model.getOption('view')).toEqual('recorddashlet');
+        });
+    });
 
-                    expect(rowModel.fetch).toHaveBeenCalledOnce();
-                });
-            });
+    describe('_getRelateFieldsForContextModel', function() {
+        it('should return relate fields based off tab links', function() {
+            var contextModel = app.data.createBean(moduleName);
+            sinon.collection.stub(view, '_getContextModel').returns(contextModel);
+            var tabs = [{
+                type: 'record',
+                link: 'accounts'
+            }];
+            view.settings.set('tabs', tabs);
+            var fields = {
+                account_name: {
+                    name: 'account_name',
+                    link: 'accounts',
+                }
+            };
+            sinon.collection.stub(app.metadata, 'getModule').returns(fields);
+            expect(view._getRelateFieldsForContextModel()).toEqual(['account_name']);
+        });
+    });
+
+    describe('_cloneModel', function() {
+        it('should copy all attributes including id to a new model', function() {
+            var modelToClone = app.data.createBean(moduleName, {id: 'id1', name: 'case1'});
+            var clonedModel = view._cloneModel(modelToClone);
+            expect(clonedModel.get('id')).toEqual('id1');
+            expect(clonedModel.get('name')).toEqual('case1');
         });
     });
 
@@ -455,6 +500,7 @@ describe('Base.View.Dashablerecord', function() {
             hasAccessStub.withArgs('view', 'Cases').returns(true);
             hasAccessStub.withArgs('view', 'Accounts').returns(false);
             hasAccessStub.withArgs('view', 'Contacts').returns(true);
+            sinon.collection.stub(view, '_cloneModel').returns(app.data.createBean(moduleName));
         });
 
         it('should create tabs from metadata', function() {
@@ -639,12 +685,12 @@ describe('Base.View.Dashablerecord', function() {
             var getModuleStub = sinon.collection.stub(app.metadata, 'getModule').returns({
                 fields: {contacts: {type: 'link'}}
             });
-            var rowModel = app.data.createBean(moduleName);
-            var rowModelStub = sinon.collection.stub(view, '_getRowModel').returns(rowModel);
+            var contextModel = app.data.createBean(moduleName);
+            var contextModelStub = sinon.collection.stub(view, '_getContextModel').returns(contextModel);
             var createCollectionStub = sinon.collection.stub(app.data, 'createRelatedCollection');
             var tab = {link: 'contacts', module: 'Contacts'};
             view._createCollection(tab);
-            expect(createCollectionStub.lastCall.args[0]).toEqual(rowModel);
+            expect(createCollectionStub.lastCall.args[0]).toEqual(contextModel);
             expect(createCollectionStub.lastCall.args[1]).toEqual('contacts');
         });
     });

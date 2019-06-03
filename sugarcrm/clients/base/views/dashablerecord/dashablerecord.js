@@ -249,11 +249,6 @@
             this.model.module ||
             this.model.get('module');
 
-        // set model if rowModel exists, eg, in multi-line dashboard
-        if (this._hasRowModel()) {
-            this._loadRowModel();
-        }
-
         if (this._mode === 'config') {
             this._configureDashlet();
         } else if (this.meta.pseudo) {
@@ -362,30 +357,90 @@
     },
 
     /**
-     * Loads the row model, or the bean related to it, into the active tab.
-     * Do not use on list view tabs.
+     * Fetches relate fields depending on tabs for the contextual model
      *
      * @private
      */
-    _loadRowModel: function() {
-        var rowModel = this._getRowModel();
-        if (!rowModel) {
-            return;
-        }
-
-        rowModel.setOption('view', this.dataView);
-        // Always load this to get all relate fields
-        // In the future, to support 2 level relationships, we need to
-        // also load the first level base model
-        rowModel.fetch({
-            async: false, // we need this model before setting up anything
+    _loadContextModel: function() {
+        var model = this._getContextModel();
+        var fields = this._getRelateFieldsForContextModel();
+        model.setOption('fields', fields);
+        model.fetch({
             showAlerts: true,
             success: _.bind(function(model) {
-                model.dataFetched = true;
+                this._syncIdsToModels(model);
             }, this)
         });
+    },
 
-        return;
+    /**
+     * Set ids for related models to the correct models in side the tabs
+     *
+     * @param {Data.Bean} model The fetched model that contains relate field data
+     * @private
+     */
+    _syncIdsToModels: function(model) {
+        _.each(this.tabs, function(tab) {
+            if (tab.type !== 'record') {
+                return;
+            }
+
+            var link = tab.link;
+            var relateField = model.get(link);
+            if (relateField && relateField.id) {
+                if (tab.model) {
+                    tab.model.dispose();
+                }
+                tab.model = app.data.createRelatedBean(this._getContextModel(), relateField.id, link);
+                this._setDataView(tab.model);
+                if (this._isActiveTab(tab)) {
+                    this._updateViewToCurrentTab();
+                    this._loadDataForTabs([tab]);
+                }
+            }
+        }, this);
+    },
+
+    /**
+     * Set the dataView for the model to tell the server what fields to load
+     * Depending on if recorddashlet metadata is defined, dataView will be recorddashlet
+     * or record
+     *
+     * @param {Data.Bean} model The model to set the dataView on
+     * @private
+     */
+    _setDataView: function(model) {
+        var dataView = app.metadata.getView(model.module, 'recorddashlet') ? this.dataView : 'record';
+        model.setOption('view', dataView);
+    },
+
+    /**
+     * Gets relate field names for the context model for each record tab
+     * Used to force relate fields onto the context model's fetch so that we get
+     * an id for the related record
+     *
+     * @return {Array} List of relate field names
+     * @private
+     */
+    _getRelateFieldsForContextModel: function() {
+        var contextModel = this._getContextModel();
+        var tabs = this.settings.get('tabs');
+        var fields = [];
+        var moduleFields = _.values(app.metadata.getModule(contextModel.module, 'fields'));
+        _.each(tabs, function(tab) {
+            if (tab.type !== 'record') {
+                return;
+            }
+            var link = tab.link;
+            var field = _.find(moduleFields, function(mField) {
+                return mField.link === link;
+            });
+            if (field) {
+                fields.push(field.name);
+            }
+        }, this);
+
+        return fields;
     },
 
     /**
@@ -501,17 +556,9 @@
             if (this.collection && !this.collection.dataFetched && !tab.skipFetch && !this.meta.pseudo) {
                 this._loadDataForTabs([tab]);
             } else if (tab.type === 'record' && !tab.model.dataFetched) {
-                tab.model.module = tab.module;
-                tab.model.fetch({
-                    showAlerts: true,
-                    success: _.bind(function(model) {
-                        model.dataFetched = true;
-                        this.render();
-                    }, this)
-                });
-            } else {
-                this.render();
+                this._loadDataForTabs([tab]);
             }
+            this.render();
         }
     },
 
@@ -589,7 +636,7 @@
     _createCollection: function(tab) {
         // on the multi-line list view, the first time the collections are created this.model is from Home
         // (i.e. it's the dashboard model). This causes fetching to complain.
-        var modelToUse = this._getRowModel() || this.model;
+        var modelToUse = this._getContextModel() || this.model;
         return app.data.createRelatedCollection(modelToUse, tab.link);
     },
 
@@ -600,12 +647,39 @@
      * @private
      */
     _getRowModel: function() {
+        return this.context.parent.parent.get('rowModel');
+    },
+
+    /**
+     * Get the contextual model for the dashlet
+     *
+     * @return {Data.Bean}
+     * @private
+     */
+    _getContextModel: function() {
         if (this._contextModel) {
             return this._contextModel;
         } else if (this._hasRowModel()) {
-            this._contextModel = this.context.parent.parent.get('rowModel');
-            return this._contextModel;
+            return this._contextModel = this._cloneModel(this._getRowModel());
+        } else {
+            return this._contextModel = this._cloneModel(app.controller.context.get('model'));
         }
+
+    },
+
+    /**
+     * Create a new model with the same attributes as the passed in model.
+     * Also copies the id
+     *
+     * @param {Data.Bean} model The model to copy
+     * @return {Data.Bean}
+     * @private
+     */
+    _cloneModel: function(model) {
+        var clonedModel = app.data.createBean(model.module);
+        clonedModel.copy(model);
+        clonedModel.set('id', model.get('id'));
+        return clonedModel;
     },
 
     /**
@@ -660,9 +734,10 @@
      *   fetch method.
      */
     loadData: function(options) {
-        if (this.disposed || this._mode === 'config' || this._mode === 'preview') {
+        if (this.disposed || this._mode === 'config' || this._mode === 'preview' || this.meta.pseudo) {
             return;
         }
+        this._loadContextModel();
         this._super('loadData', [options]);
         this._loadDataForTabs(this.tabs, options);
     },
@@ -698,7 +773,8 @@
             } else if (tab.type === 'record') {
                 return !tab.model ||
                     tab.skipFetch ||
-                    tab.model.dataFetched;
+                    tab.model.dataFetched ||
+                    _.isEmpty(tab.model.get('id'));
             }
         };
         _.each(tabs, function(tab, index) {
@@ -718,7 +794,6 @@
                     tab.model.fetch({
                         showAlerts: true,
                         success: _.bind(function(model) {
-                            model.dataFetched = true;
                             if (self._isActiveTab(tab)) {
                                 self.render();
                             }
@@ -1029,7 +1104,13 @@
         this.listenTo(this.layout, 'init', this._addPseudoDashlet);
 
         // load the previously selected tabs by default
-        var initialTabs = this.settings.get('tab_list') || [this.settings.get('module')];
+        var initialTabs = this.settings.get('tab_list');
+        // in case this is the initial setup, load in the current module as the tab
+        if (_.isUndefined(initialTabs)) {
+            initialTabs = [this.settings.get('module')];
+            var configTabs = this._generateConfigTabs(initialTabs);
+            this.settings.set('tabs', configTabs);
+        }
         this.settings.set('tab_list', initialTabs);
 
         this._bindSettingsEvents();
@@ -1290,15 +1371,22 @@
                 // Single record (record view tab)
                 module = tab.module;
                 tab.meta = app.metadata.getView(module, 'recorddashlet') || app.metadata.getView(module, 'record');
-                var model = this._getRowModel() || app.data.createBean(module);
+                var contextModel = this._getContextModel() || app.data.createBean(module);
                 if (this.meta.pseudo) {
                     tab.model = app.data.createBean(module);
                 } else if (tab.link === tab.module || tab.link === '') {
-                    tab.model = model;
+                    // Record view for the context model
+                    tab.model = this._cloneModel(this._getContextModel());
                 } else {
-                    tab.model = app.data.createRelatedBean(model, model.get(tab.link).id, tab.link);
+                    // related 1 side record view
+                    var id = null;
+                    var relationship = contextModel.get(tab.link);
+                    if (relationship) {
+                        id = relationship.id || null;
+                    }
+                    tab.model = app.data.createRelatedBean(contextModel, id, tab.link);
                 }
-                tab.model.setOption('view', this.dataView);
+                this._setDataView(tab.model);
             }
             this.tabs[index] = tab;
         }, this);
