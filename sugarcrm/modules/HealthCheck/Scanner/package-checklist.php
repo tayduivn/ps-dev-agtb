@@ -442,4 +442,9 @@ return array(
             'version' => '*',
         ],
     ],
+    'CLI command and Scheduler job to purge from database old Activity Stream records' => [
+        [
+            'version' => '*',
+        ],
+    ],
 );

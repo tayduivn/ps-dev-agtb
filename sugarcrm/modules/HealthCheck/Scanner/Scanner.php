@@ -791,10 +791,6 @@ class HealthCheckScanner
         //Now that we have catalogued all the bad files in custom, log them by category.
         $this->updateCustomDirScanStatus();
 
-        // Make sure ActivityStreamPurger is not installed as a Module Loadable Package.
-        // If so, It has to be Uninstalled - It is now a Sugar OOTB Scheduled job.
-        $this->verifyActivityStreamPurgerNotInstalledAsMLP();
-
         // Check global hooks
         $this->log("Checking global hooks");
         $hook_files = array();
@@ -4887,25 +4883,6 @@ ENDP;
         $class = strtolower($class);
 
         return isset($classes[$class]);
-    }
-
-    /**
-     * We need to make sure we don't collide with a version of the ActivityStreamPurger that was available as a Module
-     * Loadable Package. This Sugar OOTB scheduler version is based on, and replaces that MLP version. It needs to be
-     * removed prior to upgrade.
-     */
-    protected function verifyActivityStreamPurgerNotInstalledAsMLP()
-    {
-        $this->log('Verify the ActivityStreamPurger has not been previously installed as a Module Loadable Package');
-
-        $idName = 'activitystreampurger';  // 'id_name' name of the ActivityStreamPurger MLP
-        $uh = new UpgradeHistory();
-        $query = "SELECT * FROM {$uh->table_name} where id_name = ? AND status = 'installed'";
-        $stmt = $this->db->getConnection()->executeQuery($query, [$idName]);
-        $uhRecord = $stmt->fetch();
-        if (!empty($uhRecord)) {
-            $this->updateStatus('activityStreamPurgerInstalledAsMlp', $idName);
-        }
     }
 }
 
