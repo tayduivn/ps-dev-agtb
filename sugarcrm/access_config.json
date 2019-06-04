@@ -174,6 +174,20 @@
             "c290abda-7606-11e9-9f3e-f218983a1c3e":["SUGAR_SERVE"],
             "c290ae50-7606-11e9-9cb2-f218983a1c3e":["SUGAR_SERVE"],
             "c290b0da-7606-11e9-81f9-f218983a1c3e":["SUGAR_SERVE"]
+        },
+        "pmse_Project" : {
+            "645a5c70-7e4c-11e9-944d-82186cfedf39":["SUGAR_SERVE"],
+            "42b657ca-7bec-11e9-a5ed-d694a7e8e45a":["SUGAR_SERVE"],
+            "7b2f8038-7e4c-11e9-8eef-82186cfedf39":["SUGAR_SERVE"]
+        },
+        "pmse_Business_Rules" : {
+            "644d41a2-7e4c-11e9-9f68-82186cfedf39":["SUGAR_SERVE"]
+        },
+        "pmse_Emails_Templates": {
+            "7b248aca-7e4c-11e9-8bb8-82186cfedf39":["SUGAR_SERVE"],
+            "60ed5042-7e4c-11e9-8b80-82186cfedf39":["SUGAR_SERVE"],
+            "6444b154-7e4c-11e9-9f3d-82186cfedf39":["SUGAR_SERVE"],
+            "6447b4e4-7e4c-11e9-96e3-82186cfedf39":["SUGAR_SERVE"]
         }
     },
     "FIELDS": {

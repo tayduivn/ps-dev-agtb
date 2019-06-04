@@ -37,7 +37,7 @@ class PMSECrmDataWrapperTest extends TestCase
      * Module used for testing
      * @var string
      */
-    protected $testModule = 'Cases';
+    protected $testModule = 'Accounts';
 
     /**
      * @var PMSECrmDataWrapper

@@ -13,6 +13,7 @@
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 
 class PMSEPreProcessor
 {
@@ -240,6 +241,14 @@ class PMSEPreProcessor
         if ($request->getExternalAction() == 'TERMINATE_CASE') {
             $result = $this->terminateCaseByBeanAndProcess($request->getBean());
         } else {
+            // Needed for license management overrides. This should be done before
+            // any data is collected for process management
+            $acm = AccessControlManager::instance();
+            $isAdminWork = $acm->getAdminWork();
+            if ($isAdminWork !== true) {
+                $acm->setAdminWork(true, true);
+            }
+
             // Now handle actual processing of the request
             $flowDataList = $this->getFlowDataList($request);
 
@@ -341,6 +350,12 @@ class PMSEPreProcessor
             // Clear validator caches AFTER the loop completes so that the cache
             // is clear for future iterations
             $this->validator->clearValidatorCaches();
+
+            // Reset the admin flag on the access control manager if it needs it.
+            // This should be done at the very end of process management.
+            if ($isAdminWork !== true) {
+                $acm->setAdminWork(false, true);
+            }
         }
 
         return $result;

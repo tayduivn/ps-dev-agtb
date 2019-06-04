@@ -141,7 +141,7 @@ class AccessControlManager
                 return $this->voters[$key];
         }
     }
-    
+
     /**
      *
      * check if allowed to access protected resource
@@ -281,16 +281,29 @@ class AccessControlManager
     /**
      * set is isAdminWork flag, we need to disable access control for admin work
      * @param bool $adminWork
+     * @param bool $forceChange Forces update even if current user is not admin
      * @return $this
      */
-    public function setAdminWork(bool $adminWork)
+    public function setAdminWork(bool $adminWork, bool $forceChange = false)
     {
         global $current_user;
-        // admin override
-        if (!empty($current_user) && is_admin($current_user)) {
+
+        // Admin override, will only change the flag if user is an admin
+        // unless the $forceChange flag is true, in which case it will force
+        // the flag to update no matter what. This is used by the BPM engine.
+        if ($forceChange || (!empty($current_user) && is_admin($current_user))) {
             $this->isAdminWork = $adminWork;
         }
         return $this;
+    }
+
+    /**
+     * Gets the current state of the `isAdminWork` flag.
+     * @return bool
+     */
+    public function getAdminWork() : bool
+    {
+        return $this->isAdminWork;
     }
 
     /**

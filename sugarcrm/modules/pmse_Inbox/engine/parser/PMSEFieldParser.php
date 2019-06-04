@@ -161,27 +161,67 @@ class PMSEFieldParser extends PMSEAbstractDataParser implements PMSEDataParserIn
     }
 
     /**
-     * parse the token ussing the old function
-     * @global object $current_user
-     * @param type $criteriaToken
-     * @param type $params
-     * @return type
+     * Gets the correct working SugarBean
+     * @param stdClass $criteriaToken
+     * @return SugarBean
      */
-    public function parseCriteria($criteriaToken, $params = array())
+    protected function getWorkingBean($criteriaToken)
     {
-        $tokenArray = array($criteriaToken->expModule, $criteriaToken->expField, $criteriaToken->expOperator);
+        $bean = $this->evaluatedBean;
+        // We need an expModule to do the rest of the checking
+        // So if it is absent, send back the evaluated bean
+        if (!isset($criteriaToken->expModule)) {
+            return $bean;
+        }
+
+        // Get the module for the criteria
+        $criteriaMod  = BeanFactory::getBeanClass($criteriaToken->expModule);
+        // If there is no criteria module then it is a link
+        // If we have a criteria module, but it is not the evaluated bean,
+        // it is a link
+        if ($criteriaMod === false || !$bean instanceof $criteriaMod) {
+            $rels = $this->getRelatedBean($criteriaToken->expModule);
+            $bean = array_shift($rels);
+        }
+
+        // Bean will now either be the evaluated bean, or the correct related bean
+        // or a false
+        return $bean;
+    }
+
+    /**
+     * Takes in a criteria object and updates it as needed
+     * @param stdClass $criteriaToken Object made from definitions
+     * @param array $params
+     * @return stdClass
+     */
+    public function parseCriteria($criteriaToken, $params = [])
+    {
+        $tokenArray = [
+            $criteriaToken->expModule,
+            $criteriaToken->expField,
+            $criteriaToken->expOperator,
+        ];
+
         $criteriaToken->currentValue = $this->parseTokenValue($tokenArray, $params);
         $criteriaToken->expValue = $this->setExpValueFromCriteria($criteriaToken);
 
-        // Use the working bean now to get what we are after
         if (isset($criteriaToken->expField)) {
-            $fieldType = $this->evaluatedBean->field_defs[$criteriaToken->expField]['type'];
-            if ($fieldType == 'date') {
+            // Get the proper bean to use for eval
+            $bean = $this->getWorkingBean($criteriaToken);
+
+            // If there is no working bean send back the criteria token as is
+            if (!$bean) {
+                return $criteriaToken;
+            }
+
+            // Check the criteria field type and set data as needed
+            $type = $bean->field_defs[$criteriaToken->expField]['type'];
+            $dates = ['date', 'datetime', 'datetimecombo'];
+            if (in_array($type, $dates)) {
                 $criteriaToken->expSubtype = 'date';
-            } elseif ($fieldType == 'datetime' || $fieldType =='datetimecombo') {
-                $criteriaToken->expSubtype = 'date';
-            } elseif ($fieldType == 'currency') {
-                $criteriaToken->expValue = $this->setCurrentValueIfCurrency($criteriaToken);
+            } elseif ($type === 'currency') {
+                $criteriaToken->expValue = $this->setCurrentValueIfCurrency($criteriaToken, $bean);
             }
         }
 
@@ -366,11 +406,22 @@ class PMSEFieldParser extends PMSEAbstractDataParser implements PMSEDataParserIn
      * @param $token
      * @return float
      */
-    public function setCurrentValueIfCurrency($token)
+    public function setCurrentValueIfCurrency($token, SugarBean $bean = null)
     {
+        // If there is no bean presented use the evaluated bean
+        if ($bean === null) {
+            $bean = $this->evaluatedBean;
+        }
+
+        // Get the default currency ID if we don't have one set
         $expCurrency = empty($token->expCurrency) ? '-99' : $token->expCurrency;
-        $defCurrency = SugarCurrency::getCurrency($this->evaluatedBean);
+
+        // Get the currency from the bean
+        $defCurrency = SugarCurrency::getCurrency($bean);
+
+        // Convert the currency to a value
         $amount = SugarCurrency::convertAmount((float)$token->expValue, $expCurrency, $defCurrency->id);
+
         return $amount;
     }
 
