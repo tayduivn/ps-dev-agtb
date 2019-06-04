@@ -23,8 +23,7 @@ class TabController
 
     public function is_system_tabs_in_db()
     {
-
-        $administration = Administration::getSettings('MySettings');
+        $administration = $this->getMySettings();
         if (isset($administration->settings) && isset($administration->settings['MySettings_tab'])) {
             return true;
         } else {
@@ -34,12 +33,12 @@ class TabController
 
     /**
      * Get the hash of the tabs.
-     * @return string
+     * @return string MD5 hash of the tab settings.
      */
     public function getMySettingsTabHash()
     {
         //Administration MySettings are already sugar-cached, and hence only need to retrieve it directly
-        $administration = Administration::getSettings('MySettings');
+        $administration = $this->getMySettings();
         if (isset($administration->settings) && isset($administration->settings['MySettings_tab'])) {
             $tabs = $administration->settings['MySettings_tab'];
 
@@ -149,19 +148,28 @@ class TabController
         return array($tabs, $unsetTabs);
     }
 
-
+    /**
+     * Set the system tabs.
+     *
+     * @param array $tabs Tabs to save.
+     */
     public function set_system_tabs($tabs)
     {
-        $administration = BeanFactory::newBean('Administration');
+        $administration = $this->getAdministration();
         // TODO: encode in JSON rather than base64
         $serialized = base64_encode(serialize($tabs));
         $administration->saveSetting('MySettings', 'tab', $serialized);
         self::$isCacheValid = false;
     }
 
+    /**
+     * Determine if the users can edit or not.
+     *
+     * @return bool true if editing is allowed, false otherwise.
+     */
     public function get_users_can_edit()
     {
-        $administration = Administration::getSettings('MySettings');
+        $administration = $this->getMySettings();
         if (isset($administration->settings) && isset($administration->settings['MySettings_disable_useredit'])) {
             if ($administration->settings['MySettings_disable_useredit'] == 'yes') {
                 return false;
@@ -184,7 +192,13 @@ class TabController
         }
     }
 
-
+    /**
+     * Get an array for which each key maps to itself, where the keys are the
+     * values of the given array.
+     *
+     * @param array $arr The source array.
+     * @return array The key array.
+     */
     public static function get_key_array($arr)
     {
         $new = array();
@@ -366,4 +380,24 @@ class TabController
         return $tabs;
     }
 //END SUGARCRM flav=ent ONLY
+
+    /**
+     * Get the Admin bean.
+     *
+     * @return SugarBean The Admin bean.
+     */
+    public function getAdministration()
+    {
+        return BeanFactory::newBean('Administration');
+    }
+
+    /**
+     * Get MySettings.
+     *
+     * @return Administration MySettings.
+     */
+    public function getMySettings()
+    {
+        return Administration::getSettings('MySettings');
+    }
 }

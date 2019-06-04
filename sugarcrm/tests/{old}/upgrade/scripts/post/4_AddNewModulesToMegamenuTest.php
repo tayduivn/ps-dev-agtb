@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//require_once 'modules/UpgradeWizard/UpgradeDriver.php';
+
 require_once 'upgrade/scripts/post/4_AddNewModulesToMegamenu.php';
 
 /**
@@ -21,16 +21,16 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
      * Mock tabs array to be used in the TabController mock
      * @var array
      */
-    public $mockTabs = array(
-        '0' => array(
+    public $mockTabs = [
+        '0' => [
             'Accounts' => 'Accounts',
             'Bugs' => 'Bugs',
             'Contacts' => 'Contacts',
-            ),
-        '1' => array(
-            'Blah' => 'Blah',
-        ),
-    );
+        ],
+        '1' => [
+            'Products' => 'Products',
+        ],
+    ];
 
     /**
      * Tests the criteria builder
@@ -85,9 +85,9 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
         $this->assertEquals($def['expectMsg'], $msg);
     }
 
-    public function newModuleDefProvider()
+    public function newModuleDefProvider(): array
     {
-        return array(
+        return [
             array(
                 'def' => array(
                     'name' => 'PMSE Modules',
@@ -199,12 +199,46 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
                     'expectMsg' => 'Megamenu module list updated with PMSE Modules Converted',
                 ),
             ),
-        );
+            // Business Centers module added (pre-9.1.0 -> 9.1.0)
+            [
+                'def' => [
+                    'name' => 'Business Centers Module',
+                    'fromVersion' => ['9.1.0', '<'],
+                    'toFlavor' => ['ent'],
+                    'modules' => ['BusinessCenters'],
+                    'setupVersions' => [
+                        'from_version' => '9.0.0',
+                        'from_flavor' => 'ent',
+                        'to_version' => '9.1.0',
+                        'to_flavor' => 'ent',
+                    ],
+                    'expectCheck' => true,
+                    'expectMsg' => 'Megamenu module list updated with Business Centers Module',
+                ],
+            ],
+            // Business Centers module added (9.1.0+ conversion)
+            [
+                'def' => [
+                    'name' => 'Business Centers Module',
+                    'fromVersion' => ['9.1.0', '>='],
+                    'toFlavor' => ['ent'],
+                    'modules' => ['BusinessCenters'],
+                    'setupVersions' => [
+                        'from_version' => '9.1.0',
+                        'from_flavor' => 'pro',
+                        'to_version' => '9.1.0',
+                        'to_flavor' => 'ent',
+                    ],
+                    'expectCheck' => true,
+                    'expectMsg' => 'Megamenu module list updated with Business Centers Module',
+                ],
+            ],
+        ];
     }
 
-    public function moduleDefDataProvider()
+    public function moduleDefDataProvider(): array
     {
-        return array(
+        return [
             array(
                 'def' => array(
                     'modules' => array(
@@ -222,9 +256,9 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
                         'Gandalf' => 'Gandalf',
                         'Palpatine' => 'Palpatine',
                     ),
-                    '1' => array(
-                        'Blah' => 'Blah',
-                    ),
+                    '1' => [
+                        'Products' => 'Products',
+                    ],
                 ),
             ),
             array(
@@ -243,12 +277,30 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
                         'Azog' => 'Azog',
                         'Hammerhead' => 'Hammerhead',
                     ),
-                    '1' => array(
-                        'Blah' => 'Blah',
-                    ),
+                    '1' => [
+                        'Products' => 'Products',
+                    ],
                 ),
             ),
-        );
+            [
+                'def' => [
+                    'modules' => [
+                        'Accounts',
+                        'Products',
+                    ],
+                    'forceVisible' => true,
+                ],
+                'expect' => [
+                    '0' => [
+                        'Accounts' => 'Accounts',
+                        'Bugs' => 'Bugs',
+                        'Contacts' => 'Contacts',
+                        'Products' => 'Products',
+                    ],
+                    '1' => [],
+                ],
+            ],
+        ];
     }
 
     public function setupUpgraderVersions($ug, $data)
