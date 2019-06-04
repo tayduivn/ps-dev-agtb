@@ -70,10 +70,19 @@ class PMSETimerEvent extends PMSEIntermediateEvent
                 $object_id = $flowData['cas_sugar_object_id'];
                 $bean = $this->caseFlowHandler->retrieveBean($moduleName, $object_id);
                 PMSEEngineUtils::setRegistry($bean);
-                $dueDate = $this->evaluator->evaluateExpression(
-                    $eventDefinition['evn_criteria'],
-                    $bean
-                );
+                try {
+                    $dueDate = $this->evaluator->evaluateExpression(
+                        $eventDefinition['evn_criteria'],
+                        $bean
+                    );
+                } catch (PMSEExpressionEvaluationException $e) {
+                    if ($e->getCode() === PMSEExpressionEvaluator::$exceptionCodes['BusinessCenter']) {
+                        // throwing PMSEElementException to fail the process because we don't know how long to wait
+                        throw new PMSEElementException("TimerEvent: " . $e, $flowData, $this);
+                    } else {
+                        throw $e;
+                    }
+                }
                 if ($dueDate instanceof SugarDateTime) {
                     $date = $dueDate;
                 } else {

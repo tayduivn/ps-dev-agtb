@@ -105,7 +105,17 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                                 case 'Date':
                                 case 'Datetime':
                                     PMSEEngineUtils::setRegistry($bean);
-                                    $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
+                                    try {
+                                        $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
+                                    } catch (PMSEExpressionEvaluationException $e) {
+                                        if ($e->getCode() === PMSEExpressionEvaluator::$exceptionCodes['BusinessCenter']) {
+                                            // since we are adding new record, set it to empty if we have an exception
+                                            $newValue = '';
+                                            break;
+                                        } else {
+                                            throw $e;
+                                        }
+                                    }
                                     $newValue = $this->getDBDate($value, $finishDate);
                                     break;
                                 case 'Integer':

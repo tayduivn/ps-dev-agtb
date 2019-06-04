@@ -47,6 +47,13 @@ class PMSEExpressionEvaluator
      */
     public $condition;
 
+    /**
+     * exception codes
+     */
+    public static $exceptionCodes = array(
+        'BusinessCenter' => 100,
+    );
+
     public function getCondition()
     {
         return $this->condition;
@@ -500,13 +507,23 @@ class PMSEExpressionEvaluator
     {
         $bean = BeanFactory::getBean('BusinessCenters', $bid);
         if (empty($bean) || empty($bean->id)) {
-            // can't find business center, fail the process
-            throw new PMSEExpressionEvaluationException('Invalid Business Center bean.', func_get_args());
+            // can't find business center, throw an exception for the caller to handle
+            PMSELogger::getInstance()->error('Invalid Business Center bean, id: ' . $bid);
+            throw new PMSEExpressionEvaluationException(
+                'Invalid Business Center bean.',
+                func_get_args(),
+                self::$exceptionCodes['BusinessCenter']
+            );
         }
 
         $pattern = PMSEEngineUtils::getBusinessTimePattern(false);
         if (!preg_match($pattern, $value2, $matches)) {
-            throw new PMSEExpressionEvaluationException('Invalid Business Center string: ' . $value2, func_get_args());
+            PMSELogger::getInstance()->error('Invalid Business Center string: ' . $value2);
+            throw new PMSEExpressionEvaluationException(
+                'Invalid Business Center string: ' . $value2,
+                func_get_args(),
+                self::$exceptionCodes['BusinessCenter']
+            );
         }
 
         // If `$value1` is not a DateTime object then it is either a date string
@@ -524,7 +541,12 @@ class PMSEExpressionEvaluator
         $beforeTime = $value1->format('m/d/Y H:i:s');
         $unit = PMSEEngineUtils::getBusinessTimeUnit($matches[2]);
         if (empty($unit)) {
-            throw new PMSEExpressionEvaluationException('Invalid Business Center unit:' . $matches[2], func_get_args());
+            PMSELogger::getInstance()->error('Invalid Business Center unit: ' . $matches[2]);
+            throw new PMSEExpressionEvaluationException(
+                'Invalid Business Center unit:' . $matches[2],
+                func_get_args(),
+                self::$exceptionCodes['BusinessCenter']
+            );
         }
 
         $result = $bean->getIncrementedBusinessDatetime($beforeTime, $matches[1], $unit);

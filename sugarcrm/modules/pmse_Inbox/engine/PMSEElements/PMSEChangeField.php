@@ -163,7 +163,15 @@ class PMSEChangeField extends PMSEScriptTask
                                 if (!$this->emailHandler->doesPrimaryEmailExists($field, $bean, null)) {
                                     if (is_array($field->value)) {
                                         // Handle regular evaluation of values
-                                        $newValue = $this->beanHandler->processValueExpression($field->value, $beanModule);
+                                        try {
+                                            $newValue = $this->beanHandler->processValueExpression($field->value, $beanModule);
+                                        } catch (PMSEExpressionEvaluationException $e) {
+                                            if ($e->getCode() === PMSEExpressionEvaluator::$exceptionCodes['BusinessCenter']) {
+                                                continue;
+                                            } else {
+                                                throw $e;
+                                            }
+                                        }
                                         // For null values only
                                         if (!isset($newValue)) {
                                             // Used to set these fields to null in db

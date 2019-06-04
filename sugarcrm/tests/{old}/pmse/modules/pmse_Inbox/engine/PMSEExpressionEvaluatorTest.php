@@ -53,6 +53,19 @@ class PMSEExpressionEvaluatorTest extends TestCase
         BeanFactory::registerBean($bcMock);
 
         $expressionEvaluatorMock->executeDateSpanBCOp($now, '+', '4bh', $bcMock->id);
+
+        // verify that appropriate exception is thrown when it can't find the business center
+        // and the exception code is correct
+        $code = null;
+
+        try {
+            // pass in an invalid id, it should throw an exception
+            $expressionEvaluatorMock->executeDateSpanBCOp(new DateTime(), '+', '4bh', 'invalid_id');
+        } catch (PMSEExpressionEvaluationException $e) {
+            $code = $e->getCode();
+        }
+
+        $this->assertEquals(PMSEExpressionEvaluator::$exceptionCodes['BusinessCenter'], $code);
     }
 
     public function testEvaluateSingleElementZero()
