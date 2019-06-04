@@ -9,24 +9,87 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
+
 /**
- * Update OOB Reports
+ * Install OOB Reports that were added in post-7 releases.
  */
 class SugarUpgradeUpdateOOBReports extends UpgradeScript
 {
     public $order = 4500;
-    public $type = self::UPGRADE_CUSTOM;
+    public $type = self::UPGRADE_DB;
 
+    /**
+     * {@inheritDoc}
+     */
     public function run()
     {
-        if (version_compare($this->from_version, '8.1.0', '>=')) {
-            return;
+        // install the new Reports either when upgrading from pre-9.1.0 or on pro-to-ENT flavor conversion
+        if ($this->shouldInstallReports()) {
+            $this->installReports($this->getReportsToInstall());
+            // For the 9.1 release, we don't want these, but we may in the future.
+            //$this->newOOBReportsNotifications();
+        } else {
+            $this->log('Not installing new Serve Reports');
         }
+    }
+
+    /**
+     * Determine if we should install any new Reports this upgrade.
+     *
+     * @return bool true if we should install new Reports this upgrade. false
+     *   otherwise.
+     */
+    public function shouldInstallReports(): bool
+    {
+        $isFlavorConversion = !$this->fromFlavor('ent') && $this->toFlavor('ent');
+        $isBelow910Ent = $this->toFlavor('ent') && version_compare($this->from_version, '9.1.0', '<');
+        return $isFlavorConversion || $isBelow910Ent;
+    }
+
+    /**
+     * Install the OOB Reports with the given names.
+     *
+     * @param array $reportNames List of report names to install.
+     *   These should be actual Report names, not translatable labels.
+     */
+    public function installReports(array $reportNames)
+    {
+        $this->log('Temporarily enabling admin work for Report installation');
+        AccessControlManager::instance()->setAdminWork(true);
         require_once 'modules/Reports/SavedReport.php';
         require_once 'modules/Reports/SeedReports.php';
-        create_default_reports(true);
+        $this->log('Installing new Serve Reports');
+        create_default_reports(true, $reportNames);
+        AccessControlManager::instance()->setAdminWork(false);
+    }
 
-        $this->newOOBReportsNotifications();
+    /**
+     * Get the Reports to install for this upgrade.
+     *
+     * @return array A list of Report names.
+     */
+    public function getReportsToInstall(): array
+    {
+        return [
+            // 9.1 new Serve Reports
+            'New Cases by Business Center by Week',
+            'Recently Created Cases',
+            'New Cases by Customer Tier by Week',
+            'Open Cases by Customer Tier and Priority',
+            'Total Cases Resolved this Month by Business Center',
+            'Total Cases Resolved this Month by Agent',
+            'List of Recently Resolved Cases',
+            'My Cases Resolved this Month by Week',
+            'My Cases Due Today and Overdue',
+            'All Cases Due Today and Overdue',
+            'My Open Cases by Followup Date',
+            'All Open Cases by Followup Date',
+            'My Open Cases by Status',
+            'My Cases in the Last Week by Status',
+            'Status of Open Tasks Assigned by Me',
+        ];
     }
 
     /**
