@@ -15,6 +15,7 @@ $viewdefs['Cases']['base']['view']['activity-timeline'] = [
     'activity_modules' => [
         [
             'module' => 'Calls',
+            'record_date' => 'date_start',
             'fields' => [
                 'name',
                 'status',
@@ -29,6 +30,7 @@ $viewdefs['Cases']['base']['view']['activity-timeline'] = [
         ],
         [
             'module' => 'Emails',
+            'record_date' => 'date_sent',
             'fields' => [
                 'name',
                 'date_sent',
@@ -43,6 +45,7 @@ $viewdefs['Cases']['base']['view']['activity-timeline'] = [
         ],
         [
             'module' => 'Meetings',
+            'record_date' => 'date_start',
             'fields' => [
                 'name',
                 'status',
@@ -57,6 +60,7 @@ $viewdefs['Cases']['base']['view']['activity-timeline'] = [
         ],
         [
             'module' => 'Notes',
+            'record_date' => 'date_entered',
             'fields' => [
                 'name',
                 'contact_name',

@@ -61,4 +61,60 @@ class HistoryApiTest extends TestCase
         );
         $this->assertNotEmpty($return, 'HistoryAPI is broken');
     }
+
+    /**
+     * @dataProvider scrubFieldsProvider
+     * @param array $aliasFields
+     * @param array|string $expected
+     */
+    public function testScrubFields(array $aliasFields, $expected)
+    {
+        $whiteList = [
+            'date_entered' => true,
+        ];
+        $args = [['fields' => 'date_entered', 'alias_fields' => $aliasFields, 'order_by' => []], $whiteList];
+        if (is_string($expected)) {
+            $this->expectException($expected);
+        }
+        $args = SugarTestReflection::callProtectedMethod($this->filterApi, 'scrubFields', $args);
+        if (is_array($expected)) {
+            $this->assertEquals($expected, $args['alias_fields']);
+        }
+    }
+
+    public function scrubFieldsProvider()
+    {
+        $validName = $GLOBALS['db']->getValidDBName('drop table', true, 'column', true);
+        return [
+            [
+                [
+                    'record_date' => [
+                        'BadModule' => 'some_field',
+                    ],
+                ],
+                SugarApiExceptionInvalidParameter::class,
+            ],
+            [
+                [
+                    'record_date' => [
+                        'Calls' => 'bad_field',
+                    ],
+                ],
+                SugarApiExceptionInvalidParameter::class,
+            ],
+            [
+                [
+                    // alias contains illegal words
+                    'drop table' => [
+                        'Calls' => 'date_entered',
+                    ],
+                ],
+                [
+                    $validName => [
+                        'Calls' => 'date_entered',
+                    ],
+                ],
+            ],
+        ];
+    }
 }

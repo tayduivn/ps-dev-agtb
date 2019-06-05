@@ -41,6 +41,7 @@ describe('Base.View.ActivityTimeline', function() {
                     },
                     {
                         module: 'Emails',
+                        record_date: 'date_sent',
                         fields: [
                             'name',
                             'date_sent',
@@ -130,6 +131,10 @@ describe('Base.View.ActivityTimeline', function() {
             expect(view.moduleFieldNames).toEqual({
                 Calls: ['name', 'status'],
                 Emails: ['name','date_sent'],
+            });
+            expect(view.recordDateFields).toEqual({
+                Calls: 'date_entered',
+                Emails: 'date_sent',
             });
         });
     });

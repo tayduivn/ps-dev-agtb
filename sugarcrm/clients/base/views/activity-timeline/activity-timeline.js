@@ -54,6 +54,11 @@
     models: [],
 
     /**
+     * Fields to show as record date for different modules
+     */
+    recordDateFields: {},
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -129,6 +134,7 @@
         this.moduleFieldNames = {};
         _.each(modules, function(module) {
             this.moduleFieldNames[module.module] = module.fields;
+            this.recordDateFields[module.module] = module.record_date || 'date_entered';
         }, this);
     },
 
@@ -170,7 +176,7 @@
         if (!(this.baseModule && this.baseRecord && this.activityModules)) {
             return;
         }
-
+        var self = this;
         var HistoryCollection = app.MixedBeanCollection.extend({
             module: 'history',
             activityModules: this.activityModules,
@@ -192,6 +198,10 @@
                 if (options.params.fields) {
                     delete options.params.fields;
                 }
+                options.params.alias_fields = {
+                    'record_date': self.recordDateFields
+                };
+                options.params.order_by = 'record_date:desc';
                 var url = this.buildURL(options.params);
                 var callbacks = app.data.getSyncCallbacks(method, model, options);
 
@@ -220,6 +230,9 @@
             this.relatedCollection.fetch({
                 offset: this.relatedCollection.next_offset,
                 success: _.bind(function(coll) {
+                    _.each(coll.models, function(model) {
+                        model.set('record_date', model.get(this.recordDateFields[model.get('_module')]));
+                    }, this);
                     this.models = this.models.concat(coll.models);
                     this.fetchCompleted = coll.next_offset === -1;
                     this._setIconClass();

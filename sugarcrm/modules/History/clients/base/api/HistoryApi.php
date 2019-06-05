@@ -137,7 +137,7 @@ class HistoryApi extends RelateApi
                     unset($args['order_by'][$parsedOrderByKey]);
                     continue;
                 }
-                if (!array_key_exists($parsedOrderByFieldName, $fieldWhiteList)) {
+                if (!array_key_exists($parsedOrderByFieldName, $fieldWhiteList) && empty($args['alias_fields'][$parsedOrderByFieldName])) {
                     throw new SugarApiExceptionInvalidParameter(
                         sprintf('no one module has order by field: %s', $parsedOrderByFieldName)
                     );
@@ -184,7 +184,9 @@ class HistoryApi extends RelateApi
             } else {
                 $newFields = $fields;
             }
-
+            if (!empty($args['alias_fields'])) {
+                $newFields = array_merge(array_keys($args['alias_fields']), $newFields);
+            }
             sort($newFields);
             foreach ($newFields as $field) {
                 if ($field == 'module') {
@@ -197,6 +199,12 @@ class HistoryApi extends RelateApi
                 } else {
                     if (isset($args['placeholder_fields'][$module][$field])) {
                         $q->select()->fieldRaw("'' {$args['placeholder_fields'][$module][$field]}");
+                    } elseif (isset($args['alias_fields'][$field])) {
+                        if (isset($args['alias_fields'][$field][$module])) {
+                            $q->select()->field([[$args['alias_fields'][$field][$module], $field]]);
+                        } else {
+                            $q->select()->fieldRaw("'' $field");
+                        }
                     } else {
                         $q->select()->field($field);
                     }
@@ -235,12 +243,34 @@ class HistoryApi extends RelateApi
      */
     protected function scrubFields(array $args, array $fieldWhiteList)
     {
-        foreach ($args['order_by'] as $order_by) {
+        $db = DBManagerFactory::getInstance();
+        $newAliases = [];
+
+        if (isset($args['alias_fields'])) {
+            $validAliases = [];
+            foreach ($args['alias_fields'] as $alias => $moduleFields) {
+                foreach ($moduleFields as $module => $field) {
+                    if (!in_array($module, $this->moduleList)) {
+                        throw new SugarApiExceptionInvalidParameter(sprintf('invalid module: %s', $module));
+                    }
+                    if (!array_key_exists($field, $fieldWhiteList)) {
+                        throw new SugarApiExceptionInvalidParameter(sprintf('field: %s not found in module: %s', $field, $module));
+                    }
+                }
+                // prevent sql injection
+                $validAlias = $db->getValidDBName($alias, true, 'column', true);
+                $validAliases[$validAlias] = $moduleFields;
+                $newAliases[$alias] = $validAlias;
+            }
+            $args['alias_fields'] = $validAliases;
+        }
+ 
+        foreach ($args['order_by'] as $key => $order_by) {
             foreach ($this->moduleList as $module_name) {
                 $seed = BeanFactory::newBean($module_name);
-                if (!isset($seed->field_defs[$order_by[0]])) {
+                if (!isset($seed->field_defs[$order_by[0]]) && !isset($newAliases[$order_by[0]])) {
                     $args['placeholder_fields'][$module_name][$order_by[0]] = $order_by[0];
-                } else {
+                } elseif (!isset($newAliases[$order_by[0]])) {
                     if (empty($args['fields'])) {
                         $args['fields'] = "{$order_by[0]}";
                     } else {
@@ -248,9 +278,13 @@ class HistoryApi extends RelateApi
                     }
                 }
             }
+            if (isset($newAliases[$order_by[0]])) {
+                $args['order_by'][$key][0] = $newAliases[$order_by[0]];
+            }
         }
 
         $fields = !empty($args['fields']) ? explode(',', $args['fields']) : array();
+
         foreach ($fields as $key => $field) {
             if (!array_key_exists($field, $fieldWhiteList)) {
                 throw new SugarApiExceptionInvalidParameter(sprintf('no one module has select field: %s', $field));
@@ -262,6 +296,7 @@ class HistoryApi extends RelateApi
                 }
             }
         }
+
         return $args;
     }
 
@@ -274,6 +309,13 @@ class HistoryApi extends RelateApi
         foreach ($q->execute() as $row) {
             /** @var SugarBean $bean */
             $bean = BeanFactory::newBean($row['module']);
+            if (isset($args['alias_fields'])) {
+                foreach ($args['alias_fields'] as $alias => $fields) {
+                    if (!empty($fields[$row['module']])) {
+                        $row[$fields[$row['module']]] = $row[$alias];
+                    }
+                }
+            }
             $bean->populateFromRow($row);
             if ($bean->ACLAccess('list')) {
                 $beans[$row['id']] = $bean;
@@ -298,7 +340,15 @@ class HistoryApi extends RelateApi
 
             $this->populateRelatedFields($bean, $rows[$bean_id]);
         }
-
+        if (isset($args['alias_fields'])) {
+            $aliasFields = [];
+            foreach ($args['alias_fields'] as $alias => $fields) {
+                $aliasFields = array_merge($aliasFields, array_values($fields));
+            }
+            if (!empty($aliasFields)) {
+                $args['fields'] .= ',' . implode(',', array_unique($aliasFields));
+            }
+        }
         // add on the contact_id and contact_name fields so we get those
         // returned in the response
         $args['fields'] .= ',contact_id,contact_name';
