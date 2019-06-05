@@ -897,7 +897,7 @@
         this.tabContentHtml = this._getTabContentTemplate(tabType)(this);
 
         // Link to studio if showing a single record
-        if (this.meta.pseudo && tabType === 'record') {
+        if (this._shouldShowStudioText(tab)) {
             this.showStudioText = true;
             this.linkToStudio = '#bwc/index.php?module=ModuleBuilder&action=index&type=studio';
         } else {
@@ -906,6 +906,22 @@
         this._showHideListBottom(tab);
 
         this._super('_renderHtml');
+    },
+
+    /**
+     * Helper method to determine if we should show the edit in studio message
+     *
+     * @param {Object} tab The tab
+     * @return {boolean} `true` to show the message
+     * @private
+     */
+    _shouldShowStudioText: function(tab) {
+        if (!tab || !tab.type || !tab.module) {
+            return false;
+        }
+        return this.meta.pseudo && tab.type === 'record' &&
+            app.acl.hasAccess('developer', tab.module) &&
+            !_.isNull(app.metadata.getView(tab.module, 'recorddashlet'));
     },
 
     /**

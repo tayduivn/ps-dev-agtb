@@ -954,6 +954,19 @@ describe('Base.View.Dashablerecord', function() {
         });
     });
 
+    describe('_shouldShowStudioText', function() {
+        it('should determine if we should show the edit in studio message', function() {
+            var tab = {
+                type: 'record',
+                module: moduleName,
+            };
+            view.meta.pseudo = true;
+            sinon.collection.stub(app.acl, 'hasAccess').returns(true);
+            sinon.collection.stub(app.metadata, 'getView').returns({});
+            expect(view._shouldShowStudioText(tab)).toBeTruthy();
+        });
+    });
+
     describe('_getTabContentTemplate', function() {
         it('should get correct templates for pseudo dashlet', function() {
             view.meta.pseudo = true;
