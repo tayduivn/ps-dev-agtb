@@ -197,7 +197,7 @@ class LeadConvert
                     $this->modules,
                     $transferActivitiesModules
                 );
-                Activity::enable();
+                Activity::restoreToPreviousState();
             } elseif ($activitySetting === static::TRANSFERACTION_MOVE &&
                 $transferActivitiesAction === static::TRANSFERACTION_MOVE &&
                 !empty($this->contact)

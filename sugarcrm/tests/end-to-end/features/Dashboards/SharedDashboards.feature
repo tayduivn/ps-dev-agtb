@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job4
+@dashboard @dashlets @job4 @pr @scenario-stress-test
 Feature: Shareable Dashboards functionality verification
 
   Background:
@@ -28,9 +28,9 @@ Feature: Shareable Dashboards functionality verification
       | D_1 | <dashboardName> |
 
     # Add multiple dashlets to various columns of home dashboard
-    When I add MyActivityStream dashlet to #Dashboard at column 1
+    When I add ActiveTasks dashlet to #Dashboard at column 1
       | label         |
-      | My Activities |
+      | Active Tasks |
 
     And I add KBArticles dashlet to #Dashboard at column 2
       | label       |
@@ -69,8 +69,8 @@ Feature: Shareable Dashboards functionality verification
     When I use account "user"
     When I open Dashboards view and login
 
-    # Mark shared dashboard as favorite
-    When I toggle favorite for *D_1 in #DashboardsList.ListView
+#    # Mark shared dashboard as favorite
+#    When I toggle favorite for *D_1 in #DashboardsList.ListView
 
     When I go to "Home" url
 #    Then I verify that HomeDashboard element from #Dashboard.DashboardView still looks like HomeDashboard

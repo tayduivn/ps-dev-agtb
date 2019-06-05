@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job4
+@dashboard @dashlets @job4 @pr @scenario-stress-test
 Feature: Dashboard main functionality verification
 
   Background:
@@ -46,9 +46,9 @@ Feature: Dashboard main functionality verification
       | DashboardID | New Dashboard |
 
     # Add 3 Dashlets
-    When I add MyActivityStream dashlet to #Dashboard
-      | label         |
-      | My Activities |
+#    When I add MyActivityStream dashlet to #Dashboard
+#      | label         |
+#      | My Activities |
 
     And I add KBArticles dashlet to #Dashboard
       | label       |
@@ -108,9 +108,9 @@ Feature: Dashboard main functionality verification
       | DashboardID | New Dashboard |
 
     # Add multiple dashlets to various columns of home dashboard
-    When I add MyActivityStream dashlet to #Dashboard at column 1
-      | label         |
-      | My Activities |
+#    When I add MyActivityStream dashlet to #Dashboard at column 1
+#      | label         |
+#      | My Activities |
 
     And I add KBArticles dashlet to #Dashboard at column 2
       | label       |

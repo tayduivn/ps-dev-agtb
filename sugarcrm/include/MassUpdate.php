@@ -58,6 +58,16 @@ class MassUpdate
         $this->idmConfig =  new IdmConfig(\SugarConfig::getInstance());
     }
 
+    /**
+     * Restore the activity stream behaviour
+     *
+     * @access public
+     */
+    public function __destruct()
+    {
+        Activity::restoreToPreviousState();
+    }
+
 	/**
 	  * set the sugar bean to its internal member
 	  * @param sugar bean reference

@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@activity_stream @job2
+@activity_stream @job2 @ci-excluded @pr @scenario-stress-test
 Feature: Activity Stream Feature verification
 
   Background:

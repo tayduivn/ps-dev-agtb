@@ -728,7 +728,7 @@ MetaDataManager::setupMetadata(array('base'), array('en_us'));
 
 // TODO: Remove the following. (See MAR-1314)
 // Restore the activity stream behaviour.
-Activity::enable();
+Activity::restoreToPreviousState();
 //BEGIN SUGARCRM flav=ent ONLY
 // Allow processes to resume at this point
 Registry\Registry::getInstance()->drop('setup:disable_processes');

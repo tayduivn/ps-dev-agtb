@@ -472,7 +472,7 @@ function get_sugar_config_defaults()
         'sugar_max_int' => 2147483647,
         'max_aggregate_email_attachments_bytes' => 10000000,
         'new_email_addresses_opted_out' => false,
-        'activity_streams_enabled' => true,
+        'activity_streams_enabled' => false,
         'activity_streams' => [
             // No more than the following number of Data Privacy records will be processed by a single cron job
             // execution.
