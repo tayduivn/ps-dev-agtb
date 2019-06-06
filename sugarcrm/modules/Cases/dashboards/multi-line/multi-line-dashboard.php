@@ -133,4 +133,5 @@ return [
         ],
     ],
     'name' => 'LBL_CASES_MULTI_LINE_DASHBOARD',
+    'id' => 'c290ef46-7606-11e9-9129-f218983a1c3e',
 ];
