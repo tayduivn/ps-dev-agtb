@@ -34,24 +34,27 @@ class DefaultDashboardInstallerTest extends TestCase
      * @param string $dashboardsDir Dashboards directory (relative path).
      * @param string $dashboardDir Dashboard directory (relative path,
      *   including $dashboardsDir as a prefix).
+     * @param string $dashboardFile Dashboard file (relative path).
      * @param string $module Module name.
-     * @param array $expected Expected bean properties for the dashboard.
+     * @param string $layout Layout name.
      */
     public function testBuildDashboardsFromFiles(
         array $fileContents,
         string $dashboardsDir,
         string $dashboardDir,
+        string $dashboardFile,
         string $module,
-        array $expected
+        string $layout
     ) {
         $defaultDashboardInstaller = $this->getMockBuilder('DefaultDashboardInstaller')
-            ->setMethods(array(
+            ->setMethods([
+                'buildDashboardFromFile',
                 'getFileContents',
                 'storeDashboard',
                 'getNewDashboardBean',
                 'getSubDirs',
                 'getPhpFiles',
-            ))
+            ])
             ->getMock();
 
         $defaultDashboardInstaller->method('getFileContents')
@@ -72,13 +75,13 @@ class DefaultDashboardInstallerTest extends TestCase
         $defaultDashboardInstaller->expects($this->once())
             ->method('getPhpFiles')
             ->will($this->returnCallback(function ($input) {
-                return [$input . '/test-dashboard.php'];
+                return [$input . '/testview-dashboard.php'];
             }))
             ->with($dashboardDir);
 
         $defaultDashboardInstaller->expects($this->once())
-            ->method('storeDashboard')
-            ->with($this->equalTo('beanStub'), $this->equalTo($expected));
+            ->method('buildDashboardFromFile')
+            ->with($this->equalTo($dashboardFile), $this->equalTo($module), $this->equalTo($layout));
 
         $defaultDashboardInstaller->buildDashboardsFromFiles([$module]);
     }
@@ -92,14 +95,6 @@ class DefaultDashboardInstallerTest extends TestCase
         ];
         $basicDashboardsDir = 'modules/TestModule/dashboards/';
         $basicDashboardDir = 'modules/TestModule/dashboards/testview';
-        $basicExpected = [
-            'name' => 'Test Module Dashboard Name',
-            'dashboard_module' => 'TestModule',
-            'view_name' => 'testview',
-            'metadata' => '{"metadata":"test module dashboard metadata"}',
-            'default_dashboard' => true,
-            'team_id' => '1',
-        ];
 
         // home dashboard
         $homeDashboardFileContents = [
@@ -108,14 +103,6 @@ class DefaultDashboardInstallerTest extends TestCase
         ];
         $homeDashboardsDir = 'modules/Home/dashboards/';
         $homeDashboardDir = 'modules/Home/dashboards/testview';
-        $homeExpected = [
-            'name' => 'Home Module Dashboard Name',
-            'dashboard_module' => 'Home',
-            'view_name' => null,
-            'metadata' => '{"metadata":"Home module dashboard metadata"}',
-            'default_dashboard' => true,
-            'team_id' => '1',
-        ];
 
         // dashboard with predefined ID
         $dashboardWithIDFileContents = [
@@ -125,26 +112,225 @@ class DefaultDashboardInstallerTest extends TestCase
         ];
         $dashboardsWithIDsDirectory = 'modules/TestModule2/dashboards/';
         $dashboardWithIDDirectory = 'modules/TestModule2/dashboards/testview';
-        $idExpected = [
-            'id' => 'i-am-a-predefined-id',
-            'new_with_id' => true,
-            'name' => 'Test Module 2 Dashboard Name',
-            'dashboard_module' => 'TestModule2',
-            'view_name' => 'testview',
-            'metadata' => '{"metadata":"test module 2 dashboard metadata"}',
-            'default_dashboard' => true,
-            'team_id' => '1',
-        ];
 
         return [
-            [$basicDashboardFileContents, $basicDashboardsDir, $basicDashboardDir, 'TestModule', $basicExpected],
-            [$homeDashboardFileContents, $homeDashboardsDir, $homeDashboardDir, 'Home', $homeExpected],
+            [
+                $basicDashboardFileContents,
+                $basicDashboardsDir,
+                $basicDashboardDir,
+                'modules/TestModule/dashboards/testview/testview-dashboard.php',
+                'TestModule',
+                'testview',
+            ],
+            [
+                $homeDashboardFileContents,
+                $homeDashboardsDir,
+                $homeDashboardDir,
+                'modules/Home/dashboards/testview/testview-dashboard.php',
+                'Home',
+                'testview',
+            ],
             [
                 $dashboardWithIDFileContents,
                 $dashboardsWithIDsDirectory,
                 $dashboardWithIDDirectory,
+                'modules/TestModule2/dashboards/testview/testview-dashboard.php',
                 'TestModule2',
-                $idExpected,
+                'testview',
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::buildDashboardFromFile
+     * @dataProvider providerBuildDashboardFromFileNegativeCase
+     * @param string $filePath File path.
+     * @param string $module Module name.
+     * @param string $layout Layout name.
+     */
+    public function testBuildDashboardFromFileDoesNothingIfNoFileContents(
+        string $filePath,
+        string $module,
+        string $layout
+    ) {
+        $defaultDashboardInstaller = $this->getMockBuilder('DefaultDashboardInstaller')
+            ->setMethods([
+                'getFileContents',
+                'storeDashboard',
+            ])
+            ->getMock();
+
+        $defaultDashboardInstaller->method('getFileContents')
+            ->with($this->equalTo($filePath))
+            ->willReturn([]);
+
+        $defaultDashboardInstaller->expects($this->never())
+            ->method('storeDashboard');
+
+        $this->assertFalse($defaultDashboardInstaller->buildDashboardFromFile($filePath, $module, $layout));
+    }
+
+    /**
+     * @covers ::buildDashboardFromFile
+     * @dataProvider providerBuildDashboardFromFileNegativeCase
+     * @param string $filePath File path.
+     * @param string $module Module name.
+     * @param string $layout Layout name.
+     */
+    public function testBuildDashboardFromFileDoesNothingIfDashboardAlreadyExists(
+        string $filePath,
+        string $module,
+        string $layout
+    ) {
+        $defaultDashboardInstaller = $this->getMockBuilder('DefaultDashboardInstaller')
+            ->setMethods([
+                'getFileContents',
+                'getNewDashboardBean',
+                'storeDashboard',
+            ])
+            ->getMock();
+
+        $defaultDashboardInstaller->method('getFileContents')
+            ->with($this->equalTo($filePath))
+            ->willReturn(['id' => 'predefined-id']);
+
+        $mockBean = $this->getMockBuilder(Dashboard::class)
+            ->setMethods(['fetch'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockBean->method('fetch')
+            ->with($this->equalTo('predefined-id'))
+            ->willReturnSelf();
+        $defaultDashboardInstaller->method('getNewDashboardBean')
+            ->willReturn($mockBean);
+
+        $defaultDashboardInstaller->expects($this->never())
+            ->method('storeDashboard');
+
+        $this->assertFalse($defaultDashboardInstaller->buildDashboardFromFile($filePath, $module, $layout));
+    }
+
+    public function providerBuildDashboardFromFileNegativeCase(): array
+    {
+        return [
+            ['modules/TestModule/dashboards/testview/testview-dashboard.php', 'TestModule', 'testview'],
+        ];
+    }
+
+    /**
+     * @covers ::buildDashboardFromFile
+     * @dataProvider providerBuildDashboardFromFile
+     * @param string $filePath File path.
+     * @param string $module Module name.
+     * @param string $layout Layout name.
+     * @param array $fileContents File contents.
+     * @param array $expectedDashboardMeta Expected dashboard metadata.
+     * @param array $expectedDashboardProperties Expected dashboard properties.
+     */
+    public function testBuildDashboardFromFile(
+        string $filePath,
+        string $module,
+        string $layout,
+        array $fileContents,
+        array $expectedDashboardMeta,
+        array $expectedDashboardProperties
+    ) {
+        $defaultDashboardInstaller = $this->getMockBuilder('DefaultDashboardInstaller')
+            ->setMethods([
+                'getFileContents',
+                'getNewDashboardBean',
+                'setupSavedReportDashlets',
+                'storeDashboard',
+            ])
+            ->getMock();
+
+        $defaultDashboardInstaller->method('getFileContents')
+            ->with($this->equalTo($filePath))
+            ->willReturn($fileContents);
+
+        $mockBean = $this->getMockBuilder(Dashboard::class)
+            ->setMethods(['fetch'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockBean->method('fetch')
+            ->with($this->equalTo('predefined-id'))
+            ->willReturn(false);
+        $defaultDashboardInstaller->method('getNewDashboardBean')
+            ->willReturn($mockBean);
+
+        $defaultDashboardInstaller->expects($this->once())
+            ->method('setupSavedReportDashlets')
+            ->with($this->equalTo($expectedDashboardMeta));
+
+        $defaultDashboardInstaller->expects($this->once())
+            ->method('storeDashboard')
+            ->with($this->equalTo($mockBean), $this->equalTo($expectedDashboardProperties));
+
+        $this->assertTrue($defaultDashboardInstaller->buildDashboardFromFile($filePath, $module, $layout));
+    }
+
+    public function providerBuildDashboardFromFile(): array
+    {
+        return [
+            [
+                'modules/TestModule/dashboards/testview/testview-dashboard.php',
+                'TestModule',
+                'testview',
+                [
+                    'id' => 'predefined-id',
+                    'name' => 'A Dashboard!',
+                    'metadata' => ['some' => 'metadata'],
+                ],
+                ['some' => 'metadata'],
+                [
+                    'name' => 'A Dashboard!',
+                    'dashboard_module' => 'TestModule',
+                    'view_name' => 'testview',
+                    'metadata' => '{"some":"metadata"}',
+                    'default_dashboard' => true,
+                    'team_id' => 1,
+                    'id' => 'predefined-id',
+                    'new_with_id' => true,
+                ],
+            ],
+            [
+                'modules/Home/dashboards/record/record-dashboard.php',
+                'Home',
+                'record',
+                [
+                    'id' => 'predefined-id',
+                    'name' => 'A Dashboard!',
+                    'metadata' => ['some' => 'metadata'],
+                ],
+                ['some' => 'metadata'],
+                [
+                    'name' => 'A Dashboard!',
+                    'dashboard_module' => 'Home',
+                    'view_name' => null,
+                    'metadata' => '{"some":"metadata"}',
+                    'default_dashboard' => true,
+                    'team_id' => 1,
+                    'id' => 'predefined-id',
+                    'new_with_id' => true,
+                ],
+            ],
+            [
+                'modules/TestModule2/dashboards/testview/testview-dashboard.php',
+                'TestModule2',
+                'testview',
+                [
+                    'name' => 'A Dashboard With No ID!',
+                    'metadata' => ['some' => 'metadata'],
+                ],
+                ['some' => 'metadata'],
+                [
+                    'name' => 'A Dashboard With No ID!',
+                    'dashboard_module' => 'TestModule2',
+                    'view_name' => 'testview',
+                    'metadata' => '{"some":"metadata"}',
+                    'default_dashboard' => true,
+                    'team_id' => 1,
+                ],
             ],
         ];
     }
@@ -248,7 +434,8 @@ class DefaultDashboardInstallerTest extends TestCase
             ),
         );
     }
-     /**
+
+    /**
      * @covers ::setupSavedReportDashlets
      * @dataProvider setupSavedReportDashletsProvider
      */

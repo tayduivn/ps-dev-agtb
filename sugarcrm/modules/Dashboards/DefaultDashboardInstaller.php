@@ -36,30 +36,57 @@ class DefaultDashboardInstaller
 
                 // Loop over each dashboard within the view dir
                 foreach ($dashboardFiles as $dashboardFile) {
-                    $dashboardContents = $this->getFileContents($dashboardFile);
-                    if (!$dashboardContents) {
-                        continue;
-                    }
-
-                    $this->setupSavedReportDashlets($dashboardContents['metadata']);
-
-                    $dashboardProperties = [
-                        'name' => $dashboardContents['name'],
-                        'dashboard_module' => $module,
-                        'view_name' => $module !== 'Home' ? $layout : null,
-                        'metadata' => json_encode($dashboardContents['metadata']),
-                        'default_dashboard' => true,
-                        'team_id' => $this->globalTeamId,
-                    ];
-                    if (isset($dashboardContents['id'])) {
-                        $dashboardProperties['id'] = $dashboardContents['id'];
-                        $dashboardProperties['new_with_id'] = true;
-                    }
-                    $dashboardBean = $this->getNewDashboardBean();
-                    $this->storeDashboard($dashboardBean, $dashboardProperties);
+                    $this->buildDashboardFromFile($dashboardFile, $module, $layout);
                 }
             }
         }
+    }
+
+    /**
+     * Build a single dashboard.
+     *
+     * @param string $dashboardFile Path to the dashboard file.
+     * @param string $module Module name.
+     * @param string $layout Layout name.
+     * @return bool true if installed. false if not installed.
+     */
+    public function buildDashboardFromFile(string $dashboardFile, string $module, string $layout)
+    {
+        $dashboardContents = $this->getFileContents($dashboardFile);
+        if (!$dashboardContents) {
+            return false;
+        }
+
+        // if this dashboard has a preset ID, make sure we haven't installed it before
+        if (isset($dashboardContents['id'])) {
+            $id = $dashboardContents['id'];
+            $bean = $this->getNewDashboardBean();
+            $exists = $bean->fetch($id) !== false;
+            if ($exists) {
+                return false;
+            }
+        }
+
+        $this->setupSavedReportDashlets($dashboardContents['metadata']);
+
+        $dashboardProperties = [
+            'name' => $dashboardContents['name'],
+            'dashboard_module' => $module,
+            'view_name' => $module !== 'Home' ? $layout : null,
+            'metadata' => json_encode($dashboardContents['metadata']),
+            'default_dashboard' => true,
+            'team_id' => $this->globalTeamId,
+        ];
+
+        // set up preset ID if necessary
+        if (isset($dashboardContents['id'])) {
+            $dashboardProperties['id'] = $id;
+            $dashboardProperties['new_with_id'] = true;
+        }
+
+        $dashboardBean = $this->getNewDashboardBean();
+        $this->storeDashboard($dashboardBean, $dashboardProperties);
+        return true;
     }
 
     protected function translateSavedReportTitle($title)
