@@ -50,11 +50,12 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
         if (!method_exists($this->bean, 'getPublishedStatuses') || !$this->shouldCheckVisibility()) {
             return '';
         } else {
-            $statuses = $this->bean->getPublishedStatuses();
-            foreach ($statuses as $_ => $status) {
-                $statuses[$_] = $db->quoted($status);
-            }
-            $statuses = implode(',', $statuses);
+            $statuses = implode(
+                ',',
+                array_map(function (string $status) use ($db) : string {
+                    return $db->quoted($status);
+                }, $this->bean->getPublishedStatuses())
+            );
             $ow = new OwnerVisibility($this->bean, $this->params);
             $addon = '';
             $ow->addVisibilityWhere($addon);
