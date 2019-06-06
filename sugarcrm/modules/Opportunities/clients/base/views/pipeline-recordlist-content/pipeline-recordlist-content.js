@@ -45,7 +45,7 @@
         if (ctxModel && ctxModel.get('pipeline_type') === 'date_closed') {
             var dateClosed = app.date(headerFieldValue, 'MMMM YYYY')
                 .endOf('month')
-                .formatUser(true);
+                .formatServer(true);
 
             model.set('date_closed', dateClosed);
         } else {
