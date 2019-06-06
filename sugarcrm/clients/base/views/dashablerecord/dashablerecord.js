@@ -369,6 +369,7 @@
             showAlerts: true,
             success: _.bind(function(model) {
                 this._syncIdsToModels(model);
+                this.render();
             }, this)
         });
     },
@@ -880,6 +881,7 @@
      * New model related properties are injected into each model.
      */
     _renderHtml: function() {
+        debugger;
         if (this.meta.config) {
             this._super('_renderHtml');
             return;
@@ -893,6 +895,10 @@
         var tab = this.settings.get('activeTab');
 
         var tabType = tab && tab.type;
+
+        if (tabType === 'record') {
+            this._setRecordState();
+        }
 
         this.tabContentHtml = this._getTabContentTemplate(tabType)(this);
 
@@ -922,6 +928,23 @@
         return this.meta.pseudo && tab.type === 'record' &&
             app.acl.hasAccess('developer', tab.module) &&
             !_.isNull(app.metadata.getView(tab.module, 'recorddashlet'));
+    },
+
+    /**
+     * Set the state of the current record view tab
+     *
+     * @private
+     */
+    _setRecordState: function() {
+        var tab = this._getActiveTab();
+        var contextModel = this._getContextModel();
+        if (tab.model.dataFetched || this.meta.pseudo) {
+            this.recordState = 'READY';
+        } else if (contextModel.dataFetched && _.isEmpty(tab.model.get('id'))) {
+            this.recordState = 'NODATA';
+        } else {
+            this.recordState = 'LOADING';
+        }
     },
 
     /**

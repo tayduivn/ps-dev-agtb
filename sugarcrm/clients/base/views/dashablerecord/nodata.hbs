@@ -10,19 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div>
-    {{#if enableHeaderPane}}
-        {{partial 'headerpane' ../this view=../this}}
-    {{/if}}
-    {{#eq recordState 'READY'}}
-        {{partial 'businesscard' this view=this}}
-    {{/eq}}
-    {{#eq recordState 'NODATA'}}
-        {{partial 'nodata' this}}
-    {{/eq}}
-    {{#eq recordState 'LOADING'}}
-        <div class="block-footer">
-            {{loading "LBL_LOADING_NO_DOTS"}}
-        </div>
-    {{/eq}}
+<div class="block-footer">
+    {{str "LBL_NO_DATA_AVAILABLE"}}
 </div>

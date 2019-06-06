@@ -37,9 +37,7 @@
             </table>
         {{/each}}
         {{#unless collection.length}}
-            <div class="block-footer">
-                {{str "LBL_NO_DATA_AVAILABLE"}}
-            </div>
+            {{partial 'nodata' this}}
         {{/unless}}
     {{/if}}
 </div>

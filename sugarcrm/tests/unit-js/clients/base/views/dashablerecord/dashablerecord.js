@@ -981,6 +981,34 @@ describe('Base.View.Dashablerecord', function() {
         });
     });
 
+    describe('_setRecordState', function() {
+        it('should set the recordstate', function() {
+            var activeTab = {
+                type: 'record',
+                model: app.data.createBean('Accounts'),
+            };
+            var contextModel = app.data.createBean(moduleName);
+            sinon.collection.stub(view, '_getActiveTab').returns(activeTab);
+            sinon.collection.stub(view, '_getContextModel').returns(contextModel);
+
+            view._setRecordState();
+            expect(view.recordState).toEqual('LOADING');
+
+            activeTab.model.dataFetched = true;
+            view._setRecordState();
+            expect(view.recordState).toEqual('READY');
+
+            activeTab.model.dataFetched = false;
+            contextModel.dataFetched = true;
+            view._setRecordState();
+            expect(view.recordState).toEqual('NODATA');
+
+            view.meta.pseudo = true;
+            view._setRecordState();
+            expect(view.recordState).toEqual('READY');
+        });
+    });
+
     describe('_patchTabsFromSettings', function() {
         it('should merge newTabs with saved tabs', function() {
             var savedTabs = [
