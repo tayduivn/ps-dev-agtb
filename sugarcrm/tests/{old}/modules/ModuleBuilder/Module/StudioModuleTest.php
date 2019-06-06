@@ -54,6 +54,7 @@ class StudioModuleTest extends TestCase
         }
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     public function testGetViewsForCasesHasRecordDashlet()
     {
         $sm = new StudioModule('Cases');
@@ -66,6 +67,7 @@ class StudioModuleTest extends TestCase
         ];
         $this->assertEquals($expectedDef, $defs[2]);
     }
+    //END SUGARCRM flav=ent ONLY
 
     public function providerGetType()
     {
