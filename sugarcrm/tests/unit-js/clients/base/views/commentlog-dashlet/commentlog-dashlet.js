@@ -20,7 +20,7 @@ describe('Base.View.CommentlogDashlet', function() {
             {
                 name: 'commentlog',
                 type: 'commentlog',
-                dashlet:  true,
+                dashlet: true,
             }
         ]
     };
@@ -94,13 +94,18 @@ describe('Base.View.CommentlogDashlet', function() {
         dashboard = null;
     });
 
-    describe('loadData', function() {
-        it('should set correct limits for fetch', function() {
+    describe('extendedOptions', function() {
+        it('should set correct limits for fetch options', function() {
+            var extendedOptions = view.getExtendedOptions();
+            expect(extendedOptions.limit).toEqual(3);
+            extendedOptions = view.getExtendedOptions({loadAll: true});
+            expect(extendedOptions.limit).toEqual(-1);
+        });
+
+        it('should call fetch', function() {
             var fetchCollectionStub = sinon.collection.stub(view.collection, 'fetch');
             view.loadData();
-            expect(fetchCollectionStub).toHaveBeenCalledWith({limit: 3});
-            view.loadData({loadAll: true});
-            expect(fetchCollectionStub).toHaveBeenCalledWith({limit: -1});
+            expect(fetchCollectionStub).toHaveBeenCalled();
         });
     });
 });

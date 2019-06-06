@@ -87,12 +87,41 @@
     },
 
     /**
-     * Load the comment log collection with proper limits
+     * Will reset the dataFetched flag of the commentlog field
+     * and re-render the field in order to show appropriate content.
+     */
+    updateFieldsCollection: function() {
+        _.each(this.fields, function(field) {
+            field.collection.dataFetched = true;
+            field.render();
+        });
+    },
+
+    /**
+     * Through options, the refresh button will be reset on complete.
+     * Through the success callback we will be able to update the comment field.
      *
-     * @param {string} options.loadAll `true` to load all comments
+     * The property `loadAll` sent through options
+     * if set to true will allow to load all comments.
+     *
+     * @param {Object} options Call options for reading comments.
+     */
+    getExtendedOptions: function(options) {
+        var limit = options && options.loadAll ? -1 : this._defaultSettings.limit;
+        return _.extend(options || {}, {
+            limit: limit,
+            success: _.bind(this.updateFieldsCollection, this),
+            error: _.bind(this.updateFieldsCollection, this)
+        });
+    },
+
+    /**
+     * Load the comment log collection.
+     *
+     * @param {Object} options Call options for reading comments.
      */
     loadData: function(options) {
-        var limit = options && options.loadAll ? -1 : this._defaultSettings.limit;
-        this.collection.fetch({limit: limit});
+        var extendedOptions = this.getExtendedOptions(options);
+        this.collection.fetch(extendedOptions);
     }
 })
