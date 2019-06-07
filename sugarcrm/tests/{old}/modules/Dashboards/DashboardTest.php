@@ -149,13 +149,13 @@ class DashboardTest extends TestCase
 
         // Now test one of the dashlets in each row
         $this->assertSame('c290a6da-7606-11e9-a76d-f218983a1c3e', $rows[0][0]['view']['saved_report_id']);
-        $this->assertSame('LBL_REPORT_DASHLET_TITLE_135', $rows[0][0]['view']['saved_report']);
+        $this->assertSame('My Open Cases by Followup Date', $rows[0][0]['view']['saved_report']);
 
         $this->assertSame('c290abda-7606-11e9-9f3e-f218983a1c3e', $rows[1][0]['view']['saved_report_id']);
-        $this->assertSame('LBL_REPORT_DASHLET_TITLE_137', $rows[1][0]['view']['saved_report']);
+        $this->assertSame('My Open Cases by Status', $rows[1][0]['view']['saved_report']);
 
         $this->assertSame('c290b0da-7606-11e9-81f9-f218983a1c3e', $rows[2][2]['view']['saved_report_id']);
-        $this->assertSame('LBL_REPORT_DASHLET_TITLE_139', $rows[2][2]['view']['saved_report']);
+        $this->assertSame('Status of Open Tasks Assigned by Me', $rows[2][2]['view']['saved_report']);
     }
     //END SUGARCRM flav=ent ONLY
 

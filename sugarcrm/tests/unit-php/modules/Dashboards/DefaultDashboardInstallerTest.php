@@ -368,9 +368,10 @@ class DefaultDashboardInstallerTest extends TestCase
     /**
      * Data provider for testSetupSavedReportDashlets
      */
-    public function setupSavedReportDashletsProvider()
+    public function setupSavedReportDashletsProvider(): array
     {
-        return array(
+        return [
+            // regular dashboard
             array(
                 array(
                     'components' => array(
@@ -432,14 +433,119 @@ class DefaultDashboardInstallerTest extends TestCase
                     ),
                 ),
             ),
-        );
+            // tabbed dashboard
+            [
+                // original metadata
+                [
+                    'tabs' => [
+                        // tab 1
+                        [
+                            'name' => 'FIRST TAB',
+                            'components' => [[
+                                'rows' => [
+                                    [
+                                        [
+                                            'width' => 4,
+                                            'context' => [
+                                                'module' => 'Cases',
+                                            ],
+                                            'view' => [
+                                                'label' => 'saved report',
+                                                'type' => 'saved-reports-chart',
+                                                'module' => 'Cases',
+                                                'saved_report_id' => 'AN-ID',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ]],
+                        ],
+                        // tab 2
+                        [
+                            'name' => 'SECOND TAB',
+                            'components' => [[
+                                'rows' => [
+                                    [
+                                        [
+                                            'width' => 4,
+                                            'context' => [
+                                                'module' => 'Cases',
+                                            ],
+                                            'view' => [
+                                                'label' => 'saved report',
+                                                'type' => 'saved-reports-chart',
+                                                'module' => 'Cases',
+                                                'saved_report_id' => 'ANOTHER-ID',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ]],
+                        ],
+                     ],
+                ],
+                // expected results
+                [
+                    'tabs' => [
+                        // tab 1
+                        [
+                            'name' => 'FIRST TAB',
+                            'components' => [[
+                                'rows' => [
+                                    [
+                                        [
+                                            'width' => 4,
+                                            'context' => [
+                                                'module' => 'Cases',
+                                            ],
+                                            'view' => [
+                                                'label' => 'saved report',
+                                                'type' => 'saved-reports-chart',
+                                                'module' => 'Cases',
+                                                'saved_report_id' => 'AN-ID',
+                                                'saved_report' => 'saved report',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ]],
+                        ],
+                        // tab 2
+                        [
+                            'name' => 'SECOND TAB',
+                            'components' => [[
+                                'rows' => [
+                                    [
+                                        [
+                                            'width' => 4,
+                                            'context' => [
+                                                'module' => 'Cases',
+                                            ],
+                                            'view' => [
+                                                'label' => 'saved report',
+                                                'type' => 'saved-reports-chart',
+                                                'module' => 'Cases',
+                                                'saved_report_id' => 'ANOTHER-ID',
+                                                'saved_report' => 'saved report',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ]],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
      * @covers ::setupSavedReportDashlets
      * @dataProvider setupSavedReportDashletsProvider
+     * @param array $metadata Dashlet metadata.
+     * @param array $expected Expected results.
      */
-    public function testSetupSavedReportDashlets($metadata, $expected)
+    public function testSetupSavedReportDashlets(array $metadata, array $expected)
     {
         $defaultDashboardInstaller = $this->createPartialMock(
             'DefaultDashboardInstaller',

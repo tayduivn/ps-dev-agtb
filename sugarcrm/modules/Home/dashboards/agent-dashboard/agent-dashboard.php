@@ -31,7 +31,6 @@ return [
                                     'type' => 'saved-reports-chart',
                                     'module' => 'Cases',
                                     'saved_report_id' => 'c290a6da-7606-11e9-a76d-f218983a1c3e',
-                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_135',
                                 ],
                             ], [
                                 'width' => 4,
@@ -66,7 +65,6 @@ return [
                                     'type' => 'saved-reports-chart',
                                     'module' => 'Cases',
                                     'saved_report_id' => 'c290abda-7606-11e9-9f3e-f218983a1c3e',
-                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_137',
                                     'chart_type' => 'pie chart',
                                 ],
                             ], [
@@ -96,7 +94,6 @@ return [
                                     'type' => 'saved-reports-chart',
                                     'module' => 'Cases',
                                     'saved_report_id' => 'c290ae50-7606-11e9-9cb2-f218983a1c3e',
-                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_138',
                                     'chart_type' => 'horizontal group by chart',
                                 ],
                             ],
@@ -112,7 +109,6 @@ return [
                                     'type' => 'saved-reports-chart',
                                     'module' => 'Cases',
                                     'saved_report_id' => '5d6766f8-7b52-11e9-8da8-f218983a1c3e',
-                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_12',
                                     'chart_type' => 'horizontal group by chart',
                                 ],
                             ], [
@@ -125,7 +121,6 @@ return [
                                     'type' => 'saved-reports-chart',
                                     'module' => 'Cases',
                                     'saved_report_id' => 'c2909f50-7606-11e9-b00e-f218983a1c3e',
-                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_132',
                                 ],
                             ], [
                                 'width' => 4,
@@ -134,7 +129,6 @@ return [
                                     'type' => 'saved-reports-chart',
                                     'module' => null,
                                     'saved_report_id' => 'c290b0da-7606-11e9-81f9-f218983a1c3e',
-                                    'saved_report' => 'LBL_REPORT_DASHLET_TITLE_139',
                                 ],
                             ],
                         ],
