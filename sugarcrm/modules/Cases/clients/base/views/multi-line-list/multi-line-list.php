@@ -169,10 +169,8 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
     ],
     'filterDef' => [
         [
-            '$or' => [
-                ['status' => 'New'],
-                ['status' => 'Assigned'],
-                ['status' => 'Pending Input'],
+            'status' => [
+                '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
             ],
             '$owner' => '',
         ],

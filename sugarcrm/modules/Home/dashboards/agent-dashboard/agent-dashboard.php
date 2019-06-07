@@ -152,7 +152,7 @@ return [
                             ],
                             [
                                 'status' => [
-                                    '$in' => ['New', 'Assigned', 'Pending Input'],
+                                    '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
                                 ],
                             ],
                             [
@@ -173,7 +173,7 @@ return [
                             ],
                             [
                                 'status' => [
-                                    '$in' => ['New', 'Assigned', 'Pending Input'],
+                                    '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
                                 ],
                             ],
                             [
@@ -194,7 +194,7 @@ return [
                             ],
                             [
                                 'status' => [
-                                    '$in' => ['New', 'Assigned', 'Pending Input'],
+                                    '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
                                 ],
                             ],
                             [
