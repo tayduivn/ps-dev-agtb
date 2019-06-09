@@ -112,4 +112,32 @@ describe('Base.View.TabbedDashboardView', function() {
             expect(view._isDashboardTab(0)).toBeFalsy();
         });
     });
+
+    describe('_setMode', function() {
+        var $tab;
+
+        beforeEach(function() {
+            var tab0 = {name: 'tab0', components: {rows: ['row 1, tab 0', 'row 2, tab 0'], width: 22}};
+            var tab1 = {name: 'tab1', components: {view: 'multi-line-list'}};
+            view.tabs = [tab0, tab1];
+            view.activeTab = 0;
+            $tab = {
+                addClass: sinon.collection.stub(),
+                removeClass: sinon.collection.stub()
+            };
+            sinon.collection.stub(view, '$').returns({
+                closest: sinon.collection.stub().returns($tab)
+            });
+        });
+
+        it('should disable tab', function() {
+            view._setMode('edit');
+            expect($tab.addClass).toHaveBeenCalledWith('disabled');
+        });
+
+        it('should enable tab', function() {
+            view._setMode('view');
+            expect($tab.removeClass).toHaveBeenCalledWith('disabled');
+        });
+    });
 });

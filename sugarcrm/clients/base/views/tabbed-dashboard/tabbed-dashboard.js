@@ -58,6 +58,7 @@
      */
     bindDataChange: function() {
         this.context.on('tabbed-dashboard:update', this._setTabs, this);
+        this.model.on('setMode', this._setMode, this);
     },
 
     /**
@@ -68,6 +69,9 @@
      * @private
      */
     _isDashboardTab: function(tabIndex) {
+        if (_.isEmpty(this.tabs)) {
+            return true;
+        }
         tabIndex = _.isUndefined(tabIndex) ? this.activeTab : tabIndex;
         return !_.isUndefined(this.tabs[tabIndex].components.rows);
     },
@@ -86,8 +90,31 @@
             event.stopPropagation();
             return;
         }
-
         this.context.trigger('tabbed-dashboard:switch-tab', index);
+    },
+
+    /**
+     * Handle button events.
+     *
+     * @param {string} state Button state
+     * @private
+     */
+    _setMode: function(state) {
+        if (_.isEmpty(this.tabs)) {
+            return;
+        }
+        _.each(this.tabs, function(tab, index) {
+            if (index !== this.activeTab && !this._isDashboardTab(index)) {
+                var $tab = this.$('a[data-index="' + index + '"]').closest('.tab');
+                if (state === 'edit') {
+                    // disable non-dahsboard tabs
+                    $tab.addClass('disabled');
+                } else if (state === 'view') {
+                    // enable non-dahsboard tabs
+                    $tab.removeClass('disabled');
+                }
+            }
+        }, this);
     },
 
     /**
@@ -124,5 +151,15 @@
     _setTabs: function(options) {
         this._initTabs(options);
         this.render();
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _render: function() {
+        this._super('_render');
+        if (this.model.mode === 'edit') {
+            this._setMode('edit');
+        }
     }
 })

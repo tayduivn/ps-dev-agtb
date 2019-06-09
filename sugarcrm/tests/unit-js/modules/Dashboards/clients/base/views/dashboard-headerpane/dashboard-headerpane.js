@@ -266,28 +266,62 @@ describe('Dashboards.Base.View.DashboardHeaderpane', function() {
 
             expect(alertStub.lastCall.args[0]).toEqual('error_while_save');
         });
+    });
 
-        describe('_isDashboard', function() {
-            var context;
+    describe('_isDashboard', function() {
+        var context;
 
-            beforeEach(function() {
-                var tab0 = {name: 'tab0', components: [{rows: ['row 1, tab 0', 'row 2, tab 0'], width: 22}]};
-                var tab1 = {name: 'tab1', components: [{view: 'multi-line-list'}]};
-                context = app.context.getContext();
-                context.set('tabs', [tab0, tab1]);
-                context.prepare();
-                view = SugarTest.createView('base', 'Dashboards', 'dashboard-headerpane', null, context, true);
-            });
+        beforeEach(function() {
+            var tab0 = {name: 'tab0', components: [{rows: ['row 1, tab 0', 'row 2, tab 0'], width: 22}]};
+            var tab1 = {name: 'tab1', components: [{view: 'multi-line-list'}]};
+            context = app.context.getContext();
+            context.set('tabs', [tab0, tab1]);
+            context.prepare();
+            view = SugarTest.createView('base', 'Dashboards', 'dashboard-headerpane', null, context, true);
+        });
 
-            it('should return true for dashboard tab', function() {
-                context.set('activeTab', 0);
-                expect(view._isDashboard()).toBeTruthy();
-            });
+        it('should return true for dashboard tab', function() {
+            context.set('activeTab', 0);
+            expect(view._isDashboard()).toBeTruthy();
+        });
 
-            it('should return false for non-dashboard tab', function() {
-                context.set('activeTab', 1);
-                expect(view._isDashboard()).toBeFalsy();
-            });
+        it('should return false for non-dashboard tab', function() {
+            context.set('activeTab', 1);
+            expect(view._isDashboard()).toBeFalsy();
+        });
+    });
+
+    describe('_enableEditButton', function() {
+        var button;
+        var setDisabledStub;
+
+        beforeEach(function() {
+            SugarTest.loadComponent('base', 'field', 'button');
+            button = SugarTest.createField('base', 'button', 'button', 'edit');
+            button.name = 'edit_button';
+            setDisabledStub = sandbox.stub(button, 'setDisabled');
+            view = SugarTest.createView('base', 'Dashboards', 'dashboard-headerpane');
+            view.buttons = [{
+                type: 'actiondropdown',
+                fields: [button],
+                _orderButtons: $.noop,
+                render: $.noop
+            }];
+        });
+
+        afterEach(function() {
+            button.dispose();
+            button = null;
+        });
+
+        it('should disable edit button', function() {
+            view._enableEditButton(false);
+            expect(setDisabledStub).toHaveBeenCalledWith(true);
+        });
+
+        it('should enable edit button', function() {
+            view._enableEditButton(true);
+            expect(setDisabledStub).toHaveBeenCalledWith(false);
         });
     });
 });

@@ -30,8 +30,7 @@
         'click [name=delete_button]': 'deleteClicked',
         'click [name=add_button]': 'addClicked',
         'click [name=collapse_button]': 'collapseClicked',
-        'click [name=expand_button]': 'expandClicked',
-        'click [data-toggle=dropdown]': 'dropdownClicked',
+        'click [name=expand_button]': 'expandClicked'
     },
 
     initialize: function(options) {
@@ -67,6 +66,7 @@
      */
     _bindEvents: function() {
         this.context.on('record:set:state', this.setRecordState, this);
+        this.context.on('tabbed-dashboard:switch-tab', this.switchTab, this);
     },
 
     /**
@@ -208,15 +208,13 @@
     },
 
     /**
-     * Don't show dropdown for non-dashboard tab.
+     * Handle event: 'tabbed-dashboard:switch-tab'.
      *
-     * @param {Event} evt Triggered mouse event
+     * @param {number} tabIndex New tab's index
      */
-    dropdownClicked: function(evt) {
-        if (!this._isDashboard()) {
-            evt.stopPropagation();
-            return;
-        }
+    switchTab: function(tabIndex) {
+        this.context.set('activeTab', tabIndex);
+        this._enableEditButton(this._isDashboard());
     },
 
     /**
@@ -233,6 +231,29 @@
         }
         var tabIndex = this.context.get('activeTab') || 0;
         return tabs[tabIndex] && tabs[tabIndex].components && tabs[tabIndex].components[0].rows;
+    },
+
+    /**
+     * Show/hide edit button.
+     *
+     * @param {bool} state True to show, false to hide
+     * @private
+     */
+    _enableEditButton: function(state) {
+        var dropdown = _.find(this.buttons, function(button) {
+            return button.type === 'actiondropdown';
+        });
+        if (dropdown) {
+            var editButton =  _.find(dropdown.fields, function(field) {
+                return field.name === 'edit_button';
+            });
+            if (editButton) {
+                editButton.setDisabled(!state);
+                editButton.isHidden = !state;
+                dropdown._orderButtons();
+                dropdown.render();
+            }
+        }
     },
 
     /**
@@ -277,6 +298,9 @@
         this._setButtons();
         this.setButtonStates(this.context.get('create') ? 'create' : 'view');
         this.setEditableFields();
+        if (!this._isDashboard()) {
+            this._enableEditButton(false);
+        }
     },
 
     handleCancel: function() {
