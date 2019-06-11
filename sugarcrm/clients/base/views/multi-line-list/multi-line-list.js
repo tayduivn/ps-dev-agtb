@@ -92,6 +92,8 @@
         this.events = _.extend({}, this.events, leftColumnsEvents, {
             'click .multi-line-row': 'handleRowClick',
         });
+
+        this.autoRefresh(true);
     },
 
     /**
@@ -280,4 +282,35 @@
             $buttonGroup.toggleClass('dropup');
         }
     },
+
+    /**
+     * Auto refresh the list view every 5 minutes
+     *
+     * @param {boolean} start `true` to start the timer, `false` to stop it
+     */
+    autoRefresh: function(start) {
+        if (start) {
+            clearInterval(this._timerId);
+            this._timerId = setInterval(_.bind(function() {
+                this.refreshData();
+            }, this), 5 * 1000 * 60); // 5 min default
+        } else {
+            clearInterval(this._timerId);
+        }
+    },
+
+    /**
+     * Reload the data
+     */
+    refreshData: function() {
+        this.context.reloadData();
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.autoRefresh(false);
+        this._super('_dispose');
+    }
 })

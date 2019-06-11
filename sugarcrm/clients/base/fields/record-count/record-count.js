@@ -51,14 +51,32 @@
         this.filter = options.def.filter || {};
         this.cssClass = options.def.cssClass || '';
         this.tooltipLabel = options.def.tooltip || '';
+        this.autoRefresh(true);
+    },
+
+    /**
+     * Auto refresh the badges every 5 min
+     *
+     * @param {boolean} start `true` to start the timer, `false` to stop it
+     */
+    autoRefresh: function(start) {
+        if (start) {
+            clearInterval(this._timerId);
+            this._timerId = setInterval(_.bind(function() {
+                this._getCount(true);
+            }, this), 5 * 1000 * 60); // 5 min default
+        } else {
+            clearInterval(this._timerId);
+        }
     },
 
     /**
      * Get the total amount of filtered records and display it.
      *
+     * @param {boolean} forceReload `true` to ignore cache and force a new request
      * @private
      */
-    _getCount: function() {
+    _getCount: function(forceReload) {
         if (!this.module) {
             return;
         }
@@ -66,7 +84,7 @@
         var url = app.api.buildURL(this.module, 'count', {}, params);
         // if cached
         var recordCounts = this.context.get('recordCounts');
-        if (recordCounts && !_.isUndefined(recordCounts[url])) {
+        if (!forceReload && recordCounts && !_.isUndefined(recordCounts[url])) {
             this.count = recordCounts[url];
             this.render();
             return;
@@ -97,5 +115,13 @@
         } else if (this.count > 0) {
             this._super('render');
         }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.autoRefresh(false);
+        this._super('_dispose');
     }
 })
