@@ -50,9 +50,52 @@ class PMSEExpressionEvaluator
     /**
      * exception codes
      */
-    public static $exceptionCodes = array(
-        'BusinessCenter' => 100,
+    protected static $exceptionCodes = array(
+        'NO_BUSINESS_CENTER' => 100,
     );
+
+    /**
+     * Get exception code
+     * @param string $key Key of exception code
+     * @return int Exception code, or 0 if no $key is found.
+     */
+    public static function getExceptionCode(string $key) : int
+    {
+        return static::$exceptionCodes[$key] ?? 0;
+    }
+
+    /**
+     * Add exception code
+     * @param string $key Key of exception code
+     * @param int $code Exception code
+     * @return void
+     */
+    public static function addExceptionCode(string $key, int $code) : void
+    {
+        static::$exceptionCodes[$key] = $code;
+    }
+
+    /**
+     * Remove exception code
+     * @param string $key Key of exception code
+     * @return bool
+     */
+    public static function removeExceptionCode(string $key) : bool
+    {
+        $ret = static::hasExceptionCode($key);
+        unset(static::$exceptionCodes[$key]);
+        return $ret;
+    }
+
+    /**
+     * Has exception code
+     * @param string $key Key of exception code
+     * @return bool
+     */
+    public static function hasExceptionCode(string $key) : bool
+    {
+        return isset(static::$exceptionCodes[$key]);
+    }
 
     public function getCondition()
     {
@@ -512,7 +555,7 @@ class PMSEExpressionEvaluator
             throw new PMSEExpressionEvaluationException(
                 'Invalid Business Center bean.',
                 func_get_args(),
-                self::$exceptionCodes['BusinessCenter']
+                static::getExceptionCode('NO_BUSINESS_CENTER')
             );
         }
 
@@ -522,7 +565,7 @@ class PMSEExpressionEvaluator
             throw new PMSEExpressionEvaluationException(
                 'Invalid Business Center string: ' . $value2,
                 func_get_args(),
-                self::$exceptionCodes['BusinessCenter']
+                static::getExceptionCode('NO_BUSINESS_CENTER')
             );
         }
 
@@ -545,7 +588,7 @@ class PMSEExpressionEvaluator
             throw new PMSEExpressionEvaluationException(
                 'Invalid Business Center unit:' . $matches[2],
                 func_get_args(),
-                self::$exceptionCodes['BusinessCenter']
+                static::getExceptionCode('NO_BUSINESS_CENTER')
             );
         }
 

@@ -166,7 +166,8 @@ class PMSEChangeField extends PMSEScriptTask
                                         try {
                                             $newValue = $this->beanHandler->processValueExpression($field->value, $beanModule);
                                         } catch (PMSEExpressionEvaluationException $e) {
-                                            if ($e->getCode() === PMSEExpressionEvaluator::$exceptionCodes['BusinessCenter']) {
+                                            if ($e->getCode() ===
+                                                PMSEExpressionEvaluator::getExceptionCode('NO_BUSINESS_CENTER')) {
                                                 continue;
                                             } else {
                                                 throw $e;

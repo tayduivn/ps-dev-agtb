@@ -65,7 +65,22 @@ class PMSEExpressionEvaluatorTest extends TestCase
             $code = $e->getCode();
         }
 
-        $this->assertEquals(PMSEExpressionEvaluator::$exceptionCodes['BusinessCenter'], $code);
+        $this->assertEquals(PMSEExpressionEvaluator::getExceptionCode('NO_BUSINESS_CENTER'), $code);
+    }
+
+    /**
+     * Test exception code accessors
+     */
+    public function testExceptionCodeAccessors()
+    {
+        $this->assertEquals(100, PMSEExpressionEvaluator::getExceptionCode('NO_BUSINESS_CENTER'));
+        $this->assertTrue(PMSEExpressionEvaluator::hasExceptionCode('NO_BUSINESS_CENTER'));
+
+        PMSEExpressionEvaluator::addExceptionCode('NEW_CODE', 123);
+        $this->assertEquals(123, PMSEExpressionEvaluator::getExceptionCode('NEW_CODE'));
+
+        $this->assertTrue(PMSEExpressionEvaluator::removeExceptionCode('NEW_CODE'));
+        $this->assertFalse(PMSEExpressionEvaluator::hasExceptionCode('NEW_CODE'));
     }
 
     public function testEvaluateSingleElementZero()

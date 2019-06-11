@@ -76,7 +76,7 @@ class PMSETimerEvent extends PMSEIntermediateEvent
                         $bean
                     );
                 } catch (PMSEExpressionEvaluationException $e) {
-                    if ($e->getCode() === PMSEExpressionEvaluator::$exceptionCodes['BusinessCenter']) {
+                    if ($e->getCode() === PMSEExpressionEvaluator::getExceptionCode('NO_BUSINESS_CENTER')) {
                         // throwing PMSEElementException to fail the process because we don't know how long to wait
                         throw new PMSEElementException("TimerEvent: " . $e, $flowData, $this);
                     } else {

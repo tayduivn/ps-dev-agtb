@@ -108,7 +108,8 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                                     try {
                                         $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
                                     } catch (PMSEExpressionEvaluationException $e) {
-                                        if ($e->getCode() === PMSEExpressionEvaluator::$exceptionCodes['BusinessCenter']) {
+                                        if ($e->getCode() ===
+                                            PMSEExpressionEvaluator::getExceptionCode('NO_BUSINESS_CENTER')) {
                                             // since we are adding new record, set it to empty if we have an exception
                                             $newValue = '';
                                             break;
