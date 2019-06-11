@@ -36,6 +36,23 @@ describe('Base.Field.DateTimeCombo', function() {
         $('body').empty();
     });
 
+    describe('_getAppendToTarget', function() {
+        beforeEach(function() {
+            sinon.collection.stub(app.user, 'getPreference')
+                .withArgs('datepref').returns('d/m/Y')
+                .withArgs('timepref').returns('h:ia');
+        });
+
+        it('should find the parent element and position it relatively', function() {
+            var field = SugarTest.createField('base', 'time', 'datetimecombo', 'edit');
+            sinon.collection.stub(field.$el, 'attr')
+                .withArgs('data-type')
+                .returns('datetimecombo');
+            var $result = field._getAppendToTarget();
+            expect($result.css('position')).toEqual('relative');
+        });
+    });
+
     describe('verify options from field definitions are recognized and passed into timepicker', function() {
         var timeFieldOptions = [
             {key: 'disable_text_input', value: true, name: 'disableTextInput'},

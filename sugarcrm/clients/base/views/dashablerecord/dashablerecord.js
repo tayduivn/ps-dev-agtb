@@ -881,7 +881,6 @@
      * New model related properties are injected into each model.
      */
     _renderHtml: function() {
-        debugger;
         if (this.meta.config) {
             this._super('_renderHtml');
             return;

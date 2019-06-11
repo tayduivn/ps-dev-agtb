@@ -33,6 +33,47 @@ describe('Base.Field.Date', function() {
         app.view.reset();
     });
 
+    describe('placement and scrolling', function() {
+        var field;
+        var $field;
+        var closestComponentStub;
+
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'date', 'date', 'edit');
+            field.action = 'edit';
+
+            $field = {data: $.noop, datepicker: sinon.collection.stub(), on: $.noop};
+            sinon.collection.stub(field, '$')
+                .withArgs(field.fieldTag)
+                .returns($field);
+
+            closestComponentStub = sinon.collection.stub(field, 'closestComponent');
+            closestComponentStub.withArgs('main-pane').returns({$el: 'I am the main pane'});
+
+            sinon.collection.stub(window, '$')
+                .withArgs('.main-pane, .flex-list-view-content')
+                .returns({on: sinon.collection.stub().callsArg(1), off: $.noop});
+        });
+
+        afterEach(function() {
+            field.dispose();
+            field = null;
+        });
+
+        describe('bindDomChange', function() {
+            it('should re-place the datepicker on scroll', function() {
+                field.bindDomChange();
+                expect($field.datepicker).toHaveBeenCalledWith('place');
+            });
+        });
+
+        describe('_getAppendToTarget', function() {
+            it('should latch on to the closest component of a given type', function() {
+                expect(field._getAppendToTarget()).toEqual('I am the main pane');
+            });
+        });
+    });
+
     describe('format', function() {
         var field;
 
