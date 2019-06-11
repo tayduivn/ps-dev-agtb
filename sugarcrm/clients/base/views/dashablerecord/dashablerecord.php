@@ -18,7 +18,18 @@ $viewdefs['base']['view']['dashablerecord'] = [
             'label' => 'LBL_DASHLET_RECORDVIEW_NAME',
             'description' => 'LBL_DASHLET_RECORDVIEW_DESCRIPTION',
             'filter' => [
-                'view' => ['record'],
+                'view' => 'record',
+                'blacklist' => [
+                    'module' => [
+                        'Calls',
+                        'Emails',
+                        'Home',
+                        'Meetings',
+                        'Opportunities',
+                        'Quotes',
+                        'RevenueLineItems',
+                    ],
+                ],
             ],
             'config' => [],
             // FIXME: see if it's safe to erase this

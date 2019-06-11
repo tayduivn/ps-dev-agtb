@@ -17,6 +17,17 @@ $viewdefs['base']['view']['commentlog-dashlet'] = [
             'description' => 'LBL_DASHLET_COMMENTLOG_DESCRIPTION',
             'filter' => [
                 'view' => 'record',
+                'blacklist' => [
+                    'module' => [
+                        'Emails',
+                        'Home',
+                        'KBArticles',
+                        'KBContentTemplates',
+                        'KBDocuments',
+                        'ProductCategories',
+                        'Quotes',
+                    ],
+                ],
             ],
             'config' => [],
         ],

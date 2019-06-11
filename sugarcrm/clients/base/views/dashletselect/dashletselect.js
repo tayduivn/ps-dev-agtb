@@ -180,9 +180,25 @@
                     filterViews = [filterViews];
                 }
 
-                //if the filter is matched, then it returns true
-                return _.contains(filterModules, parentModule) &&
-                    _.contains(filterViews, parentView);
+                // if the filter is matched, then this will be true
+                var inModuleAndView = _.contains(filterModules, parentModule) && _.contains(filterViews, parentView);
+
+                // also allow blacklisting in addition to whitelisting
+                var blacklisted = false;
+                if (filter.blacklist) {
+                    filterModules = filter.blacklist.module || [];
+                    if (_.isString(filterModules)) {
+                        filterModules = [filterModules];
+                    }
+                    filterViews = filter.blacklist.view || [];
+                    if (_.isString(filterViews)) {
+                        filterViews = [filterViews];
+                    }
+
+                    blacklisted = _.contains(filterModules, parentModule) || _.contains(filterViews, parentView);
+                }
+
+                return inModuleAndView && !blacklisted;
             })
             .value();
     },

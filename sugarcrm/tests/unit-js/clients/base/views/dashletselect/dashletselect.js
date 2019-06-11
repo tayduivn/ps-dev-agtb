@@ -176,6 +176,18 @@ describe('Base.View.Dashletselect', function() {
                             ],
                             view: 'record'
                         }
+                    },
+                    // blacklisted module (Excluded)
+                    {
+                        label: 'first5',
+                        config: {},
+                        filter: {
+                            blacklist: {
+                                module: [
+                                    'Home',
+                                ],
+                            },
+                        },
                     }
                 ]
             });

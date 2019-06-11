@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Cases']['base']['view']['activity-timeline'] = [
+$viewdefs['Leads']['base']['view']['activity-timeline'] = [
     'activity_modules' => [
         [
             'module' => 'Calls',

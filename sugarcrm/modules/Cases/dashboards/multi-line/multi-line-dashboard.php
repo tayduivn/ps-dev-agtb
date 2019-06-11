@@ -119,7 +119,6 @@ return [
                             'view' => [
                                 'type' => 'activity-timeline',
                                 'label' => 'TPL_ACTIVITY_TIMELINE_DASHLET',
-                                'module' => 'Cases',
                             ],
                             'context' => [
                                 'module' => 'Cases',
