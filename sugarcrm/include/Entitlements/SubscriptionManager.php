@@ -365,7 +365,7 @@ class SubscriptionManager
             }
         }
 
-        throw new \Exception('new license type found!');
+        throw new \Exception('no default license type found!');
     }
 }
 //END REQUIRED CODE DO NOT MODIFY

@@ -166,9 +166,23 @@ class SubscriptionManagerTest extends TestCase
                 false,
                 ['SUGAR_SERVE'],
             ],
+            // user's license Type is empty, product is SERVE, new structure
+            [
+                '{"success":true,"error":"","subscription":{"id":"ffffc6a2-6ac3-11e9-b0f5-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Sugar Serve (DEV ONLY)","start_date_c":1556175600,"expiration_date":1587798000,"product_code_c":""}},"emails":[],"status":"enabled","audited":1,"domains":[],"perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597765,"evaluation_c":0,"portal_users":0,"date_modified":1558663202,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"47fa5aa6620415261cd7bcd2a8de6d31","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"ignore_expiration_date":0,"od_instance_location_c":"us"}}',
+                [],
+                false,
+                ['SUGAR_SERVE'],
+            ],
             // user's license Type is empty, product is SERVE + ENT
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":1010,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
+                [],
+                false,
+                ['CURRENT'],
+            ],
+            // user's license Type is empty, product is SERVE + ENT, new structure
+            [
+                '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":"10","product_name":"Sugar Serve (DEV ONLY)","start_date_c":1556175600,"expiration_date":1587798000,"product_code_c":""},"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae":{"quantity":100,"product_name":"Sugar Enterprise","start_date_c":1556175600,"expiration_date":1587798000,"product_code_c":"Ent"}},"emails":[],"status":"enabled","audited":1,"domains":[],"perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1558663202,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 [],
                 false,
                 ['CURRENT'],

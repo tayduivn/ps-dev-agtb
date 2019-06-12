@@ -98,7 +98,8 @@ class SugarLicensing
             $endpoint = "/" . $endpoint;
         }
 
-        curl_setopt($this->_curl, CURLOPT_URL, $this->_server . $endpoint);
+        $endpoint = $this->getServerName() . $endpoint;
+        curl_setopt($this->_curl, CURLOPT_URL, $endpoint);
 
         if (!empty($payload)) {
             if (is_array($payload)) {
@@ -133,5 +134,18 @@ class SugarLicensing
         }
 
         return $results;
+    }
+
+    /**
+     * get Sugar licensing server name
+     */
+    protected function getServerName()
+    {
+        global $sugar_config;
+        if (isset($sugar_config['license_server'])) {
+            return  rtrim(trim($sugar_config['license_server']), '/');
+        }
+
+        return $this->_server;
     }
 }
