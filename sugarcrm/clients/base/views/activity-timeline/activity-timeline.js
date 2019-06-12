@@ -230,6 +230,9 @@
             this.relatedCollection.fetch({
                 offset: this.relatedCollection.next_offset,
                 success: _.bind(function(coll) {
+                    if (this.disposed) {
+                        return;
+                    }
                     _.each(coll.models, function(model) {
                         model.set('record_date', model.get(this.recordDateFields[model.get('_module')]));
                     }, this);

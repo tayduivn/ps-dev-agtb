@@ -368,6 +368,9 @@
         model.fetch({
             showAlerts: true,
             success: _.bind(function(model) {
+                if (this.disposed) {
+                    return;
+                }
                 this._syncIdsToModels(model);
                 this.render();
             }, this)
