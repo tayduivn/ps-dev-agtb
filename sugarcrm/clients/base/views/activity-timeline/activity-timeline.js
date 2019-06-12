@@ -86,6 +86,27 @@
     },
 
     /**
+     * Must implement this method as a part of the contract with the Dashlet
+     * plugin. Kicks off the various paths associated with a dashlet:
+     * Configuration, preview, and display.
+     *
+     * @param {string} viewName The name of the view as defined by the `oninit`
+     *   callback in {@link DashletView#onAttach}.
+     */
+    initDashlet: function(viewName) {
+        this._mode = viewName;
+
+        if (this._mode === 'config') {
+            this.layout.before('dashletconfig:save', function() {
+                // save the toolbar
+                if (this.meta.custom_toolbar) {
+                    this.settings.set('custom_toolbar', this.meta.custom_toolbar);
+                }
+            }, this);
+        }
+    },
+
+    /**
      * Get base model from parent context
      *
      * @param {Object} options
@@ -215,6 +236,10 @@
      * @inheritdoc
      */
     loadData: function() {
+        if (this._mode === 'config') {
+            return;
+        }
+
         if (!this.relatedCollection) {
             this._initCollection();
         }

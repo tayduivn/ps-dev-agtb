@@ -93,6 +93,27 @@ $viewdefs['base']['view']['activity-timeline'] = [
                 'action' => 'toggleMinify',
                 'tooltip' => 'LBL_DASHLET_MINIMIZE',
             ],
+            [
+                'dropdown_buttons' => [
+                    [
+                        'type' => 'dashletaction',
+                        'action' => 'editClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                    ],
+                    [
+                        'type' => 'dashletaction',
+                        'action' => 'reloadData',
+                        'label' => 'LBL_DASHLET_REFRESH_LABEL',
+                    ],
+                    [
+                        'type' => 'dashletaction',
+                        'action' => 'removeClicked',
+                        'label' => 'LBL_DASHLET_REMOVE_LABEL',
+                        'name' => 'remove_button',
+                        'disallowed_layouts' => ['row-model-data'],
+                    ],
+                ],
+            ],
         ],
     ],
 ];
