@@ -189,4 +189,68 @@ class SugarQueryTest extends TestCase
             ['bean has custom table with null alias', 'account_cstm', null, 'account_cstm'],
         ];
     }
+
+    /**
+     * @covers ::orderBy
+     */
+    public function testOrderBy()
+    {
+        $field = 'test_field';
+        $byNull = "(CASE WHEN $field IS NULL THEN 1 ELSE 0 END)";
+
+        $sugarQuery = $this->getMockBuilder(SugarQuery::class)
+        ->disableOriginalConstructor()
+        ->setMethods(['getFromBean'])
+        ->getMock();
+
+        $sugarQuery->expects($this->any())
+        ->method('getFromBean')
+        ->willReturn(false);
+
+        $sugarQuery->orderBy($field, 'DESC', true);
+        $this->assertEquals(
+            2,
+            count($sugarQuery->order_by),
+            "$byNull should be added to order by clause"
+        );
+        $this->assertEquals(
+            $byNull,
+            $sugarQuery->order_by[0]->column->field,
+            "$byNull should be added to order by clause"
+        );
+        $this->assertEquals(
+            'ASC',
+            $sugarQuery->order_by[0]->direction,
+            "direction should be ASC for $byNull"
+        );
+        $this->assertEquals(
+            $field,
+            $sugarQuery->order_by[1]->column->field,
+            "$field should be added to order by clause"
+        );
+        $this->assertEquals(
+            'DESC',
+            $sugarQuery->order_by[1]->direction,
+            "direction should be DESC for $field"
+        );
+
+        $sugarQuery->orderByReset();
+
+        $sugarQuery->orderBy($field, 'ASC');
+        $this->assertEquals(
+            1,
+            count($sugarQuery->order_by),
+            "$byNull should not be added to order by clause"
+        );
+        $this->assertEquals(
+            $field,
+            $sugarQuery->order_by[0]->column->field,
+            "$field should be added to order by clause"
+        );
+        $this->assertEquals(
+            'ASC',
+            $sugarQuery->order_by[0]->direction,
+            "direction should be ASC for $field"
+        );
+    }
 }

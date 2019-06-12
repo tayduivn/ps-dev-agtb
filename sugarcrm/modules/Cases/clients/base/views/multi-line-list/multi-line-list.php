@@ -165,6 +165,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
         'params' => [
             'max_num' => 100,
             'order_by' => 'follow_up_datetime',
+            'nulls_last' => true,
         ],
     ],
     'filterDef' => [

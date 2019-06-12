@@ -231,6 +231,9 @@ class FilterApi extends SugarApi
             $options['erased_fields'] = true;
         }
 
+        // if true, return nulls last for order by fields
+        $options['nulls_last'] = !empty($args['nulls_last']);
+
         return $options;
     }
 
@@ -385,7 +388,7 @@ class FilterApi extends SugarApi
         }
 
         if (count($query->order_by) < 1) {
-            self::addOrderBy($query, $this->defaultOrderBy);
+            self::addOrderBy($query, $this->defaultOrderBy, $options['nulls_last']);
         }
 
         // This section of code is a portion of the code referred
@@ -544,7 +547,7 @@ class FilterApi extends SugarApi
         $q->select($fields);
 
         if (!empty($options['order_by'])) {
-            self::addOrderBy($q, $options['order_by']);
+            self::addOrderBy($q, $options['order_by'], $options['nulls_last']);
         }
 
         // nagative limit means no limit
@@ -560,18 +563,19 @@ class FilterApi extends SugarApi
     /**
      * Adds order by to query
      * @param SugarQuery $q
-     * @param $orderByOption
+     * @param array $orderByOption
+     * @param bool $nullsLast
      * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiExceptionNotAuthorized
      */
-    protected static function addOrderBy(SugarQuery $q, array $orderByOption)
+    protected static function addOrderBy(SugarQuery $q, array $orderByOption, bool $nullsLast = false)
     {
         foreach ($orderByOption as $orderBy) {
             // ID and date_modified are used to give some order to the system
             if ($orderBy[0] != 'date_modified' && $orderBy[0] != 'id') {
                 self::verifyField($q, $orderBy[0]);
             }
-            $q->orderBy($orderBy[0], $orderBy[1]);
+            $q->orderBy($orderBy[0], $orderBy[1], $nullsLast);
         }
     }
 

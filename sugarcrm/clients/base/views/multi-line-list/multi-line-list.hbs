@@ -47,4 +47,17 @@
             {{/each}}
         </tbody>
     </table>
+    {{#if ../collection.dataFetched}}
+        {{#unless ../../collection.length}}
+            <div class="block-footer">
+                <em>{{str "LBL_LISTVIEW_NO_RECORDS" this.module}}</em>
+            </div>
+        {{/unless}}
+    {{else}}
+       {{#unless ../../collection.length}}
+            <div class="block-footer">
+                {{loading 'LBL_ALERT_TITLE_LOADING'}}
+            </div>
+       {{/unless}}
+    {{/if}}
 {{/each}}
