@@ -16,7 +16,7 @@
  */
 ({
 
-    plugins: ['Dashlet', 'LinkedModel'],
+    plugins: ['Dashlet', 'EmailClientLaunch', 'LinkedModel'],
 
     /**
      * Object icon names for modules
@@ -359,5 +359,50 @@
             }
             self.reloadData();
         });
+    },
+
+    /**
+     * Compose an email related to the relevant record.
+     *
+     * @param {Event} event Event.
+     * @param {Object} params Parameters.
+     * @param {string} params.module Module name.
+     * @param {string} params.link Relationship link.
+     */
+    composeEmail: function(event, params) {
+        if (this.useSugarEmailClient()) {
+            this.once('emailclient:close', function() {
+                this.reloadData();
+            }, this);
+
+            this.launchEmailClient(event);
+        } else {
+            var options = this._retrieveEmailOptions($(event.currentTarget));
+            window.open(this._buildMailToURL(options), '_blank');
+        }
+    },
+
+    /**
+     * Used by EmailClientLaunch as a hook point to retrieve email options that
+     * are specific to a view/field.
+     *
+     * @return {Object} Email options.
+     * @private
+     */
+    _retrieveEmailOptionsFromLink: function() {
+        var parentModel = this.baseRecord;
+        var emailOptions = {};
+
+        if (parentModel && parentModel.id) {
+            // set parent model as option to be passed to compose for To address & relate
+            // if parentModel does not have email, it will be ignored as a To recipient
+            // if parentModel's module is not an available module to relate, it will also be ignored
+            emailOptions = {
+                to: [{bean: parentModel}],
+                related: parentModel
+            };
+        }
+
+        return emailOptions;
     }
 })

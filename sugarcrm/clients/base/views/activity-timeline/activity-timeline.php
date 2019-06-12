@@ -38,7 +38,7 @@ $viewdefs['base']['view']['activity-timeline'] = [
                 'buttons' => [
                     [
                         'type' => 'dashletaction',
-                        'action' => 'createRecord',
+                        'action' => 'composeEmail',
                         'params' => [
                             'link' => 'emails',
                             'module' => 'Emails',
