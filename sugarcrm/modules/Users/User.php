@@ -767,6 +767,14 @@ class User extends Person {
     {
         global $db;
         $sysSubscriptions = SubscriptionManager::instance()->getSystemSubscriptions();
+        $exceededLimitTypes = [];
+
+        // no subscription
+        if (empty($sysSubscriptions)) {
+            $exceededLimitTypes[Subscription::SUGAR_BASIC_KEY] = 1;
+            $license_seats_needed = 1;
+            return $exceededLimitTypes;
+        }
 
         // check individual license type
         $query = "SELECT license_type from users WHERE " . User::getLicensedUsersWhere();
@@ -789,8 +797,8 @@ class User extends Person {
                     $foundUnknownType = true;
                 } else {
                     $userCountByType[$type] += 1;
-                    $totalUserCount += 1;
                 }
+                $totalUserCount += 1;
             } else {
                 $types = json_decode($row['license_type'], true);
                 foreach ($types as $type) {
@@ -798,8 +806,8 @@ class User extends Person {
                         $foundUnknownType = true;
                     } else {
                         $userCountByType[$type] += 1;
-                        $totalUserCount += 1;
                     }
+                    $totalUserCount += 1;
                 }
             }
         }
@@ -807,15 +815,6 @@ class User extends Person {
         if ($foundUnknownType) {
             // don't know what to do, skip for now
             $GLOBALS['log']->fatal('Found unknown type: ' . $unknownTypes);
-        }
-
-        $exceededLimitTypes = [];
-
-        // no subscription
-        if (empty($sysSubscriptions)) {
-            $exceededLimitTypes = $userCountByType;
-            $license_seats_needed = $totalUserCount;
-            return $exceededLimitTypes;
         }
 
         foreach ($userCountByType as $licenseType => $count) {

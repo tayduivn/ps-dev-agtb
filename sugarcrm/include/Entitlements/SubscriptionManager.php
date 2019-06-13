@@ -85,10 +85,10 @@ class SubscriptionManager
     /**
      * get subscription, either go to db or license server to get subscription content
      *
-     * @param string $licenseKey
+     * @param null|string $licenseKey
      * @return null|Subscription
      */
-    protected function getSubscription(string $licenseKey)
+    protected function getSubscription(?string $licenseKey)
     {
         if (empty($licenseKey)) {
             return null;
@@ -216,24 +216,30 @@ class SubscriptionManager
      * get list of subscriptions
      * @return array
      */
-    public function getSystemSubscriptions()
+    public function getSystemSubscriptions() : array
     {
         $licenseKey = $this->getLicenseKey();
+        if (empty($licenseKey)) {
+            return [];
+        }
         $subscription = $this->getSubscription($licenseKey);
-        return !empty($subscription) ? $subscription->getSubscriptions() : null;
+        return !empty($subscription) ? $subscription->getSubscriptions() : [];
     }
 
     /**
      * get subscription keys
      * @return array
      */
-    public function getSystemSubscriptionKeys()
+    public function getSystemSubscriptionKeys() : array
     {
         if (!empty($this->systemSubscriptionKeys)) {
             return $this->systemSubscriptionKeys;
         }
 
         $licenseKey = $this->getLicenseKey();
+        if (empty($licenseKey)) {
+            return [];
+        }
         $subscription = $this->getSubscription($licenseKey);
         if (empty($subscription)) {
             return [];
@@ -364,8 +370,7 @@ class SubscriptionManager
                 return $type;
             }
         }
-
-        throw new \Exception('no default license type found!');
+        return '';
     }
 }
 //END REQUIRED CODE DO NOT MODIFY

@@ -35,7 +35,7 @@ class SubscriptionManagerTest extends TestCase
      *
      * @dataProvider getUserSubscriptionsProvider
      */
-    public function testGetUserSubscriptions($data, $userLicenseType, $isAdmin, $expected)
+    public function testGetUserSubscriptions($data, $userLicenseType, $licenseKey, $isAdmin, $expected)
     {
         $userMock = $this->getMockBuilder(\User::class)
             ->disableOriginalConstructor()
@@ -59,7 +59,7 @@ class SubscriptionManagerTest extends TestCase
 
         $subMock->expects($this->any())
             ->method('getLicenseKey')
-            ->will($this->returnValue('any_license_key'));
+            ->will($this->returnValue($licenseKey));
 
         $this->assertSame($expected, $subMock->getUserSubscriptions($userMock));
     }
@@ -72,6 +72,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":1010,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 [],
+                'any_key',
                 true,
                 ['CURRENT'],
             ],
@@ -79,6 +80,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":0,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['SUGAR_SERVE'],
+                'any_key',
                 false,
                 ['SUGAR_SERVE'],
             ],
@@ -86,6 +88,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":1010,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['SUGAR_SERVE'],
+                'any_key',
                 false,
                 ['SUGAR_SERVE'],
             ],
@@ -93,6 +96,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"914f07ac-3acb-3a3a-8d4f-570fe8dcae78","debug":0,"addons":{"11d7e3f8-ed89-f588-e9af-4dbf44a9b207":{"quantity":"150","product_name":"iPad with offline sync","expiration_date":1898582400},"37f53940-8ca0-e49a-5b11-4dbf4499a788":{"quantity":"150","product_name":"Blackberry with offline sync","expiration_date":1898582400},"4052c256-ab6c-6111-b6f8-4dbf44ae8408":{"quantity":"150","product_name":"Sugar Plug-in for Lotus Notes","expiration_date":1898582400},"b0fade74-2556-d181-83c7-4dbf44ee21fa":{"quantity":"150","product_name":"iPhone with offline sync","expiration_date":1898582400}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"e6e4d734-ce3c-2163-b218-4942c7410ef0","quantity_c":150,"account_name":"SugarCRM Partner Portal Login","account_type":"Partner","date_entered":1460685667,"evaluation_c":0,"portal_users":150,"date_modified":1554170401,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1898582400,"subscription_id":"5fd99624e58ec184c96d0520d9ab8b2d","term_end_date_c":1898582400,"term_start_date_c":1460617200,"enforce_user_limit":0,"od_instance_name_c":"qatest","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['CURRENT'],
+                'any_key',
                 false,
                 ['CURRENT'],
             ],
@@ -100,6 +104,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"914f07ac-3acb-3a3a-8d4f-570fe8dcae78","debug":0,"addons":{"11d7e3f8-ed89-f588-e9af-4dbf44a9b207":{"quantity":"150","product_name":"iPad with offline sync","expiration_date":1898582400},"37f53940-8ca0-e49a-5b11-4dbf4499a788":{"quantity":"150","product_name":"Blackberry with offline sync","expiration_date":1898582400},"4052c256-ab6c-6111-b6f8-4dbf44ae8408":{"quantity":"150","product_name":"Sugar Plug-in for Lotus Notes","expiration_date":1898582400},"b0fade74-2556-d181-83c7-4dbf44ee21fa":{"quantity":"150","product_name":"iPhone with offline sync","expiration_date":1898582400}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"e6e4d734-ce3c-2163-b218-4942c7410ef0","quantity_c":150,"account_name":"SugarCRM Partner Portal Login","account_type":"Partner","date_entered":1460685667,"evaluation_c":0,"portal_users":150,"date_modified":1554170401,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1898582400,"subscription_id":"5fd99624e58ec184c96d0520d9ab8b2d","term_end_date_c":1898582400,"term_start_date_c":1460617200,"enforce_user_limit":0,"od_instance_name_c":"qatest","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['SUGAR_SERVE'],
+                'any_key',
                 false,
                 [],
             ],
@@ -107,6 +112,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"914f07ac-3acb-3a3a-8d4f-570fe8dcae78","debug":0,"addons":{"11d7e3f8-ed89-f588-e9af-4dbf44a9b207":{"quantity":"150","product_name":"iPad with offline sync","expiration_date":1898582400},"37f53940-8ca0-e49a-5b11-4dbf4499a788":{"quantity":"150","product_name":"Blackberry with offline sync","expiration_date":1898582400},"4052c256-ab6c-6111-b6f8-4dbf44ae8408":{"quantity":"150","product_name":"Sugar Plug-in for Lotus Notes","expiration_date":1898582400},"b0fade74-2556-d181-83c7-4dbf44ee21fa":{"quantity":"150","product_name":"iPhone with offline sync","expiration_date":1898582400}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"e6e4d734-ce3c-2163-b218-4942c7410ef0","quantity_c":150,"account_name":"SugarCRM Partner Portal Login","account_type":"Partner","date_entered":1460685667,"evaluation_c":0,"portal_users":150,"date_modified":1554170401,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1898582400,"subscription_id":"5fd99624e58ec184c96d0520d9ab8b2d","term_end_date_c":1898582400,"term_start_date_c":1460617200,"enforce_user_limit":0,"od_instance_name_c":"qatest","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['SUGAR_SERVE'],
+                'any_key',
                 true,
                 ['CURRENT'],
             ],
@@ -114,6 +120,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"ffffc6a2-6ac3-11e9-b0f5-02c10f456dba","debug":0,"addons":[],"emails":[],"status":"enabled","audited":1,"domains":[],"product":"","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":10,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597765,"evaluation_c":0,"portal_users":0,"date_modified":1556597789,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"47fa5aa6620415261cd7bcd2a8de6d31","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"aa8834fa-6ac0-11e9-b588-02c10f456dba","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['CURRENT'],
+                'any_key',
                 false,
                 ['SUGAR_SERVE'],
             ],
@@ -121,6 +128,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"no subscription section": {"quantity" : "100"}}',
                 ['CURRENT'],
+                'any_key',
                 false,
                 [],
             ],
@@ -128,6 +136,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":0,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['SUGAR_SELL'],
+                'any_key',
                 false,
                 [],
             ],
@@ -135,6 +144,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":0,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['SUGAR_SELL'],
+                'any_key',
                 true,
                 ['SUGAR_SERVE'],
             ],
@@ -142,6 +152,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":1010,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['SUGAR_SELL'],
+                'any_key',
                 false,
                 [],
             ],
@@ -149,6 +160,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":1010,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['SUGAR_SERVE', 'CURRENT'],
+                'any_key',
                 false,
                 ['SUGAR_SERVE', 'CURRENT'],
             ],
@@ -156,6 +168,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"914f07ac-3acb-3a3a-8d4f-570fe8dcae78","debug":0,"addons":{"11d7e3f8-ed89-f588-e9af-4dbf44a9b207":{"quantity":"150","product_name":"iPad with offline sync","expiration_date":1898582400},"37f53940-8ca0-e49a-5b11-4dbf4499a788":{"quantity":"150","product_name":"Blackberry with offline sync","expiration_date":1898582400},"4052c256-ab6c-6111-b6f8-4dbf44ae8408":{"quantity":"150","product_name":"Sugar Plug-in for Lotus Notes","expiration_date":1898582400},"b0fade74-2556-d181-83c7-4dbf44ee21fa":{"quantity":"150","product_name":"iPhone with offline sync","expiration_date":1898582400}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"e6e4d734-ce3c-2163-b218-4942c7410ef0","quantity_c":150,"account_name":"SugarCRM Partner Portal Login","account_type":"Partner","date_entered":1460685667,"evaluation_c":0,"portal_users":150,"date_modified":1554170401,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1898582400,"subscription_id":"5fd99624e58ec184c96d0520d9ab8b2d","term_end_date_c":1898582400,"term_start_date_c":1460617200,"enforce_user_limit":0,"od_instance_name_c":"qatest","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 ['CURRENT'],
+                'any_key',
                 false,
                 ['CURRENT'],
             ],
@@ -163,6 +176,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"ffffc6a2-6ac3-11e9-b0f5-02c10f456dba","debug":0,"addons":[],"emails":[],"status":"enabled","audited":1,"domains":[],"product":"","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":10,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597765,"evaluation_c":0,"portal_users":0,"date_modified":1556597789,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"47fa5aa6620415261cd7bcd2a8de6d31","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"aa8834fa-6ac0-11e9-b588-02c10f456dba","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 [],
+                'any_key',
                 false,
                 ['SUGAR_SERVE'],
             ],
@@ -170,6 +184,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"ffffc6a2-6ac3-11e9-b0f5-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Sugar Serve (DEV ONLY)","start_date_c":1556175600,"expiration_date":1587798000,"product_code_c":""}},"emails":[],"status":"enabled","audited":1,"domains":[],"perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597765,"evaluation_c":0,"portal_users":0,"date_modified":1558663202,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"47fa5aa6620415261cd7bcd2a8de6d31","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 [],
+                'any_key',
                 false,
                 ['SUGAR_SERVE'],
             ],
@@ -177,6 +192,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":1010,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 [],
+                'any_key',
                 false,
                 ['CURRENT'],
             ],
@@ -184,6 +200,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":"10","product_name":"Sugar Serve (DEV ONLY)","start_date_c":1556175600,"expiration_date":1587798000,"product_code_c":""},"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae":{"quantity":100,"product_name":"Sugar Enterprise","start_date_c":1556175600,"expiration_date":1587798000,"product_code_c":"Ent"}},"emails":[],"status":"enabled","audited":1,"domains":[],"perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1558663202,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 [],
+                'any_key',
                 false,
                 ['CURRENT'],
             ],
@@ -191,6 +208,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}, "181aee1c-7b3e-11e9-b962-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":1010,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 [],
+                'any_key',
                 true,
                 ['CURRENT'],
             ],
@@ -198,6 +216,7 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}, "181aee1c-7b3e-11e9-b962-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":0,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
                 [],
+                'any_key',
                 true,
                 ['SUGAR_SERVE'],
             ],
@@ -205,7 +224,16 @@ class SubscriptionManagerTest extends TestCase
             [
                 '{"success":false,"error":"Subscription Not Found","subscription":null}',
                 ['CURRENT'],
+                'any_key',
                 false,
+                [],
+            ],
+            // user's license Type is empty, product is SERVE + SELL, license key is empty
+            [
+                '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}, "181aee1c-7b3e-11e9-b962-02c10f456dba":{"quantity":10,"product_name":"Service Cloud (DEV ONLY)","expiration_date":1587798000}},"emails":[],"status":"enabled","audited":1,"domains":[],"product":"ENT","perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","quantity_c":0,"account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1556597786,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1587798000,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1587798000,"term_start_date_c":1556175600,"enforce_user_limit":1,"od_instance_name_c":"","enforce_portal_users":0,"producttemplate_id_c":"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
+                [],
+                null,
+                true,
                 [],
             ],
         ];
