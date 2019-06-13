@@ -12,6 +12,8 @@
 require_once('modules/Configurator/Forms.php');
 require_once('modules/Administration/Forms.php');
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
+
 class ConfiguratorViewEdit extends ViewEdit
 {
     /**
@@ -47,6 +49,12 @@ class ConfiguratorViewEdit extends ViewEdit
         $sugarConfig = SugarConfig::getInstance();
         $configurator->parseLoggerSettings();
         $focus = Administration::getSettings();
+
+        $idpConfig = new IdmConfig(\SugarConfig::getInstance());
+        $idmEnabled = $idpConfig->isIDMModeEnabled();
+        $devModeOn = $configurator->config['developerMode'];
+        $showCatalogConfig = $idmEnabled || (!$idmEnabled && $devModeOn);
+        $this->ss->assign('SHOW_CATALOG_CONFIG', $showCatalogConfig);
 
         $this->ss->assign('MOD', $mod_strings);
         $this->ss->assign('APP', $app_strings);

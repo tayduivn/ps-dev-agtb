@@ -454,6 +454,7 @@
 	</tr>
 </table>
 //BEGIN SUGARCRM flav=ent ONLY
+{if $SHOW_CATALOG_CONFIG}
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
     <tr>
         <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_SUGAR_CATALOG_SETTINGS}</h4></th>
@@ -474,6 +475,7 @@
 	</tr>
 	{/if}
 </table>
+{/if}
 //END SUGARCRM flav=ent ONLY
 
 <div style="padding-top: 2px;">
