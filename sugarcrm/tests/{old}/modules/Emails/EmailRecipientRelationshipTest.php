@@ -361,75 +361,69 @@ class EmailRecipientRelationshipTest extends TestCase
      */
     public function testAdd_RolesCanHaveMultipleParticipants()
     {
+        $expectedResults = array();
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
 
         $contact1 = SugarTestContactUtilities::createContact();
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact1));
         $this->assertTrue($result, 'The contact should have been added without an email address');
+        $participantKey = 'Contacts:' . $contact1->id;
+        $expectedResults[$participantKey] = '';
 
         $contact2 = SugarTestContactUtilities::createContact();
         $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact2, $address1));
         $this->assertTrue($result, 'A different contact should have been added with an email address');
+        $participantKey = 'Contacts:' . $contact2->id;
+        $expectedResults[$participantKey] = $address1->id;
 
         $contact3 = SugarTestContactUtilities::createContact();
         $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact3, $address2));
         $this->assertTrue($result, 'A different contact should have been added with a different email address');
+        $participantKey = 'Contacts:' . $contact3->id;
+        $expectedResults[$participantKey] = $address2->id;
 
         $lead1 = SugarTestLeadUtilities::createLead();
         $result = $this->relationship->add($email, $this->createEmailParticipant($lead1));
         $this->assertTrue($result, 'The lead should have been added without an email address');
+        $participantKey = 'Leads:' . $lead1->id;
+        $expectedResults[$participantKey] = '';
 
         $lead2 = SugarTestLeadUtilities::createLead();
         $result = $this->relationship->add($email, $this->createEmailParticipant($lead2, $address1));
         $this->assertTrue($result, 'The lead should have been added even with a matching email address');
+        $participantKey = 'Leads:' . $lead2->id;
+        $expectedResults[$participantKey] = $address1->id;
 
         $address3 = SugarTestEmailAddressUtilities::createEmailAddress();
         $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address3));
         $this->assertTrue($result, 'The plain email address should have been added');
+        $participantKey = 'Email-Address:' . $address3->id;
+        $expectedResults[$participantKey] = '';
 
         $address4 = SugarTestEmailAddressUtilities::createEmailAddress();
         $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address4));
         $this->assertTrue($result, 'Another plain email address should have been added');
+        $participantKey = 'Email-Address:' . $address4->id;
+        $expectedResults[$participantKey] = '';
 
         $beans = $email->to->getBeans();
         $this->assertCount(7, $beans);
 
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact1->id, $bean->parent_id);
-        $this->assertEmpty($bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact2->id, $bean->parent_id);
-        $this->assertSame($address1->id, $bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact3->id, $bean->parent_id);
-        $this->assertSame($address2->id, $bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Leads', $bean->parent_type);
-        $this->assertSame($lead1->id, $bean->parent_id);
-        $this->assertEmpty($bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Leads', $bean->parent_type);
-        $this->assertSame($lead2->id, $bean->parent_id);
-        $this->assertSame($address1->id, $bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertEmpty($bean->parent_type);
-        $this->assertEmpty($bean->parent_id);
-        $this->assertSame($address3->id, $bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertEmpty($bean->parent_type);
-        $this->assertEmpty($bean->parent_id);
-        $this->assertSame($address4->id, $bean->email_address_id);
+        foreach ($beans as $bean) {
+            $emailAddressId = empty($bean->email_address_id) ? '' : $bean->email_address_id;
+            if (!empty($bean->parent_type)) {
+                $participant = $bean->parent_type . ':' . $bean->parent_id;
+                $this->assertArrayHasKey($participant, $expectedResults);
+                $this->assertSame($expectedResults[$participant], $emailAddressId);
+            } else {
+                $this->assertEmpty($bean->parent_type);
+                $this->assertEmpty($bean->parent_id);
+                $key = 'Email-Address:' . $emailAddressId;
+                $this->assertArrayHasKey($key, $expectedResults);
+            }
+        }
 
         $email->retrieveEmailText();
         $expected = "{$contact1->name} <{$contact1->email1}>, {$contact2->name} <{$address1->email_address}>, " .
