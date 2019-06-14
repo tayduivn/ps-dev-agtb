@@ -4917,9 +4917,10 @@ Sincerely, SugarCRM',
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
     //end portal
 
-    // for customer service
-    // labels and final names TBD!
-    'LBL_AGENT_WORKBENCH' => 'Agent Workbench',
+    // Final name given by marketing is Service Console
+    // Original name for this feature was Agent Workbench and was used
+    // throughout the development of this product.
+    'LBL_AGENT_WORKBENCH' => 'Service Console',
     'LBL_AGENT_WORKBENCH_OVERVIEW' => 'Overview',
     'LBL_CASE_OVERDUE' => 'Overdue',
     'LBL_CASE_DUE_SOON' => 'Due soon',
