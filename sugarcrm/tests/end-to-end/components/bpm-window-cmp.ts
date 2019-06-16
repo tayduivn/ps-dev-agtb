@@ -31,11 +31,24 @@ export default class BpmWindowCmp extends BaseView {
             field: {
               $: '.adam-field',
               textArea: '#notesTextArea',
-              addNotesButton: '.adam-button.btn.btn-primary'
+              addNotesButton: '.adam-button.btn.btn-primary',
+              user: '.select2-container',
+              type: {
+                  $: '#adhoc_type',
+                  option: 'option[value={{routeType}}]',
+              },
+              label: '#not_content'
             },
+
             // to get value of already created last note
             lastFieldNote: '.adam-field:last-child div:first-child p',
             lastFieldDeleteButton: '.adam-field:last-child a#deleteNoteBtn',
+
+            // to access Save and Cancel buttons
+            buttons: {
+                save: '.adam-button.btn-primary',
+                cancel: '.adam-button.btn-invisible',
+            },
 
             // to do screen compare
             elements: {
@@ -96,5 +109,69 @@ export default class BpmWindowCmp extends BaseView {
      */
     public async deleteLastNote() {
         return this.driver.waitForVisibleAndClick(this.$('lastFieldDeleteButton'));
+    }
+
+    /**
+     * Change process user
+     *
+     * @param {string} userName
+     * @returns {Promise<void>}
+     */
+    public async selectProcessUser(userName: string) {
+        // Click on the 'User' control
+        await this.driver.click(this.$('field.user'));
+        await this.driver.waitForApp();
+
+        // Type in the new value
+        await this.driver.keys(userName);
+        // Forcing the pause to wait for the select2 debounce after text entry
+        await this.driver.pause(1500);
+        await this.driver.waitForApp();
+
+        // Confirm new value by click <enter>
+        await this.driver.keys('\uE007');
+        await this.driver.pause(1000);
+        await this.driver.waitForApp();
+    }
+
+    /**
+     * Change Process Type
+     *
+     * @param {string} routeType
+     * @returns {Promise<void>}
+     */
+    public async selectRoutingType(routeType: string) {
+        // Click on the 'Type' control
+        await this.driver.click(this.$('field.type'));
+        await this.driver.pause(1500);
+        await this.driver.waitForApp();
+        // Select routing type
+        await this.driver.click(this.$('field.type.option', {routeType}));
+        await this.driver.pause(1500);
+        await this.driver.waitForApp();
+    }
+
+    /**
+     * Add a note while assign a new process user
+     *
+     * @param {string} val
+     * @returns {Promise<void>}
+     */
+    public async addText(val: string) {
+        let selector = this.$('field.label');
+        await this.driver.setValue(selector, val);
+        await this.driver.waitForApp();
+    }
+
+    /**
+     * Click Save or Cancel button
+     *
+     * @param {string} btnName
+     * @returns {Promise<void>}
+     */
+    public async btnClick(btnName: string) {
+        let selector = this.$(`buttons.${btnName}`);
+        await this.driver.click(selector);
+        await this.driver.waitForApp();
     }
 }

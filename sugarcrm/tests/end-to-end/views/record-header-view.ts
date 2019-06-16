@@ -99,8 +99,10 @@ export default class RecordHeaderView extends BaseView {
                 'bpm_cancel_button': 'a[name="project_cancel_button"]:not(.hide)',
                 'bpm_import_button': 'a[name="project_finish_button"]:not(.hide)',
                 'approve': 'a[name="approve_button"]:not(.hide)',
+                'route': 'a[name="reject_button"]:not(.hide)',
                 'status': 'a[name="status"]:not(.hide)',
                 'addnotes': 'a[name="add-notes"]:not(.hide)',
+                'selectnewprocessuser': 'a[name="duplicate_button"]:not(.hide)',
 
                 // Process Email template
                 'email_template_cancel_button': 'a[name="emailtemplates_cancel_button"]:not(.hide)',
