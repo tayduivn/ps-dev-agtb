@@ -1462,7 +1462,7 @@ if (!class_exists('TCPDF', false)) {
 			// set default JPEG quality
 			$this->jpeg_quality = 75;
 			// initialize some settings
-			$this->utf8Bidi(array(''), '');
+			$this->utf8Bidi(array(), '');
 			// set default font
 			$this->SetFont($this->FontFamily, $this->FontStyle, $this->FontSizePt);
 			// check if PCRE Unicode support is enabled
