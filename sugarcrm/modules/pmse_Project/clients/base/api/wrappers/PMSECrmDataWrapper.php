@@ -890,7 +890,7 @@ WHERE (accounts.deleted = 0 AND eabr.primary_address = 1) AND (email_address LIK
 SQL;
         $query = $this->db->getConnection()
             ->getDatabasePlatform()
-            ->modifyLimitQuery($query, 0, 25);
+            ->modifyLimitQuery($query, 25);
 
         $stmt = $this->db->getConnection()
             ->executeQuery(
