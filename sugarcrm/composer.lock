@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe6fe7c45dfaf5a1ac4d13b1c33defa1",
+    "content-hash": "199e8b225d5e49be4426d7d153ec4c3d",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2658,11 +2658,12 @@
         },
         {
             "name": "sugarcrm/identity-provider",
-            "version": "1.6.1",
+            "version": "1.6.2",
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "767a9d4ddbf6f2e610693b363679346caaef370d"
+                "reference": "e1d91021b4fa4636fbd121e8b733046739ba112c",
+                "shasum": null
             },
             "require": {
                 "doctrine/dbal": "~2.2",
