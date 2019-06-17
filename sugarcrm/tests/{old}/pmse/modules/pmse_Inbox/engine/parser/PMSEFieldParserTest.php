@@ -1118,6 +1118,31 @@ class PMSEFieldParserTest extends TestCase
         $this->assertEquals($expectedToken, $processedToken);
     }
 
+    /**
+     * @covers PMSEFieldParser::parseTokenValue
+     */
+    public function testParseTokenValueNull()
+    {
+        $beanList = array('Leads' => 'Lead');
+        $beanObject = $this->getMockBuilder('Lead')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $beanObject->email_addresses_primary = 'anything';
+
+        // set before value to null
+        $beanObject->dataChanges = array('email_addresses_primary' => array('before' => null));
+
+        $token = array('Leads', 'email_addresses_primary', 'changes_from');
+        $this->dataParser->setEvaluatedBean($beanObject);
+        $this->dataParser->setBeanList($beanList);
+        $processedToken = $this->dataParser->parseTokenValue($token);
+
+        // should return empty string instead of null
+        $this->assertSame('', $processedToken[0]);
+    }
+
     public function testParseTokenValueToken()
     {
         $preferencesArray = array();

@@ -345,6 +345,14 @@ class PMSEFieldParser extends PMSEAbstractDataParser implements PMSEDataParserIn
                             } else {
                                 $value = $dataChanges[$field]['after'];
                             }
+                            // The value coming from $bean->dataChanges can be null.
+                            // This happens to text fields (text, textarea, url, etc), date fields (date, datetime)
+                            // and dropdown. The number fields (int, float, decimal) seem to have default 0, not null.
+                            // But we should not use null because null indicates no changes.
+                            // See the comment below inside the else block
+                            if ($value === null) {
+                                $value = '';
+                            }
                         } else {
                             // used as a flag that means no changes
                             $value = null;
