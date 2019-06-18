@@ -44,10 +44,13 @@ class ACLAction  extends SugarBean
             foreach($ACLActions[$type]['actions'] as $action_name =>$action_def){
 
                 $action = BeanFactory::newBean('ACLActions');
-                $query = "SELECT * FROM " . $action->table_name . " WHERE name='$action_name' AND category = '$category' AND acltype='$type' AND deleted=0 ";
-                $row = $db->fetchOne($query);
+                $id = $db->getConnection()
+                    ->executeQuery(
+                        "SELECT id FROM {$action->table_name} WHERE name=? AND category=? AND acltype=? and deleted=0",
+                        [$action_name, $category, $type]
+                    )->fetchColumn();
                 //only add if an action with that name and category don't exist
-                if (empty($row)) {
+                if (false === $id) {
                     $action->name = $action_name;
                     $action->category = $category;
                     $action->aclaccess = $action_def['default'];
@@ -169,20 +172,25 @@ class ACLAction  extends SugarBean
     *
     *
     */
-    public static function getDefaultActions($type='module', $action=''){
+    public static function getDefaultActions($type = 'module', $action = '')
+    {
         $query = "SELECT * FROM acl_actions WHERE deleted=0 ";
-        if(!empty($type)){
-            $query .= " AND acltype='$type'";
+        $params = [];
+        if (!empty($type)) {
+            $query .= ' AND acltype=?';
+            $params[] = $type;
         }
-        if(!empty($action)){
-            $query .= "AND name='$action'";
+        if (!empty($action)) {
+            $query .= 'AND name=?';
+            $params[] = $action;
         }
         $query .= " ORDER BY category";
 
         $db = DBManagerFactory::getInstance();
-        $result = $db->query($query);
-        $default_actions = array();
-        while($row = $db->fetchByAssoc($result) ){
+        $stmt = $db->getConnection()
+            ->executeQuery($query, $params);
+        $default_actions = [];
+        foreach ($stmt as $row) {
             $acl = BeanFactory::newBean('ACLActions');
             $acl->populateFromRow($row);
             $default_actions[] = $acl;
