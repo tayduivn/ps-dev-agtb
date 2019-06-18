@@ -289,7 +289,7 @@
      */
     _patchFieldsToModel: function(model) {
         var fieldsMeta = this.meta.preview;
-        model.set('fieldsMeta', fieldsMeta[model.get('moduleName')]);
+        model.set('fieldsMeta', fieldsMeta[model.get('_module')]);
     },
 
     /**

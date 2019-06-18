@@ -328,7 +328,7 @@ describe('Base.View.ActivityTimeline', function() {
             view.meta = {preview: previewMeta};
 
             _.each(fieldsMeta, function(metaObj) {
-                var model = app.data.createBean(metaObj.name, {moduleName: metaObj.name});
+                var model = app.data.createBean(metaObj.name, {_module: metaObj.name});
                 view._patchFieldsToModel(model);
                 expect(model.get('fieldsMeta')).toEqual(metaObj.meta);
             });
