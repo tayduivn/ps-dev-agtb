@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\LoadUserOnSessionListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDC\SessionListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDC\PostLoginAuthListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDC\UpdateUserLanguageListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDC\UpdateUserLastLoginListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
 
@@ -46,6 +47,11 @@ class AuthProviderOIDCManagerBuilder extends AuthProviderManagerBuilder
         $dispatcher->addListener(
             AuthenticationEvents::AUTHENTICATION_SUCCESS,
             [new UpdateUserLastLoginListener($session), 'execute']
+        );
+
+        $dispatcher->addListener(
+            AuthenticationEvents::AUTHENTICATION_SUCCESS,
+            [new UpdateUserLanguageListener(), 'execute']
         );
         $dispatcher->addListener(
             AuthenticationEvents::AUTHENTICATION_SUCCESS,
