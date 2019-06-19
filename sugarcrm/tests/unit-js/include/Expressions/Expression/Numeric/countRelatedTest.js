@@ -60,5 +60,13 @@ describe('CountRelatedExpression Function', function() {
             sinonSandbox.stub(res.context.model, 'get').returns(payload);
             expect(parseFloat(res.evaluate())).toBe(2);
         });
+        it('should return the count from target field', function() {
+            var opp = new SUGAR.expressions.StringLiteralExpression(['opportunities']);
+            var context = getSLContext(model);
+            context.target = 'count_rel_opportunities';
+            var res = new SUGAR.expressions.CountRelatedExpression([opp], context);
+            sinonSandbox.stub(res.context.model, 'get').returns(1);
+            expect(parseFloat(res.evaluate())).toBe(1);
+        });
     });
 });
