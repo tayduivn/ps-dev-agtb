@@ -237,7 +237,11 @@ class PMSEFieldParser extends PMSEAbstractDataParser implements PMSEDataParserIn
      */
     public function parseVariable($criteriaToken, $params = array())
     {
-        $tokenArray = array($criteriaToken->expModule, $criteriaToken->expValue, $criteriaToken->expOperator);
+        $tokenArray = array(
+            $criteriaToken->expModule ?? null,
+            $criteriaToken->expValue ?? null,
+            $criteriaToken->expOperator ?? null,
+        );
         $tokenValue = $this->parseTokenValue($tokenArray);
         $tokenValue = $tokenValue[0];
         if ($criteriaToken->expSubtype == 'Currency') {

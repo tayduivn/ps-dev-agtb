@@ -125,8 +125,25 @@ class PMSECriteriaEvaluatorTest extends TestCase
         $result = $criteriaEvaluatorMock->evaluateCriteriaToken(array_pop($expression));
         
         $this->assertEquals($expectedToken, $result);
-        
+
+        // Current value is null means the status field is not changed,
+        // so the returned expValue should be evaluated false
+        $criteriaToken = new stdClass();
+        $criteriaToken->expType = "MODULE";
+        $criteriaToken->expSubtype = "DropDown";
+        $criteriaToken->expLabel = "Cases (Status changes )";
+        $criteriaToken->expValue = "New";
+        $criteriaToken->expOperator = "changes";
+        $criteriaToken->expModule = "Cases";
+        $criteriaToken->expField = "status";
+        $criteriaToken->isUpdate = true;
+        $criteriaToken->currentValue = array(0 => null);
+
+        $result = $criteriaEvaluatorMock->evaluateCriteriaToken($criteriaToken);
+
+        $this->assertFalse($result->expValue);
     }
+
     public function testEvaluateCriteriaTokenList()
     {
         $fixture  = '[
