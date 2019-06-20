@@ -4,7 +4,7 @@
     "prepublish": "./node_modules/gulp/bin/gulp.js ts"
   },
   "devDependencies": {
-    "@sugarcrm/seedbed": "0.8.10",
+    "@sugarcrm/seedbed": "0.8.11",
     "@types/async": "1.4.28",
     "@types/bluebird": "3.0.37",
     "@types/chalk": "0.4.31",
