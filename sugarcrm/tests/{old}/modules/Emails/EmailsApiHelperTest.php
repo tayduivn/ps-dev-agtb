@@ -31,6 +31,11 @@ class EmailsApiHelperTest extends TestCase
         $this->helper = new EmailsApiHelper($api);
     }
 
+    protected function tearDown()
+    {
+        SugarTestNoteUtilities::removeAllCreatedNotes();
+    }
+
     /**
      * @covers ::formatForApi
      */
@@ -61,6 +66,61 @@ class EmailsApiHelperTest extends TestCase
             'state' => $bean->state,
         ];
         $this->assertEquals($expected, $data);
+    }
+
+    /**
+     * @covers ::formatForApi
+     */
+    public function testFormatForApi_InlineImagesAreConverted()
+    {
+        $noteId1 = Uuid::uuid1();
+        $noteId2 = Uuid::uuid1();
+        $uploadId = Uuid::uuid1();
+
+        $cid1 = "cid:{$noteId1}.gif";
+        $cid2 = "cid:{$noteId2}.png";
+
+        $expected1 = "/cache/images/{$noteId1}.gif";
+        $expected2 = "/cache/images/{$noteId2}.png";
+
+        $bean = BeanFactory::newBean('Emails');
+        $bean->new_with_id = false;
+        $bean->id = Uuid::uuid1();
+        $bean->name = 'Renewal notice';
+        $bean->state = Email::STATE_ARCHIVED;
+        $bean->description_html = <<<EOHTML
+<html>
+<p><img border="0" width="1" height="20" class="image" src="{$cid1}"/></p>
+<p><img border="0" width="1" height="30" class="image" src="{$cid2}"/></p>
+</html>
+EOHTML;
+
+        $note1 = SugarTestNoteUtilities::createNote(
+            $noteId1,
+            [
+                'email_id' => $bean->id,
+                'file_mime_type' => 'image/gif',
+            ]
+        );
+        $note2 = SugarTestNoteUtilities::createNote(
+            $noteId2,
+            [
+                'email_id' => $bean->id,
+                'file_mime_type' => 'image/png',
+                'upload_id' => $uploadId,
+            ]
+        );
+
+        $fieldList = [
+            'id',
+            'name',
+            'description_html',
+        ];
+
+        $data = $this->helper->formatForApi($bean, $fieldList);
+
+        $this->assertContains($expected1, $data['description_html'], 'Image 1 not converted');
+        $this->assertContains($expected2, $data['description_html'], 'Image 2 not converted');
     }
 
     /**
