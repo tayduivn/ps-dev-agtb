@@ -42,8 +42,9 @@ class SugarSAMLUserMappingTest extends TestCase
     {
         $mapper = new SugarSAMLUserMapping([]);
         $result = $mapper->map($this->samlResponse);
-        $this->assertArrayHasKey('create', $result);
-        $this->assertArrayHasKey('update', $result);
+        $this->assertArrayHasKey('attributes', $result);
+        $this->assertArrayHasKey('create', $result['attributes']);
+        $this->assertArrayHasKey('update', $result['attributes']);
     }
 
     /**
@@ -58,8 +59,10 @@ class SugarSAMLUserMappingTest extends TestCase
                     'attr1' => ['foo'],
                 ],
                 [
-                    'create' => [],
-                    'update' => [],
+                    'attributes' => [
+                        'create' => [],
+                        'update' => [],
+                    ],
                 ],
             ],
             'missing response attributes' => [
@@ -74,8 +77,10 @@ class SugarSAMLUserMappingTest extends TestCase
                 ],
                 [],
                 [
-                    'create' => [],
-                    'update' => [],
+                    'attributes' => [
+                        'create' => [],
+                        'update' => [],
+                    ],
                 ],
             ],
             'config and response attributes are present' => [
@@ -98,11 +103,13 @@ class SugarSAMLUserMappingTest extends TestCase
                     'attr3' => ['bar'],
                 ],
                 [
-                    'create' => [
-                        'user_name' => 'foo',
-                        'first_name' => 123,
+                    'attributes' => [
+                        'create' => [
+                            'user_name' => 'foo',
+                            'first_name' => 123,
+                        ],
+                        'update' => [],
                     ],
-                    'update' => [],
                 ],
             ],
         ];
