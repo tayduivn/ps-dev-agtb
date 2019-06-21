@@ -27,16 +27,18 @@ class Subscription
     const SUGAR_SERVE_KEY = 'SUGAR_SERVE';
     const SUGAR_BASIC_KEY = 'CURRENT';
 
-    // mapping Sugar Serve SKU key to code
-    const MAPPING_PRODTEMPLATE_TO_SUBCODE = [
+    /**
+     * mapping well-known subscription_ids to keys
+     */
+    const SUBSCRIPTION_ID_MAPPING = [
         '181aee1c-7b3e-11e9-b962-02c10f456dba' => self::SUGAR_SELL_KEY,
         'aa8834fa-6ac0-11e9-b588-02c10f456dba' => self::SUGAR_SERVE_KEY,
     ];
 
     /**
-     * legacy product codes
+     * mapping product codes to internal keys
      */
-    const PRODCODE_MAPPING = [
+    const PRODUCT_CODE_MAPPING = [
         'ENT' => self::SUGAR_BASIC_KEY,
         'PRO' => self::SUGAR_BASIC_KEY,
         'ULT' => self::SUGAR_BASIC_KEY,
@@ -138,48 +140,49 @@ class Subscription
         }
         // get top level
         $prodtemplateId = $this->producttemplate_id_c;
-        $quantity = $this->quantity_c;
+        $quantity = (int)$this->quantity_c;
         $expirationDate = $this->expiration_date;
         if (!empty($prodtemplateId) && isset($quantity) && $quantity > 0 && $expirationDate - time() > 0) {
-            if (isset(self::MAPPING_PRODTEMPLATE_TO_SUBCODE[$prodtemplateId])) {
+            if (isset(self::SUBSCRIPTION_ID_MAPPING[$prodtemplateId])) {
                 // don't need to go any further
-                $subscriptions[self::MAPPING_PRODTEMPLATE_TO_SUBCODE[$prodtemplateId]] = [
-                    'quantity' => (int)$quantity,
+                $subscriptions[self::SUBSCRIPTION_ID_MAPPING[$prodtemplateId]] = [
+                    'quantity' => $quantity,
                     'expiration_date' => $expirationDate,
                 ];
             } else {
                 // assume it is one of ENT, PRO, ULT, etc
                 // get current product
                 $subscriptions[self::SUGAR_BASIC_KEY] = [
-                    'quantity' => (int)$quantity,
+                    'quantity' => $quantity,
                     'expiration_date' => $expirationDate,
                 ];
             }
         }
 
-        // check addons, only interesting in Legacy product codes, 'SELL' or 'SERVE'
+        // check addons, only interested in 'SELL', 'SERVE' and Legacy product codes such as 'ENT', 'PRO', etc.
         // ignore any other addons for now
         foreach ($this->addons as $addonId => $addon) {
-            $quantity = $addon->quantity;
+            $quantity = (int)$addon->quantity;
             $expirationDate = $addon->expiration_date;
             if (isset($quantity) && $quantity > 0 && isset($expirationDate) && $expirationDate - time() > 0) {
-                if (isset(self::MAPPING_PRODTEMPLATE_TO_SUBCODE[$addonId])) {
+                if (isset(self::SUBSCRIPTION_ID_MAPPING[$addonId])) {
                     // using predefined subscription Ids to find out subscription types
-                    $subscriptions[self::MAPPING_PRODTEMPLATE_TO_SUBCODE[$addonId]] = [
-                        'quantity' => (int)$quantity,
+                    $subscriptions[self::SUBSCRIPTION_ID_MAPPING[$addonId]] = [
+                        'quantity' => $quantity,
                         'expiration_date' => $expirationDate,
                     ];
                 } else {
-                    // using product code to find out subscrition types
+                    // using product code to find out subscription types
                     $productCode = $addon->product_code_c;
-                    if (!empty($productCode) && !empty(self::PRODCODE_MAPPING[strtoupper($productCode)])) {
-                        if (isset($subscriptions[self::PRODCODE_MAPPING[strtoupper($productCode)]])) {
+                    if (!empty($productCode) && !empty(self::PRODUCT_CODE_MAPPING[strtoupper($productCode)])) {
+                        $key = self::PRODUCT_CODE_MAPPING[strtoupper($productCode)];
+                        if (isset($subscriptions[$key])) {
                             if (isset($GLOBALS['log'])) {
                                 $GLOBALS['log']->error('Duplicated product code found: ' . $productCode);
                             }
                         }
-                        $subscriptions[self::PRODCODE_MAPPING[strtoupper($productCode)]] = [
-                            'quantity' => (int)$quantity,
+                        $subscriptions[$key] = [
+                            'quantity' => $quantity,
                             'expiration_date' => $expirationDate,
                         ];
                     }
