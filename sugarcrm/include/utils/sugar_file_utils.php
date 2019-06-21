@@ -137,52 +137,31 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
  */
 function sugar_file_put_contents_atomic($filename, $data)
 {
-    if (!is_windows()) {
-        // On NFS, we want to interact with the target file system only at the final moment of rename
-        // in order to avoid race conditions, therefore, creating the temporary file in the temporary directory
-        $dir = sys_get_temp_dir();
-    } else {
-        // On Windows, we have to create the temporary file in the destination directory because otherwise,
-        // it will inherit the default permissions of the temporary directory which will block the web server
-        // from accessing the file
-        $dir = dirname($filename);
-    }
+    // Suppress notices like "file created in the system's temporary directory"
+    // which may happen on shadow/NFS but are not relevant and will fail PHPUnit tests
+    $level = error_reporting(error_reporting() & ~E_NOTICE);
+    $temp = tempnam(dirname($filename), 'sugar');
+    error_reporting($level);
 
-    $temp1 = tempnam($dir, 'sugar');
-
-    if ($temp1 === false) {
+    if ($temp === false) {
         return false;
     }
 
-    if (file_put_contents($temp1, $data) === false) {
-        unlink($temp1);
+    if (file_put_contents($temp, $data) === false) {
+        unlink($temp);
 
         return false;
     }
 
-    sugar_chmod($temp1);
+    sugar_chmod($temp);
 
-    //rename() from sys_get_temp_dir() to NFS was causing file corruption (BR-6968)
-    //during the concurrent file writes. $temp2
-    $temp2 = tempnam(dirname($filename), 'sugar');
+    if (!rename($temp, $filename)) {
+        unlink($temp);
 
-    if (!rename($temp1, $temp2)) {
-        // cleaning up temp1 file to avoid filling up temp1 dir
-        @unlink($temp1);
         return false;
-    } elseif (!rename($temp2, $filename)) {
-        @unlink($filename);
-        if (!rename($temp2, $filename)) {
-            // cleaning up temp2 file to avoid filling up temp1 dir
-            @unlink($temp2);
-            return false;
-        }
-        return file_exists($filename);
-    } else {
-        return file_exists($filename);
     }
 
-    return false;
+    return true;
 }
 
 /**
