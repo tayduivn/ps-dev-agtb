@@ -1301,12 +1301,12 @@ TeamUpdaterItem.prototype.setSelectedTeams = function (teams) {
             var data = that._getLineData(item);
 
             if (data !== null) {
-                if (that._selectedTeams.indexOf(data.id) >= 0) {
+                if (that._selectedTeams.indexOf(data) >= 0) {
                     var $lockButton = $(item).find('.adam-team-action[name=lock]');
                     $lockButton.addClass('active').find('i').removeClass('fa-lock').addClass('active fa-unlock-alt');
                     $lockButton.attr('data-original-title', App.lang.get('LBL_TEAM_SET_DISABLE'));
 
-                    existingValues.push(data.id);
+                    existingValues.push(data);
                 }
             }
         });
@@ -1345,7 +1345,7 @@ TeamUpdaterItem.prototype.setPrimaryTeam = function (team) {
             .removeClass('active').end().toArray();
         for (i = 0; i < lines.length; i += 1) {
             data = this._getLineData(lines[i]);
-            if (!_.isNull(data) && data.id === this._primaryTeam) {
+            if (!_.isNull(data) && data === this._primaryTeam) {
                 jQuery(lines[i]).find('.adam-team-action[name=primary]').addClass('active');
                 return this;
             }
@@ -1732,6 +1732,13 @@ TeamUpdaterItem.prototype.isAppendMode = function () {
 
 TeamUpdaterItem.prototype.getData = function () {
     var value = [], i;
+    if (this._value.length === 0) {
+        // we might need to retrieve directly from value control
+        var valueFromControl = this._getValueFromControl();
+        if (valueFromControl.length > 0) {
+            this._value = valueFromControl;
+        }
+    }
     for (i = 0; i < this._value.length; i++) {
         value.push(this._value[i].id);
     }
@@ -1748,7 +1755,7 @@ TeamUpdaterItem.prototype.getData = function () {
 
 TeamUpdaterItem.prototype._getLineData = function (line) {
     line = jQuery(line);
-    return line.find("input").select2('data');
+    return line.find('input').select2('val');
 };
 
 TeamUpdaterItem.prototype._performTeamAction = function () {
