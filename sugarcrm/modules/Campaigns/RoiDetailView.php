@@ -95,19 +95,21 @@ if (isset($_REQUEST['offset']) or isset($_REQUEST['record'])) {
 //Query for opportunities won, clickthroughs
 $campaign_id = $focus->id;
 
-$query = <<<SQL
-SELECT camp.name, count(*) opp_count
-FROM opportunities opp
-RIGHT JOIN campaigns camp ON camp.id = opp.campaign_id
--- //BEGIN SUGARCRM flav=ent ONLY
-WHERE opp.sales_status = ?
--- //END SUGARCRM flav=ent ONLY
--- //BEGIN SUGARCRM flav!=ent ONLY
-WHERE opp.sales_stage = ?
--- //END SUGARCRM flav!=ent ONLY 
-AND camp.id = ? AND opp.deleted=0
-GROUP BY camp.name
-SQL;
+$settings = Opportunity::getSettings();
+$query = 'SELECT camp.name, count(*) opp_count
+ FROM opportunities opp
+ RIGHT JOIN campaigns camp ON camp.id = opp.campaign_id';
+//BEGIN SUGARCRM flav=ent ONLY
+if ($settings['opps_view_by'] === 'RevenueLineItems') {
+    $query .= ' WHERE opp.sales_status = ?';
+} elseif ($settings['opps_view_by'] === 'Opportunities') {
+    $query .= ' WHERE opp.sales_stage = ?';
+}
+//END SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav!=ent ONLY
+$query .= ' WHERE opp.sales_stage = ?';
+//END SUGARCRM flav!=ent ONLY
+$query .= ' AND camp.id = ? AND opp.deleted=0 GROUP BY camp.name';
 
 $wonOpportunities = $focus->db->getConnection()
     ->executeQuery(

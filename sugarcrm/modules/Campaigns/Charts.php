@@ -195,7 +195,12 @@ class campaign_charts {
             $opp_query1 .= " from opportunities opp";
             $opp_query1 .= " right join campaigns camp on camp.id = opp.campaign_id";
             //BEGIN SUGARCRM flav=ent ONLY
-            $opp_query1 .= " where opp.sales_status = '".Opportunity::STAGE_CLOSED_WON;
+            $settings = Opportunity::getSettings();
+            if ($settings['opps_view_by'] === 'RevenueLineItems') {
+                $opp_query1 .= " where opp.sales_status = '" . Opportunity::STAGE_CLOSED_WON;
+            } elseif ($settings['opps_view_by'] === 'Opportunities') {
+                $opp_query1 .= " where opp.sales_stage = '" . Opportunity::STAGE_CLOSED_WON;
+            }
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav!=ent ONLY
             $opp_query1 .= " where opp.sales_stage = '".Opportunity::STAGE_CLOSED_WON;
