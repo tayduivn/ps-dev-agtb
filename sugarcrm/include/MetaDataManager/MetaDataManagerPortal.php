@@ -21,10 +21,11 @@ class MetaDataManagerPortal extends MetaDataManager
     protected function getModules($filtered = true)
     {
         $modules = array();
-        foreach (SugarAutoLoader::getDirFiles("modules", true) as $mdir) {
-            // strip modules/ from name
-            $mname = substr($mdir, 8);
-            if (file_exists("$mdir/clients/portal/")) {
+        foreach (SugarAutoLoader::getDirFiles('modules', true) as $mdir) {
+            // do we have a core or custom portal directory for the module
+            if (SugarAutoLoader::existingCustomOne($mdir . '/clients/portal/')) {
+                // strip modules/ from name
+                $mname = substr($mdir, 8);
                 $modules[] = $mname;
             }
         }
