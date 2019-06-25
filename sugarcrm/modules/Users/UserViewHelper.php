@@ -323,6 +323,11 @@ class UserViewHelper {
 
         $licenseTypesInString = '';
 
+        // send hidden value for single license type
+        if (count($availableLicenseTypes) == 1) {
+            $licenseTypesDropdown .= '<input type="hidden" name="LicenseTypes[]" value="' . $availableLicenseTypes[0] . '" />';
+        }
+
         // display invalid license types in red
         foreach ($userLicenseType as $type) {
             $licenseTypesInString .= User::getLicenseTypeDescription($type) . '</br>';
