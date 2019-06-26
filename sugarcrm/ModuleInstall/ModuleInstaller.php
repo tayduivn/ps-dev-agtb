@@ -2958,6 +2958,13 @@ class ModuleInstaller{
     {
         $config = SugarConfig::getInstance();
 
+        if (empty($GLOBALS['installing'])) {
+            $settings = Administration::getSettings('portal', true)->settings;
+            $caseDeflection = !isset($settings['portal_caseDeflection']) ? 'enabled' : $settings['portal_caseDeflection'];
+        } else {
+            $caseDeflection = 'enabled';
+        }
+
         $portalConfig = array(
             'appId' => 'SupportPortal',
             'appStatus' => 'offline',
@@ -2987,6 +2994,7 @@ class ModuleInstaller{
             'clientID' => 'support_portal',
             'serverTimeout' => self::getPortalTimeoutValue(),
             'maxSearchQueryResult'=>'5',
+            'caseDeflection' => $caseDeflection,
             'analytics' => $config->get('analytics_portal', array('enabled' => false)),
         );
 

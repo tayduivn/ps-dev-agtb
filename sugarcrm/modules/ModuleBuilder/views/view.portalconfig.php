@@ -38,8 +38,14 @@ class ViewPortalConfig extends SugarView
    	 */
 	function display() 
 	{
-        $portalFields = array('appStatus'=>'offline', 'logoURL'=>
-        '', 'maxQueryResult'=>'20', 'maxSearchQueryResult'=>'5', 'defaultUser'=>'');
+        $portalFields = [
+            'appStatus' => 'offline',
+            'logoURL' => '',
+            'maxQueryResult' => '20',
+            'maxSearchQueryResult' => '5',
+            'defaultUser' => '',
+            'caseDeflection' => 'enabled',
+        ];
         $userList = get_user_array();
         $userList[''] = '';
         $controller = new TabController();

@@ -29,8 +29,16 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $tabController = new TabController();
         $tabController->getPortalTabs();
 
-        $portalFields = array('defaultUser', 'appName', 'logoURL', 'serverUrl',
-            'maxQueryResult', 'maxSearchQueryResult');
+        if (isset($settings['caseDeflection'])) {
+            if ($settings['caseDeflection'] === 'true') {
+                $settings['caseDeflection'] = 'enabled';
+            } else {
+                $settings['caseDeflection'] = 'disabled';
+            }
+        }
+
+        $portalFields = ['caseDeflection', 'defaultUser', 'appName', 'logoURL', 'serverUrl',
+            'maxQueryResult', 'maxSearchQueryResult'];
         $portalConfig = $this->getDefaultPortalSettings();
 
         foreach ($portalFields as $field) {
@@ -64,6 +72,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     {
         $portalConfig = array(
             'appStatus' => 'offLine',
+            'caseDeflection' => 'enabled',
             'on' => 0
         );
         $this->savePortalSettings($portalConfig);
@@ -86,6 +95,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
             'defaultModule' => 'Cases',
+            'caseDeflection' => 'enabled',
             'orderByDefaults' => array(
                 'Cases' => array(
                     'field' => 'case_number',

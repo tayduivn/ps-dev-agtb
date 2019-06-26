@@ -19,11 +19,10 @@
 
         <tr>
             <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_CONFIGURE}:
+                {$mod.LBL_PORTAL_ENABLE_PORTAL}:
             </td>
             <td colspan='1' nowrap>
                 <input type="checkbox" name="appStatus" {if $appStatus eq 'online'}checked{/if} class='portalField' id="appStatus" value="online"/>
-                {$mod.LBL_PORTAL_ENABLE}
             </td>
         </tr>
         {if $appStatus eq 'online'}
@@ -34,6 +33,14 @@
             </td>
         </tr>
         {/if}
+        <tr>
+            <td colspan='1' nowrap>
+                {$mod.LBL_PORTAL_ENABLE_SEARCH}:
+            </td>
+            <td colspan='1' nowrap>
+                <input type="checkbox" name="caseDeflection" {if $caseDeflection eq 'enabled'}checked{/if} class='portalField' id="caseDeflection" value="enabled"/>
+            </td>
+        </tr>
         <tr>
             <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_LOGO_URL}: {sugar_help text=$mod.LBL_CONFIG_PORTAL_URL}
