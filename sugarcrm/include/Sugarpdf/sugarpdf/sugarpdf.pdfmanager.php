@@ -107,6 +107,24 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 'currency_id' => $this->bean->currency_id,
                 'charset_convert' => true, /* UTF-8 uses different bytes for Euro and Pounds */
             );
+
+            if (!empty($this->bean->date_quote_expected_closed)) {
+                $dt = new SugarDateTime($this->bean->date_quote_expected_closed);
+                $fields['date_quote_expected_closed'] = $GLOBALS['timedate']->asUserDate($dt);
+            }
+            if (!empty($this->bean->original_po_date)) {
+                $dt = new SugarDateTime($this->bean->original_po_date);
+                $fields['original_po_date'] = $GLOBALS['timedate']->asUserDate($dt);
+            }
+            if (!empty($this->bean->date_quote_closed)) {
+                $dt = new SugarDateTime($this->bean->date_quote_closed);
+                $fields['date_quote_closed'] = $GLOBALS['timedate']->asUserDate($dt);
+            }
+            if (!empty($this->bean->date_order_shipped)) {
+                $dt = new SugarDateTime($this->bean->date_order_shipped);
+                $fields['date_order_shipped'] = $GLOBALS['timedate']->asUserDate($dt);
+            }
+
             $currency->retrieve($this->bean->currency_id);
             $fields['currency_iso'] = $currency->iso4217;
 
