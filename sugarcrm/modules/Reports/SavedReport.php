@@ -120,8 +120,9 @@ class SavedReport extends Basic
         //BEGIN SUGARCRM flav=ent ONLY
         $this->acl_team_set_id = $teamSetSelectedId;
         //END SUGARCRM flav=ent ONLY
-        $this->description = $description;
-
+        if ($description) {
+            $this->description = $description;
+        }
         // As of 9.1, some stock reports provide their own static
         // GUID. This handles those stock reports.
         if ($default_guid_id) {

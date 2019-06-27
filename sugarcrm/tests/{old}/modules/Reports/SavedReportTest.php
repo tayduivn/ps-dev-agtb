@@ -31,6 +31,11 @@ class SavedReportTest extends TestCase
 
     protected function tearDown()
     {
+        $id = static::$reportId;
+        if ($id) {
+            $GLOBALS['db']->query("DELETE FROM saved_reports WHERE id='{$id}'");
+        }
+
         unset($GLOBALS['report_modules']);
         SugarTestHelper::tearDown('mock_db');
         SugarTestHelper::tearDown();
@@ -147,6 +152,88 @@ class SavedReportTest extends TestCase
             $def = $dictionary['SavedReport'];
         }
         return $def;
+    }
+
+    /**
+     * dataProvider for ::testSavedReports
+     * @return array
+     */
+    public function getSavedReports(): array
+    {
+        return [
+            [
+                'report' => [
+                    'id' => -1,
+                    'created_by' => 1,
+                    'name' => 'Test',
+                    'module' => 'Accounts',
+                    'report_type' => 'summary',
+                    'content' => '{}',
+                    'deleted' => 0,
+                    'team_id' => 1,
+                    'chart_type' => 'vBarF',
+                    'assigned_user_id' => 1,
+                    'description' => 'testDescription',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Tests out if description is overwritten if does not exist
+     * @dataProvider getSavedReports
+     * @param array $report definitions.
+     */
+    public function testSavedReports($report)
+    {
+        $rep = new SavedReport();
+        $rep->save_report(
+            $report['id'],
+            $report['created_by'],
+            $report['name'],
+            $report['module'],
+            $report['report_type'],
+            $report['content'],
+            $report['deleted'],
+            $report['team_id'],
+            $report['chart_type'],
+            $report['assigned_user_id']
+        );
+        $id = $rep->id;
+        static::$reportId = $id;
+        $rep->retrieve($id);
+        $this->assertEmpty($rep->description);
+
+        $rep->save_report(
+            $report['id'],
+            $report['created_by'],
+            $report['name'],
+            $report['module'],
+            $report['report_type'],
+            $report['content'],
+            $report['deleted'],
+            $report['team_id'],
+            $report['chart_type'],
+            $report['assigned_user_id'],
+            $report['description']
+        );
+        $rep->retrieve($id);
+        $this->assertEquals('testDescription', $rep->description);
+
+        $rep->save_report(
+            $report['id'],
+            $report['created_by'],
+            $report['name'],
+            $report['module'],
+            $report['report_type'],
+            $report['content'],
+            $report['deleted'],
+            $report['team_id'],
+            $report['chart_type'],
+            $report['assigned_user_id']
+        );
+        $rep->retrieve($id);
+        $this->assertEquals('testDescription', $rep->description);
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
