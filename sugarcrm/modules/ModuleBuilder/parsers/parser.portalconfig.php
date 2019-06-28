@@ -38,7 +38,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         }
 
         $portalFields = ['caseDeflection', 'defaultUser', 'appName', 'logoURL', 'serverUrl',
-            'maxQueryResult', 'maxSearchQueryResult'];
+            'maxQueryResult', 'maxSearchQueryResult', 'portalModules'];
         $portalConfig = $this->getDefaultPortalSettings();
 
         foreach ($portalFields as $field) {
@@ -163,7 +163,9 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
             // TODO: category should be `support`, platform should be `portal`
             $admin = $this->getAdministrationBean();
-            if ($admin->saveSetting('portal', $fieldKey, $fieldValue, 'support') === false) {
+            if ($fieldKey === 'portalModules' && $this->validatePortalModulesList($fieldValue)) {
+                TabController::setPortalTabs($fieldValue);
+            } elseif ($admin->saveSetting('portal', $fieldKey, $fieldValue, 'support') === false) {
                 $GLOBALS['log']->fatal("Error saving portal config var $fieldKey, orig: "
                     . print_r($fieldValue, true) . " , json:".json_encode($fieldValue));
             }
@@ -175,6 +177,22 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
             $moduleInstallerClass::handlePortalConfig();
         }
+    }
+
+    /**
+     * Validates that a given list contains only names of modules that are
+     * Portal-compatible
+     *
+     * @param array $modules the list of module names
+     * @return bool true if the list is valid, false otherwise
+     */
+    private function validatePortalModulesList($modules): bool
+    {
+        // Input should be an array of module names starting with "Home"
+        if (!is_array($modules) || !isset($modules[0]) || $modules[0] !== 'Home') {
+            return false;
+        }
+        return empty(array_diff($modules, TabController::getAllPortalTabs()));
     }
 
     /**

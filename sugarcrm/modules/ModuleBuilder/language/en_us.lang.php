@@ -617,6 +617,10 @@ $mod_strings = array(
     'LBL_PORTAL_DETAIL_NUMBER' => 'Number of fields to display on Detail View',
     'LBL_PORTAL_SEARCH_RESULT_NUMBER' => 'Number of results to display on Global Search',
     'LBL_PORTAL_DEFAULT_ASSIGN_USER' => 'Default assigned for new portal registrations',
+    'LBL_PORTAL_MODULES' => 'Portal modules',
+    'LBL_CONFIG_PORTAL_MODULES_HELP' => 'Drag and drop the names of the Portal modules to set them to be displayed or hidden in the Portal\'s top navigation bar. To control Portal user access to modules, use <a href="?module=ACLRoles&action=index">Role Management.</a>',
+    'LBL_CONFIG_PORTAL_MODULES_DISPLAYED' => 'Displayed Modules',
+    'LBL_CONFIG_PORTAL_MODULES_HIDDEN' => 'Hidden Modules',
 
 'LBL_PORTAL'=>'Portal',
 'LBL_PORTAL_LAYOUTS'=>'Portal Layouts',

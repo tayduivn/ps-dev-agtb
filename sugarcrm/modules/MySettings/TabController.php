@@ -17,6 +17,11 @@ class TabController
     public $required_modules = array('Home');
 
     /**
+     * @var array The default list of displayed Portal modules
+     */
+    public static $defaultPortalTabs = ['Home', 'Cases', 'KBContents'];
+
+    /**
      * @var bool flag of validation of the cache
      */
     static protected $isCacheValid = false;
@@ -104,7 +109,7 @@ class TabController
         if (!empty($MySettings_tab['value'])) {
             $modules = json_decode($MySettings_tab['value']);
         } else {
-            $modules = self::getAllPortalTabs();
+            $modules = array_intersect(self::$defaultPortalTabs, self::getAllPortalTabs());
             self::setPortalTabs($modules);
         }
 

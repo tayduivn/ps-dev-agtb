@@ -33,6 +33,26 @@ class ViewPortalConfig extends SugarView
 	}
 
     /**
+     * Formats a list of Portal tabs (module names) to display correctly on the
+     * Portal Config screen
+     * @param array $tabsList the list of Portal module names to format
+     * @return array the list of formatted Portal module name objects
+     */
+    public function formatTabsList($tabsList) : array
+    {
+        // Remove the "Home" module from the list so that it isn't shown in the
+        // config UI. It is re-inserted when the configuration is saved.
+        $tabsList = array_diff($tabsList, ['Home']);
+        array_walk($tabsList, function (&$moduleName) {
+            $moduleName = [
+                'module' => $moduleName,
+                'label' => translate($moduleName),
+            ];
+        });
+        return $tabsList;
+    }
+
+    /**
      * This function loads portal config vars from db and sets them for the view
      * @see SugarView::display() for more info
    	 */
@@ -48,23 +68,18 @@ class ViewPortalConfig extends SugarView
         ];
         $userList = get_user_array();
         $userList[''] = '';
-        $controller = new TabController();
-        $disabledModulesFlag = false;
-        $disabledModules = array_diff($controller->getAllPortalTabs(), $controller->getPortalTabs());
-        if (!empty($disabledModules)) {
-            $disabledModulesFlag = true;
-            array_walk($disabledModules, function (&$item) {
-                $item = translate($item);
-            });
-        }
+        
+        $portalTabsList = TabController::getPortalTabs();
+        $displayedPortalTabs = $this->formatTabsList($portalTabsList);
+        $hiddenPortalTabs = $this->formatTabsList(array_diff(TabController::getAllPortalTabs(), $portalTabsList));
 
         $admin = Administration::getSettings();
 
         $portalConfig = $admin->getConfigForModule('portal','support', true);
         $portalConfig['appStatus'] = !empty($portalConfig['on']) ? 'online' : 'offline';
         $smarty = new Sugar_Smarty();
-        $smarty->assign('disabledDisplayModulesList', $disabledModules);
-        $smarty->assign('disabledDisplayModules', $disabledModulesFlag);
+        $smarty->assign('displayedPortalTabs', array_values($displayedPortalTabs));
+        $smarty->assign('hiddenPortalTabs', array_values($hiddenPortalTabs));
         foreach ($portalFields as $fieldName=>$fieldDefault) {
             if (isset($portalConfig[$fieldName])) {
                 $smarty->assign($fieldName, html_entity_decode($portalConfig[$fieldName]));

@@ -70,6 +70,37 @@
             </td>
         </tr>
         <tr>
+            <td colspan='1' nowrap>
+                {$mod.LBL_PORTAL_MODULES}: {sugar_help text=$mod.LBL_CONFIG_PORTAL_MODULES_HELP}
+            </td>
+            <td colspan='1' nowrap>
+                <div class='portal-module-list-container'>
+                    <div class='portal-module-list-header'>
+                        {$mod.LBL_CONFIG_PORTAL_MODULES_DISPLAYED}
+                    </div>
+                    <div class='portal-module-list-scrolldiv'>
+                        <ul class='portal-module-list' id='enabled-module-list'>
+                            {foreach from=$displayedPortalTabs item=module}
+                                <li class='ui-state-default mod-list-item' id="{$module.module}">{$module.label}</li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+                <div class='portal-module-list-container'>
+                    <div class='portal-module-list-header'>
+                        {$mod.LBL_CONFIG_PORTAL_MODULES_HIDDEN}
+                    </div>
+                    <div class='portal-module-list-scrolldiv'>
+                        <ul class='portal-module-list' id='disabled-module-list'>
+                            {foreach from=$hiddenPortalTabs item=module}
+                                <li class='ui-state-default mod-list-item' id='{$module.module}'>{$module.label}</li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
             <td colspan='2' nowrap>
                 <input type='button' class='button' id='gobutton' value='{$mod.LBL_BTN_SAVE}'>
             </td>
@@ -77,27 +108,33 @@
 
     </table>
 </form>
-<div>
-
-    {if $disabledDisplayModules}
-    <br>
-    <p>
-        {$mod.LBL_PORTAL_DISABLED_MODULES}
-    <ul>
-        {foreach from=$disabledDisplayModulesList item=modName}
-            <li>{$modName}</li>
-        {/foreach}
-    </ul>
-    </p>
-    <p>
-        {$mod.LBL_PORTAL_ENABLE_MODULES}
-    </p>
-    {/if}
-
-</div>
 {literal}
 
 <script language='javascript'>
+
+    // Set up jQuery actions for the portal module lists to make the items drag/drop sortable
+    $(function() {
+        $('.portal-module-list').sortable({
+            stop: function() {
+                // Prevent the user from emptying the entire list of displayed Portal modules
+                if ($('#enabled-module-list li').length < 1) {
+                    $(this).sortable('cancel');
+                }
+            },
+            connectWith: '.portal-module-list'
+        }).disableSelection();
+    });
+
+    // Retrieves the configured list of Portal modules
+    function getModuleListConfig() {
+        var moduleList = document.getElementById('enabled-module-list').getElementsByTagName('li');
+        var result = ['Home'];
+        for (var i = 0; i < moduleList.length; i++) {
+            result.push(moduleList[i].id);
+        }
+        return result;
+    }
+
     // Hack: In iframe and jquery's getting loaded twice so $ doesn't seem to have select2 plugin
     jQuery('#defaultUser').select2({
         placeholder: "{$mod.LBL_USER_SELECT}",
@@ -124,6 +161,7 @@
                 props[key] = 'true';
             }
         }
+        props['portalModules'] = getModuleListConfig();
         retrieve_portal_page($.param(props));
     });
     function retrieve_portal_page(props) {
