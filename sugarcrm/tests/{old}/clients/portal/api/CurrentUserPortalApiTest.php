@@ -33,6 +33,11 @@ class CurrentUserPortalApiTest extends TestCase
      */
     public $service;
 
+    /**
+     * @var nameFormat
+     */
+    protected $nameFormat;
+
     public function setUp()
     {
         SugarTestHelper::setUp('app_strings');
@@ -58,10 +63,15 @@ class CurrentUserPortalApiTest extends TestCase
         $this->currentUserApi= new CurrentUserPortalApi();
         $this->currentUserApi->portal_contact = $this->contact;
         $this->service = SugarTestRestUtilities::getRestServiceMock();
+
+        $this->nameFormat = $GLOBALS['sugar_config']['default_locale_name_format'];
+        $GLOBALS['sugar_config']['default_locale_name_format'] = 's f l';
     }
 
     public function tearDown()
     {
+        $GLOBALS['sugar_config']['default_locale_name_format'] = $this->nameFormat;
+
         $this->service = null;
         $this->currentUserApi = null;
         $this->contact = null;
@@ -129,7 +139,6 @@ class CurrentUserPortalApiTest extends TestCase
      */
     public function testUpdateCurrentUser(array $args, array $expected)
     {
-        // FIXME TY-1321: figure out why this test fails
         $result = $this->currentUserApi->updateCurrentUser($this->service, $args);
 
         $this->assertNotEmpty($result);

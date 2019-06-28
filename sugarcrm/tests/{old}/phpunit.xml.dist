@@ -141,7 +141,6 @@
             <directory>./modules/Users/</directory>
             <directory>./portal2</directory>
             <!-- FIXME TY-1297: Investigate why these tests are failing -->
-            <exclude>./clients/portal/api/CurrentUserPortalApiTest.php</exclude>
             <exclude>./modules/Accounts/clients/base/api/RS172Test.php</exclude>
             <exclude>./modules/Tasks/Bug56584Test.php</exclude>
             <exclude>./modules/Users/authentication/SAMLAuthenticate/Bug50936Test.php</exclude>

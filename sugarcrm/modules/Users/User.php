@@ -674,7 +674,9 @@ class User extends Person {
         if (!empty($sugar_flavor) && !empty($admin->settings['license_enforce_user_limit'])) {
 	        // Begin Express License Enforcement Check
 			// this will cause the logged in admin to have the licensed user count refreshed
-            unset($_SESSION['license_seats_needed']);
+            if (isset($_SESSION)) {
+                unset($_SESSION['license_seats_needed']);
+            }
             if ($this->portal_only != 1 && $this->is_group != 1 && $this->status == 'Active'
                   && (empty($this->fetched_row)
                       || $this->fetched_row['status'] == 'Inactive'
