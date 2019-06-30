@@ -167,5 +167,6 @@ class SugarTestACLUtilities
         }
         self::$_createdRoles = array();
         BeanFactory::newBean('ACLFields')->clearACLCache();
+        SugarACL::resetACLs();
     }
 }

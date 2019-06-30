@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+//FILE SUGARCRM flav=ent ONLY
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -66,7 +68,7 @@ class RS64Test extends TestCase
     {
         $service = SugarTestRestUtilities::getRestServiceMock();
 
-        $api = new BugsApi();
+        $api = new ModulePortalApi();
         $data = $api->createRecord($service, array(
                 'module' => 'Bugs',
                 'name' => 'Test Bug',

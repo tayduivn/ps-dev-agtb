@@ -10,21 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// FILE SUGARCRM flav=ent ONLY
+namespace Sugarcrm\Sugarcrm\Visibility\Portal;
 
-/**
- * Kept class for backward compatibility only
- * @deprecated use SugarACLPortal instead
- */
-class SugarACLSupportPortal extends SugarACLPortal
+interface Module
 {
-    public function __construct()
-    {
-        $msg = sprintf(
-            '%s::%s is deprecated and will be removed in a future release.',
-            __CLASS__,
-            __METHOD__
-        );
-        LoggerManager::getLogger()->deprecated($msg);
-    }
+    /**
+     * Add portal visibility to the SugarQuery
+     *
+     * @param \SugarQuery $query
+     */
+    public function addVisibilityQuery(\SugarQuery $query, array $options);
 }

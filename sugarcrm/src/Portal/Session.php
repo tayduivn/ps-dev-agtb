@@ -98,9 +98,9 @@ class Session
     /**
      * This method decouples the cache object retrieval for testing purposes
      *
-     * @return \Sugarcrm\Sugarcrm\Cache\Middleware\Replicate
+     * @return CacheInterface
      */
-    public function getCacheObject() : \Sugarcrm\Sugarcrm\Cache\Middleware\Replicate
+    public function getCacheObject() : CacheInterface
     {
         return Container::getInstance()->get(CacheInterface::class);
     }
@@ -134,14 +134,30 @@ class Session
     /**
      * @param \SugarBean $bean
      *
+     * @return Sugarcrm\Sugarcrm\Visibility\Portal\Context
+     */
+    public function getVisibilityContext(\SugarBean $bean) : \Sugarcrm\Sugarcrm\Visibility\Portal\Context
+    {
+        \SugarAutoLoader::requireWithCustom('data/visibility/portal/Context.php');
+        $contextClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Visibility\\Portal\\Context');
+
+        $visContext = new $contextClass($this->getContactId(), $this->getBeanVisibilityLinks($bean));
+        $visContext->setBean($bean);
+
+        return $visContext;
+    }
+
+    /**
+     * @param \SugarBean $bean
+     *
      * @return array
      */
     public function getBeanVisibilityLinks(\SugarBean $bean) : array
     {
         return
         //BEGIN SUGARCRM flav=ent ONLY
-        !empty($GLOBALS['dictionary'][$bean->getObjectName()]['portal_visibility_links']) ?
-            $GLOBALS['dictionary'][$bean->getObjectName()]['portal_visibility_links'] :
+        !empty($GLOBALS['dictionary'][$bean->getObjectName()]['portal_visibility']['links']) ?
+            $GLOBALS['dictionary'][$bean->getObjectName()]['portal_visibility']['links'] :
         //END SUGARCRM flav=ent ONLY
             [];
     }

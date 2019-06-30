@@ -417,6 +417,15 @@ $dictionary['Case'] = array(
 
     // This enables optimistic locking for Saves From EditView
     'optimistic_locking' => true,
+// BEGIN SUGARCRM flav=ent ONLY
+    'portal_visibility' => [
+        'class' => 'Cases',
+        'links' => [
+            'Accounts' => 'accounts',
+            'Contacts' => 'contacts',
+        ],
+    ],
+// END SUGARCRM flav=ent ONLY
 );
 
 VardefManager::createVardef('Cases', 'Case', array(

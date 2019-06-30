@@ -44,7 +44,8 @@ class RestTestPortalBase extends RestTestBase
         // Reset the support portal user id to the newly created user id        
         $system_config->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
 
-        $this->role = $this->_getPortalACLRole();
+        $portalConfig = new ParserModifyPortalConfig();
+        $this->role = $portalConfig->getPortalACLRole();
         if (!($this->_user->check_role_membership($this->role->name))) {
             $this->_user->load_relationship('aclroles');
             $this->_user->aclroles->add($this->role);
@@ -164,55 +165,5 @@ class RestTestPortalBase extends RestTestBase
                 throw new Exception("Rest logout failed, message looked like: ".$reply['replyRaw']);
             }
         }
-    }
-
-    // Copied from parser.portalconfig.php, when that gets merged we should probably just abuse that function.
-    protected function _getPortalACLRole()
-    {
-        $allowedModules = array('Accounts','Bugs', 'Cases', 'Notes', 'Contacts');
-        $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
-        $role = new ACLRole();
-        $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
-        $role->name = "Customer Self-Service Portal Role";
-        $role->description = "Customer Self-Service Portal Role";
-        $role->save();
-        $GLOBALS['db']->commit();
-        $roleActions = $role->getRoleActions($role->id);
-        foreach ($roleActions as $moduleName => $actions) {
-            // enable allowed moduels
-            if (isset($actions['module']['access']['id']) && !in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_DISABLED);
-            } elseif (isset($actions['module']['access']['id']) && in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
-            } else {
-                foreach ($actions as $action => $actionName) {
-                    if (isset($actions[$action]['access']['id'])) {
-                        $role->setAction($role->id, $actions[$action]['access']['id'], ACL_ALLOW_DISABLED);
-                    }
-                }
-            }
-
-            if (in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
-                $role->setAction($role->id, $actions['module']['admin']['id'], ACL_ALLOW_ALL);
-                foreach ($actions['module'] as $actionName => $action) {
-                    if (in_array($actionName, $allowedActions)) {
-                        $aclAllow = ACL_ALLOW_ALL;
-                    } else {
-                        $aclAllow = ACL_ALLOW_NONE;
-                    }
-                    if ($moduleName == 'Contacts') {
-                        if ($actionName == 'edit' ) {
-                            $aclAllow = ACL_ALLOW_OWNER;
-                        }
-                    }
-                    if ($moduleName == 'Accounts' && $actionName == 'edit') {
-                        $aclAllow = ACL_ALLOW_NONE;
-                    }
-                    $role->setAction($role->id, $action['id'], $aclAllow);
-                }
-            }
-        }
-        return $role;
     }
 }

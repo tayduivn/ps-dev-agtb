@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+//FILE SUGARCRM flav=ent ONLY
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,7 +23,7 @@ class RS152Test extends TestCase
     /** @var RestService */
     protected $service = null;
 
-    /** @var CasesApi */
+    /** @var ModulePortalApi */
     protected $api = null;
 
     /** @var Account */
@@ -41,7 +43,7 @@ class RS152Test extends TestCase
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
 
-        $this->api = new CasesApi();
+        $this->api = new ModulePortalApi();
 
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->account->load_relationship('contacts');

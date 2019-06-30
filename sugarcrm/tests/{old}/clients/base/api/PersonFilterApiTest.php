@@ -70,7 +70,7 @@ class PersonFilterApiTest extends TestCase
             $expected[] = $record['id'];
         }
 
-        $this->assertTrue(in_array($GLOBALS['current_user']->id, $expected));
+        $this->assertContains($GLOBALS['current_user']->id, $expected);
     }
 }
 

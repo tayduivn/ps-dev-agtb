@@ -41,15 +41,13 @@ class SugarQueryPortalVisibilityTest extends TestCase
         $bean = $this->createPartialMock('SugarBean', array('loadVisibility'));
 
         $vis = $this->getMockBuilder('SupportPortalVisibility')
-            ->setMethods(['addVisibilityFromQuery', 'addVisibilityWhereQuery'])
+            ->setMethods(['addVisibilityQuery'])
             ->setConstructorArgs([$bean])
             ->getMock();
         $bean->expects($this->any())->method('loadVisibility')->will($this->returnValue($vis));
-        $bean->expects($this->any())->method('loadVisibility')->will($this->returnValue($vis));
         $bean->module_dir = 'test';
         $query = new SugarQuery();
-        $vis->expects($this->once())->method('addVisibilityFromQuery')->with($query)->will($this->returnValue($query));
-        $vis->expects($this->once())->method('addVisibilityWhereQuery')->with($query)->will($this->returnValue($query));
+        $vis->expects($this->once())->method('addVisibilityQuery')->with($query)->will($this->returnValue($query));
         $bean->addVisibilityQuery($query);
         unset($vis);
         unset($bean);

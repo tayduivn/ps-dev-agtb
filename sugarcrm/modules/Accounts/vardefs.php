@@ -537,6 +537,11 @@ $dictionary['Account'] = array(
         'team_security',
         'company',
     ),
+// BEGIN SUGARCRM flav=ent ONLY
+    'portal_visibility' => [
+        'class' => 'Accounts',
+    ],
+// END SUGARCRM flav=ent ONLY
 );
 
 VardefManager::createVardef(

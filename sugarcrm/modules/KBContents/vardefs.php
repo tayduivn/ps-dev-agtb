@@ -624,6 +624,11 @@ $dictionary['KBContent'] = array(
         'team_security',
         'assignable',
     ),
+// BEGIN SUGARCRM flav=ent ONLY
+    'portal_visibility' => [
+        'class' => 'KBContents',
+    ],
+// END SUGARCRM flav=ent ONLY
 );
 
 VardefManager::createVardef(

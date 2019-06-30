@@ -497,6 +497,11 @@ $dictionary['Note'] = [
         'assignable',
         'team_security',
     ],
+// BEGIN SUGARCRM flav=ent ONLY
+    'portal_visibility' => [
+        'class' => 'Notes',
+    ],
+// END SUGARCRM flav=ent ONLY
 ];
 
 VardefManager::createVardef('Notes', 'Note');

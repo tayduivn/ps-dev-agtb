@@ -122,6 +122,11 @@ $dictionary['Dashboard'] = array(
         'taggable',
         'commentlog',
     ),
+// BEGIN SUGARCRM flav=ent ONLY
+    'portal_visibility' => [
+        'class' => 'Dashboards',
+    ],
+// END SUGARCRM flav=ent ONLY
 );
 
 if (!class_exists('VardefManager')) {

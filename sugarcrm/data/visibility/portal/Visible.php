@@ -10,21 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// FILE SUGARCRM flav=ent ONLY
+namespace Sugarcrm\Sugarcrm\Visibility\Portal;
 
 /**
- * Kept class for backward compatibility only
- * @deprecated use SugarACLPortal instead
+ * Module is visible in the portal, no special records filtering
  */
-class SugarACLSupportPortal extends SugarACLPortal
+class Visible extends Portal
 {
-    public function __construct()
-    {
-        $msg = sprintf(
-            '%s::%s is deprecated and will be removed in a future release.',
-            __CLASS__,
-            __METHOD__
-        );
-        LoggerManager::getLogger()->deprecated($msg);
-    }
 }

@@ -800,7 +800,6 @@ $dictionary['Contact'] = array(
             'type' => 'index',
             'fields' => array('mkto_id')
         ),
-
     ),
     'relationships' => array(
         'contact_direct_reports' => array(
@@ -966,6 +965,14 @@ $dictionary['Contact'] = array(
         'team_security',
         'person',
     ),
+// BEGIN SUGARCRM flav=ent ONLY
+    'portal_visibility' => [
+        'class' => 'Contacts',
+        'links' => [
+            'Accounts' => 'accounts',
+        ],
+    ],
+// END SUGARCRM flav=ent ONLY
 );
 
 VardefManager::createVardef(

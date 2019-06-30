@@ -21,24 +21,24 @@ class CurrentUserPortalApiTest extends TestCase
     /**
      * @var CurrentUserPortalApi
      */
-    public $currentUserApi;
+    public static $currentUserApi;
 
     /**
      * @var Contact
      */
-    public $contact;
+    public static $contact;
 
     /**
      * @var ServiceBase
      */
-    public $service;
+    public static $service;
 
     /**
      * @var nameFormat
      */
-    protected $nameFormat;
+    public static $nameFormat;
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -46,7 +46,13 @@ class CurrentUserPortalApiTest extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        $this->contact = SugarTestContactUtilities::createContact(
+        self::$nameFormat = $GLOBALS['sugar_config']['default_locale_name_format'];
+        $GLOBALS['sugar_config']['default_locale_name_format'] = 's f l';
+
+        SugarTestPortalUtilities::enablePortal();
+        SugarTestPortalUtilities::storeOriginalUser();
+
+        self::$contact = SugarTestContactUtilities::createContact(
             '',
             array(
                 'first_name' => 'testfirst',
@@ -58,27 +64,25 @@ class CurrentUserPortalApiTest extends TestCase
             )
         );
 
-        $_SESSION['contact_id'] = $this->contact->id;
+        $_SESSION['contact_id'] = self::$contact->id;
 
-        $this->currentUserApi= new CurrentUserPortalApi();
-        $this->currentUserApi->portal_contact = $this->contact;
-        $this->service = SugarTestRestUtilities::getRestServiceMock();
+        self::$currentUserApi= new CurrentUserPortalApi();
+        self::$currentUserApi->portal_contact = self::$contact;
 
-        $this->nameFormat = $GLOBALS['sugar_config']['default_locale_name_format'];
-        $GLOBALS['sugar_config']['default_locale_name_format'] = 's f l';
+        self::$service = SugarTestPortalUtilities::loginAsPortalUser(self::$contact->id);
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
-        $GLOBALS['sugar_config']['default_locale_name_format'] = $this->nameFormat;
+        $GLOBALS['sugar_config']['default_locale_name_format'] = self::$nameFormat;
 
-        $this->service = null;
-        $this->currentUserApi = null;
-        $this->contact = null;
+        self::$service = null;
+        self::$currentUserApi = null;
+        self::$contact = null;
 
-        unset($_SESSION['contact_id']);
-
+        SugarTestPortalUtilities::restoreOriginalUser();
         SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestPortalUtilities::disablePortal();
         SugarTestHelper::tearDown();
     }
 
@@ -87,7 +91,7 @@ class CurrentUserPortalApiTest extends TestCase
      */
     public function testRetrieveCurrentUser()
     {
-        $result = $this->currentUserApi->retrieveCurrentUser($this->service, array());
+        $result = self::$currentUserApi->retrieveCurrentUser(self::$service, array());
 
         $this->assertNotEmpty($result);
         $this->assertInternalType('array', $result);
@@ -139,7 +143,7 @@ class CurrentUserPortalApiTest extends TestCase
      */
     public function testUpdateCurrentUser(array $args, array $expected)
     {
-        $result = $this->currentUserApi->updateCurrentUser($this->service, $args);
+        $result = self::$currentUserApi->updateCurrentUser(self::$service, $args);
 
         $this->assertNotEmpty($result);
         $this->assertInternalType('array', $result);
@@ -166,7 +170,7 @@ class CurrentUserPortalApiTest extends TestCase
      */
     public function testContactPicture()
     {
-        $result = $this->currentUserApi->retrieveCurrentUser($this->service, array());
+        $result = self::$currentUserApi->retrieveCurrentUser(self::$service, array());
 
         $this->assertArrayHasKey('picture', $result['current_user']);
         $this->assertNotEmpty($result['current_user']['picture']);

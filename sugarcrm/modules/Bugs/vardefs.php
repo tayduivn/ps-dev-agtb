@@ -401,6 +401,15 @@ $dictionary['Bug'] = array(
 
     // This enables optimistic locking for Saves From EditView
     'optimistic_locking' => true,
+// BEGIN SUGARCRM flav=ent ONLY
+    'portal_visibility' => [
+        'class' => 'Bugs',
+        'links' => [
+            'Accounts' => 'accounts',
+            'Contacts' => 'contacts',
+        ],
+    ],
+// END SUGARCRM flav=ent ONLY
 );
 
 VardefManager::createVardef('Bugs', 'Bug', array(

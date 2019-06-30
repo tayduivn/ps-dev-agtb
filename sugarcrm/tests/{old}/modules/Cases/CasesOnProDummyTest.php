@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,21 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// FILE SUGARCRM flav=ent ONLY
+use PHPUnit\Framework\TestCase;
 
-/**
- * Kept class for backward compatibility only
- * @deprecated use SugarACLPortal instead
- */
-class SugarACLSupportPortal extends SugarACLPortal
+class CasesOnProDummyTest extends TestCase
 {
-    public function __construct()
+    /**
+     * Dummy interim test for Customer Service for Sugar Professional
+     */
+    public function testTrueIsTrue()
     {
-        $msg = sprintf(
-            '%s::%s is deprecated and will be removed in a future release.',
-            __CLASS__,
-            __METHOD__
-        );
-        LoggerManager::getLogger()->deprecated($msg);
+        $this->assertTrue(true);
     }
 }

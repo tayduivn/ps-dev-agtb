@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//FILE SUGARCRM flav=ent ONLY
 /**
  * Add support for changing application language when the Portal user's
  * preferred language changes.

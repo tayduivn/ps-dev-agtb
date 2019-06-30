@@ -86,6 +86,11 @@ $dictionary['Category'] = array(
         'taggable',
         'commentlog',
     ),
+// BEGIN SUGARCRM flav=ent ONLY
+    'portal_visibility' => [
+        'class' => 'Categories',
+    ],
+// END SUGARCRM flav=ent ONLY
 );
 
 VardefManager::createVardef(
