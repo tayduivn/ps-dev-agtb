@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
 
 /**
  * Team security visibility
@@ -250,7 +251,7 @@ class NormalizedTeamSecurity extends SugarVisibility implements StrategyInterfac
     public function addVisibilityQuery(SugarQuery $query)
     {
         // Support portal will never respect Teams, even if they do earn more than them even while raising the teamsets
-        if (isset($_SESSION['type']) && $_SESSION['type'] === 'support_portal') {
+        if (PortalFactory::getInstance('Session')->isActive()) {
             return;
         }
 
@@ -326,7 +327,7 @@ class NormalizedTeamSecurity extends SugarVisibility implements StrategyInterfac
         global $current_user;
 
         // Support portal will never respect Teams, even if they do earn more than them even while raising the teamsets
-        if (isset($_SESSION['type']) && $_SESSION['type'] === 'support_portal') {
+        if (PortalFactory::getInstance('Session')->isActive()) {
             return false;
         }
 

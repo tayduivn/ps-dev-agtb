@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+
 class NotesApiHelper extends SugarBeanApiHelper
 {
     /**
@@ -31,14 +33,14 @@ class NotesApiHelper extends SugarBeanApiHelper
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
         //Only needed for Portal sessions
-        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
+        $portalSession = PortalFactory::getInstance('Session');
+        if ($portalSession->isActive()) {
             if (empty($bean->id)) {
                 $bean->id = create_guid();
                 $bean->new_with_id = true;
             }
 
-            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
-            $this->addPortalUserDataToBean($contact, $bean);
+            $this->addPortalUserDataToBean($portalSession->getContact(), $bean);
         }
 
         return $data;

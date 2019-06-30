@@ -11,7 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Password\Hash;
-
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
 
 /**
  *  Contact is used to store customer information.
@@ -569,11 +569,12 @@ class Contact extends Person {
      */
     public function getOwnerWhere($user_id, $table_alias = null)
     {
-        if (isset($_SESSION['type'], $_SESSION['contact_id']) && $_SESSION['type'] === 'support_portal') {
+        $portalSession = PortalFactory::getInstance('Session');
+        if ($portalSession->isActive() && ($contactId = $portalSession->getContactId())) {
             if ($table_alias === null) {
                 $table_alias = $this->table_name;
             }
-            return $table_alias  . '.id = ' . $this->db->quoted($_SESSION['contact_id']);
+            return $table_alias  . '.id = ' . $this->db->quoted($contactId);
         }
 
         return parent::getOwnerWhere($user_id, $table_alias);
