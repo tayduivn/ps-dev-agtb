@@ -92,16 +92,23 @@ describe('Base.Layout.SideDrawer', function() {
     });
 
     describe('close', function() {
-        it('should close the drawer, remove component and callback', function() {
-            var comp = {
+        var comp;
+        var elHideStub;
+        var onCloseCallback;
+
+        beforeEach(function() {
+            comp = {
                 dispose: sinon.collection.stub()
             };
-            var onCloseCallback = {
+            onCloseCallback = {
                 apply: sinon.collection.stub()
             };
-            var elHideStub = sinon.collection.stub(drawer.$el, 'hide');
+            elHideStub = sinon.collection.stub(drawer.$el, 'hide');
             drawer._components = [comp];
             drawer.onCloseCallback = onCloseCallback;
+        });
+
+        it('should close the drawer, remove component and callback', function() {
             drawer.close();
             expect(elHideStub).toHaveBeenCalled();
             expect(comp.dispose).toHaveBeenCalled();
@@ -112,6 +119,14 @@ describe('Base.Layout.SideDrawer', function() {
 
         it('should add shortcuts to close drawer', function() {
             expect(drawer.shortcuts).toContain('SideDrawer:Close');
+        });
+
+        it('should not close if before event prevents it', function() {
+            sinon.collection.stub(drawer, 'triggerBefore').withArgs('side-drawer:close').returns(false);
+            drawer.close();
+            expect(elHideStub).not.toHaveBeenCalled();
+            expect(comp.dispose).not.toHaveBeenCalled();
+            expect(onCloseCallback.apply).not.toHaveBeenCalled();
         });
     });
 

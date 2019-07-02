@@ -17,7 +17,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'Editable'],
 
     /**
      * Default settings for dashlet
@@ -123,5 +123,16 @@
     loadData: function(options) {
         var extendedOptions = this.getExtendedOptions(options);
         this.collection.fetch(extendedOptions);
+    },
+
+    /**
+     * Determine if this dashlet has an unsaved comment in process.
+     *
+     * @return {boolean} `true` if there are unsaved comments. `false` otherwise.
+     */
+    hasUnsavedChanges: function() {
+        return _.any(this.fields, function(field) {
+            return _.isFunction(field.getCurrentCommentText) && !_.isEmpty(field.getCurrentCommentText().trim());
+        }, this);
     }
 })

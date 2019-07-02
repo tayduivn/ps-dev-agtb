@@ -206,28 +206,47 @@ describe('Base.View.MultiLineListView', function() {
                 expect(view.drawerModelId).toEqual('1234');
             });
 
-            it('should change model in context if different row is click', function() {
-                view.drawerModelId = '9999';
-                sinon.collection.stub($el, 'closest').withArgs('.multi-line-row').returns({
-                    data: sinon.collection.stub().withArgs('id').returns('1234')
+
+            describe('clicking different row', function() {
+                var drawer;
+
+                beforeEach(function() {
+                    view.drawerModelId = '9999';
+                    sinon.collection.stub($el, 'closest').withArgs('.multi-line-row').returns({
+                        data: sinon.collection.stub().withArgs('id').returns('1234')
+                    });
+                    drawer = {
+                        isOpen: function() {
+                            return true;
+                        },
+                        getComponent: function() {
+                            return layout;
+                        },
+                        triggerBefore: function() {
+                            return true;
+                        },
+                    };
+                    sinon.collection.stub(view, '_getSideDrawer').returns(drawer);
                 });
-                var drawer = {
-                    isOpen: function() {
-                        return true;
-                    },
-                    getComponent: function() {
-                        return layout;
-                    }
-                };
-                sinon.collection.stub(view, '_getSideDrawer').returns(drawer);
 
-                view.handleRowClick(event);
+                it('should change model in context if different row is clicked', function() {
+                    view.handleRowClick(event);
 
-                expect(layout.setRowModel).toHaveBeenCalled();
-                expect(view.drawerModelId).toEqual('1234');
+                    expect(layout.setRowModel).toHaveBeenCalled();
+                    expect(view.drawerModelId).toEqual('1234');
+                });
+
+                it('should not change model in context if unsaved changes warning appears', function() {
+                    sinon.collection.stub(drawer, 'triggerBefore').returns(false);
+
+                    view.handleRowClick(event);
+
+                    expect(layout.setRowModel).not.toHaveBeenCalled();
+                    expect(view.drawerModelId).toEqual('9999');
+                });
             });
 
-            it('should not close existing drawer same row is click', function() {
+            it('should not close existing drawer if same row is clicked', function() {
                 view.drawerModelId = '1234';
                 sinon.collection.stub($el, 'closest').withArgs('.multi-line-row').returns({
                     data: sinon.collection.stub().withArgs('id').returns('1234')

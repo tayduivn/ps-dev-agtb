@@ -177,9 +177,22 @@
     },
 
     /**
-     * Close the drawer.
+     * Check if it's okay to close the drawer before doing so.
      */
     close: function() {
+        var _close = _.bind(this._close, this);
+        if (!this.triggerBefore('side-drawer:close', {callback: _close})) {
+            return;
+        }
+        _close();
+    },
+
+    /**
+     * Close the drawer.
+     *
+     * @private
+     */
+    _close: function() {
         this.currentState = 'closing';
         this.$el.hide('slide', {direction: 'right'}, 300);
         this.currentState = '';

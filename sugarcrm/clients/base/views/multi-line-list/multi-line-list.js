@@ -144,10 +144,10 @@
     handleRowClick: function(event) {
         var $el = this.$(event.target);
 
-        // ignore event triggered by dorpdown-toggle or any action dropdown is open
+        // ignore event triggered by dropdown-toggle or any action dropdown is open
         if (this.isDropdownToggle($el) || this.isActionsDropdownOpen()) {
             return;
-        };
+        }
 
         var modelId = $el.closest('.multi-line-row').data('id');
         var model = this.collection.get(modelId);
@@ -164,10 +164,16 @@
                 });
                 this.drawerModelId = modelId;
             } else if (this.drawerModelId !== modelId) {
-                var rowModelDataLayout = sideDrawer.getComponent('row-model-data');
-                if (rowModelDataLayout && rowModelDataLayout.setRowModel(model)) {
-                    this.drawerModelId = modelId;
+                var setRowModel = _.bind(function() {
+                    var rowModelDataLayout = sideDrawer.getComponent('row-model-data');
+                    if (rowModelDataLayout && rowModelDataLayout.setRowModel(model)) {
+                        this.drawerModelId = modelId;
+                    }
+                }, this);
+                if (!sideDrawer.triggerBefore('side-drawer:content-changed', {callback: setRowModel})) {
+                    return;
                 }
+                setRowModel();
             }
         }
     },

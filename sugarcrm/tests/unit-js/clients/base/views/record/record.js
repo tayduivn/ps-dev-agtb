@@ -858,7 +858,8 @@ describe("Record View", function () {
                 openStub.restore();
             }
         });
-        it("should trigger 'duplicate:before' on model prior to opening create drawer", function () {
+
+        it('should trigger \'duplicate:before\' on model prior to opening create drawer', function() {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -866,16 +867,15 @@ describe("Record View", function () {
                 description: 'Description'
             });
             triggerStub.reset();
-            view.layout = new Backbone.Model();
 
             view.duplicateClicked();
             expect(triggerStub.called).toBe(true);
-            expect(triggerStub.calledWith("duplicate:before")).toBe(true);
+            expect(triggerStub.calledWith('duplicate:before')).toBe(true);
             expect(openStub.called).toBe(true);
             expect(triggerStub.calledBefore(openStub)).toBe(true);
         });
 
-        it(" should pass model to mutate with 'duplicate:before' event", function () {
+        it('should pass model to mutate with \'duplicate:before\' event', function() {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -883,7 +883,6 @@ describe("Record View", function () {
                 description: 'Description'
             });
             triggerStub.reset();
-            view.layout = new Backbone.Model();
 
             view.duplicateClicked();
             expect(triggerStub.called).toBe(true);
@@ -891,7 +890,7 @@ describe("Record View", function () {
             //Further expectations in stub
         });
 
-        it("should fire 'drawer:create:fire' event with copied model set on context", function () {
+        it('should fire \'drawer:create:fire\' event with copied model set on context', function() {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -899,13 +898,12 @@ describe("Record View", function () {
                 description: 'Description'
             });
             triggerStub.reset();
-            view.layout = new Backbone.Model();
             view.duplicateClicked();
             expect(openStub.called).toBe(true);
             expect(openStub.lastCall.args[0].context.model.get("name")).toEqual(view.model.get("name"));
         });
 
-        it("should call close callback", function () {
+        it('should call close callback', function() {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -914,7 +912,6 @@ describe("Record View", function () {
                 module: "Bugs"
             });
             triggerStub.reset();
-            view.layout = new Backbone.Model();
             view.duplicateClicked();
             expect(closeStub.lastCall.args[0].id).toEqual(expectedModel.id);
         });

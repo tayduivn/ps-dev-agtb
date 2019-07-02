@@ -270,17 +270,36 @@
         if (this.view._mode === 'preview') {
             return;
         }
-        var el = this.getTextArea();
-        var value = this.unformat(el.val());
+        var value = this.getCurrentCommentText();
         if (_.isEmpty(value)) {
             return;
         }
         var commentBean = app.data.createRelatedBean(this.model, null, 'commentlog_link', {entry: value});
         var success = _.bind(function() {
-            el.val('');
+            this.setCurrentCommentText('');
             this.view.loadData({loadAll: !!this.showAllClicked});
         }, this);
         commentBean.sync('create', commentBean, {success: success, relate: true});
+    },
+
+    /**
+     * Get the current comment text.
+     *
+     * @return {string} The current comment text.
+     */
+    getCurrentCommentText: function() {
+        var el = this.getTextArea();
+        return this.unformat(el.val());
+    },
+
+    /**
+     * Set the current comment text.
+     *
+     * @param {string} text The desired comment text.
+     */
+    setCurrentCommentText: function(text) {
+        var el = this.getTextArea();
+        el.val(text);
     },
 
     /**

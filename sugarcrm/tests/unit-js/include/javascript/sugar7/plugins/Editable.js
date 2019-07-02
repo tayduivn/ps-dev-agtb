@@ -169,6 +169,26 @@ describe("Editable Plugin", function() {
         });
     });
 
+    describe('beforeViewChange', function() {
+        using('different arguments', [null, {not: 'a callback'}, {callback: 'string not a function'}], function(arg) {
+            it('should warn if there is no callback provided', function() {
+                var errorStub = sinonSandbox.stub(app.logger, 'error');
+                expect(view.beforeViewChange(arg)).toBe(true);
+                expect(errorStub).toHaveBeenCalledWith('Custom unsavedchange must contain callback function.');
+            });
+        });
+
+        it('should call the callback after confirming the unsaved changes warning', function() {
+            var warnUnsavedChangesStub = sinonSandbox.stub(view, 'warnUnsavedChanges');
+            warnUnsavedChangesStub.callsArg(0);
+            warnUnsavedChangesStub.returns(false);
+            var stubCallback = sinonSandbox.stub();
+            var params = {callback: stubCallback, message: 'I am a custom message'};
+            expect(view.beforeViewChange(params)).toBe(false);
+            expect(stubCallback).toHaveBeenCalled();
+        });
+    });
+
     describe("Warning unsaved changes", function() {
         var alertShowStub;
         beforeEach(function() {

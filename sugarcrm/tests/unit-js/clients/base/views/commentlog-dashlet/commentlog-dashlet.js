@@ -30,16 +30,18 @@ describe('Base.View.CommentlogDashlet', function() {
     beforeEach(function() {
         app = SugarTest.app;
 
+        SugarTest.testMetadata.init();
+
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadHandlebarsTemplate('commentlog', 'field', 'base', 'dashlet');
+        SugarTest.loadComponent('base', 'view', 'base');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.loadComponent('base', 'layout', 'dashlet');
         SugarTest.loadComponent('base', 'layout', 'dashboard');
 
-        SugarTest.testMetadata.init();
-
         SugarTest.testMetadata.addViewDefinition(
-            'commentlog-dashlet',
-            dashletMeta,
-            moduleName
+            viewName,
+            dashletMeta
         );
         SugarTest.testMetadata.set();
         app.data.declareModels();
@@ -94,6 +96,11 @@ describe('Base.View.CommentlogDashlet', function() {
         dashboard = null;
     });
 
+    it('should contain the Dashlet and Editable plugins', function() {
+        expect(view.plugins).toContain('Dashlet');
+        expect(view.plugins).toContain('Editable');
+    });
+
     describe('extendedOptions', function() {
         it('should set correct limits for fetch options', function() {
             var extendedOptions = view.getExtendedOptions();
@@ -107,5 +114,24 @@ describe('Base.View.CommentlogDashlet', function() {
             view.loadData();
             expect(fetchCollectionStub).toHaveBeenCalled();
         });
+    });
+
+    describe('hasUnsavedChanges', function() {
+        using(
+            'different comment texts',
+            [
+                {func: 'not a function', result: false},
+                {func: function() { return ''; }, result: false},
+                {func: function() { return 'Partial comment'; }, result: true},
+            ],
+            function(data) {
+                it('should check for unsaved comments', function() {
+                    view.render();
+                    var field = view.getField('commentlog');
+                    field.getCurrentCommentText = data.func;
+                    expect(view.hasUnsavedChanges()).toBe(data.result);
+                });
+            }
+        );
     });
 });
