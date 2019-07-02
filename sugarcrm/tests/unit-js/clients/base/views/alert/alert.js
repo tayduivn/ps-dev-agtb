@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Alert View", function() {
+describe('Alert View', function() {
     var moduleName = 'Cases',
         app,
         sinonSandbox, view;
@@ -31,6 +31,7 @@ describe("Alert View", function() {
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
         sinonSandbox.restore();
+        sinon.collection.restore();
     });
 
     describe('getTranslatedLabels()', function() {
@@ -164,6 +165,17 @@ describe("Alert View", function() {
         });
     });
 
+    describe('closeClicked', function() {
+        it('should call onClose if it exists and then dismiss the alert', function() {
+            var dismissStub = sinon.collection.stub(app.alert, 'dismiss');
+            view.onClose = sinon.collection.stub();
+            var myEvent = {simulated: 'event'};
+            view.closeClicked(myEvent);
+            expect(view.onClose).toHaveBeenCalledWith(myEvent);
+            expect(dismissStub).toHaveBeenCalled();
+        });
+    });
+
     describe('confirmation alerts', function() {
         it('should cancel alert before calling onCancel and onConfirm', function() {
             var calledLast,
@@ -288,18 +300,29 @@ describe("Alert View", function() {
 
     describe('Key bindings', function() {
         var oldShortcuts;
+        var keybindingSandbox = sinon.sandbox.create();
 
         beforeEach(function() {
             oldShortcuts = app.shortcuts;
+            var callCount = 0;
             app.shortcuts = {
-                saveSession: sinon.stub(),
-                createSession: sinon.stub(),
-                register: sinon.stub(),
-                restoreSession: sinon.stub()
+                saveSession: keybindingSandbox.stub(),
+                createSession: keybindingSandbox.stub(),
+                register: keybindingSandbox.stub(),
+                restoreSession: keybindingSandbox.stub(),
+                getCurrentSession: function() {
+                    if (callCount) {
+                        return {layout: 'not this'};
+                    }
+
+                    callCount++;
+                    return {layout: view};
+                }
             };
         });
 
         afterEach(function() {
+            keybindingSandbox.restore();
             app.shortcuts = oldShortcuts;
         });
 
