@@ -800,6 +800,13 @@ $dictionary['Contact'] = array(
             'type' => 'index',
             'fields' => array('mkto_id')
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        [
+            'name' => 'idx_cont_portal_active',
+            'type' => 'index',
+            'fields' => ['portal_name', 'portal_active', 'deleted'],
+        ],
+// END SUGARCRM flav=ent ONLY
     ),
     'relationships' => array(
         'contact_direct_reports' => array(
