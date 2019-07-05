@@ -11,7 +11,6 @@
  */
 *}
 
-
 <script>
 {literal}
 function set_focus(){
