@@ -64,11 +64,10 @@ if(isset($_REQUEST['account_id']) && is_null($focus->parent_id)) {
 	$focus->parent_id = $_REQUEST['account_id'];
 }
 
-$params = array();
-$params[] = $focus->name;
-
-echo getClassicModuleTitle($focus->module_dir, $params, true);
-
+echo getClassicModuleTitle(htmlspecialchars($focus->module_dir), [
+    htmlspecialchars($focus->name),
+    htmlspecialchars($focus->module_dir),
+], true);
 
 $GLOBALS['log']->info("EmailTemplate detail view");
 
@@ -175,5 +174,3 @@ require_once('modules/DynamicFields/templates/Files/DetailView.php');
 $xtpl->parse("main");
 
 $xtpl->out("main");
-
-?>
