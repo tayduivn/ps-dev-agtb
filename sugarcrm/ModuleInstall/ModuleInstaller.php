@@ -2975,10 +2975,6 @@ class ModuleInstaller{
                     'target' => '#header',
                     'layout' => 'header'
                 ),
-                'footer' => array(
-                    'target' => '#footer',
-                    'layout' => 'footer'
-                ),
                 'drawer' => array(
                     'target' => '#drawers',
                     'layout' => 'drawer'

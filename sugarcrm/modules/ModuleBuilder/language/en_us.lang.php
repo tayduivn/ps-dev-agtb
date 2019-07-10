@@ -463,7 +463,8 @@ $mod_strings = array(
 'LBL_VISIBILITY_EDITOR' => 'Visibility Editor',
 'LBL_ROLLUP' => 'Rollup',
 'LBL_RELATED_FIELD' => 'Related Field',
-'LBL_CONFIG_PORTAL_URL'=>'URL to custom logo image. The recommended logo dimensions are 163 Ã 18 pixels.',
+'LBL_CONFIG_PORTAL_LOGOMARK_URL'=> 'URL to custom logomark image. The recommended logomark dimensions are 22 x 22 pixels. Any image uploaded that is larger in either direction will be scaled to these max dimensions.',
+'LBL_CONFIG_PORTAL_LOGO_URL'=> 'URL to custom logo image. The recommended logo dimensions are 24 x 450 pixels. Any image uploaded that is larger in either direction will be scaled to these max dimensions. This logo will be used on the login screen. If no image is uploaded, the logomark will be used.',
 'LBL_PORTAL_ROLE_DESC' => 'Do not delete this role. Customer Self-Service Portal Role is a system-generated role created during the Sugar Portal activation process. Use Access controls within this Role to enable and/or disable Bugs, Cases or Knowledge Base modules in Sugar Portal. Do not modify any other access controls for this role to avoid unknown and unpredictable system behavior. In case of accidental deletion of this role, recreate it by disabling and enabling Sugar Portal.',
 
 //RELATIONSHIPS
@@ -612,7 +613,10 @@ $mod_strings = array(
     'LBL_PORTAL_ENABLE' => 'Enable',
     'LBL_PORTAL_SITE_URL' => 'Your portal site is available at:',
     'LBL_PORTAL_APP_NAME' => 'Application Name',
+    'LBL_PORTAL_LOGOMARK_URL' => 'Logomark URL',
+    'LBL_PORTAL_LOGOMARK_PREVIEW' => 'Logomark Preview',
     'LBL_PORTAL_LOGO_URL' => 'Logo URL',
+    'LBL_PORTAL_LOGO_PREVIEW' => 'Logo Preview',
     'LBL_PORTAL_LIST_NUMBER' => 'Number of records to display on list',
     'LBL_PORTAL_DETAIL_NUMBER' => 'Number of fields to display on Detail View',
     'LBL_PORTAL_SEARCH_RESULT_NUMBER' => 'Number of results to display on Global Search',

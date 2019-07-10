@@ -43,14 +43,6 @@
         </tr>
         <tr>
             <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_LOGO_URL}: {sugar_help text=$mod.LBL_CONFIG_PORTAL_URL}
-            </td>
-            <td colspan='1' nowrap>
-                <input class='portalProperty portalField' id='logoURL' name='logoURL' value='{$logoURL}' size=60>
-            </td>
-        </tr>
-        <tr>
-            <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_LIST_NUMBER}:<span class="required">*</span>
             </td>
             <td colspan='1' nowrap>
@@ -101,6 +93,46 @@
             </td>
         </tr>
         <tr>
+            <td>
+                {$mod.LBL_PORTAL_LOGOMARK_URL}: {sugar_help text=$mod.LBL_CONFIG_PORTAL_LOGOMARK_URL}
+            </td>
+        <td colspan='1' nowrap>
+            <input class='portalProperty portalField logoURL' id='logomarkURL' name='logomarkURL'
+                   value='{$logomarkURL}'
+                   size=60>
+        </td>
+        </tr>
+        <tr>
+            <td colspan='1' nowrap>
+                {$mod.LBL_PORTAL_LOGOMARK_PREVIEW}:
+            </td>
+            <td>
+                <div class="company_logo_image_container">
+                    <img src='{$logomarkURL}' hide width="22px" height="22px" id="company_logomark_image" alt="{$mod_strings.LBL_LOGO}" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan='1' nowrap>
+                {$mod.LBL_PORTAL_LOGO_URL}: {sugar_help text=$mod.LBL_CONFIG_PORTAL_LOGO_URL}
+            </td>
+            <td colspan='1' nowrap>
+                <input class='portalProperty portalField logoURL' id='logoURL' name='logoURL'
+                       value='{$logoURL}' size=60 disabled>
+            </td>
+        </tr>
+        <tr>
+            <td colspan='1' nowrap>
+                {$mod.LBL_PORTAL_LOGO_PREVIEW}:
+            </td>
+            <td>
+                <div class="company_logo_image_container">
+                    <img width="450 px" height="24 px" id="company_logo_image" name = "company_logo_image"
+                         src='{$logoURL}' alt="{$mod_strings.LBL_LOGO}" />
+                </div>
+            </td>
+        </tr>
+        <tr>
             <td colspan='2' nowrap>
                 <input type='button' class='button' id='gobutton' value='{$mod.LBL_BTN_SAVE}'>
             </td>
@@ -143,6 +175,7 @@
     });
     addToValidateRange(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
     addToValidateUrl(0, 'logoURL', 'alphanumeric', false, {/literal}"{$mod.LBL_PORTAL_LOGO_URL}"{literal});
+    addToValidateUrl(0, 'logomarkURL', 'alphanumeric', false, {/literal}"{$mod.LBL_PORTAL_LOGOMARK_URL}"{literal});
     $('#gobutton').click(function(event){
         var $field, fields, props, i, key, val;
         fields = $('.portalField');
@@ -164,10 +197,77 @@
         props['portalModules'] = getModuleListConfig();
         retrieve_portal_page($.param(props));
     });
+
+    // Updates the preview for logomark
+    $('#logomarkURL').change(function() {
+        var previewLogoMark, url;
+        url = $('#logomarkURL').val();
+        previewLogoMark = $('#company_logomark_image');
+        if (url) {
+            // set the image
+            previewLogoMark.attr('src', url);
+            showPreview(previewLogoMark);
+        } else {
+            hidePreview(previewLogoMark);
+            hidePreview($('#company_logo_image'));
+            $('#logoURL').val('');
+            disableLogoUrl();
+        }
+    });
+
+    $('#company_logomark_image').on('load', function() {
+        // enable the logo textbox
+        enableLogoUrl();
+
+        // show the logoMark preview
+        showPreview($('#company_logomark_image'));
+    });
+
+    function hidePreview(preview) {
+        preview.hide();
+    }
+
+    function showPreview(preview) {
+        preview.show();
+    }
+
+    function disableLogoUrl() {
+        $('#logoURL').prop('disabled', true);
+    }
+
+    function enableLogoUrl() {
+        $('#logoURL').prop('disabled', false);
+    }
+
+    $('#company_logomark_image').on('error', function() {
+        // disable the logo textbox
+        $('#logoURL').val('');
+        disableLogoUrl();
+
+        // hide the logo preview
+        hidePreview($('#company_logo_image'));
+    });
+
+    // Updates the preview for logo
+    $('#logoURL').change(function() {
+        var previewLogo, url;
+        url = $('#logoURL').val();
+        previewLogo = $('#company_logo_image');
+
+        if (url) {
+            // set the image
+            previewLogo.attr('src', url);
+            showPreview(previewLogo);
+        } else {
+            hidePreview(previewLogo);
+        }
+    });
+
     function retrieve_portal_page(props) {
         if (validate_form(0,'')) {
             ModuleBuilder.getContent("module=ModuleBuilder&action=portalconfigsave&" + props);
             removeFromValidate(0, 'maxQueryResult');
+            removeFromValidate(0, 'logomarkURL');
             removeFromValidate(0, 'logoURL');
         }
     }

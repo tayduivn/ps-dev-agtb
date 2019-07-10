@@ -74,6 +74,7 @@ class ViewPortalConfig extends SugarView
         $portalFields = [
             'appStatus' => 'offline',
             'logoURL' => '',
+            'logomarkURL'=> '',
             'maxQueryResult' => '20',
             'maxSearchQueryResult' => '5',
             'defaultUser' => '',

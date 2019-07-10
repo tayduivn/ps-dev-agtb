@@ -41,6 +41,13 @@ $viewdefs['portal']['view']['login'] = array(
                         'no_required_placeholder' => true,
                         'required' => true,
                     ),
+                    [
+                        'name' => 'preferred_language',
+                        'type' => 'language',
+                        'options' => 'available_language_dom',
+                        'required' => false,
+                        'enabled' => true,
+                    ],
                 ),
             ),
         ),

@@ -21,7 +21,46 @@
     events: {
         'click [name=login_button]': 'login',
         'click [name=signup_button]': 'signup',
-        'keypress': 'handleKeypress'
+        'keypress': 'handleKeypress',
+        'click [name=preferred_language]': 'setLanguage'
+    },
+
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        // need to set the default/selected language
+        this.model.setDefault('preferred_language', app.lang.getLanguage() || 'en_us');
+
+        this.model.on('change:preferred_language', function() {
+            this.setLanguage(this.model.get('preferred_language'));
+        }, this);
+    },
+
+    /**
+     * When a user selects a language in the dropdown, set this language.
+     * Note that on login, user's preferred language will be updated to this language
+     *
+     * @param {string} language
+     */
+    setLanguage: function(language) {
+        if (!language) {
+            return;
+        }
+        app.alert.show('language', {level: 'warning', title: app.lang.get('LBL_LOADING_LANGUAGE'), autoclose: false});
+        app.lang.setLanguage(language, function() {
+            app.alert.dismiss('language');
+        });
+    },
+
+    /**
+     * Gets the logo image for portal
+     */
+    getLogoImage: function() {
+        // get the image urls for portal
+        return app.config.logoURL || app.config.logomarkURL || app.metadata.getLogoUrl();
     },
 
     /**

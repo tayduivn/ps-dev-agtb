@@ -38,4 +38,13 @@ describe('PortalLoginView', function() {
             expect(app.router.navigate).toHaveBeenCalledWith('#signup', {trigger: true});
         });
     });
+
+    describe('setLanguage', function() {
+        it('should select the correct language', function() {
+            var langStub = sinon.collection.stub(app.lang, 'setLanguage');
+            var language = 'en_us';
+            view.setLanguage(language);
+            expect(langStub).toHaveBeenCalledWith(language);
+        });
+    });
 });

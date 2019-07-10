@@ -178,7 +178,7 @@
             });
             return;
         }
-        this.logoUrl = app.metadata.getLogoUrl();
+        this.logoUrl = this.getLogoImage();
         //It's possible for errors to prevent the postLogin from triggering so contentEl may be hidden.
         app.$contentEl.show();
 
@@ -201,6 +201,14 @@
         }
         app.alert.dismiss(this._alertKeys.offsetProblem);
         return this;
+    },
+
+    /**
+     * Gets the logo image for sugar and portal
+     */
+    getLogoImage: function() {
+        // Fallback to Sugar logo for portal
+        return app.metadata.getLogoUrl();
     },
 
     /**

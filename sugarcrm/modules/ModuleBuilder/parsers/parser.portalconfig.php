@@ -37,8 +37,18 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
         }
 
-        $portalFields = ['caseDeflection', 'defaultUser', 'appName', 'logoURL', 'serverUrl',
-            'maxQueryResult', 'maxSearchQueryResult', 'portalModules'];
+        $portalFields = [
+            'caseDeflection',
+            'defaultUser',
+            'appName',
+            'logoURL',
+            'logomarkURL',
+            'serverUrl',
+            'maxQueryResult',
+            'maxSearchQueryResult',
+            'portalModules',
+        ];
+
         $portalConfig = $this->getDefaultPortalSettings();
 
         foreach ($portalFields as $field) {

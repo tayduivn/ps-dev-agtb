@@ -114,6 +114,19 @@
 
         this.meta.last_state = { id: 'recent' };
         this._recentToggleKey = app.user.lastState.key(this.TOGGLE_RECENTS_KEY, this);
+
+        this._setLogoImage();
+    },
+
+    /**
+     * Sets the logo for Sugar top left corner
+     * @protected
+     */
+    _setLogoImage: function() {
+        // let's put Sugar logo here instead of hbs template
+        var logoUrl = app.utils.buildUrl('styleguide/assets/img/logo.svg');
+        var altStr = app.lang.get('str', 'LBL_SUGAR_CUBE_ALT', this.module);
+        this.logoImage = '<img src="' + logoUrl + '" alt="' + altStr + '">';
     },
 
     /**
