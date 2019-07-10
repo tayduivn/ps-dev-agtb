@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "199e8b225d5e49be4426d7d153ec4c3d",
+    "content-hash": "354e54295d7fc21e76dfd52af9233f14",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2662,8 +2662,7 @@
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "e1d91021b4fa4636fbd121e8b733046739ba112c",
-                "shasum": null
+                "reference": "e1d91021b4fa4636fbd121e8b733046739ba112c"
             },
             "require": {
                 "doctrine/dbal": "~2.2",
@@ -4677,6 +4676,45 @@
                 "templating"
             ],
             "time": "2019-06-04T11:31:08+00:00"
+        },
+        {
+            "name": "ultra-lite/container",
+            "version": "6.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ultra-lite/container.git",
+                "reference": "448ecffdd3e751969e6c240541ff82aca7ee3112"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/ultra-lite/container/ultra-lite-container-6.2.0-f5c5ab.tar",
+                "reference": "448ecffdd3e751969e6c240541ff82aca7ee3112",
+                "shasum": "7ca2bdf45a90cd7029cb4e025c82b76a5360fb6e"
+            },
+            "require": {
+                "php": "^7.0",
+                "psr/container": "^1.0"
+            },
+            "require-dev": {
+                "behat/behat": "^3.3",
+                "phpspec/phpspec": "^3.2",
+                "phpunit/phpunit": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UltraLite\\Container\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-0": {
+                    "UltraLite\\Container\\Test\\": "tests/behat/context_files"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "time": "2017-06-20T21:55:40+00:00"
         },
         {
             "name": "vanderlee/php-stable-sort-functions",
