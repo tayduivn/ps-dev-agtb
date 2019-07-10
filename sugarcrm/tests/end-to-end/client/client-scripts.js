@@ -134,6 +134,13 @@ module.exports = {
         return App.router.getFragment();
     },
 
+    /**
+     * Refresh the browser window
+     */
+    browserRefresh: function() {
+        App.router.refresh();
+    },
+
     // returns options as comma separated string
     getSelectedOptionsText: function getSelectedOptionsText(selector) {
         const select = $(selector)[0];

@@ -14,6 +14,7 @@ import ListView from '../views/list-view';
 import FilterView from '../views/filter-view';
 import MassUpdateView from '../views/massupdate-view';
 import HeaderView from '../views/record-header-view';
+import MultilineListView from '../views/multiline-list-view';
 
 /**
  * Represents List page layout.
@@ -27,6 +28,7 @@ export default class ListLayout extends BaseView {
     public FilterView: FilterView;
     public MassUpdateView: MassUpdateView;
     public ListView: ListView;
+    public MultilineListView: MultilineListView;
     public defaultView: ListView;
     public HeaderView: HeaderView;
 
@@ -42,5 +44,6 @@ export default class ListLayout extends BaseView {
         this.MassUpdateView = this.createComponent<MassUpdateView>(MassUpdateView, { module: options.module });
         this.HeaderView = this.createComponent<HeaderView>(HeaderView);
         this.defaultView = this.ListView = this.createComponent<ListView>(ListView, { module: options.module, default: true });
+        this.MultilineListView = this.createComponent<MultilineListView>(MultilineListView, { module: options.module });
     }
 }

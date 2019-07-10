@@ -39,6 +39,7 @@ import KBSettingsLayout from './layouts/kb-settings-layout';
 import MergeLayout from './layouts/merge-layout';
 import HistoricalSummaryDrawerLayout from './layouts/historical-summary-layout';
 import PipelineView from './views/pipeline-view';
+import ServiceConsoleView from './views/service-console-view';
 import UserProfileLayout from './layouts/user-profile-layout'
 
 import TileViewSettings from './views/tile-settings-view';
@@ -106,6 +107,7 @@ export default (seedbed: Seedbed) => {
         seedbed.defineComponent(`ActivityStream`, ActivityStreamLayout, {module: 'Activities'});
         seedbed.defineComponent(`KBViewCategoriesDrawer`, KBViewCategoriesDrawer, {module: 'Categories'});
         seedbed.defineComponent(`KBSettingsDrawer`, KBSettingsLayout, {module: 'KBContents'});
+        seedbed.defineComponent(`ServiceConsoleView`, ServiceConsoleView, {module: 'Dashboards'});
     });
 
     /**

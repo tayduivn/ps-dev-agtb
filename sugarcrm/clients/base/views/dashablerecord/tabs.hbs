@@ -15,7 +15,7 @@
     {{#each this.tabs}}
         {{#if this}}
             <div class="dashlet-tab{{#eq ../../settings.attributes.activeTabIndex @index}} active{{/eq}}">
-            <a data-toggle="tab" data-action="tab-switcher" data-index="{{@index}}">
+            <a data-toggle="tab" data-action="tab-switcher" data-index="{{@index}}" data-module-name="{{getModuleName ../module plural=true}}">
                 {{#if label}}
                     {{str label module}}
                 {{else}}

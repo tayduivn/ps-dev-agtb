@@ -33,6 +33,13 @@ export default class DashboardView extends BaseView {
                 dashlet: '.dashlets.row-fluid',
                 FirstDashlet: '.row-fluid[name="dashlet_00"]',
                 SecondDashlet: '.row-fluid[name="dashlet_01"]',
+                ServiceConsoleOverview: '.agent_workbench_dashboard',
+                first_row_left_dashlet: '[name=dashlet_000]',
+                first_row_middle_dashlet: '[name=dashlet_001]',
+                first_row_right_dashlet: '[name=dashlet_002]',
+                second_row_left_dashlet: '[name=dashlet_010]',
+                second_row_middle_dashlet: '[name=dashlet_011]',
+                second_row_right_dashlet: '[name=dashlet_012]',
             }
         });
     }

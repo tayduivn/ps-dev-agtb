@@ -21,7 +21,7 @@ When<string, any>(
     async function(btnName: string, layout: {clickButton: ((btnName: string) => any)}) {
         await navigateToFrame('bwc-frame');
         await layout.clickButton(btnName);
-        await this.driver.pause(2000);
+        await this.driver.pause(4000);
         await this.driver.frame(null);
     },
     { waitForApp: true }

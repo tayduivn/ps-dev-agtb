@@ -825,7 +825,7 @@ When(/^I create a new record \*(\w+) by importing(?: (Business Rules|Email Templ
 );
 
 /**
- *  Click button in the Preview Header
+ *  Click button in the record Preview Header
  *
  *  @example
  *  When I click on Edit button in #Account_APreview.PreviewHeaderView
@@ -833,4 +833,27 @@ When(/^I create a new record \*(\w+) by importing(?: (Business Rules|Email Templ
 When(/^I click on (Edit|Cancel|Save) button in (#\S+)$/,
     async function (btnName: string, view: PreviewHeaderView) {
         await view.btnClick(btnName.toLowerCase());
+    }, {waitForApp: true});
+
+/**
+ *  Refresh the browser window
+ *
+ *  @example
+ *  When I refresh the browser
+ */
+When(/^I refresh the browser$/,
+    async function() {
+        await seedbed.client.driver.execSync('browserRefresh', []);
+    }, {waitForApp: true});
+
+/**
+ *  Select specific browser tab
+ *
+ *  @example
+ *  When I switch to tab 0
+ */
+When(/^I switch to tab (0|1|2)$/,
+    async function(tabNum: number) {
+        let tabIDs = await this.driver.getTabIds();
+        await this.driver.switchTab(tabIDs[tabNum]);
     }, {waitForApp: true});

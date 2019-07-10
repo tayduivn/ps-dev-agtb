@@ -25,28 +25,6 @@ Feature: Admin
 
 
   @user_profile @pr
-  Scenario Outline: User Profile > Activate License
-    When I open Accounts view and login
-    When I choose Profile in the user actions menu
-    # Verify current value(s) of License Type field
-    Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
-      | value |
-      | <ENT> |
-    When I click on Cancel button on #UserProfile
-    # Change the value of License Type field
-    When I change "LicenseTypes[]" enum-user-pref with "Sugar Serve" value in #UserProfile
-    When I click on Save button on #UserProfile
-    # Verify current value(s) of License Type field
-    Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
-      | value          |
-      | <ENT>, <SERVE> |
-    When I click on Cancel button on #UserProfile
-
-    Examples:
-      | ENT              | SERVE       |
-      | Sugar Enterprise | Sugar Serve |
-
-  @user_profile @pr
   Scenario: User Profile > Change tabs
     When I open Accounts view and login
     When I choose Profile in the user actions menu

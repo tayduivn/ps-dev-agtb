@@ -42,6 +42,8 @@ export default class extends BaseView {
                     'Create Dashboard': 'a[data-navbar-menu-item="LBL_CREATE_DASHBOARD_MENU"]',
                     'Activity Stream': 'a[data-navbar-menu-item="LBL_ACTIVITIES"]',
                     'Manage Dashboards': 'a[data-navbar-menu-item="LBL_MANAGE_DASHBOARDS"]',
+                    'Service Console': 'a[data-name="Service Console"]',
+                    'Home Dashboard': 'a[data-name="Home Dashboard"]',
 
                     // Acounts Module menu selectors
                     'Create Account': 'a[data-navbar-menu-item="LNK_NEW_ACCOUNT"]',
@@ -142,7 +144,7 @@ export default class extends BaseView {
     }
 
     /**
-     * Click on Modules Mege Menu dropdown to show all modules
+     * Click on Modules Mega Menu dropdown to show all modules
      */
     public async showAllModules() {
         await this.driver.click(this.$('moduleList.moreIcon'));
@@ -155,6 +157,7 @@ export default class extends BaseView {
      */
     public async clickItemUnderModuleMenu(menuItem: string) {
         await this.driver.click(this.$('moduleList.moduleItems.caret'));
+        await this.driver.pause(3000);
         await this.driver.waitForApp();
         await this.driver.click(this.$(`moduleList.moduleItems.${menuItem}`));
         await this.driver.waitForApp();

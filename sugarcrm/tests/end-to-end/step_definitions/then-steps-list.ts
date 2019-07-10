@@ -21,7 +21,7 @@ import BaseListView from '../views/baselist-view';
  * @example "I verify fields for *Account_A in #AccountsList:"
  */
 Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
-    async function(record: { id: string }, view: ListView, data: TableDefinition) {
+    async function(record: { id: string }, view: BaseListView, data: TableDefinition) {
 
         let listItem = view.getListItem({id: record.id});
 
@@ -46,7 +46,7 @@ Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
  * @example "I should see *Account_A in #AccountsList"
  */
 Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
-    async function(not, record: { id: string }, view: any) {
+    async function(not, record: { id: string }, view: BaseListView) {
 
         let listItem = view.getListItem({id: record.id});
 
