@@ -31,7 +31,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'include/Sugar_Smarty.php',
             'XTemplate',
             'Zend',
-            'include/lessphp',
             'include/nusoap',
             'include/oauth2-php',
             'include/pclzip',
@@ -254,8 +253,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'styleguide/assets/css/loader-sugarone.css';
             $files[] = 'styleguide/less/twitter-bootstrap/font-awesome/bootstrap.less';
             $files[] = 'styleguide/assets/font';
-            $files[] = 'vendor/lessphp/docs/docs.md';
-            $files[] = 'vendor/lessphp/plessc';
         }
 
         if (version_compare($this->from_version, '7.6', '<=')) {

@@ -33,7 +33,6 @@ class SugarUpgradeRepairVendors extends UpgradeScript
             'include/Smarty' => 'vendor/Smarty',
             'XTemplate' => 'vendor/XTemplate',
             'Zend' => 'vendor/Zend',
-            'include/lessphp' => 'vendor/lessphp',
             'include/nusoap' => 'vendor/nusoap',
             'include/oauth2-php' => 'vendor/oauth2-php',
             'include/pclzip' => 'vendor/pclzip',
