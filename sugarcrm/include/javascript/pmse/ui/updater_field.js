@@ -1395,12 +1395,13 @@ TeamUpdaterItem.prototype._getValueFromControl = function () {
                 }
             }
             if (!found) {
-                value.push({id:data, valid:!input.hasClass(that._invalidFieldClass)});
+                value.push({id: data, valid: !input.hasClass(that._invalidFieldClass)});
             }
             if (jQuery(this).find('.adam-team-action.active[name=primary]').length) {
                 that._primaryTeam = data;
             }
-            if (that._selectedTeams.indexOf(data) < 0 && jQuery(this).find('.adam-team-action.active[name=lock]').length) {
+            if (that._selectedTeams.indexOf(data) < 0 &&
+                jQuery(this).find('.adam-team-action.active[name=lock]').length) {
                 that._selectedTeams.push(data);
             }
         }
