@@ -148,7 +148,6 @@ $config['blackList']['pro'] = array(
 'sugarcrm/portal2' =>1,
 'sugarcrm/tests/portal2'=>1,
 'sugarcrm/tests/clients/portal'=>1,
-'sugarcrm/modules/Cases/clients/portal' => 1,
 
 'sugarcrm/styleguide/styleguide'=>1,
 'sugarcrm/styleguide/tests'=>1,
