@@ -14,7 +14,8 @@ $viewdefs['portal']['layout']['portal-list'] = [
     'components' => [
         [
             'view' => 'portal-list-top',
-        ], [
+        ],
+        [
             'layout' => [
                 'type' => 'filterpanel',
                 'last_state' => [
@@ -28,16 +29,20 @@ $viewdefs['portal']['layout']['portal-list'] = [
                     [
                         'layout' => 'filter',
                         'loadModule' => 'Filters',
-                    ], [
+                    ],
+                    [
                         'view' => 'filter-rows',
-                    ], [
+                    ],
+                    [
                         'view' => 'filter-actions',
                     ],
                 ],
             ],
-        ], [
+        ],
+        [
             'view' => 'list',
-        ], [
+        ],
+        [
             'view' => 'list-bottom',
         ],
     ],

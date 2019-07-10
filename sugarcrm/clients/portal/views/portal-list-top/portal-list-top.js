@@ -10,10 +10,19 @@
  */
 
 ({
+    events: {
+        'click .search': 'showSearch'
+    },
+
     _renderHtml: function() {
         if (app.acl.hasAccess('create', this.module)) {
             this.context.set('isCreateEnabled', true);
         }
         app.view.View.prototype._renderHtml.call(this);
+    },
+
+    showSearch: function() {
+        app.logger.warn('View.Views.Portal.PortalListTop#showSearch is deprecated. ' +
+            'The functionality is handled by the FilterApi.');
     },
 });

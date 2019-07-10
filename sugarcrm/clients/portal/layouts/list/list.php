@@ -36,7 +36,7 @@ $viewdefs['portal']['layout']['list'] = [
                 ],
             ],
         ], [
-            'view' => 'list',
+            'view' => 'recordlist',
             'primary' => true,
         ], [
             'view' => 'list-bottom',
