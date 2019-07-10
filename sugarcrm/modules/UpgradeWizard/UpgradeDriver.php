@@ -323,7 +323,10 @@ abstract class UpgradeDriver
 
     public function __construct()
     {
-        // empty ctor, init() does actual initialization
+        // disable access control, mark it as admin work
+        if (class_exists('Sugarcrm\Sugarcrm\AccessControl\AccessControlManager')) {
+            Sugarcrm\Sugarcrm\AccessControl\AccessControlManager::instance()->setAdminWork(true);
+        }
     }
 
     /**
