@@ -182,7 +182,7 @@ class PMSEPreProcessor
      * Sets subject data into the registry so that the bean save call can use it
      * @param array $flowData
      */
-    private function setSubjectData(array $flowData)
+    protected function setSubjectData(array $flowData)
     {
         // Store prj_id, pro_id, bpmn_id and bpmn_type in the registry for later
         // use. prj_id is only set in flowData that comes from getAllEvents, so
@@ -260,9 +260,6 @@ class PMSEPreProcessor
                 // Massage the flow data for required elements first
                 $flowData = $this->processFlowData($flowData);
 
-                // For handling Security Subject saving later on
-                $this->setSubjectData($flowData);
-
                 // Make sure we start fresh each time with validation and such
                 $request->reset();
 
@@ -311,6 +308,9 @@ class PMSEPreProcessor
                         $exBean = $validatedRequest->getBean();
                         $exExternalAction = $validatedRequest->getExternalAction();
                         $exArguments = $validatedRequest->getArguments();
+
+                        // For handling Security Subject accounting later on
+                        $this->setSubjectData($exFlowData);
 
                         // Run the executer and capture the result
                         $res = $this->executer->runEngine(

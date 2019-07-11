@@ -184,6 +184,7 @@ class PMSEPreProcessorTest extends TestCase
                     'getFlowDataList',
                     'processFlowData',
                     'processBean',
+                    'setSubjectData',
                 ])
                 ->getMock();
 
@@ -198,6 +199,9 @@ class PMSEPreProcessorTest extends TestCase
             ],
         ];
 
+        // So that the proper method calls are made in the test
+        $resultRequest->setFlowData($flowData);
+
         $preProcessorMock->expects($this->any())
                 ->method('processBean')
                 ->will($this->returnValue($beanMock));
@@ -209,6 +213,10 @@ class PMSEPreProcessorTest extends TestCase
         $preProcessorMock->expects($this->any())
                 ->method('processFlowData')
                 ->will($this->returnValue($flowData[0]));
+
+        $preProcessorMock->expects($this->once())
+            ->method('setSubjectData')
+            ->with($this->equalTo($flowData));
 
         $validatorMock = $this->getMockBuilder('PMSEValidator')
                 ->disableOriginalConstructor()
@@ -261,6 +269,7 @@ class PMSEPreProcessorTest extends TestCase
                     'getFlowDataList',
                     'processFlowData',
                     'processBean',
+                    'setSubjectData',
                 ])
                 ->getMock();
 
@@ -285,6 +294,9 @@ class PMSEPreProcessorTest extends TestCase
         $preProcessorMock->expects($this->any())
                 ->method('processFlowData')
                 ->will($this->returnValue($flowData[0]));
+
+        $preProcessorMock->expects($this->never())
+            ->method('setSubjectData');
 
         $validatorMock = $this->getMockBuilder('PMSEValidator')
                 ->disableOriginalConstructor()
