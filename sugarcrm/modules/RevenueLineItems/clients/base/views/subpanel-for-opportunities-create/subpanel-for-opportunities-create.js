@@ -93,7 +93,7 @@
                 catalog[i] = _.filter(group, function(fieldMeta) {
                     if (fieldMeta.name.indexOf('_case') != -1) {
                         var field = 'show_worksheet_' + fieldMeta.name.replace('_case', '');
-                        return (config[field] == 1);
+                        return (forecastConfig[field] == 1);
                     }
 
                     return true;
