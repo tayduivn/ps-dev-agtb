@@ -65,7 +65,12 @@ function export($type, $records = null, $members = false, $sample = false)
     if ($records) {
         $where = sprintf(
             "{$focus->table_name}.id IN (%s)",
-            implode(',', array_map([$db, 'quoted'], $records))
+            implode(',', array_map(
+                function ($id) use ($db): string {
+                    return $db->quoted($id);
+                },
+                $records
+            ))
         );
     } elseif (isset($_REQUEST['all'])) {
         $where = '';
