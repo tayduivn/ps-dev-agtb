@@ -12,7 +12,6 @@
 
 require_once 'include/HTMLPurifier';
 require_once 'include/HTTP_WebDAV_Server';
-require_once 'include/Pear';
 require_once 'include/Smarty';
 require_once 'XTemplate';
 require_once 'Zend';

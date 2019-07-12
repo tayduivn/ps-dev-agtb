@@ -205,7 +205,6 @@ class HealthCheckScanner
     protected $removed_directories = array(
         'include/HTMLPurifier',
         'include/HTTP_WebDAV_Server',
-        'include/Pear',
         'include/Smarty',
         'XTemplate',
         'Zend',

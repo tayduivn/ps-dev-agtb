@@ -30,7 +30,6 @@ class SugarUpgradeRepairVendors extends UpgradeScript
         'pre7' => array(
             'include/HTMLPurifier' => 'vendor/HTMLPurifier',
             'include/HTTP_WebDAV_Server' => 'vendor/HTTP_WebDAV_Server',
-            'include/Pear' => 'vendor/Pear',
             'include/Smarty' => 'vendor/Smarty',
             'XTemplate' => 'vendor/XTemplate',
             'Zend' => 'vendor/Zend',

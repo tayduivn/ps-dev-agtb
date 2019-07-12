@@ -27,7 +27,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             // remove the files moved to vendor
             'include/HTMLPurifier',
             'include/HTTP_WebDAV_Server',
-            'include/Pear',
             'include/Smarty',
             'include/Sugar_Smarty.php',
             'XTemplate',

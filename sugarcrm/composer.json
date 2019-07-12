@@ -57,7 +57,6 @@
             "upgrade/",
             "vendor/lessphp",
             "vendor/HTMLPurifier/HTMLPurifier.standalone.php",
-            "vendor/Pear",
             "vendor/nusoap",
             "vendor/Smarty",
             "vendor/XTemplate",
