@@ -145,7 +145,6 @@ class ConfiguratorController extends SugarController
         $configurator = new Configurator();
         $configurator->populateFromPost();
         $configurator->handleOverride();
-        $configurator->parseLoggerSettings();
         $configurator->saveConfig();
 
         // Bug 37310 - Delete any existing currency that matches the one we've just set the default to during the admin wizard

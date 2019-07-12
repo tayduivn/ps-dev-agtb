@@ -136,7 +136,6 @@ class SugarAutoLoader
         'tests',
         'examples',
         'docs',
-        'vendor/log4php',
         'upload',
         'portal',
         'vendor/HTMLPurifier',

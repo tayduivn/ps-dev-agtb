@@ -646,15 +646,6 @@ function handleDbCreateDatabase() {
     echo $mod_strings['LBL_PERFORM_DONE'];
 }
 
-
-/**
- * handles creation of Log4PHP properties file
- * This function has been deprecated.  Use SugarLogger.
- */
-function handleLog4Php() {
-    return;
-}
-
 function installLog($entry) {
     global $mod_strings;
     $nl = '
@@ -769,8 +760,7 @@ function handleSugarConfig() {
         );
     }
 
-    /* nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
-       these settings will be overwritten by those in log4php.properties when the user access admin->system settings. */
+    // Consolidate logger settings under $config['logger'] as liked by the new logger
     $sugar_config['logger']	= array(
         'level' => $setup_site_log_level,
         'file' => array(
@@ -921,7 +911,7 @@ function getForbiddenPaths()
         '^upload/',
         '^vendor/(?!ytree.*\.(css|gif|js|png)$)',
 // @codingStandardsIgnoreStart
-        '^(cache|clients|data|examples|include|jssource|log4php|metadata|ModuleInstall|modules|soap|xtemplate)/.*\.(php|tpl)$',
+        '^(cache|clients|data|examples|include|jssource|metadata|ModuleInstall|modules|soap|xtemplate)/.*\.(php|tpl)$',
 // @codingStandardsIgnoreEnd
     ];
 }

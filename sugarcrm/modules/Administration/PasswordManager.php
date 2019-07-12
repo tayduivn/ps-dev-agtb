@@ -52,7 +52,6 @@ echo getClassicModuleTitle(
 $configurator = new Configurator();
 $sugarConfig = SugarConfig::getInstance();
 $focus = BeanFactory::newBean('Administration');
-$configurator->parseLoggerSettings();
 $config_strings = return_module_language($GLOBALS['current_language'], 'Configurator');
 $valid_public_key = true;
 $samlSigningAlgos = [

@@ -36,7 +36,6 @@ sugarcrm/vendor/*
 !sugarcrm/vendor/XTemplate
 !sugarcrm/vendor/Zend
 !sugarcrm/vendor/lessphp
-!sugarcrm/vendor/log4php
 !sugarcrm/vendor/oauth2-php
 !sugarcrm/vendor/nusoap
 !sugarcrm/vendor/pclzip

@@ -17,7 +17,6 @@ require_once 'include/Smarty';
 require_once 'XTemplate';
 require_once 'Zend';
 require_once 'include/lessphp';
-require_once 'log4php';
 require_once 'include/nusoap';
 require_once 'include/oauth2-php';
 require_once 'include/pclzip';

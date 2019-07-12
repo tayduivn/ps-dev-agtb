@@ -57,7 +57,6 @@ if(count($uwFilesCurrent) < 5) {
 
 $uw_files = array(
     // standard files we steamroll with no warning
-    'log4php.properties',
     'include/utils/encryption_utils.php',
     'include/utils.php',
     'include/language/en_us.lang.php',

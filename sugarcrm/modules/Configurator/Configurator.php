@@ -374,65 +374,6 @@ class Configurator
         SugarThemeRegistry::current()->clearImageCache('company_logo.png');
         $this->updateMetadataCache(array(MetaDataManager::MM_LOGOURL));
 	}
-	/**
-	 * @params : none
-	 * @return : An array of logger configuration properties including log size, file extensions etc. See SugarLogger for more details.
-	 * Parses the old logger settings from the log4php.properties files.
-	 *
-	 */
-
-	function parseLoggerSettings(){
-		if (file_exists('log4php.properties')) {
-			$fileContent = file_get_contents('log4php.properties');
-			$old_props = explode('\n', $fileContent);
-			$new_props = array();
-			$key_names=array();
-			foreach($old_props as $value) {
-				if(!empty($value) && !preg_match("/^\/\//", $value)) {
-					$temp = explode("=",$value);
-					$property = isset( $temp[1])? $temp[1] : array();
-					if(preg_match("/log4php.appender.A2.MaxFileSize=/",$value)){
-						setDeepArrayValue($this->config, 'logger_file_maxSize', rtrim( $property));
-					}
-					elseif(preg_match("/log4php.appender.A2.File=/", $value)){
-						$ext = preg_split("/\./",$property);
-						if(preg_match( "/^\./", $property)){ //begins with .
-							setDeepArrayValue($this->config, 'logger_file_name', rtrim( ".".$ext[1]));
-						}else{
-							setDeepArrayValue($this->config, 'logger_file_name', rtrim( $ext[0] ));
-						}
-					}elseif(preg_match("/log4php.appender.A2.layout.DateFormat=/",$value)){
-						setDeepArrayValue($this->config, 'logger_file_dateFormat', trim(rtrim( $property), '""'));
-
-					}elseif(preg_match("/log4php.rootLogger=/",$value)){
-						$property = explode(",",$property);
-						setDeepArrayValue($this->config, 'logger_level', rtrim( $property[0]));
-					}
-				}
-			}
-			setDeepArrayValue($this->config, 'logger_file_maxLogs', 10);
-			setDeepArrayValue($this->config, 'logger_file_suffix', "%m_%Y");
-			$this->handleOverride();
-			unlink('log4php.properties');
-			$GLOBALS['sugar_config'] = $this->config; //load the rest of the sugar_config settings.
-			//$logger = new SugarLogger(); //this will create the log file.
-
-		}
-
-		if (!isset($this->config['logger']) || empty($this->config['logger'])) {
-			$this->config['logger'] = array (
-			'file' => array(
-				'name' => 'sugarcrm',
-				'dateFormat' => '%c',
-				'maxSize' => '10MB',
-				'maxLogs' => 10,
-				'suffix' => ''), // bug51583, change default suffix to blank for backwards comptability
-			'level' => 'fatal');
-		}
-		$this->handleOverride();
-
-
-	}
 
 	function saveCompanyQuoteLogo($path) {
 		$path = $this->checkTempImage($path);

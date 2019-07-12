@@ -134,8 +134,6 @@ EOQ;
 echo $out;
 installLog("calling handleSugarConfig()");
 $bottle = handleSugarConfig();
-installLog("calling handleLog4Php()");
-handleLog4Php();
 
 $server_software = $_SERVER["SERVER_SOFTWARE"];
 if (strpos($server_software, 'Microsoft-IIS') !== false) {

@@ -35,7 +35,6 @@ class SugarUpgradeRepairVendors extends UpgradeScript
             'XTemplate' => 'vendor/XTemplate',
             'Zend' => 'vendor/Zend',
             'include/lessphp' => 'vendor/lessphp',
-            'log4php' => 'vendor/log4php',
             'include/nusoap' => 'vendor/nusoap',
             'include/oauth2-php' => 'vendor/oauth2-php',
             'include/pclzip' => 'vendor/pclzip',

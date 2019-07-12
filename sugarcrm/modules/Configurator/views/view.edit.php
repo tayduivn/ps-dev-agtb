@@ -47,7 +47,6 @@ class ConfiguratorViewEdit extends ViewEdit
 
 	    $configurator = new Configurator();
         $sugarConfig = SugarConfig::getInstance();
-        $configurator->parseLoggerSettings();
         $focus = Administration::getSettings();
 
         $idpConfig = new IdmConfig(\SugarConfig::getInstance());
