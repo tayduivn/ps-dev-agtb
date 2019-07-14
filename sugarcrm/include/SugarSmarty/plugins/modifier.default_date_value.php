@@ -134,13 +134,10 @@ Touched:
 - include/MVC/View/SugarView.php
 - include/MVC/SugarApplication.php
 - include/ListView/ListViewData.php
-- soap/SoapPortalUsers.php
 - install/populateSeedData.php
 - install/seed_data/dceSeedData.php
 - examples/SoapTestDCE.php
-- examples/SoapTestPortal.php
 - examples/SoapFullTest.php
-- examples/SoapPortalFullTest.php
 
 r29406 - 2007-11-08 16:36:28 -0800 (Thu, 08 Nov 2007) - bsoufflet - Bug 17690 : [RC] No license and/or entry point check in the files
 
