@@ -3789,6 +3789,8 @@ Sincerely, SugarCRM',
     'TPL_DASHLET_MY_MODULE' => 'My {{module}}',
     'LBL_DASHLET_PICK_A_RECORD' => 'No record selected for display',
     'LBL_CONTENT_SEARCH_DASHLET' => 'Content Search Dashlet',
+    'LBL_CONTENT_SEARCH_DASHLET_GREETING' => 'What can we help you with today, {{username}}?',
+    'LBL_CONTENT_SEARCH_DASHLET_DISABLED' => 'Would you like to create a case?',
 
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account.',
