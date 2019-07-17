@@ -697,29 +697,28 @@ function apiActualLoadSystemStatus()
     checkSystemLicenseStatus();
     $admin = Administration::getSettings();
 
+    $subscriptions = SubscriptionManager::instance()->getSystemSubscriptions();
+    // no valid subscription
+    if (empty($subscriptions)) {
+        return array(
+            'level' => 'admin_only',
+            'message' => 'ERROR_LICENSE_EXPIRED',
+            'url' => '#bwc/index.php?action=LicenseSettings&module=Administration',
+        );
+    }
+
     if (!empty($admin->settings['license_enforce_user_limit'])) {
         // BEGIN License User Limit Enforcement
-        $subscriptions = SubscriptionManager::instance()->getSystemSubscriptions();
-        // no valid subscription
-        if (empty($subscriptions)) {
-            return array(
-                'level'  =>'admin_only',
-                'message'=>'ERROR_LICENSE_EXPIRED',
-                'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
-            );
-        }
-
         $license_seats_needed = 0;
-        $exceededLicenseTypes = User::getExceededLimitLicenseTypes($license_seats_needed);
+        $exceededLicenseTypes = SubscriptionManager::instance()->getSystemLicenseTypesExceededLimit($license_seats_needed);
 
         if (!empty($exceededLicenseTypes)) {
             $_SESSION['license_seats_needed'] = $license_seats_needed;
-            $_SESSION['exceeded_limit_types'] = $exceededLicenseTypes;
             $_SESSION['EXCEEDS_MAX_USERS'] = 1;
             return array(
-                    'level'  =>'admin_only',
-                    'message'=>'ERROR_LICENSE_SEATS_MAXED',
-                    'url'    =>'#bwc/index.php?module=Users&action=index',
+                'level' => 'admin_only',
+                'message' => 'ERROR_LICENSE_SEATS_MAXED',
+                'url' => '#bwc/index.php?module=Users&action=index',
             );
         }
         // END License User Limit Enforcement
@@ -835,34 +834,63 @@ function loginLicense(){
 	loadLicense(true);
 
   //BEGIN SUGARCRM lic=sub ONLY
-	if((isset($_SESSION['EXCEEDS_MAX_USERS']) && $_SESSION['EXCEEDS_MAX_USERS'] == 1 ) || empty($license->settings['license_key']) || (!empty($license->settings['license_last_validation']) && $license->settings['license_last_validation'] == 'failed' &&  !empty($license->settings['license_last_validation_fail']) && (empty($license->settings['license_last_validation_success']) || $license->settings['license_last_validation_fail'] > $license->settings['license_last_validation_success']))){
+    if ((isset($_SESSION['EXCEEDS_MAX_USERS']) && $_SESSION['EXCEEDS_MAX_USERS'] == 1 )
+        || empty($license->settings['license_key'])
+        || (!empty($license->settings['license_last_validation'])
+            && $license->settings['license_last_validation'] == 'failed'
+            && !empty($license->settings['license_last_validation_fail'])
+            && (empty($license->settings['license_last_validation_success'])
+                || $license->settings['license_last_validation_fail'] > $license->settings['license_last_validation_success']
+            )
+        )
+    ) {
+        if (!is_admin($current_user)) {
+            // check current user's license types, if not in $exceededLicenseTypes
+            // let user continue
+            if (empty($current_user->getUserExceededAndInvalidLicenseTypes())) {
+                unset($_SESSION['license_seats_needed']);
+                return;
+            }
 
-		if(!is_admin($current_user)){
-            if (isset($_SESSION['exceeded_limit_types'])) {
-                $exceededLicenseTypes = $_SESSION['exceeded_limit_types'];
-                $i = 0;
+            // show login error message
+            $license_seats_needed = 0;
+            $exceededLicenseTypes = SubscriptionManager::instance()->getSystemLicenseTypesExceededLimit($license_seats_needed);
+            $msg = '';
+            foreach ($exceededLicenseTypes as $type => $extraNumbers) {
+                if (!empty($msg)) {
+                    $msg .= ' and ';
+                }
+                $msg .= User::getLicenseTypeDescription($type) . ' ';
+            }
+            $GLOBALS['login_error'] = sprintf(translate('ERROR_LICENSE_TYPE_SEATS_MAXED'), $msg);
+            $_SESSION['login_error'] =  $GLOBALS['login_error'];
+        } else {
+            if (empty($license->settings['license_key'])) {
+                $_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
+            } else {
+                $_SESSION['COULD_NOT_CONNECT'] = $license->settings['license_last_validation_fail'];
+            }
+        }
+    } else {
+        // check if user has invalid license types
+        $invalidLicenseTypes = SubscriptionManager::instance()->getUserInvalidSubscriptions($current_user);
+        if (!empty($invalidLicenseTypes)) {
+            if (!is_admin($current_user)) {
                 $msg = '';
-                foreach ($exceededLicenseTypes as $type => $extraNumbers) {
-                    if ($i > 0) {
+                foreach ($invalidLicenseTypes as $type) {
+                    if (!empty($msg)) {
                         $msg .= ' and ';
                     }
                     $msg .= User::getLicenseTypeDescription($type) . ' ';
-                    $i++;
                 }
                 $GLOBALS['login_error'] = sprintf(translate('ERROR_LICENSE_TYPE_SEATS_MAXED'), $msg);
             } else {
                 $GLOBALS['login_error'] = $GLOBALS['app_strings']['ERROR_LICENSE_VALIDATION'];
             }
-		   $_SESSION['login_error'] =  $GLOBALS['login_error'];
-		}else{
-			if(empty($license->settings['license_key'])){
-				$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
-			}else{
-				$_SESSION['COULD_NOT_CONNECT'] = $license->settings['license_last_validation_fail'];
-			}
-		}
-
-	}
+            $_SESSION['login_error'] =  $GLOBALS['login_error'];
+            return;
+        }
+    }
 
   //END SUGARCRM lic=sub ONLY
 

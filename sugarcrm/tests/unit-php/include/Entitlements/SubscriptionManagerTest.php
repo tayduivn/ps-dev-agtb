@@ -512,7 +512,7 @@ class SubscriptionManagerTest extends TestCase
                 'SUGAR_SELL_CURRENT_SUGAR_SERVE',
             ],
             'empty subscriptions' => [
-                null,
+                [],
                 '',
             ],
         ];
@@ -555,6 +555,142 @@ class SubscriptionManagerTest extends TestCase
             'sortingsubscriptions' => [
                 ['SUGAR_SERVE' => true, 'CURRENT' => true],
                 ['CURRENT', 'SUGAR_SERVE'],
+            ],
+        ];
+    }
+
+
+    /**
+     * @covers ::getSystemLicenseTypesExceededLimit
+     *
+     * @dataProvider getSystemLicenseTypesExceededLimitProvider
+     */
+    public function testGetSystemLicenseTypesExceededLimit(
+        array $subscription,
+        array $activeUsersByLicenseTypes,
+        array $expected,
+        int $expectedCount
+    ) {
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getSystemSubscriptions', 'getSystemUserCountByLicenseTypes'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getSystemSubscriptions')
+            ->will($this->returnValue($subscription));
+
+        $subMock->expects($this->any())
+            ->method('getSystemUserCountByLicenseTypes')
+            ->will($this->returnValue($activeUsersByLicenseTypes));
+
+        $license_seats_needed = 0;
+        $this->assertSame($expected, $subMock->getSystemLicenseTypesExceededLimit($license_seats_needed), 'no match for exceededLimit array');
+        $this->assertEquals($expectedCount, $license_seats_needed, 'no match for exceeded limit counts');
+    }
+
+    public function getSystemLicenseTypesExceededLimitProvider()
+    {
+        return [
+            'SERVE + ENT instance, user with SERVE only license Type no exceeded limit' => [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                    'CURRENT' => ['quantity' => 1000, 'expiration_date' => 1587798000],
+                ],
+                ['SUGAR_SERVE' => 10],
+                [],
+                0,
+            ],
+            'SERVE + ENT instance, user with CURRENT license Type over limit' => [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                    'CURRENT' => ['quantity' => 1000, 'expiration_date' => 1587798000],
+                ],
+                ['SUGAR_SERVE' => 10, 'CURRENT' => 10000],
+                ['CURRENT' => 9000],
+                9000,
+            ],
+            'SERVE instance, user with SERVE only license Type exceeded limits' => [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                ],
+                ['SUGAR_SERVE' => 100],
+                ['SUGAR_SERVE' => 90],
+                90,
+            ],
+            'SERVE instance, user with SERVE and CURRENT license Types exceeded limits' => [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                ],
+                ['SUGAR_SERVE' => 100, 'CURRENT' => 10000],
+                ['SUGAR_SERVE' => 90, 'CURRENT' => 10000],
+                10090,
+            ],
+            'The instance without subscription' => [
+                [],
+                ['SUGAR_SERVE' => 10, 'CURRENT' => 10000],
+                ['CURRENT' => 1],
+                1,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getUserExceededAndInvalidLicenseTypes
+     *
+     * @dataProvider getUserExceededAndInvalidLicenseTypesProvider
+     */
+    public function testGetUserExceededAndInvalidLicenseTypes(
+        array $licenseTypesExceededLimit,
+        array $userSubscription,
+        array $invalidSubscription,
+        array $expected
+    ) {
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getUserSubscriptions', 'getUserInvalidSubscriptions', 'getSystemLicenseTypesExceededLimit'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getSystemLicenseTypesExceededLimit')
+            ->will($this->returnValue($licenseTypesExceededLimit));
+
+        $subMock->expects($this->any())
+            ->method('getUserSubscriptions')
+            ->will($this->returnValue($userSubscription));
+
+        $subMock->expects($this->any())
+            ->method('getUserInvalidSubscriptions')
+            ->will($this->returnValue($invalidSubscription));
+
+        $userMock = $this->getMockBuilder(\User::class)
+            ->disableOriginalConstructor()
+            ->setMethods()
+            ->getMock();
+
+        $this->assertSame($expected, $subMock->getUserExceededAndInvalidLicenseTypes($userMock));
+    }
+
+    public function getUserExceededAndInvalidLicenseTypesProvider()
+    {
+        return [
+            'user has license type exceed the limit' =>[
+                ['SUGAR_SERVE' => 10],
+                ['SUGAR_SERVE'],
+                [],
+                ['SUGAR_SERVE'],
+            ],
+            'user has license type exceed the limit and has invalid license type' => [
+                ['SUGAR_SERVE' => 10, 'UNKNOWN_TYPE' => 1000],
+                ['SUGAR_SERVE'],
+                ['INVALID_TYPE'],
+                ['SUGAR_SERVE', 'INVALID_TYPE'],
+            ],
+            'user has invalid license type' => [
+                [],
+                ['SUGAR_SERVE'],
+                ['INVALID_TYPE'],
+                ['INVALID_TYPE'],
             ],
         ];
     }

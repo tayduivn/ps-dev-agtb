@@ -459,12 +459,47 @@ class User extends Person {
     public function shouldUserCompleteWizard($category = 'global')
     {
         $systemStatus = apiCheckSystemStatus();
-        if ($systemStatus !== true) {
+        if ($systemStatus !== true && !$this->allowNonAdminToContinue($systemStatus)) {
             // System isn't ok, so no need to configure it
+            // or non-admin can continue is not allowed
             return false;
         }
         $ut = $this->getPreference('ut', $category);
         return !filter_var($ut, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * allow non-admin user continue to use this Sugar instance
+     * @param array|bool $systemStatus
+     * @param \User $user
+     */
+    public function allowNonAdminToContinue($systemStatus)
+    {
+        if ($systemStatus === true) {
+            return true;
+        }
+
+        if (!is_array($systemStatus) || $this->isAdmin()) {
+            return false;
+        }
+
+        if (isset($systemStatus['level']) && $systemStatus['level'] == 'admin_only'
+            && isset($systemStatus['message']) && $systemStatus['message'] === 'ERROR_LICENSE_SEATS_MAXED'
+            && empty($this->getUserExceededAndInvalidLicenseTypes())
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * get this user's license types either in exceeded limits or invalid categories
+     * @return array
+     */
+    public function getUserExceededAndInvalidLicenseTypes()
+    {
+        return SubscriptionManager::instance()->getUserExceededAndInvalidLicenseTypes($this);
     }
 
     /**
@@ -634,7 +669,7 @@ class User extends Person {
                       || $this->fetched_row['status'] == 'Inactive'
                       || $this->fetched_row['status'] == '')) {
                 $license_seats_needed = 0;
-                $exceededLicenseType = self::getExceededLimitLicenseTypes($license_seats_needed);
+                $exceededLicenseType = SubscriptionManager::instance()->getSystemLicenseTypesExceededLimit($license_seats_needed);
                 if ($license_seats_needed > 0) {
                     $GLOBALS['log']->error(
                         'The number of active users is already the maximum number of licenses allowed.'
@@ -779,85 +814,6 @@ class User extends Person {
 	}
 
     /**
-     * get number of users exceed limit by license type
-     * @param int $license_seats_needed total number of license needed
-     * @return array
-     */
-    public static function getExceededLimitLicenseTypes(int &$license_seats_needed) : array
-    {
-        global $db;
-        $sysSubscriptions = SubscriptionManager::instance()->getSystemSubscriptions();
-        $exceededLimitTypes = [];
-
-        // no subscription
-        if (empty($sysSubscriptions)) {
-            $exceededLimitTypes[Subscription::SUGAR_BASIC_KEY] = 1;
-            $license_seats_needed = 1;
-            return $exceededLimitTypes;
-        }
-
-        // check individual license type
-        $query = "SELECT license_type from users WHERE " . User::getLicensedUsersWhere();
-        $result = $db->query($query, true, "Error filling in user array: ");
-        $supportedTypes = SubscriptionManager::instance()->getAllSupportedProducts();
-        $userCountByType = [];
-        foreach ($supportedTypes as $type) {
-            $userCountByType[$type] = 0;
-        }
-        $foundUnknownType = false;
-        $unknownTypes = '';
-        while (($row=$db->fetchByAssoc($result, false)) != null) {
-            if (empty($row['license_type'])) {
-                $type = SubscriptionManager::instance()->getUserDefaultLicenseType();
-                if (empty($type) || !in_array($type, $supportedTypes)) {
-                    if (!empty($type)) {
-                        $unknownTypes .= $type . ' ';
-                    }
-                    $foundUnknownType = true;
-                } else {
-                    $userCountByType[$type] += 1;
-                }
-            } else {
-                $userBean = BeanFactory::newBean('Users');
-                try {
-                    $types = $userBean->processLicenseTypes($row['license_type']);
-                    foreach ($types as $type) {
-                        if (empty($type) || !in_array($type, $supportedTypes)) {
-                            $foundUnknownType = true;
-                        } else {
-                            $userCountByType[$type] += 1;
-                        }
-                    }
-                } catch (SugarApiExceptionInvalidParameter $e) {
-                    $userCountByType['UnknownType'] += 1;
-                }
-            }
-        }
-
-        if ($foundUnknownType) {
-            // don't know what to do, skip for now
-            $GLOBALS['log']->fatal('Found unknown type: ' . $unknownTypes);
-        }
-
-        foreach ($userCountByType as $licenseType => $count) {
-            if ($count > 0) {
-                if (isset($sysSubscriptions[$licenseType])) {
-                    if ($userCountByType[$licenseType] > $sysSubscriptions[$licenseType]['quantity']) {
-                        $exceededLimitTypes[$licenseType] = $count - $sysSubscriptions[$licenseType]['quantity'];
-                        $license_seats_needed += $exceededLimitTypes[$licenseType];
-                    }
-                } else {
-                    // license expired or switched
-                    $exceededLimitTypes[$licenseType] = $count;
-                    $license_seats_needed += $count;
-                }
-            }
-        }
-
-        return $exceededLimitTypes;
-    }
-
-    /**
      * get system subscriptions
      * @return array
      */
@@ -901,7 +857,8 @@ class User extends Person {
                 return $mod_strings['LBL_LICENSE_INVALID_PRODUCT'];
             }
         }
-        return '';
+
+        return $mod_strings['LBL_LICENSE_TYPE_INVALID'];
     }
 
 	/**

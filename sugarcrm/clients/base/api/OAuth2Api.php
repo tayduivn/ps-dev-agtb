@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 class OAuth2Api extends SugarApi
@@ -118,14 +119,17 @@ class OAuth2Api extends SugarApi
         }
 
         $loginStatus = apiCheckLoginStatus();
+        global $current_user;
         if ($loginStatus !== true && $loginStatus['level'] != 'warning') {
             if (($loginStatus['level'] == 'admin_only' || $loginStatus['level'] == 'maintenance')
-                 && $GLOBALS['current_user']->isAdmin() ) {
+                 && $current_user->isAdmin() ) {
                 // Let them through
+            } elseif (!empty($current_user) && $current_user->allowNonAdminToContinue($loginStatus)) {
+                // allow non admin user go through
             } else {
                 if ($loginStatus['message'] === 'ERROR_LICENSE_SEATS_MAXED') {
-                    $exceededLicenseTypes = $_SESSION['exceeded_limit_types']
-                        ?? User::getExceededLimitLicenseTypes($seatNeeded);
+                    $seatNeeded = 0;
+                    $exceededLicenseTypes = SubscriptionManager::instance()->getSystemLicenseTypesExceededLimit($seatNeeded);
                     $msg = '';
                     $i = 0;
 

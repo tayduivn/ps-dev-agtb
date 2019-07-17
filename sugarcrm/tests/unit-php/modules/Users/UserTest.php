@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users;
 
 use PHPUnit\Framework\TestCase;
@@ -19,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class UserTest extends TestCase
 {
-
     /**
      * @covers ::getLicenseTypes
      * @covers ::processLicenseTypes
@@ -165,6 +163,76 @@ class UserTest extends TestCase
                 ['SUGAR_SELL', 'SUGAR_SERVE'],
                 true,
                 true,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::allowNonAdminToContinue
+     *
+     * @dataProvider allowNonAdminToContinueProvider
+     */
+    public function testAllowNonAdminToContinue($systemStatus, $isAdmin, $invalidLicenseTypes, $expected, $unexpectedMasg)
+    {
+        $userMock = $this->getMockBuilder('\User')
+            ->disableOriginalConstructor()
+            ->setMethods(['isAdmin', 'getUserExceededAndInvalidLicenseTypes'])
+            ->getMock();
+
+        $userMock->expects($this->any())
+            ->method('isAdmin')
+            ->willReturn($isAdmin);
+
+        $userMock->expects($this->any())
+            ->method('getUserExceededAndInvalidLicenseTypes')
+            ->willReturn($invalidLicenseTypes);
+
+        $this->assertSame($expected, $userMock->allowNonAdminToContinue($systemStatus), $unexpectedMasg);
+    }
+    public function allowNonAdminToContinueProvider()
+    {
+        return [
+            'system in good state and is admin' => [
+                true,
+                true,
+                [],
+                true,
+                'system in good state and is admin',
+            ],
+            'system in good state and is non-admin' => [
+                true,
+                false,
+                [],
+                true,
+                'system in good state and is non-admin',
+            ],
+            'system not in good state and is admin' => [
+                ['level' => 'admin_only', 'message' => 'ERROR_LICENSE_SEATS_MAXED'],
+                true,
+                [],
+                false,
+                'system not in good state and is admin',
+            ],
+            'system not in good state and is non-admin' => [
+                ['level' => 'admin_only', 'message' => 'ERROR_LICENSE_SEATS_MAXED'],
+                false,
+                [],
+                true,
+                'system not in good state and is non-admin',
+            ],
+            'system not in good state and is non-admin and level is not admin_only' => [
+                ['level' => 'warning_only', 'message' => 'ERROR_LICENSE_SEATS_MAXED'],
+                false,
+                [],
+                false,
+                'system not in good state and is non-admin and level is not admin_only',
+            ],
+            'system not in good state and is non-admin and message is not ERROR_LICENSE_SEATS_MAXED' => [
+                ['level' => 'admin_only', 'message' => 'Random message'],
+                false,
+                [],
+                false,
+                'system not in good state and is non-admin and message is not ERROR_LICENSE_SEATS_MAXED',
             ],
         ];
     }

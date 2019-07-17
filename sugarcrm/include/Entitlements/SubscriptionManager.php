@@ -49,6 +49,17 @@ class SubscriptionManager
     protected $systemSubscriptionKeys = [];
 
     /**
+     * array of license types which exceed the limit
+     * @var array
+     */
+    protected $exceededLimitTypes = [];
+
+    /**
+     * flag to check limits
+     */
+    protected $hasCheckedLimit = false;
+
+    /**
      * instance
      * @var subscriptionmanager
      */
@@ -111,7 +122,7 @@ class SubscriptionManager
     /**
      * get content of subscription, if $useDb is false, it will ignore database and retrieve directly from license server
      *
-     * @param $licenseKey license key
+     * @param string $licenseKey license key
      * @param bool $useDb if false, it will ignore local DB and retrieve data directly from license server
      * @return string
      */
@@ -277,11 +288,14 @@ class SubscriptionManager
     }
     /**
      * get user's subscriptions, it compares system subscriptions with user's license type
-     * @param \User $user
+     * @param null|\User $user
      * @return array
      */
-    public function getUserSubscriptions(\User $user)
+    public function getUserSubscriptions(?\User $user) : array
     {
+        if (empty($user)) {
+            return [];
+        }
         // get system subscriptions
         $systemSubscriptionKeys = $this->getSystemSubscriptionKeys();
 
@@ -330,11 +344,14 @@ class SubscriptionManager
     /**
      * get user's invalid subscriptions, it compares system subscriptions with user's license type
      *
-     * @param \User $user
+     * @param null|\User $user
      * @return array
      */
-    public function getUserInvalidSubscriptions(\User $user)
+    public function getUserInvalidSubscriptions(?\User $user) : array
     {
+        if (empty($user)) {
+            return [];
+        }
         // get system subscriptions
         $systemSubscriptionKeys = $this->getSystemSubscriptionKeys();
 
@@ -354,6 +371,39 @@ class SubscriptionManager
             }
         }
         return $invalidTypes;
+    }
+
+    /**
+     * Get user's license types which either exceed limit or  is invalid
+     * @param null|\User $user
+     * @return array
+     */
+    public function getUserExceededAndInvalidLicenseTypes(?\User $user) : array
+    {
+        if (empty($user)) {
+            return [];
+        }
+
+        $license_seats_needed = 0;
+        $exceededLicenseTypes = $this->getSystemLicenseTypesExceededLimit($license_seats_needed);
+
+        $userLicenseTypesOverLimit = [];
+        // check current user's license types against $exceededLicenseTypes
+        $userLicenseTypes = $this->getUserSubscriptions($user);
+        if (!empty($userLicenseTypes)) {
+            foreach ($userLicenseTypes as $type) {
+                if (isset($exceededLicenseTypes[$type])) {
+                    $userLicenseTypesOverLimit[] = $type;
+                }
+            }
+        }
+
+        // merge with invalid types
+        $invalidLicenseTypes = $this->getUserInvalidSubscriptions($user);
+        foreach ($invalidLicenseTypes as $type) {
+            $userLicenseTypesOverLimit[] = $type;
+        }
+        return $userLicenseTypesOverLimit;
     }
 
     /**
@@ -438,6 +488,110 @@ class SubscriptionManager
         }
 
         return implode('_', $userSubscriptions);
+    }
+
+
+    /**
+     * get number of users exceed limit by license type
+     * @param int $license_seats_needed total number of license needed
+     * @return array
+     */
+    public function getSystemLicenseTypesExceededLimit(int &$license_seats_needed) : array
+    {
+        if ($this->hasCheckedLimit) {
+            return $this->exceededLimitTypes;
+        }
+
+        $this->hasCheckedLimit = true;
+
+        $sysSubscriptions = $this->getSystemSubscriptions();
+        $exceededLimitTypes = [];
+
+        // no subscription
+        if (empty($sysSubscriptions)) {
+            $exceededLimitTypes[Subscription::SUGAR_BASIC_KEY] = 1;
+            $license_seats_needed = 1;
+            $this->exceededLimitTypes = $exceededLimitTypes;
+            return $exceededLimitTypes;
+        }
+
+        $userCountByType = $this->getSystemUserCountByLicenseTypes();
+
+        foreach ($userCountByType as $licenseType => $count) {
+            if ($count > 0) {
+                if (isset($sysSubscriptions[$licenseType])) {
+                    if ($userCountByType[$licenseType] > $sysSubscriptions[$licenseType]['quantity']) {
+                        $exceededLimitTypes[$licenseType] = $count - $sysSubscriptions[$licenseType]['quantity'];
+                        $license_seats_needed += $exceededLimitTypes[$licenseType];
+                    }
+                } else {
+                    // license expired or switched
+                    $exceededLimitTypes[$licenseType] = $count;
+                    $license_seats_needed += $count;
+                }
+            }
+        }
+
+        $this->exceededLimitTypes = $exceededLimitTypes;
+        return $exceededLimitTypes;
+    }
+
+    /**
+     * Get system active users by license types
+     * @return array
+     */
+    protected function getSystemUserCountByLicenseTypes() : array
+    {
+        global $db;
+        $query = "SELECT license_type from users WHERE " . \User::getLicensedUsersWhere();
+        $result = $db->query($query, true, "Error filling in user array: ");
+        $supportedTypes = $this->getAllSupportedProducts();
+        $userCountByType = [];
+        foreach ($supportedTypes as $type) {
+            $userCountByType[$type] = 0;
+        }
+        $userCountByType[Subscription::UNKNOWN_TYPE] = 0;
+
+        $foundUnknownType = false;
+        $unknownTypes = '';
+        while (($row=$db->fetchByAssoc($result, false)) != null) {
+            if (empty($row['license_type'])) {
+                $type = $this->getUserDefaultLicenseType();
+                if (empty($type) || !in_array($type, $supportedTypes)) {
+                    if (!empty($type)) {
+                        $unknownTypes .= $type . ' ';
+                    }
+                    $foundUnknownType = true;
+                } else {
+                    $userCountByType[$type] += 1;
+                }
+            } else {
+                $types = json_decode($row['license_type'], true);
+                if (!is_array($types)) {
+                    $GLOBALS['log']->fatal('invalid license_type format: ' . $row['license_type']);
+                } else {
+                    foreach ($types as $type) {
+                        if (empty($type)) {
+                            $type = $this->getUserDefaultLicenseType();
+                        }
+                        if (!in_array($type, $supportedTypes)) {
+                            $foundUnknownType = true;
+                            $unknownTypes .= $type . ' ';
+                            $userCountByType[Subscription::UNKNOWN_TYPE] += 1;
+                        } else {
+                            $userCountByType[$type] += 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($foundUnknownType) {
+            // don't know what to do, skip for now
+            $GLOBALS['log']->fatal('Found unknown type: ' . $unknownTypes);
+        }
+
+        return $userCountByType;
     }
 }
 //END REQUIRED CODE DO NOT MODIFY

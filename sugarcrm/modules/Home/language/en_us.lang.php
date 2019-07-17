@@ -197,6 +197,7 @@ $mod_strings = array (
   'LBL_SUGAR_ENTERPRISE' => "Sugar Enterprise",
   'LBL_SUGAR_ULTIMATE' => "Sugar Ultimate",
   'LBL_LICENSE_INVALID_PRODUCT' => 'Invalid Product',
+  'LBL_LICENSE_TYPE_INVALID' => 'Invalid License Type',
   'LBL_AND' => "and",
   'LBL_ARE' => "are",
   'LBL_TRADEMARKS' => 'trademarks',

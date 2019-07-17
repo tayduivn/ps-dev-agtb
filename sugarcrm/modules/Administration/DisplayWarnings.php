@@ -170,22 +170,15 @@ if($smtp_error) {
 	        }
     }
 
-    $hasFetched = false;
     if (!isset($_SESSION['license_seats_needed'])) {
         $license_seats_needed = 0;
-        $exceededLicenseTypes = User::getExceededLimitLicenseTypes($license_seats_needed);
+        $exceededLicenseTypes = SubscriptionManager::instance()->getSystemLicenseTypesExceededLimit($license_seats_needed);
         $_SESSION['license_seats_needed'] = $license_seats_needed;
-        $_SESSION['exceeded_limit_types'] = $exceededLicenseTypes;
-        $hasFetched = true;
     }
 
     if ($_SESSION['license_seats_needed'] > 0) {
         $seatNeeded = 0;
-        if ($hasFetched) {
-            $exceededLicenseTypes = $_SESSION['exceeded_limit_types'];
-        } else {
-            $exceededLicenseTypes = User::getExceededLimitLicenseTypes($seatNeeded);
-        }
+        $exceededLicenseTypes = SubscriptionManager::instance()->getSystemLicenseTypesExceededLimit($seatNeeded);
 
         $msg = '';
         $i = 0;

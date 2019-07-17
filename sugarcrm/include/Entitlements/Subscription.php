@@ -23,9 +23,17 @@ namespace Sugarcrm\Sugarcrm\Entitlements;
  */
 class Subscription
 {
+    /**
+     * license keys or types
+     */
     const SUGAR_SELL_KEY = 'SUGAR_SELL';
     const SUGAR_SERVE_KEY = 'SUGAR_SERVE';
     const SUGAR_BASIC_KEY = 'CURRENT';
+
+    /**
+     * unknown type
+     */
+    const UNKNOWN_TYPE = 'UNKNOWN';
 
     /**
      * mapping well-known subscription_ids to keys
