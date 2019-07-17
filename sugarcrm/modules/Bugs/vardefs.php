@@ -156,7 +156,7 @@ $dictionary['Bug'] = array(
             'name' => 'portal_viewable',
             'vname' => 'LBL_SHOW_IN_PORTAL',
             'type' => 'bool',
-            'default' => 0,
+            'default' => 1,
             'reportable' => false,
         ),
 // END SUGARCRM flav=ent ONLY

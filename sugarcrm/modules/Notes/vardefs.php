@@ -164,7 +164,7 @@ $dictionary['Note'] = [
             'name' => 'portal_flag',
             'vname' => 'LBL_PORTAL_FLAG',
             'type' => 'bool',
-            'default' => '0',
+            'default' => '1',
             'comment' => 'Portal flag indicator determines if note created via portal',
         ],
         'embed_flag' => [
