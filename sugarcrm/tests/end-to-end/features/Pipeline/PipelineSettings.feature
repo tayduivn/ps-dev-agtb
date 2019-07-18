@@ -14,7 +14,7 @@ Feature: Tile View Settings
     Given I am logged in
 
   @opportunities_disable_tile_view @pr
-  Scenario: Tile View Settings > Disable/Enable tile view for Opportunities > Check Tile View button
+  Scenario: Tile View Settings > Disable/Enable Tile View for Opportunities > Check Tile View button
 
     Given Accounts records exist:
       | *name |
@@ -43,7 +43,7 @@ Feature: Tile View Settings
     # Navigate to Tile View
     When I select VisualPipeline in #OpportunitiesList.FilterView
 
-    # Create New opportunity while in tile view
+    # Create New opportunity while in Tile View
     When I click pipelineCreate button on #OpportunitiesList header
     When I click show more button on #OpportunitiesDrawer view
     When I provide input for #OpportunitiesDrawer.HeaderView view

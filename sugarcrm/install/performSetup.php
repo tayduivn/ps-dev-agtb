@@ -355,7 +355,7 @@ $opps_config = OpportunitiesDefaults::setupOpportunitiesSettings();
 unset($opps_config);
 
 //BEGIN SUGARCRM flav=ent ONLY
-//Install Visual Pipeline configuration
+//Install Tile View configuration
 $visualPipelineConfig = VisualPipelineDefaults::setupPipelineSettings();
 //END SUGARCRM flav=ent ONLY
 

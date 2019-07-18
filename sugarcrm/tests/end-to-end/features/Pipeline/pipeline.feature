@@ -185,7 +185,7 @@ Feature: Tile View feature
       | Rejected      |
       | Duplicate     |
 
-    # Create New Case while in tile view
+    # Create New Case while in Tile View
     When I click pipelineCreate button on #CasesList header
     When I provide input for #CasesDrawer.HeaderView view
       | *  | name   |
@@ -256,7 +256,7 @@ Feature: Tile View feature
       | Pending Input |
       | Deferred      |
 
-    # Create New Task while in tile view
+    # Create New Task while in Tile View
     When I click pipelineCreate button on #TasksList header
     When I click show more button on #TasksDrawer view
     When I provide input for #TasksDrawer.HeaderView view

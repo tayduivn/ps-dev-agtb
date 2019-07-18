@@ -132,7 +132,7 @@ class VisualPipelineDefaultsTest extends TestCase
     }
 
     /**
-     * Clears the visual pipeline configs from the database
+     * Clears the Tile View configs from the database
      */
     protected function clearVisualPipelineConfigs()
     {

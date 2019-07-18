@@ -48,7 +48,7 @@ When(/^I delete (\*[a-zA-Z](?:\w|\S)*) in (#\S+) view$/,
 
 
 /**
- *  Disable or enable tile view for particular module in Admin Panel > Tile View Settings
+ *  Disable or enable Tile View for particular module in Admin Panel > Tile View Settings
  *
  *  @example
  *  When I hide "Opportunities" module in #TileViewSettings view
@@ -79,7 +79,7 @@ When(/^I hide "(Cases|Opportunities|Tasks)" module in (#\S+) view$/,
 }, {waitForApp: true});
 
 /**
- *  Enable tile view for particular module in Admin Panel > Tile View Settings
+ *  Enable Tile View for particular module in Admin Panel > Tile View Settings
  *
  *  @example
  *  When I show "Opportunities" module in #TileViewSettings view with the following settings:

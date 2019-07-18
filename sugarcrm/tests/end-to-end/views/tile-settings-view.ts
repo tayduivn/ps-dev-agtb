@@ -55,7 +55,7 @@ export default class TileViewSettings extends DrawerLayout {
     }
 
     /**
-     * Remove specified module from the list of tile view supported modules in General Settings accordion
+     * Remove specified module from the list of Tile View supported modules in General Settings accordion
      *
      * @param moduleName
      * @returns {Promise<void>}
@@ -66,7 +66,7 @@ export default class TileViewSettings extends DrawerLayout {
     }
 
     /**
-     *  Select specified module for tile view support in General Settings accordion
+     *  Select specified module for Tile View support in General Settings accordion
      *
      * @param moduleName
      * @returns {Promise<void>}

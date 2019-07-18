@@ -30,7 +30,7 @@ describe('Sugar7.Routes', function() {
     });
 
     //BEGIN SUGARCRM flav=ent ONLY
-    describe('Visual Pipeline Route', function() {
+    describe('Tile View Route', function() {
         var mockKey = 'foo:key';
         var oldIsSynced;
 

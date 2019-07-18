@@ -12,9 +12,9 @@
  */
 
 $mod_strings = array(
-    'LBL_MODULE_NAME' => 'Visual Pipeline',
-    'LBL_MODULE_NAME_SINGULAR' => 'Visual Pipeline',
-    'LBL_VISUAL_PIPELINE_CONFIG_TITLE' => 'Visual Pipeline',
+    'LBL_MODULE_NAME' => 'Tile View',
+    'LBL_MODULE_NAME_SINGULAR' => 'Tile View',
+    'LBL_VISUAL_PIPELINE_CONFIG_TITLE' => 'Tile View',
     'LBL_PIPELINE_CONFIG_NO_DATA' => 'No data available. Please select at least one module from the panel above!',
     'LBL_PIPELINE_MODULES_LIST' => 'Modules List',
     'LBL_PIPELINE_GENERAL_SETTINGS' => 'General Settings',
@@ -26,7 +26,7 @@ $mod_strings = array(
     'LBL_PIPELINE_CONFIG_UPDATED' => 'Pipeline config updated',
     'LBL_PIPELINE_CONFIG_FAILED_UPDATE' => 'Failed to update pipeline config',
     'LBL_PIPELINE_TILE_PREVIEW' => 'Tile Preview',
-    'LBL_PIPELINE_HEADER_VALUES' => 'Header values (You can use drag and drop to change the items bellow)',
+    'LBL_PIPELINE_HEADER_VALUES' => 'Header values (You can use drag and drop to change the items below)',
     'LBL_PIPELINE_HEADER_AVAILABLE_VALUES' => 'Available values',
     'LBL_PIPELINE_HEADER_HIDDEN_VALUES' => 'Hidden values',
     'LBL_PIPELINE_COLUMN_COLOR' => 'Column Colors',

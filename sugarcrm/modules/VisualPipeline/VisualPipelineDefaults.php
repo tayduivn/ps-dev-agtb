@@ -38,10 +38,10 @@ class VisualPipelineDefaults
     }
 
     /**
-     * Returns the default values for Visual Pipelines to use
+     * Returns the default values for Tile View to use
      *
      * @param int $isSetup pass in if you want is_setup to be 1 or 0, 0 by default
-     * @return array default config settings for Visual Pipelines to use
+     * @return array default config settings for Tile View to use
      */
     public static function getDefaults($isSetup = 0)
     {
@@ -50,7 +50,7 @@ class VisualPipelineDefaults
             $isSetup = 0;
         }
 
-        // default visual pipeline config setup
+        // default Tile View config setup
         return array(
             // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
             'is_setup' => $isSetup,
