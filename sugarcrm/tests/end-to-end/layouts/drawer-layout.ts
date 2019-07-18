@@ -26,7 +26,6 @@ export default class DrawerLayout extends RecordLayout {
             $: '.drawer.active',
             'show more': '.show-hide-toggle .more',
             'show less': '.show-hide-toggle .less',
-
         });
 
         this.type = 'drawer';

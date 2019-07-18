@@ -125,7 +125,6 @@ Feature: Opportunities
     When I choose RevenueLineItems in modules menu
     Then I should not see *RLI_1 in #RevenueLineItemsList.ListView
 
-
   @delete
   Scenario: Opportunities >  Record View > Delete
     Given RevenueLineItems records exist:
@@ -269,8 +268,8 @@ Feature: Opportunities
       | lead_source      | Existing Customer  |
       | opportunity_type | New Business       |
 
-  @create_opportunity @pr
-  Scenario: Opportunities >  Create opportunity with RLIs
+  @create_opportunity
+  Scenario Outline: Opportunities >  Create opportunity with RLIs
     Given Accounts records exist:
       | *name |
       | Acc_1 |
@@ -285,20 +284,20 @@ Feature: Opportunities
       | Opp_1 | Acc_1        |
     # Provide input for the first (default) RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
-      | *name | date_closed | best_case | sales_stage   | quantity | likely_case |
-      | RLI1  | 12/12/2020  | 300       | Qualification | 5        | 200         |
+      | *name | date_closed | best_case    | sales_stage   | quantity | likely_case    |
+      | RLI1  | 12/12/2020  | <best_case1> | Qualification | 5        | <likely_case1> |
     # Add second RLI by clicking '+' button on the first row
     When I choose addRLI on #OpportunityDrawer.RLITable view for 1 row
     # Provide input for the second RLI
     When I provide input for #OpportunityDrawer.RLITable view for 2 row
-      | *name | date_closed | best_case | sales_stage    | quantity | likely_case |
-      | RLI2  | 12/12/2021  | 500       | Needs Analysis | 10       | 400         |
+      | *name | date_closed | best_case    | sales_stage    | quantity | likely_case    |
+      | RLI2  | 12/12/2021  | <best_case2> | Needs Analysis | 10       | <likely_case2> |
     # Add third RLI by clicking '+' button on the second row
     When I choose addRLI on #OpportunityDrawer.RLITable view for 2 row
     # Provide input for the third RLI
     When I provide input for #OpportunityDrawer.RLITable view for 3 row
-      | *name | date_closed | best_case | sales_stage       | quantity | likely_case |
-      | RLI3  | 12/12/2022  | 50        | Value Proposition | 10       | 40          |
+      | *name | date_closed | best_case    | sales_stage       | quantity | likely_case    |
+      | RLI3  | 12/12/2022  | <best_case3> | Value Proposition | 10       | <likely_case3> |
     # Remove first RLI
     When I choose removeRLI on #OpportunityDrawer.RLITable view for 1 row
     # Save new opportunity
@@ -318,6 +317,42 @@ Feature: Opportunities
     When I choose RevenueLineItems in modules menu
     Then I should see *RLI2 in #RevenueLineItemsList.ListView
     Then I should see *RLI3 in #RevenueLineItemsList.ListView
+
+    Examples:
+      | best_case1 | likely_case1 | best_case2 | likely_case2 | best_case3 | likely_case3 |
+      | 300        | 200          | 500        | 400          | 50         | 40           |
+
+  @create_opportunity_with_negative_values
+  Scenario Outline: Opportunities >  Create opportunity with RLIs
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+    Given I open about view and login
+    When I choose Opportunities in modules menu
+    When I click Create button on #OpportunitiesList header
+    When I provide input for #OpportunitiesDrawer.HeaderView view
+      | *     | name                  |
+      | Opp_1 | CreateOpportunityTest |
+    When I provide input for #OpportunitiesDrawer.RecordView view
+      | *     | account_name |
+      | Opp_1 | Acc_1        |
+    # Provide input for the first (default) RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 1 row
+      | *name | date_closed | best_case   | sales_stage   | quantity | likely_case   |
+      | RLI1  | 12/12/2020  | <best_case> | Qualification | 5        | <likely_case> |
+    # Save new opportunity
+    When I click Save button on #OpportunitiesDrawer header
+    When I close alert
+    Then I verify fields on #OpportunitiesDrawer.RecordView
+      | fieldName  | value             |
+      | best_case  | <error_min_value> |
+      | amount     | <error_min_value> |
+      | worst_case | <error_min_value> |
+    When I click Cancel button on #OpportunitiesDrawer header
+
+    Examples:
+      | best_case | likely_case | error_min_value                              |
+      | -300      | -200        | Error. The minimum value of this field is 0. |
 
   @change_rli_currency_when_opp_is_created
   Scenario: Opportunities >  Change currency of the RLI when creating new opportunity
@@ -442,4 +477,3 @@ Feature: Opportunities
       | likely_case | €50.00 $100.00 |
       | best_case   | €50.00 $100.00 |
       | worst_case  | €50.00 $100.00 |
-

@@ -22,7 +22,8 @@ class CurrencyField extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}]',
             field: {
-                selector: 'input:not([class *= select2])'
+                selector: 'input:not([class *= select2])',
+                err: '.input.error span',
             }
         });
     }
@@ -44,7 +45,17 @@ export class Edit extends CurrencyField {
     }
 
     public async getText(selector: string): Promise<string> {
-        let value: string | string[] = await this.driver.getValue(this.$('field.selector'));
+
+        let value: string | string[];
+
+        // Check if there is any field errors when attempting to save record
+        let element  =  await this.driver.isElementExist(this.$('field.err'));
+        if (element === false) {
+            value = await this.driver.getValue(this.$('field.selector'));
+        // if field errors are found return error message
+        } else {
+            value = await this.driver.getAttribute(this.$('field.err'), 'title');
+        }
         return value.toString().trim();
     }
 }
@@ -59,7 +70,6 @@ export class DetailQLIPercent extends CurrencyField {
                 selector: '.quote-totals-row-value'
             }
         });
-
     }
 
     public async getText(selector: string): Promise<string> {

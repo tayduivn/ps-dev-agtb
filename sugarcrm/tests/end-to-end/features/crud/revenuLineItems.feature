@@ -237,7 +237,7 @@ Feature: Revenue Line Items module verification
       | date_closed | 10/19/2018 |
 
   @edit-save
-  Scenario: Revenue Line Items > Record View > Edit > Save
+  Scenario Outline: Revenue Line Items > Record View > Edit > Save
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
       | RLI_1 | 2018-10-19T19:20:22+00:00 | 300         | 300       | Prospecting | 5        |
@@ -254,27 +254,32 @@ Feature: Revenue Line Items module verification
       | name  |
       | RLI_2 |
     When I provide input for #RLI_1Record.RecordView view
-      | sales_stage   | date_closed | likely_case |
-      | Qualification | 11/20/2018  | 455.50      |
+      | sales_stage   | date_closed   | likely_case   |
+      | Qualification | <date_closed> | <likely_case> |
     When I click show more button on #RLI_1Record view
     When I provide input for #RLI_1Record.RecordView view
-      | best_case | worst_case |
-      | 600       | 300        |
+      | best_case   | worst_case   |
+      | <best_case> | <worst_case> |
     When I click Save button on #RLI_1Record header
     Then I verify fields on #RLI_1Record.HeaderView
       | fieldName | value |
       | name      | RLI_2 |
     When I click show more button on #RLI_1Record view
     Then I verify fields on #RLI_1Record.RecordView
-      | fieldName   | value      |
-      | likely_case | $455.50    |
-      | date_closed | 11/20/2018 |
-      | probability | 20         |
-      | best_case   | $600.00    |
-      | worst_case  | $300.00    |
+      | fieldName   | value                     |
+      | likely_case | <dollarsign><likely_case> |
+      | date_closed | <date_closed>             |
+      | probability | <probability>             |
+      | best_case   | <dollarsign><best_case>   |
+      | worst_case  | <dollarsign><worst_case>  |
+
+    Examples:
+      | likely_case | date_closed | probability | best_case | worst_case | dollarsign |
+      | 455.50      | 11/20/2018  | 20          | 600.00    | 300.00     | $          |
+      | -1,000.00   | 11/20/2018  | 20          | -500.00   | -250.00    | $          |
 
   @create_cancel_save
-  Scenario: Revenue Line Items > Create > Cancel/Save
+  Scenario Outline: Revenue Line Items > Create > Cancel/Save
     Given Opportunities records exist:
       | name  |
       | Opp_1 |
@@ -288,8 +293,8 @@ Feature: Revenue Line Items module verification
       | *        | name  |
       | RecordID | RLI_1 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
-      | *        | date_closed | likely_case | opportunity_name | sales_stage    | quantity |
-      | RecordID | 11/20/2018  | 1000        | Opp_1            | Needs Analysis | 5        |
+      | *        | date_closed | likely_case   | opportunity_name | sales_stage    | quantity |
+      | RecordID | 11/20/2018  | <likely_case> | Opp_1            | Needs Analysis | 5        |
     # Cancel RLI record creation
     When I click Cancel button on #RevenueLineItemsDrawer header
     When I click Create button on #RevenueLineItemsList header
@@ -297,8 +302,8 @@ Feature: Revenue Line Items module verification
       | *        | name  |
       | RecordID | RLI_1 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
-      | *        | date_closed | likely_case | opportunity_name | sales_stage    | quantity |
-      | RecordID | 11/20/2018  | 1000        | Opp_1            | Needs Analysis | 5        |
+      | *        | date_closed | likely_case   | opportunity_name | sales_stage    | quantity |
+      | RecordID | 11/20/2018  | <likely_case> | Opp_1            | Needs Analysis | 5        |
     # Save RLI record
     When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
@@ -308,13 +313,18 @@ Feature: Revenue Line Items module verification
     When I click on preview button on *RecordID in #RevenueLineItemsList.ListView
     Then I should see #RecordIDPreview view
     Then I verify fields on #RecordIDPreview.PreviewView
-      | fieldName        | value          |
-      | date_closed      | 11/20/2018     |
-      | likely_case      | $1,000.00      |
-      | opportunity_name | Opp_1          |
-      | account_name     | Acc_1          |
-      | sales_stage      | Needs Analysis |
-      | probability      | 25             |
-      | quantity         | 5.00           |
-      | discount_price   | $1,000.00      |
-      | total_amount     | $5,000.00      |
+      | fieldName        | value                         |
+      | date_closed      | <date_closed>                 |
+      | likely_case      | <dollar_sign><likely_case>    |
+      | opportunity_name | <opportunity_name>            |
+      | account_name     | <account_name>                |
+      | sales_stage      | <sales_stage>                 |
+      | probability      | <probability>                 |
+      | quantity         | <quanity>                     |
+      | discount_price   | <dollar_sign><discount_price> |
+      | total_amount     | <dollar_sign><total_amount>   |
+
+    Examples:
+      | date_closed | likely_case | opportunity_name | account_name | sales_stage    | probability | quanity | discount_price | total_amount | dollar_sign |
+      | 11/20/2018  | 1,000.00    | Opp_1            | Acc_1        | Needs Analysis | 25          | 5.00    | 1,000.00       | 5,000.00     | $           |
+      | 11/20/2018  | -1,000.00   | Opp_1            | Acc_1        | Needs Analysis | 25          | 5.00    | -1,000.00      | -5,000.00    | $           |
