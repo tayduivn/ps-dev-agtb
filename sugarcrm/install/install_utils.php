@@ -1013,6 +1013,9 @@ EOQ;
         ExpiresByType application/x-font-woff "access plus 1 month"
         ExpiresByType image/svg "access plus 1 month"
 </IfModule>
+<IfModule mod_headers.c>
+        Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
 # END SUGARCRM RESTRICTIONS
 
 EOQ;
@@ -1119,6 +1122,14 @@ function handleWebConfig($iisCheck = true)
     echo "<p>Rebuilding configuration element</p>\n";
         $xmldoc->startElement('system.webServer');
         echo "<p>Rebuilding system.webServer element</p>\n";
+            $xmldoc->startElement('httpProtocol');
+                $xmldoc->startElement('customHeaders');
+                    $xmldoc->startElement('add');
+                        $xmldoc->writeAttribute('name', 'X-Frame-Options');
+                        $xmldoc->writeAttribute('value', 'SAMEORIGIN');
+                    $xmldoc->endElement();
+                $xmldoc->endElement();
+            $xmldoc->endElement();
             $xmldoc->startElement('security');
                 $xmldoc->startElement('requestFiltering');
                     $xmldoc->startElement('requestLimits');
