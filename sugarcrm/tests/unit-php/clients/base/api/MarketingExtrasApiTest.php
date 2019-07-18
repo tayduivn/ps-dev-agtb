@@ -21,6 +21,7 @@ class MarketingExtrasApiTest extends TestCase
 {
     private static $expectedContentUrl = 'https://www.example.com/exciting-content';
     private static $frenchContentUrl = 'https://www.example.com/exciting-content-in-french';
+    private static $expectedImageUrl = 'https://www.example.com/image.jpg';
 
     /**
      * @covers ::getMarketingExtras()
@@ -30,19 +31,22 @@ class MarketingExtrasApiTest extends TestCase
         bool $marketingExtrasEnabled,
         string $marketingUrl,
         ?string $selectedLang,
-        bool $exception
+        bool $marketingException,
+        string $imageUrl,
+        bool $imageException
     ) {
         $api = $this->getMarketingExtrasApiMock(
-            array(
+            [
                 'getMarketingExtrasService',
                 'parseArgs',
-            )
+            ]
         );
         $marketingExtras = $this->getMarketingExtrasMock(
-            array(
+            [
                 'areMarketingExtrasEnabled',
                 'getMarketingContentUrl',
-            )
+                'getBackgroundImageUrl',
+            ]
         );
         $api->method('getMarketingExtrasService')
             ->willReturn($marketingExtras);
@@ -60,53 +64,80 @@ class MarketingExtrasApiTest extends TestCase
                 ->method('parseArgs')
                 ->willReturn(array('language' => $selectedLang));
 
-            if ($exception) {
+            if ($marketingException) {
                 $getMarketingUrl->will($this->throwException(new \Exception()));
             } else {
                 $getMarketingUrl->willReturn($marketingUrl);
+            }
+
+            $getImageUrl = $marketingExtras->expects($this->once())
+                ->method('getBackgroundImageUrl');
+
+            if ($imageException) {
+                $getImageUrl->will($this->throwException(new \Exception()));
+            } else {
+                $getImageUrl->willReturn($imageUrl);
             }
         }
 
         $marketingContent = $api->getMarketingExtras($this->getRestServiceMock(), array($selectedLang));
 
-        $this->assertEquals(array('content_url' => $marketingUrl), $marketingContent);
+        $this->assertEquals(['content_url' => $marketingUrl, 'image_url' => $imageUrl], $marketingContent);
     }
 
     public function providerGetMarketingExtras()
     {
-        return array(
+        return [
             // marketing extras on, normal result URL, default language, no exception
-            array(
+            [
                 true,
                 MarketingExtrasApiTest::$expectedContentUrl,
                 null,
                 false,
-            ),
+                MarketingExtrasApiTest::$expectedImageUrl,
+                false,
+            ],
 
             // marketing extras on, French result URL, French language, no exception
-            array(
+            [
                 true,
                 MarketingExtrasApiTest::$frenchContentUrl,
                 'fr_FR',
                 false,
-            ),
+                MarketingExtrasApiTest::$expectedImageUrl,
+                false,
+            ],
 
             // marketing extras off, empty results URL, language doesn't matter, no exception
-            array(
+            [
                 false,
                 '',
                 null,
                 false,
-            ),
+                '',
+                false,
+            ],
 
-            // marketing extras on, but somewhere an exception is thrown
-            array(
+            // marketing extras on, normal content URL, default language, no content exception, image exception
+            [
+                true,
+                MarketingExtrasApiTest::$expectedContentUrl,
+                null,
+                false,
+                '',
+                true,
+            ],
+
+            // marketing extras on, content exception is thrown, no image exception
+            [
                 true,
                 '',
                 null,
                 true,
-            ),
-        );
+                MarketingExtrasApiTest::$expectedImageUrl,
+                false,
+            ],
+        ];
     }
 
     protected function getMarketingExtrasApiMock($methods = null)
