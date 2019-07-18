@@ -114,7 +114,7 @@ class Subscription
 
     /**
      * to get subscriptions
-     * only gets the subscriptions with quantity > 0.
+     * only gets the subscriptions with quantity > 0 and not expired.
      *
      * return in array format
      * [
@@ -123,7 +123,7 @@ class Subscription
      * ];
      * @return array
      */
-    public function getSubscriptions()
+    public function getSubscriptions() : array
     {
         if ($this->subscriptions) {
             return $this->subscriptions;
@@ -195,7 +195,7 @@ class Subscription
      *
      * need to take care of ENT, PRO, etc
      */
-    public function getSubscriptionKeys()
+    public function getSubscriptionKeys() : array
     {
         $subscriptions = $this->getSubscriptions();
         if (empty($subscriptions)) {
@@ -217,7 +217,7 @@ class Subscription
      * get current addon products,
      * @return array
      */
-    public function getAddonProducts()
+    public function getAddonProducts() : array
     {
         return [
             Subscription::SUGAR_SELL_KEY,

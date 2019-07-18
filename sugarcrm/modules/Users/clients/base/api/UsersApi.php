@@ -16,6 +16,24 @@ class UsersApi extends ModuleApi
     public function registerApiRest()
     {
         return array(
+            'create' => array(
+                'reqType' => 'POST',
+                'path' => array('Users'),
+                'pathVars' => array('module'),
+                'method' => 'createUser',
+                'minVersion' => '11.6',
+                'shortHelp' => 'This method creates a User record',
+                'longHelp'  => 'modules/Users/clients/base/api/help/UsersApi_create.html',
+            ),
+            'update' => array(
+                'reqType' => 'PUT',
+                'path' => array('Users', '?'),
+                'pathVars' => array('module','record'),
+                'method' => 'updateUser',
+                'minVersion' => '11.6',
+                'shortHelp' => 'This method updates a User record',
+                'longHelp'  => 'modules/Users/clients/base/api/help/UsersApi_update.html',
+            ),
             'delete' => array(
                 'reqType'   => 'DELETE',
                 'path'      => array('Users', '?'),
@@ -33,6 +51,41 @@ class UsersApi extends ModuleApi
                 'longHelp' => 'include/api/help/user_get_freebusy_help.html',
             ),
         );
+    }
+
+    /**
+     * create user for REST version >= 11.6, enforce license type validation
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    public function createUser(ServiceBase $api, array $args)
+    {
+        // need to enforce license type is provided.
+        $this->requireArgs($args, array('module', 'license_type'));
+        // validate license types and empty is not allowed
+        if (!$this->validateLicenseTypes($args['license_type'], false)) {
+            throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
+        }
+        $moduleApi = new ModuleApi();
+        return $moduleApi->createRecord($api, $args);
+    }
+
+    /**
+     * update user for REST API version >= 11.6
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    public function updateUser(ServiceBase $api, array $args)
+    {
+        if (isset($args['license_type']) && !$this->validateLicenseTypes($args['license_type'])) {
+            throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
+        }
+        $moduleApi = new ModuleApi();
+        return $moduleApi->updateRecord($api, $args);
     }
 
     /**
@@ -89,5 +142,18 @@ class UsersApi extends ModuleApi
             "id" => $bean->id,
             "freebusy" => $bean->getFreeBusySchedule($args),
         );
+    }
+
+    /**
+     * validate license types. Only allow system entitled license types to go through
+     *
+     * @param $licenseTypes
+     *
+     * @return bool
+     */
+    protected function validateLicenseTypes($licenseTypes) : bool
+    {
+        $seed = BeanFactory::newBean('Users');
+        return $seed->validateLicenseTypes($seed->processLicenseTypes($licenseTypes));
     }
 }

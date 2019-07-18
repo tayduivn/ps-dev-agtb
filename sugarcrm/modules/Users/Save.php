@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 if (!function_exists('verifyAndCleanup')) {
     /**
      * Verifies the given user's data, sends the result as JSON, and then exits
@@ -191,7 +193,8 @@ if (!$focus->is_group && !$focus->portal_only) {
 
     // set License types
     if (!empty($_POST['LicenseTypes'])) {
-        $focus->setLicenseType($_POST['LicenseTypes']);
+        $licenseTypes = InputValidation::getService()->getValidInputPost('LicenseTypes', 'Assert\ArrayRecursive');
+        $focus->setLicenseType($focus->processLicenseTypes($licenseTypes));
     }
 
     if (empty($_POST['receive_notifications'])) {

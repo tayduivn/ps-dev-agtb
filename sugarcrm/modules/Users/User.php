@@ -607,6 +607,14 @@ class User extends Person {
 		// this will cause the logged in admin to have the licensed user count refreshed
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);
 
+        // validate license type
+        if (isset($this->license_type)) {
+            $licenseTypes = $this->getLicenseTypes();
+            if (!$this->validateLicenseTypes($licenseTypes)) {
+                throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
+            }
+            $this->license_type = empty($this->license_type) ? $this->license_type : json_encode($licenseTypes);
+        }
  	    //BEGIN SUGARCRM lic=sub ONLY
 
 		global $sugar_flavor;
@@ -2902,14 +2910,73 @@ class User extends Person {
 
     /**
      * get license type. json-decoded to array
+     *
      * @return array
      */
     public function getLicenseTypes() : array
     {
-        if (empty($this->license_type)) {
+        return $this->processLicenseTypes($this->license_type);
+    }
+
+    /**
+     * process license type in different format. string, json-encoded string, array.
+     *
+     * @param mixed $licenseTypes
+     * @return array
+     */
+    public function processLicenseTypes($licenseTypes) : array
+    {
+        if (empty($licenseTypes)) {
             return [];
         }
 
-        return json_decode($this->license_type, true);
+        if (!is_string($licenseTypes) && !is_array($licenseTypes)) {
+            throw new SugarApiExceptionInvalidParameter('Invalid license_type format in module: Users');
+        }
+
+        if (is_array($licenseTypes)) {
+            return $licenseTypes;
+        }
+
+        // string may be in json_econded format
+        $value = json_decode($licenseTypes, true);
+
+        if (is_array($value)) {
+            return $value;
+        }
+
+        throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
+    }
+
+    /**
+     * validate license types. Only allow system entitled license types to go through
+     *
+     * @param array $licenseTypes
+     * @param bool $allowEmpty
+     *
+     * @return bool
+     */
+    public function validateLicenseTypes(array $licenseTypes, bool $allowEmpty = true) : bool
+    {
+        if (empty($licenseTypes) && !$allowEmpty) {
+            return false;
+        }
+
+        foreach ($licenseTypes as $type) {
+            if (!in_array($type, $this->getSystemSubscriptionKeys())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * get system subscriptions
+     * @return array
+     */
+    protected function getSystemSubscriptionKeys() : array
+    {
+        return array_keys(SubscriptionManager::instance()->getSystemSubscriptionKeys());
     }
 }
