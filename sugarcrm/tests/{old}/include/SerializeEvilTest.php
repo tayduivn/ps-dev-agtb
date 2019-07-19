@@ -12,7 +12,8 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('vendor/tcpdf/tcpdf.php');
+require_once 'include/Sugarpdf/sugarpdf_config.php';
+require_once 'vendor/tcpdf/tcpdf.php';
 
 class SerializeEvilTest extends TestCase
 {
