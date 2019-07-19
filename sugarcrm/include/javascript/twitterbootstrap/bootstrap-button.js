@@ -5,6 +5,9 @@
  * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
+/*
+ *THIS FILE WAS MODIFIED BY SUGARCRM INC. ON JULY 16, 2019
+ */
 
 
 +function ($) {
@@ -66,7 +69,14 @@
       $input.prop('checked', this.$element.hasClass('active'))
       if (changed) $input.trigger('change')
     } else {
-      this.$element.attr('aria-pressed', !this.$element.hasClass('active'))
+      /* PX-497: Bootstrap update, adaptation to SugarCRM behavior.
+       * Fixed active/inactive state of the buttons in pipline btn-group */
+      $parent = this.$element.closest('[data-toggle^="button"]')
+      if ($parent) {
+        $parent.find('.active').removeClass('active')
+      } else {
+        this.$element.attr('aria-pressed', !this.$element.hasClass('active'))
+      }
       this.$element.toggleClass('active')
     }
   }
@@ -112,7 +122,12 @@
       Plugin.call($btn, 'toggle')
       if (!($(e.target).is('input[type="radio"], input[type="checkbox"]'))) {
         // Prevent double click on radios, and the double selections (so cancellation) on checkboxes
-        e.preventDefault()
+        var link = $(e.target).is('a') ? $(e.target) : $(e.target).parent() ;
+        /* PX-497: Bootstrap update, adaptation to SugarCRM behavior.
+         * Prevent data-toggle="buttons-radio" from stopping navigation on pipeline-headerpane */
+        if (!(link && link.attr('href') && link.attr('href').length > 1)) {
+          e.preventDefault()
+        }
         // The target component still receive the focus
         if ($btn.is('input,button')) $btn.trigger('focus')
         else $btn.find('input:visible,button:visible').first().trigger('focus')
