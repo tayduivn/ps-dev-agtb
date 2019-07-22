@@ -371,4 +371,22 @@ describe('Base.View.ActivityTimeline', function() {
             expect(fetchStub).toHaveBeenCalled();
         });
     });
+
+    describe('_render', function() {
+        it('should inject singular module name to title', function() {
+            let singular = 'Singular';
+            let finalTitle = singular + ' Interactions';
+            let langGetStub = sinon.collection.stub(app.lang, 'get').returns(finalTitle);
+            let langGetModuleNameStub = sinon.collection.stub(app.lang, 'getModuleName').returns(singular);
+            let layoutStub = sinon.collection.stub(layout, 'setTitle');
+            view.meta.label = 'LBL_TEST_LABEL';
+            view._render();
+
+            // ensure we use getModuleName to get singular module name and setTitle to update dashlet title
+            expect(app.lang.get.lastCall.args).toEqual([view.meta.label, view.module, {moduleSingular: singular}]);
+            expect(app.lang.getModuleName.lastCall.args[0]).toEqual(view.module);
+            expect(layout.setTitle.lastCall.args[0]).toEqual(finalTitle);
+        });
+    });
+
 });

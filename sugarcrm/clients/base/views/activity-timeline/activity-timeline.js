@@ -86,6 +86,25 @@
     },
 
     /**
+     * @inheritdoc
+     *
+     * Inject the singular module name.
+     */
+    _render: function() {
+        this._super('_render');
+
+        if (_.isFunction(this.layout.setTitle)) {
+            var moduleSingular = app.lang.get(this.meta.label,
+                this.module,
+                {
+                    moduleSingular: app.lang.getModuleName(this.module)
+                }
+            );
+            this.layout.setTitle(moduleSingular);
+        }
+    },
+
+    /**
      * Must implement this method as a part of the contract with the Dashlet
      * plugin. Kicks off the various paths associated with a dashlet:
      * Configuration, preview, and display.

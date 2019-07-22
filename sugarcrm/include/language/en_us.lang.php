@@ -5600,7 +5600,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 //BEGIN SUGARCRM flav=ent ONLY
     // Activity Timeline Dashlet
     'LBL_ACTIVITY_TIMELINE_DASHLET' => 'Interactions',
-    'TPL_ACTIVITY_TIMELINE_DASHLET' => '{{module}} Interactions',
+    'TPL_ACTIVITY_TIMELINE_DASHLET' => '{{moduleSingular}} Interactions',
     'LBL_ACTIVITY_TIMELINE_DASHLET_DESCRIPTION' => 'Interactions displays Calls, Emails, ' .
         'Meetings and Notes related to a record.',
 //END SUGARCRM flav=ent ONLY
