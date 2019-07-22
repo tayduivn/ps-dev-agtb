@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['portal']['view']['recordlist'] = [
+$viewdefs['KBContents']['portal']['view']['recordlist'] = [
     'favorite' => false,
     'sticky_resizable_columns' => true,
     'rowactions' => [

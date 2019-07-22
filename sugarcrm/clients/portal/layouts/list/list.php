@@ -19,7 +19,7 @@ $viewdefs['portal']['layout']['list'] = array (
       'view' => 'filter',
     ),
     array (
-      'view' => 'list',
+      'view' => 'recordlist',
       'primary' => true,
     ),
     array (
