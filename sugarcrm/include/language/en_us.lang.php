@@ -4872,6 +4872,8 @@ Sincerely, SugarCRM',
 
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
+    'LBL_PORTAL_CREATE_ACCOUNT' => 'Create Account',
+    'LBL_PORTAL_FORGOT_PASSWORD' => 'Forgot Password',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
     'LBL_PORTAL_SIGNUP_TITLE' => 'Thank you for signing up!',
     'LBL_PORTAL_SIGNUP' => 'A customer service representative will contact you shortly to configure your account.',
@@ -4894,7 +4896,7 @@ Sincerely, SugarCRM',
     'LBL_PORTAL_SEARCH_RESULTS_TITLE' => 'Show search results for "{query}"',
 
     //for portal errors
-    'LBL_PORTAL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
+    'LBL_PORTAL_LOGIN_UNSUCCESSFUL' => 'Your login was not successful. Please try again.',
     'LBL_PORTAL_INVALID_CREDS_TITLE' => 'Invalid Credentials',
     'LBL_PORTAL_INVALID_GRANT' => 'Your token is invalid or has expired. Please login again.',
     'LBL_PORTAL_INVALID_GRANT_TITLE' => 'Token Expired',
