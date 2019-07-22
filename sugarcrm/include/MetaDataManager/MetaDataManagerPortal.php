@@ -30,6 +30,7 @@ class MetaDataManagerPortal extends MetaDataManager
         }
         $modules[] = 'Users';
         $modules[] = 'Filters';
+        $modules[] = 'Dashboards';
         return $modules;
     }
 

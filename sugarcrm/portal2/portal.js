@@ -18,7 +18,8 @@
                 route: '',
                 callback: function() {
                     app.controller.loadView({
-                        layout: 'home'
+                        layout: 'servehome',
+                        module: 'Dashboards'
                     });
                 }
             },
@@ -100,7 +101,8 @@
                 route: 'Home',
                 callback: function() {
                     app.controller.loadView({
-                        layout: 'home'
+                        module: 'Dashboards',
+                        layout: 'servehome'
                     });
                 }
             },
@@ -165,7 +167,7 @@
 
         // Handle index case - get default module if provided. Otherwise, fallback to Home if possible or alert.
         if (route === 'index') {
-            dm = typeof(app.config) !== undefined && app.config.defaultModule ? app.config.defaultModule : null;
+            dm = typeof (app.config) !== undefined && app.config.defaultModule ? app.config.defaultModule : null;
             if (dm && app.metadata.getModule(dm) && app.acl.hasAccess('read', dm)) {
                 app.router.list(dm);
             } else if (app.acl.hasAccess('read', 'Home')) {

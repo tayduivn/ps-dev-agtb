@@ -3788,6 +3788,7 @@ Sincerely, SugarCRM',
         " \nPlease update or remove this dashlet.",
     'TPL_DASHLET_MY_MODULE' => 'My {{module}}',
     'LBL_DASHLET_PICK_A_RECORD' => 'No record selected for display',
+    'LBL_CONTENT_SEARCH_DASHLET' => 'Content Search Dashlet',
 
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account.',
@@ -4869,7 +4870,9 @@ Sincerely, SugarCRM',
     'LBL_PORTAL_TOUR_RECORD_VIEW_NOTE' => 'Click on these icons to view the details of attached notes.',
 
     //for portal
-
+    'LBL_PORTAL_HOME' => 'Home Dashboard',
+    'LBL_PORTAL_DASHBOARD_ALL_OPEN_CASES' => 'All Open Cases',
+    'LBL_PORTAL_DASHBOARD_RECENT_CASES' => 'Recently Resolved Cases',
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_CREATE_ACCOUNT' => 'Create Account',
