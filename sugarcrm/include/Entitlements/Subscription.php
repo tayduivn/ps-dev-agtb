@@ -176,11 +176,6 @@ class Subscription
                     $productCode = $addon->product_code_c;
                     if (!empty($productCode) && !empty(self::PRODUCT_CODE_MAPPING[strtoupper($productCode)])) {
                         $key = self::PRODUCT_CODE_MAPPING[strtoupper($productCode)];
-                        if (isset($subscriptions[$key])) {
-                            if (isset($GLOBALS['log'])) {
-                                $GLOBALS['log']->error('Duplicated product code found: ' . $productCode);
-                            }
-                        }
                         $subscriptions[$key] = [
                             'quantity' => $quantity,
                             'expiration_date' => $expirationDate,
