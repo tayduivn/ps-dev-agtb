@@ -143,4 +143,7 @@ To create a {{module_name}}:
  - Fields marked "Required" must be completed prior to saving.
  - Click "Show More" to expose additional fields if necessary.
 2. Click "Save" to finalize the new record and return to the previous page.',
+    // Case deflection
+    'LBL_NO_LOOKING_FOR' => 'Didn\'t find what you are looking for?',
+    'LBL_CREATE_CASE' => 'Create a {{module_name}}',
 );

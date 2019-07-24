@@ -3526,7 +3526,7 @@ Sincerely, SugarCRM',
     'LNK_VIEW_CHANGE_LOG' => 'View Audit Log',
     'TPL_AUDIT_LOG_TITLE' => 'Audit Log for {{{name}}}',
     'LBL_AUDIT_EMAIL_TOOLTIP' => 'Click to view email address audit log',
-
+    'LBL_NO_SEARCH_RESULTS' => 'No results found for your search',
     'NTC_CLICK_BACK' => 'Please click the browser back button and fix the error.',
     'NTC_DATE_FORMAT' => '(yyyy-mm-dd)',
     'NTC_DATE_TIME_FORMAT' => '(yyyy-mm-dd 24:00)',
