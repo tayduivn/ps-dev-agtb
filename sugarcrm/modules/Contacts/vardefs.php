@@ -236,6 +236,19 @@ $dictionary['Contact'] = array(
             'comment' => 'Reference to the portal',
             'duplicate_on_record_copy' => 'no',
         ),
+        'portal_user_company_name' => [
+            'name' => 'portal_user_company_name',
+            'vname' => 'LBL_PORTAL_USER_COMPANY_NAME',
+            'type' => 'varchar',
+            'len' => '255',
+            'group' => 'portal',
+            'comment' => 'User company name in the portal',
+            'studio' => [
+                'portalrecordview' => false,
+                'portallistview' => false,
+            ],
+            'duplicate_on_record_copy' => 'no',
+        ],
         'preferred_language' => array(
             'name' => 'preferred_language',
             'type' => 'enum',

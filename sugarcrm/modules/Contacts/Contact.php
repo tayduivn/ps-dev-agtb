@@ -120,6 +120,7 @@ class Contact extends Person {
 	var $emailAddress;
 	var $new_schema = true;
 	var $importable = true;
+    public $portal_user_company_name;
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('bug_id', 'assigned_user_name', 'account_name', 'account_id', 'opportunity_id', 'case_id', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id'
@@ -141,7 +142,6 @@ class Contact extends Person {
         'opportunity_id'=>'opportunities',
         'contacts_users_id' => 'user_sync',
     );
-
 
 	public function __construct() {
 		parent::__construct();

@@ -295,8 +295,8 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'preferred_language',
                     'type' => 'language',
-                    'span' => 12,
                 ),
+                'portal_user_company_name',
                 'portal_name',
                 'portal_active',
                 array(
