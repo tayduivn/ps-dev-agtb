@@ -24,6 +24,7 @@ import {updateOpportunityConfig} from './steps-helper';
 import {chooseModule, chooseRecord, closeWarning, closeAlert, parseInputArray, recordViewHeaderButtonClicks, toggleRecord} from './general_bdd';
 import ActivityStream from '../layouts/activity-stream-layout';
 import ImportBpmView from '../views/import-bpm-view';
+import PreviewHeaderView from '../views/preview-header-view';
 
 /**
  * Select module in modules menu
@@ -823,3 +824,13 @@ When(/^I create a new record \*(\w+) by importing(?: (Business Rules|Email Templ
     }, { waitForApp: true }
 );
 
+/**
+ *  Click button in the Preview Header
+ *
+ *  @example
+ *  When I click on Edit button in #Account_APreview.PreviewHeaderView
+ */
+When(/^I click on (Edit|Cancel|Save) button in (#\S+)$/,
+    async function (btnName: string, view: PreviewHeaderView) {
+        await view.btnClick(btnName.toLowerCase());
+    }, {waitForApp: true});

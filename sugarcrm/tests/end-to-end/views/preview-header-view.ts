@@ -30,6 +30,15 @@ export default class PreviewHeaderView extends BaseView {
                 save: 'a[name="save_button"]',
             }
         });
+    }
 
+    /**
+     * Click on the button in preview header
+     *
+     * @param {string} btnName
+     * @returns {Promise<void>}
+     */
+    public async btnClick(btnName: string) {
+        await this.driver.click(this.$(`buttons.${btnName}`));
     }
 }
