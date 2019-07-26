@@ -33,6 +33,19 @@ class ViewPortalConfig extends SugarView
 	}
 
     /**
+     * Strips any HTML tags from an array of User IDs => names to prevent XSS
+     * attacks
+     *
+     * @param array $userList the list of User IDs => names to sanitize
+     */
+    public function sanitizeUserList(&$userList)
+    {
+        foreach ($userList as $id => $name) {
+            $userList[$id] = SugarCleaner::stripTags($name, false);
+        }
+    }
+
+    /**
      * Formats a list of Portal tabs (module names) to display correctly on the
      * Portal Config screen
      * @param array $tabsList the list of Portal module names to format
@@ -66,8 +79,9 @@ class ViewPortalConfig extends SugarView
             'defaultUser' => '',
             'caseDeflection' => 'enabled',
         ];
-        $userList = get_user_array();
+        $userList = BeanFactory::newBean('Users')->getUserArray();
         $userList[''] = '';
+        $this->sanitizeUserList($userList);
         
         $portalTabsList = TabController::getPortalTabs();
         $displayedPortalTabs = $this->formatTabsList($portalTabsList);
