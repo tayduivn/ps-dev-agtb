@@ -47,7 +47,7 @@ export default class DurationField extends BaseField {
             dates = val.trim().split('~');
         }
 
-        for (let i=0; i<dates.length; i++) {
+        for (let i = 0; i < dates.length; i++) {
             if (dates[i]) {
                 let datetime = dates[i].trim().split('-');
                 date = datetime[0].trim();

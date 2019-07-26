@@ -818,7 +818,7 @@ When(/^I create a new record \*(\w+) by importing(?: (Business Rules|Email Templ
 
         /* Navigate to the list view after import is complete
         in case of importing Business Process (aka *.bpm)file */
-        if(fileType.toLowerCase() === 'bpm') {
+        if (fileType.toLowerCase() === 'bpm') {
             await chooseModule(view.module);
         }
     }, { waitForApp: true }

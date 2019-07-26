@@ -79,7 +79,7 @@ export class Edit extends BaseField {
                await this.driver.click(this.$('field.star'));
                break;
            default:
-               throw new Error(`Not recognized action: ${action} !`)
+               throw new Error(`Not recognized action: ${action} !`);
        }
     }
 }

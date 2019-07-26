@@ -67,7 +67,7 @@ When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)(?: at column (1|2|3))?$/,
         await dashboard.HeaderView.clickButton('edit');
 
         // Add New Row
-        await dashboard.DashboardView.clickPlusButton('NewRow',column - 1);
+        await dashboard.DashboardView.clickPlusButton('NewRow', column - 1);
         await this.driver.waitForApp();
 
         // Click + to add a new dashlet

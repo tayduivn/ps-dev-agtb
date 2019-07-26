@@ -55,7 +55,7 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) tile field values in (#[a-zA-Z](?:\w|\S)*
                         `\t'${value.toString()}'`,
                         `\n`,
                     ].join('\n')
-                )
+                );
             }
         }
 
@@ -80,7 +80,7 @@ Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are under "(\w+[\/
     async function (inputIDs: string, columnName: string, view: any) {
 
         let value;
-        let errors =[];
+        let errors = [];
         let recordIds = await parseInputArray(inputIDs);
 
         let uid = inputIDs.slice(1, inputIDs.length - 1).split(',');
@@ -98,7 +98,7 @@ Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are under "(\w+[\/
                         `in Tile View`,
                         `\n`,
                     ].join('\n')
-                )
+                );
             }
         }
 
@@ -131,7 +131,7 @@ Then(/^I verify pipeline column headers in (#\S+) view$/,
         let rows = data.rows();
         let errors = [];
         for (let i = 1; i <= rows.length; i++) {
-            let expected = rows[i-1][0];
+            let expected = rows[i - 1][0];
             let value = await view.getColumnHeader(i);
 
             if (value !== expected) {
@@ -141,7 +141,7 @@ Then(/^I verify pipeline column headers in (#\S+) view$/,
                         `\tActual columnheader name: ${value}`,
                         `\n`,
                     ].join('\n')
-                )
+                );
             }
         }
         let message = '';
