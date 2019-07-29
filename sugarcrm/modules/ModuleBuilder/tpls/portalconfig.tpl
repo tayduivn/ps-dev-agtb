@@ -133,6 +133,42 @@
             </td>
         </tr>
         <tr>
+            <td colspan='1' nowrap>
+                {$mod.LBL_CONFIG_PORTAL_CONTACT_INFO}:<span class='required'>*</span> {sugar_help text=$mod.LBL_CONFIG_PORTAL_CONTACT_INFO_HELP}
+            </td>
+            <td colspan='1' nowrap>
+                <div class='portal-contact-info'>
+                    <table id='portal-contact-info-table'>
+                        <tr>
+                            <td colspan='1'>
+                                {$mod.LBL_PORTAL_CONTACT_PHONE}:
+                            </td>
+                            <td colspan='1'>
+                                <input class='portalProperty contactField' id='contactPhone' name='contactPhone' value='{$contactInfo.contactPhone}' size=60>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan='1'>
+                                {$mod.LBL_PORTAL_CONTACT_EMAIL}:
+                            </td>
+                            <td colspan='1'>
+                                <input class='portalProperty contactField' id='contactEmail' name='contactEmail' value='{$contactInfo.contactEmail}' size=60>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan='1' nowrap>
+                                {$mod.LBL_PORTAL_CONTACT_URL}:
+                            </td>
+                            <td colspan='1'>
+                                <input class='portalProperty contactField' id='contactURL' name='contactURL' value='{$contactInfo.contactURL}' size=60>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input class='hidden-portal-field' id='contactInfo' value=''>
+            </td>
+        </tr>
+        <tr>
             <td colspan='2' nowrap>
                 <input type='button' class='button' id='gobutton' value='{$mod.LBL_BTN_SAVE}'>
             </td>
@@ -167,6 +203,23 @@
         return result;
     }
 
+    // Retrieves the configured list of Portal contact information
+    function getContactInfoConfig() {
+        var contactInfo = {};
+        var contactFields = $('.contactField');
+        $('#contactInfo').val('');
+        for (var i = 0; i < contactFields.length; i++) {
+            var field = $(contactFields[i]);
+            contactInfo[field.attr('name')] = field.val();
+
+            // If at least one option is configured, indicate it to the validator
+            if (field.val()) {
+                $('#contactInfo').val('true');
+            }
+        }
+        return contactInfo;
+    }
+
     // Hack: In iframe and jquery's getting loaded twice so $ doesn't seem to have select2 plugin
     jQuery('#defaultUser').select2({
         placeholder: "{$mod.LBL_USER_SELECT}",
@@ -176,6 +229,9 @@
     addToValidateRange(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
     addToValidateUrl(0, 'logoURL', 'alphanumeric', false, {/literal}"{$mod.LBL_PORTAL_LOGO_URL}"{literal});
     addToValidateUrl(0, 'logomarkURL', 'alphanumeric', false, {/literal}"{$mod.LBL_PORTAL_LOGOMARK_URL}"{literal});
+    addToValidate(0, 'contactEmail', 'email', false, {/literal}"{$mod.LBL_PORTAL_CONTACT_EMAIL_INVALID}"{literal});
+    addToValidateUrl(0, 'contactURL', 'alphanumeric', false, {/literal}"{$mod.LBL_PORTAL_CONTACT_URL}"{literal});
+    addToValidate(0, 'contactInfo', 'alphanumeric', true, {/literal}"{$mod.LBL_PORTAL_CONTACT_INFO_ERROR}"{literal});
     $('#gobutton').click(function(event){
         var $field, fields, props, i, key, val;
         fields = $('.portalField');
@@ -195,6 +251,7 @@
             }
         }
         props['portalModules'] = getModuleListConfig();
+        props['contactInfo'] = getContactInfoConfig();
         retrieve_portal_page($.param(props));
     });
 
@@ -290,6 +347,9 @@
             removeFromValidate(0, 'maxQueryResult');
             removeFromValidate(0, 'logomarkURL');
             removeFromValidate(0, 'logoURL');
+            removeFromValidate(0, 'contactEmail');
+            removeFromValidate(0, 'contactURL');
+            removeFromValidate(0, 'contactInfo');
         }
     }
 </script>

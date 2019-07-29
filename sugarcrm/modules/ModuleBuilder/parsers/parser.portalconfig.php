@@ -47,6 +47,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'maxQueryResult',
             'maxSearchQueryResult',
             'portalModules',
+            'contactInfo',
         ];
 
         $portalConfig = $this->getDefaultPortalSettings();
@@ -106,6 +107,11 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'metadataTypes' => array(),
             'defaultModule' => 'Cases',
             'caseDeflection' => 'enabled',
+            'contactInfo' => [
+                'contactPhone' => '',
+                'contactEmail' => '',
+                'contactURL' => '',
+            ],
             'orderByDefaults' => array(
                 'Cases' => array(
                     'field' => 'case_number',

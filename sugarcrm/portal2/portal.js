@@ -84,6 +84,16 @@
                 }
             },
             {
+                name: 'contact-info',
+                route: 'contact-info',
+                callback: function() {
+                    app.controller.loadView({
+                        layout: 'contact-info',
+                        create: true
+                    });
+                }
+            },
+            {
                 name: 'search',
                 route: 'search/:query',
                 callback: function(query) {

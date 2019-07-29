@@ -66,6 +66,25 @@ class ViewPortalConfig extends SugarView
     }
 
     /**
+     * Decodes a Portal config setting, allowing both string and single-level
+     * arrays of strings to be easily HTML decoded before passing into the
+     * Portal config template
+     * @param array|string $field the Portal config setting to decode
+     * @return mixed the decoded field
+     */
+    public function decodeConfig($field)
+    {
+        if (is_array($field)) {
+            foreach ($field as $key => $value) {
+                $field[$key] = html_entity_decode($value);
+            }
+        } else {
+            $field = html_entity_decode($field);
+        }
+        return $field;
+    }
+
+    /**
      * This function loads portal config vars from db and sets them for the view
      * @see SugarView::display() for more info
    	 */
@@ -79,6 +98,11 @@ class ViewPortalConfig extends SugarView
             'maxSearchQueryResult' => '5',
             'defaultUser' => '',
             'caseDeflection' => 'enabled',
+            'contactInfo' => [
+                'contactPhone' => '',
+                'contactEmail' => '',
+                'contactURL' => '',
+            ],
         ];
         $userList = BeanFactory::newBean('Users')->getUserArray();
         $userList[''] = '';
@@ -97,7 +121,7 @@ class ViewPortalConfig extends SugarView
         $smarty->assign('hiddenPortalTabs', array_values($hiddenPortalTabs));
         foreach ($portalFields as $fieldName=>$fieldDefault) {
             if (isset($portalConfig[$fieldName])) {
-                $smarty->assign($fieldName, html_entity_decode($portalConfig[$fieldName]));
+                $smarty->assign($fieldName, $this->decodeConfig($portalConfig[$fieldName]));
             } else {
                 $smarty->assign($fieldName,$fieldDefault);
             }

@@ -2991,6 +2991,7 @@ class ModuleInstaller{
                 'forgotpassword',
                 'resetpwdconfirmation',
                 'resetpassword',
+                'contact-info',
             ],
             'loadCss' => 'url',
             'themeName' => 'default',

@@ -62,4 +62,45 @@ class PortalConfigViewTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @covers ::decodeConfig
+     * @dataProvider providerDecodeConfig
+     * @param array|string $input the config value to decode
+     * @param mixed $expectedResult the expected config value after HTML decoding
+     */
+    public function testDecodeConfig($input, $expectedResult)
+    {
+        $viewMock = $this->getMockBuilder('\ViewPortalConfig')
+            ->disableOriginalConstructor()
+            ->setMethods()
+            ->getMock();
+        $this->assertEquals($viewMock->decodeConfig($input), $expectedResult);
+    }
+
+    public function providerDecodeConfig() : array
+    {
+        return [
+            [
+                'enabled',
+                'enabled',
+            ],
+            [
+                'This &quot;is&quot; a &lt;b&gt;test&lt;/b&gt;',
+                'This "is" a <b>test</b>',
+            ],
+            [
+                [
+                    'setting1' => 'This &quot;is&quot; a &lt;b&gt;test&lt;/b&gt;',
+                    'setting2' => 'This &quot;is&quot; a &lt;b&gt;test&lt;/b&gt;',
+                    'setting3' => 'This &quot;is&quot; a &lt;b&gt;test&lt;/b&gt;',
+                ],
+                [
+                    'setting1' => 'This "is" a <b>test</b>',
+                    'setting2' => 'This "is" a <b>test</b>',
+                    'setting3' => 'This "is" a <b>test</b>',
+                ],
+            ],
+        ];
+    }
 }

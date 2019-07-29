@@ -23,6 +23,24 @@
     },
 
     /**
+     * Stores whether any Portal contact information has been configured
+     */
+    contactInfo: null,
+
+    /**
+     * @inheritdoc
+     *
+     * Grabs the Portal contact information to check if we should provide a link
+     * to the contact info page
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        var contact = app.config.contactInfo || {};
+        this.contactInfo = contact.contactPhone || contact.contactURL || contact.contactEmail;
+    },
+
+    /**
      * Gets the logo image for portal
      * @return string URL for the logo image for Portal
      */

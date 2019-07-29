@@ -4916,6 +4916,10 @@ Sincerely, SugarCRM',
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
     'LBL_PORTAL_SEARCH_RESULTS_TITLE' => 'Show search results for "{query}"',
     'LBL_PORTAL_DIDNT_GET_EMAIL' => 'Did not get an email?',
+    'LBL_PORTAL_CONTACT_INFO_CONTACT_US' => 'For assistance, or to contact us, please use any of the following: ',
+    'LBL_PORTAL_CONTACT_INFO_PHONE' => 'Phone: ',
+    'LBL_PORTAL_CONTACT_INFO_EMAIL' => 'Email: ',
+    'LBL_PORTAL_CONTACT_INFO_WEB' => 'Web: ',
 
     //for portal errors
     'LBL_PORTAL_LOGIN_UNSUCCESSFUL' => 'Your login was not successful. Please try again.',

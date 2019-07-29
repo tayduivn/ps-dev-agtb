@@ -9,45 +9,39 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * Portal Reset Password Confirmation view.
- *
- * @class View.Views.Portal.ResetPwdConfirmationView
- * @alias SUGAR.App.view.views.PortalResetPwdConfirmationView
+ * @class View.Views.Portal.ContactInfoView
+ * @alias SUGAR.App.view.views.PortalContactInfoView
  * @extends View.View
  */
 ({
     /**
-     * Stores whether any Portal contact information has been configured
+     * Stores the Portal contact information configured by the admin
      */
     contactInfo: null,
 
     /**
      * @inheritdoc
      *
-     * Grabs the Portal contact information to check if we should provide a link
-     * to the contact info page
+     * Grabs the Portal contact information to be displayed when the page loads
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-
-        var contact = app.config.contactInfo || {};
-        this.contactInfo = contact.contactPhone || contact.contactURL || contact.contactEmail;
+        this.contactInfo = app.config.contactInfo;
     },
 
     /**
      * Gets the logo image for portal
+     * @return string containing the logo image URL
      */
     getLogoImage: function() {
-        // get the image urls for portal
         return app.config.logoURL || app.config.logomarkURL || app.metadata.getLogoUrl();
     },
 
     /**
-     * Because we don't want any of the extra crap that stops it from rendering
-     * @private
+     * @inheritdoc
      */
-    _render: function() {
+    _renderHtml: function() {
         this.logoUrl = this.getLogoImage();
-        app.view.View.prototype._render.call(this);
-    }
-});
+        this._super('_renderHtml');
+    },
+})

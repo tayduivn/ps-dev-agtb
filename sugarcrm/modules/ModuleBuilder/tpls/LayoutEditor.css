@@ -104,3 +104,12 @@ body > .le_panel .le_edit, #toolbox .le_panel .le_edit {
 .portal-module-list-container .ui-sortable-helper {
 	border: 2px solid rgb(128,128,128);
 }
+
+.portal-contact-info {
+	display: inline-block;
+	border: 1px solid rgb(128,128,128);
+}
+
+.hidden-portal-field {
+	display: none;
+}
