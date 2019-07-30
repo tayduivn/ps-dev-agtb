@@ -14,6 +14,7 @@ use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\ServiceAccount;
 use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenStorage;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
 use Sugarcrm\Sugarcrm\Security\Subject\IdentityAwareServiceAccount;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
@@ -525,10 +526,16 @@ class RestService extends ServiceBase
         }
 
         if (!$valid) {
+            // copy old csrf token into new session
+            $csrfTokens = $_SESSION[CsrfTokenStorage::SESSION_NAMESPACE] ?? null;
+
             // If token is invalid, clear the session for bwc
             // It looks like a big upload can cause no auth error,
             // so we do it here instead of the catch block above
             $_SESSION = array();
+            if ($csrfTokens) {
+                $_SESSION[CsrfTokenStorage::SESSION_NAMESPACE] = $csrfTokens;
+            }
             $exception = (isset($e)) ? $e : false;
 
             return array('isLoggedIn' => false, 'exception' => $exception);
