@@ -69,13 +69,6 @@ $viewdefs['Bugs']['portal']['view']['record'] = array(
                         array(
                             'name' => 'date_entered',
                         ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY',
-                        ),
-                        array(
-                            'name' => 'created_by_name',
-                        ),
                     ),
                 ),
                 array(
@@ -88,22 +81,11 @@ $viewdefs['Bugs']['portal']['view']['record'] = array(
                         array(
                             'name' => 'date_modified',
                         ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY',
-                        ),
-                        array(
-                            'name' => 'modified_by_name',
-                        ),
                     ),
                 ),
                 array(
                     'name' => 'work_log',
                     'span' => 12,
-                ),
-                array(
-                    'name' => 'assigned_user_name',
-                    'readonly' => true,
                 ),
             ),
         ),

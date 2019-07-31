@@ -61,13 +61,6 @@ $viewdefs['Notes']['portal']['view']['preview'] = array(
                         array(
                             'name' => 'date_entered',
                         ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY',
-                        ),
-                        array(
-                            'name' => 'created_by_name',
-                        ),
                     ),
                 ),
             ),
