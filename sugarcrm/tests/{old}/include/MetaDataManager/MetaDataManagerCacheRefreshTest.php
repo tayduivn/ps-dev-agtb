@@ -105,6 +105,16 @@ class MetaDataManagerCacheRefreshTest extends TestCase
         TestMetaDataManager::refreshCache(array('base'), true);
         $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta:hash:public:base'"));
         $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta:hash:base'"));
+
+        $mm = MetaDataManager::getManager();
+        $hashKey = $mm->getCurrentUserCachedMetadataHashKey();
+
+        // no default context cache just gets invalidated, not created
+        $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$hashKey'"));
+
+        // make sure cache is created
+        $mm->getMetadata();
+        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$hashKey'"));
     }
 
     /**

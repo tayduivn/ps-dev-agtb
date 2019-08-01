@@ -16,6 +16,8 @@ namespace Sugarcrm\Sugarcrm\Entitlements;
 // to as Critical Control Software under the End User
 // License Agreement.  Neither the Company nor the Users
 // may modify any portion of the Critical Control Software.
+use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 /**
  * Class SubscriptionManager
  *
@@ -250,6 +252,17 @@ class SubscriptionManager
     }
 
     /**
+     * get subscription keys in value-sorted array
+     * @return array
+     */
+    public function getSystemSubscriptionKeysInSortedValueArray() : array
+    {
+        $results = array_keys($this->getSystemSubscriptionKeys());
+        $this->sortSubscriptionKeys($results);
+        return $results;
+    }
+
+    /**
      * get valid subscription seats by type
      * @param string $type
      * @return int
@@ -310,6 +323,7 @@ class SubscriptionManager
             return [$this->getUserDefaultLicenseType()];
         }
 
+        $this->sortSubscriptionKeys($userSubscriptions);
         return $userSubscriptions;
     }
 
@@ -359,7 +373,6 @@ class SubscriptionManager
      * get default license type
      *
      * @return string
-     * @throws \Exception
      */
     public function getUserDefaultLicenseType() : string
     {
@@ -371,6 +384,56 @@ class SubscriptionManager
             }
         }
         return '';
+    }
+
+    /**
+     * sort keys
+     * @param array $keys
+     */
+    protected function sortSubscriptionKeys(array &$keys)
+    {
+        sort($keys);
+    }
+
+    /**
+     *
+     * get all subsets of system subscriptions
+     *
+     * @return array
+     */
+    public function getAllSubsetsOfSystemSubscriptions() : array
+    {
+        $systemSubscriptions = $this->getSystemSubscriptionKeysInSortedValueArray();
+        $allSubsets = ArrayFunctions::powerSet($systemSubscriptions);
+
+        $subsets = [];
+        foreach ($allSubsets as $subset) {
+            if (!empty($subset)) {
+                $this->sortSubscriptionKeys($subset);
+                $subsets[] = $subset;
+            }
+        }
+        return $subsets;
+    }
+
+    /**
+     * convert keys to a string
+     * @param array|null $keys
+     * @return mixed|string
+     */
+    public function getUserLicenseTypesInString(?\User $user)
+    {
+        if (empty($user)) {
+            return '';
+        }
+
+        $userSubscriptions = $this->getUserSubscriptions($user);
+
+        if (empty($userSubscriptions)) {
+            return '';
+        }
+
+        return implode('_', $userSubscriptions);
     }
 }
 //END REQUIRED CODE DO NOT MODIFY

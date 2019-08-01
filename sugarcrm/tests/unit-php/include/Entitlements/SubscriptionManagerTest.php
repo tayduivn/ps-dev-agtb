@@ -162,7 +162,7 @@ class SubscriptionManagerTest extends TestCase
                 ['SUGAR_SERVE', 'CURRENT'],
                 'any_key',
                 false,
-                ['SUGAR_SERVE', 'CURRENT'],
+                ['CURRENT', 'SUGAR_SERVE'],
             ],
             // user's license Type is empty, product is ENT only
             [
@@ -411,6 +411,150 @@ class SubscriptionManagerTest extends TestCase
                 [],
                 'CURRENT',
                 0,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getAllSubsetsOfSystemSubscriptions
+     * @covers ::sortSubscriptionKeys
+     *
+     * @param array $keys
+     * @param $expected
+     *
+     * @dataProvider getAllSubsetsOfSystemSubscriptionsProvider
+     */
+    public function testGetAllSubsetsOfSystemSubscriptions(array $keys, array $expected)
+    {
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getSystemSubscriptionKeys'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getSystemSubscriptionKeys')
+            ->will($this->returnValue($keys));
+
+        $this->assertSame($expected, $subMock->getAllSubsetsOfSystemSubscriptions());
+    }
+
+    public function getAllSubsetsOfSystemSubscriptionsProvider()
+    {
+        return [
+            'single subscription' => [
+                ['SUGAR_SELL' => true],
+                [
+                    ['SUGAR_SELL'],
+                ],
+            ],
+            'mutiple subscriptions' => [
+                [
+                    'SUGAR_SELL' => true,
+                    'CURRENT' => true,
+                    'SUGAR_SERVE' => true,
+                ],
+                [
+                    ['CURRENT'],
+                    ['SUGAR_SELL'],
+                    ['CURRENT', 'SUGAR_SELL'],
+                    ['SUGAR_SERVE'],
+                    ['CURRENT', 'SUGAR_SERVE'],
+                    ['SUGAR_SELL', 'SUGAR_SERVE'],
+                    ['CURRENT', 'SUGAR_SELL', 'SUGAR_SERVE'],
+                ],
+            ],
+            'empty subscriptions' => [
+                [],
+                [],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getUserLicenseTypesInString
+     * @param array|null $data
+     * @param $expected
+     *
+     * @dataProvider getUserLicenseTypesInStringProvider
+     */
+    public function testGetUserLicenseTypesInString(?array $data, $expected)
+    {
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getUserSubscriptions'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getUserSubscriptions')
+            ->will($this->returnValue($data));
+
+        $userMock = $this->getMockBuilder(\User::class)
+            ->disableOriginalConstructor()
+            ->setMethods()
+            ->getMock();
+
+        $this->assertSame($expected, $subMock->getUserLicenseTypesInString($userMock));
+    }
+
+    public function getUserLicenseTypesInStringProvider()
+    {
+        return [
+            'single subscription' => [
+                ['SUGAR_SELL'],
+                'SUGAR_SELL',
+            ],
+            'multiple subscriptions' => [
+                [
+                    'SUGAR_SELL',
+                    'CURRENT',
+                    'SUGAR_SERVE',
+                ],
+                'SUGAR_SELL_CURRENT_SUGAR_SERVE',
+            ],
+            'empty subscriptions' => [
+                null,
+                '',
+            ],
+        ];
+    }
+
+    /**
+     *
+     * @covers ::getSystemSubscriptionKeysInSortedValueArray
+     * @param array $userSubscriptions
+     * @param array $sysSubscriptions
+     * @param bool $expected
+     *
+     * @dataProvider getSystemSubscriptionKeysInSortedValueArrayProvider
+     */
+    public function testGetSystemSubscriptionKeysInSortedValueArray($sysSubscriptions, $expected)
+    {
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getSystemSubscriptionKeys'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getSystemSubscriptionKeys')
+            ->will($this->returnValue($sysSubscriptions));
+
+        $this->assertSame($expected, $subMock->getSystemSubscriptionKeysInSortedValueArray());
+    }
+
+    public function getSystemSubscriptionKeysInSortedValueArrayProvider()
+    {
+        return [
+            'same subscription' => [
+                ['CURRENT' => true],
+                ['CURRENT'],
+            ],
+            'empty subscription' => [
+                [],
+                [],
+            ],
+            'sortingsubscriptions' => [
+                ['SUGAR_SERVE' => true, 'CURRENT' => true],
+                ['CURRENT', 'SUGAR_SERVE'],
             ],
         ];
     }

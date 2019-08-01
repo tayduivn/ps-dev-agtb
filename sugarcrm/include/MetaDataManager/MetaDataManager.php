@@ -15,6 +15,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 use Sugarcrm\Sugarcrm\MetaData\RefreshQueue;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
@@ -2500,8 +2501,18 @@ class MetaDataManager implements LoggerAwareInterface
 
         $intialContext = ($isDefaultContext || $this->public) ? $defaultContext : $partialContext;
 
-        //Start with the default metadata
+        // to retrieve default data
+        $defaultData = [];
+        if ($intialContext->getHash() != $defaultContext->getHash()) {
+            $defaultData = $this->loadAndCacheMetadata($args, $defaultContext, $ignoreCache);
+        }
+        // Start with the default or partial metadata
         $data = $this->loadAndCacheMetadata($args, $intialContext, $isDefaultContext && $ignoreCache);
+
+        // merge partial and default together
+        if (!empty($defaultData)) {
+            $data = array_merge($defaultData, $data);
+        }
 
         // Get our metadata if a users specific context was provided
         if (!$this->public && !($context instanceof MetaDataContextDefault)) {
@@ -3745,6 +3756,18 @@ class MetaDataManager implements LoggerAwareInterface
     }
 
     /**
+     * get current user's hash key
+     */
+    public function getCurrentUserCachedMetadataHashKey()
+    {
+        global $current_user;
+        if (empty($current_user)) {
+            return null;
+        }
+
+        return $this->getCachedMetadataHashKey(new MetaDataContextUser($current_user));
+    }
+    /**
      * Public accessor that gets the hash for a metadata file cache. This is a
      * wrapper to {@see getCachedMetadataHash}
      *
@@ -4216,7 +4239,7 @@ class MetaDataManager implements LoggerAwareInterface
     }
 
     /**
-     * Returns all possible metadata contexts
+     * Returns all possible metadata contexts, context will be based on license's types
      *
      * @param boolean $public Is metadata public
      * @return MetaDataContextInterface[]
@@ -4224,19 +4247,32 @@ class MetaDataManager implements LoggerAwareInterface
     protected static function getAllMetadataContexts($public)
     {
         $contexts = array();
-        $adminUser = BeanFactory::newBean("Users");
-        $adminUser->is_admin = '1';
+        $allSubsetsOfSystemSubscriptions = SubscriptionManager::instance()->getAllSubsetsOfSystemSubscriptions();
+        $users = [];
+        foreach ($allSubsetsOfSystemSubscriptions as $subscriptions) {
+            $user = BeanFactory::newBean('Users');
+            $user->license_type = json_encode($subscriptions);
+            $users[] = $user;
+            $adminUser = BeanFactory::newBean('Users');
+            $adminUser->is_admin = '1';
+            $adminUser->license_type = json_encode($subscriptions);
+            $users[] = $adminUser;
+        }
 // BEGIN SUGARCRM flav=ent ONLY
         if (!$public) {
             $roleSets = self::getAllRoleSets();
             foreach ($roleSets as $roleSet) {
                 $contexts[] = new MetaDataContextRoleSet($roleSet);
-                $contexts[] = new MetaDataContextUser($adminUser, $roleSet);
+                foreach ($users as $user) {
+                    $contexts[] = new MetaDataContextUser($user, $roleSet);
+                }
             }
         }
 // END SUGARCRM flav=ent ONLY
         $contexts[] = new MetaDataContextDefault();
-        $contexts[] = new MetaDataContextUser($adminUser);
+        foreach ($users as $user) {
+            $contexts[] = new MetaDataContextUser($user);
+        }
 
         return $contexts;
     }

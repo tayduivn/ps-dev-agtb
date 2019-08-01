@@ -12,6 +12,7 @@
 
 require_once 'modules/Administration/updater_utils.php';
 
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 use Sugarcrm\Sugarcrm\Entitlements\Subscription;
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
@@ -85,6 +86,11 @@ class User extends Person {
      * @var string, license type associated with the user
      */
     public $license_type;
+
+    /**
+     * old license type from DB
+     */
+    protected $oldLicenseType;
 
     const DEFAULT_LICENSE_TYPE = 'CURRENT';
 
@@ -966,6 +972,10 @@ class User extends Person {
             }
 		}
 
+        // record old license type for detecting license type modification
+        if (!empty($this->license_type)) {
+            $this->oldLicenseType = $this->license_type;
+        }
 		return $ret;
 	}
 
@@ -2858,15 +2868,36 @@ class User extends Person {
     {
         global $current_user;
         if (is_admin($current_user) && !empty($types)) {
-            $encodedType = json_encode($types);
-            if ($this->license_type != $encodedType) {
-                // license type changed, need to invalidate metadata cache
-                $metadataMgr = MetaDataManager::getManager();
-                $context = new MetaDataContextUser($this);
-                $metadataMgr->invalidateCache($metadataMgr->getPlatformsWithCaches(), $context);
-                $this->license_type = $encodedType;
+            $this->license_type = json_encode($types);
+            if ($this->isLicenseTypeModified($types)) {
+                // need to refresh this user's metatdata cache
+                $this->update_date_modified = true;
+                // need to reset access control
+                if ($current_user->id === $this->id) {
+                    AccessControlManager::instance()->resetAccessControl();
+                }
             }
         }
+    }
+
+    /**
+     * check if license type has been modified
+     * @param array $newType
+     * @return bool
+     */
+    protected function isLicenseTypeModified(array $newTypes) : bool
+    {
+        if (empty($this->oldLicenseType)) {
+            $oldType = [SubscriptionManager::instance()->getUserDefaultLicenseType()];
+        } else {
+            $oldType = json_decode($this->oldLicenseType, true);
+        }
+
+        if (!empty(array_diff($newTypes, $oldType))) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

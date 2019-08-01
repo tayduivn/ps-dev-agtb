@@ -21,7 +21,7 @@ class Bug61201Test extends TestCase
 
         SugarTestHelper::setUp('current_user');
     }
-    
+
     public function tearDown()
     {
         SugarTestReflection::setProtectedValue('MetaDataManager', 'isQueued', false);
@@ -36,9 +36,9 @@ class Bug61201Test extends TestCase
     }
 
     /**
-     * Tests that the queue flag was set, that the queue prevents an immediate 
+     * Tests that the queue flag was set, that the queue prevents an immediate
      * refresh and that a run queue actually fires a refresh of the cache
-     * 
+     *
      * @group Bug61201
      */
     public function testMetaDataCacheQueueHandling()
@@ -47,43 +47,59 @@ class Bug61201Test extends TestCase
 
         // Get the private metadata manager for base
         $mm = MetaDataManager::getManager();
-        
+        $hashKey = $mm->getCurrentUserCachedMetadataHashKey();
+        $defaultKey = 'meta:hash:base';
         // Get the metadata now to force a cache build if it isn't there
         $mm->getMetadata();
-        
+
         // Assert that there is a private base metadata file
-        $dateModified =  $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta:hash:base'"), 'datetime');
+        // Test default context
+        $dateModified = $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$defaultKey'"), 'datetime');
         $this->assertNotEmpty($dateModified);
-        
+        // Test user context
+        $dateModifiedUserContext = $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$hashKey'"), 'datetime');
+        $this->assertNotEmpty($dateModifiedUserContext);
+
         // Set the queue
         MetaDataManager::enableCacheRefreshQueue();
-        
+
         // Test the state of the queued flag
         $state = SugarTestReflection::getProtectedValue('MetaDataManager', 'isQueued');
         $this->assertTrue($state, "MetaDataManager cache queue state was not properly set");
-        
+
         // Try to refresh a section while queueing is on
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_SERVERINFO);
 
         // Get the metadata again and ensure it is the same
         $mm->getMetadata();
-        $newDateModified =  $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta:hash:base'"), 'datetime');
+
+        // Check default context
+        $newDateModified = $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$defaultKey'"), 'datetime');
         $this->assertEquals($dateModified, $newDateModified, "Meta Data cache has changed and it should not have");
-        
+
+        // Check user context
+        $newDateModified = $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$hashKey'"), 'datetime');
+        $this->assertEquals($dateModifiedUserContext, $newDateModified, "Meta Data cache has changed and it should not have");
+
         // Force a time diff
         sleep(1);
-        
+
         // Run the queue. This should fire the refresh jobs
         MetaDataManager::runCacheRefreshQueue();
-        
+
         // Get the metadata again and ensure it is different now
         $mm->getMetadata();
 
-        $newDateModified = $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta:hash:base'"), 'datetime');
-        
+        $newDateModified = $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$defaultKey'"), 'datetime');
+
         // Test the file first
+        $this->assertNotEmpty($newDateModified, "Default Private cache metadata was not found after refresh.");
+
+        $newDateModified = $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$hashKey'"), 'datetime');
+
+        // Test the user context
         $this->assertNotEmpty($newDateModified, "Private cache metadata was not found after refresh.");
-        
+
         // Test the time on the new file
         $this->assertGreaterThan(
             TimeDate::getInstance()->fromDb($dateModified)->getTimestamp(),

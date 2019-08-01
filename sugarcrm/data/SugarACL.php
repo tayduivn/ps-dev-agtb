@@ -20,11 +20,6 @@ class SugarACL
 {
     static $acls = array();
 
-    /**
-     * @var AccessControlManager
-     */
-    public static $accessControlMgr = null;
-
     // Access levels for field
     // matches ACLField::hasAccess returns for compatibility
     const ACL_NO_ACCESS = 0;
@@ -188,35 +183,25 @@ class SugarACL
 
     /**
      * check allow access with license type
-     * @param string $module
+     * @param null|string $module
      * @return bool
      */
-    public static function allowModuleAccess(string $module)
+    public static function allowModuleAccess(?string $module)
     {
-        self::initAccessControlManager();
-        return self::$accessControlMgr->allowModuleAccess($module);
+        return AccessControlManager::instance()->allowModuleAccess($module);
     }
 
     /**
      * check allow field access with license type
-     * @param string $module
+     * @param null|string $module
+     * @param null|string $field
      * @return bool
      */
-    protected static function allowFieldAccess(string $module, string $field)
+    protected static function allowFieldAccess(?string $module, ?string $field)
     {
-        self::initAccessControlManager();
-        return self::$accessControlMgr->allowFieldAccess($module, $field);
+        return AccessControlManager::instance()->allowFieldAccess($module, $field);
     }
 
-    /**
-     * init AccessControlManager
-     */
-    protected static function initAccessControlManager()
-    {
-        if (self::$accessControlMgr == null) {
-            self::$accessControlMgr = AccessControlManager::instance();
-        }
-    }
     /**
      * Get list of disabled modules
      * @param array $list Module list

@@ -349,5 +349,14 @@ class AccessControlManager
         }
         return [];
     }
+
+    /**
+     * reset access control
+     *
+     */
+    public function resetAccessControl()
+    {
+        self::$instance = new AccessControlManager();
+    }
 }
 //END REQUIRED CODE DO NOT MODIFY
