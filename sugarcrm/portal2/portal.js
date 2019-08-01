@@ -73,6 +73,17 @@
                 }
             },
             {
+                name: 'resetpassword',
+                route: 'resetpassword/:id',
+                callback: function(id) {
+                    app.controller.loadView({
+                        layout: 'resetpassword',
+                        resetID: id,
+                        create: true
+                    });
+                }
+            },
+            {
                 name: 'search',
                 route: 'search/:query',
                 callback: function(query) {
@@ -175,7 +186,8 @@
             'error',
             'profile',
             'profileedit',
-            'logout'
+            'logout',
+            'resetpassword'
         ];
 
         app.logger.debug('Loading route. ' + (route ? route : 'No route or undefined!'));

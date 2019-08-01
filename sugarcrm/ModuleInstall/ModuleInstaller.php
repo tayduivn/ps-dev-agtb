@@ -2990,6 +2990,7 @@ class ModuleInstaller{
                 'signup-success',
                 'forgotpassword',
                 'resetpwdconfirmation',
+                'resetpassword',
             ],
             'loadCss' => 'url',
             'themeName' => 'default',
