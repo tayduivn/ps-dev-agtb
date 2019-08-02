@@ -11,6 +11,10 @@
  */
 
 require_once 'data/SugarACLStrategy.php';
+//BEGIN SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+
+//END SUGARCRM flav=ent ONLY
 
 class SugarACLOutboundEmail extends SugarACLStrategy
 {
@@ -22,6 +26,13 @@ class SugarACLOutboundEmail extends SugarACLStrategy
         if (in_array($view, ['access', 'team_security'])) {
             return true;
         }
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        // SugarBPM ignores ACLs for OutboundEmail accounts
+        if (Registry\Registry::getInstance()->get('bpm_request') === true) {
+            return true;
+        }
+        //END SUGARCRM flav=ent ONLY
 
         $currentUser = $this->getCurrentUser($context);
 

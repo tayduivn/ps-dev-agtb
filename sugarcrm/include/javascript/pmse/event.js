@@ -978,16 +978,16 @@ AdamEvent.prototype.createConfigureAction = function () {
             required: true,
             fieldWidth: 414,
             change: changeFunction,
-            searchURL: 'Users?filter[0][$and][0][status][$not_equals]=Inactive&filter[0][$and][1][$or][0]' +
-            '[first_name][$starts]={%TERM%}&filter[0][$and][1][$or][1][last_name][$starts]={%TERM%}' +
-            '&fields=id,full_name&max_num={%PAGESIZE%}&offset={%OFFSET%}',
+            searchURL: 'pmse_Project/CrmData/outboundEmailsAccounts?filter[0][name][$starts]={%TERM%}' +
+            '&fields=id,name&max_num={%PAGESIZE%}&offset={%OFFSET%}',
             searchValue: 'id',
-            searchLabel: 'full_name',
+            searchLabel: 'name',
             searchMore: {
-                module: 'Users',
-                fields: ['id', 'full_name'],
+                module: 'OutboundEmail',
+                fields: ['id', 'name'],
                 filterOptions: null
             },
+            _searchMoreLayout: 'selection-list-for-bpm',
             options: [
                 {'text': translate('LBL_PMSE_FORM_OPTION_CREATED_BY_USER'), 'value': 'created_by'},
                 {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},

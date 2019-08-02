@@ -10,6 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+//BEGIN SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+
+//END SUGARCRM flav=ent ONLY
+
 class OutboundEmailVisibility extends SugarVisibility
 {
     /**
@@ -21,6 +26,13 @@ class OutboundEmailVisibility extends SugarVisibility
     public function addVisibilityWhere(&$query)
     {
         global $current_user;
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        // SugarBPM ignores any visibility
+        if (Registry\Registry::getInstance()->get('bpm_request') === true) {
+            return $query;
+        }
+        //END SUGARCRM flav=ent ONLY
 
         $db = DBManagerFactory::getInstance();
         $where = '';

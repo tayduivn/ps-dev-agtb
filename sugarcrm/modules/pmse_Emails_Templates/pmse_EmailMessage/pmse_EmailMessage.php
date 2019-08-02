@@ -32,6 +32,7 @@ class pmse_EmailMessage extends Basic
     public $body_html;
     public $subject;
     public $flow_id;
+    public $outbound_email_id;
 
     /**
      * @inheritDoc

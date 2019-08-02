@@ -94,6 +94,11 @@ $dictionary['pmse_EmailMessage'] = array(
             'type' => 'bool',
             'default' => 0,
         ),
+        'outbound_email_id' => [
+            'name' => 'outbound_email_id',
+            'type' => 'id',
+            'vname' => 'LBL_OUTBOUND_EMAIL_ID',
+        ],
     ),
     'relationships' => array(),
     'optimistic_locking' => true,

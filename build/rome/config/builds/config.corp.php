@@ -197,5 +197,7 @@ $config['blackList']['corp'] = array(
 'sugarcrm/clients/base/views/commentlog-dashlet' => 1,
 'sugarcrm/tests/unit-js/clients/base/views/commentlog-dashlet' => 1,
 'sugarcrm/clients/base/fields/commentlog/dashlet.hbs' => 1,
+
+'sugarcrm/modules/clients/base/views/selection-list-for-bpm' => 1,
 );
 $build = 'corp';

@@ -446,12 +446,59 @@ class PMSEEmailHandler
 
     /**
      * Returns a Mailer object
+     *
+     * @param OutboundEmailConfiguration $config
      * @return mixed
      */
-    protected function retrieveMailer()
+    protected function retrieveMailer(OutboundEmailConfiguration $config = null)
     {
+        if (!empty($config)) {
+            return MailerFactory::getMailer($config);
+        }
         return MailerFactory::getSystemDefaultMailer();
     }
+
+    /**
+     * Get the OutboundEmailConfig
+     *
+     * @param pmse_EmailMessage $email
+     * @return null|OutboundEmailConfiguration
+     * @throws MailerException
+     * @throws SugarApiExceptionNotFound
+     */
+    protected function getMailerConfig(pmse_EmailMessage $email)
+    {
+        $config = null;
+        if (!empty($email->outbound_email_id)) {
+            $outboundEmail = BeanFactory::getBean('OutboundEmail', $email->outbound_email_id);
+            if (!empty($outboundEmail->id) && $outboundEmail->isConfigured()) {
+                $config = OutboundEmailConfigurationPeer::buildOutboundEmailConfiguration(
+                    $GLOBALS['current_user'],
+                    [
+                        'config_id' => $outboundEmail->id,
+                        'config_type' => $outboundEmail->type,
+                        'from_email' => $outboundEmail->email_address,
+                        'from_name' => $outboundEmail->name,
+                        'replyto_email' => $outboundEmail->reply_to_email_address,
+                        'replyto_name' => $outboundEmail->reply_to_name,
+                    ],
+                    $outboundEmail
+                );
+            }
+        }
+
+        if (empty($config)) {
+            $config = OutboundEmailConfigurationPeer::getSystemDefaultMailConfiguration();
+            if (!empty($email->from_addr)) {
+                $config->setFrom($email->from_addr, $email->from_name);
+            }
+            if (!empty($email->reply_to_addr)) {
+                $config->setReplyTo($email->reply_to_addr, $email->reply_to_name);
+            }
+        }
+        return $config;
+    }
+
     /**
      * Send the email based in an email template and with the email data parsed.
      * @param type $moduleName
@@ -559,25 +606,14 @@ class PMSEEmailHandler
             return false;
         }
 
-        $mailObject = $this->retrieveMailer();
+        $mailObject = $this->retrieveMailer($this->getMailerConfig($email));
         $mailTransmissionProtocol = $mailObject->getMailTransmissionProtocol();
 
         $addresses = new stdClass();
         $addresses->to = json_decode($email->to_addrs);
         $addresses->cc = json_decode($email->cc_addrs);
         $addresses->bcc = json_decode($email->bcc_addrs);
-        $sender = [
-            'from' => [
-                'address' => $email->from_addr,
-                'name' => $email->from_name,
-            ],
-            'reply' => [
-                'address' => $email->reply_to_addr,
-                'name' => $email->reply_to_name,
-            ],
-        ];
 
-        $this->setEmailHeaders($mailObject, $sender);
         $this->addRecipients($mailObject, $addresses);
         $mailObject->setHtmlBody($email->body_html);
         $mailObject->setTextBody($email->body);
@@ -661,8 +697,9 @@ class PMSEEmailHandler
         $emailMessageBean->from_name = !empty($sender['from']['name']) ? $sender['from']['name'] : null;
         $emailMessageBean->reply_to_addr = !empty($sender['reply']['address']) ? $sender['reply']['address'] : null;
         $emailMessageBean->reply_to_name = !empty($sender['reply']['name']) ? $sender['reply']['name'] : null;
-
+        $emailMessageBean->outbound_email_id = $this->getOutBoundEmailIdFromEventDefinition($evnDefBean);
         $emailMessageBean->flow_id = $flowData['id'];
+
         return $emailMessageBean->save();
     }
 
@@ -828,21 +865,41 @@ class PMSEEmailHandler
             $addresses = json_decode($addressesJSON);
             $fromId = !empty($addresses->from->id) ? $addresses->from->id : null;
             $replyToId = !empty($addresses->replyTo->id) ? $addresses->replyTo->id : null;
-            $sender['from'] = $this->getContactInformationFromId($fromId, $targetBean);
-            $sender['reply'] = $this->getContactInformationFromId($replyToId, $targetBean);
+            // save from and reply id
+            $sender['from'] = $this->getContactInformationFromId($fromId, $targetBean, 'from');
+            $sender['reply'] = $this->getContactInformationFromId($replyToId, $targetBean, 'reply');
         }
         return $sender;
     }
 
+    /**
+     * Extract the id for the From field from the event definition
+     *
+     * @param SugarBean $evnDefBean
+     * @return string|null The outbound email id if it exists
+     */
+    private function getOutBoundEmailIdFromEventDefinition($evnDefBean)
+    {
+        if (!empty($evnDefBean->evn_params)) {
+            $addressesJSON = htmlspecialchars_decode($evnDefBean->evn_params);
+            $addresses = json_decode($addressesJSON);
+            $id = !empty($addresses->from->id) ? $addresses->from->id : null;
+            //Check if this is an outbound account
+            $bean = $this->retrieveBean('OutboundEmail', $id);
+            return !empty($bean->id) ? $bean->id : null;
+        }
+        return null;
+    }
     /**
      * Gets the contact information (email address and name) associated with the
      * given ID
      *
      * @param $contactId String ID of the contact, or a variable user ID
      * @param $targetBean SugarBean target bean of the process
+     * @param string $type The value we want to set on the email. Supports `from` and `reply`
      * @return array
      */
-    public function getContactInformationFromId($contactId, $targetBean)
+    public function getContactInformationFromId($contactId, $targetBean, string $type = '')
     {
         $contactBean = null;
 
@@ -876,7 +933,7 @@ class PMSEEmailHandler
         }
 
         // Return the name and primary email address associated with the contact bean
-        return $this->getContactInformationFromBean($contactBean);
+        return $this->getContactInformationFromBean($contactBean, $type);
     }
 
     /**
@@ -888,24 +945,103 @@ class PMSEEmailHandler
      */
     public function getContactBeanFromId($contactId)
     {
-        // Get the User bean
-        $contactBean = $this->retrieveBean('Users', $contactId);
-        return !empty($contactBean->id) ? $contactBean : null;
+        ProcessManager\Registry\Registry::getInstance()->set('bpm_request', true, true);
+        $bean = $this->retrieveBean('OutboundEmail', $contactId);
+        if (empty($bean->id)) {
+            // Get the User bean for backwards compatibility with 9.1
+            $bean = $this->retrieveBean('Users', $contactId);
+        }
+
+        ProcessManager\Registry\Registry::getInstance()->set('bpm_request', false, true);
+
+        return !empty($bean->id) ? $bean : null;
     }
 
     /**
      * Retrieves the contact information (name and primary email address) associated
-     * with the given user bean
+     * with the given bean
      *
-     * @param $contactBean User to extract contact information from
+     * @param Sugarbean|null $contactBean  to extract contact information from
+     * @param string $type The value we want to set on the email. Supports `from` and `reply`
      * @return array containing the contact name and primary email address of the user
      */
-    public function getContactInformationFromBean(User $contactBean = null)
+    public function getContactInformationFromBean(SugarBean $contactBean = null, string $type = '')
     {
-        return [
-            'name' => !empty($contactBean->full_name) ? $contactBean->full_name : null,
-            'address' => !empty($contactBean->email1) ? $contactBean->email1 : null,
+        $default = [
+            'name' => null,
+            'address' => null,
         ];
+        if (empty($contactBean->id)) {
+            return $default;
+        }
+
+        if ($contactBean->getModuleName() === 'Users') {
+            return $this->getContactInfoFromUser($contactBean, $type);
+        } elseif ($contactBean->getModuleName() === 'OutboundEmail') {
+            return $this->getContactInfoFromOutboundEmail($contactBean, $type);
+        }
+
+        return $default;
+    }
+
+    /**
+     * Returns the name and address fields for a User bean
+     * depending on what the email field we need to set
+     *
+     * @param User $user The User bean to get info from
+     * @param string $type The value we want to set on the email. Supports `from` and `reply`
+     * @return array name and address fields
+     */
+    private function getContactInfoFromUser(User $user, string $type)
+    {
+        switch ($type) {
+            case 'from':
+            case 'reply':
+                $info = [
+                    'name' => !empty($user->full_name) ? $user->full_name : null,
+                    'address' => !empty($user->email1) ? $user->email1 : null,
+                ];
+                break;
+            default:
+                $info = [
+                    'name' => null,
+                    'address' => null,
+                ];
+        }
+        return $info;
+    }
+
+    /**
+     * Returns the name and address fields for a OutboundEmail bean
+     * depending on what the email field we need to set
+     *
+     * @param OutboundEmail $outboundEmail The OutboundEmail bean to get info from
+     * @param string $type The value we want to set on the email. Supports `from` and `reply`
+     * @return array name and address fields
+     */
+    private function getContactInfoFromOutboundEmail(OutboundEmail $outboundEmail, string $type)
+    {
+        switch ($type) {
+            case 'from':
+                $info = [
+                    'name' => !empty($outboundEmail->name) ? $outboundEmail->name : null,
+                    'address' => !empty($outboundEmail->email_address) ? $outboundEmail->email_address : null,
+                ];
+                break;
+            case 'reply':
+                $info = [
+                    'name' => !empty($outboundEmail->reply_to_name) ? $outboundEmail->reply_to_name : null,
+                    'address' =>
+                        !empty($outboundEmail->reply_to_email_address) ? $outboundEmail->reply_to_email_address : null,
+                ];
+                break;
+            default:
+                $info = [
+                    'name' => null,
+                    'address' => null,
+                ];
+        }
+        return $info;
     }
 
     /**

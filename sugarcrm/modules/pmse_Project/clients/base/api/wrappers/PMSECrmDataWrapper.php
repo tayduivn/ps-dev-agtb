@@ -155,6 +155,11 @@ class PMSECrmDataWrapper implements PMSEObservable
     protected $logger;
 
     /**
+     * @var ServiceBase
+     */
+    private $apiService;
+
+    /**
      * @global type $beanList
      * @global type $db
      * @codeCoverageIgnore
@@ -647,10 +652,30 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
+     * Get the api service
+     * @return ServiceBase|null
+     */
+    public function getService()
+    {
+        return $this->apiService;
+    }
+
+    /**
+     * Set the api service
+     * @param ServiceBase $api
+     */
+    public function setService(ServiceBase $api)
+    {
+        $this->apiService = $api;
+    }
+
+    // @codingStandardsIgnoreStart
+    /**
      * @codeCoverageIgnore
      */
     public function _get(array $args, ModuleApi $moduleApi)
     {
+        // @codingStandardsIgnoreEnd
         $output = null;
         $data = $args['data'];
         $filter = isset($args['filter']) ? $args['filter'] : '';
@@ -765,6 +790,10 @@ class PMSECrmDataWrapper implements PMSEObservable
                 break;
             case 'oneToManyRelated':
                 $output = $this->getAllRelated($filter, $moduleApi, 'one-to-many', $baseModule, $type);
+                $outputType = 1;
+                break;
+            case 'outboundEmailsAccounts':
+                $output = $this->getOutboundEmailAccounts($args);
                 $outputType = 1;
                 break;
             //case 'Log':
@@ -2303,6 +2332,32 @@ SQL;
         }
         $result['result'] = $arr;
         return $result;
+    }
+
+    /**
+     * Gets OutboundEmail accounts for bpm to use. By setting the `bpm_request` registry value,
+     * OutboundEmail ignores visibility and acls to retrieve all accounts except the Portal user's account
+     * and the Email archiver account
+     *
+     * @param array $args REST API arguments.
+     * @return array OutboundEmail accounts
+     * @throws SugarApiExceptionError
+     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function getOutboundEmailAccounts(array $args)
+    {
+        // indicate we are coming from SugarBPM
+        ProcessManager\Registry\Registry::getInstance()->set('bpm_request', true, true);
+        $outboundFilterApi = new PMSEFilterOutboundEmailsApi();
+        $args['module'] = 'OutboundEmail';
+        $api = $this->getService();
+        if (empty($api)) {
+            throw new Exception('Could not find the request api service');
+        }
+        $ret = $outboundFilterApi->filterList($api, $args);
+        ProcessManager\Registry\Registry::getInstance()->set('bpm_request', false, true);
+        return $ret;
     }
 
     /**

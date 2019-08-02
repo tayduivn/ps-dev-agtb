@@ -290,9 +290,12 @@ class PMSEEmailHandlerTest extends TestCase
     {
         $userMock = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
+            ->setMethods(['getModuleName'])
             ->getMock();
         $userMock->full_name = 'First Last';
         $userMock->email1 = 'mockUser@email.com';
+        $userMock->id = 'id1';
+        $userMock->method('getModuleName')->willReturn('Users');
 
         $emailHandlerMock = $this->getMockBuilder('\PMSEEmailHandler')
             ->disableOriginalConstructor()
@@ -303,7 +306,7 @@ class PMSEEmailHandlerTest extends TestCase
             'name' => 'First Last',
             'address' => 'mockUser@email.com',
         ];
-        $actualResult = $emailHandlerMock->getContactInformationFromBean($userMock);
+        $actualResult = $emailHandlerMock->getContactInformationFromBean($userMock, 'from');
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -321,10 +324,63 @@ class PMSEEmailHandlerTest extends TestCase
             'name' => null,
             'address' => null,
         ];
-        $actualResult = $emailHandlerMock->getContactInformationFromBean(null);
+        $actualResult = $emailHandlerMock->getContactInformationFromBean(null, 'from');
         $this->assertEquals($expectedResult, $actualResult);
     }
 
+    /**
+     * @covers ::getContactInformationFromBean()
+     */
+    public function testGetContactInformationFromOutboundEmailBean()
+    {
+        $obMock = $this->getMockBuilder('OutboundEmail')
+            ->disableOriginalConstructor()
+            ->setMethods(['getModuleName'])
+            ->getMock();
+        $obMock->name = 'First Last';
+        $obMock->email_address = 'mockUser@email.com';
+        $obMock->id = 'id1';
+        $obMock->method('getModuleName')->willReturn('OutboundEmail');
+
+        $emailHandlerMock = $this->getMockBuilder('\PMSEEmailHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $expectedResult = [
+            'name' => 'First Last',
+            'address' => 'mockUser@email.com',
+        ];
+        $actualResult = $emailHandlerMock->getContactInformationFromBean($obMock, 'from');
+        $this->assertEquals($expectedResult, $actualResult);
+    }
+
+    /**
+     * @covers ::getContactInformationFromBean()
+     */
+    public function testGetContactInformationFromBeanReply()
+    {
+        $obMock = $this->getMockBuilder('OutboundEmail')
+            ->disableOriginalConstructor()
+            ->setMethods(['getModuleName'])
+            ->getMock();
+        $obMock->reply_to_name = 'First Last';
+        $obMock->reply_to_email_address = 'mockUser@email.com';
+        $obMock->id = 'id1';
+        $obMock->method('getModuleName')->willReturn('OutboundEmail');
+
+        $emailHandlerMock = $this->getMockBuilder('\PMSEEmailHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $expectedResult = [
+            'name' => 'First Last',
+            'address' => 'mockUser@email.com',
+        ];
+        $actualResult = $emailHandlerMock->getContactInformationFromBean($obMock, 'reply');
+        $this->assertEquals($expectedResult, $actualResult);
+    }
     /**
      * @covers ::getContactBeanFromId()
      */
@@ -348,7 +404,7 @@ class PMSEEmailHandlerTest extends TestCase
         $emailHandlerMock->method('retrieveBean')
             ->will($this->returnValueMap($returnMap));
 
-        $this->assertEquals($userMock, $emailHandlerMock->getContactBeanFromId('mockUserId'));
+        $this->assertEquals($userMock, $emailHandlerMock->getContactBeanFromId('mockUserId', 'from'));
         $this->assertNull($emailHandlerMock->getContactBeanFromId('NotARealIDAndShouldReturnNull'));
     }
 
@@ -359,9 +415,12 @@ class PMSEEmailHandlerTest extends TestCase
     {
         $userMock = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
+            ->setMethods(['getModuleName'])
             ->getMock();
         $userMock->full_name = 'First Last';
         $userMock->email1 = 'mockUser@email.com';
+        $userMock->id = 'id1';
+        $userMock->method('getModuleName')->willReturn('Users');
 
         $targetBeanMock = $this->getMockBuilder('Accounts')
             ->disableOriginalConstructor()
@@ -378,7 +437,7 @@ class PMSEEmailHandlerTest extends TestCase
             'name' => 'First Last',
             'address' => 'mockUser@email.com',
         ];
-        $actualResult = $emailHandlerMock->getContactInformationFromId('created_by', $targetBeanMock);
+        $actualResult = $emailHandlerMock->getContactInformationFromId('created_by', $targetBeanMock, 'from');
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -389,9 +448,12 @@ class PMSEEmailHandlerTest extends TestCase
     {
         $userMock = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
+            ->setMethods(['getModuleName'])
             ->getMock();
         $userMock->full_name = 'First Last';
         $userMock->email1 = 'mockUser@email.com';
+        $userMock->id = 'id1';
+        $userMock->method('getModuleName')->willReturn('Users');
 
         $targetBeanMock = $this->getMockBuilder('Accounts')
             ->disableOriginalConstructor()
@@ -408,7 +470,7 @@ class PMSEEmailHandlerTest extends TestCase
             'name' => 'First Last',
             'address' => 'mockUser@email.com',
         ];
-        $actualResult = $emailHandlerMock->getContactInformationFromId('currentuser', $targetBeanMock);
+        $actualResult = $emailHandlerMock->getContactInformationFromId('currentuser', $targetBeanMock, 'from');
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -419,9 +481,12 @@ class PMSEEmailHandlerTest extends TestCase
     {
         $userMock = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
+            ->setMethods(['getModuleName'])
             ->getMock();
         $userMock->full_name = 'First Last';
         $userMock->email1 = 'mockUser@email.com';
+        $userMock->id = 'id1';
+        $userMock->method('getModuleName')->willReturn('Users');
 
         $targetBeanMock = $this->getMockBuilder('Accounts')
             ->disableOriginalConstructor()
@@ -438,7 +503,7 @@ class PMSEEmailHandlerTest extends TestCase
             'name' => 'First Last',
             'address' => 'mockUser@email.com',
         ];
-        $actualResult = $emailHandlerMock->getContactInformationFromId('modified_user_id', $targetBeanMock);
+        $actualResult = $emailHandlerMock->getContactInformationFromId('modified_user_id', $targetBeanMock, 'from');
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -449,9 +514,12 @@ class PMSEEmailHandlerTest extends TestCase
     {
         $userMock = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
+            ->setMethods(['getModuleName'])
             ->getMock();
         $userMock->full_name = 'First Last';
         $userMock->email1 = 'mockUser@email.com';
+        $userMock->id = 'id1';
+        $userMock->method('getModuleName')->willReturn('Users');
 
         $targetBeanMock = $this->getMockBuilder('Accounts')
             ->disableOriginalConstructor()
@@ -468,7 +536,7 @@ class PMSEEmailHandlerTest extends TestCase
             'name' => 'First Last',
             'address' => 'mockUser@email.com',
         ];
-        $actualResult = $emailHandlerMock->getContactInformationFromId('owner', $targetBeanMock);
+        $actualResult = $emailHandlerMock->getContactInformationFromId('owner', $targetBeanMock, 'from');
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -486,6 +554,8 @@ class PMSEEmailHandlerTest extends TestCase
             ->getMock();
         $userSupervisorMock->full_name = 'First Last';
         $userSupervisorMock->email1 = 'mockSupervisor@email.com';
+        $userSupervisorMock->id = 'id1';
+        $userSupervisorMock->method('getModuleName')->willReturn('Users');
 
         $targetBeanMock = $this->getMockBuilder('Accounts')
             ->disableOriginalConstructor()
@@ -508,7 +578,7 @@ class PMSEEmailHandlerTest extends TestCase
             'name' => 'First Last',
             'address' => 'mockSupervisor@email.com',
         ];
-        $actualResult = $emailHandlerMock->getContactInformationFromId('supervisor', $targetBeanMock);
+        $actualResult = $emailHandlerMock->getContactInformationFromId('supervisor', $targetBeanMock, 'from');
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -519,10 +589,12 @@ class PMSEEmailHandlerTest extends TestCase
     {
         $userMock = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
+            ->setMethods(['getModuleName'])
             ->getMock();
         $userMock->full_name = 'User First Last';
         $userMock->email1 = 'mockUser@email.com';
         $userMock->id = 'mockUserId';
+        $userMock->method('getModuleName')->willReturn('Users');
 
         $targetBeanMock = $this->getMockBuilder('Accounts')
             ->disableOriginalConstructor()
@@ -543,7 +615,7 @@ class PMSEEmailHandlerTest extends TestCase
             'name' => 'User First Last',
             'address' => 'mockUser@email.com',
         ];
-        $actualResult = $emailHandlerMock->getContactInformationFromId('mockUserId', $targetBeanMock);
+        $actualResult = $emailHandlerMock->getContactInformationFromId('mockUserId', $targetBeanMock, 'from');
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -574,8 +646,8 @@ class PMSEEmailHandlerTest extends TestCase
         ];
 
         $returnMap = [
-            ['seed_chris_id', $targetBeanMock, $fromDataMock],
-            ['seed_sally_id', $targetBeanMock, $replyDataMock],
+            ['seed_chris_id', $targetBeanMock, 'from', $fromDataMock],
+            ['seed_sally_id', $targetBeanMock, 'reply', $replyDataMock],
         ];
 
         $emailHandlerMock = $this->getMockBuilder('\PMSEEmailHandler')
