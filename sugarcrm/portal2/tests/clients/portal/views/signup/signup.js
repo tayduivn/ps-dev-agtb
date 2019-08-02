@@ -28,15 +28,14 @@ describe('Portal Signup View', function() {
                             name: 'last_name'
                         },
                         {
-                            name: 'country',
-                            type: 'enum',
-                            options: 'countries_dom'
+                            name: 'company_name'
                         },
                         {
-                            name: 'state',
-                            type: 'enum',
-                            options: 'states_dom'
-                        }
+                            name: 'email'
+                        },
+                        {
+                            name: 'user_name'
+                        },
                     ]
                 }
             ]
@@ -65,31 +64,11 @@ describe('Portal Signup View', function() {
         it('should have declared a Bean with the fields metadata', function() {
             expect(view.model.fields).toBeDefined();
             expect(_.size(view.model.fields)).toBeGreaterThan(0);
-            expect(_.size(view.model.fields.first_name)).toBeDefined();
-            expect(_.size(view.model.fields.last_name)).toBeDefined();
-        });
-    });
-
-    describe('signup', function() {
-        var stateField;
-        beforeEach(function() {
-            stateField = view.getField('state');
-        });
-
-        it('should show state field', function() {
-            sinon.collection.spy(stateField, 'show');
-
-            view.model.set('country', 'USA');
-            view.toggleStateField();
-            expect(stateField.show).toHaveBeenCalled();
-        });
-
-        it('should hide state field', function() {
-            sinon.collection.spy(stateField, 'hide');
-
-            view.model.set('country', 'MEXICO');
-            view.toggleStateField();
-            expect(stateField.hide).toHaveBeenCalled();
+            expect(view.model.fields.first_name).toBeDefined();
+            expect(view.model.fields.last_name).toBeDefined();
+            expect(view.model.fields.company_name).toBeDefined();
+            expect(view.model.fields.email).toBeDefined();
+            expect(view.model.fields.user_name).toBeDefined();
         });
     });
 });

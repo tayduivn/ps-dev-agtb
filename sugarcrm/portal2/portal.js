@@ -43,6 +43,16 @@
                 }
             },
             {
+                name: 'signup-success',
+                route: 'signup-success',
+                callback: function() {
+                    app.controller.loadView({
+                        layout: 'signup-success',
+                        create: true
+                    });
+                }
+            },
+            {
                 name: 'search',
                 route: 'search/:query',
                 callback: function(query) {

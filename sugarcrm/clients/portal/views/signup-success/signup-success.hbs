@@ -15,24 +15,13 @@
         <div class="tcenter">
             <h2 class="brand"><img src="{{logoUrl}}" alt="SugarCRM"></h2>
         </div>
-        <form class="tcenter">
-            {{#each meta.panels}}
-                {{#each fields}}
-                <div class="control-group">{{field ../../this model=../../model template="edit"}}</div>
-                {{/each}}
-            {{/each}}
-            {{#each meta.buttons}}
-                <div class="control-group">
-                    {{field ../this model=../model}}
-                </div>
-            {{/each}}
-            <br>
+        <div class="tcenter">
+            <p>{{str "LBL_PORTAL_SIGNUP_TITLE"}}</p>
+            <p>{{str "LBL_PORTAL_SIGNUP"}}</p>
             <br>
             <div class="control-group">
-                <a href="#forgotlogin" class="btn btn-link btn-invisible">{{str "LBL_PORTAL_SIGNUP_FORGOT_LOGIN"}}</a>
-                <br>
                 <a href="#" class="btn btn-link btn-invisible">{{str "LBL_LOGIN_BUTTON_LABEL"}}</a>
             </div>
-        </form>
+        </div>
     </div>
 </div>

@@ -2984,7 +2984,11 @@ class ModuleInstaller{
             'alertAutoCloseDelay' => 2500,
             'serverUrl' => $config->get('site_url') . '/rest/v11_6',
             'siteUrl' => $config->get('site_url'),
-            'unsecureRoutes' => array('signup', 'error'),
+            'unsecureRoutes' => [
+                'signup',
+                'error',
+                'signup-success',
+            ],
             'loadCss' => 'url',
             'themeName' => 'default',
             'clientID' => 'support_portal',
