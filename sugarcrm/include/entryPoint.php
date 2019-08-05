@@ -23,7 +23,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
  * emailmandelivery.php
  * export_dataset.php
  * export.php
- * image.php
  * index.php
  * install.php
  * json.php
