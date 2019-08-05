@@ -2988,6 +2988,8 @@ class ModuleInstaller{
                 'signup',
                 'error',
                 'signup-success',
+                'forgotpassword',
+                'resetpwdconfirmation',
             ],
             'loadCss' => 'url',
             'themeName' => 'default',

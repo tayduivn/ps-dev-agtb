@@ -32,6 +32,26 @@
                 route: 'logout'
             },
             {
+                name: 'forgotpassword',
+                route: 'forgotpassword',
+                callback: function() {
+                    app.controller.loadView({
+                        layout: 'forgotpassword',
+                        create: true
+                    });
+                }
+            },
+            {
+                name: 'resetpwdconfirmation',
+                route: 'resetpwdconfirmation',
+                callback: function() {
+                    app.controller.loadView({
+                        layout: 'resetpwdconfirmation',
+                        create: true
+                    });
+                }
+            },
+            {
                 name: 'signup',
                 route: 'signup',
                 callback: function() {
