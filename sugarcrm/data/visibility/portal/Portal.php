@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Visibility\Portal;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
+
 class Portal implements Module
 {
     /**
@@ -53,5 +55,15 @@ class Portal implements Module
     public function addVisibilityWhere(string &$query, array $options = [])
     {
         throw new \Exception('Invalid portal visibility method call for ' . $this->context->getBean()->module_name);
+    }
+
+    /**
+     * @param \User $user
+     * @param \Elastica\Query\BoolQuery $filter
+     * @param Visibility $provider
+     */
+    public function elasticAddFilters(\User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider)
+    {
+        // to be overriden by sub classes
     }
 }

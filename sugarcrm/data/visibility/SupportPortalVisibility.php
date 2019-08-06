@@ -14,12 +14,17 @@
 
 use Sugarcrm\Sugarcrm\Visibility\Portal as PortalStrategy;
 use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\StrategyInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 
 /**
  * Portal visibility class replaces the team security restrictions for portal users
  * For non-portal users this class will not modify the query in any way.
  */
-class SupportPortalVisibility extends SugarVisibility
+class SupportPortalVisibility extends SugarVisibility implements StrategyInterface
 {
     /**
      * Add Visibility to a SugarQuery Object
@@ -94,5 +99,49 @@ class SupportPortalVisibility extends SugarVisibility
             throw new \Exception('Portal visibility strategy ' . $class . ' not found');
         }
         return $class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function elasticBuildAnalysis(AnalysisBuilder $analysisBuilder, Visibility $provider)
+    {
+        // no special analyzers needed
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function elasticBuildMapping(Mapping $mapping, Visibility $provider)
+    {
+        // nothing to do here
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function elasticProcessDocumentPreIndex(Document $document, SugarBean $bean, Visibility $provider)
+    {
+        // nothing to do here
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function elasticGetBeanIndexFields($module, Visibility $provider)
+    {
+        return ['status' => 'id'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function elasticAddFilters(User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider)
+    {
+        $strategy = $this->getVisibilityStrategy();
+        if (!method_exists($strategy, 'elasticAddFilters')) {
+            return;
+        }
+        $strategy->elasticAddFilters($user, $filter, $provider);
     }
 }

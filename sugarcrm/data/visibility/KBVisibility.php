@@ -99,6 +99,14 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
         $property = new MultiFieldProperty();
         $property->setType('keyword');
         $mapping->addModuleField('language', 'kbvis', $property);
+
+        $property = new MultiFieldProperty();
+        $property->setType('integer');
+        $mapping->addModuleField('is_external', 'kbvis', $property);
+
+        $property = new MultiFieldProperty();
+        $property->setType('date');
+        $mapping->addModuleField('exp_date', 'kbvis', $property);
     }
 
     /**

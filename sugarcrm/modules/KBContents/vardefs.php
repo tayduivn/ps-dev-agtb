@@ -16,6 +16,13 @@ $dictionary['KBContent'] = array(
     'activity_enabled' => true,
     'unified_search' => true,
     'full_text_search' => true,
+    'portal_search' => [
+        'Elastic' => [
+            'mapping' => [
+                'name' => 'name', 'description' => 'kbdocument_body',
+            ],
+        ],
+    ],
     'unified_search_default_enabled' => true,
     'comment' => 'A content represents information about document',
     'duplicate_merge' => true,
@@ -77,6 +84,10 @@ $dictionary['KBContent'] = array(
             'sortable' => true,
             'duplicate_on_record_copy' => 'no',
             'studio' => true,
+            'full_text_search' => [
+                'enabled' => true,
+                'searchable' => false,
+            ],
         ),
         'approved' => array(
             'name' => 'approved',
@@ -235,12 +246,17 @@ $dictionary['KBContent'] = array(
         'is_external' => array(
             'name' => 'is_external',
             'vname' => 'LBL_IS_EXTERNAL',
-            'type' => 'bool',
+            'type' => 'tinyint',
             'isnull' => 'true',
             'comment' => 'External article flag',
             'default' => 0,
             'studio' => true,
             'duplicate_on_record_copy' => 'always',
+            'full_text_search' => [
+                'enabled' => true,
+                'searchable' => false,
+                'type' => 'int',
+            ],
         ),
         'kbarticles_kbcontents' => array(
             'name' => 'kbarticles_kbcontents',
