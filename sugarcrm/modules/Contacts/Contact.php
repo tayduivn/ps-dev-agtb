@@ -505,6 +505,12 @@ class Contact extends Person {
      */
     public function save($check_notify = false)
     {
+        // verify if portal_name already exists
+        if (!empty($this->verifyDuplicatePortalName())) {
+            throw new SugarApiExceptionNotAuthorized('ERR_PORTAL_NAME_EXISTS', [$this->portal_name], $this->module_name);
+        }
+
+        // no duplicate so get going
         if(!is_null($this->sync_contact)) {
             if(empty($this->fetched_row) || $this->fetched_row['sync_contact'] != $this->sync_contact) {
                 $this->load_relationship('user_sync');
@@ -532,6 +538,24 @@ class Contact extends Person {
         //END SUGARCRM flav=ent ONLY
 
         return parent::save($check_notify);
+    }
+
+    /**
+     * Checks if a duplicate portal_name exists in the DB
+     * @return false|string
+     */
+    public function verifyDuplicatePortalName()
+    {
+        $query = new SugarQuery();
+        $query->select(['portal_name']);
+        $query->from($this);
+        $query->where()
+            ->equals('portal_name', $this->portal_name);
+        if (!empty($this->id)) {
+            $query->where()->notEquals('id', $this->id);
+        }
+        // just one duplicate record will do the trick
+        return $query->getOne();
     }
 
     /**

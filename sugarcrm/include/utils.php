@@ -5947,3 +5947,24 @@ function getSiteHash(string $str): string
     $url = Container::getInstance()->get(SugarConfig::class)->get('site_url');
     return hash('sha256', $url . $str);
 }
+
+/**
+ * Returns values for attributes from sugar config
+ * @param string $key Sugar config attribute
+ * @return mixed
+ */
+function getValueFromConfig(string $key)
+{
+    $config = Container::getInstance()->get(SugarConfig::class);
+    return $config->get($key);
+}
+
+/**
+ * Creates site url
+ * @param string $addOn second half of the url
+ * @return string
+ */
+function prependSiteURL(string $addOn): string
+{
+    return getValueFromConfig('site_url') . $addOn;
+}

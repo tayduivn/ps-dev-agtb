@@ -594,4 +594,19 @@ Click on the link below to reset your password:
 $contact_user_link_guid',
         'name' => 'Forgot Password email',
         ),
+
+'portal_forgot_password_email_link' => [
+    'name' => 'Portal Forgot Password email',
+    'subject' => 'Reset your account password',
+    'description' => 'This template is used to send a user a link to click to reset the Portal user\'s account password.',
+    'body' => '<div><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width="550" align=\"\&quot;\&quot;center\&quot;\&quot;\"><tbody><tr><td colspan=\"2\"><p>You recently requested to reset your account password. </p><p>Click on the link below to reset your password:</p><p> <a href="$portal_user_link_guid">$portal_user_link_guid</a> </p> </td> </tr><tr><td colspan=\"2\"></td> </tr> </tbody></table> </div>',
+    'txt_body' =>
+'
+    You recently requested to reset your account password.
+
+    Click on the link below to reset your password:
+
+    $portal_user_link_guid',
+],
+
 );

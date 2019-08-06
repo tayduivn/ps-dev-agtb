@@ -2558,6 +2558,7 @@ $app_strings = array (
 
     'LBL_EMAIL_NO'                          => 'No',
     'LBL_EMAIL_NOT_SENT'                    => 'There was a problem sending the request email. Please contact the system administrator.',
+    'LBL_INSERT_TO_USER_PWD_FAILED'         => 'Could not insert in users_password_link.',
 
     'LBL_EMAIL_OK'                          => 'OK',
     'LBL_EMAIL_ONE_MOMENT'                  => 'One moment please...',
@@ -5020,6 +5021,7 @@ Sincerely, SugarCRM',
     'LBL_PASSWORD_REGEX_REQUIREMENT' => 'The password must not match the regular expression pattern {0}.',
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
+    'LBL_PASSWORD_RESET_EMAIL_FAIL' => 'Could not send password reset email.',
 
     //Saved Reports
     'LBL_REPORT_SELECT' => 'Select a Report',

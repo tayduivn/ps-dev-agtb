@@ -245,6 +245,7 @@ $mod_strings = array (
     'LBL_PORTAL_TOUR_PROFILE_EDIT' => 'Click here to edit your profile.',
     'LBL_PORTAL_TOUR_PROFILE_LANGUAGE' => 'Here is where you can set your preferred language.  This will change the language used by Sugar Portal.',
     'LBL_PORTAL_TOUR_PROFILE_RETURN' => 'You can return to your Profile at any time using the User menu.',
+    'ERR_PORTAL_NAME_EXISTS' => 'The portal name {0} already exists. Duplicate portal names are not allowed. Change the portal name to be unique.',
     //END SUGARCRM flav=ent ONLY
 
     //D&B Principal Identification

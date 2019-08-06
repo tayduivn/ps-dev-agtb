@@ -22,6 +22,23 @@ require_once 'include/utils.php';
 class UtilsTest extends TestCase
 {
     /**
+     * @inheritDoc
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->sugar_config_bak = $GLOBALS['sugar_config'] ?? [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown()
+    {
+        $GLOBALS['sugar_config'] = $this->sugar_config_bak;
+        parent::tearDown();
+    }
+    /**
      * Provider for testSugarArrayMergeRecursive
      */
     public function providerTestSugarArrayMergeRecursive()
@@ -95,5 +112,15 @@ class UtilsTest extends TestCase
     public function testSugarArrayMergeRecursive($target, $override, $result)
     {
         $this->assertEquals($result, \sugarArrayMergeRecursive($target, $override));
+    }
+
+    /**
+     * @covers \getValueFromConfig
+     */
+    public function testGetValueFromConfig()
+    {
+        $GLOBALS['sugar_config']['berry'] = true;
+
+        $this->assertEquals(true, \getValueFromConfig('berry'));
     }
 }

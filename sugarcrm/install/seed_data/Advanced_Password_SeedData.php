@@ -16,6 +16,8 @@ global $sugar_config;
 global $timedate;
 global $mod_strings;
 
+use Sugarcrm\Sugarcrm\Security\Password\Utilities;
+
 $Team = new Team();
 $Team_id = $Team->retrieve_team_id('Administrator');
 
@@ -63,5 +65,9 @@ $sugar_config['passwordsetting']['minpwdlength'] = 6;
 $sugar_config['passwordsetting']['oneupper'] = true;
 $sugar_config['passwordsetting']['onelower'] = true;
 $sugar_config['passwordsetting']['onenumber'] = true;
+
+// Create Portal Reset Password Email Template
+$id = Utilities::addPortalPasswordSeedData($Team_id, $mod_strings);
+$sugar_config['portalpasswordsetting']['lostpasswordtmpl'] = $id;
 
 write_array_to_file("sugar_config", $sugar_config, "config.php");
