@@ -362,6 +362,7 @@ class SubscriptionManager
      */
     public function getAllSupportedProducts()
     {
+        // The order of this array determines the default license type if user's license_type is empty
         return [
             Subscription::SUGAR_BASIC_KEY,
             Subscription::SUGAR_SERVE_KEY,
@@ -376,10 +377,13 @@ class SubscriptionManager
      */
     public function getUserDefaultLicenseType() : string
     {
+        // Warning to Dev: if modifying logic here, you must notify MTS team!
+        // MTS team needs to do corresponding changes on their user reports
         $systemSubscriptionKeys = $this->getSystemSubscriptionKeys();
         $allProducts = $this->getAllSupportedProducts();
         foreach ($allProducts as $type) {
             if (isset($systemSubscriptionKeys[$type])) {
+                // The first valid key in AllSupportedProducts array will be the default license type
                 return $type;
             }
         }
