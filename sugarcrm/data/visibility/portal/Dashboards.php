@@ -12,10 +12,17 @@
 
 namespace Sugarcrm\Sugarcrm\Visibility\Portal;
 
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+
 class Dashboards extends Portal
 {
     public function addVisibilityQuery(\SugarQuery $query, array $options = [])
     {
-        // TO BE IMPLEMENTED ON CS-314
+        if (PortalFactory::getInstance('Settings')->isServe()) {
+            $dashboardId = '0ca2d773-0bb3-4bf3-ae43-68569968af57';
+        } else {
+            $dashboardId = '0ca2d773-3dc6-70d9-fa91-68569968af57';
+        }
+        $query->where()->equals($options['table_alias'] . '.id', $dashboardId);
     }
 }

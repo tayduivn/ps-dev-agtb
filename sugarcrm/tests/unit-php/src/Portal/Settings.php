@@ -32,19 +32,21 @@ class SettingsTest extends TestCase
     }
 
     /**
-     * @covers Sugarcrm\Sugarcrm\Portal\Settings::isPortalAllowed
+     * @covers Sugarcrm\Sugarcrm\Portal\Settings::isServe
      */
-    public function testIsPortalAllowed() : void
+    public function testIsServe() : void
     {
-        $this->assertTrue(self::$ps->isPortalAllowed());
-    }
+        $psMock = $this->createPartialMock(Settings, ['getSubscriptions']);
 
-    /**
-     * @covers Sugarcrm\Sugarcrm\Portal\Settings::isDeflectionEnabled
-     */
-    public function testIsDeflectionEnabled() : void
-    {
-        $this->assertTrue(self::$ps->isDeflectionEnabled());
+        $psMock->method('getSubscriptions')
+            ->willReturn(['SUGAR_SERVE' => ['more info here']]);
+
+        $this->assertTrue($psMock->isServe());
+
+        $psMock->method('getSubscriptions')
+            ->willReturn([]);
+
+        $this->assertFalse($psMock->isServe());
     }
 
     /**

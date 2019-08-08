@@ -13,29 +13,25 @@
 // FILE SUGARCRM flav=ent ONLY
 
 namespace Sugarcrm\Sugarcrm\Portal;
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 
 class Settings
 {
     /**
-     * @return bool
+     * @return array
      */
-    public function isPortalAllowed() : bool
+    protected function getSubscriptions() : array
     {
-        // TODO check that the customer is licensed for the portal
-        return true;
+        return SubscriptionManager::instance()->getSystemSubscriptions();
     }
 
     /**
      * @return bool
      */
-    public function isDeflectionEnabled() : bool
+    public function isServe() : bool
     {
-        if ($this->isPortalAllowed()) {
-            // TODO some more checks here
-            return true;
-        }
-
-        return false;
+        $sub = $this->getSubscriptions();
+        return (!empty($sub['SUGAR_SERVE']) ? true : false);
     }
 
     /**

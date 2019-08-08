@@ -29,6 +29,7 @@ class SugarTestPortalUtilities
         'Bugs',
         'KBContents',
         'Categories',
+        'Dashboards',
     ];
 
     public static $modulesToIgnore = [
@@ -44,7 +45,6 @@ class SugarTestPortalUtilities
         'SugarFavorites',
         'OAuthTokens',
         'EmailAddresses',
-        'Dashboards',
     ];
 
     protected static $manuallyEnabledRolesModules = [

@@ -13,6 +13,8 @@
 
 use PHPUnit\Framework\TestCase;
 
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+
 /**
  * @group ApiTests
  */
@@ -87,7 +89,6 @@ class PortalStandardFunctionalityApiTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user', array(true, true)); // admin
-
         SugarTestPortalUtilities::enablePortal();
         self::createOriginalTestRecords();
     }
@@ -1055,6 +1056,43 @@ class PortalStandardFunctionalityApiTest extends TestCase
             $this->assertArrayHasKey('records', $response);
             $this->assertInternalType('array', $response['records']);
             $this->assertEquals(count($response['records']), count($recordIdList));
+            foreach ($response['records'] as $record) {
+                $this->assertContains($record['id'], $recordIdList);
+            }
+        }
+    }
+
+    public function testListviewDashboards()
+    {
+        // get the id we are supposed to see, based on the license used during the test run
+        // use the same logic as the visibility
+        if (PortalFactory::getInstance('Settings')->isServe()) {
+            $dashboardId = '0ca2d773-0bb3-4bf3-ae43-68569968af57';
+        } else {
+            $dashboardId = '0ca2d773-3dc6-70d9-fa91-68569968af57';
+        }
+
+        $users = [
+            'b2c' => [$dashboardId],
+            'b2b-account-1' => [$dashboardId],
+            'b2b-account-2' => [$dashboardId],
+        ];
+
+        foreach ($users as $userKey => $recordIdList) {
+            self::$service = SugarTestPortalUtilities::loginAsPortalUser(self::$contactIds[$userKey]);
+
+            $args = [
+                'module' => 'Dashboards',
+                'view' => 'list',
+            ];
+
+            $response = (new FilterApi())->filterList(self::$service, $args);
+            $this->assertNotEmpty($response);
+            $this->assertInternalType('array', $response);
+            $this->assertArrayHasKey('next_offset', $response);
+            $this->assertArrayHasKey('records', $response);
+            $this->assertInternalType('array', $response['records']);
+            $this->assertCount(count($recordIdList), $response['records']);
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
             }
