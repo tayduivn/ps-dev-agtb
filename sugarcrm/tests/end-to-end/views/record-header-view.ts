@@ -44,6 +44,8 @@ export default class RecordHeaderView extends BaseView {
                 'togglesidepanel': '.btn.btn-invisible.sidebar-toggle',
                 'viewpersonalinfo': 'a[name="view_pii_button"]:not(.hide)',
                 'share': 'a[name="share"]:not(.hide)',
+                'findduplicates': 'a[name="find_duplicates_button"]:not(.hide)',
+                'mergeduplicates': 'a[name="merge_duplicates_button"]:not(.hide)',
 
                 // Calls, Meetings, and Tasks
                 'closeandcreatenew': 'a[name="record-close-new"]:not(.hide)',
@@ -99,7 +101,6 @@ export default class RecordHeaderView extends BaseView {
                 'approve': 'a[name="approve_button"]:not(.hide)',
                 'status': 'a[name="status"]:not(.hide)',
                 'addnotes': 'a[name="add-notes"]:not(.hide)',
-
 
                 // Process Email template
                 'email_template_cancel_button': 'a[name="emailtemplates_cancel_button"]:not(.hide)',

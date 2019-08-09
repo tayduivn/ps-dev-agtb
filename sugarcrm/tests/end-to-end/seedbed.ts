@@ -42,6 +42,7 @@ import PipelineView from './views/pipeline-view';
 import UserProfileLayout from './layouts/user-profile-layout'
 
 import TileViewSettings from './views/tile-settings-view';
+import FindDuplicates from './views/find-duplicates-view';
 
 export default (seedbed: Seedbed) => {
 
@@ -92,6 +93,7 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
                 seedbed.defineComponent(`${moduleName}PipelineView`, PipelineView, {module: moduleName});
                 seedbed.defineComponent(`TileViewSettings`, TileViewSettings, {module: moduleName});
+                seedbed.defineComponent(`FindDuplicatesDrawer`, FindDuplicates, {module: moduleName});
             }
         });
 

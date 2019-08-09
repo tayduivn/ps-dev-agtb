@@ -279,3 +279,25 @@ const removeRecordFromMerge = async function (action) {
     await closeWarning('Confirm');
     seedbed.client.driver.waitForApp();
 };
+
+/**
+ * Merge records found by 'Check For duplicates'
+ *
+ * @example
+ *  When I merge duplicates on #FindDuplicatesDrawer
+ */
+When(/^I merge duplicates on (#[a-zA-Z](?:\w|\S)*)$/,
+    async function(layout: any) {
+        const btnName = 'MergeDuplicates';
+
+        await layout.HeaderView.clickButton(btnName.toLowerCase());
+        await seedbed.client.driver.waitForApp();
+
+        await closeWarning('Confirm');
+        await closeWarning('Confirm');
+
+        // Close Confirmation alert
+        await closeAlert();
+        await closeAlert();
+
+    }, {waitForApp: true});
