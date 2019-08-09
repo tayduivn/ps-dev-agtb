@@ -912,7 +912,10 @@ $app_list_strings = array (
     'Forum' => 'Forum',
     'Web' => 'Web',
     'InboundEmail' => 'Email',
-    'Twitter' => 'Twitter'
+    'Twitter' => 'Twitter',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'Portal' => 'Portal',
+    //END SUGARCRM flav=ent ONLY
   ),
     'dataprivacy_type_default_key' => '',
     'dataprivacy_type_dom' => array(
