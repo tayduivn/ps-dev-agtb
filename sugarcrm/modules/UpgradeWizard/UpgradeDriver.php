@@ -645,15 +645,7 @@ abstract class UpgradeDriver
                 true
             );
         }
-        if (ini_get('magic_quotes_gpc') || ini_get('magic_quotes_runtime')
-            || (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc())
-            || (function_exists('get_magic_quotes_runtime') && get_magic_quotes_runtime())
-        ) {
-            return $this->error(
-                "Magic quotes are deprecated and not supported in SugarCRM. Please read: http://www.php.net/manual/en/security.magicquotes.php",
-                true
-            );
-        }
+
         return true;
     }
 
