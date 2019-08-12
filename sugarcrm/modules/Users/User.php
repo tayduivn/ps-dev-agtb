@@ -1853,12 +1853,12 @@ class User extends Person {
 		$ret1 = '';
 		$ret2 = '';
 		for($i=0; $i<strlen($macro); $i++) {
-			if(array_key_exists($macro{$i}, $format)) {
-				$ret1 .= "<i>".$format[$macro{$i}]."</i>";
-				$ret2 .= "<i>".$name[$macro{$i}]."</i>";
+            if (array_key_exists($macro[$i], $format)) {
+                $ret1 .= '<i>' . $format[$macro[$i]] . '</i>';
+                $ret2 .= '<i>' . $name[$macro[$i]] . '</i>';
 			} else {
-				$ret1 .= $macro{$i};
-				$ret2 .= $macro{$i};
+                $ret1 .= $macro[$i];
+                $ret2 .= $macro[$i];
 			}
 		}
 		return $ret1."<br />".$ret2;

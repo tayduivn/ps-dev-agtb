@@ -897,9 +897,9 @@ class RestService extends ServiceBase
                 foreach ($route['jsonParams'] as $fieldName) {
                     if (!empty($getVars[$fieldName])
                         && is_string($getVars[$fieldName])
-                        && isset($getVars[$fieldName]{0})
-                        && ($getVars[$fieldName]{0} == '{'
-                            || $getVars[$fieldName]{0} == '[')) {
+                        && isset($getVars[$fieldName][0])
+                        && ($getVars[$fieldName][0] == '{'
+                            || $getVars[$fieldName][0] == '[')) {
                         // This may be JSON data
                         $jsonData = @json_decode($getVars[$fieldName],true,32);
                         if (json_last_error() !== 0) {

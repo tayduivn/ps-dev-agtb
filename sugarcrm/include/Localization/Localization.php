@@ -507,7 +507,7 @@ class Localization {
 				$offset = strlen($exNum[0]) % 3;
 				if($offset > 0) {
 					for($i=0; $i<$offset; $i++) {
-						$majorDigits .= $exNum[0]{$i};
+                        $majorDigits .= $exNum[0][$i];
 					}
 				}
 
@@ -517,7 +517,7 @@ class Localization {
 						$majorDigits .= $thou; // add separator
 					}
 
-					$majorDigits .= $exNum[0]{$i};
+                    $majorDigits .= $exNum[0][$i];
 					$tic++;
 				}
 			} else {
@@ -525,14 +525,6 @@ class Localization {
 			}
 			$fnum = $majorDigits;
 		}
-
-		// handle decimals
-		if($precision > 0) { // we toss the minor digits otherwise
-			if(is_array($exNum) && isset($exNum[1])) {
-
-			}
-		}
-
 
 		if($is_currency) {
 			$fnum = $symbol.$fnum;
@@ -786,7 +778,7 @@ eoq;
 		// parse localeNameFormat
 		$formattedName = '';
 		for($i=0; $i<strlen($this->localeNameFormat); $i++) {
-			$formattedName .= array_key_exists($this->localeNameFormat{$i}, $names) ? $names[$this->localeNameFormat{$i}] : $this->localeNameFormat{$i};
+            $formattedName .= $names[$this->localeNameFormat[$i]] ?? $this->localeNameFormat[$i];
 		}
 
 		$formattedName = trim($formattedName);
@@ -968,7 +960,7 @@ eoq;
         if (!isset($this->parsedFormats[$format])) {
             $tokens = array();
             for ($i = 0, $length = strlen($format); $i < $length; $i++) {
-                $character = $format{$i};
+                $character = $format[$i];
                 $is_field = $character >= 'a' && $character <= 'z';
 
                 $token = array(

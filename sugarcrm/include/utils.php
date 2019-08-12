@@ -2897,7 +2897,7 @@ function javascript_escape($str)
         } elseif (ord(substr($str, $i, 1))==13) {
             $new_str .= '\r';
         } else {
-            $new_str .= $str{$i};
+            $new_str .= $str[$i];
         }
     }
 
@@ -3399,7 +3399,7 @@ function mark_delete_components($sub_object_array, $run_second_level=false, $sub
 function return_bytes($val)
 {
     $val = trim($val);
-    $last = strtolower($val{strlen($val)-1});
+    $last = strtolower($val[strlen($val)-1]);
     $multiplers = array('k' => 1024, 'm' => 1048576, 'g' => 1073741824);
     if (isset($multiplers[$last])) {
         $val = substr($val, 0, -1);
@@ -3441,7 +3441,7 @@ function is_windows()
  */
 function is_writable_windows($file)
 {
-    if ($file{strlen($file)-1}=='/') {
+    if ($file[strlen($file)-1]=='/') {
         return is_writable_windows($file.uniqid(mt_rand()).'.tmp');
     }
 

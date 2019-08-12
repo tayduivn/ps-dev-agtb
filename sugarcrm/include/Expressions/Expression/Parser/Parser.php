@@ -136,7 +136,7 @@ class Parser {
 			$isPrevCharBK = $lastCharRead == '\\';
 
 			// get the charAt index $i
-			$char = $params{$i};
+            $char = $params[$i];
 
 			// if i am in quotes, then keep reading
 			if ( $isInQuotes && $char != '"' && !$isPrevCharBK ) {
