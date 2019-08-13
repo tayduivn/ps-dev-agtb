@@ -1,16 +1,69 @@
-// Content search dropdown
+// Content search dashlet
+.portal-home-dashboard .dashlet-row > li:first-child {
+  .dashlet-container {
+    padding: 0;
+    height: 305px;
+    background-image: url('../../../../../styleguide/assets/img/ad2-suguniv.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .thumbnail.dashlet {
+    [data-dashlet='toolbar'] {
+      display: none;
+    }
+
+    margin: 0 !important;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 25px 0;
+    background-color: transparent;
+  }
+
+  .dashlet-content {
+    max-width: 600px;
+    margin: 0 auto;
+
+    &.hide {
+      display: block;
+      //disable collapse feature of the dashboard
+    }
+  }
+}
+
+.contentsearchdashlet {
+  padding: 30px;
+  background-color: rgba(198, 231, 253, 0.75);
+  margin-top: 70px;
+
+  .record-cell {
+    position: static;
+  }
+
+  input {
+    min-width: 540px;
+    margin-top: 10px;
+  }
+}
+
+.contentsearchdashlet-text {
+  margin: 0 0 20px;
+  font-weight: bold;
+  color: @darkBlue;
+}
+
 .contentsearch-dropdown {
   position: absolute;
   z-index: @zindexPopover;
   display: none; // none by default, but block on "open"
-  right: 10px;
-  left: 10px;
-  margin: 2px 0 0; // override default ul
+  margin: 1px 0 0; // override default ul
   list-style: none;
   background-color: @dropdownBackground;
   background-clip: padding-box;
   border-radius: 3px;
   border: 1px solid rgba(0, 0, 0, 0.1);
+  max-width: 539px;
+  width: 100%;
 
   li.search-result {
     min-height: 0;

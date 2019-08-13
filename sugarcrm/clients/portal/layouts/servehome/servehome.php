@@ -21,12 +21,6 @@ $viewdefs['portal']['layout']['servehome'] = [
                 'type' => 'dashboard',
                 'components' => [
                     [
-                        'view' => 'home-headerpane',
-                    ],
-                    [
-                        'view' => 'tabbed-dashboard',
-                    ],
-                    [
                         'layout' => 'dashlet-main',
                     ],
                 ],

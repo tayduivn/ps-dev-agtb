@@ -15,6 +15,7 @@ return [
     'name' => 'LBL_PORTAL_HOME',
     'id' => '0ca2d773-0bb3-4bf3-ae43-68569968af57',
     'metadata' => [
+        'css_class' => 'portal-home-dashboard',
         'components' => [
             [
                 'rows' => [
@@ -37,28 +38,26 @@ return [
                                 'label' => 'LBL_PORTAL_DASHBOARD_ALL_OPEN_CASES',
                                 'filter_id' => 'open_issues',
                                 'limit' => 15,
+                                'custom_toolbar' => ['buttons' => []],
                             ],
                             'context' => [
                                 'module' => 'Cases',
                             ],
-                            'width' => 12,
+                            'width' => 4,
                         ],
-                    ],
-                    [
                         [
                             'view' => [
                                 'type' => 'dashablelist',
                                 'label' => 'LBL_PORTAL_DASHBOARD_RECENT_CASES',
                                 'filter_id' => 'recently_resolved',
                                 'limit' => 15,
+                                'custom_toolbar' => ['buttons' => []],
                             ],
                             'context' => [
                                 'module' => 'Cases',
                             ],
-                            'width' => 12,
+                            'width' => 4,
                         ],
-                    ],
-                    [
                         [
                             'view' => [
                                 'type' => 'dashlet-nestedset-list',
@@ -70,11 +69,12 @@ return [
                                     'module' => 'KBContents',
                                     'field' => 'category_id',
                                 ],
+                                'custom_toolbar' => ['buttons' => []],
                             ],
                             'context' => [
                                 'module' => 'KBContents',
                             ],
-                            'width' => 12,
+                            'width' => 4,
                         ],
                     ],
                 ],
