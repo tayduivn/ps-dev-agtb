@@ -130,7 +130,7 @@
 
         if (catalogUrl && catalogUrl !== '') {
             var iframeOrigin = catalogUrl.match(/^.+\:\/\/[^\/]+/)[0];
-            catalogUrl += '/catalog?host=crm';
+            catalogUrl = iframeOrigin + '/catalog/authorized';
 
             var getCatalog = function(onSuccess, onError, onLogin) {
                 $.ajax({
@@ -156,10 +156,9 @@
             };
 
             return new Promise(function(res, error) {
-                var fetchProjLayout = function(project) {
-
+                var fetchAppLayout = function(app) {
                     $.ajax({
-                        url: project.src,
+                        url: app.src,
                         dataType: 'json',
                         xhrFields: {
                             withCredentials: true
@@ -187,8 +186,8 @@
                 };
 
                 var handleCatalog = function(catalog) {
-                    _.each(catalog.projects, function(proj) {
-                        fetchProjLayout(proj);
+                    _.each(catalog.apps, function(app) {
+                        fetchAppLayout(app);
                     });
 
                     res();

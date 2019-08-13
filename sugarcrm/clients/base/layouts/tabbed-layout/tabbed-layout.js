@@ -96,7 +96,7 @@
         var id = _.uniqueId('record-bottom');
         var compDef = def.layout || def.view || {};
         var lblKey = compDef.label || compDef.name || compDef.type;
-        var lblName = compDef.name || compDef;
+        var lblName = compDef.name || compDef.title || compDef;
 
         if (!lblKey) {
             // handles the 'preview' case returning the label
