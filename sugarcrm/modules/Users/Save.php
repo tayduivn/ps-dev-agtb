@@ -193,8 +193,7 @@ if (!$focus->is_group && !$focus->portal_only) {
 
     // set License types
     if (!empty($_POST['LicenseTypes'])) {
-        $licenseTypes = InputValidation::getService()->getValidInputPost('LicenseTypes', 'Assert\ArrayRecursive');
-        $focus->setLicenseType($focus->processLicenseTypes($licenseTypes));
+        $focus->license_type = InputValidation::getService()->getValidInputPost('LicenseTypes', 'Assert\ArrayRecursive');
     }
 
     if (empty($_POST['receive_notifications'])) {

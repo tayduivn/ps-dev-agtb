@@ -432,6 +432,11 @@ $dictionary['User'] = array(
             'options' => 'license_type_dom',
             'import' => false,
             'reportable' => false,
+            'custom_type' => 'enum',
+            'function_bean' => 'Users',
+            'function' => 'getSystemLicenseTypesSelections',
+            'isMultiSelect' => true,
+            'showNullOption' => false,
             'studio' => array('formula' => false),
         ),
         'default_team' => array(

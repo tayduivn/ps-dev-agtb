@@ -20,6 +20,7 @@ class SaveTest extends TestCase
 {
     protected $tabs;
     protected $savedTabs;
+    protected $currUser;
 
     public static function setUpBeforeClass()
     {
@@ -38,11 +39,13 @@ class SaveTest extends TestCase
         parent::setUp();
         $this->tabs = new TabController();
         $this->savedTabs = $this->tabs->get_user_tabs($GLOBALS['current_user']);
+        $this->currUser = $GLOBALS['current_user'];
     }
 
     protected function tearDown()
     {
         $this->tabs->set_user_tabs($this->savedTabs, $GLOBALS['current_user'], 'display');
+        $GLOBALS['current_user'] = $this->currUser;
         parent::tearDown();
     }
 
@@ -358,7 +361,6 @@ class SaveTest extends TestCase
      */
     public function testSetLicenseType(array $licenseType, bool $isAdmin, array $expected)
     {
-        $currUser = $GLOBALS['current_user'];
         $current_user = SugarTestHelper::setUp('current_user', array(true, $isAdmin));
 
         $_POST['record'] = $current_user->id;
@@ -367,7 +369,6 @@ class SaveTest extends TestCase
 
         $record = BeanFactory::getBean('Users', $current_user->id);
 
-        $GLOBALS['current_user'] = $currUser;
         $this->assertEquals($expected, $record->getLicenseTypes());
     }
 
@@ -375,9 +376,33 @@ class SaveTest extends TestCase
     {
         return [
             [['CURRENT'], true, ['CURRENT']],
-            [['CURRENT'], false, []],
-            [['SUGAR_SERVE'], false, []],
             [[], false, []],
         ];
+    }
+
+    /**
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testNonAdminSetLicenseTypeException()
+    {
+        // setup non-admin user
+        $current_user = SugarTestHelper::setUp('current_user');
+
+        $_POST['record'] = $current_user->id;
+        $_POST['LicenseTypes'] = ['SUGAR_SERVE'];
+        include 'modules/Users/Save.php';
+    }
+
+    /**
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testSetLicenseTypeInvalidException()
+    {
+        // setup admin user
+        $current_user = SugarTestHelper::setUp('current_user', [true, true]);
+
+        $_POST['record'] = $current_user->id;
+        $_POST['LicenseTypes'] = ['INVALID_TYPE'];
+        include 'modules/Users/Save.php';
     }
 }

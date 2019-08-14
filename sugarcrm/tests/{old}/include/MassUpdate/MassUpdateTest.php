@@ -57,10 +57,6 @@ class MassUpdateTest extends TestCase
             );
         $result = $mass->addStatus('test_dom', 'test_dom', $options);
         preg_match_all('/value=[\'\"].*?[\'\"]/si', $result, $matches);
-       /* $this->assertTrue(isset($matches));
-        $this->assertTrue($matches[0][0] == "value=''");
-        $this->assertTrue($matches[0][2] == "value='10'");
-        $this->assertTrue($matches[0][3] == "value='20'"); */
         $this->assertTrue($matches[0][0] == "value=''");
         $this->assertTrue($matches[0][1] == "value='__SugarMassUpdateClearField__'");
         $this->assertTrue($matches[0][2] == "value='10'");
@@ -83,14 +79,29 @@ class MassUpdateTest extends TestCase
         $result = $mass->addStatusMulti('test_dom', 'test_dom', $options);
         preg_match_all('/value=[\'\"].*?[\'\"]/si', $result, $matches);
         $this->assertTrue(isset($matches));
-        /*$this->assertTrue($matches[0][0] == "value=''");
-        $this->assertTrue($matches[0][2] == "value='10'");
-        $this->assertTrue($matches[0][3] == "value='20'"); */
         $this->assertTrue($matches[0][0] == "value=''");
         $this->assertTrue($matches[0][1] == "value='__SugarMassUpdateClearField__'");
         $this->assertTrue($matches[0][2] == "value='10'");
         $this->assertTrue($matches[0][3] == "value='20'");
         $this->assertTrue($matches[0][4] == "value='30'");       	
+    }
+
+    public function testAddStatusMultiNoNullOption()
+    {
+        $mass = new MassUpdate();
+        $options = array (
+            '10' => 'ten',
+            '20' => 'twenty',
+            '30' => 'thirty',
+        );
+
+        $result = $mass->addStatusMulti('test_dom', 'test_dom', $options, false);
+        preg_match_all('/value=[\'\"].*?[\'\"]/si', $result, $matches);
+        $this->assertTrue(isset($matches));
+        $this->assertTrue($matches[0][0] == "value=''");
+        $this->assertTrue($matches[0][1] == "value='10'");
+        $this->assertTrue($matches[0][2] == "value='20'");
+        $this->assertTrue($matches[0][3] == "value='30'");
     }
 
     /**

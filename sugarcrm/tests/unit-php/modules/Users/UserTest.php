@@ -56,6 +56,10 @@ class UserTest extends TestCase
                     ['SUGAR_SELL', 'SUGAR_SERVE'],
                     ['SUGAR_SELL', 'SUGAR_SERVE'],
                 ],
+            'License type is valid and has empty entry' => [
+                ['', 'SUGAR_SERVE'],
+                ['SUGAR_SERVE'],
+            ],
             'License type is in json encoded format' => [
                     json_encode(['SUGAR_SELL', 'SUGAR_SERVE']),
                     ['SUGAR_SELL', 'SUGAR_SERVE'],

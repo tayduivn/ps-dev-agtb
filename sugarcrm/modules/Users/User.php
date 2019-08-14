@@ -613,7 +613,13 @@ class User extends Person {
             if (!$this->validateLicenseTypes($licenseTypes)) {
                 throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
             }
-            $this->license_type = empty($this->license_type) ? $this->license_type : json_encode($licenseTypes);
+
+            // make sure only admin can modify the license type
+            global $current_user;
+            if ($this->isLicenseTypeModified($licenseTypes) && !$current_user->isAdmin()) {
+                throw new SugarApiExceptionNotAuthorized('Not authorized to modify license_type in module: Users');
+            }
+            $this->setLicenseType($licenseTypes);
         }
  	    //BEGIN SUGARCRM lic=sub ONLY
 
@@ -800,7 +806,6 @@ class User extends Person {
         }
         $foundUnknownType = false;
         $unknownTypes = '';
-        $totalUserCount = 0;
         while (($row=$db->fetchByAssoc($result, false)) != null) {
             if (empty($row['license_type'])) {
                 $type = SubscriptionManager::instance()->getUserDefaultLicenseType();
@@ -812,16 +817,19 @@ class User extends Person {
                 } else {
                     $userCountByType[$type] += 1;
                 }
-                $totalUserCount += 1;
             } else {
-                $types = json_decode($row['license_type'], true);
-                foreach ($types as $type) {
-                    if (empty($type) || !in_array($type, $supportedTypes)) {
-                        $foundUnknownType = true;
-                    } else {
-                        $userCountByType[$type] += 1;
+                $userBean = BeanFactory::newBean('Users');
+                try {
+                    $types = $userBean->processLicenseTypes($row['license_type']);
+                    foreach ($types as $type) {
+                        if (empty($type) || !in_array($type, $supportedTypes)) {
+                            $foundUnknownType = true;
+                        } else {
+                            $userCountByType[$type] += 1;
+                        }
                     }
-                    $totalUserCount += 1;
+                } catch (SugarApiExceptionInvalidParameter $e) {
+                    $userCountByType['UnknownType'] += 1;
                 }
             }
         }
@@ -847,6 +855,21 @@ class User extends Person {
         }
 
         return $exceededLimitTypes;
+    }
+
+    /**
+     * get system subscriptions
+     * @return array
+     */
+    public function getSystemLicenseTypesSelections() : array
+    {
+        $subscriptions = SubscriptionManager::instance()->getSystemSubscriptionKeys();
+        $selections = [];
+        foreach (array_keys($subscriptions) as $type) {
+            $selections[$type] = self::getLicenseTypeDescription($type);
+        }
+
+        return $selections;
     }
 
     /**
@@ -1456,6 +1479,9 @@ class User extends Person {
 				$user_fields['UPLINE'] = translate('LBL_TEAM_UPLINE_EXPLICIT','Users');
 			}
 		}
+
+        // processing license type data
+        $user_fields['LICENSE_TYPE'] = $this->getLicenseTypesDescriptionString();
 
 		return $user_fields;
 	}
@@ -2875,8 +2901,12 @@ class User extends Person {
     public function setLicenseType(array $types = [])
     {
         global $current_user;
-        if (is_admin($current_user) && !empty($types)) {
-            $this->license_type = json_encode($types);
+        if (is_admin($current_user)) {
+            if (empty($types)) {
+                $this->license_type = null;
+            } else {
+                $this->license_type = json_encode($types);
+            }
             if ($this->isLicenseTypeModified($types)) {
                 // need to refresh this user's metatdata cache
                 $this->update_date_modified = true;
@@ -2901,6 +2931,10 @@ class User extends Person {
             $oldType = json_decode($this->oldLicenseType, true);
         }
 
+        if (empty($newTypes)) {
+            $newTypes = [SubscriptionManager::instance()->getUserDefaultLicenseType()];
+        }
+
         if (!empty(array_diff($newTypes, $oldType))) {
             return true;
         }
@@ -2919,6 +2953,23 @@ class User extends Person {
     }
 
     /**
+     * get license types' description in string
+     *
+     * @return string
+     */
+    protected function getLicenseTypesDescriptionString() : string
+    {
+        $userSubscriptions = SubscriptionManager::instance()->getUserSubscriptions($this);
+        $desc = '';
+        foreach ($userSubscriptions as $type) {
+            if (!empty($desc)) {
+                $desc .= '<BR>';
+            }
+            $desc .= self::getLicenseTypeDescription($type);
+        }
+        return $desc;
+    }
+    /**
      * process license type in different format. string, json-encoded string, array.
      *
      * @param mixed $licenseTypes
@@ -2935,9 +2986,18 @@ class User extends Person {
         }
 
         if (is_array($licenseTypes)) {
-            return $licenseTypes;
+            // remove empty license types
+            $types = [];
+            foreach ($licenseTypes as $type) {
+                if (!empty($type)) {
+                    $types[] = $type;
+                }
+            }
+            return $types;
         }
 
+        // remove '&quot;', in listview retrieveal, it does encode automatically
+        $licenseTypes = str_replace("&quot;", '"', $licenseTypes);
         // string may be in json_econded format
         $value = json_decode($licenseTypes, true);
 
