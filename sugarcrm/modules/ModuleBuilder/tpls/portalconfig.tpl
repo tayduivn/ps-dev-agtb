@@ -127,7 +127,7 @@
             </td>
             <td>
                 <div class="company_logo_image_container">
-                    <img width="450 px" height="24 px" id="company_logo_image" name = "company_logo_image"
+                    <img width="200 px" id="company_logo_image" name = "company_logo_image"
                          src='{$logoURL}' alt="{$mod_strings.LBL_LOGO}" />
                 </div>
             </td>
@@ -206,30 +206,24 @@
         if (url) {
             // set the image
             previewLogoMark.attr('src', url);
-            showPreview(previewLogoMark);
         } else {
-            hidePreview(previewLogoMark);
-            hidePreview($('#company_logo_image'));
             $('#logoURL').val('');
             disableLogoUrl();
+            previewLogoMark.attr('src', 'styleguide/assets/img/logo.svg');
+            $('#company_logo_image').attr('src', 'themes/default/images/company_logo.png');
         }
     });
 
     $('#company_logomark_image').on('load', function() {
-        // enable the logo textbox
-        enableLogoUrl();
-
-        // show the logoMark preview
-        showPreview($('#company_logomark_image'));
+        var logoMarkUrl = $('#logomarkURL').val();
+        if (!_.isEmpty(logoMarkUrl)) {
+            // enable the logo textbox
+            enableLogoUrl();
+            if (_.isEmpty($('#logoURL').val())) {
+                $('#company_logo_image').attr('src', 'themes/default/images/company_logo.png');
+            }
+        }
     });
-
-    function hidePreview(preview) {
-        preview.hide();
-    }
-
-    function showPreview(preview) {
-        preview.show();
-    }
 
     function disableLogoUrl() {
         $('#logoURL').prop('disabled', true);
@@ -243,9 +237,22 @@
         // disable the logo textbox
         $('#logoURL').val('');
         disableLogoUrl();
+        $('#company_logo_image').attr('src', 'themes/default/images/company_logo.png');
 
-        // hide the logo preview
-        hidePreview($('#company_logo_image'));
+        var logoMarkUrl = $('#logomarkURL').val();
+        // default the logomark preview to sugar logomark if the input field is empty
+        if (_.isEmpty(logoMarkUrl)) {
+            $('#company_logomark_image').attr('src', 'styleguide/assets/img/logo.svg');
+        }
+    });
+
+    $('#company_logo_image').on('error', function() {
+        // disable the logo textbox
+        var logoUrl = $('#logoURL').val();
+        // default the logo preview to sugar logo if the input field is empty
+        if (_.isEmpty(logoUrl)) {
+            $('#company_logo_image').attr('src', 'themes/default/images/company_logo.png');
+        }
     });
 
     // Updates the preview for logo
@@ -257,9 +264,8 @@
         if (url) {
             // set the image
             previewLogo.attr('src', url);
-            showPreview(previewLogo);
         } else {
-            hidePreview(previewLogo);
+            previewLogo.attr('src', 'themes/default/images/company_logo.png');
         }
     });
 
