@@ -118,7 +118,7 @@
             </td>
             <td colspan='1' nowrap>
                 <input class='portalProperty portalField logoURL' id='logoURL' name='logoURL'
-                       value='{$logoURL}' size=60 disabled>
+                       value='{$logoURL}' size=60>
             </td>
         </tr>
         <tr>
@@ -243,6 +243,21 @@
         // default the logomark preview to sugar logomark if the input field is empty
         if (_.isEmpty(logoMarkUrl)) {
             $('#company_logomark_image').attr('src', 'styleguide/assets/img/logo.svg');
+        }
+    });
+
+    // Fixes firefox bug which doesn't fire error event on initial empty src property
+    $(document).ready(function() {
+        var logoMarkPreview = $('#company_logomark_image');
+        var logoPreview = $('#company_logo_image');
+
+        if (_.isEmpty(logoMarkPreview.attr('src'))) {
+            logoMarkPreview.attr('src', 'styleguide/assets/img/logo.svg');
+            disableLogoUrl();
+        }
+
+        if (_.isEmpty(logoPreview.attr('src'))) {
+            logoPreview.attr('src', 'themes/default/images/company_logo.png');
         }
     });
 
