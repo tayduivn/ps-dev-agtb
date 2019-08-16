@@ -129,8 +129,7 @@
         }
 
         if (catalogUrl && catalogUrl !== '') {
-            var iframeOrigin = catalogUrl.match(/^.+\:\/\/[^\/]+/)[0];
-            catalogUrl = iframeOrigin + '/catalog/authorized';
+            catalogUrl = catalogUrl.match(/^.+\:\/\/[^\/]+/)[0] + '/catalog/authorized';
 
             var getCatalog = function(onSuccess, onError, onLogin) {
                 $.ajax({
@@ -208,6 +207,7 @@
                         // TODO: Verify the catalog service origin instead of assuming any
                         // origin besides the one we are on is correct
 
+                        var iframeOrigin = window.location.href.match(/^.+\:\/\/[^\/]+/)[0];
                         if (event.origin === iframeOrigin) {
                             cleanup();
                             // After the iframe event callback, we need to load the catalog again
