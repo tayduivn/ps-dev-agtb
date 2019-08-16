@@ -60,6 +60,18 @@ class UsersViewOAuth2Authenticate extends SidecarView
                 'scope' => $scope,
             ]);
 
+            $systemStatus = apiCheckSystemStatus();
+            if (true !== $systemStatus) {
+                $oauthServer = \SugarOAuth2Server::getOAuth2Server($this->platform);
+                $tokenInfo = $oauthServer->verifyAccessToken($this->authorization['access_token']);
+                /** @var User $user */
+                $user = BeanFactory::getBean('Users', $tokenInfo['user_id']);
+                if (!$user->isAdmin()) {
+                    if ($systemStatus['level'] == 'maintenance') {
+                        SugarApplication::redirect('./#maintenance');
+                    }
+                }
+            }
             // Adding the setcookie() here instead of calling $api->setHeader() because
             // manually adding a cookie header will break 3rd party apps that use cookies
             setcookie(

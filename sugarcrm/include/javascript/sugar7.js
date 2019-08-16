@@ -91,6 +91,22 @@
                 }
             },
             {
+                name: 'maintenance',
+                route: 'maintenance',
+                callback: function() {
+                    app.controller.loadView({
+                        module: 'Logout',
+                        layout: 'logout',
+                        create: true
+                    });
+                    app.alert.show('needs_login_error', {
+                        level: 'error',
+                        messages: app.lang.getAppString('EXCEPTION_MAINTENANCE'),
+                        title: app.lang.get('LBL_ERROR')
+                    });
+                }
+            },
+            {
                 name: 'about',
                 route: 'about',
                 callback: function() {
