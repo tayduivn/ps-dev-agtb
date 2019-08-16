@@ -70,6 +70,11 @@ class User extends Person {
 	var $receive_notifications;
 	var $default_team;
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    public $business_center_name;
+    public $business_center_id;
+    //END SUGARCRM flav=ent ONLY
+
 	var $reports_to_name;
 	var $reports_to_id;
 	var $team_exists = false;
@@ -147,7 +152,13 @@ class User extends Person {
 
 	var $emailAddress;
 
-    public $relationship_fields = array('call_id' => 'calls', 'meeting_id' => 'meetings');
+    public $relationship_fields = array(
+        'call_id' => 'calls',
+        'meeting_id' => 'meetings',
+        //BEGIN SUGARCRM flav=ent ONLY
+        'business_center_id'=>'business_centers',
+        //END SUGARCRM flav=ent ONLY
+    );
 
 	var $new_schema = true;
 

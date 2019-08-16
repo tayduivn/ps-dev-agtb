@@ -200,6 +200,9 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'website',
                 'do_not_call',
                 'account_name',
+                //BEGIN SUGARCRM flav=ent ONLY
+                'business_center_name',
+                //END SUGARCRM flav=ent ONLY
                 'email',
                 array(
                     'name' => 'tag',

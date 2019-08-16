@@ -88,4 +88,7 @@ $mod_strings = [
     'LBL_HOLIDAYS_SUBPANEL_TITLE' => 'Business Holidays',
     'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Business Center Accounts',
     'LBL_CASES_SUBPANEL_TITLE' => 'Business Center Cases',
+    'LBL_CONTACTS_SUBPANEL_TITLE' => 'Business Center Contacts',
+    'LBL_LEADS_SUBPANEL_TITLE' => 'Business Center Leads',
+    'LBL_USERS_SUBPANEL_TITLE' => 'Business Center Users',
 ];

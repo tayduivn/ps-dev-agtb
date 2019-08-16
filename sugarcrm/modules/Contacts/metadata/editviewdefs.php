@@ -123,6 +123,10 @@ $viewdefs['Contacts']['EditView'] = array(
             'studio' => 'false',
             'label' => 'LBL_EMAIL_ADDRESS',
           ),
+          //BEGIN SUGARCRM flav=ent ONLY
+            'business_center_name',
+          //END SUGARCRM flav=ent ONLY
+
         ),
 
         array (

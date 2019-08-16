@@ -27,6 +27,27 @@ $viewdefs['BusinessCenters']['base']['layout']['subpanels'] = [
         ],
         [
             'layout' => 'subpanel',
+            'label' => 'LBL_CONTACTS_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'business_center_contacts',
+            ],
+        ],
+        [
+            'layout' => 'subpanel',
+            'label' => 'LBL_LEADS_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'business_center_leads',
+            ],
+        ],
+        [
+            'layout' => 'subpanel',
+            'label' => 'LBL_USERS_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'business_center_users',
+            ],
+        ],
+        [
+            'layout' => 'subpanel',
             'label' => 'LBL_HOLIDAYS_SUBPANEL_TITLE',
             'context' => [
                 'link' => 'business_holidays',

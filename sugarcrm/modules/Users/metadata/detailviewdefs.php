@@ -43,6 +43,7 @@ $viewdefs['Users']['DetailView'] = array(
             array('reports_to_name','phone_other'),
             array('','phone_fax'),
             array('','phone_home'),
+            array('business_center_name',''),
             array('messenger_type','messenger_id'),
             array('address_street','address_city'),
             array('address_state','address_postalcode'),

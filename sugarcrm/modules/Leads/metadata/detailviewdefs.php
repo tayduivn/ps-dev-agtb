@@ -141,6 +141,9 @@ $viewdefs['Leads']['DetailView'] = array (
 
 		array (
 			'email',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'business_center_name',
+            //END SUGARCRM flav=ent ONLY
 		),			
 		
 		array (

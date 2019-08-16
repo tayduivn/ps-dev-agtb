@@ -105,6 +105,11 @@ class Contact extends Person {
 	var $rel_opportunity_table = "opportunities_contacts";
 	var $rel_quotes_table = "quotes_contacts";
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    public $business_center_name;
+    public $business_center_id;
+    //END SUGARCRM flav=ent ONLY
+
     //Marketo
     var $mkto_sync;
     var $mkto_id;
@@ -124,6 +129,9 @@ class Contact extends Person {
 	var $relationship_fields = Array(
         'account_id'=> 'accounts',
         'bug_id' => 'bugs',
+        //BEGIN SUGARCRM flav=ent ONLY
+        'business_center_id'=>'business_centers',
+        //END SUGARCRM flav=ent ONLY
         'call_id'=>'calls',
         'case_id'=>'cases',
         'email_id'=>'emails',
@@ -509,6 +517,20 @@ class Contact extends Person {
 
             }
         }
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        //Set business_center_id to the same as related account when not provided
+        if ($this->load_relationship('accounts')) {
+            $accounts = $this->accounts->getBeans();
+            if ($accounts) {
+                $account = array_shift($accounts);
+                if ($account->business_center_id) {
+                    $this->business_center_id = $account->business_center_id;
+                }
+            }
+        }
+        //END SUGARCRM flav=ent ONLY
+
         return parent::save($check_notify);
     }
 
