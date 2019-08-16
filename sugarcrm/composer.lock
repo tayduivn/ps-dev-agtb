@@ -1573,17 +1573,17 @@
         },
         {
             "name": "onelogin/php-saml",
-            "version": "3.2.1",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/onelogin/php-saml.git",
-                "reference": "845a6ce39e839ed9e687f80bffb02ffde16a70d0"
+                "reference": "c9026b26395a65184550055d9a01bdf9dbd30861"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/onelogin/php-saml/onelogin-php-saml-3.2.1-05ae04.tar",
-                "reference": "845a6ce39e839ed9e687f80bffb02ffde16a70d0",
-                "shasum": "e5fd954b010fc1edaf9a6c29b5a2d8f817d95a0c"
+                "url": "https://satis.sugardev.team/dist/onelogin/php-saml/onelogin-php-saml-3.1.1-3712e4.tar",
+                "reference": "c9026b26395a65184550055d9a01bdf9dbd30861",
+                "shasum": "30d214a13eb422038b5acb17246243e29160739d"
             },
             "require": {
                 "php": ">=5.4",
@@ -1623,7 +1623,7 @@
                 "issues": "https://github.com/onelogin/php-saml/issues",
                 "source": "https://github.com/onelogin/php-saml/"
             },
-            "time": "2019-06-25T10:28:20+00:00"
+            "time": "2018-08-06T10:12:02+00:00"
         },
         {
             "name": "oyejorge/less.php",
@@ -2728,7 +2728,7 @@
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "e4b0a2fe75ce3ef3971e88053c7dc429d1ddc330"
+                "reference": "6777855010dfa1d7e224f2b8a083f96dee154223"
             },
             "require": {
                 "doctrine/dbal": "~2.2",
@@ -2740,7 +2740,7 @@
                 "jimdo/prometheus_client_php": "^0.9.1",
                 "league/oauth2-client": "2.2.1",
                 "monolog/monolog": "^1.21",
-                "onelogin/php-saml": "^3.1",
+                "onelogin/php-saml": "~3.1.0",
                 "php": "^7.1",
                 "ramsey/uuid": "3.8.0",
                 "silex/silex": "~2.0",
@@ -5123,17 +5123,17 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.9.1",
+            "version": "1.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "e6828efaba2c9b79f4499dae1d66ef8bfa7b2b72"
+                "reference": "007c053ae6f31bba39dfa19a7726f56e9763bbea"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/myclabs/deep-copy/myclabs-deep-copy-1.9.1-496eb3.tar",
-                "reference": "e6828efaba2c9b79f4499dae1d66ef8bfa7b2b72",
-                "shasum": "0b252c7420c46afd8fe04f0f6df0ebcdf9970a74"
+                "url": "https://satis.sugardev.team/dist/myclabs/deep-copy/myclabs-deep-copy-1.9.3-ed9354.tar",
+                "reference": "007c053ae6f31bba39dfa19a7726f56e9763bbea",
+                "shasum": "54ae685b9d3c860a1f7261833faa3242aeec381c"
             },
             "require": {
                 "php": "^7.1"
@@ -5172,7 +5172,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2019-04-07T13:18:21+00:00"
+            "time": "2019-08-09T12:45:53+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -6095,17 +6095,17 @@
         },
         {
             "name": "sebastian/exporter",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
-                "reference": "88eb77bd7b4f33d9a80e0058e3ba7f77fdb792e2"
+                "reference": "c555fcc5f47f1ba75307a0667c9054dc3f79cc9c"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/exporter/sebastian-exporter-3.1.0-0cd1a8.tar",
-                "reference": "88eb77bd7b4f33d9a80e0058e3ba7f77fdb792e2",
-                "shasum": "a1c0b1e8dfe817112a9450e4dd23cef35dab715a"
+                "url": "https://satis.sugardev.team/dist/sebastian/exporter/sebastian-exporter-3.1.1-df9b06.tar",
+                "reference": "c555fcc5f47f1ba75307a0667c9054dc3f79cc9c",
+                "shasum": "f458dfc44cc74ee409aa0199c6fc68728f27e180"
             },
             "require": {
                 "php": "^7.0",
@@ -6148,7 +6148,7 @@
                 },
                 {
                     "name": "Bernhard Schussek",
-                    "email": "bschussek@2bepublished.at"
+                    "email": "bschussek@gmail.com"
                 }
             ],
             "description": "Provides the functionality to export PHP variables for visualization",
@@ -6157,7 +6157,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2017-04-03T13:19:02+00:00"
+            "time": "2019-08-11T12:43:14+00:00"
         },
         {
             "name": "sebastian/global-state",
