@@ -28,6 +28,7 @@ class RegisterContactApi extends SugarApi
                 'shortHelp' => 'This method registers contacts',
                 'longHelp' => 'include/api/help/contacts_register_post_help.html',
                 'noLoginRequired' => true,
+                'minVersion' => '11.6',
             ],
         ];
     }
