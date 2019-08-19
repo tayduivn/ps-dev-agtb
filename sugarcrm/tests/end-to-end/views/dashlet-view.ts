@@ -24,15 +24,16 @@ export default class DashletView extends BaseView {
 
         this.selectors = this.mergeSelectors({
             $: '.dashlet-cell',
-                header: '.dashlet-header',
-                buttons: {
-                    cog: '.btn.btn-invisible.dropdown-toggle',
-                },
-                menuItems: {
-                    edit: 'a[name="edit_button"]',
-                    refresh: 'a[name="refresh_button"]',
-                    remove: 'a[name="remove_button"]',
-                },
+            header: '.dashlet-header',
+            buttons: {
+                cog: '.btn.btn-invisible.dropdown-toggle',
+            },
+            menuItems: {
+                $: '.dropdown-menu',
+                edit: 'a[name="edit_button"]',
+                refresh: 'a[name="refresh_button"]',
+                remove: 'a[name="remove_button"]',
+            },
 
             content: 'dashlet-content'
         });
@@ -42,7 +43,7 @@ export default class DashletView extends BaseView {
      * Perform standard dashlet operations such as edit, refresh or remove
      * Note: Those operations are only available to Admin
      *
-     * @param action
+     * @param {string} action to perform
      * @returns {Promise<void>}
      */
     public async performAction(action) {

@@ -483,6 +483,137 @@ Feature: Customer Service Console Verification
     When I collapse record *N_1 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
 
 
+  @service-console @cs_dashable_record_dashlet @config
+  Scenario: Customer Service Console > Dashable Record dashlet > Configuration Settings
+    # Create required Case and Account records
+    Given Accounts records exist:
+      | *   | name      | website              | industry  | account_type |
+      | A_1 | Account_1 | http://www.yahoo.com | Chemicals | Competitor   |
+
+    And Cases records exist related via cases link to *A_1:
+      | *   | name   | source   | priority | status | assigned_user_id |
+      | C_1 | Case_1 | Internal | P1       | New    | 1                |
+
+    # Create 7 notes records related to the case
+    Given 7 Notes records exist related via notes link to *C_1:
+      | *           | name                             |
+      | N_{{index}} | Note {{index}} related to Case_1 |
+    # Create 3 calls records related to the case
+    And 3 Calls records exist related via calls link to *C_1:
+      | *name          | assigned_user_id | date_start                | duration_hours | duration_minutes | direction | description      | status  |
+      | Call_{{index}} | 1                | 2020-04-16T14:30:00-07:00 | 0              | 45               | Outbound  | Call to customer | Planned |
+    # Create task records related to the case
+    And Tasks records exist related via tasks link to *C_1:
+      | *   | name   | status      | priority | date_start          | date_due            | description |
+      | T_1 | Task 1 | Not Started | High     | 2020-04-16T14:30:00 | 2020-04-18T14:30:00 | Not Started |
+
+    # Navigate to Service Console
+    When I choose Home in modules menu and select "Service Console" menu item
+
+    # Select Cases tab
+    When I select Cases tab in #ServiceConsoleView
+
+    # Click the record to open side panel
+    When I select *C_1 in #CasesList.MultilineListView
+
+    # Verify if all expected tabs are displayed in the dashlet
+    Then I should see the following tabs in #Dashboard.CsDashableRecordDashlet dashlet:
+      | tab_list  |
+      | Cases     |
+      | Tasks     |
+      | Contacts  |
+      | Documents |
+
+    # Navigate to dashlet config screen
+    When I edit #Dashboard.CsDashableRecordDashlet dashlet
+
+    # Add modules as tabs to purposely exceed the 6 tabs limit
+    When I add the following modules as tabs in #DashableRecordConfig view:
+      | tab_list |
+      | Calls    |
+      | Notes    |
+      | Account  |
+
+    # Close Alert related to more than 6 modules selected
+    When I close alert
+
+    # Remove Accounts module to comply with 6 tab maximum limit
+    When I remove the following modules as tabs in #DashableRecordConfig view:
+      | tab_list |
+      | Account  |
+
+    # Navigate to Tasks tab and update values for specified fields in Tasks tab
+    When I move to Tasks tab in #DashableRecordConfig view
+    When I provide input for #TasksRecord.RecordView view
+      | fields | auto_refresh     |
+      | Status | Every 10 Minutes |
+
+    # Navigate to Notes tab and update values for specified fields in Notes tab
+    When I move to Notes tab in #DashableRecordConfig view
+    When I provide input for #NotesRecord.RecordView view
+      | limit | auto_refresh     |
+      | 10    | Every 10 Minutes |
+
+    # Save configuration changes
+    When I click Save button on #DashableRecordConfig header
+    When I close alert
+
+    # Verify that 2 more tabs are added to the dashlet
+    Then I should see the following tabs in #Dashboard.CsDashableRecordDashlet dashlet:
+      | tab_list  |
+      | Cases     |
+      | Tasks     |
+      | Contacts  |
+      | Documents |
+      | Calls     |
+      | Notes     |
+
+    # Navigate to newly added Calls tab inside the Dashable Record dashlet
+    When I switch to Calls tab in #Dashboard.CsDashableRecordDashlet
+    # Verify that calls records related to the case appear in the Calls tab of the dashlet
+    Then I should see [*Call_1, *Call_2, *Call_3] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+
+    # Navigate to Notes tab inside the Dashable Record dashlet
+    When I switch to Notes tab in #Dashboard.CsDashableRecordDashlet
+    # Verify that notes records related to the case appear in the Notes tab of the dashlet
+    Then I should see [*N_1, *N_2, *N_3, *N_4, *N_5, *N_6, *N_7] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+
+    # Navigate to Tasks tab inside the Dashable Record dashlet
+    When I switch to Tasks tab in #Dashboard.CsDashableRecordDashlet
+    # Verify that tasks records related to the case appear in the Tasks tab of the dashlet
+    Then I should see [*T_1] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+
+     # Getting value of specific field is not currently supported in List View dashlet
+#    Then I verify field values for *T_1 in #Dashboard.CsDashableRecordDashlet.ListView
+#      | fieldName | value       |
+#      | name      | Task 1      |
+#      | status    | Not Started |
+
+    # Return back to dashlet config screen
+    When I edit #Dashboard.CsDashableRecordDashlet dashlet
+
+    # Remove previously added modules from the dashlet in configuration screen
+    When I remove the following modules as tabs in #DashableRecordConfig view:
+      | tab_list |
+      | Calls    |
+      | Notes    |
+
+    # Remove previously added field(s) in Tasks tab
+    When I remove the following fields from Tasks tab of #DashableRecordConfig view:
+      | fields |
+      | Status |
+
+    # Save configuration changes
+    When I click Save button on #DashableRecordConfig header
+    When I close alert
+
+    # Verify that 2 previously added tabs are successfully removed
+    Then I should not see the following tabs in #Dashboard.CsDashableRecordDashlet dashlet:
+      | tab_list  |
+      | Calls     |
+      | Notes     |
+
+
   @user_profile
   Scenario: User Profile > Change License type
     When I choose Profile in the user actions menu

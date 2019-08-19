@@ -17,6 +17,7 @@ import CsCasesInteractionsDashlet from '../views/cs-cases-interactions-dashlet-v
 import CsCasesInteractionsListView from '../views/cs-cases-interactions-list-view';
 import {parseInputArray} from './general_bdd';
 import ListViewDashletListView from '../views/list-view-dashlet-list-view';
+import DashableRecordDashlet from '../views/dashable-record-dashlet-view';
 
 /**
  *  Verify the order of the item in the multiline list view in Service Console Cases tab
@@ -248,6 +249,29 @@ Then(/^I should (not )?see (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) on (#\S+) dashlet$/
 
             if (_.isEmpty(not) !== value) {
                 throw new Error('Expected ' + (not || '') + ' to see list item (' + listItem.$() + ')');
+            }
+        }
+    }, {waitForApp: true}
+);
+
+/**
+ *  Verify if tab is present/not present in the Dashable record dashlet
+ *
+ *      @example
+ *      Then I should not see the following tabs in #Dashboard.CsDashableRecordDashlet dashlet:
+ *          | tab_list  |
+ *          | Calls     |
+ *          | Notes     |
+ */
+Then(/^I should (not )?see the following tabs in (#\S+) dashlet:$/,
+    async function(not: string, view: DashableRecordDashlet, data: TableDefinition) {
+        let rows = data.rows();
+
+        // Verify whether tab is present in the dashlet or not
+        for (let row of rows) {
+            let value = await view.checkTabPresence(row[0]);
+            if (_.isEmpty(not) !== value) {
+                throw new Error('Expected ' + (not || '') + ' to see tab (' + row[0] + ')');
             }
         }
     }, {waitForApp: true}

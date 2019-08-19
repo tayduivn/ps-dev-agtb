@@ -41,9 +41,10 @@ import HistoricalSummaryDrawerLayout from './layouts/historical-summary-layout';
 import PipelineView from './views/pipeline-view';
 import ServiceConsoleView from './views/service-console-view';
 import UserProfileLayout from './layouts/user-profile-layout'
-
 import TileViewSettings from './views/tile-settings-view';
 import FindDuplicates from './views/find-duplicates-view';
+import DashableRecordDashletConfig from './views/dashable-record-dashlet-config-view';
+
 
 export default (seedbed: Seedbed) => {
 
@@ -95,6 +96,7 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`${moduleName}PipelineView`, PipelineView, {module: moduleName});
                 seedbed.defineComponent(`TileViewSettings`, TileViewSettings, {module: moduleName});
                 seedbed.defineComponent(`FindDuplicatesDrawer`, FindDuplicates, {module: moduleName});
+                seedbed.defineComponent(`DashableRecordConfig`, DashableRecordDashletConfig, {module: moduleName});
             }
         });
 

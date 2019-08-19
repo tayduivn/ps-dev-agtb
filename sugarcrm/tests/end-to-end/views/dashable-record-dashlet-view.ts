@@ -56,13 +56,20 @@ export default class DashableRecordDashlet extends DashletView {
     }
 
     /**
-     * Select specified tab in the Dashable Record dashlet
+     * Select specified tab in the Dashable Record dashlet and return true,
+     * or return false if tab is not found
      *
      * @param {string} tabName
+     * @return {boolean}
      */
-    public async selectTab(tabName: string) {
-        let selector = this.$(`tab`, {tabName});
-        await this.driver.click(selector);
+    public async selectTab(tabName: string):Promise<boolean> {
+        if ( this.checkTabPresence(tabName) ) {
+            let selector = this.$(`tab`, {tabName});
+            await this.driver.click(selector);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -73,5 +80,17 @@ export default class DashableRecordDashlet extends DashletView {
     public async expandCollapseRecord(action: string) {
         let selector = this.$(`more_less`, {action});
         await this.driver.click(selector);
+    }
+
+    /**
+     * Check if specified tab is present is Dashable Record dashlet.
+     * Return 'true' if found, otherwise return false
+     *
+     * @param {string} tabName tab to check
+     * @return {boolean}
+     */
+    public async checkTabPresence(tabName: string): Promise<boolean> {
+        let selector = this.$(`tab`, {tabName});
+        return this.driver.isElementExist(selector);
     }
 }

@@ -16,6 +16,7 @@ import MultilineListView from '../views/multiline-list-view';
 import CsCommentLogDashlet from '../views/cs-comment-log-dashlet-view';
 import CsCasesInteractionsDashlet from '../views/cs-cases-interactions-dashlet-view';
 import CsCasesInteractionsListView from '../views/cs-cases-interactions-list-view';
+import DashableRecordDashletConfig from '../views/dashable-record-dashlet-config-view';
 
 /**
  *  Select specified tab in Service Console
@@ -70,9 +71,11 @@ When(/^I click (Edit|Save|Cancel) button in (#\S+)$/,
  *  @example
  *  When I switch to Tasks tab in #Dashboard.CsDashableRecordDashlet
  */
-When(/^I switch to (Cases|Tasks|Contacts|Documents) tab in (#\S+)$/,
+When(/^I switch to (\S+) tab in (#\S+)$/,
     async function(tabName: string, view: DashableRecordDashlet) {
-        await view.selectTab(tabName);
+        if (!await view.selectTab(tabName)) {
+            throw new Error(`Error! Specified tab '${tabName}' is not found.`);
+        }
     }, {waitForApp: true});
 
 /**
@@ -125,4 +128,91 @@ When(/^I (expand|collapse) record (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
 When(/^I click show (more|less) button in (#\S+)$/,
     async function(action: string, view: DashableRecordDashlet) {
         await view.expandCollapseRecord(action);
+    }, {waitForApp: true});
+
+
+/**
+ *   Move to specified tab inside configuration section of Dashable Record dashlet
+ *
+ *   @example
+ *   When I move to Tasks tab in #DashableRecordConfig view
+ */
+When(/^I move to (\S+) tab in (#\S+) view$/,
+    async function(tabName: string, view: DashableRecordDashletConfig) {
+        await view.navigateToTab(tabName);
+    }, {waitForApp: true});
+
+/**
+ *   Add or remove modules as tabs in configuration section of dashable
+ *   record dashlet
+ *
+ *   @example
+ *       When I add following modules in #DashableRecordConfig view
+ *          | tab_list |
+ *          | Calls    |
+ *          | Notes    |
+ *          | Account  |
+ */
+When(/^I (add|remove) the following modules as tabs in (#\S+) view:$/,
+    async function(action: string, view: DashableRecordDashletConfig, data: TableDefinition) {
+
+        let rows = data.rows();
+        for (let i = 0; i < rows.length; i++) {
+            let tabName = rows[i][0];
+            if (action === 'add') {
+                await view.addTab(tabName);
+            } else if (action === 'remove') {
+                await view.closePill(tabName);
+            } else {
+                throw new Error(`Error: The following action ${action} is not supported!`);
+            }
+        }
+    }, {waitForApp: true});
+
+/**
+ *  Navigate to and update value of fields in one of the tabs of Dashable Record configuration screen
+ *
+ *  @example
+ *  When I update dashlet settings in Notes tab of #DashableRecordConfig view
+ *      | limit | auto_refresh     |
+ *      | 10    | Every 10 Minutes |
+ */
+When(/^I update dashlet settings in (\S+) tab of (#\S+) view$/,
+    async function(tabName: string, view: DashableRecordDashletConfig, data: TableDefinition) {
+
+        // Navigate to specified Tab
+        await view.navigateToTab(tabName);
+
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+
+        // Set values
+        let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
+        let rec_view = await seedbed.components[`${tabName}Record`];
+        await rec_view.setFieldsValue(inputData);
+    }, {waitForApp: true});
+
+/**
+ *  Remove the field from list of fields displayed in the list View dashlet
+ *
+ *      @example
+ *      When I remove the following fields from Tasks tab of #DashableRecordConfig view:
+ *          | fields |
+ *          | Status |
+ */
+When(/^I remove the following fields from (\S+) tab of (#\S+) view:$/,
+    async function(tabName: string, view: DashableRecordDashletConfig, data: TableDefinition) {
+
+        // Navigate to specified Tab
+        await view.navigateToTab(tabName);
+
+        // Remove field
+        let rows = data.rows();
+        for (let i = 0; i < rows.length; i++) {
+            let fieldName = rows[i][0];
+            if (!await view.closePill(fieldName)) {
+                throw new Error(`Error! Specified field '${fieldName}' is not found.`);
+            }
+        }
     }, {waitForApp: true});
