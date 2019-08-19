@@ -15,7 +15,7 @@ class MetaDataManagerPortal extends MetaDataManager
 {
     /**
      * Find all modules with Portal metadata
-     * 
+     *
      * @return array List of Portal module names
      */
     protected function getModules($filtered = true)
@@ -61,12 +61,17 @@ class MetaDataManagerPortal extends MetaDataManager
 
     /**
      * Gets configs
-     * 
+     *
      * @return array
      */
     protected function getConfigs() {
         $admin = new Administration();
         $configs = $admin->getConfigForModule('portal', 'support');
+
+        $configs['smtpServerSet'] = false;
+        if (!empty(BeanFactory::getBean('OutboundEmail')->getSystemMailerSettings()->mail_smtpserver)) {
+            $configs['smtpServerSet'] = true;
+        }
 
         return $configs;
     }
@@ -74,7 +79,7 @@ class MetaDataManagerPortal extends MetaDataManager
 
     /**
      * Fills in additional app list strings data as needed by the client
-     * 
+     *
      * @param array $public Public app list strings
      * @param array $main Core app list strings
      * @return array
@@ -82,7 +87,7 @@ class MetaDataManagerPortal extends MetaDataManager
     protected function fillInAppListStrings(Array $public, Array $main) {
         $public['countries_dom'] = $main['countries_dom'];
         $public['state_dom'] = $main['state_dom'];
-        
+
         return $public;
     }
 

@@ -37,6 +37,11 @@
         this.model.on('change:preferred_language', function() {
             this.setLanguage(this.model.get('preferred_language'));
         }, this);
+
+        this.showPortalPasswordReset = false;
+        if (app.config.smtpServerSet === true) {
+            this.showPortalPasswordReset = true;
+        }
     },
 
     /**

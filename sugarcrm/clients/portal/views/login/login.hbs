@@ -31,8 +31,10 @@
             <br>
             <br>
             <div class="control-group">
+            {{#if showPortalPasswordReset}}
                 <a href="#forgotpassword" class="btn btn-link btn-invisible">{{str "LBL_PORTAL_FORGOT_PASSWORD"}}</a>
                 <br>
+            {{/if}}
                 <a href="#signup" class="btn btn-link btn-invisible">{{str "LBL_PORTAL_CREATE_ACCOUNT"}}</a>
             </div>
         </form>

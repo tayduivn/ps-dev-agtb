@@ -12,6 +12,7 @@
 describe('PortalLoginView', function() {
     var app;
     var view;
+    var options;
     var viewName = 'login';
 
     beforeEach(function() {
@@ -20,7 +21,16 @@ describe('PortalLoginView', function() {
         SugarTest.loadComponent('portal', 'view', viewName);
 
         app = SUGAR.App;
-        view = SugarTest.createView('portal', '', viewName);
+        var context = new app.Context();
+        context.set('model', new Backbone.Model());
+        var meta = {
+            label: 'testLabel'
+        };
+        options = {
+            context: context,
+            meta: meta
+        };
+        view = SugarTest.createView('portal', null, viewName, meta, context);
     });
 
     afterEach(function() {
@@ -28,6 +38,24 @@ describe('PortalLoginView', function() {
         app.view.reset();
         view = null;
         sinon.collection.restore();
+    });
+
+    describe('initialize', function() {
+        it('should display forgot password', function() {
+            app.config = {smtpServerSet: true};
+            view.initialize(options);
+            expect(view.showPortalPasswordReset).toBeTruthy();
+        });
+        it('should not display forgot password', function() {
+            app.config = {smtpServerSet: false};
+            view.initialize(options);
+            expect(view.showPortalPasswordReset).toBeFalsy();
+        });
+        it('should not display forgot password', function() {
+            app.config = {};
+            view.initialize(options);
+            expect(view.showPortalPasswordReset).toBeFalsy();
+        });
     });
 
     describe('signup', function() {
