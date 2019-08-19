@@ -12,6 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Security\Password\Hash;
 use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  *  Contact is used to store customer information.
@@ -121,6 +122,7 @@ class Contact extends Person {
 	var $new_schema = true;
 	var $importable = true;
     public $portal_user_company_name;
+    public $site_user_id;
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('bug_id', 'assigned_user_name', 'account_name', 'account_id', 'opportunity_id', 'case_id', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id'
@@ -525,6 +527,15 @@ class Contact extends Person {
         }
 
         //BEGIN SUGARCRM flav=ent ONLY
+        // Support for Pendo analytics in Portal
+        if (empty($this->site_user_id)) {
+            if (!$this->id) {
+                $this->id = Uuid::uuid1();
+                $this->new_with_id = true;
+            }
+            $this->site_user_id = getSiteHash($this->id);
+        }
+
         //Set business_center_id to the same as related account when not provided
         if ($this->load_relationship('accounts')) {
             $accounts = $this->accounts->getBeans();

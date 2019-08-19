@@ -256,6 +256,25 @@ $dictionary['Contact'] = array(
             'options' => 'available_language_dom',
             'popupHelp' => 'LBL_LANG_PREF_TOOLTIP',
         ),
+        'cookie_consent' => [
+            'name' => 'cookie_consent',
+            'vname' => 'LBL_COOKIE_CONSENT',
+            'type' => 'bool',
+            'default' => '0',
+            'audited' => true,
+            'comment' => 'Indicator whether this portal user accepts cookies',
+            'duplicate_on_record_copy' => 'no',
+        ],
+        'cookie_consent_received_on' => [
+            'name' => 'cookie_consent_received_on',
+            'vname' => 'LBL_COOKIE_CONSENT_RECEIVED_ON',
+            'type' => 'datetime',
+            'audited' => true,
+            'enable_range_search' => true,
+            'options' => 'date_range_search_dom',
+            'comment' => 'Date cookie consent received on',
+            'duplicate_on_record_copy' => 'no',
+        ],
         'business_center_name' => array(
             'name' => 'business_center_name',
             'rname' => 'name',
@@ -767,6 +786,19 @@ $dictionary['Contact'] = array(
                 'reportable' => true,
                 'importable' => 'true',
             ),
+// BEGIN SUGARCRM flav=ent ONLY
+        // site_user_id is used as an analytics id
+        'site_user_id' => [
+            'name' => 'site_user_id',
+            'vname' => 'LBL_SITE_USER_ID',
+            'type' => 'varchar',
+            'len' => '64',
+            'reportable' => false,
+            'importable' => false,
+            'studio' => false,
+            'readonly' => true,
+        ],
+// END SUGARCRM flav=ent ONLY
     ),
     'indices' => array(
         array(

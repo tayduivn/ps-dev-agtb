@@ -2999,7 +2999,7 @@ class ModuleInstaller{
             'serverTimeout' => self::getPortalTimeoutValue(),
             'maxSearchQueryResult'=>'5',
             'caseDeflection' => $caseDeflection,
-            'analytics' => $config->get('analytics_portal', array('enabled' => false)),
+            'analytics' => $config->get('analytics_portal') ?? $config->get('analytics') ?? ['enabled' => false],
         );
 
         $jsConfig = $config->get('additional_js_config', array());

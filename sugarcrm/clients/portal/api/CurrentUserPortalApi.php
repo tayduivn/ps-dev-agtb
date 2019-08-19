@@ -43,7 +43,8 @@ class CurrentUserPortalApi extends CurrentUserApi
         if (isset($contact->preferred_language)) {
             $user_data['preferences']['language'] = $contact->preferred_language;
         }
-        
+        $user_data['site_user_id'] = $contact->site_user_id;
+        $user_data['cookie_consent'] = !empty($contact->cookie_consent);
         return array('current_user'=>$user_data);
     }
 
