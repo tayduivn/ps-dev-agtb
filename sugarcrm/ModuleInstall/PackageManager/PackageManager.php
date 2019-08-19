@@ -518,10 +518,19 @@ class PackageManager{
             return $messages;
     }
 
-    function unlinkTempFiles() {
-        global $sugar_config;
-        @unlink($_FILES['upgrade_zip']['tmp_name']);
-        @unlink("upload://".$_FILES['upgrade_zip']['name']);
+    public static function unlinkTempFiles(): void
+    {
+        if (empty($_FILES['upgrade_zip'])) {
+            return;
+        }
+        $tmpFileName = $_FILES['upgrade_zip']['tmp_name'];
+        if (is_uploaded_file($tmpFileName) && file_exists($tmpFileName)) {
+            unlink($tmpFileName);
+        }
+        $filePath = UploadStream::path('upload://' . $_FILES['upgrade_zip']['name']);
+        if (null !== $filePath && file_exists($filePath)) {
+            unlink($filePath);
+        }
     }
 
     function performInstall($file, $silent=true){

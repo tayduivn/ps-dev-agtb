@@ -58,11 +58,21 @@ class UpgradeWizardCommon
     /**
      * Remove temporary files from upload
      */
-    public static function unlinkTempFiles() {
-        @unlink($_FILES['upgrade_zip']['tmp_name']);
-        @unlink("upload://".$_FILES['upgrade_zip']['name']);
+    public static function unlinkTempFiles(): void
+    {
+        if (empty($_FILES['upgrade_zip'])) {
+            return;
+        }
+        $tmpFileName = $_FILES['upgrade_zip']['tmp_name'];
+        if (is_uploaded_file($tmpFileName) && file_exists($tmpFileName)) {
+            unlink($tmpFileName);
+        }
+        $filePath = UploadStream::path('upload://' . $_FILES['upgrade_zip']['name']);
+        if (null !== $filePath && file_exists($filePath)) {
+            unlink($filePath);
+        }
     }
-
+    
     public static function extractFile($zip_file, $file_in_zip)
     {
         global $base_tmp_upgrade_dir;
