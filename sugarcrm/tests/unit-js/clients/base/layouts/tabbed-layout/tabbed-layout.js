@@ -30,7 +30,7 @@ describe('Base.Layout.TabbedLayout', function() {
             sinon.collection.stub(layout, 'updateLayoutConfig');
         });
 
-        it('should set meta.notabs if components are 1 or less', function() {
+        it('should set meta.notabs false if components are 2 or more', function() {
             initOptions = {
                 meta: {
                     components: [{
@@ -76,33 +76,50 @@ describe('Base.Layout.TabbedLayout', function() {
         });
     });
 
-    describe('removeComponent()', function() {
+    describe('_placeComponent()', function() {
         var appendStub;
         var addClassStub;
+        var layoutStub;
         var comp;
         var def;
+        var $mainTabs;
+        var $moreTabs;
+        var $tabContent;
 
         beforeEach(function() {
-            appendStub = sinon.collection.stub();
-            addClassStub = sinon.collection.stub();
-            sinon.collection.stub(layout, '$', function() {
-                return {
-                    append: appendStub,
-                    addClass: addClassStub
-                };
-            });
-            sinon.collection.stub(app.lang, 'get', function() {
-                return 'test';
-            });
             comp = {
                 el: '<div class="test"></div>'
             };
+            appendStub = sinon.collection.stub();
+            addClassStub = sinon.collection.stub();
+            $mainTabs = $('<ul/>').addClass('nav nav-tabs related-tabs');
+            sinon.collection.stub($mainTabs, 'append', appendStub);
+            sinon.collection.stub($mainTabs, 'addClass', addClassStub);
+
+            $moreTabs = $('<li/>').addClass('more-tabs hidden');
+            $tabContent = $('<div/>').addClass('tab-content');
+
+            layoutStub = sinon.collection.stub();
+            layoutStub.withArgs('.more-tabs').returns($moreTabs);
+            layoutStub.withArgs('.nav').returns($mainTabs);
+            layoutStub.withArgs('.tab-content').returns($tabContent);
+
+            sinon.collection.stub(layout, '$', layoutStub);
+
+            sinon.collection.stub(app.lang, 'get', function() {
+                return 'test';
+            });
         });
 
         afterEach(function() {
             appendStub = null;
+            addClassStub = null;
+            layoutStub = null;
             comp = null;
             def = null;
+            $mainTabs = null;
+            $moreTabs = null;
+            $tabContent = null;
         });
 
         it('should work off def.layout', function() {
@@ -168,7 +185,7 @@ describe('Base.Layout.TabbedLayout', function() {
             };
             layout._placeComponent(comp, def);
 
-            expect(addClassStub).toHaveBeenCalledWith(layout.name + '-tabs');
+            expect($mainTabs.addClass).toHaveBeenCalledWith(layout.name + '-tabs');
         });
     });
 });

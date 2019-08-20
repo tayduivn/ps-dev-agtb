@@ -15,6 +15,8 @@
  */
 ({
     maxTabs: undefined,
+    $moreTabs: undefined,
+    $overflowTabs: undefined,
 
     /**
      * @inheritdoc
@@ -65,7 +67,6 @@
                 $tabbable.toggleClass('preview-active', tabName === 'preview');
             });
         }
-
     },
 
     /**
@@ -105,13 +106,20 @@
         }
 
         var label = app.lang.get(lblKey, this.module) || lblKey;
-        var $nav = $('<li/>').html('<a href="#' + id + '" onclick="return false;" data-toggle="tab">' + label + '</a>');
-        var $content = $('<div/>').addClass('tab-pane').attr('id', id).html(comp.el);
-        var $ulNav = this.$('.nav');
+        var $nav = $('<li/>')
+            .html('<a href="#' + id + '" onclick="return false;" data-toggle="tab">' + label + '</a>');
+        var $content = $('<div/>')
+            .addClass('tab-pane')
+            .attr('id', id)
+            .html(comp.el);
 
-        $ulNav.addClass(this.name + '-tabs');
-        $nav.addClass('nav-item');
-        $nav.data('tab-name', lblName);
+        this.$mainTabs = this.$('.nav');
+        var tabIndex = this.$mainTabs.children().length;
+
+        this.$mainTabs.addClass(this.name + '-tabs');
+        $nav.addClass('nav-item')
+            .attr('data-tab-name', label)
+            .attr('data-tab-index', tabIndex);
 
         if (!this.firstIsActive) {
             $nav.addClass('active');
@@ -122,9 +130,42 @@
             }
         }
 
+        // use existing or get new reference
+        this.$moreTabs = this.$moreTabs || this.$('.more-tabs');
+
         this.firstIsActive = true;
         this.$('.tab-content').append($content);
-        $ulNav.append($nav);
+        // append new nav tab to the tab list
+        this.$mainTabs.append($nav);
+        this.$mainTabs.append(this.$moreTabs);
+
+        if (this._components.length > this.maxTabs) {
+            // get a reference to the bound event for removal
+            if (!this.onMoreTabItemClickedHandler) {
+                this.onMoreTabItemClickedHandler = _.bind(this.onMoreTabItemClicked, this);
+            }
+            // more than maxTabs so hide the new tab on the tab list
+            $nav.addClass('hidden');
+
+            // use existing or get new reference
+            this.$overflowTabs = this.$overflowTabs || this.$('[data-container="overflow"]');
+            // show moreTabs
+            this.$moreTabs.removeClass('hidden');
+            // make sure moreTabs is the last item in the list
+            this.$mainTabs.append(this.$moreTabs);
+            // append the new tab to the overflow tabs dropdown
+            this.$overflowTabs.append($nav);
+            // -1 because the $moreTabs button counts as a child
+            tabIndex = this.$mainTabs.children().length - 1 + this.$overflowTabs.children().length;
+            $nav.removeClass('hidden')
+                .attr('data-tab-index', tabIndex)
+                .on('click', this.onMoreTabItemClickedHandler);
+        }
+
+        var $navItems = this.$mainTabs.find('.nav-item');
+        $navItems.removeClass('border-right')
+            .last()
+            .addClass('border-right');
     },
 
     /**
@@ -149,6 +190,37 @@
             this.$(this.$('li')[0]).addClass('active');
             this.$(this.$('.tab-pane')[0]).addClass('active');
         }
+    },
+
+    /**
+     * When there are more than `maxTabs` and one of those overflow tabs gets clicked,
+     * this function switches the tabs from the overflow dropdown to the main tab area
+     *
+     * @param {Event} evt The Click Event
+     */
+    onMoreTabItemClicked: function(evt) {
+        var $overflowTabToMove = $(evt.currentTarget);
+        var $lastMainTab = $(this.$mainTabs.children()[2]);
+
+        // add the main tab to the overflow tabs
+        this.$overflowTabs.prepend($lastMainTab);
+        // add the dropdown tab to the main tabs list
+        this.$mainTabs.append($overflowTabToMove);
+        // remove the extra click handler from the new overflow tab thats now on the main list
+        $overflowTabToMove.off('click', 'click', this.onMoreTabItemClickedHandler);
+        // add the new click handler to the main tab moved to overflow tabs
+        $lastMainTab.on('click', this.onMoreTabItemClickedHandler);
+
+        // make sure moreTabs is the last item in the list
+        this.$mainTabs.append(this.$moreTabs);
+        // update the moved tab index to this.maxTabs
+        $overflowTabToMove.attr('data-tab-index', this.maxTabs);
+        // update the overflow tabs tab-index values
+        var $navItems = this.$overflowTabs.find('.nav-item');
+        _.each($navItems, function(navItem, index) {
+            $(navItem).attr('data-tab-index', this.maxTabs + 1 + index);
+        }, this);
+
     },
 
     /**

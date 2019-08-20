@@ -3186,6 +3186,7 @@ $app_strings = array (
     'LBL_MODIFIED_ID'=>'Modified By Id',
     'LBL_MORE' => 'More',
     'LBL_MORE_MODULES' => 'More Modules',
+    'LBL_MORE_TABS' => 'More Tabs',
     'LBL_MULTIPLE_MODULES' => 'Multiple Modules',
     'LBL_MY_ACCOUNT' => 'My Settings',
     'LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION' => 'system default',

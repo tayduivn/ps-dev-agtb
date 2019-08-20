@@ -494,11 +494,15 @@
         }
       }
 
+      &.related-tabs {
+        height: 48px;
+      }
+
       .nav-item:first-child {
         margin-left: 10px;
       }
 
-      .nav-item:last-child {
+      .nav-item.border-right {
         border-right: 1px solid @tableBorderColor;
       }
 
@@ -510,6 +514,48 @@
         border-right: none;
         border-left: 1px solid @tableBorderColor;
         margin-right: 10px;
+      }
+
+      .more-tabs {
+        flex-basis: 8%;
+        text-align: center;
+        border-top: 1px solid @tableBorderColor;
+        border-left: 1px solid @tableBorderColor;
+        border-right: 1px solid @tableBorderColor;
+
+        .nav-item:first-child {
+          margin-left: 0;
+        }
+
+        .nav-item {
+          border-left: none;
+          margin-top: 0;
+        }
+
+        > a {
+          padding: 10px;
+        }
+
+        button {
+          padding: 8px;
+        }
+
+        .btn-group.open {
+          .dropdown-menu {
+            margin-top: 3px;
+          }
+        }
+
+        .dropdown-menu {
+          top: 46px;
+          right: 10px;
+          left: initial;
+          z-index: 1500;
+        }
+
+        .nav-tabs li {
+          margin-top: 0;
+        }
       }
     }
 
