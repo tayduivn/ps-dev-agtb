@@ -639,4 +639,6 @@ $mod_strings = array (
         'Please access <a href="%s" target="_blank">Cloud Settings</a> to make changes to read-only fields.',
     'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_REGULAR_USER' =>
         'Please contact your Sugar administrator if you would like to make changes to read-only fields.',
+    'LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_EMPLOYEE_ONLY' =>
+        'This user created as an employee. Please go to the Employee module to make changes.',
 ); // END STRINGS DEFS

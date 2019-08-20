@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,10 +10,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
+class EmployeesEditView extends EditView
+{
+    protected function disableIDMModeFields()
+    {
+        if ($this->isEmployeeEditable()) {
+            return;
+        }
 
-$idpConfig = new Authentication\Config(\SugarConfig::getInstance());
+        return parent::disableIDMModeFields();
+    }
 
-$viewdefs['Employees']['base']['view']['module-menu'] = array(
-    'cloudConsoleLink' => $idpConfig->isIDMModeEnabled() ? $idpConfig->buildCloudConsoleUrl('userCreate') : '',
-);
+    public function isEmployeeEditable(): bool
+    {
+        return $this->focus->module_name === 'Employees' &&
+            (!$this->focus->isUpdate() || empty($this->focus->user_name));
+    }
+}
