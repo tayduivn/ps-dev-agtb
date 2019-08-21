@@ -378,6 +378,15 @@ $dictionary['Account'] = array(
         array('name' => 'idx_accnt_parent_id', 'type' => 'index', 'fields' => array('parent_id')),
         array('name' => 'idx_account_billing_address_city', 'type' => 'index', 'fields' => array('billing_address_city')),
         array('name' => 'idx_account_billing_address_country', 'type' => 'index', 'fields' => array('billing_address_country')),
+        array(
+            'name' => 'idx_acc_del_l_name_dm',
+            'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'name',
+                'date_modified',
+            ),
+        ),
     ),
     'relationships' => array(
         'member_accounts' => array(

@@ -668,17 +668,55 @@ $dictionary['Lead'] = array(
         ),
     ),
     'indices' => array(
-        array('name' => 'idx_lead_acct_name_first', 'type' => 'index', 'fields' => array('account_name', 'deleted')),
+        array(
+            'name' => 'idx_lead_acct_name_first',
+            'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'account_name',
+                'date_modified',
+                'id',
+                'team_set_id',
+                ),
+        ),
+        array(
+            'name' => 'idx_lead_idx_del_last_name',
+            'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'last_name',
+                ),
+        ),
+        array(
+            'name' => 'idx_leads_status',
+            'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'status',
+                ),
+        ),
         array(
             'name' => 'idx_lead_del_stat',
             'type' => 'index',
             'fields' => array('last_name', 'status', 'deleted', 'first_name')
         ),
-        array('name' => 'idx_lead_opp_del', 'type' => 'index', 'fields' => array('opportunity_id', 'deleted',)),
+        array('name' => 'idx_lead_opp_del', 'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'opportunity_id',
+                'id',
+                ),
+        ),
         array('name' => 'idx_leads_acct_del', 'type' => 'index', 'fields' => array('account_id', 'deleted',)),
         array('name' => 'idx_lead_assigned', 'type' => 'index', 'fields' => array('assigned_user_id')),
         array('name' => 'idx_lead_contact', 'type' => 'index', 'fields' => array('contact_id')),
-        array('name' => 'idx_reports_to', 'type' => 'index', 'fields' => array('reports_to_id')),
+        array('name' => 'idx_reports_to', 'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'reports_to_id',
+                'id',
+                ),
+        ),
         array('name' => 'idx_lead_phone_work', 'type' => 'index', 'fields' => array('phone_work')),
         array('name' => 'idx_lead_mkto_id', 'type' => 'index', 'fields' => array('mkto_id')),
     ),

@@ -1024,16 +1024,27 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'idx_rli_account_id_del',
             'type' => 'index',
             'fields' => array(
-                'account_id',
                 'deleted',
+                'account_id',
+                'id',
             ),
         ),
         array(
             'name' => 'idx_rli_quote_id_del',
             'type' => 'index',
             'fields' => array(
-                'quote_id',
                 'deleted',
+                'quote_id',
+                'id',
+            ),
+        ),
+        array(
+            'name' => 'idx_rli_name_dm',
+            'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'name',
+                'date_modified',
             ),
         ),
     ),

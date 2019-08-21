@@ -444,7 +444,9 @@ $dictionary['Note'] = [
             'name' => 'idx_note_name',
             'type' => 'index',
             'fields' => [
+                'deleted',
                 'name',
+                'date_modified',
             ],
         ],
         [

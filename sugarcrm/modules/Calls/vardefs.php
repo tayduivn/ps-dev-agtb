@@ -658,7 +658,11 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 	array(
 		'name' => 'idx_call_name',
 		'type' => 'index',
-		'fields'=> array('name'),
+        'fields'=> array(
+            'deleted',
+            'name',
+            'date_modified',
+        ),
 	),
 	array(
 		'name' => 'idx_status',

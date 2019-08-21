@@ -821,6 +821,11 @@ $dictionary['Contact'] = array(
             'fields' => array('deleted', 'last_name'),
         ),
         array(
+            'name' => 'idx_cont_del_last_dm',
+            'type' => 'index',
+            'fields' => array('deleted', 'last_name', 'date_modified'),
+        ),
+        array(
             'name' => 'idx_cont_del_reports',
             'type' => 'index',
             'fields' => array('deleted', 'reports_to_id', 'last_name'),
@@ -828,7 +833,11 @@ $dictionary['Contact'] = array(
         array(
             'name' => 'idx_reports_to_id',
             'type' => 'index',
-            'fields' => array('reports_to_id'),
+            'fields' => array(
+                'deleted',
+                'reports_to_id',
+                'id',
+            ),
         ),
         array(
             'name' => 'idx_del_id_user',

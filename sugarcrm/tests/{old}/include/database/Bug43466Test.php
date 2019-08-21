@@ -45,7 +45,11 @@ class Bug43466 extends TestCase
                     array(
                         'name' => 'idx_call_name',
                         'type' => 'index',
-                        'fields'=> array('name'),
+                        'fields'=> array(
+                            'deleted',
+                            'name',
+                            'date_modified',
+                        ),
                     ),
                     array(
                         'name' => 'idx_status',
@@ -64,7 +68,11 @@ class Bug43466 extends TestCase
                     array(
                         'name' => 'idx_call_name2',
                         'type' => 'index',
-                        'fields' => array('name'),
+                        'fields'=> array(
+                            'deleted',
+                            'name',
+                            'date_modified',
+                        ),
                     ),
                     array(
                         'name' => 'idx_status',
@@ -83,7 +91,11 @@ class Bug43466 extends TestCase
                     array(
                         'name' => 'iDX_cAll_NAMe',
                         'type' => 'index',
-                        'fields' => array('name'),
+                        'fields'=> array(
+                            'deleted',
+                            'name',
+                            'date_modified',
+                        ),
                     ),
                     array(
                         'name' => 'idx_STAtus',
@@ -102,7 +114,11 @@ class Bug43466 extends TestCase
                     array(
                         'name' => 'idx_call_name',
                         'type' => 'index',
-                        'fields' => array('name'),
+                        'fields'=> array(
+                            'deleted',
+                            'name',
+                            'date_modified',
+                        ),
                     ),
                     array(
                         'name' => 'idx_status',

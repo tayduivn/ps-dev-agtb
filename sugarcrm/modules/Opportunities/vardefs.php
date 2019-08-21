@@ -541,7 +541,11 @@ $dictionary['Opportunity'] = array(
         array(
             'name' => 'idx_opp_name',
             'type' => 'index',
-            'fields' => array('name'),
+            'fields' => array(
+                'deleted',
+                'name',
+                'date_modified',
+            ),
         ),
         array(
             'name' => 'idx_opp_assigned_timestamp',
@@ -551,7 +555,15 @@ $dictionary['Opportunity'] = array(
         array('name' => 'idx_opportunity_sales_status', 'type' => 'index', 'fields' => array('sales_status')),
         array('name' => 'idx_opportunity_opportunity_type', 'type' => 'index', 'fields' => array('opportunity_type')),
         array('name' => 'idx_opportunity_lead_source', 'type' => 'index', 'fields' => array('lead_source')),
-        array('name' => 'idx_opportunity_next_step', 'type' => 'index', 'fields' => array('next_step')),
+        array(
+            'name' => 'idx_opportunity_next_step',
+            'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'next_step',
+                'date_modified',
+            ),
+        ),
         array(
             'name' => 'idx_opportunity_mkto_id',
             'type' => 'index',

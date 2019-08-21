@@ -391,7 +391,11 @@ $dictionary['Task'] = array(
         array(
             'name' => 'idx_tsk_name',
             'type' => 'index',
-            'fields' => array('name')
+            'fields' => array(
+                'deleted',
+                'name',
+                'date_modified',
+            ),
         ),
         array(
             'name' => 'idx_task_con_del',

@@ -268,16 +268,21 @@ $dictionary['Case'] = array(
     ),
     'indices' => array(
         array(
-            'name' => 'idx_case_name',
+            'name' => 'idx_case_del_nam_dm',
             'type' => 'index',
             'fields' => array(
+                'deleted',
                 'name',
+                'date_modified',
+                'id',
+                'team_set_id',
             ),
         ),
         array(
             'name' => 'idx_account_id',
             'type' => 'index',
             'fields' => array(
+                'deleted',
                 'account_id',
             ),
         ),
