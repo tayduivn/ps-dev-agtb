@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0d26af93d5c6a31ef8c10c2ec6e2b38e",
+    "content-hash": "2f59212066b5dac3c504dcf74c1bcbd9",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2724,11 +2724,11 @@
         },
         {
             "name": "sugarcrm/identity-provider",
-            "version": "1.7.0-beta1",
+            "version": "1.7.0",
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "6777855010dfa1d7e224f2b8a083f96dee154223"
+                "reference": "28970526254e602f412ad6f3e556dab4b9e51a4b"
             },
             "require": {
                 "doctrine/dbal": "~2.2",
@@ -6613,9 +6613,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "sugarcrm/identity-provider": 10
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
