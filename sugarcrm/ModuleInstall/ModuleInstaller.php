@@ -3045,6 +3045,7 @@ class ModuleInstaller{
                 'externalAuthError',
                 'stsAuthError',
                 'maintenance',
+                'licenseSeats',
             ),
             'loadCss' => false,
             'themeName' => 'default',

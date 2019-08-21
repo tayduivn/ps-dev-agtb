@@ -107,6 +107,22 @@
                 }
             },
             {
+                name: 'licenseSeats',
+                route: 'licenseSeats',
+                callback: function() {
+                    app.controller.loadView({
+                        module: 'Logout',
+                        layout: 'logout',
+                        create: true
+                    });
+                    app.alert.show('needs_login_error', {
+                        level: 'error',
+                        messages: app.lang.getAppString('ERROR_LICENSE_SEATS_MAXED'),
+                        title: app.lang.get('LBL_ERROR')
+                    });
+                }
+            },
+            {
                 name: 'about',
                 route: 'about',
                 callback: function() {
