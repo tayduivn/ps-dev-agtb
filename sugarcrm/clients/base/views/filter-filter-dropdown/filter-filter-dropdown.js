@@ -94,7 +94,7 @@
      * When the filters collection not contains the model filter, fetch and add it to the collection
      */
     getModelFilter: function() {
-        var modelFilterId = this.model.get('filter_id');
+        var modelFilterId = this.model && this.model.get('filter_id');
 
         if (modelFilterId) {
             var modelFilter = this.layout.filters.collection.findWhere({id: modelFilterId});
