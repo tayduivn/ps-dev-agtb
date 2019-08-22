@@ -129,14 +129,14 @@ describe('Portal.Cases.Views.ContentsearchDashlet', function() {
                 next_offset: 2,
                 records: [
                     {
-                        __name: 'name1',
-                        __description: 'desc1',
-                        __url: 'url1'
+                        name: 'name1',
+                        description: 'desc1',
+                        url: 'url1'
                     },
                     {
-                        __name: 'name2',
-                        __description: 'desc2',
-                        __url: 'url2'
+                        name: 'name2',
+                        description: 'desc2',
+                        url: 'url2'
                     }
                 ],
                 total: 5
@@ -166,9 +166,9 @@ describe('Portal.Cases.Views.ContentsearchDashlet', function() {
                 next_offset: -1,
                 records: [
                     {
-                        __name: 'name1',
-                        __description: 'desc1',
-                        __url: 'url1'
+                        name: 'name1',
+                        description: 'desc1',
+                        url: 'url1'
                     }
                 ],
                 total: 5

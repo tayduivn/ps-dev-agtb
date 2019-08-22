@@ -160,9 +160,9 @@
             result.next_offset / this.searchOptions.max_num : totalPages;
         var records = _.map(result.records, function(record) {
             return {
-                name: self._escape(record.__name),
-                description: self._escape(self._truncate(record.__description)),
-                url: app.utils.buildUrl(record.__url.replace(/^\/+/g, ''))
+                name: self._escape(record.name),
+                description: self._escape(self._truncate(record.description)),
+                url: app.utils.buildUrl(record.url.replace(/^\/+/g, ''))
             };
         });
         return {
