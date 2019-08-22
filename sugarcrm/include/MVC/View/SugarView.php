@@ -14,6 +14,7 @@ use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Entitlements\Subscription;
 
 /**
  * Base Sugar view
@@ -81,7 +82,7 @@ class SugarView
     protected $browserTitle;
 
     /**
-     * @var Request 
+     * @var Request
      */
     protected $request;
 
@@ -193,15 +194,33 @@ class SugarView
             !empty($config['connector']) && $config['connector'] === 'Pendo' && !empty($config['id'])) {
             $apiKey = $config['id'];
 
-            // user data
+            // User data
             $visitorId = $current_user->site_user_id ?? 'unknown_user';
+
             $userType = $current_user->isAdmin() ? CurrentUserApi::TYPE_ADMIN : CurrentUserApi::TYPE_USER;
+
             $locale = Container::getInstance()->get(Localization::class);
             $language = $locale->getAuthenticatedUserLanguage();
             $language = htmlspecialchars($language, ENT_QUOTES, 'UTF-8');
+
             $roles = ACLRole::getUserRoles($current_user->id);
             $roles = count($roles) >= 1 ? implode(',', $roles) : 'no_roles';
             $roles = htmlspecialchars($roles, ENT_QUOTES, 'UTF-8');
+
+            $licenses = Subscription::SUGAR_BASIC_KEY;
+            try {
+                $lt = $current_user->getLicenseTypes();
+                if (is_array($lt) && !empty($lt)) {
+                    $licenses = implode(',', $lt);
+                }
+            } catch (SugarApiException $e) {
+                LoggerManager::getLogger()->fatal(
+                    sprintf(
+                        'Could not get user license types: %s',
+                        $e->getMessage()
+                    )
+                );
+            }
 
             // account data
             $manager = new MetaDataManager();
@@ -210,6 +229,10 @@ class SugarView
             $siteUrl = Container::getInstance()->get(SugarConfig::class)->get('site_url');
             $version = $serverInfo['version'] ?? 'unknown_version';
             $flavor = $serverInfo['flavor'] ?? 'unknown_edition';
+            $siId = $serverInfo['si_id'] ?? 'unknown_si_id';
+            // Escaping with json_encode will also add quotes around the string
+            $siName = json_encode($serverInfo['si_name']) ?? '"unknown_si_name"';
+            $siType = json_encode($serverInfo['si_type']) ?? '"unknown_si_type"';
 
             echo "<script>
                 (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=[];
@@ -223,13 +246,17 @@ class SugarView
                         id: '$visitorId',
                         user_type: '$userType',
                         language: '$language',
-                        roles: '$roles'
+                        roles: '$roles',
+                        licenses: '$licenses'
                     },
                     account: {
                         id: '$accountId',
                         domain: '$siteUrl',
                         edition: '$flavor',
-                        version: '$version'
+                        version: '$version',
+                        si_id: '$siId',
+                        si_name: $siName,
+                        si_type: $siType
                     }
                 });
             </script>";

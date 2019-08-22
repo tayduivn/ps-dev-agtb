@@ -11,17 +11,18 @@
  */
 
 require_once('modules/Users/password_utils.php');
+use Sugarcrm\Sugarcrm\Entitlements\Subscription;
 
 class CurrentUserApi extends SugarApi
 {
     /**
-     * Hash of user preference indexes and their corresponding metadata index 
-     * name. This is used in both the user pref setting in this class and in 
+     * Hash of user preference indexes and their corresponding metadata index
+     * name. This is used in both the user pref setting in this class and in
      * user preference setting in BWC mode. The list of preference indexes will
-     * be used by the BWC implementation to determine whether the state of the 
+     * be used by the BWC implementation to determine whether the state of the
      * user has changed so as to notify clients that they need to rerequest user
      * data.
-     * 
+     *
      * @var array
      */
     protected $userPrefMeta = array(
@@ -394,7 +395,7 @@ class CurrentUserApi extends SugarApi
 
         return null;
     }
-    
+
     /**
      * Gets the list of fields that should trigger a user metadata change reauth
      *
@@ -407,12 +408,12 @@ class CurrentUserApi extends SugarApi
 
     /**
      * Gets a single preference for a user by name
-     * 
+     *
      * @param User $user Current User object
      * @param string $pref The name of the pref to get
      * @param string $metaName The metadata property name, usually the same as $pref
      * @param string $category The category for the preference
-     * @return array 
+     * @return array
      */
     protected function getUserPref(User $user, $pref, $metaName, $category = 'global')
     {
@@ -448,7 +449,7 @@ class CurrentUserApi extends SugarApi
 
     /**
      * Gets the user's timezone setting
-     * 
+     *
      * @param User $user The current user
      * @return string
      */
@@ -476,11 +477,11 @@ class CurrentUserApi extends SugarApi
 
         return array('timezone' => $val, 'tz_offset' => $offset, 'tz_offset_sec' => $offsetSec);
     }
-    
+
     protected function getUserPrefCurrency(User $user, $category = 'global')
     {
         global $locale;
-        
+
         $currency = BeanFactory::newBean('Currencies');
         $currency_id = $user->getPreference('currency', $category);
         $currency->retrieve($currency_id);
@@ -498,13 +499,13 @@ class CurrentUserApi extends SugarApi
         $return['decimal_precision'] = $locale->getPrecision();
         $return['decimal_separator'] = $locale->getDecimalSeparator();
         $return['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
-        
+
         return $return;
     }
-    
+
     /**
      * Helper function that gets a default signature user pref
-     * 
+     *
      * @param User $user Current User
      * @return array
      */
@@ -541,7 +542,7 @@ class CurrentUserApi extends SugarApi
 
     /**
      * Utility function to get the users preferred language
-     * 
+     *
      * @param User $user Current User object
      * @return array
      */
@@ -557,7 +558,7 @@ class CurrentUserApi extends SugarApi
             // if nothing exists, get the sugar_config default language
             $language = $GLOBALS['sugar_config']['default_language'];
         }
-        
+
         return array('language' => $language);
     }
 
@@ -604,6 +605,24 @@ class CurrentUserApi extends SugarApi
             $user_data['is_top_level_manager'] = User::isTopLevelManager($current_user->id);
         }
         $user_data['site_user_id'] = $current_user->site_user_id;
+
+        // Start with the default license case
+        $licenses = [Subscription::SUGAR_BASIC_KEY];
+        try {
+            $lt = $current_user->getLicenseTypes();
+            if (is_array($lt) && !empty($lt)) {
+                $licenses = $lt;
+            }
+        } catch (SugarApiException $e) {
+            LoggerManager::getLogger()->fatal(
+                sprintf(
+                    'Could not get license types for user ID %s: %s',
+                    $current_user->id,
+                    $e->getMessage()
+                )
+            );
+        }
+        $user_data['licenses'] = $licenses;
 
         // Email addresses
         $fieldDef = $current_user->getFieldDefinition('email');
@@ -665,23 +684,23 @@ class CurrentUserApi extends SugarApi
     protected function getBasicUserInfo($platform, $category = 'global')
     {
         global $current_user;
-        
+
         $this->forceUserPreferenceReload($current_user);
-        
+
         $user_data['preferences'] = array();
         foreach ($this->userPrefMeta as $pref => $metaName) {
             // Twitterate this, since long lines are the devil
             $val = $this->getUserPref($current_user, $pref, $metaName, $category);
             $user_data['preferences'] = array_merge($user_data['preferences'], $val);
         }
-        
+
         // Handle language on its own for now
         $lang = $this->getUserPrefLanguage($current_user);
         $user_data['preferences'] = array_merge($user_data['preferences'], $lang);
-        
+
         // Set the user module list
         $user_data['module_list'] = $this->getModuleList($platform);
-        
+
         return $user_data;
     }
 
@@ -760,21 +779,21 @@ class CurrentUserApi extends SugarApi
         $prefs = (isset($current_user->user_preferences[$category])) ?
                         $current_user->user_preferences[$category] :
                         array();
-        
+
         // Handle filtration of requested preferences
         $data = $this->filterResults($prefs, $pref_filter);
         $this->htmlDecodeReturn($data);
         return $data;
     }
-    
+
     /**
      * Filters results from a preferences request against a list of prefs
-     * 
+     *
      * @param array $prefs Preferences collection for a user
      * @param array $prefFilter Filter definition to filter against
      * @return array
      */
-    protected function filterResults($prefs, $prefFilter) 
+    protected function filterResults($prefs, $prefFilter)
     {
         if (empty($prefFilter) || !is_array($prefFilter)) {
             return $prefs;
@@ -843,7 +862,7 @@ class CurrentUserApi extends SugarApi
         $data = $this->getUserPref($current_user, $alias, $pref, $category);
 
         // If the value of the user pref is not an array, or is an array but does
-        // not contain an index with the same name as our pref, send the response 
+        // not contain an index with the same name as our pref, send the response
         // back an array keyed on the pref. This turns prefs like "m/d/Y" or ""
         // into {"datef": "m/d/Y"} on the client.
         if (!is_array($data) || !isset($data[$pref])) {
@@ -905,7 +924,7 @@ class CurrentUserApi extends SugarApi
 
     /**
      * Gets the module list for the current user and platform
-     * 
+     *
      * @param string $platform The platform for this request
      * @return array
      */
@@ -913,16 +932,16 @@ class CurrentUserApi extends SugarApi
     {
         return $this->getMetaDataManager($platform)->getUserModuleList();
     }
-    
+
     /**
      * Forces a fresh fetching of user preferences.
-     * 
+     *
      * User preferences are written to the users session, so when an admin changes
      * a preference for a user, that user won't get the change until they logout.
      * This forces a fresh fetching of a users preferences from the DB when called.
      * This shouldn't be too expensive of a hit since user preferences need only
      * be fetched once and can be stored on the client.
-     * 
+     *
      * @param User $current_user A User bean
      */
     public function forceUserPreferenceReload($current_user)

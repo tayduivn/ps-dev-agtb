@@ -2159,6 +2159,34 @@ class MetaDataManager implements LoggerAwareInterface
         if (!empty($system_config->settings['site_id'])) {
             $data['site_id'] = $system_config->settings['site_id'];
         }
+
+        if (!empty($system_config->settings['license_subscription']['subscription'])) {
+            $s = $system_config->settings['license_subscription']['subscription'];
+            $logger = LoggerManager::getLogger();
+
+            // Handle necessary account settings from license server
+            if (empty($s['account_id'])) {
+                $logger->error('Unable to get Account ID from license server.');
+                $data['si_id'] = 'unknown_si_id';
+            } else {
+                $data['si_id'] = $s['account_id'];
+            }
+
+            if (empty($s['account_name'])) {
+                $logger->error('Unable to get Account Name from license server.');
+                $data['si_name'] = 'unknown_si_name';
+            } else {
+                $data['si_name'] = $s['account_name'];
+            }
+
+            if (empty($s['account_type'])) {
+                $logger->error('Unable to get Account Type from license server.');
+                $data['si_type'] = 'unknown_si_type';
+            } else {
+                $data['si_type'] = $s['account_type'];
+            }
+        }
+
         return $data;
     }
 
