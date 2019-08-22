@@ -36,11 +36,12 @@ class Subscription
     const UNKNOWN_TYPE = 'UNKNOWN';
 
     /**
-     * mapping well-known subscription_ids to keys
+     * current supported keys
      */
-    const SUBSCRIPTION_ID_MAPPING = [
-        '181aee1c-7b3e-11e9-b962-02c10f456dba' => self::SUGAR_SELL_KEY,
-        'aa8834fa-6ac0-11e9-b588-02c10f456dba' => self::SUGAR_SERVE_KEY,
+    const SUPPORTED_KEYS = [
+        self::SUGAR_BASIC_KEY,
+        self::SUGAR_SELL_KEY,
+        self::SUGAR_SERVE_KEY,
     ];
 
     /**
@@ -146,53 +147,43 @@ class Subscription
             $GLOBALS['log']->fatal("there is an error in license server response: " . $this->error);
             return [];
         }
-        // get top level
-        $prodtemplateId = $this->producttemplate_id_c;
-        $quantity = (int)$this->quantity_c;
-        $expirationDate = $this->expiration_date;
-        if (!empty($prodtemplateId) && isset($quantity) && $quantity > 0 && $expirationDate - time() > 0) {
-            if (isset(self::SUBSCRIPTION_ID_MAPPING[$prodtemplateId])) {
-                // don't need to go any further
-                $subscriptions[self::SUBSCRIPTION_ID_MAPPING[$prodtemplateId]] = [
-                    'quantity' => $quantity,
-                    'expiration_date' => $expirationDate,
-                ];
-            } else {
-                // assume it is one of ENT, PRO, ULT, etc
-                // get current product
-                $subscriptions[self::SUGAR_BASIC_KEY] = [
-                    'quantity' => $quantity,
-                    'expiration_date' => $expirationDate,
-                ];
-            }
+
+        // will skip top level of the subscription
+        // initiate quantity count
+        foreach (self::SUPPORTED_KEYS as $type) {
+            $subscriptions[$type]['quantity'] = 0;
         }
 
-        // check addons, only interested in 'SELL', 'SERVE' and Legacy product codes such as 'ENT', 'PRO', etc.
+        // check addons, only interested in 'SELL', 'SERVE' and Legacy product codes such as 'ENT', 'PRO' and 'ULT'.
         // ignore any other addons for now
         foreach ($this->addons as $addonId => $addon) {
             $quantity = (int)$addon->quantity;
             $expirationDate = $addon->expiration_date;
             if (isset($quantity) && $quantity > 0 && isset($expirationDate) && $expirationDate - time() > 0) {
-                if (isset(self::SUBSCRIPTION_ID_MAPPING[$addonId])) {
-                    // using predefined subscription Ids to find out subscription types
-                    $subscriptions[self::SUBSCRIPTION_ID_MAPPING[$addonId]] = [
-                        'quantity' => $quantity,
+                // using product code to find out subscription types
+                $productCode = $addon->product_code_c;
+                if (!empty($productCode) && !empty(self::PRODUCT_CODE_MAPPING[strtoupper($productCode)])) {
+                    $key = self::PRODUCT_CODE_MAPPING[strtoupper($productCode)];
+                    // calculate the expiration date, using the min date as expiration date
+                    if (!empty($subscriptions[$key]['expiration_date'])
+                        && $expirationDate > $subscriptions[$key]['expiration_date']
+                    ) {
+                        $expirationDate = $subscriptions[$key]['expiration_date'];
+                    }
+                    $subscriptions[$key] = [
+                        'quantity' => $subscriptions[$key]['quantity'] + $quantity,
                         'expiration_date' => $expirationDate,
                     ];
-                } else {
-                    // using product code to find out subscription types
-                    $productCode = $addon->product_code_c;
-                    if (!empty($productCode) && !empty(self::PRODUCT_CODE_MAPPING[strtoupper($productCode)])) {
-                        $key = self::PRODUCT_CODE_MAPPING[strtoupper($productCode)];
-                        $subscriptions[$key] = [
-                            'quantity' => $quantity,
-                            'expiration_date' => $expirationDate,
-                        ];
-                    }
                 }
             }
         }
 
+        // remove 0 quantity keys
+        foreach ($subscriptions as $key => $value) {
+            if ($subscriptions[$key]['quantity'] === 0) {
+                unset($subscriptions[$key]);
+            }
+        }
         $this->subscriptions = $subscriptions;
 
         return $subscriptions;
