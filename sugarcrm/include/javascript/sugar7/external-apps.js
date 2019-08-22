@@ -213,7 +213,9 @@
                             // After the iframe event callback, we need to load the catalog again
                             // but this time expect to get data.
                             getCatalog(handleCatalog, onError, function(url) {
-                                error('Unable to authenticate with catalog service: Second Login URL:' + url);
+                                var err = 'Unable to authenticate with catalog service: Second Login URL:' + url;
+                                app.logger.error(err);
+                                res();
                             });
                         }
                     };
