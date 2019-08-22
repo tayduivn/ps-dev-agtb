@@ -402,6 +402,14 @@ class IdmProvider extends BasicGenericProvider
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
+        if (!is_array($data)) {
+            throw new IdentityProviderException(
+                'Invalid STS response ' . var_export($data, true),
+                $response->getStatusCode(),
+                $data
+            );
+        }
+
         if (!empty($data[$this->responseError]) && is_array($data[$this->responseError])) {
             $error = $data[$this->responseError];
             $message = !empty($error[$this->responseErrorMessage]) ? $error[$this->responseErrorMessage] : '';

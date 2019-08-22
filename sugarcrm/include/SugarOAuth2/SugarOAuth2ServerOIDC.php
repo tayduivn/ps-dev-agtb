@@ -147,6 +147,7 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
                 'refresh_expires_in' => time() + $this->getVariable(self::CONFIG_REFRESH_LIFETIME),
             ];
         } catch (AuthenticationException $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
             throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_REQUEST, $e->getMessage());
         }
     }

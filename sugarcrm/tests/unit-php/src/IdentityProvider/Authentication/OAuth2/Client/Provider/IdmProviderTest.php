@@ -14,12 +14,14 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\OAuth2\Clie
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use League\OAuth2\Client\Grant\AuthorizationCode;
 use League\OAuth2\Client\Grant\ClientCredentials;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\RequestFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
 
@@ -262,6 +264,43 @@ class IdmProviderTest extends TestCase
         $provider->expects($this->once())->method('createAccessToken');
 
         $provider->getAccessToken('client_credentials');
+    }
+
+    /**
+     * @covers ::checkResponse
+     * @expectedException \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     */
+    public function testInvalidResponse()
+    {
+        $authUrl = 'http://testUrlAuth';
+        $grant = $this->getMockBuilder(AuthorizationCode::class)
+            ->setMethods(['prepareRequestParameters'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $grant->method('prepareRequestParameters')->willReturn(['client_id' => 'srn:test']);
+
+        $request = $this->createMock(RequestInterface::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getBody')->willReturn(json_encode('invalid response'));
+
+        $provider = $this->getMockBuilder(IdmProvider::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([$this->idmModeConfig])
+            ->setMethods([
+                'verifyGrant',
+                'getAccessTokenUrl',
+                'getRequest',
+                'getResponse',
+                'createAccessToken',
+            ])
+            ->getMock();
+
+        $provider->method('verifyGrant')->willReturn($grant);
+        $provider->method('getAccessTokenUrl')->willReturn($authUrl);
+        $provider->method('getRequest')->willReturn($request);
+        $provider->method('getResponse')->willReturn($response);
+
+        $provider->getAccessToken('authorization_code');
     }
 
     /**
