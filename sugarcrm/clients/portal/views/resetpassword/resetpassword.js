@@ -104,17 +104,35 @@
         var validateMatchingPasswords = function(fields, errors, callback) {
             var password1 = this.get('password1');
             var password2 = this.get('password2');
-            if (password1 && password2 && password1 !== password2) {
-                app.alert.show('password_mismatch', {
-                    level: 'error',
-                    title: app.lang.get('LBL_PORTAL_PASSWORD_MISMATCH'),
-                    autoClose: false
-                });
+            if (password1 && password2) {
+                if (password1 !== password2) {
+                    app.alert.show('password_mismatch', {
+                        level: 'error',
+                        title: app.lang.get('LBL_PORTAL_PASSWORD_MISMATCH'),
+                        autoClose: false
+                    });
 
-                errors.password1 = errors.password1 || {};
-                errors.password2 = errors.password2 || {};
-                errors.password1.password_mismatch = true;
-                errors.password2.password_mismatch = true;
+                    errors.password1 = errors.password1 || {};
+                    errors.password2 = errors.password2 || {};
+                    errors.password1.password_mismatch = true;
+                    errors.password2.password_mismatch = true;
+                } else {
+                    var data = app.utils.validatePassword(password1);
+                    if (password1 && !data.isValid) {
+                        var errMsg = app.lang.get('LBL_PASSWORD_ENFORCE_TITLE');
+                        if (data.error) {
+                            errMsg +=  '<br><br>' + data.error;
+                        }
+                        app.alert.show('passwords_invalid', {
+                            level: 'error',
+                            messages: errMsg,
+                        });
+                        errors.password1 = errors.password1 || {};
+                        errors.password2 = errors.password2 || {};
+                        errors.password1.password_error = true;
+                        errors.password2.password_error = true;
+                    }
+                }
             }
             callback(null, fields, errors);
         };

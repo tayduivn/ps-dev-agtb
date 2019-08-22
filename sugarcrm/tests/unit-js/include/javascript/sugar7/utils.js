@@ -965,4 +965,39 @@ describe("Sugar7 utils", function() {
             ]);
         });
     });
+
+    describe('validating password', function() {
+        var oldPasswordSetting;
+
+        beforeEach(function() {
+            oldPasswordSetting = app.config.passwordsetting || {};
+            app.config.passwordsetting = {
+                'minpwdlength': 6,
+                'maxpwdlength': 0,
+                'oneupper': true,
+                'onelower': true,
+                'onenumber': true,
+                'onespecial': true,
+            };
+        });
+
+        afterEach(function() {
+            app.config.passwordsetting = oldPasswordSetting;
+        });
+
+        using('passwords',
+            [
+                ['asdf', false],
+                ['123456', false],
+                ['123Abc', false],
+                ['Mypass&123', true],
+                ['=-123abC', true]
+            ],
+            function(password, result) {
+                it('should be able to get validated', function() {
+                    var testResult = app.utils.validatePassword(password, result);
+                    expect(result).toEqual(testResult.isValid);
+                });
+            });
+    });
 });

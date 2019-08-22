@@ -69,6 +69,7 @@
         // FIXME: Enforce action `edit` on portal signup to avoid field render on
         // `bindDataChange`. This should be fixed when SC-3145.
         this.action = 'edit';
+        this.addPasswordValidation();
     },
 
     /**
@@ -137,7 +138,7 @@
     signup: function() {
         var self = this;
 
-        self.model.doValidate(null, function(isValid) {
+        self.model.doValidate(this.getFields(null, this.model), function(isValid) {
             if (isValid) {
                 app.$contentEl.hide();
                 app.alert.show('signup', {level: 'process', title: app.lang.get('LBL_PORTAL_SIGNUP_PROCESS'), autoClose: false});
@@ -169,7 +170,7 @@
                             } else if (err && err.status === 424) {
                                 app.alert.show('server-error', {
                                     level: 'error',
-                                    messages: 'LBL_PORTAL_SIGNUP_PASSWORD_ERROR',
+                                    messages: 'LBL_PASSWORD_ENFORCE_TITLE',
                                     title: app.lang.get('LBL_PORTAL_ERROR')
                                 });
                             } else {
@@ -188,4 +189,42 @@
             }
         }, self);
     },
+
+    /**
+     * Adds validation to check that the given password meets password rules
+     */
+    addPasswordValidation: function() {
+        app.error.errorName2Keys.password_error = 'LBL_PASSWORD_ENFORCE_TITLE';
+        var validatePasswordRules = function(fields, errors, callback) {
+            var password = this.get('password');
+            var data = app.utils.validatePassword(password);
+            if (password && !data.isValid) {
+                var errMsg = app.lang.get('LBL_PASSWORD_ENFORCE_TITLE');
+                if (data.error) {
+                    errMsg +=  '<br><br>' + data.error;
+                }
+                app.alert.show('passwords_invalid', {
+                    level: 'error',
+                    messages: errMsg,
+                });
+                errors.password = errors.password || {};
+                errors.password.password_error = true;
+                errors.password1 = errors.password1 || {};
+                errors.password1.password_error = true;
+            }
+            callback(null, fields, errors);
+        };
+        this.model.addValidationTask('password_rules_' + this.cid, _.bind(validatePasswordRules, this.model));
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Removes custom field validation created during initialization
+     */
+    _dispose: function() {
+        this.model.removeValidationTask('password_rules_' + this.cid);
+        this._super('_dispose');
+    }
+
 })

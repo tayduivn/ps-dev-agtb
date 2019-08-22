@@ -1183,6 +1183,94 @@
                 });
 
                 return stage;
+            },
+
+            /**
+             * Returns whether the password rule is set
+             *
+             * @param {Mixed} passwordRule The password rule to check
+             * @return {boolean}
+             */
+            isPasswordRuleSet: function(passwordRule) {
+                if (_.isString(passwordRule)) {
+                    return (!isNaN(passwordRule) && parseInt(passwordRule, 10) > 0) ? true : false;
+                }
+                return passwordRule;
+            },
+
+            /**
+             * Validate if the password meets the password rules configured in Password Management:
+             *
+             * e.g.
+             * 1. Must contain one upper case letter (A-Z)
+             * 2. Must contain one lower case letter (a-z)
+             * 3. Must contain one number (0-9)
+             * 4. Minimum Length = 6
+             *
+             * @param {string} password
+             * @return {Object}
+             */
+            validatePassword: function(password) {
+                var passwordSetting = app.config.passwordsetting || {};
+                var invalidPassword = {
+                    isValid: false,
+                    error: '',
+                };
+                // We only validate the password when non-empty password is provided.
+                // An empty password would skip this check and return true because
+                // it may come from Contacts recordview/preview on Base. In these cases,
+                // when no passwords are entered, we don't want to enforce any rules.
+                if (password && passwordSetting) {
+                    if (app.utils.isPasswordRuleSet(passwordSetting.maxpwdlength) &&
+                        password.length > passwordSetting.maxpwdlength) {
+                        invalidPassword.error += '<li>' + app.utils.formatString(
+                            app.lang.get('LBL_PASSWORD_MAX_LENGTH'),
+                            [passwordSetting.maxpwdlength]
+                        ) + '</li>';
+                    }
+
+                    if (app.utils.isPasswordRuleSet(passwordSetting.minpwdlength) &&
+                        password.length < passwordSetting.minpwdlength) {
+                        invalidPassword.error += '<li>' + app.utils.formatString(
+                            app.lang.get('LBL_PASSWORD_MIN_LENGTH'),
+                            [passwordSetting.minpwdlength]
+                        ) + '</li>';
+                    }
+
+                    if (app.utils.isPasswordRuleSet(passwordSetting.onenumber) && !(/\d+/).test(password)) {
+                        invalidPassword.error += '<li>' + app.lang.get('LBL_PASSWORD_ONE_NUMBER') + '</li>';
+                    }
+
+                    if (app.utils.isPasswordRuleSet(passwordSetting.onelower) && !(/[a-z]/).test(password)) {
+                        invalidPassword.error += '<li>' + app.lang.get('LBL_PASSWORD_ONE_LOWERCASE') + '</li>';
+                    }
+
+                    if (app.utils.isPasswordRuleSet(passwordSetting.oneupper) && !(/[A-Z]/).test(password)) {
+                        invalidPassword.error += '<li>' + app.lang.get('LBL_PASSWORD_ONE_UPPERCASE') + '</li>';
+                    }
+
+                    if (app.utils.isPasswordRuleSet(passwordSetting.onespecial) &&
+                        !(/[~!@#$%^&*()_+\-={}|]/).test(password)) {
+                        invalidPassword.error += '<li>' + app.lang.get('LBL_PASSWORD_ONE_SPECIAL_CHAR') + '</li>';
+                    }
+
+                    // We must NOT match the custom regex
+                    if (app.utils.isPasswordRuleSet(passwordSetting.customregex)) {
+                        var regex = new RegExp(passwordSetting.customregex);
+                        if (regex.test(password)) {
+                            invalidPassword.error += '<li>' + app.utils.formatString(
+                                app.lang.get('LBL_PASSWORD_REGEX_REQUIREMENT'),
+                                [passwordSetting.customregex]
+                            ) + '</li>';
+                        }
+                    }
+
+                    if (invalidPassword.error) {
+                        invalidPassword.error = '<ul>' + invalidPassword.error + '</ul>';
+                        return invalidPassword;
+                    }
+                }
+                return {isValid: true, error: ''};
             }
         });
     });

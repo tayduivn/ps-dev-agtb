@@ -2232,6 +2232,10 @@ class MetaDataManager implements LoggerAwareInterface
             $configs['analytics'] = array('enabled' => false);
         }
 
+        if (isset($sugarConfig['passwordsetting'])) {
+            $configs['passwordsetting'] = $sugarConfig['passwordsetting'];
+        }
+
         $caseBean = BeanFactory::newBean('Cases');
         if(!empty($caseBean)) {
             $configs['inboundEmailCaseSubjectMacro'] = $caseBean->getEmailSubjectMacro();

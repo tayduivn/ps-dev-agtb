@@ -75,9 +75,12 @@ class RegisterContactApi extends SugarApi
         }
 
         if (!empty($args['portal_password']) &&
-            !empty($args['portal_password1']) &&
-            $args['portal_password'] !== $args['portal_password1']) {
-            throw new SugarApiExceptionRequestMethodFailure(translate('LBL_PORTAL_SIGNUP_PASSWORD_ERROR'), $args);
+            !empty($args['portal_password1'])) {
+            if ($args['portal_password'] !== $args['portal_password1']) {
+                throw new SugarApiExceptionRequestMethodFailure(translate('LBL_PORTAL_SIGNUP_PASSWORD_ERROR'), $args);
+            } elseif (!BeanFactory::getBean('Users')->check_password_rules($args['portal_password'])) {
+                throw new SugarApiExceptionRequestMethodFailure(translate('LBL_PASSWORD_ENFORCE_TITLE'), $args);
+            }
         }
 
         if (!empty($args['email'][0]['email_address']) &&

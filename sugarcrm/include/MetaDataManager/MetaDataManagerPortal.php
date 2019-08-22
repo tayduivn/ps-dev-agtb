@@ -65,6 +65,8 @@ class MetaDataManagerPortal extends MetaDataManager
      * @return array
      */
     protected function getConfigs() {
+        global $sugar_config;
+
         $admin = new Administration();
         $configs = $admin->getConfigForModule('portal', 'support');
 
@@ -72,6 +74,7 @@ class MetaDataManagerPortal extends MetaDataManager
         if (!empty(BeanFactory::getBean('OutboundEmail')->getSystemMailerSettings()->mail_smtpserver)) {
             $configs['smtpServerSet'] = true;
         }
+        $configs['passwordsetting'] = $sugar_config['passwordsetting'];
 
         return $configs;
     }
