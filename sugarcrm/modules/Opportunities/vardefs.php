@@ -137,7 +137,6 @@ $dictionary['Opportunity'] = array(
             'options' => 'numeric_range_search_dom',
             'enable_range_search' => true,
             'audited' => true,
-            'validation' => array('type' => 'range', 'min' => 0),
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
@@ -271,7 +270,6 @@ $dictionary['Opportunity'] = array(
             'dbType' => 'currency',
             'type' => 'currency',
             'len' => '26,6',
-            'validation' => array('type' => 'range', 'min' => 0),
             'audited' => true,
             'related_fields' => array(
                 'currency_id',
@@ -286,7 +284,6 @@ $dictionary['Opportunity'] = array(
             'dbType' => 'currency',
             'type' => 'currency',
             'len' => '26,6',
-            'validation' => array('type' => 'range', 'min' => 0),
             'audited' => true,
             'related_fields' => array(
                 'currency_id',
