@@ -27,6 +27,36 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 class SupportPortalVisibility extends SugarVisibility implements StrategyInterface
 {
     /**
+     * Ignore visibilty query for the following beans
+     * @var array
+     */
+    protected $modulesToIgnore = [
+        'Teams',
+        'TeamSets',
+    ];
+
+    /**
+     * Mapping base to use in locating the proper visibility strategy classes
+     * @var array
+     */
+    protected $classMap = [
+        'path' => 'data/visibility/portal/%s.php',
+        'ns' => 'Sugarcrm\\Sugarcrm\\Visibility\\Portal\\%s',
+    ];
+
+    /**
+     * Ignore visibility query for specific beans
+     *
+     * @param \SugarBean $bean
+     *
+     * @return bool
+     */
+    protected function ignoreVisibilityQuery(\SugarBean $bean)
+    {
+        return (in_array($bean->getModuleName(), $this->modulesToIgnore)) ? true : false;
+    }
+
+    /**
      * Add Visibility to a SugarQuery Object
      *
      * @param SugarQuery $sugarQuery
@@ -40,10 +70,8 @@ class SupportPortalVisibility extends SugarVisibility implements StrategyInterfa
             $GLOBALS['log']->error('Not a portal user, but running through the portal visibility class.');
             return $sugarQuery;
         }
-        if ($this->bean->disable_row_level_security) {
-            $GLOBALS['log']->debug(
-                'No portal security applied to module (row-level security disabled): ' . $this->bean->module_dir
-            );
+
+        if ($this->ignoreVisibilityQuery($this->bean)) {
             return $sugarQuery;
         }
 
@@ -79,26 +107,22 @@ class SupportPortalVisibility extends SugarVisibility implements StrategyInterfa
      *
      * @param \SugarBean $bean Bean
      *
-     * @throws \Exception
      * @return string
      */
     protected function getVisibilityStrategyClass(\SugarBean $bean)
     {
-        if (isset($GLOBALS['dictionary'][$bean->getObjectName()]['portal_visibility']['class'])) {
-            $file = 'data/visibility/portal/' . $GLOBALS['dictionary'][$bean->getObjectName()]['portal_visibility']['class']
-                . '.php';
-            $class = 'Sugarcrm\\Sugarcrm\\Visibility\\Portal\\'
-                . $GLOBALS['dictionary'][$bean->getObjectName()]['portal_visibility']['class'];
-        } else {
-            $file = 'data/visibility/portal/Hidden.php';
-            $class = 'Sugarcrm\\Sugarcrm\\Visibility\\Portal\\Hidden';
+        $hiddenVisibility = 'Hidden';
+        $visibilityClass = $GLOBALS['dictionary'][$bean->getObjectName()]['portal_visibility']['class'] ?? $hiddenVisibility;
+
+        \SugarAutoLoader::requireWithCustom(sprintf($this->classMap['path'], $visibilityClass));
+        $returnClass = \SugarAutoLoader::customClass(sprintf($this->classMap['ns'], $visibilityClass));
+
+        if (empty($returnClass) || !class_exists($returnClass)) {
+            \SugarAutoLoader::requireWithCustom(sprintf($this->classMap['path'], $hiddenVisibility));
+            $returnClass = \SugarAutoLoader::customClass(sprintf($this->classMap['ns'], $hiddenVisibility));
         }
-        \SugarAutoLoader::requireWithCustom($file);
-        $class = \SugarAutoLoader::customClass($class);
-        if (!class_exists($class)) {
-            throw new \Exception('Portal visibility strategy ' . $class . ' not found');
-        }
-        return $class;
+
+        return $returnClass;
     }
 
     /**
