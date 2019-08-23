@@ -536,6 +536,15 @@ class Contact extends Person {
             $this->site_user_id = getSiteHash($this->id);
         }
 
+        // Update the datetime the consent was granted
+        if (!empty($this->cookie_consent) && empty($this->cookie_consent_received_on)) {
+            $this->cookie_consent_received_on = TimeDate::getInstance()->nowDb();
+        }
+        // Wipe the datetime if the consent was revoked
+        if (empty($this->cookie_consent) && !empty($this->cookie_consent_received_on)) {
+            $this->cookie_consent_received_on = null;
+        }
+
         //Set business_center_id to the same as related account when not provided
         if ($this->load_relationship('accounts')) {
             $accounts = $this->accounts->getBeans();

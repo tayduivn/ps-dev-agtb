@@ -4949,6 +4949,11 @@ Sincerely, SugarCRM',
     'LBL_PORTAL_SIGNUP_USER_NAME_ERROR' => 'Username is already registered in the system. Either request a forgotten password or select another username.',
     'LBL_PORTAL_SIGNUP_EMAIL_ERROR' => 'The email provided is invalid.',
     'LBL_PORTAL_SIGNUP_PASSWORD_ERROR' => 'The passwords do not match.',
+
+    // Cookie consent
+    'LBL_WIZ_USER_COOKIE_CONSENT' => 'This application uses cookies',
+    'LBL_USER_CLICK_FOR_COOKIE_CONSENT' => 'Check to accept (Required)',
+    'LBL_USER_COOKIE_CONSENT_TEXT' => 'This application uses cookies to provide you with a better experience and to help us improve the app and tailor it for optimal use. By continuing to use it, you consent to the use of cookies in accordance with our <a href="{{href}}">privacy policy</a>.',
     //end portal
 
     // Final name given by marketing is Service Console
