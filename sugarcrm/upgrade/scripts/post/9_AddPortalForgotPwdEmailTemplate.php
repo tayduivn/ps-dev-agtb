@@ -26,10 +26,14 @@ class SugarUpgradeAddPortalForgotPwdEmailTemplate extends UpgradeScript
             $teamId = $team->retrieve_team_id('Administrator');
 
             global $mod_strings;
-            $id = Utilities::addPortalPasswordSeedData($teamId, $mod_strings);
 
-            //upgrader will update the config
+            // Add the "Portal Forgot Password Email" template
+            $id = Utilities::addPortalPasswordSeedData($teamId, $mod_strings, 'lostpasswordtmpl');
             $this->upgrader->config['portalpasswordsetting']['lostpasswordtmpl'] = $id;
+
+            // Add the "Portal Password Reset Confirmation Email" template
+            $id = Utilities::addPortalPasswordSeedData($teamId, $mod_strings, 'resetpasswordtmpl');
+            $this->upgrader->config['portalpasswordsetting']['resetpasswordtmpl'] = $id;
         }
     }
 }

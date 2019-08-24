@@ -53,7 +53,7 @@ describe('PortalResetpasswordView', function() {
             view.model.set('password1', expectedPassword);
             view.model.set('password2', expectedPassword);
             view.resetPassword();
-            expect(app.api.call).toHaveBeenCalledWith('create', expectedURL, expectedParams, jasmine.any(Object));
+            expect(app.api.call).toHaveBeenCalledWith('update', expectedURL, expectedParams, jasmine.any(Object));
         });
 
         it('should not call any API if the password fields are invalid', function() {

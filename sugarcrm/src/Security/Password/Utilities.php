@@ -14,6 +14,29 @@ namespace Sugarcrm\Sugarcrm\Security\Password;
 
 class Utilities
 {
+    protected static $validTemplateTypes = [
+        'lostpasswordtmpl',
+        'resetpasswordtmpl',
+    ];
+
+    protected static $templateData = [
+        'props' => [
+            'name' => 'name',
+            'description' => 'description',
+            'subject' => 'subject',
+            'body' => 'txt_body',
+            'body_html' => 'body',
+        ],
+        'lostpasswordtmpl' => [
+            'key' => 'portal_forgot_password_email_link',
+            'id' => 'f29f5864-bc90-11e9-82c9-a45e60e684a5',
+        ],
+        'resetpasswordtmpl' => [
+            'key' => 'portal_password_reset_confirmation_email',
+            'id' => '12d9843e-bed9-11e9-8cec-6003089fe26e',
+        ],
+    ];
+
     /**
      * Inserts values into db when a reset pwd link is created
      * for regular user and portal users
@@ -61,23 +84,35 @@ class Utilities
 
     /**
      * Creates an Email Template for Portal Password Reset Email
-     * @param string $teamId
-     * @return null|\SugarBean Email Teamplate
+     * @param string $teamId the Team ID for this template
+     * @param array $mod_strings Module strings for use in setting values of the template
+     * @param string $type the type of password email template to create
+     * @return string|null
      */
-    public static function addPortalPasswordSeedData(string $teamId, $mod_strings)
+    public static function addPortalPasswordSeedData(string $teamId, array $mod_strings, string $type) : ?string
     {
-        $portalLinkTpl = \BeanFactory::getBean('EmailTemplates');
-        $portalLinkTpl->name = $mod_strings['portal_forgot_password_email_link']['name'];
-        $portalLinkTpl->description = $mod_strings['portal_forgot_password_email_link']['description'];
-        $portalLinkTpl->subject = $mod_strings['portal_forgot_password_email_link']['subject'];
-        $portalLinkTpl->body = $mod_strings['portal_forgot_password_email_link']['txt_body'];
-        $portalLinkTpl->body_html = $mod_strings['portal_forgot_password_email_link']['body'];
-        $portalLinkTpl->team_id = $teamId;
-        $portalLinkTpl->published = 'off';
-        $portalLinkTpl->type = 'system';
-        $portalLinkTpl->text_only = 1;
-        $portalLinkTpl->id = 'f29f5864-bc90-11e9-82c9-a45e60e684a5';
-        $portalLinkTpl->new_with_id = true;
-        return $portalLinkTpl->save();
+        if (!in_array($type, self::$validTemplateTypes)) {
+            return null;
+        }
+
+        // Grab the details/settings for the given template type
+        $props = self::$templateData['props'];
+        $key = self::$templateData[$type]['key'];
+
+        // Set properties common to all Portal password email templates
+        $template = \BeanFactory::newBean('EmailTemplates');
+        $template->team_id = $teamId;
+        $template->published = 'off';
+        $template->type = 'system';
+        $template->text_only = 1;
+        $template->new_with_id = true;
+
+        // Set properties specific to the given Portal password email template
+        $template->id = self::$templateData[$type]['id'];
+        foreach ($props as $beanField => $langField) {
+            $template->$beanField = $mod_strings[$key][$langField];
+        }
+
+        return $template->save();
     }
 }

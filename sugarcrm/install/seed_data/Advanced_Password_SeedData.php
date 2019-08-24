@@ -66,8 +66,12 @@ $sugar_config['passwordsetting']['oneupper'] = true;
 $sugar_config['passwordsetting']['onelower'] = true;
 $sugar_config['passwordsetting']['onenumber'] = true;
 
-// Create Portal Reset Password Email Template
-$id = Utilities::addPortalPasswordSeedData($Team_id, $mod_strings);
+// Create Portal Start Reset Password Email Template
+$id = Utilities::addPortalPasswordSeedData($Team_id, $mod_strings, 'lostpasswordtmpl');
 $sugar_config['portalpasswordsetting']['lostpasswordtmpl'] = $id;
+
+// Create Portal Confirm Reset Password Email Template
+$id = Utilities::addPortalPasswordSeedData($Team_id, $mod_strings, 'resetpasswordtmpl');
+$sugar_config['portalpasswordsetting']['resetpasswordtmpl'] = $id;
 
 write_array_to_file("sugar_config", $sugar_config, "config.php");

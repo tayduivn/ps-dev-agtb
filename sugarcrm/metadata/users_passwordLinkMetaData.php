@@ -74,8 +74,15 @@ $dictionary['users_password_link'] = array(
             'fields' => array(
                 'username'
             )
-        )
+        ),
+        [
+            'name' => 'idx_id_deleted_platform',
+            'type' => 'index',
+            'fields' => [
+                'id',
+                'deleted',
+                'platform',
+            ],
+        ],
     ) ,
 );
-
-?>

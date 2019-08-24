@@ -507,10 +507,12 @@ class Contact extends Person {
      */
     public function save($check_notify = false)
     {
+        //BEGIN SUGARCRM flav=ent ONLY
         // verify if portal_name already exists
         if (!empty($this->verifyDuplicatePortalName())) {
             throw new SugarApiExceptionNotAuthorized('ERR_PORTAL_NAME_EXISTS', [$this->portal_name], $this->module_name);
         }
+        //END SUGARCRM flav=ent ONLY
 
         // no duplicate so get going
         if(!is_null($this->sync_contact)) {

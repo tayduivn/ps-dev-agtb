@@ -70,7 +70,7 @@
                 };
 
                 // Initiate the password reset request
-                app.api.call('create', url, params, {
+                app.api.call('update', url, params, {
                     success: function() {
                         app.alert.show('reset-password-success', {
                             level: 'success',
