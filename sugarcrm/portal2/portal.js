@@ -16,12 +16,7 @@
             {
                 name: 'portal-index',
                 route: '',
-                callback: function() {
-                    app.controller.loadView({
-                        layout: 'servehome',
-                        module: 'Dashboards'
-                    });
-                }
+                callback: loadHome,
             },
             {
                 name: 'logout',
@@ -150,12 +145,7 @@
             {
                 name: 'home',
                 route: 'Home',
-                callback: function() {
-                    app.controller.loadView({
-                        module: 'Dashboards',
-                        layout: 'servehome'
-                    });
-                }
+                callback: loadHome,
             },
             {
                 name: 'list',
@@ -185,6 +175,20 @@
             handlePortalRenderDenied(component);
         } else {
             oHandleRenderError(component, method, additionalInfo);
+        }
+    };
+
+    var loadHome = function() {
+        if (_.includes(app.metadata.getModuleNames({access: 'read'}), 'Dashboards')) {
+            app.controller.loadView({
+                module: 'Dashboards',
+                layout: 'servehome',
+            });
+        } else {
+            // legacy Home "dashboard"
+            app.controller.loadView({
+                layout: 'home',
+            });
         }
     };
 

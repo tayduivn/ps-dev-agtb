@@ -1069,7 +1069,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
         if (PortalFactory::getInstance('Settings')->isServe()) {
             $dashboardId = '0ca2d773-0bb3-4bf3-ae43-68569968af57';
         } else {
-            $dashboardId = '0ca2d773-3dc6-70d9-fa91-68569968af57';
+            $this->markTestSkipped('Test is not valid on ENT-only instances');
         }
 
         $users = [

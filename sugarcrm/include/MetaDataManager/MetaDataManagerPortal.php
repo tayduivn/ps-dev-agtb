@@ -11,11 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+
 class MetaDataManagerPortal extends MetaDataManager
 {
     /**
      * Find all modules with Portal metadata
      *
+     * @param boolean $filtered Ignored
      * @return array List of Portal module names
      */
     protected function getModules($filtered = true)
@@ -31,7 +34,12 @@ class MetaDataManagerPortal extends MetaDataManager
         }
         $modules[] = 'Users';
         $modules[] = 'Filters';
-        $modules[] = 'Dashboards';
+
+        // If you don't have Serve, you don't get Dashboards in your Portal
+        if (PortalFactory::getInstance('Settings')->isServe()) {
+            $modules[] = 'Dashboards';
+        }
+
         return $modules;
     }
 
@@ -137,6 +145,8 @@ class MetaDataManagerPortal extends MetaDataManager
 
     /**
      * Load Portal specific metadata (heavily pruned to only show modules enabled for Portal)
+     * @param array $args
+     * @param MetaDataContextInterface $context
      * @return array Portal metadata
      */
     protected function loadMetadata($args = array(), MetaDataContextInterface $context)
@@ -148,6 +158,22 @@ class MetaDataManagerPortal extends MetaDataManager
                 if (!empty($modMeta['isBwcEnabled'])) {
                     // portal has no concept of bwc so get rid of it
                     unset($data['modules'][$modKey]['isBwcEnabled']);
+                }
+            }
+
+            // Serve-only restrictions
+            if (isset($data['modules']['Cases']) && !PortalFactory::getInstance('Settings')->isServe()) {
+                $contentSearchViews = ['contentsearch-footer', 'contentsearch-results', 'contentsearchdashlet'];
+                $contentSearchLayouts = ['contentsearch-dropdown'];
+                foreach ($contentSearchViews as $view) {
+                    if (isset($data['modules']['Cases']['views'][$view])) {
+                        unset($data['modules']['Cases']['views'][$view]);
+                    }
+                }
+                foreach ($contentSearchLayouts as $layout) {
+                    if (isset($data['modules']['Cases']['layouts'][$layout])) {
+                        unset($data['modules']['Cases']['layouts'][$layout]);
+                    }
                 }
             }
         }

@@ -16,13 +16,25 @@ use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
 
 class Dashboards extends Portal
 {
+    /**
+     * @param \SugarQuery $query Sugar query.
+     * @param array $options Query options.
+     * @throws \SugarQueryException
+     */
     public function addVisibilityQuery(\SugarQuery $query, array $options = [])
     {
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
         if (PortalFactory::getInstance('Settings')->isServe()) {
-            $dashboardId = '0ca2d773-0bb3-4bf3-ae43-68569968af57';
+            $serveHomeDashboardId = '0ca2d773-0bb3-4bf3-ae43-68569968af57'; // Serve Home
+            $query->where()->equals($options['table_alias'] . '.id', $serveHomeDashboardId);
         } else {
-            $dashboardId = '0ca2d773-3dc6-70d9-fa91-68569968af57';
+            // If you do not have Serve, you don't get dashboards in your Portal
+            // (the default Home view is NOT actually a dashboard)
+            $query->where()->addRaw('1 = 0');
         }
-        $query->where()->equals($options['table_alias'] . '.id', $dashboardId);
+        //END REQUIRED CODE DO NOT MODIFY
     }
 }
