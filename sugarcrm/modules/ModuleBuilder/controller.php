@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 
 require_once 'modules/DynamicFields/FieldCases.php';
 
@@ -97,7 +98,11 @@ class ModuleBuilderController extends SugarController
         $found = false;
         //Check the StudioModule first for mapping overrides
         if (empty($_REQUEST ['view_package']) || $_REQUEST ['view_package'] == "studio") {
-            $sm = StudioModuleFactory::getStudioModule($_REQUEST ['view_module']);
+            $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+            if (!AccessControlManager::instance()->allowModuleAccess($viewModule)) {
+                throw new SugarApiExceptionModuleDisabled();
+            }
+            $sm = StudioModuleFactory::getStudioModule($viewModule);
             foreach ($sm->sources as $file => $def) {
                 if (!empty($def['type']) && !empty($def['view']) && $def['view'] == $view) {
                     $view = $def['type'];
@@ -609,11 +614,19 @@ class ModuleBuilderController extends SugarController
         }
 
         if (empty($_REQUEST ['view_package'])) {
-            $relationships = new DeployedRelationships ($_REQUEST ['view_module']);
-            if (!empty ($_REQUEST ['relationship_name'])) {
-                if ($relationship = $relationships->get($_REQUEST ['relationship_name'])) {
+            $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+            $relationshipName = $this->request->getValidInputRequest('relationship_name', 'Assert\ComponentName');
+            $relationships = new DeployedRelationships($viewModule);
+            if (!empty($relationshipName)) {
+                if (!AccessControlManager::instance()->allowFieldAccess(
+                    $viewModule,
+                    $relationshipName
+                )) {
+                    throw new SugarApiExceptionFieldDisabled();
+                }
+                if ($relationship = $relationships->get($relationshipName)) {
                     $metadata = $relationship->buildLabels(true);
-                    $parser = new ParserLabel ($_REQUEST['view_module']);
+                    $parser = new ParserLabel($viewModule);
                     $parser->handleSaveRelationshipLabels($metadata, $selected_lang);
                 }
             }
@@ -627,6 +640,15 @@ class ModuleBuilderController extends SugarController
     {
         if (!empty($GLOBALS['current_user']) && empty($GLOBALS['modListHeader'])) {
             $GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
+        }
+
+        $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        $lhsModule = $this->request->getValidInputRequest('lhs_module', 'Assert\ComponentName');
+        $rhsModule = $this->request->getValidInputRequest('rhs_module', 'Assert\ComponentName');
+        if (!AccessControlManager::instance()->allowModuleAccess($viewModule)
+            || !AccessControlManager::instance()->allowModuleAccess($lhsModule)
+            || !AccessControlManager::instance()->allowModuleAccess($rhsModule)) {
+            throw new SugarApiExceptionModuleDisabled();
         }
 
         if (empty($_REQUEST ['view_package'])) {
@@ -657,6 +679,13 @@ class ModuleBuilderController extends SugarController
         $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
         if ($relationshipName) {
             $videModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+            if (!AccessControlManager::instance()->allowFieldAccess(
+                $videModule,
+                $relationshipName
+            )) {
+                throw new SugarApiExceptionFieldDisabled();
+            }
+
             if (!$packageName) {
                 if (!empty($_REQUEST['remove_tables']))
                     $GLOBALS['mi_remove_tables'] = $_REQUEST['remove_tables'];

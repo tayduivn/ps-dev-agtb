@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
+use Sugarcrm\Sugarcrm\AccessControl\AdminWork;
 use Sugarcrm\Sugarcrm\MetaData\RefreshQueue;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
@@ -2513,6 +2514,9 @@ class MetaDataManager implements LoggerAwareInterface
      */
     public function getMetadata($args = array(), MetaDataContextInterface $context = null)
     {
+        // disable admin work, metadata is always access controlled
+        $adminWork = new AdminWork();
+        $adminWork->reset(false);
         $data =  $this->getMetadataInternal($args, $context);
         //update the hash before returning to ensure the base and context hashes are incorperated.
         //Internally this hash is not stored with a context cache.

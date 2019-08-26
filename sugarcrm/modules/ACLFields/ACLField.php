@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
+
 require_once('modules/ACLFields/actiondefs.php');
 
 /**
@@ -68,6 +70,9 @@ class ACLField extends SugarBean
                     $label = (!empty($fieldDefs[$fkey]['vname'])) ? $fieldDefs[$fkey]['vname'] : $def['vname'];
                     $fkey = strtolower($fkey);
                     $field = strtolower($field);
+                    if (!AccessControlManager::instance()->allowFieldAccess($module, $field)) {
+                        continue;
+                    }
                     $required = !empty($def['required']);
                     if ($field == 'name') {
                         $required = true;

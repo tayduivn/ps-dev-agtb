@@ -183,7 +183,7 @@ class AccessControlManager
         }
 
         // check memory cache
-        if (isset($this->moduleAclList[$module])) {
+        if (isset($this->moduleAclList[$module]) && !$this->allowAdminOverride) {
             return $this->moduleAclList[$module];
         }
 

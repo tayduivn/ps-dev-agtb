@@ -13,6 +13,7 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 
 require_once 'modules/Administration/Common.php';
 
@@ -1031,6 +1032,9 @@ class RenameModules
         }
 
         foreach ($allModuleEntries as $k => $e) {
+            if (!AccessControlManager::instance()->allowModuleAccess($k)) {
+                continue;
+            }
             $svalue = $e['s'];
             $pvalue = $e['p'];
             $prev_plural = $current_app_list_string['moduleList'][$k];

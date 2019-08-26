@@ -11,6 +11,7 @@
  */
 
 use Doctrine\DBAL\Connection;
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 
 class ACLRole extends SugarBean{
     var $module_dir = 'ACLRoles';
@@ -230,6 +231,9 @@ public static function getAllRoles($returnAsArray = false)
                 continue;
             }
             //end
+            if (!AccessControlManager::instance()->allowModuleAccess($action->category)) {
+                continue;
+            }
 
             if(!isset($role_actions[$action->category])){
                 $role_actions[$action->category] = array();

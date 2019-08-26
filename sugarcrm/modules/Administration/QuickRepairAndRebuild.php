@@ -11,6 +11,9 @@
  */
 
 //Used in rebuildExtensions
+
+use Sugarcrm\Sugarcrm\AccessControl\AdminWork;
+
 SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
 
 // Used in clearExternalAPICache
@@ -57,6 +60,11 @@ class RepairAndClear
 
     public function repairAndClearAll($selected_actions, $modules, $autoexecute=false, $show_output=true, $metadata_sections=false)
     {
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
         global $mod_strings;
         $this->module_list= $modules;
         $this->show_output = $show_output;
@@ -177,6 +185,11 @@ class RepairAndClear
 
 	public function repairDatabase()
 	{
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
         // Repair database may have already been called and doesn't really need 
         // to be called a second time
         if (isset($this->called['repairDatabase'])) {
@@ -200,6 +213,11 @@ class RepairAndClear
      */
     public function repairBaseConfig()
     {
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
         $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
         $moduleInstallerClass::handleBaseConfig();
     }
@@ -210,6 +228,11 @@ class RepairAndClear
      */
     public function repairPortalConfig()
     {
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
         $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
         $moduleInstallerClass::handlePortalConfig();
     }
@@ -217,6 +240,11 @@ class RepairAndClear
 
 	public function repairDatabaseSelectModules()
 	{
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
 		global $current_user, $mod_strings, $dictionary;
 		set_time_limit(3600);
 
@@ -290,6 +318,11 @@ class RepairAndClear
 
 	public function rebuildExtensions($objects = array())
 	{
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
         $modules = array();
         global $beanList;
         $modBeans = array_flip($beanList);
@@ -324,6 +357,11 @@ class RepairAndClear
      */
     public function rebuildFileMap()
     {
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
         global $mod_strings;
         if ($this->show_output) {
             echo "<h3>{$mod_strings['LBL_QR_REBUILDFILEMAP']}</h3>";
@@ -520,6 +558,11 @@ class RepairAndClear
      * each platform and visibility
      */
     public function repairMetadataAPICache($section = '') {
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
         // Refresh metadata for selected modules only if there selected modules
         if (is_array($this->module_list) && !empty($this->module_list) && !in_array(translate('LBL_ALL_MODULES'), $this->module_list)) {
             MetaDataFiles::clearModuleClientCache($this->module_list);
@@ -544,6 +587,11 @@ class RepairAndClear
     /////REPAIR AUDIT TABLES
     public function rebuildAuditTables()
     {
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
         global $mod_strings;
         include 'include/modules.php';    //bug 15661
         if ($this->show_output) {
@@ -618,6 +666,11 @@ class RepairAndClear
 	//
 	private function _clearCache($thedir, $extension)
 	{
+        // allow admin to access everything,
+        // don't remove $adminWork until you don’t need the privilege anymore
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
+
         if (!file_exists($thedir)) {
             return;
         }

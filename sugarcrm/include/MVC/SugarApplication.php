@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
@@ -65,9 +63,6 @@ class SugarApplication
      */
     function execute()
     {
-        // need to disable Access Control for BWC modules otherwise admin page will behave strangely
-        AccessControlManager::instance()->allowAdminOverride(true);
-
         global $sugar_config;
         if (!empty($sugar_config['default_module'])) {
             $this->default_module = $sugar_config['default_module'];

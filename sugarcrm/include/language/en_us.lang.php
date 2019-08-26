@@ -2852,6 +2852,8 @@ $app_strings = array (
     'EXCEPTION_SEARCH_RUNTIME'          => 'A search engine runtime error occurred. Please contact your System Administrator.',
     'EXCEPTION_INVALID_PLATFORM'        => 'Invalid platform specified.',
     'EXCEPTION_FIELD_LOCKED_FOR_EDIT'   => 'A field that is locked by a process cannot be edited.',
+    'EXCEPTION_MODULE_DISABLED'         => 'This module is disabled for current user.',
+    'EXCEPTION_FIELD_DISABLED'          => 'This field is disabled for current user.',
 
     // Default SugarApiException descriptions, used in the exceptions help endpoint
     'EXCEPTION_UNKNOWN_EXCEPTION_DESC'     => 'A condition was encountered because of a general failure or error. The reasons for this exception range but generally fall outside the scope of a more specific API exception.',
@@ -2880,6 +2882,8 @@ $app_strings = array (
     'EXCEPTION_FIELD_LOCKED_FOR_EDIT_DESC' => 'A field that is currently locked by a running process cannot be edited.',
     'EXCEPTION_FIELD_IS_LOCKED_FOR_EDIT'   => '%s is locked by a running process and cannot be edited.',
     'EXCEPTION_FIELDS_ARE_LOCKED_FOR_EDIT' => '%s are locked by a running process and cannot be edited.',
+    'EXCEPTION_MODULE_DISABLED_DESC'       => 'This module is disabled for current user.',
+    'EXCEPTION_FIELD_DISABLED_DESC'        => 'This field is disabled for current user.',
 
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',

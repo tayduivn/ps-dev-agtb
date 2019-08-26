@@ -26,13 +26,15 @@
 
 require_once 'include/utils/progress_bar_utils.php';
 
+use Sugarcrm\Sugarcrm\AccessControl\AdminWork;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 define('DISABLED_PATH', 'Disabled');
 
-class ModuleInstaller{
+class ModuleInstaller
+{
     var $modules = array();
     var $silent = false;
     var $base_dir  = '';
@@ -59,8 +61,18 @@ class ModuleInstaller{
      */
     protected $patch = array();
 
+    /**
+     * holder for access control
+     * @var \AdminWork
+     */
+    protected $adminWork;
+
     public function __construct()
     {
+        // allow installer install everything
+        $this->adminWork = new AdminWork();
+        $this->adminWork->startAdminWork();
+
         $this->ms = new ModuleScanner();
         $this->modules = $this->getModuleDirs();
         $this->db = DBManagerFactory::getInstance();

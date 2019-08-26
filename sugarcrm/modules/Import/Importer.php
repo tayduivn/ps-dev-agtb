@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 //BEGIN SUGARCRM flav=ent ONLY
@@ -1090,8 +1090,7 @@ class Importer
         foreach ($beanList as $moduleName => $beanName)
         {
             $tmp = BeanFactory::newBean($moduleName);
-            if( !empty($tmp->importable))
-            {
+            if (!empty($tmp->importable) && AccessControlManager::instance()->allowModuleAccess($moduleName)) {
                 $label = isset($GLOBALS['app_list_strings']['moduleList'][$moduleName]) ? $GLOBALS['app_list_strings']['moduleList'][$moduleName] : $moduleName;
                 $importableModules[$moduleName] = $label;
             }
