@@ -204,6 +204,8 @@
 
         // add the main tab to the overflow tabs
         this.$overflowTabs.prepend($lastMainTab);
+        // remove the active class from the tab moved back to overflow
+        $lastMainTab.removeClass('active');
         // add the dropdown tab to the main tabs list
         this.$mainTabs.append($overflowTabToMove);
         // remove the extra click handler from the new overflow tab thats now on the main list
