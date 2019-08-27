@@ -20,6 +20,7 @@ import CsCommentLogDashlet from '../views/cs-comment-log-dashlet-view';
 import ListViewDashlet from '../views/list-view-dashlet-view';
 import CsCasesInteractionsDashlet from '../views/cs-cases-interactions-dashlet-view';
 import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
+import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
 
 /**
  * Represents a Sugar Dashboard layout.
@@ -41,6 +42,7 @@ export default class DashboardLayout extends BaseView {
     public ListViewDashlet: DashletView;
     public CsCasesInteractionsDashlet: DashletView;
     public CsPlannedActivitiesDashlet: DashletView;
+    public CsActiveTasksDashlet: DashletView;
 
     protected type: string;
 
@@ -103,6 +105,11 @@ export default class DashboardLayout extends BaseView {
         this.CsPlannedActivitiesDashlet = this.createComponent<PlannedActivitiesDashlet>(PlannedActivitiesDashlet, {
             module: options.module,
             position: '001',
+        });
+
+        this.CsActiveTasksDashlet = this.createComponent<ActiveTasksDashlet>(ActiveTasksDashlet, {
+            module: options.module,
+            position: '002',
         });
 
     }

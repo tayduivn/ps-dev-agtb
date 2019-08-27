@@ -31,12 +31,14 @@ export default class PlannedActivitiesListItemView extends BaseListItemView {
                 label: '.label.label-important',
             },
 
-            // Actions available for each meeting or call record
+            // Actions available for each meeting, call in Planned Activities dashlet or
+            // task in Active Tasks dashlet
             actions: {
                 held: '.fa.fa-times-circle',
                 accepted: '.fa.fa-check-circle',
                 tentative: '.fa.fa-question-circle',
                 declined: '.fa.fa-ban',
+                completed: 'a[Title=Completed]',
             }
         });
 

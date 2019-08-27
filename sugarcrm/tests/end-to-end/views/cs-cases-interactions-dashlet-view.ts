@@ -66,17 +66,6 @@ export default class CsCasesInteractionsDashlet extends DashletView {
     }
 
     /**
-     * Select action from dashlet's actions (aka '+') dropdown
-     *
-     * @param {string} buttonName action to select
-     */
-    public async clickButton(buttonName: string) {
-        await this.expandPlusDropdown();
-        let selector = this.$(`header.menuItems.${buttonName}`);
-        await this.driver.click(selector);
-    }
-
-    /**
      * Get subject and status of the activity by specified index
      *
      * @param {number} index of the activity

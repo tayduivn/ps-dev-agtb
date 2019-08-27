@@ -26,7 +26,7 @@ export default class DashboardView extends BaseView {
             $: '.dashboard',
             buttons: {
                 newrow: '.row-fluid[name="dashlet_last_{{index}}0"] .add-row.empty',
-                adddashlet: '.add-dashlet .fa.fa-plus'
+                adddashlet: '.add-dashlet .fa.fa-plus',
             },
             elements: {
                 HomeDashboard: '',
@@ -40,6 +40,9 @@ export default class DashboardView extends BaseView {
                 second_row_left_dashlet: '[name=dashlet_010]',
                 second_row_middle_dashlet: '[name=dashlet_011]',
                 second_row_right_dashlet: '[name=dashlet_012]',
+                third_row_left_dashlet: '[name=dashlet_020]',
+                third_row_middle_dashlet: '[name=dashlet_021]',
+                third_row_right_dashlet: '[name=dashlet_022]',
             }
         });
     }

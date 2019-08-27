@@ -19,10 +19,12 @@ import ListViewDashletListView from '../views/list-view-dashlet-list-view';
 import DashableRecordDashlet from '../views/dashable-record-dashlet-view';
 import DashletView from '../views/dashlet-view';
 import BaseListView from '../views/baselist-view';
-import CsCasesInteractionsListItemView from '../views/cs-cases-interactions-list-item-view'
+import CsCasesInteractionsListItemView from '../views/cs-cases-interactions-list-item-view';
 import PlannedActivitiesListItemView from '../views/planned-activities-list-item-view';
 import PlannedActivitiesListView from '../views/planned-activities-list-view';
 import CsCasesInteractionsListView from '../views/cs-cases-interactions-list-view';
+import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
+import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
 
 /**
  *  Verify the order of the item in the multiline list view in Service Console Cases tab
@@ -209,6 +211,7 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) record info in (#\S+)$/,
 
             let fieldName = row[0];
             let expValue = row[1];
+
             if (view instanceof CsCasesInteractionsListView) {
                 value = await (listItem as CsCasesInteractionsListItemView).getRecordInfo(i);
             } else if (view instanceof PlannedActivitiesListView) {
@@ -216,6 +219,7 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) record info in (#\S+)$/,
             } else {
                 throw new Error('Error. Unexpected view type specified!');
             }
+
             if (value !== expValue) {
                 errors.push(
                     [
@@ -294,15 +298,19 @@ Then(/^I should (not )?see the following tabs in (#\S+) dashlet:$/,
  *      @example
  *      Then I verify the record count in Calls tab is equal to 1 in #Dashboard.CsPlannedActivitiesDashlet
  */
-Then(/^I verify the record count in (Calls|Meetings) tab is equal to ([0-9]\d*) in (#\S+)$/,
+Then(/^I verify the record count in (Meetings|Calls|Due Now|Upcoming|To Do) tab is equal to ([0-9]\d*) in (#\S+)$/,
     async function(tabName: string, exp: string, view: DashletView) {
-
         let value;
 
-        if (tabName === 'Calls') {
-            value = await view.getNumRecordsInTab('1');
-        } else if (tabName === 'Meetings') {
+        // Check dashlet tab name as well as dashlet type
+        if ((tabName === 'Meetings' && view instanceof PlannedActivitiesDashlet) ||
+            (tabName === 'Due Now' && view instanceof ActiveTasksDashlet)) {
             value = await view.getNumRecordsInTab('0');
+        } else if ((tabName === 'Calls' && view instanceof PlannedActivitiesDashlet) ||
+            (tabName === 'Upcoming' && view instanceof ActiveTasksDashlet)) {
+            value = await view.getNumRecordsInTab('1');
+        } else if (tabName === 'To Do' && view instanceof ActiveTasksDashlet) {
+            value = await view.getNumRecordsInTab('2');
         } else {
             throw new Error('Invalid module specified!');
         }
@@ -310,5 +318,4 @@ Then(/^I verify the record count in (Calls|Meetings) tab is equal to ([0-9]\d*) 
         if (value !== exp) {
             throw new Error(`Error: Numbers don't match. Actual number: ${value}. Expected number: ${exp}`);
         }
-
     }, {waitForApp: true});

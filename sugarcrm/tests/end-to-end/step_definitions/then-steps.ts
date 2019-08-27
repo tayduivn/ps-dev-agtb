@@ -244,6 +244,8 @@ Then(/^I verify that (\S+) element from (#\S+) still looks like (.*)$/,
     async function(elementName: string, component: any, fileName: string): Promise<void> {
         // FIXME AT-146: Use proper typechecking on view
         let selector = `elements.${elementName}`;
+        // Bring element into view before taking screenshot
+        await seedbed.client.driver.execSync('scrollToSelector', [component.$(selector)]);
         let view = component.type ? component.defaultView : component;
         await stepsHelper.verifyElementByImage(view, fileName, selector);
     }, {waitForApp: true});

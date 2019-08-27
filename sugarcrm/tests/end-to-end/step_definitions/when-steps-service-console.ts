@@ -17,6 +17,7 @@ import CsCommentLogDashlet from '../views/cs-comment-log-dashlet-view';
 import CsCasesInteractionsDashlet from '../views/cs-cases-interactions-dashlet-view';
 import CsCasesInteractionsListView from '../views/cs-cases-interactions-list-view';
 import DashableRecordDashletConfig from '../views/dashable-record-dashlet-config-view';
+import DashletView from '../views/dashlet-view';
 
 /**
  *  Select specified tab in Service Console
@@ -102,8 +103,8 @@ When(/^I add the following comment into (#\S+):$/,
  *  @example
  *  When I Schedule Meeting in #Dashboard.CsCasesInteractionsDashlet
  */
-When(/^I (Compose Email|Log Call|Schedule Meeting|Create Note or Attachment) in (#\S+)$/,
-    async function(action: string, view: CsCasesInteractionsDashlet) {
+When(/^I (Compose Email|Log Call|Schedule Meeting|Create Note or Attachment|Create Task) in (#\S+)$/,
+    async function(action: string, view: DashletView) {
         await view.clickButton(action.replace(/ /g, '_').toLowerCase());
     }, {waitForApp: true});
 
