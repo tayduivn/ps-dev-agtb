@@ -374,11 +374,11 @@ describe('Base.View.ActivityTimeline', function() {
 
     describe('_render', function() {
         it('should inject singular module name to title', function() {
-            let singular = 'Singular';
-            let finalTitle = singular + ' Interactions';
-            let langGetStub = sinon.collection.stub(app.lang, 'get').returns(finalTitle);
-            let langGetModuleNameStub = sinon.collection.stub(app.lang, 'getModuleName').returns(singular);
-            let layoutStub = sinon.collection.stub(layout, 'setTitle');
+            var singular = 'Singular';
+            var finalTitle = singular + ' Interactions';
+            var langGetStub = sinon.collection.stub(app.lang, 'get').returns(finalTitle);
+            var langGetModuleNameStub = sinon.collection.stub(app.lang, 'getModuleName').returns(singular);
+            var layoutStub = sinon.collection.stub(layout, 'setTitle');
             view.meta.label = 'LBL_TEST_LABEL';
             view._render();
 
