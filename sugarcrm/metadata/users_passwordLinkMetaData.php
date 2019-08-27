@@ -62,7 +62,7 @@ $dictionary['users_password_link'] = array(
             )
         ) ,
         [
-            'name' => 'idx_bean_id',
+            'name' => 'idx_bean_id_users_password_link',
             'type' => 'index',
             'fields' => [
                 'bean_id',
