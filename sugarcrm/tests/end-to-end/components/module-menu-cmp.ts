@@ -157,7 +157,6 @@ export default class extends BaseView {
      */
     public async clickItemUnderModuleMenu(menuItem: string) {
         await this.driver.click(this.$('moduleList.moduleItems.caret'));
-        await this.driver.pause(3000);
         await this.driver.waitForApp();
         await this.driver.click(this.$(`moduleList.moduleItems.${menuItem}`));
         await this.driver.waitForApp();

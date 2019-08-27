@@ -14,10 +14,15 @@ import * as _ from 'lodash';
 import MultilineListView from '../views/multiline-list-view';
 import CsCommentLogDashlet from '../views/cs-comment-log-dashlet-view';
 import CsCasesInteractionsDashlet from '../views/cs-cases-interactions-dashlet-view';
-import CsCasesInteractionsListView from '../views/cs-cases-interactions-list-view';
 import {parseInputArray} from './general_bdd';
 import ListViewDashletListView from '../views/list-view-dashlet-list-view';
 import DashableRecordDashlet from '../views/dashable-record-dashlet-view';
+import DashletView from '../views/dashlet-view';
+import BaseListView from '../views/baselist-view';
+import CsCasesInteractionsListItemView from '../views/cs-cases-interactions-list-item-view'
+import PlannedActivitiesListItemView from '../views/planned-activities-list-item-view';
+import PlannedActivitiesListView from '../views/planned-activities-list-view';
+import CsCasesInteractionsListView from '../views/cs-cases-interactions-list-view';
 
 /**
  *  Verify the order of the item in the multiline list view in Service Console Cases tab
@@ -192,10 +197,11 @@ Then(/^I verify list items in (#\S+)$/,
  *          | description | Testing with Seedbed                  |
  */
 Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) record info in (#\S+)$/,
-    async function(record: { id: string }, view: CsCasesInteractionsListView, data: TableDefinition) {
+    async function(record: { id: string }, view: BaseListView, data: TableDefinition) {
         let rows = data.rows();
         let listItem = view.getListItem({id: record.id});
-        let errors = [];
+        let errors = [],
+            value;
 
         for (let i = 1; i <= rows.length; i++) {
             let row = rows[i - 1];
@@ -203,12 +209,17 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) record info in (#\S+)$/,
 
             let fieldName = row[0];
             let expValue = row[1];
-            let value = await listItem.getExtendedInteractionInfo(i);
-
+            if (view instanceof CsCasesInteractionsListView) {
+                value = await (listItem as CsCasesInteractionsListItemView).getRecordInfo(i);
+            } else if (view instanceof PlannedActivitiesListView) {
+                value = await (listItem as PlannedActivitiesListItemView).getRecordInfo(fieldName);
+            } else {
+                throw new Error('Error. Unexpected view type specified!');
+            }
             if (value !== expValue) {
                 errors.push(
                     [
-                        `The expected and actual fields of record "${record}" don't match:`,
+                        `The expected and actual fields of record "${record.id}" don't match:`,
                         `The expected value of the field "${fieldName}" is: ${expValue}`,
                         `\tThe actual value of the field "${fieldName}" is: ${value}`,
                         `\n`,
@@ -276,3 +287,28 @@ Then(/^I should (not )?see the following tabs in (#\S+) dashlet:$/,
         }
     }, {waitForApp: true}
 );
+
+/**
+ *  Verify record count displayed in the tab
+ *
+ *      @example
+ *      Then I verify the record count in Calls tab is equal to 1 in #Dashboard.CsPlannedActivitiesDashlet
+ */
+Then(/^I verify the record count in (Calls|Meetings) tab is equal to ([0-9]\d*) in (#\S+)$/,
+    async function(tabName: string, exp: string, view: DashletView) {
+
+        let value;
+
+        if (tabName === 'Calls') {
+            value = await view.getNumRecordsInTab('1');
+        } else if (tabName === 'Meetings') {
+            value = await view.getNumRecordsInTab('0');
+        } else {
+            throw new Error('Invalid module specified!');
+        }
+
+        if (value !== exp) {
+            throw new Error(`Error: Numbers don't match. Actual number: ${value}. Expected number: ${exp}`);
+        }
+
+    }, {waitForApp: true});

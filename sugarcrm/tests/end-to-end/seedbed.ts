@@ -48,6 +48,8 @@ import DashableRecordDashletConfig from './views/dashable-record-dashlet-config-
 
 export default (seedbed: Seedbed) => {
 
+    seedbed.userSigninMap = {};
+
     seedbed.cucumber.addAsyncHandler('Before', async ({scenario}) => {
         seedbed.cachedRecords.clear();
     });
@@ -495,6 +497,7 @@ export default (seedbed: Seedbed) => {
                     });
 
                     if (recordInfo.module === 'Users') {
+                        seedbed.userSigninMap[recordInfo.input.hash.id] = false;
                         // hot fix for clean up logic: seedbed doesn't delete created users
                         seedbed.api.created.push(responseData);
                     }
@@ -544,6 +547,29 @@ export default (seedbed: Seedbed) => {
                 }
             }
         }
+    });
+
+    /* Delete record from userSigninMap at the end of each scenario */
+    seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
+
+        let url = req.url;
+        let responseData = data.buffer.toString();
+
+        let responseRecord = responseData.related_record || responseData;
+        let recordInfo: any = _.find(seedbed.cucumber.scenario.recordsInfo, (record: any) => {
+            return responseRecord && responseRecord.id && responseRecord.id === record.recordId;
+        });
+
+        if ((parseInt(res.statusCode, 10) === 200) &&
+            _.includes(['DELETE'], req.method) &&
+            !/(oauth2|bulk|filter)/.test(url)) {
+
+            //If module is "Users"
+            if (/Users/.test(req.url)) {
+                    let responseData = JSON.parse(responseRecord);
+                    delete seedbed.userSigninMap[responseData.id];
+                }
+            }
     });
 };
 

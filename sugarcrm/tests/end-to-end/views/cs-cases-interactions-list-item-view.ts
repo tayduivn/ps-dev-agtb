@@ -80,9 +80,8 @@ export default class CsCasesInteractionsListItemView extends BaseListItemView {
      * @param {number} i
      * @return {string} value of the field in the expanded record block
      */
-    public async getExtendedInteractionInfo(i: number) {
+    public async getRecordInfo(i: number) {
         let selector = this.$('expandedInfo.field', {i});
-        let value = await this.driver.getText(selector);
-        return value;
+        return await this.driver.getText(selector);
     }
 }

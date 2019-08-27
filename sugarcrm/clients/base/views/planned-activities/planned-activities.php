@@ -59,6 +59,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
                         'label' => 'LBL_SCHEDULE_MEETING',
                         'acl_action' => 'create',
                         'acl_module' => 'Meetings',
+                        'name' => 'schedule_meeting',
                     ),
                     array(
                         'type' => 'dashletaction',
@@ -70,6 +71,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
                         'label' => 'LBL_SCHEDULE_CALL',
                         'acl_action' => 'create',
                         'acl_module' => 'Calls',
+                        'name' => 'log_call',
                     ),
                 ),
             ),

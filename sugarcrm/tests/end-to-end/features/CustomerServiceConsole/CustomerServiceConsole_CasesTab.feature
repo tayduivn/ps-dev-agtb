@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @job4 @pr
+@modules @job4
 Feature: Customer Service Console Verification
   As a customer service agent I need to be able to verify main CS console functionality
 
@@ -29,7 +29,7 @@ Feature: Customer Service Console Verification
 
 
   @service_console
-  Scenario: Service Console > Basic Verification
+  Scenario: Service Console > Cases Tab > Navigation/Case Update
 
     # Create new non-admin user
     Given I create custom user "user"
@@ -141,7 +141,7 @@ Feature: Customer Service Console Verification
 
 
   @service-console @cs_dashable_record_dashlet
-  Scenario: Customer Service Console > Dashable Record dashlet > Cancel/Save
+  Scenario: Service Console > Cases Tab > Dashable Record dashlet > Cancel/Save
     # Create required Case and Account records
     Given Cases records exist:
       | *   | name   | source   | priority | status | assigned_user_id |
@@ -243,7 +243,7 @@ Feature: Customer Service Console Verification
 
 
   @service-console @cs_comment_log_dashlet
-  Scenario: Customer Service Console > Comment Log Dashlet > Add/Read Comment(s)
+  Scenario: Service Console > Cases Tab > Comment Log Dashlet > Add/Read Comment(s)
     # Create required Case and Account records
     Given Cases records exist:
       | *   | name   | source   | priority | status | assigned_user_id |
@@ -289,7 +289,7 @@ Feature: Customer Service Console Verification
 
 
   @service-console @cs_account_info_dashlet
-  Scenario: Customer Service Console > Account Info > Cancel/Save
+  Scenario: Service Console > Cases Tab > Account Info Dashlet > Cancel/Save
     Given Accounts records exist:
       | *   | name      |
       | A_1 | Account_1 |
@@ -341,7 +341,7 @@ Feature: Customer Service Console Verification
 
 
   @service-console @cs_cases_interactions_dashlet
-  Scenario: Customer Service Console > Cases Interactions
+  Scenario: Service Console > Cases Tab > Cases Interactions dashlet
     Given Accounts records exist:
       | *   | name      |
       | A_1 | Account_1 |
@@ -484,7 +484,7 @@ Feature: Customer Service Console Verification
 
 
   @service-console @cs_dashable_record_dashlet @config
-  Scenario: Customer Service Console > Dashable Record dashlet > Configuration Settings
+  Scenario: Service Console > Cases Tab > Dashable Record dashlet > Configuration Settings
     # Create required Case and Account records
     Given Accounts records exist:
       | *   | name      | website              | industry  | account_type |

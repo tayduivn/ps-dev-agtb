@@ -11,6 +11,7 @@
 
 import BaseField from './text-field';
 import {seedbed} from '@sugarcrm/seedbed';
+import * as _ from 'lodash';
 
 
 export class Edit extends BaseField {
@@ -37,9 +38,7 @@ export class Edit extends BaseField {
     }
 
     public async getText(selector: string): Promise<string> {
-
         let value: string | string[] = await this.driver.getText(selector);
-
         return value.toString().trim();
     }
 
@@ -57,27 +56,27 @@ export class Edit extends BaseField {
         for (let i = 0; i < records.length; i++) {
 
             record = (records[i].trim()).replace('*', '');
-
             recordID = seedbed.cachedRecords.get(record);
 
             if (action === 'add') {
-                name = recordID.input.get('last_name');
-
+                if (_.isFunction(recordID.input.get)) {
+                    name = recordID.input.get('last_name');
+                } else {
+                    name = recordID.input.last_name;
+                }
+                // click + (plus) button to add new invitee
                 await this.driver.click(this.$(`buttons.addInvitee`));
-
                 await this.driver.waitForApp();
 
+                // Set invitee name in search field
                 await this.driver.setValue(this.inputSelector, name);
-
                 // need to handle setTimeout 400ms in search box
                 await this.driver.pause(500);
-
                 await this.driver.waitForApp();
-
+                // Click on the found record to select it
                 await this.driver.click(`${this.itemSelector}${name}`);
 
             } else if (action === 'remove') {
-
                 await this.driver.click(this.$('buttons.removeInvitee', {id: recordID.id}));
                 await this.driver.waitForApp();
             }

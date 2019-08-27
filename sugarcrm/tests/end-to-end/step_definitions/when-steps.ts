@@ -35,7 +35,7 @@ import PreviewHeaderView from '../views/preview-header-view';
  * @example "I choose Accounts in modules menu"
  */
 When(/^I choose (\w+) in modules menu(?: and select "([^"]*)" menu item)?$/,
-    async function (moduleName: string, itemName?: string) : Promise<void> {
+    async function (moduleName: string, itemName?: string): Promise<void> {
 
         let moduleMenuCmp = seedbed.components['moduleMenu'] as ModuleMenuCmp;
         let isVisible = await moduleMenuCmp.isVisible(moduleName);
@@ -123,7 +123,14 @@ When(/^I wait for (\d+) seconds$/,
 
 When(/^I open ([\w,\/]+) view and login$/,
     async function (module: string): Promise<void> {
-        await whenStepsHelper.setUrlHashAndLogin(module);
+
+        const currentUser = seedbed.userInfo.userId;
+        let shouldSetDefaultPrefs = false;
+        if( seedbed.userSigninMap[currentUser] === false) {
+            shouldSetDefaultPrefs = true;
+            seedbed.userSigninMap[currentUser] = true;
+        }
+        await whenStepsHelper.setUrlHashAndLogin(module, shouldSetDefaultPrefs);
         await this.driver.waitForApp();
     }, {waitForApp: true});
 

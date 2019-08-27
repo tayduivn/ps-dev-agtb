@@ -98,16 +98,6 @@ When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)(?: at column (1|2|3))?$/,
     }, {waitForApp: true});
 
 /**
- * Click dashlet's cog button
- *
- * @example I click Cog in #AccountsDashboard.DashletView
- */
-When(/^I click (Cog) in (#\S+)$/,
-    async function (btn, view: DashletView): Promise<void> {
-        await view.clickButton(btn);
-    }, {waitForApp: true});
-
-/**
  * Create or cancel creation of new dashboard
  *
  * @example
