@@ -5028,7 +5028,7 @@ Sincerely, SugarCRM',
     'LBL_PASSWORD_ONE_LOWERCASE' => 'Must contain one lower case letter (a-z).',
     'LBL_PASSWORD_ONE_NUMBER' => 'Must contain one number (0-9).',
     'LBL_PASSWORD_ONE_SPECIAL_CHAR' => 'Must contain one special character (~!@#$%^&*()_+-={}|).',
-    'LBL_PASSWORD_REGEX_REQUIREMENT' => 'The password must not match the regular expression pattern {0}.',
+    'LBL_PASSWORD_REGEX_REQUIREMENT' => 'The password must not match the regular expression pattern: {0}.',
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
     'LBL_PASSWORD_RESET_EMAIL_FAIL' => 'Could not send password reset email.',

@@ -1255,7 +1255,7 @@
                     }
 
                     // We must NOT match the custom regex
-                    if (app.utils.isPasswordRuleSet(passwordSetting.customregex)) {
+                    if (_.isString(passwordSetting.customregex) && passwordSetting.customregex.length > 0) {
                         var regex = new RegExp(passwordSetting.customregex);
                         if (regex.test(password)) {
                             invalidPassword.error += '<li>' + app.utils.formatString(
