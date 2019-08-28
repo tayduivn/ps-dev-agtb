@@ -36,9 +36,13 @@ class PortalPasswordApiTest extends TestCase
         // Add a sample valid token and a sample invalid (expired) token into
         // the users_password_link table
         $now = TimeDate::getInstance()->nowDb();
+        $now = $GLOBALS['db']->convert("'$now'", 'datetime');
         $query = "INSERT INTO users_password_link VALUES " .
-            "('good', 'fakeBean', 'Contacts', 'fakeUser', '{$now}',0, 'portal')," .
-            "('bad', 'fakeBean', 'Contacts', 'fakeUser', '1980-01-01 23:02:21',0, 'portal')";
+            "('good', 'fakeBean', 'Contacts', 'fakeUser', $now, 0 , 'portal')";
+        $GLOBALS['db']->query($query);
+        $date = $GLOBALS['db']->convert("'1980-01-01 23:02:21'", 'datetime');
+        $query = "INSERT INTO users_password_link VALUES " .
+            "('bad', 'fakeBean', 'Contacts', 'fakeUser', $date, 0 , 'portal')";
         $GLOBALS['db']->query($query);
     }
 
