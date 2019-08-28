@@ -244,3 +244,94 @@ Feature: Leads module verification
 
     When I open the calls subpanel on #O1Record view
     Then I verify number of records in #O1Record.SubpanelsLayout.subpanels.meetings is 0
+
+  @lead_conversion_with_business_center
+  Scenario: Leads > Convert Lead with associated Business Center
+
+  @user_profile
+  Scenario: User Profile > Change license type
+    Given I am logged in
+    When I choose Profile in the user actions menu
+    # Change the value of License Type field
+    When I change "LicenseTypes[]" enum-user-pref with "Sugar Sell" value in #UserProfile
+    When I click on Save button on #UserProfile
+    # Verify current value(s) of License Type field
+    Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
+      | value                        |
+      | Sugar Enterprise, Sugar Sell |
+    When I click on Cancel button on #UserProfile
+
+    #Create Business center record
+    Given BusinessCenters records exist:
+      | *    | name       | timezone            | is_open_sunday | sunday_open_hour | sunday_open_minutes | sunday_close_hour | sunday_close_minutes | address_street   | address_city | address_state | address_postalcode | address_country |
+      | BC_1 | West Coast | America/Los_Angeles | true           | 08               | 0                   | 15                | 0                    | 10050 N Wolfe Rd | Cupertino    | California    | 95014              | USA             |
+
+    #Create Lead record
+    Given Leads records exist:
+      | *    | first_name | last_name |
+      | John | John       | Lee    |
+
+    #Select Business center record for Lead
+    When I choose Leads in modules menu
+    When I select *John in #LeadsList.ListView
+    Then I should see #JohnRecord view
+    When I click Edit button on #JohnRecord header
+    When I provide input for #JohnRecord.RecordView view
+      | business_center_name |
+      | West Coast           |
+    When I click Save button on #JohnRecord header
+    When I close alert
+
+    #Lead Conversion
+    When I open actions menu in #JohnRecord
+    When I choose Convert from actions menu in #JohnRecord
+
+    #Generate ID for Contact record
+    When I provide input for #JohnLeadConversionDrawer.ContactContent view
+      | *  |
+      | C1 |
+
+    #Create Account Record
+    When I provide input for #JohnLeadConversionDrawer.AccountContent view
+      | *  | name        |
+      | A1 | New Account |
+    When I click CreateRecord button on #LeadConversionDrawer.AccountContent
+
+    #Finish lead conversion process
+    When I click Save button on #LeadConversionDrawer header
+    When I close alert
+
+    #Go to Account list view and verify Business Center Name field
+    When I choose Accounts in modules menu
+    When I click on preview button on *A1 in #AccountsList.ListView
+    Then I should see #A1Preview view
+    Then I verify fields on #A1Preview.PreviewView
+      | fieldName            | value       |
+      | name                 | New Account |
+      | business_center_name | West Coast  |
+
+    #Go to Contact list view and verify Business Center Name field
+    When I choose Contacts in modules menu
+    When I click on preview button on *C1 in #ContactsList.ListView
+    Then I should see #C1Preview view
+    Then I verify fields on #C1Preview.PreviewView
+      | fieldName            | value       |
+      | name                 | John Lee    |
+      | business_center_name | West Coast  |
+
+    #Open Business Center Record
+    When I choose BusinessCenters in modules menu
+    When I select *BC_1 in #BusinessCentersList.ListView
+
+    #Verify field in Accounts subapnel of Business Center record view
+    When I open the business_center_accounts subpanel on #BC_1Record view
+    Then I verify fields for *A1 in #BC_1Record.SubpanelsLayout.subpanels.business_center_accounts
+      | fieldName | value       |
+      | name      | New Account |
+
+    #Verify field in Contacts subapnel of Business Center record view
+    When I open the business_center_contacts subpanel on #BC_1Record view
+    Then I verify fields for *C1 in #BC_1Record.SubpanelsLayout.subpanels.business_center_contacts
+      | fieldName | value       |
+      | name      | John Lee    |
+
