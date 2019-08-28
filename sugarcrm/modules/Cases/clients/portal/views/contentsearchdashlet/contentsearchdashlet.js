@@ -160,8 +160,8 @@
             result.next_offset / this.searchOptions.max_num : totalPages;
         var records = _.map(result.records, function(record) {
             return {
-                name: self._escape(record.name),
-                description: self._escape(self._truncate(record.description)),
+                name: record.name,
+                description: self._truncate(record.description),
                 url: app.utils.buildUrl(record.url.replace(/^\/+/g, ''))
             };
         });
@@ -191,17 +191,6 @@
         }
 
         return text;
-    },
-
-    /**
-     * Escapes any dangerous values from text
-     *
-     * @param {string} text The text to escape
-     * @return {string} The escaped text
-     * @private
-     */
-    _escape: function(text) {
-        return Handlebars.Utils.escapeExpression(text);
     },
 
     /**

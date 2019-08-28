@@ -197,13 +197,4 @@ describe('Portal.Cases.Views.ContentsearchDashlet', function() {
             expect(shortened).toEqual('This str ...');
         });
     });
-
-    describe('_escape', function() {
-        it('should escape dangerous chars', function() {
-            var badText = '<>`""';
-            var result = view._escape(badText);
-            var expected = '&lt;&gt;&#x60;&quot;&quot;';
-            expect(result).toEqual(expected);
-        });
-    });
 });
