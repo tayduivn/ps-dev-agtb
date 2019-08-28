@@ -47,7 +47,7 @@
      */
     handleSave: function() {
         // this is to handle the issue caused by different value between boolean and tinyint
-        this.model.set('is_external', this.model.get('is_external') ? 1 : 0);
+        this.model.set('is_external', app.utils.isTruthy(this.model.get('is_external')) ? 1 : 0);
         this._super('handleSave');
     },
 
