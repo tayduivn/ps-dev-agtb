@@ -33,6 +33,7 @@
             </td>
         </tr>
         {/if}
+        {if $isServe}
         <tr>
             <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_ENABLE_SEARCH}:
@@ -41,6 +42,7 @@
                 <input type="checkbox" name="caseDeflection" {if $caseDeflection eq 'enabled'}checked{/if} class='portalField' id="caseDeflection" value="enabled"/>
             </td>
         </tr>
+        {/if}
         <tr>
             <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_LIST_NUMBER}:<span class="required">*</span>

@@ -29,6 +29,9 @@ require_once 'include/utils/progress_bar_utils.php';
 use Sugarcrm\Sugarcrm\AccessControl\AdminWork;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+//BEGIN SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+//END SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 define('DISABLED_PATH', 'Disabled');
@@ -2971,8 +2974,12 @@ class ModuleInstaller
         $config = SugarConfig::getInstance();
 
         if (empty($GLOBALS['installing'])) {
-            $settings = Administration::getSettings('portal', true)->settings;
-            $caseDeflection = !isset($settings['portal_caseDeflection']) ? 'enabled' : $settings['portal_caseDeflection'];
+            if (PortalFactory::getInstance('Settings')->isServe() === false) {
+                $caseDeflection = 'disabled';
+            } else {
+                $settings = Administration::getSettings('portal', true)->settings;
+                $caseDeflection = !isset($settings['portal_caseDeflection']) ? 'enabled' : $settings['portal_caseDeflection'];
+            }
         } else {
             $caseDeflection = 'enabled';
         }

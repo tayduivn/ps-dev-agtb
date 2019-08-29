@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+//BEGIN SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+//END SUGARCRM flav=ent ONLY
 use PHPUnit\Framework\TestCase;
 
 class ModuleInstallerTest extends TestCase
@@ -46,15 +49,21 @@ class ModuleInstallerTest extends TestCase
      */
     public function testGetPortalConfig()
     {
-        $GLOBALS['db']->query("DELETE FROM config WHERE category = 'portal' AND name = 'caseDeflection' AND platform = 'support'");
-        $portalConfig = ModuleInstaller::getPortalConfig();
-        $this->assertEquals('enabled', $portalConfig['caseDeflection'], 'Case deflection should be enabled by default before opening a case');
-        $GLOBALS['db']->query("INSERT INTO config VALUES('portal', 'caseDeflection', 'disabled', 'support')");
-        $portalConfig = ModuleInstaller::getPortalConfig();
-        $this->assertEquals('disabled', $portalConfig['caseDeflection'], 'Case deflection should be disabled before opening a case');
-        $GLOBALS['db']->query("UPDATE config SET value = 'enabled' WHERE category = 'portal' AND name = 'caseDeflection' AND platform = 'support'");
-        $portalConfig = ModuleInstaller::getPortalConfig();
-        $this->assertEquals('enabled', $portalConfig['caseDeflection'], 'Case deflection should be enabled before opening a case');
+        // test portal config setting based on the license used during the test run
+        if (PortalFactory::getInstance('Settings')->isServe() === false) {
+            $portalConfig = ModuleInstaller::getPortalConfig();
+            $this->assertEquals('disabled', $portalConfig['caseDeflection'], 'Case deflection should be disabled by default before opening a case');
+        } else {
+            $GLOBALS['db']->query("DELETE FROM config WHERE category = 'portal' AND name = 'caseDeflection' AND platform = 'support'");
+            $portalConfig = ModuleInstaller::getPortalConfig();
+            $this->assertEquals('enabled', $portalConfig['caseDeflection'], 'Case deflection should be enabled by default before opening a case');
+            $GLOBALS['db']->query("INSERT INTO config VALUES('portal', 'caseDeflection', 'disabled', 'support')");
+            $portalConfig = ModuleInstaller::getPortalConfig();
+            $this->assertEquals('disabled', $portalConfig['caseDeflection'], 'Case deflection should be disabled before opening a case');
+            $GLOBALS['db']->query("UPDATE config SET value = 'enabled' WHERE category = 'portal' AND name = 'caseDeflection' AND platform = 'support'");
+            $portalConfig = ModuleInstaller::getPortalConfig();
+            $this->assertEquals('enabled', $portalConfig['caseDeflection'], 'Case deflection should be enabled before opening a case');
+        }
     }
     //END SUGARCRM flav=ent ONLY
 

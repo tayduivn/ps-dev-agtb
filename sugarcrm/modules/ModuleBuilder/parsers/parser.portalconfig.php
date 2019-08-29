@@ -12,7 +12,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
-
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
 
 class ParserModifyPortalConfig extends ModuleBuilderParser
 {
@@ -106,7 +106,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
             'defaultModule' => 'Cases',
-            'caseDeflection' => 'enabled',
+            'caseDeflection' => PortalFactory::getInstance('Settings')->isServe() ? 'enabled' : 'disabled',
             'contactInfo' => [
                 'contactPhone' => '',
                 'contactEmail' => '',

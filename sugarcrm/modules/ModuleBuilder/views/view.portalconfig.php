@@ -11,6 +11,7 @@
  */
 
 //FILE SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
 
 class ViewPortalConfig extends SugarView
 {
@@ -90,6 +91,7 @@ class ViewPortalConfig extends SugarView
    	 */
 	function display() 
 	{
+        $isServe = PortalFactory::getInstance('Settings')->isServe();
         $portalFields = [
             'appStatus' => 'offline',
             'logoURL' => '',
@@ -97,7 +99,7 @@ class ViewPortalConfig extends SugarView
             'maxQueryResult' => '20',
             'maxSearchQueryResult' => '5',
             'defaultUser' => '',
-            'caseDeflection' => 'enabled',
+            'caseDeflection' => $isServe ? 'enabled' : 'disabled',
             'contactInfo' => [
                 'contactPhone' => '',
                 'contactEmail' => '',
@@ -131,6 +133,7 @@ class ViewPortalConfig extends SugarView
         $smarty->assign('mod', $GLOBALS['mod_strings']);
         $smarty->assign('siteURL', $GLOBALS['sugar_config']['site_url']);
         $label = $this->request->getValidInputRequest('label');
+        $smarty->assign('isServe', $isServe);
         if ($label !== null) {
             $smarty->assign('label', $label);
         }
