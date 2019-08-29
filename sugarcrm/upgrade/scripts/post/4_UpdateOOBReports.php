@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
+use Sugarcrm\Sugarcrm\AccessControl\AdminWork;
 
 /**
  * Install OOB Reports that were added in post-7 releases.
@@ -57,12 +57,12 @@ class SugarUpgradeUpdateOOBReports extends UpgradeScript
     public function installReports(array $reportNames)
     {
         $this->log('Temporarily enabling admin work for Report installation');
-        AccessControlManager::instance()->setAdminWork(true);
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
         require_once 'modules/Reports/SavedReport.php';
         require_once 'modules/Reports/SeedReports.php';
         $this->log('Installing new Serve Reports');
         create_default_reports(true, $reportNames);
-        AccessControlManager::instance()->setAdminWork(false);
     }
 
     /**

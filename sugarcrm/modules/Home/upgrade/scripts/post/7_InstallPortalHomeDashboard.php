@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
+use Sugarcrm\Sugarcrm\AccessControl\AdminWork;
 
 /**
  * Install the Portal Home Dashboard.
@@ -51,7 +51,8 @@ class SugarUpgradeInstallPortalHomeDashboard extends UpgradeScript
     public function installDashboard()
     {
         $this->log('Temporarily enabling admin work for Portal Home Dashboard installation');
-        AccessControlManager::instance()->setAdminWork(true);
+        $adminWork = new AdminWork();
+        $adminWork->startAdminWork();
 
         $this->log('Installing Portal Home Dashboard and dependencies');
 
@@ -64,7 +65,5 @@ class SugarUpgradeInstallPortalHomeDashboard extends UpgradeScript
         if (!$result) {
             $this->log('Did not install Portal dashboard: ' . $dashboardFile);
         }
-
-        AccessControlManager::instance()->setAdminWork(false);
     }
 }
