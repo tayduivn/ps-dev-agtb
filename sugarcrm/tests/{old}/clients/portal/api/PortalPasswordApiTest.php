@@ -11,6 +11,7 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @group ApiTests
@@ -18,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 class PortalPasswordApiTest extends TestCase
 {
     protected $oldConfig;
+    protected $bean_id;
 
     public function setUp()
     {
@@ -33,16 +35,19 @@ class PortalPasswordApiTest extends TestCase
             'onespecial' => true,
         ];
 
+        // Set up a mock bean_id to use for sample database entries
+        $this->bean_id = '330c595a-ca8e-11e9-9c7f-6003089fe26e';
+
         // Add a sample valid token and a sample invalid (expired) token into
         // the users_password_link table
         $now = TimeDate::getInstance()->nowDb();
         $now = $GLOBALS['db']->convert("'$now'", 'datetime');
         $query = "INSERT INTO users_password_link VALUES " .
-            "('good', 'fakeBean', 'Contacts', 'fakeUser', $now, 0 , 'portal')";
+            "('good', '$this->bean_id', 'Contacts', 'fakeUser', $now, 0 , 'portal')";
         $GLOBALS['db']->query($query);
         $date = $GLOBALS['db']->convert("'1980-01-01 23:02:21'", 'datetime');
         $query = "INSERT INTO users_password_link VALUES " .
-            "('bad', 'fakeBean', 'Contacts', 'fakeUser', $date, 0 , 'portal')";
+            "('bad', '$this->bean_id', 'Contacts', 'fakeUser', $date, 0 , 'portal')";
         $GLOBALS['db']->query($query);
     }
 
@@ -51,7 +56,7 @@ class PortalPasswordApiTest extends TestCase
         $GLOBALS['sugar_config'] = $this->oldConfig;
 
         // Clean up
-        $query = "DELETE FROM users_password_link WHERE id='good' OR id='bad'";
+        $query = "DELETE FROM users_password_link WHERE bean_id='$this->bean_id'";
         $GLOBALS['db']->query($query);
         SugarTestContactUtilities::removeAllCreatedContacts();
     }
@@ -202,7 +207,7 @@ class PortalPasswordApiTest extends TestCase
             'validateResetToken',
             [$input]
         );
-
+        
         $this->assertEquals($expected, $actual);
     }
 
@@ -211,7 +216,7 @@ class PortalPasswordApiTest extends TestCase
         return [
             ['notAnExistingToken', null],
             ['bad', null],
-            ['good', 'fakeBean'],
+            ['good', '330c595a-ca8e-11e9-9c7f-6003089fe26e'],
         ];
     }
 
@@ -229,13 +234,13 @@ class PortalPasswordApiTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $apiMock,
             'updatePortalPassword',
-            ['fakeBean', 'newPassword']
+            [$this->bean_id, 'newPassword']
         );
 
         $this->assertNull($actual);
 
         // Verify that updating the Portal password for an existing contact ID succeeds
-        $contactMock = SugarTestContactUtilities::createContact('fakeBean', [
+        $contactMock = SugarTestContactUtilities::createContact($this->bean_id, [
             'portal_password' => 'oldPassword',
         ]);
         $oldPassword = $contactMock->portal_password;
@@ -243,7 +248,7 @@ class PortalPasswordApiTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $apiMock,
             'updatePortalPassword',
-            ['fakeBean', 'newPassword']
+            [$this->bean_id, 'newPassword']
         );
         $this->assertNotNull($actual);
         $this->assertInstanceOf(Contact::class, $actual);
