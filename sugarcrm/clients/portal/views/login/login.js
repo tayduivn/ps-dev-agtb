@@ -55,9 +55,10 @@
             return;
         }
         app.alert.show('language', {level: 'warning', title: app.lang.get('LBL_LOADING_LANGUAGE'), autoclose: false});
+        app.user.setPreference('language',language);
         app.lang.setLanguage(language, function() {
             app.alert.dismiss('language');
-        });
+        }, this);
     },
 
     /**
