@@ -50,6 +50,7 @@ class RegisterContactApiTest extends TestCase
         $bean = BeanFactory::getBean('Contacts', $result);
         $this->assertEquals('portalName', $bean->portal_name);
         $this->assertEquals(0, $bean->portal_active);
+        $this->assertEquals('external', $bean->entry_source);
         $bean->mark_deleted($bean->id);
     }
 }

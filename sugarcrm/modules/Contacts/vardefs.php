@@ -786,6 +786,20 @@ $dictionary['Contact'] = array(
                 'reportable' => true,
                 'importable' => 'true',
             ),
+        'entry_source' => [
+            'name' => 'entry_source',
+            'vname' => 'LBL_ENTRY_SOURCE',
+            'type' => 'enum',
+            'function' => 'getSourceTypes',
+            'function_bean' => 'Contacts',
+            'len' => '255',
+            'default' => 'internal',
+            'comment' => 'Determines if a record was created internal to the system or external to the system',
+            'readonly' => true,
+            'studio' => false,
+            'processes' => true,
+            'reportable' => true,
+        ],
 // BEGIN SUGARCRM flav=ent ONLY
         // site_user_id is used as an analytics id
         'site_user_id' => [

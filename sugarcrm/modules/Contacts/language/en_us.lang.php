@@ -287,4 +287,8 @@ To create a {{module_name}}:
     'LBL_FILTER_CONTACTS_REPORTS' => 'Contacts\' reports',
     'LBL_DATAPRIVACY_BUSINESS_PURPOSE' => 'Business Purposes Consented for',
     'LBL_DATAPRIVACY_CONSENT_LAST_UPDATED' => 'Consent Last Updated',
+
+    'LBL_ENTRY_SOURCE' => 'Contact Source',
+    'LBL_SOURCE_EXTERNAL' => 'External',
+    'LBL_SOURCE_INTERNAL' => 'Internal',
 );

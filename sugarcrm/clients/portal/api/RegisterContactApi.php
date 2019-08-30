@@ -131,6 +131,8 @@ class RegisterContactApi extends SugarApi
             }
         }
 
+        $bean->entry_source = 'external';
+
         return $this->updateBean($bean, $api, $fields);
     }
 
