@@ -562,6 +562,10 @@ class Contact extends Person {
                 }
             }
         }
+        //Disable portal if no account
+        if (empty($this->account_id)) {
+            $this->portal_active = 0;
+        }
         //END SUGARCRM flav=ent ONLY
 
         return parent::save($check_notify);
