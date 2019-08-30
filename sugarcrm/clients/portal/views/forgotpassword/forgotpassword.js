@@ -13,9 +13,11 @@
  *
  * @class View.Views.Portal.ForgotpasswordView
  * @alias SUGAR.App.view.views.PortalForgotpasswordView
- * @extends View.View
+ * @extends View.Views.Portal.FormView
  */
 ({
+    extendsFrom: 'FormView',
+
     plugins: ['ErrorDecoration'],
 
     events: {
@@ -38,6 +40,7 @@
 
         var contact = app.config.contactInfo || {};
         this.contactInfo = contact.contactPhone || contact.contactURL || contact.contactEmail;
+        this.submitFunction = this.forgotPassword.bind(this);
     },
 
     /**

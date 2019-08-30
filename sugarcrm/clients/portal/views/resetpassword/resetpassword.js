@@ -13,9 +13,11 @@
  *
  * @class View.Views.Portal.ResetpasswordView
  * @alias SUGAR.App.view.views.PortalResetpasswordView
- * @extends View.View
+ * @extends View.Views.Portal.FormView
  */
 ({
+    extendsFrom: 'FormView',
+
     plugins: ['ErrorDecoration'],
 
     events: {
@@ -30,6 +32,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.addPasswordValidation();
+        this.submitFunction = this.resetPassword.bind(this);
     },
 
     /**

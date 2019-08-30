@@ -9,6 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
+    extendsFrom: 'FormView',
+
     plugins: ['ErrorDecoration'],
 
     /**
@@ -70,6 +72,7 @@
         // `bindDataChange`. This should be fixed when SC-3145.
         this.action = 'edit';
         this.addPasswordValidation();
+        this.submitFunction = this.signup.bind(this);
     },
 
     /**
