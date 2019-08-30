@@ -9,16 +9,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe('Portal.Cases.Layouts.ContentsearchDropdown', function() {
+describe('Portal.Layouts.ContentsearchDropdown', function() {
     var app;
     var layout;
 
     beforeEach(function() {
         app = SugarTest.app;
-        SugarTest.loadComponent('portal', 'layout', 'contentsearch-dropdown', 'Cases');
+        SugarTest.loadComponent('portal', 'layout', 'contentsearch-dropdown');
         layout = SugarTest.createLayout(
             'portal',
-            'Cases',
+            null,
             'contentsearch-dropdown',
             null,
             null,

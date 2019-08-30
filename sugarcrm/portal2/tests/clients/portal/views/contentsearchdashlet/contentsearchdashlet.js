@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe('Portal.Cases.Views.ContentsearchDashlet', function() {
+describe('Portal.Views.ContentsearchDashlet', function() {
     var app;
     var view;
     var layout;
@@ -17,12 +17,12 @@ describe('Portal.Cases.Views.ContentsearchDashlet', function() {
     beforeEach(function() {
         app = SugarTest.app;
         var context = new app.Context();
-        SugarTest.loadComponent('portal', 'view', 'contentsearchdashlet', 'Cases');
+        SugarTest.loadComponent('portal', 'view', 'contentsearchdashlet');
         SugarTest.loadComponent('base', 'layout', 'default');
         layout = SugarTest.createLayout('base', null, 'default', {});
         view = SugarTest.createView(
             'portal',
-            'Cases',
+            null,
             'contentsearchdashlet',
             {name: 'test'},
             context,

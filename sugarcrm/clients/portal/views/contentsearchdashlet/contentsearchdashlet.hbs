@@ -20,9 +20,15 @@
             <input type='text' data-action='search' placeholder="{{str 'LBL_BASIC_QUICK_SEARCH'}}">
         </div>
     {{else}}
-        <div>
-            <p class='contentsearchdashlet-text'>{{str 'LBL_CONTENT_SEARCH_DASHLET_DISABLED'}}</p>
-            <input type='button' value="{{str 'LBL_CREATE_CASE'}}" class='btn btn-primary' data-action='create-case'>
-        </div>
+        {{#if canCreateCase}}
+            <div>
+                <p class='contentsearchdashlet-text'>{{str 'LBL_CONTENT_SEARCH_DASHLET_DISABLED'}}</p>
+                <input type='button' value="{{str 'LBL_CREATE_CASE'}}" class='btn btn-primary' data-action='create-case'>
+            </div>
+        {{else}}
+            <p class='contentsearchdashlet-text'>
+                {{greeting}}
+            </p>
+        {{/if}}
     {{/if}}
 </div>

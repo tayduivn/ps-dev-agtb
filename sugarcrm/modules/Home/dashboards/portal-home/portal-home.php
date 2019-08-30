@@ -25,9 +25,6 @@ return [
                                 'type' => 'contentsearchdashlet',
                                 'label' => 'LBL_CONTENT_SEARCH_DASHLET',
                             ],
-                            'context' => [
-                                'module' => 'Cases',
-                            ],
                             'width' => 12,
                         ],
                     ],

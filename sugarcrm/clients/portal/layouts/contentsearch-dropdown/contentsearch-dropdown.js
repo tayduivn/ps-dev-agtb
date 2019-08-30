@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Portal.CaseContentsearchDropdownLayout
- * @alias SUGAR.App.view.views.PortalCaseContentsearchDropdownLayout
+ * @class View.Views.Portal.ContentsearchDropdownLayout
+ * @alias SUGAR.App.view.views.PortalContentsearchDropdownLayout
  * @extends View.Layout
  */
 ({

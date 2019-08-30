@@ -10,8 +10,8 @@
  */
 
 /**
-* @class View.Views.Portal.CaseContentsearchdashletView
-* @alias SUGAR.App.view.views.PortalCaseContentsearchdashletView
+* @class View.Views.Portal.ContentsearchdashletView
+* @alias SUGAR.App.view.views.PortalContentsearchdashletView
 * @extends View.View
 */
 ({
@@ -42,7 +42,9 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.module = 'Cases';
         this.caseDeflection = this.isCaseDeflectionEnabled();
+        this.canCreateCase = app.acl.hasAccess('create', this.module);
         this.greeting = app.lang.get('LBL_CONTENT_SEARCH_DASHLET_GREETING', this.module, {
             username: app.user.get('full_name')
         });

@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Portal.CaseContentsearchFooterView
- * @alias SUGAR.App.view.views.PortalCaseContentsearchFooterView
+ * @class View.Views.Portal.ContentsearchFooterView
+ * @alias SUGAR.App.view.views.PortalContentsearchFooterView
  * @extends View.View
  */
 ({
@@ -24,6 +24,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.module = 'Cases';
+        this.canCreateCase = app.acl.hasAccess('create', this.module);
         this.moduleNames = {module_name: app.lang.getModuleName(this.module)};
         this.hide();
         this.context.on('data:fetched', this.show, this);

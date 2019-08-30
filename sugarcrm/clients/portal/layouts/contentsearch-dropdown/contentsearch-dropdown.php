@@ -1,4 +1,4 @@
-{{!--
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,8 +9,17 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
 
-<div class='contentsearch-footer'>
-    <span>{{str 'LBL_NO_LOOKING_FOR' module}}</span><button data-action="createcase" class="btn btn-link btn-invisible">{{str 'LBL_CREATE_CASE' module moduleNames}}</button>
-</div>
+$viewdefs['portal']['layout']['contentsearch-dropdown'] = [
+    'components' => [
+        [
+            'view' => 'contentsearch-results',
+        ],
+        [
+            'view' => 'pagination',
+        ],
+        [
+            'view' => 'contentsearch-footer',
+        ],
+    ],
+];

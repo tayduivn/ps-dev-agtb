@@ -9,17 +9,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe('Portal.Cases.Layouts.ContentsearchFooter', function() {
+describe('Portal.Layouts.ContentsearchFooter', function() {
     var app;
     var view;
 
     beforeEach(function() {
         app = SugarTest.app;
         var context = new app.Context();
-        SugarTest.loadComponent('portal', 'view', 'contentsearch-footer', 'Cases');
+        SugarTest.loadComponent('portal', 'view', 'contentsearch-footer');
         view = SugarTest.createView(
             'portal',
-            'Cases',
+            null,
             'contentsearch-footer',
             null,
             context,

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,16 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Cases']['portal']['layout']['contentsearch-dropdown'] = [
-    'components' => [
+$viewdefs['portal']['view']['contentsearchdashlet'] = [
+    'dashlets' => [
         [
-            'view' => 'contentsearch-results',
-        ],
-        [
-            'view' => 'pagination',
-        ],
-        [
-            'view' => 'contentsearch-footer',
+            'description' => '',
+            'config' => [],
+            'preview' => [],
         ],
     ],
 ];
