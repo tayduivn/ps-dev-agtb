@@ -4958,7 +4958,7 @@ Sincerely, SugarCRM',
     // Cookie consent
     'LBL_WIZ_USER_COOKIE_CONSENT' => 'This application uses cookies',
     'LBL_USER_CLICK_FOR_COOKIE_CONSENT' => 'Check to accept (Required)',
-    'LBL_USER_COOKIE_CONSENT_TEXT' => 'This application uses cookies to aid in providing you with a better experience. By continuing, you consent to the use of cookies in accordance with our <a href="{{href}}">privacy policy</a>.',
+    'LBL_USER_COOKIE_CONSENT_TEXT' => 'This application uses cookies to aid in providing you with a better experience. By continuing, you consent to the use of cookies in accordance with our <a href="{{href}}" target="_blank">privacy policy</a>.',
     //end portal
 
     // Final name given by marketing is Service Console
