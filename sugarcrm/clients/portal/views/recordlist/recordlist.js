@@ -30,5 +30,27 @@
         if (meta && _.isObject(meta.rowactions)) {
             this.addRowActions();
         }
+    },
+
+    /**
+     * Overrides the function defined in the base flex-list view. Since Portal
+     * no longer has a footer, this function alters how the scroll helper
+     * is toggled.
+     * @override
+     */
+    _toggleScrollHelper: function() {
+        // If the table is not wide enough to need a horizontal scrollbar, or
+        // the user is scrolled down to the bottom of the table, hide the fixed
+        // scrollbar helper
+        this.$helper.toggle(true);
+        if (this.$spy.get(0).scrollWidth <= this.$spy.width() ||
+            this.$helper.offset().top > this.$('tbody').offset().top + this.$('tbody').height()) {
+            this.$helper.toggle(false);
+            return;
+        }
+
+        if (this.$helper.css('display') !== 'none') {
+            this.$helper.scrollLeft(this.$spy.scrollLeft());
+        }
     }
 })
