@@ -244,7 +244,7 @@ class BusinessProcessInstaller
      */
     protected function appendInstalled(array $installed)
     {
-        $this->installed = array_merge($this->installed, $installed);
+        $this->installed = array_merge_recursive($this->installed, $installed);
     }
 
     /**
@@ -305,7 +305,13 @@ class BusinessProcessInstaller
                         // If we were successful then we will have an ID of the
                         // project that was imported
                         if (isset($result['id'])) {
+                            // Mark what was just installed
                             $this->markInstalled($ext, $result['id']);
+
+                            // Mark any installed dependencies
+                            $this->appendInstalled($importer->getDependencyKeysByType());
+
+                            // Mark the file as having been installed
                             $this->markFileInstalled($file);
                         }
                     } catch (Exception $e) {
