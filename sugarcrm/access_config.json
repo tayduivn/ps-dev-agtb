@@ -178,16 +178,30 @@
         "pmse_Project" : {
             "645a5c70-7e4c-11e9-944d-82186cfedf39":["SUGAR_SERVE"],
             "42b657ca-7bec-11e9-a5ed-d694a7e8e45a":["SUGAR_SERVE"],
-            "7b2f8038-7e4c-11e9-8eef-82186cfedf39":["SUGAR_SERVE"]
+            "7b2f8038-7e4c-11e9-8eef-82186cfedf39":["SUGAR_SERVE"],
+            "0b2619c6-d01f-11e9-af0f-020212dc7ae2":["SUGAR_SELL"],
+            "1ee3ced8-ce9c-11e9-b443-020212dc7ae2":["SUGAR_SELL"],
+            "1fca7c66-ce97-11e9-9945-020212dc7ae2":["SUGAR_SELL"],
+            "2974cb4a-ce97-11e9-8382-020212dc7ae2":["SUGAR_SELL"],
+            "73117be4-ce9d-11e9-9a22-020212dc7ae2":["SUGAR_SELL"],
+            "88c61b38-d038-11e9-a28a-269099cc8e72":["SUGAR_SELL"],
+            "d8b16456-cea1-11e9-9bd1-020212dc7ae2":["SUGAR_SELL"]
         },
         "pmse_Business_Rules" : {
-            "644d41a2-7e4c-11e9-9f68-82186cfedf39":["SUGAR_SERVE"]
+            "644d41a2-7e4c-11e9-9f68-82186cfedf39":["SUGAR_SERVE"],
+            "85737962-d038-11e9-9fd9-269099cc8e72":["SUGAR_SELL"],
+            "88c0e4ba-d038-11e9-8175-269099cc8e72":["SUGAR_SELL"]
         },
         "pmse_Emails_Templates": {
             "7b248aca-7e4c-11e9-8bb8-82186cfedf39":["SUGAR_SERVE"],
             "60ed5042-7e4c-11e9-8b80-82186cfedf39":["SUGAR_SERVE"],
             "6444b154-7e4c-11e9-9f3d-82186cfedf39":["SUGAR_SERVE"],
-            "6447b4e4-7e4c-11e9-96e3-82186cfedf39":["SUGAR_SERVE"]
+            "6447b4e4-7e4c-11e9-96e3-82186cfedf39":["SUGAR_SERVE"],
+            "0b1d30b8-d01f-11e9-b51b-020212dc7ae2":["SUGAR_SELL"],
+            "72e43742-ce9d-11e9-a418-020212dc7ae2":["SUGAR_SELL"],
+            "856ce0f2-d038-11e9-b51f-269099cc8e72":["SUGAR_SELL"],
+            "d55cd632-cea1-11e9-8252-020212dc7ae2":["SUGAR_SELL"],
+            "d8accedc-cea1-11e9-bbec-020212dc7ae2":["SUGAR_SELL"]
         }
     },
     "FIELDS": {
