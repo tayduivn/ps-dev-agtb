@@ -17,6 +17,12 @@ use PHPUnit\Framework\TestCase;
  */
 class RS44Test extends TestCase
 {
+    /**
+     * Holds the created ID for deletion
+     * @var string
+     */
+    protected static $testBean;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('app_list_strings');
@@ -28,6 +34,22 @@ class RS44Test extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+
+        // Delete the test bean data now
+        if (static::$testBean) {
+            // soft delete just in case some additional related records are left behind
+            static::$testBean->mark_deleted($id);
+            // hard delete the record as well
+            $qb = static::$testBean->db->getConnection()->createQueryBuilder();
+            $qb->delete(
+                static::$testBean->table_name
+            )->where(
+                $qb->expr()->eq(
+                    'id',
+                    $qb->createPositionalParameter(static::$testBean->id)
+                )
+            )->execute();
+        }
     }
 
     public function testCreateLead()
@@ -35,10 +57,15 @@ class RS44Test extends TestCase
         $api = new RegisterLeadApi();
         $rest = SugarTestRestUtilities::getRestServiceMock();
 
-        $result = $api->createLeadRecord($rest, array('last_name' => 'RS44Test'));
+        $result = $api->createLeadRecord($rest, [
+            'last_name' => 'RS44Test',
+            'lead_source' => 'Self Generated',
+        ]);
+
+        // Begin assertions
         $this->assertNotEmpty($result);
 
-        $bean = BeanFactory::getBean('Leads', $result);
-        $this->assertEquals('RS44Test', $bean->last_name);
+        static::$testBean = BeanFactory::getBean('Leads', $result);
+        $this->assertEquals('RS44Test', static::$testBean->last_name);
     }
 }
