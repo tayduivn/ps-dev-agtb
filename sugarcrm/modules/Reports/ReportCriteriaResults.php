@@ -176,14 +176,20 @@ $args['upper_left'] = '';
 control($args);
 
 $params = array();
-if(!empty($_REQUEST['favorite']))
-    $params[] = "<a href='index.php?module=Reports&action=index&favorite=1'>{$mod_strings['LBL_FAVORITES_TITLE']}</a>";
-$star = '';
-if(!empty($args['reporter']->saved_report->id)){
-    $star = SugarFavorites::generateStar(SugarFavorites::isUserFavorite('Reports', $args['reporter']->saved_report->id), 'Reports', $args['reporter']->saved_report->id);
+if (!empty($_REQUEST['favorite'])) {
+    $params[] = '<a href="index.php?module=Reports&action=index&favorite=1">' . htmlspecialchars($mod_strings['LBL_FAVORITES_TITLE']) . '</a>';
 }
-if (!empty($args['reporter']->name))
-    $params[] = "{$args['reporter']->name}&nbsp;{$star}";
+$star = '';
+if (!empty($args['reporter']->saved_report->id)) {
+    $star = SugarFavorites::generateStar(
+        SugarFavorites::isUserFavorite('Reports', $args['reporter']->saved_report->id),
+        'Reports',
+        $args['reporter']->saved_report->id
+    );
+}
+if (!empty($args['reporter']->name)) {
+    $params[] = htmlspecialchars($args['reporter']->name) . '&nbsp;' . $star;
+}
 
 //Override the create url
 $createURL = 'index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report';
@@ -218,11 +224,10 @@ if (isset($_REQUEST['page']) && $_REQUEST['page'] == 'report') {
         $expandDivs = explode(' ', $_REQUEST['expanded_combo_summary_divs']);
         foreach ($expandDivs as $divId) {
             str_replace(' ', '', $divId);
-			if ($divId != "") {
-                echo "<script>expandCollapseComboSummaryDiv('" . htmlspecialchars($divId, ENT_QUOTES, 'UTF-8') . "')
-                    </script>";
-			} // if
-		} // foreach
+            if ($divId !== '') {
+                echo '<script>expandCollapseComboSummaryDiv(' . JSON::encode($divId) . ');</script>';
+            } // if
+        } // foreach
 	} // if
 } // if
 ?>
