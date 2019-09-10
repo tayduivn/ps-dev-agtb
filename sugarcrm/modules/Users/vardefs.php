@@ -432,7 +432,6 @@ $dictionary['User'] = array(
             'options' => 'license_type_dom',
             'import' => false,
             'reportable' => false,
-            'custom_type' => 'enum',
             'function_bean' => 'Users',
             'function' => 'getSystemLicenseTypesSelections',
             'isMultiSelect' => true,

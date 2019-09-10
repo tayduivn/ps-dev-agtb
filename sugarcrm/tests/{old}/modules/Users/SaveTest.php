@@ -367,7 +367,7 @@ class SaveTest extends TestCase
         $_POST['LicenseTypes'] = $licenseType;
         include 'modules/Users/Save.php';
 
-        $record = BeanFactory::getBean('Users', $current_user->id);
+        $record = $su = BeanFactory::retrieveBean('Users', $current_user->id, ['use_cache' => false]);
 
         $this->assertEquals($expected, $record->getLicenseTypes());
     }

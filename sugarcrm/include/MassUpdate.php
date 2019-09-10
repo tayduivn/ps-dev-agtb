@@ -554,7 +554,9 @@ class MassUpdate
 		} else if($this->sugarbean->object_name == 'InboundEmail'){
 			$this->sugarbean->field_defs['status']['type'] = 'enum';
 			$this->sugarbean->field_defs['status']['options'] = 'user_status_dom';
-		}
+        } elseif ($this->sugarbean->object_name == 'User') {
+            $this->sugarbean->field_defs['license_type']['type'] = 'enum';
+        }
 
 		//These fields should never appear on mass update form
 		static $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
