@@ -5,7 +5,9 @@
  * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
-
+/*
+ *THIS FILE WAS MODIFIED BY SUGARCRM INC. ON SEPTEMBER 9, 2019
+ */
 
 +function ($) {
   'use strict';
@@ -50,7 +52,9 @@
 
     var $target = $(document).find(selector)
 
-    this.activate($this.closest('li'), $ul)
+    /* CS-357 Planned Activities dashlet hangs when switch dashlet tabs
+     * .closest('li') will bubble-up to dashlets on Service console */
+    this.activate($this.parent('li'), $ul)
     this.activate($target, $target.parent(), function () {
       $previous.trigger({
         type: 'hidden.bs.tab',
