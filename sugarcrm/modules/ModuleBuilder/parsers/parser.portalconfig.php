@@ -72,8 +72,14 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     protected function refreshCache()
     {
-        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_SERVERINFO), ['base']);
-        MetaDataManager::refreshCache(array('portal'));
+        MetaDataManager::refreshSectionCache([MetaDataManager::MM_SERVERINFO], ['base']);
+
+        // Rebuild the relevant sections of the Portal cache
+        $sections = [
+            MetaDataManager::MM_CONFIG,
+            MetaDataManager::MM_MODULES,
+        ];
+        MetaDataManager::refreshSectionCache($sections, ['portal']);
     }
 
     /**
