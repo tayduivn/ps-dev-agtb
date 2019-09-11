@@ -43,7 +43,7 @@ export default class BoolField extends BaseField {
     }
 }
 
-//export const Edit = BoolField;
+// export const Edit = BoolField;
 
 export class Edit extends BaseField {
     constructor(options: any) {

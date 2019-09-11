@@ -53,12 +53,11 @@ Then(/^I verify forecasts (Displayed Total|Overall Total) data on (#\S+)$/, asyn
         amountType = (expectedData[i].fieldName).toLowerCase();
 
         if (amountType === 'likely') {
-            if (result.likely != expectedData[i].value) {
+            if (result.likely !== expectedData[i].value) {
                 throw new Error(`${totalType} ${amountType} amount failure! Expected: ${expectedData[i].value} Actual: ${result.likely}`);
             }
-        }
-        if (amountType === 'best') {
-            if (result.best != expectedData[i].value) {
+        } else if (amountType === 'best') {
+            if (result.best !== expectedData[i].value) {
                 throw new Error(`${totalType} ${amountType} amount failure! Expected: ${expectedData[i].value} Actual: ${result.best}`);
             }
         }

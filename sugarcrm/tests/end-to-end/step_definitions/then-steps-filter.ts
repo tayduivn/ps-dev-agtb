@@ -33,7 +33,7 @@ Then(/I verify button state in (#[a-zA-Z](?:\w|\S)*)$/,
             let expectedValue  = row[1];
             let value  = await view.isDisabled(row[0].toLowerCase());
 
-            if (value.toString() != expectedValue) {
+            if (value.toString() !== expectedValue) {
                 errors.push(
                     [
                         `The '${row[0]}' control expected to be`,

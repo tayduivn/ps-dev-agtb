@@ -51,7 +51,7 @@ Then(/I verify pagination controls in (#[a-zA-Z](?:\w|\S)*)$/,
             let expectedValue  = row[1];
             let value  = await view.isControlActive(row[0]);
 
-            if (value.toString() != expectedValue) {
+            if (value.toString() !== expectedValue) {
                 errors.push(
                         [
                             `Field '${row[0]}' should be`,

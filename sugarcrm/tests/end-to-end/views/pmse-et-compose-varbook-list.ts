@@ -57,7 +57,7 @@ export default class PmseEtComposeVarbookList extends BaseView {
         for (let x = 1; x <= countOfLiElements; x++) {
             elementSelector = 'li:nth-child(' + x + ')';
             elementText = await this.driver.getText(this.$(`moduleDropdown`, {elementSelector}));
-            if (moduleText == elementText) {
+            if (moduleText === elementText) {
                 await this.driver.click(this.$(`moduleDropdown`, {elementSelector}));
                 await this.driver.waitForApp();
                 break;
@@ -90,7 +90,7 @@ export default class PmseEtComposeVarbookList extends BaseView {
         for (let x = 1; x <= countOfLiElements; x++) {
             elementSelector = 'li:nth-child(' + x + ')';
             elementText = await this.driver.getText(this.$(`activeDropdown`, {elementSelector}));
-            if (dropdownOption == elementText) {
+            if (dropdownOption === elementText) {
                 await this.driver.click(this.$(`activeDropdown`, {elementSelector}));
                 await this.driver.waitForApp();
                 break;
@@ -113,7 +113,7 @@ export default class PmseEtComposeVarbookList extends BaseView {
         for (let x = 1; x <= countOfLiElements; x++) {
             elementSelector = 'tr:nth-child(' + x + ') td:nth-child(2)';
             element = await this.driver.getText(this.$(`tableLinkRecord`, {elementSelector}));
-            if (element == moduleName) {
+            if (element === moduleName) {
                 elementSelector = 'tr:nth-child(' + x + ') td:nth-child(1)';
                 await this.driver.click(this.$(`tableLinkRecord`, {elementSelector}));
                 await this.driver.waitForApp();

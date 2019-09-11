@@ -82,7 +82,7 @@ When(/^a placeholder is inserted in the (subject|content) \*(\w+) record from mo
         await seedbed.client.driver.waitForApp();
 
         // Change from target module to a related module.
-        if (recordModule != table['rawTable'][1][0]) {
+        if (recordModule !== table['rawTable'][1][0]) {
             await petSelectField.clickButton('module_dropdown');
             await seedbed.client.driver.waitForApp();
             await petSelectField.clickModuleSelect(linkText);

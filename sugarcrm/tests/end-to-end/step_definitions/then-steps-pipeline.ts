@@ -177,7 +177,7 @@ Then(/I verify (\*[a-zA-Z](?:\w|\S)*) tile delete button state in (#[a-zA-Z](?:\
         let listItem = await view.getListItem({id: record.id});
         let value = await listItem.isDeleteButtonDisabled();
 
-        if (value.toString() != expectedValue) {
+        if (value.toString() !== expectedValue) {
             errors.push(
                 [
                     `The state of the delete button expected to be`,

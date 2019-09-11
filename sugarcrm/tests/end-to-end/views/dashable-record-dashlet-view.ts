@@ -62,7 +62,7 @@ export default class DashableRecordDashlet extends DashletView {
      * @param {string} tabName
      * @return {boolean}
      */
-    public async selectTab(tabName: string):Promise<boolean> {
+    public async selectTab(tabName: string): Promise<boolean> {
         if (this.checkTabPresence(tabName)) {
             let selector = this.$(`tab`, {tabName});
             await this.driver.click(selector);

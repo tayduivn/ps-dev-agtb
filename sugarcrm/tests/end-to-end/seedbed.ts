@@ -40,7 +40,7 @@ import MergeLayout from './layouts/merge-layout';
 import HistoricalSummaryDrawerLayout from './layouts/historical-summary-layout';
 import PipelineView from './views/pipeline-view';
 import ServiceConsoleView from './views/service-console-view';
-import UserProfileLayout from './layouts/user-profile-layout'
+import UserProfileLayout from './layouts/user-profile-layout';
 import TileViewSettings from './views/tile-settings-view';
 import FindDuplicates from './views/find-duplicates-view';
 import DashableRecordDashletConfig from './views/dashable-record-dashlet-config-view';
@@ -473,7 +473,7 @@ export default (seedbed: Seedbed) => {
                     return;
                 }
                 responseData = JSON.parse(responseString);
-            } catch(e) {
+            } catch (e) {
                 seedbed.logger.error(`JSON response was declared, but parsing error occurred from url ${url}`);
                 return;
             }

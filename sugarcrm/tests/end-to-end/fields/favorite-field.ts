@@ -32,16 +32,18 @@ export default class FavoriteField extends BaseField {
 
         let currValue = await (this.driver.getAttribute(this.$('button'), 'class') as any);
 
-        const isFavorite = (currValue.indexOf('active') != -1);
+        const isFavorite = (currValue.indexOf('active') !== -1);
         const myVal = val.trim().toLowerCase();
         const isTrueSet = (myVal === 'true');
 
         // Mark record as favorite
-        if ( isTrueSet  && !isFavorite )
+        if ( isTrueSet  && !isFavorite ) {
             await this.driver.click(this.$('field.selector'));
+        }
 
         // Remove record from favorites
-        if (!isTrueSet && isFavorite)
+        if (!isTrueSet && isFavorite) {
             await this.driver.click(this.$('field.selector'));
+        }
     }
 }

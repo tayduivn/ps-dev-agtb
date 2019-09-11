@@ -236,7 +236,7 @@ export default class SearchModuleMenuCmp extends BaseView {
         /** Getting the total of returned records: */
         let actualTotalReturned: number = await this.getTotalNumberOfMatch();
 
-        if (actualTotalReturned != expectedNumReturned) {
+        if (actualTotalReturned !== expectedNumReturned) {
             currentErr.messages.push('Cause:Un-matched Total Returned ' + '(Actual:' + actualTotalReturned + '. Expected:' + expectedNumReturned + ')');
         }
 
