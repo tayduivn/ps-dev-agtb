@@ -455,13 +455,13 @@ for($i=0; $i<$number_contacts; $i++) {
 	$contact->primary_address_postalcode = mt_rand(10000,99999);
 	$contact->primary_address_country = 'USA';
 
+    // Set the account ID field prior to save so that Portal Active is not disabled
+    $contact->account_id = $account_id;
+
 	$contact->save();
     addTagsToBean($contact);
 
     $contacts[] = $contact->id;
-
-    // Create a linking table entry to assign an account to the contact.
-	$contact->set_relationship('accounts_contacts', array('contact_id'=>$contact->id ,'account_id'=> $account_id, 'primary_account' => 1), false);
 
 	//Create new tasks
 	$task = new Task();
