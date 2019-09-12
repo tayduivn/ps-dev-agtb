@@ -705,6 +705,7 @@ class ModuleBuilderController extends SugarController
 
     public function action_SaveDropDown()
     {
+        /** @var ParserDropDown $parser */
         $parser = ParserFactory::getParser('dropdown');
         $parser->saveDropDown($_REQUEST);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
@@ -712,7 +713,6 @@ class ModuleBuilderController extends SugarController
 // BEGIN SUGARCRM flav=ent ONLY
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDFILTERS);
 // END SUGARCRM flav=ent ONLY
-        LanguageManager::invalidateJsLanguageCache();
         $this->view = 'dropdowns';
     }
 
