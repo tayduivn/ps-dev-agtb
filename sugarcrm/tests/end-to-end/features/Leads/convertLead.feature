@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@leads @job4
+@leads @job4 @xxx
 Feature: Leads module verification
 
   Background:
@@ -242,6 +242,54 @@ Feature: Leads module verification
 
     When I open the calls subpanel on #O1Record view
     Then I verify number of records in #O1Record.SubpanelsLayout.subpanels.meetings is 0
+
+  @lead_conversion_from_snbpanel
+  Scenario: Leads > Convert Lead from subpanel
+    # Create an Account record
+    Given Accounts records exist:
+      | *name     |
+      | Account_A |
+
+    # Open Account record view
+    When I choose Accounts in modules menu
+    When I select *Account_A in #AccountsList.ListView
+
+    # Create a Lead from Leads subpanel of Account record view
+    When I open the leads subpanel on #Account_ARecord view
+    When I create_new record from leads subpanel on #Account_ARecord view
+
+    # Verify that account field is auto-populated from the 'parent' account
+    Then I verify fields on #LeadsRecord.RecordView
+      | fieldName    | value     |
+      | account_name | Account_A |
+
+    # Provide input for Lead record
+    When I provide input for #LeadsRecord.HeaderView view
+      | *      | first_name | last_name |
+      | Lead_1 | Novak      | Djokovic  |
+    When I click Save button on #LeadsDrawer header
+    When I close alert
+
+    # Convert Lead record in Leads subpanel
+    When I click on Convert button for *Lead_1 in #Account_ARecord.SubpanelsLayout.subpanels.leads
+
+    # Generate ID for Contact record
+    When I provide input for #Lead_1LeadConversionDrawer.ContactContent view
+      | *  |
+      | C1 |
+    When I click SelectRecord button on #LeadConversionDrawer.AccountContent
+
+    # Finish lead conversion process
+    When I click Save button on #LeadConversionDrawer header
+    When I close alert
+
+    # Go to Contact list view and verify Account Name field
+    When I choose Contacts in modules menu
+    When I click on preview button on *C1 in #ContactsList.ListView
+    Then I should see #C1Preview view
+    Then I verify fields on #C1Preview.PreviewView
+      | fieldName    | value     |
+      | account_name | Account_A |
 
   @user_profile
   Scenario: User Profile > Change license type

@@ -19,9 +19,17 @@ import RecordLayout from '../layouts/record-layout';
  *
  * @example "I click CreateRecord button on #LeadConversionDrawer.OpportunityContent"
  */
-When(/^I click (CreateRecord|Reset|ChevronDown|ChevronUp) button on (#\S+)$/,
+When(/^I click (CreateRecord|Reset|ChevronDown|ChevronUp|SelectRecord) button on (#\S+)$/,
     async function (btnToClick: string, view: LeadConversionView): Promise<void> {
+
+        // Workround: In order to make Select Account button enabled and clickable, we need to click in filter search bar first
+        if (btnToClick === 'SelectRecord') {
+            await view.searchBarClick();
+            await this.driver.waitForApp();
+        }
+
         await view.btnClick(btnToClick.toLowerCase());
+
     }, {waitForApp: true});
 
 /**

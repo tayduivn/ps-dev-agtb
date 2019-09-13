@@ -26,15 +26,21 @@ export default class LeadConversionView extends BaseView {
                     reset: 'a[name="reset_button"]',
                     chevrondown: '.fa.fa-chevron-down',
                     chevronup: '.fa.fa-chevron-up',
+                    selectrecord: 'a[name="associate_button"]',
                 },
-            }
+            },
+            searchbar: '.search-name',
         });
+    }
+
+    public async searchBarClick(): Promise<any> {
+        let selector = this.$('searchbar');
+        await this.driver.click(selector);
     }
 
     public async btnClick(btnName): Promise<any> {
         let selector = this.$('header.button.' + btnName);
-        await this.driver
-            .click(selector);
+        await this.driver.click(selector);
     }
 
     public async toggleAccordion(action): Promise<any> {
