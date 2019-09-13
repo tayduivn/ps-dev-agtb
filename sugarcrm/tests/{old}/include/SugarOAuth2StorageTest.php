@@ -14,7 +14,6 @@
 class SugarOAuth2StorageTest extends RestTestPortalBase
 {
     protected $_sessionType;
-    protected $account;
 
     public static function setUpBeforeClass()
     {
@@ -60,7 +59,6 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         if (!empty($_SESSION['type'])) {
             $this->_sessionType = $_SESSION['type'];
         }
-        $this->account = SugarTestAccountUtilities::createAccount();
     }
 
     public function tearDown()
@@ -80,8 +78,6 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
         $GLOBALS['db']->query("DELETE FROM session_active");
 
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-
         SugarTestHelper::tearDown();
 
         parent::tearDown();
@@ -94,7 +90,6 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
     public function testPortalInactiveErrorActive()
     {
         $contact1 = BeanFactory::newBean('Contacts');
-        $contact1->account_id = $this->account->id;
         $contact1->first_name = 'UNIT';
         $contact1->last_name = 'UNIT1';
         $contact1->portal_active = true;
@@ -116,7 +111,6 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
     public function testPortalInactiveErrorInactive()
     {
     	$contact2 = BeanFactory::newBean('Contacts');
-        $contact2->account_id = $this->account->id;
     	$contact2->first_name = 'portal';
     	$contact2->last_name = 'inactive';
     	$contact2->portal_active = false;
@@ -137,7 +131,6 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         $this->previousPortalLicense = $row['value'];
 
         $contact1 = BeanFactory::newBean('Contacts');
-        $contact1->account_id = $this->account->id;
         $contact1->first_name = 'UNIT';
         $contact1->last_name = 'TEST1';
         $contact1->portal_active = true;
@@ -147,7 +140,6 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         $this->contacts[] = $contact1;
 
         $contact2 = BeanFactory::newBean('Contacts');
-        $contact2->account_id = $this->account->id;
         $contact2->first_name = 'UNIT';
         $contact2->last_name = 'TEST2';
         $contact2->portal_active = true;
@@ -157,7 +149,6 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         $this->contacts[] = $contact2;
 
         $contact3 = BeanFactory::newBean('Contacts');
-        $contact3->account_id = $this->account->id;
         $contact3->first_name = 'UNIT';
         $contact3->last_name = 'TEST3';
         $contact3->portal_active = true;

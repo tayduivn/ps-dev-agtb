@@ -48,11 +48,10 @@ class LoginPortalApiTest extends TestCase
 
         SugarTestPortalUtilities::enablePortal();
         SugarTestPortalUtilities::storeOriginalUser();
-        $account = SugarTestAccountUtilities::createAccount();
+
         self::$contact = SugarTestContactUtilities::createContact(
             '',
             [
-                'account_id' => $account->id,
                 'first_name' => 'Mike',
                 'last_name' => 'Smith',
                 'portal_active' => 1,
@@ -85,7 +84,6 @@ class LoginPortalApiTest extends TestCase
         self::$tokenData = null;
 
         SugarTestPortalUtilities::restoreOriginalUser();
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestPortalUtilities::disablePortal();
         SugarTestHelper::tearDown();
