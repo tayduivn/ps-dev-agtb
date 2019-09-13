@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job4 @pr @scenario-stress-test
+@dashboard @dashlets @job6 @pr
 Feature: Shareable Dashboards functionality verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @pr @ci-excluded
+  @dashboard
   Scenario Outline: Home > Shared dashboard
 
     # Create custom user
@@ -64,15 +64,18 @@ Feature: Shareable Dashboards functionality verification
     And I click Save button on #DashboardsRecord header
     And I close alert
 
+    # --------------------------------------------------
+    # RE-ENABLE the commented part after AT-148 is fixed
+    # --------------------------------------------------
     # Logout from Admin and Login as another user
-    When I go to "logout" url
-    When I use account "user"
-    When I open Dashboards view and login
-
+#    When I go to "logout" url
+#    When I use account "user"
+#    When I open Dashboards view and login
+#
 #    # Mark shared dashboard as favorite
 #    When I toggle favorite for *D_1 in #DashboardsList.ListView
-
-    When I go to "Home" url
+#
+#    When I go to "Home" url
 #    Then I verify that HomeDashboard element from #Dashboard.DashboardView still looks like HomeDashboard
 
     Examples:
