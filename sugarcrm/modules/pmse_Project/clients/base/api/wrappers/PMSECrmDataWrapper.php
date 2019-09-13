@@ -890,7 +890,7 @@ WHERE (accounts.deleted = 0 AND eabr.primary_address = 1) AND (email_address LIK
 SQL;
         $query = $this->db->getConnection()
             ->getDatabasePlatform()
-            ->modifyLimitQuery($query, 25);
+            ->modifyLimitQuery($query, 25, 0);
 
         $stmt = $this->db->getConnection()
             ->executeQuery(
@@ -903,6 +903,7 @@ SQL;
             $person['fullName'] = $a['first_name'] . ' ' . $a['last_name'];
             $person['emailAddress'] = $a['email_address'];
             $person['id'] = $a['id'];
+            $person['module'] = $a['module'];
             $out[] = $person;
         }
 

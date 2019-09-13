@@ -394,7 +394,7 @@ class PMSEEmailHandlerTest extends TestCase
         $userMock->id = 'mockUserId';
 
         $returnMap = [
-            ['Users', 'mockUserId', $userMock],
+            ['Users', 'mockUserId', [], $userMock],
         ];
 
         $emailHandlerMock = $this->getMockBuilder('\PMSEEmailHandler')
@@ -404,7 +404,7 @@ class PMSEEmailHandlerTest extends TestCase
         $emailHandlerMock->method('retrieveBean')
             ->will($this->returnValueMap($returnMap));
 
-        $this->assertEquals($userMock, $emailHandlerMock->getContactBeanFromId('mockUserId', 'from'));
+        $this->assertEquals($userMock, $emailHandlerMock->getContactBeanFromId('mockUserId'));
         $this->assertNull($emailHandlerMock->getContactBeanFromId('NotARealIDAndShouldReturnNull'));
     }
 
@@ -669,5 +669,78 @@ class PMSEEmailHandlerTest extends TestCase
         ];
         $result = $emailHandlerMock->getSenderFromEventDefinition($eventDefMock, $targetBeanMock);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @covers ::processDirectEmails
+     * @dataProvider providerProcessDirectEmails
+     */
+    public function testProcessDirectEmails($entry, $name, $address, $beanReturns)
+    {
+        $emailHandlerMock = $this->getMockBuilder('\PMSEEmailHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(['retrieveBean'])
+            ->getMock();
+
+        $emailHandlerMock->method('retrieveBean')->willReturn(...$beanReturns);
+        $entry = json_decode($entry);
+        $result = $emailHandlerMock->processDirectEmails(null, $entry, null);
+        $result = $result[0];
+        $this->assertEquals($name, $result->name);
+        $this->assertEquals($address, $result->address);
+    }
+
+    /**
+     * Format for data provider
+     * [
+     *      json encoded entry,
+     *      name,
+     *      email address,
+     *      results of each retrieveBean call
+     * ]
+     * @covers ::processDirectEmails
+     * @dataProvider providerProcessDirectEmails
+     */
+    public function providerProcessDirectEmails()
+    {
+        $bean1 = $this->getMockBuilder('\SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(['getRecordName'])
+            ->getMock();
+        $bean1->full_name = 'test';
+        $bean1->email1 = 'a@a.com';
+        $bean1->method('getRecordName')->willReturn($bean1->full_name);
+
+        $bean2 = $this->getMockBuilder('\SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(['getRecordName'])
+            ->getMock();
+        $bean2->name = 'noModule';
+        $bean2->email1 = 'noM@noM.nom';
+        $bean2->method('getRecordName')->willReturn($bean2->name);
+
+        return [
+            // ID and module are set
+            [
+                '{"id": "id1", "module": "Users"}',
+                'test',
+                'a@a.com',
+                [$bean1],
+            ],
+            // User typed an address directly
+            [
+                '{"value": "value@value.com"}',
+                'value@value.com',
+                'value@value.com',
+                [null],
+            ],
+            // ID is set but module is unknown
+            [
+                '{"id":"id2"}',
+                'noModule',
+                'noM@noM.nom',
+                [null, null, $bean2],
+            ],
+        ];
     }
 }

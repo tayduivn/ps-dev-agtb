@@ -190,15 +190,15 @@ class PMSEEmailHandler
     }
 
     /**
-     *
-     * @param type $module
-     * @param type $beanId
-     * @return type
-     * @codeCoverageIgnore
+     * Gets the bean
+     * @param $module
+     * @param null $beanId
+     * @param array $params
+     * @return null|SugarBean
      */
-    public function retrieveBean($module, $beanId = null)
+    public function retrieveBean($module, $beanId = null, $params = [])
     {
-        return BeanFactory::getBean($module, $beanId);
+        return BeanFactory::getBean($module, $beanId, $params);
     }
 
     /**
@@ -428,11 +428,25 @@ class PMSEEmailHandler
         $res = array();
         $item = new stdClass();
         if (isset($entry->id)) {
-            $userBean = $this->retrieveBean('Users', $entry->id);
-            if (!empty($userBean)) {
-                $item->name = $userBean->full_name;
-                $item->address = $userBean->email1;
+            if (isset($entry->module)) {
+                $recipientBean = $this->retrieveBean($entry->module, $entry->id);
+            } else {
+                // try getting the bean we need to do this for backward compatibility when module
+                // value isn't set when process definition was created
+                $modules = ['Users', 'Contacts', 'Leads', 'Prospects', 'Accounts'];
+                foreach ($modules as $module) {
+                    if (!empty($recipientBean = $this->retrieveBean($module, [$entry->id], ['strict_retrieve' => true]))) {
+                        break;
+                    }
+                }
+            }
+
+            if (!empty($recipientBean)) {
+                $item->name = $recipientBean->full_name ?? $recipientBean->name;
+                $item->address = $recipientBean->email1;
                 $res[] = $item;
+            } else {
+                LoggerManager::getLogger()->warn("Could not find a record bean for the given id {$entry->id}");
             }
         } else {
             // for typed-in emails
