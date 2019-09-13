@@ -33,6 +33,11 @@ export default class LeadConversionView extends BaseView {
         });
     }
 
+    /**
+     * Click on filter search bar
+     *
+     * @returns {Promise<void>}
+     */
     public async searchBarClick(): Promise<any> {
         let selector = this.$('searchbar');
         await this.driver.click(selector);

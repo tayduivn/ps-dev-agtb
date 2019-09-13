@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@leads @job4 @xxx
+@leads @job4 @pr
 Feature: Leads module verification
 
   Background:
@@ -257,11 +257,6 @@ Feature: Leads module verification
     # Create a Lead from Leads subpanel of Account record view
     When I open the leads subpanel on #Account_ARecord view
     When I create_new record from leads subpanel on #Account_ARecord view
-
-    # Verify that account field is auto-populated from the 'parent' account
-    Then I verify fields on #LeadsRecord.RecordView
-      | fieldName    | value     |
-      | account_name | Account_A |
 
     # Provide input for Lead record
     When I provide input for #LeadsRecord.HeaderView view
