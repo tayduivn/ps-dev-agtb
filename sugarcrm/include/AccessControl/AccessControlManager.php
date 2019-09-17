@@ -218,12 +218,11 @@ class AccessControlManager
             return true;
         }
 
-        if (!$this->isAccessControlled(self::RECORDS_KEY, $module)) {
-            return true;
-        }
-
         // regular workflow, we need to check record access
         if (!$this->isAdminWork) {
+            if (!$this->isAccessControlled(self::RECORDS_KEY, $module)) {
+                return true;
+            }
             $old = $this->allowAdminOverride;
             $this->allowAdminOverride = false;
             $allowed = $this->allowAccess(self::RECORDS_KEY, $module, $id);
@@ -248,7 +247,7 @@ class AccessControlManager
             return true;
         }
 
-        if (!$this->isAccessControlled(self::FIELDS_KEY, $module)) {
+        if (!$this->isAdminWork && !$this->isAccessControlled(self::FIELDS_KEY, $module)) {
             return true;
         }
 

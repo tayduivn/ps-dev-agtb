@@ -23,6 +23,29 @@ use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
  */
 class AccessConfiguratorTest extends TestCase
 {
+    protected $accessConfig = [
+        'MODULES' => [
+            'BusinessCenters' => ['SUGAR_SERVE'],
+            'CampaignLog' => ['CURRENT'],
+            'CampaignTrackers' => ['CURRENT'],
+        ],
+        'DASHLETS' => [
+            'workbench' => ['SUGAR_SERVE'],
+        ],
+        'RECORDS' => [
+            ['Dashboards' => ['c108bb4a-775a-11e9-b570-f218983a1c3e' => 'SUGAR_SERVE']],
+            [
+                'Reports' => [
+                    ['protected_report_name1_id' => 'SUGAR_SERVE'],
+                    ['protected_report_name2_id' => 'SUGAR_SERVE'],
+                ],
+            ],
+        ],
+        'FIELDS' => [
+            'Accounts' => ['field1' => 'SUGAR_SERVE'],
+        ],
+    ];
+
     /**
      * @covers ::getAccessControlledList
      *
@@ -30,29 +53,6 @@ class AccessConfiguratorTest extends TestCase
      */
     public function testGetAccessControlledList($key, $expected)
     {
-        $access_config = [
-            'MODULES' => [
-                'BusinessCenters' => ['SUGAR_SERVE'],
-                'CampaignLog' => ['CURRENT'],
-                'CampaignTrackers' => ['CURRENT'],
-            ],
-            'DASHLETS' => [
-                'workbench' => ['SUGAR_SERVE'],
-            ],
-            'RECORDS' => [
-                ['Dashboards' => ['c108bb4a-775a-11e9-b570-f218983a1c3e' => 'SUGAR_SERVE']],
-                [
-                    'Reports' => [
-                        ['protected_report_name1_id' => 'SUGAR_SERVE'],
-                        ['protected_report_name2_id' => 'SUGAR_SERVE'],
-                    ],
-                ],
-            ],
-            'FIELDS' => [
-                'Accounts' => ['field1' => 'SUGAR_SERVE'],
-            ],
-        ];
-
         $configuratorMock = $this->getMockBuilder(AccessConfigurator::class)
             ->disableOriginalConstructor()
             ->setMethods(['loadAccessConfig'])
@@ -60,7 +60,7 @@ class AccessConfiguratorTest extends TestCase
 
         $configuratorMock->expects($this->any())
             ->method('loadAccessConfig')
-            ->will($this->returnValue($access_config));
+            ->will($this->returnValue($this->accessConfig));
 
         $this->assertSame($expected, $configuratorMock->getAccessControlledList($key, false));
     }
@@ -276,23 +276,20 @@ class AccessConfiguratorTest extends TestCase
     }
 
     /**
-     * @covers ::instance
-     * @covers ::loadAccessConfig
-     */
-    public function testLoadAccessConfig()
-    {
-        $this->assertNotEmpty(
-            AccessConfigurator::instance()->getAccessControlledList(AccessControlManager::FIELDS_KEY, false)
-        );
-    }
-
-    /**
      * @covers ::getNotAccessibleModuleListByLicenseTypes
      */
     public function testGetNotAccessibleModuleListByLicenseTypes()
     {
-        $this->assertNotEmpty(
-            AccessConfigurator::instance()->getNotAccessibleModuleListByLicenseTypes(['SUGAR_SERVE'], false)
-        );
+
+        $configuratorMock = $this->getMockBuilder(AccessConfigurator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['loadAccessConfig'])
+            ->getMock();
+
+        $configuratorMock->expects($this->any())
+            ->method('loadAccessConfig')
+            ->will($this->returnValue($this->accessConfig));
+
+        $this->assertNotEmpty($configuratorMock->getNotAccessibleModuleListByLicenseTypes(['SUGAR_SERVE'], false));
     }
 }

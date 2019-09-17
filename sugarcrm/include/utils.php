@@ -24,6 +24,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Language;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use Sugarcrm\Sugarcrm\ProductDefinition\Config\Config as ProductDefinitionConfig;
 
 function make_sugar_config(&$sugar_config)
 {
@@ -521,6 +522,7 @@ function get_sugar_config_defaults()
     $sugar_config_defaults['default_currencies'] = $locale->getDefaultCurrencies();
 
     $sugar_config_defaults = sugarArrayMerge($locale->getLocaleConfigDefaults(), $sugar_config_defaults);
+    $sugar_config_defaults[ProductDefinitionConfig::SUGAR_CONFIG_KEY] = ProductDefinitionConfig::DEFAULT_CONFIG;
 
     //BEGIN SUGARCRM flav=ent ONLY
     $sugar_config_defaults[TeamBasedACLConfigurator::CONFIG_KEY] = TeamBasedACLConfigurator::getDefaultConfig();

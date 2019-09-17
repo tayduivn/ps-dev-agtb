@@ -17,6 +17,8 @@ namespace Sugarcrm\Sugarcrm\AccessControl;
 // License Agreement.  Neither the Company nor the Users
 // may modify any portion of the Critical Control Software.
 
+use Sugarcrm\Sugarcrm\ProductDefinition\Config\Config as ProductDefinitionConfig;
+
 /**
  * Class AccessConfigurator, this class offers APIs to retrieve data from access_config.json
  *
@@ -189,12 +191,7 @@ class AccessConfigurator
      */
     protected function loadAccessConfig()
     {
-        if (file_exists(self::ACCESS_CONFIG_FILE)) {
-            $accConfig = file_get_contents(self::ACCESS_CONFIG_FILE);
-            return json_decode($accConfig, true);
-        }
-
-        throw new \Exception("access config file doesn't exist: " . self::ACCESS_CONFIG_FILE);
+        return (new ProductDefinitionConfig(\SugarConfig::getInstance()))->getProductDefinition();
     }
 }
 //END REQUIRED CODE DO NOT MODIFY

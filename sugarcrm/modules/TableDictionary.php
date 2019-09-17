@@ -123,6 +123,8 @@ include 'metadata/business_centers_holidaysMetaData.php';
 // Commentlog relation field
 include 'metadata/commentlog_relMetaData.php';
 
+// Product definition table
+include 'metadata/product_definitionMetaData.php';
 
 $defs = SugarAutoLoader::loadExtension('tabledictionary');
 if($defs) {

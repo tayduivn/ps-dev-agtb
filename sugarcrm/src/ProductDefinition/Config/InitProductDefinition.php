@@ -1,3 +1,48 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+namespace Sugarcrm\Sugarcrm\ProductDefinition\Config;
+
+use Sugarcrm\Sugarcrm\ProductDefinition\Config\Cache\DbCache;
+
+/**
+ * Write initial product definition in DB on install and upgrade
+ */
+class InitProductDefinition
+{
+    /**
+     * write initial product definition in DB
+     * @throws \Exception
+     */
+    public function writeInitialProductDefinition()
+    {
+        $cache = new DbCache();
+        $definition = $cache->getPreviousDefinition();
+        if (empty($definition)) {
+            $definition = $this->getDefaultProductDefinition();
+        }
+        $cache->set($definition);
+    }
+
+    /**
+     * return default product definition
+     */
+    protected function getDefaultProductDefinition(): string
+    {
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
+        return <<<JSON
 {
     "MODULES": {
         "Bugs":["CURRENT","SUGAR_SERVE"],
@@ -261,5 +306,9 @@
             "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],
             "business_center_name":["SUGAR_SERVE","SUGAR_SELL"]
         }
+    }
+}
+JSON;
+        //END REQUIRED CODE DO NOT MODIFY
     }
 }
