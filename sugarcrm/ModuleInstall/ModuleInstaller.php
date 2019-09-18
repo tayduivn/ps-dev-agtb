@@ -33,6 +33,8 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
 //END SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\File;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 define('DISABLED_PATH', 'Disabled');
 
@@ -3077,8 +3079,18 @@ class ModuleInstaller
         // clientfiles contains five identical lists of files for each of the
         // activities relationships, this condenses them so we only copy once.
         $copyList = array();
+        $constraint = new File([
+            'baseDirs' => [
+                $this->base_dir,
+            ],
+        ]);
+
         foreach ($this->installdefs['clientfiles'] as $outer) {
             foreach ($outer as $to => $from) {
+                $violations = Validator::getService()->validate($from, $constraint);
+                if (count($violations) > 0) {
+                    sugar_die($violations);
+                }
                 $copyList[$to] = $from;
             }
         }
