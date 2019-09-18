@@ -45,7 +45,7 @@ class TeamSecurityTest extends TestCase
 
         self::$admin = SugarTestHelper::setUp('current_user', [true, true]);
 
-        self::configure(true, false);
+        self::configure(true, false, false);
 
         $command = Container::getInstance()->get(StateAwareRebuild::class);
         $command();
@@ -68,13 +68,13 @@ class TeamSecurityTest extends TestCase
      * @test
      * @dataProvider sugarQuerySelectWithRelatedFieldProvider
      */
-    public function sugarQuerySelectWithRelatedField($useDenorm, $useWhere, $userName, array $expected)
+    public function sugarQuerySelectWithRelatedField($useDenorm, $useWhere, $prefetchForRetrieve, $userName, array $expected)
     {
         global $current_user;
 
         $current_user = self::$users[$userName];
 
-        self::configure($useDenorm, $useWhere);
+        self::configure($useDenorm, $useWhere, $prefetchForRetrieve);
 
         $query = new SugarQuery();
         $query->from(BeanFactory::newBean('Contacts'));
@@ -120,8 +120,15 @@ class TeamSecurityTest extends TestCase
         ];
 
         foreach ($expected as $userName => $data) {
-            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere)) {
-                yield sprintf('%s, %s', $userName, $configName) => [$useDenorm, $useWhere, $userName, $data];
+            foreach (self::configurationProvider() as
+                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
+                yield sprintf('%s, %s', $userName, $configName) => [
+                    $useDenorm,
+                    $useWhere,
+                    $prefetchForRetrieve,
+                    $userName,
+                    $data,
+                ];
             }
         }
     }
@@ -131,14 +138,14 @@ class TeamSecurityTest extends TestCase
      * @dataProvider sugarQueryFilterByRelatedFieldProvider
      * @ticket BR-5762
      */
-    public function sugarQueryFilterByRelatedField($useDenorm, $useWhere, $userName, $accountName, array $expected)
+    public function sugarQueryFilterByRelatedField($useDenorm, $useWhere, $prefetchForRetrieve, $userName, $accountName, array $expected)
     {
         global $current_user;
 
         $current_user = self::$users[$userName];
         $account = self::$accounts[$accountName];
 
-        self::configure($useDenorm, $useWhere);
+        self::configure($useDenorm, $useWhere, $prefetchForRetrieve);
 
         $query = new SugarQuery();
         $query->from(BeanFactory::newBean('Contacts'));
@@ -169,8 +176,12 @@ class TeamSecurityTest extends TestCase
         ];
 
         foreach ($expected as $userName => $data) {
-            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere)) {
-                yield sprintf('%s, %s', $userName, $configName) => array_merge([$useDenorm, $useWhere], $data);
+            foreach (self::configurationProvider() as
+                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
+                yield sprintf('%s, %s', $userName, $configName) => array_merge(
+                    [$useDenorm, $useWhere, $prefetchForRetrieve],
+                    $data
+                );
             }
         }
     }
@@ -179,7 +190,7 @@ class TeamSecurityTest extends TestCase
      * @test
      * @dataProvider reportByTwoModulesProvider
      */
-    public function reportByTwoModules($useDenorm, $useWhere, $userName, array $expected)
+    public function reportByTwoModules($useDenorm, $useWhere, $prefetchForRetrieve, $userName, array $expected)
     {
         $definition = [
             'display_columns' => [
@@ -241,7 +252,7 @@ class TeamSecurityTest extends TestCase
             ],
         ];
 
-        $data = $this->runReport($definition, $useDenorm, $useWhere, $userName);
+        $data = $this->runReport($definition, $useDenorm, $prefetchForRetrieve, $useWhere, $userName);
 
         $this->assertCount(count($expected), $data);
         $this->assertArraySubset($expected, $data);
@@ -270,8 +281,15 @@ class TeamSecurityTest extends TestCase
         ];
 
         foreach ($expected as $userName => $data) {
-            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere)) {
-                yield sprintf('%s, %s', $userName, $configName) => [$useDenorm, $useWhere, $userName, $data];
+            foreach (self::configurationProvider() as
+                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
+                yield sprintf('%s, %s', $userName, $configName) => [
+                    $useDenorm,
+                    $useWhere,
+                    $prefetchForRetrieve,
+                    $userName,
+                    $data,
+                ];
             }
         }
     }
@@ -280,7 +298,7 @@ class TeamSecurityTest extends TestCase
      * @test
      * @dataProvider reportByTwoModulesWithAnOptionalJoinProvider
      */
-    public function reportByTwoModulesWithAnOptionalJoin($useDenorm, $useWhere, $userName, array $expected)
+    public function reportByTwoModulesWithAnOptionalJoin($useDenorm, $useWhere, $prefetchForRetrieve, $userName, array $expected)
     {
         $definition = [
             'display_columns' => [
@@ -343,7 +361,7 @@ class TeamSecurityTest extends TestCase
             ],
         ];
 
-        $data = $this->runReport($definition, $useDenorm, $useWhere, $userName);
+        $data = $this->runReport($definition, $useDenorm, $prefetchForRetrieve, $useWhere, $userName);
 
         $this->assertCount(count($expected), $data);
         $this->assertArraySubset($expected, $data);
@@ -385,8 +403,15 @@ class TeamSecurityTest extends TestCase
         ];
 
         foreach ($expected as $userName => $data) {
-            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere)) {
-                yield sprintf('%s, %s', $userName, $configName) => [$useDenorm, $useWhere, $userName, $data];
+            foreach (self::configurationProvider() as
+                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
+                yield sprintf('%s, %s', $userName, $configName) => [
+                    $useDenorm,
+                    $useWhere,
+                    $prefetchForRetrieve,
+                    $userName,
+                    $data,
+                ];
             }
         }
     }
@@ -394,13 +419,13 @@ class TeamSecurityTest extends TestCase
     /**
      * Runs a report with the given definition run under the given configuration on behalf of the given user
      */
-    private function runReport($definition, $useDenorm, $useWhere, $userName)
+    private function runReport($definition, $useDenorm, $prefetchForRetrieve, $useWhere, $userName)
     {
         global $current_user;
 
         $current_user = self::$users[$userName];
 
-        self::configure($useDenorm, $useWhere);
+        self::configure($useDenorm, $useWhere, $prefetchForRetrieve);
 
         $reporter = new Report(json_encode($definition));
         $reporter->run_query();
@@ -415,6 +440,71 @@ class TeamSecurityTest extends TestCase
     }
 
     /**
+     * @test
+     * @dataProvider retrieveAccountProvider
+     */
+    public function retrieveAccount($useDenorm, $useWhere, $prefetchForRetrieve, $userName, $accountName, ?string $expected)
+    {
+        global $current_user;
+
+        $current_user = self::$users[$userName];
+        self::configure($useDenorm, $useWhere, $prefetchForRetrieve);
+
+        $account = BeanFactory::newBean('Accounts');
+        $account = $account->retrieve(self::$accounts[$accountName]->id);
+        if ($expected) {
+            $this->assertInstanceOf(get_class(self::$accounts[$expected]), $account);
+            $this->assertSame(self::$accounts[$expected]->id, $account->id);
+        } else {
+            $this->assertNull($account);
+        }
+    }
+
+    public static function retrieveAccountProvider()
+    {
+        $names = [
+            'Account #T1',
+            'Account #T2',
+            'Account #T3',
+        ];
+
+        $expected = [
+            'User #1' => [
+                'Account #T1',
+                'Account #T2',
+                null,
+            ],
+            'User #2' => [
+                null,
+                'Account #T2',
+                null,
+            ],
+            'User #3' => [
+                null,
+                null,
+                'Account #T3',
+            ],
+        ];
+
+        foreach ($expected as $userName => $beans) {
+            foreach (self::configurationProvider() as
+                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
+                $i = 0;
+                foreach ($beans as $bean) {
+                    yield sprintf('%s, %s', $userName, $configName) => [
+                        $useDenorm,
+                        $useWhere,
+                        $prefetchForRetrieve,
+                        $userName,
+                        $names[$i++],
+                        $bean,
+                    ];
+                }
+            }
+        }
+    }
+
+    /**
      * Returns named visibility configurations to be tested
      *
      * @return array<string,mixed[]>
@@ -422,9 +512,10 @@ class TeamSecurityTest extends TestCase
     private static function configurationProvider()
     {
         return [
-            'denormalized' => [true, false],
-            'join' => [false, false],
-            'where' => [false, true],
+            'denormalized' => [true, false, false],
+            'join' => [false, false, false],
+            'where' => [false, true, false],
+            'prefetch_for_retrieve' => [false, false, true],
         ];
     }
 
@@ -448,7 +539,7 @@ class TeamSecurityTest extends TestCase
         // User #2 belongs to Team #2
         $team2->add_user_to_team($user2->id);
 
-        // User #3 belongs to Teams #1 and #2
+        // User #3 belongs to Teams #3
         $team3->add_user_to_team($user3->id);
 
         $account1 = self::createAccount('Account #T1', $team1);
@@ -516,7 +607,7 @@ class TeamSecurityTest extends TestCase
      * @param bool $useDenorm
      * @param bool $useWhere
      */
-    private static function configure($useDenorm, $useWhere)
+    private static function configure($useDenorm, $useWhere, $prefetchForRetrieve)
     {
         global $sugar_config;
 
@@ -525,6 +616,7 @@ class TeamSecurityTest extends TestCase
                 'default' => [
                     'use_denorm' => $useDenorm,
                     'where_condition' => $useWhere,
+                    'prefetch_for_retrieve' => $prefetchForRetrieve,
                 ],
             ],
         ];

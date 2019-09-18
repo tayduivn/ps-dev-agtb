@@ -366,6 +366,9 @@ class FilterApi extends SugarApi
                 'select' => ['id'],
                 'erased_fields' => false,
             ]));
+
+            $seed->disable_row_level_security = true;
+            $q = $this->createQuery($seed, $args, $options);
         }
 
         return array($args, $q, $options, $seed);

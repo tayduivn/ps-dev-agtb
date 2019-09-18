@@ -3377,6 +3377,7 @@ class SugarBean
             'team_security' => !$this->disable_row_level_security,
             'erased_fields' => $this->retrieve_erased_fields,
             'action' => 'view',
+            'bean_id' => $id !== -1 ? $id : null,
         ]);
 
         $query->select('*');
