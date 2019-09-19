@@ -2065,7 +2065,7 @@ SQL;
             ->on()->equalsField('a.cas_id', 'b.cas_id');
         $this->sugarQueryObject->where()
             ->equals('b.cas_id', $casID)
-            ->equals('b.cas_index', $casIndex);
+            ->equals('a.cas_index', $casIndex);
 
         $rows = $this->sugarQueryObject->execute();
 
