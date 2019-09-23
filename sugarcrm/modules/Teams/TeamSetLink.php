@@ -235,9 +235,13 @@ class TeamSetLink extends Link2 {
             }
 
             //keep track of what we put into the database so we can clean things up later
-            TeamSetManager::saveTeamSetModule($this->focus->team_set_id, $this->focus->table_name);
+            if (!empty($this->focus->team_set_id)) {
+                TeamSetManager::saveTeamSetModule($this->focus->team_set_id, $this->focus->table_name);
+            }
 // BEGIN SUGARCRM flav=ent ONLY
-            TeamSetManager::saveTeamSetModule($this->focus->acl_team_set_id, $this->focus->table_name);
+            if (!empty($this->focus->acl_team_set_id)) {
+                TeamSetManager::saveTeamSetModule($this->focus->acl_team_set_id, $this->focus->table_name);
+            }
 // END SUGARCRM flav=ent ONLY
 
             if ($previousTeamSetId != $this->focus->team_set_id) {

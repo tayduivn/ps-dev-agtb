@@ -253,10 +253,6 @@ class TeamSetManager {
     * @param string $tableName The table name
     */
 	public static function saveTeamSetModule($teamSetId, $tableName){
-        // Don't create link if one side is empty
-        if (empty($teamSetId) || empty($tableName)) {
-            return;
-        }
 		//if this entry is set in the config file, then store the set
 		//and modules in the team_set_modules table
         if (!isset($GLOBALS['sugar_config']['enable_team_module_save'])
