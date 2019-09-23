@@ -152,4 +152,11 @@ module.exports = {
     getNestedElementIndexByClass: function getClassOfChildByText(parent, child, classValue) {
         return window.seedbed.utils.getNestedElementIndexByClass(parent, child, classValue);
     },
+
+    /**
+     *  Open URL in a new tab
+     */
+    openNewTab: function(URL, name, specs) {
+        window.open(URL, name, specs);
+    }
 };

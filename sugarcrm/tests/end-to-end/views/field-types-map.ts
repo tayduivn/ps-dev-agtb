@@ -44,6 +44,7 @@ import * as QuotaPoint from '../fields/quotapoint-field';
 import * as NestedSetField from '../fields/nested-set-field';
 import * as TimeselectField from '../fields/timeselect-field';
 import * as DurationField from '../fields/duration-field';
+import * as PasswordField from '../fields/password-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -53,6 +54,7 @@ export const FIELD_TYPES__MAP = {
     fullname: FullnameField,
     url: UrlField,
     text: TextField,
+    'change-password': PasswordField,
     textarea: TextareaField,
     enum: EnumField,
     'enum-user-pref': EnumUserPrefField,

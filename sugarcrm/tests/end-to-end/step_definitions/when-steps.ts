@@ -25,6 +25,7 @@ import {chooseModule, chooseRecord, closeWarning, closeAlert, parseInputArray, r
 import ActivityStream from '../layouts/activity-stream-layout';
 import ImportBpmView from '../views/import-bpm-view';
 import PreviewHeaderView from '../views/preview-header-view';
+import LoginLayout from '../layouts/login-layout';
 
 /**
  * Select module in modules menu
@@ -863,4 +864,36 @@ When(/^I switch to tab (0|1|2)$/,
     async function(tabNum: number) {
         let tabIDs = await this.driver.getTabIds();
         await this.driver.switchTab(tabIDs[tabNum]);
+    }, {waitForApp: true});
+
+/**
+ *  Open new browser tab and navigate to URL
+ *
+ *  @example
+ *  When I open new browser tab and navigate to "portal/index.html" url
+ */
+When(/^I open new browser tab(?: and navigate to "(\S+)" url)?$/,
+    async function(url: string) {
+
+        let urlParam = url || [];
+        await seedbed.client.driver.execSync('openNewTab', urlParam);
+    }, {waitForApp: true});
+
+
+/**
+ *  Login to Portal (Warning! This step definition has not been tested.)
+ *
+ *  @example
+ *  When I open new browser tab and navigate to "portal/index.html" url
+ *
+ */
+When(/^I login to Portal with the following credentials in (#\S+):$/,
+    async function(layout: LoginLayout, data: TableDefinition) {
+
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+
+        let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
+        await layout.LoginView.login(inputData.hash.portal_name, inputData.hash.portal_pasword);
     }, {waitForApp: true});
