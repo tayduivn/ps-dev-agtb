@@ -40,7 +40,11 @@ export default class TileViewSettings extends DrawerLayout {
                     $: '.pipeline-fields#{{moduleName}} .row-fluid:nth-child({{index}})',
                     dropdown: '.record-cell:nth-child({{i}}) .select2-container.select2.required',
                 }
-            }
+            },
+            move: {
+                source: 'li[data-headervalue="{{source}}"]',
+                to: '[data-modulename={{moduleName}}] [data-columnname={{to}}]',
+            },
         });
 
         // Global Selectors
@@ -108,5 +112,32 @@ export default class TileViewSettings extends DrawerLayout {
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${val}`);
         await this.driver.waitForApp();
+    }
+
+    /**
+     * Drag-n-drop tile block between 'Available Values' and 'Hidden Values' lists in Tile View Settings > Header values section
+     *
+     * @param {string} moduleName
+     * @param {string} source item to move
+     * @param {string}to
+     */
+    public async moveItem(moduleName: string, source: string, to: string): Promise<void> {
+        // Get the item to move
+        let selectorSource = this.$('move.source', {source});
+        // Get the destination element
+        let selectorTo = this.$('move.to', {moduleName, to});
+
+        // Perform the move
+        if (await this.driver.isElementExist(selectorSource) &&
+            await this.driver.isElementExist(selectorTo)) {
+            try {
+                await this.driver.dragAndDrop(selectorSource, selectorTo);
+                await this.driver.waitForApp();
+            } catch (e) {
+                throw new Error("Error... Something went wrong while performing drag-n-drop!");
+            }
+        } else {
+            throw new Error('Either source or destination element could not be found on the page...');
+        }
     }
 }

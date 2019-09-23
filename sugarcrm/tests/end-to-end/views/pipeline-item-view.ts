@@ -133,12 +133,26 @@ export default class PipelineItemView extends BaseView {
      * @returns {Promise<any>}
      */
     public async checkTileViewColumn (columnName) {
-        // construct css part containing specifed column name
+        // construct css part containing specified column name
         let columnPart = `.column[data-column-name="${columnName}"]`;
         // Prepend record css with part containg column name
         let selector = `${columnPart} ${this.$()}`;
         // Check if css containing column name exists
-        let value  = await this.driver.isElementExist(selector );
+        await this.driver.scroll(selector);
+        let value  = await this.driver.isElementExist(selector);
         return value;
+    }
+
+    /**
+     * Drag and Drop tile in the Pipeline View
+     * (This method currently does not work)
+     *
+     * @param toColumn
+     */
+    public async dragAndDrop ( toColumn: string) {
+        let itemToDrag = this.$('listItem', {id: this.id} );
+        let destination  = this.$(`ul[data-column-name="${toColumn}"]`);
+        await this.driver.dragAndDrop(itemToDrag, destination);
+        await this.driver.waitForApp();
     }
 }

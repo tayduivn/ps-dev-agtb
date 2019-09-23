@@ -135,3 +135,64 @@ When(/^I show "(Cases|Opportunities|Tasks)" module in (#\S+) view with the follo
         await closeAlert();
 
     }, {waitForApp: true});
+
+/**
+ * Activate or disable columns by drag-n-drop items between white and black lists in Tile View settings
+ *
+ *      @example
+ *      When I drag-n-drop column header items on "Cases" module in #TileViewSettings view:
+ *          | sourceItem | destination |
+ *          | New        | black_list  |
+ *          | Closed     | black_list  |
+ *          | Rejected   | black_list  |
+ */
+When(/^I drag-n-drop column header items on "(Cases|Opportunities|Tasks)" module in (#\S+) view:$/,
+    async function (moduleName: string, view: TileViewSettings, data: TableDefinition) {
+
+            const urlHash = 'VisualPipeline/config';
+            const saveButton = 'save';
+
+            // Navigate to Tile View Config
+            await this.driver.setUrlHash(urlHash);
+            await this.driver.waitForApp();
+
+            // Switch to the enabled module's tab
+            await view.switchTab(moduleName);
+            await this.driver.waitForApp();
+
+            // Perform darg-n-drop
+            const rows = data.rows();
+            for (let i in rows) {
+                    let [source, to] = rows[i];
+                    if ( to === 'white_list' || to === 'black_list' ) {
+                            await  view.moveItem(moduleName, source, to);
+                    } else {
+                            throw new Error('Not a valid destination for drag-n-drop action !');
+                    }
+            }
+
+            // Click Save button
+            await view.HeaderView.clickButton(saveButton);
+            await this.driver.pause(4000);
+            await this.driver.waitForApp();
+
+            // Close Alert
+            await closeAlert();
+
+    }, {waitForApp: true});
+
+/**
+ *  Drag and drop tile from column to column in Tile View
+ *  Warning!!! This step definition does not work
+ *
+ *  @example
+ *   When I drag *Opp_1 tile to "Prospecting" column in #OpportunitiesPipelineView view
+ *
+ */
+When(/^I drag (\*[a-zA-Z](?:\w|\S)*) tile to "(\S+)" column in (#\S+) view$/,
+    async function (record: { id: string }, columnName: string, view: any) {
+            let listItem = view.getListItem({id: record.id});
+            await listItem.dragAndDrop(columnName);
+
+    }, {waitForApp: true});
+

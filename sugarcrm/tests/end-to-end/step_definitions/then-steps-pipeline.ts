@@ -112,48 +112,6 @@ Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are under "(\w+[\/
         }
     });
 
-/**
- *  Verify column headers in pipeline view
- *
- *  @example
- *  Then I verify pipeline column headers in #LeadsPipelineView view
- *      | value      |
- *      | New        |
- *      | Assigned   |
- *      | In Process |
- *      | Converted  |
- *      | Recycled   |
- *      | Dead       |
- */
-Then(/^I verify pipeline column headers in (#\S+) view$/,
-    async function (view: pipelineView, data: TableDefinition) {
-
-        let rows = data.rows();
-        let errors = [];
-        for (let i = 1; i <= rows.length; i++) {
-            let expected = rows[i - 1][0];
-            let value = await view.getColumnHeader(i);
-
-            if (value !== expected) {
-                errors.push(
-                    [
-                        `Expected colum header name: ${expected}`,
-                        `\tActual columnheader name: ${value}`,
-                        `\n`,
-                    ].join('\n')
-                );
-            }
-        }
-        let message = '';
-        _.each(errors, (item) => {
-            message += item;
-        });
-
-        if (message) {
-            throw new Error(message);
-        }
-
-    }, {waitForApp: true});
 
 /**
  *  Verify tile delete button state
@@ -198,3 +156,46 @@ Then(/I verify (\*[a-zA-Z](?:\w|\S)*) tile delete button state in (#[a-zA-Z](?:\
             throw new Error(message);
         }
     });
+
+
+/**
+ *  Verify column headers in the pipeline view
+ *
+ *  @example
+ *  Then I verify pipeline column headers in #LeadsPipelineView view
+ *      | value      |
+ *      | New        |
+ *      | Assigned   |
+ *      | In Process |
+ *      | Converted  |
+ *      | Recycled   |
+ *      | Dead       |
+ */
+Then(/^I verify pipeline column headers in (#\S+) view$/,
+    async function (view: pipelineView, data: TableDefinition) {
+
+        let rows = data.rows();
+        let errors = [];
+        for (let i = 1; i <= rows.length; i++) {
+            let expected = rows[i - 1][0];
+            let value = await view.getColumnHeader(expected);
+
+            if (!value) {
+                errors.push(
+                    [
+                        `The colum with the name ${expected} does not exists.`,
+                        `\n`,
+                    ].join('\n')
+                );
+            }
+        }
+        let message = '';
+        _.each(errors, (item) => {
+            message += item;
+        });
+
+        if (message) {
+            throw new Error(message);
+        }
+
+    }, {waitForApp: true});

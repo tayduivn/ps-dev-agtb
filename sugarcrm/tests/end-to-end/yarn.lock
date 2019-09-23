@@ -465,9 +465,9 @@
   dependencies:
     core-js "^2.5.7"
 
-"@sugarcrm/seedbed@0.8.12":
-  version "0.8.12"
-  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/seedbed/-/seedbed-0.8.12.tgz#a76e3edbbabb41f70023cbfd698fd38bca8626f5"
+"@sugarcrm/seedbed@0.8.13":
+  version "0.8.13"
+  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/seedbed/-/seedbed-0.8.13.tgz#58fb85436b745ce3e45210920ce5bfa55f51effa"
   dependencies:
     "@types/async" "1.4.28"
     "@types/bluebird" "2.0.30"
