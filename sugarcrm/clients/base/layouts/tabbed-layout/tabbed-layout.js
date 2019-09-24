@@ -91,6 +91,14 @@
     },
 
     /**
+     * Triggers that a sugar app needs to be loaded
+     * @private
+     */
+    _triggerSugarAppLoad: function(compDef) {
+        this.context.trigger('sugarApp:load:' + this.cid + ':' + compDef.srn);
+    },
+
+    /**
      * @inheritdoc
      */
     _placeComponent: function(comp, def) {
@@ -108,6 +116,12 @@
         var label = app.lang.get(lblKey, this.module) || lblKey;
         var $nav = $('<li/>')
             .html('<a href="#' + id + '" onclick="return false;" data-toggle="tab">' + label + '</a>');
+
+        // we have a sugar app and want to lazy load it
+        if (compDef.type === 'external-app') {
+            $nav = $nav.on('click', this._triggerSugarAppLoad.bind(this, compDef));
+        }
+
         var $content = $('<div/>')
             .addClass('tab-pane')
             .attr('id', id)

@@ -28,9 +28,31 @@
     initialize: function(options) {
         singleSpa.start();
         this._super('initialize', arguments);
+
+        this.context.on(
+            'sugarApp:load:' + options.layout.cid + ':' + options.meta.srn,
+            this._onSugarAppLoad,
+            this
+        );
+    },
+
+    /**
+     * singleSpa Mount function is called during the initial render
+     */
+    render: function() {
+        this.rendered = true;
+        this._mountApp();
+    },
+
+    /**
+     * Click handler that imports / loads the spa module that was clicked
+     * @private
+     */
+    _onSugarAppLoad() {
         var serverInfo = app.metadata.getServerInfo();
 
-        if (this.meta.src) {
+        // don't re-import already mounted parcel apps
+        if (this.meta.src && !this.parcelApp) {
             var url = this.meta.src;
             if (this.meta.appendVersion && serverInfo.version) {
                 url += (url.indexOf('?') ? '&' : '?') + 'sugar_version=' + serverInfo.version;
@@ -62,14 +84,6 @@
                 }
             }.bind(this));
         }
-    },
-
-    /**
-     * singleSpa Mount function is called during the initial render
-     */
-    render: function() {
-        this.rendered = true;
-        this._mountApp();
     },
 
     /**

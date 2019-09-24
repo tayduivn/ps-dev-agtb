@@ -172,7 +172,8 @@
                                         'view': {
                                             'type': 'external-app',
                                             'name': catalog.name,
-                                            'src': catalog.src
+                                            'src': catalog.src,
+                                            'srn': catalog.srn
                                         }
                                     });
                                 }
@@ -237,8 +238,7 @@
                     document.body.appendChild(iframe);
                 });
             });
-        } else {
-            return Promise.resolve();
         }
+        return Promise.resolve();
     });
 })(SUGAR.App);

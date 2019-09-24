@@ -24,14 +24,25 @@ describe('Base.View.ExternalApp', function() {
 
         var meta = {};
 
-        view = SugarTest.createView('base', 'Accounts', 'external-app', meta);
+        var options = {
+            meta: {
+                srn: 'some-srn'
+            },
+            layout: {
+                cid: 'w92'
+            }
+        };
+
+        context = app.context.getContext();
+        layout = SugarTest.createLayout('base', 'Accounts', 'tabbed-layout', meta);
+        view = SugarTest.createView('base', 'Accounts', 'external-app', {config: true}, context, false, layout);
+        view.initialize(options);
     });
 
     afterEach(function() {
         sinon.collection.restore();
         view.dispose();
         view = null;
-
     });
 
     describe('Initialize', function() {
@@ -105,5 +116,4 @@ describe('Base.View.ExternalApp', function() {
             expect(view.parcel.unmount).toHaveBeenCalled();
         });
     });
-
 });
