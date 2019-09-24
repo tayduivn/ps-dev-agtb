@@ -571,6 +571,19 @@
   }
 }
 
+.dashboard .tabbable {
+  background-color: #fff;
+
+  .nav-tabs > li > a {
+    border-radius: 0;
+    margin-left: -1px;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    outline: none;
+  }
+}
+
+.console_dashboard,
 .agent_workbench_dashboard {
   .dashlet-container {
     overflow-y: auto;
@@ -615,16 +628,16 @@
     padding-top: 11px;
     padding-bottom: 11px;
   }
-}
 
-.agent_workbench_dashboard .side-drawer {
-  .dashlet-container {
-    height: @workbenchDrawerDashletHeight;
-    max-height: @workbenchDrawerDashletHeight;
+  .side-drawer {
+    .dashlet-container {
+      height: @workbenchDrawerDashletHeight;
+      max-height: @workbenchDrawerDashletHeight;
 
-    > div .thumbnail.dashlet:not(.collapsed) {
-      height: ~"calc(@{workbenchDrawerDashletHeight} - 12px)";
-      max-height: ~"calc(@{workbenchDrawerDashletHeight} - 12px)";
+      > div .thumbnail.dashlet:not(.collapsed) {
+        height: ~"calc(@{workbenchDrawerDashletHeight} - 12px)";
+        max-height: ~"calc(@{workbenchDrawerDashletHeight} - 12px)";
+      }
     }
   }
 }

@@ -40,6 +40,11 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                             'name' => 'dashboard',
                             'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
                         ],
+                        [
+                            // this is new renewals console
+                            'name' => 'dashboard',
+                            'type' => 'renewals_console',
+                        ],
                     ],
                 ),
             ),
@@ -63,6 +68,11 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                     // this is the Agent Workbench
                     'name' => 'dashboard',
                     'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
+                ],
+                [
+                    // this is new renewals console
+                    'name' => 'dashboard',
+                    'type' => 'renewals_console',
                 ],
             ],
         ),

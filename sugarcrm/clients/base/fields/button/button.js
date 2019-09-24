@@ -212,7 +212,11 @@
         // ban this button if it has any ancestor component with one of the specified name(s)
         if (_.any(this.def.disallowed_layouts, function(layout) {
             var comp = this.closestComponent(layout.name);
-            return comp && (_.isUndefined(layout.id) || comp.model.get('id') === layout.id);
+            return comp && (layout.name !== 'dashboard' ||
+                // for dashboard, either dashboard id or type should match to hide this button
+                // dashboard id is used by service console. type is used by new consoles
+                (!_.isUndefined(layout.id) && comp.model.get('id') === layout.id) ||
+                (!_.isUndefined(layout.type) && comp.model.get('metadata').type === layout.type));
         }, this)
         ) {
             return true;

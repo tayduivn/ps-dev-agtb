@@ -14,6 +14,7 @@
 return [
     'metadata' => [
         'css_class' => 'console_dashboard',
+        'type' => 'renewals_console',
         'tabs' => [
             // TAB 1
             [

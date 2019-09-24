@@ -359,6 +359,30 @@ describe("Base.Field.Button", function() {
             closestComponentStub.restore();
         });
 
+        it('should be truthy if it is on a forbidden dashboard', function() {
+            field.def.disallowed_layouts = [{name: 'dashboard', type: 'bad'}];
+            var closestComponentStub = sinon.stub(field, 'closestComponent');
+            closestComponentStub.withArgs('dashboard').returns({
+                model: {
+                    get: function() {return {type: 'bad'};}
+                }
+            });
+            expect(field.isOnForbiddenLayout()).toBeTruthy();
+            closestComponentStub.restore();
+        });
+
+        it('should be falsy if it is not on a forbidden dashboard', function() {
+            field.def.disallowed_layouts = [{name: 'dashboard', type: 'bad'}];
+            var closestComponentStub = sinon.stub(field, 'closestComponent');
+            closestComponentStub.withArgs('dashboard').returns({
+                model: {
+                    get: function() {return {type: 'good'};}
+                }
+            });
+            expect(field.isOnForbiddenLayout()).toBeFalsy();
+            closestComponentStub.restore();
+        });
+
         it('should be falsy if it is not on a forbidden layout', function() {
             var disallowedLayouts = [{'name': 'bad-layout-1'}, {'name': 'bad-layout-2'}];
             var closestComponentStub = sinon.stub(field, 'closestComponent');
