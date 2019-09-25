@@ -4968,6 +4968,9 @@ Sincerely, SugarCRM',
     'LBL_CASE_DUE_SOON' => 'Due soon',
     'LBL_CASE_DUE_LATER' => 'Due later',
 
+    // Renewals Console
+    'LBL_RENEWALS_CONSOLE' => 'Renewals Console',
+
     //END SUGARCRM flav=ent ONLY
 
     //First time login wizard
