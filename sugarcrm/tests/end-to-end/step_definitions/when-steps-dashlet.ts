@@ -9,11 +9,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {When} from '@sugarcrm/seedbed/cucumber/step-definition';
+import {stepsHelper, When, seedbed} from '@sugarcrm/seedbed';
 import DashletView from '../views/dashlet-view';
 import PlannedActivitiesListView from '../views/planned-activities-list-view';
 import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
 import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
+import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
+import {TableDefinition} from 'cucumber';
 
 /**
  * Click dashlet's cog button
@@ -22,7 +24,7 @@ import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
  */
 When(/^I click (Cog) in (#\S+)$/,
     async function (btn: string, view: DashletView): Promise<void> {
-        await view.clickButton(btn);
+        await view.clickCog();
     }, {waitForApp: true});
 
 
@@ -32,15 +34,17 @@ When(/^I click (Cog) in (#\S+)$/,
  *      @example
  *      When I navigate to Calls tab in #Dashboard.CsPlannedActivitiesDashlet
  */
-When(/^I navigate to (Calls|Meetings|Due Now|Upcoming|To Do) tab in (#\S+)$/,
+When(/^I navigate to (Calls|Meetings|Due Now|Upcoming|To Do|Deferred|Completed) tab in (#\S+)$/,
     async function(tabName: string, view: DashletView) {
 
         // check tab name as well as dashlet type
         if ((tabName === 'Meetings' && view instanceof PlannedActivitiesDashlet) ||
-            (tabName === 'Due Now' && view instanceof ActiveTasksDashlet)) {
+            (tabName === 'Due Now' && view instanceof ActiveTasksDashlet) ||
+            (tabName === 'Deferred' && view instanceof InactiveTasksDashlet)) {
             await view.navigateToTab('0');
         } else if ((tabName === 'Calls' && view instanceof PlannedActivitiesDashlet) ||
-            (tabName === 'Upcoming' && view instanceof ActiveTasksDashlet)) {
+            (tabName === 'Upcoming' && view instanceof ActiveTasksDashlet) ||
+            (tabName === 'Completed' && view instanceof InactiveTasksDashlet)) {
             await view.navigateToTab('1');
         } else if (tabName === 'To Do' && view instanceof ActiveTasksDashlet) {
             await view.navigateToTab('2');
@@ -81,4 +85,43 @@ When(/^I mark record (\*[a-zA-Z](?:\w|\S)*) as (Held|Accepted|Tentative|Declined
     async function(record: { id: string }, action: string, view: PlannedActivitiesListView) {
         let listItem = view.getListItem({id: record.id});
         await listItem.selectAction(action.toLowerCase());
+    }, {waitForApp: true});
+
+/**
+ * Click "more tasks" in dashlet to display more records
+ *
+ *      @example
+ *      When I display more records in #Dashboard.InactiveTasksDashlet view
+ */
+When(/^I display more records in (#\S+) view$/, async function (view: DashletView) {
+    await view.clickMoreRecordsBtn();
+}, {waitForApp: true});
+
+/**
+ * Click configure and select edit to update dashlet setting
+ *
+ *      @example
+ *      When I edit dashlet settings of #Dashboard.InactiveTasksDashlet with the following values:
+ *            | label                 | limit |
+ *            | Inactive Tasks Update | 5     |
+ */
+When(/^I edit dashlet settings of (#\S+) with the following values:$/,
+    async function (view: DashletView, data?: TableDefinition): Promise<void> {
+
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+        let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
+
+        await view.performAction('edit');
+        await this.driver.waitForApp();
+
+        // Update dashlet settings with new values
+        await seedbed.components.AddSugarDashletDrawer.setFieldsValue(inputData);
+        await this.driver.waitForApp();
+
+        // Save a new dashlet
+        await seedbed.components.AddSugarDashletDrawer.HeaderView.clickButton('save');
+        await this.driver.waitForApp();
+
     }, {waitForApp: true});

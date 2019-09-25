@@ -26,7 +26,7 @@ export default class DashletView extends BaseView {
             $: '.dashlet-cell',
             header: '.dashlet-header',
             buttons: {
-                cog: '.btn.btn-invisible.dropdown-toggle',
+                cog: '.fa.fa-cog',
             },
             menuItems: {
                 $: '.dropdown-menu',
@@ -34,7 +34,8 @@ export default class DashletView extends BaseView {
                 refresh: 'a[name="refresh_button"]',
                 remove: 'a[name="remove_button"]',
             },
-            content: 'dashlet-content'
+            dashletFooter: '.block-footer',
+            moreRecords: '.btn.btn-link.more',
         });
     }
 
@@ -67,6 +68,14 @@ export default class DashletView extends BaseView {
         await this.expandPlusDropdown();
         let selector = this.$(`header.menuItems.${buttonName}`);
         await this.driver.click(selector);
+    }
+
+    /**
+     * Select configure from dashlet's configure (gear icon) dropdown
+     */
+    public async clickCog() {
+        await this.expandPlusDropdown();
+        await this.driver.click(this.$(`buttons.cog`));
     }
 
     /**
@@ -112,6 +121,26 @@ export default class DashletView extends BaseView {
      */
     public async getNumRecordsInTab(index: string): Promise<string> {
         let selector = this.$('tabs.record_count', {index});
+        return this.driver.getText(selector);
+    }
+
+    /**
+     * Display more records in the dashlet by clicking on More records button
+     * 
+     * @returns {Promise<void>}
+     */
+    public async clickMoreRecordsBtn(): Promise<void> {
+        let selector = this.$('moreRecords');
+        await this.driver.click(selector);
+    }
+
+    /**
+     * Get default 'no data available...' message in case the dashlet is empty(has no records)
+     *
+     * @return {string} message displayed in the dashlet
+     */
+    public async getDashletFooterMessage(): Promise<string> {
+        let selector = this.$('dashletFooter');
         return this.driver.getText(selector);
     }
 }

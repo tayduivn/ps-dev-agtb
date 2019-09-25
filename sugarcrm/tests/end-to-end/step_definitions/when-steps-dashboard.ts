@@ -171,3 +171,4 @@ When(/^I delete dashboard$/,
         await closeWarning('confirm');
         await closeAlert();
     }, {waitForApp: true});
+

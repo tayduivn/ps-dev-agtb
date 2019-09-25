@@ -10,16 +10,15 @@
  */
 
 import DashletView from './dashlet-view';
-import CsCasesInteractionsListView from './cs-cases-interactions-list-view';
 import PlannedActivitiesListView from './planned-activities-list-view';
 
 /**
- * Represents Active Tasks dashlet
+ * Represents Inactive Tasks dashlet
  *
- * @class ActiveTasksDashlet
+ * @class InactiveTasksDashlet
  * @extends DashletView
  */
-export default class ActiveTasksDashlet extends DashletView {
+export default class InactiveTasksDashlet extends DashletView {
 
     public ActivitiesList: PlannedActivitiesListView;
 
@@ -30,6 +29,7 @@ export default class ActiveTasksDashlet extends DashletView {
             $: `.dashlet-container[name=dashlet_${options.position}]`,
             header: {
                 $: '.dashlet-header',
+                title: '.dashlet-title',
                 plusButton: '.fa.fa-plus',
                 menuItems: {
                     create_task: 'li a[name=create_task]',
@@ -41,6 +41,7 @@ export default class ActiveTasksDashlet extends DashletView {
                 activeTab: '.dashlet-tab.active a[data-index="{{index}}"]',
                 record_count: 'a[data-index="{{index}}"] .count',
             },
+            visibility: '[value="{{visibilityName}}"]',
         });
 
         // Active Tasks shares PlannedActivitiesListView with Planned Activities dashlet
