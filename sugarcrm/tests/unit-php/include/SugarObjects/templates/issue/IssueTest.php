@@ -130,6 +130,56 @@ class IssueTest extends TestCase
 
         $bean->calculateResolutionTime();
     }
+
+    public function providerGetHoursBetween()
+    {
+        return [
+            [
+                'start' => '9/1/2019 08:00:00',
+                'end' => '9/4/2019 14:00:00',
+                'expect' => 78,
+            ],
+            [
+                'start' => '9/4/2019 08:00:00',
+                'end' => '9/1/2019 14:00:00',
+                'expect' => 0,
+            ],
+            [
+                'start' => '8/1/2019 08:00:00',
+                'end' => '8/4/2019 14:00:00',
+                'expect' => 78,
+            ],
+            [
+                'start' => '2019-08-30 09:15:00',
+                'end' => '2019-09-04 17:30:00',
+                'expect' => 128.25,
+            ],
+            [
+                'start' => '9/25/2019 00:00:00',
+                'end' => '9/25/2019 17:15:00',
+                'expect' => 17.25,
+            ],
+            [
+                'start' => '9/25/2019 08:00:00',
+                'end' => '9/25/2019 08:00:00',
+                'expect' => 0,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getHoursBetween
+     * @dataProvider providerGetHoursBetween
+     */
+    public function testGetHoursBetween(string $start, string $end, float $expect)
+    {
+        $startDT = new \SugarDateTime($start);
+        $endDT = new \SugarDateTime($end);
+
+        $bean = $this->createMockIssue();
+        $actual = $bean->getHoursBetween($startDT, $endDT);
+        $this->assertEquals($expect, $actual['calendarHours']);
+    }
     //END SUGARCRM flav=ent ONLY
 
     public function createMockIssue(array $methods = [])

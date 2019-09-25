@@ -766,4 +766,85 @@ class BusinessCenter extends Basic
     {
         return $this->getTimeForTypeOnDay($day, 'close', true);
     }
+
+    /**
+     * Calculates the total business time (in decimal hours now) between the two given datetimes,
+     * based on this business center's hours.
+     *
+     * @param SugarDateTime $startDateTime The start date
+     * @param SugarDateTime $endDateTime The end date
+     * @return float The total business time (in decimal)
+     */
+    public function getBusinessTimeBetween(\SugarDateTime $startDateTime, \SugarDateTime $endDateTime)
+    {
+        $businessSeconds = 0;
+
+        if ($startDateTime >= $endDateTime) {
+            return 0.00;
+        }
+
+        if ($this->timezone) {
+            // convert to business center time zone
+            $startDateTime->setTimeZone(new DateTimeZone($this->timezone));
+            $endDateTime->setTimeZone(new DateTimeZone($this->timezone));
+        } else {
+            // convert to server time zone
+            $startDateTime->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+            $endDateTime->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+        }
+
+        while (true) {
+            // If the date is past the end date, format and return the accumulated results
+            if ($startDateTime >= $endDateTime) {
+                return $this->secondsToHours($businessSeconds);
+            } elseif ($this->isOpenDate($startDateTime, true)) {
+                // Get the amount of time left until the end of the business day (in seconds)
+                $secondsLeftInDay = $this->getSecondsLeftInDay($startDateTime);
+
+                // Move the date to the end of the current working day
+                $startDateTime->add(new DateInterval('PT' . $secondsLeftInDay . 'S'));
+
+                // If the date is now past the end date, that means the end datetime occurs during this working day.
+                if ($startDateTime >= $endDateTime) {
+                    // Calculate the seconds until the end date
+                    $secondsLeftUntilEnd = $secondsLeftInDay - $this->getSecondsLeftInDay($endDateTime);
+                    $businessSeconds += $secondsLeftUntilEnd;
+                    return $this->secondsToHours($businessSeconds);
+                }
+                $businessSeconds += $secondsLeftInDay;
+            }
+
+            // Move the date to the next open datetime from business center
+            $startDateTime = $this->setDateToNextOpenTime($startDateTime);
+        }
+    }
+
+    /**
+     * Converts seconds to decimal hours
+     * @param int $seconds The seconds need to be converted to hours
+     * @param int $precision The precision of the output hours
+     * @return float A rounded up decimal hours
+     */
+    protected function secondsToHours(int $seconds, int $precision = 2)
+    {
+        return round($seconds / 3600, $precision);
+    }
+
+    /**
+     * The time left open for a business center on a given date
+     * @param SugarDateTime $dateTime
+     * @return int the number of seconds left in the current working day
+     */
+    protected function getSecondsLeftInDay(\SugarDateTime $dateTime)
+    {
+        $closeTime = $this->getCloseTimeElements($dateTime->day_of_week_long);
+
+        // Get the second of the day that closing occurs
+        $closeSecond = ($closeTime['hour'] * 3600) + ($closeTime['minutes'] * 60);
+
+        // Get the current second of the day
+        $currentSecond = ($dateTime->getHour() * 3600) + ($dateTime->getMinute() * 60) + $dateTime->getSecond();
+
+        return $closeSecond - $currentSecond;
+    }
 }

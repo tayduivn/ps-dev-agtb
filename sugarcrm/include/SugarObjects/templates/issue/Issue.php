@@ -114,6 +114,55 @@ class Issue extends Basic
     }
 
     /**
+     * Calculates the total hours between the two given datetimes, returns two different hours in an array,
+     * one is based on calendar hours, the other one is based on the business hours (if business center
+     * doesn't exist or not defined, calendar hours will be returned instead).
+     *
+     * @param SugarDateTime $startDateTime The start date
+     * @param SugarDateTime $endDateTime The end date
+     * @param string $bid The business center bean id
+     * @return array containing the total calendar time and business time (in decimal)
+     */
+    public function getHoursBetween(
+        \SugarDateTime $startDateTime,
+        \SugarDateTime $endDateTime,
+        string $bid = ''
+    ) {
+        $hours = [
+            'calendarHours' => 0.00,
+            'businessHours' => 0.00,
+        ];
+
+        $businessCenter = BeanFactory::getBean('BusinessCenters', $bid);
+
+        $hours['calendarHours'] = $this->getCalendarTimeBetween($startDateTime, $endDateTime);
+
+        if (!empty($businessCenter) && !empty($businessCenter->id) && $businessCenter->hasBusinessHours()) {
+            $hours['businessHours'] = $businessCenter->getBusinessTimeBetween($startDateTime, $endDateTime);
+        } else {
+            $hours['businessHours'] = $hours['calendarHours'];
+        }
+
+        return $hours;
+    }
+
+    /**
+     * Calculates the total calendar time (in decimal hours now) between the two given datetimes
+     *
+     * @param SugarDateTime $startDateTime The start date
+     * @param SugarDateTime $endDateTime The end date
+     * @return float The total calendar time (in decimal)
+     */
+    public function getCalendarTimeBetween(\SugarDateTime $startDateTime, \SugarDateTime $endDateTime)
+    {
+        if ($startDateTime > $endDateTime) {
+            return 0.00;
+        }
+
+        return round(($endDateTime->getTimestamp() - $startDateTime->getTimestamp()) / 3600, 2);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function save($check_notify = false)

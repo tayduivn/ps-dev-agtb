@@ -727,6 +727,63 @@ class BusinessCenterTest extends TestCase
     }
 
     /**
+     * Provider for ::testGetBusinessTimeBetween
+     * @return array
+     */
+    public function getBusinessTimeBetweenProvider()
+    {
+        return [
+            [
+                'start' => '9/1/2019 08:00:00',
+                'end' => '9/4/2019 14:00:00',
+                'expect' => 14.5,
+            ],
+            [
+                'start' => '9/4/2019 08:00:00',
+                'end' => '9/1/2019 14:00:00',
+                'expect' => 0,
+            ],
+            [
+                'start' => '8/1/2019 08:00:00',
+                'end' => '8/4/2019 14:00:00',
+                'expect' => 28.98,
+            ],
+            [
+                'start' => '2019-08-30 09:15:00',
+                'end' => '2019-09-04 17:30:00',
+                'expect' => 29.75,
+            ],
+            [
+                'start' => '9/25/2019 00:00:00',
+                'end' => '9/25/2019 17:15:00',
+                'expect' => 10.25,
+            ],
+            [
+                'start' => '9/25/2019 08:00:00',
+                'end' => '9/25/2019 08:00:00',
+                'expect' => 0,
+            ],
+        ];
+    }
+
+    /**
+     * Tests getting business hours for a datetime range
+     * @covers ::getBusinessTimeBetween
+     * @dataProvider getBusinessTimeBetweenProvider
+     * @param string $start The start date to get business time
+     * @param string $end The end date to get business time
+     * @param float $expect Expected business time
+     */
+    public function testGetBusinessTimeBetween(string $start, string $end, float $expect)
+    {
+        $startDT = new \SugarDateTime($start, new \DateTimeZone('America/New_York'));
+        $endDT = new \SugarDateTime($end, new \DateTimeZone('America/New_York'));
+
+        $actual = static::$bc->getBusinessTimeBetween($startDT, $endDT);
+        $this->assertEquals($expect, $actual);
+    }
+
+    /**
      * Provider for ::testGetOpenTimeElements ::testGetCloseTimeElements
      * @return array
      */
