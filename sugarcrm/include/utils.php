@@ -240,6 +240,10 @@ function make_sugar_config(&$sugar_config)
             'merge_relate_update_timeout' => 90000,
             'merge_relate_max_attempt' => 3,
         ),
+        'allowed_link_schemes' => [
+            'http',
+            'https',
+        ],
     );
 }
 
@@ -499,6 +503,10 @@ function get_sugar_config_defaults()
             'modules' => [
                 'KBContents',
             ],
+        ],
+        'allowed_link_schemes' => [
+            'http',
+            'https',
         ],
     );
 

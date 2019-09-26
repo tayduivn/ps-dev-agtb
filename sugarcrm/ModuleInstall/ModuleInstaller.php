@@ -3017,6 +3017,7 @@ class ModuleInstaller
             'maxSearchQueryResult'=>'5',
             'caseDeflection' => $caseDeflection,
             'analytics' => $config->get('analytics_portal') ?? $config->get('analytics') ?? ['enabled' => false],
+            'allowedLinkSchemes' => $config->get('allowed_link_schemes', array()),
         );
 
         $jsConfig = $config->get('additional_js_config', array());
@@ -3109,6 +3110,7 @@ class ModuleInstaller
             'teamBasedAcl' => $config->get(TeamBasedACLConfigurator::CONFIG_KEY),
 //END SUGARCRM flav=ent ONLY
             'uniqueKey' => $config->get('unique_key'),
+            'allowedLinkSchemes' => $config->get('allowed_link_schemes', array()),
         );
 
         $jsConfig = $config->get('additional_js_config', array());

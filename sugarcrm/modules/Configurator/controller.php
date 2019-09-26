@@ -53,6 +53,7 @@ class ConfiguratorController extends SugarController
 
         'marketing_extras_enabled',
         'commentlog_maxchars',
+        'allowed_link_schemes',
 
         //BEGIN SUGARCRM flav=ent ONLY
         'catalog_enabled',

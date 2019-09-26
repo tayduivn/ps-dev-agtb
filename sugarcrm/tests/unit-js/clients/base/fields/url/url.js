@@ -36,7 +36,7 @@ describe("Url field", function() {
             expect(field.format(completeURL)).toEqual(completeURL);
             expect(field.format(completeHttpsURL)).toEqual(completeHttpsURL);
             expect(field.format(incompURL)).toEqual(completeURL);
-            expect(field.format("ftp:/ftp.example.edu/")).toEqual("http://ftp:/ftp.example.edu/");
+            expect(field.format('ftp:/ftp.example.edu/')).toEqual('ftp:/ftp.example.edu/');
         });
         it("should add the target window from the field definition to the anchor tag", function(){
             field.model.set(fieldName, "http://www.google.com");

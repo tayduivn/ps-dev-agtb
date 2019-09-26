@@ -33,8 +33,17 @@
     },
 
     format:function(value){
-        if (value && !value.match(/^([a-zA-Z]+):\/\//)) {
-            value = "http://" + value;
+        if (value) {
+            if (!value.match(/^([a-zA-Z]+):/)) {
+                value = 'http://' + value;
+            }
+            let whiteList = app.config.allowedLinkSchemes;
+            this.def.isClickable = true;
+            if (!whiteList.filter(function(scheme) {
+                return value.toLowerCase().indexOf(scheme + ':') === 0;
+            }).length) {
+                this.def.isClickable = false;
+            }
         }
         return value;
     },

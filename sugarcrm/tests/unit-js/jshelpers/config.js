@@ -70,6 +70,12 @@
         clientID: 'sugar',
         syncConfig: false,
         loadCss: false,
+        allowedLinkSchemes: [
+            'http',
+            'https',
+            'ftp',
+            'mms'
+        ],
 
     }, false);
 
