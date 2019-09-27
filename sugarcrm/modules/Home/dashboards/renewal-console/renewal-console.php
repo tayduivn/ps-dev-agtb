@@ -19,7 +19,59 @@ return [
             [
                 'name' => 'LBL_RENEWALS_CONSOLE_OVERVIEW',
                 'components' => [
-                    [],
+                    [
+                        'rows' => [
+                            [
+                                [
+                                    'width' => 12,
+                                    'view' => [
+                                        'limit' => '10',
+                                        'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+                                        'type' => 'planned-activities',
+                                        'template' => 'tabbed-dashlet',
+                                    ],
+                                ],
+                            ],
+                            [
+                                [
+                                    'width' => 12,
+                                    'view' => [
+                                        'limit' => '10',
+                                        'name' => 'active-tasks',
+                                        'label' => 'LBL_ACTIVE_TASKS_DASHLET',
+                                        'template' => 'tabbed-dashlet',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'width' => 4,
+                    ],
+                    [
+                        'rows' => [
+                            [
+                                [
+                                    'width' => 12,
+                                    'view' => [
+                                        'type' => 'sales-pipeline',
+                                        'label' => 'LBL_DASHLET_PIPLINE_NAME',
+                                        'visibility' => 'user',
+                                    ],
+                                ],
+                            ],
+                            [
+                                [
+                                    'width' => 12,
+                                    'view' => [
+                                        'type' => 'bubblechart',
+                                        'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
+                                        'filter_duration' => 'current',
+                                        'visibility' => 'user',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'width' => 8,
+                    ],
                 ],
             ],
             // TAB 2
