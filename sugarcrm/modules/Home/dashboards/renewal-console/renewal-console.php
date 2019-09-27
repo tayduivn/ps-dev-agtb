@@ -16,11 +16,26 @@ return [
         'css_class' => 'console_dashboard',
         'tabs' => [
             // TAB 1
-            [],
+            [
+                'name' => 'LBL_RENEWALS_CONSOLE_OVERVIEW',
+                'components' => [
+                    [],
+                ],
+            ],
             // TAB 2
-            [],
+            [
+                'name' => 'LBL_ACCOUNTS',
+                'components' => [
+                    [],
+                ],
+            ],
             // TAB 3
-            [],
+            [
+                'name' => 'LBL_OPPORTUNITIES',
+                'components' => [
+                    [],
+                ],
+            ],
         ],
     ],
     'name' => 'LBL_RENEWALS_CONSOLE',

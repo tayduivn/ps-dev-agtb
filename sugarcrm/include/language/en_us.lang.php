@@ -4970,7 +4970,7 @@ Sincerely, SugarCRM',
 
     // Renewals Console
     'LBL_RENEWALS_CONSOLE' => 'Renewals Console',
-
+    'LBL_RENEWALS_CONSOLE_OVERVIEW' => 'Overview',
     //END SUGARCRM flav=ent ONLY
 
     //First time login wizard
