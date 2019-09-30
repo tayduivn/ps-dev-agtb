@@ -23,11 +23,26 @@ class IssueTemplateTest extends TestCase
 {
     private $bean;
     private $manager;
+    private $bc;
+    private $delete;
 
     public function setUp()
     {
         $this->bean = \SugarTestCaseUtilities::createCase();
         $this->manager = \MetaDataManager::getManager();
+
+        $this->bc = new \BusinessCenter();
+        $this->bc->name = 'A Business Center';
+        $this->bc->timezone = 'America/Los_Angeles';
+        $this->bc->is_open_thursday = 1;
+        $this->bc->thursday_open_hour = '08';
+        $this->bc->thursday_open_minutes = '00';
+        $this->bc->thursday_close_hour = '17';
+        $this->bc->thursday_close_minutes = '00';
+        $this->bc->save();
+
+        $this->bean->business_center_id = $this->bc->id;
+        $this->delete[$this->bc->getTableName()][$this->bc->id] = $this->bc->id;
     }
 
     public function tearDown()
@@ -35,6 +50,14 @@ class IssueTemplateTest extends TestCase
         \SugarTestCaseUtilities::removeAllCreatedCases();
         unset($this->bean);
         \MetaDataManager::resetManagers();
+
+        $db = \DBManagerFactory::getInstance();
+        foreach ($this->delete as $table => $ids) {
+            $in = "'" . implode("','", $ids) . "'";
+            $sql = "DELETE FROM $table WHERE id IN ($in)";
+            $db->query($sql);
+        }
+        unset($this->bc);
     }
 
     public function checkModuleHasFieldsProvider(): array
@@ -139,27 +162,29 @@ class IssueTemplateTest extends TestCase
     }
 
     /**
-     * Ensure that calling save on a newly resolved Issue calculates its
-     * resolution time.
-     * @dataProvider providerSaveUpdatesResolutionTime
+     * Ensure that calling calculateResolutionHours on a resolved Issue calculates its resolution hours.
+     *
+     * @dataProvider providerCalculateResolutionHours
      */
-    public function testSaveUpdatesResolutionTime(string $entered, string $resolved, int $expected)
+    public function testsCalculateResolutionHours(string $entered, string $resolved, array $expected)
     {
-        $this->bean->fetched_row = array('status' => 'New');
-        $this->bean->status = 'Rejected';
         $this->bean->date_entered = $entered;
         $this->bean->resolved_datetime = $resolved;
-        unset($this->bean->time_to_resolution);
+        unset($this->bean->hours_to_resolution);
+        unset($this->bean->business_hours_to_resolution);
 
-        $this->bean->save();
+        $this->bean->calculateResolutionHours();
 
-        $this->assertEquals($expected, $this->bean->time_to_resolution);
+        $this->assertEquals($expected[0], $this->bean->hours_to_resolution);
+        $this->assertEquals($expected[1], $this->bean->business_hours_to_resolution);
     }
 
-    public function providerSaveUpdatesResolutionTime(): array
+    public function providerCalculateResolutionHours(): array
     {
+        // datetime used are in UTC time, they will be converted to the timezone
+        // defined in the Business Center and then calculated for business hours
         return [
-            ['2019-05-05 5:50:00', '2019-05-05 5:55:00', 5],
+            ['2019-09-05 12:30:00', '2019-09-05 16:30:00', [4.0, 1.5]],
         ];
     }
 }

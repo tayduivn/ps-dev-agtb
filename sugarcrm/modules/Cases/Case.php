@@ -157,7 +157,7 @@ class aCase extends Issue
     public function save($check_notify = false)
     {
         if (in_array($this->status, ['Closed', 'Rejected', 'Duplicate'])) {
-            if (empty($this->resolved_datetime)) {
+            if (!$this->isResolvedStatus($this->fetched_row['status'])) {
                 $this->resolved_datetime = TimeDate::getInstance()->nowDb();
             }
         }

@@ -218,7 +218,17 @@
             "first_response_user_id":["SUGAR_SERVE"],
             "first_response_user_name":["SUGAR_SERVE"],
             "first_response_user_link":["SUGAR_SERVE"],
-            "first_response_sent":["SUGAR_SERVE"]
+            "first_response_sent":["SUGAR_SERVE"],
+            "hours_to_resolution":["SUGAR_SERVE"],
+            "business_hours_to_resolution":["SUGAR_SERVE"]
+        },
+        "Bugs": {
+            "hours_to_resolution":["SUGAR_SERVE"],
+            "business_hours_to_resolution":["SUGAR_SERVE"]
+        },
+        "DataPrivacy": {
+            "hours_to_resolution":["SUGAR_SERVE"],
+            "business_hours_to_resolution":["SUGAR_SERVE"]
         },
         "Accounts": {
             "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],

@@ -163,6 +163,16 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'type' => 'friendly-time',
                     'readonly' => true,
                 ),
+                [
+                    'name' => 'hours_to_resolution',
+                    'type' => 'decimal',
+                    'readonly' => true,
+                ],
+                [
+                    'name' => 'business_hours_to_resolution',
+                    'type' => 'decimal',
+                    'readonly' => true,
+                ],
                 //END SUGARCRM flav=ent ONLY
                 'assigned_user_name',
                 array(

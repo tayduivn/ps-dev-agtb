@@ -27,13 +27,15 @@ $mod_strings = array (
   'LBL_RESOLUTION' => 'Resolution',
   'LBL_LAST_MODIFIED' => 'Last Modified',
   'LBL_ASSIGNED_TO_ID'=>'Assigned To:',
-  'LBL_ASSIGNED_TO_NAME' => 'User:',  	  
+  'LBL_ASSIGNED_TO_NAME' => 'User:',
   'LBL_WORK_LOG' => 'Work Log:',
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_FOLLOW_UP' => 'Follow Up',
     'LBL_FOLLOW_UP_DATETIME' => 'Follow Up Date',
     'LBL_RESOLVED_DATETIME' => 'Resolved Date',
     'LBL_TIME_TO_RESOLUTION' => 'Time to Resolution',
+    'LBL_HOURS_TO_RESOLUTION' => 'Hours to Resolution',
+    'LBL_BUSINESS_HOURS_TO_RESOLUTION' => 'Business Hours to Resolution',
     'LBL_PENDING_PROCESSING' => 'Pending Processing',
     //END SUGARCRM flav=ent ONLY
   'LBL_CREATED_BY' => 'Created by:',
@@ -50,5 +52,5 @@ $mod_strings = array (
     'LBL_EDIT_BUTTON' => 'Edit',
     'LBL_REMOVE' => 'Remove',
 
-  
+
   );

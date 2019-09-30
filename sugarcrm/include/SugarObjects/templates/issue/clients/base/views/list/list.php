@@ -78,6 +78,22 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => false,
                 ),
+                [
+                    'name' => 'hours_to_resolution',
+                    'type' => 'decimal',
+                    'readonly' => true,
+                    'label' => 'LBL_HOURS_TO_RESOLUTION',
+                    'enabled' => true,
+                    'default' => false,
+                ],
+                [
+                    'name' => 'business_hours_to_resolution',
+                    'type' => 'decimal',
+                    'readonly' => true,
+                    'label' => 'LBL_BUSINESS_HOURS_TO_RESOLUTION',
+                    'enabled' => true,
+                    'default' => false,
+                ],
                 array(
                     'name' => 'follow_up_datetime',
                     'type' => 'relative-time',

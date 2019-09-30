@@ -39,7 +39,7 @@ class Issue extends Basic
      * @param string|null $status Status to check.
      * @return bool true if the given status is a resolved status and false otherwise.
      */
-    private function isResolvedStatus(?string $status): bool
+    protected function isResolvedStatus(?string $status): bool
     {
         if (!isset($status)) {
             return false;
@@ -163,12 +163,32 @@ class Issue extends Basic
     }
 
     /**
+     * Returns the hours (calendar/business) it took to resolve this issue.
+     */
+    public function calculateResolutionHours()
+    {
+        $timeDate = Container::getInstance()->get(\TimeDate::class);
+        $now = $timeDate->nowDb();
+
+        // get the UNIX timestamps (seconds) for both resolved_datetime and date_entered,
+        // substituting the current time if either does not exist.
+        $resolvedDatetime = empty($this->resolved_datetime) ? $now : $this->resolved_datetime;
+        $resolvedDatetime = $timeDate->fromDb($resolvedDatetime);
+        $dateEntered = empty($this->date_entered) ? $now : $this->date_entered;
+        $dateEntered = $timeDate->fromDb($dateEntered);
+
+        $hours = $this->getHoursBetween($dateEntered, $resolvedDatetime, $this->business_center_id ?? '');
+        $this->hours_to_resolution = $hours['calendarHours'];
+        $this->business_hours_to_resolution = $hours['businessHours'];
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function save($check_notify = false)
     {
         if ($this->isNewlyResolved()) {
-            $this->calculateResolutionTime();
+            $this->calculateResolutionHours();
         }
 
         return parent::save($check_notify);
