@@ -86,7 +86,18 @@ return [
             [
                 'name' => 'LBL_OPPORTUNITIES',
                 'components' => [
-                    [],
+                    [
+                        'context' => [
+                            'module' => 'Opportunities',
+                        ],
+                        'view' => 'multi-line-list',
+                    ],
+                    [
+                        'layout' => [
+                            'name' => 'side-drawer',
+                            'type' => 'side-drawer',
+                        ],
+                    ],
                 ],
             ],
         ],

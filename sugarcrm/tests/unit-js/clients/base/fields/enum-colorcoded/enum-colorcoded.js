@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Base.Fields.CaseStatus', function() {
+describe('Base.Fields.EnumColorcoded', function() {
     var app;
     var field;
     var fieldName = 'test_enum';
@@ -18,18 +18,16 @@ describe('Base.Fields.CaseStatus', function() {
     beforeEach(function() {
         app = SugarTest.app;
         model = app.data.createBean(module);
-        SugarTest.loadComponent('base', 'field', 'enum-colorcoded');
 
         field = SugarTest.createField(
             'base',
             fieldName,
-            'case-status',
+            'enum-colorcoded',
             'list',
             {},
             module,
             model,
-            null,
-            true
+            null
         );
 
         field.items = {

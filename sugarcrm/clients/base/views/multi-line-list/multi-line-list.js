@@ -131,8 +131,18 @@
         if (meta.collectionOptions) {
             collection.setOption(meta.collectionOptions);
         }
+        this.setFilterDef(options);
+    },
+
+    /**
+     * Set the filter for the collection
+     *
+     * @param {Object} options object for the view
+     */
+    setFilterDef: function(options) {
+        var meta = options.meta || {};
         if (meta.filterDef) {
-            collection.filterDef = meta.filterDef;
+            options.context.get('collection').filterDef = meta.filterDef;
         }
     },
 
