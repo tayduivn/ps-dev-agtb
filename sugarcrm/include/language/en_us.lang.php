@@ -2190,6 +2190,13 @@ $app_list_strings = array (
         '15' => '15',
         '20' => '20',
     ),
+    //Service Duration
+    'service_duration_unit_dom' =>
+        array (
+            'year' => 'Year(s)',
+            'month' => 'Month(s)',
+            'day' => 'Day(s)',
+        ),
 //END SUGARCRM flav=ent ONLY
 );
 
@@ -5676,6 +5683,11 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_AGENT_WORKBENCH_FOLLOW_UP' => 'Follow Up',
     'LBL_AGENT_WORKBENCH_PRIORITY_STATUS' => 'Priority/Status',
     'LBL_AGENT_WORKBENCH_SUBJECT_DESCRIPTION' => 'Subject/Description',
+
+//Service Duration
+    'LBL_SERVICE_DURATION' => 'Service Duration',
+    'LBL_SERVICE_DURATION_VALUE' => 'Service Duration Value',
+    'LBL_SERVICE_DURATION_UNIT' => 'Service Duration Unit',
 //END SUGARCRM flav=ent ONLY
 );
 

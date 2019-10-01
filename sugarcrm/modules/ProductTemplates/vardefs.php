@@ -356,6 +356,25 @@ $dictionary['ProductTemplate'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_FORECAST_WORKSHEET',
         ),
+        'service_duration_value' => array(
+            'name' => 'service_duration_value',
+            'vname' => 'LBL_SERVICE_DURATION_VALUE',
+            'type' => 'int',
+            'default' => '0',
+            'len' => '5',
+            'required' => false,
+            'comment' => 'Value of the service duration, if service duration is 4 Months the value is 4',
+        ),
+        'service_duration_unit' => array (
+            'name' => 'service_duration_unit',
+            'vname' => 'LBL_SERVICE_DURATION_UNIT',
+            'type' => 'enum',
+            'options' => 'service_duration_unit_dom',
+            'default' => 'year',
+            'len' => 50,
+            'audited' => false,
+            'comment' => 'Service Duration unit like Year(s), Month(s) or Day(s)',
+        ),
     ),
     'relationships' => array(
         'product_templates_product_categories' => array(
