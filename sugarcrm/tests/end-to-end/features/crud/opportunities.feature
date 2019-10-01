@@ -322,8 +322,9 @@ Feature: Opportunities
       | best_case1 | likely_case1 | best_case2 | likely_case2 | best_case3 | likely_case3 |
       | 300        | 200          | 500        | 400          | 50         | 40           |
 
+
   @create_opportunity_with_negative_values
-  Scenario Outline: Opportunities >  Create opportunity with RLIs
+  Scenario Outline: Opportunities >  Create opportunity with negative RLIs
     Given Accounts records exist:
       | *name |
       | Acc_1 |
@@ -338,21 +339,29 @@ Feature: Opportunities
       | Opp_1 | Acc_1        |
     # Provide input for the first (default) RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
-      | *name | date_closed | best_case   | sales_stage   | quantity | likely_case   |
-      | RLI1  | 12/12/2020  | <best_case> | Qualification | 5        | <likely_case> |
+      | *name | date_closed | best_case   | worst_case   | sales_stage   | quantity | likely_case   |
+      | RLI1  | 12/12/2020  | <best_case> | <worst_case> | Qualification | 5        | <likely_case> |
     # Save new opportunity
     When I click Save button on #OpportunitiesDrawer header
     When I close alert
-    Then I verify fields on #OpportunitiesDrawer.RecordView
-      | fieldName  | value             |
-      | best_case  | <error_min_value> |
-      | amount     | <error_min_value> |
-      | worst_case | <error_min_value> |
-    When I click Cancel button on #OpportunitiesDrawer header
+    When I select *Opp_1 in #OpportunitiesList.ListView
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName  | value                         |
+      | best_case  | <currencySymbol><best_case>   |
+      | amount     | <currencySymbol><likely_case> |
+      | worst_case | <currencySymbol><worst_case>  |
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    Then I verify fields for *RLI1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value                         |
+      | name        | RLI1                          |
+      | date_closed | 12/12/2020                    |
+      | best_case   | <currencySymbol><best_case>   |
+      | likely_case | <currencySymbol><likely_case> |
+      | worst_case  | <currencySymbol><worst_case>  |
 
     Examples:
-      | best_case | likely_case | error_min_value                              |
-      | -300      | -200        | Error. The minimum value of this field is 0. |
+      | worst_case | likely_case | best_case | currencySymbol |
+      | -300.00    | -200.00     | -100.00   | $              |
 
   @change_rli_currency_when_opp_is_created
   Scenario: Opportunities >  Change currency of the RLI when creating new opportunity
