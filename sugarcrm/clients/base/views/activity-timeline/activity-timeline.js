@@ -80,7 +80,7 @@
         this._super('initialize', [options]);
 
         this.events = _.extend({}, this.events, {
-            'click .fa.expand-collapse': 'handleExpandedClick',
+            'click .static-contents': 'handleExpandedClick',
             'click .btn.more': 'fetchModels',
         });
     },
@@ -317,9 +317,11 @@
      * @param {Event} event Click event that triggers the action
      */
     handleExpandedClick: function(event) {
-        var $el = this.$(event.target);
-        var $parent = $el.closest('.timeline-entry');
+        var $element = this.$(event.currentTarget);
+        var $parent = $element.closest('.timeline-entry');
         var modelId = $parent.data('id');
+        // to toggle chevron up and down
+        var $el = $element.find('.expand-collapse');
 
         // if model is already expanded, reset id and collapse panel
         if (modelId === this.expandedModelId) {
