@@ -23,6 +23,11 @@ class SetValueActionTest extends TestCase
         $GLOBALS['current_user']->setPreference('timef', "H:i:s");
 	}
 
+    protected function tearDown()
+    {
+        SugarTestTaskUtilities::removeAllCreatedTasks();
+    }
+
     public function testSetValueRemoveNewLinesFromExpression()
     {
         $target = "name";
@@ -71,4 +76,26 @@ class SetValueActionTest extends TestCase
         $action->fire($task);
         $this->assertEquals($task->$target, 4);
 	}
+
+    /**
+     * check that SetValueAction sets NULL to empty dates
+     */
+    public function testSetValueActionForEmptyDateWithSaveInDB()
+    {
+        $task = SugarTestTaskUtilities::createTask();
+        $task->date_start = '';
+        $task->priority = 'High';
+        $action = ActionFactory::getNewAction('SetValue', [
+            'target' => 'date_start',
+            'value' => 'ifElse(and(equal($priority,"Low"),equal($date_start,"")),now(),$date_start)',
+        ]);
+        $action->fire($task);
+        $this->assertNull($task->date_start);
+        $task->save();
+
+        // Be sure that new task will be from DB
+        BeanFactory::clearCache();
+        $task = BeanFactory::getBean('Tasks', $task->id);
+        $this->assertEquals($task->date_start, '');
+    }
 }
