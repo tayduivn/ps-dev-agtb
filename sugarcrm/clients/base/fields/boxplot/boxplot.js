@@ -55,11 +55,9 @@
     /**
      * @inheritdoc
      *
-     * Setup transactional amount if flag is present and transaction currency
-     * is not base.
-     * On edit view render the currency enum field associated with this field on
-     * the correct placeholder
-     *
+     * calculates the width of the box-plot and the worst_case and the best_case end whiskers,
+     * by calculating the worst_case and best_case value for a collection.
+     * It also calculates the median line for the likely value position to be placed in the box plot.
      * @return {Object} this
      * @private
      */
@@ -81,6 +79,12 @@
         return this;
     },
 
+    /**
+     * _worstCaseComparator() accepts modelArray for the collection
+     * and gets the overall worst_case value.
+     * @return {Number} minimum worst_case
+     * @private
+     */
     _worstCaseComparator: function(modelArray) {
         var min = Number.MAX_VALUE;
         modelArray.forEach(function(e) {
@@ -91,6 +95,12 @@
         return min.toFixed(2);
     },
 
+    /**
+     * _bestCaseComparator() accepts modelArray for the collection
+     * and gets the overall best_case value.
+     * @return {Number} minimum best_case
+     * @private
+     */
     _bestCaseComparator: function(modelArray) {
         var MAX = 0;
         modelArray.forEach(function(e) {
