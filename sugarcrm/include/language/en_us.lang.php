@@ -5667,7 +5667,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     // Customer Service
     'LBL_EDIT_IN_STUDIO' => 'Use Studio to edit record view dashlet layout by going to ' .
-        'Studio > {{module}} > Layouts > Record Dashlet View. <a href={{linkToStudio}}>Edit in Studio</a>.',
+        'Studio > {{module}} > Layouts > Record View Dashlet. <a href={{linkToStudio}}>Edit in Studio</a>.',
     'LBL_SERVICE_LEVEL' => 'Service Level',
 //BEGIN SUGARCRM flav=ent ONLY
     // Agent Workbench
