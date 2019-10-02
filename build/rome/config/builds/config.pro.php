@@ -187,6 +187,8 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/unit-js/modules/BusinessCenters' => 1,
 'sugarcrm/tests/{old}/modules/BusinessCenters' => 1,
 'sugarcrm/themes/RacerX/images/icon_BusinessCenters_32.png' => 1,
+'sugarcrm/include/SugarObjects/implements/sla_fields/language/en_us.lang.php' => 1,
+'sugarcrm/include/SugarObjects/implements/sla_fields/vardefs.php' => 1,
 
 // Business Center holidays relationship
 'sugarcrm/metadata/business_centers_holidaysMetaData.php' => 1,

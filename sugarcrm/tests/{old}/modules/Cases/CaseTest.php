@@ -84,4 +84,43 @@ class CaseTest extends TestCase
             [null, '9999', null, null],
         ];
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    public function handleSLAFieldsProvider(): array
+    {
+        return [
+            ['2019-10-01 00:05:25', '1234'],
+            [null, '1234'],
+        ];
+    }
+
+    /**
+     * Test handleSLAFields
+     * @param $followUpTime follow up time
+     * @param $assignedUserId assgined user id
+     * @covers Case::handleSLAFields
+     * @dataProvider handleSLAFieldsProvider
+     */
+    public function testHandleSLAFields($followUpTime, $assignedUserId)
+    {
+        $case = SugarTestCaseUtilities::createCase('', ['assigned_user_id' => $assignedUserId]);
+        if ($followUpTime) {
+            $case->follow_up_datetime = $followUpTime;
+        }
+        $case->handleSLAFields();
+
+        $this->assertNotEmpty($case->first_response_actual_datetime);
+        $this->assertNotNull($case->hours_to_first_response);
+        $this->assertNotNull($case->business_hours_to_first_response);
+        $this->assertSame($assignedUserId, $case->first_response_user_id);
+        if ($followUpTime) {
+            $this->assertNotEmpty($case->first_response_target_datetime);
+            $this->assertNotEmpty($case->first_response_variance_from_target);
+        } else {
+            $this->assertEmpty($case->first_response_target_datetime);
+            $this->assertEmpty($case->first_response_variance_from_target);
+        }
+    }
+    //END SUGARCRM flav=ent ONLY
+
 }

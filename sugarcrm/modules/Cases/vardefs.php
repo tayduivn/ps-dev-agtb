@@ -438,6 +438,9 @@ VardefManager::createVardef('Cases', 'Case', array(
     'assignable',
     'team_security',
     'issue',
+// BEGIN SUGARCRM flav=ent ONLY
+    'sla_fields',
+// END SUGARCRM flav=ent ONLY
 ), 'case');
 
 //jc - adding for refactor for import to not use the required_fields array

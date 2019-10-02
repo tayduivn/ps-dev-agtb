@@ -208,7 +208,17 @@
     "FIELDS": {
         "Cases": {
             "business_center_id":["SUGAR_SERVE"],
-            "business_center_name":["SUGAR_SERVE"]
+            "business_center_name":["SUGAR_SERVE"],
+            "first_response_target_datetime":["SUGAR_SERVE"],
+            "first_response_actual_datetime":["SUGAR_SERVE"],
+            "hours_to_first_response":["SUGAR_SERVE"],
+            "business_hours_to_first_response":["SUGAR_SERVE"],
+            "first_response_variance_from_target":["SUGAR_SERVE"],
+            "first_response_sla_met":["SUGAR_SERVE"],
+            "first_response_user_id":["SUGAR_SERVE"],
+            "first_response_user_name":["SUGAR_SERVE"],
+            "first_response_user_link":["SUGAR_SERVE"],
+            "first_response_sent":["SUGAR_SERVE"]
         },
         "Accounts": {
             "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],

@@ -146,4 +146,9 @@ To create a {{module_name}}:
     // Case deflection
     'LBL_NO_LOOKING_FOR' => 'Didn\'t find what you are looking for?',
     'LBL_CREATE_CASE' => 'Create a {{module_name}}',
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_SLA_DETAILS' => 'SLA Details',
+    'LBL_HOURS' => 'Hours',
+    //END SUGARCRM flav=ent ONLY
 );

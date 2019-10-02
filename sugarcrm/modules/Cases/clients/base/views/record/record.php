@@ -252,5 +252,39 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 ),
             ),
         ),
+        //BEGIN SUGARCRM flav=ent ONLY
+        [
+            'name' => 'panel_sla_body',
+            'label' => 'LBL_SLA_DETAILS',
+            'panelDefault' => 'collapsed',
+            'columns' => 2,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => [
+                'first_response_sla_met',
+                'first_response_target_datetime',
+                'first_response_actual_datetime',
+                'hours_to_first_response',
+                'business_hours_to_first_response',
+                [
+                    'name' => 'first_response_variance_from_target',
+                    'readonly' => true,
+                    'inline' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_FIRST_RESPONSE_VARIANCE_FROM_TARGET',
+                    'fields' => [
+                        [
+                            'name' => 'first_response_variance_from_target',
+                        ],
+                        [
+                            'type' => 'label',
+                            'default_value' => 'LBL_HOURS',
+                        ],
+                    ],
+                ],
+                'first_response_user_name',
+            ],
+        ],
+        //END SUGARCRM flav=ent ONLY
     ),
 );

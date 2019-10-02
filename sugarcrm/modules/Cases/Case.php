@@ -108,6 +108,46 @@ class aCase extends Issue
     var $new_schema = true;
 
     //BEGIN SUGARCRM flav=ent ONLY
+
+    /**
+     * To handle SLA fields
+     */
+    public function handleSLAFields()
+    {
+        $now = TimeDate::getInstance()->nowDb();
+
+        // first response target time
+        if (!empty($this->follow_up_datetime)) {
+            $this->first_response_target_datetime = $this->follow_up_datetime;
+        }
+
+        // first response actual time
+        $this->first_response_actual_datetime = $now;
+
+        // hours to first response
+        $hours = $this->getHoursBetween(
+            new \SugarDateTime($this->date_entered, new DateTimeZone('UTC')),
+            new \SugarDateTime($now, new DateTimeZone('UTC')),
+            $this->business_center_id ? $this->business_center_id : ''
+        );
+        $this->hours_to_first_response = $hours['calendarHours'];
+        $this->business_hours_to_first_response = $hours['businessHours'];
+
+        if (!empty($this->first_response_target_datetime)) {
+            // first response variance from target
+            $this->first_response_variance_from_target =
+                ((new \DateTime($this->first_response_actual_datetime))->getTimestamp()
+                    - (new \DateTime($this->first_response_target_datetime))->getTimestamp())
+                / 3600;
+
+            // first response SLA met
+            $this->first_response_sla_met = $this->first_response_variance_from_target <= 0 ? 'Yes' : 'No';
+        }
+
+        // first response user
+        $this->first_response_user_id = $this->assigned_user_id;
+    }
+
     /**
      * Set resolved_datetime to current time when a case is resolved
      * Set business_center_id to the same as related account when not provided
@@ -126,6 +166,11 @@ class aCase extends Issue
             if (!empty($related_account) && !empty($related_account->business_center_id)) {
                 $this->business_center_id = $related_account->business_center_id;
             }
+        }
+
+        // if first_response_sent changing from false to true
+        if (empty($this->fetched_row['first_response_sent']) && !empty($this->first_response_sent)) {
+            $this->handleSLAFields();
         }
         return parent::save($check_notify);
     }

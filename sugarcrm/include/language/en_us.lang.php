@@ -2145,7 +2145,12 @@ $app_list_strings = array (
         240000 => 'Every 4 minutes',
         300000 => 'Every 5 minutes',
   ),
-  //END SUGARCRM flav=ent ONLY
+    'first_response_met_sla_dom'=> [
+        '' => '',
+        'Yes' => 'Yes',
+        'No' => 'No',
+    ],
+//END SUGARCRM flav=ent ONLY
     'forecasts_chart_options_group' => array(
         'forecast' => 'In Forecast',
         'sales_stage' => 'Sales Stage',
