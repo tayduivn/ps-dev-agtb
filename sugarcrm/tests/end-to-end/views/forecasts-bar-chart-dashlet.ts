@@ -19,7 +19,7 @@ import DashletView from './dashlet-view';
  */
 export default class ForecastsBarChartDashlet extends DashletView {
 
-    protected itemSelector: String;
+    protected itemSelector: string;
 
     constructor(options) {
         super(options);
@@ -38,11 +38,11 @@ export default class ForecastsBarChartDashlet extends DashletView {
      *  Select specified item from either one of two drop-down controls in Forecast Bar Chart dashlet
      *  based on the supplied arguments
      *
-     * @param {string} field_name variable to build CSS path to the drop-down
      * @param {string} val item to be select from drop-down
+     * @param {string} field_name variable to build CSS path to the drop-down
      * @returns {Promise<void>}
      */
-    public async selectFromDropdown(field_name: string, val: string, ) {
+    public async selectFromDropdown(val: string, field_name?: string) {
         let element = this.$('field.selector', {field_name});
         await this.driver.click(element);
         await this.driver.waitForApp();

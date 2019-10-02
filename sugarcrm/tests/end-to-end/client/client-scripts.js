@@ -158,5 +158,9 @@ module.exports = {
      */
     openNewTab: function(URL, name, specs) {
         window.open(URL, name, specs);
+    },
+
+    disableTooltips: function() {
+        App.tooltip._disable();
     }
 };

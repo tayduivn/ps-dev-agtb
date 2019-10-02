@@ -34,6 +34,8 @@ export default class DashboardView extends BaseView {
                 FirstDashlet: '.row-fluid[name="dashlet_00"]',
                 SecondDashlet: '.row-fluid[name="dashlet_01"]',
                 ServiceConsoleOverview: '.agent_workbench_dashboard',
+
+                // 3x3 dashboard like Overview tab is Service Console
                 first_row_left_dashlet: '[name=dashlet_000]',
                 first_row_middle_dashlet: '[name=dashlet_001]',
                 first_row_right_dashlet: '[name=dashlet_002]',
@@ -43,6 +45,13 @@ export default class DashboardView extends BaseView {
                 third_row_left_dashlet: '[name=dashlet_020]',
                 third_row_middle_dashlet: '[name=dashlet_021]',
                 third_row_right_dashlet: '[name=dashlet_022]',
+
+                // 2x2 dashboard like Overview tab of Sales Renewal console
+                dashboard2by2_top_right: '[name=dashlet_100]',
+                dashboard2by2_bottom_right: {
+                    $: '[name=dashlet_110]',
+                    chart: '.sc-bubble-wrap',
+                },
             }
         });
     }

@@ -25,7 +25,7 @@ import DashletView from '../views/dashlet-view';
  *  @example
  *  When I select Cases tab in #ServiceConsoleView
  */
-When(/^I select (Overview|Cases) tab in (#\S+)$/,
+When(/^I select (Overview|Cases|Accounts|Opportunities) tab in (#\S+)$/,
     async function(choice: string, view: ServiceConsoleView) {
         await view.switchTab(choice);
     }, {waitForApp: true});

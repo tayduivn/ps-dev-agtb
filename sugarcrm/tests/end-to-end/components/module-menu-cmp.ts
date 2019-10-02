@@ -43,6 +43,7 @@ export default class extends BaseView {
                     'Activity Stream': 'a[data-navbar-menu-item="LBL_ACTIVITIES"]',
                     'Manage Dashboards': 'a[data-navbar-menu-item="LBL_MANAGE_DASHBOARDS"]',
                     'Service Console': 'a[data-name="Service Console"]',
+                    'Renewals Console': 'a[data-name="Renewals Console"]',
                     'Home Dashboard': 'a[data-name="Home Dashboard"]',
 
                     // Acounts Module menu selectors

@@ -10,6 +10,7 @@
  */
 
 import BaseView from './base-view';
+import {KeyCodes} from '../step_definitions/steps-helper';
 
 /**
  * Represents Dashboard view.
@@ -19,7 +20,8 @@ import BaseView from './base-view';
  */
 export default class DashletView extends BaseView {
 
-    protected itemSelector: String;
+    protected inputSelector: string;
+    protected itemSelector: string;
 
     constructor(options) {
         super(options);
@@ -57,6 +59,9 @@ export default class DashletView extends BaseView {
             visibility: '[value="{{visibilityName}}"]',
         });
             this.itemSelector = '.select2-result-label=';
+
+        this.inputSelector = '#select2-drop input';
+        this.itemSelector =  '.select2-result-=';
     }
 
     /**
@@ -146,7 +151,7 @@ export default class DashletView extends BaseView {
 
     /**
      * Display more records in the dashlet by clicking on More records button
-     * 
+     *
      * @returns {Promise<void>}
      */
     public async clickMoreRecordsBtn(): Promise<void> {

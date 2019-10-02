@@ -16,6 +16,8 @@ import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
 import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
 import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
 import {TableDefinition} from 'cucumber';
+import PipelineDashlet from '../views/pipeline-dashlet-view';
+import Top10RlisDashlet from '../views/top-10-rlis-dashlet';
 import HistoryDashlet from '../views/history-dashlet-view';
 
 /**
@@ -131,18 +133,26 @@ When(/^I edit dashlet settings of (#\S+) with the following values:$/,
     }, {waitForApp: true});
 
 /**
- *  Select specified item from drop-down controls in dashlet
+ *  Select specified item from Time Period dropdown control
  *
- *      @example
- *      When I select Last 7 days in #Dashboard.HistoryDashlet
+ *  @example
+ *  When I select "2021 Q3" in #Dashboard.RcPipelineDashlet
  */
 When(/^I select "([a-zA-Z0-9 ]+)" in (#\S+)$/,
     async function (itemToSelect: string, view: DashletView): Promise<void> {
 
+        let filterName: string;
+
         if (view instanceof HistoryDashlet) {
-            await view.selectFromDropdown('filter', itemToSelect);
-            await this.driver.waitForApp();
+            filterName = 'filter';
+        } else if (view instanceof PipelineDashlet) {
+            filterName = 'selectedTimePeriod';
+        } else if (view instanceof Top10RlisDashlet) {
+            filterName = 'filter_duration';
         } else {
             throw new Error('Error. This method is not applicable for specified dashlet type.');
         }
+        await view.selectFromDropdown(filterName, itemToSelect);
+        await this.driver.waitForApp();
+
     }, {waitForApp: true});

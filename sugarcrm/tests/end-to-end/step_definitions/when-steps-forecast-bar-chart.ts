@@ -19,7 +19,7 @@ import ForecastsBarChartDashlet from '../views/forecasts-bar-chart-dashlet';
  */
 When(/^I select (Likely|Best|Worst) in (#\S+)$/,
     async function (itemToSelect: string, view: ForecastsBarChartDashlet): Promise<void> {
-        await view.selectFromDropdown('dataset', itemToSelect);
+        await view.selectFromDropdown(itemToSelect, 'dataset');
     }, {waitForApp: true});
 
 /**
@@ -29,5 +29,5 @@ When(/^I select (Likely|Best|Worst) in (#\S+)$/,
  */
 When(/^I select (In Forecast|Sales Stage|Probability) in (#\S+)$/,
     async function (itemToSelect: string, view: ForecastsBarChartDashlet): Promise<void> {
-        await view.selectFromDropdown('group_by', itemToSelect);
+        await view.selectFromDropdown(itemToSelect, 'group_by');
     }, {waitForApp: true});

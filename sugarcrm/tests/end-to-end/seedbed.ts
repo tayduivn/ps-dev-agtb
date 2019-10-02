@@ -40,6 +40,7 @@ import MergeLayout from './layouts/merge-layout';
 import HistoricalSummaryDrawerLayout from './layouts/historical-summary-layout';
 import PipelineView from './views/pipeline-view';
 import ServiceConsoleView from './views/service-console-view';
+import RenewalsConsoleView from './views/renewals-console-view';
 import UserProfileLayout from './layouts/user-profile-layout';
 import TileViewSettings from './views/tile-settings-view';
 import FindDuplicates from './views/find-duplicates-view';
@@ -58,6 +59,9 @@ export default (seedbed: Seedbed) => {
     seedbed.addAsyncHandler(seedbed.events.BEFORE_INIT, async () => {
 
         seedbed.defineComponent('Login', LoginLayout, {module: 'Login'});
+
+        // Disable tooltips
+        seedbed.client.driver.execSync('disableTooltips', []);
 
         let userSettings: any = seedbed.config.users.default;
 
@@ -112,6 +116,7 @@ export default (seedbed: Seedbed) => {
         seedbed.defineComponent(`KBViewCategoriesDrawer`, KBViewCategoriesDrawer, {module: 'Categories'});
         seedbed.defineComponent(`KBSettingsDrawer`, KBSettingsLayout, {module: 'KBContents'});
         seedbed.defineComponent(`ServiceConsoleView`, ServiceConsoleView, {module: 'Dashboards'});
+        seedbed.defineComponent(`RenewalsConsoleView`, RenewalsConsoleView, {module: 'Dashboards'});
     });
 
     /**

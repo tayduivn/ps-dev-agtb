@@ -22,6 +22,8 @@ import CsCasesInteractionsDashlet from '../views/cs-cases-interactions-dashlet-v
 import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
 import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
 import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
+import PipelineDashlet from '../views/pipeline-dashlet-view';
+import Top10RLIsDashlet from '../views/top-10-rlis-dashlet';
 import HistoryDashlet from '../views/history-dashlet-view';
 
 /**
@@ -47,6 +49,10 @@ export default class DashboardLayout extends BaseView {
     public CsActiveTasksDashlet: DashletView;
     public InactiveTasksDashlet: DashletView;
     public HistoryDashlet: DashletView;
+
+    // Renewals Console
+    public RcPipelineDashlet: DashletView;
+    public RcTop10RLIsDashlet: DashletView;
 
     protected type: string;
 
@@ -115,7 +121,7 @@ export default class DashboardLayout extends BaseView {
             module: options.module,
             position: '002',
         });
-        
+
         this.InactiveTasksDashlet = this.createComponent<InactiveTasksDashlet>(InactiveTasksDashlet, {
             module: options.module,
             position: '000',
@@ -124,6 +130,15 @@ export default class DashboardLayout extends BaseView {
         this.HistoryDashlet = this.createComponent<HistoryDashlet>(HistoryDashlet, {
             module: options.module,
             position: '000',
+        });
+        this.RcPipelineDashlet = this.createComponent<PipelineDashlet>(PipelineDashlet, {
+            module: options.module,
+            position: '100',
+        });
+
+        this.RcTop10RLIsDashlet = this.createComponent<Top10RLIsDashlet>(Top10RLIsDashlet, {
+            module: options.module,
+            position: '110',
         });
     }
 }

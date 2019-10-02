@@ -28,24 +28,8 @@ Given(/^(?:(\d+) )?(\w+) records exist( created by bulk)?:$/,
         await stepsHelper.createRecords(count, module, byBulk, table);
     });
 
-Given<
-    string,
-    string
-    >(
-    /^(?:(\d+) )?(\w+) records exist related via (\w+) link\s*(?:to (\*\S+))?:$/,
-    async function(
-        countStr: string,
-        module: string,
-        link: string,
-        record: any,
-        table: TableDefinition
-    ): Promise<void> {
-        await givenStepsHelper.createRelatedRecord(
-            countStr,
-            module,
-            link,
-            table,
-            record
-        );
+Given<string, string>(/^(?:(\d+) )?(\w+) records exist related via (\w+) link\s*(?:to (\*\S+))?:$/,
+    async function(countStr: string, module: string, link: string, record: any, table: TableDefinition): Promise<void> {
+        await givenStepsHelper.createRelatedRecord(countStr, module, link, table, record);
     }
 );
