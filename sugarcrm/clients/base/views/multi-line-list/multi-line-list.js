@@ -137,6 +137,23 @@
     },
 
     /**
+     * Highlights a row on the list and removes highlight from
+     * the previously highlighted row
+     *
+     * @param {jQuery} $el Element to find the row to highlight
+     */
+    highlightRow: function($el) {
+        var prevRow = this.$('.multi-line-row.current.highlighted');
+        var currRow = $el.closest('.multi-line-row');
+        if (prevRow.length) {
+            prevRow.removeClass('current highlighted');
+        }
+        if (currRow.length) {
+            currRow.addClass('current highlighted');
+        }
+    },
+
+    /**
      * Trigger action when a model row is clicked
      *
      * @param {Object} event Click event that triggers the function
@@ -148,6 +165,9 @@
         if (this.isDropdownToggle($el) || this.isActionsDropdownOpen()) {
             return;
         }
+
+        // highlight the current row
+        this.highlightRow($el);
 
         var modelId = $el.closest('.multi-line-row').data('id');
         var model = this.collection.get(modelId);

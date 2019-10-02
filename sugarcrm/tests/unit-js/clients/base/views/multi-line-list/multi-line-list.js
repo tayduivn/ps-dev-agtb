@@ -130,6 +130,35 @@ describe('Base.View.MultiLineListView', function() {
         });
     });
 
+    describe('highlightRow', function() {
+        var $el;
+        var $row1;
+        var $row2;
+        beforeEach(function() {
+            $el = view.$el;
+            $row1 = $('<tr class="multi-line-row"></tr>');
+            $row2 = $('<tr class="multi-line-row"></tr>');
+            var $mainTable = $('<table><tbody></tbody></table>');
+            $row1.appendTo($mainTable);
+            $row2.appendTo($mainTable);
+            view.$el = $mainTable;
+        });
+
+        afterEach(function() {
+            view.$el = $el;
+        });
+
+        it('should highlight the clicked row', function() {
+            view.highlightRow($row1);
+            expect($row1.hasClass('current highlighted')).toBeTruthy();
+            expect($row2.hasClass('current highlighted')).toBeFalsy();
+
+            view.highlightRow($row2);
+            expect($row2.hasClass('current highlighted')).toBeTruthy();
+            expect($row1.hasClass('current highlighted')).toBeFalsy();
+        });
+    });
+
     describe('handleRowClick', function() {
         var $el;
         var target = 'targetValue';
@@ -140,6 +169,7 @@ describe('Base.View.MultiLineListView', function() {
                 closest: $.noop
             };
             sinon.collection.stub(view, '$').withArgs(target).returns($el);
+            sinon.collection.stub(view, 'highlightRow');
         });
 
         afterEach(function() {
