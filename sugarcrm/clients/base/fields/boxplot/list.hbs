@@ -1,19 +1,27 @@
 {{!--
 /*
-* Your installation or use of this SugarCRM file is subject to the applicable
-* terms available at
-* http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
-* If you do not agree to all of the applicable terms or do not have the
-* authority to bind the entity as an authorized representative, then do not
-* install or use this SugarCRM file.
-*
-* Copyright (C) SugarCRM Inc. All rights reserved.
-*/
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 --}}
-<div class="left_Whisker"></div>
-<hr class = "hr1"/>
-<div class="right_Whisker"></div>
-<hr class = "box_Plot" style="margin-left: {{box_start}}%; width: {{box_width}}%"/>
-<div class="median_Line" style="margin-left: {{likely_percent}}%"></div>
-<img src="./styleguide/assets/img/carat.png" class="box_Plot_Caret" style="margin-left: {{caret_pos}}%" alt="Carat.png"/>
-<div class="likely_value" style="margin-left: {{amount_pos}}%">${{likely}}</div>
+<div>
+    <div class="left-whisker"></div>
+    <hr class="horizontal-line"/>
+    <div class="right-whisker"></div>
+    <hr data-placement="top" data-original-title="Best: {{bestCase}}
+Likely: {{likely}}
+Worst: {{worstCase}}"
+        rel="tooltip" class="box-plot" style="margin-left: {{boxStart}}%; width: {{boxWidth}}%"/>
+    <div data-placement="top" data-original-title="Best: {{bestCase}}
+Likely: {{likely}}
+Worst: {{worstCase}}"
+         rel="tooltip" class="median-line" style="margin-left: {{likelyPercent}}%"></div>
+    <img src="./styleguide/assets/img/carat.png" class="box-plot-caret" style="margin-left: {{caretPos}}%" alt="Carat.png"/>
+    <div class="likely-value" style="margin-left: {{amountPos}}%">{{likelyRound}}</div>
+</div>

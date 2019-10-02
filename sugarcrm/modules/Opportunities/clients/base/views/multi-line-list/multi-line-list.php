@@ -81,10 +81,19 @@ $viewdefs['Opportunities']['base']['view']['multi-line-list'] = [
                     ],
                 ],
                 [
-                    'name' => 'likey/best/worst',
+                    'name' => 'likely/best/worst',
                     'label' => 'LBL_RENEWALS_CONSOLE_AMOUNT',
                     'subfields' => [
-                        // to be added later
+                        [
+                            'name' => 'amount',
+                            'type' => 'boxplot',
+                            'related_fields' => [
+                                'best_case',
+                                'worst_case',
+                            ],
+                            'enabled' => true,
+                            'default' => true,
+                        ],
                     ],
                 ],
                 [
