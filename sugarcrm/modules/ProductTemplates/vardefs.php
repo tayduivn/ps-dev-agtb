@@ -361,6 +361,7 @@ $dictionary['ProductTemplate'] = array(
             'vname' => 'LBL_SERVICE_DURATION_VALUE',
             'type' => 'int',
             'default' => '0',
+            'min' => '0',
             'len' => '5',
             'required' => false,
             'comment' => 'Value of the service duration, if service duration is 4 Months the value is 4',
