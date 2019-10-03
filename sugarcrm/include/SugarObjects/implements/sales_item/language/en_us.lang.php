@@ -21,6 +21,7 @@ $mod_strings = [
     'LBL_PRICING_FACTOR' => 'Pricing Factor',
     'LBL_PRICING_FORMULA' => 'Pricing Formula',
     'LBL_QUANTITY' => 'Quantity',
+    'LBL_RENEWABLE' => 'Renewable',
     'LBL_SERIAL_NUMBER' => 'Serial Number',
     'LBL_SUPPORT_CONTACT' => 'Support Contact',
     'LBL_SUPPORT_DESCRIPTION' => 'Support Description',

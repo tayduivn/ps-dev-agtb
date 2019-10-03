@@ -94,6 +94,13 @@ $vardefs = [
             'comment' => 'Quantity in use',
             'default' => 1.0,
         ],
+        'renewable' => [
+            'name' => 'renewable',
+            'vname' => 'LBL_RENEWABLE',
+            'type' => 'bool',
+            'default' => 0,
+            'comment' => 'Indicates whether the sales item is renewable (e.g. a service)',
+        ],
         'serial_number' => [
             'name' => 'serial_number',
             'vname' => 'LBL_SERIAL_NUMBER',
