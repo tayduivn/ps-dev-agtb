@@ -25,13 +25,68 @@ return [
                                 'module' => 'Opportunities',
                                 'tabs' => [
                                     [
+                                        'active' => true,
                                         'label' => 'LBL_MODULE_NAME_SINGULAR',
                                         'link' => '',
                                         'module' => 'Opportunities',
                                     ],
+                                    [
+                                        'active' => false,
+                                        'link' => 'revenuelineitems',
+                                        'module' => 'RevenueLineItems',
+                                        'order_by' => [
+                                            'field' => 'date_entered',
+                                            'direction' => 'desc',
+                                        ],
+                                        'limit' => 5,
+                                        'fields' => [
+                                            'name',
+                                            'quantity',
+                                            'likely_case',
+                                            'service_duration',
+                                            'service_start_date',
+                                            'service_end_date',
+                                        ],
+                                    ],
+                                    [
+                                        'active' => false,
+                                        'link' => 'contacts',
+                                        'module' => 'Contacts',
+                                        'order_by' => [
+                                            'field' => 'date_entered',
+                                            'direction' => 'desc',
+                                        ],
+                                        'limit' => 5,
+                                        'fields' => [
+                                            'name',
+                                            'title',
+                                            'email',
+                                            'phone_work',
+                                        ],
+                                    ],
+                                    [
+                                        'active' => false,
+                                        'link' => 'quotes',
+                                        'module' => 'Quotes',
+                                        'order_by' => [
+                                            'field' => 'date_entered',
+                                            'direction' => 'desc',
+                                        ],
+                                        'limit' => 5,
+                                        'fields' => [
+                                            'name',
+                                            'total',
+                                            'quote_stage',
+                                            'date_quote_expected_closed',
+                                            'assigned_user_name',
+                                        ],
+                                    ],
                                 ],
                                 'tab_list' => [
                                     'Opportunities',
+                                    'revenuelineitems',
+                                    'contacts',
+                                    'quotes',
                                 ],
                             ],
                             'context' => [

@@ -247,6 +247,11 @@ $fields = array(
                 'label' => 'LBL_SERVICE_DURATION_UNIT',
             ),
         ),
+        'orderBy' => 'service_duration_unit',
+        'related_fields' => array(
+            'service_duration_value',
+            'service_duration_unit',
+        ),
     ),
     'renewable' => array(
         'name' => 'renewable',

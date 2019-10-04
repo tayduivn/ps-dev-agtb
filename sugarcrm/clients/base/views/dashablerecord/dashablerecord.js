@@ -731,20 +731,35 @@
      */
     _addRelateFields: function(module, fields) {
         fields = fields || [];
-        var fieldMetadata = app.metadata.getModule(module, 'fields');
+        var vardefFieldMetadata = app.metadata.getModule(module, 'fields') || {};
 
-        if (fieldMetadata) {
+        // The columns of a dashablerecord can handle fields defined in a module's
+        // list view defs, including 'fieldset' type fields that aren't defined
+        // in the module's vardefs. This means we need to include the related
+        // fields necessary for those in the fetch as well.
+        var listViewFieldMetadata = {};
+        _.each(this._getFieldMetaForView(app.metadata.getView(module, 'list')) || [], function(field) {
+            listViewFieldMetadata[field.name] = field;
+        });
+
+        if (vardefFieldMetadata !== {} || listViewFieldMetadata !== {}) {
             // we need to find the relates and add the actual id fields
             var relates = [];
             _.each(fields, function(name) {
-                if (fieldMetadata[name].type == 'relate') {
-                    relates.push(fieldMetadata[name].id_name);
-                } else if (fieldMetadata[name].type == 'parent') {
-                    relates.push(fieldMetadata[name].id_name);
-                    relates.push(fieldMetadata[name].type_name);
+                // If the field definition is not found in the vardefs, look in
+                // the list view defs
+                var meta = vardefFieldMetadata[name] || listViewFieldMetadata[name];
+                if (!meta) {
+                    return;
                 }
-                if (_.isArray(fieldMetadata[name].related_fields)) {
-                    relates = relates.concat(fieldMetadata[name].related_fields);
+                if (meta.type == 'relate') {
+                    relates.push(meta.id_name);
+                } else if (meta.type == 'parent') {
+                    relates.push(meta.id_name);
+                    relates.push(meta.type_name);
+                }
+                if (_.isArray(meta.related_fields)) {
+                    relates = relates.concat(meta.related_fields);
                 }
             });
 

@@ -1118,5 +1118,34 @@ describe('Base.View.Dashablerecord', function() {
             });
             expect(view._addRelateFields('Opportunities', fields)).toEqual(expected);
         });
+
+        it('should add relate fields for fields defined only in list views', function() {
+            var fields = ['assigned_user_name', 'amount', 'list_view_field'];
+            var expected = ['assigned_user_name', 'amount', 'list_view_field', 'assigned_user_id',
+                'currency_id', 'list_view_related_1', 'list_view_related_2'];
+
+            sinon.collection.stub(app.metadata, 'getModule').returns({
+                'assigned_user_name': {
+                    'type': 'relate',
+                    'id_name': 'assigned_user_id'
+                },
+                'amount': {
+                    'related_fields': [
+                        'currency_id'
+                    ]
+                }
+            });
+            sinon.collection.stub(view, '_getFieldMetaForView').returns([
+                {
+                    'name': 'list_view_field',
+                    'related_fields': [
+                        'list_view_related_1',
+                        'list_view_related_2'
+                    ]
+                }
+            ]);
+
+            expect(view._addRelateFields('Opportunities', fields)).toEqual(expected);
+        });
     });
 });
