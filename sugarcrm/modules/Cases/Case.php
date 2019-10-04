@@ -156,10 +156,13 @@ class aCase extends Issue
      */
     public function save($check_notify = false)
     {
-        if (in_array($this->status, ['Closed', 'Rejected', 'Duplicate'])) {
-            if (!$this->isResolvedStatus($this->fetched_row['status'])) {
+        if ($this->isResolvedStatus($this->status)) {
+            if (empty($this->resolved_datetime)) {
                 $this->resolved_datetime = TimeDate::getInstance()->nowDb();
             }
+        } elseif (!empty(\SugarConfig::getInstance()->get('clear_resolved_date')) &&
+            $this->isResolvedStatus($this->fetched_row['status'])) {
+            $this->resolved_datetime = '';
         }
         if (empty($this->business_center_id)) {
             $related_account = BeanFactory::retrieveBean('Accounts', $this->account_id);

@@ -31,6 +31,7 @@ function make_sugar_config(&$sugar_config)
     global $admin_export_only;
     global $cache_dir;
     global $calculate_response_time;
+    global $clear_resolved_date;
     global $create_default_user;
     global $dateFormats;
     global $dbconfig;
@@ -86,6 +87,7 @@ function make_sugar_config(&$sugar_config)
     'export_delimiter' => empty($export_delimiter) ? ',' : $export_delimiter,
     'cache_dir' => empty($cache_dir) ? 'cache/' : $cache_dir,
     'calculate_response_time' => empty($calculate_response_time) ? true : $calculate_response_time,
+    'clear_resolved_date' => empty($clear_resolved_date) ? true : $clear_resolved_date,
     'create_default_user' => empty($create_default_user) ? false : $create_default_user,
     'chartEngine' => 'sucrose',
     'catalog_enabled' => false,
@@ -262,6 +264,7 @@ function get_sugar_config_defaults()
     //END SUGARCRM flav=ent ONLY
     'export_delimiter' => ',',
     'export_excel_compatible' => false,
+    'clear_resolved_date' => true,
     'cache_dir' => 'cache/',
     'calculate_response_time' => true,
     'commentlog' => array(

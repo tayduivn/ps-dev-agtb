@@ -16,10 +16,21 @@ use PHPUnit\Framework\TestCase;
 class CaseTest extends TestCase
 {
     private $case;
+    private $old_sugar_config;
+
+    public function setUp()
+    {
+        global $sugar_config;
+
+        $this->old_sugar_config = $sugar_config;
+    }
 
     public function tearDown()
     {
+        global $sugar_config;
+
         unset($this->case);
+        $sugar_config = $this->old_sugar_config;
     }
 
     public static function tearDownAfterClass()
@@ -121,6 +132,38 @@ class CaseTest extends TestCase
             $this->assertEmpty($case->first_response_variance_from_target);
         }
     }
-    //END SUGARCRM flav=ent ONLY
 
+    /**
+     * Test whether resolved_datetime is cleared or not based on the sugar config setting
+     *
+     * @param string $resolvedDate The original resolved datetime
+     * @param string $fromStatus The original status
+     * @param string $toStatus The new status
+     * @param bool $clearOrNot The flag that is set to clear the resolved datetime or not
+     * @param string $expect The expected result
+     * @dataProvider clearResolvedDateProvider
+     */
+    public function testClearResolvedDate(string $resolvedDate, string $fromStatus, string $toStatus, bool $clearOrNot, string $expect)
+    {
+        global $sugar_config;
+
+        $this->case = SugarTestCaseUtilities::createCase(null, [
+            'resolved_datetime' => $resolvedDate,
+            'status' => $toStatus,
+        ]);
+        \SugarConfig::getInstance()->clearCache('clear_resolved_date');
+        $this->case->fetched_row['status'] = $fromStatus;
+        $sugar_config['clear_resolved_date'] = $clearOrNot;
+        $this->case->save();
+        $this->assertSame($this->case->resolved_datetime, $expect);
+    }
+
+    public function clearResolvedDateProvider(): array
+    {
+        return [
+            ['2019-10-04 16:30:00', 'Rejected', 'Pending Input', false, '2019-10-04 16:30:00'],
+            ['2019-10-05 17:00:00', 'Closed', 'Assigned', true, ''],
+        ];
+    }
+    //END SUGARCRM flav=ent ONLY
 }
