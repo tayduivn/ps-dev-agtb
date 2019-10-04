@@ -26,7 +26,10 @@ describe('Base.View.ExternalApp', function() {
 
         var options = {
             meta: {
-                srn: 'some-srn'
+                srn: 'some-srn',
+                env: {
+                    testKey: 'test val'
+                },
             },
             layout: {
                 cid: 'w92'

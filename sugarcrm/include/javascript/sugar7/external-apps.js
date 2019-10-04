@@ -168,12 +168,17 @@
                         success: function(catalog) {
                             _.each(catalog.layouts, function(def) {
                                 if (def.module && def.layout) {
+                                    var catalogEnv = {};
+                                    if (catalog.env) {
+                                        catalogEnv = catalog.env;
+                                    }
                                     addCompToLayout(metadata, def.module, def.layout, {
                                         'view': {
                                             'type': 'external-app',
                                             'name': catalog.name,
                                             'src': catalog.src,
-                                            'srn': catalog.srn
+                                            'srn': catalog.srn,
+                                            'env': catalogEnv
                                         }
                                     });
                                 }

@@ -19,6 +19,7 @@
     mounted: false,
     rendered: false,
     className: 'external-app-interface',
+    extraParcelParams: {},
 
     /**
      * Initializing the SingleSpa, using systemJs getting hold of the needed information of the MFE.
@@ -28,6 +29,11 @@
     initialize: function(options) {
         singleSpa.start();
         this._super('initialize', arguments);
+
+        // pass any env options to be mounted with the external app
+        if (options.meta && options.meta.env) {
+            this.extraParcelParams = options.meta.env;
+        }
 
         this.context.on(
             'sugarApp:load:' + options.layout.cid + ':' + options.meta.srn,
@@ -98,6 +104,16 @@
             this.parcelParams = {
                 domElement: root
             };
+
+            // update parcelParams with any extra keys added
+            if (this.extraParcelParams) {
+                for (var key in this.extraParcelParams) {
+                    if (this.extraParcelParams.hasOwnProperty(key)) {
+                        this.parcelParams[key] = this.extraParcelParams[key];
+                    }
+                }
+            }
+
             this.parcel = singleSpa.mountRootParcel(this.parcelApp, this.parcelParams);
             this.mounted = true;
         }
@@ -117,4 +133,4 @@
         }
         this._super('_dispose', arguments);
     }
-})
+});
