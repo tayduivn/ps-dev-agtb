@@ -27,6 +27,7 @@ $mod_strings = array (
     // Dashboard Names
     'LBL_ACCOUNTS_LIST_DASHBOARD' => 'Accounts List Dashboard',
     'LBL_ACCOUNTS_RECORD_DASHBOARD' => 'Accounts Record Dashboard',
+    'LBL_ACCOUNTS_MULTI_LINE_DASHBOARD' => 'Account Details',
 
 	// Dashlet Categories
 	'LBL_CHARTS'    => 'Charts',
