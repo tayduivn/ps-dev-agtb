@@ -196,4 +196,7 @@ To create an {{module_name}}:
 2. Click "Save" to finalize the new record and return to the previous page.',
 
     'LBL_FILTER_ACCOUNTS_REPORTS' => 'Accounts\' reports',
+    'LBL_RENEWALS_CONSOLE_ACCOUNT_NAME_INDUSTRY' => 'Account Name/Industry',
+    'LBL_RENEWALS_CONSOLE_LOCATION' => 'Location',
+
 );

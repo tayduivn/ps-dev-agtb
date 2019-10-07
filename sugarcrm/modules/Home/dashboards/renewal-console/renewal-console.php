@@ -79,7 +79,18 @@ return [
             [
                 'name' => 'LBL_ACCOUNTS',
                 'components' => [
-                    [],
+                    [
+                        'context' => [
+                            'module' => 'Accounts',
+                        ],
+                        'view' => 'multi-line-list',
+                    ],
+                    [
+                        'layout' => [
+                            'name' => 'side-drawer',
+                            'type' => 'side-drawer',
+                        ],
+                    ],
                 ],
             ],
             // TAB 3
