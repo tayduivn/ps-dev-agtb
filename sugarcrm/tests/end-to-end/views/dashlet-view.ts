@@ -26,7 +26,7 @@ export default class DashletView extends BaseView {
             $: '.dashlet-cell',
             header: '.dashlet-header',
             buttons: {
-                cog: '.fa.fa-cog',
+                cog: '.btn.btn-invisible.dropdown-toggle:not(a)',
             },
             menuItems: {
                 $: '.dropdown-menu',
