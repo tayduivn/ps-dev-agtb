@@ -295,6 +295,40 @@ $fieldsHidden = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
+    'renewable' => array(
+        'name' => 'renewable',
+        'label' => 'LBL_RENEWABLE',
+        'type' => 'bool',
+    ),
+    array(
+        'name' => 'service_duration',
+        'type' => 'fieldset',
+        'css_class' => 'service-duration-field',
+        'label' => 'LBL_SERVICE_DURATION',
+        'inline' => true,
+        'show_child_labels' => false,
+        'fields' => array(
+            array(
+                'name' => 'service_duration_value',
+                'label' => 'LBL_SERVICE_DURATION_VALUE',
+            ),
+            array(
+                'name' => 'service_duration_unit',
+                'label' => 'LBL_SERVICE_DURATION_UNIT',
+            ),
+        ),
+    ),
+    'service_start_date' => array(
+        'name' => 'service_start_date',
+        'label' => 'LBL_SERVICE_START_DATE',
+        'type' => 'date',
+        'display_default' => 'now',
+    ),
+    'service_end_date' => array(
+        'name' => 'service_end_date',
+        'label' => 'LBL_SERVICE_END_DATE',
+        'type' => 'date',
+    ),
     'next_step',
     'product_type',
     'lead_source',
