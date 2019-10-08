@@ -270,7 +270,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'service_end_date' => array(
                     'name' => 'service_end_date',
                     'label' => 'LBL_SERVICE_END_DATE',
-                    'type' => 'date',
+                    'type' => 'service-enddate',
                 ),
                 'renewable' => array(
                     'name' => 'renewable',
