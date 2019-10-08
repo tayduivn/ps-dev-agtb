@@ -450,138 +450,138 @@ class MetaDataManager implements LoggerAwareInterface
         'account_id' => [
             'name' => 'si_id',
             'default' => 'unknown_si_id',
-            'label' => 'Account ID'
+            'label' => 'Account ID',
         ],
         'account_name' => [
             'name' => 'si_name',
             'default' => 'unknown_account_name',
-            'label' => 'Account Name'
+            'label' => 'Account Name',
         ],
         'account_type' => [
             'name' => 'si_type',
             'default' => 'unknown_si_type',
-            'label' => 'Account Type'
+            'label' => 'Account Type',
         ],
         'license_current' => [
             'name' => 'si_license_current',
             'default' => false,
-            'label' => 'License Current'
+            'label' => 'License Current',
         ],
         'license_serve' => [
             'name' => 'si_license_serve',
             'default' => false,
-            'label' => 'License Serve'
+            'label' => 'License Serve',
         ],
         'license_sell' => [
             'name' => 'si_license_sell',
             'default' => false,
-            'label' => 'License Sell'
+            'label' => 'License Sell',
         ],
         'account_tier' => [
             'name' => 'si_tier',
             'default' => 'unknown_si_tier',
-            'label' => 'Account Tier'
+            'label' => 'Account Tier',
         ],
         'customer_since' => [
             'name' => 'si_customer_since',
             'default' => 'unknown_si_customer_since',
-            'label' => 'Customer Since'
+            'label' => 'Customer Since',
         ],
         'sic_code' => [
             'name' => 'si_sic_code',
             'default' => 'unknown_si_sic_code',
-            'label' => 'SIC Code'
+            'label' => 'SIC Code',
         ],
         'employees_no' => [
             'name' => 'si_employees_no',
             'default' => 'unknown_si_employees_no',
-            'label' => 'Number of Employees'
+            'label' => 'Number of Employees',
         ],
         'account_managing_team' => [
             'name' => 'si_managing_team',
             'default' => 'unknown_si_managing_team',
-            'label' => 'Managing Team'
+            'label' => 'Managing Team',
         ],
         'account_partner_name' => [
             'name' => 'si_partner_name',
             'default' => 'unknown_si_partner_name',
-            'label' => 'Partner Name'
+            'label' => 'Partner Name',
         ],
         'partner_type_c' => [
             'name' => 'si_partner_type',
             'default' => 'unknown_si_partner_type',
-            'label' => 'Partner Type'
+            'label' => 'Partner Type',
         ],
         'account_record' => [
             'name' => 'si_account_record',
             'default' => 'unknown_si_account_record',
-            'label' => 'Account Record Link'
+            'label' => 'Account Record Link',
         ],
         'customer_region' => [
             'name' => 'si_customer_region',
             'default' => 'unknown_si_customer_region',
-            'label' => 'Customer Region'
+            'label' => 'Customer Region',
         ],
         'billing_country' => [
             'name' => 'si_billing_country',
             'default' => 'unknown_si_billing_country',
-            'label' => 'Billing Country'
+            'label' => 'Billing Country',
         ],
         'billing_state' => [
             'name' => 'si_billing_state',
             'default' => 'unknown_si_billing_state',
-            'label' => 'Billing State'
+            'label' => 'Billing State',
         ],
         'billing_city' => [
             'name' => 'si_billing_city',
             'default' => 'unknown_si_billing_state',
-            'label' => 'Billing City'
+            'label' => 'Billing City',
         ],
         'postal_code' => [
             'name' => 'si_postal_code',
             'default' => 'unknown_si_postal_code',
-            'label' => 'Postal Code'
+            'label' => 'Postal Code',
         ],
         'cloud_instance' => [
             'name' => 'si_cloud_instance',
             'default' => 'unknown_si_cloud_instance',
-            'label' => 'Cloud Instance'
+            'label' => 'Cloud Instance',
         ],
         'usage_designation' => [
             'name' => 'si_usage_designation',
             'default' => 'unknown_si_usage_designation',
-            'label' => 'Usage Designation'
+            'label' => 'Usage Designation',
         ],
         'no_of_licenses' => [
             'name' => 'si_no_of_licenses',
             'default' => 'unknown_si_no_of_licenses',
-            'label' => 'Postal Code'
+            'label' => 'Postal Code',
         ],
         'cloud_region' => [
             'name' => 'si_cloud_region',
             'default' => 'unknown_si_cloud_region',
-            'label' => 'Cloud Region'
+            'label' => 'Cloud Region',
         ],
         'upgrade_frequency' => [
             'name' => 'si_upgrade_frequency',
             'default' => 'unknown_si_upgrade_frequency',
-            'label' => 'Upgrade Frequency'
+            'label' => 'Upgrade Frequency',
         ],
         'db_size' => [
             'name' => 'si_db_size',
             'default' => 'unknown_si_db_size',
-            'label' => 'Database Size'
+            'label' => 'Database Size',
         ],
         'file_system_size' => [
             'name' => 'si_upgrade_frequency',
             'default' => 'unknown_si_file_system_size',
-            'label' => 'File System Size'
+            'label' => 'File System Size',
         ],
         'total_sum_size' => [
             'name' => 'si_sum_size',
             'default' => 'unknown_si_sum_size',
-            'label' => 'Total Size'
-        ]
+            'label' => 'Total Size',
+        ],
     ];
 
     /**
@@ -2334,10 +2334,40 @@ class MetaDataManager implements LoggerAwareInterface
             $data['site_id'] = $system_config->settings['site_id'];
         }
 
+        $logger = LoggerManager::getLogger();
+        if (isset($system_config->settings['Opportunities_opps_view_by'])) {
+            $data['si_rli_enabled'] = $system_config->settings['Opportunities_opps_view_by'] === 'RevenueLineItems';
+        } else {
+            $logger->error('Unable to get Opportunities_opps_view_by from system config.');
+            $data['si_rli_enabled'] = 'unknown_rli_enabled';
+        }
+
+        if (isset($system_config->settings['Forecasts_is_setup'])) {
+            $data['si_forecasts_is_setup'] = $system_config->settings['Forecasts_is_setup'] === 1;
+        } else {
+            $logger->error('Unable to get Forecasts_is_setup from system config.');
+            $data['si_forecasts_is_setup'] = 'unknown_forcasts_is_setup';
+        }
+
         if (!empty($system_config->settings['license_subscription']['subscription'])) {
             $s = $system_config->settings['license_subscription']['subscription'];
 
             // Handle necessary account settings from license server
+            if (!empty($s['addons']) && is_array($s['addons'])) {
+                $logger = LoggerManager::getLogger();
+                $productNames = [];
+                foreach ($s['addons'] as $addon) {
+                    if (!empty($addon['product_name'])) {
+                        $productNames[] = $addon['product_name'];
+                    }
+                }
+                if (!empty($productNames)) {
+                    $data['si_product_list'] = implode(", ", $productNames);
+                } else {
+                    $logger->error('Unable to get product list from license server.');
+                    $data['si_product_list'] = 'unknown_product_list';
+                }
+            }
             $data = $this->setSIDataValue($s, $data);
         }
 

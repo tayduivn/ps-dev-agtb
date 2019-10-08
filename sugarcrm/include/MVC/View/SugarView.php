@@ -100,7 +100,11 @@ class SugarView
         'si_upgrade_frequency' => '"unknown_si_upgrade_frequency"',
         'si_db_size' => '"unknown_si_db_size"',
         'si_file_system_size' => '"unknown_si_file_system_size"',
-        'si_sum_size' => '"unknown_si_sum_size"'
+        'si_sum_size' => '"unknown_si_sum_size"',
+        'si_rli_enabled' => '"unknown_rli_enabled"',
+        'si_forecasts_is_setup' => '"unknown_forcasts_is_setup"',
+        'si_product_list' => '"unknown_product_list"',
+        'portal_active' => '"unknown_portal_activated"',
     ];
 
     var $type = null;
@@ -279,6 +283,22 @@ class SugarView
             }
 
             // account data
+            $sugarConfig = \SugarConfig::getInstance();
+            $activityStreamsEnabled = json_encode($sugarConfig->get('activity_streams_enabled')) ??
+                'unknown_activity_streams_enabled';
+            $editablePreviewEnabled = json_encode($sugarConfig->get('preview_edit')) ??
+                'unknown_editable_preview_enabled';
+            $listMaxEntriesPerPage = $sugarConfig->get('list_max_entries_per_page') ??
+                'unknown_list_view_items_per_page';
+            $listMaxEntriesPerSubpanel = $sugarConfig->get('list_max_entries_per_subpanel') ??
+                'unknown_list_view_items_per_page';
+            $leadConversionOptions = json_encode($sugarConfig->get('lead_conv_activity_opt')) ??
+                'unknown_lead_conversion_options';
+            $systemDefaultCurrencyCode = json_encode($sugarConfig->get('default_currency_iso4217')) ??
+                'unknown_system_default_currency_code';
+            $systemDefaultLanguage = json_encode($sugarConfig->get('default_language')) ??
+                'unknown_system_default_language';
+
             $manager = new MetaDataManager();
             $serverInfo = $manager->getServerInfo();
             $accountId = $serverInfo['site_id'] ?? 'unknown_account';
@@ -289,7 +309,15 @@ class SugarView
                 'id' => $accountId,
                 'domain' => $siteUrl,
                 'edition' => $flavor,
-                'version' => $version
+                'version' => $version,
+                'activity_streams_enabled' => $activityStreamsEnabled,
+                'editable_preview_enabled' => $editablePreviewEnabled,
+                'product_list' => $productList,
+                'list_view_items_per_page' => $listMaxEntriesPerPage,
+                'subpanel_items_per_page' => $listMaxEntriesPerSubpanel,
+                'lead_conversion_options' => $leadConversionOptions,
+                'system_default_currency_code' => $systemDefaultCurrencyCode,
+                'system_default_language' => $systemDefaultLanguage,
             ];
             $accountServerInfo = $this->getSIDataValues($serverInfo, $this->serverInfoDefaults);
 
