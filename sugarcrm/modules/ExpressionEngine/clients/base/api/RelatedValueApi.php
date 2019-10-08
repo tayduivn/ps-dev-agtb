@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 /**
  * Used to evaluate related expressions on the front end for arbitrary (possibly unsaved) records.
  */
@@ -248,15 +247,39 @@ class RelatedValueApi extends SugarApi
                         $ret[$link][$type][$rField . '_values'] = $values;
                     }
                     break;
+                case 'rollupConditionalMinDate':
+                    // This function is similar to maxRelatedDate, so rather than
+                    // copying its code, set a flag to indicate this is a
+                    // rollupConditionalMinDate and fall through
+                    $isRollupMinDate = true;
+
+                    // Parse the conditions
+                    $conditions = [];
+                    foreach ($rfDef['conditionFields'] as $index => $conditionField) {
+                        if (is_array($rfDef['conditionValues'][$index])) {
+                            $conditions[$conditionField] = $rfDef['conditionValues'][$index];
+                        } else {
+                            $conditions[$conditionField] = [$rfDef['conditionValues'][$index]];
+                        }
+                    }
+                    // Fall through
                 case 'maxRelatedDate':
                     $ret[$link][$type][$rField] = "";
                     if ($focus->load_relationship($link)) {
                         $td = TimeDate::getInstance();
                         $isTimestamp = true;
-                        $maxDate = 0;
+                        $resDate = 0;
                         $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
                         $valueMap = array();
                         foreach ($relBeans as $bean) {
+                            // If this is a rollupConditionalMinDate, make sure the bean conditions hold
+                            if (!empty($isRollupMinDate) && !empty($conditions) && is_array($conditions)) {
+                                foreach ($conditions as $conField => $conValues) {
+                                    if (!in_array($bean->$conField, $conValues)) {
+                                        continue 2;
+                                    }
+                                }
+                            }
                             if (ACLField::hasAccess($rField, $bean->module_dir, $GLOBALS['current_user']->id, true)
                             ) {
                                 // we have to use the fetched_row as it's still in db format
@@ -284,25 +307,31 @@ class RelatedValueApi extends SugarApi
                                     $value = strtotime($value);
                                 }
 
-                                //compare
-                                if ($maxDate < $value) {
-                                    $maxDate = $value;
+                                // Do the proper comparison depending on whether we are looking for a min or max date
+                                if (!empty($isRollupMinDate)) {
+                                    if ($resDate === 0 || $value < $resDate) {
+                                        $resDate = $value;
+                                    }
+                                } else {
+                                    if ($resDate < $value) {
+                                        $resDate = $value;
+                                    }
                                 }
                             }
                         }
 
                         //if nothing was done, return an empty string
-                        if ($maxDate == 0 && $isTimestamp) {
-                            $maxDate = "";
+                        if ($resDate == 0 && $isTimestamp) {
+                            $resDate = "";
                         } else if ($isTimestamp === false) {
                             $date = new DateTime();
-                            $date->setTimestamp($maxDate);
+                            $date->setTimestamp($resDate);
 
-                            $maxDate = $date->format("Y-m-d");
+                            $resDate = $date->format("Y-m-d");
                         }
 
 
-                        $ret[$link][$type][$rField] = $maxDate;
+                        $ret[$link][$type][$rField] = $resDate;
                         $ret[$link][$type][$rField . '_values'] = $valueMap;
                     }
                     break;

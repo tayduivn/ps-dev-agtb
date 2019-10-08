@@ -102,6 +102,7 @@ $mod_strings = array (
 	'LBL_MODULE_ID'=> 'Accounts',
 	'LBL_NAME'=>'Name:',
 	'LBL_NEW_FORM_TITLE' => 'New Account',
+    'LBL_NEXT_RENEWAL_DATE' => 'Date of Next Renewal',
 	'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Opportunities',
 	'LBL_OTHER_EMAIL_ADDRESS' => 'Other Email:',
 	'LBL_OTHER_PHONE' => 'Other Phone:',

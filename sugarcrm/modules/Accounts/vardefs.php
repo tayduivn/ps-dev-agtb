@@ -373,6 +373,19 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PROSPECT_LIST',
         ),
+        'next_renewal_date' => array(
+            'name' => 'next_renewal_date',
+            'vname' => 'LBL_NEXT_RENEWAL_DATE',
+            'type' => 'date',
+            'calculated' => true,
+            'formula' => 'rollupConditionalMinDate(
+                $revenuelineitems,
+                "date_closed",
+                createList("product_type","renewable"),
+                createList("Existing Business","1")
+            )',
+            'enforced' => true,
+        ),
     ),
     'indices' => array(
         array('name' => 'idx_accnt_parent_id', 'type' => 'index', 'fields' => array('parent_id')),

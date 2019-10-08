@@ -47,6 +47,26 @@ $viewdefs['Accounts']['base']['view']['multi-line-list'] = [
                     ],
                 ],
                 [
+                    'name' => 'next_renewal_date',
+                    'label' => 'LBL_NEXT_RENEWAL_DATE',
+                    'subfields' => [
+                        [
+                            'name' => 'next_renewal_date',
+                            'label' => 'LBL_NEXT_RENEWAL_DATE',
+                            'default' => true,
+                            'enabled' => true,
+                            'type' => 'relative-time',
+                        ],
+                        [
+                            'name' => 'next_renewal_date',
+                            'label' => 'LBL_NEXT_RENEWAL_DATE',
+                            'default' => true,
+                            'enabled' => true,
+                            'type' => 'date',
+                        ],
+                    ],
+                ],
+                [
                     'name' => 'annual_revenue',
                     'label' => 'LBL_ANNUAL_REVENUE',
                     'subfields' => [

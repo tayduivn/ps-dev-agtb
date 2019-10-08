@@ -363,6 +363,7 @@ class Parser {
             || $expr instanceof AverageRelatedExpression
             || $expr instanceof SumRelatedExpression
             || $expr instanceof SumConditionalRelatedExpression
+            || $expr instanceof MinDateConditionalRelatedExpression
             || $expr instanceof MaxRelatedDateExpression
             || $expr instanceof CountRelatedExpression
             || $expr instanceof CountConditionalRelatedExpression
@@ -401,6 +402,18 @@ class Parser {
                         $result[] = $params[2]->evaluate();
                     }
 
+                } elseif ($expr instanceof MinDateConditionalRelatedExpression) {
+                    // For this expression type, the third parameter is a list of fields on
+                    // the related record. By adding this, changes to those fields on the
+                    // related record will also trigger recalculation on the original record
+                    if ($linkName === '' || $params[0]->varName === $linkName) {
+                        $fields = $params[2]->evaluate();
+                        foreach ($fields as $field) {
+                            if (!in_array($field, $result)) {
+                                $result[] = $field;
+                            }
+                        }
+                    }
                 }
             }
             return $result;
