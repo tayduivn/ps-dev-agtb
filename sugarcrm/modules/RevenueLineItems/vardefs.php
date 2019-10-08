@@ -65,6 +65,11 @@ $dictionary['RevenueLineItem'] = array(
                 'manufacturer_name' => 'manufacturer_name',
                 'type_id' => 'type_id',
                 'type_name' => 'type_name',
+                'service_start_date' => 'service_start_date',
+                'service_end_date' => 'service_end_date',
+                'service_duration_value' => 'service_duration_value',
+                'service_duration_unit' => 'service_duration_unit',
+                'renewable' => 'renewable',
             ),
         ),
         'account_id' => array(

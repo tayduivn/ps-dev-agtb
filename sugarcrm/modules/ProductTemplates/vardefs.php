@@ -376,6 +376,13 @@ $dictionary['ProductTemplate'] = array(
             'audited' => false,
             'comment' => 'Service Duration unit like Year(s), Month(s) or Day(s)',
         ),
+        'renewable' => [
+            'name' => 'renewable',
+            'vname' => 'LBL_RENEWABLE',
+            'type' => 'bool',
+            'default' => 0,
+            'comment' => 'Indicates whether the sales item is renewable (e.g. a service)',
+        ],
     ),
     'relationships' => array(
         'product_templates_product_categories' => array(

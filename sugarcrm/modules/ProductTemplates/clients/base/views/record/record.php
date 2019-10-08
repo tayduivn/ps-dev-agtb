@@ -133,7 +133,8 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                 'status',
                 array(
                     'name' => 'website',
-                    'type' => 'url'),
+                    'type' => 'url',
+                ),
                 'date_available',
                 'tax_class',
                 'qty_in_stock',
@@ -158,7 +159,11 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                'vendor_part_num',
+                'renewable',
+                array(
+                    'name' => 'vendor_part_num',
+                    'span' => 12,
+                ),
                 'weight',
                 'type_name',
                 array(
