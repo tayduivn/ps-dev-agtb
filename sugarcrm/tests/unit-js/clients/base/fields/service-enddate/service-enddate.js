@@ -15,6 +15,9 @@ describe('Base.Field.ServiceEnddate', function() {
     beforeEach(function() {
         app = SugarTest.app;
         field = SugarTest.createField('base', 'service-enddate', 'service-enddate', 'view');
+        sinon.collection.stub(field, 'unformat', function(date) {
+            return app.date(date).format('YYYY-MM-DD');
+        });
     });
 
     afterEach(function() {
@@ -48,7 +51,7 @@ describe('Base.Field.ServiceEnddate', function() {
     it('should allow the calculation of an end date', function() {
         field.model.set(field.durationValueFieldName, '7');
         field.model.set(field.durationUnitFieldName, 'day');
-        field.model.set(field.startDateFieldName, new Date('2019-09-25'));
+        field.model.set(field.startDateFieldName, '2019-09-25');
         expect(field.canCalculateEndDate(field.model)).toEqual(true);
     });
 
@@ -76,20 +79,20 @@ describe('Base.Field.ServiceEnddate', function() {
         field.model.set(field.durationValueFieldName, 7);
         field.model.set(field.durationUnitFieldName, 'day');
         field.model.set(field.startDateFieldName, '2019-09-25');
-        expect(field.model.get(field.name)).toEqual(new Date('2019-10-02'));
+        expect(field.model.get(field.name)).toEqual('2019-10-02');
     });
 
     it('should add months to a date correctly', function() {
         field.model.set(field.durationValueFieldName, 3);
         field.model.set(field.durationUnitFieldName, 'month');
         field.model.set(field.startDateFieldName, '2019-06-30');
-        expect(field.model.get(field.name)).toEqual(new Date('2019-09-30'));
+        expect(field.model.get(field.name)).toEqual('2019-09-30');
     });
 
     it('should add years to a date correctly', function() {
         field.model.set(field.durationValueFieldName, 2);
         field.model.set(field.durationUnitFieldName, 'year');
         field.model.set(field.startDateFieldName, '2019-09-30');
-        expect(field.model.get(field.name)).toEqual(new Date('2021-09-30'));
+        expect(field.model.get(field.name)).toEqual('2021-09-30');
     });
 });

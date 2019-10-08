@@ -100,7 +100,8 @@
             var methods = this.getMethodNames();
             var newDate = endDate[methods.get]() + this.model.get(this.durationValueFieldName);
             endDate[methods.set](newDate);
-            this.model.set(this.name, endDate);
+            var formattedEndDate = this.unformat(app.date(endDate));
+            this.model.set(this.name, formattedEndDate);
         }
     }
 });
