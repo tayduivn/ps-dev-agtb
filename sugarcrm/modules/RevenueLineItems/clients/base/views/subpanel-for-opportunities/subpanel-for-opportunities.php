@@ -127,7 +127,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                 'service_end_date' => array(
                     'name' => 'service_end_date',
                     'label' => 'LBL_SERVICE_END_DATE',
-                    'type' => 'date',
+                    'type' => 'service-enddate',
                 ),
                 array(
                     'name' => 'service_duration',
