@@ -33,7 +33,7 @@ describe('Base.View.MultiLineListView', function() {
                         'label': 'LBL_STATUS',
                         'subfields': [
                             {'name': 'name_3', 'label': 'label_3'},
-                            {'name': 'name_4', 'label': 'label_4'},
+                            {'name': 'name_4', 'label': 'label_4', 'related_fields': ['name_5']},
                         ],
                     }
                 ]
@@ -97,7 +97,7 @@ describe('Base.View.MultiLineListView', function() {
         it('should return an array of fields', function() {
             var meta = {panels: panels};
             var actual = view._extractFieldNames(meta);
-            var expected = ['name_1', 'name_2', 'name_3', 'name_4'];
+            var expected = ['name_1', 'name_2', 'name_3', 'name_4', 'name_5'];
             expect(actual).toEqual(expected);
         });
     });

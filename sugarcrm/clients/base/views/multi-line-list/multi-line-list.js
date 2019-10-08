@@ -109,7 +109,8 @@
             var panelFields = panel.fields;
             _.each(panelFields, function(fieldDefs) {
                 var subFields = fieldDefs.subfields;
-                fields = _.union(fields, _.pluck(subFields, 'name'));
+                var relatedFields = _.flatten(_.compact(_.pluck(subFields, 'related_fields')));
+                fields = _.union(fields, _.pluck(subFields, 'name'), relatedFields);
             }, this);
         }, this);
 
