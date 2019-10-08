@@ -29,11 +29,60 @@ return [
                                         'link' => '',
                                         'module' => 'Accounts',
                                     ],
-                                    // TODO: more tabs in SS-74
+                                    [
+                                        'active' => false,
+                                        'link' => 'contacts',
+                                        'module' => 'Contacts',
+                                        'order_by' => [
+                                            'field' => 'name',
+                                            'direction' => 'desc',
+                                        ],
+                                        'limit' => 5,
+                                        'fields' => [
+                                            'name',
+                                            'title',
+                                            'email',
+                                            'phone_work',
+                                        ],
+                                    ],
+                                    [
+                                        'active' => false,
+                                        'link' => 'opportunities',
+                                        'module' => 'Opportunities',
+                                        'order_by' => [
+                                            'field' => 'date_closed',
+                                            'direction' => 'desc',
+                                        ],
+                                        'limit' => 5,
+                                        'fields' => [
+                                            'name',
+                                            'sales_status',
+                                            'amount',
+                                            'date_closed',
+                                        ],
+                                    ],
+                                    [
+                                        'active' => false,
+                                        'link' => 'quotes',
+                                        'module' => 'Quotes',
+                                        'order_by' => [
+                                            'field' => 'date_quote_expected_closed',
+                                            'direction' => 'desc',
+                                        ],
+                                        'limit' => 5,
+                                        'fields' => [
+                                            'name',
+                                            'quote_stage',
+                                            'date_quote_expected_closed',
+                                            'total',
+                                        ],
+                                    ],
                                 ],
                                 'tab_list' => [
                                     'Accounts',
-                                    // TODO: more tabs in SS-74
+                                    'contacts',
+                                    'opportunities',
+                                    'quotes',
                                 ],
                             ],
                             'context' => [
