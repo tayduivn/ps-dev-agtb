@@ -134,6 +134,7 @@
         $nav.addClass('nav-item')
             .attr('data-tab-name', label)
             .attr('data-tab-index', tabIndex);
+        $nav.data('tab-name', lblName);
 
         if (!this.firstIsActive) {
             $nav.addClass('active');
