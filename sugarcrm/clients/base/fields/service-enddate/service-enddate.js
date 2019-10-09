@@ -24,7 +24,6 @@
         options.def.readonly = true;
         this._super('initialize', [options]);
         this.setFieldDependencyNames(options);
-        this.calculateEndDate();
     },
 
     /**
