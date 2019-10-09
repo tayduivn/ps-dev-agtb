@@ -61,6 +61,16 @@
 .teal-text { color: @teal; }
 .coral-text { color: @coral; }
 
+/* color coded enum colors */
+.enum-color-loop (@i) when (@i > 0) {
+  .enum-color@{i} {
+    color: ~"@{enum-fg@{i}}";
+    background-color: ~"@{enum-bg@{i}}";
+  }
+  .enum-color-loop(@i - 1);
+}
+.enum-color-loop (12);
+
 /* alert state colors */
 .info,
 .info > .fa { color: @inform; }
