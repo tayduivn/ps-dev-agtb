@@ -12,10 +12,14 @@
 describe('Base.View.ExternalApp', function() {
 
     var view;
+    var options;
     var app = null;
+    var context = null;
 
     beforeEach(function() {
         app = SugarTest.app;
+        context = app.context.getContext();
+        context.set('model', new Backbone.Model());
 
         window.singleSpa = {
             start: sinon.collection.stub(),
@@ -24,22 +28,21 @@ describe('Base.View.ExternalApp', function() {
 
         var meta = {};
 
-        var options = {
+        options = {
+            context: context,
             meta: {
                 srn: 'some-srn',
                 env: {
                     testKey: 'test val'
-                },
+                }
             },
             layout: {
                 cid: 'w92'
             }
         };
 
-        context = app.context.getContext();
         layout = SugarTest.createLayout('base', 'Accounts', 'tabbed-layout', meta);
-        view = SugarTest.createView('base', 'Accounts', 'external-app', {config: true}, context, false, layout);
-        view.initialize(options);
+        view = SugarTest.createView('base', 'Accounts', 'external-app', options.meta, options.context, false, layout);
     });
 
     afterEach(function() {
@@ -50,6 +53,7 @@ describe('Base.View.ExternalApp', function() {
 
     describe('Initialize', function() {
         it('should check if singleSpa Start is called', function() {
+            view.initialize(options);
             expect(window.singleSpa.start).toHaveBeenCalled();
         });
     });

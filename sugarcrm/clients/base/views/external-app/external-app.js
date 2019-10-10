@@ -54,7 +54,7 @@
      * Click handler that imports / loads the spa module that was clicked
      * @private
      */
-    _onSugarAppLoad() {
+    _onSugarAppLoad: function() {
         var serverInfo = app.metadata.getServerInfo();
 
         // don't re-import already mounted parcel apps
