@@ -19,11 +19,16 @@ import BaseView from './base-view';
  */
 export default class DashletView extends BaseView {
 
+    protected itemSelector: String;
+
     constructor(options) {
         super(options);
 
         this.selectors = this.mergeSelectors({
             $: '.dashlet-cell',
+            field: {
+                selector: '.edit[field-name="{{field_name}}"] .select2-choice .select2-chosen',
+            },
             header: '.dashlet-header',
             buttons: {
                 cog: '.btn.btn-invisible.dropdown-toggle:not(a)',
@@ -37,6 +42,7 @@ export default class DashletView extends BaseView {
             dashletFooter: '.block-footer',
             moreRecords: '.btn.btn-link.more',
         });
+            this.itemSelector = '.select2-result-label=';
     }
 
     /**
@@ -141,6 +147,32 @@ export default class DashletView extends BaseView {
      */
     public async getDashletFooterMessage(): Promise<string> {
         let selector = this.$('dashletFooter');
+        return this.driver.getText(selector);
+    }
+
+    /**
+     *  Select specified item from drop-down controls in History dashlet
+     *  based on the supplied arguments
+     *
+     * @param {string} field_name variable to build CSS path to the drop-down
+     * @param {string} val item to be select from drop-down
+     * @returns {Promise<void>}
+     */
+    public async selectFromDropdown(field_name: string, val: string) {
+        let element = this.$('field.selector', {field_name});
+        await this.driver.click(element);
+        await this.driver.waitForApp();
+        await this.driver.click(`${this.itemSelector}${val}`);
+        await this.driver.waitForApp();
+    }
+
+    /**
+     * Get header label in dashlet
+     *
+     * @return {string} label displayed in the dashlet
+     */
+    public async getDashletHeader(): Promise<string> {
+        let selector = this.$('header');
         return this.driver.getText(selector);
     }
 }

@@ -26,6 +26,7 @@ import CsCasesInteractionsListView from '../views/cs-cases-interactions-list-vie
 import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
 import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
 import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
+import HistoryDashlet from '../views/history-dashlet-view';
 
 /**
  *  Verify the order of the item in the multiline list view in Service Console Cases tab
@@ -131,7 +132,6 @@ Then(/^I verify comments in (#\S+)$/,
 
     }, {waitForApp: true});
 
-
 /**
  *  Verify items in the Cases Interactions dashlet list view (top-to-bottom)
  *
@@ -227,22 +227,22 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) record info in (#\S+)$/,
                         `The expected and actual fields of record "${record.id}" don't match:`,
                         `The expected value of the field "${fieldName}" is: ${expValue}`,
                         `\tThe actual value of the field "${fieldName}" is: ${value}`,
-                        `\n`,
-                    ].join('\n')
-                );
-            }
-        }
+    `\n`,
+].join('\n')
+);
+}
+}
 
-        let message = '';
-        _.each(errors, (item) => {
-            message += item;
-        });
+let message = '';
+_.each(errors, (item) => {
+    message += item;
+});
 
-        if (message) {
-            throw new Error(message);
-        }
+if (message) {
+    throw new Error(message);
+}
 
-    }, {waitForApp: true});
+}, {waitForApp: true});
 
 /**
  *  Verify if record(s) are present/not present on the list view dashlet
@@ -299,20 +299,23 @@ Then(/^I should (not )?see the following tabs in (#\S+) dashlet:$/,
  *      @example
  *      Then I verify the record count in Calls tab is equal to 1 in #Dashboard.CsPlannedActivitiesDashlet
  */
-Then(/^I verify the record count in (Meetings|Calls|Due Now|Upcoming|To Do|Deferred|Completed) tab is equal to ([0-9+]\d*\+?) in (#\S+)$/,
+Then(/^I verify the record count in (Meetings|Calls|Due Now|Upcoming|To Do|Deferred|Completed|Emails) tab is equal to ([0-9+]\d*\+?) in (#\S+)$/,
     async function(tabName: string, exp: string, view: DashletView) {
         let value;
 
         // Check dashlet tab name as well as dashlet type
         if ((tabName === 'Meetings' && view instanceof PlannedActivitiesDashlet) ||
             (tabName === 'Due Now' && view instanceof ActiveTasksDashlet) ||
-            (tabName === 'Deferred' && view instanceof InactiveTasksDashlet)) {
+            (tabName === 'Deferred' && view instanceof InactiveTasksDashlet)  ||
+            (tabName === 'Meetings' && view instanceof HistoryDashlet)) {
             value = await view.getNumRecordsInTab('0');
         } else if ((tabName === 'Calls' && view instanceof PlannedActivitiesDashlet) ||
             (tabName === 'Upcoming' && view instanceof ActiveTasksDashlet) ||
-            (tabName === 'Completed' && view instanceof InactiveTasksDashlet)) {
+            (tabName === 'Completed' && view instanceof InactiveTasksDashlet)||
+            (tabName === 'Emails' && view instanceof HistoryDashlet)) {
             value = await view.getNumRecordsInTab('1');
-        } else if (tabName === 'To Do' && view instanceof ActiveTasksDashlet) {
+        } else if ((tabName === 'To Do' && view instanceof ActiveTasksDashlet) ||
+            (tabName === 'Calls' && view instanceof HistoryDashlet)) {
             value = await view.getNumRecordsInTab('2');
         } else {
             throw new Error('Invalid module specified!');

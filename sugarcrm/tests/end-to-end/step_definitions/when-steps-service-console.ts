@@ -103,7 +103,7 @@ When(/^I add the following comment into (#\S+):$/,
  *  @example
  *  When I Schedule Meeting in #Dashboard.CsCasesInteractionsDashlet
  */
-When(/^I (Compose Email|Log Call|Schedule Meeting|Create Note or Attachment|Create Task) in (#\S+)$/,
+When(/^I (Compose Email|Log Call|Schedule Meeting|Create Note or Attachment|Create Task|Create Archived Email) in (#\S+)$/,
     async function(action: string, view: DashletView) {
         await view.clickButton(action.replace(/ /g, '_').toLowerCase());
     }, {waitForApp: true});

@@ -16,6 +16,7 @@ import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
 import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
 import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
 import {TableDefinition} from 'cucumber';
+import HistoryDashlet from '../views/history-dashlet-view';
 
 /**
  * Click dashlet's cog button
@@ -34,19 +35,22 @@ When(/^I click (Cog) in (#\S+)$/,
  *      @example
  *      When I navigate to Calls tab in #Dashboard.CsPlannedActivitiesDashlet
  */
-When(/^I navigate to (Calls|Meetings|Due Now|Upcoming|To Do|Deferred|Completed) tab in (#\S+)$/,
+When(/^I navigate to (Calls|Meetings|Due Now|Upcoming|To Do|Emails|Deferred|Completed) tab in (#\S+)$/,
     async function(tabName: string, view: DashletView) {
 
         // check tab name as well as dashlet type
         if ((tabName === 'Meetings' && view instanceof PlannedActivitiesDashlet) ||
             (tabName === 'Due Now' && view instanceof ActiveTasksDashlet) ||
-            (tabName === 'Deferred' && view instanceof InactiveTasksDashlet)) {
+            (tabName === 'Deferred' && view instanceof InactiveTasksDashlet) ||
+            (tabName === 'Meetings' && view instanceof HistoryDashlet)) {
             await view.navigateToTab('0');
         } else if ((tabName === 'Calls' && view instanceof PlannedActivitiesDashlet) ||
             (tabName === 'Upcoming' && view instanceof ActiveTasksDashlet) ||
-            (tabName === 'Completed' && view instanceof InactiveTasksDashlet)) {
+            (tabName === 'Completed' && view instanceof InactiveTasksDashlet) ||
+            (tabName === 'Emails' && view instanceof HistoryDashlet)) {
             await view.navigateToTab('1');
-        } else if (tabName === 'To Do' && view instanceof ActiveTasksDashlet) {
+        } else if ((tabName === 'To Do' && view instanceof ActiveTasksDashlet) ||
+            (tabName === 'Calls' && view instanceof HistoryDashlet)) {
             await view.navigateToTab('2');
         } else {
             throw new Error('Invalid module specified!');
@@ -124,4 +128,15 @@ When(/^I edit dashlet settings of (#\S+) with the following values:$/,
         await seedbed.components.AddSugarDashletDrawer.HeaderView.clickButton('save');
         await this.driver.waitForApp();
 
+    }, {waitForApp: true});
+
+/**
+ *  Select Last 7 days, Last 30 days or Last quarter filter in dashlet
+ *
+ *      @example
+ *      When I select Last 7 days in #Dashboard.HistoryDashlet
+ */
+When(/^I select (Last 7 Days|Last 30 Days|Last Quarter) in (#\S+)$/,
+    async function (itemToSelect: string, view: DashletView): Promise<void> {
+        await view.selectFromDropdown('filter', itemToSelect);
     }, {waitForApp: true});

@@ -24,5 +24,18 @@ Then(/^I verify '(No data available.)' message appears in (#\S+)*$/,
         if (expectedMessage !== actualValue) {
             throw new Error(`Expected value '${expectedMessage}' does not match actual value '${actualValue}'`);
         }
-    }, {waitForApp: true}
-);
+    }, {waitForApp: true});
+
+/**
+ *  Verify header label appears in dashlet
+ *
+ *  @example
+ *  Then I verify 'History Update' label appears in #Dashboard.HistoryDashlet
+ */
+Then(/^I verify '([a-zA-Z](?:\w|\S\ )*)' label appears in (#\S+)$/,
+    async function (expectedLabel: string, view: DashletView): Promise<void> {
+    let actualValue = await view.getDashletHeader();
+    if (expectedLabel !== actualValue) {
+        throw new Error(`Expected value '${expectedLabel}' does not match actual value '${actualValue}'`);
+    }
+}, {waitForApp: true});
