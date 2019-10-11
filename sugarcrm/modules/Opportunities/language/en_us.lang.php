@@ -15,6 +15,7 @@ $mod_strings = array(
     // Dashboard Names
     'LBL_OPPORTUNITIES_LIST_DASHBOARD' => 'Opportunities List Dashboard',
     'LBL_OPPORTUNITIES_RECORD_DASHBOARD' => 'Opportunities Record Dashboard',
+    'LBL_OPPORTUNITIES_MULTI_LINE_DASHBOARD' => 'Opportunity Details',
 
     'LBL_MODULE_NAME' => 'Opportunities',
     'LBL_MODULE_NAME_SINGULAR' => 'Opportunity',
