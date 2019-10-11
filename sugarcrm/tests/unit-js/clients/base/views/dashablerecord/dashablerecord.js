@@ -1100,4 +1100,23 @@ describe('Base.View.Dashablerecord', function() {
             expect(view._getFieldMetaForTab(tab)).toEqual(expected);
         });
     });
+
+    describe('_addRelateFields', function() {
+        it('should add relate fields', function() {
+            var fields = ['assigned_user_name', 'amount'];
+            var expected = ['assigned_user_name', 'amount', 'assigned_user_id', 'currency_id'];
+            sinon.collection.stub(app.metadata, 'getModule').returns({
+                'assigned_user_name': {
+                    'type': 'relate',
+                    'id_name': 'assigned_user_id'
+                },
+                'amount': {
+                    'related_fields': [
+                        'currency_id'
+                    ]
+                }
+            });
+            expect(view._addRelateFields('Opportunities', fields)).toEqual(expected);
+        });
+    });
 });

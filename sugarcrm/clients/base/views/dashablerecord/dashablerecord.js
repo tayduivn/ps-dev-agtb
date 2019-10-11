@@ -718,8 +718,40 @@
                 order_by: !_.isEmpty(tab.order_by) ? tab.order_by.field + ':' + tab.order_by.direction : null,
                 include_child_items: tab.include_child_items || null
             },
-            fields: tab.fields || null
+            fields: this._addRelateFields(tab.module, tab.fields)
         };
+    },
+
+    /**
+     * Add relates and actual id fields to the field list.
+     *
+     * @param {string} module The module name
+     * @param {Array} fields The field list
+     * @return {Array} The expanded field list
+     */
+    _addRelateFields: function(module, fields) {
+        fields = fields || [];
+        var fieldMetadata = app.metadata.getModule(module, 'fields');
+
+        if (fieldMetadata) {
+            // we need to find the relates and add the actual id fields
+            var relates = [];
+            _.each(fields, function(name) {
+                if (fieldMetadata[name].type == 'relate') {
+                    relates.push(fieldMetadata[name].id_name);
+                } else if (fieldMetadata[name].type == 'parent') {
+                    relates.push(fieldMetadata[name].id_name);
+                    relates.push(fieldMetadata[name].type_name);
+                }
+                if (_.isArray(fieldMetadata[name].related_fields)) {
+                    relates = relates.concat(fieldMetadata[name].related_fields);
+                }
+            });
+
+            fields = _.union(fields, relates);
+        }
+
+        return fields;
     },
 
     /**
