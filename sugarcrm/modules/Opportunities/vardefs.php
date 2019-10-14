@@ -536,6 +536,13 @@ $dictionary['Opportunity'] = array(
                 'reportable' => true,
                 'importable' => 'false',
             ),
+        'renewal' => array(
+            'name' => 'renewal',
+            'vname' => 'LBL_RENEWAL',
+            'type' => 'bool',
+            'default' => 0,
+            'comment' => 'Indicates whether the opportunity is a renewal',
+        ),
     ),
     'indices' => array(
         array(

@@ -142,6 +142,7 @@ $mod_strings = array(
     'LBL_COMMIT_STAGE' => 'Commit Stage',
     'LBL_COMMIT_STAGE_FORECAST' => 'Forecast',
     'LBL_WORKSHEET' => 'Worksheet',
+    'LBL_RENEWAL' => 'Renewal',
 
     //BEGIN SUGARCRM flav=ent ONLY
     'TPL_RLI_CREATE' => 'An Opportunity must have an associated Revenue Line Item.',
