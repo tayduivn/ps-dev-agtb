@@ -21,7 +21,6 @@ $viewdefs['Accounts']['base']['view']['multi-line-list'] = [
                     'subfields' => [
                         [
                             'name' => 'name',
-                            'link' => true,
                             'label' => 'LBL_LIST_ACCOUNT_NAME',
                             'width' =>  'large',
                         ],
