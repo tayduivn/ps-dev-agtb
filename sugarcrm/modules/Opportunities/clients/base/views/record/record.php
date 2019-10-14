@@ -232,6 +232,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'fields' => array(
                 'next_step',
                 'opportunity_type',
+                'renewal_parent_name',
                 'lead_source',
                 'campaign_name',
                 array(

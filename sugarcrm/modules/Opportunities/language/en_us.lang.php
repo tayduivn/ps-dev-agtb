@@ -143,6 +143,9 @@ $mod_strings = array(
     'LBL_COMMIT_STAGE_FORECAST' => 'Forecast',
     'LBL_WORKSHEET' => 'Worksheet',
     'LBL_RENEWAL' => 'Renewal',
+    'LBL_RENEWAL_OPPORTUNITIES' => 'Renewal Opportunities',
+    'LBL_RENEWAL_PARENT' => 'Parent Opportunity',
+    'LBL_PARENT_RENEWAL_OPPORTUNITY_ID' => 'Renewal Parent ID',
 
     //BEGIN SUGARCRM flav=ent ONLY
     'TPL_RLI_CREATE' => 'An Opportunity must have an associated Revenue Line Item.',
