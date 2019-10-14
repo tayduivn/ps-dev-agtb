@@ -196,6 +196,7 @@
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
         this.isShortcutsEnabled = (this.isAuthenticated && app.shortcuts.isEnabled());
+        this.isFeedbackEnabled = !!app.config.feedbackEnabled;
         this._super('_renderHtml');
         this.helpButton = this.$('[data-action=help]');
     },

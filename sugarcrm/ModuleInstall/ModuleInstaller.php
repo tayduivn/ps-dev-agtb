@@ -3111,6 +3111,7 @@ class ModuleInstaller
             'teamBasedAcl' => $config->get(TeamBasedACLConfigurator::CONFIG_KEY),
 //END SUGARCRM flav=ent ONLY
             'uniqueKey' => $config->get('unique_key'),
+            'feedbackEnabled' => self::getFeedbackEnabledStatus(),
         );
 
         $jsConfig = $config->get('additional_js_config', array());
@@ -3627,5 +3628,16 @@ class ModuleInstaller
             }
         }
         return $installedModules;
+    }
+
+    /**
+     * Check if Feedback should be enabled on client side
+     *
+     * @return bool
+     */
+    public static function getFeedbackEnabledStatus()
+    {
+        // only enable if the Feedbacks view was customized in any way
+        return !empty(SugarAutoLoader::existing('custom/modules/Feedbacks/clients/base/views/feedback/'));
     }
 }
