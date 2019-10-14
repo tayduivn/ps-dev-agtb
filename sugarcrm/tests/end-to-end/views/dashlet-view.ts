@@ -41,6 +41,7 @@ export default class DashletView extends BaseView {
             },
             dashletFooter: '.block-footer',
             moreRecords: '.btn.btn-link.more',
+            visibility: '[value="{{visibilityName}}"]',
         });
             this.itemSelector = '.select2-result-label=';
     }
@@ -158,7 +159,7 @@ export default class DashletView extends BaseView {
      * @param {string} val item to be select from drop-down
      * @returns {Promise<void>}
      */
-    public async selectFromDropdown(field_name: string, val: string) {
+    public async selectFromDropdown(field_name: string, val: string): Promise<void> {
         let element = this.$('field.selector', {field_name});
         await this.driver.click(element);
         await this.driver.waitForApp();
@@ -167,9 +168,9 @@ export default class DashletView extends BaseView {
     }
 
     /**
-     * Get header label in dashlet
+     * Get dashlet title
      *
-     * @return {string} label displayed in the dashlet
+     * @return {string} dashlet's title
      */
     public async getDashletHeader(): Promise<string> {
         let selector = this.$('header');

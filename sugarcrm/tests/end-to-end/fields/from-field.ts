@@ -9,6 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 import {BaseField} from './base-field';
+import {KeyCodes} from '../step_definitions/steps-helper';
 
 /**
  * @class FromField
@@ -28,10 +29,8 @@ export default class FromField extends BaseField {
                 selector: 'div'
             }
         });
-        
         this.itemSelector = '.select2-result-label=';
         this.inputSelector = '.select2-input.select2-focused';
-        
     }
 
     public async getText(selector: string): Promise<string> {
@@ -39,7 +38,7 @@ export default class FromField extends BaseField {
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
         return value.toString().trim();
     }
-    
+
     public async setValue(val: any): Promise<void> {
         await this.driver.click(this.$('field.selector'));
         await this.driver.setValue(this.inputSelector, val);
@@ -48,8 +47,7 @@ export default class FromField extends BaseField {
         await this.driver.waitForApp();
 
         // Confirm new value by click <enter>
-        await this.driver.keys('\uE007');
-        await this.driver.pause(1000);
+        await this.driver.keys(KeyCodes.ENTER);
         await this.driver.waitForApp();
     }
 }

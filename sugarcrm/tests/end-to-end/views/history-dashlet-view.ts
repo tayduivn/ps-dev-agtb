@@ -41,11 +41,9 @@ export default class HistoryDashlet extends DashletView {
                 activeTab: '.dashlet-tab.active a[data-index="{{index}}"]',
                 record_count: 'a[data-index="{{index}}"] .count',
             },
-            visibility: '[value="{{visibilityName}}"]',
         });
 
         // Active Tasks shares PlannedActivitiesListView with Planned Activities dashlet
         this.ActivitiesList = this.createComponent<PlannedActivitiesListView>(PlannedActivitiesListView);
-        
         }
     }

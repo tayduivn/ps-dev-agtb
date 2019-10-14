@@ -27,12 +27,12 @@ Then(/^I verify '(No data available.)' message appears in (#\S+)*$/,
     }, {waitForApp: true});
 
 /**
- *  Verify header label appears in dashlet
+ *  Verify that dashlet title is updated
  *
  *  @example
- *  Then I verify 'History Update' label appears in #Dashboard.HistoryDashlet
+ *  Then I verify 'History Update' title updated in #Dashboard.HistoryDashlet
  */
-Then(/^I verify '([a-zA-Z](?:\w|\S\ )*)' label appears in (#\S+)$/,
+Then(/^I verify '([a-zA-Z](?:\w|\S\ )*)' title updated in (#\S+)$/,
     async function (expectedLabel: string, view: DashletView): Promise<void> {
     let actualValue = await view.getDashletHeader();
     if (expectedLabel !== actualValue) {

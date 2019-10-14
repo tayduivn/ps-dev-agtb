@@ -227,22 +227,21 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) record info in (#\S+)$/,
                         `The expected and actual fields of record "${record.id}" don't match:`,
                         `The expected value of the field "${fieldName}" is: ${expValue}`,
                         `\tThe actual value of the field "${fieldName}" is: ${value}`,
-    `\n`,
-].join('\n')
-);
-}
-}
+                        `\n`,
+                    ].join('\n')
+                );
+            }
+        }
 
-let message = '';
-_.each(errors, (item) => {
-    message += item;
-});
+        let message = '';
+        _.each(errors, (item) => {
+            message += item;
+        });
 
-if (message) {
-    throw new Error(message);
-}
-
-}, {waitForApp: true});
+        if (message) {
+            throw new Error(message);
+        }
+    }, {waitForApp: true});
 
 /**
  *  Verify if record(s) are present/not present on the list view dashlet

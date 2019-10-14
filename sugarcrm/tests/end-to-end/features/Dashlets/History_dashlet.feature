@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job5 @xxx
+@dashboard @dashlets @job5
 Feature: History dashlet verification
 
   Background:
@@ -52,7 +52,7 @@ Feature: History dashlet verification
       | user_1 | Active | user_1    | LOGIN     | uLast     | uFirst     | user_1@example.org |
 
     # Go to Home page
-    And I go to "Home" url
+    When I go to "Home" url
 
     # Create new dashboard > Save
     When I create new dashboard with two column layout
@@ -139,8 +139,8 @@ Feature: History dashlet verification
     # Verify number of records displayed on Meetings tab
     Then I verify the record count in Meetings tab is equal to 6 in #Dashboard.HistoryDashlet
 
-    # Verify the dashlet label updated correctly
-    Then I verify 'History Update' label appears in #Dashboard.HistoryDashlet
+    # Verify that dashelt title is updated correctly
+    Then I verify 'History Update' title updated in #Dashboard.HistoryDashlet
 
     # Navigate to 'Emails' tab
     When I navigate to Emails tab in #Dashboard.HistoryDashlet
