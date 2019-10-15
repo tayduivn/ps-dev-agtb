@@ -5677,6 +5677,15 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_COMMENT_LOG_SHOW_LESS' => 'Show less...',
     'LBL_NO_DATA_AVAILABLE_NO_PERIOD' => 'No data available',
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    // Active Subscriptions Dashlet
+    'LBL_ACTIVE_SUBSCRIPTIONS_DASHLET' => 'Active Subscriptions',
+    'LBL_ACTIVE_SUBSCRIPTIONS_DASHLET_DESCRIPTION' => 'Active subscriptions for a specific account.',
+    'LBL_ACTIVE_SUBSCRIPTIONS_QUANTITY' => 'quantity {{quantity}}',
+    'LBL_ACTIVE_SUBSCRIPTIONS_TOTAL' => 'Total',
+    'LBL_NO_ACTIVE_SUBSCRIPTIONS' => 'No active subscriptions',
+    //END SUGARCRM flav=ent ONLY
+
     // Customer Service
     'LBL_EDIT_IN_STUDIO' => 'Use Studio to edit record view dashlet layout by going to ' .
         'Studio > {{module}} > Layouts > Record View Dashlet. <a href={{linkToStudio}}>Edit in Studio</a>.',

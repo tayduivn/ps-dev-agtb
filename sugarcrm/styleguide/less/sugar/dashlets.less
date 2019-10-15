@@ -943,6 +943,28 @@
   margin-right: 10px;
 }
 
+/* Active Subscriptions Dashlet */
+.active-subscriptions {
+  .subscription-entry {
+    padding: 11px;
+    border-bottom: @borderWidget;
+
+    .content-row {
+      .row-cell {
+        display: inline-block;
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+
+      .primary {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 250px;
+      }
+    }
+  }
+}
+
 /* Activity Timeline Dashlet */
 .activity-timeline {
   .timeline-entry {

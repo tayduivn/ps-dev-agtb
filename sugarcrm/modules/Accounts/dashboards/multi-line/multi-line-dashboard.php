@@ -101,7 +101,10 @@ return [
                     // row 2
                     [
                         [
-                            // TODO: subscription dashlet in SS-76
+                            'view' => [
+                                'type' => 'active-subscriptions',
+                                'label' => 'LBL_ACTIVE_SUBSCRIPTIONS_DASHLET',
+                            ],
                             'width' => 6,
                         ],
                         [
