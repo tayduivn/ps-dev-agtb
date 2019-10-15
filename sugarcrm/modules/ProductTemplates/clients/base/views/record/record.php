@@ -111,15 +111,13 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                     'readonly'      => true,
                 ),
+                'name',
                 array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'dismiss_label' => true,
                 ),
-                array(
-                    'name' => 'name',
-                )
             )
         ),
         array(
