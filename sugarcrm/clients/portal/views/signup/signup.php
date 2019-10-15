@@ -17,7 +17,7 @@ $viewdefs['portal']['view']['signup'] = [
         [
             'name' => 'signup_button',
             'type' => 'button',
-            'label' => 'LBL_PORTAL_SIGNUP_CREATE_ACCOUNT',
+            'label' => 'LBL_SIGNUP_BUTTON_LABEL',
             'primary' => true,
         ],
     ],
