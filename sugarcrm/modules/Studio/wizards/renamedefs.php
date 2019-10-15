@@ -682,6 +682,8 @@ $renamedefs = array(
         ),
         'PdfManager' => array(
             array('name' => 'LBL_TPL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_TPL_QUOTE_SERVICES_NAME', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_TPL_QUOTE_SERVICES_DESCRIPTION', 'type' => 'singular', 'source' => 'Quotes'),
         ),
         'ProductBundles' => array(
             array('name' => 'LBL_QUOTE_BUNDLE_POSITION', 'type' => 'singular', 'source' => 'Quotes'),

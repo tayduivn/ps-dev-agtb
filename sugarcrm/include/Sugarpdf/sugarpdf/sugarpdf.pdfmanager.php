@@ -146,6 +146,16 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
 
                     $bundleFields['products'][$count] = PdfManagerHelper::parseBeanFields($product_bundle_line_item, true);
 
+                    // Format the service start and end dates into the user preferred format
+                    if (!empty($product_bundle_line_item->service_start_date)) {
+                        $dt = new SugarDateTime($product_bundle_line_item->service_start_date);
+                        $bundleFields['products'][$count]['service_start_date'] = $GLOBALS['timedate']->asUserDate($dt);
+                    }
+                    if (!empty($product_bundle_line_item->service_end_date)) {
+                        $dt = new SugarDateTime($product_bundle_line_item->service_end_date);
+                        $bundleFields['products'][$count]['service_end_date'] = $GLOBALS['timedate']->asUserDate($dt);
+                    }
+
                     if ($product_bundle_line_item->object_name == "ProductBundleNote") {
                         $bundleFields['products'][$count]['name'] = $bundleFields['products'][$count]['description'];
                     } else {

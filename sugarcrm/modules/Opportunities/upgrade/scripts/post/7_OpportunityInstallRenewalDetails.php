@@ -55,7 +55,7 @@ class SugarUpgradeOpportunityInstallRenewalDetails extends UpgradeScript
 
         $this->log('Installing Renewal Details dashboard and dependencies');
 
-        require_once 'modules/dashboards/DefaultDashboardInstaller.php';
+        require_once 'modules/Dashboards/DefaultDashboardInstaller.php';
         $this->defaultDashboardInstaller = new DefaultDashboardInstaller();
 
         $dashboardFile = 'modules/Opportunities/dashboards/multi-line/multi-line.php';
