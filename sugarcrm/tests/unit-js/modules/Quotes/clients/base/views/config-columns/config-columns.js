@@ -232,8 +232,49 @@ describe('Quotes.View.ConfigColumns', function() {
     });
 
     describe('initialize()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_super');
+        });
         it('should set eventViewName', function() {
             expect(view.eventViewName).toBe('worksheet_columns');
+        });
+
+        describe('adding custom service duration field to productsFieldMeta', function() {
+            describe('when productsFieldMeta has both service duration value and unit fields',
+                function() {
+                var durationField;
+                beforeEach(function() {
+                    // view.productsFieldMeta.service_duration_value = {name: 'service_duration_value'};
+                    // view.productsFieldMeta.service_duration_unit = {name: 'service_duration_unit'};
+
+                    durationField = {
+                        'name': 'service_duration',
+                        'type': 'fieldset',
+                        'css_class': 'service-duration-field',
+                        'label': 'LBL_SERVICE_DURATION',
+                        'inline': true,
+                        'show_child_labels': false,
+                        'fields': [
+                            view.productsFieldMeta.service_duration_value,
+                            view.productsFieldMeta.service_duration_unit,
+                        ],
+                        'related_fields': [
+                            'service_start_date',
+                            'service_end_date',
+                            'renewable',
+                        ],
+                    };
+                });
+                afterEach(function() {
+                    durationField = null;
+                });
+                it('should add service duration field in relatedModel fields', function() {
+                    view.initialize({});
+
+                    expect(view.productsFieldMeta.service_duration).toBeDefined();
+                    expect(view.productsFieldMeta.service_duration).toEqual(durationField);
+                });
+            });
         });
     });
 
@@ -464,6 +505,7 @@ describe('Quotes.View.ConfigColumns', function() {
         var addColumnHeaderFieldStub;
         var removeColumnHeaderFieldStub;
         var testField;
+        var durationField;
 
         beforeEach(function() {
             addColumnHeaderFieldStub = sinon.collection.stub();
@@ -519,6 +561,18 @@ describe('Quotes.View.ConfigColumns', function() {
                 });
             });
 
+            it('should add all the service related fields to the column header', function() {
+                durationField =  productsFieldsMeta.service_duration;
+                durationField.def = {
+                    relatedFields: [
+                        'renewable'
+                    ]
+                };
+                view._onConfigFieldChange(durationField, 'unchecked', 'checked');
+
+                expect(view.listHeaderView.addColumnHeaderField).toHaveBeenCalledWith();
+            });
+
             it('should trigger config:<eventViewName>:<fieldName>:related:toggle event on context', function() {
                 view._onConfigFieldChange(testField, 'unchecked', 'checked');
 
@@ -535,6 +589,18 @@ describe('Quotes.View.ConfigColumns', function() {
                 view._onConfigFieldChange(testField, 'checked', 'unchecked');
 
                 expect(removeColumnHeaderFieldStub).toHaveBeenCalledWith(testField);
+            });
+
+            it('should remove all the service related fields to the column header', function() {
+                durationField = productsFieldsMeta.service_duration;
+                durationField.def = {
+                    relatedFields: [
+                        'renewable'
+                    ]
+                };
+                view._onConfigFieldChange(durationField, 'checked', 'unchecked');
+
+                expect(removeColumnHeaderFieldStub).toHaveBeenCalled();
             });
 
             it('should trigger config:<eventViewName>:<fieldName>:related:toggle event on context', function() {
@@ -643,6 +709,73 @@ describe('Quotes.View.ConfigColumns', function() {
 
         it('should trigger config:fields:<eventViewName>:reset on the context', function() {
             expect(view.context.trigger).toHaveBeenCalledWith('config:fields:' + view.eventViewName + ':reset');
+        });
+    });
+
+    describe('onConfigPanelShow', function() {
+        var len;
+        var testBool;
+        beforeEach(function() {
+            testBool = undefined;
+            sinon.collection.stub(view.context, 'trigger');
+        });
+        describe('when dependent fields do not exist', function() {
+            it('should not call context.trigger method', function() {
+                view.dependentFields = undefined;
+                view.onConfigPanelShow();
+
+                expect(view.context.trigger).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('when dependent fields exists', function() {
+            it('should call context.trigger method', function() {
+                view.onConfigPanelShow();
+
+                expect(view.context.trigger).toHaveBeenCalledWith(
+                    'config:fields:change',
+                    view.eventViewName,
+                    view.panelFields
+                    );
+            });
+
+            it('should not add service duration field to the panel fields ' +
+                'when duration unit and value do not exist', function() {
+                len = view.panelFields.length;
+                view.panelFields = undefined;
+                view.onConfigPanelShow();
+                testBool = _.find(view.panelFields, function(field) { return field.name === 'service_duration'; });
+
+                expect(testBool).toBe(undefined);
+            });
+
+            it('should add service duration field to the panel fields when duration unit and value exist',
+                function() {
+                len = view.panelFields.length;
+                view.onConfigPanelShow();
+                testBool = _.find(view.panelFields, function(field) { return field.name === 'service_duration'; });
+
+                expect(view.panelFields.length).toEqual(len - 1);
+                expect(testBool.name).toEqual('service_duration');
+            });
+
+            it('should remove service duration value and unit fields from the panel fields when ' +
+                'duration unit and value exist', function() {
+                len = view.panelFields.length;
+                view.onConfigPanelShow();
+
+                expect(view.panelFields.length).toEqual(len - 1);
+
+                testBool = _.find(view.panelFields, function(field) {
+                    return field.name === 'service_duration_value';
+                });
+                expect(testBool).toBe(undefined);
+
+                testBool = _.find(view.panelFields, function(field) {
+                    return field.name === 'service_duration_unit';
+                });
+                expect(testBool).toBe(undefined);
+            });
         });
     });
 

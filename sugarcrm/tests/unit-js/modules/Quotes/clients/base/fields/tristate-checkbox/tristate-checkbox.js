@@ -12,6 +12,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
     var app;
     var field;
     var fieldDef;
+    var context;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -22,6 +23,8 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             eventViewName: 'config-columns'
         };
 
+        context = app.context.getContext();
+
         field = SugarTest.createField(
             'base',
             fieldDef.name,
@@ -30,7 +33,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             fieldDef,
             'Quotes',
             null,
-            null,
+            context,
             true
         );
     });
@@ -38,6 +41,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
     afterEach(function() {
         sinon.collection.restore();
         field.dispose();
+        fieldDef = null;
         field = null;
     });
 
@@ -115,8 +119,55 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             expect(field.changeState).toHaveBeenCalledWith('test1');
         });
 
+        it('should set serviceRelatedFieldArr', function() {
+            field.initialize({});
+
+            expect(field.serviceRelatedFieldArr).toEqual([
+                'service_start_date',
+                'service_end_date',
+                'renewable',
+                'service_duration',
+        ]);
+        });
+
         it('should set tooltipLabel', function() {
             expect(field.tooltipLabel).toBe('LBL_CONFIG_TOOLTIP_FIELD_REQUIRED_BY');
+        });
+
+        describe('when this.name is service_duration', function() {
+            beforeEach(function() {
+                sinon.collection.stub(field, '_super');
+                field.name = 'service_duration';
+            });
+
+            afterEach(function() {
+                field.name = null;
+            });
+
+            it('should call changeState with checked when worksheet_columns has service_duration',
+                function() {
+                field.context.set('worksheet_columns', {
+                    test: {
+                        name: 'service_duration'
+                    }
+                });
+                field.initialize({});
+
+                expect(field.changeState).toHaveBeenCalledWith('checked');
+                field.context.unset();
+            });
+
+            it('should not call changeState when worksheet_columns does not have service_duration',
+                function() {
+                    field.context.set('worksheet_columns', {
+                        test: {
+                            name: 'test'
+                        }
+                    });
+                    field.initialize({});
+
+                    expect(field.changeState).not.toHaveBeenCalledWith('checked');
+                });
         });
     });
 
@@ -292,6 +343,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
     describe('_onToggleRelatedField()', function() {
         var relatedField;
         var relatedField2;
+        var relatedField3;
         var relatedFields;
 
         beforeEach(function() {
@@ -311,6 +363,12 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                     labelModule: 'Quotes'
                 }
             };
+            relatedField3 = {
+                name: 'renewable',
+                def: {
+                    labelModule: 'Products'
+                }
+            };
             relatedFields = [relatedField, relatedField2];
         });
 
@@ -318,6 +376,35 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             beforeEach(function() {
                 field.dependentFields = {};
                 field.isRequired = false;
+            });
+
+            describe('when the related field is a service field', function() {
+                it('should add all the service fields to dependent fields', function() {
+                    field._onToggleRelatedField(relatedField3, true);
+
+                    expect(field.dependentFields).toEqual({
+                        service_start_date: {
+                            module: 'Products',
+                            field: 'service_start_date',
+                            reason: 'related_fields'
+                        },
+                        service_end_date: {
+                            module: 'Products',
+                            field: 'service_end_date',
+                            reason: 'related_fields'
+                        },
+                        renewable: {
+                            module: 'Products',
+                            field: 'renewable',
+                            reason: 'related_fields'
+                        },
+                        service_duration: {
+                            module: 'Products',
+                            field: 'service_duration',
+                            reason: 'related_fields'
+                        }
+                    });
+                });
             });
 
             it('should add the relatedField to dependentFields', function() {
@@ -338,11 +425,25 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                 expect(field.isRequired).toBeTruthy();
             });
 
-            it('should call changeState with filled when currentStateName is unchecked', function() {
-                field.currentStateName = 'unchecked';
-                field._onToggleRelatedField(relatedField, true);
+            describe('when currentStatName is unchecked', function() {
+                beforeEach(function() {
+                    field.currentStateName = 'unchecked';
+                });
 
-                expect(field.changeState).toHaveBeenCalledWith('filled');
+                it('should call changeState with checked when the related field is a service field',
+                    function() {
+                    field.name = 'renewable';
+                    field._onToggleRelatedField(relatedField3, true);
+
+                    expect(field.changeState).toHaveBeenCalledWith('checked');
+                });
+
+                it('should call changeState with filled when the related field is not a service field',
+                    function() {
+                    field._onToggleRelatedField(relatedField, true);
+
+                    expect(field.changeState).toHaveBeenCalledWith('filled');
+                });
             });
 
             it('should not call changeState when currentStateName is not unchecked', function() {
@@ -358,17 +459,77 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                 field.isRequired = true;
             });
 
-            it('should set isRequired false when dependentFields gets cleared out', function() {
+            it('should delete all the service fields from dependentFields if related field is service field',
+                function() {
                 field.dependentFields = {
-                    relField1: relatedField,
-                    relField2: relatedField2
+                    renewable: relatedField3,
+                    service_duration: {
+                        name: 'service_duration',
+                        def: {
+                            labelModule: 'Products'
+                        }
+                    },
+                    service_end_date: {
+                        name: 'service_end_date',
+                        def: {
+                            labelModule: 'Products'
+                        }
+                    }
                 };
-                field._onToggleRelatedField(relatedFields, false);
+                field.name = 'renewable';
+                field._onToggleRelatedField(relatedField3, false);
 
-                expect(field.isRequired).toBeFalsy();
+                expect(field.dependentFields).toEqual({});
             });
 
-            it('should set isRequired false when dependentFields is not empty', function() {
+            it('should delete only the related fields from dependentFields if related field is not service field',
+                function() {
+                    field.dependentFields = {
+                        relField1: relatedField,
+                        relField2: relatedField2,
+                        renewable: relatedField3
+                    };
+                    field._onToggleRelatedField(relatedFields, false);
+
+                    expect(field.dependentFields).toEqual({renewable: relatedField3});
+                });
+
+            describe('when dependentFields gets cleared out', function() {
+                it('should call changeState with unchecked when currentStateName is filled', function() {
+                    field.dependentFields = {
+                        relField1: relatedField,
+                        relField2: relatedField2
+                    };
+                    field.currentStateName = 'filled';
+                    field._onToggleRelatedField(relatedFields, false);
+
+                    expect(field.changeState).toHaveBeenCalledWith('unchecked');
+                });
+
+                it('should call changeState with unchecked when currentStateName is checked for a service field',
+                    function() {
+                    field.dependentFields = {
+                        renewable: relatedField3
+                    };
+                    field.name = 'renewable';
+                    field.currentStateName = 'checked';
+                    field._onToggleRelatedField(relatedField3, false);
+
+                    expect(field.changeState).toHaveBeenCalledWith('unchecked');
+                });
+
+                it('should set isRequired false', function() {
+                    field.dependentFields = {
+                        relField1: relatedField,
+                        relField2: relatedField2
+                    };
+                    field._onToggleRelatedField(relatedFields, false);
+
+                    expect(field.isRequired).toBeFalsy();
+                });
+            });
+
+            it('should not set isRequired to false when dependentFields is not empty', function() {
                 field.dependentFields = {
                     relField1: relatedField,
                     relField2: relatedField2
@@ -392,12 +553,10 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
         });
 
         describe('when a field has relatedFields', function() {
-            beforeEach(function() {
-                field.def.relatedFields = ['relField3'];
-            });
-
-            describe('when toggleFieldOn is true', function() {
+            describe('when toggleFieldOn is true and related field is not a service field',
+                function() {
                 it('should trigger context event for each relatedField', function() {
+                    field.def.relatedFields = ['relField3'];
                     field._onToggleRelatedField(relatedFields, true);
 
                     expect(field.context.trigger).toHaveBeenCalledWith(
@@ -408,7 +567,25 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                 });
             });
 
+            describe('when toggleFieldOn is true and it is a service field',
+                function() {
+                it('should trigger context event for each relatedField', function() {
+                    field.def.relatedFields = ['service_duration'];
+                    field._onToggleRelatedField(relatedFields, true);
+
+                    expect(field.context.trigger).not.toHaveBeenCalledWith(
+                        'config:' + field.def.eventViewName + ':service_duration:related:toggle',
+                        relatedFields,
+                        true
+                    );
+                });
+            });
+
             describe('when toggleFieldOn is false', function() {
+                beforeEach(function() {
+                    field.def.relatedFields = ['relField3'];
+                });
+
                 it('should trigger context event for each relatedField', function() {
                     field._onToggleRelatedField(relatedFields, false);
 
@@ -539,6 +716,16 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             field.onCheckboxClicked(event);
 
             expect(field.changeState).toHaveBeenCalledWith(currentState.nextState);
+        });
+
+        it('should call changeState with unchecked when a service related field has nextState as filled',
+            function() {
+            field.isRequired = true;
+            field.name = 'renewable';
+            field.currentState.nextStateIfRequired = 'filled';
+            field.onCheckboxClicked(event);
+
+            expect(field.changeState).toHaveBeenCalledWith('unchecked');
         });
     });
 

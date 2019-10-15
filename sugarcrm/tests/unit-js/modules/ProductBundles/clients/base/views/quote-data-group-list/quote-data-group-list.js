@@ -646,6 +646,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             groupModel = new Backbone.Model();
             relatedModel = new Backbone.Model();
             relatedModelId = relatedModel.cid;
+            relatedModel.fields = {};
 
             sinon.collection.stub(app.data, 'createRelatedBean', function() {
                 return relatedModel;
@@ -757,6 +758,65 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             it('should populate currency_id and base_rate with passed in data', function() {
                 expect(relatedModel.get('currency_id')).toBe('prepopulated-data-currency-id');
                 expect(relatedModel.get('base_rate')).toBe('15');
+            });
+        });
+
+        describe('adding custom service duration field to relatedModels fields', function() {
+            describe('when relatedModels has both service duration value and unit fields',
+                function() {
+                var durationField;
+                beforeEach(function() {
+                    relatedModel.fields.service_duration_value = {name: 'service_duration_value'};
+                    relatedModel.fields.service_duration_unit = {name: 'service_duration_unit'};
+
+                    durationField = {
+                        'name': 'service_duration',
+                        'type': 'fieldset',
+                        'css_class': 'service-duration-field',
+                        'label': 'LBL_SERVICE_DURATION',
+                        'inline': true,
+                        'show_child_labels': false,
+                        'fields': [
+                            relatedModel.fields.service_duration_value,
+                            relatedModel.fields.service_duration_unit,
+                        ],
+                        'related_fields': [
+                            'service_start_date',
+                            'service_end_date',
+                            'renewable',
+                        ],
+                    };
+
+                    view.onAddNewItemToGroup(linkName);
+                });
+                afterEach(function() {
+                    durationField = null;
+                });
+                it('should add service duration field in relatedModel fields', function() {
+                    expect(relatedModel.fields.service_duration).toBeDefined();
+                    expect(relatedModel.fields.service_duration).toEqual(durationField);
+                });
+            });
+
+            describe('when relatedModels has service duration value or unit field undefined',
+                function() {
+                it('should not add service duration field in relatedModel fields', function() {
+                    relatedModel.fields.service_duration_value = undefined;
+                    relatedModel.fields.service_duration_unit = {name: 'service_duration_unit'};
+
+                    view.onAddNewItemToGroup(linkName);
+
+                    expect(relatedModel.fields.service_duration).not.toBeDefined();
+                });
+
+                it('should not add service duration field in relatedModel fields', function() {
+                    relatedModel.fields.service_duration_value = {name: 'service_duration_value'};
+                    relatedModel.fields.service_duration_unit = undefined;
+
+                    view.onAddNewItemToGroup(linkName);
+
+                    expect(relatedModel.fields.service_duration).not.toBeDefined();
+                });
             });
         });
     });

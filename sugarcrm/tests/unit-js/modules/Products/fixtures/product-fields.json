@@ -1522,5 +1522,61 @@
       "source":"non-db",
       "vname":"LBL_CURRENCIES"
    },
+   "service_duration_unit":{
+      "audited": false,
+      "default": "year",
+      "len": 50,
+      "massupdate": true,
+      "name": "service_duration_unit",
+      "options": "service_duration_unit_dom",
+      "type": "enum",
+      "vname": "LBL_SERVICE_DURATION_UNIT"
+   },
+   "service_duration_value":{
+      "audited": false,
+      "default": 1,
+      "len": 5,
+      "min": 1,
+      "name": "service_duration_value",
+      "type": "int",
+      "vname": "LBL_SERVICE_DURATION_VALUE"
+   },
+   "service_end_date":{
+      "dbType": "date",
+      "name": "service_end_date",
+      "type": "service-enddate",
+      "vname": "LBL_SERVICE_END_DATE",
+      "label": "LBL_SERVICE_END_DATE",
+      "related_fields": [
+         "service_duration",
+         "service_start_date",
+         "renewable"
+      ]
+   },
+   "service_start_date":{
+      "display_default": "now",
+      "name": "service_start_date",
+      "massupdate": true,
+      "type": "date",
+      "vname": "LBL_SERVICE_START_DATE",
+      "label": "LBL_SERVICE_START_DATE",
+      "related_fields": [
+         "service_duration",
+         "service_end_date",
+         "renewable"
+      ]
+   },
+   "renewable":{
+      "dafault": false,
+      "label": "LBL_RENEWABLE",
+      "vanme": "LBL_RENEWABLE",
+      "massupdate": true,
+      "type": "bool",
+      "related_fields": [
+         "service_duration",
+         "service_end_date",
+         "service_start_date"
+      ]
+   },
    "_hash":"0c827bf80ad5b5b1ad40914e4dc8db14"
 }

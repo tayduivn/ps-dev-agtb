@@ -5701,6 +5701,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SERVICE_DURATION' => 'Service Duration',
     'LBL_SERVICE_DURATION_VALUE' => 'Service Duration Value',
     'LBL_SERVICE_DURATION_UNIT' => 'Service Duration Unit',
+
 //END SUGARCRM flav=ent ONLY
 );
 

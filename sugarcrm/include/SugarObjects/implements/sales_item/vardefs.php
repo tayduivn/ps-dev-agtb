@@ -100,6 +100,11 @@ $vardefs = [
             'type' => 'bool',
             'default' => 0,
             'comment' => 'Indicates whether the sales item is renewable (e.g. a service)',
+            'related_fields' => [
+                'service_duration',
+                'service_start_date',
+                'service_end_date',
+            ],
         ],
         'serial_number' => [
             'name' => 'serial_number',
@@ -131,8 +136,14 @@ $vardefs = [
         'service_end_date' => [
             'name' => 'service_end_date',
             'vname' => 'LBL_SERVICE_END_DATE',
-            'type' => 'date',
+            'type' => 'service-enddate',
+            'dbType' => 'date',
             'comment' => 'End date of the service',
+            'related_fields' => [
+                'service_duration',
+                'service_start_date',
+                'renewable',
+            ],
         ],
         'service_start_date' => [
             'name' => 'service_start_date',
@@ -140,6 +151,11 @@ $vardefs = [
             'type' => 'date',
             'display_default' => 'now',
             'comment' => 'Start date of the service',
+            'related_fields' => [
+                'service_duration',
+                'service_end_date',
+                'renewable',
+            ],
         ],
         'support_contact' => [
             'name' => 'support_contact',
