@@ -1,4 +1,3 @@
-// FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -100,6 +99,9 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
         beforeEach(function() {
             sinon.collection.stub(layout, 'addModelToCollection', function() {});
             sinon.collection.stub(layout, 'setActiveTabIndex', function() {});
+            sinon.collection.stub(app.metadata, 'getModuleNames', function() {
+                return ['Cases', 'Tasks', 'Accounts', 'Contacts', 'Leads'];
+            });
             sinon.collection.spy(JSON, 'parse');
         });
 
@@ -161,6 +163,12 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 records_per_column: 10,
                 hidden_values: ['test']
             });
+        });
+
+        it('should return the list of available and supported module names', function() {
+            sinon.collection.stub(layout.model, 'get')
+                .withArgs('enabled_modules').returns(['Cases', 'Opportunities', 'Tasks']);
+            expect(layout.getAvailableModules()).toEqual(['Cases', 'Tasks']);
         });
 
         it('should call layout.setActiveTabIndex with 0', function() {

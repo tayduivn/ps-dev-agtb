@@ -1,4 +1,3 @@
-// FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -40,6 +39,35 @@
     },
 
     /**
+     * Returns the list of modules the user has access to
+     * and are supported.
+     *
+     * @return {Array} The list of module names.
+     */
+    getAvailableModules: function() {
+        var moduleNames = app.metadata.getModuleNames();
+        var selectedModules = this.model.get('enabled_modules');
+
+        return _.filter(selectedModules, function(module) {
+            return _.contains(moduleNames, module);
+        });
+    },
+
+    /**
+     * Sets the list of modules the user has no access to on the model.
+     *
+     * @param {Array} availableModules The list of modules the user has
+     * access to.
+     */
+    setNotAvailableModules: function(availableModules) {
+        var notAvailableModules = _.difference(
+            this.supportedModules,
+            availableModules
+        );
+        this.model.set('notAvailableModules', notAvailableModules);
+    },
+
+    /**
      * Sets up the models for each of the enabled modules from the configs
      */
     loadData: function(options) {
@@ -47,7 +75,8 @@
             this.blockModule();
             return;
         }
-        var selectedModules = this.model.get('enabled_modules');
+
+        var availableModules = this.getAvailableModules();
         var tableHeaders = this.model.get('table_header');
         var tileHeaders = this.model.get('tile_header');
         var tileBodyFields = this.model.get('tile_body_fields');
@@ -58,7 +87,7 @@
             recordsPerColumn = JSON.parse(recordsPerColumn);
         }
 
-        _.each(selectedModules, function(moduleName) {
+        _.each(availableModules, function(moduleName) {
             var data = {
                 enabled: true,
                 enabled_module: moduleName,
@@ -70,7 +99,7 @@
             };
             this.addModelToCollection(moduleName, data);
         }, this);
-
+        this.setNotAvailableModules(availableModules);
         this.setActiveTabIndex(0);
     },
 
@@ -94,15 +123,17 @@
     setAllowedModules: function() {
         var moduleDetails = {};
         var allowedModules = this.supportedModules || app.metadata.getModuleNames({
-                filter: 'display_tab',
-                access: 'read'
-            });
+            filter: 'display_tab',
+            access: 'read'
+        });
 
         var modules = {};
 
         _.each(allowedModules, function(module) {
             moduleDetails = app.metadata.getModule(module);
-            if (!moduleDetails.isBwcEnabled && !_.isEmpty(moduleDetails.fields)) {
+            if (moduleDetails &&
+                !moduleDetails.isBwcEnabled &&
+                !_.isEmpty(moduleDetails.fields)) {
                 modules[module] = app.lang.getAppListStrings('moduleList')[module];
             }
         });
