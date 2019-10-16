@@ -27,9 +27,9 @@
                 </thead>
                 <tbody>
                     {{#each ../collection.models}}
-                        <tr class="single">
+                        <tr class="single"{{#if id}} data-id="{{id}}"{{/if}}>
                             {{#each ../fields}}
-                                <td{{#if align}} class="{{align}}"{{/if}}>{{field ../../../this model=../this template='list'}}</td>
+                                <td{{#if align}} class="{{align}}"{{/if}}{{#if name}} data-fieldname="{{name}}"{{/if}}>{{field ../../../this model=../this template='list'}}</td>
                             {{/each}}
                         </tr>
                     {{/each}}
