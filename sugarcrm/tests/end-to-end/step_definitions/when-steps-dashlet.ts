@@ -131,12 +131,18 @@ When(/^I edit dashlet settings of (#\S+) with the following values:$/,
     }, {waitForApp: true});
 
 /**
- *  Select Last 7 days, Last 30 days or Last quarter filter in dashlet
+ *  Select specified item from drop-down controls in dashlet
  *
  *      @example
  *      When I select Last 7 days in #Dashboard.HistoryDashlet
  */
-When(/^I select (Last 7 Days|Last 30 Days|Last Quarter) in (#\S+)$/,
+When(/^I select "([a-zA-Z0-9 ]+)" in (#\S+)$/,
     async function (itemToSelect: string, view: DashletView): Promise<void> {
-        await view.selectFromDropdown('filter', itemToSelect);
+
+        if (view instanceof HistoryDashlet) {
+            await view.selectFromDropdown('filter', itemToSelect);
+            await this.driver.waitForApp();
+        } else {
+            throw new Error('Error. This method is not applicable for specified dashlet type.');
+        }
     }, {waitForApp: true});

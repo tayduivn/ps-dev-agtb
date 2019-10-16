@@ -65,7 +65,7 @@ Feature: History dashlet verification
       | History |
 
     # When I select last 7 days
-    When I select Last 7 Days in #Dashboard.HistoryDashlet
+    When I select "Last 7 Days" in #Dashboard.HistoryDashlet
     # Verify number of records displayed on the Meetings tab
     Then I verify the record count in Meetings tab is equal to 3 in #Dashboard.HistoryDashlet
     # Navigate to Calls tab
@@ -74,7 +74,7 @@ Feature: History dashlet verification
     Then I verify the record count in Calls tab is equal to 3 in #Dashboard.HistoryDashlet
 
     # When I select last 30 days
-    When I select Last 30 Days in #Dashboard.HistoryDashlet
+    When I select "Last 30 Days" in #Dashboard.HistoryDashlet
     # Verify number of records displayed on the Calls tab
     Then I verify the record count in Calls tab is equal to 4 in #Dashboard.HistoryDashlet
     # Navigate to Meetings tab
@@ -83,7 +83,7 @@ Feature: History dashlet verification
     Then I verify the record count in Meetings tab is equal to 4 in #Dashboard.HistoryDashlet
 
     # When I select last quarter
-    When I select Last Quarter in #Dashboard.HistoryDashlet
+    When I select "Last Quarter" in #Dashboard.HistoryDashlet
     # Verify number of records displayed on the Meetings tab
     Then I verify the record count in Meetings tab is equal to 5 in #Dashboard.HistoryDashlet
     # Navigate to Calls tab
@@ -115,7 +115,7 @@ Feature: History dashlet verification
     # Set visibility to 'group'
     When I set visibility as 'group' in #Dashboard.HistoryDashlet
     # When I select last quarter
-    When I select Last Quarter in #Dashboard.HistoryDashlet
+    When I select "Last Quarter" in #Dashboard.HistoryDashlet
     # Verify number of records displayed on Calls tab
     Then I verify the record count in Calls tab is equal to 6 in #Dashboard.HistoryDashlet
     # Verify number of records displayed on Meetings tab
@@ -128,7 +128,7 @@ Feature: History dashlet verification
     And I close alert
 
     # When I select last quarter
-    When I select Last Quarter in #Dashboard.HistoryDashlet
+    When I select "Last Quarter" in #Dashboard.HistoryDashlet
 
     # Verify number of records displayed on Meetings tab
     Then I verify the record count in Meetings tab is equal to 5+ in #Dashboard.HistoryDashlet

@@ -27,20 +27,6 @@ export default class HistoryDashlet extends DashletView {
 
         this.selectors = this.mergeSelectors({
             $: `.dashlet-container[name=dashlet_${options.position}]`,
-            header: {
-                $: '.dashlet-header',
-                title: '.dashlet-title',
-                plusButton: '.fa.fa-plus',
-                menuItems: {
-                    create_archived_email: 'li a[name=create_archived_email]',
-                },
-            },
-            tabs: {
-                $: '.dashlet-tabs',
-                tab: 'a[data-index="{{index}}"]',
-                activeTab: '.dashlet-tab.active a[data-index="{{index}}"]',
-                record_count: 'a[data-index="{{index}}"] .count',
-            },
         });
 
         // Active Tasks shares PlannedActivitiesListView with Planned Activities dashlet

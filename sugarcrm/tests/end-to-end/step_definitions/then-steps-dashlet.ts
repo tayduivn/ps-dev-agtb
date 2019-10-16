@@ -34,7 +34,7 @@ Then(/^I verify '(No data available.)' message appears in (#\S+)*$/,
  */
 Then(/^I verify '([a-zA-Z](?:\w|\S\ )*)' title updated in (#\S+)$/,
     async function (expectedLabel: string, view: DashletView): Promise<void> {
-    let actualValue = await view.getDashletHeader();
+    let actualValue = await view.getDashletTitle();
     if (expectedLabel !== actualValue) {
         throw new Error(`Expected value '${expectedLabel}' does not match actual value '${actualValue}'`);
     }

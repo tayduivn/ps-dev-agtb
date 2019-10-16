@@ -29,7 +29,14 @@ export default class DashletView extends BaseView {
             field: {
                 selector: '.edit[field-name="{{field_name}}"] .select2-choice .select2-chosen',
             },
-            header: '.dashlet-header',
+            header: {
+                $: '.dashlet-header',
+                title: '.dashlet-title',
+                plusButton: '.fa.fa-plus',
+                menuItems: {
+                    create_archived_email: 'li a[name=create_archived_email]',
+                },
+            },
             buttons: {
                 cog: '.btn.btn-invisible.dropdown-toggle:not(a)',
             },
@@ -38,6 +45,12 @@ export default class DashletView extends BaseView {
                 edit: 'a[name="edit_button"]',
                 refresh: 'a[name="refresh_button"]',
                 remove: 'a[name="remove_button"]',
+            },
+            tabs: {
+                $: '.dashlet-tabs',
+                tab: 'a[data-index="{{index}}"]',
+                activeTab: '.dashlet-tab.active a[data-index="{{index}}"]',
+                record_count: 'a[data-index="{{index}}"] .count',
             },
             dashletFooter: '.block-footer',
             moreRecords: '.btn.btn-link.more',
@@ -152,7 +165,7 @@ export default class DashletView extends BaseView {
     }
 
     /**
-     *  Select specified item from drop-down controls in History dashlet
+     *  Select specified item from drop-down controls in dashlet
      *  based on the supplied arguments
      *
      * @param {string} field_name variable to build CSS path to the drop-down
@@ -172,7 +185,7 @@ export default class DashletView extends BaseView {
      *
      * @return {string} dashlet's title
      */
-    public async getDashletHeader(): Promise<string> {
+    public async getDashletTitle(): Promise<string> {
         let selector = this.$('header');
         return this.driver.getText(selector);
     }
