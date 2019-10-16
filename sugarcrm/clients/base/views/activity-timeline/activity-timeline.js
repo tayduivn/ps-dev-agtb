@@ -217,14 +217,13 @@
             return;
         }
         var self = this;
-        var HistoryCollection = app.MixedBeanCollection.extend({
-            module: 'history',
+        var RelatedActivityCollection = app.MixedBeanCollection.extend({
             activityModules: this.activityModules,
             buildURL: _.bind(function(params) {
                 params = params || {};
 
                 var url = app.api.serverUrl + '/' + this.baseModule + '/' +
-                    this.baseRecord.get('id') + '/' + 'link/history';
+                    this.baseRecord.get('id') + '/' + 'link/related_activities';
 
                 params.module_list = this.activityModules.join(',');
                 params = $.param(params);
@@ -248,7 +247,7 @@
                 app.api.call(method, url, options.attributes, callbacks);
             }
         });
-        this.relatedCollection = new HistoryCollection();
+        this.relatedCollection = new RelatedActivityCollection();
     },
 
     /**
