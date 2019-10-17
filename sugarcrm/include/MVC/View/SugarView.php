@@ -69,6 +69,32 @@ class SugarView
         'view_print' => false,
         'use_table_container' => true
     );
+
+    /**
+    * List of default values needed for Pendo analytics
+    */
+    protected $serverInfoDefaults = [
+        'si_id' => 'unknown_si_id',
+        'si_name' => '"unknown_si_name"',
+        'si_type' => '"unknown_si_type"',
+        'si_license_current' => false,
+        'si_license_serve' => false,
+        'si_license_sell' => false,
+        'si_tier' => '"unknown_si_tier"',
+        'si_customer_since' => '"unknown_si_customer_since"',
+        'si_sic_code' => '"unknown_si_sic_code"',
+        'si_employees_no' => '"unknown_si_employees_no"',
+        'si_managing_team' => '"unknown_si_managing_team"',
+        'si_partner_name' => '"unknown_si_partner_name"',
+        'si_partner_type' => '"unknown_si_partner_type"',
+        'si_account_record' => '"unknown_si_account_record"',
+        'si_customer_region' => '"unknown_si_customer_region"',
+        'si_billing_country' => '"unknown_si_billing_country"',
+        'si_billing_state' => '"unknown_si_billing_state"',
+        'si_billing_city' => '"unknown_si_billing_city"',
+        'si_postal_code' => '"unknown_si_postal_code"'
+    ];
+
     var $type = null;
     var $responseTime;
     var $fileResources;
@@ -177,6 +203,28 @@ class SugarView
     }
 
     /**
+     * Sets server information for multiple data types.
+     * Escaping with json_encode will also add quotes around the string.
+     *
+     * @param array  $settingSource license data from config table
+     * @param array  $defaultInfoValues set default values
+     *
+     * @return array of ServerInfo
+     */
+    protected function getSIDataValues(array $settingSource, array $defaultInfoValues) : array
+    {
+        $accountServerInfo = [];
+        foreach ($defaultInfoValues as $name => $value) {
+            if (!empty($settingSource[$name]) && is_string($settingSource[$name])) {
+                $accountServerInfo[$name] = json_encode($settingSource[$name]);
+            } else {
+                $accountServerInfo[$name] = $settingSource[$name] ?? $value;
+            }
+        }
+        return $accountServerInfo;
+    }
+
+    /**
      * Add javascript for analytics.
      */
     protected function addAnalytics()
@@ -229,10 +277,13 @@ class SugarView
             $siteUrl = Container::getInstance()->get(SugarConfig::class)->get('site_url');
             $version = $serverInfo['version'] ?? 'unknown_version';
             $flavor = $serverInfo['flavor'] ?? 'unknown_edition';
-            $siId = $serverInfo['si_id'] ?? 'unknown_si_id';
-            // Escaping with json_encode will also add quotes around the string
-            $siName = json_encode($serverInfo['si_name']) ?? '"unknown_si_name"';
-            $siType = json_encode($serverInfo['si_type']) ?? '"unknown_si_type"';
+            $accountBasicInfo = [
+                'id' => $accountId,
+                'domain' => $siteUrl,
+                'edition' => $flavor,
+                'version' => $version
+            ];
+            $accountServerInfo = $this->getSIDataValues($serverInfo, $this->serverInfoDefaults);
 
             echo "<script>
                 (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=[];
@@ -249,15 +300,7 @@ class SugarView
                         roles: '$roles',
                         licenses: '$licenses'
                     },
-                    account: {
-                        id: '$accountId',
-                        domain: '$siteUrl',
-                        edition: '$flavor',
-                        version: '$version',
-                        si_id: '$siId',
-                        si_name: $siName,
-                        si_type: $siType
-                    }
+                    account: " .json_encode(array_merge($accountBasicInfo, $accountServerInfo)). "
                 });
             </script>";
         }

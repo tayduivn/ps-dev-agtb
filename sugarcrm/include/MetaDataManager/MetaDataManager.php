@@ -442,6 +442,109 @@ class MetaDataManager implements LoggerAwareInterface
     protected $idpConfig;
 
     /**
+     * List of mapped data needed from SI for Pendo analytics
+     *
+     * @var array
+     */
+    protected $sourceNameMap = [
+        'account_id' => [
+            'name' => 'si_id',
+            'default' => 'unknown_si_id',
+            'label' => 'Account ID'
+        ],
+        'account_name' => [
+            'name' => 'si_name',
+            'default' => 'unknown_account_name',
+            'label' => 'Account Name'
+        ],
+        'account_type' => [
+            'name' => 'si_type',
+            'default' => 'unknown_si_type',
+            'label' => 'Account Type'
+        ],
+        'license_current' => [
+            'name' => 'si_license_current',
+            'default' => false,
+            'label' => 'License Current'
+        ],
+        'license_serve' => [
+            'name' => 'si_license_serve',
+            'default' => false,
+            'label' => 'License Serve'
+        ],
+        'license_sell' => [
+            'name' => 'si_license_sell',
+            'default' => false,
+            'label' => 'License Sell'
+        ],
+        'account_tier' => [
+            'name' => 'si_tier',
+            'default' => 'unknown_si_tier',
+            'label' => 'Account Tier'
+        ],
+        'customer_since' => [
+            'name' => 'si_customer_since',
+            'default' => 'unknown_si_customer_since',
+            'label' => 'Customer Since'
+        ],
+        'sic_code' => [
+            'name' => 'si_sic_code',
+            'default' => 'unknown_si_sic_code',
+            'label' => 'SIC Code'
+        ],
+        'employees_no' => [
+            'name' => 'si_employees_no',
+            'default' => 'unknown_si_employees_no',
+            'label' => 'Number of Employees'
+        ],
+        'account_managing_team' => [
+            'name' => 'si_managing_team',
+            'default' => 'unknown_si_managing_team',
+            'label' => 'Managing Team'
+        ],
+        'account_partner_name' => [
+            'name' => 'si_partner_name',
+            'default' => 'unknown_si_partner_name',
+            'label' => 'Partner Name'
+        ],
+        'partner_type_c' => [
+            'name' => 'si_partner_type',
+            'default' => 'unknown_si_partner_type',
+            'label' => 'Partner Type'
+        ],
+        'account_record' => [
+            'name' => 'si_account_record',
+            'default' => 'unknown_si_account_record',
+            'label' => 'Account Record Link'
+        ],
+        'customer_region' => [
+            'name' => 'si_customer_region',
+            'default' => 'unknown_si_customer_region',
+            'label' => 'Customer Region'
+        ],
+        'billing_country' => [
+            'name' => 'si_billing_country',
+            'default' => 'unknown_si_billing_country',
+            'label' => 'Billing Country'
+        ],
+        'billing_state' => [
+            'name' => 'si_billing_state',
+            'default' => 'unknown_si_billing_state',
+            'label' => 'Billing State'
+        ],
+        'billing_city' => [
+            'name' => 'si_billing_city',
+            'default' => 'unknown_si_billing_state',
+            'label' => 'Billing City'
+        ],
+        'postal_code' => [
+            'name' => 'si_postal_code',
+            'default' => 'unknown_si_postal_code',
+            'label' => 'Postal Code'
+        ]
+    ];
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility
      * string indicator and loads the appropriate metadata section list.
      *
@@ -2105,6 +2208,30 @@ class MetaDataManager implements LoggerAwareInterface
     }
 
     /**
+     * Sets server information for multiple data types.
+     *
+     * @param array  $settingSource license data from config table
+     * @param array  $data additional metadata parameters to set value on
+     *
+     * @return array of ServerInfo
+     */
+    protected function setSIDataValue(array $settingSource, array $data) : array
+    {
+        $logger = LoggerManager::getLogger();
+        $accountServerInfo = $this->sourceNameMap;
+        foreach ($accountServerInfo as $key => $value) {
+            if (empty($settingSource[$key])) {
+                $data[$value['name']] = $value['default'];
+                $logger->error('Unable to get ' . $value['label'] . ' from license server.');
+            } else {
+                $data[$value['name']] = $settingSource[$key];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Gets server information
      *
      * @return array of ServerInfo
@@ -2169,29 +2296,9 @@ class MetaDataManager implements LoggerAwareInterface
 
         if (!empty($system_config->settings['license_subscription']['subscription'])) {
             $s = $system_config->settings['license_subscription']['subscription'];
-            $logger = LoggerManager::getLogger();
 
             // Handle necessary account settings from license server
-            if (empty($s['account_id'])) {
-                $logger->error('Unable to get Account ID from license server.');
-                $data['si_id'] = 'unknown_si_id';
-            } else {
-                $data['si_id'] = $s['account_id'];
-            }
-
-            if (empty($s['account_name'])) {
-                $logger->error('Unable to get Account Name from license server.');
-                $data['si_name'] = 'unknown_si_name';
-            } else {
-                $data['si_name'] = $s['account_name'];
-            }
-
-            if (empty($s['account_type'])) {
-                $logger->error('Unable to get Account Type from license server.');
-                $data['si_type'] = 'unknown_si_type';
-            } else {
-                $data['si_type'] = $s['account_type'];
-            }
+            $data = $this->setSIDataValue($s, $data);
         }
 
         return $data;
