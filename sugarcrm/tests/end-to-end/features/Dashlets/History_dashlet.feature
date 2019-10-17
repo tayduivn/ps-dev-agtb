@@ -67,7 +67,7 @@ Feature: History dashlet verification
     # When I select last 7 days
     When I select "Last 7 Days" in #Dashboard.HistoryDashlet
     # Verify number of records displayed on the Meetings tab
-    Then I verify the record count in Meetings tab is equal to 3 in #Dashboard.HistoryDashlet
+    # Then I verify the record count in Meetings tab is equal to 3 in #Dashboard.HistoryDashlet
     # Navigate to Calls tab
     When I navigate to Calls tab in #Dashboard.HistoryDashlet
     # Verify number of records displayed on the Calls tab
