@@ -32,6 +32,18 @@
      */
     baseModel: null,
 
+    overallSubscriptionEndDate: 0,
+
+    subscriptionValidityLeft: 0,
+
+    startDate: '',
+
+    endDate: '',
+
+    subscriptionValidityActive: 0,
+
+    subscriptionActiveWidth: 0,
+
     /**
      * Flag indicating if RLI is enabled.
      *
@@ -49,7 +61,7 @@
         this.baseModule = 'Accounts';
         this._getBaseModel();
         var oppConfig = app.metadata.getModule('Opportunities', 'config');
-        if (oppConfig && oppConfig.opps_view_by == 'RevenueLineItems') {
+        if (oppConfig && oppConfig.opps_view_by === 'RevenueLineItems') {
             this.opportunitiesWithRevenueLineItems = true;
         }
     },
@@ -147,6 +159,7 @@
                     var nextDate = app.date(model.get('service_end_date')).add('1', 'day');
                     model.set('service_remaining_time', nextDate.fromNow());
                 });
+                this._daysDifferenceCalculator();
                 this.render();
             }, this)
         };
@@ -172,5 +185,33 @@
             return;
         }
         this.collection.fetch(options);
-    }
+    },
+
+    _daysDifferenceCalculator: function() {
+        if (this.collection) {
+            var width = null;
+            var active = null;
+            var start = null;
+            var end = null;
+            _.each(this.collection.models, function(model) {
+                start = model.get('service_start_date');
+                end = model.get('service_end_date');
+                this.startDate = this.moment(start);
+                this.endDate = this.moment(end);
+                this.overallSubscriptionEndDate = this.endDate.diff(this.startDate, 'days');
+                var today = this.moment();
+                this.subscriptionValidityLeft = this.endDate.diff(today, 'days');
+                var pastSubscription = this.overallSubscriptionEndDate - this.subscriptionValidityLeft;
+                width = (pastSubscription / this.overallSubscriptionEndDate) * 100;
+                active = (100.00 - width);
+                model.set({
+                    startDate: app.date(start).formatUser().split(' ')[0],
+                    endDate: app.date(end).formatUser().split(' ')[0],
+                    expiration: this.endDate.fromNow(),
+                    subscriptionValidityActive: width,
+                    subscriptionActiveWidth: active
+                });
+            });
+        }
+    },
 })
