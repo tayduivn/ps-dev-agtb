@@ -14,16 +14,6 @@ Feature: Admin
     Given I use default account
     Given I launch App
 
-  @change_system_settings @pr
-  Scenario: Admin > Change System Settings
-    When I open about view and login
-    When I go to "bwc/index.php?module=Administration" url
-    When I click on SystemSettings link in #AdminPanel
-    # Change lead conversion settings
-    When I set lead_conv_activity_opt enum with "Do Nothing" value on #AdminPanel:SystemSettings
-    When I click on Save button on #AdminPanel:SystemSettings
-
-
   @user_profile @pr
   Scenario: User Profile > Change tabs
     When I open Accounts view and login

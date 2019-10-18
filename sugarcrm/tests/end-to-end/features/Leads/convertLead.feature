@@ -234,7 +234,7 @@ Feature: Leads module verification
       | fieldName | value                 |
       | name      | Wonderful Opportunity |
     Then I verify fields on #O1Record.RecordView
-      | account_name | Test Account          |
+      | account_name | Test Account |
 
     # 21. Verify that Meetings and Calls subpanels are empty in Opportunity record view
     When I open the meetings subpanel on #O1Record view
@@ -309,7 +309,7 @@ Feature: Leads module verification
     # Create Lead record
     Given Leads records exist:
       | *    | first_name | last_name |
-      | John | John       | Lee    |
+      | John | John       | Lee       |
 
     # Select Business center record for Lead
     When I choose Leads in modules menu
@@ -355,9 +355,9 @@ Feature: Leads module verification
     When I click on preview button on *C1 in #ContactsList.ListView
     Then I should see #C1Preview view
     Then I verify fields on #C1Preview.PreviewView
-      | fieldName            | value       |
-      | name                 | John Lee    |
-      | business_center_name | West Coast  |
+      | fieldName            | value      |
+      | name                 | John Lee   |
+      | business_center_name | West Coast |
 
     # Open Business Center Record
     When I choose BusinessCenters in modules menu
@@ -372,8 +372,8 @@ Feature: Leads module verification
     # Verify field in Contacts subapnel of Business Center record view
     When I open the business_center_contacts subpanel on #BC_1Record view
     Then I verify fields for *C1 in #BC_1Record.SubpanelsLayout.subpanels.business_center_contacts
-      | fieldName | value       |
-      | name      | John Lee    |
+      | fieldName | value    |
+      | name      | John Lee |
 
   @user_profile
   Scenario: User Profile > Change license type
@@ -386,3 +386,126 @@ Feature: Leads module verification
       | value            |
       | Sugar Enterprise |
     When I click on Cancel button on #UserProfile
+
+  @move_lead_records_on_convert @job3
+  Scenario: Convert Lead > Move Lead Records
+
+    # Generate Lead record
+    Given Leads records exist:
+      | *    | first_name | last_name | title  | phone_mobile   | phone_work     | primary_address  | primary_address_city | primary_address_state | primary_address_postalcode | email                      |
+      | John | Elton      | John      | Singer | (746) 079-5067 | (408) 536-6312 | 10050 N Wolfe Rd | Cupertino            | California            | 95014                      | John@example.org (primary) |
+
+    When I choose Leads in modules menu
+    When I select *John in #LeadsList.ListView
+    Then I should see #JohnRecord view
+
+    # Generate Calls record from the subpanel
+    When I open the calls subpanel on #JohnRecord view
+    When I create_new record from calls subpanel on #JohnRecord view
+    When I provide input for #CallsDrawer.HeaderView view
+      | *   | name     |
+      | C_1 | New Call |
+    When I provide input for #CallsRecord.RecordView view
+      | *   | duration                                       | direction | description     |
+      | C_1 | 12/01/2020-02:00pm ~ 12/01/2020-03:00pm (1 hr) | Outbound  | Testing Seedbed |
+    When I click Save button on #CallsRecord header
+    When I close alert
+
+    # Generate Meetings record from the subpanel
+    When I open the meetings subpanel on #JohnRecord view
+    When I create_new record from meetings subpanel on #JohnRecord view
+    When I provide input for #MeetingsDrawer.HeaderView view
+      | *   | name        |
+      | M_1 | New Meeting |
+    When I provide input for #MeetingsRecord.RecordView view
+      | *   | duration                                       | description     |
+      | M_1 | 12/01/2020-02:00pm ~ 12/01/2020-03:00pm (1 hr) | Testing Seedbed |
+    When I click Save button on #MeetingsRecord header
+    When I close alert
+
+    # Generate task record linked to the lead
+    Given Tasks records exist related via tasks link to *John:
+      | *name | assigned_user_id | status      | priority | date_start          | date_due            | description               |
+      | Task  | 1                | Not Started | High     | 2020-04-16T14:30:00 | 2020-04-18T14:30:00 | Seedbed testing for Tasks |
+
+    # Generate Note record linked to the lead
+    Given Notes records exist related via notes link to *John:
+      | *name | assigned_user_id | description        | tags   |
+      | Note  | 1                | note_description_1 | tags_1 |
+
+    # Navigation to Admin Page
+    When I go to "bwc/index.php?module=Administration" url
+    When I click on SystemSettings link in #AdminPanel
+    # Change lead conversion settings
+    When I set lead_conv_activity_opt enum with "Move" value on #AdminPanel:SystemSettings
+    When I click on Save button on #AdminPanel:SystemSettings
+
+    When I choose Leads in modules menu
+    When I select *John in #LeadsList.ListView
+    Then I should see #JohnRecord view
+
+    # Initiate Lead Conversion process > Save and Convert
+    When I open actions menu in #JohnRecord
+    When I choose Convert from actions menu in #JohnRecord
+
+    # Generate ID for Contact record
+    When I provide input for #JohnLeadConversionDrawer.ContactContent view
+      | *  |
+      | C1 |
+
+    # Create Account Record
+    When I provide input for #JohnLeadConversionDrawer.AccountContent view
+      | *  | name        |
+      | A1 | New Account |
+    When I click CreateRecord button on #LeadConversionDrawer.AccountContent
+
+    # Create Opportunity record
+    When I provide input for #JohnLeadConversionDrawer.OpportunityContent view
+      | *  | name            |
+      | O1 | New Opportunity |
+    When I click CreateRecord button on #LeadConversionDrawer.OpportunityContent
+
+    # Finish lead conversion process
+    When I click Save button on #LeadConversionDrawer header
+    When I close alert
+
+    When I choose Contacts in modules menu
+    When I select *C1 in #ContactsList.ListView
+    Then I should see #C1Record view
+
+    # Verify records were moved from the Lead to the Contact on conversion. Contact should have the records.
+    When I open the calls subpanel on #C1Record view
+    Then I verify number of records in #C1Record.SubpanelsLayout.subpanels.calls is 1
+
+    When I open the meetings subpanel on #C1Record view
+    Then I verify number of records in #C1Record.SubpanelsLayout.subpanels.meetings is 1
+
+    When I open the all_tasks subpanel on #C1Record view
+    Then I verify number of records in #C1Record.SubpanelsLayout.subpanels.all_tasks is 1
+
+    When I open the notes subpanel on #C1Record view
+    Then I verify number of records in #C1Record.SubpanelsLayout.subpanels.notes is 1
+
+    When I choose Leads in modules menu
+    When I select *John in #LeadsList.ListView
+    Then I should see #JohnRecord view
+
+    # Verify records were moved from the Lead to the Contact on conversion. Leads should NOT have the records.
+    When I open the calls subpanel on #JohnRecord view
+    Then I verify number of records in #JohnRecord.SubpanelsLayout.subpanels.calls is 0
+
+    When I open the meetings subpanel on #JohnRecord view
+    Then I verify number of records in #JohnRecord.SubpanelsLayout.subpanels.meetings is 0
+
+    When I open the tasks subpanel on #JohnRecord view
+    Then I verify number of records in #JohnRecord.SubpanelsLayout.subpanels.tasks is 0
+
+    When I open the notes subpanel on #JohnRecord view
+    Then I verify number of records in #JohnRecord.SubpanelsLayout.subpanels.notes is 0
+
+    # Navigation to Admin Page
+    When I go to "bwc/index.php?module=Administration" url
+    When I click on SystemSettings link in #AdminPanel
+    # Change lead conversion settings
+    When I set lead_conv_activity_opt enum with "Do Nothing" value on #AdminPanel:SystemSettings
+    When I click on Save button on #AdminPanel:SystemSettings
