@@ -541,6 +541,46 @@ class MetaDataManager implements LoggerAwareInterface
             'name' => 'si_postal_code',
             'default' => 'unknown_si_postal_code',
             'label' => 'Postal Code'
+        ],
+        'cloud_instance' => [
+            'name' => 'si_cloud_instance',
+            'default' => 'unknown_si_cloud_instance',
+            'label' => 'Cloud Instance'
+        ],
+        'usage_designation' => [
+            'name' => 'si_usage_designation',
+            'default' => 'unknown_si_usage_designation',
+            'label' => 'Usage Designation'
+        ],
+        'no_of_licenses' => [
+            'name' => 'si_no_of_licenses',
+            'default' => 'unknown_si_no_of_licenses',
+            'label' => 'Postal Code'
+        ],
+        'cloud_region' => [
+            'name' => 'si_cloud_region',
+            'default' => 'unknown_si_cloud_region',
+            'label' => 'Cloud Region'
+        ],
+        'upgrade_frequency' => [
+            'name' => 'si_upgrade_frequency',
+            'default' => 'unknown_si_upgrade_frequency',
+            'label' => 'Upgrade Frequency'
+        ],
+        'db_size' => [
+            'name' => 'si_db_size',
+            'default' => 'unknown_si_db_size',
+            'label' => 'Database Size'
+        ],
+        'file_system_size' => [
+            'name' => 'si_upgrade_frequency',
+            'default' => 'unknown_si_file_system_size',
+            'label' => 'File System Size'
+        ],
+        'total_sum_size' => [
+            'name' => 'si_sum_size',
+            'default' => 'unknown_si_sum_size',
+            'label' => 'Total Size'
         ]
     ];
 

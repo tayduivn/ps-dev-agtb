@@ -74,7 +74,7 @@ class SugarView
     * List of default values needed for Pendo analytics
     */
     protected $serverInfoDefaults = [
-        'si_id' => 'unknown_si_id',
+        'si_id' => '"unknown_si_id"',
         'si_name' => '"unknown_si_name"',
         'si_type' => '"unknown_si_type"',
         'si_license_current' => false,
@@ -92,7 +92,15 @@ class SugarView
         'si_billing_country' => '"unknown_si_billing_country"',
         'si_billing_state' => '"unknown_si_billing_state"',
         'si_billing_city' => '"unknown_si_billing_city"',
-        'si_postal_code' => '"unknown_si_postal_code"'
+        'si_postal_code' => '"unknown_si_postal_code"',
+        'si_cloud_instance' => '"unknown_si_cloud_instance"',
+        'si_usage_designation' => '"unknown_si_usage_designation"',
+        'si_no_of_licenses' => '"unknown_si_no_of_licenses"',
+        'si_cloud_region' => '"unknown_si_cloud_region"',
+        'si_upgrade_frequency' => '"unknown_si_upgrade_frequency"',
+        'si_db_size' => '"unknown_si_db_size"',
+        'si_file_system_size' => '"unknown_si_file_system_size"',
+        'si_sum_size' => '"unknown_si_sum_size"'
     ];
 
     var $type = null;
