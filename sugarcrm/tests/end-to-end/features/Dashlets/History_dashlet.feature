@@ -13,7 +13,6 @@ Feature: History dashlet verification
   Background:
     Given I am logged in
 
-  @pr
   Scenario: History dashlet verification
 
     # Create 3 meeting records that held in last 7 days
