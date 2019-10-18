@@ -47,6 +47,11 @@ $renamedefs = array(
             array('name' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Contacts'),
             array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_NOTES_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Notes'),
+            array('name' => 'LBL_ACCOUNTS_LIST_DASHBOARD', 'type' => 'plural', 'source' => 'Accounts'),
+            array('name' => 'LBL_ACCOUNTS_RECORD_DASHBOARD', 'type' => 'plural', 'source' => 'Accounts'),
+            array('name' => 'LBL_ACCOUNTS_MULTI_LINE_DASHBOARD', 'type' => 'singular', 'source' => 'Accounts'),
+            array('name' => 'LBL_RENEWALS_CONSOLE_ACCOUNT_NAME_INDUSTRY', 'type' => 'singular', 'source' => 'Accounts'),
+            array('name' => 'LBL_FILTER_ACCOUNTS_REPORTS', 'type' => 'plural', 'source' => 'Accounts'),
         ),
         'Administration' => array(
             array('name' => 'LBL_FORECAST_TITLE', 'type' => 'singular', 'source' => 'Forecasts'),
@@ -665,6 +670,11 @@ $renamedefs = array(
             array('name' => 'LBL_HELP_CONFIG_OPPS', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_HELP_CONFIG_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_HELP_CONFIG_RLIS', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_OPPORTUNITIES_LIST_DASHBOARD', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPORTUNITIES_RECORD_DASHBOARD', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPORTUNITIES_MULTI_LINE_DASHBOARD', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_RENEWAL_OPPORTUNITIES', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_RENEWAL_PARENT', 'type' => 'singular', 'source' => 'Opportunities'),
         ),
         'OutboundEmail' => array(
             array('name' => 'LBL_MODULE_NAME', 'type' => 'singular', 'source' => 'OutboundEmail'),
@@ -990,6 +1000,7 @@ $renamedefs = array(
         array('name' => 'LBL_ACCESSKEY_CLEAR_ACCOUNTS_LABEL', 'type' => 'singular', 'source' => 'Accounts'),
         array('name' => 'LBL_SHIP_TO_ACCOUNT', 'type' => 'singular', 'source' => 'Accounts'),
         array('name' => 'LBL_DASHLET_OPPORTUNITY_DESCRIPTION', 'type' => 'singular', 'source' => 'Accounts'),
+        array('name' => 'LBL_RENEWALS_CONSOLE_NAME_ACCOUNT', 'type' => 'singular', 'source' => 'Accounts'),
 
         // Calls
         array('name' => 'LBL_CALLS', 'type' => 'plural', 'source' => 'Calls'),
