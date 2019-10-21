@@ -42,8 +42,8 @@ $vardefs = [
             'massupdate' => false,
             'readonly' => true,
         ],
-        'business_hours_to_first_response' => [
-            'name' => 'business_hours_to_first_response',
+        'business_hrs_to_first_response' => [
+            'name' => 'business_hrs_to_first_response',
             'vname' => 'LBL_BUSINESS_HOURS_TO_FIRST_RESPONSE',
             'type' => 'decimal',
             'len' => '12',
@@ -53,8 +53,8 @@ $vardefs = [
             'massupdate' => false,
             'readonly' => true,
         ],
-        'first_response_variance_from_target' => [
-            'name' => 'first_response_variance_from_target',
+        'first_response_var_from_target' => [
+            'name' => 'first_response_var_from_target',
             'vname' => 'LBL_FIRST_RESPONSE_VARIANCE_FROM_TARGET',
             'type' => 'decimal',
             'len' => '12',

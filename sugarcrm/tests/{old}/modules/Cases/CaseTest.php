@@ -122,14 +122,14 @@ class CaseTest extends TestCase
 
         $this->assertNotEmpty($case->first_response_actual_datetime);
         $this->assertNotNull($case->hours_to_first_response);
-        $this->assertNotNull($case->business_hours_to_first_response);
+        $this->assertNotNull($case->business_hrs_to_first_response);
         $this->assertSame($assignedUserId, $case->first_response_user_id);
         if ($followUpTime) {
             $this->assertNotEmpty($case->first_response_target_datetime);
-            $this->assertNotEmpty($case->first_response_variance_from_target);
+            $this->assertNotEmpty($case->first_response_var_from_target);
         } else {
             $this->assertEmpty($case->first_response_target_datetime);
-            $this->assertEmpty($case->first_response_variance_from_target);
+            $this->assertEmpty($case->first_response_var_from_target);
         }
     }
 

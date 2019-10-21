@@ -265,16 +265,16 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 'first_response_target_datetime',
                 'first_response_actual_datetime',
                 'hours_to_first_response',
-                'business_hours_to_first_response',
+                'business_hrs_to_first_response',
                 [
-                    'name' => 'first_response_variance_from_target',
+                    'name' => 'first_response_var_from_target',
                     'readonly' => true,
                     'inline' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_FIRST_RESPONSE_VARIANCE_FROM_TARGET',
                     'fields' => [
                         [
-                            'name' => 'first_response_variance_from_target',
+                            'name' => 'first_response_var_from_target',
                         ],
                         [
                             'type' => 'label',

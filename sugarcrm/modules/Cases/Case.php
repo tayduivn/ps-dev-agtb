@@ -131,17 +131,17 @@ class aCase extends Issue
             $this->business_center_id ? $this->business_center_id : ''
         );
         $this->hours_to_first_response = $hours['calendarHours'];
-        $this->business_hours_to_first_response = $hours['businessHours'];
+        $this->business_hrs_to_first_response = $hours['businessHours'];
 
         if (!empty($this->first_response_target_datetime)) {
             // first response variance from target
-            $this->first_response_variance_from_target =
+            $this->first_response_var_from_target =
                 ((new \DateTime($this->first_response_actual_datetime))->getTimestamp()
                     - (new \DateTime($this->first_response_target_datetime))->getTimestamp())
                 / 3600;
 
             // first response SLA met
-            $this->first_response_sla_met = $this->first_response_variance_from_target <= 0 ? 'Yes' : 'No';
+            $this->first_response_sla_met = $this->first_response_var_from_target <= 0 ? 'Yes' : 'No';
         }
 
         // first response user
