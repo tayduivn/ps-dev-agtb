@@ -784,6 +784,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                             'service_start_date',
                             'service_end_date',
                             'renewable',
+                            'service',
                         ],
                     };
 

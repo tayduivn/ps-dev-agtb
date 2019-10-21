@@ -244,9 +244,6 @@ describe('Quotes.View.ConfigColumns', function() {
                 function() {
                 var durationField;
                 beforeEach(function() {
-                    // view.productsFieldMeta.service_duration_value = {name: 'service_duration_value'};
-                    // view.productsFieldMeta.service_duration_unit = {name: 'service_duration_unit'};
-
                     durationField = {
                         'name': 'service_duration',
                         'type': 'fieldset',
@@ -262,6 +259,7 @@ describe('Quotes.View.ConfigColumns', function() {
                             'service_start_date',
                             'service_end_date',
                             'renewable',
+                            'service',
                         ],
                     };
                 });

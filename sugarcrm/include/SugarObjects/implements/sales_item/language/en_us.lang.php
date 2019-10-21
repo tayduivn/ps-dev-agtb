@@ -32,4 +32,5 @@ $mod_strings = [
     'LBL_VENDOR_PART_NUM' => 'Vendor Part Number',
     'LBL_URL' => 'Product URL',
     'LBL_WEIGHT' => 'Weight',
+    'LBL_SERVICE' => 'Service',
 ];

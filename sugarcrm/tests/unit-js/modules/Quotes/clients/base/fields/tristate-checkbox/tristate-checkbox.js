@@ -127,6 +127,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                 'service_end_date',
                 'renewable',
                 'service_duration',
+                'service',
         ]);
         });
 
@@ -396,6 +397,11 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                         renewable: {
                             module: 'Products',
                             field: 'renewable',
+                            reason: 'related_fields'
+                        },
+                        service: {
+                            module: 'Products',
+                            field: 'service',
                             reason: 'related_fields'
                         },
                         service_duration: {

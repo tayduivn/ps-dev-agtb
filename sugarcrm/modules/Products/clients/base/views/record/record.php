@@ -261,6 +261,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
+                'service',
                 'service_start_date' => array(
                     'name' => 'service_start_date',
                     'label' => 'LBL_SERVICE_START_DATE',

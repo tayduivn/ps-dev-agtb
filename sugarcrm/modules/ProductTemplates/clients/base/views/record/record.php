@@ -139,6 +139,7 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                 'category_name',
                 'manufacturer_name',
                 'mft_part_num',
+                'service',
                 array(
                     'name' => 'service_duration',
                     'type' => 'fieldset',

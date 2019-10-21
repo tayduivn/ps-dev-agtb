@@ -99,6 +99,7 @@
             'service_end_date',
             'renewable',
             'service_duration',
+            'service',
         ];
 
         this.tooltipLabel = app.lang.get('LBL_CONFIG_TOOLTIP_FIELD_REQUIRED_BY', this.module);

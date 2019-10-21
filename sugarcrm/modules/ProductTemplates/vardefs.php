@@ -383,6 +383,13 @@ $dictionary['ProductTemplate'] = array(
             'default' => 0,
             'comment' => 'Indicates whether the sales item is renewable (e.g. a service)',
         ],
+        'service' => [
+            'name' => 'service',
+            'vname' => 'LBL_SERVICE',
+            'type' => 'bool',
+            'default' => 0,
+            'comment' => 'Indicates whether the sales item is a service or a product',
+        ],
     ),
     'relationships' => array(
         'product_templates_product_categories' => array(

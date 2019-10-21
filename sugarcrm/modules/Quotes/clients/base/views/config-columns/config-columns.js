@@ -94,6 +94,7 @@
                     'service_start_date',
                     'service_end_date',
                     'renewable',
+                    'service',
                 ],
             };
             this.productsFieldMeta.service_duration = durationField;
@@ -323,7 +324,13 @@
         var isUnchecked = newState === 'unchecked';
         var columnChanged = false;
         var toggleRelatedFields;
-        var serviceRelatedFieldsArr = ['service_duration', 'service_start_date', 'service_end_date', 'renewable'];
+        var serviceRelatedFieldsArr = [
+            'service_duration',
+            'service_start_date',
+            'service_end_date',
+            'renewable',
+            'service'
+        ];
 
         if (!wasVisible && isNowVisible) {
             // field was not visible, but now is visible
@@ -482,6 +489,7 @@
                         }
                     ],
                     'relatedFields': [
+                        'service',
                         'service_start_date',
                         'service_end_date',
                         'renewable',

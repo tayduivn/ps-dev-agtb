@@ -1550,7 +1550,8 @@
       "related_fields": [
          "service_duration",
          "service_start_date",
-         "renewable"
+         "renewable",
+         "service"
       ]
    },
    "service_start_date":{
@@ -1563,7 +1564,8 @@
       "related_fields": [
          "service_duration",
          "service_end_date",
-         "renewable"
+         "renewable",
+         "service"
       ]
    },
    "renewable":{
@@ -1575,7 +1577,21 @@
       "related_fields": [
          "service_duration",
          "service_end_date",
-         "service_start_date"
+         "service_start_date",
+         "service"
+      ]
+   },
+   "service":{
+      "dafault": false,
+      "label": "LBL_SERVICE",
+      "vanme": "LBL_SERVICE",
+      "massupdate": true,
+      "type": "bool",
+      "related_fields": [
+         "service_duration",
+         "service_end_date",
+         "service_start_date",
+         "renewable"
       ]
    },
    "_hash":"0c827bf80ad5b5b1ad40914e4dc8db14"

@@ -104,6 +104,7 @@ $vardefs = [
                 'service_duration',
                 'service_start_date',
                 'service_end_date',
+                'service',
             ],
         ],
         'serial_number' => [
@@ -112,6 +113,19 @@ $vardefs = [
             'type' => 'varchar',
             'len' => 50,
             'comment' => 'Serial number of sales item in use',
+        ],
+        'service' => [
+            'name' => 'service',
+            'vname' => 'LBL_SERVICE',
+            'type' => 'bool',
+            'default' => 0,
+            'comment' => 'Indicates whether the sales item is a service or a product',
+            'related_fields' => [
+                'renewable',
+                'service_duration',
+                'service_start_date',
+                'service_end_date',
+            ],
         ],
         'service_duration_value' => [
             'name' => 'service_duration_value',
@@ -143,6 +157,7 @@ $vardefs = [
                 'service_duration',
                 'service_start_date',
                 'renewable',
+                'service',
             ],
         ],
         'service_start_date' => [
@@ -155,6 +170,7 @@ $vardefs = [
                 'service_duration',
                 'service_end_date',
                 'renewable',
+                'service',
             ],
         ],
         'support_contact' => [

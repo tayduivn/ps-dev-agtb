@@ -579,6 +579,7 @@
                     'service_start_date',
                     'service_end_date',
                     'renewable',
+                    'service',
                 ],
             };
             relatedModel.fields.service_duration = durationField;

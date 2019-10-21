@@ -79,6 +79,7 @@ $viewdefs['ProductTemplates']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                 ),
+                'service',
                 array(
                     'name' => 'service_duration',
                     'type' => 'fieldset',

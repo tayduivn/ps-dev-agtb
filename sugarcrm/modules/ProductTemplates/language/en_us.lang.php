@@ -109,4 +109,5 @@ $mod_strings = array (
   'LBL_MANUFACTURERS' => 'Manufacturers',
   'LBL_PRODUCT_TYPES' => 'Product Types',
     'LBL_RENEWABLE' => 'Renewable',
+    'LBL_SERVICE' => 'Service',
 );

@@ -216,6 +216,11 @@ $fields = array(
         'enabled' => true,
         'default' => true,
     ),
+    'service' => array(
+        'name' => 'service',
+        'label' => 'LBL_SERVICE',
+        'default' => false,
+    ),
     'service_start_date' => array(
         'name' => 'service_start_date',
         'label' => 'LBL_SERVICE_START_DATE',
