@@ -15,9 +15,15 @@ $viewdefs['base']['view']['active-subscriptions'] = [
     'dashlets' => [
         [
             'label' => 'LBL_ACTIVE_SUBSCRIPTIONS_DASHLET',
-            'description' => 'LBL_ACTIVE_SUBSCRITIONS_DASHLET_DESCRIPTION',
+            'description' => 'LBL_ACTIVE_SUBSCRIPTIONS_DASHLET_DESCRIPTION',
             'config' => [],
             'preview' => [],
+            'filter' => [
+                'view' => 'record',
+                'module' => [
+                    'Accounts',
+                ],
+            ],
         ],
     ],
     'fields' => [
