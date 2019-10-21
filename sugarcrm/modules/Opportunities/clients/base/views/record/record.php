@@ -149,6 +149,11 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'readonly' => true,
                     'dismiss_label' => true,
                 ),
+                [
+                    'name' => 'renewal',
+                    'type' => 'renewal',
+                    'dismiss_label' => true,
+                ],
             ),
         ),
         array(
