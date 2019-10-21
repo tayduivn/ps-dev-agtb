@@ -1047,6 +1047,15 @@ $dictionary['RevenueLineItem'] = array(
                 'date_modified',
             ),
         ),
+        array(
+            'name' => 'idx_rli_del_created_by_pt_id',
+            'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'created_by',
+                'product_template_id',
+            ),
+        ),
     ),
     'relationships' => array(
         'revenuelineitem_tasks' => array(

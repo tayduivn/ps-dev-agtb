@@ -58,7 +58,9 @@ class RecentProductApi extends SugarApi
             $bean = BeanFactory::newBean($beanName);
 
             $mostRecentQuery->select(array('product_template_id', 'date_entered'));
-            $mostRecentQuery->from($bean, array('add_deleted' => true));
+            // here the team security can be omitted as each RLI/Product was created by current user once,
+            // and the return result is not linked to RLI/Product visibility
+            $mostRecentQuery->from($bean, array('add_deleted' => true, 'team_security' => false));
             $mostRecentQuery->where()
                 ->equals('created_by', "{$GLOBALS['current_user']->id}")
                 ->notNull('product_template_id');

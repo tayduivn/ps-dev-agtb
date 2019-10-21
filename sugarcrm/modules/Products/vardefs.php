@@ -940,6 +940,15 @@ $dictionary['Product'] = array(
         array('name' => 'idx_product_opp', 'type' => 'index', 'fields' => array('opportunity_id')),
         array('name' => 'idx_product_quote', 'type' => 'index', 'fields' => array('quote_id')),
         array('name' => 'idx_product_rli', 'type' => 'index', 'fields' => array('revenuelineitem_id')),
+        array(
+            'name' => 'idx_product_del_created_by_pt_id',
+            'type' => 'index',
+            'fields' => array(
+                'deleted',
+                'created_by',
+                'product_template_id',
+            ),
+        ),
     ),
     'relationships' => array(
         'product_notes' => array(
