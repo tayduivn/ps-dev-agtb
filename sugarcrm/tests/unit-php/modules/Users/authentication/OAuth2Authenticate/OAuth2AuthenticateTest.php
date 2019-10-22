@@ -15,8 +15,7 @@ namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\OAuth2Authentic
 use OAuth2Authenticate;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use SugarConfig;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\OAuth2StateRegistry;
@@ -35,9 +34,9 @@ class OAuth2AuthenticateTest extends TestCase
     protected $authMock;
 
     /**
-     * @var AuthProviderBasicManagerBuilder|MockObject
+     * @var AuthProviderApiLoginManagerBuilder|MockObject
      */
-    protected $authProviderBasicBuilder;
+    protected $authProviderBuilder;
 
     /**
      * @var AuthenticationProviderManager | MockObject
@@ -87,7 +86,7 @@ class OAuth2AuthenticateTest extends TestCase
         $this->authMock = $this->getMockBuilder(OAuth2Authenticate::class)
             ->disableOriginalConstructor()
             ->setMethods([
-                'getAuthProviderBasicBuilder',
+                'getAuthProviderApiLoginBuilder',
                 'getTenant',
                 'getIdmProvider',
                 'getStateRegistry',
@@ -101,14 +100,14 @@ class OAuth2AuthenticateTest extends TestCase
         $this->sugarUser = $this->createMock(\User::class);
         $this->sugarUser->id = 'userId';
 
-        $this->authProviderBasicBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
+        $this->authProviderBuilder = $this->createMock(AuthProviderApiLoginManagerBuilder::class);
         $this->authManager = $this->createMock(AuthenticationProviderManager::class);
 
-        $this->authMock->method('getAuthProviderBasicBuilder')->willReturn($this->authProviderBasicBuilder);
+        $this->authMock->method('getAuthProviderApiLoginBuilder')->willReturn($this->authProviderBuilder);
         $this->authMock->method('getTenant')->willReturn('srn:tenant');
         $this->authMock->method('getIdmProvider')->willReturn($this->idmProviderMock);
         $this->authMock->method('getStateRegistry')->willReturn($this->stateRegistryMock);
-        $this->authProviderBasicBuilder->method('buildAuthProviders')->willReturn($this->authManager);
+        $this->authProviderBuilder->method('buildAuthProviders')->willReturn($this->authManager);
     }
 
     /**

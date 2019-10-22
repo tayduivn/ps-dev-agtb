@@ -12,7 +12,7 @@
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordTokenFactory;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\OAuth2StateRegistry;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\Util\Uuid;
@@ -78,7 +78,7 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
         $config = new Config(\SugarConfig::getInstance());
         $token = (new UsernamePasswordTokenFactory($username, $password, ['tenant' => $this->getTenant($config)]))
             ->createIdPAuthenticationToken();
-        $manager = $this->getAuthProviderBasicBuilder($config)
+        $manager = $this->getAuthProviderApiLoginBuilder($config)
             ->buildAuthProviders();
         $resultToken = $manager->authenticate($token);
         if ($resultToken->isAuthenticated()) {
@@ -103,12 +103,11 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
 
     /**
      * @param Config $config
-     *
-     * @return AuthProviderBasicManagerBuilder
+     * @return AuthProviderApiLoginManagerBuilder
      */
-    protected function getAuthProviderBasicBuilder(Config $config)
+    protected function getAuthProviderApiLoginBuilder(Config $config): AuthProviderApiLoginManagerBuilder
     {
-        return new AuthProviderBasicManagerBuilder($config);
+        return new AuthProviderApiLoginManagerBuilder($config);
     }
 
     /**
