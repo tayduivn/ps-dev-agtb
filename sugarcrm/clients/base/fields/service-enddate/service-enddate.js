@@ -21,6 +21,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        options.viewName = 'view';
         options.def.readonly = true;
         this._super('initialize', [options]);
         this.setFieldDependencyNames(options);
