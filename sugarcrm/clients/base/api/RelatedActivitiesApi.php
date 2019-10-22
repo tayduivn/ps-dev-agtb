@@ -31,6 +31,7 @@ class RelatedActivitiesApi extends HistoryApi
                 'path' => ['<module>', '?', 'link', 'related_activities'],
                 'pathVars' => array('module', 'record', ''),
                 'method' => 'getRelatedActivities',
+                'minVersion' => '11.7',
                 'shortHelp' => 'Get the related activity records for a specific record',
                 'longHelp' => 'include/api/help/related_activities.html',
             ],

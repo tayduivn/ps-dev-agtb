@@ -55,7 +55,7 @@ class RestService extends ServiceBase
      * The maximum version accepted
      * @var string
      */
-    protected $max_version = '11.6';
+    protected $max_version = '11.7';
 
     /**
      * An array of api settings
