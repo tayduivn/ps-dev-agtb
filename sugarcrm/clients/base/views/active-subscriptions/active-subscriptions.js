@@ -33,13 +33,25 @@
     baseModel: null,
 
     /**
+     * Flag indicating if RLI is enabled.
+     *
+     * @property {bool}
+     */
+    opportunitiesWithRevenueLineItems: false,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
         this.module = 'RevenueLineItems';
+        this.moduleName = {'module_name': app.lang.getModuleName(this.module, {'plural': true})};
         this.baseModule = 'Accounts';
         this._getBaseModel();
+        var oppConfig = app.metadata.getModule('Opportunities', 'config');
+        if (oppConfig && oppConfig.opps_view_by == 'RevenueLineItems') {
+            this.opportunitiesWithRevenueLineItems = true;
+        }
     },
 
     /**
@@ -83,7 +95,7 @@
      * @private
      */
     _initCollection: function() {
-        if (!this.baseModel) {
+        if (!this.baseModel || !this.opportunitiesWithRevenueLineItems) {
             return;
         }
         var today = app.date().formatServer(true);
@@ -151,7 +163,7 @@
      * @param {Object} options Call options
      */
     loadData: function(options) {
-        if (this._mode === 'config') {
+        if (this._mode === 'config' || !this.opportunitiesWithRevenueLineItems) {
             return;
         }
         this.collection.fetch(options);

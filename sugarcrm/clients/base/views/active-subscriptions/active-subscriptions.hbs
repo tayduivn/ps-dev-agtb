@@ -12,30 +12,36 @@
  */
 --}}
 <div class="active-subscriptions">
-    {{#if collection.dataFetched}}
-        {{#if collection.models.length}}
-            {{#each collection.models}}
-                <div class="subscription-entry" data-id="{{attributes.id}}">
-                    <div class="content-row">
-                        <span class="row-cell primary">{{fieldValue this "name"}}</span>
-                        <span class="row-cell">, {{str "LBL_ACTIVE_SUBSCRIPTIONS_QUANTITY" attributes._module attributes}}</span>
-                        <span class="row-cell pull-right">{{relativeTime attributes.service_end_date class="date"}}</span>
+    {{#if opportunitiesWithRevenueLineItems}}
+        {{#if collection.dataFetched}}
+            {{#if collection.models.length}}
+                {{#each collection.models}}
+                    <div class="subscription-entry" data-id="{{attributes.id}}">
+                        <div class="content-row">
+                            <span class="row-cell primary">{{fieldValue this "name"}}</span>
+                            <span class="row-cell">, {{str "LBL_ACTIVE_SUBSCRIPTIONS_QUANTITY" attributes._module attributes}}</span>
+                            <span class="row-cell pull-right">{{relativeTime attributes.service_end_date class="date"}}</span>
+                        </div>
+                        <div class="content-row">
+                            <span class="row-cell">{{str "LBL_ACTIVE_SUBSCRIPTIONS_TOTAL" attributes._module}}: </span>
+                            {{#with ../collection.fieldsMeta.total_amount}}
+                                <span class="row-cell">{{field ../../this model=../this template='list'}}</span>
+                            {{/with}}
+                            <span class="row-cell pull-right"></span>
+                        </div>
                     </div>
-                    <div class="content-row">
-                        <span class="row-cell">{{str "LBL_ACTIVE_SUBSCRIPTIONS_TOTAL" attributes._module}}: </span>
-                        {{#with ../collection.fieldsMeta.total_amount}}
-                            <span class="row-cell">{{field ../../this model=../this template='list'}}</span>
-                        {{/with}}
-                        <span class="row-cell pull-right"></span>
-                    </div>
-                </div>
-            {{/each}}
+                {{/each}}
+            {{else}}
+                <div class="block-footer">{{str "LBL_NO_ACTIVE_SUBSCRIPTIONS"}}</div>
+            {{/if}}
         {{else}}
-            <div class="block-footer">{{str "LBL_NO_ACTIVE_SUBSCRIPTIONS"}}</div>
+            <div class="block-footer">
+                {{str "LBL_LOADING" module}}
+            </div>
         {{/if}}
     {{else}}
         <div class="block-footer">
-            {{str "LBL_LOADING" this.module}}
+            {{str "LBL_REQUIRE_REVENUE_LINE_ITEMS" module moduleName}}
         </div>
     {{/if}}
 </div>

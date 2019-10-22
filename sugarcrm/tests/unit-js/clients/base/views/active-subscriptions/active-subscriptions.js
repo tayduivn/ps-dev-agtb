@@ -133,6 +133,7 @@ describe('Base.View.ActiveSubscriptions', function() {
             view.meta = {
                 'fields': ['name']
             };
+            view.opportunitiesWithRevenueLineItems = true;
             app.config.maxRecordFetchSize = 1000;
             view._initCollection();
             expect(beanCollectionStub.lastCall.args[0]).toEqual('RevenueLineItems');
@@ -156,7 +157,7 @@ describe('Base.View.ActiveSubscriptions', function() {
                 fetch: fetchStub,
                 off: $.noop
             };
-
+            view.opportunitiesWithRevenueLineItems = true;
             view.loadData();
             expect(fetchStub).toHaveBeenCalled();
         });
