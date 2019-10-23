@@ -56,7 +56,6 @@ class SugarUpgradeInstallPortalHomeDashboard extends UpgradeScript
 
         $this->log('Installing Portal Home Dashboard and dependencies');
 
-        require_once 'modules/Dashboards/DefaultDashboardInstaller.php';
         $this->defaultDashboardInstaller = new DefaultDashboardInstaller();
 
         $dashboardFile = 'modules/Home/dashboards/portal-home/portal-home.php';

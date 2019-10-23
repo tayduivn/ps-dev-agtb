@@ -56,7 +56,6 @@ class SugarUpgradeInstallAgentWorkbench extends UpgradeScript
 
         $this->log('Installing Agent Workbench and dependencies');
 
-        require_once 'modules/Dashboards/DefaultDashboardInstaller.php';
         $this->defaultDashboardInstaller = new DefaultDashboardInstaller();
 
         // dashboard for side pane
