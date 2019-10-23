@@ -33,7 +33,6 @@ $mod_strings = array (
     'LBL_FOLLOW_UP' => 'Follow Up',
     'LBL_FOLLOW_UP_DATETIME' => 'Follow Up Date',
     'LBL_RESOLVED_DATETIME' => 'Resolved Date',
-    'LBL_TIME_TO_RESOLUTION' => 'Time to Resolution',
     'LBL_HOURS_TO_RESOLUTION' => 'Hours to Resolution',
     'LBL_BUSINESS_HOURS_TO_RESOLUTION' => 'Business Hours to Resolution',
     'LBL_PENDING_PROCESSING' => 'Pending Processing',

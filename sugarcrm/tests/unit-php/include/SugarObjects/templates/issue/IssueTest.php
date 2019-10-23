@@ -72,65 +72,6 @@ class IssueTest extends TestCase
         ];
     }
 
-    /**
-     * @covers ::calculateResolutionTime
-     * @dataProvider providerCalculateResolutionTime
-     */
-    public function testCalculateResolutionTime(string $resolvedDatetime, string $dateEntered, int $expectedMinutes)
-    {
-        $bean = $this->createMockIssue();
-        $bean->resolved_datetime = $resolvedDatetime;
-        $bean->date_entered = $dateEntered;
-        $this->assertEquals($expectedMinutes, $bean->calculateResolutionTime());
-    }
-
-    public function providerCalculateResolutionTime(): array
-    {
-        return [
-            ['2019-01-05 05:00:00', '2019-01-05 04:30:00', 30],
-            ['2019-01-05 05:00:00', '2019-01-05 04:00:00', 60],
-            ['2019-01-05 05:00:00', '2019-01-05 03:30:00', 90],
-            ['2019-01-05 05:00:00', '2019-01-05 04:55:59', 5], // 4 min, 1 second - rounded up
-            ['2019-01-05 05:00:00', '2019-01-05 05:00:00', 0],
-        ];
-    }
-
-    /**
-     * @covers ::calculateResolutionTime
-     * @dataProvider providerCalculateResolutionTimeWhenTimeAlreadyDetermined
-     */
-    public function testCalculateResolutionTimeWhenTimeAlreadyDetermined(string $timeToResolution, int $expectedTime)
-    {
-        $bean = $this->createMockIssue();
-        $bean->time_to_resolution = $timeToResolution;
-        $this->assertEquals($expectedTime, $bean->calculateResolutionTime());
-    }
-
-    public function providerCalculateResolutionTimeWhenTimeAlreadyDetermined(): array
-    {
-        return [
-            ['7', 7],
-            ['6.2', 7], // shouldn't happen, but checking anyways
-            ['0', 0],
-        ];
-    }
-
-    /**
-     * @covers ::calculateResolutionTime
-     */
-    public function testCalculateResolutionTimeThrowsWhenNegative()
-    {
-        $bean = $this->createMockIssue();
-        $bean->resolved_datetime = '1975-01-05 05:00:00';
-        $bean->date_entered = '2019-01-05 05:00:00'; // way way later than resolution time
-        $bean->object_name = 'Issue';
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Issue cannot have a resolution time earlier than its creation time');
-
-        $bean->calculateResolutionTime();
-    }
-
     public function providerGetHoursBetween()
     {
         return [

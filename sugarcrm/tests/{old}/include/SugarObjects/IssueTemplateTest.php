@@ -65,19 +65,14 @@ class IssueTemplateTest extends TestCase
         return [
             ['Bugs', 'follow_up_datetime', true],
             ['Bugs', 'resolved_datetime', true],
-            ['Bugs', 'time_to_resolution', true],
             ['Cases', 'follow_up_datetime', true],
             ['Cases', 'resolved_datetime', true],
-            ['Cases', 'time_to_resolution', true],
             ['DataPrivacy', 'follow_up_datetime', true],
             ['DataPrivacy', 'resolved_datetime', true],
-            ['DataPrivacy', 'time_to_resolution', true],
             ['Accounts', 'follow_up_datetime', false],
             ['Accounts', 'resolved_datetime', false],
-            ['Accounts', 'time_to_resolution', false],
             ['Contacts', 'follow_up_datetime', false],
             ['Contacts', 'resolved_datetime', false],
-            ['Contacts', 'time_to_resolution', false],
         ];
     }
 
@@ -133,27 +128,6 @@ class IssueTemplateTest extends TestCase
     }
 
     public function hasNoFollowUpDateFieldOnRecordViewProvider(): array
-    {
-        return [
-            ['Accounts'], // not an issue type module
-            ['Contacts'], // not an issue type module
-        ];
-    }
-
-    /**
-     * Checks that modules that should not have time_to_resolution on the
-     * record view do not.
-     *
-     * @param string $module The module we would like to verify does not
-     *   have time_to_resolution on its record view.
-     * @dataProvider hasNoTimeToResolutionFieldOnRecordViewProvider
-     */
-    public function testCheckModulesHasNoTimeToResolutionFieldOnRecordView(string $module)
-    {
-        $this->assertNotContains('time_to_resolution', $this->manager->getModuleViewFields($module, 'record'));
-    }
-
-    public function hasNoTimeToResolutionFieldOnRecordViewProvider(): array
     {
         return [
             ['Accounts'], // not an issue type module

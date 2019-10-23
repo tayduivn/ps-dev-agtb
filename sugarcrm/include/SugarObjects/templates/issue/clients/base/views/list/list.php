@@ -70,14 +70,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 //BEGIN SUGARCRM flav=ent ONLY
-                array(
-                    'name' => 'time_to_resolution',
-                    'type' => 'friendly-time',
-                    'readonly' => true,
-                    'label' => 'LBL_TIME_TO_RESOLUTION',
-                    'enabled' => true,
-                    'default' => false,
-                ),
                 [
                     'name' => 'hours_to_resolution',
                     'type' => 'decimal',

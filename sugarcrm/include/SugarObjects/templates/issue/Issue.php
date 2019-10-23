@@ -24,7 +24,6 @@ class Issue extends Basic
 
     //BEGIN SUGARCRM flav=ent ONLY
     public $resolved_datetime;
-    public $time_to_resolution;
     //END SUGARCRM flav=ent ONLY
 
     /**
@@ -80,37 +79,6 @@ class Issue extends Basic
         }
 
         return !$this->isResolvedStatus($this->fetched_row['status']);
-    }
-
-    /**
-     * Returns the time it took to resolve this issue, calculating if needed.
-     *
-     * @return int The time, in minutes, it took to resolve this issue.
-     * @throws Exception If $resolved_datetime is earlier than $date_entered.
-     */
-    public function calculateResolutionTime(): int
-    {
-        if (empty($this->time_to_resolution) && !is_numeric($this->time_to_resolution)) {
-            $timeDate = Container::getInstance()->get(\TimeDate::class);
-            $now = $timeDate->nowDb();
-
-            // get the UNIX timestamps (seconds) for both resolved_datetime and date_entered,
-            // substituting the current time if either does not exist.
-            $resolvedDatetime = empty($this->resolved_datetime) ? $now : $this->resolved_datetime;
-            $resolvedDatetime = $timeDate->fromDb($resolvedDatetime)->getTimestamp();
-            $dateEntered = empty($this->date_entered) ? $now : $this->date_entered;
-            $dateEntered = $timeDate->fromDb($dateEntered)->getTimestamp();
-
-            $resolutionInterval = $resolvedDatetime - $dateEntered;
-            $this->time_to_resolution = ((int) $resolutionInterval) / 60;
-
-            if ($this->time_to_resolution < 0) {
-                $msg = "$this->object_name cannot have a resolution time earlier than its creation time";
-                throw new \Exception($msg);
-            }
-        }
-
-        return (int) ceil($this->time_to_resolution);
     }
 
     /**
