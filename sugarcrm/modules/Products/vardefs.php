@@ -49,6 +49,14 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_PRODUCT_TEMPLATE_ID',
             'required' => false,
             'reportable' => false,
+            'related_fields' => array(
+                'service',
+                'service_start_date',
+                'service_end_date',
+                'renewal',
+                'service_duration_value',
+                'service_duration_unit',
+            ),
             'comment' => 'Product (in Admin Products) from which this product is derived (in user Products)'
         ),
         'product_template_name' => array(
@@ -91,6 +99,7 @@ $dictionary['Product'] = array(
                 'service_duration_value' => 'service_duration_value',
                 'service_duration_unit' => 'service_duration_unit',
                 'renewable' => 'renewable',
+                'service' => 'service',
             ),
         ),
         'account_id' => array(
