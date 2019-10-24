@@ -35,11 +35,15 @@
             this.extraParcelParams = options.meta.env;
         }
 
-        this.context.on(
-            'sugarApp:load:' + options.layout.cid + ':' + options.meta.srn,
-            this._onSugarAppLoad,
-            this
-        );
+        if (options.layout.type !== 'tabbed-layout') {
+            this._onSugarAppLoad();
+        } else {
+            this.context.on(
+                'sugarApp:load:' + options.layout.cid + ':' + options.meta.srn,
+                this._onSugarAppLoad,
+                this
+            );
+        }
     },
 
     /**
