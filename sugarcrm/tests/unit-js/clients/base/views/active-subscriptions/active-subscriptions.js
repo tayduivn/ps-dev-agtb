@@ -121,6 +121,7 @@ describe('Base.View.ActiveSubscriptions', function() {
 
             view._initCollection();
             expect(beanCollectionStub).not.toHaveBeenCalled();
+
         });
 
         it('should create new bean collection', function() {
@@ -140,7 +141,7 @@ describe('Base.View.ActiveSubscriptions', function() {
             expect(beanCollectionStub.lastCall.args[2].fields).toEqual(['name']);
             expect(beanCollectionStub.lastCall.args[2].filter[0].account_id.$equals).toEqual('my_id');
             expect(beanCollectionStub.lastCall.args[2].filter[1]['opportunities.sales_status'].$equals).
-                toEqual('Closed Won');
+            toEqual('Closed Won');
             expect(beanCollectionStub.lastCall.args[2].filter[2].sales_stage.$equals).toEqual('Closed Won');
             expect(beanCollectionStub.lastCall.args[2].filter[3].service_duration_value.$gt).toEqual(0);
             expect(beanCollectionStub.lastCall.args[2].filter[4].service_start_date.$lte).toEqual(today);
@@ -148,6 +149,55 @@ describe('Base.View.ActiveSubscriptions', function() {
             expect(beanCollectionStub.lastCall.args[2].limit).toEqual(app.config.maxRecordFetchSize);
             expect(beanCollectionStub.lastCall.args[2].params.order_by).toEqual('service_start_date');
         });
+
+        it('calls _daysDifferenceCalculator', function() {
+            sinon.collection.stub(app.date.fn, 'formatUser', function() {
+                return {split: function() {
+                        return (['2019-10-21']);
+                    }};
+            });
+            var model = app.data.createBean('Accounts', {
+                service_start_date: '2019-10-21',
+                service_end_date: '2020-10-20',
+                get: sinon.collection.stub(),
+                set: function() {},
+            });
+
+            view.baseModule = 'Accounts';
+            view.baseModel = model;
+            view.collection = {
+                models: [model],
+                'off': $.noop
+            };
+            view._daysDifferenceCalculator();
+            expect(view.collection.models[0].get('endDate')).toEqual('2019-10-21');
+            expect(view.collection.models[0].get('startDate')).toEqual('2019-10-21');
+        });
+
+        it('calls _caseComparator', function() {
+            sinon.collection.stub(app.date.fn, 'formatUser', function() {
+                return {split: function() {
+                        return (['2019-10-21']);
+                    }};
+            });
+            var model = app.data.createBean('Accounts', {
+                service_start_date: '2019-10-21',
+                service_end_date: '2020-10-20',
+                get: sinon.collection.stub(),
+                set: function() {},
+            });
+
+            view.baseModule = 'Accounts';
+            view.baseModel = model;
+            view.collection = {
+                models: [model],
+                'off': $.noop
+            };
+            view._caseComparator();
+            expect(view.overallSubscriptionEndDate).toEqual(18555);
+            expect(view.overallSubscriptionStartDate).toEqual(18190);
+        });
+
     });
 
     describe('loadData', function() {

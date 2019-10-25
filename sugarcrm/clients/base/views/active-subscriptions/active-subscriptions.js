@@ -32,17 +32,13 @@
      */
     baseModel: null,
 
+    overallSubscriptionStartDate: 0,
+
     overallSubscriptionEndDate: 0,
 
-    subscriptionValidityLeft: 0,
-
-    startDate: '',
+    overallDaysDifference: 0,
 
     endDate: '',
-
-    subscriptionValidityActive: 0,
-
-    subscriptionActiveWidth: 0,
 
     /**
      * Flag indicating if RLI is enabled.
@@ -159,6 +155,7 @@
                     var nextDate = app.date(model.get('service_end_date')).add('1', 'day');
                     model.set('service_remaining_time', nextDate.fromNow());
                 });
+                this._caseComparator();
                 this._daysDifferenceCalculator();
                 this.render();
             }, this)
@@ -187,30 +184,86 @@
         this.collection.fetch(options);
     },
 
-    _daysDifferenceCalculator: function() {
+    /**
+     * Calculates the upper and lower bounds for the timeline Graph calculating the earliest
+     * Start Date and End Date for all the records.
+     */
+    _caseComparator: function() {
         if (this.collection) {
-            var width = null;
-            var active = null;
+            var daysPast = moment('1970-01-01');
+            var min = Number.MAX_VALUE;
+            var max = 0;
+            var start;
+            var end;
+            var modelArray = this.collection.models;
+            modelArray.forEach(function(model) {
+                start = model.get('service_start_date');
+                start = this.moment(start);
+                start = start.diff(daysPast, 'days');
+                end = model.get('service_end_date');
+                end = this.moment(end);
+                end = end.diff(daysPast, 'days');
+                if (max < end) {
+                    max = end;
+                }
+                if (min > start) {
+                    min = start;
+                }
+            });
+            this.overallSubscriptionEndDate = max;
+            this.overallSubscriptionStartDate = min;
+        }
+    },
+
+    /**
+     * Calculates the width for the graph by adjusting in to the 60% width
+     * and sets width for the subscription time past and subscription time left
+     * to fit into 60% width.
+     */
+    _daysDifferenceCalculator: function() {
+        var daysPast = moment('1970-01-01');
+        var today = moment();
+        if (this.collection) {
+            var overallSubscriptionStartDate = this.overallSubscriptionStartDate;
+            var overallDaysDifference = this.overallSubscriptionEndDate - overallSubscriptionStartDate;
             var start = null;
             var end = null;
+            var startDate = null;
+            var endDate = null;
+            var activeTimelineWidth = null;
+            var activePastTimelineWidth = null;
+            var timelineOffset = 40;
+            today = today.diff(daysPast, 'days');
+
             _.each(this.collection.models, function(model) {
                 start = model.get('service_start_date');
+                start = this.moment(start);
+                start = start.diff(daysPast, 'days');
+                startDate = ((start - overallSubscriptionStartDate) / overallDaysDifference).toFixed(2) * 100;
+
                 end = model.get('service_end_date');
-                this.startDate = this.moment(start);
-                this.endDate = this.moment(end);
-                this.overallSubscriptionEndDate = this.endDate.diff(this.startDate, 'days');
-                var today = this.moment();
-                this.subscriptionValidityLeft = this.endDate.diff(today, 'days');
-                var pastSubscription = this.overallSubscriptionEndDate - this.subscriptionValidityLeft;
-                width = (pastSubscription / this.overallSubscriptionEndDate) * 100;
-                active = (100.00 - width);
+                end = this.moment(end);
+                this.endDate = end;
+                end = end.diff(daysPast, 'days');
+                endDate = ((end - overallSubscriptionStartDate) / overallDaysDifference).toFixed(2) * 100;
+
+                activeTimelineWidth = ((end - start) / overallDaysDifference) * 60;
+                timelineOffset = timelineOffset + startDate * 0.6;
+                activeTimelineWidth = (activeTimelineWidth + timelineOffset) > 100 ? (100 - timelineOffset)
+                    : activeTimelineWidth;
+                activePastTimelineWidth = ((today - start) / (end - start)) * 100;
+                activePastTimelineWidth = activePastTimelineWidth >= 100 ? activePastTimelineWidth - 1
+                    : activePastTimelineWidth;
+
                 model.set({
-                    startDate: app.date(start).formatUser().split(' ')[0],
-                    endDate: app.date(end).formatUser().split(' ')[0],
+                    startDate: app.date(model.get('service_start_date')).formatUser().split(' ')[0],
+                    endDate: app.date(model.get('service_end_date')).formatUser().split(' ')[0],
                     expiration: this.endDate.fromNow(),
-                    subscriptionValidityActive: width,
-                    subscriptionActiveWidth: active
+                    timelineOffset: timelineOffset,
+                    subscriptionValidityActive: activeTimelineWidth.toFixed(2),
+                    subscriptionActiveWidth: activePastTimelineWidth.toFixed(2)
                 });
+                timelineOffset = 40;
             });
         }
     },

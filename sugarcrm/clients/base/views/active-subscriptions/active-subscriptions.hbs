@@ -31,14 +31,16 @@
                                     <div class="row-cell">{{field ../../this model=../this template='list'}}</div>
                                 {{/with}}
                             </div>
-                            <div class="row-cell pull-right">
+                            <div class="row-cell">
                                 <div data-placement="top"
                                      data-original-title="{{str 'LBL_CALENDAR_START_DATE'}}: {{attributes.startDate}}
 {{str 'LBL_CALENDAR_END_DATE'}}: {{attributes.endDate}}
-{{str 'LBL_LIST_SUPPORT_EXPIRES' 'Products'}}: {{attributes.expiration}}"
+{{str 'LBL_LIST_SUPPORT_EXPIRES' 'Products'}}: {{attributes.service_remaining_time}}"
                                      rel="tooltip" class="timeline-active-subscription"
+                                     style="width:{{attributes.subscriptionValidityActive}}%;
+                                             margin-left:{{attributes.timelineOffset}}%"
                                 >
-                                    <div style="width:{{attributes.subscriptionValidityActive}}pt"></div>
+                                    <div style="width:{{attributes.subscriptionActiveWidth}}%"></div>
                                 </div>
                             </div>
                         </div>
