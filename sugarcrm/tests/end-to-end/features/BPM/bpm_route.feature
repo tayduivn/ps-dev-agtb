@@ -18,11 +18,11 @@ Feature: Assign new process user and routing type to the process
 
     # Generate quote record with one group and 1 QLI linked to the account
     Given Quotes records exist:
-      | *name   | date_quote_expected_closed | quote_stage |
-      | Quote_1 | 2018-10-19T19:20:22+00:00  | Negotiation |
+      | *name   | date_quote_expected_closed | quote_stage | assigned_user_id |
+      | Quote_1 | 2018-10-19T19:20:22+00:00  | Negotiation | 1                |
     And Accounts records exist related via billing_accounts link to *Quote_1:
-      | name  |
-      | Acc_1 |
+      | name  | assigned_user_id |
+      | Acc_1 | 1                |
     # Create a product bundle
     And ProductBundles records exist related via product_bundles link to *Quote_1:
       | *name   |
