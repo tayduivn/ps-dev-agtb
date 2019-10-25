@@ -142,6 +142,11 @@
                 if (this.disposed) {
                     return;
                 }
+                _.each(this.collection.models, function(model) {
+                    // add 1 day to display remaining time correctly
+                    var nextDate = app.date(model.get('service_end_date')).add('1', 'day');
+                    model.set('service_remaining_time', nextDate.fromNow());
+                });
                 this.render();
             }, this)
         };

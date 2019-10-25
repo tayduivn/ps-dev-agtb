@@ -18,16 +18,20 @@
                 {{#each collection.models}}
                     <div class="subscription-entry" data-id="{{attributes.id}}">
                         <div class="content-row">
-                            <span class="row-cell primary">{{fieldValue this "name"}}</span>
-                            <span class="row-cell">, {{str "LBL_ACTIVE_SUBSCRIPTIONS_QUANTITY" attributes._module attributes}}</span>
-                            <span class="row-cell pull-right">{{relativeTime attributes.service_end_date class="date"}}</span>
+                            <div class="row-cell pull-right"><time datetime="{{attributes.service_end_date}}" class="date">{{attributes.service_remaining_time}}</time></div>
+                            <div class="row-left">
+                                <div class="row-cell secondary" data-placement="bottom" rel="tooltip" title="{{fieldValue this "name"}}">{{fieldValue this "name"}}</div>
+                                <div class="row-cell">{{str "LBL_ACTIVE_SUBSCRIPTIONS_QUANTITY" attributes._module attributes}}</div>
+                            </div>
                         </div>
                         <div class="content-row">
-                            <span class="row-cell">{{str "LBL_ACTIVE_SUBSCRIPTIONS_TOTAL" attributes._module}}: </span>
-                            {{#with ../collection.fieldsMeta.total_amount}}
-                                <span class="row-cell">{{field ../../this model=../this template='list'}}</span>
-                            {{/with}}
-                            <span class="row-cell pull-right"></span>
+                            <div class="row-left">
+                                <div class="row-cell">{{str "LBL_ACTIVE_SUBSCRIPTIONS_TOTAL" attributes._module}}</div>
+                                {{#with ../collection.fieldsMeta.total_amount}}
+                                    <div class="row-cell">{{field ../../this model=../this template='list'}}</div>
+                                {{/with}}
+                            </div>
+                            <div class="row-cell pull-right"></div>
                         </div>
                     </div>
                 {{/each}}

@@ -950,16 +950,36 @@
     border-bottom: @borderWidget;
 
     .content-row {
+      width: 100%;
+
+      .row-left {
+        display: flex;
+      }
+
       .row-cell {
-        display: inline-block;
         white-space: nowrap;
         vertical-align: middle;
       }
 
-      .primary {
+      .secondary {
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 250px;
+      }
+
+      .pull-right {
+        padding-left: 10px;
+      }
+
+      .currency-field {
+        margin-left: 5px;
+
+        .original {
+          padding: 0;
+        }
+
+        .converted {
+          width: unset;
+        }
       }
     }
   }

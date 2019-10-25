@@ -5681,8 +5681,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     // Active Subscriptions Dashlet
     'LBL_ACTIVE_SUBSCRIPTIONS_DASHLET' => 'Active Subscriptions',
     'LBL_ACTIVE_SUBSCRIPTIONS_DASHLET_DESCRIPTION' => 'Active subscriptions for a specific account.',
-    'LBL_ACTIVE_SUBSCRIPTIONS_QUANTITY' => 'quantity {{quantity}}',
-    'LBL_ACTIVE_SUBSCRIPTIONS_TOTAL' => 'Total',
+    'LBL_ACTIVE_SUBSCRIPTIONS_QUANTITY' => ', quantity {{quantity}}',
+    'LBL_ACTIVE_SUBSCRIPTIONS_TOTAL' => 'Total:',
     'LBL_NO_ACTIVE_SUBSCRIPTIONS' => 'No active subscriptions',
     'LBL_REQUIRE_REVENUE_LINE_ITEMS' => 'This dashlet requires {{module_name}} to function. Talk to your administrator about enabling {{module_name}}.',
     //END SUGARCRM flav=ent ONLY
