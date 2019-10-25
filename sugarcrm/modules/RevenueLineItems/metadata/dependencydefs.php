@@ -172,3 +172,72 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
         ),
     )
 );
+
+$dependencies['RevenueLineItems']['handle_service_dependencies'] = array(
+    'hooks' => array('edit'),
+    'trigger' => 'true',
+    'triggerFields' => array('service'),
+    'onload' => true,
+    'actions' => array(
+        // If 'Service' is marked as false, then service_start_date, service_end_date,
+        // and service_duration fields should be read only
+        array(
+            'name' => 'ReadOnly',
+            'params' => array(
+                'target' => 'service_start_date',
+                'value' => 'equal($service, "0")',
+            ),
+        ),
+        array(
+            'name' => 'ReadOnly',
+            'params' => array(
+                'target' => 'service_end_date',
+                'value' => 'equal($service, "0")',
+            ),
+        ),
+        array(
+            'name' => 'ReadOnly',
+            'params' => array(
+                'target' => 'service_duration_value',
+                'value' => 'equal($service, "0")',
+            ),
+        ),
+        array(
+            'name' => 'ReadOnly',
+            'params' => array(
+                'target' => 'service_duration_unit',
+                'value' => 'equal($service, "0")',
+            ),
+        ),
+        // If 'Service' is marked as true, then service_start_date, service_end_date,
+        // and both service_duration fields should be required
+        array(
+            'name' => 'SetRequired',
+            'params' => array(
+                'target' => 'service_start_date',
+                'value' => 'equal($service, "1")',
+            ),
+        ),
+        array(
+            'name' => 'SetRequired',
+            'params' => array(
+                'target' => 'service_end_date',
+                'value' => 'equal($service, "1")',
+            ),
+        ),
+        array(
+            'name' => 'SetRequired',
+            'params' => array(
+                'target' => 'service_duration_value',
+                'value' => 'equal($service, "1")',
+            ),
+        ),
+        array(
+            'name' => 'SetRequired',
+            'params' => array(
+                'target' => 'service_duration_unit',
+                'value' => 'equal($service, "1")',
+            ),
+        ),
+    ),
+);
