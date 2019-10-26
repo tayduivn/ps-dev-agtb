@@ -17,6 +17,12 @@ $fields = array(
     'weight'
 );
 
+$serviceFieldDefaults = array(
+    'service_start_date' => 'now()',
+    'service_duration_value' => '1',
+    'service_duration_unit' => '"year"',
+);
+
 $dependencies['RevenueLineItems']['read_only_fields'] = array(
     'hooks' => array("edit"),
     //Trigger formula for the dependency. Defaults to 'true'.
@@ -173,71 +179,61 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
     )
 );
 
+// Handle the dependencies when the 'service' field is checked/unchecked
+$serviceFieldActions = array();
+foreach ($serviceFieldDefaults as $field => $defaultValue) {
+    $serviceFieldActions[] = array(
+        'name' => 'ReadOnly',
+        'params' => array(
+            'target' => $field,
+            'value' => 'equal($service, "0")',
+        ),
+    );
+    $serviceFieldActions[] = array(
+        'name' => 'SetRequired',
+        'params' => array(
+            'target' => $field,
+            'value' => 'equal($service, "1")',
+        ),
+    );
+    $serviceFieldActions[] = array(
+        'name' => 'SetValue',
+        'params' => array(
+            'target' => $field,
+            'value' => 'ifElse(
+                equal($service, "1"),
+                ifElse(
+                    equal($' . $field . ', ""),
+                    '. $defaultValue .',
+                    $'. $field .'
+                ),
+                "")',
+        ),
+    );
+}
+
+// 'renewable' field is similar to the other service fields, but never required
+$serviceFieldActions[] = array(
+    'name' => 'ReadOnly',
+    'params' => array(
+        'target' => 'renewable',
+        'value' => 'equal($service, "0")',
+    ),
+);
+$serviceFieldActions[] = array(
+    'name' => 'SetValue',
+    'params' => array(
+        'target' => 'renewable',
+        'value' => 'ifElse(
+                equal($service, "1"),
+                $renewable,
+                "0")',
+    ),
+);
 $dependencies['RevenueLineItems']['handle_service_dependencies'] = array(
     'hooks' => array('edit'),
     'trigger' => 'true',
     'triggerFields' => array('service'),
     'onload' => true,
-    'actions' => array(
-        // If 'Service' is marked as false, then service_start_date, service_end_date,
-        // and service_duration fields should be read only
-        array(
-            'name' => 'ReadOnly',
-            'params' => array(
-                'target' => 'service_start_date',
-                'value' => 'equal($service, "0")',
-            ),
-        ),
-        array(
-            'name' => 'ReadOnly',
-            'params' => array(
-                'target' => 'service_end_date',
-                'value' => 'equal($service, "0")',
-            ),
-        ),
-        array(
-            'name' => 'ReadOnly',
-            'params' => array(
-                'target' => 'service_duration_value',
-                'value' => 'equal($service, "0")',
-            ),
-        ),
-        array(
-            'name' => 'ReadOnly',
-            'params' => array(
-                'target' => 'service_duration_unit',
-                'value' => 'equal($service, "0")',
-            ),
-        ),
-        // If 'Service' is marked as true, then service_start_date, service_end_date,
-        // and both service_duration fields should be required
-        array(
-            'name' => 'SetRequired',
-            'params' => array(
-                'target' => 'service_start_date',
-                'value' => 'equal($service, "1")',
-            ),
-        ),
-        array(
-            'name' => 'SetRequired',
-            'params' => array(
-                'target' => 'service_end_date',
-                'value' => 'equal($service, "1")',
-            ),
-        ),
-        array(
-            'name' => 'SetRequired',
-            'params' => array(
-                'target' => 'service_duration_value',
-                'value' => 'equal($service, "1")',
-            ),
-        ),
-        array(
-            'name' => 'SetRequired',
-            'params' => array(
-                'target' => 'service_duration_unit',
-                'value' => 'equal($service, "1")',
-            ),
-        ),
-    ),
+    'actions' => $serviceFieldActions,
 );

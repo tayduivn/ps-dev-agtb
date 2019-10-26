@@ -9,42 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$fields = array(
-    'category_name',
-    'list_price',
-    'cost_price',
-    'tax_class',
-    'mft_part_num',
-    'weight'
-);
 
 $serviceFieldDefaults = array(
-    'service_start_date' => 'now()',
     'service_duration_value' => '1',
     'service_duration_unit' => '"year"',
 );
-
-$dependencies['Products']['read_only_fields'] = array(
-    'hooks' => array("edit"),
-    //Trigger formula for the dependency. Defaults to 'true'.
-    'trigger' => 'true',
-    'triggerFields' => array('product_template_id'),
-    'onload' => true,
-    //Actions is a list of actions to fire when the trigger is true
-    'actions' => array(),
-);
-
-foreach ($fields as $field) {
-    $dependencies['Products']['read_only_fields']['actions'][] = array(
-        'name' => 'ReadOnly', //Action type
-        //The parameters passed in depend on the action type
-        'params' => array(
-            'target' => $field,
-            'label' => $field . '_label', //normally <field>_label
-            'value' => 'not(equal($product_template_id,""))', //Formula
-        ),
-    );
-}
 
 // Handle the dependencies when the 'service' field is checked/unchecked
 $serviceFieldActions = array();
@@ -97,7 +66,7 @@ $serviceFieldActions[] = array(
                 "0")',
     ),
 );
-$dependencies['Products']['handle_service_dependencies'] = array(
+$dependencies['ProductTemplates']['handle_service_dependencies'] = array(
     'hooks' => array('edit'),
     'trigger' => 'true',
     'triggerFields' => array('service'),

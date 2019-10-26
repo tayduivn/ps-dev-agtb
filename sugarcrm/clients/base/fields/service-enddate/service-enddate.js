@@ -102,6 +102,8 @@
             endDate[methods.set](newDate);
             var formattedEndDate = this.unformat(app.date(endDate));
             this.model.set(this.name, formattedEndDate);
+        } else {
+            this.model.set(this.name, '');
         }
     }
 });

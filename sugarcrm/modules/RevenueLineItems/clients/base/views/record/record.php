@@ -323,7 +323,6 @@ $fieldsHidden = array(
         'name' => 'service_start_date',
         'label' => 'LBL_SERVICE_START_DATE',
         'type' => 'date',
-        'display_default' => 'now',
     ),
     'service_end_date' => array(
         'name' => 'service_end_date',

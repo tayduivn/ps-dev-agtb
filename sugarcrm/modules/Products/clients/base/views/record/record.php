@@ -266,7 +266,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'service_start_date',
                     'label' => 'LBL_SERVICE_START_DATE',
                     'type' => 'date',
-                    'display_default' => 'now',
                 ),
                 'service_end_date' => array(
                     'name' => 'service_end_date',
@@ -277,7 +276,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'renewable',
                     'label' => 'LBL_RENEWABLE',
                     'type' => 'bool',
-                    'default' => 0,
                 ),
                 'contact_name',
                 array(

@@ -219,14 +219,11 @@ $fields = array(
     'service' => array(
         'name' => 'service',
         'label' => 'LBL_SERVICE',
-        'default' => false,
     ),
     'service_start_date' => array(
         'name' => 'service_start_date',
         'label' => 'LBL_SERVICE_START_DATE',
         'type' => 'date',
-        'display_default' => 'now',
-        'default' => false,
     ),
     'service_end_date' => array(
         'name' => 'service_end_date',
@@ -262,7 +259,6 @@ $fields = array(
         'name' => 'renewable',
         'label' => 'LBL_RENEWABLE',
         'type' => 'bool',
-        'default' => false,
     ),
 );
 //END SUGARCRM flav=ent ONLY
