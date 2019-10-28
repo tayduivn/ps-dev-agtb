@@ -6,6 +6,7 @@
         "CampaignTrackers":["CURRENT","SUGAR_SELL"],
         "Campaigns":["CURRENT","SUGAR_SELL"],
         "Cases":["CURRENT","SUGAR_SERVE"],
+        "ChangeTimers":["SUGAR_SERVE"],
         "ContractTypes":["CURRENT","SUGAR_SELL"],
         "Contracts":["CURRENT","SUGAR_SELL"],
         "EmailMan":["CURRENT","SUGAR_SELL"],

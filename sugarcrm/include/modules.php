@@ -204,6 +204,7 @@ $beanList['pmse_BpmGroup'] = 'pmse_BpmGroup';
 $beanList['pmse_BpmGroupUser'] = 'pmse_BpmGroupUser';
 $beanList['pmse_EmailMessage'] = 'pmse_EmailMessage';
 $beanList['BusinessCenters'] = 'BusinessCenter';
+$beanList['ChangeTimers'] = 'ChangeTimer';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
 //BEGIN SUGARCRM flav=int ONLY
@@ -373,6 +374,7 @@ $beanFiles['pmse_BpmGroup'] = 'modules/pmse_Project/pmse_BpmGroup/pmse_BpmGroup.
 $beanFiles['pmse_BpmGroupUser'] = 'modules/pmse_Project/pmse_BpmGroupUser/pmse_BpmGroupUser.php';
 $beanFiles['pmse_EmailMessage'] = 'modules/pmse_Emails_Templates/pmse_EmailMessage/pmse_EmailMessage.php';
 $beanFiles['BusinessCenter'] = 'modules/BusinessCenters/BusinessCenter.php';
+$beanFiles['ChangeTimer'] = 'modules/ChangeTimers/ChangeTimer.php';
 //END SUGARCRM flav=ent ONLY
 
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
@@ -469,6 +471,7 @@ $modInvisList[] = 'CustomQueries';
 $modInvisList[] = 'DataSets';
 $modInvisList[] = 'DataSet_Attribute';
 $modInvisList[] = 'ReportMaker';
+$modInvisList[] = 'ChangeTimers';
 //END SUGARCRM flav=ent ONLY
 
 //$modInvisList[] = 'QueryBuilder';

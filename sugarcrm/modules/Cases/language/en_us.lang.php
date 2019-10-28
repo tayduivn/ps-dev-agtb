@@ -106,6 +106,7 @@ $mod_strings = array (
     'LBL_EXPORT_CREATED_BY_NAME' => 'Created By User Name',
     'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
     'LBL_EXPORT_TEAM_COUNT' => 'Team Count',
+    'LBL_CHANGETIMERS' => 'Change Timers',
 
     // SNIP
 	'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',

@@ -85,5 +85,14 @@ $viewdefs['Cases']['base']['layout']['subpanels'] = array (
               'link' => 'kbcontents',
           ),
       ),
+// BEGIN SUGARCRM flav=ent ONLY
+        [
+            'layout' => 'subpanel',
+            'label' => 'LBL_CHANGETIMERS_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'changetimers',
+            ],
+        ],
+// END SUGARCRM flav=ent ONLY
   ),
 );

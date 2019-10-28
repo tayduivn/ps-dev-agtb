@@ -160,10 +160,26 @@ $vardefs = array (
             'processes' => true,
         ),
         //END SUGARCRM flav=ent ONLY
-	),
+    ),
 	'indices'=>array(
 		 'number'=>array('name' =>strtolower($module).'numk', 'type' =>'unique', 'fields'=>array($_object_name . '_number'))
 	),
+    'relationships' =>
+    [
+        //BEGIN SUGARCRM flav=ent ONLY
+        strtolower($module) . '_changetimers' => [
+            'lhs_module' => $module,
+            'lhs_table' => strtolower($table_name),
+            'lhs_key' => 'id',
+            'rhs_module' => 'ChangeTimers',
+            'rhs_table' => 'changetimers',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => $module,
+        ],
+        //END SUGARCRM flav=ent ONLY
+    ],
         'uses' => array(
             'taggable',
         ),

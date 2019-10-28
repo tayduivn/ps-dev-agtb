@@ -168,6 +168,13 @@ $dictionary['Case'] = array(
             'default' => 1,
             'reportable' => false,
         ),
+        'changetimers' => [
+            'name' => 'changetimers',
+            'type' => 'link',
+            'relationship' => 'cases_changetimers',
+            'source' => 'non-db',
+            'vname' => 'LBL_CHANGETIMERS',
+        ],
 // END SUGARCRM flav=ent ONLY
         'tasks' => array(
             'name' => 'tasks',

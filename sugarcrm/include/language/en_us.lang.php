@@ -123,6 +123,7 @@ $app_list_strings = array (
     'ReportSchedules' => 'Report Schedules',
     'CommentLog' => 'Comment Log',
     'Holidays' => 'Holidays',
+    'ChangeTimers' => 'Change Timers',
   ),
 
     'moduleIconList' =>
@@ -253,6 +254,7 @@ $app_list_strings = array (
     'DataPrivacy' => 'Data Privacy',
     'ReportSchedules' => 'Report Schedule',
     'Holidays' => 'Holiday',
+    'ChangeTimers' => 'Change Timer',
   ),
 
 /*
@@ -752,6 +754,10 @@ $app_list_strings = array (
       'KBContents' => 'Knowledge Base',
       'Notes' => 'Note',
   ),
+
+  'changetimer_parent_type' => [
+      'Cases' => 'Case',
+  ],
 
   'product_status_default_key' => 'Ship',
   'product_status_quote_key' => 'Quotes',
@@ -5674,6 +5680,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_DATAPRIVACY_PII' => 'Personal Info',
     'LBL_DATAPRIVACY_MARK_FOR_ERASURE' => 'Mark to Erase',
     'TPL_DATAPRIVACY_PII_TITLE' => 'Personal Info for {{{name}}}',
+
+    'LBL_CHANGETIMERS_SUBPANEL_TITLE' => 'Change Timers',
 
     'LBL_TEXT_COPIED_TO_CLIPBOARD_SUCCESS' => 'Copied to your clipboard!',
     'LBL_TEXT_COPIED_TO_CLIPBOARD_ERROR' => 'Could not copy to your clipboard',

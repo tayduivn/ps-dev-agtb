@@ -462,6 +462,9 @@ $disabledTabs = array(
     "contracts",
     "revenuelineitems",
     "dataprivacy",
+// BEGIN SUGARCRM flav=ent ONLY
+    'changetimers',
+// END SUGARCRM flav=ent ONLY
 );
 
 installerHook('pre_setHiddenSubpanels');

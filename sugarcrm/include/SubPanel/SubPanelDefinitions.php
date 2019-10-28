@@ -828,6 +828,11 @@ class SubPanelDefinitions
 		$modules_to_check = array_change_key_case($modules_to_check);
         // Append on the CampaignLog module, because that is where the subpanels point, not directly to Campaigns
         $modules_to_check['campaignlog'] = "CampaignLog";
+// BEGIN SUGARCRM flav=ent ONLY
+        // We don't want to show this module, so we can't add it to the module list.
+        // But we want to make its subpanel available.
+        $modules_to_check['changetimers'] = 'ChangeTimers';
+// END SUGARCRM flav=ent ONLY
 
         // Get hidden subpanels to make sure they are not included
         $hidden = self::get_hidden_subpanels();
