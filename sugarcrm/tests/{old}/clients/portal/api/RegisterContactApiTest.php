@@ -17,6 +17,15 @@ use PHPUnit\Framework\TestCase;
  */
 class RegisterContactApiTest extends TestCase
 {
+    private $admin;
+    private $old_defaultUser;
+
+    public function setup()
+    {
+        $this->admin = Administration::getSettings(false, true);
+        $this->old_defaultUser = $this->admin->settings['portal_defaultUser'] ?? null;
+    }
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('app_list_strings');
@@ -25,15 +34,31 @@ class RegisterContactApiTest extends TestCase
         SugarTestHelper::setUp('current_user', [true, false]);
     }
 
+    public function teardown()
+    {
+        if ($this->old_defaultUser !== null) {
+            $this->admin->saveSetting('portal', 'defaultUser', $this->old_defaultUser, 'support');
+        }
+    }
+
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
     }
 
-    public function testCreateContact()
+    /**
+     * Test createContactRecord() to see if fields are set properly
+     *
+     * @param string|int $defaultUserId The default user Id
+     * @dataProvider createContactProvider
+     */
+    public function testCreateContact($defaultUserId)
     {
         $api = new RegisterContactApi();
         $rest = SugarTestRestUtilities::getRestServiceMock();
+
+        // a particular user is used for portal default user
+        $this->admin->saveSetting('portal', 'defaultUser', $defaultUserId, 'support');
         $result = $api->createContactRecord(
             $rest,
             [
@@ -51,6 +76,15 @@ class RegisterContactApiTest extends TestCase
         $this->assertEquals('portalName', $bean->portal_name);
         $this->assertEquals(0, $bean->portal_active);
         $this->assertEquals('external', $bean->entry_source);
+        $this->assertEquals($defaultUserId, $bean->assigned_user_id);
         $bean->mark_deleted($bean->id);
+    }
+
+    public function createContactProvider(): array
+    {
+        return [
+            ['280ecfca-f9ae-11e9-9ca8-6c400895ea84'],
+            [1], // admin id is saved as integer in config; other user ids are saved as strings
+        ];
     }
 }
