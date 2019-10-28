@@ -25,7 +25,7 @@ class SugarUpgradeUpdateOOBReports extends UpgradeScript
      */
     public function run()
     {
-        // install the new Reports either when upgrading from pre-9.1.0 or on pro-to-ENT flavor conversion
+        // install the new Reports either when upgrading from pre-9.3.0 or on pro-to-ENT flavor conversion
         if ($this->shouldInstallReports()) {
             $this->installReports($this->getReportsToInstall());
             // For the 9.1 release, we don't want these, but we may in the future.
@@ -44,8 +44,8 @@ class SugarUpgradeUpdateOOBReports extends UpgradeScript
     public function shouldInstallReports(): bool
     {
         $isFlavorConversion = !$this->fromFlavor('ent') && $this->toFlavor('ent');
-        $isBelow910Ent = $this->toFlavor('ent') && version_compare($this->from_version, '9.1.0', '<');
-        return $isFlavorConversion || $isBelow910Ent;
+        $isBelowEntVersion = $this->toFlavor('ent') && version_compare($this->from_version, '9.3.0', '<');
+        return $isFlavorConversion || $isBelowEntVersion;
     }
 
     /**
@@ -72,8 +72,8 @@ class SugarUpgradeUpdateOOBReports extends UpgradeScript
      */
     public function getReportsToInstall(): array
     {
-        return [
-            // 9.1 new Serve Reports
+        // 9.1 new Serve Reports
+        $the_9_1_reports = [
             'New Cases by Business Center by Week',
             'Recently Created Cases',
             'New Cases by Customer Tier by Week',
@@ -90,6 +90,37 @@ class SugarUpgradeUpdateOOBReports extends UpgradeScript
             'My Cases in the Last Week by Status',
             'Status of Open Tasks Assigned by Me',
         ];
+
+        // 9.3 new Serve Reports
+        $the_9_3_reports = [
+            'Cases That Missed the First Response SLA',
+            'My SLA Success Rate',
+            'New Portal Users Awaiting Activation',
+            'Daily Average Time to First Response',
+            'Average Time to Resolution by Week by Type',
+            'My Average Difference From Follow-Up Date by Week',
+            'Open Cases Awaiting First Response That Missed SLA',
+            'First Response SLA Success Rate',
+            'Average Difference From Follow-Up Date by Week by Agent',
+            'Average Time to Resolution by Week by Agent',
+            'Open Cases Awaiting First Response Within SLA',
+            'Average Time to First Response by Agent',
+            'Average Time Spent on Cases by Week by Case Type',
+            'Average Time on Cases by Status by Type',
+            'Total Time Spent on Cases by Week by Case Type',
+            'List of Changes to Case Status',
+        ];
+
+        $reportsToInstall = [];
+        if ($this->toFlavor('ent')) {
+            if (!$this->fromFlavor('ent') || version_compare($this->from_version, '9.1.0', '<')) {
+                $reportsToInstall = array_merge($the_9_1_reports, $the_9_3_reports);
+            } elseif (version_compare($this->from_version, '9.3.0', '<')) {
+                $reportsToInstall = $the_9_3_reports;
+            }
+        }
+
+        return $reportsToInstall;
     }
 
     /**

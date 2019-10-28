@@ -90,22 +90,22 @@ class SugarUpgradeUpdateOOBReportsTest extends UpgradeTestCase
     public function providerShouldInstallReports(): array
     {
         return [
-            // 9.0.0 Ent -> 9.1.0 Ent
+            // 9.2.0 Ent -> 9.3.0 Ent
             [
                 ['from' => ['pro' => true, 'ent' => true], 'to' => ['pro' => true, 'ent' => true]],
-                ['from' => '9.0.0', 'to' => '9.1.0'],
+                ['from' => '9.2.0', 'to' => '9.3.0'],
                 true,
             ],
-            // 9.1.0 Ent -> 9.1.1 Ent
+            // 9.3.0 Ent -> 9.3.1 Ent
             [
                 ['from' => ['pro' => true, 'ent' => true], 'to' => ['pro' => true, 'ent' => true]],
-                ['from' => '9.1.0', 'to' => '9.1.1'],
+                ['from' => '9.3.0', 'to' => '9.3.1'],
                 false,
             ],
-            // 9.1.0 Pro -> 9.1.0 Ent
+            // 9.3.0 Pro -> 9.3.0 Ent
             [
                 ['from' => ['pro' => true, 'ent' => false], 'to' => ['pro' => true, 'ent' => true]],
-                ['from' => '9.1.0', 'to' => '9.1.0'],
+                ['from' => '9.3.0', 'to' => '9.3.0'],
                 true,
             ],
             // 9.0.0 Ent -> 10.0.0 Ent (roll-up)
