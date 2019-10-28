@@ -91,6 +91,11 @@ class RS152Test extends TestCase
         $this->assertEquals($this->contact->team_id, $this->case->team_id);
         $this->assertEquals($this->contact->team_set_id, $this->case->team_set_id);
 
+        // set primary contact using Contact from portal session (the logged in contact)
+        // on creating a Case in Portal
+        $this->assertNotEmpty($this->case->primary_contact_id);
+        $this->assertEquals($this->case->primary_contact_id, $this->contact->id);
+
         $this->case->load_relationship('contacts');
         $this->case->load_relationship('accounts');
         $contacts = $this->case->contacts->getBeans();

@@ -59,6 +59,7 @@ class ModulePortalApi extends ModuleApi
                 $args['team_id'] = $contact->team_id;
                 $args['team_set_id'] = $contact->team_set_id;
                 $args['acl_team_set_id'] = $contact->acl_team_set_id;
+                $args['primary_contact_id'] = $contact->id;
 
                 // the following code populates the relationships with Contacts and Accounts on the same api call
                 // by leveraging the parent ModuleApi's getRelatedRecordArguments and linkRelatedRecords
