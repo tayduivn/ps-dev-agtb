@@ -362,7 +362,7 @@
             this.listHeaderView.addColumnHeaderField(fieldViewDef);
 
             // if a service field is added, then add all its related fields to the worksheet column as well
-            if (_.intersection(fieldVarDef.related_fields, serviceRelatedFieldsArr)) {
+            if (_.intersection(fieldVarDef.related_fields, serviceRelatedFieldsArr).length > 0) {
                 _.each(fieldVarDef.related_fields, function(relField) {
                     var relatedFieldVarDef = this.productsFieldMeta[relField];
                     fieldViewDef = {};
@@ -383,7 +383,7 @@
             // remove the column from header fields
             this.listHeaderView.removeColumnHeaderField(fieldVarDef);
             // if a service field is removed, then remove all its related fields to the worksheet column as well
-            if (_.intersection(fieldVarDef.related_fields, serviceRelatedFieldsArr)) {
+            if (_.intersection(fieldVarDef.related_fields, serviceRelatedFieldsArr).length > 0) {
                 _.each(fieldVarDef.related_fields, function(relField) {
                     var relatedFieldVarDef = this.productsFieldMeta[relField];
                     this.listHeaderView.removeColumnHeaderField(relatedFieldVarDef);

@@ -233,6 +233,67 @@ describe('Base.Layout.ConfigDrawerContent', function() {
             expect(layout.selectedPanel).toBe('config-panel');
         });
 
+        it('get newPanel model for current eventViewName', function() {
+            layout.selectedPanel = 'config-panel';
+            sinon.collection.stub($.fn, 'data', function() {
+                return 'config-panel2';
+            });
+            layout._components[1].eventViewName = 'worksheet_columns';
+            layout._components[1].model = {
+                get: sinon.collection.stub(),
+                off: sinon.collection.stub()
+            };
+
+            layout.onAccordionToggleClicked(event);
+
+            expect(layout._components[1].model.get).toHaveBeenCalledWith('worksheet_columns');
+        });
+
+        it('should set current state of the header field to checked and its relateed fields to filled',
+            function() {
+            layout.selectedPanel = 'config-panel';
+            sinon.collection.stub($.fn, 'data', function() {
+                return 'config-panel2';
+            });
+            layout._components[1].model = {
+                get: function() {
+                    return [
+                        {
+                            name: 'testColumn'
+                        },
+                        {
+                            name: 'testColumn2'
+                        }
+                    ];
+                },
+                off: sinon.collection.stub()
+            };
+            layout._components[1].panelFields = [
+                    {
+                        name: 'testColumn',
+                        currentState: undefined,
+                        relatedFields: ['testColumn1', 'testColumn2']
+                    },
+                    {
+                        name: 'testColumn1',
+                        currentState: 'unchecked'
+                    },
+                    {
+                        name: 'testColumn2',
+                        currentState: 'checked'
+                    },
+                    {
+                        name: 'testColumn3',
+                        currentState: 'unchecked'
+                    }
+                ];
+            layout.onAccordionToggleClicked(event);
+
+            expect(layout._components[1].panelFields[0].currentState).toEqual('checked');
+            expect(layout._components[1].panelFields[1].currentState).toEqual('filled');
+            expect(layout._components[1].panelFields[2].currentState).toEqual('checked');
+        });
+
         it('call toggle the new panel to show', function() {
             layout.selectedPanel = 'config-panel2';
             sinon.collection.stub($.fn, 'data', function() {

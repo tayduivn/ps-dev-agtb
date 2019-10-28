@@ -92,7 +92,9 @@
 
         this.isRequired = this.def.required || false;
 
-        this.changeState(this._getInitialState());
+        // if current state is not defined the get the initial state
+        this.changeState(options.viewDefs && options.viewDefs.currentState ?
+            options.viewDefs.currentState : this._getInitialState());
 
         this.serviceRelatedFieldArr = [
             'service_start_date',

@@ -13,6 +13,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
     var field;
     var fieldDef;
     var context;
+    var options;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -24,6 +25,9 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
         };
 
         context = app.context.getContext();
+        options = {
+            context: context
+        };
 
         field = SugarTest.createField(
             'base',
@@ -43,6 +47,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
         field.dispose();
         fieldDef = null;
         field = null;
+        options = null;
     });
 
     describe('initialize()', function() {
@@ -107,16 +112,37 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             expect(field.isRequired).toBeTruthy();
         });
 
-        it('should call _getInitialState', function() {
-            field.initialize({});
+        describe('when currentState is not defined', function() {
+            it('should call _getInitialState', function() {
+                field.initialize({});
 
-            expect(field._getInitialState).toHaveBeenCalled();
+                expect(field._getInitialState).toHaveBeenCalled();
+            });
+
+            it('should call changeState', function() {
+                field.initialize({});
+
+                expect(field.changeState).toHaveBeenCalledWith('test1');
+            });
         });
 
-        it('should call changeState', function() {
-            field.initialize({});
+        describe('when currentState is defined', function() {
+            beforeEach(function() {
+                options.viewDefs = {
+                    currentState: 'checked'
+                };
+            });
+            it('should not call _getInitialState', function() {
+                field.initialize(options);
 
-            expect(field.changeState).toHaveBeenCalledWith('test1');
+                expect(field._getInitialState).not.toHaveBeenCalled();
+            });
+
+            it('should call changeState with checked', function() {
+                field.initialize(options);
+
+                expect(field.changeState).toHaveBeenCalledWith('checked');
+            });
         });
 
         it('should set serviceRelatedFieldArr', function() {
