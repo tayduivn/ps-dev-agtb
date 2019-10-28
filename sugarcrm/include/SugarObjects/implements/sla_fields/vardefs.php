@@ -73,7 +73,6 @@ $vardefs = [
             'audited' => false,
             'reportable' => true,
             'massupdate' => false,
-            'readonly' => true,
         ],
         'first_response_user_id' => [
             'name' => 'first_response_user_id',

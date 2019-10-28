@@ -100,6 +100,13 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'default' => false,
                     'enabled' => true,
                 ),
+                [
+                    'name' => 'first_response_sla_met',
+                    'label' => 'LBL_FIRST_RESPONSE_SLA_MET',
+                    'default' => false,
+                    'enabled' => true,
+                    'readonly' => true,
+                ],
                 //END SUGARCRM flav=ent ONLY
             ),
         )

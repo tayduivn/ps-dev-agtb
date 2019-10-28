@@ -261,7 +261,10 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
-                'first_response_sla_met',
+                [
+                    'name' => 'first_response_sla_met',
+                    'readonly' => true,
+                ],
                 'first_response_target_datetime',
                 'first_response_actual_datetime',
                 'hours_to_first_response',
