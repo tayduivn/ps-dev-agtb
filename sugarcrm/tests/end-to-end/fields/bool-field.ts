@@ -50,7 +50,7 @@ export class Edit extends BaseField {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: `input[name={{name}}].checkbox`,
+            $: `input[name={{name}}][type=checkbox]`,
             field: {
                 selector: '',
             },
