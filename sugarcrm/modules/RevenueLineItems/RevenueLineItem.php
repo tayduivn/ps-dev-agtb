@@ -206,6 +206,10 @@ class RevenueLineItem extends SugarBean
         $this->mapFieldsFromProductTemplate();
         $this->mapFieldsFromOpportunity();
 
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->setServiceEndDate();
+        //END SUGARCRM flav=ent ONLY
+
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
@@ -214,6 +218,26 @@ class RevenueLineItem extends SugarBean
 
         return $id;
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Calculate service_end_date for service RLI.
+     */
+    protected function setServiceEndDate()
+    {
+        if (!empty($this->service) &&
+            !empty($this->service_start_date) &&
+            !empty($this->service_duration_value) &&
+            !empty($this->service_duration_unit) &&
+            empty($this->service_end_date)
+        ) {
+            $timeDate = TimeDate::getInstance();
+            $duration = '+' . $this->service_duration_value . ' ' . $this->service_duration_unit;
+            $endDate = $timeDate->fromDbDate($this->service_start_date)->modify($duration);
+            $this->service_end_date = $endDate->modify('-1 day')->asDbDate();
+        }
+    }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * Set the discount_price

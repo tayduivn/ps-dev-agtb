@@ -22,6 +22,56 @@ class OpportunityHooks extends AbstractForecastHooks
         return (isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems');
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Generate a renewal opportunity when an opportunity containing services is closed won.
+     *
+     * @param Opportunity $bean The bean we are working with
+     * @param string $event Which event was fired
+     * @param array $args Any additional Arguments
+     * @return bool
+     */
+    public static function generateRenewalOpportunity(Opportunity $bean, string $event, array $args): bool
+    {
+        if ($bean->useRevenueLineItems() &&
+            !empty($args['dataChanges']['sales_status']) &&
+            $args['dataChanges']['sales_status']['after'] === Opportunity::STATUS_CLOSED_WON
+        ) {
+            $rliBeans = $bean->getClosedWonRenewableRLIs();
+
+            if (!empty($rliBeans)) {
+                // check if parent opportunity and its renewal opportunity exist
+                $parentBean = $bean->getRenewalParent();
+
+                if ($parentBean) {
+                    $renewalBean = $parentBean->getExistingRenewalOpportunity();
+                }
+
+                // check if its own renewal opportunity exists
+                if (empty($renewalBean)) {
+                    $renewalBean = $bean->getExistingRenewalOpportunity();
+                }
+
+                // create a new renewal opportunity
+                if (empty($renewalBean)) {
+                    $renewalBean = $bean->createNewRenewalOpportunity();
+                }
+
+                if ($renewalBean && $renewalBean->load_relationship('revenuelineitems')) {
+                    foreach ($rliBeans as $rliBean) {
+                        // create new renewal RLI
+                        $newRliBean = $renewalBean->createNewRenewalRLI($rliBean);
+                    }
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    //END SUGARCRM flav=ent ONLY
+
     /**
      * This is a general hook that takes the Opportunity and saves it to the forecast worksheet record.
      *

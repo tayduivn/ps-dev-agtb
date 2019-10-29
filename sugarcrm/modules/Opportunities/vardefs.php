@@ -386,7 +386,6 @@ $dictionary['Opportunity'] = array(
             'link' => 'renewal_parent',
             'unified_search' => true,
             'importable' => 'true',
-            'dependency' => 'equal($renewal,"true")',
         ],
         //END SUGARCRM flav=ent ONLY
         'accounts' => array(
