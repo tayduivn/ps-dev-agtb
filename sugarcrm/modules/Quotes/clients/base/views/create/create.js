@@ -368,7 +368,7 @@
         var bundles = this.model.get('bundles');
         var isConvert = this.context.get('convert');
         var hasItems = 0;
-        var userId = app.user.id;
+        var userId = this.model.get('assigned_user_id');
 
         _.each(bundles.models, function(bundle) {
             var pbItems = bundle.get('product_bundle_items');
