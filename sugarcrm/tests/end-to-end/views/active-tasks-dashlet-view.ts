@@ -10,7 +10,7 @@
  */
 
 import DashletView from './dashlet-view';
-import CsCasesInteractionsListView from './cs-cases-interactions-list-view';
+import RecordInteractionsListView from './record-interactions-list-view';
 import PlannedActivitiesListView from './planned-activities-list-view';
 
 /**

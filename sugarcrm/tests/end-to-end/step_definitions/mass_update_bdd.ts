@@ -15,6 +15,7 @@ import {TableDefinition} from 'cucumber';
 import {When, seedbed} from '@sugarcrm/seedbed';
 import {chooseModule, closeAlert, toggleRecord, parseInputArray, closeWarning, toggleSpecifiedRecords} from './general_bdd';
 import MassupdateView from '../views/massupdate-view';
+import * as moment from 'moment';
 
 /**
  *  Perform (or cancel) mass update of all records present on the list view
@@ -79,6 +80,10 @@ const populateMassUpdate = async function (massUpdateView, module, table: TableD
         let row = rows[i];
         let fieldName = row[0];
         let fieldValue = row[1];
+
+        if (fieldValue === 'today') {
+            fieldValue = moment().format('MM/DD/YYYY');
+        }
 
         // Get Field Label
         let argumentsArray = [];

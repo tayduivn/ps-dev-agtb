@@ -147,7 +147,7 @@ describe('Base.View.ActiveSubscriptions', function() {
             expect(beanCollectionStub.lastCall.args[2].filter[4].service_start_date.$lte).toEqual(today);
             expect(beanCollectionStub.lastCall.args[2].filter[5].service_end_date.$gte).toEqual(today);
             expect(beanCollectionStub.lastCall.args[2].limit).toEqual(app.config.maxRecordFetchSize);
-            expect(beanCollectionStub.lastCall.args[2].params.order_by).toEqual('service_start_date');
+            expect(beanCollectionStub.lastCall.args[2].params.order_by).toEqual('service_start_date,service_end_date');
         });
 
         it('calls _daysDifferenceCalculator', function() {

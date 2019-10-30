@@ -47,16 +47,16 @@ Feature: Customer Service Console Verification > Overview Tab
     When I choose Home in modules menu and select "Service Console" menu item
 
     # Verify chart in "My Open Cases by Follow Up Date" dashlet
-    Then I verify that first_row_left_dashlet element from #Dashboard.DashboardView still looks like myOpenCasesByFollowUpDate
+    Then I verify that first_row_left_dashlet element from #ServiceConsoleView still looks like myOpenCasesByFollowUpDate
 
     # Verify chart in "My Open Cases by Status" dashlet
-    Then I verify that second_row_left_dashlet element from #Dashboard.DashboardView still looks like myOpenCasesByStatus
+    Then I verify that second_row_left_dashlet element from #ServiceConsoleView still looks like myOpenCasesByStatus
 
     # Verify chart in "My Cases in the Last Week by Status" dashlet
-    Then I verify that second_row_right_dashlet element from #Dashboard.DashboardView still looks like myCasesInTheLastWeekByStatus
+    Then I verify that second_row_right_dashlet element from #ServiceConsoleView still looks like myCasesInTheLastWeekByStatus
 
     # Verify chart in "Open Cases By User By Status" dashlet
-    Then I verify that third_row_left_dashlet element from #Dashboard.DashboardView still looks like openCasesByUserByStatus
+    Then I verify that third_row_left_dashlet element from #ServiceConsoleView still looks like openCasesByUserByStatus
 
 
   @service_console @status_of_open_tasks_assigned_by_me
@@ -100,7 +100,7 @@ Feature: Customer Service Console Verification > Overview Tab
     When I choose Home in modules menu and select "Service Console" menu item
 
     # Verify chart in "Status of Open Tasks assigned to me" dashlet
-    Then I verify that third_row_right_dashlet element from #Dashboard.DashboardView still looks like StatusOfOpenTasksAssignedByMe
+    Then I verify that third_row_right_dashlet element from #ServiceConsoleView still looks like StatusOfOpenTasksAssignedByMe
 
 
   @planned_activities_dashlet
@@ -126,7 +126,7 @@ Feature: Customer Service Console Verification > Overview Tab
     When I choose Home in modules menu and select "Service Console" menu item
 
     # Schedule meeting 'Meeting 1' as Admin
-    When I Schedule Meeting in #Dashboard.CsPlannedActivitiesDashlet
+    When I Schedule Meeting in #ServiceConsoleView.PlannedActivitiesDashlet
     When I provide input for #MeetingsDrawer.HeaderView view
       | *   | name               |
       | M_1 | Initial discussion |
@@ -138,7 +138,7 @@ Feature: Customer Service Console Verification > Overview Tab
     When I close alert
 
     # Schedule meeting 'Meeting 2' as Admin
-    When I Schedule Meeting in #Dashboard.CsPlannedActivitiesDashlet
+    When I Schedule Meeting in #ServiceConsoleView.PlannedActivitiesDashlet
     When I provide input for #MeetingsDrawer.HeaderView view
       | *   | name              |
       | M_2 | Follow Up meeting |
@@ -149,71 +149,71 @@ Feature: Customer Service Console Verification > Overview Tab
     When I close alert
 
     # Navigate to meetings tab of Planned Activities Dashlet
-    When I navigate to Meetings tab in #Dashboard.CsPlannedActivitiesDashlet
+    When I navigate to Meetings tab in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Set Filter to 'today'
-    When I set filter as Today in #Dashboard.CsPlannedActivitiesDashlet
+    When I set filter as Today in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Verify number of records displayed on the tab
-    Then I verify the record count in Meetings tab is equal to 1 in #Dashboard.CsPlannedActivitiesDashlet
+    Then I verify the record count in Meetings tab is equal to 1 in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Verify that meeting record is present in the meetings tab of the dashlet
-    Then I verify *TodayM record info in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    Then I verify *TodayM record info in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
       | fieldName | value           |
       | name      | Today's Meeting |
       | label     | Overdue         |
 
     # Set Filter to future
-    When I set filter as Future in #Dashboard.CsPlannedActivitiesDashlet
+    When I set filter as Future in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Set visibility to 'user'
-    When I set visibility as 'user' in #Dashboard.CsPlannedActivitiesDashlet
+    When I set visibility as 'user' in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Verify number of records displayed on the tab
-    Then I verify the record count in Meetings tab is equal to 2 in #Dashboard.CsPlannedActivitiesDashlet
+    Then I verify the record count in Meetings tab is equal to 2 in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Verify that meeting record is present in the meetings tab of the dashlet
-    Then I verify *M_1 record info in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    Then I verify *M_1 record info in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
       | fieldName | value              |
       | name      | Initial discussion |
 
     # Verify that meeting record is present in the meetings tab of the dashlet
-    Then I verify *M_2 record info in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    Then I verify *M_2 record info in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
       | fieldName | value             |
       | name      | Follow Up meeting |
 
     # Set visibility to 'group'
-    When I set visibility as 'group' in #Dashboard.CsPlannedActivitiesDashlet
+    When I set visibility as 'group' in #ServiceConsoleView.PlannedActivitiesDashlet
     # Verify number of records displayed on the tab
-    Then I verify the record count in Meetings tab is equal to 2 in #Dashboard.CsPlannedActivitiesDashlet
+    Then I verify the record count in Meetings tab is equal to 2 in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Verify that meeting record is present in the meetings tab of the dashlet
-    Then I verify *M_1 record info in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    Then I verify *M_1 record info in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
       | fieldName | value              |
       | name      | Initial discussion |
 
     # Verify that meeting record is present in the meetings tab of the dashlet
-    Then I verify *M_2 record info in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    Then I verify *M_2 record info in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
       | fieldName | value             |
       | name      | Follow Up meeting |
 
     # Mark first meeting as 'Tentative'
-    When I mark record *M_1 as Tentative in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    When I mark record *M_1 as Tentative in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
     # Mark second meeting as 'Held'
-    When I mark record *M_2 as Held in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    When I mark record *M_2 as Held in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
     # Cancel
     When I Confirm confirmation alert
     # Mark third meeting (created by user) as 'Declined'
     When I close alert
 
     # Verify number of records displayed on the tab
-    Then I verify the record count in Meetings tab is equal to 1 in #Dashboard.CsPlannedActivitiesDashlet
+    Then I verify the record count in Meetings tab is equal to 1 in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Navigate to Calls tab
-    When I navigate to Calls tab in #Dashboard.CsPlannedActivitiesDashlet
+    When I navigate to Calls tab in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Log call record as Admin user
-    When I Log Call in #Dashboard.CsPlannedActivitiesDashlet
+    When I Log Call in #ServiceConsoleView.PlannedActivitiesDashlet
     When I provide input for #CallsDrawer.HeaderView view
       | *    | name       |
       | Ca_1 | First Call |
@@ -224,30 +224,30 @@ Feature: Customer Service Console Verification > Overview Tab
     When I close alert
 
     # Set Filter to 'Today'
-    When I set filter as Today in #Dashboard.CsPlannedActivitiesDashlet
+    When I set filter as Today in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Verify number of records displayed on the tab
-    Then I verify the record count in Calls tab is equal to 1 in #Dashboard.CsPlannedActivitiesDashlet
+    Then I verify the record count in Calls tab is equal to 1 in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Verify that call record is present in the Calls tab of the dashlet
-    Then I verify *TodayC record info in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    Then I verify *TodayC record info in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
       | fieldName | value        |
       | name      | Today's Call |
       | label     | Overdue      |
 
     # Set filter to 'Future'
-    When I set filter as Future in #Dashboard.CsPlannedActivitiesDashlet
+    When I set filter as Future in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Verify number of records displayed on the tab
-    Then I verify the record count in Calls tab is equal to 1 in #Dashboard.CsPlannedActivitiesDashlet
+    Then I verify the record count in Calls tab is equal to 1 in #ServiceConsoleView.PlannedActivitiesDashlet
 
     # Verify that record is present in the dashlet
-    Then I verify *Ca_1 record info in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    Then I verify *Ca_1 record info in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
       | fieldName | value      |
       | name      | First Call |
 
     # Mark call as Declined
-    When I mark record *Ca_1 as Declined in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+    When I mark record *Ca_1 as Declined in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
 
 
   @active_tasks_dashlet
@@ -262,36 +262,36 @@ Feature: Customer Service Console Verification > Overview Tab
     When I choose Home in modules menu and select "Service Console" menu item
 
     # Verify number of records displayed on the tab
-    Then I verify the record count in Due Now tab is equal to 2 in #Dashboard.CsActiveTasksDashlet
+    Then I verify the record count in Due Now tab is equal to 2 in #ServiceConsoleView.ActiveTasksDashlet
 
     # Verify record is present in 'Due Now' tab
-    Then I verify *T1 record info in #Dashboard.CsActiveTasksDashlet.ActivitiesList
+    Then I verify *T1 record info in #ServiceConsoleView.ActiveTasksDashlet.ActivitiesList
       | fieldName | value   |
       | name      | Task 1  |
       | label     | Overdue |
 
     # Verify record is present in 'Due Now' tab
-    Then I verify *T2 record info in #Dashboard.CsActiveTasksDashlet.ActivitiesList
+    Then I verify *T2 record info in #ServiceConsoleView.ActiveTasksDashlet.ActivitiesList
       | fieldName | value   |
       | name      | Task 2  |
       | label     | Overdue |
 
     # Complete task
-    When I mark record *T1 as Completed in #Dashboard.CsActiveTasksDashlet.ActivitiesList
+    When I mark record *T1 as Completed in #ServiceConsoleView.ActiveTasksDashlet.ActivitiesList
     When I Confirm confirmation alert
     When I close alert
 
     # Verify number of records displayed on the tab
-    Then I verify the record count in Due Now tab is equal to 1 in #Dashboard.CsActiveTasksDashlet
+    Then I verify the record count in Due Now tab is equal to 1 in #ServiceConsoleView.ActiveTasksDashlet
 
     # Navigate to 'Upcoming' tab
-    When I navigate to Upcoming tab in #Dashboard.CsActiveTasksDashlet
+    When I navigate to Upcoming tab in #ServiceConsoleView.ActiveTasksDashlet
 
     # Verify number of records on the tab
-    Then I verify the record count in Upcoming tab is equal to 0 in #Dashboard.CsActiveTasksDashlet
+    Then I verify the record count in Upcoming tab is equal to 0 in #ServiceConsoleView.ActiveTasksDashlet
 
     # Create 'Upcoming' task record
-    When I Create Task in #Dashboard.CsActiveTasksDashlet
+    When I Create Task in #ServiceConsoleView.ActiveTasksDashlet
     When I click show more button on #TasksDrawer view
     When I provide input for #TasksDrawer.HeaderView view
       | *   | name              |
@@ -303,21 +303,21 @@ Feature: Customer Service Console Verification > Overview Tab
     When I close alert
 
     # Verify number of records on the tab
-    Then I verify the record count in Upcoming tab is equal to 1 in #Dashboard.CsActiveTasksDashlet
+    Then I verify the record count in Upcoming tab is equal to 1 in #ServiceConsoleView.ActiveTasksDashlet
 
     # Verify record is present in 'Upcoming' tab
-    Then I verify *T_1 record info in #Dashboard.CsActiveTasksDashlet.ActivitiesList
+    Then I verify *T_1 record info in #ServiceConsoleView.ActiveTasksDashlet.ActivitiesList
       | fieldName | value             |
       | name      | Finalize the sale |
 
     # Navigate to 'Upcoming' tab
-    When I navigate to To Do tab in #Dashboard.CsActiveTasksDashlet
+    When I navigate to To Do tab in #ServiceConsoleView.ActiveTasksDashlet
 
     # Verify number of records on the tab
-    Then I verify the record count in To Do tab is equal to 0 in #Dashboard.CsActiveTasksDashlet
+    Then I verify the record count in To Do tab is equal to 0 in #ServiceConsoleView.ActiveTasksDashlet
 
     # Create task record with no due date
-    When I Create Task in #Dashboard.CsActiveTasksDashlet
+    When I Create Task in #ServiceConsoleView.ActiveTasksDashlet
     When I click show more button on #TasksDrawer view
     When I provide input for #TasksDrawer.HeaderView view
       | *   | name        |
@@ -329,10 +329,10 @@ Feature: Customer Service Console Verification > Overview Tab
     When I close alert
 
     # Verify number of records on the tab
-    Then I verify the record count in To Do tab is equal to 1 in #Dashboard.CsActiveTasksDashlet
+    Then I verify the record count in To Do tab is equal to 1 in #ServiceConsoleView.ActiveTasksDashlet
 
-    When I navigate to Due Now tab in #Dashboard.CsActiveTasksDashlet
-    When I select *T2 in #Dashboard.CsActiveTasksDashlet.ActivitiesList
+    When I navigate to Due Now tab in #ServiceConsoleView.ActiveTasksDashlet
+    When I select *T2 in #ServiceConsoleView.ActiveTasksDashlet.ActivitiesList
     Then I should see #T2Record view
 
 

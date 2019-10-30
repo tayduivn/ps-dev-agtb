@@ -10,12 +10,12 @@
  */
 
 import BaseListView from './baselist-view';
-import CsCasesInteractionsListItemView from './cs-cases-interactions-list-item-view';
+import RecordInteractionsListItemView from './record-interactions-list-item-view';
 import * as _ from 'lodash';
 import ListViewDashletListItemView from './list-view-dashlet-list-item-view';
 
 /**
- * @class CsCasesInteractionsListView represents list view in Cases Interactions dashlet
+ * @class RecordInteractionsListView represents list view in Cases Interactions dashlet
  * @extends BaseListView
  */
 export default class ListViewDashletListView extends BaseListView {
@@ -57,7 +57,7 @@ export default class ListViewDashletListView extends BaseListView {
      * Creates and returns a list item based on conditions
      *
      * @param {Object} conditions The record ID or other conditions of the list item to return
-     * @return {CsCasesInteractionsListItemView} listViewItem
+     * @return {RecordInteractionsListItemView} listViewItem
      */
     public createListItem(conditions) {
 

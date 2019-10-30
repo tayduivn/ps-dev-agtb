@@ -10,6 +10,12 @@
  */
 
 import DashboardView from './dashboard-view';
+import DashletView from './dashlet-view';
+import DashableRecordDashlet from './dashable-record-dashlet-view';
+import CommentLogDashlet from './comment-log-dashlet-view';
+import RecordInteractionsDashlet from './record-interactions-dashlet-view';
+import PlannedActivitiesDashlet from './planned-activities-dashlet-view';
+import ActiveTasksDashlet from './active-tasks-dashlet-view';
 
 /**
  * Represents Service Console view.
@@ -19,30 +25,51 @@ import DashboardView from './dashboard-view';
  */
 export default class ServiceConsoleView extends DashboardView {
 
+    public DashableRecordDashlet: DashletView;
+    public RcPipelineDashlet: DashletView;
+    public CommentLogDashlet: DashletView;
+    public AccountInfoDashlet: DashletView;
+    public CasesInteractionsDashlet: DashletView;
+    public PlannedActivitiesDashlet: DashletView;
+    public ActiveTasksDashlet: DashletView;
+
     constructor(options) {
         super(options);
 
-        this.selectors = this.mergeSelectors({
-            tab: 'a[data-original-title="{{tabName}}"]',
-            closeSideDrawer: '.close-drawer',
+        /*
+         *    Service Console > Overview Tab dashlets
+         */
+        this.PlannedActivitiesDashlet = this.createComponent<PlannedActivitiesDashlet>(PlannedActivitiesDashlet, {
+            module: options.module,
+            position: '001',
         });
-    }
 
-    /**
-     * Switch tabs in Service Console
-     *
-     * @param {string} tabName
-     */
-    public async switchTab(tabName: string) {
-        let selector = this.$('tab', {tabName});
-        await this.driver.click(selector);
-    }
+        this.ActiveTasksDashlet = this.createComponent<ActiveTasksDashlet>(ActiveTasksDashlet, {
+            module: options.module,
+            position: '002',
+        });
 
-    /**
-     * Close side drawer in Cases tab of Service Console
-     */
-    public async closeSideDrawer() {
-        let selector = this.$('closeSideDrawer');
-        await this.driver.click(selector);
+        /*
+         *    Service Console > Cases Tab dashlets
+         */
+        this.DashableRecordDashlet = this.createComponent<DashableRecordDashlet>(DashableRecordDashlet, {
+            module: options.module,
+            position: '000',
+        });
+
+        this.CommentLogDashlet = this.createComponent<CommentLogDashlet>(CommentLogDashlet, {
+            module: options.module,
+            position: '001',
+        });
+
+        this.AccountInfoDashlet = this.createComponent<DashableRecordDashlet>(DashableRecordDashlet, {
+            module: options.module,
+            position: '010',
+        });
+
+        this.CasesInteractionsDashlet = this.createComponent<RecordInteractionsDashlet>(RecordInteractionsDashlet, {
+            module: options.module,
+            position: '011',
+        });
     }
 }

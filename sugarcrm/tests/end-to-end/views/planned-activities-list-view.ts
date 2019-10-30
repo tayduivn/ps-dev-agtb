@@ -55,7 +55,7 @@ export default class PlannedActivitiesListView extends BaseListView {
      * Creates and returns a list item based on conditions
      *
      * @param {Object} conditions The record ID or other conditions of the list item to return
-     * @return {CsCasesInteractionsListItemView} listViewItem
+     * @return {RecordInteractionsListItemView} listViewItem
      */
     public createListItem(conditions) {
 

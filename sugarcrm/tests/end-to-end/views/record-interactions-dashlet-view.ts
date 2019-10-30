@@ -10,7 +10,7 @@
  */
 
 import DashletView from './dashlet-view';
-import CsCasesInteractionsListView from './cs-cases-interactions-list-view';
+import RecordsInteractionsListView from './record-interactions-list-view';
 
 /**
  * Represents Cases Interactions dashlet
@@ -18,14 +18,15 @@ import CsCasesInteractionsListView from './cs-cases-interactions-list-view';
  * @class CsCasesInteractionsDashletView
  * @extends DashletView
  */
-export default class CsCasesInteractionsDashlet extends DashletView {
+export default class RecordInteractionsDashlet extends DashletView {
 
     public activity = {
         name:  '',
         status: '',
     };
 
-    public CsCasesInteractionsList: CsCasesInteractionsListView;
+    public InteractionsList: RecordsInteractionsListView;
+
 
     constructor(options) {
         super(options);
@@ -54,7 +55,7 @@ export default class CsCasesInteractionsDashlet extends DashletView {
             }
         });
 
-        this.CsCasesInteractionsList = this.createComponent<CsCasesInteractionsListView>(CsCasesInteractionsListView);
+        this.InteractionsList = this.createComponent<RecordsInteractionsListView>(RecordsInteractionsListView);
     }
 
     /**

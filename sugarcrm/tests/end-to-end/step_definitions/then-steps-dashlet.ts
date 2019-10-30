@@ -18,7 +18,7 @@ import DashletView from '../views/dashlet-view';
  *  @example
  *  Then I verify 'No data available.' message appears in #Dashboard.InactiveTasksDashlet
  */
-Then(/^I verify '(No data available.)' message appears in (#\S+)*$/,
+Then(/^I verify '([a-zA-Z](?:\w|\S\ )*[.]?)' message appears in (#\S+)*$/,
     async function (expectedMessage: string, view: DashletView): Promise<void> {
         let actualValue = await view.getDashletFooterMessage();
         if (expectedMessage !== actualValue) {

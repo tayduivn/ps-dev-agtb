@@ -60,16 +60,16 @@ Feature: Sugar Sell Renewal Console Verification > Overview Tab
     When I select Overview tab in #RenewalsConsoleView
 
     # Select '2021 Q3' in time periods dropdown
-    When I select "2021 Q3" in #Dashboard.RcPipelineDashlet
+    When I select "2021 Q3" in #RenewalsConsoleView.PipelineDashlet
 
     # Verify that dashlet is empty (nothing to display)
-    Then I verify 'No data available.' message appears in #Dashboard.RcPipelineDashlet
+    Then I verify 'No data available.' message appears in #RenewalsConsoleView.PipelineDashlet
 
     # Select '2021 Q4' in time periods dropdown
-    When I select "2021 Q4" in #Dashboard.RcPipelineDashlet
+    When I select "2021 Q4" in #RenewalsConsoleView.PipelineDashlet
 
     # Verify Pipeline chart is updated
-    Then I verify that dashboard2by2_top_right element from #Dashboard.DashboardView still looks like PipelineChart_1
+    Then I verify that dashboard2by2_top_right element from #RenewalsConsoleView still looks like PipelineChart_1
 
     # Generate opportunity record with RLIs with different sales stages linked to it
     Given Opportunities records exist:
@@ -81,10 +81,10 @@ Feature: Sugar Sell Renewal Console Verification > Overview Tab
       | RLI_6 | 2021-10-01T19:20:22+00:00 | 2000       | 3000        | 4000      | Perception Analysis | 1        | 1                |
 
     # Refresh dashlet
-    When I refresh #Dashboard.RcPipelineDashlet dashlet
+    When I refresh #RenewalsConsoleView.PipelineDashlet dashlet
 
     # Verify Pipeline chart is updated
-    Then I verify that dashboard2by2_top_right element from #Dashboard.DashboardView still looks like PipelineChart_2
+    Then I verify that dashboard2by2_top_right element from #RenewalsConsoleView still looks like PipelineChart_2
 
     # Navigate to RLI module and delete one RLI item
     When I delete *RLI_1 record in RevenueLineItems list view
@@ -93,10 +93,10 @@ Feature: Sugar Sell Renewal Console Verification > Overview Tab
     When I choose Home in modules menu
 
     # Select '2021 Q4' in time periods dropdown
-    When I select "2021 Q4" in #Dashboard.RcPipelineDashlet
+    When I select "2021 Q4" in #RenewalsConsoleView.PipelineDashlet
 
     # Verify Pipeline chart is updated
-    Then I verify that dashboard2by2_top_right element from #Dashboard.DashboardView still looks like PipelineChart_3
+    Then I verify that dashboard2by2_top_right element from #RenewalsConsoleView still looks like PipelineChart_3
 
 
   @user_profile

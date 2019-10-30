@@ -1262,10 +1262,10 @@ Feature: Quotes module E2E testing
       | fieldName | value   |
       | name      | Quote_3 |
     Then I verify fields on #EmailsRecord.RecordView
-      | fieldName              | value                                  |
-      | attachments_collection | Email Attachment : Quote_3_Invoice.pdf |
-      | from_collection        | Administrator                          |
-      | to_collection          | Acc_1                                  |
+      | fieldName              | value                                                  |
+      | attachments_collection | Email Attachment : Quote_3_Invoice_(with_services).pdf |
+      | from_collection        | Administrator                                          |
+      | to_collection          | Acc_1                                                  |
 
 
 

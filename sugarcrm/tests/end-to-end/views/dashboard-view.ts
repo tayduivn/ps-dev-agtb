@@ -28,6 +28,10 @@ export default class DashboardView extends BaseView {
                 newrow: '.row-fluid[name="dashlet_last_{{index}}0"] .add-row.empty',
                 adddashlet: '.add-dashlet .fa.fa-plus',
             },
+            // Service and Renewals console
+            tab: 'a[data-original-title="{{tabName}}"]',
+            closeSideDrawer: '.close-drawer',
+
             elements: {
                 HomeDashboard: '',
                 dashlet: '.dashlets.row-fluid',
@@ -48,10 +52,9 @@ export default class DashboardView extends BaseView {
 
                 // 2x2 dashboard like Overview tab of Sales Renewal console
                 dashboard2by2_top_right: '[name=dashlet_100]',
-                dashboard2by2_bottom_right: {
-                    $: '[name=dashlet_110]',
-                    chart: '.sc-bubble-wrap',
-                },
+                dashboard2by2_bottom_right: '[name=dashlet_110]',
+                dashboard2by2_top_left: '[name=dashlet_000]',
+                dashboard2by2_bottom_left: '[name=dashlet_010]',
             }
         });
     }
@@ -68,4 +71,21 @@ export default class DashboardView extends BaseView {
         await this.driver.click(selector);
     }
 
+    /**
+     * Switch tabs in Service Console and Renewals Console
+     *
+     * @param {string} tabName
+     */
+    public async switchTab(tabName: string) {
+        let selector = this.$('tab', {tabName});
+        await this.driver.click(selector);
+    }
+
+    /**
+     * Close side drawer in  Service Console and Renewals Console
+     */
+    public async closeSideDrawer() {
+        let selector = this.$('closeSideDrawer');
+        await this.driver.click(selector);
+    }
 }

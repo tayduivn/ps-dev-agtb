@@ -10,16 +10,16 @@
  */
 
 import DashletView from './dashlet-view';
+import RecordInteractionsListView from './record-interactions-list-view';
 import PlannedActivitiesListView from './planned-activities-list-view';
 
 /**
- * Represents Planned Activities dashlet
+ * Represents Active Subscriptions dashlet
  *
- * @class PlannedActivitiesDashlet
+ * @class ActiveSubscriptionsDashlet
  * @extends DashletView
  */
-export default class PlannedActivitiesDashlet extends DashletView {
-
+export default class ActiveSubscriptionsDashlet extends DashletView {
 
     public ActivitiesList: PlannedActivitiesListView;
 
@@ -28,26 +28,13 @@ export default class PlannedActivitiesDashlet extends DashletView {
 
         this.selectors = this.mergeSelectors({
             $: `.dashlet-container[name=dashlet_${options.position}]`,
-            header: {
-                $: '.dashlet-header',
-                plusButton: '.fa.fa-plus',
-                menuItems: {
-                    log_call: 'li a[name=log_call]',
-                    schedule_meeting: 'li a[name=schedule_meeting]',
-                },
-            },
-            tabs: {
-                $: '.dashlet-tabs',
-                tab: 'a[data-index="{{index}}"]',
-                activeTab: '.dashlet-tab.active a[data-index="{{index}}"]',
-                record_count: 'a[data-index="{{index}}"] .count',
-            },
 
-            count: '.dashlet-tabs a[data-index="{{index}}"] .count',
-            filter: '.btn-group.dashlet-group .btn[value={{filterName}}]',
-            visibility: '[value="{{visibilityName}}"]',
+            subscriptions: {
+                $: '.active-subscriptions'
+            }
         });
 
+        // Active Tasks shares PlannedActivitiesListView with Planned Activities dashlet
         this.ActivitiesList = this.createComponent<PlannedActivitiesListView>(PlannedActivitiesListView);
     }
 }

@@ -7,9 +7,9 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @job4
+@modules @job4 @pr
 Feature: Customer Service Console Verification
-  As a customer service agent I need to be able to verify main CS console functionality
+  As a customer service agent I need to be able to verify main Service Console functionality
 
   Background:
     Given I am logged in
@@ -87,21 +87,21 @@ Feature: Customer Service Console Verification
     # Click the record to open side drawer
     When I select *C_1 in #CasesList.MultilineListView
     # Verify that case name is updated in the header of Dashable Record dashlet
-    Then I verify fields on #Dashboard.CsDashableRecordDashlet
+    Then I verify fields on #ServiceConsoleView.DashableRecordDashlet
       | fieldName | value  |
       | name      | Case_1 |
 
     # Select another case while side drawer is opened
     When I select *C_2 in #CasesList.MultilineListView
     # Verify that case name is updated in the header of Dashable Record dashlet
-    Then I verify fields on #Dashboard.CsDashableRecordDashlet
+    Then I verify fields on #ServiceConsoleView.DashableRecordDashlet
       | fieldName | value  |
       | name      | Case_2 |
 
     # Select another case while side drawer is opened
     When I select *C_3 in #CasesList.MultilineListView
     # Verify that case name is updated in the header of Dashable Record dashlet
-    Then I verify fields on #Dashboard.CsDashableRecordDashlet
+    Then I verify fields on #ServiceConsoleView.DashableRecordDashlet
       | fieldName | value  |
       | name      | Case_3 |
 
@@ -137,7 +137,7 @@ Feature: Customer Service Console Verification
 
     # Select Overview tab
     When I select Overview tab in #ServiceConsoleView
-    Then I verify that first_row_left_dashlet element from #Dashboard.DashboardView still looks like sc_overview_toprow_left
+    Then I verify that first_row_left_dashlet element from #ServiceConsoleView still looks like sc_overview_toprow_left
 
 
   @service-console @cs_dashable_record_dashlet
@@ -179,7 +179,7 @@ Feature: Customer Service Console Verification
     When I select *C_1 in #CasesList.MultilineListView
 
     # Edit record inside the dashlet and cancel
-    When I click Edit button in #Dashboard.CsDashableRecordDashlet
+    When I click Edit button in #ServiceConsoleView.DashableRecordDashlet
     When I provide input for #C_1Record.RecordView view
       | priority | account_name |
       | Medium   | Account_1    |
@@ -188,14 +188,14 @@ Feature: Customer Service Console Verification
     # Verify that Alert appears
     When I Cancel confirmation alert
     # Cancel Editing
-    When I click Cancel button in #Dashboard.CsDashableRecordDashlet
+    When I click Cancel button in #ServiceConsoleView.DashableRecordDashlet
 
     # Edit record inside the dashlet and cancel
-    When I click Edit button in #Dashboard.CsDashableRecordDashlet
+    When I click Edit button in #ServiceConsoleView.DashableRecordDashlet
     When I provide input for #C_1Record.RecordView view
       | priority | account_name |
       | Medium   | Account_1    |
-    When I click Cancel button in #Dashboard.CsDashableRecordDashlet
+    When I click Cancel button in #ServiceConsoleView.DashableRecordDashlet
 
     # Verify the edited value are not saved
     Then I verify fields on #C_1Record.RecordView
@@ -204,11 +204,11 @@ Feature: Customer Service Console Verification
       | account_name |       |
 
     # Edit record inside the dashlet and save
-    When I click Edit button in #Dashboard.CsDashableRecordDashlet
+    When I click Edit button in #ServiceConsoleView.DashableRecordDashlet
     When I provide input for #C_1Record.RecordView view
       | priority | account_name |
       | Medium   | Account_1    |
-    When I click Save button in #Dashboard.CsDashableRecordDashlet
+    When I click Save button in #ServiceConsoleView.DashableRecordDashlet
     When I close alert
 
     # Verify the edited value is successfully saved
@@ -218,27 +218,27 @@ Feature: Customer Service Console Verification
       | account_name | Account_1 |
 
     # Switch to Tasks tab inside the Dashable Record dashlet
-    When I switch to Tasks tab in #Dashboard.CsDashableRecordDashlet
+    When I switch to Tasks tab in #ServiceConsoleView.DashableRecordDashlet
     # Verify task records related to the case appear in Tasks tab of Dashable Record dashlet
-    Then I verify number of records in #Dashboard.CsDashableRecordDashlet.ListView is 5
-    And I should see [*T1, *T2, *T3, *T4, *T5] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+    Then I verify number of records in #ServiceConsoleView.DashableRecordDashlet.ListView is 5
+    And I should see [*T1, *T2, *T3, *T4, *T5] on #ServiceConsoleView.DashableRecordDashlet.ListView dashlet
 
     # Switch to Contacts tab inside the Dashable Record dashlet
-    When I switch to Contacts tab in #Dashboard.CsDashableRecordDashlet
+    When I switch to Contacts tab in #ServiceConsoleView.DashableRecordDashlet
     # Verify contact records related to the case appear in Contacts tab of Dashable Record dashlet
-    Then I verify number of records in #Dashboard.CsDashableRecordDashlet.ListView is 2
-    And I should see [*Co_1, *Co_2] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+    Then I verify number of records in #ServiceConsoleView.DashableRecordDashlet.ListView is 2
+    And I should see [*Co_1, *Co_2] on #ServiceConsoleView.DashableRecordDashlet.ListView dashlet
 
     # Switch to Documents tab inside the Dashable Record dashlet
-    When I switch to Documents tab in #Dashboard.CsDashableRecordDashlet
+    When I switch to Documents tab in #ServiceConsoleView.DashableRecordDashlet
     # Verify document records related to the case appear in Documents tab of Dashable Record dashlet
-    Then I verify number of records in #Dashboard.CsDashableRecordDashlet.ListView is 1
-    And I should see [*D_1] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+    Then I verify number of records in #ServiceConsoleView.DashableRecordDashlet.ListView is 1
+    And I should see [*D_1] on #ServiceConsoleView.DashableRecordDashlet.ListView dashlet
 
     # Switch to Tasks tab
-    When I switch to Tasks tab in #Dashboard.CsDashableRecordDashlet
+    When I switch to Tasks tab in #ServiceConsoleView.DashableRecordDashlet
     # Click item from the Tasks tab
-    And I select *T1 in #Dashboard.CsDashableRecordDashlet.ListView
+    And I select *T1 in #ServiceConsoleView.DashableRecordDashlet.ListView
     Then I should see #T1Record view
 
 
@@ -264,23 +264,23 @@ Feature: Customer Service Console Verification
     # Click the record to open side panel
     When I select *C_1 in #CasesList.MultilineListView
 
-    When I add the following comment into #Dashboard.CsCommentLogDashlet:
+    When I add the following comment into #ServiceConsoleView.CommentLogDashlet:
       | value                |
       | My first new comment |
 
-    When I add the following comment into #Dashboard.CsCommentLogDashlet:
+    When I add the following comment into #ServiceConsoleView.CommentLogDashlet:
       | value                 |
       | My second new comment |
 
-    When I add the following comment into #Dashboard.CsCommentLogDashlet:
+    When I add the following comment into #ServiceConsoleView.CommentLogDashlet:
       | value                      |
       | Add reference to the @user |
 
-    When I add the following comment into #Dashboard.CsCommentLogDashlet:
+    When I add the following comment into #ServiceConsoleView.CommentLogDashlet:
       | value                           |
       | Add reference to the #Account_1 |
 
-    Then I verify comments in #Dashboard.CsCommentLogDashlet
+    Then I verify comments in #ServiceConsoleView.CommentLogDashlet
       | comment                             |
       | Add reference to the Account_1      |
       | Add reference to the user userLName |
@@ -307,7 +307,7 @@ Feature: Customer Service Console Verification
     When I select *C_1 in #CasesList.MultilineListView
 
     # Edit record inside the dashlet and cancel
-    When I click Edit button in #Dashboard.CsAccountInfoDashlet
+    When I click Edit button in #ServiceConsoleView.AccountInfoDashlet
     When I provide input for #A_1Record.RecordView view
       | website              | industry  | parent_name | account_type | service_level | phone_office |
       | http://www.yahoo.com | Chemicals | Account_2   | Competitor   | Tier 1        | 408.233.3221 |
@@ -316,15 +316,15 @@ Feature: Customer Service Console Verification
     # Verify that Alert appears
     When I Cancel confirmation alert
     # Cancel Editing
-    When I click Cancel button in #Dashboard.CsAccountInfoDashlet
+    When I click Cancel button in #ServiceConsoleView.AccountInfoDashlet
 
     # Edit record inside the dashlet and save
-    When I click Edit button in #Dashboard.CsAccountInfoDashlet
-    When I click show more button in #Dashboard.CsAccountInfoDashlet
+    When I click Edit button in #ServiceConsoleView.AccountInfoDashlet
+    When I click show more button in #ServiceConsoleView.AccountInfoDashlet
     When I provide input for #A_1Record.RecordView view
       | website              | industry  | parent_name | account_type | service_level | phone_office | description         | annual_revenue |
       | http://www.yahoo.com | Chemicals | Account_2   | Competitor   | Tier 1        | 408.233.3221 | Account Description | $100,000.00    |
-    When I click Save button in #Dashboard.CsAccountInfoDashlet
+    When I click Save button in #ServiceConsoleView.AccountInfoDashlet
     When I close alert
 
     # Verify the edited value is successfully saved
@@ -337,7 +337,7 @@ Feature: Customer Service Console Verification
       | service_level  | Tier 1               |
       | phone_office   | 408.233.3221         |
       | annual_revenue | $100,000.00          |
-    When I click show less button in #Dashboard.CsAccountInfoDashlet
+    When I click show less button in #ServiceConsoleView.AccountInfoDashlet
 
 
   @service-console @cs_cases_interactions_dashlet
@@ -363,7 +363,7 @@ Feature: Customer Service Console Verification
     When I select *C_1 in #CasesList.MultilineListView
 
     # Create Call Record with status Held
-    When I Log Call in #Dashboard.CsCasesInteractionsDashlet
+    When I Log Call in #ServiceConsoleView.CasesInteractionsDashlet
     When I provide input for #CallsDrawer.HeaderView view
       | *    | name        | status |
       | Co_1 | Call (Held) | Held   |
@@ -374,7 +374,7 @@ Feature: Customer Service Console Verification
     When I close alert
 
     # Create Call Record with status Cancelled
-    When I Log Call in #Dashboard.CsCasesInteractionsDashlet
+    When I Log Call in #ServiceConsoleView.CasesInteractionsDashlet
     When I provide input for #CallsDrawer.HeaderView view
       | *    | name            | status   |
       | Co_2 | Call (Canceled) | Canceled |
@@ -385,10 +385,10 @@ Feature: Customer Service Console Verification
     When I close alert
 
     # Expand record in the dashlet
-    When I expand record *Co_1 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    When I expand record *Co_1 in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
 
     # Verify record info in the expanded record info block
-    Then I verify *Co_1 record info in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    Then I verify *Co_1 record info in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
       | fieldName   | value                                 |
       | name        | Call (Held)                           |
       | status      | Held                                  |
@@ -397,10 +397,10 @@ Feature: Customer Service Console Verification
       | description | Testing with Seedbed                  |
 
     # Expand another record in the dashlet
-    When I expand record *Co_2 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    When I expand record *Co_2 in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
 
     # Verify record info in the expanded record info block
-    Then I verify *Co_2 record info in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    Then I verify *Co_2 record info in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
       | fieldName   | value                                 |
       | name        | Call (Canceled)                       |
       | status      | Canceled                              |
@@ -409,10 +409,10 @@ Feature: Customer Service Console Verification
       | description | Testing with Seedbed                  |
 
     # Collapse expanded info block
-    When I collapse record *Co_2 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    When I collapse record *Co_2 in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
 
     # Schedule meeting with status 'Held'
-    When I Schedule Meeting in #Dashboard.CsCasesInteractionsDashlet
+    When I Schedule Meeting in #ServiceConsoleView.CasesInteractionsDashlet
     When I provide input for #MeetingsDrawer.HeaderView view
       | *   | name      | status |
       | M_1 | Meeting 1 | Held   |
@@ -423,7 +423,7 @@ Feature: Customer Service Console Verification
     When I close alert
 
     # Schedule meeting with status 'Canceled'
-    When I Schedule Meeting in #Dashboard.CsCasesInteractionsDashlet
+    When I Schedule Meeting in #ServiceConsoleView.CasesInteractionsDashlet
     When I provide input for #MeetingsDrawer.HeaderView view
       | *   | name      | status   |
       | M_2 | Meeting 2 | Canceled |
@@ -434,10 +434,10 @@ Feature: Customer Service Console Verification
     When I close alert
 
     # Expand record in the dashlet
-    When I expand record *M_1 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    When I expand record *M_1 in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
 
     # Verify record info in the expanded record info block
-    Then I verify *M_1 record info in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    Then I verify *M_1 record info in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
       | fieldName   | value                                 |
       | name        | Meeting 1                             |
       | status      | Held                                  |
@@ -445,10 +445,10 @@ Feature: Customer Service Console Verification
       | description | Testing with Seedbed                  |
 
     # Expand another record in the dashlet
-    When I expand record *M_2 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    When I expand record *M_2 in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
 
     # Verify record info in the expanded record info block
-    Then I verify *M_2 record info in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    Then I verify *M_2 record info in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
       | fieldName   | value                                 |
       | name        | Meeting 2                             |
       | status      | Canceled                              |
@@ -456,10 +456,10 @@ Feature: Customer Service Console Verification
       | description | Testing with Seedbed                  |
 
     # Collapse expanded info block
-    When I collapse record *M_2 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    When I collapse record *M_2 in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
 
     # Create note record
-    When I Create Note or Attachment in #Dashboard.CsCasesInteractionsDashlet
+    When I Create Note or Attachment in #ServiceConsoleView.CasesInteractionsDashlet
     When I provide input for #NotesDrawer.HeaderView view
       | *   | name   |
       | N_1 | Note 1 |
@@ -470,17 +470,17 @@ Feature: Customer Service Console Verification
     When I close alert
 
     # Expand another record in the dashlet
-    When I expand record *N_1 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    When I expand record *N_1 in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
 
     # Verify record info in the expanded record info block
-    Then I verify *N_1 record info in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    Then I verify *N_1 record info in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
       | fieldName   | value              |
       | subject     | Note 1             |
       | contact     | Contact1 Contact1  |
       | description | Note 1 description |
 
     # Collapse expanded record info block
-    When I collapse record *N_1 in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+    When I collapse record *N_1 in #ServiceConsoleView.CasesInteractionsDashlet.InteractionsList
 
 
   @service-console @cs_dashable_record_dashlet @config
@@ -517,7 +517,7 @@ Feature: Customer Service Console Verification
     When I select *C_1 in #CasesList.MultilineListView
 
     # Verify if all expected tabs are displayed in the dashlet
-    Then I should see the following tabs in #Dashboard.CsDashableRecordDashlet dashlet:
+    Then I should see the following tabs in #ServiceConsoleView.DashableRecordDashlet dashlet:
       | tab_list  |
       | Cases     |
       | Tasks     |
@@ -525,7 +525,7 @@ Feature: Customer Service Console Verification
       | Documents |
 
     # Navigate to dashlet config screen
-    When I edit #Dashboard.CsDashableRecordDashlet dashlet
+    When I edit #ServiceConsoleView.DashableRecordDashlet dashlet
 
     # Add modules as tabs to purposely exceed the 6 tabs limit
     When I add the following modules as tabs in #DashableRecordConfig view:
@@ -559,7 +559,7 @@ Feature: Customer Service Console Verification
     When I close alert
 
     # Verify that 2 more tabs are added to the dashlet
-    Then I should see the following tabs in #Dashboard.CsDashableRecordDashlet dashlet:
+    Then I should see the following tabs in #ServiceConsoleView.DashableRecordDashlet dashlet:
       | tab_list  |
       | Cases     |
       | Tasks     |
@@ -569,28 +569,28 @@ Feature: Customer Service Console Verification
       | Notes     |
 
     # Navigate to newly added Calls tab inside the Dashable Record dashlet
-    When I switch to Calls tab in #Dashboard.CsDashableRecordDashlet
+    When I switch to Calls tab in #ServiceConsoleView.DashableRecordDashlet
     # Verify that calls records related to the case appear in the Calls tab of the dashlet
-    Then I should see [*Call_1, *Call_2, *Call_3] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+    Then I should see [*Call_1, *Call_2, *Call_3] on #ServiceConsoleView.DashableRecordDashlet.ListView dashlet
 
     # Navigate to Notes tab inside the Dashable Record dashlet
-    When I switch to Notes tab in #Dashboard.CsDashableRecordDashlet
+    When I switch to Notes tab in #ServiceConsoleView.DashableRecordDashlet
     # Verify that notes records related to the case appear in the Notes tab of the dashlet
-    Then I should see [*N_1, *N_2, *N_3, *N_4, *N_5, *N_6, *N_7] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+    Then I should see [*N_1, *N_2, *N_3, *N_4, *N_5, *N_6, *N_7] on #ServiceConsoleView.DashableRecordDashlet.ListView dashlet
 
     # Navigate to Tasks tab inside the Dashable Record dashlet
-    When I switch to Tasks tab in #Dashboard.CsDashableRecordDashlet
+    When I switch to Tasks tab in #ServiceConsoleView.DashableRecordDashlet
     # Verify that tasks records related to the case appear in the Tasks tab of the dashlet
-    Then I should see [*T_1] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+    Then I should see [*T_1] on #ServiceConsoleView.DashableRecordDashlet.ListView dashlet
 
      # Getting value of specific field is not currently supported in List View dashlet
-#    Then I verify field values for *T_1 in #Dashboard.CsDashableRecordDashlet.ListView
+#    Then I verify field values for *T_1 in #ServiceConsoleView.DashableRecordDashlet.ListView
 #      | fieldName | value       |
 #      | name      | Task 1      |
 #      | status    | Not Started |
 
     # Return back to dashlet config screen
-    When I edit #Dashboard.CsDashableRecordDashlet dashlet
+    When I edit #ServiceConsoleView.DashableRecordDashlet dashlet
 
     # Remove previously added modules from the dashlet in configuration screen
     When I remove the following modules as tabs in #DashableRecordConfig view:
@@ -608,7 +608,7 @@ Feature: Customer Service Console Verification
     When I close alert
 
     # Verify that 2 previously added tabs are successfully removed
-    Then I should not see the following tabs in #Dashboard.CsDashableRecordDashlet dashlet:
+    Then I should not see the following tabs in #ServiceConsoleView.DashableRecordDashlet dashlet:
       | tab_list  |
       | Calls     |
       | Notes     |

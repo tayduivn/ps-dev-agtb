@@ -12,17 +12,17 @@
 import {seedbed, TableDefinition, Then} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import MultilineListView from '../views/multiline-list-view';
-import CsCommentLogDashlet from '../views/cs-comment-log-dashlet-view';
-import CsCasesInteractionsDashlet from '../views/cs-cases-interactions-dashlet-view';
+import CommentLogDashlet from '../views/comment-log-dashlet-view';
+import CsCasesInteractionsDashlet from '../views/record-interactions-dashlet-view';
 import {parseInputArray} from './general_bdd';
 import ListViewDashletListView from '../views/list-view-dashlet-list-view';
 import DashableRecordDashlet from '../views/dashable-record-dashlet-view';
 import DashletView from '../views/dashlet-view';
 import BaseListView from '../views/baselist-view';
-import CsCasesInteractionsListItemView from '../views/cs-cases-interactions-list-item-view';
+import RecordInteractionsListItemView from '../views/record-interactions-list-item-view';
 import PlannedActivitiesListItemView from '../views/planned-activities-list-item-view';
 import PlannedActivitiesListView from '../views/planned-activities-list-view';
-import CsCasesInteractionsListView from '../views/cs-cases-interactions-list-view';
+import RecordInteractionsListView from '../views/record-interactions-list-view';
 import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
 import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
 import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
@@ -89,14 +89,14 @@ Then(/^I verify the case records order in (#\S+)$/,
  *  Verify comments in the comment log (from top to bottom)
  *
  *  @example
- *  Then I verify comments in #Dashboard.CsCommentLogDashlet
+ *  Then I verify comments in #ServiceConsoleView.CommentLogDashlet
  *      | comment                             |
  *      | Add reference to the Account_1      |
  *      | Add reference to the user userLName |
  *      | My second new comment               |
  */
 Then(/^I verify comments in (#\S+)$/,
-    async function(view: CsCommentLogDashlet, data: TableDefinition) {
+    async function(view: CommentLogDashlet, data: TableDefinition) {
         let rows = data.rows();
         let expValue, actValue;
         let errors = [];
@@ -136,7 +136,7 @@ Then(/^I verify comments in (#\S+)$/,
  *  Verify items in the Cases Interactions dashlet list view (top-to-bottom)
  *
  *      @example
- *      Then I verify list items in #Dashboard.CsCasesInteractionsDashlet
+ *      Then I verify list items in #ServiceConsoleView.CasesInteractionsDashlet
  *          | name            | status   |
  *          | Meeting 1       | Held     |
  *          | Meeting 2       | Not Held |
@@ -192,7 +192,7 @@ Then(/^I verify list items in (#\S+)$/,
  *  Verify record info in the expanded block inside Cases Interactions dashlet
  *
  *      @example
- *      Then I verify *M_1 record info in #Dashboard.CsCasesInteractionsDashlet.CsCasesInteractionsList
+ *      Then I verify *M_1 record info in #ServiceConsoleView.CasesInteractionsDashlet.CsCasesInteractionsList
  *          | fieldName   | value                                 |
  *          | name        | Meeting 1                             |
  *          | status      | Held                                  |
@@ -213,8 +213,8 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) record info in (#\S+)$/,
             let fieldName = row[0];
             let expValue = row[1];
 
-            if (view instanceof CsCasesInteractionsListView) {
-                value = await (listItem as CsCasesInteractionsListItemView).getRecordInfo(i);
+            if (view instanceof RecordInteractionsListView) {
+                value = await (listItem as RecordInteractionsListItemView).getRecordInfo(i);
             } else if (view instanceof PlannedActivitiesListView) {
                 value = await (listItem as PlannedActivitiesListItemView).getRecordInfo(fieldName);
             } else {
@@ -247,7 +247,7 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) record info in (#\S+)$/,
  *  Verify if record(s) are present/not present on the list view dashlet
  *
  *  @example
- *  Then I should see [*T1, *T2, *T3, *T4, *T5] on #Dashboard.CsDashableRecordDashlet.ListView dashlet
+ *  Then I should see [*T1, *T2, *T3, *T4, *T5] on #ServiceConsoleView.DashableRecordDashlet.ListView dashlet
  *
  */
 Then(/^I should (not )?see (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) on (#\S+) dashlet$/,
@@ -273,7 +273,7 @@ Then(/^I should (not )?see (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) on (#\S+) dashlet$/
  *  Verify if tab is present/not present in the Dashable record dashlet
  *
  *      @example
- *      Then I should not see the following tabs in #Dashboard.CsDashableRecordDashlet dashlet:
+ *      Then I should not see the following tabs in #ServiceConsoleView.DashableRecordDashlet dashlet:
  *          | tab_list  |
  *          | Calls     |
  *          | Notes     |
@@ -296,7 +296,7 @@ Then(/^I should (not )?see the following tabs in (#\S+) dashlet:$/,
  *  Verify record count displayed in the tab
  *
  *      @example
- *      Then I verify the record count in Calls tab is equal to 1 in #Dashboard.CsPlannedActivitiesDashlet
+ *      Then I verify the record count in Calls tab is equal to 1 in #ServiceConsoleView.PlannedActivitiesDashlet
  */
 Then(/^I verify the record count in (Meetings|Calls|Due Now|Upcoming|To Do|Deferred|Completed|Emails) tab is equal to ([0-9+]\d*\+?) in (#\S+)$/,
     async function(tabName: string, exp: string, view: DashletView) {

@@ -11,10 +11,10 @@
 import BaseListItemView from './list-item-view';
 
 /**
- * @class CsCasesInteractionsListItemView
+ * @class RecordInteractionsListItemView
  * @extends ListItemView
  */
-export default class CsCasesInteractionsListItemView extends BaseListItemView {
+export default class RecordInteractionsListItemView extends BaseListItemView {
 
     public id: string;
     public index: number;

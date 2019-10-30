@@ -38,11 +38,9 @@ export default class DashableRecordDashlet extends DashletView {
             more_less: '.btn[data-moreless={{action}}]',
         });
 
-        if (options.hasListView) {
-            this.ListView = this.createComponent<ListViewDashletListView>(ListViewDashletListView, {
-                module: options.module,
-            });
-        }
+        this.ListView = this.createComponent<ListViewDashletListView>(ListViewDashletListView, {
+            module: options.module,
+        });
     }
 
     /**

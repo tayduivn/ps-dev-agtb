@@ -15,10 +15,10 @@ import {KeyCodes} from '../step_definitions/steps-helper';
 /**
  * Represents Comment Log dashlet
  *
- * @class CsCommentLogDashletView
+ * @class CommentLogDashletView
  * @extends DashletView
  */
-export default class CsCommentLogDashlet extends DashletView {
+export default class CommentLogDashlet extends DashletView {
 
     constructor(options) {
         super(options);
@@ -53,6 +53,7 @@ export default class CsCommentLogDashlet extends DashletView {
         await this.driver.pause(2000);
         // Press <ENTER> to link referenced user or record
         await this.driver.keys(KeyCodes.ENTER);
+        await this.driver.pause(1000);
         await this.driver.waitForApp();
 
         // Click 'Add' button

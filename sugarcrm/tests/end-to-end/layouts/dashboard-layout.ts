@@ -15,15 +15,8 @@ import DashletView from '../views/dashlet-view';
 import ProductCatalogQuickPicksDashlet from '../views/product-catalog-quick-picks-dashlet-view';
 import RecordsMarkedForErasureDashlet from '../views/records-marked-for-erasure-dashlet';
 import ForecastsBarChartDashlet from '../views/forecasts-bar-chart-dashlet';
-import DashableRecordDashlet from '../views/dashable-record-dashlet-view';
-import CsCommentLogDashlet from '../views/cs-comment-log-dashlet-view';
 import ListViewDashlet from '../views/list-view-dashlet-view';
-import CsCasesInteractionsDashlet from '../views/cs-cases-interactions-dashlet-view';
-import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
-import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
 import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
-import PipelineDashlet from '../views/pipeline-dashlet-view';
-import Top10RLIsDashlet from '../views/top-10-rlis-dashlet';
 import HistoryDashlet from '../views/history-dashlet-view';
 
 /**
@@ -40,19 +33,9 @@ export default class DashboardLayout extends BaseView {
     public ForecastsBarChartDashlet: DashletView;
     public ProductCatalogQuickPicksDashlet: DashletView;
     public RecordsMarkedForErasureDashlet: DashletView;
-    public CsDashableRecordDashlet: DashletView;
-    public CsCommentLogDashlet: DashletView;
-    public CsAccountInfoDashlet: DashletView;
     public ListViewDashlet: DashletView;
-    public CsCasesInteractionsDashlet: DashletView;
-    public CsPlannedActivitiesDashlet: DashletView;
-    public CsActiveTasksDashlet: DashletView;
     public InactiveTasksDashlet: DashletView;
     public HistoryDashlet: DashletView;
-
-    // Renewals Console
-    public RcPipelineDashlet: DashletView;
-    public RcTop10RLIsDashlet: DashletView;
 
     protected type: string;
 
@@ -91,37 +74,6 @@ export default class DashboardLayout extends BaseView {
             module: options.module,
         });
 
-        this.CsDashableRecordDashlet = this.createComponent<DashableRecordDashlet>(DashableRecordDashlet, {
-            module: options.module,
-            position: '000',
-            hasListView: true,
-        });
-
-        this.CsCommentLogDashlet = this.createComponent<CsCommentLogDashlet>(CsCommentLogDashlet, {
-            module: options.module,
-            position: '001',
-        });
-
-        this.CsAccountInfoDashlet = this.createComponent<DashableRecordDashlet>(DashableRecordDashlet, {
-            module: options.module,
-            position: '010',
-        });
-
-        this.CsCasesInteractionsDashlet = this.createComponent<CsCasesInteractionsDashlet>(CsCasesInteractionsDashlet, {
-            module: options.module,
-            position: '011',
-        });
-
-        this.CsPlannedActivitiesDashlet = this.createComponent<PlannedActivitiesDashlet>(PlannedActivitiesDashlet, {
-            module: options.module,
-            position: '001',
-        });
-
-        this.CsActiveTasksDashlet = this.createComponent<ActiveTasksDashlet>(ActiveTasksDashlet, {
-            module: options.module,
-            position: '002',
-        });
-
         this.InactiveTasksDashlet = this.createComponent<InactiveTasksDashlet>(InactiveTasksDashlet, {
             module: options.module,
             position: '000',
@@ -130,15 +82,6 @@ export default class DashboardLayout extends BaseView {
         this.HistoryDashlet = this.createComponent<HistoryDashlet>(HistoryDashlet, {
             module: options.module,
             position: '000',
-        });
-        this.RcPipelineDashlet = this.createComponent<PipelineDashlet>(PipelineDashlet, {
-            module: options.module,
-            position: '100',
-        });
-
-        this.RcTop10RLIsDashlet = this.createComponent<Top10RLIsDashlet>(Top10RLIsDashlet, {
-            module: options.module,
-            position: '110',
         });
     }
 }

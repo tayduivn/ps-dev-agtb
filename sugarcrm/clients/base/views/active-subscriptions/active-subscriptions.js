@@ -146,7 +146,7 @@
             'filter': filter,
             'limit': app.config.maxRecordFetchSize || 1000,
             'params': {
-                'order_by': 'service_start_date',
+                'order_by': 'service_start_date,service_end_date',
             },
             'success': _.bind(function() {
                 if (this.disposed) {

@@ -35,7 +35,7 @@ When(/^I click (Cog) in (#\S+)$/,
  *  Navigate to specific tab in Planned Activities dashlet
  *
  *      @example
- *      When I navigate to Calls tab in #Dashboard.CsPlannedActivitiesDashlet
+ *      When I navigate to Calls tab in #ServiceConsoleView.PlannedActivitiesDashlet
  */
 When(/^I navigate to (Calls|Meetings|Due Now|Upcoming|To Do|Emails|Deferred|Completed) tab in (#\S+)$/,
     async function(tabName: string, view: DashletView) {
@@ -63,7 +63,7 @@ When(/^I navigate to (Calls|Meetings|Due Now|Upcoming|To Do|Emails|Deferred|Comp
  *  When I set time filter (today vs future) in the dashlet
  *
  *      @example
- *      When I set filter as Today in #Dashboard.CsPlannedActivitiesDashlet
+ *      When I set filter as Today in #ServiceConsoleView.PlannedActivitiesDashlet
  */
 When(/^I set filter as (Today|Future) in (#\S+)$/,
     async function(filterName: string, view: DashletView) {
@@ -74,7 +74,7 @@ When(/^I set filter as (Today|Future) in (#\S+)$/,
  *  When I set visibility (user vs group) in the dashlet
  *
  *      @example
- *      When I set visibility as 'group' in #Dashboard.CsPlannedActivitiesDashlet
+ *      When I set visibility as 'group' in #ServiceConsoleView.PlannedActivitiesDashlet
  */
 When(/^I set visibility as '(user|group)' in (#\S+)$/,
     async function(visibility: string, view: DashletView) {
@@ -85,7 +85,7 @@ When(/^I set visibility as '(user|group)' in (#\S+)$/,
  *  Mark meeting or Call record as held, accepted, tentative or declined
  *
  *      @example
- *      When I mark record *M_1 as Tentative in #Dashboard.CsPlannedActivitiesDashlet.ActivitiesList
+ *      When I mark record *M_1 as Tentative in #ServiceConsoleView.PlannedActivitiesDashlet.ActivitiesList
  */
 When(/^I mark record (\*[a-zA-Z](?:\w|\S)*) as (Held|Accepted|Tentative|Declined|Completed) in (#\S+)$/,
     async function(record: { id: string }, action: string, view: PlannedActivitiesListView) {
