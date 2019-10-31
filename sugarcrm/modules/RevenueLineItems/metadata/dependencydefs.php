@@ -183,13 +183,6 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
 $serviceFieldActions = array();
 foreach ($serviceFieldDefaults as $field => $defaultValue) {
     $serviceFieldActions[] = array(
-        'name' => 'ReadOnly',
-        'params' => array(
-            'target' => $field,
-            'value' => 'equal($service, "0")',
-        ),
-    );
-    $serviceFieldActions[] = array(
         'name' => 'SetRequired',
         'params' => array(
             'target' => $field,
@@ -211,7 +204,27 @@ foreach ($serviceFieldDefaults as $field => $defaultValue) {
         ),
     );
 }
-
+$serviceFieldActions[] = array(
+    'name' => 'ReadOnly',
+    'params' => array(
+        'target' => 'service_start_date',
+        'value' => 'equal($service, "0")',
+    ),
+);
+$serviceFieldActions[] = array(
+    'name' => 'ReadOnly',
+    'params' => array(
+        'target' => 'service_duration_value',
+        'value' => 'or(equal($service, "0"),equal($has_service_template,true))',
+    ),
+);
+$serviceFieldActions[] = array(
+    'name' => 'ReadOnly',
+    'params' => array(
+        'target' => 'service_duration_unit',
+        'value' => 'or(equal($service, "0"),equal($has_service_template,true))',
+    ),
+);
 // 'renewable' field is similar to the other service fields, but never required
 $serviceFieldActions[] = array(
     'name' => 'ReadOnly',
@@ -237,3 +250,34 @@ $dependencies['RevenueLineItems']['handle_service_dependencies'] = array(
     'onload' => true,
     'actions' => $serviceFieldActions,
 );
+
+$dependencies['RevenueLineItems']['service_template_read_only_fields'] = [
+    'hooks' => ['edit'],
+    'trigger' => 'true',
+    'triggerFields' => ['has_service_template'],
+    'onload' => true,
+    'actions' => [
+        [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'service',
+                'label' => 'service_label',
+                'value' => 'equal($has_service_template,true)',
+            ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'service_duration_unit',
+                'label' => 'service_duration_unit_label',
+                'value' => 'equal($has_service_template,true)',
+            ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'service_duration_value',
+                'label' => 'service_duration_value_label',
+                'value' => 'equal($has_service_template,true)',
+            ],
+        ],
+    ],
+];
