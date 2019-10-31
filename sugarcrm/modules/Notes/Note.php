@@ -76,6 +76,30 @@ class Note extends SugarBean
     }
 
     /**
+     * Populate the contact id field for new record if it's empty
+     */
+    protected function setContactId()
+    {
+        // supported parent module/field pair
+        $supportedModules = [
+            'Cases' => 'primary_contact_id',
+        ];
+
+        // If we are creating a new Note and the parent module is supported
+        // and contact_id is not already set, then set contact_id
+        if (!$this->isUpdate()
+            && empty($this->contact_id)
+            && !empty($this->parent_type)
+            && !empty($supportedModules[$this->parent_type])
+            && !empty($this->parent_id)) {
+            $parentBean = BeanFactory::retrieveBean($this->parent_type, $this->parent_id);
+            if (!empty($parentBean->{$supportedModules[$this->parent_type]})) {
+                $this->contact_id = $parentBean->{$supportedModules[$this->parent_type]};
+            }
+        }
+    }
+
+    /**
      * Get and save file size if note represents and email file attachment
      *
      * {@inheritdoc}
@@ -101,6 +125,7 @@ class Note extends SugarBean
             $this->file_size = filesize($filePath);
         }
 
+        $this->setContactId();
         return parent::save($check_notify);
     }
 

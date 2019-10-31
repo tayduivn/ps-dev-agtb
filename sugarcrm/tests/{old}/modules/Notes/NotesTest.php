@@ -27,9 +27,69 @@ class NotesTest extends TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestNoteUtilities::removeAllCreatedNotes();
+        SugarTestTaskUtilities::removeAllCreatedTasks();
+        SugarTestCaseUtilities::removeAllCreatedCases();
         unset($GLOBALS['current_user']);
     }
-    
+
+    public function setContactProvider()
+    {
+        return [
+            [
+                'Cases',
+                '',
+                'parent_contact_id',
+                'parent_contact_id',
+            ],
+            [
+                'Cases',
+                'note_contact_id',
+                'parent_contact_id',
+                'note_contact_id',
+            ],
+            [
+                'Tasks',
+                '',
+                'parent_contact_id',
+                '',
+            ],
+            [
+                'Tasks',
+                'note_contact_id',
+                'parent_contact_id',
+                'note_contact_id',
+            ],
+        ];
+    }
+
+    /**
+     * @param $parentModule
+     * @param $noteContactId
+     * @param $parentContactId
+     * @param $expectedContactId
+     * @covers ::setContactId
+     * @dataProvider setContactProvider
+     */
+    public function testSetContactId($parentModule, $noteContactId, $parentContactId, $expectedContactId)
+    {
+        if ($parentModule == 'Cases') {
+            $parent = SugarTestCaseUtilities::createCase();
+            $parent->primary_contact_id = $parentContactId;
+        } elseif ($parentModule == 'Tasks') {
+            $parent = SugarTestTaskUtilities::createTask();
+            $parent->contact_id = $parentContactId;
+        } else {
+            $this->fail('No hanlder for module:' . $parentModule);
+        }
+
+        $note = SugarTestNoteUtilities::createNote(null, [
+            'parent_type' => $parentModule,
+            'parent_id' => $parent->id,
+            'contact_id' => $noteContactId,
+        ]);
+        $this->assertSame($expectedContactId, $note->contact_id);
+    }
+
     /**
      * @ticket 19499
      */
