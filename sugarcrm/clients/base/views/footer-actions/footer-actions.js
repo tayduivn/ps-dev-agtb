@@ -196,7 +196,6 @@
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
         this.isShortcutsEnabled = (this.isAuthenticated && app.shortcuts.isEnabled());
-        this.isFeedbackEnabled = !!app.config.feedbackEnabled;
         this._super('_renderHtml');
         this.helpButton = this.$('[data-action=help]');
     },
@@ -217,8 +216,10 @@
      * the button doesn't do anything.
      *
      * @param {Event} evt the `click` event.
+     * @deprecated Feedback is no longer supported
      */
     feedback: function(evt) {
+        app.logger.warn('Feedback functionality has been deprecated and will be removed in a future release');
         if (!app.isSynced) {
             return;
         }
