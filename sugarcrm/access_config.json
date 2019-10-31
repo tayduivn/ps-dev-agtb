@@ -178,6 +178,7 @@
         },
         "pmse_Project" : {
             "645a5c70-7e4c-11e9-944d-82186cfedf39":["SUGAR_SERVE"],
+            "4899c5ee-fa88-11e9-a733-c2e4554fbccf":["SUGAR_SERVE"],
             "42b657ca-7bec-11e9-a5ed-d694a7e8e45a":["SUGAR_SERVE"],
             "7b2f8038-7e4c-11e9-8eef-82186cfedf39":["SUGAR_SERVE"],
             "0b2619c6-d01f-11e9-af0f-020212dc7ae2":["SUGAR_SELL"],
@@ -190,6 +191,7 @@
         },
         "pmse_Business_Rules" : {
             "644d41a2-7e4c-11e9-9f68-82186cfedf39":["SUGAR_SERVE"],
+            "48958326-fa88-11e9-b836-c2e4554fbccf":["SUGAR_SERVE"],
             "85737962-d038-11e9-9fd9-269099cc8e72":["SUGAR_SELL"],
             "88c0e4ba-d038-11e9-8175-269099cc8e72":["SUGAR_SELL"]
         },
@@ -198,6 +200,9 @@
             "60ed5042-7e4c-11e9-8b80-82186cfedf39":["SUGAR_SERVE"],
             "6444b154-7e4c-11e9-9f3d-82186cfedf39":["SUGAR_SERVE"],
             "6447b4e4-7e4c-11e9-96e3-82186cfedf39":["SUGAR_SERVE"],
+            "ea578d9e-fc27-11e9-9cef-6c400895ea84":["SUGAR_SERVE"],
+            "9299e754-fc28-11e9-9b3b-6c400895ea84":["SUGAR_SERVE"],
+            "39ec46be-fc29-11e9-b2c2-6c400895ea84":["SUGAR_SERVE"],
             "0b1d30b8-d01f-11e9-b51b-020212dc7ae2":["SUGAR_SELL"],
             "72e43742-ce9d-11e9-a418-020212dc7ae2":["SUGAR_SELL"],
             "856ce0f2-d038-11e9-b51f-269099cc8e72":["SUGAR_SELL"],
