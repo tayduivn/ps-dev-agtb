@@ -24,7 +24,7 @@
      */
     _getSaveConfigAttributes: function() {
         _.each(this.model.get('worksheet_columns'), function(column) {
-            if(column.name === 'service_duration') {
+            if (column.name === 'service_duration') {
                 column.fields = column.fields || [
                     {
                         'name': 'service_duration_value',
@@ -94,7 +94,7 @@
                 requiredRelatedFields.push(col.type_name);
             }
 
-            if(col.name === 'service_duration') {
+            if (col.name === 'service_duration') {
                 _.each(col.fields, function(field) {
                     requiredRelatedFields.push(field.name);
                 }, this);
