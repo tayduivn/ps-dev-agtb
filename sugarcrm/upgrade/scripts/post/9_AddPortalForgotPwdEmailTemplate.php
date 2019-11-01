@@ -20,7 +20,8 @@ class SugarUpgradeAddPortalForgotPwdEmailTemplate extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '9.2.0', '<') || strtolower($this->to_flavor) === 'ent') {
+        if (strtolower($this->to_flavor) === 'ent' && (version_compare($this->from_version, '9.2.0', '<') ||
+                strtolower($this->from_flavor) === 'pro')) {
             // prepare the template
             $team = BeanFactory::getBean('Teams');
             $teamId = $team->retrieve_team_id('Administrator');

@@ -113,6 +113,10 @@ class Utilities
             $template->$beanField = $mod_strings[$key][$langField];
         }
 
-        return $template->save();
+        $ETbean = \BeanFactory::retrieveBean('EmailTemplates', $template->id);
+        if (empty($ETbean) || empty($ETbean->id)) {
+            return $template->save();
+        }
+        return $template->id;
     }
 }
