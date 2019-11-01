@@ -95,11 +95,19 @@
      */
     calculateEndDate: function() {
         if (this.canCalculateEndDate()) {
-            var startDate = this.model.get(this.startDateFieldName);
-            var endDate = new Date(startDate);
+            // Begin with the end date equal to zero hour on the specified start
+            // date, correcting any offset added by the javascript Date object
+            var endDate = new Date(this.model.get(this.startDateFieldName));
+            var offsetInMs = endDate.getTimezoneOffset() * 60000;
+            endDate.setTime(endDate.getTime() + offsetInMs);
+
+            // Add the specified duration to the date, then subtract one day
+            // as service runs through one day prior
             var methods = this.getMethodNames();
             var newDate = endDate[methods.get]() + this.model.get(this.durationValueFieldName);
             endDate[methods.set](newDate);
+            endDate.setDate(endDate.getDate() - 1);
+
             var formattedEndDate = this.unformat(app.date(endDate));
             this.model.set(this.name, formattedEndDate);
         } else {

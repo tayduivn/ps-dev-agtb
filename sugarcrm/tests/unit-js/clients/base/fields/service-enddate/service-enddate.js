@@ -76,23 +76,36 @@ describe('Base.Field.ServiceEnddate', function() {
     });
 
     it('should add days to a date correctly', function() {
+        field.model.set(field.startDateFieldName, '2019-09-25');
+
+        field.model.set(field.durationValueFieldName, 1);
+        field.model.set(field.durationUnitFieldName, 'day');
+        expect(field.model.get(field.name)).toEqual('2019-09-25');
+
         field.model.set(field.durationValueFieldName, 7);
         field.model.set(field.durationUnitFieldName, 'day');
-        field.model.set(field.startDateFieldName, '2019-09-25');
-        expect(field.model.get(field.name)).toEqual('2019-10-02');
+        expect(field.model.get(field.name)).toEqual('2019-10-01');
     });
 
     it('should add months to a date correctly', function() {
+        field.model.set(field.startDateFieldName, '2019-06-30');
+        field.model.set(field.durationValueFieldName, 1);
+        field.model.set(field.durationUnitFieldName, 'month');
+        expect(field.model.get(field.name)).toEqual('2019-07-29');
+
         field.model.set(field.durationValueFieldName, 3);
         field.model.set(field.durationUnitFieldName, 'month');
-        field.model.set(field.startDateFieldName, '2019-06-30');
-        expect(field.model.get(field.name)).toEqual('2019-09-30');
+        expect(field.model.get(field.name)).toEqual('2019-09-29');
     });
 
     it('should add years to a date correctly', function() {
-        field.model.set(field.durationValueFieldName, 2);
-        field.model.set(field.durationUnitFieldName, 'year');
         field.model.set(field.startDateFieldName, '2019-09-30');
-        expect(field.model.get(field.name)).toEqual('2021-09-30');
+        field.model.set(field.durationValueFieldName, 1);
+        field.model.set(field.durationUnitFieldName, 'year');
+        expect(field.model.get(field.name)).toEqual('2020-09-29');
+
+        field.model.set(field.durationValueFieldName, 3);
+        field.model.set(field.durationUnitFieldName, 'year');
+        expect(field.model.get(field.name)).toEqual('2022-09-29');
     });
 });
