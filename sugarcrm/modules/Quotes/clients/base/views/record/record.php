@@ -190,7 +190,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                                         'service',
                                         'service_start_date',
                                         'service_end_date',
-                                        'renewal',
+                                        'renewable',
                                         'service_duration_value',
                                         'service_duration_unit',
                                     ),
