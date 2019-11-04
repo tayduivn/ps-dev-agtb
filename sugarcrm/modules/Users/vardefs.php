@@ -1117,6 +1117,7 @@ $dictionary['User'] = array(
 		),
         array('name' => 'idx_user_title', 'type' => 'index', 'fields' => array('title')),
         array('name' => 'idx_user_department', 'type' => 'index', 'fields' => array('department')),
+        array('name' => 'idx_user_type_status', 'type' => 'index', 'fields' => array('status', 'is_admin', 'deleted')),
     ) ,
     'required_import_indexes' => array('idx_user_name::user_name'),
 	'relationships' => array (

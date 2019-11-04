@@ -179,13 +179,15 @@ class User extends Person {
      */
     public function getSystemUser()
     {
-        if (null === $this->retrieve('1'))
-            // handle cases where someone deleted user with id "1"
-            $this->retrieve_by_string_fields(array(
-                'status' => 'Active',
-                'is_admin' => '1',
-                ));
+        $q = new SugarQuery();
+        $q->from($this);
+        $q->select('id');
+        $q->where()->equals('is_admin', '1');
+        $q->where()->equals('status', 'Active');
+        //prefer to get the default administrator
+        $q->orderByRaw('id = ' . $q->getDBManager()->quoted('1'), 'DESC');
 
+        $this->retrieve($q->getOne());
         return $this;
     }
 
