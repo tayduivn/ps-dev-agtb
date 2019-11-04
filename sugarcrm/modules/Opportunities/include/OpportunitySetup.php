@@ -91,6 +91,20 @@ abstract class OpportunitySetup
      */
     protected $rliStudioFile = 'custom/modules/RevenueLineItems/metadata/studio.php';
 
+    /**
+     * Account Extension Folder
+     *
+     * @var string
+     */
+    protected $accModuleExtFolder = 'custom/Extension/modules/Accounts/Ext';
+    
+    /**
+     * Account Module Extension vardef dictionary change
+     *
+     * @var string
+     */
+    protected $accModuleExtVardefFile = 'acc_vardef.ext.php';
+
     public function __construct()
     {
         $this->bean = BeanFactory::newBean('Opportunities');
@@ -193,12 +207,16 @@ abstract class OpportunitySetup
         // hide RLI related fields from massupdate
         $this->fixProductsModule();
 
+        // hide RLI related fields in Account module
+        $this->fixAccountModule();
+
         // r&r the opp module
         $this->runRepairAndRebuild(
             array(
                 'Opportunities',
                 'Products',
                 'Forecasts',
+                'Accounts',
             )
         );
 
@@ -792,4 +810,9 @@ EOL;
      * Any Custom Logic for the Opportunity Module
      */
     abstract protected function fixOpportunityModule();
+
+    /**
+     * Fix Account module.
+     */
+    abstract protected function fixAccountModule();
 }

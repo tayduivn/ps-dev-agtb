@@ -442,4 +442,14 @@ EOL;
     {
         $this->fixProductsModuleField('revenuelineitem_name', 'massupdate', true);
     }
+
+    /**
+     * Fix Account module.
+     */
+    protected function fixAccountModule()
+    {
+        if (file_exists($this->accModuleExtFolder . '/Vardefs/' . $this->accModuleExtVardefFile)) {
+            unlink($this->accModuleExtFolder . '/Vardefs/' . $this->accModuleExtVardefFile);
+        }
+    }
 }

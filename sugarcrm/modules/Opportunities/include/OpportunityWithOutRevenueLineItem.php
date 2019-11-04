@@ -635,4 +635,20 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     {
         $this->fixProductsModuleField('revenuelineitem_name', 'massupdate', false);
     }
+
+    /**
+     * Fix Account module.
+     */
+    protected function fixAccountModule()
+    {
+        // lets make sure the dir is there
+        SugarAutoLoader::ensureDir($this->accModuleExtFolder . '/Vardefs');
+        
+        $file_contents = <<<EOL
+<?php
+\$dictionary['Account']['fields']['next_renewal_date'] = null;
+EOL;
+        
+        sugar_file_put_contents($this->accModuleExtFolder . '/Vardefs/' . $this->accModuleExtVardefFile, $file_contents);
+    }
 }
