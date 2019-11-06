@@ -1074,11 +1074,16 @@ public function convert($string, $type, array $additional_parameters = array())
 	/**+
 	 * @see DBManager::setAutoIncrement()
 	 */
-	protected function setAutoIncrement($table, $field_name)
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
 	{
 		$this->deleteAutoIncrement($table, $field_name);
-		$seqName = $this->_getSequenceName($table, $field_name, true);
-        $this->query("CREATE SEQUENCE $seqName START WITH 0 INCREMENT BY 1 NO MAXVALUE NO CYCLE NO CACHE");
+        if (!empty($platformOptions['cache'])) {
+            $seqCache = sprintf('CACHE %d', $platformOptions['cache']);
+        } else {
+            $seqCache = 'NO CACHE';
+        }
+        $seqName = $this->_getSequenceName($table, $field_name, true);
+        $this->query("CREATE SEQUENCE $seqName START WITH 0 INCREMENT BY 1 NO MAXVALUE NO CYCLE $seqCache");
         $this->query("SELECT NEXTVAL FOR $seqName  FROM SYSIBM.SYSDUMMY1"); // Making sure we initialize the sequence so that getAutoIncrement behaves as expected
 		return "";
 	}

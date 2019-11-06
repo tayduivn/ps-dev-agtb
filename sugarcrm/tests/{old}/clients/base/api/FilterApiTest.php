@@ -1018,7 +1018,7 @@ class FilterApiTest extends TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $filter->parseArguments($service, array());
+        $filter->parseArguments($service, ['module' => 'any-module']);
     }
 
     /**

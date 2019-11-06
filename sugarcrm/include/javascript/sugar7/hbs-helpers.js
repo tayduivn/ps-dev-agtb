@@ -194,5 +194,10 @@
 
             return field.getPlaceholder();
         });
+
+        Handlebars.registerHelper('timeAgo', function(str, options) {
+            return moment ? moment.utc(str).fromNow() : str;
+        });
+
     });
 })(SUGAR.App);

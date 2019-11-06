@@ -13,6 +13,7 @@
 
 use Doctrine\DBAL\FetchMode;
 use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
+use Sugarcrm\Sugarcrm\Denormalization\Relate\FieldConfig;
 
 class FilterApi extends SugarApi
 {
@@ -248,8 +249,16 @@ class FilterApi extends SugarApi
     protected function getOrderByFromArgs(array $args, SugarBean $seed = null)
     {
         $orderBy = parent::getOrderByFromArgs($args, $seed);
+        // denormalized and synchronized relate fields to be used for ORDER BY queries
+        $synchronizedFields = isset($args['module'])
+            ? (new FieldConfig)->getSynchronizedModuleFields($args['module'])
+            : null;
         $converted = array();
         foreach ($orderBy as $field => $direction) {
+            // use denormalized fields for ORDER BY if this was configured
+            if (isset($synchronizedFields[$field])) {
+                $field = $synchronizedFields[$field]['denorm_field_name'];
+            }
             $converted[] = array($field, $direction ? 'ASC' : 'DESC');
         }
 

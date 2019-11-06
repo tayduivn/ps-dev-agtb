@@ -1284,7 +1284,7 @@ WHERE TABLE_NAME = ?
         return $sql;
     }
 
-    protected function setAutoIncrement($table, $field_name)
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
     {
 		return "identity(1,1)";
 	}

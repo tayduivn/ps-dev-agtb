@@ -2843,30 +2843,32 @@ abstract class DBManager implements LoggerAwareInterface
 	/**
 	 * Generates SQL for create index statement for a bean.
 	 *
-	 * @param  SugarBean $bean SugarBean instance
+     * @param  SugarBean|string $beanOrTableName SugarBean instance or a table name
 	 * @param  array  $fields fields used in the index
 	 * @param  string $name index name
 	 * @param  bool   $unique Optional, set to true if this is an unique index
 	 * @return string SQL Select Statement
 	 */
-	public function createIndexSQL(SugarBean $bean, array $fields, $name, $unique = true)
-	{
-		$unique = ($unique) ? "unique" : "";
-		$tablename = $bean->getTableName();
-		$columns = array();
-		// get column names
-		foreach ($fields as $fieldDef)
-			$columns[] = $fieldDef['name'];
+    public function createIndexSQL($beanOrTableName, array $fields, $name, $unique = true): string
+    {
+        $unique = ($unique) ? "unique" : "";
+        $tableName = $beanOrTableName instanceof SugarBean ? $beanOrTableName->getTableName() : $beanOrTableName;
+        $columns = [];
+        // get column names
+        foreach ($fields as $fieldDef) {
+            $columns[] = $fieldDef['name'];
+        }
 
-		if (empty($columns))
-			return "";
+        if (empty($columns)) {
+            return "";
+        }
 
-		$columns = implode(",", $columns);
+        $columns = implode(",", $columns);
 
-		return "CREATE $unique INDEX $name ON $tablename ($columns)";
-	}
+        return "CREATE $unique INDEX $name ON $tableName ($columns)";
+    }
 
-	/**
+    /**
 	 * Returns the type of the variable in the field
 	 *
 	 * @param  array $fieldDef Vardef-format field def
@@ -2992,7 +2994,11 @@ abstract class DBManager implements LoggerAwareInterface
 
 		$auto_increment = '';
 		if(!empty($fieldDef['auto_increment']) && $fieldDef['auto_increment'])
-			$auto_increment = $this->setAutoIncrement($table , $fieldDef['name']);
+            $auto_increment = $this->setAutoIncrement(
+                $table,
+                $fieldDef['name'],
+                $fieldDef['auto_increment_platform_options'] ?? []
+            );
 
 		$required = 'NULL';  // MySQL defaults to NULL, SQL Server defaults to NOT NULL -- must specify
 		//Starting in 6.0, only ID and auto_increment fields will be NOT NULL in the DB.
@@ -3081,9 +3087,10 @@ abstract class DBManager implements LoggerAwareInterface
 	 * @abstract
 	 * @param  string $table Table name
 	 * @param  string $field_name Field name
+     * @param  array $platformOptions Options related to a platform autoincrement statement
 	 * @return string
 	 */
-	protected function setAutoIncrement($table, $field_name)
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
 	{
 		$this->deleteAutoIncrement($table, $field_name);
 		return "";

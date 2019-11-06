@@ -221,6 +221,13 @@ $admin_option_defs['Administration']['styleguide'] = array(
     'javascript:parent.SUGAR.App.router.navigate("Styleguide", {trigger: true});',
 );
 
+$admin_option_defs['any']['denormalization'] = [
+    'Administration',
+    'LBL_MANAGE_RELATE_DENORMALIZATION_TITLE',
+    'LBL_MANAGE_RELATE_DENORMALIZATION_DESC',
+    'javascript:void(parent.SUGAR.App.router.navigate("Administration/denormalization", {trigger: true}));',
+];
+
 $admin_group_header[]= array('LBL_STUDIO_TITLE','',false,$admin_option_defs, 'LBL_TOOLS_DESC');
 
 

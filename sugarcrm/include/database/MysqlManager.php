@@ -695,7 +695,7 @@ WHERE TABLE_SCHEMA = ?
 	/**
 	 * @see DBManager::setAutoIncrement()
 	 */
-	protected function setAutoIncrement($table, $field_name)
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
 	{
 		return "auto_increment";
 	}

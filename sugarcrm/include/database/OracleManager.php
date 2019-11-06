@@ -1304,7 +1304,7 @@ WHERE OWNER = ?
     /**
      * @see DBManager::setAutoIncrement()
      */
-    protected function setAutoIncrement($table, $field_name)
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
     {
         $this->deleteAutoIncrement($table, $field_name);
         $this->query(
