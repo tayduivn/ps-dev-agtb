@@ -39,6 +39,7 @@ use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Sugarcrm\Sugarcrm\Console\Command\Api\IdmModeManageCommand;
 
 /**
  *
@@ -114,6 +115,9 @@ class Application extends BaseApplication
             //Team Security
             new RebuildCommand(),
             new StatusCommand(),
+
+            // Idm mode management
+            new IdmModeManageCommand(),
         ));
 
         $app = new Application();

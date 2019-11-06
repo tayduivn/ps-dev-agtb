@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\clients\base\api;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 require_once 'include/utils.php';
 
@@ -39,6 +40,7 @@ class ModuleApiTest extends TestCase
     {
         $this->api = $this->createMock(\ServiceBase::class);
         $this->moduleApi = $this->getMockBuilder(\ModuleApi::class)
+            ->disableOriginalConstructor()
             ->setMethods(['isIDMModeEnabled'])
             ->getMock();
         $this->moduleApi->expects($this->any())->method('isIDMModeEnabled')->willReturn(true);
@@ -64,6 +66,7 @@ class ModuleApiTest extends TestCase
      */
     public function testCreateBeanException($module)
     {
+        TestReflection::setProtectedValue($this->moduleApi, 'idmModeDisabledModules', ['Users', 'Employees']);
         $this->moduleApi->createBean($this->api, ['module' => $module]);
     }
 
@@ -75,6 +78,7 @@ class ModuleApiTest extends TestCase
      */
     public function testDeleteRecordException($module)
     {
+        TestReflection::setProtectedValue($this->moduleApi, 'idmModeDisabledModules', ['Users', 'Employees']);
         $this->moduleApi->deleteRecord($this->api, ['module' => $module, 'record' => 'not_exist']);
     }
 }

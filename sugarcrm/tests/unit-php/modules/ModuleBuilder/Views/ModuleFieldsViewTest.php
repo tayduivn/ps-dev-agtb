@@ -13,6 +13,8 @@
 namespace Sugarcrm\SugarcrmTestsUnit\modules\ModuleBuilder\Views;
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 require_once 'include/utils.php';
 
@@ -43,11 +45,6 @@ class ModuleFieldsViewTest extends TestCase
         $this->view = new \ViewModulefields();
 
         $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
-        $GLOBALS['sugar_config'] = [
-            'idm_mode' => [
-                'enabled' => true,
-            ],
-        ];
 
         $this->config = \SugarConfig::getInstance();
         $this->config->clearCache();
@@ -241,8 +238,15 @@ class ModuleFieldsViewTest extends TestCase
      */
     public function testIsValidStudioField($idmModeConfig, $fieldDef, $expectedResult)
     {
-        $GLOBALS['sugar_config']['idm_mode'] = $idmModeConfig;
+        $configMock = $this->getMockBuilder(Config::class)
+            ->setConstructorArgs([\SugarConfig::getInstance()])
+            ->setMethods(['isIDMModeEnabled'])
+            ->getMock();
+        $configMock->expects($this->any())
+            ->method('isIDMModeEnabled')
+            ->willReturn(isset($idmModeConfig['enabled']) ? $idmModeConfig['enabled'] : false);
 
+        TestReflection::setProtectedValue($this->view, 'idpConfig', $configMock);
         $this->assertEquals($expectedResult, $this->view->isValidStudioField($fieldDef));
     }
 }

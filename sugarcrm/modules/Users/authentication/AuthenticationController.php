@@ -73,12 +73,15 @@ class AuthenticationController implements LoggerAwareInterface
      * Returns an instance of the authentication controller
      *
      * @param string $type this is the type of authentication you want to use default is IdMSugarAuthenticate
+     * @param Config $idpConfig
      * @return AuthenticationController An instance of the authentication controller
      */
-    public static function getInstance($type = null)
+    public static function getInstance($type = null, $idpConfig = null)
     {
         if (empty($type)) {
-            $idpConfig = new Config(\SugarConfig::getInstance());
+            if ($idpConfig == null) {
+                $idpConfig = new Config(\SugarConfig::getInstance());
+            }
             if ($idpConfig->isIDMModeEnabled()) {
                 $type = 'OAuth2Authenticate';
             } else {
