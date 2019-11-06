@@ -448,4 +448,132 @@ class ProductTest extends TestCase
         // restore dictionary
         $dictionary['Product']['related_calc_fields'] = $initialState;
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @covers ::setServiceEndDate
+     * @dataProvider providerTestSetServiceEndDate
+     */
+    public function testSetServiceEndDate(array $serviceFields, ?string $expectedEndDate, $shouldClearFields)
+    {
+        $mockProduct = $this->getMockBuilder('Product')
+            ->disableOriginalConstructor()
+            ->getMock();
+        // Set the service fields accordingly
+        $mockProduct->service = $serviceFields['service'];
+        $mockProduct->service_start_date = $serviceFields['service_start_date'];
+        $mockProduct->service_duration_value = $serviceFields['service_duration_value'];
+        $mockProduct->service_duration_unit = $serviceFields['service_duration_unit'];
+        SugarTestReflection::callProtectedMethod($mockProduct, 'setServiceEndDate');
+        $this->assertSame($expectedEndDate, $mockProduct->service_end_date);
+        if ($shouldClearFields) {
+            $this->assertSame(false, $mockProduct->service);
+            $this->assertSame(null, $mockProduct->service_start_date);
+            $this->assertSame(null, $mockProduct->service_duration_value);
+            $this->assertSame(null, $mockProduct->service_duration_unit);
+        }
+    }
+
+    public function providerTestSetServiceEndDate()
+    {
+        return [
+            // Test days
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-09-25',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'day',
+                ],
+                '2019-09-25',
+                false,
+            ],
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-09-25',
+                    'service_duration_value' => 7,
+                    'service_duration_unit' => 'day',
+                ],
+                '2019-10-01',
+                false,
+            ],
+            // Test months
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-06-30',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'month',
+                ],
+                '2019-07-29',
+                false,
+            ],
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-06-30',
+                    'service_duration_value' => 3,
+                    'service_duration_unit' => 'month',
+                ],
+                '2019-09-29',
+                false,
+            ],
+            // Test years
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-09-30',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'year',
+                ],
+                '2020-09-29',
+                false,
+            ],
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-09-30',
+                    'service_duration_value' => 3,
+                    'service_duration_unit' => 'year',
+                ],
+                '2022-09-29',
+                false,
+            ],
+            // Test non-service type
+            [
+                [
+                    'service' => false,
+                    'service_start_date' => null,
+                    'service_duration_value' => null,
+                    'service_duration_unit' => null,
+                ],
+                null,
+                true,
+            ],
+            // Test clearing of service data for non-services
+            [
+                [
+                    'service' => false,
+                    'service_start_date' => '2019-09-30',
+                    'service_duration_value' => 3,
+                    'service_duration_unit' => 'year',
+                ],
+                null,
+                true,
+            ],
+            // Test clearing of service data for end date calculation errors
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => 'Not a real date',
+                    'service_duration_value' => 'Not a real number',
+                    'service_duration_unit' => null,
+                ],
+                null,
+                true,
+            ],
+        ];
+    }
+    //END SUGARCRM flav=ent ONLY
 }
