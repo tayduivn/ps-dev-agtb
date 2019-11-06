@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -40,11 +41,6 @@ class SugarOAuth2ServerTest extends TestCase
     protected function setUp()
     {
         $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
-        $GLOBALS['sugar_config'] = [
-            'idm_mode' => [
-                'enabled' => true,
-            ],
-        ];
 
         $this->config = \SugarConfig::getInstance();
         $this->config->clearCache();
@@ -116,9 +112,15 @@ class SugarOAuth2ServerTest extends TestCase
      */
     public function testGetOAuth2Server(array $idmMode, string $platform, $expectedServerClass, $expectedStorageClass)
     {
-        $GLOBALS['sugar_config']['idm_mode'] = $idmMode;
+        $configMock = $this->getMockBuilder(Config::class)
+            ->setConstructorArgs([\SugarConfig::getInstance()])
+            ->setMethods(['isIDMModeEnabled'])
+            ->getMock();
+        $configMock->expects($this->any())
+            ->method('isIDMModeEnabled')
+            ->willReturn(isset($idmMode['enabled']) ? $idmMode['enabled'] : false);
 
-        $oAuthServer = SugarOAuth2ServerMock::getOAuth2Server($platform);
+        $oAuthServer = SugarOAuth2ServerMock::getOAuth2Server($platform, $configMock);
         $this->assertInstanceOf($expectedServerClass, $oAuthServer);
         $this->assertInstanceOf(
             $expectedStorageClass,
@@ -164,11 +166,13 @@ class SugarOAuth2ServerMock extends \SugarOAuth2Server
 {
     /**
      * @param string $platform
+     * @param Config $idpConfig
+     *
      * @return \SugarOAuth2Server
      */
-    public static function getOAuth2Server($platform = null)
+    public static function getOAuth2Server($platform = null, $idpConfig = null)
     {
         parent::$currentOAuth2Server = null;
-        return parent::getOAuth2Server($platform);
+        return parent::getOAuth2Server($platform, $idpConfig);
     }
 }
