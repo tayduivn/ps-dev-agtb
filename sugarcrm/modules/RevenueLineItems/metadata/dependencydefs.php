@@ -269,14 +269,14 @@ $dependencies['RevenueLineItems']['service_template_read_only_fields'] = [
             'params' => [
                 'target' => 'service_duration_unit',
                 'label' => 'service_duration_unit_label',
-                'value' => 'equal($has_service_template,true)',
+                'value' => 'or(equal($service, "0"),equal($has_service_template,true))',
             ],
         ], [
             'name' => 'ReadOnly',
             'params' => [
                 'target' => 'service_duration_value',
                 'label' => 'service_duration_value_label',
-                'value' => 'equal($has_service_template,true)',
+                'value' => 'or(equal($service, "0"),equal($has_service_template,true))',
             ],
         ],
     ],
