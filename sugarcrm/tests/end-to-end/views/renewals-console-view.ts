@@ -32,6 +32,8 @@ export default class RenewalsConsole extends DashboardView {
     public CommentLogDashlet: DashletView;
     public AccountsInteractionsDashlet: DashletView;
     public ActiveSubscriptionsDashlet: DashletView;
+    public AccountInfoDashlet: DashletView;
+    public OpportunityInteractionsDashlet: DashletView;
 
     constructor(options) {
         super(options);
@@ -69,5 +71,14 @@ export default class RenewalsConsole extends DashboardView {
         });
 
         // Opportunities Tab dashlets
+        this.AccountInfoDashlet = this.createComponent<DashableRecordDashlet>(DashableRecordDashlet, {
+            module: options.module,
+            position: '010',
+        });
+
+        this.OpportunityInteractionsDashlet = this.createComponent<RecordsInteractionsDashlet>(RecordsInteractionsDashlet, {
+            module: options.module,
+            position: '011',
+        });
     }
 }

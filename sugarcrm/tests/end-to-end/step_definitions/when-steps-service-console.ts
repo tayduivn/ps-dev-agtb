@@ -71,7 +71,7 @@ When(/^I click (Edit|Save|Cancel) button in (#\S+)$/,
  *  @example
  *  When I switch to Tasks tab in #RenewalsConsoleView.DashableRecordDashlet
  */
-When(/^I switch to (\S+) tab in (#\S+)$/,
+When(/^I switch to ([\S+ ]*) tab in (#\S+)$/,
     async function(tabName: string, view: DashableRecordDashlet) {
         if (!await view.selectTab(tabName)) {
             throw new Error(`Error! Specified tab '${tabName}' is not found.`);

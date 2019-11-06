@@ -156,13 +156,14 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
 
 
   @renewals-console @rc_dashable_record_dashlet
-  Scenario: Renewal Console > Acounts Tab > Dashable Record dashlet > Cancel/Save
-    # Create required Case and Account records
+  Scenario: Renewal Console > Accounts Tab > Dashable Record dashlet > Cancel/Save
+
+    # Create account record
     Given Accounts records exist:
       | *   | name      | website        | industry | account_type | service_level | phone_office | phone_alternate | email (primary) | phone_fax    | tag  | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
       | A_1 | Account 1 | www.google.com | Apparel  | Analyst      | T1            | 555-555-0000 | 555-555-0001    | bob@bob.com     | 555-555-0002 | tags | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
 
-    # Create Contact records related to the case
+    # Create Contact records related to the account
     Given 5 Contacts records exist related via contacts link to *A_1:
       | *            | first_name       | last_name       | email                                   |
       | Co_{{index}} | cFirst_{{index}} | cLast_{{index}} | contact_{{index}}@example.org (primary) |
@@ -244,7 +245,7 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
     Then I verify number of records in #RenewalsConsoleView.DashableRecordDashlet.ListView is 2
     And I should see [*Q_1, *Q_2] on #RenewalsConsoleView.DashableRecordDashlet.ListView dashlet
 
-    # Click item from the Tasks tab
+    # Click item from the Quotes tab
     When I select *Q_1 in #RenewalsConsoleView.DashableRecordDashlet.ListView
     Then I should see #Q_1Record view
 
