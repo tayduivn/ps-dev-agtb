@@ -97,6 +97,7 @@
 </tr>
 <!--START_PRODUCT_LOOP-->
 <tr>
+    <!-- // BEGIN SUGARCRM flav=ent ONLY -->
     {if $withServices}
         <td width="60%">{literal}{if isset($product.quantity)}{$product.quantity}{/if}{/literal}</td>
         <td width="150%">{literal}{if isset($product.manufacturer_name)}{$product.manufacturer_name}{/if}
@@ -123,6 +124,7 @@
                 {/if}
                 {/if}{/literal}</td>
     {else}
+    <!-- // END SUGARCRM flav=ent ONLY -->
         <td width="70%">{literal}{if isset($product.quantity)}{$product.quantity}{/if}{/literal}</td>
         <td width="175%">{literal}{if isset($product.manufacturer_name)}{$product.manufacturer_name}{/if}
                 {if isset($product.mft_part_num)}<br></br>{$product.mft_part_num}{/if}{/literal}</td>
@@ -138,7 +140,9 @@
                 {sugar_currency_format var=$product.discount_amount currency_id=$product.currency_id}
                 {/if}
                 {/if}{/literal}</td>
+    <!-- // BEGIN SUGARCRM flav=ent ONLY -->
     {/if}
+    <!-- // END SUGARCRM flav=ent ONLY -->
 </tr>
 <!--END_PRODUCT_LOOP--></tbody>
 </table>

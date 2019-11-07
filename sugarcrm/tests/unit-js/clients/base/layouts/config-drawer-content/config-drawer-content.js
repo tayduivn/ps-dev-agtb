@@ -233,6 +233,7 @@ describe('Base.Layout.ConfigDrawerContent', function() {
             expect(layout.selectedPanel).toBe('config-panel');
         });
 
+        // BEGIN SUGARCRM flav=ent ONLY
         it('get newPanel model for current eventViewName', function() {
             layout.selectedPanel = 'config-panel';
             sinon.collection.stub($.fn, 'data', function() {
@@ -293,6 +294,7 @@ describe('Base.Layout.ConfigDrawerContent', function() {
             expect(layout._components[1].panelFields[1].currentState).toEqual('filled');
             expect(layout._components[1].panelFields[2].currentState).toEqual('checked');
         });
+        // END SUGARCRM flav=ent ONLY
 
         it('call toggle the new panel to show', function() {
             layout.selectedPanel = 'config-panel2';

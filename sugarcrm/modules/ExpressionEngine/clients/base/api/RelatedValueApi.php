@@ -247,6 +247,7 @@ class RelatedValueApi extends SugarApi
                         $ret[$link][$type][$rField . '_values'] = $values;
                     }
                     break;
+                // BEGIN SUGARCRM flav=ent ONLY
                 case 'rollupConditionalMinDate':
                     // This function is similar to maxRelatedDate, so rather than
                     // copying its code, set a flag to indicate this is a
@@ -263,6 +264,7 @@ class RelatedValueApi extends SugarApi
                         }
                     }
                     // Fall through
+                // END SUGARCRM flav=ent ONLY
                 case 'maxRelatedDate':
                     $ret[$link][$type][$rField] = "";
                     if ($focus->load_relationship($link)) {

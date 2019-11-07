@@ -118,6 +118,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                     'enabled' => true,
                     'default' => true
                 ),
+                // BEGIN SUGARCRM flav=ent ONLY
                 'service',
                 'service_start_date' => array(
                     'name' => 'service_start_date',
@@ -152,6 +153,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                     'label' => 'LBL_RENEWABLE',
                     'type' => 'bool',
                 ),
+                // END SUGARCRM flav=ent ONLY
             ),
         ),
     ),

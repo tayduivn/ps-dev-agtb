@@ -89,6 +89,7 @@ $viewdefs['ProductTemplates']['base']['view']['product-catalog-dashlet-drawer-re
                 'category_name',
                 'manufacturer_name',
                 'mft_part_num',
+                // BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'service_duration',
                     'type' => 'fieldset',
@@ -107,6 +108,7 @@ $viewdefs['ProductTemplates']['base']['view']['product-catalog-dashlet-drawer-re
                         ),
                     ),
                 ),
+                // END SUGARCRM flav=ent ONLY
                 'vendor_part_num',
                 'weight',
                 'type_name',

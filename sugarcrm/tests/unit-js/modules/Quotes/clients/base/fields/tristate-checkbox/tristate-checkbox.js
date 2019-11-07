@@ -405,6 +405,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                 field.isRequired = false;
             });
 
+            // BEGIN SUGARCRM flav=ent ONLY
             describe('when the related field is a service field', function() {
                 it('should add all the service fields to dependent fields', function() {
                     field._onToggleRelatedField(relatedField3, true);
@@ -438,6 +439,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                     });
                 });
             });
+            // END SUGARCRM flav=ent ONLY
 
             it('should add the relatedField to dependentFields', function() {
                 field._onToggleRelatedField(relatedField, true);

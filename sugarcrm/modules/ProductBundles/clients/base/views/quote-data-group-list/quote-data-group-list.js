@@ -559,6 +559,7 @@
         // add model to toggledModels to be toggled next render
         this.toggledModels[relatedModel.cid] = relatedModel;
 
+        // BEGIN SUGARCRM flav=ent ONLY
         //If related model has service duration and unit fields,
         //add a custom service duration field to relatedModel
         if (!_.isUndefined(relatedModel.fields.service_duration_value) &&
@@ -584,6 +585,7 @@
             };
             relatedModel.fields.service_duration = durationField;
         }
+        // END SUGARCRM flav=ent ONLY
 
         // adding to the collection will trigger the render
         this.collection.add(relatedModel);

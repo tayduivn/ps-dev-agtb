@@ -187,12 +187,14 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                                         'base_rate',
                                         'discount_select',
                                         'total_amount',
+                                        // BEGIN SUGARCRM flav=ent ONLY
                                         'service',
                                         'service_start_date',
                                         'service_end_date',
                                         'renewable',
                                         'service_duration_value',
                                         'service_duration_unit',
+                                        // END SUGARCRM flav=ent ONLY
                                     ),
                                     'max_num' => -1,
                                 ),

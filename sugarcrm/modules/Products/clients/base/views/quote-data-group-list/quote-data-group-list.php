@@ -36,6 +36,7 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
                     'widthClass' => 'cell-large',
                     'type' => 'quote-data-relate',
                     'required' => true,
+                    // BEGIN SUGARCRM flav=ent ONLY
                     'related_fields' => array(
                         'service',
                         'service_start_date',
@@ -44,6 +45,7 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
                         'service_duration_value',
                         'service_duration_unit',
                     ),
+                    // END SUGARCRM flav=ent ONLY
                 ),
                 array(
                     'name' => 'mft_part_num',

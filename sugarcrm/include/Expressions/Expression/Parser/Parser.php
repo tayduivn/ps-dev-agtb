@@ -363,7 +363,9 @@ class Parser {
             || $expr instanceof AverageRelatedExpression
             || $expr instanceof SumRelatedExpression
             || $expr instanceof SumConditionalRelatedExpression
+            // BEGIN SUGARCRM flav=ent ONLY
             || $expr instanceof MinDateConditionalRelatedExpression
+            // END SUGARCRM flav=ent ONLY
             || $expr instanceof MaxRelatedDateExpression
             || $expr instanceof CountRelatedExpression
             || $expr instanceof CountConditionalRelatedExpression
@@ -401,7 +403,7 @@ class Parser {
                     if ($linkName === '' || $params[0]->varName === $linkName) {
                         $result[] = $params[2]->evaluate();
                     }
-
+                // BEGIN SUGARCRM flav=ent ONLY
                 } elseif ($expr instanceof MinDateConditionalRelatedExpression) {
                     // For this expression type, the third parameter is a list of fields on
                     // the related record. By adding this, changes to those fields on the
@@ -414,6 +416,7 @@ class Parser {
                             }
                         }
                     }
+                // END SUGARCRM flav=ent ONLY
                 }
             }
             return $result;

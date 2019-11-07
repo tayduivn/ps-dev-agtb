@@ -1522,6 +1522,7 @@
       "source":"non-db",
       "vname":"LBL_CURRENCIES"
    },
+   // BEGIN SUGARCRM flav=ent ONLY
    "service_duration_unit":{
       "audited": false,
       "default": "year",
@@ -1594,5 +1595,6 @@
          "renewable"
       ]
    },
+   // END SUGARCRM flav=ent ONLY
    "_hash":"0c827bf80ad5b5b1ad40914e4dc8db14"
 }

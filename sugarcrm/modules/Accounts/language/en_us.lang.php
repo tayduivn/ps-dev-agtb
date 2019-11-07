@@ -27,7 +27,12 @@ $mod_strings = array (
     // Dashboard Names
     'LBL_ACCOUNTS_LIST_DASHBOARD' => 'Accounts List Dashboard',
     'LBL_ACCOUNTS_RECORD_DASHBOARD' => 'Accounts Record Dashboard',
+    // BEGIN SUGARCRM flav=ent ONLY
     'LBL_ACCOUNTS_MULTI_LINE_DASHBOARD' => 'Account Details',
+    'LBL_NEXT_RENEWAL_DATE' => 'Date of Next Renewal',
+    'LBL_RENEWALS_CONSOLE_ACCOUNT_NAME_INDUSTRY' => 'Account Name/Industry',
+    'LBL_RENEWALS_CONSOLE_LOCATION' => 'Location',
+    // END SUGARCRM flav=ent ONLY
 
 	// Dashlet Categories
 	'LBL_CHARTS'    => 'Charts',
@@ -102,7 +107,6 @@ $mod_strings = array (
 	'LBL_MODULE_ID'=> 'Accounts',
 	'LBL_NAME'=>'Name:',
 	'LBL_NEW_FORM_TITLE' => 'New Account',
-    'LBL_NEXT_RENEWAL_DATE' => 'Date of Next Renewal',
 	'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Opportunities',
 	'LBL_OTHER_EMAIL_ADDRESS' => 'Other Email:',
 	'LBL_OTHER_PHONE' => 'Other Phone:',
@@ -198,7 +202,4 @@ To create an {{module_name}}:
 2. Click "Save" to finalize the new record and return to the previous page.',
 
     'LBL_FILTER_ACCOUNTS_REPORTS' => 'Accounts\' reports',
-    'LBL_RENEWALS_CONSOLE_ACCOUNT_NAME_INDUSTRY' => 'Account Name/Industry',
-    'LBL_RENEWALS_CONSOLE_LOCATION' => 'Location',
-
 );

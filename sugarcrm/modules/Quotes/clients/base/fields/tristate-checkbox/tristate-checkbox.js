@@ -74,11 +74,13 @@
      */
     tooltipLabel: undefined,
 
+    // BEGIN SUGARCRM flav=ent ONLY
     /**
      * Service related fields
      * @type Array
      */
     serviceRelatedFieldArr: undefined,
+    // END SUGARCRM flav=ent ONLY
 
     /**
      * @inheritdoc
@@ -96,6 +98,7 @@
         this.changeState(options.viewDefs && options.viewDefs.currentState ?
             options.viewDefs.currentState : this._getInitialState());
 
+        // BEGIN SUGARCRM flav=ent ONLY
         this.serviceRelatedFieldArr = [
             'service_start_date',
             'service_end_date',
@@ -103,6 +106,7 @@
             'service_duration',
             'service',
         ];
+        // END SUGARCRM flav=ent ONLY
 
         this.tooltipLabel = app.lang.get('LBL_CONFIG_TOOLTIP_FIELD_REQUIRED_BY', this.module);
         if (this.name === 'service_duration') {

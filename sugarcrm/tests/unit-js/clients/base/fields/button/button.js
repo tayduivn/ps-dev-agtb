@@ -359,6 +359,7 @@ describe("Base.Field.Button", function() {
             closestComponentStub.restore();
         });
 
+        // BEGIN SUGARCRM flav=ent ONLY
         it('should be truthy if it is on a forbidden dashboard', function() {
             field.def.disallowed_layouts = [{name: 'dashboard', type: 'bad'}];
             var closestComponentStub = sinon.stub(field, 'closestComponent');
@@ -382,6 +383,7 @@ describe("Base.Field.Button", function() {
             expect(field.isOnForbiddenLayout()).toBeFalsy();
             closestComponentStub.restore();
         });
+        // END SUGARCRM flav=ent ONLY
 
         it('should be falsy if it is not on a forbidden layout', function() {
             var disallowedLayouts = [{'name': 'bad-layout-1'}, {'name': 'bad-layout-2'}];

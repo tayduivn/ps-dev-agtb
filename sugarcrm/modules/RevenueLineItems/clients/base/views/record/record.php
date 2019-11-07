@@ -295,6 +295,7 @@ $fieldsHidden = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
+    // BEGIN SUGARCRM flav=ent ONLY
     'renewable' => array(
         'name' => 'renewable',
         'label' => 'LBL_RENEWABLE',
@@ -329,6 +330,7 @@ $fieldsHidden = array(
         'label' => 'LBL_SERVICE_END_DATE',
         'type' => 'service-enddate',
     ),
+    // END SUGARCRM flav=ent ONLY
     'next_step',
     'product_type',
     'lead_source',

@@ -239,6 +239,7 @@ describe('Quotes.View.ConfigColumns', function() {
             expect(view.eventViewName).toBe('worksheet_columns');
         });
 
+        // BEGIN SUGARCRM flav=ent ONLY
         describe('adding custom service duration field to productsFieldMeta', function() {
             describe('when productsFieldMeta has both service duration value and unit fields',
                 function() {
@@ -274,6 +275,7 @@ describe('Quotes.View.ConfigColumns', function() {
                 });
             });
         });
+        // END SUGARCRM flav=ent ONLY
     });
 
     describe('_getEventViewName()', function() {
@@ -559,6 +561,7 @@ describe('Quotes.View.ConfigColumns', function() {
                 });
             });
 
+            // BEGIN SUGARCRM flav=ent ONLY
             it('should add all the service related fields to the column header', function() {
                 durationField =  productsFieldsMeta.service_duration;
                 durationField.def = {
@@ -570,6 +573,7 @@ describe('Quotes.View.ConfigColumns', function() {
 
                 expect(view.listHeaderView.addColumnHeaderField).toHaveBeenCalledWith();
             });
+            // END SUGARCRM flav=ent ONLY
 
             it('should trigger config:<eventViewName>:<fieldName>:related:toggle event on context', function() {
                 view._onConfigFieldChange(testField, 'unchecked', 'checked');
@@ -589,6 +593,7 @@ describe('Quotes.View.ConfigColumns', function() {
                 expect(removeColumnHeaderFieldStub).toHaveBeenCalledWith(testField);
             });
 
+            // BEGIN SUGARCRM flav=ent ONLY
             it('should remove all the service related fields to the column header', function() {
                 durationField = productsFieldsMeta.service_duration;
                 durationField.def = {
@@ -600,6 +605,7 @@ describe('Quotes.View.ConfigColumns', function() {
 
                 expect(removeColumnHeaderFieldStub).toHaveBeenCalled();
             });
+            // END SUGARCRM flav=ent ONLY
 
             it('should trigger config:<eventViewName>:<fieldName>:related:toggle event on context', function() {
                 view._onConfigFieldChange(testField, 'checked', 'unchecked');
@@ -747,6 +753,7 @@ describe('Quotes.View.ConfigColumns', function() {
                 expect(testBool).toBe(undefined);
             });
 
+            // BEGIN SUGARCRM flav=ent ONLY
             it('should add service duration field to the panel fields when duration unit and value exist',
                 function() {
                 len = view.panelFields.length;
@@ -774,6 +781,7 @@ describe('Quotes.View.ConfigColumns', function() {
                 });
                 expect(testBool).toBe(undefined);
             });
+            // END SUGARCRM flav=ent ONLY
         });
     });
 

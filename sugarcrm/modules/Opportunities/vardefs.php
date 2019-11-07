@@ -580,6 +580,7 @@ $dictionary['Opportunity'] = array(
                 'reportable' => true,
                 'importable' => 'false',
             ),
+        // BEGIN SUGARCRM flav=ent ONLY
         'renewal' => array(
             'name' => 'renewal',
             'vname' => 'LBL_RENEWAL',
@@ -587,6 +588,7 @@ $dictionary['Opportunity'] = array(
             'default' => 0,
             'comment' => 'Indicates whether the opportunity is a renewal',
         ),
+        // END SUGARCRM flav=ent ONLY
     ),
     'indices' => array(
         array(
@@ -722,6 +724,7 @@ $dictionary['Opportunity'] = array(
             'rhs_key' => 'opportunity_id',
             'relationship_type' => 'one-to-many',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
         'renewals_opportunities' => [
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
@@ -731,6 +734,7 @@ $dictionary['Opportunity'] = array(
             'rhs_key' => 'renewal_parent_id',
             'relationship_type' => 'one-to-many',
         ],
+        // END SUGARCRM flav=ent ONLY
     ),
     'duplicate_check' => array(
         'enabled' => true,

@@ -84,7 +84,9 @@ $viewdefs['Products']['base']['view']['list'] = array(
                 array(
                     'name' => 'assigned_user_name',
                 ),
+                // BEGIN SUGARCRM flav=ent ONLY
                 'service',
+                // END SUGARCRM flav=ent ONLY
             ),
         ),
     )

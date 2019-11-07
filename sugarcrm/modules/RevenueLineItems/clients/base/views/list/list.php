@@ -216,6 +216,7 @@ $fields = array(
         'enabled' => true,
         'default' => true,
     ),
+    // BEGIN SUGARCRM flav=ent ONLY
     'service' => array(
         'name' => 'service',
         'label' => 'LBL_SERVICE',
@@ -260,6 +261,7 @@ $fields = array(
         'label' => 'LBL_RENEWABLE',
         'type' => 'bool',
     ),
+    // END SUGARCRM flav=ent ONLY
 );
 //END SUGARCRM flav=ent ONLY
 

@@ -74,6 +74,7 @@
 
         this.productsFieldMeta = app.metadata.getModule('Products', 'fields');
 
+        // BEGIN SUGARCRM flav=ent ONLY
         //If service duration value and unit exists
         //Add a custom service_duration field in the productsFieldMeta
         if (!_.isUndefined(this.productsFieldMeta.service_duration_value) &&
@@ -99,6 +100,7 @@
             };
             this.productsFieldMeta.service_duration = durationField;
         }
+        // END SUGARCRM flav=ent ONLY
 
         this.defaultFields = [];
 
@@ -324,6 +326,7 @@
         var isUnchecked = newState === 'unchecked';
         var columnChanged = false;
         var toggleRelatedFields;
+        // BEGIN SUGARCRM flav=ent ONLY
         var serviceRelatedFieldsArr = [
             'service_duration',
             'service_start_date',
@@ -331,6 +334,7 @@
             'renewable',
             'service'
         ];
+        // END SUGARCRM flav=ent ONLY
 
         if (!wasVisible && isNowVisible) {
             // field was not visible, but now is visible
@@ -361,6 +365,7 @@
             // add the column to header fields
             this.listHeaderView.addColumnHeaderField(fieldViewDef);
 
+            // BEGIN SUGARCRM flav=ent ONLY
             // if a service field is added, then add all its related fields to the worksheet column as well
             if (_.intersection(fieldVarDef.related_fields, serviceRelatedFieldsArr).length > 0) {
                 _.each(fieldVarDef.related_fields, function(relField) {
@@ -375,6 +380,7 @@
                     this.listHeaderView.addColumnHeaderField(fieldViewDef);
                 }, this);
             }
+            // END SUGARCRM flav=ent ONLY
 
             toggleRelatedFields = true;
             columnChanged = true;
@@ -382,6 +388,7 @@
             // field was visible, but now is not visible, so remove from columns
             // remove the column from header fields
             this.listHeaderView.removeColumnHeaderField(fieldVarDef);
+            // BEGIN SUGARCRM flav=ent ONLY
             // if a service field is removed, then remove all its related fields to the worksheet column as well
             if (_.intersection(fieldVarDef.related_fields, serviceRelatedFieldsArr).length > 0) {
                 _.each(fieldVarDef.related_fields, function(relField) {
@@ -389,6 +396,7 @@
                     this.listHeaderView.removeColumnHeaderField(relatedFieldVarDef);
                 }, this);
             }
+            // END SUGARCRM flav=ent ONLY
 
             toggleRelatedFields = false;
             columnChanged = true;
@@ -459,6 +467,7 @@
      */
     onConfigPanelShow: function() {
         if (this.dependentFields) {
+            // BEGIN SUGARCRM flav=ent ONLY
             //picking the service duration value and unit
             //these will be reinserted in the panelFields as a single fieldset
             var durationValueField =
@@ -498,6 +507,7 @@
                 };
                 this.panelFields = _.union(this.panelFields, [durationField]);
             }
+            // END SUGARCRM flav=ent ONLY
             this.context.trigger('config:fields:change', this.eventViewName, this.panelFields);
         }
     },

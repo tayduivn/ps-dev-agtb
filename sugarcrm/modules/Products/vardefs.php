@@ -49,6 +49,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_PRODUCT_TEMPLATE_ID',
             'required' => false,
             'reportable' => false,
+            // BEGIN SUGARCRM flav=ent ONLY
             'related_fields' => array(
                 'service',
                 'service_start_date',
@@ -57,6 +58,7 @@ $dictionary['Product'] = array(
                 'service_duration_value',
                 'service_duration_unit',
             ),
+            // END SUGARCRM flav=ent ONLY
             'comment' => 'Product (in Admin Products) from which this product is derived (in user Products)'
         ),
         'product_template_name' => array(
@@ -94,12 +96,14 @@ $dictionary['Product'] = array(
                 'manufacturer_name' => 'manufacturer_name',
                 'currency_id' => 'currency_id',
                 'base_rate' => 'base_rate',
+                // BEGIN SUGARCRM flav=ent ONLY
                 'service_start_date' => 'service_start_date',
                 'service_end_date' => 'service_end_date',
                 'service_duration_value' => 'service_duration_value',
                 'service_duration_unit' => 'service_duration_unit',
                 'renewable' => 'renewable',
                 'service' => 'service',
+                // END SUGARCRM flav=ent ONLY
             ),
         ),
         'account_id' => array(

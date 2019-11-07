@@ -243,6 +243,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
+                // BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'service_duration',
                     'type' => 'fieldset',
@@ -277,6 +278,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'label' => 'LBL_RENEWABLE',
                     'type' => 'bool',
                 ),
+                // END SUGARCRM flav=ent ONLY
                 'contact_name',
                 array(
                     'name' => 'tag',

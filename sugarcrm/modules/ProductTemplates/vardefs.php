@@ -356,6 +356,7 @@ $dictionary['ProductTemplate'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_FORECAST_WORKSHEET',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
         'service_duration_value' => array(
             'name' => 'service_duration_value',
             'vname' => 'LBL_SERVICE_DURATION_VALUE',
@@ -388,6 +389,7 @@ $dictionary['ProductTemplate'] = array(
             'default' => 0,
             'comment' => 'Indicates whether the sales item is a service or a product',
         ],
+        // END SUGARCRM flav=ent ONLY
     ),
     'relationships' => array(
         'product_templates_product_categories' => array(

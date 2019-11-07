@@ -79,6 +79,7 @@ $viewdefs['ProductTemplates']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                 ),
+                // BEGIN SUGARCRM flav=ent ONLY
                 'service',
                 array(
                     'name' => 'service_duration',
@@ -98,6 +99,7 @@ $viewdefs['ProductTemplates']['base']['view']['list'] = array(
                         ),
                     ),
                 ),
+                // END SUGARCRM flav=ent ONLY
             ),
         ),
     ),

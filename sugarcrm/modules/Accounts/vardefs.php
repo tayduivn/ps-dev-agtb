@@ -373,6 +373,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PROSPECT_LIST',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
         'next_renewal_date' => array(
             'name' => 'next_renewal_date',
             'vname' => 'LBL_NEXT_RENEWAL_DATE',
@@ -386,6 +387,7 @@ $dictionary['Account'] = array(
             )',
             'enforced' => true,
         ),
+        // END SUGARCRM flav=ent ONLY
     ),
     'indices' => array(
         array('name' => 'idx_accnt_parent_id', 'type' => 'index', 'fields' => array('parent_id')),

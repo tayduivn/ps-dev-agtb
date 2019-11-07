@@ -149,11 +149,13 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'readonly' => true,
                     'dismiss_label' => true,
                 ),
+                // BEGIN SUGARCRM flav=ent ONLY
                 [
                     'name' => 'renewal',
                     'type' => 'renewal',
                     'dismiss_label' => true,
                 ],
+                // END SUGARCRM flav=ent ONLY
             ),
         ),
         array(
@@ -237,7 +239,9 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'fields' => array(
                 'next_step',
                 'opportunity_type',
+                // BEGIN SUGARCRM flav=ent ONLY
                 'renewal_parent_name',
+                // END SUGARCRM flav=ent ONLY
                 'lead_source',
                 'campaign_name',
                 array(

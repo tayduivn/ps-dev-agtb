@@ -761,6 +761,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             });
         });
 
+        // BEGIN SUGARCRM flav=ent ONLY
         describe('adding custom service duration field to relatedModels fields', function() {
             describe('when relatedModels has both service duration value and unit fields',
                 function() {
@@ -820,6 +821,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 });
             });
         });
+        // END SUGARCRM flav=ent ONLY
     });
 
     describe('onNewItemChanged()', function() {

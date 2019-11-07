@@ -1101,6 +1101,7 @@ describe('Base.View.Dashablerecord', function() {
         });
     });
 
+    // BEGIN SUGARCRM flav=ent ONLY
     describe('_addRelateFields', function() {
         it('should add relate fields', function() {
             var fields = ['assigned_user_name', 'amount'];
@@ -1148,4 +1149,5 @@ describe('Base.View.Dashablerecord', function() {
             expect(view._addRelateFields('Opportunities', fields)).toEqual(expected);
         });
     });
+    // END SUGARCRM flav=ent ONLY
 });

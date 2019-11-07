@@ -537,6 +537,7 @@ class Product extends SugarBean
             }
         }
 
+        // BEGIN SUGARCRM flav=ent ONLY
         // convert for services
         $rli->service = $this->service;
         $rli->renewable = $this->renewable;
@@ -545,6 +546,7 @@ class Product extends SugarBean
             $endDate = $datetime->modify($this->service_duration_value . ' ' . $this->service_duration_unit);
             $rli->service_end_date = $datetime->asDbDate($endDate, false);
         }
+        // END SUGARCRM flav=ent ONLY
 
         if ($this->discount_select == 1) {
             // we have a percentage discount, but we don't allow the use of percentages on

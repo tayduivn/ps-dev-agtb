@@ -108,6 +108,8 @@ $mod_strings = array (
   'LBL_PRODUCT_CATEGORIES' => 'Product Categories',
   'LBL_MANUFACTURERS' => 'Manufacturers',
   'LBL_PRODUCT_TYPES' => 'Product Types',
-    'LBL_RENEWABLE' => 'Renewable',
-    'LBL_SERVICE' => 'Service',
+  // BEGIN SUGARCRM flav=ent ONLY
+  'LBL_RENEWABLE' => 'Renewable',
+  'LBL_SERVICE' => 'Service',
+  // END SUGARCRM flav=ent ONLY
 );

@@ -72,17 +72,21 @@ $mod_strings = array (
   'LBL_TPL_QUOTE_DESCRIPTION' => 'This template is used to print Quote in PDF.',
   'LBL_TPL_QUOTE_TEMPLATE_NAME' => 'quote',
 
+  // BEGIN SUGARCRM flav=ent ONLY
   'LBL_TPL_QUOTE_SERVICES_NAME' => 'Quote (with services)',
   'LBL_TPL_QUOTE_SERVICES_DESCRIPTION' => 'This template is used to print a Quote, including service information, in PDF.',
   'LBL_TPL_QUOTE_SERVICES_TEMPLATE_NAME' => 'servicequote',
+  // END SUGARCRM flav=ent ONLY
 
   'LBL_TPL_INVOICE_NAME' => 'Invoice',
   'LBL_TPL_INVOICE_DESCRIPTION' => 'This template is used to print Invoice in PDF.',
   'LBL_TPL_INVOICE_TEMPLATE_NAME' => 'invoice',
 
+  // BEGIN SUGARCRM flav=ent ONLY
   'LBL_TPL_INVOICE_SERVICES_NAME' => 'Invoice (with services)',
   'LBL_TPL_INVOICE_SERVICES_DESCRIPTION' => 'This template is used to print an Invoice, including service information, in PDF.',
   'LBL_TPL_INVOICE_SERVICES_TEMPLATE_NAME' => 'serviceinvoice',
+  // END SUGARCRM flav=ent ONLY
 
   'LBL_TPL_QUOTE_NUMBER' => 'Quote number:',
   'LBL_TPL_SALES_PERSON' => 'Sales Person:',
@@ -95,9 +99,11 @@ $mod_strings = array (
   'LBL_TPL_PART_NUMBER' => 'Part Number',
   'LBL_TPL_PRODUCT' => 'Quoted Line Item',
   'LBL_TPL_RLI' => 'Revenue Line Items',
+  // BEGIN SUGARCRM flav=ent ONLY
   'LBL_TPL_DURATION' => 'Duration',
   'LBL_TPL_DURATION_STARTS' => 'Starts:',
   'LBL_TPL_DURATION_ENDS' => 'Ends:',
+  // END SUGARCRM flav=ent ONLY
   'LBL_TPL_LIST_PRICE' => 'List Price',
   'LBL_TPL_UNIT_PRICE' => 'Unit Price',
   'LBL_TPL_EXT_PRICE' => 'Ext. Price',

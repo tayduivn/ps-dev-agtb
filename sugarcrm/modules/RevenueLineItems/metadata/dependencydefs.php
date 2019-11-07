@@ -17,11 +17,13 @@ $fields = array(
     'weight'
 );
 
+// BEGIN SUGARCRM flav=ent ONLY
 $serviceFieldDefaults = array(
     'service_start_date' => 'now()',
     'service_duration_value' => '1',
     'service_duration_unit' => '"year"',
 );
+// END SUGARCRM flav=ent ONLY
 
 $dependencies['RevenueLineItems']['read_only_fields'] = array(
     'hooks' => array("edit"),
@@ -179,6 +181,7 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
     )
 );
 
+// BEGIN SUGARCRM flav=ent ONLY
 // Handle dependencies related to service fields
 $dependencies['RevenueLineItems']['service_fields_read_only'] = [
     'hooks' => ['edit'],
@@ -309,3 +312,4 @@ $dependencies['RevenueLineItems']['service_fields_values'] = [
         ],
     ],
 ];
+// END SUGARCRM flav=ent ONLY
