@@ -96,8 +96,7 @@
                 "tests/unit-php/"
             ],
             "Sugarcrm\\SugarcrmTestsUnit\\inc\\": "tests/unit-php/include/",
-            "Sugarcrm\\SugarcrmTestsUnit\\custom\\": "custom/tests/unit-php/",
-            "Sugarcrm\\SugarcrmTestsBehat\\": "tests/behat"
+            "Sugarcrm\\SugarcrmTestsUnit\\custom\\": "custom/tests/unit-php/"
         }
     },
     "require": {
@@ -132,8 +131,7 @@
         "ultra-lite/container": "6.2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "7.5.1",
-        "behat/behat": "3.4.3"
+        "phpunit/phpunit": "7.5.1"
     },
     "repositories": [
         {
