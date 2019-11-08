@@ -40,6 +40,8 @@
 
     endDate: '',
 
+    expiryComingSoon: false,
+
     /**
      * Flag indicating if RLI is enabled.
      *
@@ -254,14 +256,15 @@
                 activePastTimelineWidth = ((today - start) / (end - start)) * 100;
                 activePastTimelineWidth = activePastTimelineWidth >= 100 ? activePastTimelineWidth - 1
                     : activePastTimelineWidth;
-
+                this.expiryComingSoon = (activePastTimelineWidth) >= 90 ? true : false;
                 model.set({
                     startDate: app.date(model.get('service_start_date')).formatUser().split(' ')[0],
                     endDate: app.date(model.get('service_end_date')).formatUser().split(' ')[0],
                     expiration: this.endDate.fromNow(),
                     timelineOffset: timelineOffset,
                     subscriptionValidityActive: activeTimelineWidth.toFixed(2),
-                    subscriptionActiveWidth: activePastTimelineWidth.toFixed(2)
+                    subscriptionActiveWidth: activePastTimelineWidth.toFixed(2),
+                    expiryComingSoon: this.expiryComingSoon
                 });
                 timelineOffset = 40;
             });

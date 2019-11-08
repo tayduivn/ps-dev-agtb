@@ -18,9 +18,15 @@
                 {{#each collection.models}}
                     <div class="subscription-entry" data-id="{{attributes.id}}">
                         <div class="content-row">
-                            <div class="row-cell pull-right"><time datetime="{{attributes.service_end_date}}" class="date">{{attributes.service_remaining_time}}</time></div>
+                            <div class="row-cell pull-right"><time datetime="{{attributes.service_end_date}}"
+                                                                   class="date"
+                                                                   style="{{#if attributes.expiryComingSoon}}color:#AA0001{{/if}}">
+                                {{attributes.service_remaining_time}}</time>
+                            </div>
                             <div class="row-left">
-                                <div class="row-cell secondary" data-placement="bottom" rel="tooltip" title="{{fieldValue this "name"}}">{{fieldValue this "name"}}</div>
+                                <a class="row-cell secondary" data-placement="bottom" rel="tooltip"
+                                   title="{{fieldValue this "name"}}"
+                                   href="#RevenueLineItems/{{attributes.id}}">{{fieldValue this "name"}}</a>
                                 <div class="row-cell">{{str "LBL_ACTIVE_SUBSCRIPTIONS_QUANTITY" attributes._module attributes}}</div>
                             </div>
                         </div>
