@@ -381,8 +381,8 @@ $dictionary['Account'] = array(
             'formula' => 'rollupConditionalMinDate(
                 $revenuelineitems,
                 "date_closed",
-                createList("product_type","renewable"),
-                createList("Existing Business","1")
+                createList("product_type","renewable","sales_stage"),
+                createList("Existing Business","1",forecastSalesStages(false, false))
             )',
             'enforced' => true,
         ),
