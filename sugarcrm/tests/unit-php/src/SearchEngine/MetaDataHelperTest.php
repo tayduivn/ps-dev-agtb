@@ -415,6 +415,66 @@ class MetaDataHelperTest extends TestCase
     }
 
     /**
+     * @covers ::getAllEnabledModules
+     * @dataProvider getAllEnabledModulesProvider
+     */
+    public function testGetAllEnabledModules($modulesMap, $vardefsMap, $expected)
+    {
+        $helper = $this->getMetaDataHelperMock(
+            ['isRealCacheDisabled', 'getModuleVardefs']
+        );
+        TestReflection::setProtectedValue($helper, 'disableCache', true);
+
+        $helper->expects($this->any())
+            ->method('isRealCacheDisabled')
+            ->will($this->returnValue(true));
+
+        $helper->expects($this->any())
+            ->method('getModuleVardefs')
+            ->will($this->returnValueMap($vardefsMap));
+
+        $metadataManagerMock = $this->getMockBuilder(\MetaDataManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getModuleList'])
+            ->getMock();
+        $metadataManagerMock->expects($this->any())
+            ->method('getModuleList')
+            ->will($this->returnValueMap($modulesMap));
+
+        TestReflection::setProtectedValue($helper, 'mdm', $metadataManagerMock);
+
+        $this->assertSame($expected, $helper->getAllEnabledModules());
+    }
+
+    public function getAllEnabledModulesProvider()
+    {
+        return [
+            'all modules' => [
+                [
+                    [true, ['Accounts']],
+                    [false, ['foo', 'Accounts']],
+                ],
+                [
+                    ['foo', ['full_text_search' => true]],
+                    ['Accounts', ['full_text_search' => true]],
+                ],
+                ['foo', 'Accounts'],
+            ],
+            'filtered modules' => [
+                [
+                    [true, ['Accounts']],
+                    [false, ['foo', 'Accounts']],
+                ],
+                [
+                    ['foo', ['full_text_search' => false]],
+                    ['Accounts', ['full_text_search' => true]],
+                ],
+                ['Accounts'],
+            ],
+        ];
+    }
+
+    /**
      * Get MetaDataHelper mock
      * @param array $methods
      * @return \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
