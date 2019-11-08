@@ -853,8 +853,13 @@
             });
             $row.removeClass('ui-sortable');
 
-            //trigger sugarlogic
-            this.context.trigger('list:editrow:fire', toggleModel);
+            // Since the act of toggling the fields to "edit" mode is deferred
+            // (see toggleFields in Editable.js), SugarLogic must also be deferred
+            // until that act is complete. Otherwise, SetValue actions cannot take
+            // place as the fields are not yet in edit mode.
+            _.defer(function(context, toggleModel) {
+                context.trigger('list:editrow:fire', toggleModel);
+            }, this.context, toggleModel);
         } else if ($row.hasClass('not-sortable')) {
             // if this is not edit mode and row still has not-sortable (from being a brand new row)
             // then remove the not-sortable and add the sortable classes

@@ -179,104 +179,132 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
     )
 );
 
-// Handle the dependencies when the 'service' field is checked/unchecked
-$serviceFieldActions = array();
-foreach ($serviceFieldDefaults as $field => $defaultValue) {
-    $serviceFieldActions[] = array(
-        'name' => 'SetRequired',
-        'params' => array(
-            'target' => $field,
-            'value' => 'equal($service, "1")',
-        ),
-    );
-    $serviceFieldActions[] = array(
-        'name' => 'SetValue',
-        'params' => array(
-            'target' => $field,
-            'value' => 'ifElse(
-                equal($service, "1"),
-                ifElse(
-                    equal($' . $field . ', ""),
-                    '. $defaultValue .',
-                    $'. $field .'
-                ),
-                "")',
-        ),
-    );
-}
-$serviceFieldActions[] = array(
-    'name' => 'ReadOnly',
-    'params' => array(
-        'target' => 'service_start_date',
-        'value' => 'equal($service, "0")',
-    ),
-);
-$serviceFieldActions[] = array(
-    'name' => 'ReadOnly',
-    'params' => array(
-        'target' => 'service_duration_value',
-        'value' => 'or(equal($service, "0"),equal($has_service_template,true))',
-    ),
-);
-$serviceFieldActions[] = array(
-    'name' => 'ReadOnly',
-    'params' => array(
-        'target' => 'service_duration_unit',
-        'value' => 'or(equal($service, "0"),equal($has_service_template,true))',
-    ),
-);
-// 'renewable' field is similar to the other service fields, but never required
-$serviceFieldActions[] = array(
-    'name' => 'ReadOnly',
-    'params' => array(
-        'target' => 'renewable',
-        'value' => 'equal($service, "0")',
-    ),
-);
-$serviceFieldActions[] = array(
-    'name' => 'SetValue',
-    'params' => array(
-        'target' => 'renewable',
-        'value' => 'ifElse(
-                equal($service, "1"),
-                $renewable,
-                "0")',
-    ),
-);
-$dependencies['RevenueLineItems']['handle_service_dependencies'] = array(
-    'hooks' => array('edit'),
-    'trigger' => 'true',
-    'triggerFields' => array('service'),
-    'onload' => true,
-    'actions' => $serviceFieldActions,
-);
-
-$dependencies['RevenueLineItems']['service_template_read_only_fields'] = [
+// Handle dependencies related to service fields
+$dependencies['RevenueLineItems']['service_fields_read_only'] = [
     'hooks' => ['edit'],
     'trigger' => 'true',
-    'triggerFields' => ['has_service_template'],
+    'triggerFields' => ['service', 'product_template_id'],
     'onload' => true,
     'actions' => [
         [
             'name' => 'ReadOnly',
             'params' => [
                 'target' => 'service',
-                'label' => 'service_label',
-                'value' => 'equal($has_service_template,true)',
+                'value' => 'not(equal($product_template_id,""))',
             ],
         ], [
             'name' => 'ReadOnly',
             'params' => [
-                'target' => 'service_duration_unit',
-                'label' => 'service_duration_unit_label',
-                'value' => 'or(equal($service, "0"),equal($has_service_template,true))',
+                'target' => 'renewable',
+                'value' => 'equal($service,0)',
+            ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'service_start_date',
+                'value' => 'equal($service,0)',
             ],
         ], [
             'name' => 'ReadOnly',
             'params' => [
                 'target' => 'service_duration_value',
-                'label' => 'service_duration_value_label',
-                'value' => 'or(equal($service, "0"),equal($has_service_template,true))',
+                'value' => 'or(equal($service,0),not(equal($product_template_id,"")))',
+            ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'service_duration_unit',
+                'value' => 'or(equal($service,0),not(equal($product_template_id,"")))',
+            ],
+        ],
+    ],
+];
+
+$dependencies['RevenueLineItems']['service_fields_required'] = [
+    'hooks' => array('edit'),
+    'trigger' => 'true',
+    'triggerFields' => array('service'),
+    'onload' => true,
+    'actions' => [
+        [
+            'name' => 'SetRequired',
+            'params' => [
+                'target' => 'service_start_date',
+                'value' => 'equal($service,1)',
+            ],
+        ],
+        [
+            'name' => 'SetRequired',
+            'params' => [
+                'target' => 'service_duration_value',
+                'value' => 'equal($service,1)',
+            ],
+        ],
+        [
+            'name' => 'SetRequired',
+            'params' => [
+                'target' => 'service_duration_unit',
+                'value' => 'equal($service,1)',
+            ],
+        ],
+    ],
+];
+
+$dependencies['RevenueLineItems']['service_fields_values'] = [
+    'hooks' => array('edit'),
+    'trigger' => 'true',
+    'triggerFields' => array('service'),
+    'onload' => true,
+    'actions' => [
+        [
+            'name' => 'SetValue',
+            'params' => [
+                'target' => 'service_start_date',
+                'value' => 'ifElse(
+                    equal($service,1),
+                    ifElse(
+                        equal($service_start_date,""),
+                        '. $serviceFieldDefaults['service_start_date'] .',
+                        $service_start_date
+                    ),
+                    "")',
+            ],
+        ],
+        [
+            'name' => 'SetValue',
+            'params' => [
+                'target' => 'service_duration_value',
+                'value' => 'ifElse(
+                    equal($service,1),
+                    ifElse(
+                        equal($service_duration_value,""),
+                        '. $serviceFieldDefaults['service_duration_value'] .',
+                        $service_duration_value
+                    ),
+                    "")',
+            ],
+        ],
+        [
+            'name' => 'SetValue',
+            'params' => [
+                'target' => 'service_duration_unit',
+                'value' => 'ifElse(
+                    equal($service,1),
+                    ifElse(
+                        equal($service_duration_unit,""),
+                        '. $serviceFieldDefaults['service_duration_unit'] .',
+                        $service_duration_unit
+                    ),
+                    "")',
+            ],
+        ], [
+            'name' => 'SetValue',
+            'params' => [
+                'target' => 'renewable',
+                'value' => 'ifElse(
+                    equal($service, "1"),
+                    $renewable,
+                    0)',
             ],
         ],
     ],

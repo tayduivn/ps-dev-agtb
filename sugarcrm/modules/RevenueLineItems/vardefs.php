@@ -73,17 +73,6 @@ $dictionary['RevenueLineItem'] = array(
                 'service' => 'service',
             ),
         ),
-        'has_service_template' => array(
-            'name' => 'has_service_template',
-            'vname' => 'LBL_HAS_SERVICE_TEMPLATE',
-            'type' => 'bool',
-            'default' => '0',
-            'comment' => 'Has a service type product template associated with it.',
-            'massupdate' => false,
-            'studio' => false,
-            'calculated' => true,
-            'formula' => 'related($rli_templates_link,"service")',
-        ),
         'account_id' => array(
             'name' => 'account_id',
             'type' => 'id',
