@@ -867,7 +867,7 @@ class Scheduler extends SugarBean {
         $scheduler->job = 'function::pruneDatabase';
         $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
         $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
-        $scheduler->job_interval = '0::4::1::*::*';
+        $scheduler->job_interval = '0::1::1::*::*';
         $scheduler->status = 'Inactive';
         $scheduler->created_by = '1';
         $scheduler->modified_user_id = '1';

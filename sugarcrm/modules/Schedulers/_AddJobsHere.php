@@ -301,28 +301,52 @@ function runMassEmailCampaign() {
  *  Job 3
  */
 function pruneDatabase() {
+    $pruneBatchSize = SugarConfig::getInstance()->get('prune_job_batch_size', 500);
 	$GLOBALS['log']->info('----->Scheduler fired job of type pruneDatabase()');
 
 	$db = DBManagerFactory::getInstance();
 	$tables = $db->getTablesArray();
+    $conn = DBManagerFactory::getInstance()->getConnection();
 
 	if(!empty($tables)) {
         foreach ($tables as $table) {
 			// find tables with deleted=1
 			$columns = $db->get_columns($table);
 			// no deleted - won't delete
-			if(empty($columns['deleted'])) continue;
-
+            if (empty($columns['deleted'])) {
+                continue;
+            }
             if (in_array($table . '_cstm', $tables)) {
 			    $custom_columns = $db->get_columns($table.'_cstm');
                 if (!empty($custom_columns['id_c'])) {
-                    $db->query('DELETE FROM ' . $table . '_cstm WHERE id_c IN'
-                        . ' (SELECT id FROM ' . $table . ' WHERE deleted = 1)');
-			    }
-			}
-
-			// now do the actual delete
-			$db->query('DELETE FROM '.$table.' WHERE deleted = 1');
+                    while (true) {
+                        $ids = $conn->createQueryBuilder()
+                            ->select('id')
+                            ->from($table)
+                            ->where('deleted = 1')
+                            ->setMaxResults($pruneBatchSize)
+                            ->execute()
+                            ->fetchColumn();
+                        if (count($ids) === 0) {
+                            break;
+                        }
+                        $conn->executeUpdate(
+                            'DELETE FROM ' . $table . '_cstm WHERE id_c IN (?)',
+                            [$ids],
+                            [Connection::PARAM_STR_ARRAY]
+                        );
+                        $conn->executeUpdate(
+                            'DELETE FROM ' . $table . ' WHERE id IN (?)',
+                            [$ids],
+                            [Connection::PARAM_STR_ARRAY]
+                        );
+                        $conn->commit();
+                    }
+                }
+            } else {
+                $db->query('DELETE FROM ' . $table . ' WHERE deleted = 1');
+                $db->commit();
+            }
 		} // foreach() tables
 
 		return true;
