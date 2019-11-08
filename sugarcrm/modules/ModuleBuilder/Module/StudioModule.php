@@ -71,11 +71,7 @@ class StudioModule
      */
     public function __construct($module, $seed = null)
     {
-        $moduleList = $GLOBALS['app_list_strings']['moduleList'];
-        if (empty($moduleList) && !is_array($moduleList)) {
-            $moduleList = array();
-        }
-
+        $moduleList = $GLOBALS['app_list_strings']['moduleList'] ?? [];
         $moduleNames = array_change_key_case($moduleList);
         $this->name = isset($moduleNames[strtolower($module)]) ? $moduleNames[strtolower($module)] : strtolower($module);
         $this->module = $module;

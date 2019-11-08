@@ -1372,7 +1372,7 @@ if (!class_exists('TCPDF', false)) {
 			// set disk caching
 			$this->diskcache = $diskcache ? true : false;
 			// set language direction
-			$this->rtl = $this->l['a_meta_dir']=='rtl' ? true : false;
+			$this->rtl = $this->l !== null && $this->l['a_meta_dir'] === 'rtl';
 			$this->tmprtl = false;
 			//Some checks
 			$this->_dochecks();

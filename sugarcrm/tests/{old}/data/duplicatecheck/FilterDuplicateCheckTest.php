@@ -137,7 +137,7 @@ class FilterDuplicateCheckTest extends TestCase
 
         $filterDuplicateCheckMock->expects(self::once())
             ->method("buildDupeCheckFilter")
-            ->will(self::returnValue(true));
+            ->will(self::returnValue(['whatever']));
 
         // addFilterForEdits should be called if the bean has an id
         $filterDuplicateCheckMock->expects(self::once())

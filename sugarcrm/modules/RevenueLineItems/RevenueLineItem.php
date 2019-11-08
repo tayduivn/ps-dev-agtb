@@ -417,9 +417,9 @@ class RevenueLineItem extends SugarBean
      */
     protected function mapFieldsFromProductTemplate()
     {
-        if (!empty($this->product_template_id)
-            && $this->fetched_row['product_template_id'] != $this->product_template_id
-        ) {
+        if ($this->product_template_id && (
+            $this->fetched_row === false || $this->fetched_row['product_template_id'] != $this->product_template_id
+        )) {
             /* @var $pt ProductTemplate */
             $pt = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
 

@@ -145,6 +145,11 @@ class User extends Person {
     );
 
     /**
+     * @var string|null
+     */
+    private $hashTS;
+
+    /**
      * @param $userName
      * @return bool
      */
@@ -990,8 +995,12 @@ class User extends Person {
      */
     public function retrieve($id = -1, $encode = true, $deleted = true) {
         $ret = parent::retrieve($id, $encode, $deleted);
+
         //CurrentUserApi needs a consistent timestamp/format of the data modified for hash purposes.
-        $this->hashTS = $this->fetched_row['date_modified'];
+        if ($this->fetched_row !== false) {
+            $this->hashTS = $this->fetched_row['date_modified'];
+        }
+
 		if ($ret) {
 			if (isset($_SESSION)) {
 				$this->loadPreferences();
@@ -1382,8 +1391,8 @@ class User extends Person {
                     $already_seen_list[$check_user] = 1;
                     $stmt->bindValue(1, $check_user);
                     $stmt->execute();
-                    $row = $stmt->fetch();
-                    $check_user = $row['reports_to_id'];
+
+                    $check_user = $stmt->fetchColumn();
                 }
                 $stmt->closeCursor();
             }

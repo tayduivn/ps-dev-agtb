@@ -183,7 +183,7 @@ class Audit extends SugarBean
      * Wrapper around static method self::getAssociatedFieldName($fieldName, $fieldValue)
      * @param string $fieldName
      * @param string $fieldValue
-     * @return string
+     * @return string|null
      */
     protected function getNameForId($fieldName, $fieldValue)
     {
@@ -393,7 +393,7 @@ class Audit extends SugarBean
      * Return a more readable name for an id
      * @param {String} $fieldName
      * @param {String} $fieldValue
-     * @return string
+     * @return string|null
      */
     public static function getAssociatedFieldName($fieldName, $fieldValue)
     {
@@ -424,6 +424,10 @@ SQL;
                 ),
                 [$fieldValue]
             )->fetch();
+
+        if ($row === false) {
+            return null;
+        }
 
         if (is_array($field_arr['select_field_name'])) {
             $returnVal = '';

@@ -272,7 +272,7 @@ class ServiceDictionaryRest extends ServiceDictionary
         if ($currPath === '?') {
             // This matches anything
             $myScore = self::SCORE_WILDCARD;
-        } elseif ($currPath[0] === '<') {
+        } elseif (substr($currPath, 0, 1) === '<') {
             // This is looking for a specfic data type
             $myScore = self::SCORE_MODULE;
         } else {

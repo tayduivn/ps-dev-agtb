@@ -46,7 +46,7 @@ if ( !class_exists('Accounts_workflow') ) {
  } 
 
 
- if( ( !($focus->fetched_row['name'] ==  'Sugar' )) && 
+            if ((!($focus->fetched_row !== false && $focus->fetched_row['name'] == 'Sugar')) &&
  (isset($focus->name) && $focus->name ==  'Sugar')){ 
 	 //Frame Secondary 
 

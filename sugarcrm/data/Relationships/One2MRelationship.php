@@ -67,8 +67,14 @@ class One2MRelationship extends M2MRelationship
             $this->lhsLinkDef = $this->getLinkedDefForModuleByRelationship($lhsModule);
             $this->rhsLinkDef = $this->getLinkedDefForModuleByRelationship($rhsModule);
         }
-        $this->lhsLink = $this->lhsLinkDef['name'];
-        $this->rhsLink = $this->rhsLinkDef['name'];
+
+        if ($this->lhsLinkDef) {
+            $this->lhsLink = $this->lhsLinkDef['name'];
+        }
+
+        if ($this->rhsLinkDef) {
+            $this->rhsLink = $this->rhsLinkDef['name'];
+        }
     }
 
     protected function linkIsLHS($link) {

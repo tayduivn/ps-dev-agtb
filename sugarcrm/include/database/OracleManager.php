@@ -742,7 +742,7 @@ WHERE OWNER = ?
             case 'left':
                 return "LTRIM($string$additional_parameters_string)";
             case 'date_format':
-                if(!empty($additional_parameters[0]) && $additional_parameters[0][0] == "'") {
+                if (isset($additional_parameters[0]) && substr($additional_parameters[0], 0, 1) === "'") {
                     $additional_parameters[0] = trim($additional_parameters[0], "'");
                 }
                 if(!empty($additional_parameters) && isset($this->date_formats[$additional_parameters[0]])) {
