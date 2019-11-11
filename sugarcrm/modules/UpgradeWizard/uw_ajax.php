@@ -663,49 +663,6 @@ function preflightCheckJsonGetSchemaErrors($persistence) {
 }
 
 
-function preflightCheckJsonFillSchema() {
-	global $mod_strings;
-	global $persistence;
-	global $sugar_db_version;
-	global $manifest;
-	global $db;
-
-    if (empty($sugar_db_version))
-    {
-        include('sugar_version.php');
-    }
-	if(empty($manifest)) {
-		include($persistence['unzip_dir'].'/manifest.php');
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
-	////	SCHEMA SCRIPT HANDLING
-	$schema = '';
-	$alterTableSchemaOut = '';
-
-    $origVersion = implodeVersion($sugar_db_version);
-    $destVersion = implodeVersion($manifest['version']);
-
-    $script_name = $db->getScriptType();
-    $sqlScript = $persistence['unzip_dir']."/scripts/{$origVersion}_to_{$destVersion}_{$script_name}.sql";
-	$newTables = array();
-
-	logThis('looking for SQL script for DISPLAY at '.$sqlScript);
-	if(file_exists($sqlScript)) {
-		$contents = sugar_file_get_contents($sqlScript);
-		$schema  = "<p><a href='javascript:void(0); toggleNwFiles(\"schemashow\");'>{$mod_strings['LBL_UW_SHOW_SCHEMA']}</a>";
-		$schema .= "<div id='schemashow' style='display:none;'>";
-		$schema .= "<textarea readonly cols='80' rows='10'>{$contents}</textarea>";
-		$schema .= "</div></p>";
-	}
-	////	END SCHEMA SCRIPT HANDLING
-	///////////////////////////////////////////////////////////////////////////////
-
-	ob_start();
-	echo $schema;
-	ob_flush();
-}
-
 
 function preflightCheckJsonAlterTableCharset() {
 	global $mod_strings;
