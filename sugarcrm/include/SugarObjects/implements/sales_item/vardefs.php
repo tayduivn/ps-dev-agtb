@@ -94,6 +94,14 @@ $vardefs = [
             'comment' => 'Quantity in use',
             'default' => 1.0,
         ],
+        'serial_number' => [
+            'name' => 'serial_number',
+            'vname' => 'LBL_SERIAL_NUMBER',
+            'type' => 'varchar',
+            'len' => 50,
+            'comment' => 'Serial number of sales item in use',
+        ],
+        // BEGIN SUGARCRM flav=ent ONLY
         'renewable' => [
             'name' => 'renewable',
             'vname' => 'LBL_RENEWABLE',
@@ -105,13 +113,6 @@ $vardefs = [
                 'service_end_date',
                 'service',
             ],
-        ],
-        'serial_number' => [
-            'name' => 'serial_number',
-            'vname' => 'LBL_SERIAL_NUMBER',
-            'type' => 'varchar',
-            'len' => 50,
-            'comment' => 'Serial number of sales item in use',
         ],
         'service' => [
             'name' => 'service',
@@ -169,6 +170,7 @@ $vardefs = [
                 'service',
             ],
         ],
+        // END SUGARCRM flav=ent ONLY
         'support_contact' => [
             'name' => 'support_contact',
             'vname' => 'LBL_SUPPORT_CONTACT',
