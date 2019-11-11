@@ -99,5 +99,61 @@ $viewdefs['Opportunities']['base']['view']['recorddashlet'] = [
                 'opportunity_type',
             ],
         ],
+        [
+            'name' => 'panel_hidden',
+            'label' => 'LBL_RECORD_SHOWMORE',
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'columns' => 2,
+            'fields' => [
+                'next_step',
+                'renewal_parent_name',
+                'lead_source',
+                'campaign_name',
+                [
+                    'name' => 'description',
+                    'span' => 12,
+                ],
+                'assigned_user_name',
+                'team_name',
+                [
+                    'name' => 'date_entered_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'fields' => [
+                        [
+                            'name' => 'date_entered',
+                        ],
+                        [
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY',
+                        ],
+                        [
+                            'name' => 'created_by_name',
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'date_modified_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => [
+                        [
+                            'name' => 'date_modified',
+                        ],
+                        [
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY',
+                        ],
+                        [
+                            'name' => 'modified_by_name',
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ],
 ];
