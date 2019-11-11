@@ -95,7 +95,7 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
      */
     protected function getTenant(Config $config)
     {
-        $idmModeConfig = $config->get(Config::IDM_MODE_KEY, []);
+        $idmModeConfig = $config->getIDMModeConfig();
         return !empty($idmModeConfig['tid']) ? $idmModeConfig['tid'] : '';
     }
 

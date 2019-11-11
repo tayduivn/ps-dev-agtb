@@ -37,11 +37,11 @@ class IdmModeManageCommand extends Command implements InstanceModeInterface
     {
         $this
             ->setName('idm-mode:manage')
-            ->setDescription('enable, disable or migrate IDM mode')
+            ->setDescription('enable, disable IDM mode, or move config data to DB')
             ->addArgument(
                 'action',
                 InputArgument::REQUIRED,
-                'enable or disable',
+                'enable, disable or moveConfigToDb',
                 null
             )
             ->addOption(
@@ -62,13 +62,13 @@ class IdmModeManageCommand extends Command implements InstanceModeInterface
         $args['idmMode'] = [];
         $action = $input->getArgument('action');
 
-        if (!in_array($action, array('enable', 'disable', 'migrate'), true)) {
-            throw new \Exception("Please specify a proper action: 'enable', 'disable' or 'migrate'");
+        if (!in_array($action, array('enable', 'disable', 'moveConfigToDb'), true)) {
+            throw new \Exception("Please specify a proper action: 'enable', 'disable' or 'moveConfigToDb'");
         }
 
-        $enbled = ($action === 'enable');
-
-        if ($enbled) {
+        $enabled = ($action === 'enable');
+        if ($enabled) {
+            // to get config file input
             $file = $input->getOption('file');
             if (empty($file)) {
                 $file = self::IDM_CONFIG_FILE;
@@ -77,13 +77,11 @@ class IdmModeManageCommand extends Command implements InstanceModeInterface
                 global $sugar_idm_config;
                 require $file;
                 $args['idmMode'] = $sugar_idm_config;
-                $args['idmMode']['enabled'] = $enbled;
+                $args['idmMode']['enabled'] = $enabled;
             } else {
                 throw new \Exception("Cannot find file '{$file}'");
             }
-        }
-
-        if ($action === 'migrate') {
+        } elseif ($action === 'moveConfigToDb') {
             // migrate from config to db
             $output->writeln('migrate IDM storage from config file to database ...');
             $idmEnabled = (bool)\SugarConfig::getInstance()->get('idm_mode.enabled', false);
@@ -95,22 +93,17 @@ class IdmModeManageCommand extends Command implements InstanceModeInterface
             $args['idmMode'] = \SugarConfig::getInstance()->get('idm_mode');
         }
 
+
         if (!empty($args['idmMode'])) {
-            $oldSetting = null;
-            if ($GLOBALS['sugar_config']['idmMigration']) {
-                $oldSetting = $GLOBALS['sugar_config']['idmMigration'];
-            }
-            $GLOBALS['sugar_config']['idmMigration'] = true;
             $output->writeln('enable IDM mode, it may take while to refresh cache ...');
+            $this->enableIdmMigration();
             $this->initApi($this->getApi())->callApi('switchOnIdmMode', $args);
-            if ($oldSetting !== null) {
-                $GLOBALS['sugar_config']['idmMigration'] = $oldSetting;
-            } else {
-                unset($GLOBALS['sugar_config']['idmMigration']);
-            }
+            $this->disableIdmMigration();
         } elseif ($action === 'disable') {
-            $output->writeln('enable IDM mode, it may take while to refresh cache ...');
+            $output->writeln('disable IDM mode, it may take while to refresh cache ...');
+            $this->enableIdmMigration();
             $this->initApi($this->getApi())->callApi('switchOffIdmMode', $args);
+            $this->disableIdmMigration();
         }
         $output->writeln('Done!');
     }
@@ -121,5 +114,29 @@ class IdmModeManageCommand extends Command implements InstanceModeInterface
     protected function getApi()
     {
         return new \AuthSettingsApi();
+    }
+
+    /**
+     * @return \AdministrationApi
+     */
+    protected function getAdministrationApi()
+    {
+        return new \AdministrationApi();
+    }
+
+    /**
+     * call AdministrationApi::enableIdmMigration to enableIdmMigration
+     */
+    protected function enableIdmMigration()
+    {
+        $this->initApi($this->getAdministrationApi())->callApi('enableIdmMigration', []);
+    }
+
+    /**
+     * call AdministrationApi::enableIdmMigration to enableIdmMigration
+     */
+    protected function disableIdmMigration()
+    {
+        $this->initApi($this->getAdministrationApi())->callApi('disableIdmMigration', []);
     }
 }
