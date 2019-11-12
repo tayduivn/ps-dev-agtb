@@ -19,6 +19,12 @@ $dictionary['Case'] = array(
     'unified_search_default_enabled' => true,
     'duplicate_merge' => true,
     'comment' => 'Cases are issues or problems that a customer asks a support representative to resolve',
+// BEGIN SUGARCRM flav=ent ONLY
+    'change_timer_fields' => [
+        'status',
+        'assigned_user_id',
+    ],
+// END SUGARCRM flav=ent ONLY
     'fields' => array(
         'account_name' => array(
             'name' => 'account_name',

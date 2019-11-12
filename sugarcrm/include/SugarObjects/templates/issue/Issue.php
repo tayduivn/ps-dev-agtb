@@ -151,6 +151,135 @@ class Issue extends Basic
     }
 
     /**
+     * @param array $fields change timer enabled fields
+     * @param bool $isUpdate, return changed fields if true, non empty fields if false
+     * @return array
+     */
+    protected function getFields(array $fields, bool $isUpdate) : array
+    {
+        $fieldsToProcess = [];
+        foreach ($fields as $field) {
+            if ($isUpdate) {
+                if (!empty($this->dataChanges[$field])) {
+                    $fieldsToProcess[] = $field;
+                }
+            } else {
+                if (!empty($this->$field)) {
+                    $fieldsToProcess[] = $field;
+                }
+            }
+        }
+        return $fieldsToProcess;
+    }
+
+    /**
+     * @param string $field
+     * @return string
+     * @throws SugarQueryException
+     */
+    protected function getLastId(string $field) : string
+    {
+        $query = new SugarQuery();
+        $query->select(['id']);
+        $bean = BeanFactory::newBean('ChangeTimers');
+
+        $query->from($bean);
+
+        $query->where()->queryAnd()
+            ->equals('field_name', $field)
+            ->equals('parent_type', $this->getModuleName())
+            ->equals('parent_id', $this->id)
+            ->isNull('to_datetime');
+        $query->limit(1);
+        $query->orderBy('date_modified');
+
+        $rows = $query->execute();
+
+        return $rows[0]['id'] ?? '';
+    }
+
+    /**
+     * @param string $field
+     * @return string
+     */
+    protected function createNewCTRecord(string $field) : string
+    {
+        $newBean = BeanFactory::newBean('ChangeTimers');
+        $newBean->parent_type = $this->getModuleName();
+        $newBean->parent_id = $this->id;
+        $newBean->field_name = $field;
+        $newBean->value_string = $this->$field;
+        $newBean->from_datetime = $this->date_modified;
+        return $newBean->save();
+    }
+
+    /**
+     * @param string $lastId
+     * @throws Exception
+     */
+    protected function updateLastCTRecord(string $lastId)
+    {
+        $bean = BeanFactory::retrieveBean('ChangeTimers', $lastId);
+        $bean->to_datetime = $this->date_modified;
+
+        // hours and business hours between from_datetime to to_datetime
+        $hours = $this->getHoursBetween(
+            new \SugarDateTime($bean->from_datetime, new DateTimeZone('UTC')),
+            new \SugarDateTime($bean->to_datetime, new DateTimeZone('UTC')),
+            $this->business_center_id ?? ''
+        );
+        $bean->hours = $hours['calendarHours'];
+        $bean->business_hours = $hours['businessHours'];
+
+        $bean->save();
+    }
+
+    /**
+     * @param string $field
+     * @throws SugarQueryException
+     */
+    protected function updateChangeTimerRecord(string $field)
+    {
+        // update the last record
+        $lastId = $this->getLastId($field);
+        if (!empty($lastId)) {
+            $this->updateLastCTRecord($lastId);
+        }
+
+        // add a new record
+        $this->createNewCTRecord($field);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getChangeTimerFields() : array
+    {
+        global $dictionary;
+        $bean_name = get_valid_bean_name($this->getModuleName());
+        return $dictionary[$bean_name]['change_timer_fields'] ?? [];
+    }
+
+    /**
+     * Update the fields in the related ChangeTimers module
+     * @param bool $isUpdate
+     * @param array $changeTimerFields
+     * @throws SugarQueryException
+     */
+    protected function processChangeTimers(bool $isUpdate, array $changeTimerFields)
+    {
+        if (empty($changeTimerFields) || !is_array($changeTimerFields)) {
+            return;
+        }
+
+        $fieldsToProcess = $this->getFields($changeTimerFields, $isUpdate);
+
+        foreach ($fieldsToProcess as $field) {
+            $this->updateChangeTimerRecord($field);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function save($check_notify = false)
@@ -159,7 +288,15 @@ class Issue extends Basic
             $this->calculateResolutionHours();
         }
 
-        return parent::save($check_notify);
+        $isUpdate = $this->isUpdate();
+        $id = parent::save($check_notify);
+
+        $changeTimerFields = $this->getChangeTimerFields();
+        if (!empty($changeTimerFields)) {
+            $this->processChangeTimers($isUpdate, $changeTimerFields);
+        }
+
+        return $id;
     }
     //END SUGARCRM flav=ent ONLY
 }
