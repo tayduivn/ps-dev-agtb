@@ -4067,6 +4067,8 @@ Sincerely, SugarCRM',
     //MB -Fixed Bug #32812 -Max
     'LBL_ASSIGNED_TO_NAME' => 'Assigned to',
     'LBL_DESCRIPTION' => 'Description',
+    'LBL_PRIMARY_CONTACT_NAME' => 'Primary Contact',
+    'LBL_PRIMARY_CONTACT_ID' => 'Primary Contact ID',
 
   'LBL_NONE' => '-none-',
   'LBL_YESTERDAY'=> 'yesterday',

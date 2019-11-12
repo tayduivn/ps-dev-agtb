@@ -181,6 +181,7 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 'resolved_datetime',
                 //END SUGARCRM flav=ent ONLY
                 'assigned_user_name',
+                'primary_contact_name',
                 array(
                     'name' => 'description',
                     'nl2br' => true,

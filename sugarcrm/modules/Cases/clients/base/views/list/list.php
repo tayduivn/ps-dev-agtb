@@ -79,6 +79,12 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'default' => false,
                     'enabled' => true,
                 ),
+                [
+                    'name' => 'primary_contact_name',
+                    'label' => 'LBL_PRIMARY_CONTACT_NAME',
+                    'default' => false,
+                    'enabled' => true,
+                ],
                 //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'business_center_name',
