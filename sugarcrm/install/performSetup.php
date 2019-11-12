@@ -357,6 +357,9 @@ unset($opps_config);
 //BEGIN SUGARCRM flav=ent ONLY
 //Install Tile View configuration
 $visualPipelineConfig = VisualPipelineDefaults::setupPipelineSettings();
+
+// Install Console Configuration settings
+$consoleConfig = ConsoleConfigurationDefaults::setupConsoleConfigurationSettings();
 //END SUGARCRM flav=ent ONLY
 
 installerHook('pre_createUsers');

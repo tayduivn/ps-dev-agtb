@@ -724,6 +724,10 @@ $modInvisList[] = 'EmbeddedFiles';
 $beanList['VisualPipeline']  = 'VisualPipeline';
 $beanFiles['VisualPipeline'] = 'modules/VisualPipeline/VisualPipeline.php';
 $modInvisList[] = 'VisualPipeline';
+
+$beanList['ConsoleConfiguration']  = 'ConsoleConfiguration';
+$beanFiles['ConsoleConfiguration'] = 'modules/ConsoleConfiguration/ConsoleConfiguration.php';
+$modInvisList[] = 'ConsoleConfiguration';
 //END SUGARCRM flav=ent ONLY
 
 // this module doesn't need a Bean
