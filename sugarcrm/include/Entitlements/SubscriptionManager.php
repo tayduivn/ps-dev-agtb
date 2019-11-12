@@ -537,6 +537,30 @@ class SubscriptionManager
     }
 
     /**
+     * Check system types for free seats for user and return array of exceeded types
+     * It should be used for user management only.
+     * @param \User $user
+     * @return array
+     */
+    public function getUserExceededLicenseTypes(\User $user): array
+    {
+        $usedSeats = $this->getSystemUserCountByLicenseTypes();
+        $allowedSeats = $this->getSystemSubscriptions();
+        $userTypes = $user->getLicenseTypes();
+
+        if (empty($allowedSeats)) {
+            return $userTypes;
+        }
+
+        return array_filter($userTypes, function ($type) use ($allowedSeats, $usedSeats) {
+            if (empty($allowedSeats[$type]) || $allowedSeats[$type]['quantity'] - $usedSeats[$type] <= 0) {
+                return true;
+            }
+            return false;
+        });
+    }
+
+    /**
      * Get system active users by license types
      * @return array
      */

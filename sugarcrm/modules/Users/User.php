@@ -681,9 +681,8 @@ class User extends Person {
                   && (empty($this->fetched_row)
                       || $this->fetched_row['status'] == 'Inactive'
                       || $this->fetched_row['status'] == '')) {
-                $license_seats_needed = 0;
-                $exceededLicenseType = SubscriptionManager::instance()->getSystemLicenseTypesExceededLimit($license_seats_needed);
-                if ($license_seats_needed > 0) {
+                $exceededLicenseTypes = SubscriptionManager::instance()->getUserExceededLicenseTypes($this);
+                if (count($exceededLicenseTypes)) {
                     $GLOBALS['log']->error(
                         'The number of active users is already the maximum number of licenses allowed.'
                         . ' New user cannot be created or activated.'
@@ -700,7 +699,7 @@ class User extends Person {
                     }
 
                     $typeString = '';
-                    foreach ($exceededLicenseType as $type => $number) {
+                    foreach ($exceededLicenseTypes as $type) {
                         $typeString .= self::getLicenseTypeDescription($type) . ' ';
                     }
                     $msg = sprintf(translate('WARN_LICENSE_TYPE_SEATS_EDIT_USER', 'Administration'), $typeString);

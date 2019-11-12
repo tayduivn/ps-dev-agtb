@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\inc\Entitlements;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 use Sugarcrm\Sugarcrm\Entitlements\Subscription;
@@ -639,5 +640,61 @@ class SubscriptionManagerTest extends TestCase
                 ['INVALID_TYPE'],
             ],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function providerTestGetUserExceededLicenseTypes()
+    {
+        return [
+            'empty system license types' => [[], [Subscription::SUGAR_SERVE_KEY], [Subscription::SUGAR_SERVE_KEY]],
+            'all other cases' =>[
+                [
+                    Subscription::SUGAR_SERVE_KEY => ['quantity' => 10],
+                    Subscription::SUGAR_BASIC_KEY => ['quantity' => 100],
+                ],
+                [Subscription::SUGAR_SERVE_KEY, Subscription::SUGAR_SELL_KEY, Subscription::SUGAR_BASIC_KEY],
+                [Subscription::SUGAR_SERVE_KEY, Subscription::SUGAR_SELL_KEY],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getUserExceededLicenseTypes
+     * @dataProvider providerTestGetUserExceededLicenseTypes
+     * @param $allowedSeats
+     * @param $userTypes
+     * @param $result
+     */
+    public function testGetUserExceededLicenseTypes($allowedSeats, $userTypes, $result)
+    {
+        /** @var \User|MockObject $user */
+        $user = $this->getMockBuilder(\User::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getLicenseTypes'])
+            ->getMock();
+        $user->expects($this->once())->method('getLicenseTypes')->willReturn($userTypes);
+
+        /** @var SubscriptionManager|MockObject $manager */
+        $manager = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getSystemUserCountByLicenseTypes',
+                'getSystemSubscriptions',
+            ])->getMock();
+
+        $manager->expects($this->once())
+            ->method('getSystemUserCountByLicenseTypes')
+            ->willReturn([
+                Subscription::SUGAR_SERVE_KEY => 10,
+                Subscription::SUGAR_BASIC_KEY => 1,
+            ]);
+
+        $manager->expects($this->once())
+            ->method('getSystemSubscriptions')
+            ->willReturn($allowedSeats);
+
+        $this->assertEquals($result, $manager->getUserExceededLicenseTypes($user));
     }
 }
