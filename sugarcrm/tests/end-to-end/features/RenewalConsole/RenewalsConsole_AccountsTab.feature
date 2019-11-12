@@ -108,8 +108,8 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
       | name        |
       | Account 1.1 |
     When I provide input for #A_1Record.RecordView view
-      | website          | industry | account_type | service_level | phone_office | phone_alternate | email       |
-      | www.sugarcrm.com | Banking  | Customer     | Tier 2        | 555-555-0000 | 555-555-0001    | bob@bob.com |
+      | website          | industry | account_type | service_level | phone_office | phone_alternate |
+      | www.sugarcrm.com | Banking  | Customer     | Tier 2        | 555-555-0000 | 555-555-0001    |
     When I click Save button on #A_1Record header
     When I close alert
 
