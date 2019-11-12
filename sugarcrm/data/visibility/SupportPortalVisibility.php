@@ -53,7 +53,11 @@ class SupportPortalVisibility extends SugarVisibility implements StrategyInterfa
      */
     protected function ignoreVisibilityQuery(\SugarBean $bean)
     {
-        return (in_array($bean->getModuleName(), $this->modulesToIgnore)) ? true : false;
+        include 'modules/pmse_Inbox/engine/PMSEModules.php';
+        // Besides modulesToIgnore list, we don't want to apply visibility query for pmse modules either.
+        // Otherwise, SugarBPM won't be triggered for Portal.
+        return (in_array($bean->getModuleName(), $this->modulesToIgnore) ||
+            in_array($bean->getModuleName(), $pmseModulesList));
     }
 
     /**

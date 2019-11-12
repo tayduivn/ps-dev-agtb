@@ -13,12 +13,26 @@
 use PHPUnit\Framework\TestCase;
 
 // FILE SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
 
 class SugarQueryPortalVisibilityTest extends TestCase
 {
     public $bean = null;
     public $vis = null;
     public $query = null;
+    public $oldSession = null;
+
+    public function setUp()
+    {
+        $this->oldSession = $_SESSION;
+    }
+
+    public function tearDown()
+    {
+        if (!empty($this->oldSession)) {
+            $_SESSION = $this->oldSession;
+        }
+    }
 
     public static function setupBeforeClass()
     {
@@ -52,6 +66,47 @@ class SugarQueryPortalVisibilityTest extends TestCase
         unset($vis);
         unset($bean);
         unset($query);
+    }
+
+    /**
+     * Test SugarBPM module should be ignored by portal visibility
+     *
+     * @param string $moduleName
+     * @param bool $ignoreVisibility
+     * @dataProvider getPortalVisibilityProvider
+     */
+    public function testSupportPortalVisibility(string $moduleName, bool $ignoreVisibility)
+    {
+        $portalSession = PortalFactory::getInstance('Session');
+        $portalSession->unsetCache();
+        $_SESSION['type'] = 'support_portal';
+
+        $bean = $this->createPartialMock($moduleName, array('loadVisibility'));
+        $query = new SugarQuery();
+
+        $originalQuery = clone $query;
+        $visibility = new SupportPortalVisibility($bean);
+        $sugarQuery = $visibility->addVisibilityQuery($query);
+
+        // For SugarBPM module, such as pmse_BpmProcessDefinition, the original query
+        // shouldn't be added with visibility (0=1) criteria to the where clause.
+        // i.e. the returned $sugarQuery should still be equal to the $originalQuery
+        if ($ignoreVisibility) {
+            $this->assertEquals($sugarQuery, $originalQuery);
+        } else {
+            $this->assertNotEquals($sugarQuery, $originalQuery);
+        }
+    }
+
+    public function getPortalVisibilityProvider(): array
+    {
+        return [
+            ['pmse_BpmProcessDefinition', true],
+            ['pmse_Business_Rules', true],
+            ['pmse_Emails_Templates', true],
+            ['Account', false],
+            ['Contact', false],
+        ];
     }
 
     public function testQueryReturnWithAccounts()
