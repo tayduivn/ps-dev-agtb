@@ -1784,7 +1784,7 @@ class Report
                         $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view', $type = 'module');
 
                         if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE) {
-                            if ((isset($_REQUEST['DynamicAction']) && $_REQUEST['DynamicAction'] == 'retrievePage') || (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Home')) {
+                            if (isset($_REQUEST['module']) && $_REQUEST['module'] === 'Home') {
                                 throw new Exception($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
                             } else {
                                 $this->handleException($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
