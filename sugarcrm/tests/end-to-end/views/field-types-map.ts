@@ -82,6 +82,7 @@ export const FIELD_TYPES__MAP = {
     datetimecombo: DatetimecomboField,
     'quote-group-title': QuoteGroupTitleField,
     'badge-select': BadgeSelectField,
+    'renewal': BadgeSelectField,
     'email-recipients': EmailRecipientsField,
     'participants': ParticipantsField,
     'timeperiod': EnumField,
