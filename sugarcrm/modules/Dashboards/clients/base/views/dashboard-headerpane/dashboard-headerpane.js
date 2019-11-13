@@ -30,7 +30,9 @@
         'click [name=delete_button]': 'deleteClicked',
         'click [name=add_button]': 'addClicked',
         'click [name=collapse_button]': 'collapseClicked',
-        'click [name=expand_button]': 'expandClicked'
+        'click [name=expand_button]': 'expandClicked',
+        'click [name=edit_overview_tab_button]': 'editOverviewTabClicked',
+        'click [name=edit_module_tabs_button]': 'editModuleTabsClicked'
     },
 
     initialize: function(options) {
@@ -80,6 +82,32 @@
         this.setButtonStates(state);
         this.inlineEditMode = state === 'edit';
         this.toggleEdit(this.inlineEditMode);
+    },
+
+    /**
+     * Event handler for button 'Edit Overview Tab'.
+     *
+     * @param {Event} evt Triggered mouse event
+     */
+    editOverviewTabClicked: function(evt) {
+        // switch to overview tab
+        if (this.context.get('activeTab') !== 0) {
+            this.context.trigger('tabbed-dashboard:switch-tab', 0);
+        }
+        this.editClicked(evt);
+    },
+
+    /**
+     * Event handler for button 'Edit Module Tabs'.
+     *
+     * @param {Event} evt Triggered mouse event
+     */
+    editModuleTabsClicked: function(evt) {
+        app.drawer.open({
+            layout: 'default', //TODO: create a new layout in SS-136
+        }, function() {
+            //TODO: refresh tabs in SS-137
+        });
     },
 
     editClicked: function(evt) {

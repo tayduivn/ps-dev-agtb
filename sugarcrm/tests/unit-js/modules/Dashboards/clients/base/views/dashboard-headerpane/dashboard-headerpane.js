@@ -155,6 +155,33 @@ describe('Dashboards.Base.View.DashboardHeaderpane', function() {
         });
     });
 
+    describe('editOverviewTabClicked', function() {
+        it('should switch tab and call editClicked', function() {
+            view = SugarTest.createView('base', 'Dashboards', 'dashboard-headerpane');
+            view.context = {
+                trigger: sandbox.stub(),
+                get: function() {
+                    return 1;
+                }
+            };
+            var editClickedStub = sandbox.stub(view, 'editClicked');
+            view.editOverviewTabClicked();
+            expect(view.context.trigger).toHaveBeenCalledWith('tabbed-dashboard:switch-tab', 0);
+            expect(editClickedStub).toHaveBeenCalled();
+        });
+    });
+
+    describe('editModuleTabsClicked', function() {
+        it('should open drawer', function() {
+            view = SugarTest.createView('base', 'Dashboards', 'dashboard-headerpane');
+            app.drawer = {
+                open: sinon.stub()
+            };
+            view.editModuleTabsClicked();
+            expect(app.drawer.open).toHaveBeenCalled();
+        });
+    });
+
     describe('hasUnsavedChanges', function() {
         beforeEach(function() {
             view = SugarTest.createView('base', 'Dashboards', 'dashboard-headerpane');
