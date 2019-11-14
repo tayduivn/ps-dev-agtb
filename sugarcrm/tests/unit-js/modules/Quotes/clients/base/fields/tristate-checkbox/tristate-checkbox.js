@@ -145,6 +145,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             });
         });
 
+        // BEGIN SUGARCRM flav=ent ONLY
         it('should set serviceRelatedFieldArr', function() {
             field.initialize({});
 
@@ -156,11 +157,13 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                 'service',
         ]);
         });
+        // END SUGARCRM flav=ent ONLY
 
         it('should set tooltipLabel', function() {
             expect(field.tooltipLabel).toBe('LBL_CONFIG_TOOLTIP_FIELD_REQUIRED_BY');
         });
 
+        // BEGIN SUGARCRM flav=ent ONLY
         describe('when this.name is service_duration', function() {
             beforeEach(function() {
                 sinon.collection.stub(field, '_super');
@@ -196,6 +199,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                     expect(field.changeState).not.toHaveBeenCalledWith('checked');
                 });
         });
+        // END SUGARCRM flav=ent ONLY
     });
 
     describe('bindDataChange()', function() {
@@ -464,6 +468,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                     field.currentStateName = 'unchecked';
                 });
 
+                // BEGIN SUGARCRM flav=ent ONLY
                 it('should call changeState with checked when the related field is a service field',
                     function() {
                     field.name = 'renewable';
@@ -471,6 +476,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
 
                     expect(field.changeState).toHaveBeenCalledWith('checked');
                 });
+                // END SUGARCRM flav=ent ONLY
 
                 it('should call changeState with filled when the related field is not a service field',
                     function() {
@@ -493,6 +499,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                 field.isRequired = true;
             });
 
+            // BEGIN SUGARCRM flav=ent ONLY
             it('should delete all the service fields from dependentFields if related field is service field',
                 function() {
                 field.dependentFields = {
@@ -515,6 +522,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
 
                 expect(field.dependentFields).toEqual({});
             });
+            // END SUGARCRM flav=ent ONLY
 
             it('should delete only the related fields from dependentFields if related field is not service field',
                 function() {
@@ -540,6 +548,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                     expect(field.changeState).toHaveBeenCalledWith('unchecked');
                 });
 
+                // BEGIN SUGARCRM flav=ent ONLY
                 it('should call changeState with unchecked when currentStateName is checked for a service field',
                     function() {
                     field.dependentFields = {
@@ -551,6 +560,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
 
                     expect(field.changeState).toHaveBeenCalledWith('unchecked');
                 });
+                // END SUGARCRM flav=ent ONLY
 
                 it('should set isRequired false', function() {
                     field.dependentFields = {
@@ -601,6 +611,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                 });
             });
 
+            // BEGIN SUGARCRM flav=ent ONLY
             describe('when toggleFieldOn is true and it is a service field',
                 function() {
                 it('should trigger context event for each relatedField', function() {
@@ -614,6 +625,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
                     );
                 });
             });
+            // END SUGARCRM flav=ent ONLY
 
             describe('when toggleFieldOn is false', function() {
                 beforeEach(function() {
@@ -752,6 +764,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
             expect(field.changeState).toHaveBeenCalledWith(currentState.nextState);
         });
 
+        // BEGIN SUGARCRM flav=ent ONLY
         it('should call changeState with unchecked when a service related field has nextState as filled',
             function() {
             field.isRequired = true;
@@ -761,6 +774,7 @@ describe('Quotes.Base.Fields.TristateCheckbox', function() {
 
             expect(field.changeState).toHaveBeenCalledWith('unchecked');
         });
+        // END SUGARCRM flav=ent ONLY
     });
 
     describe('_onCheckboxClicked()', function() {
