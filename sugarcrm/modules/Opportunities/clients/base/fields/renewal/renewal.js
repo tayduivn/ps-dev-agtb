@@ -1,4 +1,3 @@
-// FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -21,6 +20,8 @@
      * This field doesn't support `showNoData`.
      */
     showNoData: false,
+    month: '',
+    year: '',
 
     /**
      * @inheritdoc
@@ -28,5 +29,15 @@
     initialize: function(options) {
         options.def.readonly = true;
         this._super('initialize', [options]);
-    }
+    },
+
+    bindDataChange: function() {
+        this._super('bindDataChange');
+        this.model.on('change:date_closed', function() {
+            var date = this.model.get('date_closed');
+            this.month = app.date(date).format('MMMM');
+            this.year = app.date(date).format('YYYY');
+            this.render();
+        }, this);
+    },
 })

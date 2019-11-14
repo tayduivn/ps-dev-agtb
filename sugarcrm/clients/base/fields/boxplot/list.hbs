@@ -15,13 +15,13 @@
     <div class="left-whisker"></div>
     <hr class="horizontal-line"/>
     <div class="right-whisker"></div>
-    <hr data-placement="top" data-original-title="Best: {{bestCase}}
-Likely: {{likely}}
-Worst: {{worstCase}}"
+    <hr data-placement="top" data-original-title="{{str 'LBL_BEST'}}: {{bestCase}}
+{{str 'LBL_LIKELY'}}: {{likely}}
+{{str 'LBL_WORST'}}: {{worstCase}}"
         rel="tooltip" class="box-plot" style="margin-left: {{boxStart}}%; width: {{boxWidth}}%"/>
-    <div data-placement="top" data-original-title="Best: {{bestCase}}
-Likely: {{likely}}
-Worst: {{worstCase}}"
+    <div data-placement="top" data-original-title="{{str 'LBL_BEST'}}: {{bestCase}}
+{{str 'LBL_LIKELY'}}: {{likely}}
+{{str 'LBL_WORST'}}: {{worstCase}}"
          rel="tooltip" class="median-line" style="margin-left: {{likelyPercent}}%"></div>
     <img src="./styleguide/assets/img/carat.png" class="box-plot-caret" style="margin-left: {{caretPos}}%" alt="Carat.png"/>
     <div class="likely-value" style="margin-left: {{amountPos}}%">{{likelyRound}}</div>

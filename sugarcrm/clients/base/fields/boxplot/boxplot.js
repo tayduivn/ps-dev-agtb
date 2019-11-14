@@ -133,8 +133,9 @@
         this.boxEnd = ((this.bestCase - worstCase) / this.overallCaseDifference).toFixed(userDecPrecision) * 100;
         this.boxEnd = this.overallCaseDifference !== 0 ?
             ((this.bestCase - worstCase) / this.overallCaseDifference).toFixed(userDecPrecision) * 100 : 0;
-        this.boxWidth = (parseFloat(this.boxEnd) - parseFloat(this.boxStart)).toFixed(userDecPrecision);
-        this.boxWidth = this.boxWidth === 100.00 ? this.boxWidth - 1 : this.boxWidth;
+        this.boxWidth = parseFloat((this.boxEnd - this.boxStart).toFixed(userDecPrecision));
+        this.boxWidth = (this.boxStart + this.boxWidth) === 100 ? parseFloat(this.boxWidth - 1) : this.boxWidth;
+        this.boxWidth = isNaN(this.boxWidth) ? 99 : this.boxWidth;
 
         this.likely = app.currency.formatAmountLocale(this.likely);
         this.bestCase = app.currency.formatAmountLocale(this.bestCase);

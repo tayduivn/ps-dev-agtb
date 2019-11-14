@@ -159,7 +159,7 @@ describe('Base.Fields.BoxplotField', function() {
             expect(field.amountPos).toEqual(41);
             expect(field.boxStart).toEqual(0);
             expect(field.boxEnd).toEqual(100);
-            expect(field.boxWidth).toEqual('100.00');
+            expect(field.boxWidth).toEqual(99);
         });
     });
 
@@ -196,7 +196,7 @@ describe('Base.Fields.BoxplotField', function() {
             expect(field.amountPos).toEqual(15);
             expect(field.boxStart).toEqual(0);
             expect(field.boxEnd).toEqual(50);
-            expect(field.boxWidth).toEqual('50.00');
+            expect(field.boxWidth).toEqual(50);
         });
     });
 
@@ -233,7 +233,7 @@ describe('Base.Fields.BoxplotField', function() {
             expect(field.amountPos).toEqual(10);
             expect(field.boxStart).toEqual(0);
             expect(field.boxEnd).toEqual(60);
-            expect(field.boxWidth).toEqual('60.00');
+            expect(field.boxWidth).toEqual(60);
         });
     });
 });
