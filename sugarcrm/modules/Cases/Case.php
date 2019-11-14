@@ -135,10 +135,10 @@ class aCase extends Issue
 
         if (!empty($this->first_response_target_datetime)) {
             // first response variance from target
-            $this->first_response_var_from_target =
-                ((new \DateTime($this->first_response_actual_datetime))->getTimestamp()
-                    - (new \DateTime($this->first_response_target_datetime))->getTimestamp())
-                / 3600;
+            $this->first_response_var_from_target = $this->getFirstResponseVariance(
+                $this->first_response_actual_datetime,
+                $this->first_response_target_datetime
+            );
 
             // first response SLA met
             $this->first_response_sla_met = $this->first_response_var_from_target <= 0 ? 'Yes' : 'No';
@@ -146,6 +146,26 @@ class aCase extends Issue
 
         // first response user
         $this->first_response_user_id = $this->assigned_user_id;
+    }
+
+    /**
+     * @param string $actual
+     * @param string $target
+     * @return float|int
+     * @throws Exception
+     */
+    protected function getFirstResponseVariance(string $actual, string $target)
+    {
+        $actualDateTime = new \SugarDateTime($actual, new DateTimeZone('UTC'));
+        $targetDateTime = new \SugarDateTime($target, new DateTimeZone('UTC'));
+        $businessCenterId = $this->business_center_id ?? '';
+        if ($actualDateTime >= $targetDateTime) {
+            $hours = $this->getHoursBetween($targetDateTime, $actualDateTime, $businessCenterId);
+        } else {
+            $hours = $this->getHoursBetween($actualDateTime, $targetDateTime, $businessCenterId);
+            $hours['businessHours'] = $hours['businessHours'] * -1.0;
+        }
+        return $hours['businessHours'];
     }
 
     /**

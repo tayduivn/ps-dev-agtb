@@ -18,6 +18,8 @@ class CaseTest extends TestCase
     private $case;
     private $old_sugar_config;
 
+    protected $businessCenters = [];
+
     public function setUp()
     {
         global $sugar_config;
@@ -30,6 +32,13 @@ class CaseTest extends TestCase
         global $sugar_config;
 
         unset($this->case);
+
+        if (!empty($this->businessCenters)) {
+            $sql = 'DELETE FROM business_centers WHERE id IN (\'' . implode("', '", $this->businessCenters) . '\')';
+            $GLOBALS['db']->query($sql);
+        }
+        unset($this->businessCenters);
+
         $sugar_config = $this->old_sugar_config;
     }
 
@@ -131,6 +140,69 @@ class CaseTest extends TestCase
             $this->assertEmpty($case->first_response_target_datetime);
             $this->assertEmpty($case->first_response_var_from_target);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getFirstResponseVarianceProvider(): array
+    {
+        return [
+            ['2019-11-08 12:07:24', '2019-11-10 12:17:24', -9.0],
+            ['2019-11-10 12:17:24', '2019-11-08 12:07:24', 9.0],
+        ];
+    }
+
+    /**
+     * @param string $actual
+     * @param string $target
+     * @param float $expected
+     * @covers Case::getFirstResponseVariance
+     * @dataProvider getFirstResponseVarianceProvider
+     */
+    public function testGetFirstResponseVariance(string $actual, string $target, float $expected)
+    {
+        $weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+        $weekend = ['saturday', 'sunday'];
+        $bc = BeanFactory::newBean('BusinessCenters');
+        $bc->name = 'LA';
+        $bc->timezone = 'America/Los_Angeles';
+        foreach ($weekdays as $day) {
+            $is_open = 'is_open_' . $day;
+            $open_hour = $day . '_open_hour';
+            $open_min = $day . '_open_minutes';
+            $close_hour = $day . '_close_hour';
+            $close_min = $day . '_close_minutes';
+            $bc->$is_open = true;
+            $bc->$open_hour = 8;
+            $bc->$open_min = 0;
+            $bc->$close_hour = 17;
+            $bc->$close_min = 0;
+        }
+        foreach ($weekend as $day) {
+            $is_open = 'is_open_' . $day;
+            $open_hour = $day . '_open_hour';
+            $open_min = $day . '_open_minutes';
+            $close_hour = $day . '_close_hour';
+            $close_min = $day . '_close_minutes';
+            $bc->$is_open = false;
+            $bc->$open_hour = 0;
+            $bc->$open_min = 0;
+            $bc->$close_hour = 0;
+            $bc->$close_min = 0;
+        }
+
+        $bc->save();
+        $this->businessCenters[] = $bc->id;
+
+        $case = SugarTestCaseUtilities::createCase('');
+        $case->business_center_id = $bc->id;
+        $bHours = SugarTestReflection::callProtectedMethod(
+            $case,
+            'getFirstResponseVariance',
+            [$actual, $target]
+        );
+        $this->assertSame($expected, $bHours);
     }
 
     /**
