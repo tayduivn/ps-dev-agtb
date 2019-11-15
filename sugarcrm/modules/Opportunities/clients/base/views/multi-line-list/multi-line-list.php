@@ -68,7 +68,7 @@ $viewdefs['Opportunities']['base']['view']['multi-line-list'] = [
                             'label' => 'LBL_DATE_CLOSED',
                             'default' => true,
                             'enabled' => true,
-                            'type' => 'relative-time',
+                            'type' => 'relative-date',
 
                         ],
                         [

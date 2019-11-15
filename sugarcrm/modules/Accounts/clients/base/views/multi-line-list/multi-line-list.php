@@ -56,7 +56,7 @@ $viewdefs['Accounts']['base']['view']['multi-line-list'] = [
                             'label' => 'LBL_NEXT_RENEWAL_DATE',
                             'default' => true,
                             'enabled' => true,
-                            'type' => 'relative-time',
+                            'type' => 'relative-date',
                         ],
                         [
                             'name' => 'next_renewal_date',
