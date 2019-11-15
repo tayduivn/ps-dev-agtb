@@ -55,15 +55,12 @@
 
     /**
      * Sets the list of modules the user has no access to on the model.
-     *
-     * @param {Array} availableModules The list of modules the user has
-     * access to.
      */
-    setNotAvailableModules: function(availableModules) {
-        var notAvailableModules = _.difference(
-            this.supportedModules,
-            availableModules
-        );
+    setNotAvailableModules: function() {
+        var moduleNames = app.metadata.getModuleNames();
+        var notAvailableModules = _.reject(this.supportedModules, function(module) {
+            return _.contains(moduleNames, module);
+        });
         this.model.set('notAvailableModules', notAvailableModules);
     },
 
@@ -99,7 +96,7 @@
             };
             this.addModelToCollection(moduleName, data);
         }, this);
-        this.setNotAvailableModules(availableModules);
+        this.setNotAvailableModules();
         this.setActiveTabIndex(0);
     },
 
