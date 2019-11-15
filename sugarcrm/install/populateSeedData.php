@@ -827,6 +827,12 @@ foreach($sugar_demodata['producttemplate_seed_data'] as $v){
 	$template->weight = $v['weight'];
 	$template->date_available = $v['date_available'];
 	$template->qty_in_stock = $v['qty_in_stock'];
+    //BEGIN SUGARCRM flav=ent ONLY
+    $template->service = $v['service'];
+    $template->service_duration_unit = $v['service_duration_unit'];
+    $template->service_duration_value = $v['service_duration_value'];
+    $template->renewable = $v['renewable'];
+    //END SUGARCRM flav=ent ONLY
 	$template->save();
 }
 installLog("DemoData: Done Products Metadata");
@@ -995,6 +1001,11 @@ $GLOBALS['mod_strings']  = $installerStrings;
         $opportunity_key = array_rand($opportunity_ids);
         $contact->set_relationship('opportunities_contacts', array('contact_id'=>$contact->id ,'opportunity_id'=> $opportunity_ids[$opportunity_key], 'contact_role'=>$app_list_strings['opportunity_relationship_type_default_key']), false);
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    $renewalOppIds[] = OpportunitiesSeedData::populateServiceData($app_list_strings, $accounts);
+    array_push($opportunity_ids, $renewalOppIds);
+    //END SUGARCRM flav=ent ONLY
 
     installLog("DemoData: Done Opportunities");
 

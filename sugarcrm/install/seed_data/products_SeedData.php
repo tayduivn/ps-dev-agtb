@@ -31,11 +31,15 @@ $branch_leafs = "3";	//Products per category
 
 $depth_flag = "1";
 
+global $serviceCount;
+$serviceCount = 0;
+
 traverse_tree("", $depth_flag, $tree_depth, $tree_branches, $branch_leafs);
 
 
 function traverse_tree($parent_id, $depth_flag, &$tree_depth, &$tree_branches, &$branch_leafs){
-	//control how deep the tree goes
+    global $serviceCount;
+    //control how deep the tree goes
 	$depth_flag = $depth_flag + 1;
 
 
@@ -105,6 +109,8 @@ function create_product($category_id)
 {
     global $sugar_demodata;
     global $app_list_strings;
+    global $serviceCount;
+    $serviceDurationUnitArray = ['year', 'month', 'day'];
     $first_name_array = $sugar_demodata['first_name_array'];
     $first_name_count = count($sugar_demodata['first_name_array']);
     $company_name_array = $sugar_demodata['company_name_array'];
@@ -143,6 +149,31 @@ function create_product($category_id)
     $template->date_available = "2004-10-15";
     $template->qty_in_stock = rand(0, 150);
     $template->category_id = $category_id;
+    //BEGIN SUGARCRM flav=ent ONLY
+    if ($serviceCount <= 3) {
+        $template->service = true;
+        $template->renewable = true;
+        $template->service_duration_unit =
+            $serviceDurationUnitArray[mt_rand(0, count($serviceDurationUnitArray)-1)];
+
+        switch ($template->service_duration_unit) {
+            case "year":
+                $template->service_duration_value = random_int(1, 5);
+                break;
+            case "month":
+                $template->service_duration_value = random_int(1, 36);
+                break;
+            case "day":
+                $template->service_duration_value = random_int(1, 500);
+                break;
+            default:
+                $template->service_duration_value = random_int(1, 10);
+        }
+
+        $serviceCount++;
+    }
+    //END SUGARCRM flav=ent ONLY
+
     $template->calculateDiscountPrice();
     $template->save();
 
