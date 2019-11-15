@@ -199,51 +199,26 @@
     },
 
     /**
-     * Check if this button is on a layout.
-     *
-     * @param {Object} layout the layout def
-     * @return {boolean} `true` if this button is on the layout. `false` otherwise.
-     * @private
-     */
-    _isOnLayout: function(layout) {
-        var comp = this.closestComponent(layout.name);
-        return comp && (layout.name !== 'dashboard' ||
-             // for dashboard, either dashboard id or type should match
-             // dashboard id is used by service console. type is used by new consoles
-             (!_.isUndefined(layout.id) && comp.model.get('id') === layout.id) ||
-             (!_.isUndefined(layout.type) && comp.model.get('metadata').type === layout.type));
-    },
-
-    /**
      * Check if this button is on a forbidden layout.
      *
      * @return {boolean} `true` if this button is on a forbidden layout, or if
      *  it is a descendant of a forbidden layout. `false` otherwise.
      */
     isOnForbiddenLayout: function() {
-        if (!this.def || (!this.def.disallowed_layouts && !this.def.allowed_layouts)) {
+        if (!this.def || !this.def.disallowed_layouts) {
             return false;
         }
 
-        if (this.def.disallowed_layouts) {
-            // ban this button if it has any ancestor component in the list of disallowed layouts
-            if (_.any(this.def.disallowed_layouts, function(layout) {
-                return this._isOnLayout(layout);
-            }, this)
-            ) {
-                return true;
-            }
-        }
-
-        if (this.def.allowed_layouts) {
-            // don't ban this button if it has any ancestor component in the list of allowed layouts
-            if (_.any(this.def.allowed_layouts, function(layout) {
-                return this._isOnLayout(layout);
-            }, this)
-            ) {
-                return false;
-            }
-            // ban this button if it doesn't have any ancestor component in the list of allowed layouts
+        // ban this button if it has any ancestor component with one of the specified name(s)
+        if (_.any(this.def.disallowed_layouts, function(layout) {
+            var comp = this.closestComponent(layout.name);
+            return comp && (layout.name !== 'dashboard' ||
+                // for dashboard, either dashboard id or type should match to hide this button
+                // dashboard id is used by service console. type is used by new consoles
+                (!_.isUndefined(layout.id) && comp.model.get('id') === layout.id) ||
+                (!_.isUndefined(layout.type) && comp.model.get('metadata').type === layout.type));
+        }, this)
+        ) {
             return true;
         }
 

@@ -315,34 +315,6 @@ describe("Base.Field.Button", function() {
         expect(called).toBe(true);
     });
 
-    describe('_isOnLayout', function() {
-        var closestComponentStub;
-
-        beforeEach(function() {
-            field = SugarTest.createField('base', 'button', 'button', 'edit', {});
-            closestComponentStub = sinon.stub(field, 'closestComponent');
-            closestComponentStub.withArgs('dashboard').returns({
-                model: {
-                    get: function() {return {'type': 'good-type'};}
-                }
-            });
-        });
-
-        afterEach(function() {
-            closestComponentStub.restore();
-        });
-
-        it('should be truthy if it is on a layout', function() {
-            var layout = {'name': 'dashboard', 'type': 'good-type'};
-            expect(field._isOnLayout(layout)).toBeTruthy();
-        });
-
-        it('should be falsy if it is not on a layout', function() {
-            var layout = {'name': 'dashboard', 'type': 'bad-type'};
-            expect(field._isOnLayout(layout)).toBeFalsy();
-        });
-    });
-
     describe('isOnForbiddenLayout', function() {
         beforeEach(function() {
             field = SugarTest.createField('base', 'button', 'button', 'edit', {});
@@ -418,30 +390,6 @@ describe("Base.Field.Button", function() {
             var closestComponentStub = sinon.stub(field, 'closestComponent');
             closestComponentStub.withArgs('bad-layout-1').returns(void 0);
             closestComponentStub.withArgs('bad-layout-2').returns(void 0);
-            expect(field.isOnForbiddenLayout()).toBeFalsy();
-            closestComponentStub.restore();
-        });
-
-        it('should be truthy if it is not on an allowed dashboard', function() {
-            field.def.allowed_layouts = [{name: 'dashboard', type: 'good'}];
-            var closestComponentStub = sinon.stub(field, 'closestComponent');
-            closestComponentStub.withArgs('dashboard').returns({
-                model: {
-                    get: function() {return {type: 'bad'};}
-                }
-            });
-            expect(field.isOnForbiddenLayout()).toBeTruthy();
-            closestComponentStub.restore();
-        });
-
-        it('should be falsy if it is on an allowed dashboard', function() {
-            field.def.allowed_layouts = [{name: 'dashboard', type: 'good'}];
-            var closestComponentStub = sinon.stub(field, 'closestComponent');
-            closestComponentStub.withArgs('dashboard').returns({
-                model: {
-                    get: function() {return {type: 'good'};}
-                }
-            });
             expect(field.isOnForbiddenLayout()).toBeFalsy();
             closestComponentStub.restore();
         });
