@@ -479,7 +479,7 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
     When I select *A_1 in #AccountsList.MultilineListView
 
     # Verify Active Subscriptions
-    Then I verify that dashboard2by2_bottom_left element from #RenewalsConsoleView still looks like ActiveSubscriptions_1
+    # Then I verify that dashboard2by2_bottom_left element from #RenewalsConsoleView still looks like ActiveSubscriptions_1
 
 
   @user_profile
