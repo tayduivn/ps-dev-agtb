@@ -30,6 +30,42 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.setAllowedModules();
+
+        // Unless a console ID was passed in with the context, parse the console
+        // information from the parent context it was opened from
+        if (!this.context.get('consoleId')) {
+            this._parseConsoleContext();
+        }
+    },
+
+    /**
+     * Extracts console information from the parent console context
+     */
+    _parseConsoleContext: function() {
+        var consoleContext = this.context.parent;
+        if (consoleContext) {
+            this.context.set('consoleId', consoleContext.get('modelId'));
+            this.context.set('consoleTabs', this._parseConsoleTabs(consoleContext.get('tabs')));
+        }
+    },
+
+    /**
+     * Parses a list of console tabs from the console context to extract the
+     * names of the modules used in the console
+     * @param tabsArray
+     * @returns {Array}
+     */
+    _parseConsoleTabs: function(tabsArray) {
+        var modules = [];
+        _.each(tabsArray, function(tab) {
+            var tabComponents = tab.components || [];
+            _.each(tabComponents, function(component) {
+                if (component.view === 'multi-line-list' && component.context && component.context.module) {
+                    modules.push(component.context.module);
+                }
+            });
+        });
+        return modules;
     },
 
     /**
@@ -48,7 +84,12 @@
      */
     getAvailableModules: function() {
         var moduleNames = app.metadata.getModuleNames();
-        var selectedModules = this.model.get('enabled_modules')[this.context.get('consoleId')];
+
+        // Get the configured list of currently enabled modules for the tab.
+        // If there is no setting saved yet for this, use the list of modules
+        // parsed from the parent console context
+        var selectedModules = this.model.get('enabled_modules')[this.context.get('consoleId')] ||
+            this.context.get('consoleTabs');
 
         return _.filter(selectedModules, function(module) {
             return _.contains(moduleNames, module);
@@ -63,18 +104,22 @@
             this.blockModule();
             return;
         }
+        // Get the modules that are currently enabled for the console
         var availableModules = this.getAvailableModules();
-        var orderByPrimary = this.model.get('order_by_primary')[this.context.get('consoleId')];
-        var orderBySecondary = this.model.get('order_by_secondary')[this.context.get('consoleId')];
-        var filterDef = this.model.get('filter_def')[this.context.get('consoleId')];
+
+        // Load the settings saved for this particular console ID. If no settings
+        // are saved yet for this console, create them
+        var orderByPrimary = this.model.get('order_by_primary')[this.context.get('consoleId')] || {};
+        var orderBySecondary = this.model.get('order_by_secondary')[this.context.get('consoleId')] || {};
+        var filterDef = this.model.get('filter_def')[this.context.get('consoleId')] || {};
 
         _.each(availableModules, function(moduleName) {
             var data = {
                 enabled: true,
                 enabled_module: moduleName,
-                order_by_primary: orderByPrimary[moduleName],
-                order_by_secondary: orderBySecondary[moduleName],
-                filter_def: filterDef[moduleName],
+                order_by_primary: orderByPrimary[moduleName] || '',
+                order_by_secondary: orderBySecondary[moduleName] || '',
+                filter_def: filterDef[moduleName] || [],
             };
             this.addModelToCollection(moduleName, data);
         }, this);

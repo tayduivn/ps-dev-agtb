@@ -13,45 +13,6 @@
 
 class ConsoleConfigurationDefaults
 {
-    public static $consoleDefaults = [
-        'enabled_modules' => [
-            // Renewals console
-            'da438c86-df5e-11e9-9801-3c15c2c53980' => [
-                'Accounts',
-                'Opportunities',
-            ],
-        ],
-        'order_by_primary' => [
-            // Renewals console
-            'da438c86-df5e-11e9-9801-3c15c2c53980' => [
-                'Accounts' => 'date_modified',
-                'Opportunities' => 'date_closed',
-            ],
-        ],
-        'order_by_secondary' => [
-            // Renewals console
-            'da438c86-df5e-11e9-9801-3c15c2c53980' => [
-                'Accounts' => '',
-                'Opportunities' => '',
-            ],
-        ],
-        'filter_def' => [
-            // Renewals console
-            'da438c86-df5e-11e9-9801-3c15c2c53980' => [
-                'Accounts' => [
-                    [
-                        '$owner' => '',
-                    ],
-                ],
-                'Opportunities' => [
-                    [
-                        '$owner' => '',
-                    ],
-                ],
-            ],
-        ],
-    ];
-
     /**
      * Sets up the default ConsoleConfiguration settings
      * @return array The config settings
@@ -100,6 +61,71 @@ class ConsoleConfigurationDefaults
             $isSetup = 0;
         }
 
-        return array_merge(self::$consoleDefaults, ['is_setup' => $isSetup]);
+        // Get the closed won/lost names for the Opportunities default filter
+        $settings = Forecast::getSettings();
+        $closedStages = array_merge($settings['sales_stage_won'], $settings['sales_stage_lost']);
+
+        return [
+            'is_setup' => $isSetup,
+            'enabled_modules' => [
+                // Serve console
+                'c108bb4a-775a-11e9-b570-f218983a1c3e' => [
+                    'Cases',
+                ],
+
+                // Renewals console
+                'da438c86-df5e-11e9-9801-3c15c2c53980' => [
+                    'Accounts',
+                    'Opportunities',
+                ],
+            ],
+            'order_by_primary' => [
+                // Serve console
+                'c108bb4a-775a-11e9-b570-f218983a1c3e' => [
+                    'Cases' => '',
+                ],
+
+                // Renewals console
+                'da438c86-df5e-11e9-9801-3c15c2c53980' => [
+                    'Accounts' => 'next_renewal_date',
+                    'Opportunities' => 'date_closed',
+                ],
+            ],
+            'order_by_secondary' => [
+                // Serve console
+                'c108bb4a-775a-11e9-b570-f218983a1c3e' => [
+                    'Cases' => '',
+                ],
+
+                // Renewals console
+                'da438c86-df5e-11e9-9801-3c15c2c53980' => [
+                    'Accounts' => '',
+                    'Opportunities' => '',
+                ],
+            ],
+            'filter_def' => [
+                // Serve console
+                'c108bb4a-775a-11e9-b570-f218983a1c3e' => [
+                    'Cases' => [],
+                ],
+
+                // Renewals console
+                'da438c86-df5e-11e9-9801-3c15c2c53980' => [
+                    'Accounts' => [
+                        [
+                            '$owner' => '',
+                        ],
+                    ],
+                    'Opportunities' => [
+                        [
+                            'sales_status' => [
+                                '$not_in' => $closedStages,
+                            ],
+                            '$owner' => '',
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }
