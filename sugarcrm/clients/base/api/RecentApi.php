@@ -173,7 +173,11 @@ class RecentApi extends SugarApi
         $query = new SugarQuery();
         $query->from($seed, $options);
         $query->where()->in('id', $ids);
-        return $seed->fetchFromQuery($query, ['name', 'id'], $options);
+        return $seed->fetchFromQuery($query, [
+            'id',
+            'name',
+            'date_modified',
+        ], $options);
     }
 
     /**

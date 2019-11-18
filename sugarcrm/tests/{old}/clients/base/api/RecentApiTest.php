@@ -70,7 +70,10 @@ class RecentApiTest extends TestCase
     {
         global $timedate;
 
-        $account = SugarTestAccountUtilities::createAccount();
+        $account = SugarTestAccountUtilities::createAccount(null, [
+            'date_modified' => '2019-11-18 10:49:36',
+            'update_date_modified' => false,
+        ]);
 
         $service = SugarTestRestUtilities::getRestServiceMock();
         $this->api->api = $service;
@@ -86,6 +89,7 @@ class RecentApiTest extends TestCase
         $record = array_shift($response['records']);
         $this->assertEquals($account->module_name, $record['_module']);
         $this->assertEquals($account->id, $record['id']);
+        $this->assertEquals('2019-11-18T10:49:36+00:00', $record['date_modified']);
 
         $lastViewed = $record['_last_viewed_date'];
         $dateTime = $timedate->fromIso($lastViewed);
