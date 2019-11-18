@@ -487,7 +487,7 @@ function get_sugar_config_defaults()
         ],
         'marketing_extras_enabled' => true,
         'marketing_extras_url' => 'https://marketing.sugarcrm.com/content',
-        'default_background_image' => 'include/images/coffeeCup-sugar-sm.png',
+        'default_background_image' => 'include/images/login-background.png',
 
         'analytics' => array(
             'enabled' => true,
