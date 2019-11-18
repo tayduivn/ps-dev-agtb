@@ -114,7 +114,12 @@ if(!empty($sugar_demodata['quotes_seed_data']['quotes'])) {
 					$product->team_set_id = $focus->team_set_id;
 					$product->account_id = $focus->billing_account_id;
 					$product->status = 'Quotes';
-					
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    if ($product->service) {
+                        $product->service_start_date = $products['service_start_date'];
+                    }
+                    //END SUGARCRM flav=ent ONLY
+
 					if ($focus->quote_stage == 'Closed Accepted') {
 						$product->status='Orders';
 					}

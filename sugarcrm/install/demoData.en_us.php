@@ -2469,6 +2469,9 @@ $sugar_demodata['producttemplate_seed_data'][] = array(
 	'weight' => 20.0,
 	'date_available' => '2009-10-15',
 	'qty_in_stock' => '72',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'service' => false,
+    //END SUGARCRM flav=ent ONLY
 ); 
 
 $sugar_demodata['producttemplate_seed_data'][] = array(
@@ -2487,6 +2490,9 @@ $sugar_demodata['producttemplate_seed_data'][] = array(
 	'weight' => 20.0,
 	'date_available' => '2009-10-15',
 	'qty_in_stock' => '65',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'service' => false,
+    //END SUGARCRM flav=ent ONLY
 ); 
 
 $sugar_demodata['producttemplate_seed_data'][] = array(
@@ -2505,6 +2511,9 @@ $sugar_demodata['producttemplate_seed_data'][] = array(
 	'weight' => 5.0,
 	'date_available' => '2009-10-15',
 	'qty_in_stock' => '12',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'service' => false,
+    //END SUGARCRM flav=ent ONLY
 ); 
 
 $sugar_demodata['producttemplate_seed_data'][] = array(
@@ -2523,8 +2532,56 @@ $sugar_demodata['producttemplate_seed_data'][] = array(
 	'weight' => 20.0,
 	'date_available' => '2009-10-15',
 	'qty_in_stock' => '65',
-); 
+    //BEGIN SUGARCRM flav=ent ONLY
+    'service' => false,
+    //END SUGARCRM flav=ent ONLY
+);
 
+//BEGIN SUGARCRM flav=ent ONLY
+$sugar_demodata['producttemplate_seed_data'][] = array(
+    'name' => '48 Month Service',
+    'tax_class' => 'Taxable',
+    'cost_price' => 900.00,
+    'cost_usdollar' => 900.00,
+    'list_price' => 1230.00,
+    'list_usdollar' => 1230.00,
+    'discount_price' => 984.00,
+    'discount_usdollar' => 984.00,
+    'pricing_formula' => 'ProfitMargin',
+    'mft_part_num' => 'PQRS0123456789',
+    'pricing_factor' => '1',
+    'status' => 'Available',
+    'weight' => 10.0,
+    'date_available' => '2014-10-15',
+    'qty_in_stock' => '70',
+    'service' => true,
+    'renewable' => true,
+    'service_duration_unit' => 'month',
+    'service_duration_value'=> 48,
+);
+
+$sugar_demodata['producttemplate_seed_data'][] = array(
+    'name' => '3 Year Service',
+    'tax_class' => 'Taxable',
+    'cost_price' => 350.00,
+    'cost_usdollar' => 350.00,
+    'list_price' => 550.00,
+    'list_usdollar' => 550.00,
+    'discount_price' => 550.50,
+    'discount_usdollar' => 550.50,
+    'pricing_formula' => 'PercentageDiscount',
+    'mft_part_num' => 'LMNO9876543210',
+    'pricing_factor' => '1',
+    'status' => 'Available',
+    'weight' => 25.0,
+    'date_available' => '2014-10-15',
+    'qty_in_stock' => '50',
+    'service' => true,
+    'renewable' => false,
+    'service_duration_unit' => 'year',
+    'service_duration_value'=> 3,
+);
+//END SUGARCRM flav=ent ONLY
 
 // KBDocuments
 $sugar_demodata['kbcategories_array'] = array(
@@ -2637,7 +2694,7 @@ $sugar_demodata['contract_seed_data'][] = array(
 $sugar_demodata['quotes_seed_data']['quotes'][0] = array(
 	'name' => 'Computers for [account name]',
 	'quote_stage' => 'Draft',
-	'date_quote_expected_closed' => '2012-04-30',
+    'date_quote_expected_closed' => '2020-06-28',
     'description' => '',
     'purcahse_order_num' => '6011842',
     'payment_terms' => 'Net 30',
@@ -2659,7 +2716,7 @@ $sugar_demodata['quotes_seed_data']['quotes'][0] = array(
 $sugar_demodata['quotes_seed_data']['quotes'][1] = array(
 	'name' => 'Mirrors for [account name]',
 	'quote_stage' => 'Negotiation',
-	'date_quote_expected_closed' => '2012-04-30',
+    'date_quote_expected_closed' => '2020-06-28',
     'description' => '',
  	'purcahse_order_num' => '3940021',
     'payment_terms' => 'Net 15',
@@ -2676,6 +2733,56 @@ $sugar_demodata['quotes_seed_data']['quotes'][1] = array(
 		),
 	),
 );
+
+//BEGIN SUGARCRM flav=ent ONLY
+$sugar_demodata['quotes_seed_data']['quotes'][2] = array(
+    'name' => '48 Month Service for [account name]',
+    'quote_stage' => 'Negotiation',
+    'date_quote_expected_closed' => '2020-06-28',
+    'description' => '',
+    'purcahse_order_num' => '5480201',
+    'payment_terms' => 'Net 25',
+
+    'bundle_data' => array(
+        0 => array (
+            'bundle_name' => '48 Month Service',
+            'bundle_stage' => 'Draft',
+            'comment' => '48 Month Service',
+            'products' => array (
+                1 => array(
+                    'name'=>'48 Month Service',
+                    'quantity'=>'5',
+                    'service_start_date' => '2020-06-28',
+                ),
+            ),
+        ),
+    ),
+);
+
+$sugar_demodata['quotes_seed_data']['quotes'][3] = array(
+    'name' => '3 Year Service for [account name]',
+    'quote_stage' => 'Draft',
+    'date_quote_expected_closed' => '2020-06-28',
+    'description' => '',
+    'purcahse_order_num' => '692500',
+    'payment_terms' => 'Net 10',
+
+    'bundle_data' => array(
+        0 => array (
+            'bundle_name' => '3 Year Service',
+            'bundle_stage' => 'Draft',
+            'comment' => '3 Year Service',
+            'products' => array (
+                1 => array(
+                    'name'=>'3 Year Service',
+                    'quantity'=>'10',
+                    'service_start_date' => '2020-06-28',
+                ),
+            ),
+        ),
+    ),
+);
+//END SUGARCRM flav=ent ONLY
 //END Quotes demo data
 
 //BEGIN Opportunities demo data

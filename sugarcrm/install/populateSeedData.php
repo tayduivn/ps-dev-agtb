@@ -827,6 +827,14 @@ foreach($sugar_demodata['producttemplate_seed_data'] as $v){
 	$template->weight = $v['weight'];
 	$template->date_available = $v['date_available'];
 	$template->qty_in_stock = $v['qty_in_stock'];
+    //BEGIN SUGARCRM flav=ent ONLY
+    if ($v['service']) {
+        $template->service = $v['service'];
+        $template->service_duration_unit = $v['service_duration_unit'];
+        $template->service_duration_value = $v['service_duration_value'];
+        $template->renewable = $v['renewable'];
+    }
+    //END SUGARCRM flav=ent ONLY
 	$template->save();
 }
 installLog("DemoData: Done Products Metadata");

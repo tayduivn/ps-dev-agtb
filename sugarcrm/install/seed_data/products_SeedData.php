@@ -110,7 +110,8 @@ function create_product($category_id)
     global $sugar_demodata;
     global $app_list_strings;
     global $serviceCount;
-    $serviceDurationUnitArray = ['year', 'month', 'day'];
+    $serviceDurationUnitArray = ['year', 'month', 'day', 'month'];
+    $serviceDurationValueArray = [1, 6, 14, 24];
     $first_name_array = $sugar_demodata['first_name_array'];
     $first_name_count = count($sugar_demodata['first_name_array']);
     $company_name_array = $sugar_demodata['company_name_array'];
@@ -153,23 +154,9 @@ function create_product($category_id)
     if ($serviceCount <= 3) {
         $template->service = true;
         $template->renewable = true;
-        $template->service_duration_unit =
-            $serviceDurationUnitArray[mt_rand(0, count($serviceDurationUnitArray)-1)];
-
-        switch ($template->service_duration_unit) {
-            case "year":
-                $template->service_duration_value = random_int(1, 5);
-                break;
-            case "month":
-                $template->service_duration_value = random_int(1, 36);
-                break;
-            case "day":
-                $template->service_duration_value = random_int(1, 500);
-                break;
-            default:
-                $template->service_duration_value = random_int(1, 10);
-        }
-
+        $template->service_duration_unit = $serviceDurationUnitArray[$serviceCount];
+        $template->service_duration_value = $serviceDurationValueArray[$serviceCount];
+        $template->name = $template->service_duration_value . ' ' . $template->service_duration_unit . ' Service';
         $serviceCount++;
     }
     //END SUGARCRM flav=ent ONLY

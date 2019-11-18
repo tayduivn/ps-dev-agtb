@@ -644,6 +644,8 @@ class OpportunitiesSeedData {
 
             //BEGIN SUGARCRM flav=ent ONLY
             if ($service === '1') {
+                $rli->name = $service_duration_value . ' ' . $service_duration_unit . ' Service';
+                $opp->name = $rli->name;
                 $rli->service_start_date = $rli->date_closed;
                 $rli->service_end_date = self::setServiceEndDate($rli);
             }
