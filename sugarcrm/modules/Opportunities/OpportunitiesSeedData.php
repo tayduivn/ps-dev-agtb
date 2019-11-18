@@ -240,6 +240,8 @@ class OpportunitiesSeedData {
         // get the additional currencies from the table
         /* @var $currency Currency */
         $currency = SugarCurrency::getCurrencyByISO('EUR');
+        $baseRate = '1.0';
+        $currencyId = '-99';
 
         $oppBestCase = 0;
         $oppWorstCase = 0;
@@ -282,6 +284,9 @@ class OpportunitiesSeedData {
             $oppFieldDefs = $opp->getFieldDefinitions();
             $oppSalesStageFieldDef = $oppFieldDefs['sales_stage'];
             $opp->id = create_guid();
+
+            $opp->base_rate = $baseRate;
+            $opp->currency_id = $currencyId;
 
             /* @var $fw ForecastWorksheet */
             $fw = BeanFactory::newBean('ForecastWorksheets');
@@ -351,13 +356,13 @@ class OpportunitiesSeedData {
             }
 
             $oppAmount = SugarMath::init($oppAmount)
-                ->add(SugarCurrency::convertWithRate($rli->likely_case, $base_rate, $opp->base_rate))
+                ->add(SugarCurrency::convertWithRate($rli->likely_case, $baseRate, $opp->base_rate))
                 ->result();
             $oppBestCase = SugarMath::init($oppBestCase)
-                ->add(SugarCurrency::convertWithRate($rli->best_case, $base_rate, $opp->base_rate))
+                ->add(SugarCurrency::convertWithRate($rli->best_case, $baseRate, $opp->base_rate))
                 ->result();
             $oppWorstCase = SugarMath::init($oppWorstCase)
-                ->add(SugarCurrency::convertWithRate($rli->worst_case, $base_rate, $opp->base_rate))
+                ->add(SugarCurrency::convertWithRate($rli->worst_case, $baseRate, $opp->base_rate))
                 ->result();
 
             $return = array(
@@ -380,7 +385,6 @@ class OpportunitiesSeedData {
             self::insertAndCommit($fwSql, $tRows);
 
             //Renewal Opp
-
             if ($usingRLIs) {
                 // get all the fields from the opportunities table for the given Opportunity Id
                 $sql = 'SELECT * FROM opportunities WHERE deleted = 0 AND id = '. '"' . $serviceOpp['opportunity_id'] . '"';
@@ -403,10 +407,6 @@ class OpportunitiesSeedData {
             $opp->name .= ' - ' . $oppUnits . ' Renewal';
             $opp->sales_status = $app_list_strings['sales_status_dom']['New'];
 
-            // figure out which one to use
-            $baseRate = '1.0';
-            $currencyId = '-99';
-
             if (!$usingRLIs) {
                 $seed = rand(1, 15);
                 if ($seed % 2 == 0) {
@@ -414,9 +414,6 @@ class OpportunitiesSeedData {
                     $baseRate = $currency->conversion_rate;
                 }
             }
-
-            $opp->base_rate = $baseRate;
-            $opp->currency_id = $currencyId;
 
             $oppSql = 'INSERT INTO '. $opp->table_name . ' ('. join(',', array_keys($opp->toArray(true))) . ') VALUES';
             $oppRows = array();
@@ -430,6 +427,11 @@ class OpportunitiesSeedData {
             );
             $oppAccSql = 'INSERT INTO accounts_opportunities ('. join(',', array_keys($oppAccRow)) . ') VALUES';
 
+            $oppAccRows[] = '(' . join(',', array_merge($oppAccRow, array(
+                    'id' => self::$db->quoted(create_guid()),
+                    'account_id' => self::$db->quoted($serviceOpp['account_id']),
+                    'opportunity_id' => self::$db->quoted($opp->id),
+                ))) . ')';
 
             $values = array_merge($opp->toArray(true), $return);
 
