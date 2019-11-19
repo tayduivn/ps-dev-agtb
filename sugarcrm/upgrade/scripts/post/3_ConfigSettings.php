@@ -24,6 +24,7 @@ class SugarUpgradeConfigSettings extends UpgradeScript
      */
     private $forceUpgrade = [
         'preview_edit',
+        'default_background_image',
     ];
 
     public function run()
