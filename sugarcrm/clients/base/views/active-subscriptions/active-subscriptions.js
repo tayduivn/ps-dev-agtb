@@ -257,6 +257,10 @@
                 activePastTimelineWidth = activePastTimelineWidth >= 100 ? activePastTimelineWidth - 1
                     : activePastTimelineWidth;
                 this.expiryComingSoon = (activePastTimelineWidth) >= 90 ? true : false;
+                timelineOffset = isNaN(timelineOffset) ? 40 : timelineOffset;
+                activeTimelineWidth = isNaN(activeTimelineWidth) ? 60 : activeTimelineWidth;
+                activePastTimelineWidth = isNaN(activePastTimelineWidth) ? 99 : activePastTimelineWidth;
+                activeTimelineWidth = (activeTimelineWidth === 0) ? 100 - activePastTimelineWidth : activeTimelineWidth;
                 model.set({
                     startDate: app.date(model.get('service_start_date')).formatUser().split(' ')[0],
                     endDate: app.date(model.get('service_end_date')).formatUser().split(' ')[0],
