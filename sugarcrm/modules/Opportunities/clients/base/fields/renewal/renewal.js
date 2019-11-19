@@ -28,6 +28,9 @@
      */
     initialize: function(options) {
         options.def.readonly = true;
+        var date = this.model.get('date_closed');
+        this.month = app.date(date).format('MMMM');
+        this.year = app.date(date).format('YYYY');
         this._super('initialize', [options]);
     },
 
