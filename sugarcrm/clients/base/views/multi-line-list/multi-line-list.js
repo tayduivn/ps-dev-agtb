@@ -66,7 +66,7 @@
         var defaultMeta = app.metadata.getView(null, 'multi-line-list') || {};
         var listViewMeta = app.metadata.getView(options.module, 'multi-line-list') || {};
         options.meta = _.extend({}, defaultMeta, listViewMeta, options.meta || {});
-
+        this._setConfig(options);
         this._setCollectionOption(options);
 
         this._super('initialize', [options]);
@@ -115,6 +115,31 @@
         }, this);
 
         return fields;
+    },
+
+    /**
+     * Set filter_def and order_by from config.
+     *
+     * @param {Object} options object for the view
+     */
+    _setConfig: function(options) {
+        var configMeta = app.metadata.getModule('ConsoleConfiguration');
+
+        if (configMeta && options.context && options.context.parent) {
+            var module = options.context.get('module');
+            var consoleId = options.context.parent.get('modelId');
+            options.meta = options.meta || {};
+            options.meta.filterDef = configMeta.config.filter_def[consoleId][module] || [];
+            var orderByPrimary = configMeta.config.order_by_primary[consoleId][module] || '';
+            var orderBySecondary = configMeta.config.order_by_secondary[consoleId][module] || '';
+            var orderBy = orderByPrimary.trim();
+            if (orderBySecondary) {
+                orderBy += ',' + orderBySecondary.trim();
+            }
+            options.meta.collectionOptions = options.meta.collectionOptions || {};
+            options.meta.collectionOptions.params = options.meta.collectionOptions.params || {};
+            options.meta.collectionOptions.params.order_by = orderBy;
+        }
     },
 
     /**

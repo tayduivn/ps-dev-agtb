@@ -72,5 +72,13 @@ describe('Base.View.Opportunites.MultiLineListView', function() {
             }];
             expect(mockCollection.filterDef).toEqual(expected);
         });
+
+        it('should use filterDef in meta if exists', function() {
+            options.meta = {
+                filterDef: 'fake_filterDef'
+            };
+            view.setFilterDef(options);
+            expect(mockCollection.filterDef).toEqual(options.meta.filterDef);
+        });
     });
 })

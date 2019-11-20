@@ -47,9 +47,14 @@ describe('Base.View.MultiLineListView', function() {
     });
 
     describe('initialize', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_setConfig');
+        });
+
         it('should initialize with module-specified view metadata', function() {
             var initializedStub = sinon.collection.stub(view, '_super');
             var getStub = sinon.collection.stub().returns(true);
+
             var rowactions = {
                 'actions': [
                     {
@@ -495,6 +500,60 @@ describe('Base.View.MultiLineListView', function() {
             view._setCollectionOption(options);
             expect(mockCollection.setOption).toHaveBeenCalledWith({sampleProps: 'sampleValue'});
             expect(mockCollection.filterDef).toEqual({fakeFilterDef: 'fakeFilterValue'});
+        });
+    });
+
+    describe('_setConfig', function() {
+        var options;
+
+        beforeEach(function() {
+            options = {
+                context: {
+                    get: sinon.collection.stub().returns('Cases'),
+                    parent: {
+                        get: sinon.collection.stub().returns('my_console_id')
+                    }
+                },
+            };
+        });
+
+        afterEach(function() {
+            options = null;
+        });
+
+        it('should not set order_by and filterDef when not available', function() {
+            sinon.collection.stub(app.metadata, 'getModule').returns(null);
+            view._setConfig(options);
+            expect(options.meta).toBeUndefined();
+        });
+
+        it('should set order_by and filterDef when available', function() {
+            var filterDef = 'fake_filterDef';
+            var orderByPrimary = 'fake_orderByPrimary';
+            var orderBySecondary = 'fake_orderBySecondary';
+
+            sinon.collection.stub(app.metadata, 'getModule').returns({
+                config: {
+                    filter_def: {
+                        my_console_id: {
+                            Cases: filterDef
+                        }
+                    },
+                    order_by_primary: {
+                        my_console_id: {
+                            Cases: orderByPrimary
+                        }
+                    },
+                    order_by_secondary: {
+                        my_console_id: {
+                            Cases: orderBySecondary
+                        }
+                    }
+                }
+            });
+            view._setConfig(options);
+            expect(options.meta.collectionOptions.params.order_by).toEqual(orderByPrimary + ',' + orderBySecondary);
+            expect(options.meta.filterDef).toEqual(filterDef);
         });
     });
 });

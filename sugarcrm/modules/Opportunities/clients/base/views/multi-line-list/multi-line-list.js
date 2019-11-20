@@ -20,6 +20,11 @@
      * @override
      */
     setFilterDef: function(options) {
+        var meta = options.meta || {};
+        if (meta.filterDef) {
+            options.context.get('collection').filterDef = meta.filterDef;
+            return;
+        }
         var closedWon = ['Closed Won'];
         var closedLost = ['Closed Lost'];
         var forecastCfg = app.metadata.getModule('Forecasts', 'config');
