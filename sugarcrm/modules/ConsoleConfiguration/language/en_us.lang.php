@@ -22,4 +22,5 @@ $mod_strings = array(
     'LBL_CONSOLE_SORT_ORDER_PRIMARY' => 'Primary Sort Order',
     'LBL_CONSOLE_SORT_ORDER_SECONDARY' => 'Secondary Sort Order',
     'LBL_CONSOLE_FILTER' => 'Filter',
+    'LBL_CONSOLE_FILTER_RULES' => 'Filter Rules',
 );

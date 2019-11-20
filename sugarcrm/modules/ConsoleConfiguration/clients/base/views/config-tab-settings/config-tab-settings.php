@@ -13,7 +13,7 @@
 $viewdefs['ConsoleConfiguration']['base']['view']['config-tab-settings'] = array(
     'label' => 'LBL_MODULE_NAME',
     'panels' => array(
-        'field_group' => array(
+        array(
             'label' => 'LBL_CONSOLE_SORT_ORDER_DEFAULT',
             'fields' => array(
                 array(
@@ -25,6 +25,16 @@ $viewdefs['ConsoleConfiguration']['base']['view']['config-tab-settings'] = array
                     'name' => 'order_by_secondary',
                     'label' => 'LBL_CONSOLE_SORT_ORDER_SECONDARY',
                     'type' => 'enum',
+                ),
+            ),
+        ),
+        array(
+            'label' => 'LBL_CONSOLE_FILTER',
+            'fields' => array(
+                array(
+                    'name' => 'filter_def',
+                    'vname' => 'LBL_CONSOLE_FILTER_RULES',
+                    'type' => 'filter-field',
                 ),
             ),
         ),
