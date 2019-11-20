@@ -185,7 +185,7 @@ class User extends Person {
         $q->where()->equals('is_admin', '1');
         $q->where()->equals('status', 'Active');
         //prefer to get the default administrator
-        $q->orderByRaw('id = ' . $q->getDBManager()->quoted('1'), 'DESC');
+        $q->orderByRaw("(CASE WHEN id = '1' THEN 1 ELSE 0 END)", 'DESC');
 
         $this->retrieve($q->getOne());
         return $this;
