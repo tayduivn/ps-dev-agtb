@@ -76,13 +76,13 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
         });
 
         it('should call _parseConsoleContext if no console ID exists on the context', function() {
-            sinon.collection.stub(layout.context, 'get').withArgs('consoleId').returns(undefined)
+            sinon.collection.stub(layout.context, 'get').withArgs('consoleId').returns(undefined);
             layout.initialize(options);
             expect(layout._parseConsoleContext).toHaveBeenCalled();
         });
 
         it('should not call _parseConsoleContext if a console ID already exists on the context', function() {
-            sinon.collection.stub(layout.context, 'get').withArgs('consoleId').returns('12345')
+            sinon.collection.stub(layout.context, 'get').withArgs('consoleId').returns('12345');
             layout.initialize(options);
             expect(layout._parseConsoleContext).not.toHaveBeenCalled();
         });
@@ -533,23 +533,6 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                 layout._validatePrimaryOrderBy(fields, errors, callback);
                 expect(errors.order_by_primary.required).toBe(true);
             });
-        });
-    });
-
-    describe('_dispose', function() {
-        beforeEach(function() {
-            sinon.collection.stub(layout.context, 'off', function() {});
-            sinon.collection.stub(layout, '_super');
-            layout._dispose();
-        });
-
-        it('should call layout.context.off method', function() {
-            expect(layout.context.off).toHaveBeenCalledWith('consoleconfiguration:config:model:add');
-            expect(layout.context.off).toHaveBeenCalledWith('consoleconfiguration:config:model:remove');
-        });
-
-        it('should call layout._super method', function() {
-            expect(layout._super).toHaveBeenCalledWith('_dispose');
         });
     });
 });

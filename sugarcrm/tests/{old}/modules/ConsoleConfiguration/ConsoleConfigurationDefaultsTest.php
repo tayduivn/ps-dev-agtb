@@ -58,7 +58,7 @@ class ConsoleConfigurationDefaultsTest extends TestCase
     public function testSetupConsoleConfigurationSettings_IsSetup_ValuesNotChanged()
     {
         $testValue = array(
-            'fake_console_id' => array('Accounts', 'Opportunities')
+            'fake_console_id' => array('Accounts', 'Opportunities'),
         );
         $setupConfig = array(
             'is_setup' => 1,

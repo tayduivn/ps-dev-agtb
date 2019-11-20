@@ -34,14 +34,13 @@
      * Displays alert message for invalid models
      */
     showInvalidModel: function() {
-        var self = this;
         if (!this instanceof app.view.View) {
             app.logger.error('This method should be invoked by Function.prototype.call(), passing in as ' +
                 'argument an instance of this view.');
             return;
         }
         var name = 'invalid-data';
-        self._viewAlerts.push(name);
+        this._viewAlerts.push(name);
         app.alert.show(name, {
             level: 'error',
             messages: 'ERR_RESOLVE_ERRORS'

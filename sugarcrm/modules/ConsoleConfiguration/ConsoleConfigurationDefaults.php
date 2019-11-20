@@ -33,7 +33,7 @@ class ConsoleConfigurationDefaults
             foreach ($adminConfig as $configName => $configValue) {
                 if ($configName === 'is_setup') {
                     $consoleConfig[$configName] = $configValue;
-                } else if (isset($consoleConfig[$configName])) {
+                } elseif (isset($consoleConfig[$configName])) {
                     foreach ($configValue as $consoleId => $consoleSetting) {
                         $consoleConfig[$configName][$consoleId] = $consoleSetting;
                     }

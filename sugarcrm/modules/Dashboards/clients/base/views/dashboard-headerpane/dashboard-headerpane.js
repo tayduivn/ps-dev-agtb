@@ -104,9 +104,10 @@
      */
     editModuleTabsClicked: function(evt) {
         app.drawer.open({
-            layout: 'default', //TODO: create a new layout in SS-136
-        }, function() {
-            //TODO: refresh tabs in SS-137
+            layout: 'config-drawer',
+            context: {
+                module: 'ConsoleConfiguration',
+            }
         });
     },
 

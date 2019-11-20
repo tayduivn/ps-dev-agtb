@@ -44,8 +44,10 @@
     _parseConsoleContext: function() {
         var consoleContext = this.context.parent;
         if (consoleContext) {
-            this.context.set('consoleId', consoleContext.get('modelId'));
-            this.context.set('consoleTabs', this._parseConsoleTabs(consoleContext.get('tabs')));
+            this.context.set({
+                consoleId: consoleContext.get('modelId'),
+                consoleTabs: this._parseConsoleTabs(consoleContext.get('tabs'))
+            });
         }
     },
 
@@ -53,7 +55,7 @@
      * Parses a list of console tabs from the console context to extract the
      * names of the modules used in the console
      * @param tabsArray
-     * @returns {Array}
+     * @return {Array}
      */
     _parseConsoleTabs: function(tabsArray) {
         var modules = [];
@@ -107,11 +109,15 @@
         // Get the modules that are currently enabled for the console
         var availableModules = this.getAvailableModules();
 
+        // Get the ID of the console in order to load the settings for the
+        // correct console
+        var consoleId = this.context.get('consoleId');
+
         // Load the settings saved for this particular console ID. If no settings
         // are saved yet for this console, create them
-        var orderByPrimary = this.model.get('order_by_primary')[this.context.get('consoleId')] || {};
-        var orderBySecondary = this.model.get('order_by_secondary')[this.context.get('consoleId')] || {};
-        var filterDef = this.model.get('filter_def')[this.context.get('consoleId')] || {};
+        var orderByPrimary = this.model.get('order_by_primary')[consoleId] || {};
+        var orderBySecondary = this.model.get('order_by_secondary')[consoleId] || {};
+        var filterDef = this.model.get('filter_def')[consoleId] || {};
 
         _.each(availableModules, function(moduleName) {
             var data = {
@@ -275,15 +281,5 @@
         }
 
         callback(null, fields, errors);
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _dispose: function() {
-        this.context.off('consoleconfiguration:config:model:add', null, this);
-        this.context.off('consoleconfiguration:config:model:remove', null, this);
-
-        this._super('_dispose');
     }
 })

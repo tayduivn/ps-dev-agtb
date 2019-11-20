@@ -45,11 +45,9 @@ describe('ConsoleConfiguration.Fields.Enum', function() {
     });
 
     describe('initialize', function() {
-
         beforeEach(function() {
             sinon.collection.stub(field, 'populateOrderByValues');
-        })
-
+        });
 
         it('should set the order-by values for order-by enum fields', function() {
             field.initialize({
@@ -58,7 +56,7 @@ describe('ConsoleConfiguration.Fields.Enum', function() {
                 }
             });
             expect(field.populateOrderByValues).toHaveBeenCalled();
-        })
+        });
 
         it('should not affect non-order-by enum fields', function() {
             field.initialize({
@@ -72,12 +70,12 @@ describe('ConsoleConfiguration.Fields.Enum', function() {
 
     describe('populateOrderByValues', function() {
         beforeEach(function() {
-           model.attributes.tabContent = {
-               fields: {
-                   'field1': 'Field 1',
-                   'field2': 'Field 2'
-               }
-           };
+            model.attributes.tabContent = {
+                fields: {
+                    'field1': 'Field 1',
+                    'field2': 'Field 2'
+                }
+            };
         });
 
         it('should populate the order-by enums with the correct fields list', function() {
