@@ -54,7 +54,9 @@ class RegisterContactApi extends SugarApi
             $bean->created_by = $adminId;
             $bean->modified_user_id = $adminId;
         }
-        $bean->save(true);
+        if (empty($GLOBALS['current_user']->id)) {
+            $GLOBALS['current_user'] = BeanFactory::retrieveBean('Users', $bean->created_by);
+        }
         return parent::updateBean($bean, $api, $args);
     }
 
