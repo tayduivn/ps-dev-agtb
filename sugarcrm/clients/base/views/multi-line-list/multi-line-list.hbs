@@ -37,7 +37,7 @@
                     {{#each ../fields}}
                         <td class="subfields{{#if align}} {{align}}{{/if}}">
                             {{#each subfields}}
-                                <div class="subfield {{#if @index}}stylesGray{{else}}{{#eq name 'date_closed'}}stylesSemiBold{{/eq}}{{/if}}">
+                                <div class="subfield {{#if @index}}stylesGray{{else}}{{#eq name 'date_closed'}}stylesSemiBold{{/eq}}{{/if}}"{{#if name}} data-fieldname="{{name}}"{{/if}}>
                                     {{field ../../../../this model=../../this template=../../../../viewName}}
                                 </div>
                             {{/each}}
