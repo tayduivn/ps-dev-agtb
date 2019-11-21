@@ -288,6 +288,9 @@ $dictionary['pmse_Project'] = array(
     'ignore_templates' => array(
         'lockable_fields',
     ),
+    'portal_visibility' => [
+        'class' => 'PMSE',
+    ],
     'uses' => array(
         'basic',
         'team_security',
