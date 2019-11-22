@@ -16,7 +16,6 @@ use OneLogin\Saml2\Constants;
 use PHPUnit\Framework\TestCase;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config
@@ -38,6 +37,12 @@ class ConfigTest extends TestCase
     protected function setUp()
     {
         $this->sugarConfig = isset($GLOBALS['sugar_config']) ? $GLOBALS['sugar_config'] : null;
+        $GLOBALS['sugar_config'] = [
+            'idm_mode' => [
+                'enabled' => true,
+            ],
+        ];
+
         $this->config = \SugarConfig::getInstance();
         $this->config->clearCache();
     }
@@ -53,69 +58,13 @@ class ConfigTest extends TestCase
 
     /**
      * @covers ::get
-     * @covers ::handleArrayValue
-     *
-     * @dataProvider getProvider
      */
-    public function testGet($key, $value, $isIdmAttriubute, $idmSettings, $default, $expected)
+    public function testGet()
     {
-        if (!$isIdmAttriubute) {
-            $GLOBALS['sugar_config'][$key] = $value;
-        }
-        $configMock = $this->getMockBuilder(Config::class)
-            ->setConstructorArgs([\SugarConfig::getInstance()])
-            ->setMethods(['getIdmSettings'])
-            ->getMock();
+        $GLOBALS['sugar_config']['some_key'] = 'sugar_config_value';
+        $config = new Config(\SugarConfig::getInstance());
 
-        $idmSettingsMock = $this->getMockBuilder(\Administration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $idmSettingsMock->settings = $idmSettings;
-
-        $configMock->expects($this->any())
-            ->method('getIdmSettings')
-            ->willReturn($idmSettingsMock);
-
-        $this->assertEquals($expected, $configMock->get($key, $default));
-    }
-
-    public function getProvider()
-    {
-        return [
-            'non idm attribute' => [
-                'non-idm-attribute-key',
-                'non-idm-attribute-value',
-                false,
-                [],
-                null,
-                'non-idm-attribute-value',
-            ],
-            'idm attribute, key exists' => [
-                'idm_mode.idm-key',
-                '',
-                true,
-                ['idm_mode_idm-key' => 'string value'],
-                null,
-                'string value',
-            ],
-            'idm attribute, key does not exist' => [
-                'idm_mode.idm-key',
-                'string value',
-                true,
-                ['idm_mode_randon-key' => 'string value'],
-                null,
-                null,
-            ],
-            'idm attribute array value, key exists' => [
-                'idm_mode.http_client',
-                '',
-                true,
-                ['idm_mode_http_client' => json_encode(['cleint1' => 'https://sugarcrm.com', 'cleint2' => 'google.com'])],
-                null,
-                ['cleint1' => 'https://sugarcrm.com', 'cleint2' => 'google.com'],
-            ],
-        ];
+        $this->assertEquals('sugar_config_value', $config->get('some_key'), 'Proxying to sugar config');
     }
 
     public function getSAMLConfigDataProvider()
@@ -637,6 +586,7 @@ class ConfigTest extends TestCase
                     'idm_mode' => [
                         'enabled' => false,
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
                 'expected' => [],
             ],
@@ -651,6 +601,7 @@ class ConfigTest extends TestCase
                         'stsKeySetId' => 'keySetId',
                         'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
                 'expected' => [
                     'clientId' => 'testLocal',
@@ -696,6 +647,7 @@ class ConfigTest extends TestCase
                         'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                         'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
                 'expected' => [
                     'clientId' => 'testLocal',
@@ -748,6 +700,7 @@ class ConfigTest extends TestCase
                             'passwordManagement' => 'management/password',
                         ],
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
                 'expected' => [
                     'clientId' => 'testLocal',
@@ -795,6 +748,7 @@ class ConfigTest extends TestCase
                         'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                         'caching' => [],
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
                 'expected' => [
                     'clientId' => 'testLocal',
@@ -840,6 +794,7 @@ class ConfigTest extends TestCase
                             ],
                         ],
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
                 'expected' => [
                     'clientId' => 'testLocal',
@@ -881,6 +836,7 @@ class ConfigTest extends TestCase
                         'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                         'crmOAuthScope' => 'https://apis.sugarcrm.com/auth/crm',
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
                 'expected' => [
                     'clientId' => 'testLocal',
@@ -930,6 +886,7 @@ class ConfigTest extends TestCase
                             'phone',
                         ],
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
                 'expected' => [
                     'clientId' => 'testLocal',
@@ -981,6 +938,7 @@ class ConfigTest extends TestCase
                             'srn:cloud:iam:us-west-2:1234567890:sa:custom-sa',
                         ],
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
                 'expected' => [
                     'clientId' => 'testLocal',
@@ -1017,38 +975,19 @@ class ConfigTest extends TestCase
     }
 
     /**
-     *
-     * @covers ::getIDMModeConfig
-     *
      * @param $sugarConfig
      * @param $expected
      *
      * @dataProvider getIDMModeConfigProvider
      *
+     * @covers ::getIDMModeConfig
      */
     public function testGetIDMModeConfig($sugarConfig, $expected)
     {
-        $GLOBALS['sugar_config']['site_url'] = 'http://site.url/';
-        $configMock = $this->getMockBuilder(Config::class)
-            ->setConstructorArgs([\SugarConfig::getInstance()])
-            ->setMethods(['getIdmSettings'])
-            ->getMock();
+        $GLOBALS['sugar_config'] = $sugarConfig;
+        $config = new Config(\SugarConfig::getInstance());
 
-        $idmSettingsMock = $this->getMockBuilder(\Administration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        if (isset($sugarConfig[Config::IDM_MODE_KEY])) {
-            foreach ($sugarConfig[Config::IDM_MODE_KEY] as $key => $value) {
-                $idmSettingsMock->settings[Config::IDM_MODE_KEY . '_' . $key] = $value;
-            }
-        }
-
-        $configMock->expects($this->any())
-            ->method('getIdmSettings')
-            ->willReturn($idmSettingsMock);
-
-        $this->assertEquals($expected, $configMock->getIDMModeConfig());
+        $this->assertEquals($expected, $config->getIDMModeConfig());
     }
 
     /**
@@ -1091,38 +1030,18 @@ class ConfigTest extends TestCase
     }
 
     /**
-     *
-     * @covers ::isIDMModeEnabled
-     *
      * @param $sugarConfig
      * @param $expected
      *
      * @dataProvider isIDMModeEnabledProvider
-     *
+     * @covers ::isIDMModeEnabled
      */
     public function testIsIDMModeEnabled($sugarConfig, $expected)
     {
-        $GLOBALS['sugar_config']['site_url'] = 'http://site.url/';
-        $configMock = $this->getMockBuilder(Config::class)
-            ->setConstructorArgs([\SugarConfig::getInstance()])
-            ->setMethods(['getIdmSettings'])
-            ->getMock();
+        $GLOBALS['sugar_config'] = $sugarConfig;
+        $config = new Config(\SugarConfig::getInstance());
 
-        $idmSettingsMock = $this->getMockBuilder(\Administration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        if (isset($sugarConfig[Config::IDM_MODE_KEY])) {
-            foreach ($sugarConfig[Config::IDM_MODE_KEY] as $key => $value) {
-                $idmSettingsMock->settings[Config::IDM_MODE_KEY . '_' . $key] = $value;
-            }
-        }
-
-        $configMock->expects($this->any())
-            ->method('getIdmSettings')
-            ->willReturn($idmSettingsMock);
-
-        $this->assertEquals($expected, $configMock->isIDMModeEnabled());
+        $this->assertEquals($expected, $config->isIDMModeEnabled());
     }
 
     /**
@@ -1292,24 +1211,22 @@ class ConfigTest extends TestCase
      */
     public function testSetIDMMode($setIDMModeConfig) : void
     {
-        $configMock = $this->getMockBuilder(Config::class)
-            ->setMethods(['getIdmSettings', 'refreshCache'])
+        $config = $this->getMockBuilder(Config::class)
+            ->setMethods(['getConfigurator', 'refreshCache'])
             ->setConstructorArgs([$this->createMock('\SugarConfig')])
             ->getMock();
-
-        $idmSettingsMock = $this->getMockBuilder(\Administration::class)
-            ->setMethods(['saveSetting'])
+        $configurator = $this->getMockBuilder('\Configurator')
+            ->setMethods(['handleOverride', 'clearCache'])
             ->disableOriginalConstructor()
             ->getMock();
-        $idmSettingsMock->settings[Config::IDM_MODE_KEY . '_' . 'enabled'] = true;
-
-        $configMock->expects($this->any())
-            ->method('getIdmSettings')
-            ->willReturn($idmSettingsMock);
-
-        $configMock->expects($this->once())
+        $configurator->expects($this->once())
+            ->method('handleOverride');
+        $configurator->config = [];
+        $config->method('getConfigurator')
+            ->willReturn($configurator);
+        $config->expects($this->once())
             ->method('refreshCache');
-        $configMock->setIDMMode($setIDMModeConfig);
+        $config->setIDMMode($setIDMModeConfig);
     }
 
     /**

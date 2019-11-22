@@ -44,7 +44,7 @@ class PMSEEngineUtils
     /**
      * @var Authentication\Config
      */
-    public static $idmConfig;
+    protected static $idmConfig;
 
     /**
      * @var array supported business time unit - only business hour (bh) for now

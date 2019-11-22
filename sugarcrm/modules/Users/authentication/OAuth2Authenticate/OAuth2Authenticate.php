@@ -30,7 +30,8 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
      */
     public function getLoginUrl($returnQueryVars = [])
     {
-        $idmModeConfig = $this->getIDMModeConfig();
+        $config = new Config(\SugarConfig::getInstance());
+        $idmModeConfig = $config->getIDMModeConfig();
         if (empty($idmModeConfig['stsUrl'])) {
             throw new \RuntimeException('IDM-mode config and URL were not found.');
         }
@@ -64,7 +65,8 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
      */
     public function getLogoutUrl(): string
     {
-        $idmModeConfig = $this->getIDMModeConfig();
+        $config = new Config(\SugarConfig::getInstance());
+        $idmModeConfig = $config->getIDMModeConfig();
         return $idmModeConfig['idpUrl'] . '/logout?redirect_uri='.$idmModeConfig['idpUrl'];
     }
 
@@ -95,7 +97,7 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
      */
     protected function getTenant(Config $config)
     {
-        $idmModeConfig = $config->get(Config::IDM_MODE_KEY, []);
+        $idmModeConfig = $config->get('idm_mode', []);
         return !empty($idmModeConfig['tid']) ? $idmModeConfig['tid'] : '';
     }
 

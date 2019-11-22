@@ -160,14 +160,4 @@ class BaseAuthenticate
     {
         return new UsernamePasswordTokenFactory($username, $password, $params);
     }
-
-    /**
-     * get IdmMode config
-     * @return array
-     */
-    protected function getIdmModeConfig() : array
-    {
-        $config = new Config(\SugarConfig::getInstance());
-        return $config->getIDMModeConfig();
-    }
 }

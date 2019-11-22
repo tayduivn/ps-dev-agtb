@@ -102,19 +102,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      */
     protected $sugarAccessToken = '956fc0c6-eb25-491c-aa19-411bde06e238';
 
-    protected $idmMode = [
-        'enabled' => true,
-        'clientId' => 'testLocal',
-        'clientSecret' => 'testLocalSecret',
-        'stsUrl' => 'http://sts.sugarcrm.local',
-        'idpUrl' => 'http://sugar.dolbik.local/idm289idp/web/',
-        'stsKeySetId' => 'KeySetName',
-        'tid' => 'srn:cluster:sugar::0000000001:tenant',
-        'idpServiceName' => 'idm',
-        'crmOAuthScope' => 'email account',
-    ];
-
-
     /**
      * @inheritdoc
      */
@@ -130,34 +117,11 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                                        'getAuthProviderApiLoginBuilder',
                                        'genAccessToken',
                                        'setLogger',
-                                       'getIdmModeConfig',
-                                       'getIdpConfig',
                                    ])
                                    ->getMock();
 
         TestReflection::setProtectedValue($this->oAuth2Server, 'storage', $this->storage);
         TestReflection::setProtectedValue($this->oAuth2Server, 'logger', $this->createMock(LoggerInterface::class));
-
-        $configMock = $this->getMockBuilder(Config::class)
-            ->setConstructorArgs([\SugarConfig::getInstance()])
-            ->setMethods(['getIdmSettings'])
-            ->getMock();
-
-        $idmSettingsMock = $this->getMockBuilder(\Administration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        if (isset($sugarConfig[Config::IDM_MODE_KEY])) {
-            foreach ($this->idmMode as $key => $value) {
-                $idmSettingsMock->settings[Config::IDM_MODE_KEY . '_' . $key] = $value;
-            }
-        }
-
-        $configMock->expects($this->any())
-            ->method('getIdmSettings')
-            ->willReturn($idmSettingsMock);
-
-        $this->oAuth2Server->method('getIdpConfig')->willReturn($configMock);
 
         $this->authProviderBuilder = $this->createMock(AuthProviderOIDCManagerBuilder::class);
         $this->authProviderBasicBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
@@ -191,6 +155,18 @@ class SugarOAuth2ServerOIDCTest extends TestCase
         \BeanFactory::registerBean($this->mockedUser);
 
         $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
+        $GLOBALS['sugar_config'] = [
+            'idm_mode' => [
+                'enabled' => true,
+                'clientId' => 'testLocal',
+                'clientSecret' => 'testLocalSecret',
+                'stsUrl' => 'http://sts.sugarcrm.local',
+                'idpUrl' => 'http://sugar.dolbik.local/idm289idp/web/',
+                'stsKeySetId' => 'KeySetName',
+                'tid' => 'srn:cluster:sugar::0000000001:tenant',
+                'idpServiceName' => 'idm',
+            ],
+        ];
 
         $this->config = \SugarConfig::getInstance();
         $this->config->clearCache();
@@ -353,9 +329,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
             }
         );
 
-        $this->oAuth2Server->expects($this->any())
-            ->method('getIdmModeConfig')->willReturn($this->idmMode);
-
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
                 $this->assertInstanceOf(JWTBearerToken::class, $token);
@@ -402,8 +375,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
 
         $refreshTokenId = 'testRefreshTokenId';
         $this->oAuth2Server->expects($this->once())->method('genAccessToken')->willReturn($refreshTokenId);
-        $this->oAuth2Server->expects($this->any())
-            ->method('getidmModeConfig')->willReturn($this->idmMode);
 
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
@@ -481,9 +452,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                 return $this->authProviderBuilder;
             }
         );
-
-        $this->oAuth2Server->expects($this->any())
-            ->method('getidmModeConfig')->willReturn($this->idmMode);
 
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {

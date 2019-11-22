@@ -133,7 +133,7 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
         }
 
         try {
-            $idpConfig = $this->getIdpConfig();
+            $idpConfig = new Config(\SugarConfig::getInstance());
             $authManager = $this->getAuthProviderBasicBuilder($idpConfig)->buildAuthProviders();
             /** @var TokenInterface  $resultToken */
             $resultToken = $authManager->authenticate($sourceToken);
@@ -174,13 +174,12 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
 
         $userToken = null;
         try {
-            $config = $this->getIdpConfig();
-            $idmModeConfig = $this->getIdmModeConfig();
+            $config = new Config(\SugarConfig::getInstance());
             $authManager = $this->getAuthProviderBuilder($config)->buildAuthProviders();
             $introspectToken = new IntrospectToken(
                 $token,
-                $idmModeConfig['tid'],
-                $idmModeConfig['crmOAuthScope']
+                $config->getIDMModeConfig()['tid'],
+                $config->getIDMModeConfig()['crmOAuthScope']
             );
             $introspectToken->setAttribute('platform', $this->platform);
             /** @var IntrospectToken $userToken */
@@ -226,22 +225,6 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
     }
 
     /**
-     * get IDM oonfig object
-     * @return Config
-     */
-    protected function getIdpConfig()
-    {
-        return new Config(\SugarConfig::getInstance());
-    }
-    /**
-     * get Idm mode Config
-     * @return array
-     */
-    protected function getIdmModeConfig()
-    {
-        return $this->getIdpConfig()->getIDMModeConfig();
-    }
-    /**
      * @inheritdoc
      */
     protected function createAccessToken($client_id, $user_id, $scope = null)
@@ -250,7 +233,9 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
             return parent::createAccessToken($client_id, $user_id, $scope);
         }
 
-        $idmModeConfig = $this->getIdmModeConfig();
+        $sugarConfig = \SugarConfig::getInstance();
+        $idpConfig = new Config($sugarConfig);
+        $idmModeConfig = $idpConfig->getIDMModeConfig();
 
         $tenantSrn = Srn\Converter::fromString($idmModeConfig['tid']);
         $srnManagerConfig = [
@@ -260,7 +245,6 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
         $srnManager = new Srn\Manager($srnManagerConfig);
         $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $user_id);
 
-        $idpConfig = $this->getIdpConfig();
         try {
             $authManager = $this->getAuthProviderApiLoginBuilder($idpConfig)->buildAuthProviders();
             $jwtBearerToken = new JWTBearerToken(Srn\Converter::toString($userSrn), $idmModeConfig['tid']);

@@ -75,6 +75,9 @@ class OAuth2AuthenticateTest extends TestCase
         $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
         $GLOBALS['sugar_config'] = [
             'site_url' => 'http://test.sugarcrm.local',
+            'idm_mode' => [
+                'enabled' => true,
+            ],
         ];
 
         $this->config = \SugarConfig::getInstance();
@@ -88,7 +91,6 @@ class OAuth2AuthenticateTest extends TestCase
                 'getIdmProvider',
                 'getStateRegistry',
                 'createState',
-                'getIDMModeConfig',
             ])
             ->getMock();
 
@@ -122,7 +124,7 @@ class OAuth2AuthenticateTest extends TestCase
      */
     public function testGetLoginUrlWithValidConfig() : void
     {
-        $idmMode = [
+        $GLOBALS['sugar_config']['idm_mode'] = [
             'enabled' => true,
             'clientId' => 'testLocal',
             'clientSecret' => 'testLocalSecret',
@@ -132,7 +134,6 @@ class OAuth2AuthenticateTest extends TestCase
             'requestedOAuthScopes' => ['offline', 'profile'],
             'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
         ];
-
         $expectedQueryData = [
             'state' => 'base_generated',
             'response_type' => 'code',
@@ -144,7 +145,6 @@ class OAuth2AuthenticateTest extends TestCase
         ];
         $expectedUrl = 'http://sts.sugarcrm.local/oauth2/auth?' . http_build_query($expectedQueryData);
 
-        $this->authMock->expects($this->any())->method('getIDMModeConfig')->willReturn($idmMode);
         $this->authMock->expects($this->once())->method('createState')->willReturn('generated');
         $this->idmProviderMock->expects($this->once())
             ->method('getAuthorizationUrl')
@@ -166,7 +166,8 @@ class OAuth2AuthenticateTest extends TestCase
      */
     public function testGetLoginUrlWithEmptyConfig()
     {
-        $this->authMock->expects($this->any())->method('getIDMModeConfig')->willReturn([]);
+        unset($GLOBALS['sugar_config']['idm_mode']);
+
         $this->authMock->getLoginUrl();
     }
 
@@ -175,7 +176,7 @@ class OAuth2AuthenticateTest extends TestCase
      */
     public function testGetLogoutUrl(): void
     {
-        $idmMode = [
+        $GLOBALS['sugar_config']['idm_mode'] = [
             'enabled' => true,
             'clientId' => 'testLocal',
             'clientSecret' => 'testLocalSecret',
@@ -186,7 +187,6 @@ class OAuth2AuthenticateTest extends TestCase
             'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
         ];
 
-        $this->authMock->expects($this->any())->method('getIDMModeConfig')->willReturn($idmMode);
         $this->assertEquals(
             'http://idp.url/logout?redirect_uri=http://idp.url',
             $this->authMock->getLogoutUrl()

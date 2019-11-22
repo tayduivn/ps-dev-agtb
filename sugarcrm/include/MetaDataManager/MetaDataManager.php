@@ -436,12 +436,6 @@ class MetaDataManager implements LoggerAwareInterface
     ];
 
     /**
-     * idp config
-     * @var
-     */
-    protected $idpConfig;
-
-    /**
      * The constructor for the class. Sets the visibility flag, the visibility
      * string indicator and loads the appropriate metadata section list.
      *
@@ -2167,19 +2161,6 @@ class MetaDataManager implements LoggerAwareInterface
     }
 
     /**
-     * get Idp config
-     *
-     * @return Authentication\Config
-     */
-    protected function getIdpConfig()
-    {
-        if (empty($this->idpConfig)) {
-            $this->idpConfig = new Authentication\Config(\SugarConfig::getInstance());
-        }
-
-        return $this->idpConfig;
-    }
-    /**
      * Gets configs
      *
      * @return array
@@ -2190,7 +2171,7 @@ class MetaDataManager implements LoggerAwareInterface
         $administration = new Administration();
         $administration->retrieveSettings();
 
-        $idpConfig = $this->getIdpConfig();
+        $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
         $properties = $this->getConfigProperties();
         $properties = $this->parseConfigProperties($sugarConfig, $properties);
         $configs = $this->handleConfigPropertiesExceptions($properties);
@@ -2208,7 +2189,7 @@ class MetaDataManager implements LoggerAwareInterface
             }
         }
 
-        $auth = AuthenticationController::getInstance($sugarConfig['authenticationClass'] ?? null, $idpConfig);
+        $auth = AuthenticationController::getInstance($sugarConfig['authenticationClass'] ?? null);
 
         if ($auth->isExternal()) {
             $configs['externalLogin'] = true;

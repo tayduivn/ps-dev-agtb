@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\Sugarcrm\ProcessManager;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
@@ -695,33 +694,7 @@ class PMSEEngineUtilsTest extends TestCase
      */
     public function testIsValidStudioFieldInIDMMode($idmModeConfig, $defs, $expectedResult)
     {
-        $configMock = $this->getMockBuilder(Config::class)
-            ->setConstructorArgs([\SugarConfig::getInstance()])
-            ->setMethods(['getIdmSettings', 'isIDMModeEnabled'])
-            ->getMock();
-
-        $idmSettingsMock = $this->getMockBuilder(\Administration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        foreach ($idmModeConfig as $key => $value) {
-            $idmSettingsMock->settings[Config::IDM_MODE_KEY . '_' . $key] = $value;
-        }
-
-        $configMock->expects($this->any())
-            ->method('getIdmSettings')
-            ->willReturn($idmSettingsMock);
-
-        $idmEnabled = false;
-        if (isset($idmModeConfig['enabled']) && $idmModeConfig['enabled']) {
-            $idmEnabled = true;
-        }
-        $configMock->expects($this->any())
-            ->method('isIDMModeEnabled')
-            ->willReturn($idmEnabled);
-
-        PMSEEngineUtils::$idmConfig = $configMock;
-
+        $this->sugarConfig->_cached_values['idm_mode'] = $idmModeConfig;
         $this->assertEquals($expectedResult, $this->object->isValidStudioField($defs));
     }
 

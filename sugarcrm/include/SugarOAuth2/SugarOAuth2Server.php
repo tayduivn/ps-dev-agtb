@@ -34,16 +34,13 @@ class SugarOAuth2Server extends OAuth2
      * types and storage
      *
      * @param string $platform
-     * @param Config $idpConfig
      *
      * @return SugarOAuth2Server
      */
-    public static function getOAuth2Server($platform = null, $idpConfig = null)
+    public static function getOAuth2Server($platform = null)
     {
         if (!isset(static::$currentOAuth2Server)) {
-            if (empty($idpConfig)) {
-                $idpConfig = new Config(\SugarConfig::getInstance());
-            }
+            $idpConfig = new Config(\SugarConfig::getInstance());
             $isIDMModeEnabled = $idpConfig->isIDMModeEnabled() && $platform != SugarOAuth2ServerOIDC::PORTAL_PLATFORM;
             $oidcPostfix = $isIDMModeEnabled ? 'OIDC' : '';
             SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage'.$oidcPostfix.'.php');

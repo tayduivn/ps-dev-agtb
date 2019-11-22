@@ -11,7 +11,6 @@
  */
 
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 class MetaDataManagerTest extends TestCase
 {
@@ -34,6 +33,10 @@ class MetaDataManagerTest extends TestCase
             $this->configBackup['disabled_languages'] = $GLOBALS['sugar_config']['disabled_languages'];
         }
 
+        if (!empty($GLOBALS['sugar_config']['idm_mode'])) {
+            $this->configBackup['idm_mode'] = $GLOBALS['sugar_config']['idm_mode'];
+        }
+
         $this->setTestLanguageSettings();
         $this->mm = MetaDataManager::getManager();
         $this->mdc = new MetaDataCache(DBManagerFactory::getInstance());
@@ -47,6 +50,10 @@ class MetaDataManagerTest extends TestCase
         $GLOBALS['sugar_config']['languages'] = $this->configBackup['languages'];
         if (isset($this->configBackup['disabled_languages'])) {
             $GLOBALS['sugar_config']['disabled_languages'] = $this->configBackup['disabled_languages'];
+        }
+
+        if (isset($this->configBackup['idm_mode'])) {
+            $GLOBALS['sugar_config']['idm_mode'] = $this->configBackup['idm_mode'];
         }
 
         MetaDataFiles::clearModuleClientCache();
@@ -261,47 +268,17 @@ class MetaDataManagerTest extends TestCase
      */
     public function testGetConfigs($sugarConfig, $expectedConfigs)
     {
+        $GLOBALS['sugar_config']['idm_mode'] = $sugarConfig['idm_mode'];
         $administration = new Administration();
         $administration->retrieveSettings();
         if (!empty($administration->settings['system_name'])) {
             $expectedConfigs['systemName'] = $administration->settings['system_name'];
         }
 
-        $manager = $this->createPartialMock('MetadataManagerMock', ['getSugarConfig', 'getIdpConfig']);
+        $manager = $this->createPartialMock('MetadataManagerMock', array('getSugarConfig'));
         $manager->expects($this->any())
             ->method('getSugarConfig')
             ->will($this->returnValue($sugarConfig));
-
-        $configMock = $this->getMockBuilder(Config::class)
-            ->setConstructorArgs([\SugarConfig::getInstance()])
-            ->setMethods(['getIdmSettings', 'isIDMModeEnabled'])
-            ->getMock();
-
-        $idmSettingsMock = $this->getMockBuilder(\Administration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        if (isset($sugarConfig[Config::IDM_MODE_KEY])) {
-            foreach ($sugarConfig[Config::IDM_MODE_KEY] as $key => $value) {
-                $idmSettingsMock->settings[Config::IDM_MODE_KEY . '_' . $key] = $value;
-            }
-        }
-
-        $configMock->expects($this->any())
-            ->method('getIdmSettings')
-            ->willReturn($idmSettingsMock);
-
-        $idmEnabled = false;
-        if (isset($sugarConfig[Config::IDM_MODE_KEY]['enabled']) && $sugarConfig[Config::IDM_MODE_KEY]['enabled']) {
-            $idmEnabled = true;
-        }
-        $configMock->expects($this->any())
-            ->method('isIDMModeEnabled')
-            ->willReturn($idmEnabled);
-
-        $manager->expects($this->any())
-            ->method('getIdpConfig')
-            ->will($this->returnValue($configMock));
 
         // Get the configs from metadata manager
         $actualConfigs = $manager->getConfigs();

@@ -14,7 +14,6 @@ namespace Sugarcrm\SugarcrmTestsUnit\Console;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Console\Application;
-use Sugarcrm\Sugarcrm\Console\Command\Api\IdmModeManageCommand;
 use Sugarcrm\Sugarcrm\Console\CommandRegistry\CommandRegistry;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\RebuildCommand;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
@@ -86,7 +85,6 @@ class ApplicationTest extends TestCase
                     'password:weak' => $ns . '\Password\WeakHashesCommand',
                     'team-security:rebuild' => RebuildCommand::class,
                     'team-security:status' => StatusCommand::class,
-                    'idm-mode:manage' => IdmModeManageCommand::class,
                 ),
             ),
         );
