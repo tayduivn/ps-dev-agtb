@@ -54,8 +54,8 @@
      * Specifies correspondence between field types and field operator types.
      */
     fieldTypeMap: {
-        'datetime' : 'date',
-        'datetimecombo' : 'date'
+        'datetime': 'date',
+        'datetimecombo': 'date'
     },
 
     /**
@@ -112,13 +112,13 @@
 
     /**
      * Get filterable fields from the module metadata
-     * @param {String} moduleName
+     * @param {string} moduleName
      * @return {Object}
      */
     getFilterableFields: function(moduleName) {
-        var moduleMeta = app.metadata.getModule(moduleName),
-            fieldMeta = moduleMeta.fields,
-            fields = {};
+        var moduleMeta = app.metadata.getModule(moduleName);
+        var fieldMeta = moduleMeta.fields;
+        var fields = {};
         if (moduleMeta.filters) {
             _.each(moduleMeta.filters, function(templateMeta) {
                 if (templateMeta.meta && templateMeta.meta.fields) {
@@ -134,7 +134,7 @@
             } else {
                 fields[fieldName] = _.extend({name: fieldName}, fieldMetaData, fieldFilterDef);
             }
-            delete fields[fieldName]['readonly'];
+            delete fields[fieldName].readonly;
         });
 
         return fields;
@@ -146,7 +146,7 @@
      * @private
      */
     _render: function() {
-        this._super("_render");
+        this._super('_render');
         this.populateFilter(this.filterDef);
 
         // If the filter definition is empty, add a fresh row
@@ -155,10 +155,11 @@
         }
     },
 
+    /**
+     * Builds the initial elements of the filter for the given filter definition
+     * @param array filterDef the filter definition
+     */
     populateFilter: function(filterDef) {
-
-        debugger;
-
         filterDef = app.data.getBeanClass('Filters').prototype.populateFilterDefinition(filterDef, true);
         _.each(filterDef, function(row) {
             this.populateRow(row);
@@ -287,12 +288,13 @@
     initRow: function($row, data) {
         $row = $row || $(this.rowTemplate()).appendTo(this.$el);
         data = data || {};
-        var model, field;
+        var model;
+        var field;
 
         // Init the row with the data available.
-        $row.data('name', data.name);
-        $row.data('operator', data.operator);
-        $row.data('value', data.value);
+        $row.attr('data-name', data.name);
+        $row.attr('data-operator', data.operator);
+        $row.attr('data-value', data.value);
 
         // Create a blank model for the field selector enum, and set the
         // field value if we know it.
@@ -308,7 +310,7 @@
             options: this.filterFields
         });
         field.render();
-        $row.find("[data-filter=field]").append(field.$el);
+        $row.find('[data-filter=field]').append(field.$el);
 
         // Store the field in the data attributes.
         $row.data('nameField', field);
@@ -332,7 +334,7 @@
         var previousOperator = data.operator;
 
         // Make sure the data attributes contain the right selected field.
-        data['name'] = fieldName;
+        data.name = fieldName;
 
         if (!fieldName) {
             return;
@@ -350,9 +352,9 @@
         }
 
         // Get operators for this filter type
-        var fieldType = this.fieldTypeMap[this.fieldList[fieldName].type] || this.fieldList[fieldName].type,
-            payload = {},
-            types = _.keys(this.filterOperatorMap[fieldType]);
+        var fieldType = this.fieldTypeMap[this.fieldList[fieldName].type] || this.fieldList[fieldName].type;
+        var payload = {};
+        var types = _.keys(this.filterOperatorMap[fieldType]);
 
         // For parent field with the operator '$equals', the operator field is
         // hidden and we need to display the value field directly. So here we
@@ -384,17 +386,17 @@
         }
 
         var field = this.createField(model, {
-                name: 'filter_row_operator',
-                type: 'enum',
-                // minimumResultsForSearch set to 9999 to hide the search field,
-                // See: https://github.com/ivaynberg/select2/issues/414
-                searchBarThreshold: 9999,
-                options: payload
+            name: 'filter_row_operator',
+            type: 'enum',
+            // minimumResultsForSearch set to 9999 to hide the search field,
+            // See: https://github.com/ivaynberg/select2/issues/414
+            searchBarThreshold: 9999,
+            options: payload
         });
         field.render();
         $fieldWrapper.append(field.$el);
 
-        data['operatorField'] = field;
+        data.operatorField = field;
 
         var hide = fieldType === 'parent';
         this._hideOperator(hide, $row);
@@ -429,14 +431,14 @@
         }
 
         // Patching fields metadata
-        var moduleName = this.moduleName,
-            module = app.metadata.getModule(moduleName),
-            fields = app.metadata._patchFields(moduleName, module, app.utils.deepCopy(this.fieldList));
+        var moduleName = this.moduleName;
+        var module = app.metadata.getModule(moduleName);
+        var fields = app.metadata._patchFields(moduleName, module, app.utils.deepCopy(this.fieldList));
 
         // More patch for some field types
-        var fieldName = $row.find('[data-filter=field] input[type=hidden]').select2('val'),
-            fieldType = this.fieldTypeMap[this.fieldList[fieldName].type] || this.fieldList[fieldName].type,
-            fieldDef = fields[fieldName];
+        var fieldName = $row.find('[data-filter=field] input[type=hidden]').select2('val');
+        var fieldType = this.fieldTypeMap[this.fieldList[fieldName].type] || this.fieldList[fieldName].type;
+        var fieldDef = fields[fieldName];
 
         switch (fieldType) {
             case 'enum':
@@ -456,7 +458,7 @@
                     fieldDef.type = 'varchar';
                     fieldDef.len = 200;
                     if (_.isArray($row.data('value'))) {
-                        $row.data('value', $row.data('value').join(','));
+                        $row.attr('data-value', $row.data('value').join(','));
                     }
                 }
                 break;
@@ -498,7 +500,7 @@
 
         //fire the change event as soon as the user start typing
         var _keyUpCallback = function(e) {
-            if ($(e.currentTarget).is(".select2-input")) {
+            if ($(e.currentTarget).is('.select2-input')) {
                 return; //Skip select2. Select2 triggers other events.
             }
             this.value = $(e.currentTarget).val();
@@ -524,7 +526,7 @@
             minmax.push(this.createField(model, _.extend({}, fieldDef, {name: fieldName + '_min'})));
             minmax.push(this.createField(model, _.extend({}, fieldDef, {name: fieldName + '_max'})));
 
-            if(operation === '$dateBetween') {
+            if (operation === '$dateBetween') {
                 minmax[0].label = app.lang.get('LBL_FILTER_DATEBETWEEN_FROM');
                 minmax[1].label = app.lang.get('LBL_FILTER_DATEBETWEEN_TO');
             } else {
@@ -532,31 +534,29 @@
                 minmax[1].label = app.lang.get('LBL_FILTER_BETWEEN_TO');
             }
 
-                minmax[0].label = '';
-                minmax[1].label = '';
-
-            data['valueField'] = minmax;
+            data.valueField = minmax;
 
             _.each(minmax, function(field) {
                 $fieldValue.append(field.$el);
                 this.listenTo(field, 'render', function() {
                     field.$('input, select, textarea').addClass('inherit-width');
-                    field.$('.input-append').prepend('<span class="add-on">' + field.label + '</span>');
-                    field.$('.input-append').addClass('input-prepend');
-                    // .date makes .inherit-width on input have no effect so we need to remove it.
-                    field.$('.input-append').removeClass('date');
+                    field.$('.input-append').prepend('<span class="add-on">' + field.label + '</span>')
+                        .addClass('input-prepend')
+                        .removeClass('date'); // .date makes .inherit-width on input have no effect
                     field.$('input, textarea').on('keyup', _.debounce(_.bind(_keyUpCallback, field), 400));
                 });
                 field.render();
             }, this);
         } else if (data.isFlexRelate) {
+            var values = {};
             _.each($row.data('value'), function(value, key) {
-                model.set(key, value);
+                values[key] = value;
             }, this);
+            model.set(values);
 
             var field = this.createField(model, _.extend({}, fieldDef, {name: fieldName}));
-                findRelatedName = app.data.createBeanCollection(model.get('parent_type'));
-            data['valueField'] = field;
+            findRelatedName = app.data.createBeanCollection(model.get('parent_type'));
+            data.valueField = field;
             $fieldValue.append(field.$el);
 
             if (model.get('parent_id')) {
@@ -593,7 +593,7 @@
             var field = this.createField(model, _.extend({}, fieldDef, {name: fieldName}));
             $fieldValue.append(field.$el);
 
-            data['valueField'] = field;
+            data.valueField = field;
 
             this.listenTo(field, 'render', function() {
                 field.$('input, select, textarea').addClass('inherit-width');
@@ -612,8 +612,8 @@
                     complete: function() {
                         if (!self.disposed) {
                             if (findRelatedName.length > 0) {
-                                model.set(fieldDef.id_name, findRelatedName.pluck('id'), { silent: true });
-                                model.set(fieldName, findRelatedName.pluck(fieldDef.rname), { silent: true });
+                                model.set(fieldDef.id_name, findRelatedName.pluck('id'), {silent: true});
+                                model.set(fieldName, findRelatedName.pluck(fieldDef.rname), {silent: true});
                             }
                             if (!field.disposed) {
                                 field.render();
@@ -630,7 +630,7 @@
         var updateFilter = function() {
             self._updateFilterData($row);
             self.model.set('filter_def', self.buildFilterDef(true), {silent: true});
-        }
+        };
         this.listenTo(model, 'change', updateFilter);
         this.listenTo(model, 'change:' + fieldName, updateFilter);
 
@@ -659,11 +659,11 @@
      * @param $row Row to update
      * @private
      */
-    _updateFilterData: function($row){
-        var data = $row.data(),
-            field = data['valueField'],
-            name = data['name'],
-            valueForFilter;
+    _updateFilterData: function($row) {
+        var data = $row.data();
+        var field = data.valueField;
+        var name = data.name;
+        var valueForFilter;
 
         //Make sure we use ID for relate fields
         if (this.fieldList[name] && this.fieldList[name].id_name) {
@@ -682,7 +682,10 @@
             var value = !field.disposed && field.model.has(name) ? field.model.get(name) : '';
             valueForFilter = $row.data('isDate') ? (app.date.stripIsoTimeDelimterAndTZ(value) || '') : value;
         }
-        $row.data("value", valueForFilter); // Update filter value once we've calculated final value
+
+        // Update filter value once we've calculated final value
+        $row.data('value', valueForFilter);
+        $row.attr('data-value', valueForFilter);
     },
 
     /**
@@ -719,7 +722,7 @@
             nested: true,
             viewName: 'edit',
             model: model
-        }
+        };
 
         var field = app.view.createField(obj);
         return field;
@@ -739,6 +742,11 @@
         this._disposeRowFields($row, fieldOpts);
         this.initOperatorField($row);
 
+        // Update the attributes of the row
+        $row.attr('data-name', $el.val());
+        $row.attr('data-operator', '');
+        $row.attr('data-value', '');
+
         this.model.set('filter_def', this.buildFilterDef(true), {silent: true});
     },
 
@@ -754,6 +762,10 @@
         ];
         this._disposeRowFields($row, fieldOpts);
         this.initValueField($row);
+
+        // Update the attributes of the row
+        $row.attr('data-operator', $el.val());
+        $row.attr('data-value', '');
 
         this.model.set('filter_def', this.buildFilterDef(true), {silent: true});
     },
@@ -773,7 +785,8 @@
      *  value to the data attributes of the row.
      */
     _disposeRowFields: function($row, opts) {
-        var data = $row.data(), model;
+        var data = $row.data();
+        var model;
 
         if (_.isObject(data) && _.isArray(opts)) {
             _.each(opts, function(val) {
@@ -783,7 +796,7 @@
                     data[val.value] = '';
                     _.each(fields, function(field) {
                         model = field.model;
-                        if (val.field === "valueField" && model) {
+                        if (val.field === 'valueField' && model) {
                             model.clear({silent: true});
                             this.stopListening(model);
                         }
@@ -808,14 +821,14 @@
     /**
      * Build filter definition for all rows.
      *
-     * @param {Boolean} onlyValidRows Set `true` to retrieve only filter
+     * @param {boolean} onlyValidRows Set `true` to retrieve only filter
      *   definition of valid rows, `false` to retrieve the entire field
      *   template.
      * @return {Array} Filter definition.
      */
     buildFilterDef: function(onlyValidRows) {
-        var $rows = this.$('[data-filter=row]'),
-            filter = [];
+        var $rows = this.$('[data-filter=row]');
+        var filter = [];
 
         _.each($rows, function(row) {
             var rowFilter = this.buildRowFilterDef($(row), onlyValidRows);
@@ -832,7 +845,7 @@
      * Build filter definition for this row.
      *
      * @param {jQuery} $row The related row.
-     * @param {Boolean} onlyIfValid Set `true` to validate the row and return
+     * @param {boolean} onlyIfValid Set `true` to validate the row and return
      *   `undefined` if not valid, or `false` to build the definition anyway.
      * @return {Object} Filter definition for this row.
      */
@@ -841,10 +854,10 @@
         if (onlyIfValid && !this.validateRow($row)) {
             return;
         }
-        var operator = data['operator'],
-            value = data['value'] || '',
-            name = data['id_name'] || data['name'],
-            filter = {};
+        var operator = data.operator;
+        var value = data.value || '';
+        var name = data.id_name || data.name;
+        var filter = {};
 
         if (_.isEmpty(name)) {
             return;
@@ -865,20 +878,21 @@
                     filter[dbField][operator] = value;
                     subfilters.push(filter);
                 });
-                filter['$or'] = subfilters;
+                filter.$or = subfilters;
             } else {
                 if (data.isFlexRelate) {
-                    var valueField = data['valueField'],
-                        idFilter = {},
-                        typeFilter = {};
+                    var valueField = data.valueField;
+                    var idFilter = {};
+                    var typeFilter = {};
 
                     idFilter[data.id_name] = valueField.model.get(data.id_name);
                     typeFilter[data.type_name] = valueField.model.get(data.type_name);
-                    filter['$and'] = [idFilter, typeFilter];
-                    // Creating currency filter. For all but `$between` operators we use type property from data.valueField.
-                    // For `$between`, data.valueField is an array and therefore we check for type==='currency' from
+                    filter.$and = [idFilter, typeFilter];
+                    // Creating currency filter. For all but `$between` operators we use
+                    // type property from data.valueField. For `$between`, data.valueField
+                    // is an array and therefore we check for type==='currency' from
                     // either of the elements.
-                } else if (data['valueField'] && (data['valueField'].type === 'currency' ||
+                } else if (data.valueField && (data.valueField.type === 'currency' ||
                     (_.isArray(data.valueField) && data.valueField[0].type === 'currency'))
                 ) {
                     // initially value is an array which we later convert into an object for saving and retrieving
@@ -909,7 +923,7 @@
                     var currencyFilter = {};
                     currencyFilter[currencyId] = dataField.model.get(currencyId);
 
-                    filter['$and'] = [amountFilter, currencyFilter];
+                    filter.$and = [amountFilter, currencyFilter];
                 } else if (data.isDateRange) {
                     //Once here the value is actually a key of date_range_selector_dom and we need to build a real
                     //filter definition on it.
@@ -940,19 +954,19 @@
      * Verify the value of the row is not empty.
      *
      * @param {Element} $row The row to validate.
-     * @return {Boolean} `true` if valid, `false` otherwise.
+     * @return {boolean} `true` if valid, `false` otherwise.
      */
     validateRow: function(row) {
-        var $row = $(row),
-            data = $row.data();
+        var $row = $(row);
+        var data = $row.data();
 
         if (_.contains(this._operatorsWithNoValues, data.operator)) {
             return true;
         }
 
         // for empty value in currency we dont want to validate
-        if (!_.isUndefined(data.valueField) && !_.isArray(data.valueField) && data.valueField.type ==='currency'
-            && (_.isEmpty(data.value) || (_.isObject(data.value) &&
+        if (!_.isUndefined(data.valueField) && !_.isArray(data.valueField) && data.valueField.type === 'currency' &&
+            (_.isEmpty(data.value) || (_.isObject(data.value) &&
                 _.isEmpty(data.valueField.model.get(data.name))))) {
             return false;
         }
