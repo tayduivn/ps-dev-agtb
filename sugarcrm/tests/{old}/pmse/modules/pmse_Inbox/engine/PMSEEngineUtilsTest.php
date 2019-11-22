@@ -15,7 +15,6 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\Sugarcrm\ProcessManager;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 class PMSEEngineUtilsTest extends TestCase
 {
@@ -721,9 +720,7 @@ class PMSEEngineUtilsTest extends TestCase
             ->method('isIDMModeEnabled')
             ->willReturn($idmEnabled);
 
-        $reflection = new \ReflectionProperty(PMSEEngineUtils::class, 'idmConfig');
-        $reflection->setAccessible(true);
-        $reflection->setValue(null, $configMock);
+        PMSEEngineUtils::$idmConfig = $configMock;
 
         $this->assertEquals($expectedResult, $this->object->isValidStudioField($defs));
     }

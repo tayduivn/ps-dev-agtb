@@ -1293,7 +1293,7 @@ class ConfigTest extends TestCase
     public function testSetIDMMode($setIDMModeConfig) : void
     {
         $configMock = $this->getMockBuilder(Config::class)
-            ->setMethods(['getIdmSettings', 'refreshCache', 'getIDMModeConfig'])
+            ->setMethods(['getIdmSettings', 'refreshCache'])
             ->setConstructorArgs([$this->createMock('\SugarConfig')])
             ->getMock();
 
@@ -1306,20 +1306,6 @@ class ConfigTest extends TestCase
         $configMock->expects($this->any())
             ->method('getIdmSettings')
             ->willReturn($idmSettingsMock);
-
-        $idmConfigSettings = [
-            'enabled' => true,
-            'clientId' => 'testLocal',
-            'clientSecret' => 'testLocalSecret',
-            'stsUrl' => 'http://sts.sugarcrm.local',
-            'idpUrl' => 'http://login.sugarcrm.local',
-            'stsKeySetId' => 'keySetId',
-            'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-        ];
-
-        $configMock->expects($this->any())
-            ->method('getIDMModeConfig')
-            ->willReturn($idmConfigSettings);
 
         $configMock->expects($this->once())
             ->method('refreshCache');

@@ -31,7 +31,7 @@ class Config
      * list of key names with values in array format
      * @var array
      */
-    protected $idmArrayTypeAttributes = [
+    protected $idmAttributesInArray = [
         'http_client',
         'cloudConsoleRoutes',
         'caching',
@@ -84,9 +84,13 @@ class Config
         } elseif ($key === self::IDM_MODE_KEY) {
             // get all idm config from db
             $result = [];
-            foreach ($this->getIdmSettings()->settings as $idmKey => $value) {
-                $idmKey = preg_replace('/' . self::IDM_MODE_KEY . '/', '', $idmKey, 1);
-                $result[$idmKey] = $this->handleArrayValue($idmKey, $value, $default);
+            $this->getIdmSettings()->retrieveSettings(self::IDM_MODE_KEY);
+            foreach ($this->getIdmSettings()->settings as $attrkey => $value) {
+                $attrkey = preg_replace('/' . self::IDM_MODE_KEY . '/', '', $attrkey, 1);
+                $result[$attrkey] = $value;
+                if ($this->isValueInArrayForKey($attrkey)) {
+                    $result[$attrkey] = json_encode($value, true);
+                }
             }
             return $result ?? $default;
         } else {
@@ -121,7 +125,7 @@ class Config
      */
     protected function handleArrayValue($key, $value, $default = null)
     {
-        if (!$this->isArrayTypeValue($key)) {
+        if (!$this->isValueInArrayForKey($key)) {
             return $value;
         } else {
             if (!empty($value)) {
@@ -139,9 +143,9 @@ class Config
      * @param string $key
      * @return bool
      */
-    protected function isArrayTypeValue(string $key) : bool
+    protected function isValueInArrayForKey(string $key) : bool
     {
-        return in_array($key, $this->idmArrayTypeAttributes);
+        return in_array($key, $this->idmAttributesInArray);
     }
 
     /**
@@ -270,27 +274,20 @@ class Config
      */
     public function setIDMMode($config) : void
     {
-        $oldConfig = $this->getIDMModeConfig();
-        if (is_array($config)) {
-            ksort($config);
-            ksort($oldConfig);
-            if ($config == $oldConfig) {
-                // do nothing
-                return;
-            }
+
+        $oldConfig = $this->getIdmSettingsByKey('enabled', false);
+        if ($oldConfig === $config) {
+            // do nothing
+            return;
         }
 
         if ($config === false || !is_array($config)) {
-            if (empty($oldConfig['enabled'])) {
-                // was idm off, do nothing
-                return;
-            }
             $this->getIdmSettings()->saveSetting(self::IDM_MODE_KEY, 'enabled', false);
         } else {
             foreach ($config as $key => $value) {
                 if (is_array($value)) {
                     $value = json_encode($value);
-                    if (!$this->isArrayTypeValue($key)) {
+                    if (!$this->isValueInArrayForKey($key)) {
                         if (!empty($GLOBALS['log'])) {
                             $GLOBALS['log']->fatal("value for key=$key is unexpected in array!");
                         }
