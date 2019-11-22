@@ -70,43 +70,6 @@ class SugarView
         'use_table_container' => true
     );
 
-    /**
-    * List of default values needed for Pendo analytics
-    */
-    protected $serverInfoDefaults = [
-        'si_id' => '"unknown_si_id"',
-        'si_name' => '"unknown_si_name"',
-        'si_type' => '"unknown_si_type"',
-        'si_license_current' => false,
-        'si_license_serve' => false,
-        'si_license_sell' => false,
-        'si_tier' => '"unknown_si_tier"',
-        'si_customer_since' => '"unknown_si_customer_since"',
-        'si_sic_code' => '"unknown_si_sic_code"',
-        'si_employees_no' => '"unknown_si_employees_no"',
-        'si_managing_team' => '"unknown_si_managing_team"',
-        'si_partner_name' => '"unknown_si_partner_name"',
-        'si_partner_type' => '"unknown_si_partner_type"',
-        'si_account_record' => '"unknown_si_account_record"',
-        'si_customer_region' => '"unknown_si_customer_region"',
-        'si_billing_country' => '"unknown_si_billing_country"',
-        'si_billing_state' => '"unknown_si_billing_state"',
-        'si_billing_city' => '"unknown_si_billing_city"',
-        'si_postal_code' => '"unknown_si_postal_code"',
-        'si_cloud_instance' => '"unknown_si_cloud_instance"',
-        'si_usage_designation' => '"unknown_si_usage_designation"',
-        'si_no_of_licenses' => '"unknown_si_no_of_licenses"',
-        'si_cloud_region' => '"unknown_si_cloud_region"',
-        'si_upgrade_frequency' => '"unknown_si_upgrade_frequency"',
-        'si_db_size' => '"unknown_si_db_size"',
-        'si_file_system_size' => '"unknown_si_file_system_size"',
-        'si_sum_size' => '"unknown_si_sum_size"',
-        'si_rli_enabled' => '"unknown_rli_enabled"',
-        'si_forecasts_is_setup' => '"unknown_forcasts_is_setup"',
-        'si_product_list' => '"unknown_product_list"',
-        'portal_active' => '"unknown_portal_activated"',
-    ];
-
     var $type = null;
     var $responseTime;
     var $fileResources;
@@ -215,28 +178,6 @@ class SugarView
     }
 
     /**
-     * Sets server information for multiple data types.
-     * Escaping with json_encode will also add quotes around the string.
-     *
-     * @param array  $settingSource license data from config table
-     * @param array  $defaultInfoValues set default values
-     *
-     * @return array of ServerInfo
-     */
-    protected function getSIDataValues(array $settingSource, array $defaultInfoValues) : array
-    {
-        $accountServerInfo = [];
-        foreach ($defaultInfoValues as $name => $value) {
-            if (!empty($settingSource[$name]) && is_string($settingSource[$name])) {
-                $accountServerInfo[$name] = json_encode($settingSource[$name]);
-            } else {
-                $accountServerInfo[$name] = $settingSource[$name] ?? $value;
-            }
-        }
-        return $accountServerInfo;
-    }
-
-    /**
      * Add javascript for analytics.
      */
     protected function addAnalytics()
@@ -248,7 +189,7 @@ class SugarView
             return;
         }
 
-        $config = SugarConfig::getInstance()->get('analytics');
+        $config = \SugarConfig::getInstance()->get('analytics');
 
         if (!empty($config) && !empty($config['enabled']) &&
             !empty($config['connector']) && $config['connector'] === 'Pendo' && !empty($config['id'])) {
@@ -282,44 +223,17 @@ class SugarView
                 );
             }
 
-            // account data
-            $sugarConfig = \SugarConfig::getInstance();
-            $activityStreamsEnabled = json_encode($sugarConfig->get('activity_streams_enabled')) ??
-                'unknown_activity_streams_enabled';
-            $editablePreviewEnabled = json_encode($sugarConfig->get('preview_edit')) ??
-                'unknown_editable_preview_enabled';
-            $listMaxEntriesPerPage = $sugarConfig->get('list_max_entries_per_page') ??
-                'unknown_list_view_items_per_page';
-            $listMaxEntriesPerSubpanel = $sugarConfig->get('list_max_entries_per_subpanel') ??
-                'unknown_list_view_items_per_page';
-            $leadConversionOptions = json_encode($sugarConfig->get('lead_conv_activity_opt')) ??
-                'unknown_lead_conversion_options';
-            $systemDefaultCurrencyCode = json_encode($sugarConfig->get('default_currency_iso4217')) ??
-                'unknown_system_default_currency_code';
-            $systemDefaultLanguage = json_encode($sugarConfig->get('default_language')) ??
-                'unknown_system_default_language';
-
-            $manager = new MetaDataManager();
-            $serverInfo = $manager->getServerInfo();
-            $accountId = $serverInfo['site_id'] ?? 'unknown_account';
-            $siteUrl = Container::getInstance()->get(SugarConfig::class)->get('site_url');
-            $version = $serverInfo['version'] ?? 'unknown_version';
-            $flavor = $serverInfo['flavor'] ?? 'unknown_edition';
-            $accountBasicInfo = [
-                'id' => $accountId,
-                'domain' => $siteUrl,
-                'edition' => $flavor,
-                'version' => $version,
-                'activity_streams_enabled' => $activityStreamsEnabled,
-                'editable_preview_enabled' => $editablePreviewEnabled,
-                'product_list' => $productList,
-                'list_view_items_per_page' => $listMaxEntriesPerPage,
-                'subpanel_items_per_page' => $listMaxEntriesPerSubpanel,
-                'lead_conversion_options' => $leadConversionOptions,
-                'system_default_currency_code' => $systemDefaultCurrencyCode,
-                'system_default_language' => $systemDefaultLanguage,
-            ];
-            $accountServerInfo = $this->getSIDataValues($serverInfo, $this->serverInfoDefaults);
+            // For analytics
+            $info = MetaDataManager::getManager()->getServerInfo();
+            $account = array_merge(
+                [
+                    'id' => $info['site_id'] ?? 'unknown_account',
+                    'domain' => Container::getInstance()->get(SugarConfig::class)->get('site_url'),
+                    'edition' => $info['flavor'] ?? 'unknown_edition',
+                    'version' => $info['version'] ?? 'unknown_version',
+                ],
+                Administration::getSettings(false, true)->getUpdatedAnalyticData($info)
+            );
 
             echo "<script>
                 (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=[];
@@ -336,7 +250,7 @@ class SugarView
                         roles: '$roles',
                         licenses: '$licenses'
                     },
-                    account: " .json_encode(array_merge($accountBasicInfo, $accountServerInfo)). "
+                    account: " . json_encode($account) . "
                 });
             </script>";
         }
