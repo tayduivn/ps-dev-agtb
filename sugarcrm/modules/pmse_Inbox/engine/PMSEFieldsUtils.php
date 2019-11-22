@@ -138,7 +138,7 @@ function bpminbox_get_href($temp_module, $field, $field_value, $adv_type = null,
         }
     }
 
-    return "<a href=\"$link\">{$temp_module->name}</a>";
+    return "<a href=\"$link\">{$temp_module->getRecordName()}</a>";
 }
 
 //////////////////////Processing actions
