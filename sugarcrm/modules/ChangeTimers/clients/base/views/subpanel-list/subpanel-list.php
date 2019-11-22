@@ -25,6 +25,7 @@ $viewdefs['ChangeTimers']['base']['view']['subpanel-list'] = [
                             'default' => true,
                             'readonly' => true,
                             'name' => 'field_name',
+                            'type' => 'field_name',
                         ],
                         [
                             'label' => 'LBL_VALUE',
