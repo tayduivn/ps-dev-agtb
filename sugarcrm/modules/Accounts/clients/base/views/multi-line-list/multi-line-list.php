@@ -80,15 +80,18 @@ $viewdefs['Accounts']['base']['view']['multi-line-list'] = [
                     ],
                 ],
                 [
-                    'name' => 'industry',
-                    'label' => 'LBL_INDUSTRY',
+                    'name' => 'service_level',
+                    'label' => 'LBL_SERVICE_LEVEL',
                     'subfields' => [
                         [
-                            'name' => 'industry',
-                            'label' => 'LBL_INDUSTRY',
+                            'name' => 'service_level',
+                            'label' => 'LBL_SERVICE_LEVEL',
+                            'type' => 'enum',
+                            'options' => 'service_level_dom',
+                            'audited' => true,
+                            'comment' => 'An indication of the service level of a company',
                             'default' => true,
                             'enabled' => true,
-                            'type' => 'enum',
                         ],
                     ],
                 ],
