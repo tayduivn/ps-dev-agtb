@@ -82,7 +82,7 @@ class ConsoleConfigurationDefaults
             'order_by_primary' => [
                 // Serve console
                 'c108bb4a-775a-11e9-b570-f218983a1c3e' => [
-                    'Cases' => '',
+                    'Cases' => 'follow_up_datetime',
                 ],
 
                 // Renewals console
@@ -106,7 +106,14 @@ class ConsoleConfigurationDefaults
             'filter_def' => [
                 // Serve console
                 'c108bb4a-775a-11e9-b570-f218983a1c3e' => [
-                    'Cases' => [],
+                    'Cases' => [
+                        [
+                            'status' => [
+                                '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
+                            ],
+                            '$owner' => '',
+                        ],
+                    ],
                 ],
 
                 // Renewals console
