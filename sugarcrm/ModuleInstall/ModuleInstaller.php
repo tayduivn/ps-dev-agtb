@@ -223,8 +223,6 @@ class ModuleInstaller
             {
                 include('custom/application/Ext/Include/modules.ext.php');
             }
-            require_once("modules/Administration/upgrade_custom_relationships.php");
-            upgrade_custom_relationships($this->installed_modules);
             $this->rebuild_all(true);
             $rac = new RepairAndClear();
             $rac->repairAndClearAll($selectedActions, $this->installed_modules,true, false);
