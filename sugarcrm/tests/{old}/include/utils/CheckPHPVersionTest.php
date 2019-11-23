@@ -17,11 +17,7 @@ class CheckPHPVersionTest extends TestCase
     public function providerPhpVersion() : iterable
     {
         return [
-            'too-old' => ['7.0.0', -1],
-            'supported-71-but-dev' => ['7.1.0-dev', -1],
-            'supported-71' => ['7.1.0', 1],
-            'unsupported-72-dev' => ['7.2.0', -1],
-            'unsupported-72' => ['7.2.0', -1],
+            'too-old' => ['7.2.0', -1],
             'supported-73-but-dev' => ['7.3.0-dev', -1],
             'supported-73' => ['7.3.0', 1],
             'too-new-and-dev' => ['7.4.0-dev', -1],

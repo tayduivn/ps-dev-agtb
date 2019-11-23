@@ -627,8 +627,8 @@ abstract class UpgradeDriver
      */
     protected function preflightPHP()
     {
-        if (version_compare(PHP_VERSION, '7.1.0', '<')) {
-            return $this->error("PHP versions below 7.1.0 are not supported!", true);
+        if (version_compare(PHP_VERSION, '7.3.0', '<')) {
+            return $this->error('PHP versions below 7.3.0 are not supported!', true);
         }
         return true;
     }
