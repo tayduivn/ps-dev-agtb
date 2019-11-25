@@ -39,11 +39,6 @@
     filterDef: [],
 
     /**
-     * Stores the row objects of the filter field
-     */
-    filterRows: [],
-
-    /**
      * Stores the template to render a row of the filter list
      */
     rowTemplate: null,
@@ -295,6 +290,9 @@
         $row.attr('data-name', data.name);
         $row.attr('data-operator', data.operator);
         $row.attr('data-value', data.value);
+        $row.data('name', data.name);
+        $row.data('operator', data.operator);
+        $row.data('value', data.value);
 
         // Create a blank model for the field selector enum, and set the
         // field value if we know it.
