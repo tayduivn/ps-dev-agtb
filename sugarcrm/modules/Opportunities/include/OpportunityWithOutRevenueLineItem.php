@@ -104,6 +104,13 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         'closed_revenue_line_items' => array(
             'reportable' => false,
             'workflow' => false
+        ),
+        'renewal_parent_id' => array(
+            'reportable' => false,
+            'audited' => false,
+        ),
+        'renewal' => array(
+            'reportable' => false,
         )
     );
 
@@ -139,7 +146,10 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'commit_stage' => $this->isForecastSetup(),
                 'sales_status' => false,
                 'sales_stage' => true,
-                'probability' => true
+                'probability' => true,
+                'renewal' => false,
+                'renewal_parent_id' => false,
+                'renewal_parent_name' => false,
             )
         );
 
@@ -149,6 +159,9 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'commit_stage' => $this->isForecastSetup(),
                 'sales_status' => 'sales_stage',
                 'probability' => true,
+                'renewal' => false,
+                'renewal_parent_id' => false,
+                'renewal_parent_name' => false,
             )
         );
 
@@ -157,6 +170,9 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'sales_stage' => true,
                 'sales_status' => false,
                 'probability' => true,
+                'renewal' => false,
+                'renewal_parent_id' => false,
+                'renewal_parent_name' => false,
             )
         );
     }

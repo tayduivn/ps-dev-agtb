@@ -748,6 +748,29 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     }
 
     /**
+     * Adds the specified field to the header in the specified position.
+     * Position should be an integer - field positions are index-based from
+     * left-right where 0 is the leftmost field in the header
+     * @param array $fieldDef Definition of the field to add to the header panel
+     * @param int $position Position index in which to insert the field into the header
+     * @return bool true if the field was added to the header panel
+     */
+    public function addFieldToHeader($fieldDef, $position = null) : bool
+    {
+        $result = false;
+        if (!empty($this->headerPanelMeta['fields']) && is_array($this->headerPanelMeta['fields'])) {
+            // Insert the field at the specified position of the header, or at
+            // the end if no position was specified
+            $fields = $this->headerPanelMeta['fields'];
+            $position = !empty($position) ? $position : count($fields);
+            array_splice($fields, $position, 0, [$fieldDef]);
+            $this->headerPanelMeta['fields'] = $fields;
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
      * Adds field to panel
      *
      * @param array $panelRows Panel rows
@@ -837,6 +860,32 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
         }
         return $out;
+    }
+
+    /**
+     *
+     * Remove a field from the header panel which is hidden from the viewdef
+     *
+     * @param string $fieldName Name of the field to remove
+     * @return boolean True if the field was removed; false otherwise
+     */
+
+    public function removeFieldFromHeader($fieldName)
+    {
+        $result = false;
+
+        if (!empty($this->headerPanelMeta['fields']) && is_array($this->headerPanelMeta['fields'])) {
+            foreach ($this->headerPanelMeta['fields'] as $fieldIndex => $field) {
+                // Need strict equality here to prevent upgrade issues
+                // like with Cases, that have an empty field placeholder
+                // in it's layout
+                if ($field['name'] === $fieldName) {
+                    unset($this->headerPanelMeta['fields'][$fieldIndex]);
+                    $result = true;
+                }
+            }
+        }
+        return $result;
     }
 
     /**
