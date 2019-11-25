@@ -155,12 +155,20 @@ class Issue extends Basic
      * @param bool $isUpdate, return changed fields if true, non empty fields if false
      * @return array
      */
-    protected function getFields(array $fields, bool $isUpdate) : array
+    protected function getCTFieldsToProcess(array $fields, bool $isUpdate) : array
     {
         $fieldsToProcess = [];
+        if ($isUpdate) {
+            $changedFields = [];
+            foreach ($this->db->getDataChanges($this, ['field_filter' => $fields]) as $field) {
+                if (!empty($field['field_name'])) {
+                    $changedFields[] = $field['field_name'];
+                }
+            }
+        }
         foreach ($fields as $field) {
             if ($isUpdate) {
-                if (!empty($this->dataChanges[$field])) {
+                if (in_array($field, $changedFields)) {
                     $fieldsToProcess[] = $field;
                 }
             } else {
@@ -215,23 +223,28 @@ class Issue extends Basic
 
     /**
      * @param string $lastId
+     * @return bool
      * @throws Exception
      */
-    protected function updateLastCTRecord(string $lastId)
+    protected function updateLastCTRecord(string $lastId) : bool
     {
         $bean = BeanFactory::retrieveBean('ChangeTimers', $lastId);
-        $bean->to_datetime = $this->date_modified;
+        if ($bean) {
+            $bean->to_datetime = $this->date_modified;
 
-        // hours and business hours between from_datetime to to_datetime
-        $hours = $this->getHoursBetween(
-            new \SugarDateTime($bean->from_datetime, new DateTimeZone('UTC')),
-            new \SugarDateTime($bean->to_datetime, new DateTimeZone('UTC')),
-            $this->business_center_id ?? ''
-        );
-        $bean->hours = $hours['calendarHours'];
-        $bean->business_hours = $hours['businessHours'];
+            // hours and business hours between from_datetime to to_datetime
+            $hours = $this->getHoursBetween(
+                new \SugarDateTime($bean->from_datetime, new DateTimeZone('UTC')),
+                new \SugarDateTime($bean->to_datetime, new DateTimeZone('UTC')),
+                $this->business_center_id ?? ''
+            );
+            $bean->hours = $hours['calendarHours'];
+            $bean->business_hours = $hours['businessHours'];
 
-        $bean->save();
+            return (bool) $bean->save();
+        }
+
+        return false;
     }
 
     /**
@@ -255,24 +268,21 @@ class Issue extends Basic
      */
     protected function getChangeTimerFields() : array
     {
-        global $dictionary;
         $bean_name = get_valid_bean_name($this->getModuleName());
-        return $dictionary[$bean_name]['change_timer_fields'] ?? [];
+        return VardefManager::getModuleProperty($bean_name, 'change_timer_fields', []);
     }
 
     /**
      * Update the fields in the related ChangeTimers module
-     * @param bool $isUpdate
      * @param array $changeTimerFields
+     * @param array $fieldsToProcess
      * @throws SugarQueryException
      */
-    protected function processChangeTimers(bool $isUpdate, array $changeTimerFields)
+    protected function processChangeTimers(array $changeTimerFields, array $fieldsToProcess)
     {
         if (empty($changeTimerFields) || !is_array($changeTimerFields)) {
             return;
         }
-
-        $fieldsToProcess = $this->getFields($changeTimerFields, $isUpdate);
 
         foreach ($fieldsToProcess as $field) {
             $this->updateChangeTimerRecord($field);
@@ -289,11 +299,17 @@ class Issue extends Basic
         }
 
         $isUpdate = $this->isUpdate();
-        $id = parent::save($check_notify);
-
         $changeTimerFields = $this->getChangeTimerFields();
         if (!empty($changeTimerFields)) {
-            $this->processChangeTimers($isUpdate, $changeTimerFields);
+            // need to get the changed fields before calling parent::save()
+            // because during parent::save(), BPM may affect $this->fetched_row
+            $fieldsToProcess = $this->getCTFieldsToProcess($changeTimerFields, $isUpdate);
+        }
+
+        $id = parent::save($check_notify);
+
+        if (!empty($changeTimerFields) && !empty($fieldsToProcess)) {
+            $this->processChangeTimers($changeTimerFields, $fieldsToProcess);
         }
 
         return $id;

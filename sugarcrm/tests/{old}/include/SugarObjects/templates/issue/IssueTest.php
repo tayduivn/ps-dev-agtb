@@ -77,20 +77,20 @@ class IssueTest extends TestCase
      * @param $values
      * @param $fields
      * @param $expected
-     * @dataProvider getFieldsProvider
+     * @dataProvider getCTFieldsToProcessProvider
      */
-    public function testGetFields(bool $isUpdate, array $values, array $fields, array $expected)
+    public function testGetCTFieldsToProcess(bool $isUpdate, array $values, array $fields, array $expected)
     {
         $case = new CaseMock();
         $case->dataChanges = $values;
         foreach ($values as $key => $value) {
             $case->$key = $value;
         }
-        $fields = $case->getFieldsMock($fields, $isUpdate);
+        $fields = $case->getCTFieldsToProcessMock($fields, $isUpdate);
         $this->assertSame($expected, $fields);
     }
 
-    public function getFieldsProvider(): array
+    public function getCTFieldsToProcessProvider(): array
     {
         return [
             [
@@ -135,9 +135,9 @@ class IssueTest extends TestCase
 
 class CaseMock extends aCase
 {
-    public function getFieldsMock(array $fields, bool $isUpdate) : array
+    public function getCTFieldsToProcessMock(array $fields, bool $isUpdate) : array
     {
-        return parent::getFields($fields, $isUpdate);
+        return parent::getCTFieldsToProcess($fields, $isUpdate);
     }
 
     public function createNewCTRecordMock(string $field)
