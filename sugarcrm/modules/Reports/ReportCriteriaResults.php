@@ -16,7 +16,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('modules/Reports/index.php');
 require_once('modules/Reports/templates/templates_reports.php');
-require_once('modules/Reports/templates/templates_reports_index.php');
 require_once('modules/Reports/templates/templates_pdf.php');
 require_once('modules/Reports/templates/templates_export.php');
 

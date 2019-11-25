@@ -15,7 +15,6 @@ global $theme;
 $GLOBALS['displayListView'] = true;
 
 require_once('modules/Reports/templates/templates_reports.php');
-require_once('modules/Reports/templates/templates_reports_index.php');
 require_once('modules/Reports/templates/templates_pdf.php');
 require_once('modules/Reports/templates/templates_export.php');
 
