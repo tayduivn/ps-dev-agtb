@@ -235,7 +235,7 @@ class RevenueLineItem extends SugarBean
                 $this->service_end_date = TimeDate::getInstance()->fromString($this->service_start_date)
                     ->modify('+' . $this->service_duration_value . ' ' . $this->service_duration_unit)
                     ->modify('-1 day')
-                    ->asDbDate();
+                    ->asDbDate(false);
             } catch (Exception $e) {
                 $GLOBALS['log']->error('Error calculating service end date:' . $e->getMessage());
                 $clearServiceValues = true;
