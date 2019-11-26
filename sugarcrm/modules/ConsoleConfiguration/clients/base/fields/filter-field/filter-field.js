@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.ConsoleConfiguration.FilterField
- * @alias SUGAR.App.view.fields.BaseConsoleConfigurationFilterField
+ * @class View.Fields.Base.ConsoleConfiguration.FilterFieldField
+ * @alias SUGAR.App.view.fields.BaseConsoleConfigurationFilterFieldField
  * @extends View.Fields.Base.BaseField
  */
 ({

@@ -221,5 +221,10 @@ $config['blackList']['pro'] = array(
 'sugarcrm/clients/base/fields/commentlog/dashlet.hbs' => 1,
 
 'sugarcrm/modules/clients/base/views/selection-list-for-bpm' => 1,
+
+// Console configuration
+'sugarcrm/modules/ConsoleConfiguration' => 1,
+'sugarcrm/tests/unit-js/modules/ConsoleConfiguration' => 1,
+'sugarcrm/tests/{old}/modules/ConsoleConfiguration' => 1,
 );
 $build = 'pro';
