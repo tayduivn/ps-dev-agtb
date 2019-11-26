@@ -136,9 +136,6 @@ class DocumentRevision extends SugarBean {
 
 	function fill_in_additional_detail_fields()
 	{
-		global $theme;
-		global $current_language;
-		
 		parent::fill_in_additional_detail_fields();
 
         if ( empty($this->id) && empty($this->document_id) && isset($_REQUEST['return_id']) && !empty($_REQUEST['return_id']) ) {
@@ -155,7 +152,6 @@ class DocumentRevision extends SugarBean {
 		if ($row != null) {
 			$this->document_name = $row['document_name'];
             $this->name = $this->document_name;
-            $this->document_name = '<a href="index.php?module=Documents&action=DetailView&record='.$this->document_id.'">'.$row['document_name'].'</a>';
 			$this->latest_revision = $row['revision'];	
 			$this->latest_revision_id = $row['document_revision_id'];
 
