@@ -26,7 +26,7 @@ $dictionary['ChangeTimer'] = [
             'name' => 'parent_id',
             'vname' => 'LBL_PARENT_ID',
             'type' => 'id',
-            'required' => true,
+            'required' => false,
             'reportable' => false,
         ],
         'field_name' => [
