@@ -12,6 +12,7 @@
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 
 class Administration extends SugarBean {
