@@ -47,7 +47,7 @@
             tabContent = this.getTabContent(this.model.get('enabled_module'));
         }
         if (!_.isEmpty(tabContent)) {
-            this.items = _.extend(this.items, tabContent.fields);
+            this.items = _.extend(this.items, tabContent.sortFields);
         }
     },
 
@@ -58,7 +58,6 @@
      */
     getTabContent: function(module) {
         var content = {};
-        var dropdownFields = {};
         var allFields = {};
         var fields = app.metadata.getModule(module, 'fields');
 
@@ -68,17 +67,11 @@
 
                 if (!_.isEmpty(app.lang.getModString(label, module))) {
                     allFields[field.name] = app.lang.getModString(label, module);
-
-                    if (field.type === 'enum') {
-                        dropdownFields[field.name] = app.lang.getModString(label, module);
-                    }
                 }
             }
         });
 
-        content.dropdownFields = dropdownFields;
         content.fields = allFields;
-
         return content;
     }
 });

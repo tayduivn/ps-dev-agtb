@@ -22,7 +22,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                     'subfields' => [
                         [
                             'name' => 'case_number',
-                            'label' => 'LBL_LIST_NUMBER',
+                            'label' => 'LBL_AGENT_WORKBENCH_NUMBER',
                             'default' => true,
                             'enabled' => true,
                             'readonly' => true,
@@ -96,6 +96,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                             'default' => true,
                             'enabled' => true,
                             'readonly' => true,
+                            'sortable' => false,
                         ],
                     ],
                 ],

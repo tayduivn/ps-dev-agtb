@@ -86,6 +86,7 @@ $viewdefs['Opportunities']['base']['view']['multi-line-list'] = [
                     'subfields' => [
                         [
                             'name' => 'amount',
+                            'label' => 'LBL_LIKELY',
                             'type' => 'boxplot',
                             'related_fields' => [
                                 'best_case',

@@ -30,6 +30,16 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
 
         sinon.collection.stub(app.metadata, 'getModule', function() {
             return {
+                relField1: {
+                    name: 'relField1',
+                    type: 'enum',
+                    vname: 'LBL_REL_1'
+                },
+                relField2: {
+                    name: 'relField2',
+                    type: 'enum',
+                    vname: 'LBL_REL_2'
+                },
                 priority: {
                     audited: true,
                     name: 'priority',
@@ -328,7 +338,7 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                 return {Accounts: 'Accounts'};
             });
             sinon.collection.stub(layout, 'setActiveTabIndex', function() {});
-            sinon.collection.stub(layout, 'getModuleFields', function() {});
+            sinon.collection.stub(layout, 'setTabContent', function() {});
             sinon.collection.stub(layout, 'addValidationTasks', function() {});
         });
 
@@ -388,8 +398,8 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                 expect(layout.collection.add).toHaveBeenCalled();
             });
 
-            it('should call layout.getModuleFields with bean', function() {
-                expect(layout.getModuleFields).toHaveBeenCalled();
+            it('should call layout.setTabContent with bean', function() {
+                expect(layout.setTabContent).toHaveBeenCalled();
             });
 
             it('should not layout.addValidationTasks method', function() {
@@ -398,7 +408,7 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
         });
     });
 
-    describe('getModuleFields', function() {
+    describe('setTabContent', function() {
         var bean;
         beforeEach(function() {
             bean = app.data.createBean(layout.module, {
@@ -419,42 +429,50 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                     panels: [{
                         fields: [
                             {
-                                default: true,
-                                enabled: true,
-                                label: 'LBL_LIST_PRIORITY',
-                                name: 'priority',
-                                type: 'enum'
+                                name: 'field_group',
+                                label: 'LBL_FIELD_GROUP',
+                                subfields: [
+                                    {
+                                        name: 'priority',
+                                        label: 'LBL_PRIORITY',
+                                        type: 'enum',
+                                        default: true,
+                                        enabled: true,
+                                        related_fields: [
+                                            'relField1',
+                                            'relField2'
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     }]
                 };
             });
-            sinon.collection.stub(app.lang, 'get', function() {return 'LBL_PRIORITY';});
+            sinon.collection.stub(app.lang, 'get').withArgs('LBL_PRIORITY').returns('Priority')
+                .withArgs('LBL_REL_1').returns('Related Field 1')
+                .withArgs('LBL_REL_2').returns('Related Field 2');
+
+            sinon.collection.spy(layout, '_getMultiLineFields');
         });
 
         it('should call bean.get method', function() {
-            layout.getModuleFields(bean);
+            layout.setTabContent(bean);
             expect(bean.get).toHaveBeenCalledWith('enabled_module');
         });
 
-        it('should call app.metadata.getView', function() {
-            layout.getModuleFields(bean);
-            expect(app.metadata.getView).toHaveBeenCalledWith('Accounts', 'multi-line-list');
-        });
-
-        it('should call app.metadata.getModule', function() {
-            layout.getModuleFields(bean);
-            expect(app.metadata.getModule).toHaveBeenCalledWith('Accounts', 'fields');
+        it('should get the multi-line-list fields for the correct module', function() {
+            layout.setTabContent(bean);
+            expect(layout._getMultiLineFields).toHaveBeenCalledWith('Accounts');
         });
 
         it('should call bean.set with tabContent and content', function() {
-            layout.getModuleFields(bean);
+            layout.setTabContent(bean);
             expect(bean.set).toHaveBeenCalledWith('tabContent', {
-                dropdownFields: {
-                    priority: 'LBL_PRIORITY'
-                },
-                fields: {
-                    priority: 'LBL_PRIORITY'
+                sortFields: {
+                    priority: 'Priority',
+                    relField1: 'Related Field 1',
+                    relField2: 'Related Field 2'
                 }
             });
         });

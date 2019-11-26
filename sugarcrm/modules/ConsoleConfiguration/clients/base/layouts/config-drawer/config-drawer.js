@@ -214,7 +214,7 @@
                 filter_def: data.filter_def || '',
             });
 
-            this.getModuleFields(bean);
+            this.setTabContent(bean);
             this.addValidationTasks(bean);
             this.collection.add(bean);
         }
@@ -223,37 +223,68 @@
     },
 
     /**
-     * Set the fields for the module on the bean
+     * Sets the tab content for the module on the bean
      *
-     * @param {Object} bean ta Model data to add to the collection
+     * @param {Object} bean to add to the collection
      */
-    getModuleFields: function(bean) {
+    setTabContent: function(bean) {
+        var tabContent = {};
         var module = bean.get('enabled_module');
-        var content = {};
-        var dropdownFields = {};
-        var allFields = {};
 
-        var fields = _.flatten(_.pluck(app.metadata.getView(module, 'multi-line-list').panels, 'fields'));
-
-        _.each(app.metadata.getModule(module, 'fields'), function(field) {
-            if (field.type == 'enum' && app.acl.hasAccess('read', module, null, field.name)) {
-                dropdownFields[field.name] = app.lang.get(field.label || field.vname, module);
-            }
-        }, this);
-
-        _.each(fields, function(field) {
-            if (_.isObject(field) && app.acl.hasAccess('read', module, null, field.name)) {
+        // Set the fields allowed for "Sort By" configuration. In order to be
+        // included in the "Sort By" list, the field must be sortable, have a
+        // label, and not be one of the non-sortable types
+        var sortFields = {};
+        var multiLineFields = this._getMultiLineFields(module);
+        var nonSortableTypes = ['id', 'relate'];
+        _.each(multiLineFields, function(field) {
+            if (_.isObject(field) &&
+                app.acl.hasAccess('read', module, null, field.name) &&
+                (field.sortable !== false && field.sortable !== 'false') &&
+                nonSortableTypes.indexOf(field.type) === -1) {
                 var label = app.lang.get(field.label || field.vname, module);
                 if (!_.isEmpty(label)) {
-                    allFields[field.name] = label;
+                    sortFields[field.name] = label;
                 }
             }
+        });
+        tabContent.sortFields = sortFields;
+
+        bean.set('tabContent', tabContent);
+    },
+
+    /**
+     * Gets a unique list of the underlying fields contained in a multi-line list
+     * @param module
+     * @return {Array} a list of field definitions from the multi-line list metadata
+     * @private
+     */
+    _getMultiLineFields: function(module) {
+        // Get the unique lists of subfields and related_fields from the multi-line
+        // list metadata of the module
+        var multiLineMeta = app.metadata.getView(module, 'multi-line-list');
+        var moduleFields = app.metadata.getModule(module, 'fields');
+        var subfields = [];
+        var relatedFields = [];
+        _.each(multiLineMeta.panels, function(panel) {
+            var panelFields = panel.fields;
+            _.each(panelFields, function(fieldDefs) {
+                subfields = subfields.concat(fieldDefs.subfields);
+                _.each(fieldDefs.subfields, function(subfield) {
+                    if (subfield.related_fields) {
+                        var related = _.map(subfield.related_fields, function(relatedField) {
+                            return moduleFields[relatedField];
+                        });
+                        relatedFields = relatedFields.concat(related);
+                    }
+                });
+            }, this);
         }, this);
 
-        content.dropdownFields = dropdownFields;
-        content.fields = allFields;
-
-        bean.set('tabContent', content);
+        // Return the combined list of subfields and related fields
+        return _.compact(_.uniq(subfields.concat(relatedFields), false, function(field) {
+            return field.name;
+        }));
     },
 
     /**

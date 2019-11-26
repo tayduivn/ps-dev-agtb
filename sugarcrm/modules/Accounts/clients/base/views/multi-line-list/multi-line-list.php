@@ -44,6 +44,7 @@ $viewdefs['Accounts']['base']['view']['multi-line-list'] = [
                             'label' => 'LBL_DESCRIPTION',
                             'default' => true,
                             'enabled' => true,
+                            'sortable' => false,
                         ],
                     ],
                 ],

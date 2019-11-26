@@ -72,9 +72,10 @@ describe('ConsoleConfiguration.Fields.Enum', function() {
     describe('populateOrderByValues', function() {
         beforeEach(function() {
             model.attributes.tabContent = {
-                fields: {
+                sortFields: {
                     'field1': 'Field 1',
-                    'field2': 'Field 2'
+                    'field2': 'Field 2',
+                    'field3': 'Field 3'
                 }
             };
         });
@@ -85,7 +86,8 @@ describe('ConsoleConfiguration.Fields.Enum', function() {
             expect(field.items).toEqual({
                 '': '',
                 'field1': 'Field 1',
-                'field2': 'Field 2'
+                'field2': 'Field 2',
+                'field3': 'Field 3'
             });
         });
     });
