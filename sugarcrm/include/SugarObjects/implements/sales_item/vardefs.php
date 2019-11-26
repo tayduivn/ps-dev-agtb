@@ -134,6 +134,7 @@ $vardefs = [
             'min' => '1',
             'len' => '5',
             'required' => false,
+            'studio' => false,
             'comment' => 'Value of the service duration, if service duration is 4 Months the value is 4',
         ],
         'service_duration_unit' => [
@@ -143,6 +144,7 @@ $vardefs = [
             'options' => 'service_duration_unit_dom',
             'len' => 50,
             'audited' => false,
+            'studio' => false,
             'comment' => 'Service Duration unit like Year(s), Month(s) or Day(s)',
         ],
         'service_end_date' => [
