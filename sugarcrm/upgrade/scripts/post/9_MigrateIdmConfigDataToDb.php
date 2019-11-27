@@ -26,7 +26,8 @@ class SugarUpgradeMigrateIdmConfigDataToDb extends UpgradeScript
     public function run()
     {
         if (version_compare($this->from_version, '9.3.0', '>=')
-            || empty($GLOBALS['sugar_config']['idm_mode']['enabled'])) {
+            || empty($GLOBALS['sugar_config']['idm_mode']['enabled'])
+            || $this->isIdmDataInDb()) {
             return;
         }
 
@@ -38,5 +39,11 @@ class SugarUpgradeMigrateIdmConfigDataToDb extends UpgradeScript
         $config = new Authentication\Config(SugarConfig::getInstance());
         // don't need to refresh cache right now
         $config->setIDMMode($configData, false);
+    }
+
+    protected function isIdmDataInDb()
+    {
+        $admin = \Administration::getSettings('idm_mode', true);
+        return !empty($admin->settings['idm_mode_enabled']);
     }
 }
