@@ -387,7 +387,7 @@ class OpportunitiesSeedData {
             //Renewal Opp
             if ($usingRLIs) {
                 // get all the fields from the opportunities table for the given Opportunity Id
-                $sql = 'SELECT * FROM opportunities WHERE deleted = 0 AND id = '. '"' . $serviceOpp['opportunity_id'] . '"';
+                $sql = 'SELECT * FROM opportunities WHERE deleted = 0 AND id = '. self::$db->quoted($serviceOpp['opportunity_id']);
                 $oppResults = self::$db->query($sql);
                 while ($row = self::$db->fetchByAssoc($oppResults)) {
                     static::$oppForRenewal[] = $row;
