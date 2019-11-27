@@ -71,6 +71,11 @@
 
         this._super('initialize', [options]);
 
+        this.hasModuleAccess = _.contains(
+            app.metadata.getModuleNames(),
+            this.module
+        );
+
         // Set fields on context to forcefully load these fields
         var fields = this._extractFieldNames(this.meta);
         this.context.set('fields', fields);

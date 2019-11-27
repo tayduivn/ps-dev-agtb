@@ -2853,6 +2853,7 @@ $app_strings = array (
     'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
     'EXCEPTION_INVALID_TOKEN'           => 'Your authentication token is invalid.',
     'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
+    'EXCEPTION_NOT_AUTHORIZED_TO_DATA'  => 'You are not authorized to view data. Contact your administrator if you need access.',
     'EXCEPTION_INACTIVE_PORTAL_USER'    => 'You cannot access Portal because your portal account is inactive. Please contact customer support if you need access.',
     'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
     'EXCEPTION_NO_METHOD'               => 'Your request was not supported. Could not find the HTTP method of your request for this path.',
