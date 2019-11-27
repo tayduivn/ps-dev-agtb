@@ -3963,7 +3963,9 @@ abstract class DBManager implements LoggerAwareInterface
         }
 
         if (!empty($row) && $encode && $this->encode) {
-            return array_map(array($this, "encodeHTML"), $row);
+            return array_map(function ($value) : ?string {
+                return $this->encodeHTML($value);
+            }, $row);
         } else {
            return $row;
         }
