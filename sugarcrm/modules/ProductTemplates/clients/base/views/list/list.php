@@ -80,7 +80,9 @@ $viewdefs['ProductTemplates']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 // BEGIN SUGARCRM flav=ent ONLY
-                'service',
+                array(
+                    'name' => 'service',
+                ),
                 array(
                     'name' => 'service_duration',
                     'type' => 'fieldset',

@@ -405,7 +405,7 @@ class OpportunitiesSeedData {
             $opp->renewal = 1;
             $opp->sales_stage = $rli->sales_stage;
             $opp->name .= ' - ' . $oppUnits . ' Renewal';
-            $opp->sales_status = $app_list_strings['sales_status_dom']['New'];
+            $opp->sales_status = $app_list_strings['sales_status_dom']['In Progress'];
 
             if (!$usingRLIs) {
                 $seed = rand(1, 15);

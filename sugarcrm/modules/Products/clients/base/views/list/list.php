@@ -41,7 +41,9 @@ $viewdefs['Products']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                 ),
-                'quantity',
+                array(
+                    'name' => 'quantity',
+                ),
                  array(
                     'name' => 'discount_price',
                     'type' => 'currency',
@@ -85,7 +87,9 @@ $viewdefs['Products']['base']['view']['list'] = array(
                     'name' => 'assigned_user_name',
                 ),
                 // BEGIN SUGARCRM flav=ent ONLY
-                'service',
+                array(
+                    'name' => 'service',
+                ),
                 // END SUGARCRM flav=ent ONLY
             ),
         ),
