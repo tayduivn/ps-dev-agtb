@@ -12,10 +12,10 @@
  */
 $viewdefs['Calls']['mobile']['view']['detail'] = array(
 	'templateMeta' => array(
-                            'maxColumns' => '1', 
+                            'maxColumns' => '1',
                             'widths' => array(
-								array('label' => '10', 'field' => '30'), 
-                            ),                                  
+								array('label' => '10', 'field' => '30'),
+                            ),
                            ),
     'panels' => array(
         array(
@@ -59,6 +59,7 @@ $viewdefs['Calls']['mobile']['view']['detail'] = array(
                 ),
                 'description',
                 'parent_name',
+                'tag',
                 'assigned_user_name',
                 'team_name',
             ),
