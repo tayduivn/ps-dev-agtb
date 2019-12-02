@@ -157,6 +157,11 @@ class RliMock extends RevenueLineItem
         return 'revenue_line_items';
     }
 
+    public function findDuplicates()
+    {
+        return null;
+    }
+
     public function save($check_notify = false)
     {
     }
@@ -177,6 +182,11 @@ class OpMock extends Opportunity
     {
         $this->$link = new Link2Mock();
         return true;
+    }
+
+    public function findDuplicates()
+    {
+        return null;
     }
 
     public function save($check_notify = false)

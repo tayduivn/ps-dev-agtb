@@ -57,7 +57,7 @@ class OpportunityHooks extends AbstractForecastHooks
                     $renewalBean = $bean->createNewRenewalOpportunity();
                 }
 
-                if ($renewalBean && $renewalBean->load_relationship('revenuelineitems')) {
+                if ($renewalBean) {
                     foreach ($rliBeans as $rliBean) {
                         // create new renewal RLI
                         $newRliBean = $renewalBean->createNewRenewalRLI($rliBean);
@@ -163,6 +163,8 @@ class OpportunityHooks extends AbstractForecastHooks
                 if ($lost_rlis == $total_rlis) {
                     $bean->sales_status = Opportunity::STATUS_CLOSED_LOST;
                 } else {
+                    // update $bean->fetched_row['sales_status'] to avoid triggering generateRenewalOpportunity again
+                    $bean->retrieveSalesStatus();
                     $bean->sales_status = Opportunity::STATUS_CLOSED_WON;
                 }
             }

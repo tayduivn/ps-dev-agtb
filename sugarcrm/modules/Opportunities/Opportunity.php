@@ -597,6 +597,29 @@ class Opportunity extends SugarBean
         return (isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems');
     }
 
+    /**
+     * Retrieve and update fetched_row['sales_status'] from db.
+     */
+    public function retrieveSalesStatus()
+    {
+        if (!empty($this->id)) {
+            $query = new \SugarQuery();
+            $query->from($this, ['add_deleted' => 1, 'team_security' => false]);
+            $query->select('sales_status');
+            $query->where()->equals('id', $this->id);
+            $query->limit(1);
+            $results = $query->execute();
+            if (!empty($results)) {
+                $row = $results[0];
+                $row = $this->convertRow($row);
+                if (empty($this->fetched_row)) {
+                    $this->fetched_row = [];
+                }
+                $this->fetched_row['sales_status'] = $row['sales_status'];
+            }
+        }
+    }
+
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Get renewal parent.
@@ -694,6 +717,16 @@ class Opportunity extends SugarBean
             }
         }
 
+        $duplicates = $newBean->findDuplicates();
+        if (!empty($duplicates['records'])) {
+            // check if its renewal
+            foreach ($duplicates['records'] as $opp) {
+                if (!empty($opp->renewal) && $opp->renewal_parent_id === $this->id) {
+                    return $opp;
+                }
+            }
+        }
+
         $newBean->save();
 
         if ($newBean->load_relationship('accounts')) {
@@ -707,9 +740,9 @@ class Opportunity extends SugarBean
      * Create a new renewal RLI from an existing RLI.
      *
      * @param RevenueLineItem $rli
-     * @return RevenueLineItem
+     * @return RevenueLineItem|NULL
      */
-    public function createNewRenewalRLI(RevenueLineItem $rli): RevenueLineItem
+    public function createNewRenewalRLI(RevenueLineItem $rli): ?RevenueLineItem
     {
         $copyRliFields = [
             'name',
@@ -746,6 +779,11 @@ class Opportunity extends SugarBean
             if (isset($rli->$field)) {
                 $newRliBean->$field = $rli->$field;
             }
+        }
+
+        $duplicates = $newRliBean->findDuplicates();
+        if (!empty($duplicates['records'])) {
+            return null;
         }
 
         $newRliBean->save();

@@ -86,7 +86,13 @@ class OpportunityHooksTest extends TestCase
      */
     public function testSetOpportunitySalesStatusWithAccess($won_count, $lost_count, $total_count, $status)
     {
-        $oppMock = $this->createPartialMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
+        $oppMock = $this->createPartialMock('Opportunity', array(
+            'get_linked_beans',
+            'save',
+            'retrieve',
+            'ACLFieldAccess',
+            'retrieveSalesStatus',
+        ));
         $oppMock->id = 'test';
         $oppMock->fetched_row['id'] = 'test';
 
