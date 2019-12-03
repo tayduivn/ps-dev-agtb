@@ -22,9 +22,19 @@
     },
 
     /**
-     * Stores the list of filter field options
+     * Stores the list of filter field options. Defaults for all filter lists
+     * can be specified here
      */
-    fieldList: {},
+    fieldList: {
+        $owner: {
+            'predefined_filter': true,
+            'label': 'LBL_CURRENT_USER_FILTER'
+        },
+        $favorite: {
+            'predefined_filter': true,
+            'label': 'LBL_FAVORITES_FILTER'
+        }
+    },
     filterFields: {},
 
     /**
@@ -71,8 +81,8 @@
         this.rowTemplate = app.template.getField('filter-field', 'edit-filter-row', 'ConsoleConfiguration');
 
         // Store the filter field and operator information for the module
-        this.loadFilterFields(this.model.get('enabled_module'));
         this.loadFilterOperators(this.model.get('enabled_module'));
+        this.loadFilterFields(this.model.get('enabled_module'));
 
         this.filterDef = this.model.get('filter_def');
     },
@@ -83,15 +93,23 @@
      * @param {string} module The module to load the filter fields for.
      */
     loadFilterFields: function(module) {
-        if (_.isEmpty(app.metadata.getModule(module, 'filters'))) {
-            return;
-        }
+        // Get the set of multi-line-list fields for the tab, and extend it with
+        // the default fieldList
+        var tabContent = this.model.get('tabContent') || {};
+        this.fieldList = _.extend({}, this.fieldList, tabContent.fields);
 
-        this.fieldList = app.data.getBeanClass('Filters').prototype.getFilterableFields(module);
+        // For each field, if it is filterable (or a pre-defined filter), add it
+        // to the filterFields list
         this.filterFields = {};
-
-        _.each(this.fieldList, function(value, key) {
-            this.filterFields[key] = app.lang.get(value.vname, module);
+        var nonFilterableTypes = ['id', 'relate'];
+        _.each(this.fieldList, function(fieldDef, fieldName) {
+            var label = app.lang.get(fieldDef.label || fieldDef.vname, module);
+            var isPredefined = fieldDef.predefined_filter;
+            var isFilterable = !_.isEmpty(label) && this.filterOperatorMap[fieldDef.type] &&
+                _.indexOf(nonFilterableTypes, fieldDef.type) === -1;
+            if (isPredefined || isFilterable) {
+                this.filterFields[fieldName] = label;
+            }
         }, this);
     },
 
@@ -103,36 +121,6 @@
     loadFilterOperators: function(module) {
         this.filterOperatorMap = app.metadata.getFilterOperators(module);
         this._operatorsWithNoValues = ['$empty', '$not_empty'];
-    },
-
-    /**
-     * Get filterable fields from the module metadata
-     * @param {string} moduleName
-     * @return {Object}
-     */
-    getFilterableFields: function(moduleName) {
-        var moduleMeta = app.metadata.getModule(moduleName);
-        var fieldMeta = moduleMeta.fields;
-        var fields = {};
-        if (moduleMeta.filters) {
-            _.each(moduleMeta.filters, function(templateMeta) {
-                if (templateMeta.meta && templateMeta.meta.fields) {
-                    fields = _.extend(fields, templateMeta.meta.fields);
-                }
-            });
-        }
-
-        _.each(fields, function(fieldFilterDef, fieldName) {
-            var fieldMetaData = app.utils.deepCopy(fieldMeta[fieldName]);
-            if (_.isEmpty(fieldFilterDef)) {
-                fields[fieldName] = fieldMetaData || {};
-            } else {
-                fields[fieldName] = _.extend({name: fieldName}, fieldMetaData, fieldFilterDef);
-            }
-            delete fields[fieldName].readonly;
-        });
-
-        return fields;
     },
 
     /**

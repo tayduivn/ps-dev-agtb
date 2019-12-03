@@ -230,24 +230,28 @@
     setTabContent: function(bean) {
         var tabContent = {};
         var module = bean.get('enabled_module');
-
-        // Set the fields allowed for "Sort By" configuration. In order to be
-        // included in the "Sort By" list, the field must be sortable, have a
-        // label, and not be one of the non-sortable types
-        var sortFields = {};
         var multiLineFields = this._getMultiLineFields(module);
+
+        // Set the information about the tab's fields, including which fields
+        // can be used for sorting
+        var fields = {};
+        var sortFields = {};
         var nonSortableTypes = ['id', 'relate'];
         _.each(multiLineFields, function(field) {
-            if (_.isObject(field) &&
-                app.acl.hasAccess('read', module, null, field.name) &&
-                (field.sortable !== false && field.sortable !== 'false') &&
-                nonSortableTypes.indexOf(field.type) === -1) {
+            if (_.isObject(field) && app.acl.hasAccess('read', module, null, field.name)) {
+                // Set the field information
+                fields[field.name] = field;
+
+                // Set the sort field information if the field is sortable
                 var label = app.lang.get(field.label || field.vname, module);
-                if (!_.isEmpty(label)) {
+                var isSortable = !_.isEmpty(label) && field.sortable !== false &&
+                    field.sortable !== 'false' && nonSortableTypes.indexOf(field.type) === -1;
+                if (isSortable) {
                     sortFields[field.name] = label;
                 }
             }
         });
+        tabContent.fields = fields;
         tabContent.sortFields = sortFields;
 
         bean.set('tabContent', tabContent);
@@ -281,10 +285,18 @@
             }, this);
         }, this);
 
-        // Return the combined list of subfields and related fields
-        return _.compact(_.uniq(subfields.concat(relatedFields), false, function(field) {
+        // Return the combined list of subfields and related fields. Ensure that
+        // the correct field type is associated with the field (important for
+        // filtering)
+        var fields = _.compact(_.uniq(subfields.concat(relatedFields), false, function(field) {
             return field.name;
         }));
+        return _.map(fields, function(field) {
+            if (moduleFields[field.name]) {
+                field.type = moduleFields[field.name].type;
+            }
+            return field;
+        });
     },
 
     /**

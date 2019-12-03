@@ -433,6 +433,7 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                                 label: 'LBL_FIELD_GROUP',
                                 subfields: [
                                     {
+                                        audited: true,
                                         name: 'priority',
                                         label: 'LBL_PRIORITY',
                                         type: 'enum',
@@ -469,6 +470,30 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
         it('should call bean.set with tabContent and content', function() {
             layout.setTabContent(bean);
             expect(bean.set).toHaveBeenCalledWith('tabContent', {
+                fields: {
+                    priority: {
+                        audited: true,
+                        name: 'priority',
+                        label: 'LBL_PRIORITY',
+                        type: 'enum',
+                        default: true,
+                        enabled: true,
+                        related_fields: [
+                            'relField1',
+                            'relField2'
+                        ]
+                    },
+                    relField1: {
+                        name: 'relField1',
+                        type: 'enum',
+                        vname: 'LBL_REL_1'
+                    },
+                    relField2: {
+                        name: 'relField2',
+                        type: 'enum',
+                        vname: 'LBL_REL_2'
+                    }
+                },
                 sortFields: {
                     priority: 'Priority',
                     relField1: 'Related Field 1',

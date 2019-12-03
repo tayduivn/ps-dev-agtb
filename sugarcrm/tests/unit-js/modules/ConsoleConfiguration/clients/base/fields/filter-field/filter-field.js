@@ -70,57 +70,46 @@ describe('ConsoleConfiguration.Fields.filter-field', function() {
     });
 
     describe('loadFilterFields', function() {
-        var module = 'Cases';
+        var module = 'Accounts';
+
+        beforeEach(function() {
+            model.set('tabContent', {
+                fields: {
+                    'next_renewal_date': {
+                        'name': 'next_renewal_date',
+                        'type': 'date',
+                        'label': 'LBL_NEXT_RENEWAL_DATE'
+                    }
+                }
+            });
+
+            field.fieldList = {
+                $owner: {
+                    'predefined_filter': true,
+                    'label': 'LBL_CURRENT_USER_FILTER'
+                },
+                $favorite: {
+                    'predefined_filter': true,
+                    'label': 'LBL_FAVORITES_FILTER'
+                }
+            };
+
+            field.filterOperatorMap = {
+                'date': {
+                    '$in': 'In'
+                }
+            };
+        });
 
         it('should load filter fields properly', function() {
-            var filterableFields = {status: {vname: 'LBL_STATUS'}};
-            var expectedFilterFields = {status: 'Status'};
-
-            sinon.collection.stub(app.metadata, 'getModule')
-                .withArgs(module, 'filters').returns({basic: {}});
-
-            var beanClass = $.noop;
-            beanClass.prototype.getFilterableFields = $.noop;
-
-            sinon.collection.stub(beanClass.prototype, 'getFilterableFields')
-                .withArgs(module).returns(filterableFields);
-            sinon.collection.stub(app.data, 'getBeanClass')
-                .withArgs('Filters').returns(beanClass);
-
-            sinon.collection.stub(app.lang, 'get')
-                .withArgs('LBL_STATUS').returns('Status');
-
             field.loadFilterFields(module);
-
-            expect(app.metadata.getModule).toHaveBeenCalledOnce();
-            expect(app.metadata.getModule).toHaveBeenCalledWith(module, 'filters');
-
-            expect(beanClass.prototype.getFilterableFields).toHaveBeenCalledOnce();
-            expect(beanClass.prototype.getFilterableFields).toHaveBeenCalledWith(module);
-
-            expect(field.filterFields).toEqual(expectedFilterFields);
-            expect(field.fieldList).toEqual(filterableFields);
+            expect(field.filterFields).toEqual({
+                '$owner': 'LBL_CURRENT_USER_FILTER',
+                '$favorite': 'LBL_FAVORITES_FILTER',
+                'next_renewal_date': 'LBL_NEXT_RENEWAL_DATE'
+            });
         });
 
-        it('should not load filter fields if no filters defined', function() {
-            sinon.collection.stub(app.metadata, 'getModule')
-                .withArgs(module, 'filters').returns({});
-
-            var beanClass = $.noop;
-            beanClass.prototype.getFilterableFields = $.noop;
-
-            sinon.collection.stub(beanClass.prototype, 'getFilterableFields');
-
-            field.loadFilterFields(module);
-
-            expect(app.metadata.getModule).toHaveBeenCalledOnce();
-            expect(app.metadata.getModule).toHaveBeenCalledWith(module, 'filters');
-
-            expect(beanClass.prototype.getFilterableFields).not.toHaveBeenCalled();
-
-            expect(field.filterFields).toEqual([]);
-            expect(field.fieldList).toEqual({});
-        });
     });
 
     describe('loadFilterOperators', function() {
@@ -145,81 +134,6 @@ describe('ConsoleConfiguration.Fields.filter-field', function() {
             expect(app.metadata.getFilterOperators).toHaveBeenCalledWith(module);
 
             expect(field.filterOperatorMap).toEqual(operatorMap);
-        });
-    });
-
-    describe('getFilterableFields', function() {
-        it('should return the list of filterable fields with fields definition', function() {
-            sinon.collection.stub(app.metadata, 'getModule').returns(
-                {
-                    fields: {
-                        name: {
-                            name: 'name',
-                            type: 'varchar',
-                            len: 100
-                        },
-                        date_modified: {
-                            name: 'date_modified',
-                            options: 'date_range_search_dom',
-                            type: 'datetime',
-                            vname: 'LBL_DATE_MODIFIED'
-                        },
-                        number: {
-                            name: 'number',
-                            type: 'varchar',
-                            len: 100,
-                            readonly: true
-                        }
-                    },
-                    filters: {
-                        'default': {
-                            meta: {
-                                default_filter: 'all_records',
-                                fields: {
-                                    account_name_related: {
-                                        dbFields: ['accounts.name'],
-                                        type: 'text',
-                                        vname: 'LBL_ACCOUNT_NAME'
-                                    },
-                                    date_modified: {},
-                                    number: {}
-                                },
-                                filters: [
-                                    {
-                                        id: 'test_filter',
-                                        name: 'Test Filter',
-                                        filter_definition: {
-                                            '$starts': 'Test'
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            );
-            var fields = field.getFilterableFields('Cases');
-            var expected = {
-                account_name_related: {
-                    name: 'account_name_related',
-                    dbFields: ['accounts.name'],
-                    type: 'text',
-                    vname: 'LBL_ACCOUNT_NAME'
-                },
-                date_modified: {
-                    name: 'date_modified',
-                    options: 'date_range_search_dom',
-                    type: 'datetime',
-                    vname: 'LBL_DATE_MODIFIED'
-                },
-                number: {
-                    name: 'number',
-                    type: 'varchar',
-                    len: 100
-                }
-            };
-            expect(fields).toEqual(expected);
-            expect(fields.number.readonly).not.toBe(true);
         });
     });
 
