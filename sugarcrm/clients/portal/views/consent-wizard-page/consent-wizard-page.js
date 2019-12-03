@@ -48,14 +48,11 @@
         if (this._isBound) {
             return;
         }
-        var field = this.getField('cookie_consent');
-        var $el = field.$(field.fieldTag);
         // this should be disabled by default
         this.getField('continue_button').setDisabled(true);
-        $el.on('change', _.bind(function() {
-            var isChecked = $el.prop('checked');
-            this.getField('continue_button').setDisabled(!isChecked);
-        }, this));
+        this.model.on('change:cookie_consent',function() {
+            this.getField('continue_button').setDisabled(!this.model.get('cookie_consent'));
+        }, this);
         this._isBound = true;
     },
 
