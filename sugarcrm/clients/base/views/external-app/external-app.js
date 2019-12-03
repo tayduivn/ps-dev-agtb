@@ -20,6 +20,9 @@
     rendered: false,
     className: 'external-app-interface',
     extraParcelParams: {},
+    sugarAppStore: {
+        listPreviewModel: ''
+    },
 
     /**
      * Initializing the SingleSpa, using systemJs getting hold of the needed information of the MFE.
@@ -29,6 +32,9 @@
     initialize: function(options) {
         singleSpa.start();
         this._super('initialize', arguments);
+
+        // Creating Listeners for various Sugar Events.
+        this._sdkEventHandler();
 
         // pass any env options to be mounted with the external app
         if (options.meta && options.meta.env) {
@@ -44,6 +50,24 @@
                 this
             );
         }
+    },
+
+    /**
+     * This Method is the Handler to SugarEvents that stores the event callback data to the sugarAppStore object so that
+     * SDK wrapper can use it for SugarApps.
+     * @private
+     */
+    _sdkEventHandler: function() {
+        this.on(this.layout.cid + ':get:sugarApp:store', function(callback) {
+            callback(this.sugarAppStore);
+        }, this);
+
+        this.context.on('list:preview:fire', function(model) {
+            this.sugarAppStore.listPreviewModel = model;
+
+            // trigger to let store has changed
+            this.trigger(this.layout.cid + ':sugarApp:store:changed', this.sugarAppStore);
+        }, this);
     },
 
     /**
@@ -106,7 +130,8 @@
             //Since we can't use a shadow dom, we can at least reset the css to isolate styling.
             this.el.appendChild(root);
             this.parcelParams = {
-                domElement: root
+                domElement: root,
+                view: this
             };
 
             // update parcelParams with any extra keys added
@@ -134,6 +159,15 @@
     _dispose: function() {
         if (this.parcel && this.parcel.unmount) {
             this.parcel.unmount();
+
+            // Removing listeners on sugar app dispose.
+            this.off(this.layout.cid + ':get:sugarApp:store');
+            this.off(this.layout.cid + ':sugarApp:store:changed');
+
+            // Resetting sugarAppStore data
+            if (this.sugarAppStore.listPreviewModel) {
+                this.sugarAppStore.listPreviewModel = null;
+            }
         }
         this._super('_dispose', arguments);
     }
