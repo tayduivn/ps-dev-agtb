@@ -20,6 +20,7 @@ $mod_strings = [
     'LBL_TO_DATETIME' => 'To Time',
     'LBL_HOURS' => 'Hours',
     'LBL_BUSINESS_HOURS' => 'Business Hours',
+    'LBL_MODULE_NAME' => 'Change Timers',
 
     // reports labels
     'LBL_CASES' => 'Cases',

@@ -43,14 +43,12 @@ $dictionary['ChangeTimer'] = [
         'from_datetime' => array(
             'name' => 'from_datetime',
             'vname' => 'LBL_FROM_DATETIME',
-            'type' => 'datetimecombo',
-            'dbType' => 'datetime',
+            'type' => 'datetime',
         ),
         'to_datetime' => array(
             'name' => 'to_datetime',
             'vname' => 'LBL_TO_DATETIME',
-            'type' => 'datetimecombo',
-            'dbType' => 'datetime',
+            'type' => 'datetime',
         ),
         'hours' => [
             'name' => 'hours',
