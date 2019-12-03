@@ -25,17 +25,27 @@ class ConfigTest extends TestCase
     /** @var array */
     protected $sugarConfig;
 
+    /** @var array */
+    protected $currentIdmConfig;
 
     /**
      * @inheritdoc
      */
     protected function setUp()
     {
+        $this->currentIdmConfig = [];
         $this->currentUser = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = \SugarTestUserUtilities::createAnonymousUser(false, true);
         $this->sugarConfig = isset($GLOBALS['sugar_config']) ? $GLOBALS['sugar_config'] : null;
         $this->config = \SugarConfig::getInstance();
         $this->config->clearCache();
+        $admin = \Administration::getSettings(Config::IDM_MODE_KEY, true);
+        foreach ($admin->settings as $key => $value) {
+            if (strpos($key, Config::IDM_MODE_KEY) === 0) {
+                $key = str_replace(Config::IDM_MODE_KEY . '_', '', $key);
+                $this->currentIdmConfig[$key] = $value;
+            }
+        }
         $this->cleanIdmModeData();
     }
 
@@ -47,6 +57,11 @@ class ConfigTest extends TestCase
         $GLOBALS['sugar_config'] = $this->sugarConfig;
         $this->config->clearCache();
         $this->cleanIdmModeData();
+        $admin = \Administration::getSettings(Config::IDM_MODE_KEY, true);
+        foreach ($this->currentIdmConfig as $key => $value) {
+            $admin->saveSetting(Config::IDM_MODE_KEY, $key, $value);
+        }
+
         $GLOBALS['current_user'] = $this->currentUser;
     }
 
@@ -464,7 +479,7 @@ class ConfigTest extends TestCase
             $config->setIDMMode($sugarConfig['idm_mode'], false);
         } elseif (!empty($sugarConfig['idm_mode'])) {
             foreach ($sugarConfig['idm_mode'] as $key => $value) {
-                $admin = \Administration::getSettings(Config::IDM_MODE_KEY);
+                $admin = \Administration::getSettings(Config::IDM_MODE_KEY, true);
                 $admin->saveSetting(Config::IDM_MODE_KEY, $key, $value);
             }
         }
@@ -514,5 +529,6 @@ class ConfigTest extends TestCase
     protected function cleanIdmModeData()
     {
         $GLOBALS['db']->query("DELETE FROM config WHERE category = 'idm_mode'");
+        \Administration::getSettings(Config::IDM_MODE_KEY, true);
     }
 }
