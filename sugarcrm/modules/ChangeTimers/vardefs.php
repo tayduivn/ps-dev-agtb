@@ -92,6 +92,11 @@ $dictionary['ChangeTimer'] = [
             ],
         ],
     ],
+    'ignore_templates' => [
+        'taggable',
+        'commentlog',
+        'lockable_fields',
+    ],
     'uses' => [
         'default',
     ],
