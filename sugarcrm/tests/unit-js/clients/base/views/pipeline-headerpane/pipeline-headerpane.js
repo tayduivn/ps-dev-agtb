@@ -139,6 +139,12 @@ describe('Base.Views.PipelineHeaderpane', function() {
                     };
                 });
 
+                view.collection = {
+                    off: $.noop,
+                    origFilterDef: {
+                        $favorite: ''
+                    }
+                };
                 view.changePipeline(evt);
             });
 

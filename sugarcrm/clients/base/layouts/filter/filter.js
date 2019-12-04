@@ -153,6 +153,21 @@
     },
 
     /**
+     * Creates the key used to set/get the filter id last used.
+     * Tile view and list view filters should be sticky.
+     *
+     * @param {string} filterModule The name of the filtered module.
+     * @param {string} layoutName The name of the current layout.
+     */
+    getLastFilterKey: function(filterModule, layoutName) {
+        if (layoutName === 'pipeline-records') {
+            layoutName = 'records';
+        }
+        var keyString = 'last-' + filterModule + '-' + layoutName;
+        return app.user.lastState.key(keyString, this);
+    },
+
+    /**
      * Saves last filter id to app cache.
      *
      * @param {String} filterModule The name of the filtered module.
@@ -163,7 +178,7 @@
         var filterOptions = this.context.get('filterOptions') || {};
         this.context.set('currentFilterId', filterId);
         if (filterOptions.stickiness !== false) {
-            var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this);
+            var key = this.getLastFilterKey(filterModule, layoutName);
             app.user.lastState.set(key, filterId);
         }
     },
@@ -185,7 +200,7 @@
         var filterOptions = this.context.get('filterOptions') || {};
         // Load from cache.
         if (filterOptions.stickiness !== false) {
-            var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this);
+            var key = this.getLastFilterKey(filterModule, layoutName);
             filter = app.user.lastState.get(key);
         }
 
@@ -207,7 +222,7 @@
     clearLastFilter: function(filterModule, layoutName) {
         var filterOptions = this.context.get('filterOptions') || {};
         if (filterOptions.stickiness !== false) {
-            var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this);
+            var key = this.getLastFilterKey(filterModule, layoutName);
             app.user.lastState.remove(key);
         }
         this.clearFilterEditState();

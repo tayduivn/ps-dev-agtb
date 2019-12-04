@@ -62,8 +62,10 @@
         app.user.lastState.set(this.pipelineStateKey, pipelineType);
 
         this.context.get('model').set('pipeline_type', pipelineType);
-        this.context.trigger('pipeline:recordlist:filter:changed');
-        this.context.trigger('filter:clear');
+
+        var origFilterDef = this.collection.origFilterDef;
+        var filterDef = origFilterDef.length > -1 ? origFilterDef : [origFilterDef];
+        this.context.trigger('pipeline:recordlist:filter:changed', filterDef);
     },
 
     /**

@@ -1055,6 +1055,19 @@ describe('Base.Layout.Filter', function() {
                 layout.clearLastFilter(filterModule, layoutName);
                 expect(stubCache).not.toHaveBeenCalled();
             });
+            it('should create the correct last filter id', function() {
+                layoutName = 'records';
+                var key = layout.getLastFilterKey(filterModule, layoutName);
+                expect(key).toEqual('Accounts:filter:last-TestModule-records');
+
+                layoutName = 'pipeline-records';
+                key = layout.getLastFilterKey(filterModule, layoutName);
+                expect(key).toEqual('Accounts:filter:last-TestModule-records');
+
+                layoutName = 'TestLayout';
+                key = layout.getLastFilterKey(filterModule, layoutName);
+                expect(key).toEqual('Accounts:filter:last-TestModule-TestLayout');
+            });
         });
 
         describe('last edit state filter', function() {
