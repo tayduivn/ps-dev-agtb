@@ -92,9 +92,11 @@ class PMSEEngineUtils
             'modified_user_id',
             'date_entered',
             'date_modified',
+            'primary_contact_name',
         ),
         // list for BR conditions (read)
         'BRR' => array(
+            'primary_contact_name',
         ),
         // Add related record Activity item in Process Definitions
         'AC' => array(
@@ -183,7 +185,7 @@ class PMSEEngineUtils
      * @var array
      */
     public static $specialFields = array(
-        'All' => array('created_by', 'modified_user_id'),
+        'All' => array('created_by', 'modified_user_id', 'primary_contact_name'),
         'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'BRR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'ET' => array('email1'),

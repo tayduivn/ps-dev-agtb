@@ -301,7 +301,6 @@ $dictionary['Case'] = array(
             'table' => 'contacts',
             'studio' => 'visible',
             'audited' => true,
-            'processes' => true,
         ],
         'primary_contact_id' => [
             'name' => 'primary_contact_id',
