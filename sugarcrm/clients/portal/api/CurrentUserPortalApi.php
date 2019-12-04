@@ -43,7 +43,7 @@ class CurrentUserPortalApi extends CurrentUserApi
         if (isset($contact->preferred_language)) {
             $user_data['preferences']['language'] = $contact->preferred_language;
         }
-        $user_data['site_user_id'] = $contact->site_user_id;
+        $user_data['site_user_id'] = $contact->getSiteUserId(true);
         $user_data['cookie_consent'] = !empty($contact->cookie_consent);
         return array('current_user'=>$user_data);
     }
@@ -70,7 +70,7 @@ class CurrentUserPortalApi extends CurrentUserApi
 
     /**
      * Checks a given password and sends back the contact bean if the password matches
-     * 
+     *
      * @param string $passwordToVerify
      * @return Contact
      */
@@ -82,15 +82,15 @@ class CurrentUserPortalApi extends CurrentUserApi
         if (User::checkPassword($passwordToVerify, $currentPassword)) {
             return $contact;
         }
-        
+
         return null;
     }
 
     /**
      * Changes a portal password for a contact from old to new
-     * 
+     *
      * @param Contact $bean Contact bean
-     * @param string $old Old password 
+     * @param string $old Old password
      * @param string $new New password
      * @return array
      */
@@ -107,7 +107,7 @@ class CurrentUserPortalApi extends CurrentUserApi
 
     /**
      * Gets the preference for user login expiration
-     * 
+     *
      * @return null
      */
     protected function getUserLoginExpirationPreference()
@@ -117,7 +117,7 @@ class CurrentUserPortalApi extends CurrentUserApi
 
     /**
      * Manipulates the ACLs for portal
-     * 
+     *
      * @param array $acls
      * @return array
      */
@@ -129,13 +129,13 @@ class CurrentUserPortalApi extends CurrentUserApi
         $acls['import'] = 'no';
         $acls['export'] = 'no';
         $acls['massupdate'] = 'no';
-        
+
         return $acls;
     }
 
     /**
      * Enforces module specific ACLs
-     * 
+     *
      * @param array $acls
      * @return array
      */
@@ -161,7 +161,7 @@ class CurrentUserPortalApi extends CurrentUserApi
 
             $acls[$modName]['edit'] = 'no';
         }
-        
+
         return $acls;
     }
 

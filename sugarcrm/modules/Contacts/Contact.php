@@ -535,12 +535,8 @@ class Contact extends Person {
 
         //BEGIN SUGARCRM flav=ent ONLY
         // Support for Pendo analytics in Portal
-        if (empty($this->site_user_id)) {
-            if (!$this->id) {
-                $this->id = Uuid::uuid1();
-                $this->new_with_id = true;
-            }
-            $this->site_user_id = getSiteHash($this->id);
+        if (!empty($this->portal_active)) {
+            $this->getSiteUserId();
         }
 
         // Update the datetime the consent was granted
@@ -565,6 +561,30 @@ class Contact extends Person {
         //END SUGARCRM flav=ent ONLY
 
         return parent::save($check_notify);
+    }
+
+    /**
+     * Gets and sets a site user id for analytics
+     * @param boolean $save Whether to save updates on set, defaults to false
+     * @return string
+     */
+    public function getSiteUserId($save = false)
+    {
+        if (empty($this->site_user_id)) {
+            if (!$this->id) {
+                $this->id = Uuid::uuid1();
+                $this->new_with_id = true;
+            }
+
+            $this->site_user_id = getSiteHash($this->id);
+
+            // Handle saving only if explicitly told to
+            if ($save) {
+                $this->save();
+            }
+        }
+
+        return $this->site_user_id;
     }
 
     /**
