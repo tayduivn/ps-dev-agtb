@@ -51,23 +51,38 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
 
     # Verify that record is present in multiline list view
     Then I verify fields for *A_1 in #AccountsList.MultilineListView
-      | fieldName | value     |
-      | name      | Account 1 |
+      | fieldName      | value      |
+      | name           | Account 1  |
+      | industry       | Apparel    |
+      | annual_revenue | 10K        |
+      | account_type   | Competitor |
+
 
     # Verify that record is present in multiline list view
     Then I verify fields for *A_2 in #AccountsList.MultilineListView
-      | fieldName | value     |
-      | name      | Account 2 |
+      | fieldName      | value      |
+      | name           | Account 2  |
+      | industry       | Apparel    |
+      | annual_revenue | 20K        |
+      | account_type   | Competitor |
 
     # Verify that record is present in multiline list view
     Then I verify fields for *A_3 in #AccountsList.MultilineListView
-      | fieldName | value     |
-      | name      | Account 3 |
+      | fieldName      | value      |
+      | name           | Account 3  |
+      | industry       | Apparel    |
+      | annual_revenue | 30K        |
+      | account_type   | Competitor |
+
 
     # Verify that record is present in multiline list view
     Then I verify fields for *A_4 in #AccountsList.MultilineListView
-      | fieldName | value     |
-      | name      | Account 4 |
+      | fieldName      | value      |
+      | name           | Account 4  |
+      | industry       | Apparel    |
+      | annual_revenue | 40K        |
+      | account_type   | Competitor |
+
 
     # Accounts assigned to different user shouldn't be displayed in Renewal Console
     Then I should not see *A_5 in #AccountsList.MultilineListView
@@ -479,7 +494,68 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
     When I select *A_1 in #AccountsList.MultilineListView
 
     # Verify Active Subscriptions
-    # Then I verify that dashboard2by2_bottom_left element from #RenewalsConsoleView still looks like ActiveSubscriptions_1
+    Then I verify that dashboard2by2_bottom_left element from #RenewalsConsoleView still looks like ActiveSubscriptions_1
+
+
+  @renewals-console @rc_date_of_next_renewal
+  Scenario: Renewal Console > Accounts Tab > Date of Next Renewal
+
+    # Create account record
+    Given Accounts records exist:
+      | *   | name      | website        | industry | account_type | service_level | phone_office | phone_alternate | email (primary) | phone_fax    | tag  | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | A_1 | Account 1 | www.google.com | Apparel  | Analyst      | T1            | 555-555-0000 | 555-555-0001    | bob@bob.com     | 555-555-0002 | tags | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+
+    # Create Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_1:
+      | *     | name          |
+      | Opp_1 | Opportunity 1 |
+
+    # Add RLI records
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed | likely_case | sales_stage         | quantity | product_type      | service | service_duration_value | service_duration_unit | service_start_date | renewable |
+      | RLI_1 | now +11d    | 1000        | Prospecting         | 1        | Existing Business | true    | 2                      | year                  | 2019-11-06         | true      |
+      | RLI_2 | now +12d    | 2000        | Qualification       | 1        | New Business      | true    | 19                     | month                 | 2019-11-06         | true      |
+      | RLI_3 | now +13d    | 3000        | Needs Analysis      | 1        | Existing Business | true    | 17                     | month                 | 2019-11-06         | true      |
+      | RLI_4 | now +14d    | 4000        | Value Proposition   | 1        | New Business      | true    | 1                      | year                  | 2019-11-06         | false     |
+      | RLI_5 | now +15d    | 5000        | Id. Decision Makers | 1        |                   | true    | 90                     | day                   | 2019-11-06         | true      |
+      | RLI_6 | now +16d    | 1000        | Closed Won          | 1        | Existing Business | true    | 2                      | year                  | 2019-11-06         | true      |
+      | RLI_7 | now +17d    | 1000        | Closed Lost         | 1        | Existing Business | true    | 2                      | year                  | 2019-11-06         | true      |
+
+    # Trigger sugar logic by mass-update opportunity name
+    When I perform mass update of all RevenueLineItems with the following values:
+      | fieldName        | value         |
+      | opportunity_name | Opportunity 1 |
+
+    # Navigate to Renewal Console
+    When I choose Home in modules menu and select "Renewals Console" menu item
+
+    # Select Accounts tab
+    When I select Accounts tab in #RenewalsConsoleView
+
+    # Verify that next renewal date is properly calculated
+    Then I verify fields for *A_1 in #AccountsList.MultilineListView
+      | fieldName         | value      |
+      | name              | Account 1  |
+      | industry          | Apparel    |
+      | next_renewal_date | in 11 days |
+      | annual_revenue    | 5000000    |
+      | service_level     | Tier 1     |
+      | account_type      | Analyst    |
+
+    # Delete one of the RLIs linked to opportunity
+    When I delete *RLI_1 record in RevenueLineItems list view
+
+    # Navigate to Renewal Console
+    When I choose Home in modules menu
+
+    # Select Accounts tab
+    When I select Accounts tab in #RenewalsConsoleView
+
+    # Verify that Next Renewal Date field is properly updated
+    Then I verify fields for *A_1 in #AccountsList.MultilineListView
+      | fieldName         | value      |
+      | next_renewal_date | in 13 days |
+
 
 
   @user_profile

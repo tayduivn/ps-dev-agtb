@@ -17,6 +17,7 @@ import * as PricingFormula from '../fields/pricing_formula';
 import * as IntField from '../fields/int-field';
 import * as FloatField from '../fields/float-field';
 import * as DateField from '../fields/date-field';
+import * as RelativeDateField from '../fields/relative-date-field';
 import * as RelateField from '../fields/relate-field';
 import * as QuoteDataRelateField from '../fields/quote-data-relate';
 import * as CurrencyField from '../fields/currency-field';
@@ -62,6 +63,7 @@ export const FIELD_TYPES__MAP = {
     tag: TagField,
     int: IntField,
     date: DateField,
+    'relative-date': RelativeDateField,
     float: FloatField,
     relate: RelateField,
     taxrate: RelateField,
