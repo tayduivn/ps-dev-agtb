@@ -2964,10 +2964,11 @@ class MetaDataManager implements LoggerAwareInterface
     protected function getFilterModulesFlag(MetaDataContextInterface $context = null)
     {
         $filterModules = false;
-
-        if (!($context instanceof MetaDataContextDefault)) {
+        // BEGIN SUGARCRM flav=ent ONLY
+        if (SugarConfig::getInstance()->get('roleBasedViews') && !($context instanceof MetaDataContextDefault)) {
             $filterModules = true;
         }
+        // END SUGARCRM flav=ent ONLY
 
         return $filterModules;
     }
