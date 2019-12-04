@@ -9,7 +9,6 @@
         "ChangeTimers":["SUGAR_SERVE"],
         "ContractTypes":["CURRENT","SUGAR_SELL"],
         "Contracts":["CURRENT","SUGAR_SELL"],
-        "EmailMan":["CURRENT","SUGAR_SELL"],
         "EmailMarketing":["CURRENT","SUGAR_SELL"],
         "ForecastManagerWorksheets":["CURRENT","SUGAR_SELL"],
         "ForecastWorksheets":["CURRENT","SUGAR_SELL"],
