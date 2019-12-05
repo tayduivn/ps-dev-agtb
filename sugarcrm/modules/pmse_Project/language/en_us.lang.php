@@ -52,6 +52,7 @@ $mod_strings = array (
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_BR' => 'The Process Definition has been imported but contains one or more Business Rule actions for which business rules have not been selected.',
     'LBL_BPM_IMPORT_SELECT' => 'This Process Definition contains the following Business Rules and Email Templates. '
         . 'Please select the ones you want to import.',
+    'LBL_PMSE_PROCESS_DEFINITION_IMPORT_ERROR' => 'There was an error importing the Process Definition.',
     'LBL_BUSINESS_RULES' => 'Business Rules',
     'LBL_EMAIL_TEMPLATES' => 'Email Templates',
 
