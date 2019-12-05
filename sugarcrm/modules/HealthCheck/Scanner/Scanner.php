@@ -3743,6 +3743,8 @@ class HealthCheckScanner
         $this->md5_files = $md5_string;
         $this->bwcModulesHash = array_flip($this->bwcModules);
 
+        // turn on AdminWork
+        Sugarcrm\Sugarcrm\AccessControl\AccessControlManager::instance()->setAdminWork(true, true);
         return true;
     }
 
