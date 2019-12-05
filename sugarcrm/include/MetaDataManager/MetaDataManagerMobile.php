@@ -96,6 +96,7 @@ class MetaDataManagerMobile extends MetaDataManager
             'Activities',
             'Forecasts',
             'Home',
+            'Tags',
             // add in Users [Bug59548] since it is forcefully removed for the
             // CurrentUserApi
             'Users',
