@@ -44,9 +44,9 @@ class OpportunityHooksTest extends TestCase
         $opBean = $this->createPartialMock('Opportunity', [
             'getClosedWonRenewableRLIs',
             'getRenewalParent',
-            'useRevenueLineItems',
+            'canRenew',
         ]);
-        $opBean->method('useRevenueLineItems')->willReturn(true);
+        $opBean->method('canRenew')->willReturn(true);
         $opBean->method('getClosedWonRenewableRLIs')->willReturn([$rliBean]);
         $opBean->method('getRenewalParent')->willReturn($parentBean);
         $args['dataChanges']['sales_status']['after'] = Opportunity::STATUS_CLOSED_WON;
@@ -56,9 +56,9 @@ class OpportunityHooksTest extends TestCase
             'getClosedWonRenewableRLIs',
             'getRenewalParent',
             'getExistingRenewalOpportunity',
-            'useRevenueLineItems',
+            'canRenew',
         ]);
-        $opBean->method('useRevenueLineItems')->willReturn(true);
+        $opBean->method('canRenew')->willReturn(true);
         $opBean->method('getClosedWonRenewableRLIs')->willReturn([$rliBean]);
         $opBean->method('getRenewalParent')->willReturn(null);
         $opBean->method('getExistingRenewalOpportunity')->willReturn($renewalBean);
@@ -69,9 +69,9 @@ class OpportunityHooksTest extends TestCase
             'getRenewalParent',
             'getExistingRenewalOpportunity',
             'createNewRenewalOpportunity',
-            'useRevenueLineItems',
+            'canRenew',
         ]);
-        $opBean->method('useRevenueLineItems')->willReturn(true);
+        $opBean->method('canRenew')->willReturn(true);
         $opBean->method('getClosedWonRenewableRLIs')->willReturn([$rliBean]);
         $opBean->method('getRenewalParent')->willReturn(null);
         $opBean->method('getExistingRenewalOpportunity')->willReturn(null);

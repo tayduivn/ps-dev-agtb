@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
+
 // Opportunity is used to store customer information.
 class Opportunity extends SugarBean
 {
@@ -585,16 +587,20 @@ class Opportunity extends SugarBean
         return Forecast::getSettings()['sales_stage_won'] ?? ['Closed Won'];
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
-     * Check if RLI is enabled.
+     * Check if we can renew opportunity.
      *
      * @return bool
      */
-    public function useRevenueLineItems(): bool
+    public function canRenew(): bool
     {
         // get the OpportunitySettings
         $settings = Opportunity::getSettings();
-        return (isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems');
+        $useRli = isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems';
+        // get licenses
+        $licenses = SubscriptionManager::instance()->getSystemSubscriptionKeysInSortedValueArray();
+        return $useRli && in_array('SUGAR_SELL', $licenses);
     }
 
     /**

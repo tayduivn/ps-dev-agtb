@@ -33,7 +33,7 @@ class OpportunityHooks extends AbstractForecastHooks
      */
     public static function generateRenewalOpportunity(Opportunity $bean, string $event, array $args): bool
     {
-        if ($bean->useRevenueLineItems() &&
+        if ($bean->canRenew() &&
             !empty($args['dataChanges']['sales_status']) &&
             $args['dataChanges']['sales_status']['after'] === Opportunity::STATUS_CLOSED_WON
         ) {
