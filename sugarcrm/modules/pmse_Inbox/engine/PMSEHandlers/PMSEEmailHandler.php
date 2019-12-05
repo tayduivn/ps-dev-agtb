@@ -435,7 +435,7 @@ class PMSEEmailHandler
                 // value isn't set when process definition was created
                 $modules = ['Users', 'Contacts', 'Leads', 'Prospects', 'Accounts'];
                 foreach ($modules as $module) {
-                    if (!empty($recipientBean = $this->retrieveBean($module, [$entry->id], ['strict_retrieve' => true]))) {
+                    if (!empty($recipientBean = $this->retrieveBean($module, $entry->id, ['strict_retrieve' => true]))) {
                         break;
                     }
                 }
