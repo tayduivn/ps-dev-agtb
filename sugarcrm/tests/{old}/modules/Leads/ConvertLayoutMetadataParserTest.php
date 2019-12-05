@@ -32,6 +32,12 @@ class ConvertLayoutMetadataParserTest extends TestCase
         'duplicateCheckOnStart' => true,
     );
 
+    protected $customFile = null;
+
+    protected $customModule = null;
+
+    protected $customDef = null;
+
     public function setUp()
     {
         $this->parser = new TestConvertLayoutMetadataParser('Contacts');
@@ -41,10 +47,31 @@ class ConvertLayoutMetadataParserTest extends TestCase
                     $this->accountDef,
                 )
             ));
+        // custom def
+        $this->customModule = 'TestModule';
+        $this->customDef = [
+            'module' => $this->customModule,
+            'required' => true,
+        ];
+        $this->customFile = "custom/modules/{$this->customModule}/clients/base/layouts/convert-main-for-leads/convert-main-for-leads.php";
+        if (file_exists($this->customFile)) {
+            rename($this->customFile, $this->customFile . '.bak');
+        }
+        $dirName = dirname($this->customFile);
+        if (!file_exists($dirName)) {
+            mkdir($dirName, 0777, true);
+        }
+        $viewdefs[$this->customModule]['base']['layout']['convert-main-for-leads'] = $this->customDef;
+        write_array_to_file('viewdefs', $viewdefs, $this->customFile);
     }
 
     public function tearDown()
     {
+        if (file_exists($this->customFile . '.bak')) {
+            rename($this->customFile . '.bak', $this->customFile);
+        } else {
+            unlink($this->customFile);
+        }
     }
 
     /**
@@ -224,6 +251,15 @@ class ConvertLayoutMetadataParserTest extends TestCase
     {
         $this->parser->deploy();
         $this->assertEquals(1, $this->parser->saveToFileCallCount, 'saveToFile() should be called once');
+    }
+
+    /**
+     * @covers ConvertLayoutMetadataParser::getDefaultDefForModule
+     */
+    public function testGetDefaultDefForModule()
+    {
+        $customDef = $this->parser->getDefaultDefForModule($this->customModule);
+        $this->assertEquals($this->customDef, $customDef, 'Custom def should be returned');
     }
 
     /**

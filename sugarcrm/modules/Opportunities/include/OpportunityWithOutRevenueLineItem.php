@@ -249,6 +249,10 @@ EOL;
         // disable the ACLs on RevenueLineItems
         ACLAction::removeActions('RevenueLineItems');
 
+        // remove RLI from lead convert settings
+        $parser = new ConvertLayoutMetadataParser('RevenueLineItems');
+        $parser->removeLayout('RevenueLineItems');
+
         // add the RLI module
         $affected_modules[] = 'RevenueLineItems';
 

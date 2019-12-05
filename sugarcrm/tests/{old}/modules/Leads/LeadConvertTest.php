@@ -23,6 +23,7 @@ class LeadConvertTest extends TestCase
     private $accountsDef;
     private $opportunitiesDef;
     private $tasksDef;
+    private $rliDef;
     private $modulesDef;
 
     public function setUp()
@@ -66,11 +67,25 @@ class LeadConvertTest extends TestCase
             'fieldMapping' => array()
         );
 
+        $this->rliDef = array(
+            'module' => 'RevenueLineItems',
+            'required' => false,
+            'duplicateCheck' => true,
+            'dependentModules' => array(
+                'Opportunities' => array(
+                    'fieldMapping' => array(
+                        'opportunity_id' => 'id',
+                    ),
+                ),
+            ),
+        );
+
         $this->modulesDef = array(
             $this->contactsDef,
             $this->accountsDef,
             $this->opportunitiesDef,
-            $this->tasksDef
+            $this->tasksDef,
+            $this->rliDef,
         );
 
         SugarTestHelper::setUp('dictionary');
@@ -88,6 +103,7 @@ class LeadConvertTest extends TestCase
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestTaskUtilities::removeAllCreatedTasks();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
 
         unset($this->lead);
         unset($this->modulesDef);
@@ -584,6 +600,23 @@ class LeadConvertTest extends TestCase
         );
         $this->assertEquals(true, $lead->converted, 'Lead converted field not set properly');
         $this->assertEquals(true, $lead->in_workflow, 'Lead workflow field not set properly');
+    }
+
+    /**
+     * @covers LeadConvert::copyDependentData
+     */
+    public function testCopyDependentData()
+    {
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->opportunity_id = null;
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $leadConvert = $this->createPartialMock('LeadConvert', array('initialize'));
+        $leadConvert->setModules(array(
+            'RevenueLineItems' => $rli,
+            'Opportunities' => $opp,
+        ));
+        SugarTestReflection::callProtectedMethod($leadConvert, 'copyDependentData', array($this->rliDef));
+        $this->assertEquals($opp->id, $rli->opportunity_id, 'Opp id should be copied to opportunity_id in rli');
     }
 
     /**
