@@ -747,9 +747,9 @@ class Opportunity extends SugarBean
      * Create a new renewal RLI from an existing RLI.
      *
      * @param RevenueLineItem $rli
-     * @return RevenueLineItem|NULL
+     * @return RevenueLineItem
      */
-    public function createNewRenewalRLI(RevenueLineItem $rli): ?RevenueLineItem
+    public function createNewRenewalRLI(RevenueLineItem $rli): RevenueLineItem
     {
         $copyRliFields = [
             'name',
@@ -786,11 +786,6 @@ class Opportunity extends SugarBean
             if (isset($rli->$field)) {
                 $newRliBean->$field = $rli->$field;
             }
-        }
-
-        $duplicates = $newRliBean->findDuplicates();
-        if (!empty($duplicates['records'])) {
-            return null;
         }
 
         $newRliBean->save();

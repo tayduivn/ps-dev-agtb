@@ -157,11 +157,6 @@ class RliMock extends RevenueLineItem
         return 'revenue_line_items';
     }
 
-    public function findDuplicates()
-    {
-        return null;
-    }
-
     public function save($check_notify = false)
     {
     }
