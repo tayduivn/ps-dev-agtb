@@ -55,7 +55,9 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 if (!empty($pdfTemplate->header_logo)) {
                     // Create a temporary copy of the header logo
                     // and append the original filename, so TCPDF can figure the extension
-                    $headerLogo = 'upload/' . $pdfTemplate->id . $pdfTemplate->header_logo;
+                    $uniqueNumber = rand(1, 500) / rand(1, 50);
+                    $headerLogo = 'upload/' . $uniqueNumber . '-' .
+                        $pdfTemplate->id . $pdfTemplate->header_logo;
                     copy('upload/' . $pdfTemplate->id, $headerLogo);
                 }
 
