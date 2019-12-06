@@ -73,75 +73,42 @@ class IssueTest extends TestCase
     }
 
     /**
-     * @param $isUpdate
-     * @param $values
-     * @param $fields
+     * @param $field
+     * @param $value
+     * @param $lastRecord
      * @param $expected
-     * @dataProvider getCTFieldsToProcessProvider
+     * @dataProvider shouldNotProcessProvider
      */
-    public function testGetCTFieldsToProcess(bool $isUpdate, array $values, array $fields, array $expected)
+    public function testShouldNotProcess($field, $value, $lastRecord, $expected)
     {
         $case = new CaseMock();
-        $case->dataChanges = $values;
-        foreach ($values as $key => $value) {
-            $case->$key = $value;
-        }
-        $fields = $case->getCTFieldsToProcessMock($fields, $isUpdate);
-        $this->assertSame($expected, $fields);
+        $case->$field = $value;
+        $result = $case->shouldNotProcessMock($field, $lastRecord);
+        $this->assertSame($expected, $result);
     }
 
-    public function getCTFieldsToProcessProvider(): array
+    public function shouldNotProcessProvider(): array
     {
         return [
-            [
-                false,
-                ['status' => 'New', 'assigned_user_id' => 1],
-                ['status', 'assigned_user_id'],
-                ['status', 'assigned_user_id'],
-            ],
-            [
-                false,
-                ['status' => 'New'],
-                ['status', 'assigned_user_id'],
-                ['status'],
-            ],
-            [
-                false,
-                ['status' => 'New', 'assigned_user_id' => 1],
-                ['status'],
-                ['status'],
-            ],
-            [
-                true,
-                ['status' => 'New', 'assigned_user_id' => 1],
-                ['status', 'assigned_user_id'],
-                ['status', 'assigned_user_id'],
-            ],
-            [
-                true,
-                ['status' => 'New'],
-                ['status', 'assigned_user_id'],
-                ['status'],
-            ],
-            [
-                true,
-                ['status' => 'New', 'assigned_user_id' => 1],
-                ['status'],
-                ['status'],
-            ],
+            ['status', 'New', ['value_string' => 'New'], true],
+            ['status', 'New', ['value_string' => 'Assigned'], false],
+            ['status', 'New', ['value_string' => ''], false],
+            ['status', '', ['value_string' => 'New'], false],
+            ['status', '', ['value_string' => ''], true],
+            ['status', 'New', [], false], // no last record
         ];
     }
 }
 
 class CaseMock extends aCase
 {
-    public function getCTFieldsToProcessMock(array $fields, bool $isUpdate) : array
-    {
-        return parent::getCTFieldsToProcess($fields, $isUpdate);
-    }
-
     public function createNewCTRecordMock(string $field)
     {
         return parent::createNewCTRecord($field);
+    }
+
+    public function shouldNotProcessMock(string $field, array $lastRecord) : bool
+    {
+        return parent::shouldNotProcess($field, $lastRecord);
     }
 }

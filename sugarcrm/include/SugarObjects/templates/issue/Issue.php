@@ -151,44 +151,14 @@ class Issue extends Basic
     }
 
     /**
-     * @param array $fields change timer enabled fields
-     * @param bool $isUpdate, return changed fields if true, non empty fields if false
-     * @return array
-     */
-    protected function getCTFieldsToProcess(array $fields, bool $isUpdate) : array
-    {
-        $fieldsToProcess = [];
-        if ($isUpdate) {
-            $changedFields = [];
-            foreach ($this->db->getDataChanges($this, ['field_filter' => $fields]) as $field) {
-                if (!empty($field['field_name'])) {
-                    $changedFields[] = $field['field_name'];
-                }
-            }
-        }
-        foreach ($fields as $field) {
-            if ($isUpdate) {
-                if (in_array($field, $changedFields)) {
-                    $fieldsToProcess[] = $field;
-                }
-            } else {
-                if (!empty($this->$field)) {
-                    $fieldsToProcess[] = $field;
-                }
-            }
-        }
-        return $fieldsToProcess;
-    }
-
-    /**
      * @param string $field
      * @return string
      * @throws SugarQueryException
      */
-    protected function getLastId(string $field) : string
+    protected function getLastRecord(string $field) : array
     {
         $query = new SugarQuery();
-        $query->select(['id']);
+        $query->select(['id', 'value_string']);
         $bean = BeanFactory::newBean('ChangeTimers');
 
         $query->from($bean);
@@ -203,7 +173,7 @@ class Issue extends Basic
 
         $rows = $query->execute();
 
-        return $rows[0]['id'] ?? '';
+        return $rows[0] ?? [];
     }
 
     /**
@@ -249,14 +219,32 @@ class Issue extends Basic
 
     /**
      * @param string $field
+     * @param array $lastRecord
+     * @return bool
+     */
+    protected function shouldNotProcess(string $field, array $lastRecord) : bool
+    {
+        if (!empty($lastRecord)) {
+            if ($this->$field == $lastRecord['value_string']) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * @param string $field
      * @throws SugarQueryException
      */
     protected function updateChangeTimerRecord(string $field)
     {
+        $lastRecord = $this->getLastRecord($field);
+        if ($this->shouldNotProcess($field, $lastRecord)) {
+            return;
+        }
+
         // update the last record
-        $lastId = $this->getLastId($field);
-        if (!empty($lastId)) {
-            $this->updateLastCTRecord($lastId);
+        if (!empty($lastRecord['id'])) {
+            $this->updateLastCTRecord($lastRecord['id']);
         }
 
         // add a new record
@@ -275,16 +263,15 @@ class Issue extends Basic
     /**
      * Update the fields in the related ChangeTimers module
      * @param array $changeTimerFields
-     * @param array $fieldsToProcess
      * @throws SugarQueryException
      */
-    protected function processChangeTimers(array $changeTimerFields, array $fieldsToProcess)
+    protected function processChangeTimers(array $changeTimerFields)
     {
         if (empty($changeTimerFields) || !is_array($changeTimerFields)) {
             return;
         }
 
-        foreach ($fieldsToProcess as $field) {
+        foreach ($changeTimerFields as $field) {
             $this->updateChangeTimerRecord($field);
         }
     }
@@ -298,18 +285,11 @@ class Issue extends Basic
             $this->calculateResolutionHours();
         }
 
-        $isUpdate = $this->isUpdate();
-        $changeTimerFields = $this->getChangeTimerFields();
-        if (!empty($changeTimerFields)) {
-            // need to get the changed fields before calling parent::save()
-            // because during parent::save(), BPM may affect $this->fetched_row
-            $fieldsToProcess = $this->getCTFieldsToProcess($changeTimerFields, $isUpdate);
-        }
-
         $id = parent::save($check_notify);
 
-        if (!empty($changeTimerFields) && !empty($fieldsToProcess)) {
-            $this->processChangeTimers($changeTimerFields, $fieldsToProcess);
+        $changeTimerFields = $this->getChangeTimerFields();
+        if (!empty($changeTimerFields)) {
+            $this->processChangeTimers($changeTimerFields);
         }
 
         return $id;

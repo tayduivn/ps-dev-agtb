@@ -28,7 +28,7 @@ class ChangeTimersApiHelper extends SugarBeanApiHelper
         if (!empty($options['args']['module']) && !empty($options['args']['record'])) {
             $parentBean = BeanFactory::getBean($options['args']['module'], $options['args']['record']);
             $mappings = $this->getMappingForRelateFields($parentBean);
-            $fieldMapping = $mappings[$data['field_name']];
+            $fieldMapping = $mappings[$data['field_name']] ?? [];
             if (!empty($fieldMapping)) {
                 $data['value_string'] = $this->runRelateFieldQuery($fieldMapping, $data['value_string']);
             }
