@@ -92,6 +92,53 @@ describe('Base.View.TabbedDashboardView', function() {
         });
     });
 
+    describe('_initTabBadges', function() {
+        it('should set badge filter', function() {
+            var expectedFilter = [
+                {
+                    follow_up_datetime: 'followupFilter'
+                },
+                {
+                    name: 'nameFilter'
+                }
+            ];
+            view.tabs = [
+                {
+                    badges: [
+                        {
+                            type: 'record-count',
+                            module: 'Cases',
+                            filter: [
+                                {
+                                    follow_up_datetime: 'followupFilter'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ];
+            view.context = {
+                get: function() {return 'model_id';},
+                off: $.noop
+            };
+            sinon.collection.stub(app.metadata, 'getModule').returns({
+                config: {
+                    filter_def: {
+                        model_id: {
+                            Cases: [
+                                {
+                                    name: 'nameFilter'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+            view._initTabBadges();
+            expect(view.tabs[0].badges[0].filter).toEqual(expectedFilter);
+        });
+    });
+
     describe('getLastStatekey', function() {
         it('should return a key', function() {
             view.model.set('id', 'my_dashboard_id');

@@ -140,6 +140,33 @@
             this.tabs = options.tabs;
             this.context.set('tabs', this.tabs);
             this.context.set('activeTab', this.activeTab);
+            this._initTabBadges();
+        }
+    },
+
+    /**
+     * Initialize tab badges.
+     * @private
+     */
+    _initTabBadges: function() {
+        var modelId = this.context.get('modelId');
+        var configMeta = app.metadata.getModule('ConsoleConfiguration');
+
+        if (this.tabs && configMeta) {
+            _.each(this.tabs, function(tab) {
+                if (!_.isUndefined(tab.badges)) {
+                    _.each(tab.badges, function(badge) {
+                        if (badge.type === 'record-count' && badge.module === 'Cases') {
+                            badge.filter = _.union(
+                                [
+                                    {follow_up_datetime: _.first(_.pluck(badge.filter, 'follow_up_datetime'))}
+                                ],
+                                configMeta.config.filter_def[modelId][badge.module]
+                            );
+                        }
+                    });
+                }
+            });
         }
     },
 
