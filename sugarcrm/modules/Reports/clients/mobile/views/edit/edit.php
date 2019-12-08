@@ -47,4 +47,3 @@ $viewdefs['Reports']['mobile']['view']['edit'] = array(
         )
     ),
 );
-?>

@@ -36,4 +36,3 @@ $viewdefs['Notes']['mobile']['view']['detail'] = array(
         )
     ),
 );
-?>
