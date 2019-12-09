@@ -105,13 +105,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'reportable' => false,
             'workflow' => false
         ),
-        'renewal_parent_id' => array(
-            'reportable' => false,
-            'audited' => false,
-        ),
-        'renewal' => array(
-            'reportable' => false,
-        )
     );
 
     /**
@@ -148,7 +141,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'sales_stage' => true,
                 'probability' => true,
                 'renewal' => false,
-                'renewal_parent_id' => false,
                 'renewal_parent_name' => false,
             )
         );
@@ -160,7 +152,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'sales_status' => 'sales_stage',
                 'probability' => true,
                 'renewal' => false,
-                'renewal_parent_id' => false,
                 'renewal_parent_name' => false,
             )
         );
@@ -170,9 +161,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'sales_stage' => true,
                 'sales_status' => false,
                 'probability' => true,
-                'renewal' => false,
-                'renewal_parent_id' => false,
-                'renewal_parent_name' => false,
             )
         );
     }
@@ -185,10 +173,22 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
      */
     protected function fixOpportunityModule()
     {
+        // Clear the Opportunities extension vardefs
         if (file_exists($this->moduleExtFolder . '/Vardefs/' . $this->dupeCheckExtFile)) {
             unlink($this->moduleExtFolder . '/Vardefs/' . $this->dupeCheckExtFile);
         }
 
+        // Remove the renewal fields from the Opportunities module
+        SugarAutoLoader::ensureDir($this->moduleExtFolder . '/Vardefs');
+        $file_contents = <<<EOL
+<?php
+\$dictionary['Opportunity']['fields']['renewal'] = null;
+\$dictionary['Opportunity']['fields']['renewal_parent_name'] = null;
+\$dictionary['Opportunity']['fields']['renewal_parent_id'] = null;
+EOL;
+        sugar_file_put_contents($this->moduleExtFolder . '/Vardefs/' . $this->dupeCheckExtFile, $file_contents);
+
+        // Clear the Opportunities extension dependencies
         if (file_exists($this->moduleExtFolder . '/Dependencies/' . $this->oppModuleDependencyFile)) {
             unlink($this->moduleExtFolder . '/Dependencies/' . $this->oppModuleDependencyFile);
         }

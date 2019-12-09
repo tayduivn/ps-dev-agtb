@@ -102,13 +102,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'reportable' => true,
             'workflow' => true
         ),
-        'renewal_parent_id' => array(
-            'reportable' => false,
-            'audited' => true,
-        ),
-        'renewal' => array(
-            'reportable' => true,
-        )
     );
 
     /**
@@ -146,7 +139,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
                 'sales_stage' => false,
                 'probability' => false,
                 'renewal' => true,
-                'renewal_parent_id' => true,
                 'renewal_parent_name' => true,
             )
         );
@@ -156,9 +148,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
                 'sales_stage' => 'sales_status',
                 'probability' => false,
                 'commit_stage' => false,
-                'renewal' => true,
-                'renewal_parent_id' => true,
-                'renewal_parent_name' => true,
             )
         );
 
@@ -167,9 +156,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
                 'sales_stage' => false,
                 'sales_status' => true,
                 'probability' => false,
-                'renewal_parent' => true,
-                'renewal_parent_id' => true,
-                'renewal_parent_name' => true,
             )
         );
     }
