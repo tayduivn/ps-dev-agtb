@@ -602,6 +602,7 @@ class Opportunity extends SugarBean
         $licenses = SubscriptionManager::instance()->getSystemSubscriptionKeysInSortedValueArray();
         return $useRli && in_array('SUGAR_SELL', $licenses);
     }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * Retrieve and update fetched_row['sales_status'] from db.
