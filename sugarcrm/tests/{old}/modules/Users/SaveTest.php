@@ -31,6 +31,7 @@ class SaveTest extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDownAfterClass();
     }
 
@@ -404,5 +405,47 @@ class SaveTest extends TestCase
         $_POST['record'] = $current_user->id;
         $_POST['LicenseTypes'] = ['INVALID_TYPE'];
         include 'modules/Users/Save.php';
+    }
+
+    /**
+     * @param array $licenseType
+     * @param bool $unlinked
+     * @dataProvider unlinkReportCacheProvider
+     */
+    public function testUnlinkReportCache(array $licenseType, bool $unlinked)
+    {
+        global $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser(
+            true,
+            1,
+            [
+                'license_type' => "[\"CURRENT\"]",
+                'preferred_language' => 'en_us',
+            ]
+        );
+
+        $cacheFile = sugar_cached('modules/modules_def_' . $current_user->preferred_language . '_' .
+            md5($current_user->id) . '.js');
+        if (!file_exists($cacheFile)) {
+            sugar_file_put_contents($cacheFile, 'test content');
+        }
+
+        $_POST['record'] = $current_user->id;
+        $_POST['LicenseTypes'] = $licenseType;
+        include 'modules/Users/Save.php';
+
+        if ($unlinked) {
+            $this->assertFalse(file_exists($cacheFile));
+        } else {
+            $this->assertTrue(file_exists($cacheFile));
+        }
+    }
+
+    public function unlinkReportCacheProvider()
+    {
+        return [
+            [['CURRENT'], false],
+            [['SUGAR_SERVE'], true],
+        ];
     }
 }

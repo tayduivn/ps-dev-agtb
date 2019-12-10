@@ -2885,6 +2885,15 @@ class User extends Person {
                 if ($current_user->id === $this->id) {
                     AccessControlManager::instance()->resetAccessControl();
                 }
+                // License Type has been changed, clear the report cache
+                $default_language = SugarConfig::getInstance()->get('default_language') ?? 'en_us';
+                $current_language = !empty($current_user->preferred_language) ?
+                    $current_user->preferred_language : $default_language;
+                $cacheFile = sugar_cached('modules/modules_def_' . $current_language . '_' .
+                    md5($current_user->id) . '.js');
+                if (file_exists($cacheFile)) {
+                    unlink($cacheFile);
+                }
             }
         }
     }
