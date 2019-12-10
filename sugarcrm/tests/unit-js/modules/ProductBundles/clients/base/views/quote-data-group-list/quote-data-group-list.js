@@ -82,7 +82,10 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             module: 'Quotes',
             create: false,
             currency_id: 'quote_currency_id',
-            base_rate: '2.0'
+            base_rate: '2.0',
+            billing_accounts: {
+                id: 'test'
+            }
         });
         viewParentContext.prepare();
 

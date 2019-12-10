@@ -584,7 +584,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var bundles;
         var bundleModel;
         var productModel;
-        var lastCallArgs;
+        var callArgs;
         var pbItems;
 
         beforeEach(function() {
@@ -598,6 +598,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             });
             layout.model.set({
                 id: 'quote1',
+                billing_accounts: {
+                    id: 'account1',
+                    name: 'test name'
+                },
                 bundles: {
                     models: [bundleModel]
                 }
@@ -609,28 +613,28 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             });
 
             layout._checkProductsQuoteLink();
-            lastCallArgs = app.api.call.lastCall.args;
+            callArgs = app.api.call.args;
         });
 
         afterEach(function() {
             bundles = null;
             bundleModel = null;
             productModel = null;
-            lastCallArgs = null;
+            callArgs = null;
             pbItems = null;
         });
 
         describe('when app.api.call is used with correct params', function() {
             it('should use create call type', function() {
-                expect(lastCallArgs[0]).toBe('create');
+                expect(callArgs[0][0]).toBe('create');
             });
 
             it('should use bulk URL', function() {
-                expect(lastCallArgs[1]).toBe(app.api.buildURL(null, 'bulk'));
+                expect(callArgs[0][1]).toBe(app.api.buildURL(null, 'bulk'));
             });
 
             it('should use bulk requests', function() {
-                var request = lastCallArgs[2].requests[0];
+                var request = callArgs[0][2].requests[0];
                 var url = app.api.buildURL('Products/product1/link/quotes/quote1');
 
                 expect(request.url).toBe(url.substr(4));

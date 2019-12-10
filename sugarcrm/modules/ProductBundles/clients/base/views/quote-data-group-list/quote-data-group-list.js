@@ -372,18 +372,17 @@
         var modelId = rowModel.cid;
         var modelModule = rowModel.module;
         var quoteId = rowModel.get('quote_id');
+        var accountId = rowModel.get('account_id');
         var productId = rowModel.get('id');
-        var quoteModel;
+        var quoteModel = this.context.get('parentModel');
 
         this.toggleCancelButton(false, rowModel.cid);
         this.toggleRow(modelModule, modelId, false);
         this.onNewItemChanged();
 
-        // when a new row is added if it does not have quote_id already, set it
-        if (rowModel.module === 'Products' && _.isUndefined(quoteId)) {
-            quoteModel = this.context.get('parentModel');
-
-            if (quoteModel) {
+        if (quoteModel && rowModel.module === 'Products') {
+            // when a new row is added if it does not have quote_id already, set it
+            if (_.isUndefined(quoteId)) {
                 quoteId = quoteModel.get('id');
 
                 app.api.relationships('create', 'Products', {
@@ -394,27 +393,52 @@
                         quote_id: quoteId
                     }
                 }, null, {
-                    success: _.bind(function(response) {
-                        var record = response.record;
-                        var relatedRecord = response.related_record;
-                        var pbItems = this.model.get('product_bundle_items');
-                        var quoteModel = this.context.get('parentModel');
-
-                        _.each(pbItems.models, function(itemModel) {
-                            if (itemModel.get('id') === record.id) {
-                                itemModel.setSyncedAttributes(record);
-                                itemModel.set(record);
-                            }
-                        }, this);
-
-                        if (quoteModel) {
-                            quoteModel.setSyncedAttributes(relatedRecord);
-                            quoteModel.set(relatedRecord);
-                        }
-
-                    }, this)
+                    success: _.bind(this._updateFromRelationshipCall, this, true)
                 });
             }
+            // when a new row is added if it does not have account_id already, set it
+            if (_.isUndefined(accountId)) {
+                accountId = quoteModel.get('billing_account_id');
+
+                if (accountId) {
+                    app.api.relationships('create', 'Products', {
+                        id: productId,
+                        link: 'account_link',
+                        relatedId: accountId,
+                        related: {
+                            account_id: accountId
+                        }
+                    }, null, {
+                        success: _.bind(this._updateFromRelationshipCall, this, false)
+                    });
+                }
+            }
+        }
+    },
+
+    /**
+     * Updates the item model and Quote model based on Relationship API calls
+     *
+     * @param {boolean} updateQuote If we should update the Quote record or not
+     * @param {Object} response The API Data response
+     * @private
+     */
+    _updateFromRelationshipCall: function(updateQuote, response) {
+        var record = response.record;
+        var relatedRecord = response.related_record;
+        var pbItems = this.model.get('product_bundle_items');
+        var quoteModel = this.context.get('parentModel');
+
+        _.each(pbItems.models, function(itemModel) {
+            if (itemModel.get('id') === record.id) {
+                itemModel.setSyncedAttributes(record);
+                itemModel.set(record);
+            }
+        }, this);
+
+        if (updateQuote && quoteModel) {
+            quoteModel.setSyncedAttributes(relatedRecord);
+            quoteModel.set(relatedRecord);
         }
     },
 
