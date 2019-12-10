@@ -890,11 +890,14 @@ PLATFORMS;
     public function testGetFilterModulesFlag()
     {
         $mm = $this->createPartialMock('MetaDataManager', []);
-        $this->assertTrue(SugarTestReflection::callProtectedMethod($mm, 'getFilterModulesFlag'));
         $defualtContext = SugarTestReflection::callProtectedMethod($mm, 'getDefaultContext');
         $this->assertFalse(SugarTestReflection::callProtectedMethod($mm, 'getFilterModulesFlag', [$defualtContext]));
+
+        // BEGIN SUGARCRM flav=ent ONLY
+        $this->assertTrue(SugarTestReflection::callProtectedMethod($mm, 'getFilterModulesFlag'));
         $userContextMock = $this->createPartialMock('MetaDataContextUser', []);
         $this->assertTrue(SugarTestReflection::callProtectedMethod($mm, 'getFilterModulesFlag', [$userContextMock]));
+        // END SUGARCRM flav=ent ONLY
     }
 
 
