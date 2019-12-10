@@ -170,14 +170,17 @@ class AuthenticationController implements LoggerAwareInterface
             $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
         }
 
-		if($this->loginSuccess){
-			loginLicense();
-			if(!empty($GLOBALS['login_error'])){
-				unset($_SESSION['authenticated_user_id']);
+        if ($this->loginSuccess) {
+            loginLicense();
+            // allow admin to login
+            if (!empty($GLOBALS['login_error'])
+                && !(isset($GLOBALS['current_user']) && is_admin($GLOBALS['current_user']))
+            ) {
+                unset($_SESSION['authenticated_user_id']);
                 $this->logger->critical('FAILED LOGIN: potential hack attempt:' . $GLOBALS['login_error']);
-				$this->loginSuccess = false;
-				return false;
-			}
+                $this->loginSuccess = false;
+                return false;
+            }
 
 			//call business logic hook
 			if(isset($GLOBALS['current_user']) && empty($params['noHooks']))
