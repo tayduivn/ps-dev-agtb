@@ -70,6 +70,7 @@ abstract class AbstractMetaDataImplementation
     MB_QUICKCREATE              => 'viewdefs',
     MB_RECORDVIEW               => 'viewdefs',
     MB_RECORDDASHLETVIEW        => 'viewdefs',
+    MB_PREVIEWVIEW              => 'viewdefs',
     MB_WIRELESSEDITVIEW         => 'viewdefs',
     MB_WIRELESSDETAILVIEW       => 'viewdefs',
     MB_WIRELESSLISTVIEW         => 'viewdefs',

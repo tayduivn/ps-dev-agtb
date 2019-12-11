@@ -86,6 +86,7 @@ class ParserFactory
         switch ( $lView) {
             case MB_RECORDVIEW:
             case MB_RECORDDASHLETVIEW:
+            case MB_PREVIEWVIEW:
                 SugarAutoLoader::requireWithCustom(
                     'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php'
                 );

@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Notes']['portal']['view']['preview'] = array(
+    'templateMeta' => array(
+        'maxColumns' => 1,
+    ),
     'panels' => array(
         array(
             'name' => 'panel_header',

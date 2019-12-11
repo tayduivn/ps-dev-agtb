@@ -152,6 +152,13 @@ class StudioModule
                     'image' => 'RecordDashletView',
                     'path'  => "modules/{$this->module}/clients/base/views/recorddashlet/recorddashlet.php",
                 ),
+                array(
+                    'name'  => translate('LBL_PREVIEWVIEW'),
+                    'type'  => MB_PREVIEWVIEW,
+                    'image' => 'PreviewView',
+                    'path'  => "modules/{$this->module}/clients/base/views/preview/preview.php",
+                    'fallback_path' => "modules/{$this->module}/clients/base/views/record/record.php",
+                ),
             );
         }
     }
@@ -349,7 +356,12 @@ class StudioModule
             // Remove path from the defs as it's not needed in the views array
             $path = $def['path'];
             unset($def['path']);
-            if (file_exists($path) || file_exists("custom/$path")) {
+            if (isset($def['fallback_path'])) {
+                $fallbackPath = $def['fallback_path'];
+                unset($def['fallback_path']);
+            }
+            if (file_exists($path) || file_exists("custom/$path") ||
+                (isset($fallbackPath) && file_exists($fallbackPath))) {
                 $views[basename($path, '.php')] = $def;
             }
         }

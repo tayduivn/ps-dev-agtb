@@ -69,6 +69,22 @@ class StudioModuleTest extends TestCase
     }
     //END SUGARCRM flav=ent ONLY
 
+    /**
+     * @covers ::getViewsForCallsHasPreview
+     */
+    public function testGetViewsForCallsHasPreview()
+    {
+        $sm = new StudioModule('Calls');
+        $views = $sm->getViews();
+        $defs = array_values($views);
+        $expectedDef = [
+            'name' => 'LBL_PREVIEWVIEW',
+            'type' => 'previewview',
+            'image' => 'PreviewView',
+        ];
+        $this->assertEquals($expectedDef, $defs[2]);
+    }
+
     public function providerGetType()
     {
         return array(

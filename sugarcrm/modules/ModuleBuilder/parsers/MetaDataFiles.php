@@ -100,6 +100,7 @@ class MetaDataFiles
         MB_QUICKCREATE            => 'quickcreatedefs',
         MB_RECORDVIEW             => 'record',
         MB_RECORDDASHLETVIEW      => 'recorddashlet',
+        MB_PREVIEWVIEW            => 'preview',
         MB_SIDECARPOPUPVIEW       => 'selection-list',
         MB_SIDECARDUPECHECKVIEW   => 'dupecheck-list',
         MB_WIRELESSEDITVIEW       => 'edit' ,
@@ -134,7 +135,7 @@ class MetaDataFiles
         MB_QUICKCREATE => 'QuickCreate',
         MB_RECORDVIEW  => array('base', 'view', 'record'),
         MB_RECORDDASHLETVIEW  => array('base', 'view', 'recorddashlet'),
-
+        MB_PREVIEWVIEW  => array('base', 'view', 'preview'),
         MB_WIRELESSEDITVIEW => array('mobile','view','edit'),
         MB_WIRELESSDETAILVIEW => array('mobile','view','detail'),
         //BEGIN SUGARCRM flav=ent ONLY

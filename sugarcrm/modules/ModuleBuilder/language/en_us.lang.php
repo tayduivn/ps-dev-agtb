@@ -377,6 +377,7 @@ $mod_strings = array(
 'LBL_LISTVIEW'=>'List View',
 'LBL_RECORDVIEW'=>'Record View',
 'LBL_RECORDDASHLETVIEW'=>'Record View Dashlet',
+'LBL_PREVIEWVIEW'=>'Preview View',
 'LBL_MODULE_TITLE' => 'Studio',
 'LBL_NEW_PACKAGE' => 'New Package',
 'LBL_NEW_PANEL'=>'New Panel',

@@ -9,11 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.KBContents.Portal.PreviewView
- * @alias SUGAR.App.view.views.KBContents.PortalPreviewView
+ * @class View.Views.Portal.PreviewView
+ * @alias SUGAR.App.view.views.PortalPreviewView
+ * @extends View.Views.Base.PreviewView
  */
 ({
-    extendsFrom: 'BaseKBContentsPreviewView',
+    extendsFrom: 'PreviewView',
 
     initialize: function(options) {
         this._super('initialize', [options]);

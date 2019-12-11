@@ -681,7 +681,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         foreach ($panels as $n => $panel) {
             // If we are on a record view we need to hide the header panel from
             // studio. This is to prevent breaking the client side application.
-            if (in_array($this->_view, [MB_RECORDVIEW, MB_RECORDDASHLETVIEW]) && $n == $this->headerPanelIndex) {
+            if (in_array($this->_view, [MB_RECORDVIEW, MB_RECORDDASHLETVIEW, MB_PREVIEWVIEW]) && $n == $this->headerPanelIndex) {
                 $this->headerPanelMeta = $panel;
                 continue;
             }

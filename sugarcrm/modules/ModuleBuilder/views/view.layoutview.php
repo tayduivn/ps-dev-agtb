@@ -161,6 +161,11 @@ class ViewLayoutView extends SugarView
         $smarty->assign ( 'nextPanelId', $parser->getFirstNewPanelId() ) ;
         $smarty->assign ( 'displayAsTabs', $parser->getUseTabs() ) ;
         $smarty->assign ( 'tabDefs', $parser->getTabDefs() ) ;
+        // no tabs and collapse for preview
+        if ($this->editLayout === MB_PREVIEWVIEW) {
+            $smarty->assign('no_tabs', true);
+            $smarty->assign('no_collapse', true);
+        }
         $smarty->assign ( 'syncDetailEditViews', $parser->getSyncDetailEditViews() ) ;
         $smarty->assign('fieldwidth', 300 / $parser->getMaxColumns());
         // Bug 57260 - LBL_PANEL_DEFAULT not translated for undeployed modules in layout editor

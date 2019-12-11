@@ -116,6 +116,7 @@ class ModuleBuilderController extends SugarController
                 case MB_QUICKCREATE :
                 case MB_RECORDVIEW :
                 case MB_RECORDDASHLETVIEW:
+                case MB_PREVIEWVIEW:
                 case MB_WIRELESSEDITVIEW :
                 case MB_WIRELESSDETAILVIEW :
                     $this->view = 'layoutView';
