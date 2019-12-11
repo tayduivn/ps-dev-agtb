@@ -27,8 +27,8 @@ class RelatedValueApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('ExpressionEngine', '?', 'related'),
                 'pathVars' => array('', 'record', ''),
-                'method' => 'getRelatedValues',
-                'shortHelp' => 'Retrieve the Chart data for the given data in the Forecast Module',
+                'method' => 'deprecatedGetRelatedValues',
+                'shortHelp' => 'Retrieve the Chart data for the given data in the Forecast Module (deprecated)',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastChartApi.html',
             ),
             'post_related_value' => array(
@@ -41,6 +41,19 @@ class RelatedValueApi extends SugarApi
             ),
         );
         return $parentApi;
+    }
+
+    /**
+     * Extends the functionality of getRelatedValues to produce a warning for
+     * the deprecated GET ExpressionEngine/:record/related endpoint
+     */
+    public function deprecatedGetRelatedValues(ServiceBase $api, array $args)
+    {
+        LoggerManager::getLogger()->deprecated(
+            'GET ExpressionEngine/:record/related is deprecated as of 10.0. 
+            Use POST ExpressionEngine/:record/related instead.'
+        );
+        return $this->getRelatedValues($api, $args);
     }
 
     /**
