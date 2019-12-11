@@ -32,6 +32,7 @@ export default class DateField extends BaseField {
 
     public async setValue(val: any): Promise<void> {
         await this.driver.setValue(this.$('field.selector'), val);
+        await this.driver.execSync('blurActiveElement');
     }
 
     protected prepareValues(
