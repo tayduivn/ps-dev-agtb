@@ -1325,6 +1325,9 @@ class Email extends SugarBean {
 		}
 
         if (!empty($request['fromAccount']) && !empty($sentMessage) && !empty($this->outbound_email_id)) {
+            /**
+             * @var \InboundEmail $ie
+             */
             $ie = BeanFactory::getBean('InboundEmail', $request['fromAccount']);
             $oe = new OutboundEmail();
             $oe->retrieve($this->outbound_email_id);
@@ -1336,9 +1339,9 @@ class Email extends SugarBean {
                     $ie->mailbox = $sentFolder;
 
                     if ($ie->connectMailserver() == 'true') {
-                        $connectString = $ie->getConnectString($ie->getServiceString(), $ie->mailbox);
+                        $mailbox = $ie->getMailbox($ie->getServiceString(), $ie->mailbox);
 
-                        if (imap_append($ie->conn, $connectString, $sentMessage, '\\Seen')) {
+                        if (imap_append($ie->conn, $mailbox->value(), $sentMessage, '\\Seen')) {
                             $GLOBALS['log']->info("copied email ({$this->id}) to {$ie->mailbox} for {$ie->name}");
                         } else {
                             $GLOBALS['log']->debug("could not copy email to {$ie->mailbox} for {$ie->name}");

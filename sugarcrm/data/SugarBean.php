@@ -1932,7 +1932,7 @@ class SugarBean
         $this->saveData($isUpdate, $check_notify);
 
         if ($isUpdate) {
-            $nonEmptyFields = array_keys(array_filter($this->toArray(true)));
+            $nonEmptyFields = array_keys(array_filter($this->toArray()));
             $this->getErasedFieldsRepository()->removeBeanFields(
                 $this->getTableName(),
                 $this->id,
@@ -7369,34 +7369,19 @@ class SugarBean
         return $array_assign;
     }
 
-    /**
-    * returns this bean as an array
-    *
-    * @return array of fields with id, name, access and category
-    */
-    function toArray($dbOnly = false, $stringOnly = false, $upperKeys=false)
-    {
-        static $cache = array();
-        $arr = array();
 
-        foreach($this->field_defs as $field=>$data)
-        {
-            if( !$dbOnly || !isset($data['source']) || $data['source'] == 'db')
-            if(!$stringOnly || is_string($this->$field))
-            if($upperKeys)
-            {
-                                if(!isset($cache[$field])){
-                                    $cache[$field] = strtoupper($field);
-                                }
-                $arr[$cache[$field]] = $this->$field;
-            }
-            else
-            {
-                if(isset($this->$field)){
-                    $arr[$field] = $this->$field;
-                }else{
-                    $arr[$field] = '';
-                }
+    /**
+     * Returns an associative array where the keys are the names of the fields described in vardefs and the values are their values
+     * @param bool $dbOnly Deprecated, the flag whether to return only fields that are stored in the database
+     * @final
+     * @return array
+     */
+    public function toArray(bool $dbOnly = false): array
+    {
+        $arr = [];
+        foreach ($this->field_defs as $field => $data) {
+            if (!$dbOnly || !isset($data['source']) || $data['source'] === 'db') {
+                $arr[$field] = $this->$field ?? '';
             }
         }
         return $arr;

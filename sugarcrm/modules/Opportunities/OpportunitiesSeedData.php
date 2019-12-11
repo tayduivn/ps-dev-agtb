@@ -70,7 +70,8 @@ class OpportunitiesSeedData {
         /* @var $opp Opportunity */
         $opp = BeanFactory::newBean('Opportunities');
         $oppFieldDefs = $opp->getFieldDefinitions();
-        $oppSql = 'INSERT INTO '. $opp->table_name . ' ('. join(',', array_keys($opp->toArray(true))) . ') VALUES';
+        $oppDbData = self::toDatabaseArray($opp);
+        $oppSql = 'INSERT INTO '. $opp->table_name . ' ('. join(',', array_keys($oppDbData)) . ') VALUES';
         $oppRows = array();
         $oppAccRows = array();
         $oppAccRow = array(
@@ -113,7 +114,8 @@ class OpportunitiesSeedData {
 
         $fwFieldDefs = $fw->getFieldDefinitions();
         $fwRows = array();
-        $fwSql = 'INSERT INTO ' . $fw->table_name . '(' . join(',', array_keys($fw->toArray(true))) . ') VALUES';
+        $fwDbData = self::toDatabaseArray($fw);
+        $fwSql = 'INSERT INTO ' . $fw->table_name . '(' . join(',', array_keys($fwDbData)) . ') VALUES';
 
         while ($records-- > 0) {
             $key = array_rand($accounts);
@@ -189,7 +191,7 @@ class OpportunitiesSeedData {
                 $return = static::createRevenueLineItems($opp, rand(3, 5), $app_list_strings);
             }
             // END SUGARCRM flav=ent ONLY
-            $values = array_merge($opp->toArray(true), $return);
+            $values = array_merge(self::toDatabaseArray($opp), $return);
 
             $sqlValues = array();
             foreach($values as $key => $value) {
@@ -204,7 +206,7 @@ class OpportunitiesSeedData {
 
                 $fw->id = create_guid();
                 $fw->parent_id = $opp->id;
-                $fwValues = $fw->toArray(true);
+                $fwValues = self::toDatabaseArray($fw);
 
                 $sqlValues = array();
                 foreach ($fwValues as $key => $value) {
@@ -297,13 +299,15 @@ class OpportunitiesSeedData {
 
             $fwFieldDefs = $fw->getFieldDefinitions();
             $fwRows = array();
-            $fwSql = 'INSERT INTO ' . $fw->table_name . '(' . join(',', array_keys($fw->toArray(true))) . ') VALUES';
+            $fwDbData = self::toDatabaseArray($fw);
+            $fwSql = 'INSERT INTO ' . $fw->table_name . '(' . join(',', array_keys($fwDbData)) . ') VALUES';
 
             /* @var $rli RevenueLineItem */
             $rli = BeanFactory::newBean('RevenueLineItems');
             $rliFieldDefs = $rli->getFieldDefinitions();
             $rliSql = array();
-            $sqlRli = 'INSERT INTO '. $rli->table_name . '('. join(',', array_keys($rli->toArray(true))) . ') VALUES';
+            $rliDbData = self::toDatabaseArray($rli);
+            $sqlRli = 'INSERT INTO '. $rli->table_name . '('. join(',', array_keys($rliDbData)) . ') VALUES';
 
             foreach (array_keys($serviceOpp) as $arrKey) {
                 $rli->$arrKey = $serviceOpp[$arrKey];
@@ -324,7 +328,7 @@ class OpportunitiesSeedData {
 
             $opp->name = $rli->name;
 
-            $values = $rli->toArray(true);
+            $values = self::toDatabaseArray($rli);
 
             $sqlValues = array();
             foreach ($values as $key => $value) {
@@ -337,7 +341,7 @@ class OpportunitiesSeedData {
 
             $fw->id = create_guid();
             $fw->parent_id = $rli->id;
-            $fwValues = $fw->toArray(true);
+            $fwValues = self::toDatabaseArray($fw);
             $sqlValues = array();
             foreach ($fwValues as $key => $value) {
                 $sqlValues[$key] = self::$db->massageValue($value, $fwFieldDefs[$key]);
@@ -415,7 +419,7 @@ class OpportunitiesSeedData {
                 }
             }
 
-            $oppSql = 'INSERT INTO '. $opp->table_name . ' ('. join(',', array_keys($opp->toArray(true))) . ') VALUES';
+            $oppSql = 'INSERT INTO '. $opp->table_name . ' ('. join(',', array_keys(self::toDatabaseArray($opp))) . ') VALUES';
             $oppRows = array();
             $oppAccRows = array();
             $oppAccRow = array(
@@ -433,7 +437,7 @@ class OpportunitiesSeedData {
                     'opportunity_id' => self::$db->quoted($opp->id),
                 ))) . ')';
 
-            $values = array_merge($opp->toArray(true), $return);
+            $values = array_merge(self::toDatabaseArray($opp), $return);
 
             $sqlValues = array();
             foreach ($values as $key => $value) {
@@ -448,7 +452,7 @@ class OpportunitiesSeedData {
 
                 $fw->id = create_guid();
                 $fw->parent_id = $opp->id;
-                $fwValues = $fw->toArray(true);
+                $fwValues = self::toDatabaseArray($fw);
 
                 $sqlValues = array();
                 foreach ($fwValues as $key => $value) {
@@ -506,7 +510,7 @@ class OpportunitiesSeedData {
         $rli = BeanFactory::newBean('RevenueLineItems');
         $rliFieldDefs = $rli->getFieldDefinitions();
         $rliSql = array();
-        $sqlRli = 'INSERT INTO '. $rli->table_name . '('. join(',', array_keys($rli->toArray(true))) . ') VALUES';
+        $sqlRli = 'INSERT INTO '. $rli->table_name . '('. join(',', array_keys(self::toDatabaseArray($rli))) . ') VALUES';
 
 
         /* @var $fw ForecastWorksheet */
@@ -519,7 +523,7 @@ class OpportunitiesSeedData {
         $fw->created_by = $opp->created_by;
         $fwFieldDefs = $fw->getFieldDefinitions();
         $fwRows = array();
-        $fwSql = 'INSERT INTO '. $fw->table_name . '('. join(',', array_keys($fw->toArray(true))) . ') VALUES';
+        $fwSql = 'INSERT INTO '. $fw->table_name . '('. join(',', array_keys(self::toDatabaseArray($fw))) . ') VALUES';
 
         $opp_date_closed = '';
         $opp_date_closed_timestamp = 0;
@@ -658,7 +662,8 @@ class OpportunitiesSeedData {
             $rli->modified_user_id = $opp->modified_user_id;
             $rli->created_by = $opp->created_by;
 
-            $values = $rli->toArray(true);
+
+            $values = self::toDatabaseArray($rli);
 
             $sqlValues = array();
             foreach($values as $key => $value) {
@@ -671,7 +676,7 @@ class OpportunitiesSeedData {
 
             $fw->id = create_guid();
             $fw->parent_id = $rli->id;
-            $fwValues = $fw->toArray(true);
+            $fwValues = self::toDatabaseArray($fw);
 
             $sqlValues = array();
             foreach($fwValues as $key => $value) {
@@ -864,5 +869,17 @@ class OpportunitiesSeedData {
         $now->setTime(0, 0, 0); // always default it to midnight
         return $timedate->asDbDate($now->get_day_begin($day));
     }
-}
 
+    /**
+     * Returns an associative array where the keys are the names of the fields that are stored in the database and the values are their values
+     * @param SugarBean $bean
+     * @return array
+     */
+    private static function toDatabaseArray(SugarBean $bean): array
+    {
+        return array_filter($bean->toArray(), static function ($key) use ($bean) : bool {
+            $data = $bean->field_defs[$key];
+            return !isset($data['source']) || $data['source'] === 'db';
+        }, ARRAY_FILTER_USE_KEY);
+    }
+}

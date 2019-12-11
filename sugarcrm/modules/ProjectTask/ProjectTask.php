@@ -359,7 +359,7 @@ class ProjectTask extends SugarBean {
                 $tasks = array();
                 foreach($subProjectTasks as &$task)
                 {
-                    array_push($tasks, $task->toArray(true));
+                    array_push($tasks, $task->toArray());
                 }
                 $parentProjectTask->percent_complete = $this->_calculateCompletePercent($tasks);
                 unset($tasks);

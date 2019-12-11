@@ -355,9 +355,10 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowBeanMock));
 
+        $toArrayData = ['foo' => 'bar'];
         $flowBeanMock->expects($this->once())
                 ->method('toArray')
-                ->will($this->returnValue('toArrayData'));
+                ->will($this->returnValue($toArrayData));
 
         $flowData = array(
             'id' => 'abc123',
@@ -368,7 +369,7 @@ class PMSECaseFlowHandlerTest extends TestCase
         );
 
         $result = $caseFlowHandlerMock->saveFlowData($flowData);
-        $this->assertEquals($result, 'toArrayData');
+        $this->assertEquals($result, $toArrayData);
     }
 
     public function testSaveFlowDataWithThread()
@@ -394,9 +395,10 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowBeanMock));
 
+        $toArrayData = ['foo' => 'bar'];
         $flowBeanMock->expects($this->once())
                 ->method('toArray')
-                ->will($this->returnValue('toArrayData'));
+                ->will($this->returnValue($toArrayData));
 
         $flowData = array(
             'id' => 'abc123',
@@ -407,7 +409,7 @@ class PMSECaseFlowHandlerTest extends TestCase
         );
 
         $result = $caseFlowHandlerMock->saveFlowData($flowData, true, 'abc123');
-        $this->assertEquals($result, 'toArrayData');
+        $this->assertEquals($result, $toArrayData);
     }
 
     public function testProcessFlowData()

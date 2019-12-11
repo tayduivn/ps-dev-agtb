@@ -783,7 +783,7 @@ abstract class DBManager implements LoggerAwareInterface
         return $this->insertParams(
             $bean->getTableName(),
             $bean->getFieldDefinitions(),
-            get_object_vars($bean)
+            $bean->toArray()
         );
 	}
 
@@ -3363,7 +3363,7 @@ abstract class DBManager implements LoggerAwareInterface
         }
 
         // remove fields which do not present in the current state
-        $fields = array_intersect_key($fields, (array) $bean);
+        $fields = array_intersect_key($fields, $bean->toArray());
 
         if (is_array($fields) and count($fields) > 0) {
             foreach ($fields as $field => $vardefs) {

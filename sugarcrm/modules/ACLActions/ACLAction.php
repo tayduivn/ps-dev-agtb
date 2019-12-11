@@ -581,34 +581,6 @@ SQL;
 
 
     /**
-    * function toArray()
-    * returns this acl as an array
-    *
-    * @return array of fields with id, name, access and category
-    */
-    public function toArray($dbOnly = false, $stringOnly = false, $upperKeys=false)
-    {
-        $array_fields = array('id', 'aclaccess');
-        $arr = array();
-        foreach($array_fields as $field){
-            $arr[$field] = $this->$field;
-        }
-        return $arr;
-    }
-
-    /**
-    * function fromArray($arr)
-    * converts an array into an acl mapping name value pairs into files
-    *
-    * @param Array $arr
-    */
-    function fromArray($arr){
-        foreach($arr as $name=>$value){
-            $this->$name = $value;
-        }
-    }
-
-    /**
      * @deprecated
      */
     public function clearSessionCache()
