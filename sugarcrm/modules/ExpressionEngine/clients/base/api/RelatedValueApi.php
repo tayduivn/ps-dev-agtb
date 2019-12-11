@@ -31,6 +31,14 @@ class RelatedValueApi extends SugarApi
                 'shortHelp' => 'Retrieve the Chart data for the given data in the Forecast Module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastChartApi.html',
             ),
+            'post_related_value' => array(
+                'reqType' => 'POST',
+                'path' => array('ExpressionEngine', '?', 'related'),
+                'pathVars' => array('', 'record', ''),
+                'method' => 'getRelatedValues',
+                'shortHelp' => 'Retrieves the related fields for a given module record',
+                'longHelp' => 'modules/ExpressionEngine/clients/base/api/help/related_value_api_post_help.html',
+            ),
         );
         return $parentApi;
     }
@@ -41,12 +49,16 @@ class RelatedValueApi extends SugarApi
      */
     public function getRelatedValues(ServiceBase $api, array $args)
     {
-        if (empty($args['module']) || empty($args['fields'])) {
-            return;
-        }
-        $fields = json_decode(html_entity_decode($args['fields']), true);
-        $focus = $this->loadBean($api, $args);
         $ret = array();
+        if (empty($args['module']) || empty($args['fields'])) {
+            return $ret;
+        }
+        if (is_array($args['fields'])) {
+            $fields = $args['fields'];
+        } else {
+            $fields = json_decode(html_entity_decode($args['fields']), true);
+        }
+        $focus = $this->loadBean($api, $args);
         foreach ($fields as $rfDef) {
             if (!isset($rfDef['link']) || !isset($rfDef['type'])) {
                 continue;

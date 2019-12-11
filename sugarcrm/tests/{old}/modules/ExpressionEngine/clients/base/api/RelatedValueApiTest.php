@@ -57,20 +57,36 @@ class RelatedValueApiTest extends TestCase
      * @param array $fields
      * @param mixed $expected
      * @param bool $setRelatedId
+     * @param bool $skipEncoding
      * @dataProvider relatedProvider
      */
-    public function testRelatedValue($fields, $expected, $setRelatedId)
+    public function testRelatedValue($fields, $expected, $setRelatedId, $skipEncoding = false)
     {
         if ($setRelatedId) {
             $fields['contacts']['relId'] = $this->contact->id;
             $expected['contacts']['relId'] = $this->contact->id;
         }
-        $encoded_fields = json_encode($fields);
+        if (empty($skipEncoding)) {
+            $fields = json_encode($fields);
+        }
         $result = $this->api->getRelatedValues(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'fields' => $encoded_fields, 'record' => $this->account->id)
+            array('module' => 'Accounts', 'fields' => $fields, 'record' => $this->account->id)
         );
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the related value API where the fields argument is an array, not an
+     * encoded URL (i.e. using the POST endpoint)
+     * @param $fields
+     * @param $expected
+     * @param $setRelatedId
+     * @dataProvider relatedProvider
+     */
+    public function testRelatedValuePost($fields, $expected, $setRelatedId)
+    {
+        $this->testRelatedValue($fields, $expected, $setRelatedId, true);
     }
 
     public function relatedProvider()

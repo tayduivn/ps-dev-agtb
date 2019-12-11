@@ -44,7 +44,7 @@ describe('SumRelatedExpression Function', function() {
     var seedServer = function() {
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith(
-            'GET',
+            'POST',
             /.*\/rest\/v10\/ExpressionEngine\/quote_id_1\/related.*/, //new RegExp('.*/rest/v10/ExpressionEngine/.*'),
             [
                 200,
@@ -64,7 +64,7 @@ describe('SumRelatedExpression Function', function() {
             ]
         );
         SugarTest.server.respondWith(
-            'GET',
+            'POST',
             /.*\/rest\/v10\/ExpressionEngine\/bundle_id_1\/related.*/, //new RegExp('.*/rest/v10/ExpressionEngine/.*'),
             [
                 200,
