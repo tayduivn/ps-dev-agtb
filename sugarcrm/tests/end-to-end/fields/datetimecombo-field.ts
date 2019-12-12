@@ -8,13 +8,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import {BaseField} from './base-field';
+import DateField from "./date-field";
 
 /**
  * @class DatetimecomboField
- * @extends BaseField
+ * @extends DateField
  */
-export default class DatetimecomboField extends BaseField {
+export default class DatetimecomboField extends DateField {
 
     constructor(options) {
         super(options);
@@ -48,6 +48,12 @@ export default class DatetimecomboField extends BaseField {
             await this.driver.click('li=' + time.trim());
         }
         await this.driver.click('body');
+    }
+
+    protected getDateTimePref(): string {
+        let datePref = this.getAdminPreference('datepref');
+        let timePref = this.getAdminPreference('timepref');
+        return datePref + ' ' + timePref;
     }
 }
 

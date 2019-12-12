@@ -9,6 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 import {BaseField} from './base-field';
+import {seedbed} from "@sugarcrm/seedbed";
+import {config} from "../config";
+import * as _ from "underscore";
 
 /**
  * @class DateField
@@ -29,6 +32,51 @@ export default class DateField extends BaseField {
 
     public async setValue(val: any): Promise<void> {
         await this.driver.setValue(this.$('field.selector'), val);
+    }
+
+    protected prepareValues(
+        actualValue: string,
+        expectedValue: string
+    ): string[] {
+        let values = super.prepareValues(actualValue, expectedValue);
+        values[1] = seedbed.support.fixDateInput(values[1], this.convertFormat(this.getDateTimePref()));
+        return values;
+    }
+
+    protected getDateTimePref(): string {
+        return this.getAdminPreference('datepref');
+    }
+
+    protected getAdminPreference(pref: string): string {
+        return config.users.admin.defaultPreferences[pref];
+    }
+
+    /**
+     * Convert Sugar server to momentjs format
+     * @param {string} server
+     * @returns {string}
+     */
+    private convertFormat(server: string): string {
+
+        let convertTable = [
+            // date
+            ['d', 'DD'],  // day of the month w\ leading zeros
+            ['m', 'MM'],  // numeric month w\ leading zeros
+            ['Y', 'YYYY'],  // full numeric year
+            // time
+            ['H', 'HH'], // 24-hour format w\ leading zeros
+            ['h', 'hh'], // 12-hour format w\ leading zeros
+            ['G', 'H'], // 24-hour format without leading zeros
+            ['g', 'h'], // 12-hour format without leading zeros
+            ['i', 'mm'], // minutes w\ leading zeros
+        ];
+
+        var client = server;
+        _.each(convertTable, conversion => {
+            let [from, to] = conversion;
+            client = client.replace(from, to);
+        });
+        return client;
     }
 }
 
