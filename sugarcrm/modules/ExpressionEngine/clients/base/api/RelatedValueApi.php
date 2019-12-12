@@ -23,21 +23,23 @@ class RelatedValueApi extends SugarApi
     public function registerApiRest()
     {
         $parentApi = array(
-            'related_value' => array(
+            'related_value_deprecated' => array(
                 'reqType' => 'GET',
                 'path' => array('ExpressionEngine', '?', 'related'),
                 'pathVars' => array('', 'record', ''),
                 'method' => 'deprecatedGetRelatedValues',
                 'shortHelp' => 'Retrieve the Chart data for the given data in the Forecast Module (deprecated)',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastChartApi.html',
+                'maxVersion' => '12',
             ),
-            'post_related_value' => array(
+            'related_value' => array(
                 'reqType' => 'POST',
                 'path' => array('ExpressionEngine', '?', 'related'),
                 'pathVars' => array('', 'record', ''),
                 'method' => 'getRelatedValues',
                 'shortHelp' => 'Retrieves the related fields for a given module record',
                 'longHelp' => 'modules/ExpressionEngine/clients/base/api/help/related_value_api_post_help.html',
+                'minVersion' => '11.8',
             ),
         );
         return $parentApi;
