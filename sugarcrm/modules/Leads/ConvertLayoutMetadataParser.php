@@ -31,6 +31,7 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
         'Activities',
         'Products',
         'ProductTemplates',
+        'ProductBundles',
         'Leads',
         'Users',
         'pmse_Business_Rules',
