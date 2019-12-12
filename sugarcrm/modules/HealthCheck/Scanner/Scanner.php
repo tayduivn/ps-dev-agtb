@@ -4142,6 +4142,14 @@ ENDP;
             return false;
         }
 
+        // ignore entryPoint session error when running healthcheck on php7.3+
+        if (basename($errfile) === 'entryPoint.php'
+            && !empty($errstr)
+            && strpos($errstr, 'session_set_save_handler') !== false
+        ) {
+            return false;
+        }
+
         switch ($errno) {
             case 1:     $e_type = 'E_ERROR'; break;
             case 2:     $e_type = 'E_WARNING'; break;
