@@ -182,7 +182,7 @@ class SidecarTheme
             if (!isset($this->variables['baseUrl'])) {
                 //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/FILE.css
                 //              to   /styleguide/assets/
-                $this->setVariable('baseUrl', '"../../../../styleguide/assets"');
+                $this->setVariable('baseUrl', '"../../../../../styleguide/assets"');
             }
             $this->compiler->setVariables($this->loadVariables());
 
