@@ -3744,7 +3744,10 @@ class HealthCheckScanner
         $this->bwcModulesHash = array_flip($this->bwcModules);
 
         // turn on AdminWork
-        Sugarcrm\Sugarcrm\AccessControl\AccessControlManager::instance()->setAdminWork(true, true);
+        if (class_exists('Sugarcrm\Sugarcrm\AccessControl\AccessControlManager')) {
+            Sugarcrm\Sugarcrm\AccessControl\AccessControlManager::instance()->setAdminWork(true, true);
+        }
+
         return true;
     }
 
