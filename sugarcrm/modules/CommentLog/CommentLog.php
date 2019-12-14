@@ -24,7 +24,6 @@ class CommentLog extends Basic
     public $module_name = 'CommentLog';
     public $table_name = 'commentlog';
     public $new_schema = true;
-    public $importable = true;
     public $entry;
 
     /**

@@ -50,6 +50,14 @@ class CommentLogTest extends TestCase
     }
 
     /**
+     * Test that comment log is not importable
+     */
+    public function testNotImportable()
+    {
+        $this->assertFalse($this->bean->importable);
+    }
+
+    /**
      * Removes the commentlog in $created_commentlogs
      */
     public function removeCommentLog()
