@@ -130,6 +130,7 @@ $viewdefs['Opportunities']['base']['view']['multi-line-list'] = [
         'params' => [
             'max_num' => 100,
             'order_by' => 'date_closed',
+            'nulls_last' => true,
         ],
     ],
 ];
