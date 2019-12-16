@@ -373,6 +373,22 @@ $dictionary['Contact'] = array(
                 'account_name'
             )
         ),
+        'case_contact' => [
+            'name' => 'case_contact',
+            'type' => 'link',
+            'relationship' => 'contact_cases',
+            'source' => 'non-db',
+            'side' => 'right',
+            'vname' => 'LBL_CONTACT',
+            'module' => 'Cases',
+            'bean_name' => 'aCase',
+            'id_name' => 'primary_contact_id',
+            'link_type' => 'one',
+            'populate_list' => [
+                'account_id',
+                'account_name',
+            ],
+        ],
         'dataprivacy' => array(
             'name' => 'dataprivacy',
             'type' => 'link',

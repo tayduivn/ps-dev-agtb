@@ -74,6 +74,33 @@ class CaseTest extends TestCase
     }
 
     /**
+     * @param string $primary_contact_id The Primary Contact Id
+     * @dataProvider updatePrimaryContactOnSaveProvider
+     */
+    public function testUpdatePrimaryContactOnSave(string $primary_contact_id)
+    {
+        $this->case = SugarTestCaseUtilities::createCase(
+            null,
+            [
+                'new_rel_id' => '0123456789',
+                'new_rel_relname' => 'case_contact',
+                'primary_contact_id' => $primary_contact_id,
+            ]
+        );
+        $this->case->save();
+        $this->assertSame($primary_contact_id, $this->case->new_rel_id);
+    }
+
+    public function updatePrimaryContactOnSaveProvider(): array
+    {
+        return [
+            [''],
+            ['0123456789'],
+            ['9876543210'],
+        ];
+    }
+
+    /**
      * Test whether save method update business center from related account when empty
      * @param null|string $businessCenterId The id of business center
      * @param string $accountId The id of account

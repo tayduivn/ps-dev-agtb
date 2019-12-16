@@ -322,6 +322,10 @@ $dictionary['Case'] = array(
             'id_name' => 'primary_contact_id',
             'link_type' => 'one',
             'audited' => true,
+            'populate_list' => [
+                'account_id',
+                'account_name',
+            ],
         ],
     ),
     'indices' => array(

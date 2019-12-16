@@ -191,6 +191,16 @@ class aCase extends Issue
             }
         }
 
+        // When new_rel_relname & new_rel_id are added by RelateRecordApi, parent id is set to new_rel_id by default.
+        // Once the new_rel_relname is case_contact and primary_contact_name is set (because we allow users to modify),
+        // we want to make sure the primary contact id is set for new_rel_id.
+        if (!empty($this->new_rel_id) &&
+            !empty($this->new_rel_relname) &&
+            $this->new_rel_relname === 'case_contact' &&
+            $this->new_rel_id !== $this->primary_contact_id) {
+            $this->new_rel_id = $this->primary_contact_id;
+        }
+
         // if first_response_sent changing from false to true
         if (empty($this->fetched_row['first_response_sent']) && !empty($this->first_response_sent)) {
             $this->handleSLAFields();
