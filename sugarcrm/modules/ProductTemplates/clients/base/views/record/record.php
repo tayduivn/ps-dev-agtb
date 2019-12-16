@@ -224,6 +224,7 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                 'support_description',
                 'support_contact',
                 'support_term',
+                'team_name',
                 array(
                     'name' => 'tag',
                     'span' => 12,

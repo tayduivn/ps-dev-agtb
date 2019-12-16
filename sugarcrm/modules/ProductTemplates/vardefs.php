@@ -422,7 +422,6 @@ $dictionary['ProductTemplate'] = array(
             'relationship_type' => 'one-to-many'
         ),
     ),
-    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
     'indices' => array (
         array('name' => 'idx_producttemplate_status', 'type' => 'index', 'fields' => array('status')),
         array('name' => 'idx_producttemplate_qty_in_stock', 'type' => 'index', 'fields' => array('qty_in_stock')),
@@ -436,6 +435,7 @@ VardefManager::createVardef(
     array(
         'default',
         'assignable',
-        'currency'
+        'currency',
+        'team_security',
     )
 );

@@ -14,6 +14,7 @@ $moduleList = array();
 // this list defines the modules shown in the top tab list of the app
 //the order of this list is the default order displayed - do not change the order unless it is on purpose
 $moduleList[] = 'Home';
+$moduleList[] = 'ProductTemplates';
 $moduleList[] = 'Calendar';
 $moduleList[] = 'Calls';
 $moduleList[] = 'Meetings';
@@ -386,7 +387,7 @@ $beanFiles['DataPrivacy'] = 'modules/DataPrivacy/DataPrivacy.php';
 $beanFiles['ReportSchedule'] = 'modules/ReportSchedules/ReportSchedule.php';
 
 // added these lists for security settings for tabs
-$modInvisList = array('Administration', 'CustomFields', 'Connectors',
+$modInvisList = array('Administration', 'CustomFields', 'Connectors', 'ProductTemplates',
     'Dropdown', 'Dynamic', 'DynamicFields', 'DynamicLayout', 'EditCustomFields',
     'Help', 'Import',  'MySettings', 'EditCustomFields','FieldsMetaData',
     'UpgradeWizard', 'Trackers', 'Connectors', 'Employees', 'Calendar',

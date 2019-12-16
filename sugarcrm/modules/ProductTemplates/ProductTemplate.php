@@ -52,7 +52,8 @@ class ProductTemplate extends SugarBean {
 	var $pricing_factor;
     var $currency_symbol;
 	var $default_currency_symbol;
-	var $tax_class_name;
+    public $tax_class_name;
+    public $team_id;
 
 
 	// These are for related fields
@@ -93,6 +94,13 @@ class ProductTemplate extends SugarBean {
 	public function __construct() {
 		parent::__construct();
 		$this->disable_row_level_security =true;
+
+        global $current_user;
+        if (!empty($current_user)) {
+            $this->team_id = $current_user->default_team; //default_team is a team id
+        } else {
+            $this->team_id = 1; // make the item globally accessible
+        }
 
 		$currency = BeanFactory::newBean('Currencies');
 		$this->default_currency_symbol = $currency->getDefaultCurrencySymbol();
@@ -159,6 +167,18 @@ class ProductTemplate extends SugarBean {
 
 		$this->tax_class_name = (!empty($this->tax_class) && !empty($app_list_strings['tax_class_dom'][$this->tax_class])) ? $app_list_strings['tax_class_dom'][$this->tax_class] : "";
 	}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+        return false;
+    }
 
     /**
      * @deprecated

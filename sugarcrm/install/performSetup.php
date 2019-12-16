@@ -495,6 +495,7 @@ $enabled_tabs[] = 'Tasks';
 $enabled_tabs[] = 'Notes';
 $enabled_tabs[] = 'Forecasts';
 $enabled_tabs[] = 'Cases';
+$enabled_tabs[] = 'ProductTemplates';
 $enabled_tabs[] = 'Prospects';
 $enabled_tabs[] = 'ProspectLists';
 $enabled_tabs[] = 'Tags';
