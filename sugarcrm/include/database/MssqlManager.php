@@ -900,10 +900,14 @@ WHERE TABLE_NAME = ?
         '%Y-%m-%d' => 10,
         '%Y-%m' => 7,
         '%Y' => 4,
-        '%v' => array(
+        '%v' => [
             'format' => 'isoww',
             'function' => 'datepart',
-        ),
+        ],
+        '%u' => [
+            'format' => 'week',
+            'function' => 'datepart',
+        ],
     );
 
     /**
