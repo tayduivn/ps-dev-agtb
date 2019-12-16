@@ -117,6 +117,7 @@ $viewdefs['Accounts']['base']['view']['multi-line-list'] = [
         'params' => [
             'max_num' => 100,
             'order_by' => 'date_modified',
+            'nulls_last' => true,
         ],
     ],
     'filterDef' => [
