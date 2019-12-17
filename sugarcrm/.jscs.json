@@ -12,7 +12,6 @@
         "include/javascript/jquery/**",
         "include/javascript/mousetrap/**",
         "include/javascript/nprogress/**",
-        "include/javascript/nvd3/**",
         "include/javascript/phaser/**",
         "include/javascript/d3-sugar/**",
         "include/javascript/sucrose/**",

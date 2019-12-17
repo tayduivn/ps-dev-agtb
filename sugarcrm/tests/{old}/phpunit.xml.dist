@@ -117,7 +117,6 @@
             <file>./upgrade/UpgradeFixPdfTest.php</file>
             <file>./upgrade/UpgradeMigrateDashableLists.php</file>
             <file>./upgrade/scripts/post/RemoveDuplicateAccountsContactsTest.php</file>
-            <directory>./include/Dashlets</directory>
             <directory>./include/MassUpdate</directory>
             <directory>./include/tcpdf</directory>
             <directory>./modules/Accounts/</directory>

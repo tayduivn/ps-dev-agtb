@@ -26,8 +26,6 @@ define('MB_SIDECARDUPECHECKVIEW', 'dupecheck-list');
 define('MB_SEARCHVIEW', 'searchview');
 define('MB_BASICSEARCH', 'basic_search' );
 define('MB_ADVANCEDSEARCH', 'advanced_search' );
-define('MB_DASHLET', 'dashlet');
-define('MB_DASHLETSEARCH', 'dashletsearch');
 define('MB_EDITVIEW', 'editview');
 define('MB_DETAILVIEW', 'detailview');
 define('MB_QUICKCREATE', 'quickcreate');

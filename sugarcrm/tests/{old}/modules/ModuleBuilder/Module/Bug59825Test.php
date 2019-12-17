@@ -70,8 +70,6 @@ class Bug59825Test extends TestCase
             array('type' => MB_LISTVIEW),
             array('type' => MB_BASICSEARCH),
             array('type' => MB_ADVANCEDSEARCH),
-            array('type' => MB_DASHLET),
-            array('type' => MB_DASHLETSEARCH),
             array('type' => MB_POPUPLIST),
             array('type' => MB_QUICKCREATE),
             // Wireless types

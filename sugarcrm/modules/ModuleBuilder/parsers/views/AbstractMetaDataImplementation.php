@@ -52,8 +52,6 @@ abstract class AbstractMetaDataImplementation
     protected $_sourceFilename = '' ; // the name of the file from which we loaded the definition we're working on - needed when we come to write out the historical record
     // would like this to be a constant, but alas, constants cannot contain arrays...
     protected $_fileVariables = array (
-    MB_DASHLETSEARCH            => 'dashletData',
-    MB_DASHLET                  => 'dashletData',
     MB_POPUPSEARCH              => 'popupMeta',
     MB_POPUPLIST                => 'popupMeta',
     MB_LISTVIEW                 => 'listViewDefs',

@@ -131,11 +131,8 @@ class ModuleInstaller
         $tasks = array(
             'pre_execute',
             'install_copy',
-            'update_wireless_metadata',
             'install_extensions',
             'install_images',
-            'install_dcactions',
-            'install_dashlets',
             'install_connectors',
             'install_layoutfields',
             'install_relationships',
@@ -938,79 +935,12 @@ class ModuleInstaller
         $this->rebuild_extensions($this->modulesInPackage);
     }
 
-    function install_dashlets()
-    {
-        if(isset($this->installdefs['dashlets'])){
-            foreach($this->installdefs['dashlets'] as $cp){
-                $this->log(translate('LBL_MI_IN_DASHLETS') . $cp['name']);
-                $cp['from'] = str_replace('<basepath>', $this->base_dir, $cp['from']);
-                $path = 'custom/modules/Home/Dashlets/' . $cp['name'] . '/';
-                $GLOBALS['log']->debug("Installing Dashlet " . $cp['name'] . "..." . $cp['from'] );
-                if(!file_exists($path)){
-                    mkdir_recursive($path, true);
-                }
-                copy_recursive($cp['from'] , $path);
-            }
-            include('modules/Administration/RebuildDashlets.php');
-
-        }
-    }
-
-    function uninstall_dashlets(){
-        if(isset($this->installdefs['dashlets'])){
-            foreach($this->installdefs['dashlets'] as $cp){
-                $this->log(translate('LBL_MI_UN_DASHLETS') . $cp['name']);
-                $path = 'custom/modules/Home/Dashlets/' . $cp['name'];
-                $GLOBALS['log']->debug('Unlink ' .$path);
-                if (file_exists($path))
-                    rmdir_recursive($path);
-            }
-            include('modules/Administration/RebuildDashlets.php');
-        }
-    }
-
 
     function install_images(){
         if(isset($this->installdefs['image_dir'])){
             $this->log( translate('LBL_MI_IN_IMAGES') );
             $this->copy_path($this->installdefs['image_dir'] , 'custom/themes');
 
-        }
-    }
-
-    function install_dcactions(){
-        if(isset($this->installdefs['dcaction'])){
-            $this->log(translate('LBL_MI_IN_MENUS'));
-            foreach($this->installdefs['dcaction'] as $action){
-                $action['from'] = str_replace('<basepath>', $this->base_dir, $action['from']);
-                $GLOBALS['log']->debug("Installing DCActions ..." . $action['from']);
-                $path = 'custom/Extension/application/Ext/DashletContainer/Containers';
-                if(!file_exists($path)){
-                    mkdir_recursive($path, true);
-                }
-                copy_recursive($action['from'] , $path . '/'. $this->id_name . '.php');
-            }
-            $this->rebuild_dashletcontainers();
-        }
-    }
-
-    function uninstall_dcactions(){
-        if(isset($this->installdefs['dcaction'])){
-            $this->log(translate('LBL_MI_UN_MENUS'));
-            foreach($this->installdefs['dcaction'] as $action){
-                $action['from'] = str_replace('<basepath>', $this->base_dir, $action['from']);
-                $GLOBALS['log']->debug("Uninstalling DCActions ..." . $action['from'] );
-                $path = 'custom/Extension/application/Ext/DashletContainer/Containers';
-                if (sugar_is_file($path . '/'. $this->id_name . '.php', 'w'))
-                {
-                    rmdir_recursive( $path . '/'. $this->id_name . '.php');
-                }
-                else if (sugar_is_file($path . '/'. DISABLED_PATH . '/'. $this->id_name . '.php', 'w'))
-                {
-                    rmdir_recursive( $path . '/'. DISABLED_PATH . '/'. $this->id_name . '.php');
-                }
-            }
-            $this->rebuild_dashletcontainers();
         }
     }
 
@@ -1743,8 +1673,6 @@ class ModuleInstaller
             'pre_uninstall',
             'uninstall_relationships',
             'uninstall_copy',
-            'uninstall_dcactions',
-            'uninstall_dashlets',
             'uninstall_connectors',
             'uninstall_layoutfields',
             'uninstall_extensions',
@@ -1885,12 +1813,6 @@ class ModuleInstaller
         sugar_cache_reset();
     }
 
-    function rebuild_dashletcontainers($modules = array())
-    {
-        $this->log(translate('LBL_MI_REBUILDING') . " DC Actions...");
-        $this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php', null, null, $modules);
-    }
-
     function rebuild_tabledictionary()
     {
         $this->rebuildExt("TableDictionary", 'tabledictionary.ext.php');
@@ -1935,7 +1857,6 @@ class ModuleInstaller
 
         $this->rebuild_languages($sugar_config['languages'], $modules);
         $this->rebuild_extensions($modules);
-        $this->rebuild_dashletcontainers($modules);
         // This will be a time consuming process, particularly if $modules is empty
         $this->rebuild_relationships(array_flip($modules));
         $this->rebuild_tabledictionary();
@@ -2456,7 +2377,6 @@ class ModuleInstaller
         $current_step = 0;
         $tasks = array(
             'enable_copy',
-            'enable_dashlets',
             'enable_relationships',
             'enable_extensions',
             'enable_global_search',
@@ -2525,7 +2445,6 @@ class ModuleInstaller
         $this->base_dir = $base_dir;
         $tasks = array(
             'disable_copy',
-            'disable_dashlets',
             'disable_relationships',
             'disable_extensions',
             'disable_global_search',
@@ -2835,39 +2754,6 @@ class ModuleInstaller
         return $relationships;
     }
 
-    function enable_dashlets(){
-        if(isset($this->installdefs['dashlets'])){
-            foreach($this->installdefs['dashlets'] as $cp){
-                $cp['from'] = str_replace('<basepath>', $this->base_dir, $cp['from']);
-                $path = 'custom/modules/Home/Dashlets/' . $cp['name'] . '/';
-                $disabled_path = 'custom/modules/Home/'.DISABLED_PATH.'Dashlets/' . $cp['name'];
-                $GLOBALS['log']->debug("Enabling Dashlet " . $cp['name'] . "..." . $cp['from'] );
-                if (file_exists($disabled_path))
-                {
-                    rename($disabled_path,  $path);
-                }
-            }
-            include('modules/Administration/RebuildDashlets.php');
-
-        }
-    }
-
-    function disable_dashlets(){
-        if(isset($this->installdefs['dashlets'])){
-            foreach($this->installdefs['dashlets'] as $cp){
-                $path = 'custom/modules/Home/Dashlets/' . $cp['name'];
-                $disabled_path = 'custom/modules/Home/'.DISABLED_PATH.'Dashlets/' . $cp['name'];
-                $GLOBALS['log']->debug('Disabling ' .$path);
-                if (file_exists($path))
-                {
-                    mkdir_recursive('custom/modules/Home/'.DISABLED_PATH.'Dashlets/', true);
-                    rename( $path, $disabled_path);
-                }
-            }
-            include('modules/Administration/RebuildDashlets.php');
-        }
-    }
-
     function enable_copy(){
         //copy files back onto file system. first perform md5 check to determine if anything has been modified
         //here we should just go through the files in the -restore directory and copy those back
@@ -3161,74 +3047,6 @@ class ModuleInstaller
         $configString = json_encode($config);
         $JSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
         sugar_file_put_contents($path, $JSConfig);
-    }
-    /**
-     * Update wireless metadata for packages that were created prior to 6.6 but
-     * are being installed or deployed in 6.6+
-     */
-    public function update_wireless_metadata() {
-        // If there was a copy to path then we can work it
-        if (isset($this->installdefs['copy'])) {
-            // Add in Sidecar upgrader after old style metadata changes are brought over
-            $sidecarUpgrader = new SidecarMetaDataUpgrader();
-
-            // Let the upgrader know that this is from installation
-            $sidecarUpgrader->fromInstallation = true;
-
-            // Turn off writing to log
-            $sidecarUpgrader->toggleWriteToLog();
-
-            // Get our files in the $cp['to'] path to upgrade
-            foreach($this->installdefs['copy'] as $cp) {
-                // Set the files array
-                $files = array();
-
-                // Grab the package name
-                $package = basename($cp['to']);
-
-                // Set the dir to get the files from
-                $modulesDir = $cp['to'] . '/modules/';
-
-                // If we have the modules directory
-                if (is_dir($modulesDir)) {
-                    // Get the modules from inside the path
-                    $dirs = glob($modulesDir . '*', GLOB_ONLYDIR);
-                    if (!empty($dirs)) {
-                        foreach ($dirs as $dirpath) {
-                            // Get the module to list it in case it needs to be upgraded
-                            $module = basename($dirpath);
-
-                            // Get the metadata directory
-                            $metadatadir = "$dirpath/metadata/";
-
-                            // We only want to do this if there is a metadata dir
-                            // and there isn't already a clients dir
-                            if (is_dir($metadatadir) && !is_dir("$dirpath/clients")) {
-                                // Get our upgrade files
-                                $files = array_merge($files, $sidecarUpgrader->getUpgradeableFilesInPath($metadatadir, $module, 'wireless', 'base', $package, false));
-                            }
-                        }
-                    }
-                }
-
-                // Upgrade them
-                foreach ($files as $file) {
-                    // Get the appropriate upgrade class name for this view type
-                    $class = $sidecarUpgrader->getUpgraderClass($file['viewtype']);
-                    if ($class) {
-                        if (!class_exists($class, false)) {
-                            $classfile = $class . '.php';
-                            require_once "modules/UpgradeWizard/SidecarUpdate/$classfile";
-                        }
-
-                        $upgrader = new $class($sidecarUpgrader, $file);
-
-                        // Let the upgrader do its thing
-                        $upgrader->upgrade();
-                    }
-                }
-            }
-        }
     }
 
     /**

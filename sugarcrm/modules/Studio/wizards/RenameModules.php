@@ -192,7 +192,6 @@ class RenameModules
         $this->changeAllModuleModStrings();
         $this->renameAllRelatedLinks();
         $this->renameAllSubpanels();
-        $this->renameAllDashlets();
         $this->changeStringsInRelatedModules();
         $this->changeGlobalAppStrings();
 
@@ -638,51 +637,6 @@ class RenameModules
         LanguageManager::clearLanguageCache();
     }
 
-    /**
-     * Rename all module strings within the application for dashlets.
-     */
-    private function renameAllDashlets()
-    {
-        //Load the Dashlet metadata so we know what needs to be changed
-        if (!is_file(sugar_cached('dashlets/dashlets.php'))) {
-            $dc = new DashletCacheBuilder();
-            $dc->buildCache();
-        }
-
-        include(sugar_cached('dashlets/dashlets.php'));
-
-        foreach ($this->changedModules as $moduleName => $replacementLabels) {
-            $this->changeModuleDashletStrings($moduleName, $replacementLabels, $dashletsFiles);
-        }
-    }
-
-    /*
-     * Rename the title value for all dashlets associated with a particular module
-     *
-     */
-    private function changeModuleDashletStrings($moduleName, $replacementLabels, $dashletsFiles)
-    {
-        $GLOBALS['log']->debug("Beginning to change module dashlet labels for: $moduleName ");
-        $replacementStrings = array();
-
-        foreach ($dashletsFiles as $dashletName => $dashletData) {
-            if (isset($dashletData['module']) && $dashletData['module'] == $moduleName && file_exists($dashletData['meta'])) {
-                require($dashletData['meta']);
-                $dashletTitle = $dashletMeta[$dashletName]['title'];
-                $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
-                $modStringKey = array_search($dashletTitle,$currentModuleStrings);
-                if ($modStringKey !== FALSE) {
-                    $replacementStrings[$modStringKey] = $this->renameModuleRelatedStrings($dashletTitle, $replacementLabels);
-                }
-            }
-        }
-
-        //Now we can write out the replaced language strings for each module
-        if (count($replacementStrings) > 0) {
-            $GLOBALS['log']->debug("Writing out labels for dashlet changes for module $moduleName, labels: " . var_export($replacementStrings,true));
-            ParserLabel::addLabels($this->selectedLanguage, $replacementStrings, $moduleName);
-        }
-    }
 
     /**
      * Rename all module strings within the application.

@@ -131,10 +131,6 @@ class ModuleBuilderController extends SugarController
                 case MB_WIRELESSADVANCEDSEARCH :
                     $this->view = 'searchView';
                     break;
-                case MB_DASHLET :
-                case MB_DASHLETSEARCH :
-                    $this->view = 'dashlet';
-                    break;
                 case MB_POPUPLIST :
                 case MB_POPUPSEARCH :
                 case MB_SIDECARPOPUPVIEW :

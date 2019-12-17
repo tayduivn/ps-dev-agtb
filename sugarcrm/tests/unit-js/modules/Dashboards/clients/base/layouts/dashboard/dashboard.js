@@ -48,21 +48,6 @@ describe('Dashboards.Base.Layout.Dashboard', function() {
             sandbox.stub(layout, '_renderEmptyTemplate');
         });
 
-        it('should navigate to bwc dashboard', function() {
-            layout.collection.add(layout.context.get('model'));
-            sandbox.stub(layout, 'getLastStateKey').returns('Home:last-visit:Home.');
-            sandbox.stub(app.user.lastState, 'get')
-                .returns('#bwc/index.php?module=Home&action=bwc_dashboard');
-            var navStub = sandbox.stub(app.router, 'navigate');
-
-            layout.setDefaultDashboard();
-
-            expect(navStub).toHaveBeenCalledWith(
-                '#bwc/index.php?module=Home&action=bwc_dashboard',
-                {trigger: true}
-            );
-        });
-
         it('should initialize dashboard model and collection', function() {
             var model = layout.context.get('model');
             expect(model.apiModule).toBe('Dashboards');

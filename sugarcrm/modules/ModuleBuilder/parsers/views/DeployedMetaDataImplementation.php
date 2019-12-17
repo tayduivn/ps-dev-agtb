@@ -190,34 +190,6 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$this->_saveToFile ( $this->_sourceFilename, $loaded , false ) ; // write out without the placeholder module_name and object
 					$this->_mergeFielddefs ( $fielddefs , $loaded ) ;
 					break;
-				case MB_DASHLETSEARCH:
-        		case MB_DASHLET:
-	        		$type = $module->getType () ;
-	        		$this->_sourceFilename = $this->getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
-	        		$needSave = false;
-	        		if(file_exists( "custom/modules/{$moduleName}/metadata/".basename ( $this->_sourceFilename))){
-	        			$loaded = $this->_loadFromFile ( "custom/modules/{$moduleName}/metadata/".basename ( $this->_sourceFilename) )  ;
-	        		}
-	        		elseif(file_exists(
-	        			"modules/{$moduleName}/Dashlets/My{$moduleName}Dashlet/My{$moduleName}Dashlet.data.php")){
-	        			$loaded = $this->_loadFromFile ( "modules/{$moduleName}/Dashlets/My{$moduleName}Dashlet/My{$moduleName}Dashlet.data.php");
-	        		}
-	        		else{
-	        			$loaded = $this->_loadFromFile ( "include/SugarObjects/templates/$type/metadata/".basename ( $this->_sourceFilename ) ) ;
-	        			$needSave = true;
-	        		}
-	        		if ($loaded === null)
-						throw new Exception( get_class ( $this ) . ": cannot create dashlet view for module $moduleName - definitions for $view are missing in the SugarObject template for type $type" ) ;
-	        		$loaded = $this->replaceVariables($loaded, $module);
-	        		$temp = $this->_moduleName;
-	        		if($needSave){
-		        		$this->_moduleName = $this->_moduleName.'Dashlet';
-						$this->_saveToFile ( $this->_sourceFilename, $loaded,false) ; // write out without the placeholder module_name and object
-						$this->_moduleName = $temp;
-						unset($temp);
-	        		}
-					$this->_mergeFielddefs ( $fielddefs , $loaded ) ;
-					break;
 				case MB_POPUPLIST:
         		case MB_POPUPSEARCH:
         			$type = $module->getType () ;

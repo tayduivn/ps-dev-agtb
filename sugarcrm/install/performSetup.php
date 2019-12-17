@@ -618,14 +618,6 @@ if (isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::is_array_access(
     updateUpgradeHistory();
 }
 
-//BEGIN SUGARCRM flav=int ONLY
-if (is_file(sugar_cached('dashlets/dashlets.php'))) {
-    unlink(sugar_cached('dashlets/dashlets.php'));
-}
-$dc = new DashletCacheBuilder();
-$dc->buildCache();
-//END SUGARCRM flav=int ONLY
-
 
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/Connectors/InstallDefaultConnectors.php');

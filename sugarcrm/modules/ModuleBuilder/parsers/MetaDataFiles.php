@@ -87,8 +87,6 @@ class MetaDataFiles
      * @static
      */
     public static $names = array(
-        MB_DASHLETSEARCH          => 'dashletviewdefs',
-        MB_DASHLET                => 'dashletviewdefs',
         MB_POPUPSEARCH            => 'popupdefs',
         MB_POPUPLIST              => 'popupdefs',
         MB_LISTVIEW               => 'listviewdefs' ,

@@ -29,7 +29,6 @@ if(count($uwFilesCurrent) < 5) {
 		'modules/UpgradeWizard/index.php',
 		'modules/UpgradeWizard/Menu.php',
 		'modules/UpgradeWizard/preflight.php',
-		'modules/UpgradeWizard/preflightJson.php',
 		'modules/UpgradeWizard/start.php',
 		'modules/UpgradeWizard/su_utils.php',
 		'modules/UpgradeWizard/su.php',

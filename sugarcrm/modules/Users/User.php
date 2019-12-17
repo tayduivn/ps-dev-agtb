@@ -713,7 +713,6 @@ class User extends Person {
                         $sv->displayHeader();
                         $sv->errors[] = $msg;
                         $sv->displayErrors();
-                        $sv->displayFooter();
                         $msg = '';
                     }
                     // When action is not set, we're coming from the installer or non-UI source.

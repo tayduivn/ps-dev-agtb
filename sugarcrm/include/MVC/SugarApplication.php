@@ -677,7 +677,7 @@ EOF;
      */
     private $globalModifyActions
         = array(
-            'massupdate', 'configuredashlet', 'import', 'importvcardsave', 'inlinefieldsave',
+            'massupdate', 'import', 'importvcardsave', 'inlinefieldsave',
             'wlsave', 'quicksave'
         );
 

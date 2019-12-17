@@ -20,7 +20,6 @@ class ViewAjaxTest extends TestCase
         
         $this->assertFalse($view->options['show_title']);
         $this->assertFalse($view->options['show_header']);
-        $this->assertFalse($view->options['show_footer']);	  
         $this->assertFalse($view->options['show_javascript']);
         $this->assertFalse($view->options['show_subpanels']);
         $this->assertFalse($view->options['show_search']);

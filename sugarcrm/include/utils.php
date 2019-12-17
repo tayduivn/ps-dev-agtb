@@ -4471,31 +4471,6 @@ function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='
     return SugarThemeRegistry::current()->getImage($iconName, "align=\"$align\" border=\"0\"", $width, $height);
 }
 
-/**
- * Function to grab the correct icon image for Dashlets Dialog
- * @param string $filename Location of the icon file
- * @param string $module Name of the module to fall back onto if file does not exist
- * @param string $width Width of image
- * @param string $height Height of image
- * @param string $align Alignment of image
- * @param string $alt Alt tag of image
- * @return string $string <img> tag with corresponding image
- */
-
-function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align='absmiddle',$alt='')
-{
-    global $app_strings, $theme;
-     $iconName = _getIcon($module . "_32");
-     if (empty($iconName)) {
-         $iconName = _getIcon($module);
-     }
-     if (empty($iconName)) {
-         return $app_strings['LBL_NO_IMAGE'];
-     }
-
-    return SugarThemeRegistry::current()->getImage($iconName, "align=\"$align\" border=\"0\"", $width, $height);
-}
-
 // works nicely to change UTF8 strings that are html entities - good for PDF conversions
 function html_entity_decode_utf8($string)
 {

@@ -289,7 +289,6 @@ class MetaDataManager implements LoggerAwareInterface
         'default_decimal_seperator' => true,
         'default_number_grouping_seperator' => true,
         'default_currency_significant_digits' => true,
-        'enable_legacy_dashboards' => true,
         'logger' => array(
             'level' => true,
             'write_to_server' => true,

@@ -947,12 +947,6 @@ class SugarChart
         return $resources;
     }
 
-    function getMySugarChartResources()
-    {
-        $mySugarResources = "";
-        return $mySugarResources;
-    }
-
     /**
      * wrapper function to return chart array after any additional processing
      *

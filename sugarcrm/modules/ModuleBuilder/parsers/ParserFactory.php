@@ -207,11 +207,6 @@ class ParserFactory
                     }
                 }
                 // no break
-            case MB_DASHLET :
-            case MB_DASHLETSEARCH :
-                SugarAutoLoader::requireWithCustom('modules/ModuleBuilder/parsers/views/DashletMetaDataParser.php');
-                $parserClass = SugarAutoLoader::customClass('DashletMetaDataParser');
-                return new $parserClass($view, $moduleName, $packageName);
             case MB_SIDECARPOPUPVIEW:
             case MB_SIDECARDUPECHECKVIEW:
                 SugarAutoLoader::requireWithCustom(
