@@ -697,4 +697,51 @@ class SubscriptionManagerTest extends TestCase
 
         $this->assertEquals($result, $manager->getUserExceededLicenseTypes($user));
     }
+
+    /**
+     * @covers ::isSubscriptionChanged
+     * @param array $currentSubscriptionKeys
+     * @param string $oldSubData
+     * @param $expected
+     *
+     * @dataProvider providorIsSubscriptionChanged
+     */
+    public function testIsSubscriptionChanged(array $currentSubscriptionKeys, string $oldSubData, $expected)
+    {
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getSystemSubscriptionKeys'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getSystemSubscriptionKeys')
+            ->will($this->returnValue($currentSubscriptionKeys));
+
+        $changed = TestReflection::callProtectedMethod($subMock, 'isSubscriptionChanged', [$oldSubData]);
+        $this->assertSame($expected, $changed);
+    }
+
+    public function providorIsSubscriptionChanged()
+    {
+        // @codingStandardsIgnoreStart
+        return [
+            'no change, SERVE, old product is SERVE' => [
+                ['SUGAR_SERVE' => true],
+                '{"success":true,"error":"","subscription":{"id":"ffffc6a2-6ac3-11e9-b0f5-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456aaa":{"quantity":10,"product_name":"Sugar Serve (DEV ONLY)","start_date_c":1556175600,"product_code_c":"SERVE","expiration_date":1898582400,"deployment_flavor_c":""}},"emails":[],"status":"enabled","audited":1,"domains":[],"perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597765,"evaluation_c":0,"portal_users":0,"date_modified":1558663202,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1898582400,"subscription_id":"47fa5aa6620415261cd7bcd2a8de6d31","term_end_date_c":1898582400,"term_start_date_c":1556175600,"account_partner_id":"","enforce_user_limit":1,"od_instance_name_c":"","account_partner_name":"","enforce_portal_users":0,"account_managing_team":"Channel","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
+                false,
+            ],
+            'changed, SERVE, old product is SERVE + ENT' => [
+                ['SUGAR_SERVE' => true],
+                '{"success":true,"error":"","subscription":{"id":"9c9f882c-6ac3-11e9-a884-02c10f456dba","debug":0,"addons":{"aa8834fa-6ac0-11e9-b588-02c10f456aaa":{"quantity":10,"product_name":"Sugar Serve (DEV ONLY)","start_date_c":1556175600,"product_code_c":"SERVE","expiration_date":1898582400,"deployment_flavor_c":""},"b8d64dc8-4235-f4ad-a2b9-4c4ee85b80ae":{"quantity":100,"product_name":"Sugar Enterprise","start_date_c":1556175600,"product_code_c":"ENT","expiration_date":1898582400,"deployment_flavor_c":"Ent"}},"emails":[],"status":"enabled","audited":1,"domains":[],"perpetual":0,"account_id":"1f978c6b-df8e-33f8-90ba-557f67e9a05e","account_name":"iApps Test Partner Account","account_type":"Partner","date_entered":1556597598,"evaluation_c":0,"portal_users":0,"date_modified":1558663202,"partner_type_c":"basic","perpetual_dd_c":"","expiration_date":1898582400,"subscription_id":"ad794561d946951952ce55d24a4617cf","term_end_date_c":1898582400,"term_start_date_c":1556175600,"account_partner_id":"","enforce_user_limit":1,"od_instance_name_c":"","account_partner_name":"","enforce_portal_users":0,"account_managing_team":"Channel","ignore_expiration_date":0,"od_instance_location_c":"us"}}',
+                true,
+            ],
+            'changed, old prodution has no subscription' => [
+                ['CURRENT' => true],
+                '{"no subscription section": {"quantity" : "100"}}',
+                true,
+            ],
+
+        ];
+        // @codingStandardsIgnoreEnd
+    }
 }

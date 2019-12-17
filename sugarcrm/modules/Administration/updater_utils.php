@@ -45,6 +45,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 	$return_array=array();
     if(!$from_install && empty($license))loadLicense(true);
 
+    $key = null;
 	if(!$response_data){
 
         $systemInfo = SugarSystemInfo::getInstance();
@@ -114,16 +115,17 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
     }
 	if($response_data || !$sclient->getError() )
 	{
-	 //BEGIN SUGARCRM lic=sub ONLY
-
-		// This section of code is a portion of the code referred
-		// to as Critical Control Software under the End User
-		// License Agreement.  Neither the Company nor the Users
-		// may modify any portion of the Critical Control Software.
-		checkDownloadKey($resultData['validation']);
-		//END REQUIRED CODE
-		//END SUGARCRM lic=sub ONLY
-		if(!empty($resultData['msg'])){
+        //BEGIN SUGARCRM lic=sub ONLY
+        // This section of code is a portion of the code referred
+        // to as Critical Control Software under the End User
+        // License Agreement.  Neither the Company nor the Users
+        // may modify any portion of the Critical Control Software.
+        checkDownloadKey($resultData['validation']);
+        // download subscription content
+        SubscriptionManager::instance()->downloadSubscriptionContent($key);
+        //END REQUIRED CODE
+        //END SUGARCRM lic=sub ONLY
+        if (!empty($resultData['msg'])) {
 			if(!empty($resultData['msg']['admin'])){
 				$license->saveSetting('license', 'msg_admin', base64_encode($resultData['msg']['admin']));
 			}else{
@@ -572,6 +574,12 @@ function checkSystemLicenseStatus()
         } else {
             $_SESSION['LICENSE_EXPIRES_IN'] = 'REQUIRED';
         }
+
+        // check subscription
+        $subscriptions = SubscriptionManager::instance()->getSystemSubscriptions();
+        if (empty($subscriptions)) {
+            $_SESSION['LICENSE_EXPIRES_IN'] = 'REQUIRED';
+        }
     } else {
         $_SESSION['INVALID_LICENSE'] = true;
     }
@@ -849,21 +857,20 @@ function loginLicense(){
             // let user continue
             if (empty($current_user->getUserExceededAndInvalidLicenseTypes())) {
                 unset($_SESSION['license_seats_needed']);
-                return;
-            }
-
-            // show login error message
-            $license_seats_needed = 0;
-            $exceededLicenseTypes = SubscriptionManager::instance()->getSystemLicenseTypesExceededLimit($license_seats_needed);
-            $msg = '';
-            foreach ($exceededLicenseTypes as $type => $extraNumbers) {
-                if (!empty($msg)) {
-                    $msg .= ' and ';
+            } else {
+                // show login error message
+                $license_seats_needed = 0;
+                $exceededLicenseTypes = SubscriptionManager::instance()->getSystemLicenseTypesExceededLimit($license_seats_needed);
+                $msg = '';
+                foreach ($exceededLicenseTypes as $type => $extraNumbers) {
+                    if (!empty($msg)) {
+                        $msg .= ' and ';
+                    }
+                    $msg .= User::getLicenseTypeDescription($type) . ' ';
                 }
-                $msg .= User::getLicenseTypeDescription($type) . ' ';
+                $GLOBALS['login_error'] = sprintf(translate('ERROR_LICENSE_TYPE_SEATS_MAXED'), $msg);
+                $_SESSION['login_error'] = $GLOBALS['login_error'];
             }
-            $GLOBALS['login_error'] = sprintf(translate('ERROR_LICENSE_TYPE_SEATS_MAXED'), $msg);
-            $_SESSION['login_error'] =  $GLOBALS['login_error'];
         } else {
             if (empty($license->settings['license_key'])) {
                 $_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
@@ -888,7 +895,6 @@ function loginLicense(){
                 $GLOBALS['login_error'] = $GLOBALS['app_strings']['ERROR_LICENSE_VALIDATION'];
             }
             $_SESSION['login_error'] =  $GLOBALS['login_error'];
-            return;
         }
     }
 

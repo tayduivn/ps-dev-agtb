@@ -129,21 +129,22 @@ class SubscriptionManager
     protected function getSubscriptionContent(string $licenseKey, bool $useDb) : string
     {
         $admin = \BeanFactory::newBean('Administration');
-        if ($useDb) {
-            $admin->retrieveSettings('license');
-            if (isset($admin->settings['license_subscription'])) {
-                $data = $admin->settings['license_subscription'];
-                if (is_array($data)) {
-                    return json_encode($admin->settings['license_subscription']);
-                } else {
-                    return $data;
-                }
+        $admin->retrieveSettings('license');
+        $data = null;
+        if (isset($admin->settings['license_subscription'])) {
+            $data = $admin->settings['license_subscription'];
+            if (is_array($data)) {
+                $data = json_encode($admin->settings['license_subscription']);
             }
         }
+        if ($useDb && !empty($data)) {
+            return $data;
+        }
 
-        // go to license server to retrieve data
+            // go to license server to retrieve data
         $endpoint = $this->subscriptionRestApiEndPoint . $licenseKey;
         $subscriptionClient = $this->getSugarLicensingClient();
+        $GLOBALS['log']->info('download new sunscription data');
         $response = $subscriptionClient->request($endpoint, [], false);
 
         // try to parse and valid the content
@@ -158,12 +159,29 @@ class SubscriptionManager
         // save to config table
         $admin->saveSetting('license', 'subscription', $response);
 
-        // refresh metadata cache if not in installation time
-        if (!(isset($GLOBALS['installing'])) || $GLOBALS['installing'] != true) {
+        // refresh metadata cache if not in installation stage and subscription has changed
+        if ((!(isset($GLOBALS['installing'])) || $GLOBALS['installing'] != true)
+            && $this->isSubscriptionChanged($data)) {
             $this->refreshMetadataCache();
         }
 
         return $response;
+    }
+
+    /**
+     * check if there is any entitlement changes, it'll ignore any expiration date and quantity changes
+     * @param string $oldSubscrptionData
+     * @return bool
+     */
+    protected function isSubscriptionChanged(?string $oldSubscrptionData)
+    {
+        if (empty($oldSubscrptionData)) {
+            return true;
+        }
+        $oldSubscrptionData = new Subscription($oldSubscrptionData);
+        $currentKeys = $this->getSystemSubscriptionKeys();
+        $oldKeys = $oldSubscrptionData->getSubscriptionKeys();
+        return $currentKeys != $oldKeys;
     }
 
     /**
