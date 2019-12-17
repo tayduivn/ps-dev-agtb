@@ -349,36 +349,46 @@ describe("Drawer Layout", function() {
             triggerStub.restore();
         });
 
-        it('Should remove scroll positions that has been closed', function() {
+        it('Should remove scroll positions that has been closed, and call jQuery scrollTop as expected', function() {
             sinonSandbox.stub(drawer, '_animateOpenDrawer', $.noop());
             sinonSandbox.stub(drawer, '_animateCloseDrawer', function(){
                 drawer._scrollBackToOriginal($());
             });
+            sinonSandbox.spy($.fn, 'scrollTop');
 
             drawer.open({
                 layout: {
-                    "name": "foo",
-                    "components":[{"view":"record"}]
+                    'name': 'foo',
+                    'components': [{'view': 'record'}]
                 },
                 context: {create: true}
             });
             drawer.open({
                 layout: {
-                    "name": "bar",
-                    "components":[{"view":"record"}]
+                    'name': 'bar',
+                    'components': [{'view': 'record'}]
                 },
                 context: {create: true}
             });
 
             expect(drawer.scrollTopPositions.length).toBe(2);
+            // called 8 times per drawer opening, 4 times to get initial
+            // position, 4 times to scroll elements to top
+            expect($.fn.scrollTop.callCount).toBe(16);
 
             drawer.close();
-
             expect(drawer.scrollTopPositions.length).toBe(1);
+            // called 4 times per drawer closing
+            expect($.fn.scrollTop.callCount).toBe(20);
 
             drawer.close();
-
             expect(drawer.scrollTopPositions.length).toBe(0);
+            expect($.fn.scrollTop.callCount).toBe(24);
+
+            // closing with no scrollTopPositions should not call scrollTop
+            drawer.close();
+            expect(drawer.scrollTopPositions.length).toBe(0);
+            expect($.fn.scrollTop.callCount).toBe(24);
         });
 
         it('should go into the closing state and then back to the idle state', function() {
@@ -464,31 +474,41 @@ describe("Drawer Layout", function() {
         it('Should remove scroll positions that has been closed', function() {
             sinonSandbox.stub(drawer, '_animateOpenDrawer', $.noop());
             sinonSandbox.stub(drawer, '_removeTabAndBackdrop', function(){});
+            sinonSandbox.spy($.fn, 'scrollTop');
 
             drawer.open({
                 layout: {
-                    "name": "foo",
-                    "components":[{"view":"record"}]
+                    'name': 'foo',
+                    'components': [{'view': 'record'}]
                 },
                 context: {create: true}
             });
             drawer.open({
                 layout: {
-                    "name": "bar",
-                    "components":[{"view":"record"}]
+                    'name': 'bar',
+                    'components': [{'view': 'record'}]
                 },
                 context: {create: true}
             });
 
             expect(drawer.scrollTopPositions.length).toBe(2);
+            // called 8 times per drawer opening, 4 times to get initial
+            // position, 4 times to scroll elements to top
+            expect($.fn.scrollTop.callCount).toBe(16);
 
             drawer.closeImmediately();
-
             expect(drawer.scrollTopPositions.length).toBe(1);
+            // called 4 times per drawer closing
+            expect($.fn.scrollTop.callCount).toBe(20);
 
             drawer.closeImmediately();
-
             expect(drawer.scrollTopPositions.length).toBe(0);
+            expect($.fn.scrollTop.callCount).toBe(24);
+
+            // closing with no scrollTopPositions should not call scrollTop
+            drawer.closeImmediately();
+            expect(drawer.scrollTopPositions.length).toBe(0);
+            expect($.fn.scrollTop.callCount).toBe(24);
         });
 
         it('should go into the closing state and then back to the idle state', function() {

@@ -826,7 +826,7 @@
     _scrollBackToOriginal: function($drawer) {
         var scrollPositions = this.scrollTopPositions.pop();
 
-        if (!scrollPositions || !scrollPositions.length) {
+        if (!scrollPositions || _.isEmpty(scrollPositions)) {
             return;
         }
 
