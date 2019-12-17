@@ -36,8 +36,7 @@
     /**
      * @inheritdoc
      */
-    saveModel: function(model, ui) {
-        var self = this;
+    _setNewModelValues: function(model, ui) {
         var ctxModel = this.context.get('model');
         var $ulEl = this.$(ui.item).parent('ul');
         var headerFieldValue = $ulEl.data('column-name');
@@ -58,16 +57,5 @@
                 });
             }
         }
-
-        model.save({}, {
-            success: function(model) {
-                self._super('render');
-                self.postRender();
-            },
-            error: function(data) {
-                self._super('render');
-                self.postRender();
-            }
-        });
     }
 });

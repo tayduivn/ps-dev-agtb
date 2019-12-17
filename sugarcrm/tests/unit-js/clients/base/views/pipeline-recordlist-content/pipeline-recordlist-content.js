@@ -1137,38 +1137,110 @@ describe('Base.Views.PipelineRecordlistContent', function() {
     describe('saveModel', function() {
         var model;
         var ui;
+        var senderMock;
         beforeEach(function() {
             view.headerField = 'testHeader';
             ui = {
                 item: 'test'
             };
             model = app.data.createBean('Opportunities');
+
+            // Mock the sender object that is returned by view.$(ui.sender)
+            senderMock = {
+                sortable: function() {},
+                parent: function() {
+                    return {
+                        data: function() {
+                            return 'testColumn';
+                        }
+                    };
+                }
+            };
+            sinon.collection.stub(senderMock, 'sortable');
             sinon.collection.stub(view, '$', function() {
-                return {
-                    parent: function() {
-                        return {
-                            data: function() {
-                                return 'testColumn';
-                            }
-                        };
-                    }
-                };
+                return senderMock;
             });
+            sinon.collection.stub(view, '_getFieldsToValidate');
 
             sinon.collection.stub(model, 'set', function() {});
             sinon.collection.stub(model, 'save', function() {});
-
-            view.saveModel(model, ui);
         });
 
         it('should set view.headerField for the model', function() {
-
+            sinon.collection.stub(model, 'isValidAsync');
+            view.saveModel(model, ui);
             expect(model.set).toHaveBeenCalledWith('testHeader', 'testColumn');
         });
 
-        it('should call model.save function', function() {
+        describe('when validation is successful', function() {
+            beforeEach(function() {
+                // Mock a successful validation
+                sinon.collection.stub(model, 'isValidAsync', function(fields, callback) {
+                    callback(true, {});
+                });
+            });
 
-            expect(model.save).toHaveBeenCalled();
+            it('should call model.save function', function() {
+                view.saveModel(model, ui);
+                expect(model.save).toHaveBeenCalled();
+            });
+        });
+
+        describe('when validation fails', function() {
+            beforeEach(function() {
+                // Mock a failed validation
+                sinon.collection.stub(model, 'isValidAsync', function(fields, callback) {
+                    callback(false, {'fake_field': 'required'});
+                });
+                view.$(ui.sender).sortable = function() {};
+                sinon.collection.stub(model, 'revertAttributes');
+                sinon.collection.stub(view, 'switchCollection');
+                sinon.collection.stub(view, '_displayValidationErrorMessage');
+                sinon.collection.stub(view.$(ui.sender), 'sortable');
+            });
+
+            it('should not call model.save function', function() {
+                view.saveModel(model, ui);
+                expect(model.save).not.toHaveBeenCalled();
+            });
+
+            it('should revert the changes', function() {
+                view.saveModel(model, ui, 'mockOldCollection', 'mockNewCollection');
+                expect(model.revertAttributes).toHaveBeenCalled();
+                expect(view.switchCollection).toHaveBeenCalledWith('mockNewCollection', model, 'mockOldCollection');
+                expect(senderMock.sortable).toHaveBeenCalledWith('cancel');
+            });
+        });
+    });
+
+    describe('_getFieldsToValidate', function() {
+        beforeEach(function() {
+            sinon.collection.stub(app.metadata, 'getView', function() {
+                return {
+                    panels: [
+                        {
+                            fields: [
+                                {
+                                    name: 'name',
+                                    type: 'overridden_in_record_view',
+                                    record_view_property: 'record view property'
+                                }
+                            ]
+                        }
+                    ]
+                };
+            });
+        });
+
+        it('should get the correct list of field definitions for the record view', function() {
+            var result = view._getFieldsToValidate();
+            expect(result).toEqual({
+                name: {
+                    name: 'name',
+                    type: 'overridden_in_record_view',
+                    record_view_property: 'record view property'
+                }
+            });
         });
     });
 

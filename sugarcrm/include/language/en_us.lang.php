@@ -3836,6 +3836,7 @@ Sincerely, SugarCRM',
     'LBL_PIPELINE_VIEW_BTN' => 'Tile View',
     'LBL_PIPELINE_VIEW_TAB_NAME' => '{{module}} by {{fieldName}}',
     'LBL_VISUAL_PIPELINE_DISABLED' => 'Tile View is not enabled',
+    'LBL_VISUAL_PIPELINE_MOVE_FAILED' => '{{recordName}} could not be moved to {{columnLabel}} because of the following fields: ',
     //END SUGARCRM flav=ent ONLY
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',

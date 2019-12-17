@@ -29,6 +29,7 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                 type: 'pipeline-type'
             }
         };
+        SugarTest.loadComponent('base', 'view', 'pipeline-recordlist-content');
         view = SugarTest.createView(
             'base',
             'Opportunities',
@@ -61,6 +62,12 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
 
             sinon.collection.stub(model, 'set', function() {});
             sinon.collection.stub(model, 'save', function() {});
+            sinon.collection.stub(view, '_getFieldsToValidate');
+
+            // Mock a successful validation of the model fields
+            sinon.collection.stub(model, 'isValidAsync', function(fields, callback) {
+                callback(true, {});
+            });
         });
 
         describe('when pipeline_type is date_closed', function() {

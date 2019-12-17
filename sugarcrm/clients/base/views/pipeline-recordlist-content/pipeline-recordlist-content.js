@@ -529,19 +529,116 @@
      * Gets called to save the model once it switches columns
      * @param {Object} model for the tile to be saved
      * @param {Object} ui an object with the ui details of the tiles like originalPosition, offset, etc.
+     * @param {Object} oldCollection the collection of models that make up the moved-from column
+     * @param {Object} newCollection the collection of models that make up the moved-to column
      */
-    saveModel: function(model, ui) {
+    saveModel: function(model, ui, oldCollection, newCollection) {
         var self = this;
-        model.set(this.headerField, this.$(ui.item).parent('ul').data('column-name'));
-        model.save({}, {
-            success: function(model) {
-                self._super('render');
-                self.postRender();
-            },
-            error: function(data) {
-                self._super('render');
-                self.postRender();
+
+        // Set the changes on the model before validating and saving. Sync
+        // the old attributes in case we need to revert (i.e. if validation fails)
+        model.setSyncedAttributes(model.attributes);
+        this._setNewModelValues(model, ui);
+
+        // Validate the record fields on the model. If validation is successful,
+        // save the model. Otherwise, revert the changes and display an error
+        // message indicating the fields that failed validation.
+        model.isValidAsync(this._getFieldsToValidate(), function(isValid, errors) {
+            if (isValid) {
+                model.save({}, {
+                    success: function(model) {
+                        self._super('render');
+                        self.postRender();
+                    },
+                    error: function(data) {
+                        self._super('render');
+                        self.postRender();
+                    }
+                });
+            } else {
+                model.revertAttributes();
+                self.switchCollection(newCollection, model, oldCollection);
+                app.alert.dismiss('pipeline-loading');
+                self.$(ui.sender).sortable('cancel');
+                self._displayValidationErrorMessage(model, newCollection, errors);
             }
+        });
+    },
+
+    /**
+     * Returns the fields to validate on the model for the current module
+     * @param model
+     * @private
+     */
+    _getFieldsToValidate: function() {
+        // Get the field definitions from the module's vardefs
+        var moduleFields = app.metadata.getModule(this.module, 'fields');
+
+        // Get the extended field definitions from the module's record view meta
+        var recordViewMeta = app.metadata.getView(this.module, 'record');
+        var recordViewFieldDefs = _.flatten(_.pluck(recordViewMeta.panels, 'fields'));
+        var recordViewFields = {};
+        _.each(recordViewFieldDefs, function(field) {
+            if (_.isEmpty(recordViewFields[field.name])) {
+                recordViewFields[field.name] = field;
+            }
+        });
+
+        // Get the names of the record view fields that actually need validation.
+        // We can temporarily swap the view metadata to make it easier
+        var oldMeta = this.meta;
+        this.meta = recordViewMeta;
+        var fieldNames = this.getFieldNames(this.module);
+        this.meta = oldMeta;
+
+        // For each field that needs validation, extend the field's vardefs with
+        // the record view definition to get an accurate list of field definitions
+        // to validate
+        var fieldsToValidate = {};
+        _.each(fieldNames, function(fieldName) {
+            fieldsToValidate[fieldName] = _.extend({}, moduleFields[fieldName], recordViewFields[fieldName]);
+        });
+
+        return fieldsToValidate;
+    },
+
+    /**
+     * Sets the changed values on the model before validation and saving. This is
+     * useful to override in case custom action must be taken to handle field changes
+     * (for example, converting "January 2020" to "01/31/2020" before setting the
+     * value on the model)
+     * @param {Object} model the model to set the values on
+     * @param (Object}  ui an object with the ui details of the tiles like originalPosition, offset, etc.
+     * @private
+     */
+    _setNewModelValues: function(model, ui) {
+        model.set(this.headerField, this.$(ui.item).parent('ul').data('column-name'));
+    },
+
+    /**
+     * Displays an error message indicating to the user which fields failed
+     * validation, preventing the model from being moved to the column
+     * representing newCollection
+     * @param {Object} model the model that failed validation
+     * @param {Object} newCollection the collection of models that make up the moved-to column
+     * @param {Object} errors an object containing the field errors encountered during validation
+     * @private
+     */
+    _displayValidationErrorMessage: function(model, newCollection, errors) {
+        var errorVars = {
+            recordName: model.get('name'),
+            columnLabel: newCollection.headerName,
+        };
+        var errorMsg = app.lang.get('LBL_VISUAL_PIPELINE_MOVE_FAILED', this.module, errorVars);
+        if (!_.isEmpty(errors)) {
+            errorMsg += '<br>';
+            for (var errorField in errors) {
+                errorMsg += '<br>' + errorField;
+            }
+        }
+        app.alert.show('validation_failed', {
+            level: 'error',
+            messages: errorMsg
         });
     },
 
