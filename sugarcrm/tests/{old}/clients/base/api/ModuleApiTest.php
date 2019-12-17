@@ -794,11 +794,11 @@ class ModuleApiTest extends TestCase
     public function testCreateRelatedRecords()
     {
         /** @var MockObject $relateRecordApi */
-        $api = $this->getApiWithMockedRelateRecordApi('createRelatedRecord', $relateRecordApi);
+        $api = $this->getApiWithMockedRelateRecordApi('createRelatedBean', $relateRecordApi);
         $bean = $this->getPrimaryBean('primary-module', 'primary-id');
 
         $relateRecordApi->expects($this->at(0))
-            ->method('createRelatedRecord')
+            ->method('createRelatedBean')
             ->with($this->serviceMock, array(
                 'module' => 'primary-module',
                 'record' => 'primary-id',
@@ -807,7 +807,7 @@ class ModuleApiTest extends TestCase
             ));
 
         $relateRecordApi->expects($this->at(1))
-            ->method('createRelatedRecord')
+            ->method('createRelatedBean')
             ->with($this->serviceMock, array(
                 'module' => 'primary-module',
                 'record' => 'primary-id',
