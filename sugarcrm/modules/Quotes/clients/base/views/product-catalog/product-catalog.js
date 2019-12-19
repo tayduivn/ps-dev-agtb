@@ -300,10 +300,16 @@
      * @protected
      */
     _onMouseWheelChange: function(mouseEvent) {
-        var delta = mouseEvent.type === 'mousewheel' ?
-            mouseEvent.originalEvent.wheelDelta / 20 :
-            mouseEvent.originalEvent.deltaY;
-
+        var delta;
+        if (mouseEvent.type === 'mousewheel') {
+            delta = mouseEvent.originalEvent.wheelDelta / 20;
+        } else if (this.phaser.device.firefox) {
+            //for firefox the scrollamount is reduced considerably (around 30 times);
+            // in order to have an immersive scroll behavior the delta has to be corrected
+            delta = mouseEvent.originalEvent.deltaY * 30;
+        } else {
+            delta = mouseEvent.originalEvent.deltaY;
+        }
         mouseEvent.preventDefault();
         this.phaser.events.onScrollWheel.dispatch(delta);
     },
