@@ -415,6 +415,9 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
             };
             phaserObj = {
                 destroy: function() {},
+                device: {
+                    firefox: false
+                },
                 events: {
                     destroy: function() {},
                     onScrollWheel: {
@@ -434,13 +437,13 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
 
         it('should call preventDefault on the incoming mouse event', function() {
-            view._onMouseWheelChange(mouseEvent);
+            view._onMouseWheelChange.call(view, mouseEvent);
 
             expect(preventDefaultStub).toHaveBeenCalled();
         });
 
         it('should call preventDefault on the incoming mouse event', function() {
-            view._onMouseWheelChange(mouseEvent);
+            view._onMouseWheelChange.call(view, mouseEvent);
 
             expect(dispatchStub).toHaveBeenCalledWith(4.71);
         });
