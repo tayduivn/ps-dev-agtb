@@ -43,6 +43,12 @@
     hasAccessToView: true,
 
     /**
+     * Cached fieldnames to retrieve for tile view
+     * This does not include fields from record view
+     */
+    _fieldsToFetch: [],
+
+    /**
      * Initialize various pipelineConfig variables and set action listeners
      *
      * @inheritdoc
@@ -331,6 +337,9 @@
      * @return {Array} an array of fields
      */
     getFieldsForFetch: function() {
+        if (!_.isEmpty(this._fieldsToFetch)) {
+            return this._fieldsToFetch;
+        }
         var fields =
             _.flatten(
                 _.map(_.flatten(_.pluck(this.meta.tileDef.panels, 'fields')), function(field) {
@@ -351,7 +360,7 @@
             });
         }
 
-        return _.uniq(fields);
+        return this._fieldsToFetch = _.uniq(fields);
     },
 
     /**
@@ -448,8 +457,6 @@
      * Gives the ability for a tile to be dragged and moved to other columns on the page
      */
     buildDraggable: function() {
-        var self = this;
-
         if (!app.acl.hasAccessToModel('edit', this.model) ||
             !app.acl.hasAccessToModel('edit', this.model, this.headerField)) {
             return;
@@ -469,7 +476,6 @@
                     headerKey: this.$(ui.item).parent('ul').data('column-name')
                 });
                 var model = oldCollection.records.get(modelId);
-
                 if (!app.acl.hasAccessToModel('edit', model)) {
                     app.alert.show('not_authorized', {
                         level: 'error',
@@ -479,7 +485,8 @@
 
                     this.$(ui.sender).sortable('cancel');
                     return;
-                } else {
+                }
+                var success = _.bind(function() {
                     app.alert.show('pipeline-loading', {
                         level: 'process',
                         autoClose: true
@@ -487,7 +494,16 @@
 
                     this.switchCollection(oldCollection, model, newCollection);
                     this.saveModel(model, ui);
-                }
+                }, this);
+                var error = _.bind(function() {
+                    this.$(ui.sender).sortable('cancel');
+                }, this);
+                model.fetch({
+                    view: 'record',
+                    fields: this.getFieldsForFetch(),
+                    success: success,
+                    error: error
+                });
             }, this)
         });
 
