@@ -84,8 +84,12 @@ class SugarACLUsers extends SugarACLStrategy
         }
 
         // Deny access to export if it disabled globally or user is not an admin
-        if ($view == 'export' && (!empty($sugar_config['disable_export'])
-                || !$current_user->isAdminForModule($module))) {
+        if ($view == 'export' &&
+            (
+                !empty($sugar_config['disable_export']) ||
+                (!$current_user->isAdminForModule($module) && !empty($sugar_config['admin_export_only']))
+            )
+        ) {
             return false;
         }
 

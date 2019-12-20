@@ -52,7 +52,6 @@ class Bug56391Test extends TestCase
             'delete' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
-            'export' => 'no',
         );
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);

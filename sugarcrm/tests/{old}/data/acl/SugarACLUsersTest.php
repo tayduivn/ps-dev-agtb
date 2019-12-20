@@ -51,12 +51,14 @@ class SugarACLUsersTest extends TestCase
             array('Accounts', 'view', false, array(), array(), false),
             // Let the other modules decide about acl access
             array('Users', 'team_security', false, array(), array(), true),
-            // Regular user in any way shouldn't have access to export functionality
+            // Regular user in any way should have access to export functionality
+            // if both disable_export & admin_export_only are not checked
             array('Users', 'export', false, array(),
-                array('disable_export' => false, 'admin_export_only' => false), false),
-            // Regular user shouldn't have access to export functionality in Employees module
+                array('disable_export' => false, 'admin_export_only' => false), true),
+            // Regular user should have access to export functionality in Employees module
+            // if both disable_export & admin_export_only are not checked
             array('Employees', 'export', false, array(),
-                array('disable_export' => false, 'admin_export_only' => false), false),
+                array('disable_export' => false, 'admin_export_only' => false), true),
             // Regular user doesn't have access to export functionality if admin_export_only is true
             array('Employees', 'export', false, array(),
                 array('disable_export' => false, 'admin_export_only' => true), false),

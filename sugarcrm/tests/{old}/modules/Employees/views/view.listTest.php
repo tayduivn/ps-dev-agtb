@@ -57,9 +57,9 @@ class EmployeesViewListTest extends TestCase
             array(false, array('disable_export' => false, 'admin_export_only' => true), false),
             // Regular user shouldn't see template with export options if disable_export is checked
             array(false, array('disable_export' => true, 'admin_export_only' => false), false),
-            // Regular user will not see template with export options
+            // Regular user will see template with export options
             // if disable_export is not checked and admin_export_only is not checked
-            array(false, array('disable_export' => false, 'admin_export_only' => false), false),
+            array(false, array('disable_export' => false, 'admin_export_only' => false), true),
         );
     }
 
