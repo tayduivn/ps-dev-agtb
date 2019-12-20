@@ -497,7 +497,13 @@
                 }, this);
                 var error = _.bind(function() {
                     this.$(ui.sender).sortable('cancel');
+                    this.$('.column').sortable('enable');
                 }, this);
+
+                // Disable dragging while the change is being processed to prevent
+                // issues due to multiple simultaneous drags
+                this.$('.column').sortable('disable');
+
                 model.fetch({
                     view: 'record',
                     fields: this.getFieldsForFetch(),
@@ -535,15 +541,19 @@
     saveModel: function(model, ui, oldCollection, newCollection) {
         var self = this;
 
-        // Set the changes on the model before validating and saving. Sync
-        // the old attributes in case we need to revert (i.e. if validation fails)
-        model.setSyncedAttributes(model.attributes);
+        // Set the changes on the model before validating and saving. If validation
+        // fails, the updated model will be opened in a record view drawer which causes
+        // the synced attributes to change, so we need to store a backup of the
+        // previous values for changed fields on the model in case we need to revert
         this._setNewModelValues(model, ui);
+        model.oldValues = _.pick(model.previousAttributes(), function(value, key) {
+            return key in model.changed;
+        });
 
         // Validate the record fields on the model. If validation is successful,
-        // save the model. Otherwise, revert the changes and display an error
-        // message indicating the fields that failed validation.
-        model.isValidAsync(this._getFieldsToValidate(), function(isValid, errors) {
+        // save the model. Otherwise, open the record in a drawer to edit the
+        // fields that failed validation
+        model.isValidAsync(this._getFieldsToValidate(), function(isValid) {
             if (isValid) {
                 model.save({}, {
                     success: function(model) {
@@ -553,14 +563,13 @@
                     error: function(data) {
                         self._super('render');
                         self.postRender();
+                    },
+                    complete: function() {
+                        self.$('.column').sortable('enable');
                     }
                 });
             } else {
-                model.revertAttributes();
-                self.switchCollection(newCollection, model, oldCollection);
-                app.alert.dismiss('pipeline-loading');
-                self.$(ui.sender).sortable('cancel');
-                self._displayValidationErrorMessage(model, newCollection, errors);
+                self._handleFailedValidation(model, ui, oldCollection, newCollection);
             }
         });
     },
@@ -603,6 +612,41 @@
     },
 
     /**
+     * Opens a drawer to the record view to fix any invalid fields on the model
+     * after switching the model to a new column
+     * @param model the model that failed validation
+     * @param ui an object with the ui details of the tiles like originalPosition, offset, etc.
+     * @param oldCollection the collection of models that make up the moved-from column
+     * @param newCollection the collection of models that make up the moved-to column
+     * @private
+     */
+    _handleFailedValidation: function(model, ui, oldCollection, newCollection) {
+        var self = this;
+        app.alert.dismiss('pipeline-loading');
+        app.drawer.open({
+            layout: 'record',
+            context: {
+                module: self.module,
+                model: model,
+                correctInvalidFields: true
+            }
+        }, function(saved) {
+            if (saved) {
+                self._super('render');
+                self.postRender();
+            } else {
+                model.set(model.oldValues);
+                self.switchCollection(newCollection, model, oldCollection);
+                self.$(ui.sender).sortable('cancel');
+            }
+            // Accessing record view drawer causes the fragment to change,
+            // so set it back to the pipeline route after the drawer is closed
+            app.router.navigate(self.module + '/pipeline');
+            self.$('.column').sortable('enable');
+        });
+    },
+
+    /**
      * Sets the changed values on the model before validation and saving. This is
      * useful to override in case custom action must be taken to handle field changes
      * (for example, converting "January 2020" to "01/31/2020" before setting the
@@ -613,33 +657,6 @@
      */
     _setNewModelValues: function(model, ui) {
         model.set(this.headerField, this.$(ui.item).parent('ul').data('column-name'));
-    },
-
-    /**
-     * Displays an error message indicating to the user which fields failed
-     * validation, preventing the model from being moved to the column
-     * representing newCollection
-     * @param {Object} model the model that failed validation
-     * @param {Object} newCollection the collection of models that make up the moved-to column
-     * @param {Object} errors an object containing the field errors encountered during validation
-     * @private
-     */
-    _displayValidationErrorMessage: function(model, newCollection, errors) {
-        var errorVars = {
-            recordName: model.get('name'),
-            columnLabel: newCollection.headerName,
-        };
-        var errorMsg = app.lang.get('LBL_VISUAL_PIPELINE_MOVE_FAILED', this.module, errorVars);
-        if (!_.isEmpty(errors)) {
-            errorMsg += '<br>';
-            for (var errorField in errors) {
-                errorMsg += '<br>' + errorField;
-            }
-        }
-        app.alert.show('validation_failed', {
-            level: 'error',
-            messages: errorMsg
-        });
     },
 
     /**

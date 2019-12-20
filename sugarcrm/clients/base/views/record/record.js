@@ -203,6 +203,11 @@
         }, this);
 
         this.on('render', this.registerShortcuts, this);
+
+        // If this view is only to correct invalid fields, set a flag to mark that
+        if (this.context.get('correctInvalidFields')) {
+            this.correctInvalidFields = true;
+        }
     },
 
     /**
@@ -484,6 +489,13 @@
         if ($.contains(document.documentElement, this.$el[0])) {
             this.handleActiveTab();
             this.overflowTabs();
+        }
+
+        // If this view is only to correct invalid fields, programmatically
+        // click the save button to trigger validation
+        if (this.correctInvalidFields) {
+            this.editClicked();
+            this.saveClicked();
         }
     },
 
@@ -945,6 +957,12 @@
         this.clearValidationErrors(this.editableFields);
         this.setRoute();
         this.unsetContextAction();
+
+        // If this view is only to correct invalid fields, and exists in a drawer,
+        // close the drawer and mark the model as not saved
+        if (this.correctInvalidFields && app.drawer.count()) {
+            app.drawer.close(false);
+        }
     },
 
     deleteClicked: function(model) {
@@ -1022,7 +1040,11 @@
         this._saveModel();
         this.$('.record-save-prompt').hide();
 
-        if (!this.disposed) {
+        // If this view is only to correct invalid fields, keep it in edit mode
+        // but disable buttons during the save
+        if (this.correctInvalidFields) {
+            this.toggleButtons(false);
+        } else if (!this.disposed) {
             this.setButtonStates(this.STATE.VIEW);
             this.action = 'detail';
             this.setRoute();
@@ -1075,6 +1097,12 @@
                     //re-render the view if the user does not have edit access after save.
                     this.render();
                 }
+
+                // If this view is only to correct invalid fields, and exists in
+                // a drawer, close the drawer and mark the model as saved
+                if (this.correctInvalidFields && app.drawer.count()) {
+                    app.drawer.close(true);
+                }
             }, this);
 
         //Call editable to turn off key and mouse events before fields are disposed (SP-1873)
@@ -1101,6 +1129,10 @@
                 } else {
                     this.editClicked();
                 }
+
+                // If this view is only to correct invalid fields, make sure the
+                // buttons are re-enabled after an error during save
+                this.toggleButtons(true);
             }, this),
             lastModified: this.model.get('date_modified'),
             viewed: true

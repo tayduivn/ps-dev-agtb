@@ -1147,7 +1147,6 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
             // Mock the sender object that is returned by view.$(ui.sender)
             senderMock = {
-                sortable: function() {},
                 parent: function() {
                     return {
                         data: function() {
@@ -1156,7 +1155,6 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                     };
                 }
             };
-            sinon.collection.stub(senderMock, 'sortable');
             sinon.collection.stub(view, '$', function() {
                 return senderMock;
             });
@@ -1192,11 +1190,8 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                 sinon.collection.stub(model, 'isValidAsync', function(fields, callback) {
                     callback(false, {'fake_field': 'required'});
                 });
-                view.$(ui.sender).sortable = function() {};
-                sinon.collection.stub(model, 'revertAttributes');
-                sinon.collection.stub(view, 'switchCollection');
-                sinon.collection.stub(view, '_displayValidationErrorMessage');
-                sinon.collection.stub(view.$(ui.sender), 'sortable');
+
+                sinon.collection.stub(view, '_handleFailedValidation');
             });
 
             it('should not call model.save function', function() {
@@ -1204,11 +1199,10 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                 expect(model.save).not.toHaveBeenCalled();
             });
 
-            it('should revert the changes', function() {
+            it('should handle the failure', function() {
                 view.saveModel(model, ui, 'mockOldCollection', 'mockNewCollection');
-                expect(model.revertAttributes).toHaveBeenCalled();
-                expect(view.switchCollection).toHaveBeenCalledWith('mockNewCollection', model, 'mockOldCollection');
-                expect(senderMock.sortable).toHaveBeenCalledWith('cancel');
+                expect(view._handleFailedValidation).toHaveBeenCalledWith(
+                    model, ui, 'mockOldCollection', 'mockNewCollection');
             });
         });
     });
@@ -1241,6 +1235,67 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                     record_view_property: 'record view property'
                 }
             });
+        });
+    });
+
+    describe('_handleFailedValidation', function() {
+        var model;
+        var senderMock;
+
+        beforeEach(function() {
+            app.drawer = {};
+            model = {
+                set: function() {}
+            };
+
+            // Mock the sender object that is returned by view.$(ui.sender)
+            senderMock = {
+                sortable: function() {}
+            };
+            sinon.collection.stub(senderMock, 'sortable');
+            sinon.collection.stub(view, '$', function() {
+                return senderMock;
+            });
+
+            // Stub the app router's navigate
+            app.router = {
+                navigate: function() {}
+            };
+            sinon.collection.stub(app.router, 'navigate');
+
+            sinon.collection.stub(model, 'set');
+            sinon.collection.stub(view, 'switchCollection');
+        });
+
+        afterEach(function() {
+            delete app.drawer;
+            delete app.router;
+        });
+
+        it('should open the app drawer to fix the fields that failed validation', function() {
+            app.drawer.open = function(def, onClose) {};
+            sinon.collection.stub(app.drawer, 'open');
+
+            view._handleFailedValidation(model, {}, 'mockOldCollection', 'mockNewCollection');
+            expect(app.drawer.open).toHaveBeenCalled();
+        });
+
+        it('should undo changes to the model and collections if the drawer is cancelled', function() {
+            app.drawer.open = function(def, onClose) {
+                onClose(false);
+            };
+
+            // Mock the old values of the model to test that they are set again
+            var oldValues = {
+                'fake_field': 'fake_value'
+            };
+            model.oldValues = oldValues;
+
+            view._handleFailedValidation(model, {}, 'mockOldCollection', 'mockNewCollection');
+            expect(model.set).toHaveBeenCalledWith(oldValues);
+            expect(view.switchCollection).toHaveBeenCalledWith('mockNewCollection', model, 'mockOldCollection');
+            expect(senderMock.sortable).toHaveBeenCalledWith('cancel');
+            expect(app.router.navigate).toHaveBeenCalledWith('Opportunities/pipeline');
         });
     });
 
