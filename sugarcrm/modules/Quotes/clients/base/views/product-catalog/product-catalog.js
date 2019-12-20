@@ -859,8 +859,9 @@
                     };
                 };
 
-                // Restrict IE to have a scrollbar while it is not supported
-                this.useScrollbar = !this.game.device.ie;
+                // Restrict IE and Safari to have a scrollbar while
+                // moving the scrollbar with the mouse is not supported
+                this.useScrollbar = !(this.game.device.ie || this.game.device.safari);
 
                 if (this.game.hasTreeData) {
                     this._setTreeData(this.game.treeData);
