@@ -5955,3 +5955,12 @@ function prependSiteURL(string $addOn): string
 {
     return getValueFromConfig('site_url') . $addOn;
 }
+
+/**
+ * check if it is CLI command line
+ * @return bool
+ */
+function isCli() : bool
+{
+    return PHP_SAPI === 'cli';
+}

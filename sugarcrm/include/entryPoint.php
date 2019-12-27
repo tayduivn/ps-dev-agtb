@@ -140,9 +140,9 @@ if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
 
-if (class_exists('SessionHandler')) {
-    session_set_save_handler(new SugarSessionHandler());
-}
+    if (class_exists('SessionHandler') && !isCli()) {
+        session_set_save_handler(new SugarSessionHandler());
+    }
 
 $GLOBALS['sugar_version'] = $sugar_version;
 $GLOBALS['sugar_flavor'] = $sugar_flavor;
