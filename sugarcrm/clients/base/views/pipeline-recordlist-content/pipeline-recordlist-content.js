@@ -493,7 +493,7 @@
                     });
 
                     this.switchCollection(oldCollection, model, newCollection);
-                    this.saveModel(model, ui);
+                    this.saveModel(model, ui, oldCollection, newCollection);
                 }, this);
                 var error = _.bind(function() {
                     this.$(ui.sender).sortable('cancel');
