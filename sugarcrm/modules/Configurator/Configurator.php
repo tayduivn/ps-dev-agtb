@@ -26,6 +26,7 @@ class Configurator
 	var $previous_sugar_override_config_array = array();
 	var $useAuthenticationClass = false;
 
+    const COMPANY_LOGO_UPLOAD_PATH = 'upload://tmp_logo_company_upload/logo.png';
     /**
      * List of allowed undefined `$sugar_config` keys to be set
      * @var array
@@ -341,15 +342,12 @@ class Configurator
 		header('Location: index.php?action=EditView&module=Configurator');
 	}
 
-	function saveImages() {
-		if (!empty ($_POST['company_logo'])) {
-			$this->saveCompanyLogo("upload://".$_POST['company_logo']);
-		}
-		if (!empty ($_POST['quotes_logo'])) {
-			$this->saveCompanyQuoteLogo("upload://".$_POST['quotes_logo']);
-			rmdir_recursive(sugar_cached('smarty/templates_c'));
-		}
-	}
+    private function saveImages()
+    {
+        if (!empty($_POST['commit_company_logo'])) {
+            $this->commitCompanyLogo();
+        }
+    }
 
 	function checkTempImage($path)
 	{
@@ -359,26 +357,24 @@ class Configurator
 		}
 		return $path;
 	}
+
     /**
-     * Saves the company logo to the custom directory for the default theme, so all themes can use it
-     *
-     * @param string $path path to the image to set as the company logo image
+     * Commits images uploaded by the user as the company logo for default theme
      */
-	function saveCompanyLogo($path)
+    private function commitCompanyLogo(): void
     {
-    	$path = $this->checkTempImage($path);
-    	$logo = create_custom_directory(SugarThemeRegistry::current()->getDefaultImagePath(). '/company_logo.png');
+        $path = self::COMPANY_LOGO_UPLOAD_PATH;
+        if (!file_exists($path)) {
+            return;
+        }
+        $logo = create_custom_directory(SugarThemeRegistry::current()->getDefaultImagePath() . '/company_logo.png');
         copy($path, $logo);
         sugar_cache_clear('company_logo_attributes');
         SugarThemeRegistry::clearAllCaches();
         SugarThemeRegistry::current()->clearImageCache('company_logo.png');
         $this->updateMetadataCache(array(MetaDataManager::MM_LOGOURL));
-	}
+    }
 
-	function saveCompanyQuoteLogo($path) {
-		$path = $this->checkTempImage($path);
-		copy($path, 'modules/Quotes/layouts/company.jpg');
-	}
 
 	/**
 	 * Add error message
