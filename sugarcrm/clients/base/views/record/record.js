@@ -1357,7 +1357,7 @@
             if (fieldPanel && fieldPanel.is(':hidden')) {
                 fieldPanel.toggle();
                 var fieldPanelArrow = fieldPanel.prev().find('i');
-                fieldPanelArrow.toggleClass('fa-chevron-up fa-chevron-down');
+                fieldPanelArrow.toggleClass('fa-chevron-down fa-chevron-right');
             }
         } else if (field.$el.is(':hidden')) {
             this.$('.more[data-moreless]').trigger('click');
@@ -1771,7 +1771,8 @@
             $panelHeader.toggleClass('panel-inactive panel-active');
         }
         if ($panelHeader && $panelHeader.find('i')) {
-            $panelHeader.find('i').toggleClass('fa-chevron-up fa-chevron-down');
+            var $panelArrow = $panelHeader.find('i');
+            $panelArrow.toggleClass('fa-chevron-down fa-chevron-right');
         }
         var panelName = this.$(e.currentTarget).parent().data('panelname');
         var state = 'collapsed';
