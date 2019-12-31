@@ -5008,7 +5008,7 @@ Sincerely, SugarCRM',
     'LBL_RENEWALS_CONSOLE_OVERVIEW' => 'Overview',
     'LBL_RENEWALS_CONSOLE_STAGE_STATUS' => 'Stage/Status',
     'LBL_RENEWALS_CONSOLE_NAME_ACCOUNT' => 'Name/Account Name',
-    'LBL_RENEWALS_CONSOLE_AMOUNT' => 'Likely/Best/Worst',
+    'LBL_RENEWALS_CONSOLE_AMOUNT' => 'Worst | Likely | Best',
 
     //END SUGARCRM flav=ent ONLY
 
