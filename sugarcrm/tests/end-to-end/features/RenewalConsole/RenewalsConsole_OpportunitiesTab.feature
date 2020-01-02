@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @job5 @pr
+@modules @job3 @pr
 Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
   As a sales agent I need to be able to verify Opportunities Tab functionality of Renewals Console
 
@@ -35,29 +35,29 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
       | *   | name      |
       | A_1 | Account_1 |
     And Opportunities records exist related via opportunities link to *A_1:
-      | *name |
-      | Opp_1 |
+      | *name | assigned_user_id |
+      | Opp_1 | 1                |
     And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
       | *name | date_closed | worst_case | likely_case | best_case | sales_stage | quantity | service | service_duration_value | service_duration_unit |
       | RLI_1 | now         | 1000       | 2000        | 3000      | Prospecting | 1        | true    | 2                      | year                  |
 
     Given Opportunities records exist related via opportunities link to *A_1:
-      | *name |
-      | Opp_2 |
+      | *name | assigned_user_id |
+      | Opp_2 | 1                |
     And RevenueLineItems records exist related via revenuelineitems link to *Opp_2:
       | *name | date_closed | likely_case | sales_stage | quantity | service | service_duration_value | service_duration_unit |
       | RLI_1 | now         | 1000        | Closed Won  | 1        | true    | 2                      | year                  |
 
     Given Opportunities records exist related via opportunities link to *A_1:
-      | *name |
-      | Opp_3 |
+      | *name | assigned_user_id |
+      | Opp_3 | 1                |
     And RevenueLineItems records exist related via revenuelineitems link to *Opp_3:
       | *name | date_closed | likely_case | sales_stage | quantity | service | service_duration_value | service_duration_unit |
       | RLI_1 | now         | 1000        | Closed Lost | 1        | true    | 2                      | year                  |
 
     Given Opportunities records exist related via opportunities link to *A_1:
-      | *name |
-      | Opp_4 |
+      | *name | assigned_user_id |
+      | Opp_4 | 1                |
     And RevenueLineItems records exist related via revenuelineitems link to *Opp_4:
       | *name | date_closed | worst_case | likely_case | best_case | sales_stage        | quantity | service | service_duration_value | service_duration_unit |
       | RLI_1 | now         | 13000      | 15000       | 17000     | Negotiation/Review | 1        | true    | 2                      | year                  |
@@ -169,8 +169,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
       | *   | name      |
       | A_1 | Account_1 |
     And Opportunities records exist related via opportunities link to *A_1:
-      | *name |
-      | Opp_1 |
+      | *name | assigned_user_id |
+      | Opp_1 | 1                |
     And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
       | *name | date_closed | worst_case | likely_case | best_case | sales_stage | quantity | service | service_duration_value | service_duration_unit |
       | RLI_1 | now         | 1000       | 2000        | 3000      | Prospecting | 1        | true    | 2                      | year                  |
@@ -271,8 +271,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
       | A_1 | Account_1 |
       | A_2 | Account_2 |
     And Opportunities records exist related via opportunities link to *A_1:
-      | *name |
-      | Opp_1 |
+      | *name | assigned_user_id |
+      | Opp_1 | 1                |
     And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
       | *name | date_closed | worst_case | likely_case | best_case | sales_stage | quantity | service | service_duration_value | service_duration_unit |
       | RLI_1 | now         | 1000       | 2000        | 3000      | Prospecting | 1        | true    | 2                      | year                  |
@@ -316,12 +316,12 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
   @renewals-console @rc_dashable_record_dashlet
   Scenario: Renewal Console > Opportunities Tab > Account Dashable Record dashlet > Cancel/Save
     Given Accounts records exist:
-      | *   | name      | website            |
-      | A_1 | Account_1 | http://www.cnn.com |
+      | *   | name      | website                 |
+      | A_1 | Account_1 | http://www.cnn.com      |
       | A_2 | Account_2 | http://www.sugarcrm.com |
     And Opportunities records exist related via opportunities link to *A_1:
-      | *name |
-      | Opp_1 |
+      | *name | assigned_user_id |
+      | Opp_1 | 1                |
     And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
       | *name | date_closed | worst_case | likely_case | best_case | sales_stage | quantity | service | service_duration_value | service_duration_unit |
       | RLI_1 | now         | 1000       | 2000        | 3000      | Prospecting | 1        | true    | 2                      | year                  |
@@ -360,8 +360,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Verify the edited value are not saved
     Then I verify fields on #A_1Record.RecordView
-      | fieldName    | value              |
-      | website      | http://www.cnn.com |
+      | fieldName | value              |
+      | website   | http://www.cnn.com |
 
     # Edit record inside the dashlet and save
     When I click Edit button in #RenewalsConsoleView.AccountInfoDashlet
@@ -391,8 +391,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
       | *   | name      | website            |
       | A_1 | Account_1 | http://www.cnn.com |
     And Opportunities records exist related via opportunities link to *A_1:
-      | *name |
-      | Opp_1 |
+      | *name | assigned_user_id |
+      | Opp_1 | 1                |
 
     And Contacts records exist:
       | *     | first_name | last_name | email                      | title               |
@@ -526,6 +526,162 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Collapse expanded record info block
     When I collapse record *N_1 in #RenewalsConsoleView.OpportunityInteractionsDashlet.InteractionsList
+
+
+  @renewals-console @rc_opportunities_config
+  Scenario: Renewals Console > Console Settings > Opportunities Tab
+    # Create an account record
+    Given Accounts records exist:
+      | *   | name      | industry  | annual_revenue | service_level | type    | assigned_user_id |
+      | A_1 | Account_1 | Chemicals | 30K            | T3            | Analyst | 1                |
+
+    # Create an Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_1:
+      | *     | name          | my_favorite | lead_source | assigned_user_id |
+      | Opp_1 | Opportunity 1 | true        | Employee    | 1                |
+
+    # Add RLI record related to the above opportunity
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed | likely_case | sales_stage    | quantity |
+      | RLI_1 | now +11d    | 1000        | Needs Analysis | 1        |
+
+    # Create an Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_1:
+      | *     | name          | my_favorite | lead_source | assigned_user_id |
+      | Opp_2 | Opportunity 2 | false       | Cold Call   | 1                |
+
+    # Add RLI record related to the above opportunity
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_2:
+      | *name | date_closed | likely_case | sales_stage | quantity |
+      | RLI_2 | now +15d    | 1000        | Prospecting | 1        |
+
+    # Create an Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_1:
+      | *     | name          | my_favorite | lead_source | assigned_user_id |
+      | Opp_3 | Opportunity 3 | true        | Conference  | 1                |
+
+    # Add RLI record related to the above opportunity
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_3:
+      | *name | date_closed | likely_case | sales_stage         | quantity |
+      | RLI_3 | now +13d    | 1000        | Perception Analysis | 1        |
+
+    # Create an Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_1:
+      | *     | name          | my_favorite | lead_source | assigned_user_id |
+      | Opp_4 | Opportunity 4 | false       | Trade Show  | 1                |
+
+    # Add RLI record related to the above opportunity
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_4:
+      | *name | date_closed | likely_case | sales_stage | quantity |
+      | RLI_4 | now +10d    | 1000        | Prospecting | 1        |
+
+    # Create an Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_1:
+      | *     | name          | my_favorite | lead_source | assigned_user_id |
+      | Opp_5 | Opportunity 5 | true        | Direct Mail | 1                |
+
+    # Add RLI record related to the above opportunity
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_5:
+      | *name | date_closed | likely_case | sales_stage        | quantity |
+      | RLI_5 | now +12d    | 1000        | Negotiation/Review | 1        |
+
+    # Trigger sugar logic by mass-update opportunities 'sales_stage' field
+    When I perform mass update of all RevenueLineItems with the following values:
+      | fieldName          | value         |
+      | assigned_user_name | Administrator |
+
+    # Navigate to Renewals Console
+    When I choose Home in modules menu and select "Renewals Console" menu item
+
+    # Select Opportunities tab in Renewals Console
+    When I select Opportunities tab in #RenewalsConsoleView
+
+     # TODO: Below is standard way of setting values of the standard dropdown field.
+     # In this test custom step definition had to be used because there are pairs of fields with the same name
+     # (one on each tab) loaded when Console Settings drawer is displayed and there
+     # is no way to access fields on the Opportunities tab using standard approach
+     # because the field with the same name already exists on Accounts tab
+
+     # When I provide input for #ConsoleSettingsConfig view
+     #     | order_by_primary | order_by_secondary |
+     #     | Industry         | Name               |
+
+    # Set sorting order in the Console Settings > Opportunities tab and save
+    When I set sort order in Opportunities tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy           |
+      | primary        | Sales Stage      |
+      | secondary      | Opportunity Name |
+
+    # Verify the order of records in the multiline list view after sorting order is changed
+    Then I verify records order in #OpportunitiesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | Opp_1             | 1                   |
+      | Opp_5             | 2                   |
+      | Opp_3             | 3                   |
+      | Opp_2             | 4                   |
+      | Opp_4             | 5                   |
+
+    # Set sorting order in the Console Settings > Opportunities tab and save
+    When I set sort order in Opportunities tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy      |
+      | primary        | Lead Source |
+
+    # Verify the order of records in the multiline list view after sorting order is changed
+    Then I verify records order in #OpportunitiesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | Opp_2             | 1                   |
+      | Opp_3             | 2                   |
+      | Opp_5             | 3                   |
+      | Opp_1             | 4                   |
+      | Opp_4             | 5                   |
+
+    # Set filter in the Console Settings > Opportunities tab and save
+    When I set the "My Favorites" filter in Opportunities tab of #ConsoleSettingsConfig view
+
+    # Verify the order of records in the multiline list view after filter is applied
+    Then I should not see *Opp_2 in #OpportunitiesList.MultilineListView
+    Then I should not see *Opp_4 in #OpportunitiesList.MultilineListView
+
+    Then I verify records order in #OpportunitiesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | Opp_3             | 1                   |
+      | Opp_5             | 2                   |
+      | Opp_1             | 3                   |
+
+    # Change sales stage of one of the RLI records to Closed Won
+    When I perform mass update of RevenueLineItems [*RLI_3] with the following values:
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+
+    # Navigate to Renewals Console
+    When I choose Home in modules menu
+
+    # Select Opportunities tab in Renewals Console
+    When I select Opportunities tab in #RenewalsConsoleView
+
+    # Verify the order of records in the multiline list view after filter is applied
+    Then I should not see *Opp_3 in #OpportunitiesList.MultilineListView
+    Then I verify records order in #OpportunitiesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | Opp_5             | 1                   |
+      | Opp_1             | 2                   |
+
+    # Restore default sorting order in the Console Settings > Opportunities tab and save
+    When I set sort order in Opportunities tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy              |
+      | primary        | Expected Close Date |
+      | secondary      |                     |
+
+    # Restore default filter in the Console Settings > Opportunities tab and save.
+    When I set the "My Items" filter in Opportunities tab of #ConsoleSettingsConfig view
+
+    # Verify the records in the multiline list view after sorting order is changed
+    Then I verify records order in #AccountsList.MultilineListView
+      | record_identifier | expected_list_order |
+      | Opp_4             | 1                   |
+      | Opp_1             | 2                   |
+      | Opp_5             | 3                   |
+      | Opp_2             | 4                   |
 
 
   @user_profile

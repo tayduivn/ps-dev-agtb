@@ -29,7 +29,7 @@ import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
 import HistoryDashlet from '../views/history-dashlet-view';
 
 /**
- *  Verify the order of the item in the multiline list view in Service Console Cases tab
+ *  Verify the order of the item in the multiline list view of Renewals or Service Console
  *
  *  @example
  *  Then I verify case records order in #CasesList.MultilineListView
@@ -38,7 +38,7 @@ import HistoryDashlet from '../views/history-dashlet-view';
  *      | C_2               | 2                   |
  *      | C_1               | 1                   |
  */
-Then(/^I verify the case records order in (#\S+)$/,
+Then(/^I verify records order in (#\S+)$/,
     async function (view: MultilineListView, data: TableDefinition) {
 
         let rows = data.rows();

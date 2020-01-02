@@ -534,12 +534,12 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
 
     # Verify that next renewal date is properly calculated
     Then I verify fields for *A_1 in #AccountsList.MultilineListView
-      | fieldName         | value      |
-      | name              | Account 1  |
-      | industry          | Apparel    |
-      | annual_revenue    | 5000000    |
-      | service_level     | Tier 1     |
-      | account_type      | Analyst    |
+      | fieldName      | value     |
+      | name           | Account 1 |
+      | industry       | Apparel   |
+      | annual_revenue | 5000000   |
+      | service_level  | Tier 1    |
+      | account_type   | Analyst   |
 
   # There is an issue with using relative date:
   # if the test runs before noon of the current day (meaning today) in calculates next renewal date "in 12 days"
@@ -561,6 +561,122 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
 #      | next_renewal_date | in 14 days |
 
 
+  @renewals-console @rc_accounts_config
+  Scenario: Renewals Console > Console Settings > Accounts Tab
+    Given Accounts records exist:
+      | *   | name      | industry     | annual_revenue | service_level | type     | my_favorite |
+      | A_1 | Account_1 | Chemicals    | 30K            | T3            | Analyst  | true        |
+      | A_2 | Account_2 | Construction | 25K            | T1            | Analyst  | false       |
+      | A_3 | Account_3 | Chemicals    | 30K            | T2            | Partner  | true        |
+      | A_4 | Account_4 | Chemicals    | 35K            | T2            | Investor | false       |
+      | A_5 | Account_5 | Banking      | 30K            | T1            | Partner  | true        |
+
+    # Create an Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_1:
+      | *     | name          |
+      | Opp_1 | Opportunity 1 |
+
+    # Add RLI record related to the above opportunity
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed | likely_case | sales_stage | quantity | product_type      | service | service_duration_value | service_duration_unit | service_start_date | renewable |
+      | RLI_1 | now +11d    | 1000        | Prospecting | 1        | Existing Business | true    | 2                      | year                  | 2019-11-06         | true      |
+
+    # Create an Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_3:
+      | *     | name          |
+      | Opp_3 | Opportunity 3 |
+
+    # Add RLI record related to the above opportunity
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_3:
+      | *name | date_closed | likely_case | sales_stage | quantity | product_type      | service | service_duration_value | service_duration_unit | service_start_date | renewable |
+      | RLI_3 | now +13d    | 1000        | Prospecting | 1        | Existing Business | true    | 2                      | year                  | 2019-11-06         | true      |
+
+    # Create an Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_4:
+      | *     | name          |
+      | Opp_4 | Opportunity 4 |
+
+    # Add RLI record related to the above opportunity
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_4:
+      | *name | date_closed | likely_case | sales_stage | quantity | product_type      | service | service_duration_value | service_duration_unit | service_start_date | renewable |
+      | RLI_4 | now +10d    | 1000        | Prospecting | 1        | Existing Business | true    | 2                      | year                  | 2019-11-06         | true      |
+
+    # Create an Opportunity related to the account
+    Given Opportunities records exist related via Opportunities link to *A_5:
+      | *     | name          |
+      | Opp_5 | Opportunity 5 |
+
+    # Add RLI record related to the above opportunity
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_5:
+      | *name | date_closed | likely_case | sales_stage | quantity | product_type      | service | service_duration_value | service_duration_unit | service_start_date | renewable |
+      | RLI_5 | now +12d    | 1000        | Prospecting | 1        | Existing Business | true    | 2                      | year                  | 2019-11-06         | true      |
+
+    # Trigger sugar logic by mass-update opportunities 'sales_stage' field
+    When I perform mass update of all RevenueLineItems with the following values:
+      | fieldName   | value         |
+      | sales_stage | Qualification |
+
+    # Navigate to Renewals Console
+    When I choose Home in modules menu and select "Renewals Console" menu item
+
+    # Select Accounts tab in Renewals Console
+    When I select Accounts tab in #RenewalsConsoleView
+
+     # TODO: Below is standard way of setting values of the standard dropdown field.
+     # In this test custom step definition had to be used because there are pairs of fields with the same name
+     # (one on each tab) loaded when Console Settings drawer is displayed and there
+     # is no way to access fields on the Opportunities tab using standard approach
+     # because the field with the same name already exists on Accounts tab
+
+     # When I provide input for #ConsoleSettingsConfig view
+     #     | order_by_primary | order_by_secondary |
+     #     | Industry         | Name               |
+
+    # Set sorting order in the Console Settings > Accounts tab and save
+    When I set sort order in Accounts tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy   |
+      | primary        | Industry |
+      | secondary      | Name     |
+
+    # Verify the order of records in the multiline list view after sorting order is changed
+    Then I verify records order in #AccountsList.MultilineListView
+      | record_identifier | expected_list_order |
+      | A_5               | 1                   |
+      | A_1               | 2                   |
+      | A_3               | 3                   |
+      | A_4               | 4                   |
+      | A_2               | 5                   |
+
+    # Set filter in the Console Settings > Accounts tab and save
+    When I set the "My Favorites" filter in Accounts tab of #ConsoleSettingsConfig view
+
+    # Verify the order of records in the multiline list view after filter is applied
+    Then I should not see *A_2 in #AccountsList.MultilineListView
+    Then I should not see *A_4 in #AccountsList.MultilineListView
+
+    Then I verify records order in #AccountsList.MultilineListView
+      | record_identifier | expected_list_order |
+      | A_5               | 1                   |
+      | A_1               | 2                   |
+      | A_3               | 3                   |
+
+    # Restore default sorting order in the Console Settings > Accounts tab and save
+    When I set sort order in Accounts tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy               |
+      | primary        | Date of Next Renewal |
+      | secondary      |                      |
+
+    # Restore default filter in the Console Settings > Accounts tab and save.
+    When I set the "My Items" filter in Accounts tab of #ConsoleSettingsConfig view
+
+    # Verify the records in the multiline list view after sorting order is changed
+    Then I verify records order in #AccountsList.MultilineListView
+      | record_identifier | expected_list_order |
+      | A_4               | 1                   |
+      | A_1               | 2                   |
+      | A_5               | 3                   |
+      | A_3               | 4                   |
+      | A_2               | 5                   |
 
 
   @user_profile
@@ -574,5 +690,3 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
       | value            |
       | Sugar Enterprise |
     When I click on Cancel button on #UserProfile
-
-

@@ -59,7 +59,7 @@ Feature: Customer Service Console Verification
     When I select Cases tab in #ServiceConsoleView
 
     # Check the list sorting order
-    Then I verify the case records order in #CasesList.MultilineListView
+    Then I verify records order in #CasesList.MultilineListView
       | record_identifier | expected_list_order |
       | C_3               | 1                   |
       | C_2               | 2                   |
@@ -609,9 +609,110 @@ Feature: Customer Service Console Verification
 
     # Verify that 2 previously added tabs are successfully removed
     Then I should not see the following tabs in #ServiceConsoleView.DashableRecordDashlet dashlet:
-      | tab_list  |
-      | Calls     |
-      | Notes     |
+      | tab_list |
+      | Calls    |
+      | Notes    |
+
+
+  @service-console @sc_cases_config
+  Scenario: Service Console > Console Settings > Cases Tab
+    Given Accounts records exist:
+      | *   | name      | industry  | annual_revenue | service_level | type    | my_favorite |
+      | A_1 | Account_1 | Chemicals | 30K            | T3            | Analyst | true        |
+
+    And Cases records exist related via cases link to *A_1:
+      | *   | name   | source   | priority | status        | follow_up_datetime        | assigned_user_id | my_favorite |
+      | C_1 | Case_1 | Internal | P1       | New           | 2025-11-20T22:27:00+00:00 | 1                | true        |
+      | C_2 | Case_2 | Forum    | P2       | Assigned      | 2025-10-20T22:27:00+00:00 | 1                | true        |
+      | C_3 | Case_3 | Web      | P3       | Pending Input | 2025-09-20T22:27:00+00:00 | 1                | false       |
+      | C_4 | Case_4 | Web      | P1       | New           | 2025-08-20T22:27:00+00:00 | 1                | false       |
+      | C_5 | Case_5 | Forum    | P2       | Assigned      | 2025-07-20T22:27:00+00:00 | 1                | true        |
+
+    # Navigate to Service Console
+    When I choose Home in modules menu and select "Service Console" menu item
+
+    # Select Cases tab in Service Console
+    When I select Cases tab in #ServiceConsoleView
+
+    # Set sorting order in the Console Settings > Cases tab and save
+    When I set sort order in Cases tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy |
+      | primary        | Status |
+      | secondary      | Number |
+
+    # Verify the order of records in the multiline list view after sorting order is changed
+    Then I verify records order in #CasesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | C_2               | 1                   |
+      | C_5               | 2                   |
+      | C_1               | 3                   |
+      | C_4               | 4                   |
+      | C_3               | 5                   |
+
+    # Set sorting order in the Console Settings > Cases tab and save
+    When I set sort order in Cases tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy   |
+      | primary        | Priority |
+      | secondary      | Subject  |
+
+    # Verify the order of records in the multiline list view after sorting order is changed
+    Then I verify records order in #CasesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | C_1               | 1                   |
+      | C_4               | 2                   |
+      | C_2               | 3                   |
+      | C_5               | 4                   |
+      | C_3               | 5                   |
+
+    # Set filter in the Console Settings > Cases tab and save
+    When I set the "My Favorites" filter in Cases tab of #ConsoleSettingsConfig view
+
+    # Verify the order of records in the multiline list view after filter is applied
+    Then I should not see *C_3 in #CasesList.MultilineListView
+    Then I should not see *C_4 in #CasesList.MultilineListView
+
+    Then I verify records order in #CasesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | C_1               | 1                   |
+      | C_2               | 2                   |
+      | C_5               | 3                   |
+
+    # Change status of one of the Cases records to Rejected
+    When I perform mass update of Cases [*C_2] with the following values:
+      | fieldName | value    |
+      | status    | Rejected |
+
+    # Navigate to Renewals Console
+    When I choose Home in modules menu
+
+    # Select Cases tab in Service Console
+    When I select Cases tab in #ServiceConsoleView
+
+    # Verify the order of records in the multiline list view after filter is applied
+    Then I should not see *C_2 in #CasesList.MultilineListView
+
+    # Restore default sorting order in the Console Settings > Cases tab and save
+    When I set sort order in Cases tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy         |
+      | primary        | Follow Up Date |
+      | secondary      |                |
+
+    # Verify the records in the multiline list view after sorting order is changed
+    Then I verify records order in #CasesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | C_5               | 1                   |
+      | C_1               | 2                   |
+
+    # Restore default filter in the Console Settings > Cases tab and save.
+    When I set the "My Items" filter in Cases tab of #ConsoleSettingsConfig view
+
+    # Verify the records in the multiline list view after sorting order is changed
+    Then I verify records order in #CasesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | C_5               | 1                   |
+      | C_4               | 2                   |
+      | C_3               | 3                   |
+      | C_1               | 4                   |
 
 
   @user_profile

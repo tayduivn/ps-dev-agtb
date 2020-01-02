@@ -45,6 +45,7 @@ import UserProfileLayout from './layouts/user-profile-layout';
 import TileViewSettings from './views/tile-settings-view';
 import FindDuplicates from './views/find-duplicates-view';
 import DashableRecordDashletConfig from './views/dashable-record-dashlet-config-view';
+import ConsoleSettingsConfig from './views/console-settings-view';
 
 
 export default (seedbed: Seedbed) => {
@@ -116,6 +117,7 @@ export default (seedbed: Seedbed) => {
         seedbed.defineComponent(`KBSettingsDrawer`, KBSettingsLayout, {module: 'KBContents'});
         seedbed.defineComponent(`ServiceConsoleView`, ServiceConsoleView, {module: 'Dashboards'});
         seedbed.defineComponent(`RenewalsConsoleView`, RenewalsConsoleView, {module: 'Dashboards'});
+        seedbed.defineComponent(`ConsoleSettingsConfig`, ConsoleSettingsConfig, {module: 'Dashboards'});
     });
 
     /**

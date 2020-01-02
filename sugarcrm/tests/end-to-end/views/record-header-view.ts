@@ -115,6 +115,10 @@ export default class RecordHeaderView extends BaseView {
 
                 // Pipeline View
                 'pipelinecreate': 'a[name="pipeline_create_button"]:not(.hide)',
+
+                // Serve Console and Renewal Console
+                'edit_overview_tab_button': 'a[name="edit_overview_tab_button"]:not(.hide)',
+                'edit_module_tabs_button': 'a[name="edit_module_tabs_button"]:not(.hide)',
             },
 
             title: {

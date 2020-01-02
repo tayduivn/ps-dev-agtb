@@ -28,6 +28,7 @@ export default class DashboardView extends BaseView {
                 newrow: '.row-fluid[name="dashlet_last_{{index}}0"] .add-row.empty',
                 adddashlet: '.add-dashlet .fa.fa-plus',
             },
+
             // Service and Renewals console
             tab: 'a[data-original-title="{{tabName}}"]',
             closeSideDrawer: '.close-drawer',
