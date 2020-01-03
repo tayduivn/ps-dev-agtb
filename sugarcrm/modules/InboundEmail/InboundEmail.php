@@ -2592,7 +2592,8 @@ class InboundEmail extends SugarBean {
 			$goodStr['serial'] = $newTls.'::'.$newCert.'::'.$newSsl.'::'.$this->protocol.'::'.$newNovalidate_cert.'::'.$newNotls.'::'.$secure;
 			$goodStr['service'] = $good;
 			$testConnectString = str_replace('foo','', $good);
-            $testConnectString = $this->getMailbox($testConnectString)->value();
+            $testConnectString = '{' . $this->remoteSystemName->value() . ':' . $this->port
+                . '/service=' . $this->protocol . $testConnectString . '}';
             $this->setSessionConnectionOptions($this->remoteSystemName, $this->email_user, $this->port, $this->protocol, $goodStr);
 			$i = 0;
 			foreach($raw as $mbox)
