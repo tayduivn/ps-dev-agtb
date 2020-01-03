@@ -32,9 +32,10 @@ final class RemoteSystemName
     {
         if (!filter_var($value, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
             throw new \DomainException(
-                sprintf('Expected internet domain name or IP address, %s given', $value)
+                sprintf('Expected internet domain name or IP address, "%s" given', $value)
             );
         }
+
         $remoteSystemName = new self();
         $remoteSystemName->value = $value;
         return $remoteSystemName;

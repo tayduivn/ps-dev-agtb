@@ -31,6 +31,18 @@ class InboundEmailMagicMethodsTest extends TestCase
     }
 
     /**
+     * Ensure that the $server_url property can be set to an empty value
+     */
+    public function testEmptyServerUrl()
+    {
+        $inboundEmail = new InboundEmail();
+        $inboundEmail->server_url = '';
+
+        $this->assertFalse(isset($inboundEmail->server_url));
+        $this->assertNull($inboundEmail->server_url);
+    }
+
+    /**
      * Ensure that server_url property can not be set to invalid value by magic setter
      */
     public function testInvalidServerUrl()

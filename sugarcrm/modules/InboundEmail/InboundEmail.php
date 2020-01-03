@@ -164,6 +164,12 @@ class InboundEmail extends SugarBean {
     {
         switch ($name) {
             case 'server_url':
+                if ($value === null || $value === '') {
+                    $this->remoteSystemName = null;
+
+                    return;
+                }
+
                 try {
                     $this->remoteSystemName = RemoteSystemName::fromString($value);
                 } catch (\DomainException $exception) {
