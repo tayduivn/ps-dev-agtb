@@ -318,6 +318,71 @@ describe('Base.Field.Relate', function() {
         });
     });
 
+    describe('_setRelated', function() {
+        using('data with and without dependent relationships', [
+            {
+                'data': {
+                    'first_name': 'Jim',
+                    'last_name': 'Morrison'
+                },
+                'call_count': 1
+            },
+            {
+                'data': {
+                    'preferred_language': 'en_us',
+                    'portal_name': 'jmorris199'
+                },
+                'call_count': 2
+            },
+            {
+                'data': {
+                    'preferred_language': 'en_uk',
+                    'portal_name': 'jmorris199',
+                    'portal_user_company_name': 'applebees'
+                },
+                'call_count': 3
+            },
+            {
+                'data': {
+                    'preferred_language': 'en_us',
+                    'portal_name': 'jmorris199',
+                    'portal_user_company_name': 'applebees',
+                    'first_name': 'Jim',
+                    'last_name': 'Morrison'
+                },
+                'call_count': 3
+            }
+        ], function(setData) {
+            it('should call `set` recursively is parent/child fields in set data', function() {
+                // force mock data relationship to trigger recursive set
+                var bean = app.data.createBean('Contacts');
+                bean.fields = {
+                    'preferred_language': {
+                        'visibility_grid': {'trigger': 'portal_name'}
+                    },
+                    'portal_name': {
+                        'visibility_grid': {'trigger': 'portal_user_company_name'}
+                    }
+                };
+
+                field = SugarTest.createField(
+                    'base',
+                    'portal_name',
+                    'relate',
+                    'edit',
+                    fieldDef
+                );
+
+                field.modules = 'Contacts';
+                field.model = bean;
+                sinon.spy(field, '_setRelated');
+
+                field._setRelated(setData.data);
+                expect(field._setRelated.callCount).toBe(setData.call_count);
+            });
+        });
+    });
+
     describe('buildRoute', function() {
         using('different related records', [
             {
