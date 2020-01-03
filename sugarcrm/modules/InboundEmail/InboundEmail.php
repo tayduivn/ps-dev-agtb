@@ -143,7 +143,7 @@ class InboundEmail extends SugarBean {
 	public function __construct() {
 	    $this->EmailCachePath = sugar_cached('modules/Emails');
 	    parent::__construct();
-		if(function_exists("imap_timeout")) {
+        if (extension_loaded('imap')) {
 			/*
 			 * 1: Open
 			 * 2: Read
@@ -2421,7 +2421,7 @@ class InboundEmail extends SugarBean {
 							'bad' => $badService,
 							'err' => $errorArr);
 
-		if(!function_exists('imap_open')) {
+        if (!extension_loaded('imap')) {
 			$retArray['err'][0] = $mod_strings['ERR_NO_IMAP'];
 			return $retArray;
 		}
@@ -4834,7 +4834,7 @@ eoq;
 	 */
 	function connectMailserver($test=false, $force=false) {
 		global $mod_strings;
-		if(!function_exists("imap_open")) {
+        if (!extension_loaded('imap')) {
 			$GLOBALS['log']->debug('------------------------- IMAP libraries NOT available!!!! die()ing thread.----');
 			return $mod_strings['LBL_WARN_NO_IMAP'];
 		}
@@ -4927,7 +4927,7 @@ eoq;
 	function checkImap() {
 		global $mod_strings;
 
-		if(!function_exists('imap_open')) {
+        if (!extension_loaded('imap')) {
 			echo '
 			<table cellpadding="0" cellspacing="0" width="100%" border="0" class="list view">
 				<tr height="20">

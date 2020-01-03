@@ -320,7 +320,7 @@ if (class_exists("ZipArchive")) {
 }
 
 // imap
-if (function_exists('imap_open')) {
+if (extension_loaded('imap')) {
     $imapStatus = "{$mod_strings['LBL_CHECKSYS_OK']}";
 } else {
     $imapStatus = "<span class='stop'><b>{$mod_strings['ERR_CHECKSYS_IMAP']}</b></span>";

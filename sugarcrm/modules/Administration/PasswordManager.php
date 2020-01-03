@@ -251,7 +251,9 @@ if (!empty($focus->settings['ldap_admin_password'])) {
 $sugar_smarty = new Sugar_Smarty();
 
 // if no IMAP libraries available, disable Save/Test Settings
-if(!function_exists('imap_open')) $sugar_smarty->assign('IE_DISABLED', 'DISABLED');
+if (!extension_loaded('imap')) {
+    $sugar_smarty->assign('IE_DISABLED', 'DISABLED');
+}
 
 $sugar_smarty->assign('CONF', $config_strings);
 $sugar_smarty->assign('MOD', $mod_strings);

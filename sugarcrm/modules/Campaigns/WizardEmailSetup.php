@@ -138,7 +138,7 @@ $mboxTable .= "</table>";
 $ss->assign("MAILBOXES_DETECTED_MESSAGE", $mboxTable);
 $ss->assign("MBOX_NEEDED", $need_mbox);          
 $ss->assign('ROLLOVER', $email->rolloverStyle);
-if(!function_exists('imap_open')) {
+if (!extension_loaded('imap')) {
     $ss->assign('IE_DISABLED', 'DISABLED');   
 }
 /**************************** SUMMARY UI DIV Stuff *******************/
