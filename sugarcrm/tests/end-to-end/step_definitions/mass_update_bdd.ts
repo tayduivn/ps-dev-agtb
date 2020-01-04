@@ -30,6 +30,7 @@ When(/^I (perform|cancel) mass update of all (\w+) with the following values:$/,
         await chooseModule(module);
         const listView = await seedbed.components[`${module}List`].ListView;
         const massUpdateView = await seedbed.components[`${module}List`].MassUpdateView;
+        await seedbed.client.driver.waitForApp();
 
         // Toggle all records
         await listView.toggleAll();

@@ -10,6 +10,9 @@
  */
 import BaseView from './base-view';
 import BaseListItemView from './list-item-view';
+import {BaseField} from "../fields/base-field";
+import * as chalk from "chalk";
+import * as _ from 'lodash';
 
 /**
  * @class MultilineListItemView represents multiple list view in Service Console
@@ -98,5 +101,67 @@ export default class MultilineListItemView extends BaseListItemView {
         }
         // if record is not found in the first 20 list view rows
         return -1;
+    }
+
+    public async getField(name: string, type?: string): Promise<BaseField> {
+
+        let selector = '';
+        let nameObj = this.parseName(name);
+        name = nameObj['fieldName'];
+        try {
+
+            selector = this.$('field', {name});
+            type = nameObj['type'] || type;
+            if (!type) {
+                let fieldTypeAttr = await this.driver.getAttribute(
+                    selector,
+                    'field-type'
+                );
+                type = _.isArray(fieldTypeAttr) ? fieldTypeAttr[0] : fieldTypeAttr;
+            }
+
+            let field = await this.createField(name, type);
+
+            console.log(`field ${name}, template ${field.constructor.name}`);
+
+            return field;
+        } catch (err) {
+            throw new Error(
+                `Field '${name}' is missing on ${this.constructor.name}
+                via selector: '${chalk.yellow(selector)}'`
+            );
+        }
+    }
+
+    /**
+     * Parse the fieldname from data hash. Converts paren values to
+     * key value object
+     *
+     * Examples:
+     * name => { fieldName: "name"}
+     * name (type=text) => {
+     *                         fieldName: "name",
+     *                         type: "text"
+     *                     }
+     * @param {string} str
+     * @returns {object}
+     */
+    private parseName(str: string): object {
+        let arr = str.split('(');
+        let obj = {};
+        arr.forEach(function(piece) {
+            if (piece.indexOf('=') === -1) {
+                // assume fieldName
+                obj['fieldName'] = piece.trim();
+            } else {
+                let keyValue = piece.split('=');
+                let key = keyValue[0];
+                let value = keyValue[1].trim();
+                // strip off `)`
+                value = value.substring(0, value.length - 1);
+                obj[key.trim()] = value.trim();
+            }
+        });
+        return obj;
     }
 }

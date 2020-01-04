@@ -23,7 +23,7 @@ export default class DateField extends BaseField {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '[field-name={{name}}]',
+            $: '[field-name={{name}}][field-type={{type}}]',
             field: {
                 selector: 'input'
             }
