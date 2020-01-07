@@ -63,9 +63,11 @@
 
         this.context.get('model').set('pipeline_type', pipelineType);
 
-        var origFilterDef = this.collection.origFilterDef;
-        var filterDef = origFilterDef.length > -1 ? origFilterDef : [origFilterDef];
-        this.context.trigger('pipeline:recordlist:filter:changed', filterDef);
+        // apply filter
+        var filterPanel = this.layout.getComponent('filterpanel');
+        if (filterPanel) {
+            filterPanel.trigger('filter:apply');
+        }
     },
 
     /**
