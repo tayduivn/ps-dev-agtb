@@ -489,7 +489,7 @@
                 var success = _.bind(function() {
                     app.alert.show('pipeline-loading', {
                         level: 'process',
-                        autoClose: true
+                        autoClose: false
                     });
 
                     this.switchCollection(oldCollection, model, newCollection);
@@ -550,65 +550,72 @@
             return key in model.changed;
         });
 
-        // Validate the record fields on the model. If validation is successful,
-        // save the model. Otherwise, open the record in a drawer to edit the
-        // fields that failed validation
-        model.isValidAsync(this._getFieldsToValidate(), function(isValid) {
-            if (isValid) {
-                model.save({}, {
-                    success: function(model) {
-                        self._super('render');
-                        self.postRender();
-                    },
-                    error: function(data) {
-                        self._super('render');
-                        self.postRender();
-                    },
-                    complete: function() {
-                        self.$('.column').sortable('enable');
+        // Validate the model according to the record view validation rules. For
+        // accurate validation which takes SugarLogic dependencies into account,
+        // we need to actually open the record view. Here we load the view into
+        // the side drawer (without opening it), then validate it. If validation
+        // is successful, the model/collection change is saved. Otherwise, the
+        // record view is opened in a regular drawer for the user to fix the
+        // invalid fields
+        var sideDrawer = this._getSideDrawer();
+        if (sideDrawer) {
+            sideDrawer.showComponent({
+                layout: 'record',
+                context: {
+                    create: true,
+                    model: model,
+                    module: self.module,
+                    validationOnly: true,
+                    validationCallback: function(isValid) {
+                        if (isValid) {
+                            self._handleSuccessfulValidation(model);
+                        } else {
+                            self._handleFailedValidation(model, ui, oldCollection, newCollection);
+                        }
                     }
-                });
-            } else {
-                self._handleFailedValidation(model, ui, oldCollection, newCollection);
-            }
-        });
+                }
+            });
+        }
     },
 
     /**
-     * Returns the fields to validate on the model for the current module
-     * @param model
+     * Get side drawer.
+     * @return {Object} The side drawer.
      * @private
      */
-    _getFieldsToValidate: function() {
-        // Get the field definitions from the module's vardefs
-        var moduleFields = app.metadata.getModule(this.module, 'fields');
+    _getSideDrawer: function() {
+        if (!this.sideDrawer) {
+            this.sideDrawer = this.layout.getComponent('side-drawer');
+        }
+        return this.sideDrawer;
+    },
 
-        // Get the extended field definitions from the module's record view meta
-        var recordViewMeta = app.metadata.getView(this.module, 'record');
-        var recordViewFieldDefs = _.flatten(_.pluck(recordViewMeta.panels, 'fields'));
-        var recordViewFields = {};
-        _.each(recordViewFieldDefs, function(field) {
-            if (_.isEmpty(recordViewFields[field.name])) {
-                recordViewFields[field.name] = field;
+    _handleSuccessfulValidation: function(model) {
+        var self = this;
+        model.save({}, {
+            success: function() {
+                app.alert.show('pipeline-success', {
+                    level: 'success',
+                    messages: app.lang.get('LBL_SAVED', self.module),
+                    autoClose: true
+                })
+                self._super('render');
+                self.postRender();
+            },
+            error: function(err) {
+                app.alert.show('pipeline-error', {
+                    level: 'error',
+                    messages: app.lang.get('LBL_ERROR', self.module),
+                    autoClose: true
+                })
+                self._super('render');
+                self.postRender();
+            },
+            complete: function() {
+                app.alert.dismiss('pipeline-loading');
+                self.$('.column').sortable('enable');
             }
         });
-
-        // Get the names of the record view fields that actually need validation.
-        // We can temporarily swap the view metadata to make it easier
-        var oldMeta = this.meta;
-        this.meta = recordViewMeta;
-        var fieldNames = this.getFieldNames(this.module);
-        this.meta = oldMeta;
-
-        // For each field that needs validation, extend the field's vardefs with
-        // the record view definition to get an accurate list of field definitions
-        // to validate
-        var fieldsToValidate = {};
-        _.each(fieldNames, function(fieldName) {
-            fieldsToValidate[fieldName] = _.extend({}, moduleFields[fieldName], recordViewFields[fieldName]);
-        });
-
-        return fieldsToValidate;
     },
 
     /**
@@ -628,7 +635,8 @@
             context: {
                 module: self.module,
                 model: model,
-                correctInvalidFields: true
+                correctInvalidFields: true,
+                noEditFields: [self.headerField]
             }
         }, function(saved) {
             if (saved) {

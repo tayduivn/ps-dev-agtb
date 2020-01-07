@@ -65,6 +65,12 @@ $viewdefs['base']['layout']['pipeline-records'] = array(
                                                 'view' => 'pipeline-recordlist-content',
                                                 'primary'=>true,
                                             ),
+                                            array(
+                                                'layout' => array(
+                                                    'name' => 'side-drawer',
+                                                    'type' => 'side-drawer',
+                                                ),
+                                            ),
                                         ),
                                     ),
                                 ),

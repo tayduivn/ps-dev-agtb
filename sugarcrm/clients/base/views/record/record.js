@@ -204,10 +204,18 @@
 
         this.on('render', this.registerShortcuts, this);
 
-        // If this view is only to correct invalid fields, set a flag to mark that
-        if (this.context.get('correctInvalidFields')) {
-            this.correctInvalidFields = true;
-        }
+        // Allow for specification of additional noEdit/readonly fields
+        this.extraNoEditFields = this.context.get('noEditFields') || [];
+
+        // Used by the pipeline view for validation purposes
+        this.validationOnly = this.context.get('validationOnly') || false;
+        this.validationCallback = this.context.get('validationCallback') || null;
+
+        // Flags whether this view is only meant to be used to correct existing
+        // invalid fields. This is meant only for record views that are opened
+        // in a drawer
+        this.correctInvalidFields = this.context.get('correctInvalidFields') || false;
+
     },
 
     /**
@@ -491,12 +499,31 @@
             this.overflowTabs();
         }
 
+        // If this view is only to validate fields, immediately run validation
+        // and trigger the specified callback function with the results
+        if (this.validationOnly && typeof this.validationCallback === 'function') {
+            this._validateFields(this.validationCallback);
+        }
+
         // If this view is only to correct invalid fields, programmatically
         // click the save button to trigger validation
         if (this.correctInvalidFields) {
             this.editClicked();
             this.saveClicked();
         }
+    },
+
+    _validateFields: function(callback) {
+        var allFields = this.getFields(this.module, this.model);
+        var fieldsToValidate = {};
+        var erasedFields = this.model.get('_erased_fields');
+        for (var fieldKey in allFields) {
+            if (app.acl.hasAccessToModel('edit', this.model, fieldKey) &&
+                (!_.contains(erasedFields, fieldKey) || this.model.get(fieldKey) || allFields[fieldKey].id_name)) {
+                _.extend(fieldsToValidate, _.pick(allFields, fieldKey));
+            }
+        }
+        this.model.doValidate(fieldsToValidate, callback);
     },
 
     _renderField: function(field, $fieldEl) {
@@ -661,12 +688,14 @@
                         return !_.isUndefined(self.model.get(fieldSetField.name));
                     });
 
-                    if (field.readonly || _.every(fieldSetFields, function(f) {
+                    if (field.readonly || this.extraNoEditFields.indexOf(field.name) !== -1 ||
+                        _.every(fieldSetFields, function(f) {
                         return !app.acl.hasAccessToModel('edit', this.model, f.name);
                     }, this)) {
                         this.noEditFields.push(field.name);
                     }
-                } else if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                } else if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name) ||
+                    this.extraNoEditFields.indexOf(field.name) !== -1) {
                     this.noEditFields.push(field.name);
                 }
             }, this);
@@ -1487,12 +1516,14 @@
 
                 // disable the pencil icon if the user doesn't have ACLs
                 if (field.fields && _.isArray(field.fields)) {
-                    if (field.readonly || _.every(field.fields, function(field) {
+                    if (field.readonly || this.extraNoEditFields.indexOf(field.name) !== -1 ||
+                        _.every(field.fields, function(field) {
                         return !app.acl.hasAccessToModel('edit', this.model, field.name);
                     }, this)) {
                         this.noEditFields.push(field.name);
                     }
-                } else if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                } else if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name) ||
+                    this.extraNoEditFields.indexOf(field.name) !== -1) {
                     this.noEditFields.push(field.name);
                 }
             }, this);
