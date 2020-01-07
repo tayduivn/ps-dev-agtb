@@ -487,22 +487,20 @@
                     return;
                 }
                 var success = _.bind(function() {
-                    app.alert.show('pipeline-loading', {
-                        level: 'process',
-                        autoClose: false
-                    });
-
                     this.switchCollection(oldCollection, model, newCollection);
-                    this.saveModel(model, ui, oldCollection, newCollection);
+                    this.saveModel(model, {
+                        ui: ui,
+                        oldCollection: oldCollection,
+                        newCollection: newCollection
+                    });
                 }, this);
                 var error = _.bind(function() {
                     this.$(ui.sender).sortable('cancel');
                     this.$('.column').sortable('enable');
                 }, this);
 
-                // Disable dragging while the change is being processed to prevent
-                // issues due to multiple simultaneous drags
-                this.$('.column').sortable('disable');
+                // Run any functionality necessary before the change is processed
+                this._preChange();
 
                 model.fetch({
                     view: 'record',
@@ -534,18 +532,16 @@
     /**
      * Gets called to save the model once it switches columns
      * @param {Object} model for the tile to be saved
-     * @param {Object} ui an object with the ui details of the tiles like originalPosition, offset, etc.
-     * @param {Object} oldCollection the collection of models that make up the moved-from column
-     * @param {Object} newCollection the collection of models that make up the moved-to column
+     * @param {Object} pipelineData contains info about the pipeline ui and collections involved in the change
      */
-    saveModel: function(model, ui, oldCollection, newCollection) {
+    saveModel: function(model, pipelineData) {
         var self = this;
 
         // Set the changes on the model before validating and saving. If validation
         // fails, the updated model will be opened in a record view drawer which causes
         // the synced attributes to change, so we need to store a backup of the
         // previous values for changed fields on the model in case we need to revert
-        this._setNewModelValues(model, ui);
+        this._setNewModelValues(model, pipelineData.ui);
         model.oldValues = _.pick(model.previousAttributes(), function(value, key) {
             return key in model.changed;
         });
@@ -565,13 +561,12 @@
                     create: true,
                     model: model,
                     module: self.module,
-                    validationOnly: true,
+                    saveImmediately: true,
                     validationCallback: function(isValid) {
-                        if (isValid) {
-                            self._handleSuccessfulValidation(model);
-                        } else {
-                            self._handleFailedValidation(model, ui, oldCollection, newCollection);
-                        }
+                        self._handleValidationResults(isValid, model, pipelineData);
+                    },
+                    saveCallback: function(saved) {
+                        self._postChange(!saved, model, pipelineData);
                     }
                 }
             });
@@ -579,8 +574,21 @@
     },
 
     /**
-     * Get side drawer.
-     * @return {Object} The side drawer.
+     * Sets the changed values on the model before validation and saving. This is
+     * useful to override in case custom action must be taken to handle field changes
+     * (for example, converting "January 2020" to "01/31/2020" before setting the
+     * value on the model)
+     * @param {Object} model the model to set the values on
+     * @param (Object} ui an object with the ui details of the tiles like originalPosition, offset, etc.
+     * @private
+     */
+    _setNewModelValues: function(model, ui) {
+        model.set(this.headerField, this.$(ui.item).parent('ul').data('column-name'));
+    },
+
+    /**
+     * Gets the side drawer component associated with the layout
+     * @return {Object} The side drawer, or undefined if it does not exist
      * @private
      */
     _getSideDrawer: function() {
@@ -590,81 +598,79 @@
         return this.sideDrawer;
     },
 
-    _handleSuccessfulValidation: function(model) {
-        var self = this;
-        model.save({}, {
-            success: function() {
-                app.alert.show('pipeline-success', {
-                    level: 'success',
-                    messages: app.lang.get('LBL_SAVED', self.module),
-                    autoClose: true
-                })
-                self._super('render');
-                self.postRender();
-            },
-            error: function(err) {
-                app.alert.show('pipeline-error', {
-                    level: 'error',
-                    messages: app.lang.get('LBL_ERROR', self.module),
-                    autoClose: true
-                })
-                self._super('render');
-                self.postRender();
-            },
-            complete: function() {
-                app.alert.dismiss('pipeline-loading');
-                self.$('.column').sortable('enable');
-            }
-        });
-    },
-
     /**
      * Opens a drawer to the record view to fix any invalid fields on the model
      * after switching the model to a new column
-     * @param model the model that failed validation
-     * @param ui an object with the ui details of the tiles like originalPosition, offset, etc.
-     * @param oldCollection the collection of models that make up the moved-from column
-     * @param newCollection the collection of models that make up the moved-to column
+     * @param isValid boolean indicating whether the model passed validation
+     * @param {Object} model the model that was validated
+     * @param {Object} pipelineData contains info about the pipeline ui and collections involved in the change
      * @private
      */
-    _handleFailedValidation: function(model, ui, oldCollection, newCollection) {
-        var self = this;
-        app.alert.dismiss('pipeline-loading');
-        app.drawer.open({
-            layout: 'record',
-            context: {
-                module: self.module,
-                model: model,
-                correctInvalidFields: true,
-                noEditFields: [self.headerField]
-            }
-        }, function(saved) {
-            if (saved) {
-                self._super('render');
-                self.postRender();
-            } else {
-                model.set(model.oldValues);
-                self.switchCollection(newCollection, model, oldCollection);
-                self.$(ui.sender).sortable('cancel');
-            }
-            // Accessing record view drawer causes the fragment to change,
-            // so set it back to the pipeline route after the drawer is closed
-            app.router.navigate(self.module + '/pipeline');
-            self.$('.column').sortable('enable');
-        });
+    _handleValidationResults: function(isValid, model, pipelineData) {
+        if (!isValid) {
+            var self = this;
+            app.drawer.open({
+                layout: 'record',
+                context: {
+                    module: self.module,
+                    model: model,
+                    noEditFields: [self.headerField],
+                    saveImmediately: true,
+                    saveCallback: function(saved) {
+                        app.drawer.close(saved);
+                    },
+                    cancelCallback: function() {
+                        app.drawer.close(false);
+                    },
+                    editOnly: true
+                }
+            }, function(saved) {
+                self._postChange(!saved, model, pipelineData);
+            });
+        }
     },
 
     /**
-     * Sets the changed values on the model before validation and saving. This is
-     * useful to override in case custom action must be taken to handle field changes
-     * (for example, converting "January 2020" to "01/31/2020" before setting the
-     * value on the model)
-     * @param {Object} model the model to set the values on
-     * @param (Object}  ui an object with the ui details of the tiles like originalPosition, offset, etc.
+     * Utility function that runs before a column change is processed
      * @private
      */
-    _setNewModelValues: function(model, ui) {
-        model.set(this.headerField, this.$(ui.item).parent('ul').data('column-name'));
+    _preChange: function() {
+        // Disable dragging while the change is being processed to prevent any
+        // potential issues due to multiple simultaneous drag/drops
+        this.$('.column').sortable('disable');
+    },
+
+    /**
+     * Utility function that runs after a column change is processed
+     * @param {boolean} shouldRevert indicates whether the change needs to be reverted
+     * @param {Object} model the model involved in the column change
+     * @param {Object} pipelineData contains info about the pipeline ui and collections involved in the change
+     * @private
+     */
+    _postChange: function(shouldRevert, model, pipelineData) {
+        if (shouldRevert) {
+            this._revertChanges(model, pipelineData);
+        }
+
+        // Accessing record view drawer causes the fragment to change,
+        // so set it back to the pipeline route after the drawer is closed
+        app.router.navigate(this.module + '/pipeline');
+
+        this._super('render');
+        this.postRender();
+        this.$('.column').sortable('enable');
+    },
+
+    /**
+     * Reverts the changes to the model and collections made by a column move
+     * @param {Object} model the model involved in the change
+     * @param {Object} pipelineData contains info about the pipeline ui and collections involved in the change
+     * @private
+     */
+    _revertChanges: function(model, pipelineData) {
+        model.set(model.oldValues);
+        this.switchCollection(pipelineData.newCollection, model, pipelineData.oldCollection);
+        this.$(pipelineData.ui.sender).sortable('cancel');
     },
 
     /**

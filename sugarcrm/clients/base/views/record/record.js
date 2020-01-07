@@ -204,18 +204,19 @@
 
         this.on('render', this.registerShortcuts, this);
 
-        // Allow for specification of additional noEdit/readonly fields
+        // Option to specify additional noEdit/readonly fields
         this.extraNoEditFields = this.context.get('noEditFields') || [];
 
-        // Used by the pipeline view for validation purposes
-        this.validationOnly = this.context.get('validationOnly') || false;
+        // Option to open the record view to immediately validate/save
+        this.saveImmediately = this.context.get('saveImmediately') || false;
+
+        // Option to make this view edit-only
+        this.editOnly = this.context.get('editOnly') || false;
+
+        // Optional callbacks for after-save, after-cancel, and after-validation
+        this.saveCallback = this.context.get('saveCallback') || null;
+        this.cancelCallback = this.context.get('cancelCallback') || null;
         this.validationCallback = this.context.get('validationCallback') || null;
-
-        // Flags whether this view is only meant to be used to correct existing
-        // invalid fields. This is meant only for record views that are opened
-        // in a drawer
-        this.correctInvalidFields = this.context.get('correctInvalidFields') || false;
-
     },
 
     /**
@@ -447,6 +448,9 @@
         if (isValid) {
             this.handleSave();
         }
+        if (typeof this.validationCallback === 'function') {
+            this.validationCallback(isValid);
+        }
     },
 
     /**
@@ -499,31 +503,11 @@
             this.overflowTabs();
         }
 
-        // If this view is only to validate fields, immediately run validation
-        // and trigger the specified callback function with the results
-        if (this.validationOnly && typeof this.validationCallback === 'function') {
-            this._validateFields(this.validationCallback);
-        }
-
-        // If this view is only to correct invalid fields, programmatically
-        // click the save button to trigger validation
-        if (this.correctInvalidFields) {
+        // If saveImmediately is set, programmatically click Edit -> Save
+        if (this.saveImmediately) {
             this.editClicked();
             this.saveClicked();
         }
-    },
-
-    _validateFields: function(callback) {
-        var allFields = this.getFields(this.module, this.model);
-        var fieldsToValidate = {};
-        var erasedFields = this.model.get('_erased_fields');
-        for (var fieldKey in allFields) {
-            if (app.acl.hasAccessToModel('edit', this.model, fieldKey) &&
-                (!_.contains(erasedFields, fieldKey) || this.model.get(fieldKey) || allFields[fieldKey].id_name)) {
-                _.extend(fieldsToValidate, _.pick(allFields, fieldKey));
-            }
-        }
-        this.model.doValidate(fieldsToValidate, callback);
     },
 
     _renderField: function(field, $fieldEl) {
@@ -987,10 +971,8 @@
         this.setRoute();
         this.unsetContextAction();
 
-        // If this view is only to correct invalid fields, and exists in a drawer,
-        // close the drawer and mark the model as not saved
-        if (this.correctInvalidFields && app.drawer.count()) {
-            app.drawer.close(false);
+        if (typeof this.cancelCallback === 'function') {
+            this.cancelCallback();
         }
     },
 
@@ -1005,6 +987,10 @@
      *   otherwise.
      */
     toggleEdit: function(isEdit) {
+        if (this.editOnly) {
+            isEdit = true;
+        }
+
         var self = this;
         this.$('.record-lock-link').toggleClass('record-lock-link-on', isEdit);
         if (this.hasLockedFields()) {
@@ -1069,17 +1055,19 @@
         this._saveModel();
         this.$('.record-save-prompt').hide();
 
-        // If this view is only to correct invalid fields, keep it in edit mode
-        // but disable buttons during the save
-        if (this.correctInvalidFields) {
-            this.toggleButtons(false);
-        } else if (!this.disposed) {
-            this.setButtonStates(this.STATE.VIEW);
-            this.action = 'detail';
-            this.setRoute();
-            this.unsetContextAction();
-            this.toggleEdit(false);
-            this.inlineEditMode = false;
+        if (!this.disposed) {
+            if (this.editOnly) {
+                // If we are in edit-only mode, prevent multiple saves at a time.
+                // Buttons will be re-enabled after save call is complete
+                this.toggleButtons(false);
+            } else {
+                this.setButtonStates(this.STATE.VIEW);
+                this.action = 'detail';
+                this.setRoute();
+                this.unsetContextAction();
+                this.toggleEdit(false);
+                this.inlineEditMode = false;
+            }
         }
     },
 
@@ -1127,10 +1115,8 @@
                     this.render();
                 }
 
-                // If this view is only to correct invalid fields, and exists in
-                // a drawer, close the drawer and mark the model as saved
-                if (this.correctInvalidFields && app.drawer.count()) {
-                    app.drawer.close(true);
+                if (typeof this.saveCallback === 'function') {
+                    this.saveCallback(true);
                 }
             }, this);
 
@@ -1159,10 +1145,15 @@
                     this.editClicked();
                 }
 
-                // If this view is only to correct invalid fields, make sure the
-                // buttons are re-enabled after an error during save
-                this.toggleButtons(true);
+                if (typeof this.saveCallback === 'function') {
+                    this.saveCallback(false);
+                }
             }, this),
+            complete: function() {
+                if (this.editOnly) {
+                    this.toggleButtons(true);
+                }
+            },
             lastModified: this.model.get('date_modified'),
             viewed: true
         };
@@ -1436,6 +1427,10 @@
      * @param {String} state The {@link #STATE} of the current view.
      */
     setButtonStates: function(state) {
+        if (this.editOnly) {
+            state = this.STATE.EDIT;
+        }
+
         this.currentState = state;
 
         _.each(this.buttons, function(field) {

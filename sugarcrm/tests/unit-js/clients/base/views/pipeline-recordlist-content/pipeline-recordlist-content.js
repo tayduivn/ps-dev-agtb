@@ -15,6 +15,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
     var app;
     var context;
     var viewMeta;
+    var pipelineChangeDataMock;
 
     beforeEach(function() {
         app = SUGAR.App;
@@ -60,6 +61,15 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                 }
             }
         );
+
+        pipelineChangeDataMock = {
+            ui: {
+                item: 'test'
+            },
+            oldCollection: 'oldCollection',
+            newCollection: 'newCollection'
+        };
+
         sinon.collection.stub(view.context, 'on', function() {});
         sinon.collection.stub(view, '_super', function() {});
     });
@@ -1136,16 +1146,11 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
     describe('saveModel', function() {
         var model;
-        var ui;
         var senderMock;
-        beforeEach(function() {
-            view.headerField = 'testHeader';
-            ui = {
-                item: 'test'
-            };
-            model = app.data.createBean('Opportunities');
+        var sideDrawer;
 
-            // Mock the sender object that is returned by view.$(ui.sender)
+        beforeEach(function() {
+            model = app.data.createBean('Opportunities');
             senderMock = {
                 parent: function() {
                     return {
@@ -1153,149 +1158,237 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                             return 'testColumn';
                         }
                     };
-                }
+                },
+                sortable: function() {}
             };
+            sideDrawer = {
+                showComponent: function() {}
+            };
+
+            view.headerField = 'testHeader';
+
             sinon.collection.stub(view, '$', function() {
                 return senderMock;
             });
-            sinon.collection.stub(view, '_getFieldsToValidate');
-
             sinon.collection.stub(model, 'set', function() {});
             sinon.collection.stub(model, 'save', function() {});
+            sinon.collection.stub(view, '_getSideDrawer').returns(sideDrawer);
         });
 
         it('should set view.headerField for the model', function() {
-            sinon.collection.stub(model, 'isValidAsync');
-            view.saveModel(model, ui);
+            view.saveModel(model, pipelineChangeDataMock);
             expect(model.set).toHaveBeenCalledWith('testHeader', 'testColumn');
         });
 
-        describe('when validation is successful', function() {
-            beforeEach(function() {
-                // Mock a successful validation
-                sinon.collection.stub(model, 'isValidAsync', function(fields, callback) {
-                    callback(true, {});
-                });
-            });
-
-            it('should call model.save function', function() {
-                view.saveModel(model, ui);
-                expect(model.save).toHaveBeenCalled();
-            });
+        it('should validate the record in the side drawer', function() {
+            sinon.collection.stub(sideDrawer, 'showComponent');
+            view.saveModel(model, pipelineChangeDataMock);
+            expect(sideDrawer.showComponent).toHaveBeenCalled();
         });
 
         describe('when validation fails', function() {
             beforeEach(function() {
-                // Mock a failed validation
-                sinon.collection.stub(model, 'isValidAsync', function(fields, callback) {
-                    callback(false, {'fake_field': 'required'});
+                sinon.collection.stub(sideDrawer, 'showComponent', function(def) {
+                    def.context.validationCallback(false);
                 });
-
-                sinon.collection.stub(view, '_handleFailedValidation');
+                sinon.collection.stub(view, '_handleValidationResults');
             });
 
-            it('should not call model.save function', function() {
-                view.saveModel(model, ui);
-                expect(model.save).not.toHaveBeenCalled();
+            it('should handle the validation failure', function() {
+                view.saveModel(model, pipelineChangeDataMock);
+                expect(view._handleValidationResults).toHaveBeenCalled();
+            });
+        });
+
+        describe('when validation succeeds', function() {
+            beforeEach(function() {
+                sinon.collection.stub(view, '_postChange');
             });
 
-            it('should handle the failure', function() {
-                view.saveModel(model, ui, 'mockOldCollection', 'mockNewCollection');
-                expect(view._handleFailedValidation).toHaveBeenCalledWith(
-                    model, ui, 'mockOldCollection', 'mockNewCollection');
+            it('should signal that changes should be reverted if saving fails', function() {
+                sinon.collection.stub(sideDrawer, 'showComponent', function(def) {
+                    def.context.saveCallback(false);
+                });
+                view.saveModel(model, pipelineChangeDataMock);
+                expect(view._postChange).toHaveBeenCalledWith(true, model, pipelineChangeDataMock);
+            });
+
+            it('should signal that changes should not be reverted if saving succeeds', function() {
+                sinon.collection.stub(sideDrawer, 'showComponent', function(def) {
+                    def.context.saveCallback(true);
+                });
+                view.saveModel(model, pipelineChangeDataMock);
+                expect(view._postChange).toHaveBeenCalledWith(false, model, pipelineChangeDataMock);
             });
         });
     });
 
-    describe('_getFieldsToValidate', function() {
-        beforeEach(function() {
-            sinon.collection.stub(app.metadata, 'getView', function() {
-                return {
-                    panels: [
-                        {
-                            fields: [
-                                {
-                                    name: 'name',
-                                    type: 'overridden_in_record_view',
-                                    record_view_property: 'record view property'
-                                }
-                            ]
-                        }
-                    ]
-                };
-            });
-        });
-
-        it('should get the correct list of field definitions for the record view', function() {
-            var result = view._getFieldsToValidate();
-            expect(result).toEqual({
-                name: {
-                    name: 'name',
-                    type: 'overridden_in_record_view',
-                    record_view_property: 'record view property'
-                }
-            });
-        });
-    });
-
-    describe('_handleFailedValidation', function() {
+    describe('_revertChanges', function() {
         var model;
         var senderMock;
+        var oldValues;
+        var newValues;
 
         beforeEach(function() {
-            app.drawer = {};
-            model = {
-                set: function() {}
-            };
-
-            // Mock the sender object that is returned by view.$(ui.sender)
+            model = app.data.createBean('Opportunities');
             senderMock = {
+                parent: function() {
+                    return {
+                        data: function() {
+                            return 'testColumn';
+                        }
+                    };
+                },
                 sortable: function() {}
             };
-            sinon.collection.stub(senderMock, 'sortable');
+            oldValues = {
+                attr1: 'old1',
+                attr2: 'old2',
+                attr3: 'old3'
+            };
+            newValues = {
+                attr1: 'new1',
+                attr2: 'new2',
+                attr3: 'new3'
+            };
+
+            model.set(newValues);
+            model.oldValues = oldValues;
+
             sinon.collection.stub(view, '$', function() {
                 return senderMock;
             });
-
-            // Stub the app router's navigate
-            app.router = {
-                navigate: function() {}
-            };
-            sinon.collection.stub(app.router, 'navigate');
-
-            sinon.collection.stub(model, 'set');
             sinon.collection.stub(view, 'switchCollection');
+            sinon.collection.stub(senderMock, 'sortable');
+        });
+
+        it('should set the old fields on the model', function() {
+            expect(model.get('attr1')).toEqual('new1');
+            expect(model.get('attr2')).toEqual('new2');
+            expect(model.get('attr3')).toEqual('new3');
+
+            view._revertChanges(model, pipelineChangeDataMock);
+
+            expect(model.get('attr1')).toEqual('old1');
+            expect(model.get('attr2')).toEqual('old2');
+            expect(model.get('attr3')).toEqual('old3');
+        });
+
+        it('should switch the model back to the old collection', function() {
+            view._revertChanges(model, pipelineChangeDataMock);
+            expect(view.switchCollection).toHaveBeenCalledWith('newCollection', model, 'oldCollection');
+        });
+
+        it('should cancel the UI change and place the record back in the original column', function() {
+            view._revertChanges(model, pipelineChangeDataMock);
+            expect(senderMock.sortable).toHaveBeenCalledWith('cancel');
+        });
+    });
+
+    describe('_handleValidationResults', function() {
+        var model;
+
+        beforeEach(function() {
+            model = {
+                set: function() {}
+            };
+            app.drawer = {
+                open: function(def, onClose) {},
+                close: function(saved) {}
+            };
         });
 
         afterEach(function() {
             delete app.drawer;
+        });
+
+        describe('when validation fails', function() {
+            beforeEach(function() {
+                sinon.collection.stub(app.drawer, 'close');
+            });
+
+            it('should open the app drawer to fix the fields that failed validation', function() {
+                sinon.collection.stub(app.drawer, 'open');
+                view._handleValidationResults(false, model, pipelineChangeDataMock);
+                expect(app.drawer.open).toHaveBeenCalled();
+            });
+
+            describe('when the record is edited and saved in the resulting drawer', function() {
+                beforeEach(function() {
+                    sinon.collection.stub(app.drawer, 'open', function(def, onClose) {
+                        def.context.saveCallback(true);
+                    });
+                });
+
+                it('should close the drawer and indicate the record change was saved', function() {
+                    view._handleValidationResults(false, model, pipelineChangeDataMock);
+                    expect(app.drawer.close).toHaveBeenCalledWith(true);
+                });
+            });
+
+            describe('when the record view drawer is cancelled', function() {
+                beforeEach(function() {
+                    sinon.collection.stub(app.drawer, 'open', function(def, onClose) {
+                        def.context.cancelCallback();
+                    });
+                });
+
+                it('should close the drawer and indicate the record change was not saved', function() {
+                    view._handleValidationResults(false, model, pipelineChangeDataMock);
+                    expect(app.drawer.close).toHaveBeenCalledWith(false);
+                });
+            });
+        });
+
+        describe('when validation succeeds', function() {
+            it('should not open the app drawer', function() {
+                sinon.collection.stub(app.drawer, 'close');
+                view._handleValidationResults(true, model, pipelineChangeDataMock);
+                expect(app.drawer.open).not.toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('_postChange', function() {
+        var model;
+
+        beforeEach(function() {
+            model = app.data.createBean('Opportunities');
+            app.router = {
+                navigate: function() {}
+            };
+
+            sinon.collection.stub(view, '_revertChanges');
+            sinon.collection.stub(app.router, 'navigate');
+            sinon.collection.stub(view, 'postRender');
+            sinon.collection.stub(view, '$').returns({
+                sortable: function() {}
+            });
+            sinon.collection.stub(view.$('.column'), 'sortable');
+        });
+
+        afterEach(function() {
             delete app.router;
         });
 
-        it('should open the app drawer to fix the fields that failed validation', function() {
-            app.drawer.open = function(def, onClose) {};
-            sinon.collection.stub(app.drawer, 'open');
-
-            view._handleFailedValidation(model, {}, 'mockOldCollection', 'mockNewCollection');
-            expect(app.drawer.open).toHaveBeenCalled();
+        it('should revert changes if needed', function() {
+            view._postChange(true, model, pipelineChangeDataMock);
+            expect(view._revertChanges).toHaveBeenCalled();
         });
 
-        it('should undo changes to the model and collections if the drawer is cancelled', function() {
-            app.drawer.open = function(def, onClose) {
-                onClose(false);
-            };
+        it('should not revert changes if not needed', function() {
+            view._postChange(false, model, pipelineChangeDataMock);
+            expect(view._revertChanges).not.toHaveBeenCalled();
+        });
 
-            // Mock the old values of the model to test that they are set again
-            var oldValues = {
-                'fake_field': 'fake_value'
-            };
-            model.oldValues = oldValues;
+        it('should reset the router fragment back to the pipeline view', function() {
+            view._postChange(false, model, pipelineChangeDataMock);
+            expect(app.router.navigate).toHaveBeenCalled();
+        });
 
-            view._handleFailedValidation(model, {}, 'mockOldCollection', 'mockNewCollection');
-            expect(model.set).toHaveBeenCalledWith(oldValues);
-            expect(view.switchCollection).toHaveBeenCalledWith('mockNewCollection', model, 'mockOldCollection');
-            expect(senderMock.sortable).toHaveBeenCalledWith('cancel');
-            expect(app.router.navigate).toHaveBeenCalledWith('Opportunities/pipeline');
+        it('should re-enable the pipeline view drag/drop functionality', function() {
+            view._postChange(false, model, pipelineChangeDataMock);
+            expect(view.$('.column').sortable).toHaveBeenCalledWith('enable');
         });
     });
 

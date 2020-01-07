@@ -607,18 +607,21 @@ describe("Record View", function () {
     });
 
     describe("build grids", function() {
-        var hasAccessToModelStub,
-            readonlyFields = ["created_by", "date_entered", "date_modified"],
-            aclFailFields  = ["case_number"];
+        var hasAccessToModelStub;
+        var readonlyFields = ['created_by', 'date_entered', 'date_modified'];
+        var aclFailFields  = ['case_number'];
+        var extraNoEditFields = ['status'];
 
         beforeEach(function() {
             buildGridsFromPanelsMetadataStub.restore();
             hasAccessToModelStub = sinon.stub(SugarTest.app.acl, "hasAccessToModel", function (method, model, field) {
                 return _.indexOf(aclFailFields, field) < 0;
             });
+            view.extraNoEditFields = extraNoEditFields;
         });
 
         afterEach(function() {
+            delete view.extraNoEditFields;
             hasAccessToModelStub.restore();
         });
 
@@ -632,7 +635,8 @@ describe("Record View", function () {
             expect(meta.panels[0].fields[0].name).toBe("description");
         });
 
-        it("Should add readonly fields and acl fail fields to the noEditFields array", function () {
+        it('Should add readonly fields, and acl fail fields to the noEditFields array, as well as any extra' +
+            'noEdit fields specified in the context', function() {
             var meta = {
                 panels: [{
                     fields: [
@@ -641,7 +645,8 @@ describe("Record View", function () {
                         {name: "description"},
                         {name: "created_by"},
                         {name: "date_entered"},
-                        {name: "date_modified"}
+                        {name: 'date_modified'},
+                        {name: 'status'}
                     ]
                 }]
             };
@@ -657,7 +662,7 @@ describe("Record View", function () {
             view._buildGridsFromPanelsMetadata(meta.panels);
 
             var actual   = view.noEditFields,
-                expected = _.union(readonlyFields, aclFailFields);
+                expected = _.union(readonlyFields, aclFailFields, extraNoEditFields);
 
             expect(actual.length).toBe(expected.length);
             _.each(actual, function (noEditField) {
