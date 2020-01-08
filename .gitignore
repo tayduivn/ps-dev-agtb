@@ -38,7 +38,6 @@ sugarcrm/vendor/*
 !sugarcrm/vendor/oauth2-php
 !sugarcrm/vendor/nusoap
 !sugarcrm/vendor/pclzip
-!sugarcrm/vendor/reCaptcha
 !sugarcrm/vendor/tcpdf
 !sugarcrm/vendor/ytree
 sugarcrm/testsunit/phpunit.xml

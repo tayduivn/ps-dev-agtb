@@ -164,9 +164,6 @@ class AuthSettingsApiTest extends TestCase
             'attribute_mapping' => [],
         ];
         $adminSettingsMap = [
-            'captcha_on' => ['captcha_on', false, true],
-            'captcha_public_key' => ['captcha_public_key', '', 'captcha_public_key'],
-            'captcha_private_key' => ['captcha_private_key', '', 'captcha_private_key',],
             'honeypot_on' => ['honeypot_on', false, true],
         ];
         $passwordSetting = [

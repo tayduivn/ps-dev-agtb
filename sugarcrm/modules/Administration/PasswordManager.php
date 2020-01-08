@@ -53,7 +53,6 @@ $configurator = new Configurator();
 $sugarConfig = SugarConfig::getInstance();
 $focus = BeanFactory::newBean('Administration');
 $config_strings = return_module_language($GLOBALS['current_language'], 'Configurator');
-$valid_public_key = true;
 $samlSigningAlgos = [
     XMLSecurityKey::RSA_SHA256 => 'RSA-SHA256',
     XMLSecurityKey::RSA_SHA512 => 'RSA-SHA512',
@@ -65,23 +64,6 @@ $ldapEncryptionOptions = [
 ];
 if (!empty($_POST['saveConfig'])) {
     do {
-        if ($_POST['captcha_on'] == '1') {
-            $public_key = InputValidation::getService()->getValidInputPost('captcha_public_key');
-            $handle = @fopen("http://api.recaptcha.net/challenge?k=".$public_key."&cachestop=35235354", "r");
-    		$buffer ='';
-    		if ($handle) {
-    		    while (!feof($handle)) {
-    		        $buffer .= fgets($handle, 4096);
-    		    }
-    		    fclose($handle);
-    		}
-    		if (substr($buffer, 1, 4) != 'var ') {
-    		    // skip save and go to display form
-    		    $valid_public_key = false;
-    		    break;
-    		}
-    	}
-
 		if (isset($_REQUEST['system_ldap_enabled']) && $_REQUEST['system_ldap_enabled'] == 'on') {
 			$_POST['system_ldap_enabled'] = 1;
 		}
@@ -279,20 +261,6 @@ $sugar_smarty->assign(
 );
 
 $sugar_smarty->assign("settings", $focus->settings);
-
-if ($valid_public_key){
-	if(!empty($focus->settings['captcha_on'])){
-		$sugar_smarty->assign("CAPTCHA_CONFIG_DISPLAY", 'inline');
-	}else{
-		$sugar_smarty->assign("CAPTCHA_CONFIG_DISPLAY", 'none');
-	}
-}else{
-	$sugar_smarty->assign("CAPTCHA_CONFIG_DISPLAY", 'inline');
-}
-
-$sugar_smarty->assign("VALID_PUBLIC_KEY", $valid_public_key);
-
-
 
 $res=$GLOBALS['sugar_config']['passwordsetting'];
 

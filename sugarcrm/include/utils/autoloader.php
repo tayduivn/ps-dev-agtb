@@ -139,7 +139,6 @@ class SugarAutoLoader
         'upload',
         'portal',
         'vendor/HTMLPurifier',
-        'vendor/reCaptcha',
         'vendor/ytree',
         'vendor/pclzip',
         'vendor/nusoap',

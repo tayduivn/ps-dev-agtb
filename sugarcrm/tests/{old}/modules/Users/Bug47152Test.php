@@ -87,7 +87,6 @@ class Bug47152Test extends TestCase
         $admin = $this->admin;
         $this->admin->retrieveSettings();
         include 'sugar_version.php';
-        include "modules/Users/Login.php";
         if($expect) {
             $this->assertEquals(1, $_SESSION['EXCEEDS_MAX_USERS']);
         } else {

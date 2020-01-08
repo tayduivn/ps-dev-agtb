@@ -546,76 +546,17 @@ if(!empty($boolean_fields)){
     $Web_To_Lead_Form_html .= "<tr><td style='display: none'><input type='hidden' id='bool_id' name='bool_id' value='$boolean_fields'></td></tr>";
 }
 
-//BEGIN SUGARCRM flav=int ONLY
-	/////BEGIN CAPTCHA VALIDATION
-	
-	$admin = Administration::getSettings('captcha');
-	$add_captcha = 0;
-	$captcha_privatekey = "";
-	$captcha_publickey="";
-	$captcha_js = "";
-	if(isset($admin->settings['captcha_on'])&& $admin->settings['captcha_on']=='1' && !empty($admin->settings['captcha_private_key']) && !empty($admin->settings['captcha_public_key'])){
-			$add_captcha = 1;
-			$captcha_privatekey = $admin->settings['captcha_private_key'];
-			$captcha_publickey = $admin->settings['captcha_public_key'];
-			$captcha_js .="<script type='text/javascript' src='" . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . "'></script><script type='text/javascript' src='" . getJSPath('cache/include/javascript/sugar_grp_yui2.js') . "'></script>
-			<script type='text/javascript' src='http://api.recaptcha.net/js/recaptcha_ajax.js'></script>
-	<script> var oldFormAction = document.getElementById('WebToLeadForm').action; //save old action
-		function initCaptcha(){
-				Recaptcha.create('$captcha_publickey' ,'captchaImage',{theme:'white',callback:Recaptcha.focus_response_field});
-		}
-
-		window.onload=initCaptcha;
-
-		var handleFailure=handleSuccess;
-		var handleSuccess = function(o){
-			if(o.responseText!==undefined && o.responseText =='Success'){
-				var form = document.getElementById('WebToLeadCreation');
-				document.getElementById('captchaFailureMsg' ).style.display='none';
-				check_webtolead_fields();
-			}
-			else{
-				document.getElementById('captchaFailureMsg').style.display='none';
-				Recaptcha.reload();
-			}
-		}
-		var callback =
-		{
-		  success:handleSuccess,
-		  failure: handleFailure
-		};
-		function validateCaptchaAndSubmit(){
-			var form = document.getElementById('WebToLeadForm');
-				//form.action.value = 'CaptchaValidate';
-				var url = document.referrer+'?module=Campaigns&action=CaptchaValidate&recaptcha_challenge_field='+Recaptcha.get_challenge()+'&recaptcha_response_field='+ Recaptcha.get_response() +'&to_pdf=true';
-				var xact = YAHOO.util.Connect.asyncRequest('POST',url,callback);
-		}
-	</script>";
-	$Web_To_Lead_Form_html.=$captcha_js;
-	$Web_To_Lead_Form_html.= "<tr><td class=\"dataLabel\"><slot>Enter the text that appears in the image:</slot></td><td id='captchaImage'></td></tr><tr id =\"captchaFailureMsg\" style=\"display:none;\"><td></td><td class=\"dataLabel\" style=\"color:#ff0000;\">Response must match the image above.</td></tr><tr ><td></td><td id='captchaFailureMsg' style='display:none; color:red'>Please enter the correct text in the image above.</td></tr>";
-
-	}
-
-
-////END CAPTCHA VALIDATION
-//END SUGARCRM flav=int ONLY
-
 $Web_To_Lead_Form_html .= "</table >";
 $Web_To_Lead_Form_html .="</form>";
 
 $Web_To_Lead_Form_html .="<script type='text/javascript'>
  function submit_form(){
- 	if(typeof(validateCaptchaAndSubmit)!='undefined'){
- 		validateCaptchaAndSubmit();
- 	}else{
- 		check_webtolead_fields();
- 	}
+ 	check_webtolead_fields();
  }
  function check_webtolead_fields(){
      if(document.getElementById('bool_id') != null){
         var reqs=document.getElementById('bool_id').value;
         bools = reqs.substring(0,reqs.lastIndexOf(';'));
-        var bool_fields = new Array();
         var bool_fields = bools.split(';');
         nbr_fields = bool_fields.length;
         for(var i=0;i<nbr_fields;i++){
@@ -630,7 +571,6 @@ $Web_To_Lead_Form_html .="<script type='text/javascript'>
     if(document.getElementById('req_id') != null){
         var reqs=document.getElementById('req_id').value;
         reqs = reqs.substring(0,reqs.lastIndexOf(';'));
-        var req_fields = new Array();
         var req_fields = reqs.split(';');
         nbr_fields = req_fields.length;
         var req = true;

@@ -212,7 +212,6 @@ class HealthCheckScanner
         'include/nusoap',
         'include/oauth2-php',
         'include/pclzip',
-        'include/reCaptcha',
         'include/tcpdf',
         'include/ytree',
         'include/SugarSearchEngine/Elastic/Elastica',
