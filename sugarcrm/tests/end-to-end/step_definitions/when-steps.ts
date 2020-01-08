@@ -26,6 +26,7 @@ import ActivityStream from '../layouts/activity-stream-layout';
 import ImportBpmView from '../views/import-bpm-view';
 import PreviewHeaderView from '../views/preview-header-view';
 import LoginLayout from '../layouts/login-layout';
+import QuickCreateMenuCmp from '../components/quick-create-menu-cmp';
 
 /**
  * Select module in modules menu
@@ -897,3 +898,20 @@ When(/^I login to Portal with the following credentials in (#\S+):$/,
         let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
         await layout.LoginView.login(inputData.hash.portal_name, inputData.hash.portal_pasword);
     }, {waitForApp: true});
+
+
+/**
+ *  Create Record using Quick Create
+ *
+ *  @example
+ *  When I choose Contacts in the Quick Create actions menu
+ */
+When(/^I choose (\w+) in the Quick Create actions menu$/,
+    async function(itemName: string): Promise<void> {
+        let quickCreateMenuCmp: QuickCreateMenuCmp = seedbed.components.QuickCreateMenuCmp;
+
+        await quickCreateMenuCmp.open();
+        await this.driver.waitForApp();
+        await quickCreateMenuCmp.clickItem(itemName);
+    },
+    { waitForApp: true });

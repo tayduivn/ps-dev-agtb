@@ -45,6 +45,7 @@ import UserProfileLayout from './layouts/user-profile-layout';
 import TileViewSettings from './views/tile-settings-view';
 import FindDuplicates from './views/find-duplicates-view';
 import DashableRecordDashletConfig from './views/dashable-record-dashlet-config-view';
+import QuickCreateMenuCmp from './components/quick-create-menu-cmp';
 import ConsoleSettingsConfig from './views/console-settings-view';
 
 
@@ -111,6 +112,7 @@ export default (seedbed: Seedbed) => {
         seedbed.defineComponent(`AddSugarDashletDrawer`, AddSugarDashletDrawerLayout, {module: 'Dashboards'});
         seedbed.components[`AdminPanel`] = new AdminPanelLayout({});
         seedbed.components[`AdminMenuCmp`] = new AdminMenuCmp({});
+        seedbed.components[`QuickCreateMenuCmp`] = new QuickCreateMenuCmp({});
         seedbed.components[`UserProfile`] = new UserProfileLayout({module: 'Users'});
         seedbed.defineComponent(`ActivityStream`, ActivityStreamLayout, {module: 'Activities'});
         seedbed.defineComponent(`KBViewCategoriesDrawer`, KBViewCategoriesDrawer, {module: 'Categories'});

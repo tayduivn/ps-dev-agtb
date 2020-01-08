@@ -71,3 +71,18 @@ export default class DurationField extends BaseField {
         }
     }
 }
+
+export class Detail extends DurationField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div',
+            }
+        });
+    }
+}
+
+export const Preview = Detail;

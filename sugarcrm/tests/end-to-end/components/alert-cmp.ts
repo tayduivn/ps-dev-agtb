@@ -8,11 +8,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- Alert.
- */
 
-import {BaseView, seedbed} from '@sugarcrm/seedbed';
+import BaseView from '../views/base-view';
 
 /**
  * @class AlertCmp
@@ -54,10 +51,6 @@ export default class AlertCmp extends BaseView {
         return this.driver.waitForVisibleAndClick(this.$('closeIcon'));
     }
 
-    public async clickButton(selectorName) {
-        return this.driver.click(this.$(`buttons.${selectorName.toLowerCase()}`));
-    }
-
     public async getText() {
         return this.driver.getText(this.$('text'));
     }
@@ -72,3 +65,4 @@ export default class AlertCmp extends BaseView {
         return this.driver.getText(this.$('type'));
     }
 }
+

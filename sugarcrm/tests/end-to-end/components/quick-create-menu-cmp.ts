@@ -12,44 +12,38 @@
 import BaseView from '../views/base-view';
 
 /**
- * Represents Admin Menu.
+ * Represents Quick Create Menu
  *
- * @class AdminMenuCmp
+ * @class QuickCreateMenuCmp
  * @extends BaseView
  */
-export default class AdminMenuCmp extends BaseView {
+export default class QuickCreateMenuCmp extends BaseView {
 
     constructor(options) {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            userTab: '#userActions',
-            items: {
-                profile: '.profileactions-profile a',
-                employees: 'profileactions-employees a',
-                administration: '.administration a',
-                about: '.profileactions-about a',
-                logout: '.profileactions-logout a',
-            },
+            caret: '.fa.fa-plus.fa-md',
+            menuitem: '.quickcreate .actionLink[data-module={{name}}]',
         });
     }
 
     /**
-     * Click item in the admin menu
+     * Select menu item under the Quick Create dropdown menu
      *
      * @param {string} name
      */
     public async clickItem(name: string) {
-        let itemSelector = this.$('items.' + name);
+        let itemSelector = this.$('menuitem', {name} );
         await this.driver.waitForVisible(itemSelector);
         await this.driver.moveToObject(itemSelector);
         await this.driver.click(itemSelector);
     }
 
     /**
-     *  Open admin Dropdown in the Mega Menu
+     *  Open Quick Create dropdown menu by clicking on "+" (plus) button in Mega Menu
      */
     public async open() {
-        await this.driver.click(this.$('userTab'));
+        await this.driver.click(this.$('caret'));
     }
 }

@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {BaseView, seedbed} from '@sugarcrm/seedbed';
+import BaseView from '../views/base-view';
 
 /**
  * @class BpmWindowCmp
