@@ -18,6 +18,22 @@ class PMSEPreProcessorTest extends TestCase
 {
     protected $loggerMock;
 
+    /** @var array fields for related dependency objects created during testing */
+    private $relatedDependencyFields = [
+        'rel_element_id' => 'abc123',
+        'deleted' => 0,
+        'pro_status' => 'ACTIVE',
+        'evn_type' => 'START',
+        'evn_module' => 'Accounts',
+        'evn_params' => 'new',
+    ];
+
+    /** @var array fields for bpm project objects created during testing */
+    private $bpmProjectFields = [
+        'prj_status' => 'ACTIVE',
+        'prj_module' => 'Accounts',
+    ];
+
     /**
      * Sets up the test data, for example,
      *     opens a network connection.
@@ -38,6 +54,7 @@ class PMSEPreProcessorTest extends TestCase
      */
     protected function tearDown()
     {
+        SugarTestBpmUtilities::removeAllCreatedBpmObjects();
         SugarTestHelper::tearDown();
     }
 
@@ -157,6 +174,62 @@ class PMSEPreProcessorTest extends TestCase
         $preProcessorMock->getAllEvents($beanMock);
     }
 
+    /**
+     * @return array array of project run order values
+     */
+    public function runOrderProvider()
+    {
+        return [
+            [
+                'runOrders' => [1, 2, 3, 4],
+            ],
+            [
+                'runOrders' => [null, 4, 2, 3, 1],
+            ],
+            [
+                'runOrders' => [4, 1, 1, 1],
+            ],
+            [
+                'runOrders' => [null, null, null, 1, 2, 3],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider runOrderProvider
+     */
+    public function testGetAllEventsSortedByRunOrder($runOrders)
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+
+        $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        foreach ($runOrders as $index => $value) {
+            $projectFields = array_merge($this->bpmProjectFields, ['prj_run_order' => $value]);
+            $project = SugarTestBpmUtilities::createBpmObject('Project', 'id' . strval($index), $projectFields);
+
+            $relatedDepFields = array_merge($this->relatedDependencyFields, ['prj_id' => $project->id]);
+            SugarTestBpmUtilities::createBpmObject('BpmRelatedDependency', '', $relatedDepFields);
+        }
+
+        $results = $preProcessorMock->getAllEvents($account);
+
+        for ($i = 0; $i < count($results) - 1; $i++) {
+            $lhval = $results[$i]['prj_run_order'];
+            $rhval = $results[$i + 1]['prj_run_order'];
+            if ($lhval === $rhval) {
+                $this->assertLessThanOrEqual($results[$i+1]['date_entered'], $results[$i]['date_entered']);
+            } elseif ($rhval === null) {
+                $this->assertIsInt($lhval);
+            } else {
+                $this->assertLessThanOrEqual($rhval, $lhval);
+            }
+        }
+    }
+
     public function testProcessRequestValidRequest()
     {
         $beanMock = $this->getMockBuilder('SugarBean')
@@ -187,6 +260,7 @@ class PMSEPreProcessorTest extends TestCase
                     'setSubjectData',
                 ])
                 ->getMock();
+        SugarTestReflection::setProtectedValue($preProcessorMock, 'executedFlowIds', []);
 
         $flowData = [
             [
@@ -196,6 +270,7 @@ class PMSEPreProcessorTest extends TestCase
                 // Added so that subject data setter doesn't die
                 'prj_id' => 'foo',
                 'pro_id' => 'bar',
+                'prj_run_order' => 1,
             ],
         ];
 
@@ -272,6 +347,7 @@ class PMSEPreProcessorTest extends TestCase
                     'setSubjectData',
                 ])
                 ->getMock();
+        SugarTestReflection::setProtectedValue($preProcessorMock, 'executedFlowIds', []);
 
         $flowData = [
             [
@@ -281,6 +357,7 @@ class PMSEPreProcessorTest extends TestCase
                 // Added so that subject data setter doesn't die
                 'prj_id' => 'foo',
                 'pro_id' => 'bar',
+                'prj_run_order' => 1,
             ],
         ];
         $preProcessorMock->expects($this->any())

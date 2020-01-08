@@ -22,6 +22,7 @@ $mod_strings = array (
 
   'LBL_PRJ_STATUS' => 'Status',
   'LBL_PRJ_MODULE' => 'Target Module',
+  'LBL_PRJ_RUN_ORDER' => 'Run Order',
   'LBL_PMSE_BUTTON_SAVE' => 'Save',
   'LBL_PMSE_BUTTON_CANCEL' => 'Cancel',
   'LBL_PMSE_BUTTON_YES' => 'Yes',

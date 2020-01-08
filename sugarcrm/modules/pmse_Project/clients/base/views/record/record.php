@@ -143,6 +143,12 @@ $viewdefs['pmse_Project']['base']['view']['record'] = [
                     'span' => 6,
                 ],
                 [
+                    'name' => 'prj_run_order',
+                    'studio' => 'visible',
+                    'label' => 'LBL_PRJ_RUN_ORDER',
+                    'span' => 6,
+                ],
+                [
                     'name' => 'tag',
                     'span' => 12,
                 ],

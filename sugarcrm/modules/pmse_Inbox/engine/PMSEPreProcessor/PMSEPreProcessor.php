@@ -24,6 +24,11 @@ class PMSEPreProcessor
     private static $instance;
 
     /**
+     * @var array
+     */
+    protected $executedFlowIds;
+
+    /**
      *
      * @var type
      */
@@ -70,6 +75,7 @@ class PMSEPreProcessor
         $this->validator = ProcessManager\Factory::getPMSEObject('PMSEValidator');
         $this->caseFlowHandler = ProcessManager\Factory::getPMSEObject('PMSECaseFlowHandler');
         $this->logger = PMSELogger::getInstance();
+        $this->executedFlowIds = [];
     }
 
     /**
@@ -260,6 +266,12 @@ class PMSEPreProcessor
                 // Massage the flow data for required elements first
                 $flowData = $this->processFlowData($flowData);
 
+                // If we've seen this flow before, we should skip it now
+                $flowId = $flowData['prj_id'];
+                if (in_array($flowId, $this->executedFlowIds, true)) {
+                    continue;
+                }
+
                 // Make sure we start fresh each time with validation and such
                 $request->reset();
 
@@ -344,6 +356,12 @@ class PMSEPreProcessor
 
                 if ($request->getResult() == 'TERMINATE_CASE') {
                     $result = $this->terminateCaseByBeanAndProcess($request->getBean(), $data);
+                }
+
+                // Store project id if this flow's project has its "Run Order" set, so we don't trigger this process
+                // on future save.
+                if (is_int($flowData['prj_run_order'])) {
+                    $this->executedFlowIds[] = $flowId;
                 }
             }
 
@@ -526,8 +544,15 @@ class PMSEPreProcessor
 
     /**
      * Optimized version of get all events method.
+     *
+     * Gets BPM Events related to the bean argument. Events are sorted by
+     * 1. bpm_project.prj_run_order (Process Definition Run Order) with nulls last
+     * 2. rd.evn_params (Events that trigger the process) in order New, Updates, rest
+     * 3. rd.date_entered (Datetime the Process Definition was created) oldest -> newest
+     *
      * @param SugarBean $bean
      * @return array
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function getAllEvents(SugarBean $bean)
     {
@@ -570,7 +595,7 @@ class PMSEPreProcessor
             rd.pro_locked_variables, rd.pro_terminate_variables, rd.date_entered,
             flow.id, flow.cas_id, flow.cas_index, flow.bpmn_id, flow.bpmn_type,
             flow.cas_user_id, flow.cas_thread, flow.cas_sugar_module,
-            flow.cas_sugar_object_id, flow.cas_flow_status
+            flow.cas_sugar_object_id, flow.cas_flow_status, prj.prj_run_order
         FROM
             pmse_bpm_related_dependency rd
         LEFT JOIN
@@ -580,6 +605,10 @@ class PMSEPreProcessor
                 flow.cas_flow_status='WAITING' AND
                 flow.cas_sugar_object_id IN (?) AND
                 flow.deleted = 0
+        LEFT JOIN
+            pmse_project prj
+            ON
+                rd.prj_id = prj.id
         WHERE
             rd.deleted = 0 AND rd.pro_status != 'INACTIVE' AND (
                 (
@@ -599,6 +628,12 @@ class PMSEPreProcessor
                 )
             )
             ORDER BY (
+                CASE 
+                WHEN prj.prj_run_order IS NULL
+                THEN 1
+                ELSE 0
+                END
+            ) ASC, prj.prj_run_order ASC, (
                 CASE $evnParamsChar
                 WHEN 'new' THEN 1
                 WHEN 'updated' THEN 2
@@ -750,5 +785,4 @@ class PMSEPreProcessor
 
         return $bean;
     }
-
 }
