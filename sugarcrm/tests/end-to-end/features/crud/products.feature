@@ -313,7 +313,7 @@ Feature: Products module verification
       | fieldName       | value  |
       | discount_amount | 10.00% |
 
-  @create @verify_QLI_accountname @pr @scenario-stress-test
+  @create @verify_QLI_accountname
   Scenario: Quotes > Record View > QLI Table > Add QLI > Account Verification
     Given ProductTemplates records exist:
       | *name          | discount_price | cost_price | list_price | quanity | mft_part_num                 | my_favorite |
