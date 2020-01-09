@@ -59,11 +59,13 @@ class VisualPipelineDefaults
                 'Cases',
                 'Opportunities',
                 'Tasks',
+                'Leads',
             ),
             'table_header' => array(
                 'Cases' => 'status',
                 'Opportunities' => 'sales_stage',
                 'Tasks' => 'status',
+                'Leads' => 'status',
             ),
             'hidden_values' => array(
                 'Cases' => array(),
@@ -72,11 +74,13 @@ class VisualPipelineDefaults
                     'Closed Lost',
                 ),
                 'Tasks' => array(),
+                'Leads' => array(),
             ),
             'tile_header' => array(
                 'Cases' => 'name',
                 'Opportunities' => 'name',
                 'Tasks' => 'name',
+                'Leads' => 'name',
             ),
             'tile_body_fields' => array(
                 'Cases' => array(
@@ -93,11 +97,17 @@ class VisualPipelineDefaults
                     'parent_name',
                     'date_due',
                 ),
+                'Leads' => array(
+                    'email',
+                    'account_name',
+                    'phone_work',
+                ),
             ),
             'records_per_column' => array(
                 'Cases' => '10',
                 'Opportunities' => '10',
                 'Tasks' => '10',
+                'Leads' => '10',
             ),
             'header_colors' => array(
                 '#36850F',
