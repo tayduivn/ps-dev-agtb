@@ -79,7 +79,7 @@ $dictionary['ProductCategory'] = array(
             'vname' => 'LBL_FORECAST_WORKSHEET',
         ),
     ),
-    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
+    'acls' => array('SugarACLProduct' => true),
     'indices' => array (
         array('name' => 'idx_producttemplate_id_parent_name', 'type' => 'index', 'fields' => array('id', 'parent_id', 'name', 'deleted')),
     ),

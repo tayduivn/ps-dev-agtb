@@ -387,11 +387,11 @@ $beanFiles['DataPrivacy'] = 'modules/DataPrivacy/DataPrivacy.php';
 $beanFiles['ReportSchedule'] = 'modules/ReportSchedules/ReportSchedule.php';
 
 // added these lists for security settings for tabs
-$modInvisList = array('Administration', 'CustomFields', 'Connectors', 'ProductTemplates',
+$modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'Dropdown', 'Dynamic', 'DynamicFields', 'DynamicLayout', 'EditCustomFields',
     'Help', 'Import',  'MySettings', 'EditCustomFields','FieldsMetaData',
     'UpgradeWizard', 'Trackers', 'Connectors', 'Employees', 'Calendar',
-    'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes',
+    'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTypes',
     'Shippers', 'TaxRates', 'TeamNotices', 'Teams', 'TimePeriods', 'ForecastOpportunities', 'Quotas',
     'ContractTypes',
     'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports',

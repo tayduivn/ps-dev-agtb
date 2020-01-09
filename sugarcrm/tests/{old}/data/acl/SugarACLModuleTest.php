@@ -62,12 +62,10 @@ class SugarACLModuleTest extends TestCase
             //END SUGARCRM flav=ent ONLY
             array('module'=>'Expressions',      'view'=>'dev'  ,'edit'=>'dev'  ,'delete'=>'dev'),
             array('module'=>'Holidays',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
+            array('module'=>'ProductTemplates', 'view'=>'any', 'edit'=>'any', 'delete'=>'any'),
             // Manufacturers won't be showing on acl-role edit panel, user can't view/edit/delete it
             // array('module'=>'Manufacturers',    'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Products'),
             array('module'=>'OAuthKeys',        'view'=>'admin','edit'=>'admin','delete'=>'admin'),
-            array('module'=>'ProductCategories','view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Products'),
-            array('module'=>'ProductTemplates', 'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Products'),
-            array('module'=>'ProductTypes',     'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Products'),
             array('module'=>'Releases',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Bugs'),
             array('module'=>'Roles',            'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
             array('module'=>'Schedulers',       'view'=>'admin','edit'=>'admin','delete'=>'admin'),

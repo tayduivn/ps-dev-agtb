@@ -533,6 +533,10 @@ $renamedefs = array(
             array('name' => 'LBL_CONVERTED_OPP', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_NOTES_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Notes'),
         ),
+        'Manufacturers' => array(
+            array('name' => 'LNK_NEW_PRODUCT', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LNK_PRODUCT_LIST', 'type' => 'plural', 'source' => 'ProductTemplates'),
+        ),
         'Meetings' => array(
             array('name' => 'ERR_DELETE_RECORD', 'type' => 'singular', 'source' => 'Meetings'),
             array('name' => 'LBL_DEFAULT_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Meetings'),
@@ -701,8 +705,18 @@ $renamedefs = array(
             array('name' => 'LBL_QUOTE_BUNDLE_DEFAULT_GROUP', 'type' => 'singular', 'source' => 'ProductBundles'),
             array('name' => 'LBL_QUOTE_BUNDLE_DEFAULT_GROUP', 'type' => 'singular', 'source' => 'Quotes'),
         ),
+        'ProductCategories' => array(
+            array('name' => 'LNK_NEW_PRODUCT', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LNK_PRODUCT_LIST', 'type' => 'plural', 'source' => 'ProductTemplates'),
+        ),
+        'ProductTypes' => array(
+            array('name' => 'LNK_NEW_PRODUCT', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LNK_PRODUCT_LIST', 'type' => 'plural', 'source' => 'ProductTemplates'),
+        ),
         'ProductTemplates' => array(
             array('name' => 'LBL_PRODUCT_ID', 'type' => 'singular', 'source' => 'Products'),
+            array('name' => 'LNK_NEW_PRODUCT', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LNK_PRODUCT_LIST', 'type' => 'plural', 'source' => 'ProductTemplates'),
             array('name' => 'LBL_PRODUCT_TEMPLATES', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         ),
         'Products' => array(
