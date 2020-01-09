@@ -28,15 +28,18 @@ class DateTest extends TestCase
      * @covers ::formatRows
      * @dataProvider formatRowsProvider
      */
-    public function testFormatRows($rows, $expectedDateCalls, $isoDates, $expectedOutput)
+    public function testFormatRows($rows, $isoDates, $isoDateTimes, $expectedOutput)
     {
         $tdMock = $this->createMock(\TimeDate::class);
-        $tdMock->expects($this->exactly($expectedDateCalls))
+        $tdMock->expects($this->exactly(3))
             ->method('fromDbType')
             ->willReturn(new \DateTime());
-        $tdMock->expects($this->exactly($expectedDateCalls))
-            ->method('asIso')
+        $tdMock->expects($this->exactly(2))
+            ->method('asIsoDate')
             ->willReturnOnConsecutiveCalls(...$isoDates);
+        $tdMock->expects($this->exactly(1))
+            ->method('asIso')
+            ->willReturnOnConsecutiveCalls(...$isoDateTimes);
 
         $dateFormatter = new Date($tdMock);
         $dateFormatter->formatRows($rows);
@@ -70,13 +73,14 @@ class DateTest extends TestCase
                         'after' => true,
                     ],
                 ],
-                3,
-                //email id=>address map
+                //iso Dates
                 [
                     '2011-10-05 IN ISO',
                     '2018-02-27 IN ISO',
+                ],
+                //iso DateTimes
+                [
                     '2018-02-27T14:48:00.000Z IN ISO',
-
                 ],
                 //Expected formated changes
                 [

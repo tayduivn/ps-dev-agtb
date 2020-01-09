@@ -38,7 +38,14 @@ class Date implements Formatter
         if ($value) {
             $obj = $this->timedate->fromDbType($value, $type);
             if ($obj instanceof DateTime) {
-                $value = $this->timedate->asIso($obj);
+                switch ($type) {
+                    case 'date':
+                        $value = $this->timedate->asIsoDate($obj);
+                        break;
+                    case 'datetime':
+                        $value = $this->timedate->asIso($obj);
+                        break;
+                }
             }
         }
 
