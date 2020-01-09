@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_products @job6
+@crud_modules_products @job3
 Feature: Products module verification
 
   Background:
@@ -313,8 +313,54 @@ Feature: Products module verification
       | fieldName       | value  |
       | discount_amount | 10.00% |
 
+  @create @verify_QLI_accountname @pr @scenario-stress-test
+  Scenario: Quotes > Record View > QLI Table > Add QLI > Account Verification
+    Given ProductTemplates records exist:
+      | *name          | discount_price | cost_price | list_price | quanity | mft_part_num                 | my_favorite |
+      | Prod_1         | 100            | 200        | 300        | 1       |                              | true        |
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
 
+    Given I open about view and login
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+    # Add New Line Item
+    When I choose createLineItem on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.QliRecord view
+      | *        | quantity | product_template_name | discount_price | discount_amount |
+      | RecordID | 2.00     | Prod_1        | 100            | 2.00            |
+    #Save and verify account name has been populated
+    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I close alert
+    When I click product_template_name field on #RecordIDQLIRecord view
+    Then I should see #ProductsRecord view
+    When I click show more button on #ProductsRecord view
+    Then I verify fields on #ProductsRecord.RecordView
+      | fieldName          | value         |
+      | assigned_user_name | Administrator |
+      | account_name       | Acc_1         |
 
-
-
-
+    # Add New Line Item via quick pick dashlet
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+    # Select 'Favorites' tab in Product Catalog Quick Picks dashlet
+    When I select Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
+    # Add one product from the dashlet and cancel
+    When I click *Prod_1 on Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
+    When I click Add2Quote button on #Prod_1Drawer header
+    #Save and verify account name has been populated
+    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I close alert
+    When I click product_template_name field on #RecordIDQLIRecord view
+    Then I should see #ProductsRecord view
+    When I click show more button on #ProductsRecord view
+    Then I verify fields on #ProductsRecord.RecordView
+      | fieldName          | value         |
+      | assigned_user_name | Administrator |
+      | account_name       | Acc_1         |
