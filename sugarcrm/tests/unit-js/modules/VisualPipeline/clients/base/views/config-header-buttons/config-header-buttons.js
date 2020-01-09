@@ -59,8 +59,16 @@ describe('VisualPipeline.View.ConfigHeaderButtons', function() {
 
     describe('showInvalidModel', function() {
         describe('when view is defined', function() {
+            var errorMessage;
+
             beforeEach(function() {
                 view._viewAlerts = [];
+                view.validatedModels = [
+                    {isValid: false, moduleName: 'Invalid Module'},
+                    {isValid: true, moduleName: 'Valid Module'}
+                ];
+                errorMessage = 'Error message';
+                sinon.collection.stub(app.lang, 'get').returns(errorMessage);
                 sinon.collection.stub(app.alert, 'show', function() {});
                 view.showInvalidModel();
             });
@@ -75,11 +83,11 @@ describe('VisualPipeline.View.ConfigHeaderButtons', function() {
                 expect(view._viewAlerts).toEqual(['invalid-data']);
             });
 
-            it('should call app.alert.show mwthod', function() {
+            it('should call app.alert.show method', function() {
 
                 expect(app.alert.show).toHaveBeenCalledWith('invalid-data', {
                     level: 'error',
-                    messages: 'ERR_RESOLVE_ERRORS'
+                    messages: errorMessage + '<li>Invalid Module</li>'
                 });
             });
         });

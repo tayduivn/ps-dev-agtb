@@ -160,7 +160,8 @@
 
         _.each(this.collection.models, function(model) {
             model.doValidate(fieldsToValidate, function(isValid) {
-                callback({modelId: model.id, isValid: isValid, moduleName: model.get('enabled_module')});
+                var moduleName = app.lang.getModuleName(model.get('enabled_module'), {plural: true});
+                callback({modelId: model.id, isValid: isValid, moduleName: moduleName});
             });
         }, this);
     }
