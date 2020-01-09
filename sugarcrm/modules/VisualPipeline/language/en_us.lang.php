@@ -32,4 +32,5 @@ $mod_strings = array(
     'LBL_PIPELINE_COLUMN_COLOR' => 'Column Colors',
     'LBL_PIPELINE_HEADER_PREVIEW' => 'Tile Preview',
     'LBL_PIPELINE_ERR_TOO_MANY_FIELDS_ON_TILE' => 'Too many fields on tile.',
+    'LBL_PIPELINE_ERR_VALIDATION_FAILED' => 'Please resolve errors in the following module settings tabs before proceeding:<br><br>',
 );

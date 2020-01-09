@@ -17,6 +17,8 @@
 ({
     extendsFrom: 'ConfigHeaderButtonsView',
 
+    plugins: ['ErrorDecoration'],
+
     /**
      * @inheritdoc
      */
@@ -40,11 +42,19 @@
                 'argument an instance of this view.');
             return;
         }
+
+        var errorMsg = app.lang.get('LBL_PIPELINE_ERR_VALIDATION_FAILED', self.module);
+        _.each(this.validatedModels, function(model) {
+            if (!model.isValid) {
+                errorMsg += '<li>' + model.moduleName + '</li>';
+            }
+        });
+
         var name = 'invalid-data';
         self._viewAlerts.push(name);
         app.alert.show(name, {
             level: 'error',
-            messages: 'ERR_RESOLVE_ERRORS'
+            messages: errorMsg
         });
     },
 
@@ -145,9 +155,12 @@
             }
         }
 
+        // Clear errors from any previous validation runs first
+        this.clearValidationErrors(this.getFieldNames());
+
         _.each(this.collection.models, function(model) {
             model.doValidate(fieldsToValidate, function(isValid) {
-                callback({modelId: model.id, isValid: isValid});
+                callback({modelId: model.id, isValid: isValid, moduleName: model.get('enabled_module')});
             });
         }, this);
     }
