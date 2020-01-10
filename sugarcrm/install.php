@@ -251,11 +251,6 @@ if (!isset($_SESSION['cache_dir']) || empty($_SESSION['cache_dir'])) {
   $workflow[] = 'confirmSettings.php';
   $workflow[] = 'performSetup.php';
 
-    if(isset($_SESSION['install_type'])  && !empty($_SESSION['install_type'])  && $_SESSION['install_type']=='custom'){
-        //$workflow[] = 'download_patches.php';
-        $workflow[] = 'download_modules.php';
-    }
-
     $workflow[] = 'register.php';
 
 

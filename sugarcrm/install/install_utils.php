@@ -75,142 +75,6 @@ function parseAcceptLanguage() {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-////    FROM localization.php
-/**
- * copies the temporary unzip'd files to their final destination
- * removes unzip'd files from system if $uninstall=true
- * @param bool uninstall true if uninstalling a language pack
- * @return array sugar_config
- */
-function commitLanguagePack($uninstall=false) {
-    global $sugar_config;
-    global $mod_strings;
-    global $base_upgrade_dir;
-    global $base_tmp_upgrade_dir;
-
-    $request = InputValidation::getService();
-
-    $errors         = array();
-    $manifest       = urldecode($request->getValidInputRequest('manifest'));
-    $zipFile        = urldecode($request->getValidInputRequest('zipFile'));
-    $version        = "";
-    $show_files     = true;
-    $unzip_dir      = mk_temp_dir( $base_tmp_upgrade_dir );
-    $zip_from_dir   = ".";
-    $zip_to_dir     = ".";
-    $zip_force_copy = array();
-
-    if($uninstall == false && isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::in_array_access($zipFile, $_SESSION['INSTALLED_LANG_PACKS'])) {
-        return;
-    }
-
-    // unzip lang pack to temp dir
-    if(isset($zipFile) && !empty($zipFile)) {
-        if(is_file($zipFile)) {
-            unzip( $zipFile, $unzip_dir );
-        } else {
-            echo $mod_strings['ERR_LANG_MISSING_FILE'].$zipFile;
-            die(); // no point going any further
-        }
-    }
-
-    // filter for special to/from dir conditions (langpacks generally don't have them)
-    if(isset($manifest) && !empty($manifest)) {
-        if(is_file($manifest)) {
-            include($manifest);
-            if( isset( $manifest['copy_files']['from_dir'] ) && $manifest['copy_files']['from_dir'] != "" ){
-                $zip_from_dir   = $manifest['copy_files']['from_dir'];
-            }
-            if( isset( $manifest['copy_files']['to_dir'] ) && $manifest['copy_files']['to_dir'] != "" ){
-                $zip_to_dir     = $manifest['copy_files']['to_dir'];
-            }
-            if( isset( $manifest['copy_files']['force_copy'] ) && $manifest['copy_files']['force_copy'] != "" ){
-                $zip_force_copy     = $manifest['copy_files']['force_copy'];
-            }
-            if( isset( $manifest['version'] ) ){
-                $version    = $manifest['version'];
-            }
-        } else {
-            $errors[] = $mod_strings['ERR_LANG_MISSING_FILE'].$manifest;
-        }
-    }
-
-
-    // find name of language pack: find single file in include/language/xx_xx.lang.php
-    $d = dir( "$unzip_dir/$zip_from_dir/include/language" );
-    while( $f = $d->read() ){
-        if( $f == "." || $f == ".." ){
-            continue;
-        }
-        else if( preg_match("/(.*)\.lang\.php\$/", $f, $match) ){
-            $new_lang_name = $match[1];
-        }
-    }
-    if( $new_lang_name == "" ){
-        die( $mod_strings['ERR_LANG_NO_LANG_FILE'].$zipFile );
-    }
-    $new_lang_desc = getLanguagePackName( "$unzip_dir/$zip_from_dir/include/language/$new_lang_name.lang.php" );
-    if( $new_lang_desc == "" ){
-        die( "No language pack description found at include/language/$new_lang_name.lang.php inside $install_file." );
-    }
-    // add language to available languages
-    $sugar_config['languages'][$new_lang_name] = ($new_lang_desc);
-
-    // get an array of all files to be moved
-    $filesFrom = array();
-    $filesFrom = findAllFiles($unzip_dir, $filesFrom);
-
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    ////    FINALIZE
-    if($uninstall) {
-        // unlink all pack files
-        foreach($filesFrom as $fileFrom) {
-            @unlink(getcwd().substr($fileFrom, strlen($unzip_dir), strlen($fileFrom)));
-        }
-
-        // remove session entry
-        if(isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::is_array_access($_SESSION['INSTALLED_LANG_PACKS'])) {
-            foreach($_SESSION['INSTALLED_LANG_PACKS'] as $k => $langPack) {
-                if($langPack == $zipFile) {
-                    unset($_SESSION['INSTALLED_LANG_PACKS'][$k]);
-                    unset($_SESSION['INSTALLED_LANG_PACKS_VERSION'][$k]);
-                    unset($_SESSION['INSTALLED_LANG_PACKS_MANIFEST'][$k]);
-                    $removedLang = $k;
-                }
-            }
-
-            // remove language from config
-            $new_langs = array();
-            $old_langs = $sugar_config['languages'];
-            foreach( $old_langs as $key => $value ){
-                if( $key != $removedLang ){
-                    $new_langs += array( $key => $value );
-                }
-            }
-            $sugar_config['languages'] = $new_langs;
-        }
-    } else {
-        // copy filesFrom to filesTo
-        foreach($filesFrom as $fileFrom) {
-            @copy($fileFrom, getcwd().substr($fileFrom, strlen($unzip_dir), strlen($fileFrom)));
-        }
-
-        $_SESSION['INSTALLED_LANG_PACKS'][$new_lang_name] = $zipFile;
-        $_SESSION['INSTALLED_LANG_PACKS_VERSION'][$new_lang_name] = $version;
-        $serial_manifest = array();
-        $serial_manifest['manifest'] = (isset($manifest) ? $manifest : '');
-        $serial_manifest['installdefs'] = (isset($installdefs) ? $installdefs : '');
-        $serial_manifest['upgrade_manifest'] = (isset($upgrade_manifest) ? $upgrade_manifest : '');
-        $_SESSION['INSTALLED_LANG_PACKS_MANIFEST'][$new_lang_name] = base64_encode(serialize($serial_manifest));
-    }
-
-    writeSugarConfig($sugar_config);
-
-    return $sugar_config;
-}
 
 function commitPatch($unlink = false, $type = 'patch'){
     require_once('include/entryPoint.php');
@@ -280,77 +144,6 @@ function commitPatch($unlink = false, $type = 'patch'){
     $mod_strings = $old_mod_strings;
 }
 
-function commitModules($unlink = false, $type = 'module'){
-    require_once('include/entryPoint.php');
-
-
-    global $mod_strings;
-    global $base_upgrade_dir;
-    global $base_tmp_upgrade_dir;
-    global $db;
-    $GLOBALS['db'] = $db;
-    $errors = array();
-    $files = array();
-     global $current_user;
-    $current_user = new User();
-    $current_user->is_admin = '1';
-    $old_mod_strings = $mod_strings;
-    if(is_dir(sugar_cached("upload/upgrades"))) {
-            $files = findAllFiles(sugar_cached("upload/upgrades/$type"), $files);
-            $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
-            $mi = new $moduleInstallerClass();
-            $mi->silent = true;
-            $mod_strings = return_module_language('en', "Administration");
-
-            foreach($files as $file) {
-                if(!preg_match('#.*\.zip\$', $file)) {
-                    continue;
-                }
-                $lic_name = 'accept_lic_'.str_replace('.', '_', urlencode(basename($file)));
-
-                $can_install = true;
-                if(isset($_REQUEST[$lic_name])){
-                    if($_REQUEST[$lic_name] == 'yes'){
-                        $can_install = true;
-                    }else{
-                        $can_install = false;
-                    }
-                }
-                if($can_install){
-                    // handle manifest.php
-                    $target_manifest = remove_file_extension( $file ) . '-manifest.php';
-                    if($type == 'langpack'){
-                        $_REQUEST['manifest'] = $target_manifest;
-                        $_REQUEST['zipFile'] = $file;
-                        commitLanguagePack();
-                        continue;
-                    }
-                    include($target_manifest);
-
-                    $unzip_dir = mk_temp_dir( $base_tmp_upgrade_dir );
-                    unzip($file, $unzip_dir );
-                    $_REQUEST['install_file'] = $file;
-                    $mi->install($unzip_dir);
-                    $new_upgrade = new UpgradeHistory();
-                    $new_upgrade->filename      = $file;
-                    $new_upgrade->md5sum        = md5_file($file);
-                    $new_upgrade->type          = $manifest['type'];
-                    $new_upgrade->version       = $manifest['version'];
-                    $new_upgrade->status        = "installed";
-                    $new_upgrade->name          = $manifest['name'];
-                    $new_upgrade->description   = $manifest['description'];
-                    $new_upgrade->id_name       = (isset($installdefs['id_name'])) ? $installdefs['id_name'] : '';
-                    $serial_manifest = array();
-                    $serial_manifest['manifest'] = (isset($manifest) ? $manifest : '');
-                    $serial_manifest['installdefs'] = (isset($installdefs) ? $installdefs : '');
-                    $serial_manifest['upgrade_manifest'] = (isset($upgrade_manifest) ? $upgrade_manifest : '');
-                    $new_upgrade->manifest   = base64_encode(serialize($serial_manifest));
-                    $new_upgrade->save();
-                }//fi
-            }//rof
-    }//fi
-    $mod_strings = $old_mod_strings;
-}
 
 /**
  * creates UpgradeHistory entries
@@ -437,26 +230,6 @@ function writeSugarConfig($sugar_config) {
     }
 }
 
-
-/**
- * uninstalls the Language pack
- */
-function uninstallLangPack() {
-    global $sugar_config;
-
-    // remove language from config
-    $new_langs = array();
-    $old_langs = $sugar_config['languages'];
-    foreach( $old_langs as $key => $value ){
-        if( $key != $_REQUEST['new_lang_name'] ){
-            $new_langs += array( $key => $value );
-        }
-    }
-    $sugar_config['languages'] = $new_langs;
-
-    writeSugarConfig($sugar_config);
-}
-
 /**
  * retrieves the name of the language
  */
@@ -521,12 +294,6 @@ function getInstalledLangPacks($showButtons=true) {
     }
     return $ret;
 }
-
-
-function uninstallLanguagePack() {
-    return commitLanguagePack(true);
-}
-
 
 function getSugarConfigLanguageArray($langZip) {
     global $sugar_config;
