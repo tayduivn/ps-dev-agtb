@@ -322,4 +322,9 @@ After confirming each required and desired module, click the Save and Convert bu
     'LBL_FILTER_LEADS_REPORTS' => 'Leads\' reports',
     'LBL_DATAPRIVACY_BUSINESS_PURPOSE' => 'Business Purposes Consented for',
     'LBL_DATAPRIVACY_CONSENT_LAST_UPDATED' => 'Consent Last Updated',
+
+    // BEGIN SUGARCRM flav=ent ONLY
+    // Leads Pipeline view
+    'LBL_PIPELINE_ERR_CONVERTED' => 'Unable to change Lead status. This Lead has already been converted.',
+    // END SUGARCRM flav=ent ONLY
 );

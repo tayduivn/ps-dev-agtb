@@ -507,6 +507,9 @@
                     this.$(ui.sender).sortable('cancel');
                     this.$('.column').sortable('enable');
                 }, this);
+                var complete = function() {
+                    app.alert.dismiss('model_loading');
+                };
 
                 // Run any functionality necessary before the change is processed
                 this._preChange();
@@ -515,7 +518,8 @@
                     view: 'record',
                     fields: this.getFieldsForFetch(),
                     success: success,
-                    error: error
+                    error: error,
+                    complete: complete
                 });
             }, this)
         });
@@ -647,6 +651,11 @@
         // Disable dragging while the change is being processed to prevent any
         // potential issues due to multiple simultaneous drag/drops
         this.$('.column').sortable('disable');
+
+        // Display a loading message while the model data is being fetched
+        app.alert.show('model_loading', {
+            level: 'process',
+        });
     },
 
     /**
