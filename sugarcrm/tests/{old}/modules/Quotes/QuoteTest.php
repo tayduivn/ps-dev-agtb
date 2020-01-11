@@ -194,4 +194,36 @@ class QuoteTest extends TestCase
             array('Closed Dead', false)
         );
     }
+
+    /**
+     * @covers ::updateProductsAccountId
+     */
+    public function testUpdateProductsAccountId()
+    {
+        $quote = $this->getMockBuilder('Quote')
+        ->setMethods(array('load_relationship'))
+        ->getMock();
+        $quote->expects($this->once())
+        ->method('load_relationship')
+        ->with('products')
+        ->willReturn(true);
+        $quote->billing_account_id = 'new';
+        $quote->account_id = 'old';
+        $product = $this->getMockBuilder('Products')
+        ->setMethods(array('save'))
+        ->getMock();
+        $product->account_id = 'old';
+        $product->expects($this->once())
+        ->method('save');
+        $link2 = $this->getMockBuilder('Link2')
+        ->setMethods(array('getBeans'))
+        ->disableOriginalConstructor()
+        ->getMock();
+        $link2->expects($this->once())
+        ->method('getBeans')
+        ->will($this->returnValue(array($product)));
+        $quote->products = $link2;
+        $quote->updateProductsAccountId();
+        $this->assertEquals($quote->billing_account_id, $product->account_id, 'Product account_id should have been updated');
+    }
 }

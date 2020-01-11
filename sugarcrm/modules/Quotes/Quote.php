@@ -459,8 +459,29 @@ class Quote extends SugarBean
         if (!isset($this->quote_type) || empty($this->quote_type)) {
             $this->quote_type = 'Quotes';
         }
-
+        if (isset($this->billing_account_id, $this->account_id) &&
+            $this->billing_account_id !== $this->account_id) {
+            $this->updateProductsAccountId();
+        }
         return parent::save($check_notify);
+    }
+
+    /**
+     * Updates account_id for related products.
+     */
+    public function updateProductsAccountId()
+    {
+        if ($this->load_relationship('products')) {
+            $products = $this->products->getBeans();
+            if (!empty($products)) {
+                foreach ($products as $product) {
+                    if ($product->account_id !== $this->billing_account_id) {
+                        $product->account_id = $this->billing_account_id;
+                        $product->save();
+                    }
+                }
+            }
+        }
     }
 
     public function set_notification_body($xtpl, $quote)
