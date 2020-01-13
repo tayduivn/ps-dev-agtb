@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {Then} from '@sugarcrm/seedbed';
+import {seedbed, Then} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
 import pipelineView from '../views/pipeline-view';
@@ -76,8 +76,8 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) tile field values in (#[a-zA-Z](?:\w|\S)*
  *  @example
  *  Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
  */
-Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are under "(\w+[\/\s]*\w+)" column in (#[a-zA-Z](?:\w|\S)*) view$/,
-    async function (inputIDs: string, columnName: string, view: any) {
+Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are (not )?under "(\w+[\/\s\+]*\w+)" column in (#[a-zA-Z](?:\w|\S)*) view$/,
+    async function (inputIDs: string, not, columnName: string, view: any) {
 
         let value;
         let errors = [];
@@ -85,17 +85,28 @@ Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are under "(\w+[\/
 
         let uid = inputIDs.slice(1, inputIDs.length - 1).split(',');
 
+        if (columnName.search('now') !== -1 ) {
+            columnName =  seedbed.support.fixDateInput(columnName, "MMMM YYYY");
+        }
+
         for (let i = 0; i < recordIds.length; i++) {
 
             let listItem = await view.getListItem({id: recordIds[i].id});
             value = await listItem.checkTileViewColumn(columnName);
 
-            if (value === false) {
+            if (_.isEmpty(not) && value === false) {
                 errors.push(
                     [
                         `The record '${uid[i]}'`,
-                        `\tis not found under '${columnName}' column`,
-                        `in Tile View`,
+                        `is expected but not found under the '${columnName}' column in Tile View\n`,
+                    ].join('\n')
+                );
+            } else if ( (!_.isEmpty(not)) && value === true) {
+                errors.push(
+                    [
+                        `The record '${uid[i]}'`,
+                        `is not expected but present under the '${columnName}' column in Tile View`,
+
                         `\n`,
                     ].join('\n')
                 );

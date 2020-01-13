@@ -130,17 +130,15 @@ export default class PipelineItemView extends BaseView {
      * Check column of specified opportunity record
      *
      * @param columnName
-     * @returns {Promise<any>}
+     * @returns {Promise<boolean>}
      */
-    public async checkTileViewColumn (columnName) {
-        // construct css part containing specified column name
-        let columnPart = `.column[data-column-name="${columnName}"]`;
-        // Prepend record css with part containg column name
-        let selector = `${columnPart} ${this.$()}`;
+    public async checkTileViewColumn (columnName): Promise<boolean> {
+
+        // Prepend record css with part containing column name
+        let selector = `.column[data-column-name="${columnName}"] ${this.$()}`;
+
         // Check if css containing column name exists
-        await this.driver.scroll(selector);
-        let value  = await this.driver.isElementExist(selector);
-        return value;
+        return this.driver.isElementExist(selector);
     }
 
     /**

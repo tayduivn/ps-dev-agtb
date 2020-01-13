@@ -302,3 +302,166 @@ Feature: Tile View feature
       | cFirst cLast       |
       | Opp_1              |
       | 06/10/2020 12:00pm |
+
+
+  @tileView_filter
+  Scenario: Opportunities > Tile View > Filter is sticky when moving between tile view tabs and list view
+    Given Accounts records exist:
+      | *name     |
+      | Account_1 |
+
+    Given Opportunities records exist:
+      | *name | lead_source |
+      | Opp_1 | Cold Call   |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed               | likely_case | sales_stage   |
+      | RLI_1 | 2020-12-12T19:20:22+00:00 | 1000        | Qualification |
+
+    Given Opportunities records exist:
+      | *name | lead_source       |
+      | Opp_2 | Existing Customer |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_2:
+      | *name | date_closed               | likely_case | sales_stage |
+      | RLI_2 | 2020-12-12T19:20:22+00:00 | 2000        | Prospecting |
+
+    Given Opportunities records exist:
+      | *name | lead_source |
+      | Opp_3 | Direct Mail |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_3:
+      | *name | date_closed               | likely_case | sales_stage    |
+      | RLI_3 | 2020-12-12T19:20:22+00:00 | 3000        | Needs Analysis |
+
+    # Link opportunities to the account to re-enforce the calculations
+    When I perform mass update of all Opportunities with the following values:
+      | fieldName    | value     |
+      | account_name | Account_1 |
+
+    # Create custom filter
+    When I add custom filter 'New Filter 1' on the Opportunities list view with the following values:
+      | fieldName   | filter_operator | filter_value           |
+      | lead_source | is any of       | Cold Call, Direct Mail |
+
+    # Navigate to Opportunities > Tile View
+    When I select VisualPipeline in #OpportunitiesList.FilterView
+    Then I should be redirected to "Opportunities/pipeline" route
+
+    # Switch to Opportunities by Sales Stage tab
+    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+
+    # Verify that custom filter is applied in Opportunities -> Tile View
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+
+    # Navigate to Opportunities > List View
+    When I select ListView in #OpportunitiesList.FilterView
+
+    # Verify that custom filter is applied in Opportunities -> List View
+    Then I should see [*Opp_1, *Opp_3] on Opportunities list view
+    And I should not see [*Opp_2] on Opportunities list view
+
+    # Remove custom filter
+    When I delete custom filter 'New Filter 1' on the Opportunities list view
+
+    # Navigate to Opportunities > Tile View
+    When I select VisualPipeline in #OpportunitiesList.FilterView
+
+    # Verify that custom filter is removed in Opportunities -> Tile View
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+
+    # Navigate to Opportunities > List View
+    When I select ListView in #OpportunitiesList.FilterView
+
+    # Verify that custom filter is removed in Opportunities -> List View
+    Then I should see [*Opp_1, *Opp_2, *Opp_3] on Opportunities list view
+
+
+  @tileView_search
+  Scenario: Opportunities > Tile View > Search string is 'sticky' when switch tabs in Opportunities Tile View
+    Given Accounts records exist:
+      | *name     |
+      | Account_1 |
+
+    Given Opportunities records exist:
+      | *name | lead_source |
+      | Opp_1 | Cold Call   |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed | likely_case | sales_stage   |
+      | RLI_1 | now + 30d   | 1000        | Qualification |
+
+    Given Opportunities records exist:
+      | *name | lead_source       |
+      | Opp_2 | Existing Customer |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_2:
+      | *name | date_closed | likely_case | sales_stage |
+      | RLI_2 | now         | 2000        | Prospecting |
+
+    Given Opportunities records exist:
+      | *name | lead_source |
+      | Opp_3 | Direct Mail |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_3:
+      | *name | date_closed | likely_case | sales_stage    |
+      | RLI_3 | now + 90d   | 3000        | Needs Analysis |
+
+    Given Opportunities records exist:
+      | *name   | lead_source |
+      | Opp_3_1 | Direct Mail |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_3_1:
+      | *name   | date_closed | likely_case | sales_stage    |
+      | RLI_3_1 | now + 90d   | 3000        | Needs Analysis |
+
+    # Link opportunities to the account to re-enforce the calculations
+    When I perform mass update of all Opportunities with the following values:
+      | fieldName    | value     |
+      | account_name | Account_1 |
+
+    # Navigate to Opportunities > Tile View
+    When I select VisualPipeline in #OpportunitiesList.FilterView
+
+    # Switch to Opportunities by Time tab
+    When I select pipelineByTime tab in #OpportunitiesPipelineView view
+
+    # Verify that records appear in the tile view
+    Then I verify the [*Opp_1] records are under "now + 30d" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are under "now" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3, *Opp_3_1] records are under "now + 90d" column in #OpportunitiesPipelineView view
+
+    # Search for 'Opp_2' string in tile view
+    When I search for "Opp_2" in #OpportunitiesList.FilterView view
+
+    # Verify that search is applied
+    Then I verify the [*Opp_1] records are not under "now + 30d" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are under "now" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3, *Opp_3_1] records are not under "now + 90d" column in #OpportunitiesPipelineView view
+
+    # Switch to Opportunities by Sales Stage tab
+    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+
+    # Verify that search is applied in Opportunities by Sales Stage tab
+    Then I verify the [*Opp_1] records are not under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
+
+    # Search for 'Opp_3' string in tile view
+    When I search for "Opp_3" in #OpportunitiesList.FilterView view
+
+    # Verify that search is applied in Opportunities by Sales Stage tab
+    Then I verify the [*Opp_1] records are not under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3, *Opp_3_1] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+
+    # Switch to Opportunities by Time tab
+    When I select pipelineByTime tab in #OpportunitiesPipelineView view
+
+    # Verify that search is applied in Opportunities by Time tab
+    Then I verify the [*Opp_1] records are not under "now + 30d" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are not under "now" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3, *Opp_3_1] records are under "now + 90d" column in #OpportunitiesPipelineView view
+
+    # Switch back to list view
+    When I select ListView in #OpportunitiesList.FilterView
+
+    # Verify that there is no search applied in the opportunities list view
+    Then I should see [*Opp_1, *Opp_2, *Opp_3, *Opp_3_1] on Opportunities list view
