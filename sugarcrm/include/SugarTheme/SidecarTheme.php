@@ -179,11 +179,15 @@ class SidecarTheme
 
             //Load and set variables
             $this->loadVariables();
-            if (!isset($this->variables['baseUrl'])) {
-                //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/FILE.css
-                //              to   /styleguide/assets/
-                $this->setVariable('baseUrl', '"../../../../../styleguide/assets"');
+
+            if (!isset($this->variables['siteUrl'])) {
+                $this->setVariable('siteUrl', '"' . getValueFromConfig('site_url') . '"');
             }
+
+            if (!isset($this->variables['baseUrl'])) {
+                $this->setVariable('baseUrl', '"' . getValueFromConfig('site_url') . '/styleguide/assets"');
+            }
+
             $this->compiler->setVariables($this->loadVariables());
 
             if ($min) {
