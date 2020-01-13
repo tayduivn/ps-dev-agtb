@@ -471,13 +471,20 @@ class Quote extends SugarBean
      */
     public function updateProductsAccountId()
     {
-        if ($this->load_relationship('products')) {
-            $products = $this->products->getBeans();
-            if (!empty($products)) {
-                foreach ($products as $product) {
-                    if ($product->account_id !== $this->billing_account_id) {
-                        $product->account_id = $this->billing_account_id;
-                        $product->save();
+        if ($this->load_relationship('product_bundles')) {
+            $bundles = $this->product_bundles->getBeans();
+            if (!empty($bundles)) {
+                foreach ($bundles as $bundle) {
+                    if ($bundle->load_relationship('products')) {
+                        $products = $bundle->products->getBeans();
+                        if (!empty($products)) {
+                            foreach ($products as $product) {
+                                if ($product->account_id !== $this->billing_account_id) {
+                                    $product->account_id = $this->billing_account_id;
+                                    $product->save();
+                                }
+                            }
+                        }
                     }
                 }
             }

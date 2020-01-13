@@ -205,11 +205,11 @@ class QuoteTest extends TestCase
         ->getMock();
         $quote->expects($this->once())
         ->method('load_relationship')
-        ->with('products')
+        ->with('product_bundles')
         ->willReturn(true);
         $quote->billing_account_id = 'new';
         $quote->account_id = 'old';
-        $product = $this->getMockBuilder('Products')
+        $product = $this->getMockBuilder('Product')
         ->setMethods(array('save'))
         ->getMock();
         $product->account_id = 'old';
@@ -222,7 +222,22 @@ class QuoteTest extends TestCase
         $link2->expects($this->once())
         ->method('getBeans')
         ->will($this->returnValue(array($product)));
-        $quote->products = $link2;
+        $bundle = $this->getMockBuilder('ProductBundle')
+        ->setMethods(array('load_relationship'))
+        ->getMock();
+        $bundle->expects($this->once())
+        ->method('load_relationship')
+        ->with('products')
+        ->willReturn(true);
+        $bundle->products = $link2;
+        $link2 = $this->getMockBuilder('Link2')
+        ->setMethods(array('getBeans'))
+        ->disableOriginalConstructor()
+        ->getMock();
+        $link2->expects($this->once())
+        ->method('getBeans')
+        ->will($this->returnValue(array($bundle)));
+        $quote->product_bundles = $link2;
         $quote->updateProductsAccountId();
         $this->assertEquals($quote->billing_account_id, $product->account_id, 'Product account_id should have been updated');
     }
