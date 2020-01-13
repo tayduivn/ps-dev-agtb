@@ -28,6 +28,10 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.setAllowedModules();
+        this.moduleLangObj = {
+            // using "Tile View" for error messages
+            module: app.lang.get('LBL_PIPELINE_VIEW_NAME', this.module)
+        };
     },
 
     /**
