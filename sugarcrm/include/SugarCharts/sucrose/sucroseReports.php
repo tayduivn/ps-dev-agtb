@@ -123,8 +123,10 @@ class sucroseReports extends sucrose
             return;
         }
 
+        $firstTwoGroups = array_slice($this->group_by, 0, 2);
+
         // store last grouped field
-        $lastgroupfield = end($this->group_by);
+        $lastgroupfield = end($firstTwoGroups);
 
         if ($this->isDateSort($lastgroupfield)) {
             usort($super_set, array($this, "runDateSort"));
