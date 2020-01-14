@@ -50,21 +50,23 @@
                     {{#eq model.attributes.pipeline_type 'date_closed'}}
                         <td class='arrowholder left'></td>
                     {{/eq}}
-                    {{#each recordsToDisplay}}
-                        <td>
-                            <ul class='column' data-column-name='{{headerKey}}'>
-                                {{#if records.length}}
-                                    {{#each records.models}}
-                                        {{#if id}}
-                                            <li data-modelId='{{id}}'>
-                                                {{partial 'pipeline-record-tile' ../../../../this fields=fields model=this meta=../../../../meta view=../../../../this}}
-                                            </li>
-                                        {{/if}}
-                                    {{/each}}
-                                {{/if}}
-                            </ul>
-                        </td>
-                    {{/each}}
+                    {{#if totalRecords}}
+                        {{#each recordsToDisplay}}
+                            <td>
+                                <ul class='column' data-column-name='{{headerKey}}'>
+                                    {{#if records.length}}
+                                        {{#each records.models}}
+                                            {{#if id}}
+                                                <li data-modelId='{{id}}'>
+                                                    {{partial 'pipeline-record-tile' ../../../../this fields=fields model=this meta=../../../../meta view=../../../../this}}
+                                                </li>
+                                            {{/if}}
+                                        {{/each}}
+                                    {{/if}}
+                                </ul>
+                            </td>
+                        {{/each}}
+                    {{/if}}
                     {{#eq model.attributes.pipeline_type 'date_closed'}}
                         <td class='arrowholder right'></td>
                     {{/eq}}
@@ -72,6 +74,13 @@
             </tr>
             </tbody>
         </table>
+        {{#if dataFetched}}
+            {{#unless totalRecords}}
+                <div class='block-footer'>
+                    {{str "LBL_NO_DATA_AVAILABLE" this.module}}
+                </div>        
+            {{/unless}}
+        {{/if}}
         {{#unless hasAccessToView}}
             <div id='noData'>
                 <div class='block-footer'>

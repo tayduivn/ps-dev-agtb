@@ -419,6 +419,8 @@
                     // user must've clicked several tabs before data finished loading
                     return;
                 }
+                self.dataFetched = true;
+                self.totalRecords = 0;
                 _.each(self.recordsToDisplay, function(column, index) {
                     var records = app.data.createBeanCollection(self.module);
                     if (!_.isEmpty(column.records.models)) {
@@ -428,6 +430,7 @@
                     var augmentedContents = self.addTileVisualIndicator(contents.records);
                     records.add(augmentedContents);
                     column.records = records;
+                    self.totalRecords = self.totalRecords + records.length;
 
                     if (contents.next_offset > -1 && !self.moreData) {
                         self.moreData = true;
