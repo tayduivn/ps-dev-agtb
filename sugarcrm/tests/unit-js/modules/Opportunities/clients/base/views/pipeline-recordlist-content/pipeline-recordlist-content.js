@@ -62,12 +62,7 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
 
             sinon.collection.stub(model, 'set', function() {});
             sinon.collection.stub(model, 'save', function() {});
-            sinon.collection.stub(view, '_getFieldsToValidate');
-
-            // Mock a successful validation of the model fields
-            sinon.collection.stub(model, 'isValidAsync', function(fields, callback) {
-                callback(true, {});
-            });
+            sinon.collection.stub(view, '_getSideDrawer');
         });
 
         describe('when pipeline_type is date_closed', function() {
@@ -93,13 +88,17 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                         }
                     };
                 });
-                view.saveModel(model, ui);
+                view.saveModel(model, {
+                    ui: ui,
+                    oldCollection: 'oldCollection',
+                    newCollection: 'newCollection'
+                });
                 expect(model.set).toHaveBeenCalledWith('date_closed', '2019-05-31');
             });
         });
 
-        describe('when pipeline_type is a dropdwon field in Opportunities', function() {
-            it('should save the model', function() {
+        describe('when pipeline_type is a dropdown field in Opportunities', function() {
+            it('should set the field to the column value', function() {
                 var status = 'In Progress';
                 sinon.collection.stub(jQuery.fn, 'parent', function() {
                     return {
@@ -109,9 +108,12 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                     };
                 });
 
-                view.saveModel(model, ui);
+                view.saveModel(model, {
+                    ui: ui,
+                    oldCollection: 'oldCollection',
+                    newCollection: 'newCollection'
+                });
                 expect(model.set).toHaveBeenCalledWith(view.headerField, status);
-                expect(model.save).toHaveBeenCalled();
             });
         });
     });

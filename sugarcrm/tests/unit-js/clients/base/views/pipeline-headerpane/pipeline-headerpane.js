@@ -11,6 +11,7 @@
  */
 
 describe('Base.Views.PipelineHeaderpane', function() {
+    var layout;
     var view;
     var app;
     var layout;
@@ -39,7 +40,8 @@ describe('Base.Views.PipelineHeaderpane', function() {
                 }
             }
         );
-        view = SugarTest.createView('base', 'Opportunities', 'pipeline-headerpane', viewMeta, context, false);
+        layout = SugarTest.createLayout('base', 'Opportunities', 'pipeline-records');
+        view = SugarTest.createView('base', 'Opportunities', 'pipeline-headerpane', viewMeta, context, false, layout);
         sinon.collection.stub(view.context, 'on', function() {});
         sinon.collection.stub(view, '_super', function() {});
     });
@@ -103,7 +105,10 @@ describe('Base.Views.PipelineHeaderpane', function() {
                 };
             });
 
-            sinon.collection.stub(view.context, 'trigger', function() {});
+            sinon.collection.stub(view.layout, 'getComponent').returns({
+                trigger: function() {}
+            });
+            sinon.collection.stub(view.layout.getComponent('filterpanel'), 'trigger');
         });
 
         afterEach(function() {
@@ -117,11 +122,11 @@ describe('Base.Views.PipelineHeaderpane', function() {
             hasClassStub = null;
         });
 
-        it('should not call view.context.trigger when pipeline view is already selected', function() {
+        it('should not trigger filter:apply when pipeline view is already selected', function() {
             hasClassStub.returns(true);
             view.changePipeline(evt);
 
-            expect(view.context.trigger).not.toHaveBeenCalledWith('pipeline:recordlist:filter:changed');
+            expect(view.layout.getComponent('filterpanel').trigger).not.toHaveBeenCalledWith('filter:apply');
         });
 
         describe('when pipeline view is not already selected', function() {
@@ -168,9 +173,8 @@ describe('Base.Views.PipelineHeaderpane', function() {
                 expect(pipelineType).toEqual('testType');
             });
 
-            it('should trigger view.context', function() {
-
-                expect(view.context.trigger).toHaveBeenCalledWith('pipeline:recordlist:filter:changed');
+            it('should trigger filter:apply', function() {
+                expect(view.layout.getComponent('filterpanel').trigger).toHaveBeenCalled();
             });
         });
     });
