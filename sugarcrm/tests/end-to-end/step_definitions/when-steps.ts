@@ -27,6 +27,7 @@ import ImportBpmView from '../views/import-bpm-view';
 import PreviewHeaderView from '../views/preview-header-view';
 import LoginLayout from '../layouts/login-layout';
 import QuickCreateMenuCmp from '../components/quick-create-menu-cmp';
+import AdminMenuCmp from "../components/admin-menu-cmp";
 
 /**
  * Select module in modules menu
@@ -133,6 +134,23 @@ When(/^I open ([\w,\/]+) view and login$/,
             seedbed.userSigninMap[currentUser] = true;
         }
         await whenStepsHelper.setUrlHashAndLogin(module, shouldSetDefaultPrefs);
+        await this.driver.waitForApp();
+    }, {waitForApp: true});
+
+/**
+ * Use to logout properly to account for the browser hard refresh
+ */
+When(/^I logout$/,
+    async function () {
+        await this.driver.waitForApp();
+        let mainMenuCmp: AdminMenuCmp = seedbed.components.AdminMenuCmp;
+
+        await mainMenuCmp.open();
+        await this.driver.waitForApp();
+        await mainMenuCmp.clickItem('logout');
+        await this.driver.pause(3000);
+        await this.driver.wd.waitForExist('#sidecar');
+        await this.driver.pause(3000);
         await this.driver.waitForApp();
     }, {waitForApp: true});
 
@@ -421,7 +439,7 @@ When(/^I stop timer and verify$/, async function (data: TableDefinition) {
  *    Given I create custom user "user"
  *    .....
  *    # Logout from Admin and Login as another user
- *    When I go to "logout" url
+ *    When I logout
  *    When I use account "user"
  *    When I open Home view and login
  */
