@@ -47,9 +47,13 @@
             <tbody>
             <tr>
                 {{#if hasAccessToView}}
-                    {{#eq model.attributes.pipeline_type 'date_closed'}}
-                        <td class='arrowholder left'></td>
-                    {{/eq}}
+                    {{#if dataFetched}}
+                        {{#if totalRecords}}
+                            {{#eq model.attributes.pipeline_type 'date_closed'}}
+                                <td class='arrowholder left'></td>
+                            {{/eq}}
+                        {{/if}}
+                    {{/if}}
                     {{#if totalRecords}}
                         {{#each recordsToDisplay}}
                             <td>
@@ -67,9 +71,13 @@
                             </td>
                         {{/each}}
                     {{/if}}
-                    {{#eq model.attributes.pipeline_type 'date_closed'}}
-                        <td class='arrowholder right'></td>
-                    {{/eq}}
+                    {{#if dataFetched}}
+                        {{#if totalRecords}}
+                            {{#eq model.attributes.pipeline_type 'date_closed'}}
+                                <td class='arrowholder right'></td>
+                            {{/eq}}
+                        {{/if}}
+                    {{/if}}
                 {{/if}}
             </tr>
             </tbody>
