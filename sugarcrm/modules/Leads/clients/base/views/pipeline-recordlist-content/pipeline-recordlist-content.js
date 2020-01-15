@@ -23,10 +23,6 @@
      */
     saveModel: function(model, pipelineData) {
         if (this.headerField === 'status') {
-            // Get the name of the status representing 'Converted'
-            var statusOptions = app.lang.getAppListStrings('lead_status_dom');
-            var convertedStatus = statusOptions.Converted;
-
             // If the lead has already been converted, don't allow the user to change
             // its status. If the lead status is being changed to from non-converted
             // to converted, open the lead conversion layout in a drawer instead of
@@ -39,9 +35,8 @@
                     messages: app.lang.get('LBL_PIPELINE_ERR_CONVERTED', this.module, {moduleSingular: moduleName})
                 });
                 return;
-            } else if (convertedStatus &&
-                _.isObject(pipelineData.newCollection) &&
-                pipelineData.newCollection.headerKey === convertedStatus) {
+            } else if (_.isObject(pipelineData.newCollection) &&
+                pipelineData.newCollection.headerKey === 'Converted') {
                 app.drawer.open({
                     layout: 'convert',
                     context: {

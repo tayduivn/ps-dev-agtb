@@ -42,7 +42,7 @@
                 headerLabel: fieldLabel,
                 moduleField: field,
                 tabLabel: app.lang.get('LBL_PIPELINE_VIEW_TAB_NAME', this.module, {
-                    module: app.lang.get('LBL_MODULE_NAME', this.module),
+                    module: app.lang.getModuleName(this.module, {plural: true}),
                     fieldName: fieldLabel
                 })
             };

@@ -325,6 +325,6 @@ After confirming each required and desired module, click the Save and Convert bu
 
     // BEGIN SUGARCRM flav=ent ONLY
     // Leads Pipeline view
-    'LBL_PIPELINE_ERR_CONVERTED' => 'Unable to change Lead status. This Lead has already been converted.',
+    'LBL_PIPELINE_ERR_CONVERTED' => 'Unable to change {{moduleSingular}} status. This {{moduleSingular}} has already been converted.',
     // END SUGARCRM flav=ent ONLY
 );
