@@ -189,10 +189,11 @@ When(/^I drag-n-drop column header items on "(Cases|Opportunities|Tasks)" module
  *   When I drag *Opp_1 tile to "Prospecting" column in #OpportunitiesPipelineView view
  *
  */
-When(/^I drag (\*[a-zA-Z](?:\w|\S)*) tile to "(\S+)" column in (#\S+) view$/,
+When(/^I drag (\*[a-zA-Z](?:\w|\S)*) tile to "(\w+\s?\w+)" column in (#\S+) view$/,
     async function (record: { id: string }, columnName: string, view: any) {
             let listItem = view.getListItem({id: record.id});
-            await listItem.dragAndDrop(columnName);
+            await listItem.dragAndDropTile(columnName);
+            await closeAlert();
 
     }, {waitForApp: true});
 

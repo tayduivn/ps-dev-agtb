@@ -465,3 +465,38 @@ Feature: Tile View feature
 
     # Verify that there is no search applied in the opportunities list view
     Then I should see [*Opp_1, *Opp_2, *Opp_3, *Opp_3_1] on Opportunities list view
+
+
+  @tasks_tileView_move @pr
+  Scenario: Tasks > Tile View > Move tiles
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+    And 3 Tasks records exist related via tasks link to *Acc_1:
+      | *          | name           | status      | priority | date_start          | date_due            | description               |
+      | T{{index}} | Task {{index}} | Not Started | High     | 2020-04-16T14:30:00 | 2020-04-18T14:30:00 | Seedbed testing for Tasks |
+
+    # Navigate to Tasks > Tile View
+    When I choose Tasks in modules menu
+    When I select VisualPipeline in #TasksList.FilterView
+
+    # Verify column the task tile appears under 'Not Started' column
+    Then I verify the [*T1, *T2, *T3] records are under "Not Started" column in #TasksPipelineView view
+
+    # Move tiles
+    When I drag *T1 tile to "In Progress" column in #TasksPipelineView view
+    When I drag *T2 tile to "Completed" column in #TasksPipelineView view
+    When I drag *T3 tile to "Pending Input" column in #TasksPipelineView view
+
+    # Verify that tiles are moved successfully
+    Then I verify the [*T1, *T2, *T3] records are not under "Not Started" column in #TasksPipelineView view
+    Then I verify the [*T1] records are under "In Progress" column in #TasksPipelineView view
+    Then I verify the [*T2] records are under "Completed" column in #TasksPipelineView view
+    Then I verify the [*T3] records are under "Pending Input" column in #TasksPipelineView view
+
+    # Move tiles
+    When I drag *T1 tile to "Pending Input" column in #TasksPipelineView view
+    When I drag *T2 tile to "Pending Input" column in #TasksPipelineView view
+
+    # Verify that tiles are moved successfully
+    Then I verify the [*T3, *T2, *T1] records are under "Pending Input" column in #TasksPipelineView view

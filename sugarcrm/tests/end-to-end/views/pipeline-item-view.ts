@@ -33,7 +33,8 @@ export default class PipelineItemView extends BaseView {
                     delete: '.rowaction.btn.delete',
                 },
                 tileName: '.name',
-                tileContent: '.tile-body span:nth-child({{tileContentRow}})'
+                tileBody: '.tile-body .ui-corner-all div',
+                tileContent: '.tile-body span:nth-child({{tileContentRow}})',
             },
         });
 
@@ -41,6 +42,48 @@ export default class PipelineItemView extends BaseView {
         this.index = options.index;
         this.current = !this.id && !this.index;
     }
+
+    /**
+     * Drag and Drop tile to specified column in the Tile View
+     *
+     * @param toColumn
+     */
+    public async dragAndDropTile ( colName: string) {
+        let src_by = this.$('listItem.tileBody', {id: this.id} );
+
+        let columnNumber: number = 0;
+        let found: boolean = false;
+
+        //assuming there won't be more than 40 columns at most:
+        while((columnNumber < 40) && !found) {
+            columnNumber++;
+            let targetColTitle_by = `//div[@class='main-content']//table//thead//th[${columnNumber}]/div[normalize-space()='${colName}']`;
+
+            let isExists = await this.driver.isElementExist(targetColTitle_by);
+            if(isExists) {
+                found = true;
+            }
+        }
+
+        if(!found) {
+            throw new  Error(`Could not find the column titled "${colName}" in Tile View!`);
+        }
+        let des_by = `//div[@id='my-pipeline-content']//tbody//td[${columnNumber}]/ul`;
+
+
+        let driver = this.driver;
+        await driver.moveToObject(src_by);
+        await driver.moveTo(null, 0, 0);
+        await driver.pause(1000);
+        await driver.buttonDown(0);
+        await driver.moveToObject(des_by);
+        await driver.pause(1000);
+        await driver.moveTo(null, 0, 3);
+        await driver.pause(1000);
+        await driver.buttonUp(0);
+        await driver.pause(1000);
+    }
+
 
     /**
      * Click on list view item list element (name in most cases)
@@ -74,7 +117,7 @@ export default class PipelineItemView extends BaseView {
     }
 
     /**
-     * Click on delete record button (top-right corner of each tile) in pipeline view
+     * Click on delete record button (top-right corner of each tile) in tile view
      *
      * @param itemName
      * @returns {Promise<void>}
@@ -139,18 +182,5 @@ export default class PipelineItemView extends BaseView {
 
         // Check if css containing column name exists
         return this.driver.isElementExist(selector);
-    }
-
-    /**
-     * Drag and Drop tile in the Pipeline View
-     * (This method currently does not work)
-     *
-     * @param toColumn
-     */
-    public async dragAndDrop ( toColumn: string) {
-        let itemToDrag = this.$('listItem', {id: this.id} );
-        let destination  = this.$(`ul[data-column-name="${toColumn}"]`);
-        await this.driver.dragAndDrop(itemToDrag, destination);
-        await this.driver.waitForApp();
     }
 }
