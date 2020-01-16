@@ -39,6 +39,8 @@
     enableHeaderPane: true,
 
     events: {
+        'mousemove .record-edit-link-wrapper, .record-lock-link-wrapper': 'handleMouseMove',
+        'mouseleave .record-edit-link-wrapper, .record-lock-link-wrapper': 'handleMouseLeave',
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': '_deprecatedCancelClicked',
         'click [data-action=scroll]': 'paginateRecord',
@@ -1003,6 +1005,68 @@
     },
 
     /**
+     * Gets target fields in a record-cell for a mouse event.
+     * For now it only returns fields with tooltips.
+     *
+     * @param {Event} event Event object
+     * @return {Object} collection of DOM elements of the target fields
+     * @private
+     */
+    _getMouseTargetFields: function(event) {
+        var target = this.$(event.target);
+        var cell = target.parents('.record-cell');
+        var fields = cell.find('[title]');
+        return fields;
+    },
+
+    /**
+     * Checks if tooltip is visible.
+     *
+     * @param {Object} field
+     * @return {boolean}
+     * @private
+     */
+    _isTooltipOn: function(field) {
+        return !!$(field).attr('aria-describedby');
+    },
+
+    /**
+     * Handles mousemove event.
+     *
+     * @param {Event} event Event object
+     */
+    handleMouseMove: function(event) {
+        var fields = this._getMouseTargetFields(event);
+        _.each(fields, function(field) {
+            var rect = field.getBoundingClientRect();
+            var tooltipOn = this._isTooltipOn(field);
+            if (event.clientX >= rect.left && event.clientX < (rect.left + rect.width) &&
+                event.clientY >= rect.top && event.clientY < (rect.top + rect.height)) {
+                if (!tooltipOn) {
+                    $(field).tooltip('show');
+                }
+            } else if (tooltipOn) {
+                $(field).tooltip('hide');
+            }
+        }, this);
+    },
+
+    /**
+     * Handles mouseleave event.
+     *
+     * @param {Event} event Event object
+     */
+    handleMouseLeave: function(event) {
+        var fields = this._getMouseTargetFields(event);
+        _.each(fields, function(field) {
+            var tooltipOn = this._isTooltipOn(field);
+            if (tooltipOn) {
+                $(field).tooltip('hide');
+            }
+        }, this);
+    },
+
+    /**
      * Handler for intent to edit. This handler is called both as a callback
      * from click events, and also triggered as part of tab focus event.
      *
@@ -1017,6 +1081,8 @@
         if (e) { // If result of click event, extract target and cell.
             target = this.$(e.target);
             cell = target.parents('.record-cell');
+            // hide tooltip
+            this.handleMouseLeave(e);
         }
 
         cellData = cell.data();

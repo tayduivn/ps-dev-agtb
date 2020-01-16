@@ -1349,4 +1349,94 @@ describe("Record View", function () {
             expect(view.model.get('profile_picture_guid')).toBe(undefined);
         });
     });
+
+    describe('_getMouseTargetFields', function() {
+        it('should return a list of fields', function() {
+            var event = {target: 'target'};
+            var target = {
+                parents: function() {
+                    return {
+                        find: function() {
+                            return 'fields';
+                        }
+                    };
+                }
+            };
+            sinon.collection.stub(view, '$').returns(target);
+            expect(view._getMouseTargetFields(event)).toEqual('fields');
+        });
+    });
+
+    describe('handleMouseMove', function() {
+        var tooltipStub;
+
+        beforeEach(function() {
+            sinon.collection.stub(view, '_getMouseTargetFields').returns([{
+                getBoundingClientRect: function() {
+                    return {
+                        left: 10,
+                        top: 20,
+                        width: 10,
+                        height: 10
+                    };
+                }
+            }]);
+            tooltipStub = sinon.collection.stub();
+            sinon.collection.stub(window, '$').returns({
+                tooltip: tooltipStub
+            });
+        });
+
+        it('should show tooltip', function() {
+            sinon.collection.stub(view, '_isTooltipOn').returns(false);
+            var event = {clientX: 15, clientY: 25};
+            view.handleMouseMove(event);
+            expect(tooltipStub).toHaveBeenCalledWith('show');
+        });
+
+        it('should not do anything', function() {
+            sinon.collection.stub(view, '_isTooltipOn').returns(true);
+            var event = {clientX: 15, clientY: 25};
+            view.handleMouseMove(event);
+            expect(tooltipStub).not.toHaveBeenCalled();
+        });
+
+        it('should hide tooltip', function() {
+            sinon.collection.stub(view, '_isTooltipOn').returns(true);
+            var event = {clientX: 25, clientY: 35};
+            view.handleMouseMove(event);
+            expect(tooltipStub).toHaveBeenCalledWith('hide');
+        });
+
+        it('should not do anything', function() {
+            sinon.collection.stub(view, '_isTooltipOn').returns(false);
+            var event = {clientX: 25, clientY: 35};
+            view.handleMouseMove(event);
+            expect(tooltipStub).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('handleMouseLeave', function() {
+        var tooltipStub;
+
+        beforeEach(function() {
+            sinon.collection.stub(view, '_getMouseTargetFields').returns([{}]);
+            tooltipStub = sinon.collection.stub();
+            sinon.collection.stub(window, '$').returns({
+                tooltip: tooltipStub
+            });
+        });
+
+        it('should hide tooltip', function() {
+            sinon.collection.stub(view, '_isTooltipOn').returns(true);
+            view.handleMouseLeave({});
+            expect(tooltipStub).toHaveBeenCalledWith('hide');
+        });
+
+        it('should not do anything', function() {
+            sinon.collection.stub(view, '_isTooltipOn').returns(false);
+            view.handleMouseLeave({});
+            expect(tooltipStub).not.toHaveBeenCalled();
+        });
+    });
 });
