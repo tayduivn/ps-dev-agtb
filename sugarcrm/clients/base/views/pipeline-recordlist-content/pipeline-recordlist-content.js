@@ -42,6 +42,10 @@
 
     hasAccessToView: true,
 
+    dataFetched: false,
+
+    totalRecords: 0,
+
     /**
      * Cached fieldnames to retrieve for tile view
      * This does not include fields from record view
@@ -272,6 +276,8 @@
             model.set('tileVisualIndicator', literal[0].tileVisualIndicator);
 
             collection.records.add(model, {at: 0});
+            this.dataFetched = true;
+            this.totalRecords = this.totalRecords + 1;
         }
 
         this._super('render');
@@ -692,6 +698,7 @@
                 model.destroy({
                     showAlerts: {'process': true, 'success': {messages: self.getDeleteMessages(model).success}},
                     success: function(data) {
+                        self.totalRecords = self.totalRecords - 1;
                         self._super('render');
                         self.postRender();
                     }
