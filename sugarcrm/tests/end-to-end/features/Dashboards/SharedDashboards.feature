@@ -74,8 +74,7 @@ Feature: Shareable Dashboards functionality verification
 
     When I go to "Home" url
 
-    #TODO renable this when screenshot is updated
-#    Then I verify that HomeDashboard element from #Dashboard.DashboardView still looks like HomeDashboard
+    Then I verify that HomeDashboard element from #Dashboard.DashboardView still looks like HomeDashboard
 
     Examples:
       | dashboardName    |
