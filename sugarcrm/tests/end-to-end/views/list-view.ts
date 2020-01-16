@@ -37,7 +37,7 @@ export default class ListView extends BaseListView {
                 tableRow: '.table.table-striped.dataTable tbody tr',
                 actionsMenu: '.fieldset.actions.actionmenu .btn.dropdown-toggle',
                 actions: {
-                    'Delete Selected': 'a[name="delete_button"]:not(.hide)',
+                    'Delete Selected': 'a[name="massdelete_button"]:not(.hide)',
                     'Export': 'a[name="export_button"]:not(.hide)',
                     'Mass Update': 'a[name="massupdate_button"]:not(.hide)',
                     'Merge': 'a[name="merge_button"]:not(.hide)',

@@ -48,7 +48,7 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
     # Verify that new renewal RLIs are auto-generated
     Then I verify number of records in #RevenueLineItemsList.ListView is 6
 
-    # Since renewal opportunity has the same name as original, rename original opportunity to differentiate orginal and renewal
+    # Since renewal opportunity has the same name as original, rename original opportunity to differentiate original and renewal
     When I edit *Opp_1 record in Opportunities list view with the following values:
       | fieldName | value          |
       | name      | Original_Opp_1 |
@@ -128,3 +128,104 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
       | value            |
       | Sugar Enterprise |
     When I click on Cancel button on #UserProfile
+
+  @multiple_RLI_renewal_oppertunity @SS-198
+  Scenario: Opportunities >  Add in multiple RLI's with the same product catalog id's on a renewal opportunity
+    # Create product records
+    Given ProductTemplates records exist:
+      | *name | discount_price | cost_price | list_price | service | service_start_date | service_duration_value | service_duration_unit | renewable |
+      | Alex1 | 100            | 100        | 100        | true    | 2020-01-01         | 2                      | year                  | true      |
+
+    # Create Account
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+
+    # Create an opportunity
+    When I choose Opportunities in modules menu
+    When I click Create button on #OpportunitiesList header
+    When I provide input for #OpportunitiesDrawer.HeaderView view
+      | *     | name          |
+      | Opp_1 | Opportunity 1 |
+    When I provide input for #OpportunitiesDrawer.RecordView view
+      | *     | account_name |
+      | Opp_1 | Acc_1        |
+
+    # Provide input for the RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 1 row
+      | *name | date_closed | product_template_name |
+      | RLI1  | 12/12/2020  | Alex1                 |
+
+    # Save new opportunity
+    When I click Save button on #OpportunitiesDrawer header
+    When I close alert
+
+    # Edit RLI and change status
+    When I choose RevenueLineItems in modules menu
+    When I click on Edit button for *RLI1 in #RevenueLineItemsList.ListView
+    When I set values for *RLI1 in #RevenueLineItemsList.ListView
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+    When I click on Save button for *RLI1 in #RevenueLineItemsList.ListView
+    When I close alert
+
+    # Rename closed won opportunity
+    When I choose Opportunities in modules menu
+    When I click on Edit button for *Opp_1 in #OpportunitiesList.ListView
+    When I set values for *Opp_1 in #OpportunitiesList.ListView
+      | fieldName | value                |
+      | name      | Opportunity Original |
+
+    # Save renamed opportunity
+    When I click on Save button for *Opp_1 in #OpportunitiesList.ListView
+    When I close alert
+
+    # Create an 2nd opportunity
+    When I choose Opportunities in modules menu
+    When I click Create button on #OpportunitiesList header
+    When I click show more button on #OpportunitiesDrawer view
+    When I provide input for #OpportunitiesDrawer.HeaderView view
+      | *      | name          |
+      | Opp_1U | Opportunity 2 |
+
+    When I provide input for #OpportunitiesDrawer.RecordView view
+      | *      | account_name | renewal_parent_name  |
+      | Opp_1U | Acc_1        | Opportunity Original |
+
+    # Provide input for the RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 1 row
+      | *name | date_closed | product_template_name |
+      | RLI2  | 12/12/2020  | Alex1                 |
+
+    # Save 2nd opportunity
+    When I click Save button on #OpportunitiesDrawer header
+    When I close alert
+
+    # Edit RLI and change status
+    When I choose RevenueLineItems in modules menu
+    When I click on Edit button for *RLI2 in #RevenueLineItemsList.ListView
+    When I set values for *RLI2 in #RevenueLineItemsList.ListView
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+    When I click on Save button for *RLI2 in #RevenueLineItemsList.ListView
+    When I close alert
+
+    # Verify Roll up of RLI's to parent opportunity
+    # Assign ID for newly generated renewal opportunity
+    When I filter for the Opportunities record *Opp_2 named "Opportunity 1"
+    When I select *Opp_2 in #OpportunitiesList.ListView
+    Then I verify fields on #Opp_2Record.RecordView
+      | fieldName | value |
+      | best_case | $200.00   |
+      | amount    | $200.00   |
+    When I open the revenuelineitems subpanel on #Opp_2Record view
+    Then I verify number of records in #Opp_2Record.SubpanelsLayout.subpanels.revenuelineitems is 2
+
+  @multiple_RLI_renewal_oppertunity_cleanup @AT-328
+  Scenario: Opportunities >  Select all records > Mass Delete
+    # Issue with seedbed not cleaning up created rewable opportunities and RLIs operation below handles the clean up. remove when fixed.
+    When I choose Opportunities in modules menu
+    When I toggleAll records in #OpportunitiesList.ListView
+    When I select "Delete Selected" action in #OpportunitiesList.ListView
+    When I Confirm confirmation alert
+    When I close alert

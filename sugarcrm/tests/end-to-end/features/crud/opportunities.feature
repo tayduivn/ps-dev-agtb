@@ -322,7 +322,6 @@ Feature: Opportunities
       | best_case1 | likely_case1 | best_case2 | likely_case2 | best_case3 | likely_case3 |
       | 300        | 200          | 500        | 400          | 50         | 40           |
 
-
   @create_opportunity_with_negative_values
   Scenario Outline: Opportunities >  Create opportunity with negative RLIs
     Given Accounts records exist:
