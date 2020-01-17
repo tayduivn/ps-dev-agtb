@@ -38,9 +38,16 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                     Leads: 'date_closed',
                     Opportunities: 'status'
                 },
+                available_columns: {
+                    Opportunities: {
+                        status: {
+                            Lost: 'Lost',
+                            New: 'New'
+                        }
+                    }
+                },
                 header_colors: ['#FFFFFF', '#000000']
-            }
-        ).withArgs(view.module, 'fields').returns(
+            }).withArgs(view.module, 'fields').returns(
             {
                 name: {
                     type: 'text',

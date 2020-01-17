@@ -119,6 +119,13 @@ $dictionary['VisualPipeline'] = array(
                 'audited' => true,
                 'merge_filter' => 'enabled',
             ),
+        'available_columns' =>
+            array(
+                'name' => 'available_columns',
+                'vname' => 'LBL_PIPELINE_AVAILABLE_COLUMNS',
+                'type' => 'text',
+                'comment' => 'An array of white-listed column names',
+            ),
     ),
 );
 

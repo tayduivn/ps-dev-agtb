@@ -13,11 +13,14 @@ describe('VisualPipeline.View.ConfigHeaderButtons', function() {
     var app;
     var view;
     var context;
+    var layout;
     beforeEach(function() {
         app = SugarTest.app;
         context = app.context.getContext();
 
         view = SugarTest.createView('base', 'VisualPipeline', 'config-header-buttons', null, null, true);
+        layout = SugarTest.createLayout('base', 'VisualPipeline', 'config-drawer-content', null, null);
+        view.layout = layout;
         app.routing.start();
     });
 
@@ -174,6 +177,7 @@ describe('VisualPipeline.View.ConfigHeaderButtons', function() {
         var contextModel;
         var getStub;
         var setStub;
+        var availableColumns;
         beforeEach(function() {
             model = new Backbone.Model('VisualPipeline');
             view.collection = {
@@ -189,6 +193,8 @@ describe('VisualPipeline.View.ConfigHeaderButtons', function() {
                     set: setStub
                 };
             });
+            sinon.collection.stub(view, 'getAvailableColumnNames').withArgs(['Cases'])
+                .returns(['test']);
             contextModel = view.context.get('model');
 
             sinon.collection.stub(model, 'get')
@@ -221,6 +227,7 @@ describe('VisualPipeline.View.ConfigHeaderButtons', function() {
             expect(model.get).toHaveBeenCalledWith('tile_body_fields');
             expect(model.get).toHaveBeenCalledWith('records_per_column');
             expect(model.get).toHaveBeenCalledWith('hidden_values');
+            expect(view.getAvailableColumnNames).toHaveBeenCalledWith(['Cases']);
         });
 
         it('should call view.context.get.set method', function() {
@@ -233,8 +240,91 @@ describe('VisualPipeline.View.ConfigHeaderButtons', function() {
                 tile_header: {Cases: 'name'},
                 tile_body_fields: {Cases: ['account_name', 'priority']},
                 records_per_column: {Cases: 10},
-                hidden_values: {Cases: ['test']}
+                hidden_values: {Cases: ['test']},
+                available_columns: {Cases: ['test']}
             }, {silent: true});
+        });
+    });
+
+    describe('getAvailableColumnNames', function() {
+        var mockHtml;
+        var availableColumnNames;
+        var model;
+        beforeEach(function() {
+            mockHtml = '<div class="main-pane span8">' +
+                            '<div class="accordion record-panel">' +
+                                '<div class="config-visual-pipeline-group accordion-group">' +
+                                    '<div class="accordion-headerpane"></div>' +
+                                    '<div class="accordion-inner">' +
+                                        '<div id="tabs" class="ui-tabs ui-corner-all ui-widget">' +
+                                            '<div id="Cases">' +
+                                                '<div class="row-fluid">' +
+                                                    '<div class="span6 record-cell">' +
+                                                        '<ul id="pipeline-sortable-1">' +
+                                                            '<li><span>Assigned</span></li>' +
+                                                            '<li><span>New</span></li>' +
+                                                        '</ul>>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+
+            view.layout.$el = $(mockHtml);
+
+            model = new Backbone.Model('VisualPipeline');
+            sinon.collection.stub(model, 'get').withArgs('enabled_module').returns('Cases')
+                .withArgs('table_header').returns('status');
+
+            view.collection = {
+                models: [model],
+                off: function() {}
+            };
+
+            sinon.collection.stub(view.model, 'get').withArgs('table_header').returns({
+                'Cases': 'status',
+                'Opportunities': 'sales_stage',
+                'Tasks': 'status',
+                'Leads': 'status'
+            });
+
+            sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs('Cases', 'fields')
+                .returns({
+                    status: {
+                        name: 'status',
+                        options: 'case_status_dom'
+                    }
+                });
+            sinon.collection.stub(app.lang, 'getAppListStrings').returns(
+                {
+                    'New': 'New',
+                    'Assigned': 'Assigned',
+                    'Duplicate': 'Duplicate',
+                    'Lost': 'Lost'
+                }
+            );
+        });
+
+        it('should call app.metadata.getModule with an array and fields', function() {
+            view.getAvailableColumnNames('Cases');
+
+            expect(app.metadata.getModule).toHaveBeenCalledWith('Cases', 'fields');
+        });
+
+        it('should call app.lang.getAppListStrings method', function() {
+            view.getAvailableColumnNames('Cases');
+
+            expect(app.lang.getAppListStrings).toHaveBeenCalledWith('case_status_dom');
+        });
+
+        it('should return availableColumnNames', function() {
+            availableColumnNames = view.getAvailableColumnNames('Cases');
+
+            expect(availableColumnNames).toEqual({status: {'Assigned': 'Assigned', 'New': 'New'}});
         });
     });
 

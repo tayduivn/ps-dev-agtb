@@ -82,6 +82,9 @@
         var tileBodyFields = {};
         var recordsPerColumn = {};
         var hiddenValues = {};
+        var availableColumns = {};
+
+        var availableColumnNames = [];
 
         _.each(this.collection.models, function(model) {
             var moduleName = model.get('enabled_module');
@@ -90,6 +93,9 @@
             tileBodyFields[moduleName] = model.get('tile_body_fields');
             recordsPerColumn[moduleName] = model.get('records_per_column');
             hiddenValues[moduleName] = model.get('hidden_values');
+
+            availableColumnNames = this.getAvailableColumnNames(moduleName);
+            availableColumns[moduleName] = availableColumnNames || model.get('white_listed_header_vals');
         }, this);
 
         ctxModel.set({
@@ -99,8 +105,47 @@
             tile_header: tileHeader,
             tile_body_fields: tileBodyFields,
             records_per_column: recordsPerColumn,
-            hidden_values: hiddenValues
+            hidden_values: hiddenValues,
+            available_columns: availableColumns
         }, {silent: true});
+    },
+
+    /**
+     * Gets the list of all the available columns in the exact order from the config
+     *
+     * @param {string} moduleName name of the current Module tab in Pipeline config
+     * @return {Array} List of available whitelisted column names
+     */
+    getAvailableColumnNames: function(moduleName) {
+        var availableColumnNames = {};
+        var columnsWithHeaders = {};
+        var tableHeader = '';
+        var fields = app.metadata.getModule(moduleName, 'fields');
+
+        var $divElem = this.layout.$el.find('#' + moduleName);
+        var $elemList = $divElem[0].querySelector('#pipeline-sortable-1').getElementsByTagName('li');
+
+        for (var model of this.collection.models) {
+            if (model.get('enabled_module') === moduleName) {
+                tableHeader = model.get('table_header');
+                break;
+            }
+        }
+        var translated = app.lang.getAppListStrings(fields[tableHeader].options);
+
+        _.each($elemList, function($itemElem) {
+            var item = {};
+            for (var key of Object.keys(translated)) {
+                if ($itemElem.innerText.trim() === translated[key]) {
+                    availableColumnNames[key] = translated[key];
+                    break;
+                }
+            }
+        }, this);
+
+        columnsWithHeaders[tableHeader] = availableColumnNames;
+
+        return columnsWithHeaders;
     },
 
     /**

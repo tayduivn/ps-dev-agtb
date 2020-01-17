@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.VisualPipeline.ConfigPaneView
+ * @class View.Views.Base.VisualPipeline.ConfigPanelView
  * @alias SUGAR.App.view.views.BaseVisualConfigPanelView
  * @extends View.Fields.Base.BaseField
  */

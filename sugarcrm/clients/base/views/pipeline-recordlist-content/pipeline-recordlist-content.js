@@ -181,19 +181,37 @@
                 }
 
                 if (!_.isEmpty(options)) {
-                    var items = _.difference(options, this.hiddenHeaderValues);
-                    _.each(options, function(option, key) {
-                        var index = _.indexOf(items, option);
-                        index = index <= 11 ? index : index % 12;
-                        if (!_.isEmpty(key) && (_.indexOf(this.hiddenHeaderValues, key) === -1)) {
-                            this.recordsToDisplay.push({
-                                'headerName': option,
-                                'headerKey': key,
-                                'records': [],
-                                'color': !_.isUndefined(headerColors[index]) ? headerColors[index] : ''
-                            });
-                        }
-                    }, this);
+                    // Get all the whitelisted column names for current module
+                    if (!_.isUndefined(this.pipelineConfig.available_columns[this.module])) {
+                        var items = this.pipelineConfig.available_columns[this.module][headerField];
+                        var index = 0;
+                        _.each(items, function(item, key) {
+                            index = index <= 11 ? index : index % 12;
+                            if (!_.isEmpty(options[key]) && (_.indexOf(this.hiddenHeaderValues, item) === -1)) {
+                                this.recordsToDisplay.push({
+                                    'headerName': options[key],
+                                    'headerKey': key,
+                                    'records': [],
+                                    'color': !_.isUndefined(headerColors[index]) ? headerColors[index] : ''
+                                });
+                                index++;
+                            }
+                        }, this);
+                    } else {
+                        var items = _.difference(options, this.hiddenHeaderValues);
+                        _.each(options, function(option, key) {
+                            var index = _.indexOf(items, option);
+                            index = index <= 11 ? index : index % 12;
+                            if (!_.isEmpty(key) && (_.indexOf(this.hiddenHeaderValues, key) === -1)) {
+                                this.recordsToDisplay.push({
+                                    'headerName': option,
+                                    'headerKey': key,
+                                    'records': [],
+                                    'color': !_.isUndefined(headerColors[index]) ? headerColors[index] : ''
+                                });
+                            }
+                        }, this);
+                    }
                 }
             }
 

@@ -113,7 +113,8 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                     .withArgs('tile_header').returns({Cases: 'name'})
                     .withArgs('tile_body_fields').returns({Cases: ['account_name', 'priority']})
                     .withArgs('records_per_column').returns('{"Cases": 10}')
-                    .withArgs('hidden_values').returns({Cases: ['test']});
+                    .withArgs('hidden_values').returns({Cases: ['test']})
+                    .withArgs('available_columns').returns({Cases: ['Assigned']});
                 layout.loadData();
             });
             afterEach(function() {
@@ -133,7 +134,8 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 .withArgs('tile_header').returns({Cases: 'name'})
                 .withArgs('tile_body_fields').returns({Cases: ['account_name', 'priority']})
                 .withArgs('records_per_column').returns({Cases: 10})
-                .withArgs('hidden_values').returns({Cases: ['test']});
+                .withArgs('hidden_values').returns({Cases: ['test']})
+                .withArgs('available_columns').returns({Cases: ['Assigned']});
             layout.loadData();
 
             expect(layout.model.get).toHaveBeenCalledWith('enabled_modules');
@@ -142,6 +144,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
             expect(layout.model.get).toHaveBeenCalledWith('tile_body_fields');
             expect(layout.model.get).toHaveBeenCalledWith('records_per_column');
             expect(layout.model.get).toHaveBeenCalledWith('hidden_values');
+            expect(layout.model.get).toHaveBeenCalledWith('available_columns');
         });
 
         it('should call layout.addModelToCollection with moduleName and data', function() {
@@ -151,7 +154,8 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 .withArgs('tile_header').returns({Cases: 'name'})
                 .withArgs('tile_body_fields').returns({Cases: ['account_name', 'priority']})
                 .withArgs('records_per_column').returns({Cases: 10})
-                .withArgs('hidden_values').returns({Cases: ['test']});
+                .withArgs('hidden_values').returns({Cases: ['test']})
+                .withArgs('available_columns').returns({Cases: ['Assigned']});
             layout.loadData();
 
             expect(layout.addModelToCollection).toHaveBeenCalledWith('Cases', {
@@ -161,7 +165,8 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 tile_header: 'name',
                 tile_body_fields: ['account_name', 'priority'],
                 records_per_column: 10,
-                hidden_values: ['test']
+                hidden_values: ['test'],
+                available_columns: ['Assigned']
             });
         });
 
@@ -178,7 +183,8 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 .withArgs('tile_header').returns({Cases: 'name'})
                 .withArgs('tile_body_fields').returns({Cases: ['account_name', 'priority']})
                 .withArgs('records_per_column').returns({Cases: 10})
-                .withArgs('hidden_values').returns({Cases: ['test']});
+                .withArgs('hidden_values').returns({Cases: ['test']})
+                .withArgs('available_columns').returns({Cases: ['Assigned']});
             layout.loadData();
 
             expect(layout.setActiveTabIndex).toHaveBeenCalledWith(0);

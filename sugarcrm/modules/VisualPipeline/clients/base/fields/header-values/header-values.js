@@ -43,22 +43,65 @@
     populateHeaderValues: function() {
         var whiteListed = [];
         var blackListed = [];
+        var availableValues = {};
+        var tempList = [];
         var fields = app.metadata.getModule(this.model.get('enabled_module'), 'fields');
         var tableHeader = this.model.get('table_header');
 
         if (!_.isEmpty(tableHeader)) {
             var hiddenValues = this.getBlackListedArray();
+            var availableValues = this.model.get('available_columns') ? this.model.get('available_columns') : {};
             var translated = app.lang.getAppListStrings(fields[tableHeader].options);
-            for (var prop in translated) {
-                if (translated.hasOwnProperty(prop) && !_.isEmpty(prop)) {
-                    var item = {};
-                    item.key = prop;
-                    item.translatedLabel = translated[prop];
 
-                    if (_.indexOf(hiddenValues, prop) === -1) {
+            if (!_.isUndefined(availableValues[tableHeader])) {
+                // if availableColumns is defined for the table header
+                // Check for any new custom column added
+                if (Object.keys(translated).length >
+                    (hiddenValues.length + Object.keys(availableValues[tableHeader]).length)) {
+                    // get missing columns
+                    var diffArr = _.difference(Object.keys(translated),
+                        _.union(Object.keys(availableValues[tableHeader]), hiddenValues));
+
+                    if (!_.isUndefined(diffArr)) {
+                        for (var diffElem of diffArr) {
+                            // add missing column values to the available columns
+                            availableValues[tableHeader][diffElem] = translated[diffElem];
+                        }
+                    }
+                }
+
+                for (var prop in availableValues[tableHeader]) {
+                    if (translated.hasOwnProperty(prop) && !_.isEmpty(prop)) {
+                        var item = {};
+                        item.key = prop;
+                        item.translatedLabel = translated[prop];
                         whiteListed.push(item);
-                    } else {
-                        blackListed.push(item);
+                    }
+                }
+
+                if (!_.isEmpty(hiddenValues)) {
+                    _.each(hiddenValues, function(prop) {
+                        if (translated.hasOwnProperty(prop) && !_.isEmpty(prop)) {
+                            var item = {};
+                            item.key = prop;
+                            item.translatedLabel = translated[prop];
+                            blackListed.push(item);
+                        }
+                    }, this);
+                }
+            } else {
+                // if availableColumns is not defined then load from the translated object
+                for (var prop in translated) {
+                    if (translated.hasOwnProperty(prop) && !_.isEmpty(prop)) {
+                        var item = {};
+                        item.key = prop;
+                        item.translatedLabel = translated[prop];
+
+                        if (_.indexOf(hiddenValues, prop) === -1) {
+                            whiteListed.push(item);
+                        } else {
+                            blackListed.push(item);
+                        }
                     }
                 }
             }

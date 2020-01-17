@@ -47,6 +47,7 @@ class VisualPipelineApi extends ConfigModuleApi
             'tile_header',
             'tile_body_fields',
             'records_per_column',
+            'available_columns',
         ];
 
         foreach ($args['notAvailableModules'] as $naModule) {

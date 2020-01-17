@@ -83,6 +83,7 @@
         var tileBodyFields = this.model.get('tile_body_fields');
         var recordsPerColumn = this.model.get('records_per_column');
         var hiddenValues = this.model.get('hidden_values');
+        var availableColumns = this.model.get('available_columns');
 
         if (!(recordsPerColumn instanceof Object)) {
             recordsPerColumn = JSON.parse(recordsPerColumn);
@@ -96,7 +97,8 @@
                 tile_header: tileHeaders[moduleName],
                 tile_body_fields: tileBodyFields[moduleName],
                 records_per_column: recordsPerColumn[moduleName],
-                hidden_values: hiddenValues[moduleName]
+                hidden_values: hiddenValues[moduleName],
+                available_columns: availableColumns[moduleName]
             };
             this.addModelToCollection(moduleName, data);
         }, this);
@@ -190,7 +192,8 @@
                 tile_header: data.tile_header || '',
                 tile_body_fields: data.tile_body_fields || '',
                 records_per_column: data.records_per_column || '',
-                hidden_values: data.hidden_values || ''
+                hidden_values: data.hidden_values || '',
+                available_columns: data.available_columns || ''
             });
 
             this.getModuleFields(bean);

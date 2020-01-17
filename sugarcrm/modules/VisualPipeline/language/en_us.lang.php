@@ -21,6 +21,7 @@ $mod_strings = array(
     'LBL_PIPELINE_MODULE_SETTINGS' => 'Module Settings',
     'LBL_PIPELINE_TABLE_HEADER' => 'Table Header',
     'LBL_PIPELINE_TILE_HEADER' => 'Tile Options Header',
+    'LBL_PIPELINE_AVAILABLE_COLUMNS' => 'Available Columns',
     'LBL_PIPELINE_TILE_BODY_FIELDS' => 'Tile Options Body',
     'LBL_PIPELINE_RECORDS_PER_COLUMN' => 'Number of records displayed per column',
     'LBL_PIPELINE_CONFIG_UPDATED' => 'Pipeline config updated',

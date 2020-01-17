@@ -109,6 +109,49 @@ class VisualPipelineDefaults
                 'Tasks' => '10',
                 'Leads' => '10',
             ),
+            'available_columns' => array(
+                'Cases' => array(
+                    'status' => array(
+                        'New' => 'New',
+                        'Assigned' => 'Assigned',
+                        'Closed' => 'Closed',
+                        'Pending Input' => 'Pending Input',
+                        'Rejected' => 'Rejected',
+                        'Duplicate' => 'Duplicate',
+                    ),
+                ),
+                'Opportunities' => array(
+                    'sales_stage' => array(
+                        'Prospecting' =>  'Prospecting',
+                        'Qualification' => 'Qualification',
+                        'Value Proposition' => 'Value Proposition',
+                        'Id. Decision Makers' => 'Id. Decision Makers',
+                        'Needs Analysis' => 'Needs Analysis',
+                        'Perception Analysis' => 'Perception Analysis',
+                        'Proposal/Price Quote' => 'Proposal/Price Quote',
+                        'Negotiation/Review' => 'Negotiation/Review',
+                    ),
+                ),
+                'Tasks' => array(
+                    'status' => array(
+                        'Not Started' => 'Not Started',
+                        'In Progress' => 'In Progress',
+                        'Completed' => 'Completed',
+                        'Pending Input' => 'Pending Input',
+                        'Deferred' => 'Deferred',
+                    ),
+                ),
+                'Leads' => array(
+                    'status' => array(
+                        'New' => 'New',
+                        'Assigned' => 'Assigned',
+                        'In Process' => 'In Process',
+                        'Converted' => 'Converted',
+                        'Recycled' => 'Recycled',
+                        'Dead' => 'Dead',
+                    ),
+                ),
+            ),
             'header_colors' => array(
                 '#36850F',
                 '#0679C8',

@@ -96,7 +96,8 @@ describe('VisualPipeline.Base.Fields.HeaderValuesField', function() {
 
         it('should call this.model.get with enabled_modules', function() {
             sinon.collection.stub(field.model, 'get').withArgs('enabled_module').returns(['Opportunities', 'Tasks'])
-                .withArgs('table_header').returns('status');
+                .withArgs('table_header').returns('status')
+                .withArgs('available_columns').returns({'Assigned': 'Assigned', 'Duplicate': 'Duplicate'});
             sinon.collection.stub(app.metadata, 'getModule')
                 .withArgs(['Opportunities', 'Tasks'], 'fields')
                 .returns({
@@ -112,7 +113,8 @@ describe('VisualPipeline.Base.Fields.HeaderValuesField', function() {
 
         it('should call app.metadata.getModule with an array and fields', function() {
             sinon.collection.stub(field.model, 'get').withArgs('enabled_module').returns(['Opportunities', 'Tasks'])
-                .withArgs('table_header').returns('status');
+                .withArgs('table_header').returns('status')
+                .withArgs('available_columns').returns({'Assigned': 'Assigned', 'Duplicate': 'Duplicate'});
             sinon.collection.stub(app.metadata, 'getModule')
                 .withArgs(['Opportunities', 'Tasks'], 'fields')
                 .returns({
@@ -129,7 +131,8 @@ describe('VisualPipeline.Base.Fields.HeaderValuesField', function() {
         describe('when tableHeader is empty', function() {
             beforeEach(function() {
                 sinon.collection.stub(field.model, 'get').withArgs('enabled_module').returns(['Opportunities', 'Tasks'])
-                    .withArgs('table_header').returns();
+                    .withArgs('table_header').returns()
+                    .withArgs('available_columns').returns({'Assigned': 'Assigned', 'Duplicate': 'Duplicate'});
                 sinon.collection.stub(app.metadata, 'getModule')
                     .withArgs(['Opportunities', 'Tasks'], 'fields')
                     .returns({
@@ -158,7 +161,8 @@ describe('VisualPipeline.Base.Fields.HeaderValuesField', function() {
         describe('when tableHeader is not empty', function() {
             beforeEach(function() {
                 sinon.collection.stub(field.model, 'get').withArgs('enabled_module').returns(['Opportunities', 'Tasks'])
-                    .withArgs('table_header').returns('status');
+                    .withArgs('table_header').returns('status')
+                    .withArgs('available_columns').returns({'Assigned': 'Assigned', 'Duplicate': 'Duplicate'});
             });
 
             it('should call field.getBlackListArray method', function() {
@@ -184,7 +188,14 @@ describe('VisualPipeline.Base.Fields.HeaderValuesField', function() {
                             options: 'case_status_dom'
                         }
                     });
-                sinon.collection.stub(app.lang, 'getAppListStrings', function() {});
+                sinon.collection.stub(app.lang, 'getAppListStrings').returns(
+                    {
+                        'New': 'New',
+                        'Assigned': 'Assigned',
+                        'Duplicate': 'Duplicate',
+                        'Lost': 'Lost'
+                    }
+                );
                 field.populateHeaderValues();
 
                 expect(app.lang.getAppListStrings).toHaveBeenCalledWith('case_status_dom');
