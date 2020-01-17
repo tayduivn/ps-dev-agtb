@@ -58,6 +58,10 @@ describe('Base.Fields.PipelineType', function() {
             'detail', fieldDef, 'Tasks', model, false);
 
         sinon.collection.stub(app.lang, 'get')
+            .withArgs('LBL_MODULE_NAME', 'Opportunities')
+            .returns('Opportunities')
+            .withArgs('LBL_MODULE_NAME', 'Tasks')
+            .returns('Tasks')
             .withArgs('LBL_PIPELINE_VIEW_TAB_NAME', moduleName, {
                 module: moduleName,
                 fieldName: 'Status'

@@ -61,7 +61,9 @@ describe('Opportunities.Base.Fields.PipelineType', function() {
             .withArgs('LBL_PIPELINE_VIEW_TAB_NAME', 'Opportunities', {
                 module: 'Opportunities',
                 fieldName: 'Time'
-            }).returns('Opportunities by Time');
+            }).returns('Opportunities by Time')
+            .withArgs('LBL_MODULE_NAME', 'Opportunities')
+            .returns('Opportunities');
         getModStub = sinon.collection.stub(app.lang, 'getModString');
 
         sinon.collection.stub(app.metadata, 'getModule').withArgs('VisualPipeline').returns(config)
@@ -105,6 +107,7 @@ describe('Opportunities.Base.Fields.PipelineType', function() {
                     'tabLabel': 'Opportunities by Status'
                 }
             ];
+            getModStub.withArgs('LBL_TIME', field.module).returns('Time');
             getModStub.withArgs('LBL_SALES_STATUS', field.module).returns('Status');
         });
 

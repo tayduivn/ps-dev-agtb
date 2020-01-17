@@ -28,6 +28,7 @@ $mod_strings = array(
     'LBL_OPPORTUNITY_NAME' => 'Opportunity Name:',
     'LBL_OPPORTUNITY' => 'Opportunity:',
     'LBL_NAME' => 'Opportunity Name',
+    'LBL_TIME' => 'Time',
     'LBL_INVITEE' => 'Contacts',
     'LBL_CURRENCIES' => 'Currencies',
     'LBL_LIST_OPPORTUNITY_NAME' => 'Name',

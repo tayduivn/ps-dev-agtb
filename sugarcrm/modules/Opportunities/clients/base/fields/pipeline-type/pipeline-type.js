@@ -29,13 +29,14 @@
         var fieldMeta = app.metadata.getModule(this.module, 'fields');
 
         _.each(fieldsForTabs, function(field) {
-            var fieldLabel = field === 'date_closed' ? 'Time' : app.lang.getModString(fieldMeta[field].vname,
-                this.module);
+            var label = field === 'date_closed' ?
+                'LBL_TIME' : fieldMeta[field].vname;
+            var fieldLabel = app.lang.getModString(label, this.module);
             var metaObject = {
                 headerLabel: fieldLabel,
                 moduleField: field,
                 tabLabel: app.lang.get('LBL_PIPELINE_VIEW_TAB_NAME', this.module, {
-                    module: this.module,
+                    module: app.lang.get('LBL_MODULE_NAME', this.module),
                     fieldName: fieldLabel
                 })
             };
