@@ -2928,6 +2928,11 @@ class User extends Person {
      */
     public function getLicenseTypes() : array
     {
+        // support user has the full privilidge to access all flavors
+        if (strcmp($this->user_name, 'SugarCRMSupport') === 0) {
+            return $this->getSystemSubscriptionKeys();
+        }
+
         return $this->processLicenseTypes($this->license_type);
     }
 

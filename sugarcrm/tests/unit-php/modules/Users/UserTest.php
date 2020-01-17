@@ -24,13 +24,18 @@ class UserTest extends TestCase
      *
      * @dataProvider getLicenseTypesProvider
      */
-    public function testGetLicenseTypes($licenseType, $expected)
+    public function testGetLicenseTypes($systemLicenseTypes, $licenseType, $userName, $expected)
     {
         $userMock = $this->getMockBuilder('\User')
             ->disableOriginalConstructor()
-            ->setMethods()
+            ->setMethods(['getSystemSubscriptionKeys'])
             ->getMock();
 
+        $userMock->expects($this->any())
+            ->method('getSystemSubscriptionKeys')
+            ->willReturn($systemLicenseTypes);
+
+        $userMock->user_name = $userName;
         $userMock->license_type = $licenseType;
         $this->assertSame($expected, $userMock->getLicenseTypes());
     }
@@ -39,33 +44,53 @@ class UserTest extends TestCase
     {
         return [
             'License type is empty' => [
-                    '',
-                    [],
-                ],
+                ['SUGAR_SELL'],
+                '',
+                'any_name',
+                [],
+            ],
             'License type is null' => [
-                    null,
-                    [],
-                ],
+                ['SUGAR_SELL'],
+                null,
+                'any_name',
+                [],
+            ],
             'License type is in json encoded empty arry' => [
-                    json_encode([]),
-                    [],
-                ],
+                ['SUGAR_SELL'],
+                json_encode([]),
+                'any_name',
+                [],
+            ],
             'License type is valid' => [
-                    ['SUGAR_SELL', 'SUGAR_SERVE'],
-                    ['SUGAR_SELL', 'SUGAR_SERVE'],
-                ],
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
+                'any_name',
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
+            ],
             'License type is valid and has empty entry' => [
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
                 ['', 'SUGAR_SERVE'],
+                'any_name',
                 ['SUGAR_SERVE'],
             ],
             'License type is in json encoded format' => [
-                    json_encode(['SUGAR_SELL', 'SUGAR_SERVE']),
-                    ['SUGAR_SELL', 'SUGAR_SERVE'],
-                ],
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
+                json_encode(['SUGAR_SELL', 'SUGAR_SERVE']),
+                'any_name',
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
+            ],
             'License type is in json encoded format in single value' => [
-                    json_encode(['SUGAR_SELL']),
-                    ['SUGAR_SELL'],
-                ],
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
+                json_encode(['SUGAR_SELL']),
+                'any_name',
+                ['SUGAR_SELL'],
+            ],
+            'Suppport user get all flavors' => [
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
+                json_encode(['SUGAR_SELL']),
+                'SugarCRMSupport',
+                ['SUGAR_SELL', 'SUGAR_SERVE'],
+            ],
         ];
     }
 
