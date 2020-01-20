@@ -24,12 +24,10 @@ class CheckerTest extends TestCase
      * @covers ::isAllowed()
      * @dataProvider isAllowedDataProvider
      */
-    public function testIsAllowed($expected, $srn, $config)
+    public function testIsAllowed($expected, $accessTokenInfo, $config)
     {
-        $checker = $this->getMockBuilder(Checker::class)
-            ->setConstructorArgs([$config])
-            ->getMock();
-        $this->assertEquals($expected, $checker->isAllowed($srn));
+        $checker = new Checker($config);
+        $this->assertEquals($expected, $checker->isAllowed($accessTokenInfo));
     }
 
     /**
@@ -38,31 +36,101 @@ class CheckerTest extends TestCase
     public function isAllowedDataProvider(): array
     {
         return [
-            'empty' => [
+            'emptySAs' => [
                 false,
-                '',
-                [],
+                [
+                    'sub' => 'srn:cluster:idm:eu:0000000001:tenant',
+                ],
+                [
+                    'tid' => 'srn:cluster:idm:eu:0000000002:tenant',
+                ],
             ],
-            'emptySA' => [
+            'notAllowedSAs' => [
                 false,
-                '',
-                ['allowedSAs' => ['srn:sa:enabled']],
+                [
+                    'sub' => 'srn:cluster:idm:eu:0000000001:tenant',
+                ],
+                [
+                    'tid' => 'srn:cluster:idm:eu:0000000003:tenant',
+                    'allowedSAs' => ['srn:cluster:idm:eu:0000000004:tenant'],
+                ],
             ],
-            'emptyAllowed' => [
-                false,
-                'srn:sa:something',
-                ['allowedSAs' => []],
+            'allowedSAs' => [
+                true,
+                [
+                    'sub' => 'srn:cluster:idm:eu:0000000001:tenant',
+                ],
+                [
+                    'tid' => 'srn:cluster:idm:eu:0000000003:tenant',
+                    'allowedSAs' => ['srn:cluster:idm:eu:0000000001:tenant'],
+                ],
             ],
-            'notAllowed' => [
+            'notAllowedForDifferentSubjectTenant' => [
                 false,
-                'srn:sa:notAllowed',
-                ['allowedSAs' => ['srn:sa:enabled']],
+                [
+                    'sub' => 'srn:cluster:idm:eu:0000000002:tenant',
+                ],
+                [
+                    'tid' => 'srn:cluster:idm:eu:0000000001:tenant',
+                ],
             ],
-            'allowed' => [
-                false,
-                'srn:sa:enabled',
-                ['allowedSAs' => ['srn:sa:enabled']],
+            'allowedForSameOwnTenantAndSATokenTenant' => [
+                true,
+                [
+                    'sub' => 'srn:cluster:idm:eu:0000000001:tenant',
+                ],
+                [
+                    'tid' => 'srn:cluster:idm:eu:0000000001:tenant',
+                ],
+            ],
+            'sameTenantIsCheckedEvenIfNotInAllowedSAs' => [
+                true,
+                [
+                    'sub' => 'srn:cluster:idm:eu:0000000001:tenant',
+                ],
+                [
+                    'tid' => 'srn:cluster:idm:eu:0000000001:tenant',
+                    'allowedSAs' => ['srn:cluster:idm:eu:enabled:tenant'],
+                ],
             ],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function badOrMissingSRNsIsAllowedDataProvider(): array
+    {
+        return [
+            'empty' => [
+                [],
+                [],
+            ],
+            'noOwnTenant' => [
+                [
+                    'sub' => 'srn:cluster:idm:eu:0000000001:tenant',
+                ],
+                [],
+            ],
+            'incorrectOwnTID' => [
+                [
+                    'sub' => 'srn:cluster:idm:eu:0000000001:tenant',
+                ],
+                [
+                    'tid' => 'srn:cluster:idm:eu:WRONG:tenant',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::isAllowed()
+     * @expectedException \InvalidArgumentException
+     * @dataProvider badOrMissingSRNsIsAllowedDataProvider
+     */
+    public function testIsAllowedThrowsExceptionWhenGivenInvalidSRNs($accessTokenInfo, $config)
+    {
+        $checker = new Checker($config);
+        $checker->isAllowed($accessTokenInfo);
     }
 }

@@ -209,7 +209,7 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         $user = $this->userProvider->loadUserBySrn($result['sub']);
 
         if ($user->isServiceAccount()) {
-            if (!$this->SAChecker->isAllowed($result['sub'])) {
+            if (!$this->SAChecker->isAllowed($result)) {
                 throw new AuthenticationException(
                     sprintf('Service account is not allowed: %s', $result['sub'])
                 );

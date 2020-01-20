@@ -36,6 +36,8 @@ class Config
         'cloudConsoleRoutes',
         'caching',
         'requestedOAuthScopes',
+
+        // @deprecated: allowedSAs will be removed in the future versions.
         'allowedSAs',
     ];
 
@@ -188,6 +190,7 @@ class Config
             'caching' => array_replace_recursive($this->getIDMModeDefaultCachingConfig(), $this->getIdmSettingsByKey('caching') ?? []),
             'crmOAuthScope' => $this->getIdmSettingsByKey('crmOAuthScope', ''),
             'requestedOAuthScopes' => $this->getIdmSettingsByKey('requestedOAuthScopes', []),
+            // @deprecated: allowedSAs will be removed in the future versions.
             'allowedSAs' => $this->getIdmSettingsByKey('allowedSAs', []),
         ];
 
