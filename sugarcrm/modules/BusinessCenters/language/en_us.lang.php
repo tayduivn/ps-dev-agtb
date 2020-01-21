@@ -91,4 +91,10 @@ $mod_strings = [
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'Business Center Contacts',
     'LBL_LEADS_SUBPANEL_TITLE' => 'Business Center Leads',
     'LBL_USERS_SUBPANEL_TITLE' => 'Business Center Users',
+
+    'LBL_BUSINESS_CENTER_ACCOUNTS_TITLE' => 'Accounts',
+    'LBL_BUSINESS_CENTER_CASES_TITLE' => 'Cases',
+    'LBL_BUSINESS_CENTER_CONTACTS_TITLE' => 'Contacts',
+    'LBL_BUSINESS_CENTER_LEADS_TITLE' => 'Leads',
+    'LBL_BUSINESS_CENTER_USERS_TITLE' => 'Users',
 ];
