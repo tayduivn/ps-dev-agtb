@@ -26,6 +26,56 @@ class FieldTest extends TestCase
         SugarBean::clearLoadedDef('Account');
     }
 
+    /**
+     * Test OrderBy field build should not apply team security
+     *
+     * @throws SugarQueryException
+     */
+    public function testGetJoinOrderBy()
+    {
+        $orderBy = $this->getMockBuilder('SugarQuery_Builder_Field_OrderBy')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMockForAbstractClass();
+
+        $orderBy->query = $this->getMockBuilder('SugarQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(
+                [
+                    'getJoinTableAlias',
+                    'join',
+                ]
+            )
+            ->getMock();
+
+        $orderBy->query->method('getJoinTableAlias')->willReturn('joinName');
+
+        $join = $this->getMockBuilder('SugarQuery_Builder_Join')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $join->query = $orderBy->query;
+        $orderBy->query->join['joinName'] = $join;
+
+        // mock $orderBy->query->join() to check if 'team_security' is set to false
+        // because $orderBy is an instance of SugarQuery_Builder_Field_OrderBy
+        $orderBy->query->expects($this->once())
+            ->method('join')->with(
+                'accounts',
+                [
+                    'joinType' => 'LEFT',
+                    'team_security' => false,
+                ]
+            )
+            ->willReturn($join);
+
+        $orderBy->def['link'] = 'accounts';
+        $orderBy->def['source'] = 'non-db';
+        $orderBy->def['type'] = 'related';
+        $alias = $orderBy->getJoin();
+    }
+
     public function testGetJoinRecursion()
     {
         $contact = BeanFactory::newBean('Contacts');
