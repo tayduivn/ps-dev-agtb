@@ -179,17 +179,28 @@
                 border-radius: 4px;
                 margin: 0 auto 10px;
                 width: 100%;
+                position: relative;
+
+                &:hover .pipeline-tile .tile-header .pull-right .btn.delete {
+                  position: absolute;
+                  top: 2px;
+                  right: 4px;
+                  display: inline;
+
+                  &:not(.disabled):hover > .fa {
+                    color: @black;
+                  }
+                }
 
                 .pipeline-tile {
-                  max-width: 250px;
                   cursor: pointer;
+                  max-width: 250px;
 
                   .tile-header {
                     font-size: 14px;
                     line-height: 25px;
                     padding: 0 15px 0 10px;
                     border-radius: 5px 5px 0 0;
-                    position: relative;
 
                     .pull-right {
                       .btn.delete {
@@ -205,21 +216,8 @@
                       }
                     }
 
-                    &:hover {
-                      .btn.delete {
-                        position: absolute;
-                        top: 2px;
-                        right: 4px;
-                        display: inline;
-
-                        &:not(.disabled):hover > .fa {
-                          color: @black;
-                        }
-                      }
-                    }
-
                     .name {
-                      max-width: 220px;
+                      max-width: 200px;
                       color: @black;
                     }
                   }
@@ -924,4 +922,3 @@
   background-color: @grayDark;
   background-repeat: no-repeat;
 }
-
