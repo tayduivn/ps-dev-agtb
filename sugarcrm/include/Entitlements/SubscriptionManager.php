@@ -562,6 +562,9 @@ class SubscriptionManager
      */
     public function getUserExceededLicenseTypes(\User $user): array
     {
+        if ($user->user_name === \User::SUPPORT_USER_NAME) {
+            return [];
+        }
         $usedSeats = $this->getSystemUserCountByLicenseTypes();
         $allowedSeats = $this->getSystemSubscriptions();
         $userTypes = $user->getLicenseTypes();

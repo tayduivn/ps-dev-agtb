@@ -110,6 +110,11 @@ class User extends Person {
     );
 
     /**
+     * support user name
+     */
+    const SUPPORT_USER_NAME = 'SugarCRMSupport';
+
+    /**
      * These modules don't take kindly to the studio trying to play about with them.
      *
      * @var array
@@ -597,7 +602,7 @@ class User extends Person {
     public static function getSystemUsersWhere($comp = '!=', $logic = 'AND')
     {
         $db = DBManagerFactory::getInstance();
-        $users = array('SugarCRMSupport', 'SugarCRMUpgradeUser');
+        $users = array(self::SUPPORT_USER_NAME, 'SugarCRMUpgradeUser');
         $where = ' 1=1 ';
         foreach ($users as $user) {
             $where .= sprintf(

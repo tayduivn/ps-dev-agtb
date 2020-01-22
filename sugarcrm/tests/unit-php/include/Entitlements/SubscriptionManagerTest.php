@@ -648,14 +648,29 @@ class SubscriptionManagerTest extends TestCase
     public function providerTestGetUserExceededLicenseTypes()
     {
         return [
-            'empty system license types' => [[], [Subscription::SUGAR_SERVE_KEY], [Subscription::SUGAR_SERVE_KEY]],
-            'all other cases' =>[
+            'empty system license types' => [
+                [],
+                [Subscription::SUGAR_SERVE_KEY],
+                'anyname',
+                [Subscription::SUGAR_SERVE_KEY],
+            ],
+            'all other cases with non-support user' =>[
                 [
                     Subscription::SUGAR_SERVE_KEY => ['quantity' => 10],
                     Subscription::SUGAR_BASIC_KEY => ['quantity' => 100],
                 ],
                 [Subscription::SUGAR_SERVE_KEY, Subscription::SUGAR_SELL_KEY, Subscription::SUGAR_BASIC_KEY],
+                'anyname',
                 [Subscription::SUGAR_SERVE_KEY, Subscription::SUGAR_SELL_KEY],
+            ],
+            'support user' =>[
+                [
+                    Subscription::SUGAR_SERVE_KEY => ['quantity' => 10],
+                    Subscription::SUGAR_BASIC_KEY => ['quantity' => 100],
+                ],
+                [Subscription::SUGAR_SERVE_KEY, Subscription::SUGAR_SELL_KEY, Subscription::SUGAR_BASIC_KEY],
+                \User::SUPPORT_USER_NAME,
+                [],
             ],
         ];
     }
@@ -667,14 +682,15 @@ class SubscriptionManagerTest extends TestCase
      * @param $userTypes
      * @param $result
      */
-    public function testGetUserExceededLicenseTypes($allowedSeats, $userTypes, $result)
+    public function testGetUserExceededLicenseTypes($allowedSeats, $userTypes, $userName, $expected)
     {
         /** @var \User|MockObject $user */
         $user = $this->getMockBuilder(\User::class)
             ->disableOriginalConstructor()
             ->setMethods(['getLicenseTypes'])
             ->getMock();
-        $user->expects($this->once())->method('getLicenseTypes')->willReturn($userTypes);
+        $user->expects($this->any())->method('getLicenseTypes')->willReturn($userTypes);
+        $user->user_name = $userName;
 
         /** @var SubscriptionManager|MockObject $manager */
         $manager = $this->getMockBuilder(SubscriptionManager::class)
@@ -684,18 +700,18 @@ class SubscriptionManagerTest extends TestCase
                 'getSystemSubscriptions',
             ])->getMock();
 
-        $manager->expects($this->once())
+        $manager->expects($this->any())
             ->method('getSystemUserCountByLicenseTypes')
             ->willReturn([
                 Subscription::SUGAR_SERVE_KEY => 10,
                 Subscription::SUGAR_BASIC_KEY => 1,
             ]);
 
-        $manager->expects($this->once())
+        $manager->expects($this->any())
             ->method('getSystemSubscriptions')
             ->willReturn($allowedSeats);
 
-        $this->assertEquals($result, $manager->getUserExceededLicenseTypes($user));
+        $this->assertEquals($expected, $manager->getUserExceededLicenseTypes($user));
     }
 
     /**
