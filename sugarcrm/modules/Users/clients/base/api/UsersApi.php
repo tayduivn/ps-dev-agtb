@@ -24,6 +24,7 @@ class UsersApi extends ModuleApi
                 'minVersion' => '11.6',
                 'shortHelp' => 'This method creates a User record',
                 'longHelp'  => 'modules/Users/clients/base/api/help/UsersApi_create.html',
+                'ignoreSystemStatusError' => true,
             ),
             'update' => array(
                 'reqType' => 'PUT',
@@ -33,6 +34,7 @@ class UsersApi extends ModuleApi
                 'minVersion' => '11.6',
                 'shortHelp' => 'This method updates a User record',
                 'longHelp'  => 'modules/Users/clients/base/api/help/UsersApi_update.html',
+                'ignoreSystemStatusError' => true,
             ),
             'delete' => array(
                 'reqType'   => 'DELETE',
@@ -41,6 +43,7 @@ class UsersApi extends ModuleApi
                 'method'    => 'deleteUser',
                 'shortHelp' => 'This method deletes a User record',
                 'longHelp'  => 'modules/Users/clients/base/api/help/UsersApi.html',
+                'ignoreSystemStatusError' => true,
             ),
             'getFreeBusySchedule' => array(
                 'reqType' => 'GET',
