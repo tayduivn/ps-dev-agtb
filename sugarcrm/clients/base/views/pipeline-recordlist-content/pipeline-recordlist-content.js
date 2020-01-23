@@ -643,6 +643,7 @@
             app.drawer.open({
                 layout: 'record',
                 context: {
+                    create: true,
                     module: self.module,
                     model: model,
                     noEditFields: [self.headerField],
