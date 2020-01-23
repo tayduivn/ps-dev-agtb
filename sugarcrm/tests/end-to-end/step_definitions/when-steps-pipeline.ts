@@ -193,7 +193,11 @@ When(/^I drag (\*[a-zA-Z](?:\w|\S)*) tile to "(\w+\s?\w+)" column in (#\S+) view
     async function (record: { id: string }, columnName: string, view: any) {
             let listItem = view.getListItem({id: record.id});
             await listItem.dragAndDropTile(columnName);
-            await closeAlert();
 
+            // In case the tile is dragged to 'Converted' column in Leads tile view
+            // the alert is handled differently because conversion process is triggered
+            if (columnName !== 'Converted') {
+                await closeAlert();
+            }
     }, {waitForApp: true});
 

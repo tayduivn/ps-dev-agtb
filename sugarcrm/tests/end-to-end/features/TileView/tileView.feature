@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@job4
+@job2
 Feature: Tile View feature
 
   Background:
@@ -304,6 +304,161 @@ Feature: Tile View feature
       | 06/10/2020 12:00pm |
 
 
+  @leads_tileView
+  Scenario: Leads > Tile View
+    Given 3 Leads records exist:
+      | *           | first_name    | last_name     | account_name          | title             | email                                     | status |
+      | L_{{index}} | Lead{{index}} | Lead{{index}} | Lead{{index}} Account | Software Engineer | lead{{index}}.sugar@example.org (primary) | New    |
+
+    # Navigate to List > Tile View
+    When I choose Leads in modules menu
+    When I select VisualPipeline in #LeadsList.FilterView
+    Then I should be redirected to "Leads/pipeline" route
+
+    # Verify column headers in Pipeline By Stage tab
+    Then I verify pipeline column headers in #LeadsPipelineView view
+      | value      |
+      | New        |
+      | Assigned   |
+      | In Process |
+      | Converted  |
+      | Recycled   |
+      | Dead       |
+
+    # Create New Lead while in Tile View
+    When I click pipelineCreate button on #LeadsList header
+    When I click show more button on #LeadsDrawer view
+    When I provide input for #LeadsDrawer.HeaderView view
+      | *   | first_name | last_name |
+      | L_4 | Lead4      | Lead4     |
+    When I provide input for #LeadsDrawer.RecordView view
+      | *   | title                | phone_work     | website      | account_name     | status | email                   |
+      | L_4 | Software QA Engineer | (639) 881-8398 | sugarcrm.com | Tester's Account | New    | lead4.sugar@example.org |
+
+    When I click Save button on #LeadsDrawer header
+    When I close alert
+
+    # Verify column the task tile appears under
+    Then I verify the [*L_1, *L_2, *L_3, *L_4] records are under "New" column in #LeadsPipelineView view
+
+    # Verify record's information displayed in the tile
+    Then I verify *L_4 tile field values in #LeadsPipelineView view
+      | value                   |
+      | Lead4 Lead4             |
+      | lead4.sugar@example.org |
+      | Tester's Account        |
+      | (639) 881-8398          |
+
+    # Change Lead Status
+    When I select *L_1 in #LeadsPipelineView
+    When I click Edit button on #L_1Record header
+    When I provide input for #L_1Record.RecordView view
+      | *   | title             | phone_work     | website      | account_name | status   | email                    |
+      | L_1 | Software Engineer | (936) 188-8398 | sugarcrm.com | QA's Account | Assigned | lead4.sweets@example.org |
+    When I click Save button on #L_1Record header
+    When I close alert
+
+    When I choose Leads in modules menu
+    When I select VisualPipeline in #LeadsList.FilterView
+
+    # Verify column the case tile appears under
+    Then I verify the [*L_1] records are under "Assigned" column in #LeadsPipelineView view
+
+    # Verify record's information displayed in the tile
+    Then I verify *L_1 tile field values in #LeadsPipelineView view
+      | value                    |
+      | Lead1 Lead1              |
+      | lead4.sweets@example.org |
+      | QA's Account             |
+      | (936) 188-8398           |
+
+    # Move tiles
+    When I drag *L_2 tile to "In Process" column in #LeadsPipelineView view
+    When I drag *L_3 tile to "Recycled" column in #LeadsPipelineView view
+    When I drag *L_4 tile to "Dead" column in #LeadsPipelineView view
+
+    # Verify that tiles are moved successfully
+    Then I verify the [*L_2, *L_3, *L_4] records are not under "New" column in #LeadsPipelineView view
+    Then I verify the [*L_2] records are under "In Process" column in #LeadsPipelineView view
+    Then I verify the [*L_3] records are under "Recycled" column in #LeadsPipelineView view
+    Then I verify the [*L_4] records are under "Dead" column in #LeadsPipelineView view
+
+
+  @leads_tileView_convert_lead @pr
+  Scenario: Leads > Tile View > Convert Lead in Tile View
+    Given 1 Leads records exist:
+      | *           | first_name    | last_name     | account_name          | title             | email                                     | status |
+      | L_{{index}} | Lead{{index}} | Lead{{index}} | Lead{{index}} Account | Software Engineer | lead{{index}}.sugar@example.org (primary) | New    |
+
+    # Navigate to List > Tile View
+    When I choose Leads in modules menu
+    When I select VisualPipeline in #LeadsList.FilterView
+    Then I should be redirected to "Leads/pipeline" route
+
+      # Move tile to Converted column > Cancel
+    When I drag *L_1 tile to "Converted" column in #LeadsPipelineView view
+
+    # Generate ID for Contact record
+    When I provide input for #L_1LeadConversionDrawer.ContactContent view
+      | *  |
+      | C1 |
+
+    # Create Account Record
+    When I provide input for #L_1LeadConversionDrawer.AccountContent view
+      | *  |
+      | A1 |
+
+    # Create Opportunity record
+    When I provide input for #L_1LeadConversionDrawer.OpportunityContent view
+      | *  | name            |
+      | O1 | New Opportunity |
+    When I click CreateRecord button on #LeadConversionDrawer.OpportunityContent
+
+    # Cancel lead conversion process
+    When I click Cancel button on #LeadConversionDrawer header
+
+    # Verify that conversion process is successfully completed
+    Then I verify the [*L_1] records are under "New" column in #LeadsPipelineView view
+
+    # Move tile to Converted column > Save
+    When I drag *L_1 tile to "Converted" column in #LeadsPipelineView view
+
+    # Generate ID for Contact record
+    When I provide input for #L_1LeadConversionDrawer.ContactContent view
+      | *  |
+      | C1 |
+
+    # Create Account Record
+    When I provide input for #L_1LeadConversionDrawer.AccountContent view
+      | *  |
+      | A1 |
+
+    # Create Opportunity record
+    When I provide input for #L_1LeadConversionDrawer.OpportunityContent view
+      | *  | name            |
+      | O1 | New Opportunity |
+    When I click CreateRecord button on #LeadConversionDrawer.OpportunityContent
+
+    # Finish lead conversion process
+    When I click Save button on #LeadConversionDrawer header
+    When I close alert
+
+    # Verify that conversion process is successfully completed
+    Then I verify the [*L_1] records are under "Converted" column in #LeadsPipelineView view
+
+    # Move tile from Converted column
+    When I drag *L_1 tile to "New" column in #LeadsPipelineView view
+
+    # Verify that tile is not moved from the Converted column
+    Then I verify the [*L_1] records are under "Converted" column in #LeadsPipelineView view
+
+    When I select *L_1 in #LeadsPipelineView
+    # Verify that label in the lead's header says 'Converted'
+    Then I verify fields on #L_1Record.HeaderView
+      | fieldName | value     |
+      | converted | Converted |
+
+
   @tileView_filter
   Scenario: Opportunities > Tile View > Filter is sticky when moving between tile view tabs and list view
     Given Accounts records exist:
@@ -500,3 +655,4 @@ Feature: Tile View feature
 
     # Verify that tiles are moved successfully
     Then I verify the [*T3, *T2, *T1] records are under "Pending Input" column in #TasksPipelineView view
+
