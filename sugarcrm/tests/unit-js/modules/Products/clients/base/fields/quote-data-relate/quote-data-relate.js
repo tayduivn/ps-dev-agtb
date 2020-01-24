@@ -117,24 +117,28 @@ describe('Products.Base.Fields.QuoteDataRelate', function() {
 
     describe('_buildRoute()', function() {
         beforeEach(function() {
-            field.buildRoute = function() {};
-            sinon.collection.stub(field, 'buildRoute', function() {});
-
             field.model.set({
-                id: 'fieldModelId1'
+                id: 'fieldModelId1',
+                _module: 'Products'
             });
-
-            field.model.module = 'Products';
+            app.routing.start();
         });
 
-        it('should call buildRoute using the model module', function() {
-            field._buildRoute();
-            expect(field.buildRoute.lastCall.args[0]).toBe('Products');
+        afterEach(function() {
+            app.router.stop();
         });
 
-        it('should call buildRoute using the model id', function() {
+        it('should set href', function() {
+            sinon.collection.stub(app.acl, 'hasAccess').returns(true);
+            sinon.collection.stub(app.router, 'buildRoute').returns('link');
             field._buildRoute();
-            expect(field.buildRoute.lastCall.args[1]).toBe('fieldModelId1');
+            expect(field.href).toBe('#link');
+        });
+
+        it('should not set href', function() {
+            sinon.collection.stub(app.acl, 'hasAccess').returns(false);
+            field._buildRoute();
+            expect(field.href).toBeUndefined();
         });
     });
 
