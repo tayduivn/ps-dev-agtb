@@ -17,6 +17,7 @@ class IssueTest extends TestCase
 {
     protected $cases = [];
     protected $changeTimers = [];
+    protected $caseIds = [];
 
     public function setUp()
     {
@@ -28,6 +29,13 @@ class IssueTest extends TestCase
         if (!empty($this->changeTimers)) {
             $GLOBALS['db']->query('DELETE FROM changetimers WHERE id IN (\'' . implode("', '", $this->changeTimers) . '\')');
         }
+        if (!empty($this->caseIds)) {
+            DBManagerFactory::getInstance()->query(
+                'DELETE FROM cases WHERE id IN (\'' . implode("', '", $this->caseIds) . '\')'
+            );
+        }
+        SugarBean::leaveOperation('saving_change_timer');
+
         SugarTestCaseUtilities::removeAllCreatedCases();
         SugarTestHelper::tearDown();
     }
@@ -97,6 +105,37 @@ class IssueTest extends TestCase
             ['status', '', ['value_string' => ''], true],
             ['status', 'New', [], false], // no last record
         ];
+    }
+
+    public function save2Provider()
+    {
+        return [
+            [true, 0],
+            [false, 1],
+        ];
+    }
+    /**
+     * @param $setOperation should set 'saving_change_timer' operation
+     * @param $expected how many times should processChangeTimers be called
+     * @dataProvider save2Provider
+     */
+    public function testSave2($setOperation, $expected)
+    {
+        $methods = ['getChangeTimerFields', 'callStatic', 'processChangeTimers', 'isNewlyResolved',
+            'populateFetchedEmail', 'fixUpFormatting', 'commitAuditedStateChanges', 'saveData', 'call_custom_logic'];
+        $issue = $this->createPartialMock(\aCase::class, $methods);
+        $issue->method('getChangeTimerFields')->willReturn(['status']);
+        $issue->field_defs = ['id' => ['name' => 'id', 'type' => 'id']];
+        $issue->db = DBManagerFactory::getInstance();
+        $issue->id = 'foo';
+        $issue->new_with_id = true;
+        $this->caseIds[] = 'foo';
+
+        $issue->expects($this->exactly($expected))->method('processChangeTimers');
+        if ($setOperation) {
+            SugarBean::enterOperation('saving_change_timer');
+        }
+        $issue->save();
     }
 }
 
