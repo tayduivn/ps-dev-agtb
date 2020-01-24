@@ -590,6 +590,7 @@
                 layout: 'record',
                 context: {
                     create: true,
+                    skipRouting: true,
                     model: model,
                     module: self.module,
                     saveImmediately: true,
@@ -644,6 +645,7 @@
                 layout: 'record',
                 context: {
                     create: true,
+                    skipRouting: true,
                     module: self.module,
                     model: model,
                     noEditFields: [self.headerField],
@@ -689,9 +691,9 @@
             this._revertChanges(model, pipelineData);
         }
 
-        // Accessing record view drawer causes the fragment to change,
-        // so set it back to the pipeline route after the drawer is closed
-        app.router.navigate(this.module + '/pipeline');
+        // Since both this view and the record view make changes to the model,
+        // sync its final attributes here to avoid "unsaved changes" warnings
+        model.setSyncedAttributes(model.attributes);
 
         this._super('render');
         this.postRender();

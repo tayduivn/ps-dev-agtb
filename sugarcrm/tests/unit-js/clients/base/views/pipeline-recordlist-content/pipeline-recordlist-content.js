@@ -1366,7 +1366,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
             };
 
             sinon.collection.stub(view, '_revertChanges');
-            sinon.collection.stub(app.router, 'navigate');
+            sinon.collection.stub(model, 'setSyncedAttributes');
             sinon.collection.stub(view, 'postRender');
             sinon.collection.stub(view, '$').returns({
                 sortable: function() {}
@@ -1388,9 +1388,9 @@ describe('Base.Views.PipelineRecordlistContent', function() {
             expect(view._revertChanges).not.toHaveBeenCalled();
         });
 
-        it('should reset the router fragment back to the pipeline view', function() {
+        it('should sync the new attributes', function() {
             view._postChange(false, model, pipelineChangeDataMock);
-            expect(app.router.navigate).toHaveBeenCalled();
+            expect(model.setSyncedAttributes).toHaveBeenCalledWith(model.attributes);
         });
 
         it('should re-enable the pipeline view drag/drop functionality', function() {

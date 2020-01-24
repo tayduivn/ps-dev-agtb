@@ -219,6 +219,9 @@
         this.saveCallback = this.context.get('saveCallback') || null;
         this.cancelCallback = this.context.get('cancelCallback') || null;
         this.validationCallback = this.context.get('validationCallback') || null;
+
+        // Option to avoid navigating to other routes during edit/save (useful for opening in a drawer)
+        this.skipRouting = this.context.get('skipRouting') || false;
     },
 
     /**
@@ -1174,7 +1177,7 @@
                         }
                     }
                 });
-                if (this.createMode) {
+                if (this.createMode && !this.skipRouting) {
                     app.navigate(this.context, this.model);
                 } else if (!this.disposed && !app.acl.hasAccessToModel('edit', this.model)) {
                     //re-render the view if the user does not have edit access after save.
@@ -1673,7 +1676,7 @@
      *   with {@link Core.Router#buildRoute}.
      */
     setRoute: function(action) {
-        if (!this.meta.hashSync) {
+        if (!this.meta.hashSync || this.skipRouting) {
             return;
         }
         app.router.navigate(app.router.buildRoute(this.module, this.model.id, action), {trigger: false});
