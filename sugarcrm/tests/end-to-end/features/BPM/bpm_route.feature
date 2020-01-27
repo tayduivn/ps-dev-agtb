@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@bpm @job2 @pr
+@bpm @job2 @pr @xxx
 Feature: Assign new process user and routing type to the process
 
   Background:
@@ -72,7 +72,7 @@ Feature: Assign new process user and routing type to the process
       | sally | Round Trip | Assign to Sally to take a look |
 
     # Logout from Admin and Login as Sally
-    When I go to "logout" url
+    When I logout
     When I use account "sally"
     When I open about view and login
     When I choose pmse_Inbox in modules menu
@@ -87,7 +87,7 @@ Feature: Assign new process user and routing type to the process
       | jim  | One Way | Assign to Jim to take a look |
 
     # Log Sally out and log Jim in
-    When I go to "logout" url
+    When I logout
     When I use account "jim"
     When I wait for 2 seconds
     When I open pmse_Inbox view and login
@@ -100,7 +100,7 @@ Feature: Assign new process user and routing type to the process
     When I route the Business Process request on #Pr_1Record
 
     # Logout from Jim
-    When I go to "logout" url
+    When I logout
 
     # Login as admin
     Given I am logged in

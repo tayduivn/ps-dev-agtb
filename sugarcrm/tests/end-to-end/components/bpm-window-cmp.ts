@@ -10,6 +10,7 @@
  */
 
 import BaseView from '../views/base-view';
+import {KeyCodes} from '../step_definitions/steps-helper';
 
 /**
  * @class BpmWindowCmp
@@ -129,7 +130,7 @@ export default class BpmWindowCmp extends BaseView {
         await this.driver.waitForApp();
 
         // Confirm new value by click <enter>
-        await this.driver.keys('\uE007');
+        await this.driver.keys(KeyCodes.ENTER);
         await this.driver.pause(1000);
         await this.driver.waitForApp();
     }
