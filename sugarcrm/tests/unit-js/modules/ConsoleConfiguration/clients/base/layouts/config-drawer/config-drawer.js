@@ -172,9 +172,9 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
             expect(layout.getAvailableModules()).toEqual(['Accounts', 'Opportunities']);
         });
 
-        it('should call layout.setActiveTabIndex with 0', function() {
+        it('should call layout.setActiveTabIndex', function() {
             layout.loadData();
-            expect(layout.setActiveTabIndex).toHaveBeenCalledWith(0);
+            expect(layout.setActiveTabIndex).toHaveBeenCalled();
         });
     });
 
@@ -218,45 +218,78 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
     });
 
     describe('setActiveIndex', function() {
-        var index;
         beforeEach(function() {
+            layout.context.set({
+                consoleTabs: ['Accounts', 'Opportunities']
+            });
+            layout.context.parent = new app.Context();
+
             sinon.collection.stub(layout.context, 'set', function() {});
         });
 
-        describe('when collection.length is < 1 and index is undefined', function() {
-            it('should not call layotu.context.set', function() {
-                index = undefined;
+        describe('when collection.length is < 1', function() {
+            it('should not call layout.context.set', function() {
                 layout.collection = {
                     length: 0,
                     off: function() {}
                 };
-                layout.setActiveTabIndex(index);
+                layout.context.parent.set({
+                    tabs: [
+                        {name: 'LBL_OVERVIEW'},
+                        {name: 'LBL_ACCOUNTS'},
+                        {name: 'LBL_OPPORTUNITIES'}
+                    ],
+                    activeTab: 2
+                });
+                layout.setActiveTabIndex();
 
                 expect(layout.context.set).not.toHaveBeenCalled();
             });
         });
 
-        describe('when collection.length is >= 1 or index is undefined', function() {
-            it('should not call layout.context.set at length 1', function() {
-                index = undefined;
+        describe('when collection.length is >= 1', function() {
+            beforeEach(function() {
                 layout.collection = {
                     length: 1,
                     off: function() {}
                 };
-                layout.setActiveTabIndex(index);
+                layout.context.parent.set({
+                    tabs: [
+                        {name: 'LBL_OVERVIEW'},
+                        {name: 'LBL_ACCOUNTS'},
+                        {name: 'LBL_OPPORTUNITIES'}
+                    ],
+                    activeTab: 2
+                });
 
-                expect(layout.context.set).toHaveBeenCalledWith('activeTabIndex', 0);
+                layout.setActiveTabIndex();
             });
+            it('should call layout.context.set with activeTabIndex 1', function() {
 
-            it('should not call layout.context.set at index defined', function() {
-                index = 2;
+                expect(layout.context.set).toHaveBeenCalledWith('activeTabIndex', 1);
+            });
+        });
+
+        describe('when active tab is Overview', function() {
+            beforeEach(function() {
                 layout.collection = {
-                    length: 0,
+                    length: 1,
                     off: function() {}
                 };
-                layout.setActiveTabIndex(index);
+                layout.context.parent.set({
+                    tabs: [
+                        {name: 'LBL_OVERVIEW'},
+                        {name: 'LBL_ACCOUNTS'},
+                        {name: 'LBL_OPPORTUNITIES'}
+                    ],
+                    activeTab: 0
+                });
 
-                expect(layout.context.set).toHaveBeenCalledWith('activeTabIndex', 2);
+                layout.setActiveTabIndex();
+            });
+            it('should call layout.context.set with activeTabIndex 0', function() {
+
+                expect(layout.context.set).toHaveBeenCalledWith('activeTabIndex', 0);
             });
         });
     });

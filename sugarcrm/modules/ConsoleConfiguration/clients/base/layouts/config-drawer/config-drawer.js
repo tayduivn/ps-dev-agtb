@@ -129,7 +129,7 @@
             };
             this.addModelToCollection(moduleName, data);
         }, this);
-        this.setActiveTabIndex(0);
+        this.setActiveTabIndex();
     },
 
     /**
@@ -168,9 +168,13 @@
     /**
      * Sets the active tab
      */
-    setActiveTabIndex: function(index) {
-        if (this.collection.length >= 1 || !_.isUndefined(index)) {
-            var activeIndex = !_.isUndefined(index) ? index : this.collection.length - 1;
+    setActiveTabIndex: function() {
+        if (this.collection.length >= 1) {
+            var activeParentTabIndex = this.context.parent.get('activeTab');
+
+            // get active index based on current tab name selected on the console
+            var activeIndex = activeParentTabIndex > 0 ? activeParentTabIndex - 1 : 0;
+
             this.context.set('activeTabIndex', activeIndex);
         }
     },
