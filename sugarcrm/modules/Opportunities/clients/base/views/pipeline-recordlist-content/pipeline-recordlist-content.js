@@ -39,7 +39,7 @@
     _setNewModelValues: function(model, ui) {
         var ctxModel = this.context.get('model');
         var $ulEl = this.$(ui.item).parent('ul');
-        var headerFieldValue = $ulEl.data('column-name');
+        var headerFieldValue = $ulEl.attr('data-column-name');
 
         if (ctxModel && ctxModel.get('pipeline_type') === 'date_closed') {
             var dateClosed = app.date(headerFieldValue, 'MMMM YYYY')

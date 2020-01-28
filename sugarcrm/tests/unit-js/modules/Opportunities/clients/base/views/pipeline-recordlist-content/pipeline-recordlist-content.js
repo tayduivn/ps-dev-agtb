@@ -69,7 +69,7 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
             it('should set date_closed to the last day of the month selected', function() {
                 sinon.collection.stub(jQuery.fn, 'parent', function() {
                     return {
-                        data: function() {
+                        attr: function() {
                             return 'May 2019';
                         }
                     };
@@ -102,7 +102,7 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                 var status = 'In Progress';
                 sinon.collection.stub(jQuery.fn, 'parent', function() {
                     return {
-                        data: function() {
+                        attr: function() {
                             return status;
                         }
                     };

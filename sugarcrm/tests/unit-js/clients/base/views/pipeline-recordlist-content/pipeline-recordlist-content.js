@@ -1161,7 +1161,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
             senderMock = {
                 parent: function() {
                     return {
-                        data: function() {
+                        attr: function() {
                             return 'testColumn';
                         }
                     };
@@ -1241,7 +1241,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
             senderMock = {
                 parent: function() {
                     return {
-                        data: function() {
+                        attr: function() {
                             return 'testColumn';
                         }
                     };

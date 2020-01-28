@@ -497,10 +497,10 @@
             receive: _.bind(function(event, ui) {
                 var modelId = this.$(ui.item).data('modelid');
                 var oldCollection = _.findWhere(this.recordsToDisplay, {
-                    headerKey: this.$(ui.sender).data('column-name')
+                    headerKey: this.$(ui.sender).attr('data-column-name')
                 });
                 var newCollection = _.findWhere(this.recordsToDisplay, {
-                    headerKey: this.$(ui.item).parent('ul').data('column-name')
+                    headerKey: this.$(ui.item).parent('ul').attr('data-column-name')
                 });
                 var model = oldCollection.records.get(modelId);
                 if (!app.acl.hasAccessToModel('edit', model)) {
@@ -615,7 +615,7 @@
      * @private
      */
     _setNewModelValues: function(model, ui) {
-        model.set(this.headerField, this.$(ui.item).parent('ul').data('column-name'));
+        model.set(this.headerField, this.$(ui.item).parent('ul').attr('data-column-name'));
     },
 
     /**
