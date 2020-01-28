@@ -169,9 +169,9 @@ describe("Leads.Base.View.ConvertPanelHeader", function() {
 
     it("should set active indicator button appropriately when hidden/shown", function() {
         view.handlePanelShown();
-        expect(view.$('.active-indicator i')).toHaveClass('fa-chevron-up');
-        view.handlePanelHidden();
         expect(view.$('.active-indicator i')).toHaveClass('fa-chevron-down');
+        view.handlePanelHidden();
+        expect(view.$('.active-indicator i')).toHaveClass('fa-chevron-right');
     });
 
     it("should set step circle appropriately when complete/reset", function() {
