@@ -74,12 +74,20 @@
     bindDataChange: function() {
         this._super('bindDataChange');
 
-        this.context.on('pipeline:recordlist:model:created', this.addModelToCollection, this);
+        this.context.on('pipeline:recordlist:model:created', this.handleTileViewCreate, this);
         this.context.on('pipeline:recordlist:filter:changed', this.buildFilters, this);
         this.context.on('button:delete_button:click', this.deleteRecord, this);
         this.context.on('pipeline:recordlist:resizeContent', this.resizeContainer, this);
         this.resizeContainerHandler = _.bind(this.resizeContainer, this);
         window.addEventListener('resize', this.resizeContainerHandler);
+    },
+
+    /**
+     * Triggers a re-fetch for the model added by the create drawer.
+     * @param {Data.Bean} model The model created through the drawer.
+     */
+    handleTileViewCreate: function(model) {
+        this._callWithTileModel(model, 'addModelToCollection');
     },
 
     /**
@@ -308,8 +316,8 @@
     },
 
     /**
-     * Adds a newly created model to the view
-     * @param {Object} model for the newly created opportunity
+     * Adds a newly created model to the view.
+     * @param {Object} model Model that should be added to a column.
      */
     addModelToCollection: function(model) {
         var collection = this.getColumnCollection(model);
@@ -399,7 +407,10 @@
                 })
             );
 
-        fields.push(this.tileVisualIndicatorFields[this.module]);
+        fields.push(
+            this.headerField,
+            this.tileVisualIndicatorFields[this.module]
+        );
 
         var fieldMetadata = app.metadata.getModule(this.module, 'fields');
         if (fieldMetadata) {

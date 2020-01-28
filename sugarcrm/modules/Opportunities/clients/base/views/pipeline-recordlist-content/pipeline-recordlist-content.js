@@ -30,7 +30,7 @@
             newFields.push(cfg.opps_view_by === 'RevenueLineItems' ? 'sales_status' : 'sales_stage');
         }
 
-        return _.union(fields, newFields);
+        return _.union(fields, newFields, [this.headerField]);
     },
 
     /**
