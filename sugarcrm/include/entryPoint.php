@@ -57,7 +57,8 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
   * for 510, added:
   * dceActionCleanup.php
   */
-if (in_array('phar', stream_get_wrappers())) {
+if (strpos(PHP_SAPI, 'cli') !== 0
+    && in_array('phar', stream_get_wrappers(), true)) {
     stream_wrapper_unregister('phar');
 }
 
