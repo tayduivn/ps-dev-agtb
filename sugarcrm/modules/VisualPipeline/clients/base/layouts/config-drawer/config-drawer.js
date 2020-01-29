@@ -214,7 +214,14 @@
         var content = {};
         var dropdownFields = {};
         var allFields = {};
-        var fields = _.flatten(_.pluck(app.metadata.getView(module, 'list').panels, 'fields'));
+        var studioFields = [];
+        var metaFields = app.metadata.getModule(module).fields;
+
+        _.each(metaFields, function(metaField) {
+            if (this.isValidStudioField(metaField)) {
+                studioFields.push(metaField);
+            }
+        }, this);
 
         _.each(app.metadata.getModule(module, 'fields'), function(field) {
             if (field.type == 'enum' && app.acl.hasAccess('read', module, null, field.name)) {
@@ -222,7 +229,7 @@
             }
         }, this);
 
-        _.each(fields, function(field) {
+        _.each(studioFields, function(field) {
             if (_.isObject(field) && app.acl.hasAccess('read', module, null, field.name)) {
                 var label = app.lang.get(field.label || field.vname, module);
                 if (!_.isEmpty(label)) {
@@ -235,6 +242,43 @@
         content.fields = allFields;
 
         bean.set('tabContent', content);
+    },
+
+    /**
+     * Checks if a metadata field is valid to be shown in Studio layout editors
+     *
+     * @param {Object} metaField metadata field to be checked
+     * @return {boolean} true if the field can be shown in studio layout
+     */
+    isValidStudioField: function(metaField) {
+        if (!_.isUndefined(metaField.studio)) {
+            if (_.isObject(metaField.studio)) {
+                if (!_.isUndefined(metaField.studio.recordview)) {
+                    return (metaField.studio.recordview !== 'hidden' && metaField.studio.recordview !== false);
+                }
+
+                if (!_.isUndefined(metaField.studio.visible)) {
+                    return metaField.studio.visible;
+                }
+            } else {
+                return (metaField.studio !== 'false' && metaField.studio !== false && metaField.studio !== 'hidden');
+            }
+        }
+
+        // JSON fields are not supposed to be modified in studio
+        if (!_.isUndefined(metaField.type) && metaField.type === 'json') {
+            return false;
+        }
+
+        // remove id type fields except those with names as *_name or email1
+        return ((!_.isUndefined(metaField.name) &&
+            (metaField.name === 'email1' || metaField.name.slice(-5) === '_name')) ||
+            (
+                (!_.isUndefined(metaField.type) && metaField.type !== 'id') &&  metaField.type !== 'parent_type' &&
+                (_.isEmpty(metaField.dbType) || metaField.dbType !== 'id') &&
+                (_.isEmpty(metaField.source) || metaField.source === 'db' || metaField.source === 'custom_fields') &&
+                (!_.isUndefined(metaField.name) && metaField.name !== 'deleted')
+            ));
     },
 
     /**

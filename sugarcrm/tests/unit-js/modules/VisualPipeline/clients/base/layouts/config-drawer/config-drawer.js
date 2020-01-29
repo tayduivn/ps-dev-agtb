@@ -39,6 +39,49 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 fields: {
                     name: {
                         type: 'name'
+                    },
+                    priority: {
+                        default: true,
+                        enabled: true,
+                        options: 'case_priority_dom',
+                        vname: 'LBL_PRIORITY',
+                        name: 'priority',
+                        type: 'enum'
+                    },
+                    following: {
+                        massupdate: false,
+                        name: 'following',
+                        vname: 'LBL_FOLLOWING',
+                        type: 'bool',
+                        source: 'non-db',
+                        comment: 'Is user following this record',
+                        studio: 'false',
+                        link: 'following_link',
+                        rname: 'id',
+                        rname_exists: true
+                    },
+                    my_favorite: {
+                        massupdate: false,
+                        name: 'my_favorite',
+                        vname: 'LBL_FAVORITE',
+                        type: 'bool',
+                        source: 'non-db',
+                        comment: 'Favorite for the user',
+                        studio: {
+                            list: false,
+                            recordview: false,
+                            basic_search: false,
+                            advanced_search: false,
+                        }
+                    },
+                    comment_log: {
+                        name: 'commentlog',
+                        vname: 'LBL_COMMENTLOG',
+                        type: 'collection',
+                        studio: {
+                            listview: false,
+                            recordview: true
+                        }
                     }
                 },
                 isBwcEnabled: false
@@ -455,22 +498,8 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 return 'Cases';
             });
 
-            sinon.collection.stub(app.metadata, 'getView', function() {
-                return {
-                    panels: [{
-                        fields: [
-                            {
-                                default: true,
-                                enabled: true,
-                                label: 'LBL_LIST_PRIORITY',
-                                name: 'priority',
-                                type: 'enum'
-                            }
-                        ]
-                    }]
-                };
-            });
-            sinon.collection.stub(app.lang, 'get', function() {return 'LBL_PRIORITY';});
+            sinon.collection.stub(app.lang, 'get').withArgs('LBL_PRIORITY', 'Cases').returns('LBL_PRIORITY')
+                .withArgs('LBL_COMMENTLOG', 'Cases').returns('LBL_COMMENTLOG');
         });
 
         it('should call bean.get method', function() {
@@ -482,7 +511,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
         it('should call app.metadata.getView', function() {
             layout.getModuleFields(bean);
 
-            expect(app.metadata.getView).toHaveBeenCalledWith('Cases', 'list');
+            expect(app.metadata.getModule).toHaveBeenCalledWith('Cases');
         });
 
         it('should call app.metadata.getModule', function() {
@@ -499,9 +528,158 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                     priority: 'LBL_PRIORITY'
                 },
                 fields: {
-                    priority: 'LBL_PRIORITY'
+                    priority: 'LBL_PRIORITY',
+                    commentlog: 'LBL_COMMENTLOG'
                 }
             });
+        });
+    });
+
+    describe('isValidStudioField', function() {
+        var testMeta;
+        var res;
+        it('should return true if studio is not false', function() {
+            testMeta = {
+                name: 'test',
+                type: 'json',
+                studio: true
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeTruthy();
+        });
+
+        it('should return false if studio is false', function() {
+            testMeta = {
+                name: 'test',
+                studio: false
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeFalsy();
+        });
+
+        it('should return true if studio.recordview is not false or hidden', function() {
+            testMeta = {
+                name: 'test',
+                studio: {
+                    recordview: true
+                }
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeTruthy();
+        });
+
+        it('should return false if studio.recordview is false or hidden', function() {
+            testMeta = {
+                name: 'test',
+                studio: {
+                    recordview: 'hidden'
+                }
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeFalsy();
+        });
+
+        it('should return true if studio.visible is true', function() {
+            testMeta = {
+                name: 'test',
+                studio: {
+                    visible: true
+                }
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeTruthy();
+        });
+
+        it('should return false if studio.visible is false', function() {
+            testMeta = {
+                name: 'test',
+                studio: {
+                    visible: false
+                }
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeFalsy();
+        });
+
+        it('should return false if field type is json', function() {
+            testMeta = {
+                name: 'test',
+                type: 'json'
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeFalsy();
+        });
+
+        it('should return true if name is email1', function() {
+            testMeta = {
+                name: 'email1',
+                type: 'id',
+                source: 'non-db'
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeTruthy();
+        });
+
+        it('should return true if name ends with _name', function() {
+            testMeta = {
+                name: 'random_test_name',
+                dbType: 'id'
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeTruthy();
+        });
+
+        it('should return false if field type is id', function() {
+            testMeta = {
+                name: 'test',
+                type: 'id'
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeFalsy();
+        });
+
+        it('should return false if field dbType is id', function() {
+            testMeta = {
+                name: 'test',
+                type: 'id'
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeFalsy();
+        });
+
+        it('should return true if source is db, type is not id and name is not deleted', function() {
+            testMeta = {
+                name: 'test',
+                source: 'db',
+                type: 'int',
+                dbType: 'int'
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeTruthy();
+        });
+
+        it('should return false if name is deleted', function() {
+            testMeta = {
+                name: 'deleted',
+                source: 'db',
+                type: 'int',
+                dbType: 'int'
+            };
+
+            res = layout.isValidStudioField(testMeta);
+            expect(res).toBeFalsy();
         });
     });
 
