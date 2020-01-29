@@ -21,6 +21,9 @@ $mod_strings = array(
     'LBL_CONSOLE_SORT_ORDER_DEFAULT' => 'Default Sort Order',
     'LBL_CONSOLE_SORT_ORDER_PRIMARY' => 'Primary Sort Order',
     'LBL_CONSOLE_SORT_ORDER_SECONDARY' => 'Secondary Sort Order',
+    'LBL_CONSOLE_SORT_ORDER_DESCENDING' => 'Sort Descending',
+    'LBL_CONSOLE_SORT_ORDER_ASCENDING' => 'Sort Ascending',
+    'LBL_DIRECTION' => 'Direction',
     'LBL_CONSOLE_FILTER' => 'Filter',
     'LBL_CONSOLE_FILTER_RULES' => 'Filter Rules',
 );

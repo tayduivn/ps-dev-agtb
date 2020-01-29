@@ -132,7 +132,7 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
             })
                 .withArgs('order_by_primary').returns({
                 '12345': {
-                    'Accounts': 'next_renewal_date',
+                    'Accounts': 'next_renewal_date:asc',
                     'Opportunities': 'date_closed'
                 }
             })
@@ -163,7 +163,9 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                 enabled: true,
                 enabled_module: 'Accounts',
                 order_by_primary: 'next_renewal_date',
+                order_by_primary_direction: 'asc',
                 order_by_secondary: '',
+                order_by_secondary_direction: 'desc',
                 filter_def: [{'$owner': ''}]
             });
         });

@@ -82,13 +82,13 @@ class ConsoleConfigurationDefaults
             'order_by_primary' => [
                 // Serve console
                 'c108bb4a-775a-11e9-b570-f218983a1c3e' => [
-                    'Cases' => 'follow_up_datetime',
+                    'Cases' => 'follow_up_datetime:asc',
                 ],
 
                 // Renewals console
                 'da438c86-df5e-11e9-9801-3c15c2c53980' => [
-                    'Accounts' => 'next_renewal_date',
-                    'Opportunities' => 'date_closed',
+                    'Accounts' => 'next_renewal_date:asc',
+                    'Opportunities' => 'date_closed:asc',
                 ],
             ],
             'order_by_secondary' => [

@@ -196,7 +196,9 @@ describe('ConsoleConfiguration.View.ConfigHeaderButtons', function() {
             sinon.collection.stub(model, 'get')
                 .withArgs('enabled_module').returns('Accounts')
                 .withArgs('order_by_primary').returns('next_renewal_date')
+                .withArgs('order_by_primary_direction').returns('asc')
                 .withArgs('order_by_secondary').returns('')
+                .withArgs('order_by_seconary_direction').returns('desc')
                 .withArgs('filter_def').returns({'$owner': ''});
         });
 
@@ -227,7 +229,7 @@ describe('ConsoleConfiguration.View.ConfigHeaderButtons', function() {
             expect(contextModel.set).toHaveBeenCalledWith({
                 is_setup: true,
                 enabled_modules: {'1234-5678': ['Accounts']},
-                order_by_primary: {'1234-5678': {'Accounts': 'next_renewal_date'}},
+                order_by_primary: {'1234-5678': {'Accounts': 'next_renewal_date:asc'}},
                 order_by_secondary: {'1234-5678': {'Accounts': ''}},
                 filter_def: {'1234-5678': {'Accounts': {'$owner': ''}}}
             }, {silent: true});

@@ -120,16 +120,36 @@
         var filterDef = this.model.get('filter_def')[consoleId] || {};
 
         _.each(availableModules, function(moduleName) {
+            // Parse the sort fields and directions from the 'order by' setting
+            var orderByPrimaryComponents = this._parseOrderByComponents(orderByPrimary[moduleName] || '');
+            var orderBySecondaryComponents = this._parseOrderByComponents(orderBySecondary[moduleName] || '');
+
             var data = {
                 enabled: true,
                 enabled_module: moduleName,
-                order_by_primary: orderByPrimary[moduleName] || '',
-                order_by_secondary: orderBySecondary[moduleName] || '',
+                order_by_primary: orderByPrimaryComponents[0] || '',
+                order_by_primary_direction: orderByPrimaryComponents[1] || 'desc',
+                order_by_secondary: orderBySecondaryComponents[0] || '',
+                order_by_secondary_direction: orderBySecondaryComponents[1] || 'desc',
                 filter_def: filterDef[moduleName] || [],
             };
             this.addModelToCollection(moduleName, data);
         }, this);
         this.setActiveTabIndex();
+    },
+
+    /**
+     * Takes a stored order_by value and splits it into field name and direction
+     *
+     * @param value
+     * @return {Array} an array containing the order_by field and direction data
+     * @private
+     */
+    _parseOrderByComponents: function(value) {
+        if (_.isString(value)) {
+            return value.split(':');
+        }
+        return [];
     },
 
     /**
@@ -214,7 +234,9 @@
                 enabled: data.enabled || true,
                 enabled_module: data.module || module,
                 order_by_primary: data.order_by_primary || '',
+                order_by_primary_direction: data.order_by_primary_direction || 'desc',
                 order_by_secondary: data.order_by_secondary || '',
+                order_by_secondary_direction: data.order_by_secondary_direction || 'desc',
                 filter_def: data.filter_def || '',
             });
 

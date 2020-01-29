@@ -69,22 +69,22 @@
         // Get the current settings for the given console ID. If there are no
         // settings for the given console ID, create them
         var enabledModules = ctxModel.get('enabled_modules') || {};
-        enabledModules[consoleId] = enabledModules[consoleId] || [];
+        enabledModules[consoleId] = !_.isEmpty(enabledModules[consoleId]) ? enabledModules[consoleId] : [];
 
         var orderByPrimary = ctxModel.get('order_by_primary') || {};
-        orderByPrimary[consoleId] = orderByPrimary[consoleId] || {};
+        orderByPrimary[consoleId] = !_.isEmpty(orderByPrimary[consoleId]) ? orderByPrimary[consoleId] : {};
 
         var orderBySecondary = ctxModel.get('order_by_secondary') || {};
-        orderBySecondary[consoleId] = orderBySecondary[consoleId] || {};
+        orderBySecondary[consoleId] = !_.isEmpty(orderBySecondary[consoleId]) ? orderBySecondary[consoleId] : {};
 
         var filterDef = ctxModel.get('filter_def') || {};
-        filterDef[consoleId] = filterDef[consoleId] || {};
+        filterDef[consoleId] = !_.isEmpty(filterDef[consoleId]) ? filterDef[consoleId] : {};
 
         // Update the variables holding the field values for the given console ID
         _.each(this.collection.models, function(model) {
             var moduleName = model.get('enabled_module');
-            orderByPrimary[consoleId][moduleName] = model.get('order_by_primary');
-            orderBySecondary[consoleId][moduleName] = model.get('order_by_secondary');
+            orderByPrimary[consoleId][moduleName] = this._buildOrderByValue(model, 'order_by_primary');
+            orderBySecondary[consoleId][moduleName] = this._buildOrderByValue(model, 'order_by_secondary');
             filterDef[consoleId][moduleName] = model.get('filter_def');
         }, this);
 
@@ -95,6 +95,25 @@
             order_by_secondary: orderBySecondary,
             filter_def: filterDef
         }, {silent: true});
+    },
+
+    /**
+     * Parses the 'order by' components of the given model for the given field
+     * and concatenates them into the proper ordering string. Example: if the
+     * primary sort field is 'name', and primary sort direction is 'asc',
+     * it will return 'name:asc'
+     *
+     * @param {Object} model the model being saved
+     * @param {string} the base field name
+     * @private
+     */
+    _buildOrderByValue: function(model, fieldName) {
+        var value = model.get(fieldName) || '';
+        if (!_.isEmpty(value)) {
+            var direction = model.get(fieldName + '_direction') || 'desc';
+            value += ':' + direction;
+        }
+        return value;
     },
 
     /**
