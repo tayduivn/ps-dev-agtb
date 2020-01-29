@@ -41,17 +41,41 @@
      * Populates the whitelist and blacklist sections based on the hidden_values config
      */
     populateHeaderValues: function() {
+        var tableHeader = this.model.get('table_header');
+        var module = this.model.get('enabled_module');
+        var fields = app.metadata.getModule(module, 'fields');
+        var translated = app.lang.getAppListStrings(fields[tableHeader].options);
+
+        if (!_.isEmpty(tableHeader) && _.isEmpty(translated)) {
+            // call enum api
+            app.api.enumOptions(module, tableHeader, {
+                success: _.bind(function(data) {
+                    if (!this.disposed) {
+                        this._createHeaderValueLists(tableHeader, data);
+                        this._super('_render');
+                        this.handleDraggableActions();
+                    }
+                }, this)
+            });
+        }
+
+        this._createHeaderValueLists(tableHeader, translated);
+    },
+
+    /**
+     * Creates whitelist and blacklist of header values.
+     *
+     * @param {string} tableHeader Header name
+     * @param {Array} translated List of options
+     */
+    _createHeaderValueLists: function(tableHeader, translated) {
         var whiteListed = [];
         var blackListed = [];
         var availableValues = {};
-        var tempList = [];
-        var fields = app.metadata.getModule(this.model.get('enabled_module'), 'fields');
-        var tableHeader = this.model.get('table_header');
 
-        if (!_.isEmpty(tableHeader)) {
+        if (!_.isEmpty(tableHeader) && !_.isEmpty(translated)) {
             var hiddenValues = this.getBlackListedArray();
             var availableValues = this.model.get('available_columns') ? this.model.get('available_columns') : {};
-            var translated = app.lang.getAppListStrings(fields[tableHeader].options);
 
             if (!_.isUndefined(availableValues[tableHeader])) {
                 // if availableColumns is defined for the table header

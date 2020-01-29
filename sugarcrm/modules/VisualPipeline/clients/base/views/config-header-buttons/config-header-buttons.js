@@ -131,17 +131,10 @@
                 break;
             }
         }
-        var translated = app.lang.getAppListStrings(fields[tableHeader].options);
 
         _.each($elemList, function($itemElem) {
-            var item = {};
-            for (var key of Object.keys(translated)) {
-                if ($itemElem.innerText.trim() === translated[key]) {
-                    availableColumnNames[key] = translated[key];
-                    break;
-                }
-            }
-        }, this);
+            availableColumnNames[$itemElem.getAttribute('data-headervalue')] = $itemElem.innerText.trim();
+        });
 
         columnsWithHeaders[tableHeader] = availableColumnNames;
 

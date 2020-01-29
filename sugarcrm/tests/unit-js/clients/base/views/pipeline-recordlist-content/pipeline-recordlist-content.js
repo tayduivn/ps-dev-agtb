@@ -406,6 +406,24 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         });
     });
 
+    describe('_setRecordsToDisplay', function() {
+        it('should populate view.recordsToDisplay', function() {
+            var options = {
+                Lost: 'Closed Lost',
+                New: 'New'
+            };
+            view.pipelineType = 'status';
+            view.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
+            sinon.collection.stub(view, 'getColumnColors', function() {
+                return ['#FFFFFF', '#000000', '#FFFFFF', '#000000', '#FFFFFF', '#000000'];
+            });
+            view.recordsToDisplay = [];
+            view._setRecordsToDisplay('status', options);
+
+            expect(view.recordsToDisplay.length).toEqual(2);
+        });
+    });
+
     describe('getTableHeader', function() {
         var headerColors;
         beforeEach(function() {
@@ -493,27 +511,14 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                     });
 
                     describe('when options is empty', function() {
-                        it('should not populate view.recordsToDisplay', function() {
+                        it('should call enum api', function() {
                             sinon.collection.stub(app.lang, 'getAppListStrings', function() {
                                 return [];
                             });
+                            var apiStub = sinon.collection.stub(app.api, 'enumOptions');
                             view.getTableHeader();
 
-                            expect(view.recordsToDisplay).toEqual([]);
-                        });
-                    });
-
-                    describe('when options is not empty', function() {
-                        it('should populate view.recordsToDisplay', function() {
-                            sinon.collection.stub(app.lang, 'getAppListStrings', function() {
-                                return {
-                                    Lost: 'Closed Lost',
-                                    New: 'New'
-                                };
-                            });
-                            view.getTableHeader();
-
-                            expect(view.recordsToDisplay.length).toEqual(2);
+                            expect(apiStub).toHaveBeenCalled();
                         });
                     });
                 });

@@ -159,6 +159,48 @@
     },
 
     /**
+     * Sets records to display.
+     *
+     * @param {string} headerField The header field
+     * @param {Array} options List of options
+     */
+    _setRecordsToDisplay: function(headerField, options) {
+        var headerColors = this.getColumnColors();
+
+        // Get all the whitelisted column names for current module
+        if (!_.isUndefined(this.pipelineConfig.available_columns[this.module])) {
+            var items = this.pipelineConfig.available_columns[this.module][headerField];
+            var index = 0;
+            _.each(items, function(item, key) {
+                index = index <= 11 ? index : index % 12;
+                if (!_.isEmpty(options[key]) && (_.indexOf(this.hiddenHeaderValues, item) === -1)) {
+                    this.recordsToDisplay.push({
+                        'headerName': options[key],
+                        'headerKey': key,
+                        'records': [],
+                        'color': !_.isUndefined(headerColors[index]) ? headerColors[index] : ''
+                    });
+                    index++;
+                }
+            }, this);
+        } else {
+            var items = _.difference(options, this.hiddenHeaderValues);
+            _.each(options, function(option, key) {
+                var index = _.indexOf(items, option);
+                index = index <= 11 ? index : index % 12;
+                if (!_.isEmpty(key) && (_.indexOf(this.hiddenHeaderValues, key) === -1)) {
+                    this.recordsToDisplay.push({
+                        'headerName': option,
+                        'headerKey': key,
+                        'records': [],
+                        'color': !_.isUndefined(headerColors[index]) ? headerColors[index] : ''
+                    });
+                }
+            }, this);
+        }
+    },
+
+    /**
      * Gets the table headers for all the columns being displayed on the page
      */
     getTableHeader: function() {
@@ -181,37 +223,20 @@
                 }
 
                 if (!_.isEmpty(options)) {
-                    // Get all the whitelisted column names for current module
-                    if (!_.isUndefined(this.pipelineConfig.available_columns[this.module])) {
-                        var items = this.pipelineConfig.available_columns[this.module][headerField];
-                        var index = 0;
-                        _.each(items, function(item, key) {
-                            index = index <= 11 ? index : index % 12;
-                            if (!_.isEmpty(options[key]) && (_.indexOf(this.hiddenHeaderValues, item) === -1)) {
-                                this.recordsToDisplay.push({
-                                    'headerName': options[key],
-                                    'headerKey': key,
-                                    'records': [],
-                                    'color': !_.isUndefined(headerColors[index]) ? headerColors[index] : ''
-                                });
-                                index++;
+                    this._setRecordsToDisplay(headerField, options);
+                } else {
+                    // call enum api
+                    app.api.enumOptions(this.module, headerField, {
+                        success: _.bind(function(data) {
+                            if (!this.disposed) {
+                                this._setRecordsToDisplay(headerField, data);
+                                this._super('_render');
+                                if (this.hasAccessToView) {
+                                    this.buildRecordsList();
+                                }
                             }
-                        }, this);
-                    } else {
-                        var items = _.difference(options, this.hiddenHeaderValues);
-                        _.each(options, function(option, key) {
-                            var index = _.indexOf(items, option);
-                            index = index <= 11 ? index : index % 12;
-                            if (!_.isEmpty(key) && (_.indexOf(this.hiddenHeaderValues, key) === -1)) {
-                                this.recordsToDisplay.push({
-                                    'headerName': option,
-                                    'headerKey': key,
-                                    'records': [],
-                                    'color': !_.isUndefined(headerColors[index]) ? headerColors[index] : ''
-                                });
-                            }
-                        }, this);
-                    }
+                        }, this)
+                    });
                 }
             }
 

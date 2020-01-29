@@ -87,6 +87,40 @@ describe('VisualPipeline.Base.Fields.HeaderValuesField', function() {
 
     describe('populateHeaderValues', function() {
         beforeEach(function() {
+            sinon.collection.stub(field.model, 'get').withArgs('enabled_module').returns(['Opportunities', 'Tasks'])
+            .withArgs('table_header').returns('status');
+            sinon.collection.stub(app.metadata, 'getModule')
+            .withArgs(['Opportunities', 'Tasks'], 'fields')
+            .returns({
+                status: {
+                    name: 'status',
+                    options: 'case_status_dom'
+                }
+            });
+        });
+
+        it('should call _createHeaderValueLists with header and values', function() {
+            var statusDom = {
+                New: 'New',
+                Assigned: 'Assigned'
+            };
+            sinon.collection.stub(app.lang, 'getAppListStrings').withArgs('case_status_dom').returns(statusDom);
+            var stub = sinon.collection.stub(field, '_createHeaderValueLists');
+            field.populateHeaderValues();
+            expect(stub).toHaveBeenCalledWith('status', statusDom);
+        });
+
+        it('should call enum api if no header values', function() {
+            sinon.collection.stub(field, '_createHeaderValueLists');
+            sinon.collection.stub(app.lang, 'getAppListStrings').returns(undefined);
+            var stub = sinon.collection.stub(app.api, 'enumOptions');
+            field.populateHeaderValues();
+            expect(stub).toHaveBeenCalled();
+        });
+    });
+
+    describe('_createHeaderValueLists', function() {
+        beforeEach(function() {
             sinon.collection.stub(field, 'getBlackListedArray', function() {
                 return ['Closed', 'New'];
             });
@@ -94,58 +128,9 @@ describe('VisualPipeline.Base.Fields.HeaderValuesField', function() {
             sinon.collection.stub(field.model, 'set', function() {});
         });
 
-        it('should call this.model.get with enabled_modules', function() {
-            sinon.collection.stub(field.model, 'get').withArgs('enabled_module').returns(['Opportunities', 'Tasks'])
-                .withArgs('table_header').returns('status')
-                .withArgs('available_columns').returns({'Assigned': 'Assigned', 'Duplicate': 'Duplicate'});
-            sinon.collection.stub(app.metadata, 'getModule')
-                .withArgs(['Opportunities', 'Tasks'], 'fields')
-                .returns({
-                    status: {
-                        name: 'status',
-                        options: 'case_status_dom'
-                    }
-                });
-            field.populateHeaderValues();
-
-            expect(field.model.get).toHaveBeenCalledWith('enabled_module');
-        });
-
-        it('should call app.metadata.getModule with an array and fields', function() {
-            sinon.collection.stub(field.model, 'get').withArgs('enabled_module').returns(['Opportunities', 'Tasks'])
-                .withArgs('table_header').returns('status')
-                .withArgs('available_columns').returns({'Assigned': 'Assigned', 'Duplicate': 'Duplicate'});
-            sinon.collection.stub(app.metadata, 'getModule')
-                .withArgs(['Opportunities', 'Tasks'], 'fields')
-                .returns({
-                    status: {
-                        name: 'status',
-                        options: 'case_status_dom'
-                    }
-                });
-            field.populateHeaderValues();
-
-            expect(app.metadata.getModule).toHaveBeenCalledWith(['Opportunities', 'Tasks'], 'fields');
-        });
-
         describe('when tableHeader is empty', function() {
-            beforeEach(function() {
-                sinon.collection.stub(field.model, 'get').withArgs('enabled_module').returns(['Opportunities', 'Tasks'])
-                    .withArgs('table_header').returns()
-                    .withArgs('available_columns').returns({'Assigned': 'Assigned', 'Duplicate': 'Duplicate'});
-                sinon.collection.stub(app.metadata, 'getModule')
-                    .withArgs(['Opportunities', 'Tasks'], 'fields')
-                    .returns({
-                        status: {
-                            name: 'status',
-                            options: 'case_status_dom'
-                        }
-                    });
-                field.populateHeaderValues();
-            });
-
             it('should call this.model.set with empty whiteListed and blackListed values', function() {
-
+                field._createHeaderValueLists(null, null);
                 expect(field.model.set).toHaveBeenCalledWith({
                     'white_listed_header_vals': [],
                     'black_listed_header_vals': []
@@ -153,124 +138,55 @@ describe('VisualPipeline.Base.Fields.HeaderValuesField', function() {
             });
 
             it('should not call field.getBlackListArray method', function() {
-
+                field._createHeaderValueLists(null, null);
                 expect(field.getBlackListedArray).not.toHaveBeenCalled();
             });
         });
 
         describe('when tableHeader is not empty', function() {
+            var tableHeader;
+            var translated;
+
             beforeEach(function() {
-                sinon.collection.stub(field.model, 'get').withArgs('enabled_module').returns(['Opportunities', 'Tasks'])
-                    .withArgs('table_header').returns('status')
+                tableHeader = 'status';
+                translated = {
+                    Assigned: 'Assigned',
+                    Closed: 'Closed',
+                    Duplicate: 'Duplicate',
+                    New: 'New'
+                };
+                sinon.collection.stub(field.model, 'get')
                     .withArgs('available_columns').returns({'Assigned': 'Assigned', 'Duplicate': 'Duplicate'});
             });
 
             it('should call field.getBlackListArray method', function() {
-                sinon.collection.stub(app.metadata, 'getModule')
-                    .withArgs(['Opportunities', 'Tasks'], 'fields')
-                    .returns({
-                        status: {
-                            name: 'status',
-                            options: 'case_status_dom'
-                        }
-                    });
-                field.populateHeaderValues();
-
+                field._createHeaderValueLists(tableHeader, translated);
                 expect(field.getBlackListedArray).toHaveBeenCalled();
             });
 
-            it('should call app.lang.getAppListStrings method', function() {
-                sinon.collection.stub(app.metadata, 'getModule')
-                    .withArgs(['Opportunities', 'Tasks'], 'fields')
-                    .returns({
-                        status: {
-                            name: 'status',
-                            options: 'case_status_dom'
+            it('should call this.model.set with empty whiteListed and blackListed values', function() {
+                field._createHeaderValueLists(tableHeader, translated);
+                expect(field.model.set).toHaveBeenCalledWith({
+                    'white_listed_header_vals': [
+                        {
+                            key: 'Assigned',
+                            translatedLabel: 'Assigned'
+                        },
+                        {
+                            key: 'Duplicate',
+                            translatedLabel: 'Duplicate'
                         }
-                    });
-                sinon.collection.stub(app.lang, 'getAppListStrings').returns(
-                    {
-                        'New': 'New',
-                        'Assigned': 'Assigned',
-                        'Duplicate': 'Duplicate',
-                        'Lost': 'Lost'
-                    }
-                );
-                field.populateHeaderValues();
-
-                expect(app.lang.getAppListStrings).toHaveBeenCalledWith('case_status_dom');
-            });
-
-            describe('when table_header.option is empty', function() {
-                beforeEach(function() {
-                    sinon.collection.stub(app.metadata, 'getModule')
-                        .withArgs(['Opportunities', 'Tasks'], 'fields')
-                        .returns({
-                            status: {
-                                name: 'status',
-                                options: ''
-                            }
-                        });
-                    sinon.collection.stub(app.lang, 'getAppListStrings', function() {
-                        return {};
-                    });
-                    field.populateHeaderValues();
-                });
-
-                it('should call this.model.set with empty whiteListed and blackListed values', function() {
-
-                    expect(field.model.set).toHaveBeenCalledWith({
-                        'white_listed_header_vals': [],
-                        'black_listed_header_vals': []
-                    });
-                });
-            });
-
-            describe('when table_header.option is not empty', function() {
-                beforeEach(function() {
-                    sinon.collection.stub(app.metadata, 'getModule')
-                        .withArgs(['Opportunities', 'Tasks'], 'fields')
-                        .returns({
-                            status: {
-                                name: 'status',
-                                options: ''
-                            }
-                        });
-                    sinon.collection.stub(app.lang, 'getAppListStrings', function() {
-                        return {
-                            Assigned: 'Assigned',
-                            Closed: 'Closed',
-                            Duplicate: 'Duplicate',
-                            New: 'New'
-                        };
-                    });
-                    field.populateHeaderValues();
-                });
-
-                it('should call this.model.set with empty whiteListed and blackListed values', function() {
-
-                    expect(field.model.set).toHaveBeenCalledWith({
-                        'white_listed_header_vals': [
-                            {
-                                key: 'Assigned',
-                                translatedLabel: 'Assigned'
-                            },
-                            {
-                                key: 'Duplicate',
-                                translatedLabel: 'Duplicate'
-                            }
-                        ],
-                        'black_listed_header_vals': [
-                            {
-                                key: 'Closed',
-                                translatedLabel: 'Closed'
-                            },
-                            {
-                                key: 'New',
-                                translatedLabel: 'New'
-                            }
-                        ]
-                    });
+                    ],
+                    'black_listed_header_vals': [
+                        {
+                            key: 'Closed',
+                            translatedLabel: 'Closed'
+                        },
+                        {
+                            key: 'New',
+                            translatedLabel: 'New'
+                        }
+                    ]
                 });
             });
         });

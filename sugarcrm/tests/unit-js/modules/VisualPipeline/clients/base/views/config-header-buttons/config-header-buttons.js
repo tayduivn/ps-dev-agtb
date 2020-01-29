@@ -261,8 +261,10 @@ describe('VisualPipeline.View.ConfigHeaderButtons', function() {
                                                 '<div class="row-fluid">' +
                                                     '<div class="span6 record-cell">' +
                                                         '<ul id="pipeline-sortable-1">' +
-                                                            '<li><span>Assigned</span></li>' +
-                                                            '<li><span>New</span></li>' +
+                                                            '<li data-headervalue="Assigned">' +
+                                                                '<span>Assigned</span></li>' +
+                                                            '<li data-headervalue="New">' +
+                                                                '<span>New</span></li>' +
                                                         '</ul>>' +
                                                     '</div>' +
                                                 '</div>' +
@@ -313,12 +315,6 @@ describe('VisualPipeline.View.ConfigHeaderButtons', function() {
             view.getAvailableColumnNames('Cases');
 
             expect(app.metadata.getModule).toHaveBeenCalledWith('Cases', 'fields');
-        });
-
-        it('should call app.lang.getAppListStrings method', function() {
-            view.getAvailableColumnNames('Cases');
-
-            expect(app.lang.getAppListStrings).toHaveBeenCalledWith('case_status_dom');
         });
 
         it('should return availableColumnNames', function() {
