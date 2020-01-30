@@ -30,7 +30,7 @@ export default class PipelineView extends BaseListView {
             content: {
                 $: '.main-content',
             },
-            columnHeader: 'thead [data-original-title="{{columnName}}"]',
+            columnHeader: 'thead th:nth-child({{columnIndex}}) [data-original-title="{{columnName}}"]',
         });
     }
 
@@ -75,11 +75,12 @@ export default class PipelineView extends BaseListView {
      * Check whether the column with specified name exists in Tile View
      *
      * @param {string} columnName
+     * @columnIndex {columnIndex} index of the column in Tile View starting from 1
      * @returns {Promise<any>}
      */
-    public async getColumnHeader(columnName) {
+    public async getColumnHeader(columnName: string, columnIndex:string):Promise<boolean> {
 
-        let selector = this.$('columnHeader', {columnName} );
-        return this.driver.isElementExist(selector);
+        let selector = this.$('columnHeader', {columnName, columnIndex} );
+        return await this.driver.isElementExist(selector);
     }
 }

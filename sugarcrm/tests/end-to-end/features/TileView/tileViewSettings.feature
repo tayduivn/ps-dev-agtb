@@ -116,31 +116,30 @@ Feature: Tile View Settings
 
 
   @tile_view_settings @activate_columns @pr
-  Scenario: Tile View Settings > Opportunities > Activate/Hide Tile View columns
-
+  Scenario: Tile View Settings > Opportunities > Re-arrange columns
     Given Accounts records exist:
       | *name |
       | Acc_1 |
 
-    # Enable 'Closed Won' and 'Closed Lost' columns in Opportunities Tile View
+    # Move column to other position in Opportunities Tile View
     When I drag-n-drop column header items on "Opportunities" module in #TileViewSettings view:
-      | sourceItem  | destination |
-      | Closed Won  | white_list  |
-      | Closed Lost | white_list  |
+      | sourceItem    | destination | destinationIndex |
+      | Prospecting   | white_list  | 3                |
+      | Qualification | white_list  | 5                |
 
-    # Navigate to Cases > Tile View
+
+    # Navigate to Opportunities > Tile View
     When I choose Opportunities in modules menu
     And I select VisualPipeline in #OpportunitiesList.FilterView
-    Then I should be redirected to "Opportunities/pipeline" route
 
     # Switch to Opportunities by Sales Stage tab
     When I select pipelineByStage tab in #OpportunitiesPipelineView view
 
-    # Verify that 'Closed Won' and 'Closed Lost' columns are enabled
+    # Verify that columns are successfully re-arranged
     Then I verify pipeline column headers in #OpportunitiesPipelineView view
-      | value       |
-      | Closed Won  |
-      | Closed Lost |
+      | value         | columnIndex |
+      | Prospecting   | 2           |
+      | Qualification | 5           |
 
     # Create New opportunity while in Tile View
     When I click pipelineCreate button on #OpportunitiesList header
@@ -167,11 +166,82 @@ Feature: Tile View Settings
     # Verify column the opportunity tile appears under
     Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesPipelineView view
 
-#    When I drag *Opp_1 tile to "Negotiation/Review" column in #OpportunitiesPipelineView view
-#    When I wait for 3 seconds
+     # Temporary commented ! uncomment after SS-231 is fixed
+#    When I drag *Opp_1 tile to "Perception Analysis" column in #OpportunitiesPipelineView view
+#
+#    Then I verify the [*Opp_1] records are under "Perception Analysis" column in #OpportunitiesPipelineView view
+
+    # Restore default order
+    When I drag-n-drop column header items on "Opportunities" module in #TileViewSettings view:
+      | sourceItem    | destination | destinationIndex |
+      | Prospecting   | white_list  | 1                |
+      | Qualification | white_list  | 2                |
+
+    Then I verify pipeline column headers in #OpportunitiesPipelineView view
+      | value         | columnIndex |
+      | Prospecting   | 1           |
+      | Qualification | 2           |
+
+
+  @tile_view_settings @rearrange_columns @pr
+  Scenario: Tile View Settings > Opportunities > Re-arrange columns
+
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+
+    # Enable 'Closed Won' and 'Closed Lost' columns in Opportunities Tile View
+    When I drag-n-drop column header items on "Opportunities" module in #TileViewSettings view:
+      | sourceItem  | destination | destinationIndex |
+      | Closed Won  | white_list  | 2                |
+      | Closed Lost | white_list  | 4                |
+
+    # Navigate to Cases > Tile View
+    When I choose Opportunities in modules menu
+    And I select VisualPipeline in #OpportunitiesList.FilterView
+    Then I should be redirected to "Opportunities/pipeline" route
+
+    # Switch to Opportunities by Sales Stage tab
+    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+
+    # Verify that 'Closed Won' and 'Closed Lost' columns are enabled
+    Then I verify pipeline column headers in #OpportunitiesPipelineView view
+      | value       | columnIndex |
+      | Closed Won  | 2           |
+      | Closed Lost | 4           |
+
+    # Create New opportunity while in Tile View
+    When I click pipelineCreate button on #OpportunitiesList header
+    When I click show more button on #OpportunitiesDrawer view
+    When I provide input for #OpportunitiesDrawer.HeaderView view
+      | *     | name            |
+      | Opp_1 | New Opportunity |
+    When I provide input for #OpportunitiesDrawer.RecordView view
+      | *     | account_name | lead_source |
+      | Opp_1 | Acc_1        | Cold Call   |
+    # Provide input for the first (default) RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 1 row
+      | *name | date_closed | sales_stage | likely_case |
+      | RLI1  | 04/19/2020  | Closed Won  | 2000        |
+    # Add second RLI by clicking '+' button on the first row
+    When I choose addRLI on #OpportunityDrawer.RLITable view for 1 row
+    # Provide input for the second RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 2 row
+      | *name | date_closed | sales_stage | likely_case |
+      | RLI2  | 04/19/2021  | Closed Lost | 2000        |
+    When I click Save button on #OpportunitiesDrawer header
+    When I close alert
+
+    # Verify column the opportunity tile appears under
+    Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesPipelineView view
+
+    # # Temporary commented ! uncomment after SS-231 is fixed
+#    When I drag *Opp_1 tile to "Closed Lost" column in #OpportunitiesPipelineView view
+#
+#    Then I verify the [*Opp_1] records are under "Closed Lost" column in #OpportunitiesPipelineView view
 
     # Disable 'Closed Won' and 'Closed Lost' columns in Opportunities Tile View
     When I drag-n-drop column header items on "Opportunities" module in #TileViewSettings view:
-      | sourceItem  | destination |
-      | Closed Won  | black_list  |
-      | Closed Lost | black_list  |
+      | sourceItem  | destination | destinationIndex |
+      | Closed Won  | black_list  | 0                |
+      | Closed Lost | black_list  | 1                |

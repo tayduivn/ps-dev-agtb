@@ -42,8 +42,12 @@ export default class TileViewSettings extends DrawerLayout {
                 }
             },
             move: {
-                source: 'li[data-headervalue="{{source}}"]',
-                to: '[data-modulename={{moduleName}}] [data-columnname={{to}}]',
+                // Source tile to move
+                source: '[data-columnname={{from_list}}] li[data-headervalue="{{source}}"]',
+                // Empty destination list
+                toEmptyList: '[data-modulename={{moduleName}}] [data-columnname={{to_list}}]',
+                // Destination list with at least one item present
+                to: '[data-modulename={{moduleName}}] [data-columnname={{to_list}}] li:nth-child({{index}})',
             },
         });
 
@@ -102,7 +106,7 @@ export default class TileViewSettings extends DrawerLayout {
      * @param moduleName
      * @param index
      * @param i
-     * @param value
+     * @param val
      * @returns {Promise<void>}
      */
     public async selectValueFromDropdown(moduleName, index, i, val) {
@@ -119,25 +123,83 @@ export default class TileViewSettings extends DrawerLayout {
      *
      * @param {string} moduleName
      * @param {string} source item to move
-     * @param {string}to
-     */
-    public async moveItem(moduleName: string, source: string, to: string): Promise<void> {
-        // Get the item to move
-        let selectorSource = this.$('move.source', {source});
-        // Get the destination element
-        let selectorTo = this.$('move.to', {moduleName, to});
+     * @param {string} to_list
+     * @param {string} index index of the position to move the tile block to in Tile View settings
+      */
+    public async moveItem(moduleName: string, source: string, to_list: string, index:string): Promise<void> {
+
+
+        // Initialize source list and build selectorSource
+        let from_list = 'white_list';
+        let selectorSource = this.$('move.source', {source, from_list});
+
+        // Check if such selector source exists and if not, correct the 'from_list' and rebuild selectorSource
+        let flag: boolean = await this.driver.isElementExist(selectorSource);
+        if (!flag) {
+            from_list = 'black_list';
+            selectorSource = this.$('move.source', {source, from_list});
+        }
+
+        // Index equals to zero represents the case when black or white list is empty and does not have any tiles yet
+        let pathToElement = (index !== "0") ? 'move.to' : 'move.toEmptyList';
+
+        // Construct the destination selector
+        let selectorTo = this.$(pathToElement, {moduleName, to_list, index});
 
         // Perform the move
         if (await this.driver.isElementExist(selectorSource) &&
             await this.driver.isElementExist(selectorTo)) {
             try {
-                await this.driver.dragAndDrop(selectorSource, selectorTo);
-                await this.driver.waitForApp();
+                let driver = this.driver;
+                await driver.moveToObject(selectorSource);
+                await driver.moveTo(null, 0, 0);
+                await driver.pause(1000);
+                await driver.buttonDown(0);
+                await driver.pause(1000);
+
+                // In case of source and destination lists are the same add span to CSS
+                if ( from_list === to_list ) {
+                    selectorTo = selectorTo + ' span';
+                }
+
+                // Prform move
+                await driver.moveToObject(selectorTo);
+
+                // In case of source and destination lists are the same calculate yOffset based on the index
+                // Otherwise, set zero  offset
+                if ( from_list === to_list ) {
+                    let curColumnIndex = await this.currentColumnIndex(source, from_list);
+                    let yOffset = (curColumnIndex > Number(index)) ? -15 : 15;
+                    await driver.moveTo(null, 30, yOffset);
+                } else {
+                    await driver.moveTo(null, 0, 0);
+                }
+                await driver.pause(1000);
+                await driver.buttonUp(0);
+                await driver.pause(1000);
             } catch (e) {
                 throw new Error("Error... Something went wrong while performing drag-n-drop!");
             }
         } else {
             throw new Error('Either source or destination element could not be found on the page...');
         }
+    }
+
+    /**
+     * Calculate index of the source item. Return index in the list if item is found. Otherwise return -1
+     *
+     * @param {string} source - item name
+     * @param {string} from_list - original list to move item from
+     * @return {number}
+     */
+    private async currentColumnIndex(source: string, from_list: string): Promise<number> {
+
+        for (let curIndex: number = 1; curIndex < 25; curIndex++) {
+            let selectorSource = this.$('move.source', {source, from_list}) + `:nth-child(${curIndex})`;
+            if ( await this.driver.isElementExist(selectorSource)) {
+                return curIndex;
+            }
+        }
+        return -1;
     }
 }

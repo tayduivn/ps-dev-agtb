@@ -163,9 +163,9 @@ When(/^I drag-n-drop column header items on "(Cases|Opportunities|Tasks)" module
             // Perform darg-n-drop
             const rows = data.rows();
             for (let i in rows) {
-                    let [source, to] = rows[i];
+                    let [source, to, index] = rows[i];
                     if ( to === 'white_list' || to === 'black_list' ) {
-                            await  view.moveItem(moduleName, source, to);
+                            await  view.moveItem(moduleName, source, to, index);
                     } else {
                             throw new Error('Not a valid destination for drag-n-drop action !');
                     }

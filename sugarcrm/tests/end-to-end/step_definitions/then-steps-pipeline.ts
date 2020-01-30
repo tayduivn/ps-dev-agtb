@@ -170,17 +170,17 @@ Then(/I verify (\*[a-zA-Z](?:\w|\S)*) tile delete button state in (#[a-zA-Z](?:\
 
 
 /**
- *  Verify column headers in the pipeline view
+ *  Verify that the column in present and located in the correct position in Tile View
  *
  *  @example
  *  Then I verify pipeline column headers in #LeadsPipelineView view
- *      | value      |
- *      | New        |
- *      | Assigned   |
- *      | In Process |
- *      | Converted  |
- *      | Recycled   |
- *      | Dead       |
+ *      | value      |  columnNumber |
+ *      | New        |  1            |
+ *      | Assigned   |  2            |
+ *      | In Process |  3            |
+ *      | Converted  |  4            |
+ *      | Recycled   |  5            |
+ *      | Dead       |  6            |
  */
 Then(/^I verify pipeline column headers in (#\S+) view$/,
     async function (view: pipelineView, data: TableDefinition) {
@@ -189,12 +189,13 @@ Then(/^I verify pipeline column headers in (#\S+) view$/,
         let errors = [];
         for (let i = 1; i <= rows.length; i++) {
             let expected = rows[i - 1][0];
-            let value = await view.getColumnHeader(expected);
+            let index = rows[i - 1][1];
+            let value = await view.getColumnHeader(expected, index);
 
             if (!value) {
                 errors.push(
                     [
-                        `The colum with the name ${expected} does not exists.`,
+                        `The colum with the name ${expected} is not found at the position ${index} in Tile View`,
                         `\n`,
                     ].join('\n')
                 );
