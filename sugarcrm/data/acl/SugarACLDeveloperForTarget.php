@@ -58,12 +58,15 @@ class SugarACLDeveloperForTarget extends SugarACLStrategy
             }
 
             $dev_mods = $current_user->getDeveloperModules();
-            if (count($dev_mods)) {
+            $ret = count($dev_mods);
+            // BEGIN SUGARCRM flav=ent ONLY
+            if ($ret) {
                 $sup_mods = PMSEEngineUtils::getSupportedModules();
                 $valid_mods = array_intersect($dev_mods, $sup_mods);
-                return !empty($valid_mods);
+                $ret = !empty($valid_mods);
             }
-            return false;
+            // END SUGARCRM flav=ent ONLY
+            return (bool) $ret;
         }
 
         if (!empty($this->targetModuleField) && !empty($context['bean'])) {
