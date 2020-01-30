@@ -88,6 +88,20 @@
     },
 
     /**
+     * @inheritdoc
+     *
+     * Overrides the parent bindDataChange to make sure this field is re-rendered
+     * when the config is reset
+     */
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on('consoleconfig:reset:default', function() {
+                this.render();
+            }, this);
+        }
+    },
+
+    /**
      * Loads the list of filter fields for supplied module.
      *
      * @param {string} module The module to load the filter fields for.
@@ -130,7 +144,7 @@
      */
     _render: function() {
         this._super('_render');
-        this.populateFilter(this.filterDef);
+        this.populateFilter(this.model.get('filter_def'));
 
         // If the filter definition is empty, add a fresh row
         if (this.$('[data-filter=row]').length === 0) {

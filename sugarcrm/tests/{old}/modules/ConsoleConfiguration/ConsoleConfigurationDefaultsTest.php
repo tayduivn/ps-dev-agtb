@@ -86,6 +86,22 @@ class ConsoleConfigurationDefaultsTest extends TestCase
     }
 
     /**
+     * Tests that the config defaults metadata is included as its own config setting
+     */
+    public function testIncludeDefaultsInConfig()
+    {
+        ConsoleConfigurationDefaults::setupConsoleConfigurationSettings();
+        $admin = BeanFactory::newBean('Administration');
+        $adminConfig = $admin->getConfigForModule('ConsoleConfiguration', 'base', true);
+        $defaultConfig = ConsoleConfigurationDefaults::getDefaults();
+        $this->assertArrayHasKey('defaults', $adminConfig);
+        $this->assertEquals(
+            $adminConfig['defaults'],
+            $defaultConfig
+        );
+    }
+
+    /**
      * Tests that existing config values are ignored when is_setup is equal to 0
      *
      * @covers ::setupConsoleConfigurationSettings

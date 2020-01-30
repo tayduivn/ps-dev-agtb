@@ -36,5 +36,5 @@
         this.$('#tabs').tabs({
             active: this.context.get('activeTabIndex')
         });
-    },
+    }
 })

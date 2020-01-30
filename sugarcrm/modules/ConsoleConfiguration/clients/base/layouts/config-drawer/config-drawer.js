@@ -125,6 +125,7 @@
             var orderBySecondaryComponents = this._parseOrderByComponents(orderBySecondary[moduleName] || '');
 
             var data = {
+                defaults: this._getModelDefaults(consoleId, moduleName),
                 enabled: true,
                 enabled_module: moduleName,
                 order_by_primary: orderByPrimaryComponents[0] || '',
@@ -150,6 +151,35 @@
             return value.split(':');
         }
         return [];
+    },
+
+    /**
+     * Utility function to get an object containing a mapping of
+     * {field name} => {default value} for the given console and module tab
+     *
+     * @param {string} consoleId the ID of the console to grab default settings for
+     * @param {string} moduleName the module tab name to grab default settings for
+     * @return {Object} containing the mapping, which can be used directly by the
+     *                  tab's model.set() function
+     * @private
+     */
+    _getModelDefaults: function(consoleId, moduleName) {
+        var config = app.metadata.getModule('ConsoleConfiguration', 'config') || {};
+        var defaults = config.defaults || {};
+        var defaultAttributes = {};
+
+        _.each(defaults, function(value, key) {
+            if (_.isObject(value) && _.isObject(value[consoleId]) && !_.isUndefined(value[consoleId][moduleName])) {
+                if (key === 'order_by_primary' || key === 'order_by_secondary') {
+                    var orderByComponents = this._parseOrderByComponents(value[consoleId][moduleName]);
+                    defaultAttributes[key] = orderByComponents[0] || '';
+                    defaultAttributes[key + '_direction'] = orderByComponents[1] || 'desc';
+                } else {
+                    defaultAttributes[key] = value[consoleId][moduleName];
+                }
+            }
+        }, this);
+        return defaultAttributes;
     },
 
     /**
@@ -231,6 +261,7 @@
 
         if (_.isEmpty(existingBean)) {
             var bean = app.data.createBean(this.module, {
+                defaults: data.defaults || {},
                 enabled: data.enabled || true,
                 enabled_module: data.module || module,
                 order_by_primary: data.order_by_primary || '',

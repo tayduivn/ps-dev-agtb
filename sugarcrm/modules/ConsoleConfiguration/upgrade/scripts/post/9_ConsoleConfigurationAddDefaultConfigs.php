@@ -24,14 +24,14 @@ class SugarUpgradeConsoleConfigurationAddDefaultConfigs extends UpgradeScript
     }
 
     /**
-     * Determine if we should set the ConsoleConfiguration default settings
+     * Determine if we should update the ConsoleConfiguration default settings
      *
-     * @return bool true if we should set the default settings; false otherwise
+     * @return bool true if we should update the default settings; false otherwise
      */
     public function shouldSetConsoleConfigurationDefaults(): bool
     {
         $isFlavorConversion = !$this->fromFlavor('ent') && $this->toFlavor('ent');
-        $isBelow930Ent = $this->toFlavor('ent') && version_compare($this->from_version, '9.3.0', '<');
-        return $isFlavorConversion || $isBelow930Ent;
+        $isBelow100Ent = $this->toFlavor('ent') && version_compare($this->from_version, '10.0.0', '<');
+        return $isFlavorConversion || $isBelow100Ent;
     }
 }

@@ -50,6 +50,9 @@
             this.model.on('change:' + this.dependencyField, function() {
                 this._handleDependencyChange();
             }, this);
+            this.model.on('change:' + this.name, function() {
+                this._setValue(this.model.get(this.name));
+            }, this);
         }
     },
 
@@ -73,12 +76,23 @@
     _handleDependencyChange: function() {
         if (this.model && this.$el) {
             if (_.isEmpty(this.model.get(this.dependencyField))) {
-                this.$el.find('[name="asc"]').click();
+                this._setValue('asc');
                 this.$el.hide();
             } else {
                 this.$el.show();
             }
         }
+    },
+
+    /**
+     * Simulates the user clicking on the field to set a value for this field
+     * (both on the model and in the UI)
+     *
+     * @param value the value ('asc' or 'desc') to set the field to
+     * @private
+     */
+    _setValue(value) {
+        this.$el.find('[name="' + value + '"]').click();
     },
 
     /**

@@ -77,4 +77,3 @@ describe('ConsoleConfiguration.View.ConfigTabSettingsView', function() {
         });
     });
 });
-

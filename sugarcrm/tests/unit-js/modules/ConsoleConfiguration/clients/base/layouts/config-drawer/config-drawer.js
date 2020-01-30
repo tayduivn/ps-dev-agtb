@@ -148,6 +148,8 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                     'Opportunities': [{'$owner': ''}]
                 }
             });
+
+            sinon.collection.stub(layout, '_getModelDefaults').returns({});
         });
 
         it('should call layout.model.get with various arguments', function() {
@@ -160,6 +162,7 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
         it('should call layout.addModelToCollection with moduleName and data', function() {
             layout.loadData();
             expect(layout.addModelToCollection).toHaveBeenCalledWith('Accounts', {
+                defaults: {},
                 enabled: true,
                 enabled_module: 'Accounts',
                 order_by_primary: 'next_renewal_date',

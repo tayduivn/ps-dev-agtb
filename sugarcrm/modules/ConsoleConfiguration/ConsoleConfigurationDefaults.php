@@ -40,10 +40,12 @@ class ConsoleConfigurationDefaults
                 }
             }
         }
-
         foreach ($consoleConfig as $name => $value) {
             $admin->saveSetting('ConsoleConfiguration', $name, $value, 'base');
         }
+
+        // Save the default configuration value metadata as its own entry in the database
+        $admin->saveSetting('ConsoleConfiguration', 'defaults', self::getDefaults(), 'base');
 
         return $consoleConfig;
     }
@@ -111,6 +113,8 @@ class ConsoleConfigurationDefaults
                             'status' => [
                                 '$not_in' => ['Closed', 'Rejected', 'Duplicate'],
                             ],
+                        ],
+                        [
                             '$owner' => '',
                         ],
                     ],
@@ -128,6 +132,8 @@ class ConsoleConfigurationDefaults
                             'sales_status' => [
                                 '$not_in' => $closedStages,
                             ],
+                        ],
+                        [
                             '$owner' => '',
                         ],
                     ],
