@@ -316,28 +316,33 @@ Feature: Products module verification
   @create @verify_QLI_accountname
   Scenario: Quotes > Record View > QLI Table > Add QLI > Account Verification
     Given ProductTemplates records exist:
-      | *name          | discount_price | cost_price | list_price | quanity | mft_part_num                 | my_favorite |
-      | Prod_1         | 100            | 200        | 300        | 1       |                              | true        |
+      | *name  | discount_price | cost_price | list_price | quanity | my_favorite |
+      | Prod_1 | 100            | 200        | 300        | 1       | true        |
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
-      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
-    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | Quote_1 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link to *Quote_1:
       | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
       | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+    And Accounts records exist:
+      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Acc_2 | City 2               | 10050 North Wolf       | 95014                      | CA                    | USA                     |
 
     Given I open about view and login
     When I choose Quotes in modules menu
-    When I select *Quote_3 in #QuotesList.ListView
-    Then I should see #Quote_3Record view
-    # Add New Line Item
-    When I choose createLineItem on QLI section on #Quote_3Record view
-    When I provide input for #Quote_3Record.QliTable.QliRecord view
-      | *        | quantity | product_template_name | discount_price | discount_amount |
-      | RecordID | 2.00     | Prod_1        | 100            | 2.00            |
+    When I select *Quote_1 in #QuotesList.ListView
+    Then I should see #Quote_1Record view
+
+    # Add 1st Line Item
+    When I choose createLineItem on QLI section on #Quote_1Record view
+    When I provide input for #Quote_1Record.QliTable.QliRecord view
+      | *       | quantity | product_template_name | discount_price | discount_amount |
+      | RecordA | 2.00     | Prod_1                | 100            | 2.00            |
+
     #Save and verify account name has been populated
-    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I click on save button on QLI #Quote_1Record.QliTable.QliRecord record
     When I close alert
-    When I click product_template_name field on #RecordIDQLIRecord view
+    When I click product_template_name field on #RecordAQLIRecord view
     Then I should see #ProductsRecord view
     When I click show more button on #ProductsRecord view
     Then I verify fields on #ProductsRecord.RecordView
@@ -345,22 +350,77 @@ Feature: Products module verification
       | assigned_user_name | Administrator |
       | account_name       | Acc_1         |
 
+    When I choose Quotes in modules menu
+    When I select *Quote_1 in #QuotesList.ListView
+    Then I should see #Quote_1Record view
+
+        # Add 2nd Line Item
+    When I choose createLineItem on QLI section on #Quote_1Record view
+    When I provide input for #Quote_1Record.QliTable.QliRecord view
+      | *       | quantity | product_template_name | discount_price | discount_amount |
+      | RecordB | 4.00     | Prod_A                | 0              | 0.00            |
+
+    #Save
+    When I click on save button on QLI #Quote_1Record.QliTable.QliRecord record
+    When I close alert
+
     # Add New Line Item via quick pick dashlet
     When I choose Quotes in modules menu
-    When I select *Quote_3 in #QuotesList.ListView
-    Then I should see #Quote_3Record view
+    When I select *Quote_1 in #QuotesList.ListView
+    Then I should see #Quote_1Record view
+
     # Select 'Favorites' tab in Product Catalog Quick Picks dashlet
     When I select Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
+
     # Add one product from the dashlet and cancel
     When I click *Prod_1 on Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
     When I click Add2Quote button on #Prod_1Drawer header
+
     #Save and verify account name has been populated
-    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I click on save button on QLI #Quote_1Record.QliTable.QliRecord record
     When I close alert
-    When I click product_template_name field on #RecordIDQLIRecord view
+    When I click product_template_name field on #RecordAQLIRecord view
     Then I should see #ProductsRecord view
     When I click show more button on #ProductsRecord view
     Then I verify fields on #ProductsRecord.RecordView
       | fieldName          | value         |
       | assigned_user_name | Administrator |
       | account_name       | Acc_1         |
+
+   # Update account in quotes updates QLI records @AT-329
+   # Edit quote and update the billing account to a new selection
+    When I choose Quotes in modules menu
+    When I select *Quote_1 in #QuotesList.ListView
+    Then I should see #Quote_1Record view
+    When I open actions menu in #Quote_1Record
+    When I click Edit button on #Quote_1Record header
+    When I toggle Billing_and_Shipping panel on #Quote_1Record.RecordView view
+    When I provide input for #Quote_1Record.RecordView view
+      | billing_account_name |
+      | Acc_2                |
+    When I Confirm confirmation alert
+    When I click Save button on #Quote_1Record header
+    Then I close alert
+
+    # Verification of the update of the billing account on QLI
+    When I go to "Products" url
+    Then I should see *RecordA in #ProductsList.ListView
+    When I select *RecordA in #ProductsList.ListView
+    Then I should see #RecordARecord view
+    Then I verify fields on #RecordARecord.HeaderView
+      | fieldName | value  |
+      | name      | Prod_1 |
+    Then I verify fields on #RecordARecord.RecordView
+      | fieldName    | value |
+      | account_name | Acc_2 |
+
+    When I go to "Products" url
+    Then I should see *RecordB in #ProductsList.ListView
+    When I select *RecordB in #ProductsList.ListView
+    Then I should see #RecordBRecord view
+    Then I verify fields on #RecordARecord.HeaderView
+      | fieldName | value  |
+      | name      | Prod_A |
+    Then I verify fields on #RecordARecord.RecordView
+      | fieldName    | value |
+      | account_name | Acc_2 |

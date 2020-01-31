@@ -317,7 +317,6 @@ Feature: Quotes module verification
       | assigned_user_name | Administrator |
 
 
-
   @quote @add_new_comment
   Scenario: Quotes > Record View > QLI Table > Add Comment > Cancel/Save
     Given Quotes records exist:
@@ -369,3 +368,4 @@ Feature: Quotes module verification
       | name      |
       | New Group |
     When I click on save button on Group #Quote_3Record.QliTable.GroupRecord record
+
