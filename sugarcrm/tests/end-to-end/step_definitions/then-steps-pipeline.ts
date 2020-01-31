@@ -188,14 +188,13 @@ Then(/^I verify pipeline column headers in (#\S+) view$/,
         let rows = data.rows();
         let errors = [];
         for (let i = 1; i <= rows.length; i++) {
-            let expected = rows[i - 1][0];
-            let index = rows[i - 1][1];
-            let value = await view.getColumnHeader(expected, index);
+            let [expColumnName, expPosition] = rows[i - 1];
+            let value = await view.getColumnHeader(expColumnName, expPosition);
 
             if (!value) {
                 errors.push(
                     [
-                        `The colum with the name ${expected} is not found at the position ${index} in Tile View`,
+                        `The colum with the name ${expColumnName} is not found at the position ${expPosition} in Tile View`,
                         `\n`,
                     ].join('\n')
                 );

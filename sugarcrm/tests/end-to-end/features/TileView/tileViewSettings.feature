@@ -142,9 +142,9 @@ Feature: Tile View Settings
 
     # Verify that columns are successfully re-arranged
     Then I verify pipeline column headers in #OpportunitiesPipelineView view
-      | value         | columnIndex |
-      | Prospecting   | 2           |
-      | Qualification | 5           |
+      | value         | position |
+      | Prospecting   | 2        |
+      | Qualification | 5        |
 
     # Create New opportunity while in Tile View
     When I click pipelineCreate button on #OpportunitiesList header
@@ -184,9 +184,9 @@ Feature: Tile View Settings
       | Qualification | white_list  | 2        |
 
     Then I verify pipeline column headers in #OpportunitiesPipelineView view
-      | value         | columnIndex |
-      | Prospecting   | 1           |
-      | Qualification | 2           |
+      | value         | position |
+      | Prospecting   | 1        |
+      | Qualification | 2        |
 
 
   @tile_view_settings @rearrange_columns @pr
