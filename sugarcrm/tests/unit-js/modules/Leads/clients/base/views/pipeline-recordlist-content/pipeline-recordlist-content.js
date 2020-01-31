@@ -74,7 +74,7 @@ describe('Leads.Base.View.PipelineRecordlistContent', function() {
 
                 it('should cancel the tile move', function() {
                     view.saveModel(model, pipelineData);
-                    expect(view._postChange).toHaveBeenCalledWith(true, model, pipelineData);
+                    expect(view._postChange).toHaveBeenCalledWith(model, true, pipelineData);
                 });
 
                 it('should display an error message to the user', function() {

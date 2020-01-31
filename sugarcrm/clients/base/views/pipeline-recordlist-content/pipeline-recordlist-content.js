@@ -623,7 +623,7 @@
                         self._handleValidationResults(isValid, model, pipelineData);
                     },
                     saveCallback: function(saved) {
-                        self._postChange(!saved, model, pipelineData);
+                        self._callWithTileModel(model, '_postChange', [!saved, pipelineData]);
                     }
                 }
             });
@@ -684,7 +684,7 @@
                     editOnly: true
                 }
             }, function(saved) {
-                self._postChange(!saved, model, pipelineData);
+                self._callWithTileModel(model, '_postChange', [!saved, pipelineData]);
             });
         }
     },
@@ -705,15 +705,47 @@
     },
 
     /**
+     * Utility function. It fetches a model with only the fields required by the view.
+     * @param {Object} model A model that is passed to the view from elsewhere.
+     * @param {string} methodName The name of the method that should be called with the tile view compatible model.
+     * This method should has to accept at least 1 parameter, the first being a model.
+     * @param {Array} params Any other params that should be passed to the method called.
+     * @private
+     */
+    _callWithTileModel: function(model, methodName, params) {
+        this._preChange();
+        var tileModel = app.data.createBean(this.module, {
+            id: model.get('id')
+        });
+        tileModel.fetch({
+            view: 'record',
+            fields: this.getFieldsForFetch(),
+            success: _.bind(function() {
+                var newParams = _.union([tileModel], params || []);
+                this[methodName].apply(this, newParams);
+            }, this),
+            error: _.bind(function() {
+                this.$('.column').sortable('enable');
+            }, this),
+            complete: function() {
+                app.alert.dismiss('model_loading');
+            }
+        });
+    },
+
+    /**
      * Utility function that runs after a column change is processed
-     * @param {boolean} shouldRevert indicates whether the change needs to be reverted
      * @param {Object} model the model involved in the column change
+     * @param {boolean} shouldRevert indicates whether the change needs to be reverted
      * @param {Object} pipelineData contains info about the pipeline ui and collections involved in the change
      * @private
      */
-    _postChange: function(shouldRevert, model, pipelineData) {
+    _postChange: function(model, shouldRevert, pipelineData) {
+        var validCollection = this.getColumnCollection(model);
         if (shouldRevert) {
             this._revertChanges(model, pipelineData);
+        } else if (validCollection.headerKey !== pipelineData.newCollection.headerKey) {
+            this.switchCollection(pipelineData.newCollection, model, validCollection);
         }
 
         // Since both this view and the record view make changes to the model,
@@ -867,7 +899,7 @@
     addIndicatorBasedOnStatus: function(model) {
         // Group statuses in 3 categories:
         var inFuture = ['New', 'Converted'];
-        var outOfDate = ['Dead', 'Closed', 'Rejected', 'Duplicate','Recycled'];
+        var outOfDate = ['Dead', 'Closed', 'Rejected', 'Duplicate', 'Recycled'];
         var nearFuture = ['Assigned', 'In Process', , 'Pending Input', ''];
 
         if (_.indexOf(outOfDate, model.status) !== -1) {

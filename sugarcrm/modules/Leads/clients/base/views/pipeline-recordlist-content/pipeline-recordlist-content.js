@@ -28,7 +28,7 @@
             // to converted, open the lead conversion layout in a drawer instead of
             // the normal change saving process
             if (model.get('converted')) {
-                this._postChange(true, model, pipelineData);
+                this._postChange(model, true, pipelineData);
                 var moduleName = app.lang.getModuleName(this.module, {plural: false});
                 app.alert.show('error_converted', {
                     level: 'error',
@@ -46,7 +46,7 @@
                         leadsModel: model
                     }
                 }, _.bind(function(success) {
-                    this._postChange(!success, model, pipelineData);
+                    this._callWithTileModel(model, '_postChange', [!success, pipelineData]);
                 }, this));
                 return;
             }

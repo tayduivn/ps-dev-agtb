@@ -48,26 +48,26 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                 },
                 header_colors: ['#FFFFFF', '#000000']
             }).withArgs(view.module, 'fields').returns(
-            {
-                name: {
-                    type: 'text',
-                    name: 'name'
-                },
-                amount: {
-                    type: 'currency',
-                    name: 'amount'
-                },
-                sales_status: {
-                    options: 'sales_status_dom'
-                },
-                status: {
-                    options: 'status'
-                },
-                dupeTest: {
-                    type: 'test'
+                {
+                    name: {
+                        type: 'text',
+                        name: 'name'
+                    },
+                    amount: {
+                        type: 'currency',
+                        name: 'amount'
+                    },
+                    sales_status: {
+                        options: 'sales_status_dom'
+                    },
+                    status: {
+                        options: 'status'
+                    },
+                    dupeTest: {
+                        type: 'test'
+                    }
                 }
-            }
-        );
+            );
 
         pipelineChangeDataMock = {
             ui: {
@@ -1214,7 +1214,38 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
         describe('when validation succeeds', function() {
             beforeEach(function() {
-                sinon.collection.stub(view, '_postChange');
+                sinon.collection.stub(view, '_callWithTileModel');
+                view.meta.tileDef = {
+                    panels: [
+                        {
+                            is_header: true,
+                            name: 'header',
+                            fields: [{
+                                name: 'name'
+                            }]
+                        },
+                        {
+                            name: 'body',
+                            fields: [
+                                {
+                                    name: 'amount'
+                                },
+                                {
+                                    name: 'account_name'
+                                },
+                                {
+                                    name: 'sales_status'
+                                },
+                                {
+                                    name: 'dupeTest'
+                                },
+                                {
+                                    name: 'dupeTest'
+                                }
+                            ]
+                        }
+                    ]
+                };
             });
 
             it('should signal that changes should be reverted if saving fails', function() {
@@ -1222,7 +1253,11 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                     def.context.saveCallback(false);
                 });
                 view.saveModel(model, pipelineChangeDataMock);
-                expect(view._postChange).toHaveBeenCalledWith(true, model, pipelineChangeDataMock);
+                expect(view._callWithTileModel).toHaveBeenCalledWith(
+                    model,
+                    '_postChange',
+                    [true, pipelineChangeDataMock]
+                );
             });
 
             it('should signal that changes should not be reverted if saving succeeds', function() {
@@ -1230,7 +1265,11 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                     def.context.saveCallback(true);
                 });
                 view.saveModel(model, pipelineChangeDataMock);
-                expect(view._postChange).toHaveBeenCalledWith(false, model, pipelineChangeDataMock);
+                expect(view._callWithTileModel).toHaveBeenCalledWith(
+                    model,
+                    '_postChange',
+                    [false, pipelineChangeDataMock]
+                );
             });
         });
     });
@@ -1377,6 +1416,10 @@ describe('Base.Views.PipelineRecordlistContent', function() {
                 sortable: function() {}
             });
             sinon.collection.stub(view.$('.column'), 'sortable');
+
+            sinon.collection.stub(view, 'getColumnCollection', function() {
+                return app.data.createBeanCollection('Opportunities');
+            });
         });
 
         afterEach(function() {
@@ -1384,22 +1427,22 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         });
 
         it('should revert changes if needed', function() {
-            view._postChange(true, model, pipelineChangeDataMock);
+            view._postChange(model, true, pipelineChangeDataMock);
             expect(view._revertChanges).toHaveBeenCalled();
         });
 
         it('should not revert changes if not needed', function() {
-            view._postChange(false, model, pipelineChangeDataMock);
+            view._postChange(model, false, pipelineChangeDataMock);
             expect(view._revertChanges).not.toHaveBeenCalled();
         });
 
         it('should sync the new attributes', function() {
-            view._postChange(false, model, pipelineChangeDataMock);
+            view._postChange(model, false, pipelineChangeDataMock);
             expect(model.setSyncedAttributes).toHaveBeenCalledWith(model.attributes);
         });
 
         it('should re-enable the pipeline view drag/drop functionality', function() {
-            view._postChange(false, model, pipelineChangeDataMock);
+            view._postChange(model, false, pipelineChangeDataMock);
             expect(view.$('.column').sortable).toHaveBeenCalledWith('enable');
         });
     });
@@ -1625,7 +1668,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
         var model;
         beforeEach(function() {
             inFuture = ['New', 'Converted'];
-            outOfDate = ['Dead', 'Closed', 'Rejected', 'Duplicate','Recycled'];
+            outOfDate = ['Dead', 'Closed', 'Rejected', 'Duplicate', 'Recycled'];
             nearFuture = ['Assigned', 'In Process', , 'Pending Input', ''];
 
             view.tileVisualIndicator = {
