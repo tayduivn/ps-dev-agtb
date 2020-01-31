@@ -21,7 +21,7 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
 
         var cfgModel = new Backbone.Model({
             is_setup: 1,
-            timeperiod_start_date: '01/01/2014'
+            timeperiod_start_date: '2014-01-01'
         });
 
         context.set({
@@ -72,7 +72,7 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
 
         it('should set this.tpStartDate', function() {
             view.initialize(options);
-            expect(view.tpStartDate).toEqual(app.date('01/01/2014', 'MM/DD/YYYY'));
+            expect(view.tpStartDate).toEqual(app.date('2014-01-01'));
         });
     });
 
@@ -97,7 +97,7 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
 
         describe('if tp start date is 01/01/yyyy', function() {
             it('should call removeFiscalYearField if this.fiscalYearField has rendered', function() {
-                options.context.get('model').set('timeperiod_start_date', '01/01/2014');
+                options.context.get('model').set('timeperiod_start_date', '2014-01-01');
                 view.initialize(options);
                 // setting to true instead of creating a field
                 view.fiscalYearField = true;
@@ -107,7 +107,7 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
             });
 
             it('should not call removeFiscalYearField if this.fiscalYearField is undefined', function() {
-                options.context.get('model').set('timeperiod_start_date', '01/01/2014');
+                options.context.get('model').set('timeperiod_start_date', '2014-01-01');
                 view.initialize(options);
                 view.checkFiscalYearField();
                 expect(view.addFiscalYearField).not.toHaveBeenCalled(' -- addFiscalYearField');
@@ -116,7 +116,7 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
         });
 
         it('if tp start date is not 01/01/yyyy, call addFiscalYearField', function() {
-            options.context.get('model').set('timeperiod_start_date', '02/02/2014');
+            options.context.get('model').set('timeperiod_start_date', '2014-02-02');
             view.initialize(options);
             view.checkFiscalYearField();
             expect(view.addFiscalYearField).toHaveBeenCalled(' -- addFiscalYearField');
@@ -142,7 +142,7 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
                 };
             });
 
-            view.model.set('timeperiod_start_date', '02/02/2014');
+            view.model.set('timeperiod_start_date', '2014-02-02');
             expect(view.checkFiscalYearField).toHaveBeenCalled(' -- checkFiscalYearField');
             expect(view.updateTitle).toHaveBeenCalled(' -- updateTitle');
         });
