@@ -42,12 +42,13 @@ export default class TileViewSettings extends DrawerLayout {
                 }
             },
             move: {
+                $: '[data-modulename={{moduleName}}]',
                 // Source tile to move
                 source: '[data-columnname={{from_list}}] li[data-headervalue="{{source}}"]',
                 // Empty destination list
-                toEmptyList: '[data-modulename={{moduleName}}] [data-columnname={{to_list}}]',
+                toEmptyList: '[data-columnname={{to_list}}]',
                 // Destination list with at least one item present
-                to: '[data-modulename={{moduleName}}] [data-columnname={{to_list}}] li:nth-child({{index}})',
+                to: '[data-columnname={{to_list}}] li:nth-child({{index}})',
             },
         });
 
@@ -119,25 +120,25 @@ export default class TileViewSettings extends DrawerLayout {
     }
 
     /**
-     * Drag-n-drop tile block between 'Available Values' and 'Hidden Values' lists in Tile View Settings > Header values section
+     * Drag-n-drop tile block between 'Available Values' and 'Hidden Values' lists or
+     * re-arrange tiles in Tile View Settings > Header values section
      *
      * @param {string} moduleName
      * @param {string} source item to move
      * @param {string} to_list
      * @param {string} index index of the position to move the tile block to in Tile View settings
-      */
+     */
     public async moveItem(moduleName: string, source: string, to_list: string, index:string): Promise<void> {
-
 
         // Initialize source list and build selectorSource
         let from_list = 'white_list';
-        let selectorSource = this.$('move.source', {source, from_list});
+        let selectorSource = this.$('move.source', {moduleName, source, from_list});
 
         // Check if such selector source exists and if not, correct the 'from_list' and rebuild selectorSource
         let flag: boolean = await this.driver.isElementExist(selectorSource);
         if (!flag) {
             from_list = 'black_list';
-            selectorSource = this.$('move.source', {source, from_list});
+            selectorSource = this.$('move.source', {moduleName, source, from_list});
         }
 
         // Index equals to zero represents the case when black or white list is empty and does not have any tiles yet
@@ -168,7 +169,7 @@ export default class TileViewSettings extends DrawerLayout {
                 // In case of source and destination lists are the same calculate yOffset based on the index
                 // Otherwise, set zero  offset
                 if ( from_list === to_list ) {
-                    let curColumnIndex = await this.currentColumnIndex(source, from_list);
+                    let curColumnIndex = await this.currentColumnIndex(moduleName, source, from_list);
                     let yOffset = (curColumnIndex > Number(index)) ? -15 : 15;
                     await driver.moveTo(null, 30, yOffset);
                 } else {
@@ -192,10 +193,10 @@ export default class TileViewSettings extends DrawerLayout {
      * @param {string} from_list - original list to move item from
      * @return {number}
      */
-    private async currentColumnIndex(source: string, from_list: string): Promise<number> {
+    private async currentColumnIndex(moduleName: string, source: string, from_list: string): Promise<number> {
 
         for (let curIndex: number = 1; curIndex < 25; curIndex++) {
-            let selectorSource = this.$('move.source', {source, from_list}) + `:nth-child(${curIndex})`;
+            let selectorSource = this.$('move.source', {moduleName, source, from_list}) + `:nth-child(${curIndex})`;
             if ( await this.driver.isElementExist(selectorSource)) {
                 return curIndex;
             }

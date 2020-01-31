@@ -137,14 +137,15 @@ When(/^I show "(Cases|Opportunities|Tasks)" module in (#\S+) view with the follo
     }, {waitForApp: true});
 
 /**
- * Activate or disable columns by drag-n-drop items between white and black lists in Tile View settings
+ * Activate or disable columns by drag-n-drop list items between white and black lists or re-arrange
+ * column order in Tile View settings
  *
- *      @example
- *      When I drag-n-drop column header items on "Cases" module in #TileViewSettings view:
- *          | sourceItem | destination |
- *          | New        | black_list  |
- *          | Closed     | black_list  |
- *          | Rejected   | black_list  |
+ *   @example
+ *   When I drag-n-drop column header items on "Cases" module in #TileViewSettings view:
+ *       | sourceItem | destination | position |
+ *       | New        | black_list  |   0      |
+ *       | Closed     | black_list  |   1      |
+ *       | Rejected   | black_list  |   2      |
  */
 When(/^I drag-n-drop column header items on "(Cases|Opportunities|Tasks)" module in (#\S+) view:$/,
     async function (moduleName: string, view: TileViewSettings, data: TableDefinition) {
@@ -183,11 +184,9 @@ When(/^I drag-n-drop column header items on "(Cases|Opportunities|Tasks)" module
 
 /**
  *  Drag and drop tile from column to column in Tile View
- *  Warning!!! This step definition does not work
  *
  *  @example
- *   When I drag *Opp_1 tile to "Prospecting" column in #OpportunitiesPipelineView view
- *
+ *  When I drag *Opp_1 tile to "Prospecting" column in #OpportunitiesPipelineView view
  */
 When(/^I drag (\*[a-zA-Z](?:\w|\S)*) tile to "(\w+\s?\w+)" column in (#\S+) view$/,
     async function (record: { id: string }, columnName: string, view: any) {

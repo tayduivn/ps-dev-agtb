@@ -38,15 +38,15 @@ Feature: Tile View feature
 
     # Verify column headers in Pipeline By Stage tab
     Then I verify pipeline column headers in #OpportunitiesPipelineView view
-      | value                | columnIndex |
-      | Prospecting          | 1           |
-      | Qualification        | 2           |
-      | Needs Analysis       | 3           |
-      | Value Proposition    | 4           |
-      | Id. Decision Makers  | 5           |
-      | Perception Analysis  | 6           |
-      | Proposal/Price Quote | 7           |
-      | Negotiation/Review   | 8           |
+      | value                | position |
+      | Prospecting          | 1        |
+      | Qualification        | 2        |
+      | Value Proposition    | 3        |
+      | Id. Decision Makers  | 4        |
+      | Needs Analysis       | 5        |
+      | Perception Analysis  | 6        |
+      | Proposal/Price Quote | 7        |
+      | Negotiation/Review   | 8        |
 
     # Create New opportunity while in pipeline view
     When I click pipelineCreate button on #OpportunitiesList header
@@ -177,13 +177,13 @@ Feature: Tile View feature
 
     # Verify column headers in Pipeline By Stage tab
     Then I verify pipeline column headers in #CasesPipelineView view
-      | value         | columnIndex |
-      | New           | 1           |
-      | Assigned      | 2           |
-      | Closed        | 3           |
-      | Pending Input | 4           |
-      | Rejected      | 5           |
-      | Duplicate     | 6           |
+      | value         | position |
+      | New           | 1        |
+      | Assigned      | 2        |
+      | Closed        | 3        |
+      | Pending Input | 4        |
+      | Rejected      | 5        |
+      | Duplicate     | 6        |
 
     # Create New Case while in Tile View
     When I click pipelineCreate button on #CasesList header
@@ -249,12 +249,12 @@ Feature: Tile View feature
 
     # Verify column headers in Pipeline By Stage tab
     Then I verify pipeline column headers in #TasksPipelineView view
-      | value         | columnIndex |
-      | Not Started   | 1           |
-      | In Progress   | 2           |
-      | Completed     | 3           |
-      | Pending Input | 4           |
-      | Deferred      | 5           |
+      | value         | position |
+      | Not Started   | 1        |
+      | In Progress   | 2        |
+      | Completed     | 3        |
+      | Pending Input | 4        |
+      | Deferred      | 5        |
 
     # Create New Task while in Tile View
     When I click pipelineCreate button on #TasksList header
@@ -317,13 +317,13 @@ Feature: Tile View feature
 
     # Verify column headers in Pipeline By Stage tab
     Then I verify pipeline column headers in #LeadsPipelineView view
-      | value      | columnIndex |
-      | New        | 1           |
-      | Assigned   | 2           |
-      | In Process | 3           |
-      | Converted  | 4           |
-      | Recycled   | 5           |
-      | Dead       | 6           |
+      | value      | position |
+      | New        | 1        |
+      | Assigned   | 2        |
+      | In Process | 3        |
+      | Converted  | 4        |
+      | Recycled   | 5        |
+      | Dead       | 6        |
 
     # Create New Lead while in Tile View
     When I click pipelineCreate button on #LeadsList header

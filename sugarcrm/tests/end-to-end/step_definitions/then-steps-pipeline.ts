@@ -46,7 +46,7 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) tile field values in (#[a-zA-Z](?:\w|\S)*
                 value = await listItem.getTileFieldValue(i);
             }
 
-            if (value !== expectedValue ) {
+            if (value !== expectedValue) {
                 errors.push(
                     [
                         `Expected Value: `,
@@ -85,8 +85,8 @@ Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are (not )?under "
 
         let uid = inputIDs.slice(1, inputIDs.length - 1).split(',');
 
-        if (columnName.search('now') !== -1 ) {
-            columnName =  seedbed.support.fixDateInput(columnName, "MMMM YYYY");
+        if (columnName.search('now') !== -1) {
+            columnName = seedbed.support.fixDateInput(columnName, "MMMM YYYY");
         }
 
         for (let i = 0; i < recordIds.length; i++) {
@@ -101,7 +101,7 @@ Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are (not )?under "
                         `is expected but not found under the '${columnName}' column in Tile View\n`,
                     ].join('\n')
                 );
-            } else if ( (!_.isEmpty(not)) && value === true) {
+            } else if ((!_.isEmpty(not)) && value === true) {
                 errors.push(
                     [
                         `The record '${uid[i]}'`,
@@ -137,7 +137,7 @@ Then(/I verify (\*[a-zA-Z](?:\w|\S)*) tile delete button state in (#[a-zA-Z](?:\
 
         let errors = [];
         let row = data.rows()[0];
-        let expectedValue  = row[0];
+        let expectedValue = row[0];
 
         if (data.hashes.length > 1) {
             throw new Error('One line data table entry is expected');
@@ -174,13 +174,13 @@ Then(/I verify (\*[a-zA-Z](?:\w|\S)*) tile delete button state in (#[a-zA-Z](?:\
  *
  *  @example
  *  Then I verify pipeline column headers in #LeadsPipelineView view
- *      | value      |  columnNumber |
- *      | New        |  1            |
- *      | Assigned   |  2            |
- *      | In Process |  3            |
- *      | Converted  |  4            |
- *      | Recycled   |  5            |
- *      | Dead       |  6            |
+ *      | value      |  position |
+ *      | New        |  1        |
+ *      | Assigned   |  2        |
+ *      | In Process |  3        |
+ *      | Converted  |  4        |
+ *      | Recycled   |  5        |
+ *      | Dead       |  6        |
  */
 Then(/^I verify pipeline column headers in (#\S+) view$/,
     async function (view: pipelineView, data: TableDefinition) {
