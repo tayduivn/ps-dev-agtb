@@ -129,7 +129,7 @@
         }
 
         if (catalogUrl && catalogUrl !== '') {
-            catalogUrl = catalogUrl.match(/^.+\:\/\/[^\/]+/)[0] + '/catalog/authorized';
+            catalogUrl = catalogUrl.match(/^.+\:\/\/[^\/]+/)[0] + '/catalog?isAuthorized=true';
 
             var getCatalog = function(onSuccess, onError, onLogin) {
                 $.ajax({
