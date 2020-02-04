@@ -124,9 +124,9 @@ class VisualPipelineDefaults
                     'sales_stage' => array(
                         'Prospecting' =>  'Prospecting',
                         'Qualification' => 'Qualification',
+                        'Needs Analysis' => 'Needs Analysis',
                         'Value Proposition' => 'Value Proposition',
                         'Id. Decision Makers' => 'Id. Decision Makers',
-                        'Needs Analysis' => 'Needs Analysis',
                         'Perception Analysis' => 'Perception Analysis',
                         'Proposal/Price Quote' => 'Proposal/Price Quote',
                         'Negotiation/Review' => 'Negotiation/Review',
