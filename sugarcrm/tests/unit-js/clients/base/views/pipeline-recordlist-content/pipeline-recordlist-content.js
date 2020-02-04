@@ -79,6 +79,7 @@ describe('Base.Views.PipelineRecordlistContent', function() {
 
         sinon.collection.stub(view.context, 'on', function() {});
         sinon.collection.stub(view, '_super', function() {});
+        sinon.collection.stub(app.metadata, 'getView').returns({});
     });
 
     afterEach(function() {

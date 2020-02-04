@@ -62,7 +62,11 @@
 
         this.startDate = app.date().format('YYYY-MM-DD');
         this.pipelineConfig = app.metadata.getModule('VisualPipeline', 'config');
-
+        this.meta = _.extend(
+            this.meta || {},
+            app.metadata.getView(null, 'pipeline-recordlist-content'),
+            app.metadata.getView(this.module, 'pipeline-recordlist-content')
+        );
         this.pipelineFilters = [];
         this.hiddenHeaderValues = [];
         this.action = 'list';
