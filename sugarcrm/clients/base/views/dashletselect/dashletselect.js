@@ -175,13 +175,21 @@
         var parentModule = isMultiLine ? this.context.parent.get('module') : app.controller.context.get('module');
         // show record view dashlets for 'multi-line' dashboards
         var parentView = isMultiLine ? 'record' : app.controller.context.get('layout');
-
-        return _.chain(dashlets)
+        var externalAppDashlet;
+        var filteredDashlets = _.chain(dashlets)
             .filter(function(dashlet) {
                 var filter = dashlet.filter;
                 // if there is no filter for this dashlet, include it
                 if (_.isUndefined(filter)) {
                     return true;
+                }
+
+                if (dashlet.type === 'external-app-dashlet') {
+                    // save a reference to the external-app-dashlet def
+                    // since we're already looping over them
+                    externalAppDashlet = dashlet;
+                    // don't include external-app-dashlet in the list of dashlets yet
+                    return false;
                 }
 
                 var filterModules = filter.module || [parentModule];
@@ -215,6 +223,18 @@
                 return inModuleAndView && !blacklisted;
             })
             .value();
+
+        if (app.config.catalogEnabled) {
+            // only do this check if Catalog is enabled
+            var dashletView = parentView === 'records' ? 'list-dashlet' : 'record-dashlet';
+            var dashletMeta = app.metadata.getLayout(parentModule, dashletView);
+            if (dashletMeta) {
+                // if there is a Sugar App already set to load in this module's list or record dashlet spot
+                // add the external-app-dashlet def to the filteredDashlets
+                filteredDashlets.push(externalAppDashlet);
+            }
+        }
+        return filteredDashlets;
     },
 
     /**

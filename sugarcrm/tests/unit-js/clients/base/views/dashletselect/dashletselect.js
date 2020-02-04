@@ -208,6 +208,53 @@ describe('Base.View.Dashletselect', function() {
         });
     });
 
+    describe('getFilteredList', function() {
+        var dashlets;
+        var results;
+
+        beforeEach(function() {
+            sinon.collection.stub(app.controller.context, 'get', function(arg) {
+                if (arg === 'module') {
+                    return 'Contacts';
+                } else {
+                    return 'record';
+                }
+            });
+            dashlets = [{
+                type: 'dashablelist',
+                label: 'LBL_D1',
+                filter: []
+            }, {
+                type: 'external-app-dashlet',
+                label: 'LBL_D2',
+                filter: []
+            }];
+        });
+
+        afterEach(function() {
+            dashlets = null;
+            results = null;
+        });
+
+        it('should remove external-app-dashlet by default', function() {
+            results = view.getFilteredList(dashlets);
+
+            expect(results.length).toBe(1);
+        });
+
+        it('should add external-app-dashlet if catalog is enabled', function() {
+            app.config.catalogEnabled = true;
+            sinon.collection.stub(app.metadata, 'getLayout', function() {
+                return {
+                    components: []
+                };
+            });
+            results = view.getFilteredList(dashlets);
+
+            expect(results.length).toBe(2);
+        });
+    });
+
     describe('selectDashlet', function() {
         var loadSpy;
         var metadata;

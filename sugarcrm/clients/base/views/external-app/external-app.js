@@ -11,7 +11,7 @@
 /**
  *
  * @class View.Views.Base.ExternalAppView
- * @alias SUGAR.App.view.views.BaseAppView
+ * @alias SUGAR.App.view.views.BaseExternalAppView
  * @extends View.View
  */
 ({
@@ -31,6 +31,11 @@
      */
     initialize: function(options) {
         singleSpa.start();
+
+        // if coming from external-app-dashlet, this will be set to true or false
+        // else it will be undefined. Either way, if undefined or true set to true, otherwise false.
+        this.allowApp = _.isUndefined(this.allowApp) || this.allowApp;
+
         this._super('initialize', arguments);
 
         // Creating Listeners for various Sugar Events.
@@ -80,7 +85,7 @@
 
     /**
      * Click handler that imports / loads the spa module that was clicked
-     * @private
+     * @protected
      */
     _onSugarAppLoad: function() {
         var serverInfo = app.metadata.getServerInfo();
@@ -110,14 +115,36 @@
                     }
                 }
 
-                this.parcelApp = mod;
-                //If we haven't been asked to render yet, don't force a render.
-                //If we have been rendered, mount the app into our element.
-                if (this.rendered) {
-                    this._mountApp();
+                if (this.allowApp) {
+                    // only if the app is allowed, continue loading it
+                    this.parcelApp = mod;
+                    //If we haven't been asked to render yet, don't force a render.
+                    //If we have been rendered, mount the app into our element.
+                    if (this.rendered) {
+                        this._mountApp();
+                    }
                 }
+
+            }.bind(this)).catch(function(e) {
+                if (!this.allowApp) {
+                    // catalog could not find the dashlet, and the service url failed
+                    this.errorCode = 'SVC-404';
+                    this.displayError();
+                }
+                System.delete(url);
             }.bind(this));
         }
+    },
+
+    /**
+     * Displays an error message with error code into the template
+     */
+    displayError: function() {
+        this.errorMsg = app.lang.get('LBL_SUGAR_APPS_DASHLET_CATALOG_ERROR', null, {
+            errorCode: this.errorCode
+        });
+        this.$el.empty();
+        this.$el.append(this.template(this));
     },
 
     /**
