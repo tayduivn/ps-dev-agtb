@@ -113,6 +113,7 @@ $dictionary['Product'] = array(
             'required' => false,
             'reportable' => false,
             'audited' => true,
+            'readonly' => true,
             'comment' => 'Account this product is associated with'
         ),
         'contact_id' => array(
@@ -742,6 +743,7 @@ $dictionary['Product'] = array(
             'table' => 'accounts',
             'module' => 'Accounts',
             'source' => 'non-db',
+            'readonly' => true,
         ),
         'emails' => array(
             'name' => 'emails',
