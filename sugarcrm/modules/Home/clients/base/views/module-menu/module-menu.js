@@ -72,7 +72,7 @@
      * @protected
      */
     _defaultSettings: {
-        dashboards: 20,
+        dashboards: 50,
         favorites: 3,
         recently_viewed: 10,
         recently_viewed_toggle: 3
