@@ -29,6 +29,7 @@ class CurrentUserApiTest extends TestCase
 
     public function tearDown()
     {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();
     }
@@ -65,6 +66,28 @@ class CurrentUserApiTest extends TestCase
         $result = $this->currentUserApiMock->shouldShowWizard();
         $this->assertFalse($result, "We do NOT show Wizard when user's preference 'ut' is truthy");
     }
+
+    /**
+     * Test Field Name Placement preference setting is retrieved from getUserPrefField_name_placement()
+     * @param string $placement
+     * @dataProvider getUserPrefFieldNamePlacementProvider
+     */
+    public function testGetUserPrefFieldNamePlacement(string $placement)
+    {
+        $current_user = SugarTestHelper::setUp('current_user', [true, true]);
+        $current_user->setPreference('field_name_placement', $placement, 0, 'global');
+        $result = $this->currentUserApiMock->getUserPrefField_name_placement($current_user);
+
+        $this->assertEquals($placement, $result['field_name_placement']);
+    }
+
+    public function getUserPrefFieldNamePlacementProvider()
+    {
+        return [
+            ['field_on_top'],
+            ['field_on_side'],
+        ];
+    }
 }
 
 class CurrentUserApiMock extends CurrentUserApi
@@ -72,5 +95,14 @@ class CurrentUserApiMock extends CurrentUserApi
     public function getBasicInfo()
     {
         return parent::getBasicUserInfo('base');
+    }
+
+    /**
+     * @param User $user Current User object
+     * @return array
+     */
+    public function getUserPrefField_name_placement($user)
+    {
+        return parent::getUserPrefField_name_placement($user);
     }
 }

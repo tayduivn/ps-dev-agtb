@@ -130,7 +130,6 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
                     'name' => 'PANEL_BODY',
                     'label' => 'PANEL_BODY',
                     'columns' => 2,
-                    'labelsOnTop' => 1,
                     'placeholders' => 1,
                     'fields' => array(
                         array(
@@ -194,7 +193,6 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
                     'name' => 'PANEL_BODY',
                     'label' => 'PANEL_BODY',
                     'columns' => 2,
-                    'labelsOnTop' => 1,
                     'placeholders' => 1,
                     'fields' => array(
                         array(
@@ -245,7 +243,6 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
                     'name' => 'PANEL_BODY',
                     'label' => 'PANEL_BODY',
                     'columns' => 2,
-                    'labelsOnTop' => 1,
                     'placeholders' => 1,
                     'fields' => array(
                         '',

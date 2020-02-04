@@ -1602,6 +1602,10 @@
                 panel.labels = true;
             }
 
+            if (_.isUndefined(panel.labelsOnTop)) {
+                panel.labelsOnTop = app.user.getPreference('field_name_placement') === 'field_on_top';
+            }
+
             if (_.isFunction(this.getGridBuilder)) {
                 var options = {
                         fields: panel.fields,

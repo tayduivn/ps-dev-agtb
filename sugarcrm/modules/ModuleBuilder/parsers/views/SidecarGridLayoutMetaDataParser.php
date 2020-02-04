@@ -404,7 +404,6 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 'name' => $panelName,
                 'label' => $panelName,
                 'columns' =>$panelColumns,
-                'labelsOnTop' => 1,
                 'placeholders' => 1
             );
 

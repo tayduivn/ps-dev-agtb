@@ -38,6 +38,7 @@ class CurrentUserApi extends SugarApi
         'shortcuts' => 'shortcuts',
         'reminder_time' => 'reminder_time',
         'email_reminder_time' => 'email_reminder_time',
+        'field_name_placement' => 'field_name_placement',
     );
 
     const TYPE_ADMIN = "admin";
@@ -672,6 +673,21 @@ class CurrentUserApi extends SugarApi
         $user_data['_hash'] = $current_user->getUserMDHash();
 
         return array('current_user' => $user_data);
+    }
+
+    /**
+     * Utility function to get the users preferred field name placement
+     *
+     * @param User $user Current User object
+     * @param string $category The category for the preference
+     * @return array
+     */
+    protected function getUserPrefField_name_placement(User $user, $category = 'global')
+    {
+        return [
+            'field_name_placement' =>
+            $user->getPreference('field_name_placement', $category) ?? 'field_on_top',
+        ];
     }
 
     /**

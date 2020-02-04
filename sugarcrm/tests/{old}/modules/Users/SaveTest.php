@@ -448,4 +448,23 @@ class SaveTest extends TestCase
             [['SUGAR_SERVE'], true],
         ];
     }
+
+    /**
+     * Test Field Name Placement preference is set
+     */
+    public function testSetFieldNamePlacementPref()
+    {
+        $current_user = SugarTestHelper::setUp('current_user', [true, true]);
+
+        $_POST['record'] = $current_user->id;
+        $_POST['field_name_placement'] = 'field_on_side';
+        include 'modules/Users/Save.php';
+
+        unset($_POST['record']);
+        unset($_POST['field_name_placement']);
+
+        $record = BeanFactory::retrieveBean('Users', $current_user->id, ['use_cache' => false]);
+
+        $this->assertEquals('field_on_side', $record->getPreference('field_name_placement'));
+    }
 }

@@ -372,6 +372,10 @@ if (!$focus->is_group && !$focus->portal_only) {
         // Make sure we're on the full form and not the QuickCreate.
         $focus->setPreference('use_real_names', 'off', 0, 'global');
     }
+    $field_name_placement = InputValidation::getService()->getValidInputPost('field_name_placement');
+    if (isset($field_name_placement)) {
+        $focus->setPreference('field_name_placement', $field_name_placement, 0, 'global');
+    }
 
     if (isset($_POST['mail_smtpauth_req'])) {
         $focus->setPreference('mail_smtpauth_req', $_POST['mail_smtpauth_req'], 0, 'global');

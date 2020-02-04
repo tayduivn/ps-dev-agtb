@@ -606,6 +606,17 @@ class UserViewHelper {
         $this->ss->assign('CHOOSER_SCRIPT','set_chooser();');
         $this->ss->assign('CHOOSE_WHICH', translate('LBL_CHOOSE_WHICH','Users'));
 
+        // Gets the translated preference. If it doesn't exist, use the translated LBL_ABOVE_FIELD_VALUE label.
+        $field_name_placement = $this->bean->getPreference('field_name_placement') ??
+            translate('LBL_ABOVE_FIELD_VALUE', 'Users');
+        $field_name_placement_options = [
+            'field_on_top' => translate('LBL_ABOVE_FIELD_VALUE', 'Users'),
+            'field_on_side' => translate('LBL_BESIDE_FIELD_VALUE', 'Users'),
+        ];
+        $this->ss->assign(
+            'FIELD_NAME_PLACEMENT',
+            get_select_options_with_id($field_name_placement_options, $field_name_placement)
+        );
     }
 
     protected function setupAdvancedTabLocaleSettings() {

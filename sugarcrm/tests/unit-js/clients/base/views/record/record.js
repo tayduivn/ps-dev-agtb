@@ -778,6 +778,30 @@ describe("Record View", function () {
 
             expect(_.isEmpty(actual)).toBe(true);
         });
+
+        using('different placements', [
+                {
+                    placement: 'field_on_top',
+                    returnValue: true,
+                },
+                {
+                    placement: 'field_on_side',
+                    returnValue: false,
+                },
+            ],
+            function(params) {
+                it('Should set the labelsOnTop attribute', function() {
+                    var meta = {
+                        panels: [{
+                            fields: ['description']
+                        }]
+                    };
+                    app.user.setPreference('field_name_placement', params.placement);
+                    view._buildGridsFromPanelsMetadata(meta.panels);
+                    expect(meta.panels[0].labelsOnTop).toEqual(params.returnValue);
+                });
+            }
+        );
     });
 
     describe('Switching to next and previous record', function () {

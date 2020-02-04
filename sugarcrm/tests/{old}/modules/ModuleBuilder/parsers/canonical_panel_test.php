@@ -22,7 +22,6 @@ $canonicals = array(
         'name' => 0,
         'label' => 0,
         'columns' => 2,
-        'labelsOnTop' => 1,
         'placeholders' => 1,
     )),
 
@@ -47,7 +46,6 @@ $canonicals = array(
         'name' => 0,
         'label' => '0',
         'columns' => 2,
-        'labelsOnTop' => 1,
         'placeholders' => 1,
     )),
 
@@ -74,7 +72,6 @@ $canonicals = array(
         'name' => 0,
         'label' => '0',
         'columns' => 2,
-        'labelsOnTop' => 1,
         'placeholders' => 1,
     )),
     array(array(
@@ -89,7 +86,6 @@ $canonicals = array(
         'name' => 0,
         'label' => '0',
         'columns' => 2,
-       'labelsOnTop' => 1,
         'placeholders' => 1,
     )),
     array(array(
@@ -100,7 +96,6 @@ $canonicals = array(
         'name' => 0,
         'label' => '0',
         'columns' => 2,
-        'labelsOnTop' => 1,
         'placeholders' => 1,
     )),
 // end

@@ -299,6 +299,10 @@ $mod_strings = array (
 
 	'LBL_RECEIVE_NOTIFICATIONS_TEXT'	=> 'Receive an email notification when a record is assigned to you.',
 	'LBL_RECEIVE_NOTIFICATIONS'			=> 'Notify on Assignment',
+    'LBL_FIELD_NAME_PLACEMENT_TEXT'     => 'Select how field names should be displayed on record views. Choose "Beside Field Value" for a more compact record view.',
+    'LBL_FIELD_NAME_PLACEMENT'          => 'Field Name Placement',
+    'LBL_ABOVE_FIELD_VALUE'             => 'Above Field Value',
+    'LBL_BESIDE_FIELD_VALUE'            => 'Beside Field Value',
 	'LBL_REGISTER'                      => 'New user? Please register',
 	'LBL_REGULAR_USER'                  => 'Regular User',
     'LBL_LICENSE_TYPE'                  => 'License Type',
