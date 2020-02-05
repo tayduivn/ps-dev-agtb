@@ -41,9 +41,9 @@ Feature: Tile View feature
       | value                | position |
       | Prospecting          | 1        |
       | Qualification        | 2        |
-      | Value Proposition    | 3        |
-      | Id. Decision Makers  | 4        |
-      | Needs Analysis       | 5        |
+      | Needs Analysis       | 3        |
+      | Value Proposition    | 4        |
+      | Id. Decision Makers  | 5        |
       | Perception Analysis  | 6        |
       | Proposal/Price Quote | 7        |
       | Negotiation/Review   | 8        |
