@@ -130,7 +130,7 @@ describe('Base.Field.CollectionCount', function() {
 
             field.collection.length = 20;
             field.collection.total = 500;
-            field.countTotal = 500;
+            field.lastTotalCount = 500;
             field.collection.dataFetched = true;
 
             field.collection.trigger('reset');
@@ -140,7 +140,7 @@ describe('Base.Field.CollectionCount', function() {
 
             field.collection.length = 20;
             field.collection.total = null;
-            field.countTotal = undefined;
+            field.lastTotalCount = undefined;
             field.collection.next_offset = -1;
 
             field.collection.trigger('reset');
