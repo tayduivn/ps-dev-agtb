@@ -100,9 +100,9 @@
 
         // Override default properties with passed-in values.
         length = !_.isUndefined(options.length) ? options.length : length;
-        if (length === 0 && this.collection.total > this.collection.getOption().limit) {
+        if (length === 0 && this.collection.total > this.collection.getOption('limit')) {
             // Having a total greater than 0 means that the length of records shall not be 0
-            length = this.collection.getOption().limit;
+            length = this.collection.getOption('limit');
         }
         fullyFetched = !_.isUndefined(options.hasMore) ? !options.hasMore : fullyFetched;
 
@@ -113,15 +113,15 @@
         var tplKey = 'TPL_LIST_HEADER_COUNT_TOTAL';
         var context = {
             num: length,
-            total: this.countTotal
+            total: this.lastTotalCount
         };
 
         if (fullyFetched) {
             tplKey = 'TPL_LIST_HEADER_COUNT';
         } else if (!_.isNull(this.collection.total)) {
             context.total = this.collection.total;
-            this.countTotal = context.total;
-        } else if (!this.countTotal) {
+            this.lastTotalCount = context.total;
+        } else if (!this.lastTotalCount) {
             var tooltipLabel = app.lang.get('TPL_LIST_HEADER_COUNT_TOOLTIP', this.module);
             // FIXME: When SC-3681 is ready, we will no longer have the need for
             // this link, since the total will be displayed by default.
@@ -153,10 +153,10 @@
 
         this.listenTo(this.collection, 'reset', function() {
             if (!this.disposed) {
-                if (this.countTotal) {
+                if (this.lastTotalCount) {
                     var successFn = _.bind(function(total) {
                         if (!this.disposed) {
-                            this.countTotal = total;
+                            this.lastTotalCount = total;
                             this.updateCount();
                         }
                     }, this);
