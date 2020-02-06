@@ -32,11 +32,7 @@
         }
 
         this.collection.fetchTotal({
-            success: _.bind(function() {
-                if (!this.disposed) {
-                    this.updateCount();
-                }
-            }, this),
+            success: _.bind(this.updateCount, this),
             complete: function() {
                 app.alert.dismiss('fetch_count');
             }
@@ -54,8 +50,10 @@
      *   fetched or paginated, `false` if we've fetched everything.
      */
     updateCount: function(options) {
-        this._setCountLabel(options);
-        this.render();
+        if (!this.disposed) {
+            this._setCountLabel(options);
+            this.render();
+        }
     },
 
     /**
@@ -113,15 +111,18 @@
         var tplKey = 'TPL_LIST_HEADER_COUNT_TOTAL';
         var context = {
             num: length,
-            total: this.lastTotalCount
+            total: this.cachedCount
         };
 
         if (fullyFetched) {
             tplKey = 'TPL_LIST_HEADER_COUNT';
         } else if (!_.isNull(this.collection.total)) {
+            // Save the total on the field - this is the primary save point.
+            this.cachedCount = this.collection.total;
+            // Since we have a total we display it through the context.
             context.total = this.collection.total;
-            this.lastTotalCount = context.total;
-        } else if (!this.lastTotalCount) {
+        } else if (!this.cachedCount) {
+            // Initial load case - we did not have a total for the current collection before.
             var tooltipLabel = app.lang.get('TPL_LIST_HEADER_COUNT_TOOLTIP', this.module);
             // FIXME: When SC-3681 is ready, we will no longer have the need for
             // this link, since the total will be displayed by default.
@@ -151,19 +152,18 @@
             return;
         }
 
+        this.listenTo(this.collection, 'remove', this.updateCount);
+
         this.listenTo(this.collection, 'reset', function() {
-            if (!this.disposed) {
-                if (this.lastTotalCount) {
-                    var successFn = _.bind(function(total) {
-                        if (!this.disposed) {
-                            this.lastTotalCount = total;
-                            this.updateCount();
-                        }
-                    }, this);
-                    this.collection.fetchTotal({success: successFn});
-                } else {
+            if (!this.disposed && this.cachedCount) {
+                var successFn = _.bind(function(total) {
+                    // Update the cached total on reset action.
+                    this.cachedCount = total;
                     this.updateCount();
-                }
+                }, this);
+                this.collection.fetchTotal({success: successFn});
+            } else {
+                this.updateCount();
             }
         });
 
@@ -172,10 +172,9 @@
                 this.fetchCount();
             }
         });
+
         this.listenTo(this.context, 'refresh:count', function(hasAmount, properties) {
-            if (!this.disposed) {
-                this.updateCount(properties);
-            }
+            this.updateCount(properties);
         });
     }
 })
