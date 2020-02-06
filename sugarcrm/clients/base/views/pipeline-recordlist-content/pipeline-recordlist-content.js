@@ -623,7 +623,7 @@
         var sideDrawer = this._getSideDrawer();
         if (sideDrawer) {
             sideDrawer.showComponent({
-                layout: 'record',
+                layout: 'tile-validation-drawer',
                 context: {
                     create: true,
                     skipRouting: true,
@@ -678,7 +678,7 @@
         if (!isValid) {
             var self = this;
             app.drawer.open({
-                layout: 'record',
+                layout: 'tile-validation-drawer',
                 context: {
                     create: true,
                     skipRouting: true,
