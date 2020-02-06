@@ -83,6 +83,13 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                     'acl_action' => 'create',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'acl_action' => 'view',
+                ),
+                array(
                     'type' => 'divider',
                 ),
                 array(
