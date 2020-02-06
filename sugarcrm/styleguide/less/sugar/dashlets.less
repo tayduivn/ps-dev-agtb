@@ -397,7 +397,7 @@
     h4 {
       font-weight: bold;
       margin: 0 0 0 -10px;
-      color: #759eef;
+      color: @ocean;
     }
 
     .dnb-inner-nav {
@@ -736,7 +736,7 @@
       .block-footer {
         text-align: center;
         padding: 0;
-        border-top: 1px solid #ddd;
+        border-top: 1px solid @grayLighter;
 
         ul {
           box-shadow: none;
@@ -800,7 +800,7 @@
 
               &:active {
                 background-color: @btnSecondaryBackgroundActive;
-                color: #094268;
+                color: @night;
               }
 
               &.disabled {
@@ -813,7 +813,7 @@
           //Previous button
           .nav-previous {
             padding: 3px 6px;
-            border: 1px solid #ddd;
+            border: 1px solid @grayLighter;
             border-top-left-radius: 5px;
             border-bottom-left-radius: 5px;
           }
@@ -821,7 +821,7 @@
           //Next button
           .nav-next {
             padding: 3px 6px;
-            border: 1px solid #ddd;
+            border: 1px solid @grayLighter;
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
           }
@@ -900,7 +900,7 @@
     margin-right: 20px;
 
     .image_rounded img {
-      border: 2px solid rgba(0, 0, 0, 0.4);
+      border: 2px solid fade(@black, 40%);
       border-radius: 23px;
     }
   }
@@ -1012,7 +1012,7 @@
       border-bottom: @borderWidget;
 
       &.expanded {
-        background-color: #eaf4fd;
+        background-color: @grayLighter;
       }
 
       .content-col {

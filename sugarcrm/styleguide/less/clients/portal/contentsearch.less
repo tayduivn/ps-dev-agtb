@@ -17,7 +17,7 @@
     box-shadow: none;
     border-radius: 0;
     padding: 25px 0;
-    background-color: transparent;
+    background-color: @transparent;
   }
 
   .dashlet-content {
@@ -33,7 +33,7 @@
 
 .contentsearchdashlet {
   padding: 30px;
-  background-color: rgba(198, 231, 253, 0.75);
+  background-color: fade(@ocean, 75%);
   margin-top: 70px;
 
   .record-cell {
@@ -65,7 +65,7 @@
   background-color: @dropdownBackground;
   background-clip: padding-box;
   border-radius: 3px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid fade(@black, 10%);
   max-width: 539px;
   width: 100%;
 
@@ -89,7 +89,7 @@
 }
 
 .contentsearch-footer {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid fade(@black, 10%);
   background-color: @dropdownLinkBackgroundHover;
   text-align: center;
 

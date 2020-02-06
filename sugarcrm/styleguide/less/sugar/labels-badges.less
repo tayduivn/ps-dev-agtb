@@ -14,7 +14,7 @@
   color: @white;
   vertical-align: baseline;
   white-space: nowrap;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  text-shadow: 0 -1px 0 fade(@black, 25%);
   background-color: @grayLight;
 }
 // Set unique padding and border-radius
@@ -51,20 +51,35 @@ a {
 .label,
 .badge {
   // Important (red)
-  &-important { background-color: @errorText; }
-  &-important[href] { background-color: darken(@errorText, 10%); }
+  &-important {
+    background-color: @errorBackground;
+    color: @errorText;
+  }
+  &-important[href] { background-color: darken(@errorBackground, 10%); }
   // Warnings (orange)
-  &-warning { background-color: @orange; }
-  &-warning[href] { background-color: darken(@orange, 10%); }
+  &-warning {
+    background-color: @warningBackground;
+    color: @warningText;
+  }
+  &-warning[href] { background-color: darken(@warningBackground, 10%); }
   // Success (green)
-  &-success { background-color: @successText; }
-  &-success[href] { background-color: darken(@successText, 10%); }
+  &-success {
+    background-color: @successBackground;
+    color: @successText;
+  }
+  &-success[href] { background-color: darken(@successBackground, 10%); }
   // Info (turquoise)
-  &-info { background-color: @infoText; }
+  &-info {
+    background-color: @infoBackground;
+    color: @infoText;
+  }
   &-info[href] { background-color: darken(@infoText, 10%); }
   // Inverse (black)
-  &-inverse { background-color: @grayDark; }
-  &-inverse[href] { background-color: darken(@grayDark, 10%); }
+  &-inverse {
+    background-color: @grayLight;
+    color: @grayDark;
+  }
+  &-inverse[href] { background-color: darken(@grayLight, 10%); }
 }
 
 // Quick fix for labels/badges in buttons
@@ -104,7 +119,6 @@ a.label,
 a > .label {
   font-weight: 500;
   text-shadow: none;
-  color: @white;
   text-decoration: none;
   cursor: pointer;
 }
@@ -127,7 +141,7 @@ a > .label {
   .inactive [class*="label-"],
   [data-type="follow"] .label,
   [data-type="follow"] .label:hover {
-  background-color: transparent;
+  background-color: @transparent;
   border: 1px solid @gray;
   color: @grayDark;
   font-weight: 500;
@@ -146,7 +160,7 @@ a > .label {
 [data-type="follow"],
 [data-type="badge"] {
   .label:not([class*="label-"]) {
-    background: transparent;
+    background: @transparent;
     border-color: @gray;
     color: @grayDark;
     font-weight: 500;
@@ -236,28 +250,31 @@ a > .label {
   &-important {
     background-color: @errorBackground;
     border: 1px solid @errorBackground;
+    color: @errorText;
   }
 
   &-warning {
     background-color: @warningBackground;
-    color: @warningAlertText;
-    border: 1px solid @warningBorder;
+    color: @warningText;
+    border: 1px solid @warningBackground;
   }
 
   &-pending {
-    background-color: transparent;
-    color: @grayDark;
-    border: 1px solid @gray;
+    background-color: @infoBackground;
+    border: 1px solid @infoBackground;
+    color: @infoText;
   }
 
   &-success {
     background-color: @successBackground;
     border: 1px solid @successBackground;
+    color: @successText;
   }
 
   &-info {
     background-color: @infoBackground;
     border: 1px solid @infoBackground;
+    color: @infoText;
   }
 
   &-inverse,

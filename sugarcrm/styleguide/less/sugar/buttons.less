@@ -14,7 +14,7 @@
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
-  .buttonBackground(@btnBackground, @btnBackgroundHighlight, @grayDark, 0 1px 1px rgba(255,255,255,.75));
+  .buttonBackground(@btnBackground, @btnBackgroundHighlight, @grayDark, 0 1px 1px fade(@white, 75%));
 
   border-radius: @baseBorderRadius;
 
@@ -46,7 +46,7 @@
   &:active {
     background-image: none;
     outline: 0;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px fade(@black, 15%), 0 1px 2px fade(@black, 5%);
   }
 
   // Disabled state
@@ -130,7 +130,7 @@ input[type="button"] {
 .btn-success.active,
 .btn-info.active,
 .btn-inverse.active {
-  color: rgba(255, 255, 255, 0.75);
+  color: fade(@white, 75%);
 }
 
 .btn-primary {
@@ -192,7 +192,7 @@ input[type="button"] {
   font-size: @fontSizeSmall;
   box-shadow: none;
   margin-left: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid fade(@black, 10%);
   text-shadow: none;
 
   /* keeps button widths with icons the same regardless of icon width */
@@ -383,6 +383,12 @@ input[type="button"] {
       color: darken(@yellow, 70%);
     }
   }
+}
+
+.btn-danger,
+.btn-danger:hover,
+.btn-danger:active {
+  color: @darkRed !important;
 }
 
 .btn.btn-input-addon {
