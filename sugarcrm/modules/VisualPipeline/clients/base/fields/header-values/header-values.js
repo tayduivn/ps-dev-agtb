@@ -44,7 +44,7 @@
         var tableHeader = this.model.get('table_header');
         var module = this.model.get('enabled_module');
         var fields = app.metadata.getModule(module, 'fields');
-        var translated = app.lang.getAppListStrings(fields[tableHeader].options);
+        var translated = app.lang.getAppListStrings((fields[tableHeader] || {}).options);
 
         if (!_.isEmpty(tableHeader) && _.isEmpty(translated)) {
             // call enum api

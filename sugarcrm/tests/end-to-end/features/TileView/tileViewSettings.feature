@@ -13,7 +13,7 @@ Feature: Tile View Settings
   Background:
     Given I am logged in
 
-  @tile_view_settings @opportunities_disable_tile_view
+  @tile_view_settings @opportunities_disable_tile_view @pr
   Scenario: Tile View Settings > Disable/Enable Tile View for Opportunities > Check Tile View button
 
     Given Accounts records exist:
@@ -32,7 +32,7 @@ Feature: Tile View Settings
     # Enable Tile View for opportunities module
     When I show "Opportunities" module in #TileViewSettings view with the following settings:
       | table_header | tile_options_header | tile_options_body                                      | records_per_column |
-      | Sales Stage  | Name                | Account Name, Expected Close Date, Likely, Lead Source | 15                 |
+      | Sales Stage  | Opportunity Name    | Account Name, Expected Close Date, Likely, Lead Source | 15                 |
 
     # Check state of the Tile View button
     When I choose Opportunities in modules menu
