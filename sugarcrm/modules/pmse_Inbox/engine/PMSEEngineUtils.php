@@ -76,7 +76,6 @@ class PMSEEngineUtils
             'user_hash',
             'portal_app',
             'portal_active',
-            'portal_name',
             'password',
             'is_admin',
         ),
@@ -93,10 +92,12 @@ class PMSEEngineUtils
             'date_entered',
             'date_modified',
             'primary_contact_name',
+            'portal_name',
         ),
         // list for BR conditions (read)
         'BRR' => array(
             'primary_contact_name',
+            'portal_name',
         ),
         // Add related record Activity item in Process Definitions
         'AC' => array(
@@ -105,17 +106,20 @@ class PMSEEngineUtils
             'viewcount',
             'created_by',
             'modified_user_id',
+            'portal_name',
         ),
         // Process Definitions
         'PD' => array(
             'kbdocument_body',
             'revision',
             'viewcount',
+            'portal_name',
         ),
         'GT' => array(
             'kbdocument_body',
             'revision',
             'viewcount',
+            'portal_name',
         ),
         // Change field action... this used to be the same as Add Related Record
         // but we needed different things from this
@@ -130,7 +134,13 @@ class PMSEEngineUtils
             'modified_user_id',
             'date_entered',
             'date_modified',
+            'portal_name',
         ),
+        // Readonly and Required fields in Activity
+        // Locked fields in Process Definition
+        'RR' => [
+            'portal_name',
+        ],
     );
 
     /**
@@ -188,7 +198,7 @@ class PMSEEngineUtils
         'All' => array('created_by', 'modified_user_id', 'primary_contact_name'),
         'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'BRR' => array('assigned_user_id', 'email1', 'outlook_id'),
-        'ET' => array('email1'),
+        'ET' => array('email1', 'portal_name'),
         'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'CF' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'RR' => array(),
