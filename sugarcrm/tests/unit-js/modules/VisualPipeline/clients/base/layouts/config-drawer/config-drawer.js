@@ -40,6 +40,14 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                     name: {
                         type: 'name'
                     },
+                    accept_status_name: {
+                        massupdate: false,
+                        name: 'accept_status_name',
+                        type: 'enum',
+                        source: 'non-db',
+                        vname: 'LBL_LIST_ACCEPT_STATUS',
+                        options: 'dom_meeting_accept_status'
+                    },
                     priority: {
                         default: true,
                         enabled: true,
@@ -517,7 +525,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
         it('should call app.metadata.getModule', function() {
             layout.getModuleFields(bean);
 
-            expect(app.metadata.getModule).toHaveBeenCalledWith('Cases', 'fields');
+            expect(app.metadata.getModule).toHaveBeenCalledWith('Cases');
         });
 
         it('should call bean.set with tabContent and content', function() {

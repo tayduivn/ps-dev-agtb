@@ -223,8 +223,9 @@
             }
         }, this);
 
-        _.each(app.metadata.getModule(module, 'fields'), function(field) {
-            if (field.type == 'enum' && app.acl.hasAccess('read', module, null, field.name)) {
+        _.each(metaFields, function(field) {
+            if (field.type === 'enum' && field.source !== 'non-db' &&
+                app.acl.hasAccess('read', module, null, field.name)) {
                 dropdownFields[field.name] = app.lang.get(field.label || field.vname, module);
             }
         }, this);
