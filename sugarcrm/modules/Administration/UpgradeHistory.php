@@ -94,6 +94,28 @@ class UpgradeHistory extends SugarBean
     }
 
     /**
+     * return unserialized and decoded package patch
+     * @return array
+     */
+    public function getPackagePatch(): array
+    {
+        $packagePatch = [];
+        if (!empty($this->patch)) {
+            $packagePatch = unserialize(base64_decode($this->patch));
+        }
+        return $packagePatch;
+    }
+
+    /**
+     * is package enabled?
+     * @return bool
+     */
+    public function isPackageEnabled(): bool
+    {
+        return intval($this->enabled) === 1;
+    }
+
+    /**
      * Check if this is an upgrade, if it is then return the latest version before this installation
      */
     public function determineIfUpgrade($id_name, $version)

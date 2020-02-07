@@ -23,11 +23,11 @@ $request = InputValidation::getService();
 $view = $request->getValidInputRequest('view', null, '');
 if ($view !== '') {
     if( $view != "default" && $view != "module" ){
-        throw new Exception($mod_strings['ERR_UW_INVALID_VIEW']);
+        throw new Exception(translate('ERR_UW_INVALID_VIEW', 'Administration'));
     }
 }
 else{
-    throw new Exception($mod_strings['ERR_UW_NO_VIEW']);
+    throw new Exception(translate('ERR_UW_NO_VIEW', 'Administration'));
 }
 $form_action = "index.php?module=Administration&view=" . $view . "&action=UpgradeWizard";
 
@@ -113,19 +113,19 @@ class UpgradeWizardCommon
         $icon = "";
         switch ($type) {
             case "full":
-                $icon = SugarThemeRegistry::current()->getImage("Upgrade", "", null, null, '.gif', $mod_strings['LBL_DST_UPGRADE']);
+                $icon = SugarThemeRegistry::current()->getImage("Upgrade", "", null, null, '.gif', translate('LBL_DST_UPGRADE', 'Administration'));
                 break;
             case "langpack":
-                $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "", null, null, '.gif', $mod_strings['LBL_LANGUAGE_PACKS']);
+                $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "", null, null, '.gif', translate('LBL_LANGUAGE_PACKS', 'Administration'));
                 break;
             case "module":
-                $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "", null, null, '.gif', $mod_strings['LBL_MODULE_LOADER_TITLE']);
+                $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "", null, null, '.gif', translate('LBL_MODULE_LOADER_TITLE', 'Administration'));
                 break;
             case "patch":
-                $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "", null, null, '.gif', $mod_strings['LBL_PATCH_UPGRADES']);
+                $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "", null, null, '.gif', translate('LBL_PATCH_UPGRADES', 'Administration'));
                 break;
             case "theme":
-                $icon = SugarThemeRegistry::current()->getImage("Themes", "", null, null, '.gif', $mod_strings['LBL_THEME_SETTINGS']);
+                $icon = SugarThemeRegistry::current()->getImage("Themes", "", null, null, '.gif', translate('LBL_THEME_SETTINGS', 'Administration'));
                 break;
             default:
                 break;
@@ -152,14 +152,14 @@ class UpgradeWizardCommon
     {
         $type = 'LBL_UW_TYPE_' . strtoupper($type);
         global $mod_strings;
-        return $mod_strings[$type];
+        return translate($type, 'Administration');
     }
 
     public static function getUITextForMode($mode)
     {
         $mode = 'LBL_UW_MODE_' . strtoupper($mode);
         global $mod_strings;
-        return $mod_strings[$mode];
+        return translate($mode, 'Administration');
     }
 
     public static function validate_manifest($manifest)
@@ -170,16 +170,16 @@ class UpgradeWizardCommon
         global $mod_strings;
 
         if (!isset($manifest['type'])) {
-            throw new Exception($mod_strings['ERROR_MANIFEST_TYPE']);
+            throw new Exception(translate('ERROR_MANIFEST_TYPE', 'Administration'));
         }
         $type = $manifest['type'];
         if (self::getInstallType("/$type/") == "") {
-            throw new Exception($mod_strings['ERROR_PACKAGE_TYPE'] . ": '" . $type . "'.");
+            throw new Exception(translate('ERROR_PACKAGE_TYPE', 'Administration') . ": '" . $type . "'.");
         }
 
         $acceptable_sugar_versions = self::getAcceptableSugarVersions($manifest);
         if (!$acceptable_sugar_versions) {
-            throw new Exception($mod_strings['ERROR_VERSION_MISSING']);
+            throw new Exception(translate('ERROR_VERSION_MISSING', 'Administration'));
         }
 
         $version_ok = false;
@@ -217,7 +217,7 @@ class UpgradeWizardCommon
         }
 
         if (!$matches_empty && !$version_ok) {
-            throw new Exception($mod_strings['ERROR_VERSION_INCOMPATIBLE'] . $sugar_version);
+            throw new Exception(translate('ERROR_VERSION_INCOMPATIBLE', 'Administration') . $sugar_version);
         }
 
         $acceptable_sugar_flavors = self::getAcceptableSugarFlavors($manifest);
@@ -229,7 +229,7 @@ class UpgradeWizardCommon
                 }
             }
             if (!$flavor_ok) {
-                throw new Exception($mod_strings['ERROR_FLAVOR_INCOMPATIBLE'] . $sugar_flavor);
+                throw new Exception(translate('ERROR_FLAVOR_INCOMPATIBLE', 'Administration') . $sugar_flavor);
             }
         }
     }

@@ -977,6 +977,33 @@ class ModuleScanner{
 		}
 	}
 
+    /**
+     * Formatted issues by type and file and return array.
+     * @return array
+     */
+    public function getFormattedIssues(): array
+    {
+        $out = [];
+        foreach ($this->issues as $type => $issuesByType) {
+            foreach ($issuesByType as $file => $issuesByFile) {
+                $file = str_replace($this->pathToModule . '/', '', $file);
+
+                if (!is_array($issuesByFile)) {
+                    $issuesByFile = [$issuesByFile];
+                }
+                foreach ($issuesByFile as $key => $issueText) {
+                    $words = explode(' ', $issueText);
+                    $words[0] = translate($words[0], 'Administration');
+                    $issuesByFile[$key] = implode(' ', $words);
+                }
+
+                $out[$type][$file] = $issuesByFile;
+            }
+        }
+
+        return $out;
+    }
+
 	/**
 	 *This function will take all issues of the current instance and print them to the screen
 	 **/

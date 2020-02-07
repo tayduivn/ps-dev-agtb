@@ -2489,7 +2489,11 @@ class ModuleInstaller
             $this->updateSystemTabs('Restore',$installed_modules);
 
         }else{
-            die("No manifest.php Defined In $this->base_dir/manifest.php");
+            $errorMsg = 'No manifest.php defined in ' . $this->base_dir;
+            if ($this->silent) {
+                throw new RuntimeException($errorMsg);
+            }
+            die($errorMsg);
         }
     }
 
