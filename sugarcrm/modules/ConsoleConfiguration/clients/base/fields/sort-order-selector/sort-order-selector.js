@@ -66,14 +66,14 @@
 
     /**
      * Checks the value of the dependency field. If it is empty, this field will
-     * be set to 'descending' and hidden.
+     * be set to 'ascending' and hidden.
      *
      * @private
      */
     _handleDependencyChange: function() {
         if (this.model && this.$el) {
             if (_.isEmpty(this.model.get(this.dependencyField))) {
-                this.$el.find('[name="desc"]').click();
+                this.$el.find('[name="asc"]').click();
                 this.$el.hide();
             } else {
                 this.$el.show();

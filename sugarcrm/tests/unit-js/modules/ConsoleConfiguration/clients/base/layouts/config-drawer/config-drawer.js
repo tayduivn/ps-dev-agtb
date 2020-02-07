@@ -165,7 +165,7 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                 order_by_primary: 'next_renewal_date',
                 order_by_primary_direction: 'asc',
                 order_by_secondary: '',
-                order_by_secondary_direction: 'desc',
+                order_by_secondary_direction: 'asc',
                 filter_def: [{'$owner': ''}]
             });
         });

@@ -128,9 +128,9 @@
                 enabled: true,
                 enabled_module: moduleName,
                 order_by_primary: orderByPrimaryComponents[0] || '',
-                order_by_primary_direction: orderByPrimaryComponents[1] || 'desc',
+                order_by_primary_direction: orderByPrimaryComponents[1] || 'asc',
                 order_by_secondary: orderBySecondaryComponents[0] || '',
-                order_by_secondary_direction: orderBySecondaryComponents[1] || 'desc',
+                order_by_secondary_direction: orderBySecondaryComponents[1] || 'asc',
                 filter_def: filterDef[moduleName] || [],
             };
             this.addModelToCollection(moduleName, data);
@@ -234,9 +234,9 @@
                 enabled: data.enabled || true,
                 enabled_module: data.module || module,
                 order_by_primary: data.order_by_primary || '',
-                order_by_primary_direction: data.order_by_primary_direction || 'desc',
+                order_by_primary_direction: data.order_by_primary_direction || 'asc',
                 order_by_secondary: data.order_by_secondary || '',
-                order_by_secondary_direction: data.order_by_secondary_direction || 'desc',
+                order_by_secondary_direction: data.order_by_secondary_direction || 'asc',
                 filter_def: data.filter_def || '',
             });
 

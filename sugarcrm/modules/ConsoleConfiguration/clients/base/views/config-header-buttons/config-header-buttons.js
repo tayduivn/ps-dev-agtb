@@ -110,7 +110,7 @@
     _buildOrderByValue: function(model, fieldName) {
         var value = model.get(fieldName) || '';
         if (!_.isEmpty(value)) {
-            var direction = model.get(fieldName + '_direction') || 'desc';
+            var direction = model.get(fieldName + '_direction') || 'asc';
             value += ':' + direction;
         }
         return value;
