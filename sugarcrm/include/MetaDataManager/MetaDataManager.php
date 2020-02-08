@@ -2116,20 +2116,8 @@ class MetaDataManager implements LoggerAwareInterface
         $data['build'] = $this->getInstanceVersionValue('sugar_build');
         $data['marketing_version'] = $this->getInstanceVersionValue('sugar_mar_version');
 
-        // Product Name for Professional edition.
-        $data['product_name'] = "SugarCRM Professional";
-        //BEGIN SUGARCRM flav=ent ONLY
-        // Product Name for Enterprise edition.
-        $data['product_name'] = "SugarCRM Enterprise";
-        //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=corp ONLY
-        // Product Name for Corp edition.
-        $data['product_name'] = "SugarCRM Corporate";
-        //END SUGARCRM flav=corp ONLY
-        //BEGIN SUGARCRM flav=ult ONLY
-        // Product Name for Ultimate edition.
-        $data['product_name'] = "SugarCRM Ultimate";
-        //END SUGARCRM flav=ult ONLY
+        $data['product_name'] = "SugarCRM";
+
         if (file_exists('custom/version.php')) {
             include 'custom/version.php';
             $data['custom_version'] = $custom_version;

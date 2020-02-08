@@ -171,7 +171,7 @@ $mod_strings = array (
 //ABOUT page
   'LBL_VERSION' => 'Version',
   'LBL_BUILD' => 'Build',
-    'TPL_ABOUT' => 'About {{product_name}}, Version {{version}} (Build {{build}}{{#if custom_version}} - {{custom_version}}{{/if}})',
+    'TPL_ABOUT' => 'About {{product_name}} Version {{version}} (Build {{build}}{{#if custom_version}} - {{custom_version}}{{/if}} {{flav}})',
     'LBL_RESOURCES' => 'Resources',
     'LBL_RESOURCES_DOCUMENTATION' => 'Documentation',
     'LBL_RESOURCES_DEVELOPERS' => 'Developers',
@@ -179,7 +179,7 @@ $mod_strings = array (
     'LBL_LANGUAGE_PACKS' => 'Language Packs',
     'TPL_LANGUAGE_PACKS_PROVIDED_BY' => 'Provided by {{{link}}}',
     'LBL_SUGAR_VERSION' => 'version',
-    'LBL_SUGAR_SOURCECODE_DESC' => 'Sales force automation application.',
+    'LBL_SUGAR_SOURCECODE_DESC' => 'The Customer Experience (CX) application.',
     'LBL_THIRD_PARTY_SOFTWARE_TITLE' => 'Third Party Software',
     'LBL_THIRD_PARTY_SOURCECODE' => 'Information about third party code used in this product, including related license terms, is available at',
   'LBL_SUGAR_PROFESSIONAL' => "Sugar Professional",

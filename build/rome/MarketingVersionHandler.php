@@ -27,7 +27,7 @@ final class MarketingVersionHandler
      * configurable.
      * @var string
      */
-    private $format = "%s '%02d";
+    private $format = "%s 20%d";
 
     /**
      * Patterns to use for calculating the marketing version, going back to 7.10.x.
@@ -48,14 +48,14 @@ final class MarketingVersionHandler
     ];
 
     /**
-     * Seasons for the marketing versions
+     * Quarters for the marketing versions
      * @var array
      */
-    private $seasons = [
-        'Spring',
-        'Summer',
-        'Fall',
-        'Winter',
+    private $quarters = [
+        'Q2',
+        'Q3',
+        'Q4',
+        'Q1',
     ];
 
     /**
@@ -66,14 +66,14 @@ final class MarketingVersionHandler
     private function getFormattedVersion(array $args) : string
     {
         // If we don't have what we need then just bail
-        if (!isset($args['season'], $args['year'])) {
+        if (!isset($args['quarter'], $args['year'])) {
             return $this->default;
         }
 
         // Otherwise return the formatted string
         return sprintf(
             $this->format,
-            $args['season'],
+            $args['quarter'],
             $args['year']
         );
     }
@@ -217,7 +217,7 @@ final class MarketingVersionHandler
         }
 
         return [
-            'season' => $this->seasons[$minor],
+            'quarter' => $this->quarters[$minor],
             'year' => $year,
         ];
     }
