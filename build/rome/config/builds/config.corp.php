@@ -188,8 +188,6 @@ $config['blackList']['corp'] = array(
 'sugarcrm/include/SugarObjects/implements/sla_fields/language/en_us.lang.php' => 1,
 'sugarcrm/include/SugarObjects/implements/sla_fields/vardefs.php' => 1,
 'sugarcrm/modules/ChangeTimers' => 1,
-'sugarcrm/clients/base/views/activity-timeline' => 1,
-'sugarcrm/tests/unit-js/clients/base/views/activity-timeline' => 1,
 
 // Business Center holidays relationship
 'sugarcrm/metadata/business_centers_holidaysMetaData.php' => 1,
