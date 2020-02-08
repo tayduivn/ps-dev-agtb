@@ -81,9 +81,9 @@ class InitProductDefinition
         "WorkFlowTriggerShells":["CURRENT"]
     },
     "DASHLETS": {
-        "commentlog-dashlet":["SUGAR_SERVE","SUGAR_SELL"],
-        "activity-timeline":["SUGAR_SERVE","SUGAR_SELL"],
-        "dashablerecord":["SUGAR_SERVE","SUGAR_SELL"],
+        "commentlog-dashlet":["CURRENT","SUGAR_SERVE","SUGAR_SELL"],
+        "activity-timeline":["CURRENT","SUGAR_SERVE","SUGAR_SELL"],
+        "dashablerecord":["CURRENT","SUGAR_SERVE","SUGAR_SELL"],
         "bubblechart":["CURRENT","SUGAR_SELL"],
         "casessummary":["CURRENT","SUGAR_SERVE"],
         "forecast-pareto":["CURRENT","SUGAR_SELL"],
