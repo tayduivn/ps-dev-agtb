@@ -42,6 +42,7 @@
         'mousemove .record-edit-link-wrapper, .record-lock-link-wrapper': 'handleMouseMove',
         'mouseleave .record-edit-link-wrapper, .record-lock-link-wrapper': 'handleMouseLeave',
         'click .record-edit-link-wrapper': 'handleEdit',
+        'click .label-pill .record-label': 'handleEdit',
         'click a[name=cancel_button]': '_deprecatedCancelClicked',
         'click [data-action=scroll]': 'paginateRecord',
         'click .record-panel-header': 'togglePanel',
@@ -78,6 +79,12 @@
      * @type {boolean}
      */
     _hasLockedFields: false,
+
+    /**
+     * Name of the field that contains the field and its surrounding elements
+     * like the label, pencil icon, etc.
+     */
+    decoratorField: 'record-decor',
 
     /**
      * @inheritdoc
@@ -437,7 +444,8 @@
     },
 
     setLabel: function(context, value) {
-        this.$('.record-label[data-name="' + value.field + '"]').text(value.label);
+        var plus = '<i class="fa fa-plus label-plus"></i>';
+        this.$('.record-label[data-name="' + value.field + '"]').html(plus + value.label);
     },
 
     /**
@@ -698,6 +706,9 @@
      */
     _getNonButtonFields: function() {
         return _.filter(this.fields, _.bind(function(field) {
+            if (field.type === this.decoratorField) {
+                return false;
+            }
             if (field.name) {
                 return !this.buttons[field.name];
             }
@@ -773,6 +784,15 @@
         this._initButtons();
         this.setEditableFields();
         this.adjustHeaderpane();
+    },
+
+    /**
+     * Calls setEditable fields after the fields are rendered
+     * @private
+     */
+    _renderFields: function() {
+        app.view.View.prototype._renderFields.call(this);
+        this.setEditableFields();
     },
 
     bindDataChange: function() {

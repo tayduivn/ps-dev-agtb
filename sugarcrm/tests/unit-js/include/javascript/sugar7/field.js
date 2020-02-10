@@ -280,4 +280,35 @@ describe('Sugar7 field extensions', function () {
             expect(field.action).toEqual('erased');
         });
     });
+
+    describe('isFieldEmpty', function() {
+        using('different model values', [
+            {value: '', expected: true},
+            {value: 'hello', expected: false},
+            {value: [], expected: true},
+            {value: ['hello'], expected: false},
+            {value: true, expected: false},
+            {value: false, expected: false},
+            {value: 0, expected: false},
+            {value: 1, expected: false},
+            {value: 1.1, expected: false},
+            {value: undefined, expected: true},
+            {value: null, expected: true},
+            {value: {}, expected: false},
+            {value: {a: 'b'}, expected: false},
+
+        ], function(provider) {
+            it('should correctly identify empty fields', function() {
+                field = SugarTest.createField('base', 'name', 'base', 'detail');
+                field.model.set('name', provider.value);
+                expect(field.isFieldEmpty()).toBe(provider.expected);
+            });
+        });
+
+        it('should be empty if there is no model attribute', function() {
+            field = SugarTest.createField('base', 'noAttribute', 'base', 'detail');
+            field.name = 'noAttribute';
+            expect(field.isFieldEmpty()).toBeTruthy();
+        });
+    });
 });

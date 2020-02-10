@@ -64,25 +64,7 @@
                 <div class="row-fluid panel_body {{../name}}">
                     {{#each this}}
                         <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
-                            {{#if ../../labels}}
-                                {{#unless dismiss_label}}
-                                    <div class="record-label" data-name="{{name}}">
-                                        {{#if label}}{{str label ../../../../../../../view.module}}{{/if}}
-                                    </div>
-                                {{/unless}}
-                            {{/if}}
-                            {{#if name}}
-                                <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-                                    {{field ../../../../../view model=../../../../../view.model template=../../../../../view.action}}
-                                </span>
-                            {{/if}}
-                            {{#unless ../../../../view.createMode}}
-                                {{#notHas name ../../../../../view.noEditFields}}
-                                    <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                        <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
-                                    </span>
-                                {{/notHas}}
-                            {{/unless}}
+                            {{decoratedField  ../../../../view.decoratorField ../../../../view model=../../../../view.model template=../../../../view.action}}
                         </div>
                     {{/each}}
                 </div>

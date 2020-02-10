@@ -312,6 +312,14 @@
     },
 
     /**
+     * Commentlog needs to check if it has any messages in the collection
+     * @override
+     */
+    isFieldEmpty: function() {
+        return this.getCollection().length === 0;
+    },
+
+    /**
      * @inheritdoc
      */
     bindDomChange: function() {

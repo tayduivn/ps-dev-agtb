@@ -248,6 +248,14 @@
     },
 
     /**
+     * This field always has a value
+     * @override
+     */
+    isFieldEmpty: function() {
+        return false;
+    },
+
+    /**
      * Hide the timeselect fields.
      *
      * @private

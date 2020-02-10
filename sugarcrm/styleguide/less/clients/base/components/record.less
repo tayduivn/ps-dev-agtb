@@ -660,4 +660,41 @@
   }
 }
 
+.record-cell {
+  &.label-pill {
+    .record-label {
+      border: 1px dashed #b2bec6;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 2px 8px;
+      width: max-content;
+      margin-bottom: 12px;
+
+      .label-plus {
+        margin-right: 2px;
+      }
+
+      &:hover {
+        border-color: #0679c8;
+        background-color: #e2f2fe;
+        color: #0679c8;
+
+        .label-plus {
+          color: #0679c8;
+        }
+      }
+    }
+
+    [data-wrapper="edit"] {
+      display: none;
+    }
+  }
+
+  &:not(.label-pill) {
+    .label-plus {
+      display: none;
+    }
+  }
+}
+
 /* NEW SKIN END */

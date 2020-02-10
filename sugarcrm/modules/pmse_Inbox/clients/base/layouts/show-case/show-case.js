@@ -180,7 +180,7 @@
         this.recordComponent.model.on('error:validation', showInvalidModel, this.recordComponent);
 
         this._super('loadData', loadDataParams);
-        this._render();
+        this.render();
         this._delegateEvents();
     },
 
@@ -635,11 +635,18 @@
              */
             checkReadonly: function(field){
                 var isReadonly = false;
+                if (this.buttons[field.name]) {
+                    return false;
+                }
                 _.each(this.context.get('case').readonly, function(caseField) {
                     if (field.name === caseField) {
                         isReadonly = true;
                     }
                 }, this);
+
+                if (this.context.get('case').reclaim) {
+                    isReadonly = true;
+                }
                 return isReadonly;
             },
 
