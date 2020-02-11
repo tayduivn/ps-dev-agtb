@@ -633,6 +633,46 @@
             // FIXME: Show wizard functionality should be broken out into
             // another function; will be addressed in SC-2761.
 
+            // Check if cookie consent should be shown
+            var showConsent = false;
+            if (app.user && app.user.has('cookie_consent')) {
+                showConsent = !app.user.get('cookie_consent');
+                if (showConsent) {
+                    // If the license settings need to be input, don't show the cookie consent
+                    var systemConfig = app.metadata.getConfig();
+                    if (systemConfig.system_status &&
+                        systemConfig.system_status.level &&
+                        systemConfig.system_status.level === 'admin_only'
+                    ) {
+                        showConsent = false;
+                    }
+                }
+            }
+            if (showConsent) {
+                var callbacks = {
+                    complete: function() {
+                        var module = app.utils.getWindowLocationParameterByName('module', window.location.search);
+                        var action = app.utils.getWindowLocationParameterByName('action', window.location.search);
+
+                        // work around for saml authentication of a new user
+                        if (_.isString(module) && _.isString(action) &&
+                            module.toLowerCase() === 'users' && action.toLowerCase() === 'authenticate') {
+                            window.location = window.location.pathname;
+                        } else {
+                            window.location.reload(); //Reload when done
+                        }
+                    }
+                };
+                app.controller.loadView({
+                    layout: 'consent-wizard',
+                    module: 'Users',
+                    modelId: app.user.get('id'),
+                    callbacks: callbacks
+                });
+                app.additionalComponents.header.hide();
+                return false;
+            }
+
             // Check if first time login wizard should be shown
             var showWizard = false;
             if (app.user && app.user.has('show_wizard')) {

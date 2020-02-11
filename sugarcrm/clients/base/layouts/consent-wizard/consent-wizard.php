@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['portal']['layout']['consent-wizard'] = [
+$viewdefs['base']['layout']['consent-wizard'] = [
     'components' => [
         [
             'view' => 'consent-wizard-page',

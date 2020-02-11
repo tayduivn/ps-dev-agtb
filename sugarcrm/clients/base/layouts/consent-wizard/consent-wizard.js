@@ -9,12 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Layouts.Portal.ConsentWizardLayout
- * @alias SUGAR.App.view.layouts.PortalConsentWizardLayout
+ * @class View.Layouts.Base.ConsentWizardLayout
+ * @alias SUGAR.App.view.layouts.BaseConsentWizardLayout
  * @extends View.Layouts.Base.WizardLayout
  */
 ({
-    extendsFrom: 'BaseWizardLayout',
+    extendsFrom: 'WizardLayout',
 
     /**
      * Skip to the Layout addComponent to ignore logic around adding buttons to meta

@@ -669,6 +669,9 @@ class CurrentUserApi extends SugarApi
         }
         $user_data['preferences']['default_teams'] = $defaultTeams;
 
+        $user_data['site_user_id'] = $current_user->site_user_id;
+        $user_data['cookie_consent'] = !empty($current_user->cookie_consent);
+
         // Send back a hash of this data for use by the client
         $user_data['_hash'] = $current_user->getUserMDHash();
 

@@ -9,15 +9,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe('View.Views.Portal.ConsentWizardPageView', function() {
+describe('View.Views.Base.ConsentWizardPageView', function() {
     var view;
     var viewName = 'consent-wizard-page';
     var app;
 
     beforeEach(function() {
         app = SUGAR.App;
-        SugarTest.loadComponent('portal', 'view', viewName);
-        view = SugarTest.createView('portal', null, viewName);
+        SugarTest.loadComponent('base', 'view', viewName);
+        view = SugarTest.createView('base', null, viewName);
     });
 
     afterEach(function() {

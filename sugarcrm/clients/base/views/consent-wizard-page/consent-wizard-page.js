@@ -9,12 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Portal.ConsentWizardPageView
- * @alias SUGAR.App.view.views.PortalConsentWizardPageView
+ * @class View.Views.Base.ConsentWizardPageView
+ * @alias SUGAR.App.view.views.BaseConsentWizardPageView
  * @extends View.Views.Base.WizardPageView
  */
 ({
-    extendsFrom: 'BaseWizardPageView',
+    extendsFrom: 'WizardPageView',
 
     events: {
         'click [name=continue_button]:not(.disabled)': 'continueConsent',

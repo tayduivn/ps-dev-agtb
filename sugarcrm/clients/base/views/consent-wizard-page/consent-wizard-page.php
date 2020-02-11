@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['portal']['view']['consent-wizard-page'] = [
+$viewdefs['base']['view']['consent-wizard-page'] = [
     'title' => 'LBL_WIZ_USER_COOKIE_CONSENT',
     'buttons' => [
         [

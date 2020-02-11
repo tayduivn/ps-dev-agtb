@@ -761,6 +761,15 @@ class User extends Person {
             $this->site_user_id = getSiteHash($this->id);
         }
 
+        // Update the datetime the consent was granted
+        if (!empty($this->cookie_consent) && empty($this->cookie_consent_received_on)) {
+            $this->cookie_consent_received_on = TimeDate::getInstance()->nowDb();
+        }
+        // Wipe the datetime if the consent was revoked
+        if (empty($this->cookie_consent) && !empty($this->cookie_consent_received_on)) {
+            $this->cookie_consent_received_on = null;
+        }
+
 		parent::save($check_notify);
 
         //if this is an import, make sure the related teams get added
