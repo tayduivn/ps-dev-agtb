@@ -97,47 +97,38 @@ describe('Base.Field.TextArea', function() {
         using('various field values', [
             {
                 fieldVal: 'testvalue',
-                shortExists: true,
-                expectedShortValue: 'testvalu'
-            },
-            {
-                fieldVal: 'testvalu',
-                shortExists: false,
-                expectedShortValue: undefined
-            },
-            {
-                fieldVal: 'testval',
-                shortExists: false,
-                expectedShortValue: undefined
+                expectedShortValue: ''
             },
             {
                 fieldVal: '',
-                shortExists: false,
-                expectedShortValue: undefined
+                expectedShortValue: ''
+            },
+            {
+                fieldVal: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+                expectedShortValue: 'Lorem '
             },
             {
                 fieldVal: '結葉鮮敬。対好速残',
-                shortExists: true,
-                expectedShortValue: '結葉鮮敬。対好速'
+                expectedShortValue: ''
             },
             {
                 fieldVal: '結葉鮮敬。対好\n速残',
-                shortExists: true,
-                expectedShortValue: '結葉鮮敬。対好'
+                expectedShortValue: '結葉鮮敬。対好\n'
             },
             {
                 fieldVal: '結葉鮮敬。対\n好速残',
-                shortExists: true,
-                expectedShortValue: '結葉鮮敬。対\n好'
+                expectedShortValue: '結葉鮮敬。対\n'
             }
         ], function(value) {
             it('should set a proper `short` value if the field value exceeds `max_display_chars`', function() {
                 var returnVal = field.format(value.fieldVal);
 
-                expect(returnVal.hasOwnProperty('short')).toBe(value.shortExists);
+                expect(returnVal.hasOwnProperty('short')).toBe(true);
                 expect(returnVal.hasOwnProperty('long')).toBe(true);
-                expect(returnVal.long).toEqual(value.fieldVal);
-                expect(returnVal.short).toEqual(value.expectedShortValue);
+                expect(returnVal.hasOwnProperty('defaultValue')).toBe(true);
+                expect(returnVal.long.toString()).toEqual(value.fieldVal);
+                expect(returnVal.defaultValue.toString()).toEqual(value.fieldVal);
+                expect(returnVal.short.toString()).toEqual(value.expectedShortValue);
             });
         });
     });
@@ -183,6 +174,25 @@ describe('Base.Field.TextArea', function() {
                 expect(field.collapsed).toBe(!value);
                 expect(renderStub).toHaveBeenCalled();
             });
+        });
+    });
+
+    describe('getShortComment', function() {
+        it('should truncate a comment if it is longer than max chars', function() {
+            field._settings.max_display_chars = 10;
+            var comment = 'This comment is longer than 10 chars';
+            var shortened = field.getShortComment(comment);
+            expect(shortened).toEqual('This ');
+        });
+
+    });
+
+    describe('insertHtmlLinks', function() {
+        it('replaces text links with html links', function() {
+            var comment = 'www.sugarcrm.com';
+            var result = field.insertHtmlLinks(comment);
+            var expected = '<a href="http://www.sugarcrm.com" target="_blank" rel="noopener">www.sugarcrm.com</a>';
+            expect(result).toEqual(expected);
         });
     });
 });

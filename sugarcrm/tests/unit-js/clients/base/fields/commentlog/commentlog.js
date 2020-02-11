@@ -23,6 +23,7 @@ describe('commentlog field', function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
+        SugarTest.loadComponent('base', 'field', 'textarea');
         template = SugarTest.loadHandlebarsTemplate(fieldName, 'field', 'base', 'detail');
         editTemplate = SugarTest.loadHandlebarsTemplate(fieldName, 'field', 'base', 'edit');
         SugarTest.seedMetadata(false, 'fixtures');
@@ -159,16 +160,6 @@ describe('commentlog field', function() {
                     }
                 });
             });
-
-        describe('_getShortComment', function() {
-            it('should truncate a comment if it is longer than max chars', function() {
-                field._settings.max_display_chars = 10;
-                var comment = 'This comment is longer than 10 chars';
-                var shortened = field._getShortComment(comment);
-                expect(shortened).toEqual('This ');
-            });
-
-        });
     });
 
     describe('Edit View Behavior', function() {
@@ -476,15 +467,6 @@ describe('commentlog field', function() {
             var badText = '<>`""';
             var result = field._escapeValue(badText);
             var expected = '&lt;&gt;&#x60;&quot;&quot;';
-            expect(result).toEqual(expected);
-        });
-    });
-
-    describe('_insertHtmlLinks', function() {
-        it('replaces text links with html links', function() {
-            var comment = 'www.sugarcrm.com';
-            var result = field._insertHtmlLinks(comment);
-            var expected = '<a href="http://www.sugarcrm.com" target="_blank" rel="noopener">www.sugarcrm.com</a>';
             expect(result).toEqual(expected);
         });
     });
