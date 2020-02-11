@@ -19,8 +19,10 @@ describe("Plugins.ErrorDecoration", function() {
         clock = sinon.useFakeTimers();
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadHandlebarsTemplate('record-decor', 'field', 'base', 'record-decor');
         SugarTest.loadComponent('base', 'field', 'base');
         SugarTest.loadComponent('base', 'view', viewName);
+        SugarTest.loadComponent('base', 'field', 'record-decor');
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "panels": [{
                 "name": "panel_body",

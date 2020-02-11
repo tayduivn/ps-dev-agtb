@@ -697,4 +697,114 @@
   }
 }
 
+.labels-on-side {
+  .record-label {
+    max-width: 100%;
+    float: right;
+    box-sizing: border-box;
+    margin: 4px 0 0;
+    padding: 2px 8px;
+    border: 1px solid transparent;
+
+    // We want our label on the left in rtl text
+    html.rtl & {
+      float: left;
+    }
+
+    .record-cell.label-pill & {
+      margin: 4px 0 0;
+    }
+  }
+
+  .record-link-wrapper {
+    margin-left: @labelOnSideGutterWidth;
+
+    html.rtl & {
+      margin-right: @labelOnSideGutterWidth;
+      margin-left: 0;
+    }
+  }
+
+  .record-label-wrapper {
+    margin-bottom: @labelOnSideVerticalSpacing;
+  }
+
+  &.label-pill {
+    margin: 0;
+  }
+
+  .normal {
+    > .detail,
+    > .erased,
+    > .edit {
+      display: inline-block;
+      width: inherit;
+    }
+
+    > .detail,
+    > .erased {
+      margin-bottom: 0;
+    }
+
+    > .edit {
+      margin-bottom: 16px;
+    }
+  }
+
+  .fieldset-inline .record-label {
+    float: initial;
+    line-height: @labelOnSideVerticalSpacing;
+
+    .record-label-symbol {
+      margin-right: 2px;
+    }
+
+    .fieldset-field {
+      margin-bottom: 16px;
+    }
+  }
+}
+
+.row-fluid > .record-cell {
+  float: left;
+
+  html.rtl & {
+    float: right;
+  }
+
+  &:not(:first-child) {
+    margin-left: @labelOnSideGutterWidth;
+
+    html.rtl & {
+      margin-right: @labelOnSideGutterWidth;
+      margin-left: 0;
+    }
+  }
+}
+
+.spanInputLabel (@columns, @columnWidth, @gutterWidth) {
+  width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1));
+}
+
+// override default grid values for labels-on-side
+.spanInputLabelX (@index) when (@index > 0) {
+  .labels-on-side > .span@{index} { .spanInputLabel(@index, @labelOnSideNarrowColumnWidth, @labelOnSideGutterWidth); }
+
+  @media (min-width: 995px) {
+    .labels-on-side > .span@{index} { .spanInputLabel(@index, @gridColumnWidth768, @labelOnSideGutterWidth); }
+  }
+
+  @media (min-width: 1320px) {
+    .labels-on-side > .span@{index} { .spanInputLabel(@index, @gridColumnWidth, @labelOnSideGutterWidth); }
+  }
+
+  @media (min-width: 1550px) {
+    .labels-on-side.record-cell > .span@{index} { .spanInputLabel(@index, @gridColumnWidth1200, @labelOnSideGutterWidth); }
+  }
+
+  .spanInputLabelX(@index - 1);
+}
+
+.spanInputLabelX (@gridColumns);
+
 /* NEW SKIN END */

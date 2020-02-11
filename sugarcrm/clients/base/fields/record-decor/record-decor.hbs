@@ -11,25 +11,57 @@
  */
 --}}
 {{#each actualFieldsMeta}}
-    {{#unless dismiss_label}}
-        <div class="record-label" data-name="{{name}}">
-            {{#if label}}<i class="fa fa-plus label-plus"></i>{{str label ../../../module}}{{/if}}
-        </div>
-    {{/unless}}
-    {{#if name}}
-        <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-            {{field ../../view model=../../model template=../../view.action parent=../../this}}
-        </span>
-    {{/if}}
-    {{#unless ../../view.createMode}}
-        <span class="record-edit-link-wrapper {{#has name ../../view.noEditFields}}hide{{/has}}" data-name="{{name}}" data-wrapper="edit">
-            <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
-        </span>
+    {{#if this.labelsOnTop}}
+        {{#unless dismiss_label}}
+            <div class="record-label" data-name="{{name}}">
+                {{#if label}}<i class="fa fa-plus label-plus"></i>{{str label ../../../../module}}{{/if}}
+            </div>
+        {{/unless}}
+        {{#if name}}
+            <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
+                {{field ../../../view model=../../../model template=../../../view.action parent=../../../this}}
+            </span>
+        {{/if}}
+        {{#unless ../../../view.createMode}}
+            <span class="record-edit-link-wrapper {{#has name ../../../view.noEditFields}}hide{{/has}}" data-name="{{name}}" data-wrapper="edit">
+                <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
+            </span>
 
-        <span class="record-lock-link-wrapper hide" data-name="{{name}}">
-            <a class="record-lock-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}">
-                <i class="fa fa-lock" rel="tooltip" data-original-title="{{str 'LBL_LOCKED_FIELD_RECORD_VIEW_TOOLTIP'}}" data-placement="right"></i>
-            </a>
-        </span>
-    {{/unless}}
+            <span class="record-lock-link-wrapper hide" data-name="{{name}}">
+                <a class="record-lock-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}">
+                    <i class="fa fa-lock" rel="tooltip" data-original-title="{{str 'LBL_LOCKED_FIELD_RECORD_VIEW_TOOLTIP'}}" data-placement="right"></i>
+                </a>
+            </span>
+        {{/unless}}
+    {{else}}
+        <div class="labels-on-side">
+            <div class="record-label-wrapper span{{labelSpan}}">
+                {{#unless dismiss_label}}
+                    <div class="record-label ellipsis_inline" data-placement="bottom" data-original-title="{{str label ../../../module}}" title="{{str label ../../../module}}" data-name="{{name}}">
+                        {{#if label}}
+                            <i class="fa fa-plus label-plus"></i>
+                            {{str label ../../../../module}}
+                        {{/if}}
+                    </div>
+                {{/unless}}
+            </div>
+            <div class="record-link-wrapper span{{span}}">
+                {{#if name}}
+                    <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
+                        {{field ../../../view model=../../../model template=../../../view.action parent=../../../this}}
+                    </span>
+                {{/if}}
+            </div>
+            {{#unless ../../../view.createMode}}
+                <span class="record-edit-link-wrapper {{#has name ../../../view.noEditFields}}hide{{/has}}" data-name="{{name}}" data-wrapper="edit">
+                    <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
+                </span>
+                <span class="record-lock-link-wrapper hide" data-name="{{name}}">
+                    <a class="record-lock-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}">
+                        <i class="fa fa-lock" rel="tooltip" data-original-title="{{str 'LBL_LOCKED_FIELD_RECORD_VIEW_TOOLTIP'}}" data-placement="right"></i>
+                    </a>
+                </span>
+            {{/unless}}
+        </div>
+    {{/if}}
 {{/each}}

@@ -21,6 +21,7 @@ describe("Record View", function () {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('record-decor', 'field', 'base', 'record-decor');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'headerpane');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'tabspanels');
@@ -30,6 +31,7 @@ describe("Record View", function () {
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'fieldset');
         SugarTest.loadComponent('base', 'field', 'actiondropdown');
+        SugarTest.loadComponent('base', 'field', 'record-decor');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "buttons": [
@@ -295,7 +297,7 @@ describe("Record View", function () {
                 description: 'Description'
             });
             _.each(view.editableFields, function (field) {
-                if ((field.$el.closest('.hide').length === 1)) {
+                if ((field.$el.closest('.panel_hidden.hide').length === 1)) {
                     hiddenFields++;
                 }
             });
@@ -360,7 +362,7 @@ describe("Record View", function () {
 
             view.$('.more').click();
             _.each(view.editableFields, function (field) {
-                if (field.$el.closest('.hide').length === 1) {
+                if (field.$el.parents('.panel_hidden.hide').length === 1) {
                     hiddenFields++;
                 } else {
                     visibleFields++;

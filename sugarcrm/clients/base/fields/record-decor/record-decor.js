@@ -65,6 +65,9 @@
             field.setElement(fieldElems[field.sfId]);
             field.render();
             this.redecorate(field);
+            if (!field.def.labelsOnTop) {
+                this.relocatePencil(field);
+            }
         }, this);
     },
 
@@ -185,5 +188,34 @@
         _.each(this.fields, function(field) {
             field.dispose();
         });
-    }
+    },
+
+    /**
+     * In labelsOnSide view, the pencil icon needs to be moved to the left
+     * so it hovers near the text
+     *
+     * @param {field} field whose pencil we're moving
+     */
+    relocatePencil: function(field) {
+        var cell = this.getRecordCell();
+        var pencil = cell.find('.fa-pencil');
+        var wrapper = cell.find('.record-label-wrapper');
+        var label = cell.find('.record-label');
+        var wrapperWidth = wrapper.outerWidth();
+        var labelWidth = label.outerWidth();
+
+        var offset = wrapperWidth - labelWidth + 5;
+
+        // bool fields' element wrappers aren't the same size as other fields,
+        // so we need to change their offset
+        if (field.type === 'bool') {
+            offset -= 15;
+        }
+
+        var direction = app.lang.direction === 'ltr' ? 'left' : 'right';
+        var css = {top: '6px'};
+        css[direction] = offset + 'px';
+
+        pencil.css(css);
+    },
 })

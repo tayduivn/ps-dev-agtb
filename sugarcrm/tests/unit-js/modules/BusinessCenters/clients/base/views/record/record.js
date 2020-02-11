@@ -22,6 +22,7 @@ describe('BusinessCenters.Views.Record', function() {
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'headerpane');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'tabspanels');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'businesscard');
+        SugarTest.loadHandlebarsTemplate('record-decor', 'field', 'base', 'record-decor');
         SugarTest.loadComponent('base', 'view', 'base');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.loadComponent('base', 'view', viewName, moduleName);
@@ -29,6 +30,7 @@ describe('BusinessCenters.Views.Record', function() {
         SugarTest.loadComponent('base', 'field', 'enum');
         SugarTest.loadComponent('base', 'field', 'business-day-status', moduleName);
         SugarTest.loadComponent('base', 'field', 'timeselect', moduleName);
+        SugarTest.loadComponent('base', 'field', 'record-decor');
 
         app = SugarTest.app;
         app.data.declareModels();

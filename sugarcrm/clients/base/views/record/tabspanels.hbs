@@ -60,51 +60,15 @@
                 </div>
             <div class="row-fluid record-panel-content {{#eq panelState "collapsed"}}hide{{/eq}}">
         {{/if}}
-        {{#if labelsOnTop}}
-            {{#each grid}}
-                    <div class="row-fluid panel_body {{../name}}">
-                        {{#each this}}
-                            <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
-                                {{decoratedField  ../../../../../view.decoratorField ../../../../../view model=../../../../../view.model template=../../../../../view.action}}
-                            </div>
-                        {{/each}}
+        {{#each grid}}
+            <div class="row-fluid {{name}}{{#if hide}}{{#if ../../../../view.hidePanel}} hide{{/if}}{{/if}}">
+                {{#each this}}
+                    <div class="{{#if this.labelsOnTop}}span{{span}} {{/if}}record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                        {{decoratedField  ../../../../view.decoratorField ../../../../view model=../../../../view.model template=../../../../view.action}}
                     </div>
-            {{/each}}
-        {{else}}
-            <div class="form-horizontal">
-                <fieldset class="card2">
-                    {{#each grid}}
-                        <div class="row-fluid control-group panel_body {{../name}}">
-                            {{#each this}}
-                                {{#if ../../labels}}
-                                    {{#unless dismiss_label}}
-                                        <div class="control-label span{{labelSpan}} {{label_css_class}}">
-                                            <div class="control-label-background span{{labelSpan}}">
-                                                <label class="tright record-label" data-name="{{name}}">{{str label ../../../../../../../view.module}}</label>
-                                            </div>
-                                        </div>
-                                    {{/unless}}
-                                {{/if}}
-                                <div class="controls span{{span}} record-cell {{#if cell_css_class}}{{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
-                                {{#if name}}
-                                    <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-                                        {{field ../../../../../../view model=../../../../../../view.model template=../../../../../../view.action}}
-                                    </span>
-                                {{/if}}
-                                {{#unless ../../../../view.createMode}}
-                                    {{#notHas name ../../../../../view.noEditFields}}
-                                        <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                            <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
-                                        </span>
-                                    {{/notHas}}
-                                {{/unless}}
-                                </div>
-                            {{/each}}
-                        </div>
-                    {{/each}}
-                </fieldset>
+                {{/each}}
             </div>
-        {{/if}}
+        {{/each}}
         {{#unless newTab}}</div></div>{{/unless}}
         {{#eq @index ../../view.meta.lastPanelIndex}}</div>{{/eq}}
     {{/unless}}

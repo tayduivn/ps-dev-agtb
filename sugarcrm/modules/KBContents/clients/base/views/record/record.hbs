@@ -157,55 +157,15 @@
         <div class="record">
             {{#each meta.panels}}
                 {{#unless header}}
-                    {{#if ../labelsOnTop}}
                         {{#each grid}}
                             <div class="row-fluid {{../name}}{{#if ../hide}}{{#if ../../../../../hidePanel}} hide{{/if}}{{/if}}">
                                 {{#each this}}
-                                    <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                                    <div class="{{#if this.labelsOnTop}}span{{span}} {{/if}}record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                                         {{decoratedField  ../../../../../decoratorField ../../../../../this model=../../../../../model template=../../../../../action}}
                                     </div>
                                 {{/each}}
                             </div>
                         {{/each}}
-                    {{else}}
-                        <div class="form-horizontal">
-                            <fieldset class="card2">
-                                {{#each grid}}
-                                    <div class="row-fluid control-group {{../name}}{{#if ../hide}}{{#if ../../../../../hidePanel}} hide{{/if}}{{/if}}">
-                                        {{#each this}}
-                                            {{#if ../../labels}}
-                                                {{#unless dismiss_label}}
-                                                    <div class="control-label span{{labelSpan}} {{label_css_class}}">
-                                                        <div class="control-label-background span{{labelSpan}}">
-                                                            <label class="tright record-label" data-name="{{name}}">{{str label ../../../../../../../module}}</label>
-                                                        </div>
-                                                    </div>
-                                                {{/unless}}
-                                            {{/if}}
-                                            <div class="controls span{{span}} record-cell {{cell_css_class}}"
-                                                 data-type="{{type}}" data-name="{{name}}">
-                                                {{#if name}}
-                                                    <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-                                                        {{field ../../../../../../this model=../../../../../../model template=../../../../../../action}}
-                                                    </span>
-                                                {{/if}}
-                                                {{#unless ../../../../../../createMode}}
-                                                    <span class="record-edit-link-wrapper {{#has name ../../../../../../../noEditFields}}hide{{/has}}" data-name="{{name}}" data-wrapper="edit">
-                                                        <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
-                                                    </span>
-                                                    <span class="record-lock-link-wrapper hide" data-name="{{name}}">
-                                                        <a class="record-lock-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}">
-                                                            <i class="fa fa-lock" rel="tooltip" data-original-title="{{str 'LBL_LOCKED_FIELD_RECORD_VIEW_TOOLTIP'}}" data-placement="right"></i>
-                                                        </a>
-                                                    </span>
-                                                {{/unless}}
-                                            </div>
-                                        {{/each}}
-                                    </div>
-                                {{/each}}
-                            </fieldset>
-                        </div>
-                    {{/if}}
                 {{/unless}}
             {{/each}}
         </div>
