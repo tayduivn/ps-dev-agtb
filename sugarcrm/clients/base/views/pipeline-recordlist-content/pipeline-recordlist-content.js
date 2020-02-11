@@ -180,7 +180,8 @@
         var headerColors = this.getColumnColors();
 
         // Get all the whitelisted column names for current module
-        if (!_.isUndefined(this.pipelineConfig.available_columns[this.module])) {
+        if (!_.isUndefined(this.pipelineConfig.available_columns) &&
+            !_.isUndefined(this.pipelineConfig.available_columns[this.module])) {
             var items = this.pipelineConfig.available_columns[this.module][headerField];
             var index = 0;
             _.each(items, function(item, key) {
