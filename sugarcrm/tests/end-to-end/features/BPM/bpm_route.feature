@@ -7,7 +7,8 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@bpm @job2 @pr
+@bpm @job2 @pr @ci-excluded
+# Temporarily disable this test due to seedbed loading the wrong dashboard after route
 Feature: Assign new process user and routing type to the process
 
   Background:

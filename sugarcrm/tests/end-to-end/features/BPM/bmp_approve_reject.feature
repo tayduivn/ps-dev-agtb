@@ -1,4 +1,5 @@
-@bpm @job1
+@bpm @job1 @ci-excluded
+# Temporarily disable this test due to seedbed loading the wrong dashboard after approve/reject
 Feature: Importing files related to Business Process Management
 
   Background:
