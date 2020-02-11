@@ -24,7 +24,12 @@ class CurrentUserApiTest extends TestCase
         SugarTestHelper::setUp("current_user");
         OutboundEmailConfigurationTestHelper::setUp();
         // load up the unifiedSearchApi for good times ahead
-        $this->currentUserApiMock = new CurrentUserApiMock();
+
+        $apiMock = $this->getMockBuilder('CurrentUserApi')
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->currentUserApiMock = $apiMock;
     }
 
     public function tearDown()
@@ -38,17 +43,18 @@ class CurrentUserApiTest extends TestCase
     {
         // test from session
         $_SESSION['authenticated_user_language'] = 'en_UK';
-        $result = $this->currentUserApiMock->getBasicInfo();
+        $result = SugarTestReflection::callProtectedMethod($this->currentUserApiMock, 'getBasicUserInfo', ['base']);
         $this->assertEquals('en_UK', $result['preferences']['language']);
         // test from user
         unset($_SESSION['authenticated_user_language']);
         $GLOBALS['current_user']->preferred_language = 'AWESOME';
-        $result = $this->currentUserApiMock->getBasicInfo();
+        $result = SugarTestReflection::callProtectedMethod($this->currentUserApiMock, 'getBasicUserInfo', ['base']);
         $this->assertEquals('AWESOME', $result['preferences']['language']);
         // test from default
         unset($_SESSION['authenticated_user_language']);
         unset($GLOBALS['current_user']->preferred_language);
-        $result = $this->currentUserApiMock->getBasicInfo();
+        $result = SugarTestReflection::callProtectedMethod($this->currentUserApiMock, 'getBasicUserInfo', ['base']);
+
         $this->assertEquals($GLOBALS['sugar_config']['default_language'], $result['preferences']['language']);
     }
     /**
@@ -76,8 +82,7 @@ class CurrentUserApiTest extends TestCase
     {
         $current_user = SugarTestHelper::setUp('current_user', [true, true]);
         $current_user->setPreference('field_name_placement', $placement, 0, 'global');
-        $result = $this->currentUserApiMock->getUserPrefField_name_placement($current_user);
-
+        $result = SugarTestReflection::callProtectedMethod($this->currentUserApiMock, 'getUserPrefField_name_placement', [$current_user]);
         $this->assertEquals($placement, $result['field_name_placement']);
     }
 
@@ -87,22 +92,5 @@ class CurrentUserApiTest extends TestCase
             ['field_on_top'],
             ['field_on_side'],
         ];
-    }
-}
-
-class CurrentUserApiMock extends CurrentUserApi
-{
-    public function getBasicInfo()
-    {
-        return parent::getBasicUserInfo('base');
-    }
-
-    /**
-     * @param User $user Current User object
-     * @return array
-     */
-    public function getUserPrefField_name_placement($user)
-    {
-        return parent::getUserPrefField_name_placement($user);
     }
 }
