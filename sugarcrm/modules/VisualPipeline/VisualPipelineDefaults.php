@@ -16,17 +16,16 @@ class VisualPipelineDefaults
      * Sets up the default PipelineConfig settings
      * @return array The config settings
      */
-    public static function setupPipelineSettings($isAboveOrAt93)
+    public static function setupPipelineSettings()
     {
         $admin = BeanFactory::newBean('Administration');
         // get current settings
         $adminConfig = $admin->getConfigForModule('VisualPipeline');
-        if ($isAboveOrAt93) {
-            $pipelineConfig = self::get93Defaults();
-        } else {
+        if (empty($adminConfig)) {
             $pipelineConfig = self::getDefaults();
+        } else {
+            $pipelineConfig = self::updateTo93Defaults($adminConfig);
         }
-
 
         // if admin has already been set up
         if (!empty($adminConfig['is_setup'])) {
@@ -49,95 +48,6 @@ class VisualPipelineDefaults
      * @return array default config settings for Tile View to use
      */
     public static function getDefaults($isSetup = 0)
-    {
-        // If isSetup happens to get passed as a boolean false, change to 0 for the db
-        if ($isSetup === false) {
-            $isSetup = 0;
-        }
-
-        // default Tile View config setup
-        return array(
-            // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
-            'is_setup' => $isSetup,
-            // which modules can use pipeline
-            'enabled_modules' => array(
-                'Cases',
-                'Opportunities',
-                'Tasks',
-                'Leads',
-            ),
-            'table_header' => array(
-                'Cases' => 'status',
-                'Opportunities' => 'sales_stage',
-                'Tasks' => 'status',
-                'Leads' => 'status',
-            ),
-            'hidden_values' => array(
-                'Cases' => array(),
-                'Opportunities' => array(
-                    'Closed Won',
-                    'Closed Lost',
-                ),
-                'Tasks' => array(),
-                'Leads' => array(),
-            ),
-            'tile_header' => array(
-                'Cases' => 'name',
-                'Opportunities' => 'name',
-                'Tasks' => 'name',
-                'Leads' => 'name',
-            ),
-            'tile_body_fields' => array(
-                'Cases' => array(
-                    'account_name',
-                    'priority',
-                ),
-                'Opportunities' => array(
-                    'account_name',
-                    'date_closed',
-                    'amount',
-                ),
-                'Tasks' => array(
-                    'contact_name',
-                    'parent_name',
-                    'date_due',
-                ),
-                'Leads' => array(
-                    'email',
-                    'account_name',
-                    'phone_work',
-                ),
-            ),
-            'records_per_column' => array(
-                'Cases' => '10',
-                'Opportunities' => '10',
-                'Tasks' => '10',
-                'Leads' => '10',
-            ),
-            'header_colors' => array(
-                '#36850F',
-                '#0679C8',
-                '#AB173C',
-                '#854EDB',
-                '#00856F',
-                '#016FAA',
-                '#BC3CCD',
-                '#BD5800',
-                '#1202F5',
-                '#E61718',
-                '#717171',
-                '#222222',
-            ),
-        );
-    }
-
-    /**
-     * Returns the default values for Tile View to use for 9.3
-     *
-     * @param int $isSetup pass in if you want is_setup to be 1 or 0, 0 by default
-     * @return array default config settings for Tile View to use
-     */
-    public static function get93Defaults($isSetup = 0)
     {
         // If isSetup happens to get passed as a boolean false, change to 0 for the db
         if ($isSetup === false) {
@@ -261,5 +171,63 @@ class VisualPipelineDefaults
                 '#222222',
             ),
         );
+    }
+
+    /**
+     * Returns the default values for Tile View to use post 9.3 along with the availableColumn values
+     *
+     * @param array $adminConfig pass any existing settings/defaults for the tile view
+     * @return array updated config settings for Tile View to use post 9.3
+     */
+    public static function updateTo93Defaults($adminConfig)
+    {
+        if (empty($adminConfig['available_columns'])) {
+            $adminConfig['available_columns'] = array(
+                'Cases' => array(
+                    'status' => array(
+                        'New' => 'New',
+                        'Assigned' => 'Assigned',
+                        'Closed' => 'Closed',
+                        'Pending Input' => 'Pending Input',
+                        'Rejected' => 'Rejected',
+                        'Duplicate' => 'Duplicate',
+                    ),
+                ),
+                'Opportunities' => array(
+                    'sales_stage' => array(
+                        'Prospecting' =>  'Prospecting',
+                        'Qualification' => 'Qualification',
+                        'Needs Analysis' => 'Needs Analysis',
+                        'Value Proposition' => 'Value Proposition',
+                        'Id. Decision Makers' => 'Id. Decision Makers',
+                        'Perception Analysis' => 'Perception Analysis',
+                        'Proposal/Price Quote' => 'Proposal/Price Quote',
+                        'Negotiation/Review' => 'Negotiation/Review',
+                    ),
+                ),
+                'Tasks' => array(
+                    'status' => array(
+                        'Not Started' => 'Not Started',
+                        'In Progress' => 'In Progress',
+                        'Completed' => 'Completed',
+                        'Pending Input' => 'Pending Input',
+                        'Deferred' => 'Deferred',
+                    ),
+                ),
+                'Leads' => array(
+                    'status' => array(
+                        'New' => 'New',
+                        'Assigned' => 'Assigned',
+                        'In Process' => 'In Process',
+                        'Converted' => 'Converted',
+                        'Recycled' => 'Recycled',
+                        'Dead' => 'Dead',
+                    ),
+                ),
+            );
+        }
+
+        // default Tile View config setup
+        return $adminConfig;
     }
 }
