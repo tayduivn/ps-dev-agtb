@@ -137,7 +137,8 @@ Feature: Customer Service Console Verification
 
     # Select Overview tab
     When I select Overview tab in #ServiceConsoleView
-    Then I verify that first_row_left_dashlet element from #ServiceConsoleView still looks like sc_overview_toprow_left
+    # TODO: Temporary disable screenshots until AT-337 is fixed
+    # Then I verify that first_row_left_dashlet element from #ServiceConsoleView still looks like sc_overview_toprow_left
 
 
   @service-console @cs_dashable_record_dashlet

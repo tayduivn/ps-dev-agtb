@@ -494,7 +494,8 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
     When I select *A_1 in #AccountsList.MultilineListView
 
     # Verify Active Subscriptions
-    Then I verify that dashboard2by2_bottom_left element from #RenewalsConsoleView still looks like ActiveSubscriptions_1
+    # TODO: Temporary disable screenshots until AT-337 is fixed
+    # Then I verify that dashboard2by2_bottom_left element from #RenewalsConsoleView still looks like ActiveSubscriptions_1
 
 
   @renewals-console @rc_date_of_next_renewal

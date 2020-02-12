@@ -34,4 +34,5 @@ Feature: Summary Of Open Cases by Priority Verification.
       | label      | saved_report                      |
       | My dashlet | Summary of Open Cases by Priority |
 
-    Then I verify that dashlet element from #Dashboard.DashboardView still looks like opencasesdashboard
+    # TODO: Temporary disable screenshots until AT-337 is fixed
+    # Then I verify that dashlet element from #Dashboard.DashboardView still looks like opencasesdashboard
