@@ -87,10 +87,10 @@
                         _.union(Object.keys(availableValues[tableHeader]), hiddenValues));
 
                     if (!_.isUndefined(diffArr)) {
-                        for (var diffElem of diffArr) {
+                        _.each(diffArr, function(diffElem) {
                             // add missing column values to the available columns
                             availableValues[tableHeader][diffElem] = translated[diffElem];
-                        }
+                        }, this);
                     }
                 }
 

@@ -91,7 +91,7 @@
      * @param value the value ('asc' or 'desc') to set the field to
      * @private
      */
-    _setValue(value) {
+    _setValue: function(value) {
         this.$el.find('[name="' + value + '"]').click();
     },
 

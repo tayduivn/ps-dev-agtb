@@ -125,12 +125,11 @@
         var $divElem = this.layout.$el.find('#' + moduleName);
         var $elemList = $divElem[0].querySelector('#pipeline-sortable-1').getElementsByTagName('li');
 
-        for (var model of this.collection.models) {
+        _.each(this.collection.models, function(model) {
             if (model.get('enabled_module') === moduleName) {
                 tableHeader = model.get('table_header');
-                break;
             }
-        }
+        }, this);
 
         _.each($elemList, function($itemElem) {
             availableColumnNames[$itemElem.getAttribute('data-headervalue')] = $itemElem.innerText.trim();
