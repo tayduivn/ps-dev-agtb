@@ -1142,6 +1142,7 @@ class ConfigTest extends TestCase
             'path-key-found' => [
                 'userManagement',
                 [],
+                'E0900101-726A-49CD-A1C6-B6D518BFBF8A',
                 [
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     'cloudConsoleRoutes' => [
@@ -1149,17 +1150,18 @@ class ConfigTest extends TestCase
                     ],
                     'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://console.sugarcrm.local/management/users?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
+                'http://console.sugarcrm.local/management/users?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant&user_hint=srn%3Acloud%3Aiam%3A%3A0000000001%3Auser%3AE0900101-726A-49CD-A1C6-B6D518BFBF8A',
             ],
             'path-key-not-found' => [
                 'some-unknown-route',
                 [],
+                'E0900101-726A-49CD-A1C6-B6D518BFBF8A',
                 [
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     'cloudConsoleRoutes' => [],
                     'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://console.sugarcrm.local?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
+                'http://console.sugarcrm.local?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant&user_hint=srn%3Acloud%3Aiam%3A%3A0000000001%3Auser%3AE0900101-726A-49CD-A1C6-B6D518BFBF8A',
             ],
             'path-key-found-and-3-parts-exist' => [
                 'userManagement',
@@ -1168,6 +1170,7 @@ class ConfigTest extends TestCase
                     'some-id',
                     'policies',
                 ],
+                'E0900101-726A-49CD-A1C6-B6D518BFBF8A',
                 [
                     'cloudConsoleUrl' => 'http://foo.bar',
                     'cloudConsoleRoutes' => [
@@ -1175,17 +1178,18 @@ class ConfigTest extends TestCase
                     ],
                     'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://foo.bar/management/users/a/some-id/policies?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
+                'http://foo.bar/management/users/a/some-id/policies?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant&user_hint=srn%3Acloud%3Aiam%3A%3A0000000001%3Auser%3AE0900101-726A-49CD-A1C6-B6D518BFBF8A',
             ],
             'no-parts-url-has-slashes' => [
                 'userManagement',
                 [],
+                'E0900101-726A-49CD-A1C6-B6D518BFBF8A',
                 [
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local//',
                     'cloudConsoleRoutes' => [],
                     'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://console.sugarcrm.local?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
+                'http://console.sugarcrm.local?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant&user_hint=srn%3Acloud%3Aiam%3A%3A0000000001%3Auser%3AE0900101-726A-49CD-A1C6-B6D518BFBF8A',
             ],
             'parts-with-non-url-characters' => [
                 'userManagement',
@@ -1193,12 +1197,26 @@ class ConfigTest extends TestCase
                     'user',
                     'Имя',
                 ],
+                'E0900101-726A-49CD-A1C6-B6D518BFBF8A',
                 [
                     'cloudConsoleUrl' => 'http://foo.bar',
                     'cloudConsoleRoutes' => [],
                     'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
                 ],
-                'http://foo.bar/user/%D0%98%D0%BC%D1%8F?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
+                'http://foo.bar/user/%D0%98%D0%BC%D1%8F?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant&user_hint=srn%3Acloud%3Aiam%3A%3A0000000001%3Auser%3AE0900101-726A-49CD-A1C6-B6D518BFBF8A',
+            ],
+            'without-user-id' => [
+                'forgotPassword',
+                [],
+                '',
+                [
+                    'cloudConsoleUrl' => 'http://console.sugarcrm.local',
+                    'cloudConsoleRoutes' => [
+                        'forgotPassword' => '/forgot/password/',
+                    ],
+                    'tid' => 'srn:cloud:iam:eu:0000000001:tenant',
+                ],
+                'http://console.sugarcrm.local/forgot/password?tenant_hint=srn%3Acloud%3Aiam%3Aeu%3A0000000001%3Atenant',
             ],
         ];
     }
@@ -1207,12 +1225,13 @@ class ConfigTest extends TestCase
      * @param string $pathKey
      * @param array|null $parts
      * @param array $idmModeConfig
+     * @param array $userId
      * @param string $result
      *
      * @dataProvider buildCloudConsoleUrlProvider
      * @covers ::buildCloudConsoleUrl
      */
-    public function testBuildCloudConsoleUrl($pathKey, $parts, $idmModeConfig, $result)
+    public function testBuildCloudConsoleUrl($pathKey, $parts, $userId, $idmModeConfig, $result)
     {
         $config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
@@ -1220,7 +1239,7 @@ class ConfigTest extends TestCase
             ->getMock();
         $config->method('getIDMModeConfig')->willReturn($idmModeConfig);
 
-        $this->assertEquals($result, $config->buildCloudConsoleUrl($pathKey, $parts));
+        $this->assertEquals($result, $config->buildCloudConsoleUrl($pathKey, $parts, $userId));
     }
 
      /**

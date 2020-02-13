@@ -1000,4 +1000,34 @@ describe("Sugar7 utils", function() {
                 });
             });
     });
+    describe('create User SRN', function() {
+        var oldTenant;
+        beforeEach(function() {
+            oldTenant = app.config.tenant || '';
+        });
+
+        afterEach(function() {
+            app.config.tenant = oldTenant;
+        });
+
+        using('srn',
+            [
+                [
+                    'srn:dev:iam:na:1396243377:tenant',
+                    '123',
+                    'srn:dev:iam::1396243377:user:123'
+                ],
+                [
+                    'srn:dev:iam:na:1111111111:tenant',
+                    '11111111-1111-1111-1111-11111111',
+                    'srn:dev:iam::1111111111:user:11111111-1111-1111-1111-11111111'
+                ]
+            ],
+            function(tenant, uId, expectedSRN) {
+                it('should be created user SRN', function() {
+                    app.config.tenant = tenant;
+                    expect(app.utils.createUserSrn(uId)).toEqual(expectedSRN);
+                });
+            });
+    });
 });

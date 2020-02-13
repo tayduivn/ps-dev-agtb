@@ -1216,7 +1216,11 @@ class SugarEmailAddress extends SugarBean
             ];
             $srnManager = new Srn\Manager($srnManagerConfig);
             $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $id);
-            $cloudConsoleUrl = $idmConfig->buildCloudConsoleUrl('userProfile', [Srn\Converter::toString($userSrn)]);
+            $cloudConsoleUrl = $idmConfig->buildCloudConsoleUrl(
+                'userProfile',
+                [Srn\Converter::toString($userSrn)],
+                $GLOBALS['current_user']->id
+            );
         }
         $this->smarty->assign('idmMode', json_encode([
             'disabledForModule' => $disabledForModule,

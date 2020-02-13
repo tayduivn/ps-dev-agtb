@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 use OneLogin\Saml2\Constants;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
+use Sugarcrm\IdentityProvider\Srn;
 use Sugarcrm\IdentityProvider\STS\EndpointInterface;
 use Sugarcrm\IdentityProvider\STS\EndpointService;
 
@@ -61,6 +62,12 @@ class Config
      * @var \Administration
      */
     protected $idmSettings;
+
+    /**
+     * idm settings
+     * @var Srn\Manager
+     */
+    protected $srnManager;
 
     /**
      * @param \SugarConfig $sugarConfig
@@ -212,9 +219,10 @@ class Config
      *
      * @param string $pathKey
      * @param array $parts
+     * @param string $userId
      * @return string
      */
-    public function buildCloudConsoleUrl($pathKey, $parts = [])
+    public function buildCloudConsoleUrl($pathKey, $parts = [], string $userId = '')
     {
         $config = $this->getIDMModeConfig();
         $serverUrl = rtrim($config['cloudConsoleUrl'], '/');
@@ -226,7 +234,30 @@ class Config
 
         $additional = array_merge($additional, array_map('urlencode', $parts));
 
-        return join('/', array_merge([$serverUrl], $additional)) . '?tenant_hint=' . urlencode($config['tid']);
+        $query = ['tenant_hint' => $config['tid']];
+        if ($userId !== '') {
+            $tenantSrn = Srn\Converter::fromString($config['tid']);
+            $userSrn = $this->getSrnManager()->createUserSrn($tenantSrn->getTenantId(), $userId);
+            $query['user_hint'] = Srn\Converter::toString($userSrn);
+        }
+        return join('/', array_merge([$serverUrl], $additional)) .'?'. http_build_query($query) ;
+    }
+
+    /**
+     * Create Srn\Manager
+     *
+     * @return Srn\Manager
+     */
+    protected function getSrnManager(): Srn\Manager
+    {
+        if (is_null($this->srnManager)) {
+            $tenantSrn = Srn\Converter::fromString($this->getIDMModeConfig()['tid']);
+            $this->srnManager = new Srn\Manager([
+                'partition' => $tenantSrn->getPartition(),
+                'region' => $tenantSrn->getRegion(),
+            ]);
+        }
+        return $this->srnManager;
     }
 
     /**

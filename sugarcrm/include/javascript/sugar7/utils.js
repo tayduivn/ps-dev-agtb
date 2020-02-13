@@ -1271,6 +1271,21 @@
                     }
                 }
                 return {isValid: true, error: ''};
+            },
+
+            /**
+             * Create user SRN based on tenant
+             *
+             * @param {string} userId
+             * @return {string}
+             */
+            createUserSrn: function(userId) {
+                let srnParts = app.config.tenant
+                    .split(':')
+                    .slice(0, 5);
+                srnParts.splice(3, 1, '');  // delete region
+                srnParts.push('user', userId);
+                return srnParts.join(':');
             }
         });
     });

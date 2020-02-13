@@ -50,7 +50,9 @@ var $useForSubpanel = true;
         $idpConfig = new IdmConfig(\SugarConfig::getInstance());
         if ($idpConfig->isIDMModeEnabled() && !$this->bean->isUpdate() &&
             !$idpConfig->isSpecialBeanAction($this->bean, $_REQUEST)) {
-            $this->showRedirectToCloudConsole($idpConfig->buildCloudConsoleUrl('userCreate'));
+            $this->showRedirectToCloudConsole(
+                $idpConfig->buildCloudConsoleUrl('userCreate', [], $GLOBALS['current_user']->id)
+            );
         }
 
         //lets set the return values
@@ -246,7 +248,11 @@ EOD
                 } else {
                     $msg = sprintf(
                         translate('LBL_IDM_MODE_NON_EDITABLE_FIELDS_FOR_ADMIN_USER', 'Users'),
-                        $idpConfig->buildCloudConsoleUrl('userProfile', [Srn\Converter::toString($userSrn)])
+                        $idpConfig->buildCloudConsoleUrl(
+                            'userProfile',
+                            [Srn\Converter::toString($userSrn)],
+                            $GLOBALS['current_user']->id
+                        )
                     );
                 }
             } else {

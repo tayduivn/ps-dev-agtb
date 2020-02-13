@@ -50,7 +50,7 @@ $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS
 $idpConfig = new Authentication\Config($config);
 $idmModeConfig = $idpConfig->getIDMModeConfig();
 if ($idpConfig->isIDMModeEnabled()) {
-    $passwordManagerUrl = $idpConfig->buildCloudConsoleUrl('passwordManagement');
+    $passwordManagerUrl = $idpConfig->buildCloudConsoleUrl('passwordManagement', [], $GLOBALS['current_user']->id);
     $passwordManagerTarget = '_blank';
     $passwordManagerLink = str_replace(
         '"',

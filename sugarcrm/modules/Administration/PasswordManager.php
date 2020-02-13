@@ -21,7 +21,7 @@ if ($idpConfig->isIDMModeEnabled()) {
     sugar_die(
         sprintf(
             $GLOBALS['app_strings']['ERR_PASSWORD_MANAGEMENT_DISABLED_FOR_IDM_MODE'],
-            $idpConfig->buildCloudConsoleUrl('passwordManagement')
+            $idpConfig->buildCloudConsoleUrl('passwordManagement', [], $GLOBALS['current_user']->id)
         )
     );
 }
