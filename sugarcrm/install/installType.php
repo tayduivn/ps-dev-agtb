@@ -62,9 +62,6 @@ $out = <<<EOQ
         <table width="100%" class="StyleDottedHr">
 EOQ;
 
-
-  //BEGIN SUGARCRM lic=sub ONLY
-
 $out .= <<<EOQ1
 <tr><th colspan='2' align="left">{$mod_strings['LBL_LICENSE_DOWNLOAD_KEY']}</th></tr>
         <tr><td colspan='2' align="left"><p>{$mod_strings['LBL_INSTALL_TYPE_MSG1']}</p>
@@ -72,9 +69,6 @@ $out .= <<<EOQ1
             value="{$_SESSION['setup_license_key']}" size="30" /></p></td></tr>
 
 EOQ1;
-
-  //END SUGARCRM lic=sub ONLY
-
 
 $typical_checked ='checked';
 $custom_checked ='';

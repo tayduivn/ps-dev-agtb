@@ -34,12 +34,7 @@ class Administration extends SugarBean {
         'honeypot',
         'sugarpdf',
         'base',
-
-            //BEGIN SUGARCRM lic=sub ONLY
-
         'license',
-
-            //END SUGARCRM lic=sub ONLY
     );
     var $disable_custom_fields = true;
     public $checkbox_fields = array(

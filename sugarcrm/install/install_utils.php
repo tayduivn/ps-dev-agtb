@@ -1114,14 +1114,10 @@ function insert_default_settings(){
     $db->query("INSERT INTO config (category, name, value) VALUES ('MySettings', 'tab', '')");
     $db->query("INSERT INTO config (category, name, value, platform) VALUES ('portal', 'on', '0', 'support')");
 
-      //BEGIN SUGARCRM lic=sub ONLY
-
     // license info
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'license', 'users',        '0' )" );
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'license', 'expire_date',  '' )" );
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'license', 'key',          '' )" );
-
-      //END SUGARCRM lic=sub ONLY
 
     //insert default tracker settings
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
@@ -1134,9 +1130,6 @@ function insert_default_settings(){
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'tweettocase_on', '0' )");
 
 }
-
-
-  //BEGIN SUGARCRM lic=sub ONLY
 
 function update_license_settings($users, $expire_date, $key)
 {
@@ -1175,13 +1168,6 @@ function update_license_settings($users, $expire_date, $key)
         ['value' => getSiteHash($key), 'category' => 'site', 'name' => 'id']
     );
 }
-
-  //END SUGARCRM lic=sub ONLY
-
-
-
-
-
 
 // Returns true if the given file/dir has been made writable (or is already
 // writable).

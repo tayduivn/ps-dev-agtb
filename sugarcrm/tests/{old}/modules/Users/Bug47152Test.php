@@ -13,8 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-//FILE SUGARCRM lic=sub ONLY
-
 /**
  * @ticket 47152
  */

@@ -335,8 +335,6 @@ $KBContent = new KBContent();
 $KBContent->setupPrimaryLanguage();
 $KBContent->setupCategoryRoot();
 
-//BEGIN SUGARCRM lic=sub ONLY
-
 echo $line_entry_format . $mod_strings['LBL_PERFORM_LICENSE_SETTINGS'] . $line_exit_format;
 installLog($mod_strings['LBL_PERFORM_LICENSE_SETTINGS']);
 update_license_settings(
@@ -345,9 +343,6 @@ update_license_settings(
     $_SESSION['setup_license_key']
 );
 echo $mod_strings['LBL_PERFORM_DONE'];
-
-
-//END SUGARCRM lic=sub ONLY
 
 //Install forecasts configuration
 $forecast_config = ForecastsDefaults::setupForecastSettings();

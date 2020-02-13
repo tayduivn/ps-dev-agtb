@@ -63,16 +63,6 @@ if (isset($_REQUEST['useraction']) && $_REQUEST['useraction']=='CheckNow') {
 
 }
 
-  //BEGIN SUGARCRM lic=sub ONLY
-	/*
-
-  //END SUGARCRM lic=sub ONLY
-$xtpl->parse('main.stats');
-  //BEGIN SUGARCRM lic=sub ONLY
-	*/
-
-  //END SUGARCRM lic=sub ONLY
-
 $has_updates= false;
 if(!empty($license->settings['license_latest_versions'])){
 

@@ -695,7 +695,6 @@ class User extends Person {
             }
             $this->setLicenseType($licenseTypes);
         }
- 	    //BEGIN SUGARCRM lic=sub ONLY
 
 		global $sugar_flavor;
         $admin = Administration::getSettings();
@@ -747,8 +746,6 @@ class User extends Person {
             }
         }
         // End Express License Enforcement Check
-
-		  //END SUGARCRM lic=sub ONLY
 
 		// wp: do not save user_preferences in this table, see user_preferences module
 		$this->user_preferences = '';

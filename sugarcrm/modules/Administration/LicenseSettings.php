@@ -17,8 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-  //FILE SUGARCRM lic=sub ONLY
-
 use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 
 global $timedate;

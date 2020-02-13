@@ -56,21 +56,16 @@ if (!is_null($licenseKey)) {
         $licenseKey = trim($licenseKey);
         $focus->saveSetting('license', 'key', $licenseKey);
     }
-    //BEGIN SUGARCRM lic=sub ONLY
+
     loadLicense(true);
     check_now(get_sugarbeat());
     $focus->saveSetting('site', 'id', getSiteHash($licenseKey));
-    //END SUGARCRM lic=sub ONLY
 }
-
-  //BEGIN SUGARCRM lic=sub ONLY
 
 unset($_SESSION['license_seats_needed']);
 unset($_SESSION['LICENSE_EXPIRES_IN']);
 unset($_SESSION['VALIDATION_EXPIRES_IN']);
 unset($_SESSION['HomeOnly']);
-
-  //END SUGARCRM lic=sub ONLY
 
 apiLoadSystemStatus(true);
 

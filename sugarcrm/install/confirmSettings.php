@@ -23,7 +23,7 @@ if (!isset($install_script) || !$install_script) {
 }
 
 $db = getDbConnection();
-//BEGIN SUGARCRM lic=sub ONLY
+
 if (isset($_SESSION['licenseKey_submitted']) && ($_SESSION['licenseKey_submitted']) && isset($_SESSION['setup_db_type'])) {
     if (isset($GLOBALS['license']) && isset($GLOBALS['license']->settings)) {
         if (isset($GLOBALS['license']->settings['license_users'])) {
@@ -34,7 +34,7 @@ if (isset($_SESSION['licenseKey_submitted']) && ($_SESSION['licenseKey_submitted
         }
     }
 }
-//BEGIN SUGARCRM lic=sub ONLY
+
 $dbCreate = "({$mod_strings['LBL_CONFIRM_WILL']} ";
 if (empty($_SESSION['setup_db_create_database'])) {
 	$dbCreate .= $mod_strings['LBL_CONFIRM_NOT'];

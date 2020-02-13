@@ -60,8 +60,6 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
             $info = $systemInfo->getInfo();
         }
 
-		  //BEGIN SUGARCRM lic=sub ONLY
-
 		// This section of code is a portion of the code referred
 		// to as Critical Control Software under the End User
 		// License Agreement.  Neither the Company nor the Users
@@ -70,17 +68,8 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 			$key = $license->settings['license_key'];
 		}else{
 			//END REQUIRED CODE
-
-			  //END SUGARCRM lic=sub ONLY
-
 			$key = '4829482749329';
-
-			  //BEGIN SUGARCRM lic=sub ONLY
-
 		}
-
-		  //END SUGARCRM lic=sub ONLY
-
 
 		$encoded = sugarEncode($key, serialize($info));
 
@@ -115,7 +104,6 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
     }
 	if($response_data || !$sclient->getError() )
 	{
-        //BEGIN SUGARCRM lic=sub ONLY
         // This section of code is a portion of the code referred
         // to as Critical Control Software under the End User
         // License Agreement.  Neither the Company nor the Users
@@ -124,7 +112,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
         // download subscription content
         SubscriptionManager::instance()->downloadSubscriptionContent($key);
         //END REQUIRED CODE
-        //END SUGARCRM lic=sub ONLY
+
         if (!empty($resultData['msg'])) {
 			if(!empty($resultData['msg']['admin'])){
 				$license->saveSetting('license', 'msg_admin', base64_encode($resultData['msg']['admin']));
@@ -256,35 +244,13 @@ function set_sugarbeat($value) {
 	write_array_to_file( "sugar_config", $sugar_config, "config.php" );
 }
 function get_sugarbeat() {
-
-	  //BEGIN SUGARCRM lic=sub ONLY
-
-	/*
-	  //END SUGARCRM lic=sub ONLY
-
-	global $sugar_config;
-	$_SUGARBEAT="sugarbeet";
-
-	if (isset($sugar_config[$_SUGARBEAT]) && $sugar_config[$_SUGARBEAT] == false) {
-	return false;
-	}
-	  //BEGIN SUGARCRM lic=sub ONLY
-	*/
-
-	  //END SUGARCRM lic=sub ONLY
 	return true;
-
 }
-
-
 
 function shouldCheckSugar(){
 	global $license, $timedate;
 	if(
-
-	  //BEGIN SUGARCRM lic=sub ONLY
 	(empty($license->settings['license_last_validation_fail']) ||  $license->settings['license_last_validation_fail'] < $timedate->getNow()->modify("-6 hours")->asDb(false))  &&
-	  //END SUGARCRM lic=sub ONLY
     (get_CheckUpdates_config_setting() == 'automatic' || !empty($GLOBALS['sugar_config']['hide_admin_licensing']))) {
 		return true;
 	}
@@ -292,7 +258,6 @@ function shouldCheckSugar(){
 	return false;
 }
 
-  //BEGIN SUGARCRM lic=sub ONLY
 // This section of code is a portion of the code referred
 // to as Critical Control Software under the End User
 // License Agreement.  Neither the Company nor the Users
@@ -825,8 +790,6 @@ function isAboutToExpire($expire_date, $days_before_warning = 7){
 	}
 }
 //END REQUIRED CODE
-//END SUGARCRM lic=sub ONLY
-
 
 function loadLicense($firstLogin=false){
 
@@ -838,7 +801,6 @@ function loginLicense(){
 	global $current_user, $license;
 	loadLicense(true);
 
-  //BEGIN SUGARCRM lic=sub ONLY
     if ((isset($_SESSION['EXCEEDS_MAX_USERS']) && $_SESSION['EXCEEDS_MAX_USERS'] == 1 )
         || empty($license->settings['license_key'])
         || (!empty($license->settings['license_last_validation'])
@@ -895,8 +857,6 @@ function loginLicense(){
         }
     }
 
-  //END SUGARCRM lic=sub ONLY
-
 	if (shouldCheckSugar()) {
 
 
@@ -904,19 +864,15 @@ function loginLicense(){
 		$current_date_time=time();
 		$time_period=3*23*3600 ;
 		if (($current_date_time - $last_check_date) > $time_period
-		  //BEGIN SUGARCRM lic=sub ONLY
 		|| empty($license->settings['license_last_validation_success'])
-		  //END SUGARCRM lic=sub ONLY
 		) {
 			$version = check_now(get_sugarbeat());
 
 			unset($_SESSION['license_seats_needed']);
-		  //BEGIN SUGARCRM lic=sub ONLY
-
 			unset($_SESSION['LICENSE_EXPIRES_IN']);
 			unset($_SESSION['VALIDATION_EXPIRES_IN']);
 			unset($_SESSION['HomeOnly']);
-		  //END SUGARCRM lic=sub ONLY
+
 			loadLicense();
 			set_last_check_date_config_setting("$current_date_time");
 			include('sugar_version.php');
@@ -937,7 +893,6 @@ function loginLicense(){
 		}
 	}
 
-	  //BEGIN SUGARCRM lic=sub ONLY
 	// This section of code is a portion of the code referred
 	// to as Critical Control Software under the End User
 	// License Agreement.  Neither the Company nor the Users
@@ -952,6 +907,4 @@ function loginLicense(){
 	    }
 	}
 	//END REQUIRED CODE DO NOT MODIFY
-	  //END SUGARCRM lic=sub ONLY
-
 }

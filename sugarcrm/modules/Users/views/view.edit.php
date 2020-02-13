@@ -110,7 +110,6 @@ var $useForSubpanel = true;
         ////	END NEW USER CREATION ONLY
         ///////////////////////////////////////////////////////////////////////////////
 
-	    //BEGIN SUGARCRM lic=sub ONLY
         global $sugar_flavor;
         $admin = Administration::getSettings();
 
@@ -132,7 +131,6 @@ var $useForSubpanel = true;
                 }
             }
         }
-	    //END SUGARCRM lic=sub ONLY
 
         // FIXME: Translate error prefix
         $error_string = $this->request->getValidInputRequest('error_string');

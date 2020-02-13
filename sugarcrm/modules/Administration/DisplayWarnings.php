@@ -49,9 +49,6 @@ if (empty($license)){
 	$license = Administration::getSettings('license');
 }
 
-
-	//BEGIN SUGARCRM lic=sub ONLY
-
 // This section of code is a portion of the code referred
 // to as Critical Control Software under the End User
 // License Agreement.  Neither the Company nor the Users
@@ -72,8 +69,6 @@ if (isset($_SESSION['VALIDATION_EXPIRES_IN']) && $_SESSION['VALIDATION_EXPIRES_I
     }
 }
 //END REQUIRED CODE DO NOT MODIFY
-
-	//END SUGARCRM lic=sub ONLY
 
 if(!empty($_SESSION['HomeOnly'])){
 	displayAdminError(translate('FATAL_LICENSE_ALTERED', 'Administration'));
@@ -127,8 +122,6 @@ if($smtp_error) {
         	displayAdminError(translate('WARN_INSTALLER_LOCKED', 'Administration'));
 		}
 
-
-			//BEGIN SUGARCRM lic=sub ONLY
 // This section of code is a portion of the code referred
 // to as Critical Control Software under the End User
 // License Agreement.  Neither the Company nor the Users
@@ -200,7 +193,7 @@ if($smtp_error) {
             . $msg . translate('WARN_LICENSE_SEATS3', 'Administration'));
     }
         //END REQUIRED CODE DO NOT MODIFY
-		//END SUGARCRM lic=sub ONLY
+
         if(empty($GLOBALS['sugar_config']['admin_access_control'])){
 			if (isset($_SESSION['available_version'])){
 				if($_SESSION['available_version'] != $sugar_version)
