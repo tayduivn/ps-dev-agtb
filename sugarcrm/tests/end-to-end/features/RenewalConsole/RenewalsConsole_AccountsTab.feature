@@ -535,13 +535,13 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
 
     # Verify that next renewal date is properly calculated
     Then I verify fields for *A_1 in #AccountsList.MultilineListView
-      | fieldName                     | value      |
-      | name                          | Account 1  |
-      | industry                      | Apparel    |
-      | annual_revenue                | 5000000    |
-      | service_level                 | Tier 1     |
-      | account_type                  | Analyst    |
-      | next_renewal_date (type=date) | now +11d |
+      | fieldName                     | value     |
+      | name                          | Account 1 |
+      | industry                      | Apparel   |
+      | annual_revenue                | 5000000   |
+      | service_level                 | Tier 1    |
+      | account_type                  | Analyst   |
+      | next_renewal_date (type=date) | now +11d  |
 
     # Delete one of the RLIs linked to opportunity
     When I delete *RLI_1 record in RevenueLineItems list view
@@ -554,7 +554,7 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
 
     # Verify that Next Renewal Date field is properly updated
     Then I verify fields for *A_1 in #AccountsList.MultilineListView
-      | fieldName                     | value      |
+      | fieldName                     | value    |
       | next_renewal_date (type=date) | now +13d |
 
 
@@ -619,21 +619,21 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
     # Select Accounts tab in Renewals Console
     When I select Accounts tab in #RenewalsConsoleView
 
-     # TODO: Below is standard way of setting values of the standard dropdown field.
-     # In this test custom step definition had to be used because there are pairs of fields with the same name
-     # (one on each tab) loaded when Console Settings drawer is displayed and there
-     # is no way to access fields on the Opportunities tab using standard approach
-     # because the field with the same name already exists on Accounts tab
+    # Verify the order of records in the multiline list view after sorting order is changed
+    Then I verify records order in #AccountsList.MultilineListView
+      | record_identifier | expected_list_order |
+      | A_4               | 1                   |
+      | A_1               | 2                   |
+      | A_5               | 3                   |
+      | A_3               | 4                   |
+      | A_2               | 5                   |
 
-     # When I provide input for #ConsoleSettingsConfig view
-     #     | order_by_primary | order_by_secondary |
-     #     | Industry         | Name               |
 
     # Set sorting order in the Console Settings > Accounts tab and save
     When I set sort order in Accounts tab of #ConsoleSettingsConfig view:
-      | sortOrderField | sortBy   |
-      | primary        | Industry |
-      | secondary      | Name     |
+      | sortOrderField | sortBy   | sortDirection |
+      | primary        | Industry | Ascending     |
+      | secondary      | Name     | Ascending     |
 
     # Verify the order of records in the multiline list view after sorting order is changed
     Then I verify records order in #AccountsList.MultilineListView
@@ -644,6 +644,21 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
       | A_4               | 4                   |
       | A_2               | 5                   |
 
+    # Set sorting order in the Console Settings > Accounts tab and save
+    When I set sort order in Accounts tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy   | sortDirection |
+      | primary        | Industry | Descending    |
+      | secondary      | Name     | Descending    |
+
+    # Verify the order of records in the multiline list view after sorting order is changed
+    Then I verify records order in #AccountsList.MultilineListView
+      | record_identifier | expected_list_order |
+      | A_5               | 5                   |
+      | A_1               | 4                   |
+      | A_3               | 3                   |
+      | A_4               | 2                   |
+      | A_2               | 1                   |
+
     # Set filter in the Console Settings > Accounts tab and save
     When I set the "My Favorites" filter in Accounts tab of #ConsoleSettingsConfig view
 
@@ -651,20 +666,28 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
     Then I should not see *A_2 in #AccountsList.MultilineListView
     Then I should not see *A_4 in #AccountsList.MultilineListView
 
+    # Verify the order of records in the multiline list view after sorting order is changed
     Then I verify records order in #AccountsList.MultilineListView
       | record_identifier | expected_list_order |
-      | A_5               | 1                   |
+      | A_3               | 1                   |
       | A_1               | 2                   |
-      | A_3               | 3                   |
+      | A_5               | 3                   |
+
+    # Set sorting order in the Console Settings > Accounts tab and save
+    When I set sort order in Accounts tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy               | sortDirection |
+      | primary        | Date of Next Renewal | Descending    |
+      | secondary      |                      |               |
+
+    # Verify the order of records in the multiline list view after sorting order is changed
+    Then I verify records order in #AccountsList.MultilineListView
+      | record_identifier | expected_list_order |
+      | A_3               | 1                   |
+      | A_5               | 2                   |
+      | A_1               | 3                   |
 
     # Restore default sorting order in the Console Settings > Accounts tab and save
-    When I set sort order in Accounts tab of #ConsoleSettingsConfig view:
-      | sortOrderField | sortBy               |
-      | primary        | Date of Next Renewal |
-      | secondary      |                      |
-
-    # Restore default filter in the Console Settings > Accounts tab and save.
-    When I set the "My Items" filter in Accounts tab of #ConsoleSettingsConfig view
+    When I restore defaults in Accounts tab of #ConsoleSettingsConfig view
 
     # Verify the records in the multiline list view after sorting order is changed
     Then I verify records order in #AccountsList.MultilineListView

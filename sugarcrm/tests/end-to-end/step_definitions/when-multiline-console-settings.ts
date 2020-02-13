@@ -45,6 +45,11 @@ When(/^I navigate to (\S+) tab in (#\S+) view$/,
 When(/^I set sort order in (\S+) tab of (#\S+) view:$/,
     async function(tabName: string, view: ConsoleSettingsConfig, data: TableDefinition) {
 
+        const directionArr = {
+            'ascending': 'asc',
+            'descending': 'desc',
+        };
+
         // Open Console Settings drawer in multiline view
         await openConsoleSettingsDrawer();
 
@@ -55,20 +60,24 @@ When(/^I set sort order in (\S+) tab of (#\S+) view:$/,
         const rows = data.rows();
 
         for (let i = 0; i < rows.length; i++) {
-            let [sortOrder, sortingCriteria] = rows[i];
+            let [sortOrder, sortingCriteria, sortingDirection] = rows[i];
+
+            let sortDir = sortingDirection.toLowerCase();
 
             // Only 'primary' or 'secondary' strings are supported as sort order
-            if (sortOrder.toLowerCase() === 'primary' || sortOrder.toLowerCase() === 'secondary') {
-
+            // Only 'asc' for ascending or 'desc' for descending are supported as sort direction
+            if ((sortOrder.toLowerCase() === 'primary' || sortOrder.toLowerCase() === 'secondary') &&
+                (sortDir === 'ascending' || sortDir === 'descending' || sortDir === '') )
+            {
                 // If not empty string is supplied, go ahead and try to set specified sorting criteria to this string
                 // if empty string is provided - clear sorting criteria by clicking 'x' button in the sorting order drop-down
-                if( sortingCriteria || sortingCriteria.length !== 0) {
-                    await view.setSortCriteria(tabName, sortingCriteria, sortOrder);
+                if( (sortingCriteria || sortingCriteria.length !== 0) && (directionArr[sortDir]) ) {
+                    await view.setSortCriteria(tabName, sortingCriteria, sortOrder, directionArr[sortDir]);
                 } else {
                     await view.clearSortCriteria(tabName, sortOrder);
                 }
             } else {
-                throw new Error('Invalid sort order specified!');
+                throw new Error(`Invalid sort order "${sortOrder}" or/and sort direction "${sortingDirection}" is specified!`);
             }
         }
 
@@ -101,6 +110,32 @@ When(/^I set the "(\D+)" filter in (\S+) tab of (#\S+) view$/,
         await saveChanges();
 
     }, {waitForApp: true});
+
+
+/**
+ *  Restore default settings
+ *
+ *  @example
+ *  When I restore defaults in Accounts tab of #ConsoleSettingsConfig view
+ */
+When(/^I restore defaults in (\S+) tab of (#\S+) view$/,
+    async function(tabName: string, view: ConsoleSettingsConfig) {
+
+        // Open Console Settings drawer in multiline view
+        await openConsoleSettingsDrawer();
+
+        // Navigate to specific tab
+        await view.navigateToTab(tabName);
+
+        // Click Restore Defaults link
+        await view.restoreDefault(tabName);
+
+        // Save changes and close confirmation alert
+        await saveChanges();
+
+    }, {waitForApp: true});
+
+
 
 /**
  * Open Console Settings configuration drawer

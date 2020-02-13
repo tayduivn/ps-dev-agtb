@@ -596,21 +596,20 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
     # Select Opportunities tab in Renewals Console
     When I select Opportunities tab in #RenewalsConsoleView
 
-     # TODO: Below is standard way of setting values of the standard dropdown field.
-     # In this test custom step definition had to be used because there are pairs of fields with the same name
-     # (one on each tab) loaded when Console Settings drawer is displayed and there
-     # is no way to access fields on the Opportunities tab using standard approach
-     # because the field with the same name already exists on Accounts tab
-
-     # When I provide input for #ConsoleSettingsConfig view
-     #     | order_by_primary | order_by_secondary |
-     #     | Industry         | Name               |
+    # Verify the order of records in the multiline list view after sorting order is changed
+    Then I verify records order in #OpportunitiesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | Opp_4             | 1                   |
+      | Opp_1             | 2                   |
+      | Opp_5             | 3                   |
+      | Opp_3             | 4                   |
+      | Opp_2             | 5                   |
 
     # Set sorting order in the Console Settings > Opportunities tab and save
     When I set sort order in Opportunities tab of #ConsoleSettingsConfig view:
-      | sortOrderField | sortBy           |
-      | primary        | Sales Stage      |
-      | secondary      | Opportunity Name |
+      | sortOrderField | sortBy           | sortDirection |
+      | primary        | Sales Stage      | Ascending     |
+      | secondary      | Opportunity Name | Ascending     |
 
     # Verify the order of records in the multiline list view after sorting order is changed
     Then I verify records order in #OpportunitiesList.MultilineListView
@@ -623,8 +622,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Set sorting order in the Console Settings > Opportunities tab and save
     When I set sort order in Opportunities tab of #ConsoleSettingsConfig view:
-      | sortOrderField | sortBy      |
-      | primary        | Lead Source |
+      | sortOrderField | sortBy      | sortDirection |
+      | primary        | Lead Source | Ascending     |
 
     # Verify the order of records in the multiline list view after sorting order is changed
     Then I verify records order in #OpportunitiesList.MultilineListView
@@ -667,13 +666,7 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
       | Opp_1             | 2                   |
 
     # Restore default sorting order in the Console Settings > Opportunities tab and save
-    When I set sort order in Opportunities tab of #ConsoleSettingsConfig view:
-      | sortOrderField | sortBy              |
-      | primary        | Expected Close Date |
-      | secondary      |                     |
-
-    # Restore default filter in the Console Settings > Opportunities tab and save.
-    When I set the "My Items" filter in Opportunities tab of #ConsoleSettingsConfig view
+    When I restore defaults in Opportunities tab of #ConsoleSettingsConfig view
 
     # Verify the records in the multiline list view after sorting order is changed
     Then I verify records order in #AccountsList.MultilineListView

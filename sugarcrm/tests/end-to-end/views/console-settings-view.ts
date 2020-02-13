@@ -34,14 +34,18 @@ export default class ConsoleSettingsConfig extends DrawerLayout {
             },
             // Field specific selector
             fields: {
-                $: 'div[id={{tabName}}] [field-name=order_by_{{sortingOrderField}}]',
+                $: 'div[id={{tabName}}] [field-name=order_by_{{sortingOrderField}}_group]',
+                field: '[field-name=order_by_{{sortingOrderField}}]',
                 clearField: '.select2-search-choice-close',
+                direction: '[name={{sortingDirection}}]',
             },
             // Basic filter support
             filter: {
                 $: 'div[id={{tabName}}]',
                 filterLine: '.filter-body.console-config:nth-child({{index}}) .edit',
-            }
+            },
+            // restore default settings
+            restoreDefault: 'div[id={{tabName}}] .restore-defaults-btn',
         });
 
         this.itemSelector = '.select2-result-label=';
@@ -62,19 +66,30 @@ export default class ConsoleSettingsConfig extends DrawerLayout {
     }
 
     /**
-     * Set value in Primary or Secondary sort order dropdown fields
+     * Set value in Primary or Secondary sort order dropdown fields and
+     * specify sorting direction
      *
      * @param tabName name of the currently opened tab in Console Settings configuration drawer
      * @param val value to set in sorting order field
      * @param sortingOrderField primary or secondary sorting order field
+     * @param sortingDirection ascending or descending sorting direction
      */
-    public async setSortCriteria(tabName: string, val: string, sortingOrderField: string ):Promise <void> {
+    public async setSortCriteria(tabName: string, val: string, sortingOrderField: string, sortingDirection: string ):Promise <void> {
 
-        let  selector = this.$('fields', {tabName, sortingOrderField});
-        await this.driver.click(selector);
-        await this.driver.waitForApp();
-        await this.driver.click(`${this.itemSelector}${val}`);
-        await this.driver.waitForApp();
+        let  selector = this.$('fields.field', {tabName, sortingOrderField});
+        // set sorting order field
+        if ( await this.driver.isElementExist(selector) ) {
+            await this.driver.click(selector);
+            await this.driver.waitForApp();
+            await this.driver.click(`${this.itemSelector}${val}`);
+            await this.driver.waitForApp();
+        }
+
+        // set sort direction
+        selector = this.$('fields.direction', {tabName, sortingOrderField, sortingDirection});
+        if ( await this.driver.isElementExist(selector) ) {
+            await this.driver.click(selector);
+        }
     }
 
     /**
@@ -105,5 +120,17 @@ export default class ConsoleSettingsConfig extends DrawerLayout {
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${val}`);
         await this.driver.waitForApp();
+    }
+
+    /**
+     * Restore default settings in the current tab
+     *
+     * @param tabName name of the currently opened tab in Console Settings configuration drawer
+     */
+    public async restoreDefault(tabName: string):Promise <void> {
+        let selector = this.$('restoreDefault', {tabName});
+        if ( await this.driver.isElementExist(selector) ) {
+            await this.driver.click(selector);
+        }
     }
 }

@@ -637,9 +637,9 @@ Feature: Customer Service Console Verification
 
     # Set sorting order in the Console Settings > Cases tab and save
     When I set sort order in Cases tab of #ConsoleSettingsConfig view:
-      | sortOrderField | sortBy |
-      | primary        | Status |
-      | secondary      | Number |
+      | sortOrderField | sortBy | sortDirection |
+      | primary        | Status | Ascending     |
+      | secondary      | Number | Ascending     |
 
     # Verify the order of records in the multiline list view after sorting order is changed
     Then I verify records order in #CasesList.MultilineListView
@@ -652,9 +652,9 @@ Feature: Customer Service Console Verification
 
     # Set sorting order in the Console Settings > Cases tab and save
     When I set sort order in Cases tab of #ConsoleSettingsConfig view:
-      | sortOrderField | sortBy   |
-      | primary        | Priority |
-      | secondary      | Subject  |
+      | sortOrderField | sortBy   | sortDirection |
+      | primary        | Priority | Ascending     |
+      | secondary      | Subject  | Ascending     |
 
     # Verify the order of records in the multiline list view after sorting order is changed
     Then I verify records order in #CasesList.MultilineListView
@@ -678,6 +678,17 @@ Feature: Customer Service Console Verification
       | C_2               | 2                   |
       | C_5               | 3                   |
 
+    When I set sort order in Cases tab of #ConsoleSettingsConfig view:
+      | sortOrderField | sortBy   | sortDirection |
+      | primary        | Priority | Descending    |
+      | secondary      | Subject  | Descending    |
+
+    Then I verify records order in #CasesList.MultilineListView
+      | record_identifier | expected_list_order |
+      | C_5               | 1                   |
+      | C_2               | 2                   |
+      | C_1               | 3                   |
+
     # Change status of one of the Cases records to Rejected
     When I perform mass update of Cases [*C_2] with the following values:
       | fieldName | value    |
@@ -693,19 +704,7 @@ Feature: Customer Service Console Verification
     Then I should not see *C_2 in #CasesList.MultilineListView
 
     # Restore default sorting order in the Console Settings > Cases tab and save
-    When I set sort order in Cases tab of #ConsoleSettingsConfig view:
-      | sortOrderField | sortBy         |
-      | primary        | Follow Up Date |
-      | secondary      |                |
-
-    # Verify the records in the multiline list view after sorting order is changed
-    Then I verify records order in #CasesList.MultilineListView
-      | record_identifier | expected_list_order |
-      | C_5               | 1                   |
-      | C_1               | 2                   |
-
-    # Restore default filter in the Console Settings > Cases tab and save.
-    When I set the "My Items" filter in Cases tab of #ConsoleSettingsConfig view
+    When I restore defaults in Cases tab of #ConsoleSettingsConfig view
 
     # Verify the records in the multiline list view after sorting order is changed
     Then I verify records order in #CasesList.MultilineListView
