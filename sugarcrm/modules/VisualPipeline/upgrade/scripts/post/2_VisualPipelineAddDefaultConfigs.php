@@ -39,9 +39,9 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
     public function shouldUpdatePipelineDefaults()
     {
         $isConversion = !$this->fromFlavor('ent') && $this->toFlavor('ent');
-        $isBelow10Ent = $this->toFlavor('ent') && version_compare($this->from_version, '10.0.0', '<');
+        $isBelowOrAt93Ent = $this->toFlavor('ent') && version_compare($this->from_version, '9.3.0', '<=');
         $needsUpdate = !empty($adminConfig) && empty($adminConfig['available_columns']);
-        return ($isConversion || $isBelow10Ent) && $needsUpdate;
+        return ($isConversion || $isBelowOrAt93Ent) && $needsUpdate;
     }
 
     public function saveUpdates($adminConfig)
