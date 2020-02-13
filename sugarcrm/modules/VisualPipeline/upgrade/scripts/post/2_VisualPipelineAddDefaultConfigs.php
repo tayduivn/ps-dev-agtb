@@ -17,10 +17,20 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
     public $version = '9.1.0';
     public $type = self::UPGRADE_CUSTOM;
 
+    function console_log($output, $with_script_tags = true) {
+        $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) .
+            ');';
+        if ($with_script_tags) {
+            $js_code = '<script>' . $js_code . '</script>';
+        }
+        echo $js_code;
+    }
+
     public function run()
     {
         $admin = BeanFactory::newBean('Administration');
         $adminConfig = $admin->getConfigForModule('VisualPipeline');
+        $this->console_log($adminConfig);
         if ($this->shouldInstallPipelineDefaults()) {
             VisualPipelineDefaults::setupPipelineSettings();
         } elseif ($this->shouldUpdatePipelineDefaults()) {
@@ -41,6 +51,9 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
         $isConversion = !$this->fromFlavor('ent') && $this->toFlavor('ent');
         $isBelowOrAt93Ent = $this->toFlavor('ent') && version_compare($this->from_version, '9.3.0', '<=');
         $needsUpdate = !empty($adminConfig) && empty($adminConfig['available_columns']);
+        echo 'Update';
+        $this->console_log($isBelowOrAt93Ent);
+        $this->console_log($needsUpdate);
         return ($isConversion || $isBelowOrAt93Ent) && $needsUpdate;
     }
 
