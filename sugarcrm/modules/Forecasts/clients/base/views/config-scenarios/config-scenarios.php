@@ -40,37 +40,5 @@ $viewdefs['Forecasts']['base']['view']['config-scenarios'] = array(
                 ),
             ),
         ),
-        //TODO-sfa - this will be revisited in a future sprint and determined whether it should go in 6.7, 6.8 or later
-        // BEGIN SUGARCRM flav=int ONLY
-        array(
-            'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS',
-            'fields' => array(
-                array(
-                    'name' => 'show_projected_likely',
-                    'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS_LIKELY',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'detail',
-                ),
-                array(
-                    'name' => 'show_projected_best',
-                    'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS_BEST',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'edit',
-                ),
-                array(
-                    'name' => 'show_projected_worst',
-                    'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS_WORST',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'edit',
-                ),
-            ),
-        ),
-        // END SUGARCRM flav=int ONLY
     ),
 );

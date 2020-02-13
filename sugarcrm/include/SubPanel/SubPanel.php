@@ -172,12 +172,6 @@ class SubPanel
 
 	function display()
 	{
-		//BEGIN SUGARCRM flav=int ONLY
-		$mircotime = microtime(true);
-		$db = DBManagerFactory::getInstance();
-		$q_before = $db->getQueryCount();
-
-		//END SUGARCRM flav=int ONLY
 		global $timedate;
 		global $mod_strings;
 		global $app_strings;
@@ -191,18 +185,6 @@ class SubPanel
 		$return_string = $this->ProcessSubPanelListView($this->template_file,$result_array);
 
 		print $return_string;
-		//BEGIN SUGARCRM flav=int ONLY
-		global $total_data_retrieval_time;
-		$total_queries = $db->getQueryCount() - $q_before;
-
-		echo '(Internal Only) Total Time: '. (microtime(true) - $mircotime);
-		if(!empty($total_data_retrieval_time)){
-			echo ' Data Collection Time: ' . $total_data_retrieval_time;
-		}
-		echo ' Total Queries: '. $total_queries;
-		echo '<br>';
-		unset($total_data_retrieval_time);
-		//END SUGARCRM flav=int ONLY
 	}
 
 	function getModulesWithSubpanels()

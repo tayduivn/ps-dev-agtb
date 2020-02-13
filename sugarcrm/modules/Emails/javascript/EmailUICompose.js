@@ -2592,9 +2592,6 @@ SE.util = {
      */
     getTiny : function(instanceId) {
         if(instanceId == '') {
-            //BEGIN SUGARCRM flav=int ONLY
-            alert('getTiny called with no instance ID');
-            //END SUGARCRM flav=int ONLY
             return null;
         }
 

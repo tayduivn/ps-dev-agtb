@@ -2510,9 +2510,6 @@ class InboundEmail extends SugarBean {
 					$retArray['err'][$k] = $mod_strings['ERR_BAD_LOGIN_PASSWORD'];
 					$retArray['bad'][$k] = $serviceTest;
 					$GLOBALS['log']->debug($l.': I-E ERROR: $ie->findOptimums() failed due to bad user credentials for user login: '.$this->email_user);
-					//BEGIN SUGARCRM flav=int ONLY
-					$GLOBALS['log']->debug($l.': I-E ERROR: $ie->findOptimums() failed due to bad user credentials for user password: '.$this->email_password);
-					//END SUGARCRM flav=int ONLY
 				} elseif( in_array($errors, $acceptableWarnings, TRUE)) { // false positive
 					$GLOBALS['log']->debug($l.': I-E found good connection but with warnings ['.$serviceTest.'] Errors:' . $errors);
 					$retArray['good'][$k] = $returnService[$k];
@@ -2786,9 +2783,6 @@ class InboundEmail extends SugarBean {
 	function handleCaseAssignment($email) {
 		$c = BeanFactory::newBean('Cases');
 		if($caseId = $this->getCaseIdFromCaseNumber($email->name, $c)) {
-			//BEGIN SUGARCRM flav=int ONLY
-			_pp('found Case with id ('.$caseId.') using Subject: '.$email->name.' -- Linking items.');
-			//END SUGARCRM flav=int ONLY
 			$c->retrieve($caseId);
 			$email->retrieve($email->id);
             //assign the case info to parent id and parent type so that the case can be linked to the email on Email Save
@@ -4908,9 +4902,6 @@ eoq;
 					$msg .= $mod_strings['LBL_POP3_SUCCESS'];
 				}
 			}
-			//BEGIN SUGARCRM flav=int ONLY
-            $msg .= '<div><b>' . $mailbox->value() . '</b></div>';
-			//END SUGARCRM flav=int ONLY
 
 			imap_errors(); // collapse error stack
 			imap_close($this->conn);
@@ -5234,14 +5225,6 @@ eoq;
 	function moveEmails($fromIe, $fromFolder, $toIe, $toFolder, $uids, $copy=false) {
 		global $app_strings;
 		global $current_user;
-
-		//BEGIN SUGARCRM flav=int ONLY
-		$GLOBALS['log']->info("fromIe: {$fromIe}");
-		$GLOBALS['log']->info("fromFolder: {$fromFolder}");
-		$GLOBALS['log']->info("toIe: {$toIe}");
-		$GLOBALS['log']->info("toFolder: {$toFolder}");
-		$GLOBALS['log']->info("UIDs: {$uids}");
-		//END SUGARCRM flav=int ONLY
 
 		// same I-E server
 		if($fromIe == $toIe) {

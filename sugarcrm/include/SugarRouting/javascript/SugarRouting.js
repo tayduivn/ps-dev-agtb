@@ -118,9 +118,7 @@ SUGAR.routing.xhr = {
 				YAHOO.util.Connect.abort(this.currentRequestObject, null, false);
 			}
 		}
-		//BEGIN SUGARCRM flav=int ONLY
-		this.trail.push(args);
-		//END SUGARCRM flav=int ONLY
+
 		this.currentRequestObject = YAHOO.util.Connect.asyncRequest('POST', "./index.php", callback, args);
 		this._reset();
 	},

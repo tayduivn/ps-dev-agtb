@@ -23,9 +23,6 @@
 	{/if}
 	</td>
 </tr>
-{* //BEGIN SUGARCRM flav=een ONLY *}
-{include file="modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl"}
-{* //END SUGARCRM flav=een ONLY *}
 <tr>
 	<td nowrap="nowrap">{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DEFAULT_VALUE"}:</td>
 	<td>

@@ -650,10 +650,6 @@ class SugarChart
         return $data;
     }
 
-
-    //BEGIN SUGARCRM flav=int ONLY
-    //Collin Says - Todo:  Whoever wrote this function, can you please comment on it?
-    //END SUGARCRM flav=int ONLY
     /**
      * nullGroup
      * This function sets a null group by clause
@@ -734,13 +730,7 @@ class SugarChart
         global $app_strings;
         global $locale;
 
-        //BEGIN SUGARCRM flav=int ONLY
-        /*
-        //END SUGARCRM flav=int ONLY
         $xmlContents = chr(255).chr(254).$GLOBALS['locale']->translateCharset($xmlContents, 'UTF-8', 'UTF-16LE');
-        //BEGIN SUGARCRM flav=int ONLY
-        */
-        //END SUGARCRM flav=int ONLY
 
         // Create dir if it doesn't exist
         $dir = dirname($xmlFilename);

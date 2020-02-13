@@ -63,10 +63,6 @@ class SugarPHPMailer extends PHPMailerProxy
 
         // allow for empty messages to go out
         $this->AllowEmpty = true;
-
-        //BEGIN SUGARCRM flav=int ONLY
-        $this->SMTPDebug	= false;
-        //END SUGARCRM flav=int ONLY
     }
 
 

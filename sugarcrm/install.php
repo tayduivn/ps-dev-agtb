@@ -53,18 +53,12 @@ $install_script = true;
 //// INSTALL RESOURCE SETUP
 $css = 'install/install.css';
 $icon = 'include/images/sugar_icon.ico';
-//BEGIN SUGARCRM flav=ent && flav!=dev ONLY
+//BEGIN SUGARCRM flav=ent ONLY
 $sugar_md = 'include/images/sugar_md_ent.png';
-//END SUGARCRM flav=ent && flav!=dev ONLY
+//END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
 $sugar_md = 'include/images/sugar_md.png';
 //END SUGARCRM flav=pro && flav!=ent ONLY
-//BEGIN SUGARCRM flav=dev ONLY
-$sugar_md = 'include/images/sugar_md_dev.png';
-//END SUGARCRM flav=dev ONLY
-//BEGIN SUGARCRM flav=corp ONLY
-$sugar_md = 'include/images/sugar_md_corp.png';
-//END SUGARCRM flav=corp ONLY
 //BEGIN SUGARCRM flav=ult ONLY
 $sugar_md = 'include/images/sugar_md_ult.png';
 //END SUGARCRM flav=ult ONLY
@@ -317,12 +311,6 @@ EOHTML;
     die();
 }
 
-//BEGIN SUGARCRM flav=int ONLY
-// Internally, disable the installer_locked flag.
-$sugar_config['installer_locked'] = false;
-//END SUGARCRM flav=int ONLY
-
-
     $exclude_files = array('register.php','download_modules.php');
 
 if(isset($next_step) && isset($workflow[$next_step]) && !in_array($workflow[$next_step],$exclude_files) && isset($sugar_config['installer_locked']) && $sugar_config['installer_locked'] == true) {
@@ -373,15 +361,6 @@ if($next_clicked) {
                 $_SESSION['setup_license_key']  = $_REQUEST['setup_license_key'];
             }
             $_SESSION['licenseKey_submitted']      = true;
-
-
-            //BEGIN SUGARCRM flav=int ONLY
-            if(empty($_SESSION['setup_license_key'])){
-                $_SESSION['setup_license_key']  = '';
-            }
-            $_SESSION['setup_license_key_users'] = 50;
-            $_SESSION['setup_license_key_expire_date'] = $timedate->asDbDate($timedate->getNow()->modify("+1 year"));
-            //END SUGARCRM flav=int ONLY
 
             break;
 

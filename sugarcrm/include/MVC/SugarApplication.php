@@ -190,13 +190,7 @@ class SugarApplication
 
         SugarThemeRegistry::buildRegistry();
         $this->loadLanguages();
-        //BEGIN SUGARCRM flav=int ONLY
-        /*
-          //END SUGARCRM flav=int ONLY
-          $this->checkDatabaseVersion();
-          //BEGIN SUGARCRM flav=int ONLY
-          */
-        //END SUGARCRM flav=int ONLY
+        $this->checkDatabaseVersion();
         $this->loadDisplaySettings();
         $this->loadLicense();
         $this->loadGlobals();

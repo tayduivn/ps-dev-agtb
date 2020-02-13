@@ -14,20 +14,7 @@ class TemplatePhone extends TemplateText{
     var $max_size = 25;
     var $type='phone';
     var $supports_unified_search = true;
-    
-    /**
-     * __construct
-     * 
-     * Constructor for TemplatePhone class. This constructor ensures that TemplatePhone instances have the
-     * validate_usa_format vardef value.
-     */
-    public function __construct()
-	{
-		//BEGIN SUGARCRM flav=int ONLY
-		$this->vardef_map['validate_usa_format'] = 'validate_usa_format';
-		//END SUGARCRM flav=int ONLY
-	}	
-	
+
 	/**
 	 * get_field_def
 	 * 
@@ -38,16 +25,7 @@ class TemplatePhone extends TemplateText{
     function get_field_def(){
 		$def = parent::get_field_def();
 		$def['dbType'] = 'varchar';
-		
-		//BEGIN SUGARCRM flav=int ONLY
-    	if(!empty($this->validate_usa_format))
-    	{
-		   $def['validate_usa_format'] = $this->validate_usa_format;
-		}
-		//END SUGARCRM flav=int ONLY
-		return $def;	
+
+        return $def;
 	}
 }
-
-
-?>

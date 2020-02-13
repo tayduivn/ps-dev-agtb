@@ -76,9 +76,6 @@ class MeetingsViewListbytype extends ViewList {
    		$type = 'IBMSmartCloud';
           global $timedate;
 
-         //BEGIN SUGARCRM flav=int ONLY
-         //Collin Lee - According to Rob A., Product Management suggested two hours as a close enough approximation to show meetings starting "now"
-         //END SUGARCRM flav=int ONLY
          $two_hours_ago = $GLOBALS['db']->convert($GLOBALS['db']->quoted($timedate->asDb($timedate->getNow()->get("-2 hours"))), 'datetime');
 
    		$where =  " meetings.type = '$type' AND meetings.status != 'Held' AND meetings.status != 'Not Held' AND meetings.date_start > {$two_hours_ago} AND ( meetings.assigned_user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' OR exists ( SELECT id FROM meetings_users WHERE meeting_id = meetings.id AND user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' AND deleted = 0 ) ) ";

@@ -14,19 +14,6 @@ $viewdefs['Forecasts']['base']['view']['config-timeperiods'] = array(
     'panels' => array(
         array(
             'fields' => array(
-                //BEGIN SUGARCRM flav=int ONLY
-                //TODO-sfa - 6.8 work with PM to determine whether custom date types are being added as ent feature or not.
-                array(
-                    'name' => 'timeperiod_type',
-                    'type' => 'enum',
-                    'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE',
-                    'options' => 'forecasts_timeperiod_types_dom',
-                    'searchBarThreshold' => 5,
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'edit'
-                ),
-                //END SUGARCRM flav=int ONLY
                 array(
                     'name' => 'timeperiod_interval',
                     'type' => 'enum',

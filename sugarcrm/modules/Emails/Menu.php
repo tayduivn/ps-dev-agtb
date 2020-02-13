@@ -25,7 +25,3 @@ if(ACLController::checkAccess('Emails', 'edit', true)) {
 if(ACLController::checkAccess('EmailTemplates', 'edit', true)) $module_menu[] = array("index.php?module=EmailTemplates&action=EditView&return_module=EmailTemplates&return_action=DetailView", $mod_strings['LNK_NEW_EMAIL_TEMPLATE'],"CreateEmails","Emails");
 // email templates
 if(ACLController::checkAccess('EmailTemplates', 'list', true)) $module_menu[] = array("index.php?module=EmailTemplates&action=index", $mod_strings['LNK_EMAIL_TEMPLATE_LIST'],"EmailFolder", 'Emails');
-//BEGIN SUGARCRM flav=int ONLY
-$module_menu[]=Array("index.php?module=Activities&action=ActivitiesReports", $mod_strings['LBL_ACTIVITIES_REPORTS'],"ActivitiesReports", 'Reports');
-//END SUGARCRM flav=int ONLY
-?>

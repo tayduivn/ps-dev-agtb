@@ -20,9 +20,6 @@ SUGAR.dependentDropdown = {
 	 */
 	debugMode : false
 }
-//BEGIN SUGARCRM flav=int ONLY
-SUGAR.dependentDropdown.debugMode = true;
-//END SUGARCRM flav=int ONLY
 
 /**
  * Handle drop-down dependencies
@@ -163,11 +160,6 @@ SUGAR.dependentDropdown.generateElement = function(focusElement, elementRow, ind
 				debugger;
 			}
 		}
-
-	} else {
-		//BEGIN SUGARCRM flav=int ONLY
-		debugger;
-		//END SUGARCRM flav=int ONLY
 	}
 }
 

@@ -25,13 +25,4 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>'EmailTemplates',
         'icon' => 'fa-bars',
     ),
-    //BEGIN SUGARCRM flav=int ONLY
-    array(
-        'route'=>'#bwc/index.php?module=Activities&action=ActivitiesReports',
-        'label' =>'LBL_ACTIVITIES_REPORTS',
-        'acl_action'=>'',
-        'acl_module'=>'',
-        'icon' => '',
-    ),
-    //END SUGARCRM flav=int ONLY
 );

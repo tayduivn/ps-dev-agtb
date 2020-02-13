@@ -18,8 +18,3 @@ $sugar_flavor       = '@_SUGAR_FLAV';
 $sugar_build        = '@_SUGAR_BUILD_NUMBER';
 $sugar_timestamp    = '@_SUGAR_BUILD_TIME';
 $sugar_mar_version  = '@_SUGAR_MAR_VERSION';
-
-//BEGIN SUGARCRM flav=int ONLY
- $sugar_codename 	= '<font color="red">(( Windex ))</font>';
-//END SUGARCRM flav=int ONLY
-?>

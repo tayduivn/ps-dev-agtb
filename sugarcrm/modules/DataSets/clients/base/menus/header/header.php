@@ -32,22 +32,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>'',
         'icon' => '',
     ),
-    //BEGIN SUGARCRM flav=int ONLY
-    array(
-        'route'=>'#bwc/index.php?module=QueryBuilder&action=EditView&return_module=QueryBuilder&return_action=DetailView',
-        'label' =>'LNK_NEW_QUERYBUILDER',
-        'acl_action'=>'',
-        'acl_module'=>'',
-        'icon' => '',
-    ),
-    array(
-        'route'=>'#bwc/index.php?module=QueryBuilder&action=index&return_module=QueryBuilder&return_action=DetailView',
-        'label' =>'LNK_QUERYBUILDER',
-        'acl_action'=>'',
-        'acl_module'=>'',
-        'icon' => '',
-    ),
-    //END SUGARCRM flav=int ONLY
     array(
         'route'=>'#bwc/index.php?module=DataSets&action=EditView&return_module=DataSets&return_action=DetailView',
         'label' =>'LNK_NEW_DATASET',

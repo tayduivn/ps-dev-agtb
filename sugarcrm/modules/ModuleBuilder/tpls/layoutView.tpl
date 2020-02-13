@@ -135,9 +135,6 @@
 			    {$panelid}
 			{/if}</span>
           <span class='panel_id' id='le_panelid_{$idCount}'>{$panelid}</span>
-          {* //BEGIN SUGARCRM flav=een ONLY *}
-          <span class='panel_id' id='le_paneldep_{$idCount}'>{$dependencies.$panelid}</span>
-          {* //END SUGARCRM flav=een ONLY *}
         </div>
         {if $panelid ne 'default'}
             {capture assign="otherAttributes"}class="le_edit" style="float:left; cursor:pointer;" onclick="editPanelProperties('{$idCount}');"{/capture}
@@ -281,16 +278,9 @@ var editPanelProperties = function (panelId, view) {
     panelId = "" + panelId;
 	var key_label = document.getElementById('le_panelid_' + panelId).innerHTML.replace(/^\s+|\s+$/g,'');
 	var value_label = document.getElementById('le_panelname_' + panelId).innerHTML.replace(/^\s+|\s+$/g,'');
-    //BEGIN SUGARCRM flav=een ONLY
-	var value_dep = document.getElementById('le_paneldep_' + panelId).innerHTML;
-    //END SUGARCRM flav=een ONLY
-	var params = "module=ModuleBuilder&action=editProperty&view_module=" + encodeURIComponent(ModuleBuilder.module) 
+	var params = "module=ModuleBuilder&action=editProperty&view_module=" + encodeURIComponent(ModuleBuilder.module)
 	            + (ModuleBuilder.package ?  "&view_package=" + encodeURIComponent(ModuleBuilder.package) : "")
                 + "&view=" + encodeURIComponent(view) + "&id_label=le_panelname_" + encodeURIComponent(panelId) + "&name_label=label_" + encodeURIComponent(key_label.toUpperCase())
-				//BEGIN SUGARCRM flav=een ONLY
-                + "&title_dep=" + encodeURIComponent(SUGAR.language.get("ModuleBuilder", "LBL_DEPENDENCY")) + "&name_dep=" + "dep_" + encodeURIComponent(key_label.toUpperCase()) 
-                + "&id_dep=le_paneldep_" + encodeURIComponent(key_label) + "&value_dep=" + encodeURIComponent(value_dep) + "&expression_dep=true"
-                //END SUGARCRM flav=een ONLY
                 + "&title_label=" + encodeURIComponent(SUGAR.language.get("ModuleBuilder", "LBL_LABEL_TITLE")) + "&value_label=" + encodeURIComponent(value_label);
     ModuleBuilder.getContent(params);
 };

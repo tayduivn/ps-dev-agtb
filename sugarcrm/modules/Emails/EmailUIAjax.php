@@ -528,11 +528,6 @@ $request = InputValidation::getService();
     isset($_REQUEST['ieId']) && !empty($_REQUEST['ieId']) &&
     isset($_REQUEST['folder']) && !empty($_REQUEST['folder'])) {
         $email->et->markEmails("deleted", $_REQUEST['ieId'], $_REQUEST['folder'], $_REQUEST['uids']);
-    } else {
-        //BEGIN SUGARCRM flav=int ONLY
-        echo "missing somthing";
-        _pp($_REQUEST);
-        //END SUGARCRM flav=int ONLY
     }
     break;
     case "markEmail":
@@ -567,11 +562,6 @@ $request = InputValidation::getService();
         	}
 	        $out = trim($json->encode($ret, false));
 	        echo $out;
-        } else {
-            //BEGIN SUGARCRM flav=int ONLY
-            echo "missing somthing";
-            _pp($_REQUEST);
-            //END SUGARCRM flav=int ONLY
         }
         break;
 
@@ -1751,47 +1741,6 @@ eoq;
 
         ////    END ADDRESS BOOK
         ///////////////////////////////////////////////////////////////////////////
-
-
-
-        ///////////////////////////////////////////////////////////////////////////
-        ////    MISC
-        //BEGIN SUGARCRM flav=int ONLY
-    case "test":
-        $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: checkEmail2");
-
-            $showFolders = Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
-
-        $ret = array();
-        $ret['numberAccounts'] = count($showFolders);
-
-        $GLOBALS['log']->info("EMAIL2.0: async checkEmail - found [ ".$ret['numberAccounts']." ] accounts to check");
-
-        if(!empty($showFolders) && is_array($showFolders)) {
-            foreach($showFolders as $ieId) {
-                $ieId = trim($ieId);
-
-                if(!empty($ieId)) {
-                    $GLOBALS['log']->info("INBOUNDEMAIL: trying to check email for GUID [ {$ieId} ]");
-                    $ie->disconnectMailserver();
-                    $ie->retrieve($ieId);
-
-                    $ret[$ieId] = $ie->checkEmail2_meta();
-                }
-            }
-        } else {
-            $GLOBALS['log']->info("EMAIL2.0: at checkEmail() async call - not subscribed accounts to check.");
-        }
-
-        _ppd($ret);
-        break;
-
-    case "refreshTodos":
-        $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: refreshTodos");
-        $out = $email->et->smarty->fetch("modules/Emails/templates/_todos.tpl");
-        echo $out;
-        break;
-        //END SUGARCRM flav=int ONLY
 
     default:
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: default");

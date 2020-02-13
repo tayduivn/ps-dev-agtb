@@ -270,15 +270,9 @@ class EmailUI {
 				var loader = new YAHOO.util.YUILoader({
 				    require : [
 				    	"layout", "element", "tabview", "menu",
-				    	//BEGIN SUGARCRM flav=int ONLY
-				        'logger',
-				        //END SUGARCRM flav=int ONLY
 				    	"cookie", "sugarwidgets"
 				    ],
 				    loadOptional: true,
-				    //BEGIN SUGARCRM flav=int ONLY
-					filter: 'debug',
-					//END SUGARCRM flav=int ONLY
 				    skin: { base: 'blank', defaultSkin: '' },
 				    onSuccess: email2init,
 				    allowRollup: true,

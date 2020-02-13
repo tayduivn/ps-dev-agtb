@@ -204,17 +204,8 @@ else {
 		@ob_end_clean();
 		ob_start();
 
-		//BEGIN SUGARCRM flav=int ONLY
-		// awu: stripping out zend_send_file function call, the function changes the filename to be whatever is on the file system
-		if(function_exists('zend_send_file')){
-            zend_send_file($download_location);
-		}else{
-		//END SUGARCRM flav=int ONLY
-	        readfile($download_location);
-	    //BEGIN SUGARCRM flav=int ONLY
-		}
-		//END SUGARCRM flav=int ONLY
+        readfile($download_location);
+
 		@ob_flush();
 	}
 }
-?>

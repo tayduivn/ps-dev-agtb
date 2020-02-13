@@ -52,7 +52,4 @@
 	{/if}
 	</td>
 </tr>
-{* //BEGIN SUGARCRM flav=een ONLY *}
-{include file="modules/DynamicFields/templates/Fields/Forms/coreCalculated.tpl"}
-{* //END SUGARCRM flav=een ONLY *}
 {include file="modules/DynamicFields/templates/Fields/Forms/coreBottom.tpl"}

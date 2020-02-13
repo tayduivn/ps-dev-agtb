@@ -15,67 +15,6 @@ use Symfony\Component\Validator\Constraints as AssertBasic;
 
 class TeamsController extends SugarController {
 
-	//BEGIN SUGARCRM flav=int ONLY
-	public function action_GetTeamHierarchy(){
-		$this->view = 'ajax';
-		if(!empty($_REQUEST['node']) && $_REQUEST['node'] != 'ynode-7'){
-			$parent_id = $_REQUEST['node'];
-			$sql = "SELECT team_hierarchies.id, teams.name FROM team_hierarchies INNER JOIN teams ON teams.id = team_hierarchies.team_id WHERE parent_id = '$parent_id'";
-
-		}else{
-			$sql = "SELECT team_hierarchies.id, teams.name FROM team_hierarchies INNER JOIN teams ON teams.id = team_hierarchies.team_id WHERE (parent_id is NULL OR parent_id = '')";
-		}
-		$result = $GLOBALS['db']->query($sql);
-		$nodes = array();
-	   	while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-	   			$node = array();
-	   			$node['id'] = $row['id'];
-	   			$node['text'] = $row['name'];
-	   			$node['cls'] = 'file';
-	   			$sql2 = "SELECT count(*) count FROM team_hierarchies WHERE parent_id = '".$row['id']."'";
-	   			$result2 = $GLOBALS['db']->query($sql2);
-	   			$row2 = $GLOBALS['db']->fetchByAssoc($result2);
-	   			if($row2['count'] <= 0){
-	   				$node['leaf'] = 'true';
-	   			}
-	   			$nodes[] = $node;
-	   	}
-	   	$json = getJSONobj();
-		echo $json->encode($nodes);
-	}
-
-	public function action_AddTeamToHierarchy(){
-		if(!empty($_POST['team_id'])){
-			$teamH = BeanFactory::newBean('TeamHierarchy');
-			if(!empty($_POST['parent_id']))
-				$teamH->parent_id = $_POST['parent_id'];
-			$teamH->team_id = $_POST['team_id'];
-			$teamH->save();
-		}
-		$this->view = 'tree';
-	}
-
-
-	public function action_AddTheUserToTeam(){
-		if(!empty($_POST['user_id']) && !empty($_POST['user_parent_id'])){
-			$teamH = BeanFactory::newBean('TeamHierarchy');
-			$teamH->addUserToTeam($_POST['user_id'], $_POST['user_parent_id']);
-		}
-		$this->view = 'tree';
-	}
-
-	public function action_ReorderTree(){
-		$this->view = 'ajax';
-		if(!empty($_POST['node_id']) && !empty($_POST['parent_id'])){
-			$teamH = BeanFactory::getBean('TeamHierarchy', $_POST['node_id']);
-			$teamH->parent_id = $_POST['parent_id'];
-			$teamH->save();
-			return 'success';
-		}
-		return 'failure';
-	}
-	//END SUGARCRM flav=int ONLY
-
 	public function action_DisplayInlineTeams(){
 		$this->view = 'ajax';
 		$body = '';

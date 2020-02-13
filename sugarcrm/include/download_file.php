@@ -79,16 +79,7 @@ class DownloadFile {
         set_time_limit(0);
         ob_start();
 
-        //BEGIN SUGARCRM flav=int ONLY
-        // awu: stripping out zend_send_file function call, the function changes the filename to be whatever is on the file system
-        if(function_exists('zend_send_file')){
-            zend_send_file($info['path']);
-        }else{
-        //END SUGARCRM flav=int ONLY
-            readfile($info['path']);
-        //BEGIN SUGARCRM flav=int ONLY
-        }
-        //END SUGARCRM flav=int ONLY
+        readfile($info['path']);
         @ob_end_flush();
     }
 

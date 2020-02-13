@@ -124,15 +124,6 @@ EOQ;
 
 			$description = empty($desc1) ? '' : $app_strings['MSG_JS_ALERT_MTG_REMINDER_AGENDA'].$desc1."\n";
 
-			//BEGIN SUGARCRM flav=notifications ONLY
-			//Add the notification
-			$n = BeanFactory::newBean('Notifications');
-			$n->name = $app_strings['MSG_JS_ALERT_MTG_REMINDER_MEETING'] .": " . $meetingName;
-			$n->description = $app_strings['MSG_JS_ALERT_MTG_REMINDER_LOC'].$row['location']. $description.$instructions;
-			$n->assigned_user_id = $current_user->id;
-			$n->save(FALSE);
-			//END SUGARCRM flav=notifications ONLY
-
 			// standard functionality
 			$this->addAlert($app_strings['MSG_JS_ALERT_MTG_REMINDER_MEETING'], $meetingName,
 				$app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($db->fromConvert($row['date_start'], 'datetime')),
@@ -164,15 +155,6 @@ EOQ;
 			$timeRemind = $row['reminder_time'];
 			$timeStart -= $timeRemind;
 			$row['description'] = (isset($row['description'])) ? $row['description'] : '';
-
-			//BEGIN SUGARCRM flav=notifications ONLY
-			//Add the notification
-			$n = BeanFactory::newBean('Notifications');
-			$n->name = $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'] . ": ".$row['name'];
-			$n->description = $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL_MSG'];
-			$n->assigned_user_id = $current_user->id;
-			$n->save(FALSE);
-			//END SUGARCRM flav=notifications ONLY
 
 			$this->addAlert($app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'], $row['name'], $app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($db->fromConvert($row['date_start'], 'datetime')) , $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL_MSG'] , $timeStart - strtotime($alertDateTimeNow), 'index.php?action=DetailView&module=Calls&record=' . $row['id']);
 		}

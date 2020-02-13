@@ -57,20 +57,4 @@ class DetailView2 extends EditView
 
         $this->defs = $viewdefs[$this->module][$this->view];
     }
-
-	//BEGIN SUGARCRM flav=inlineEdit ONLY
-	function display(
-	    $showTitle = true,
-	    $ajaxSave = false
-	    )
-	{
-
-	 	$str = parent::display($showTitle, $ajaxSave);
-		$ie = new InlineEdit();
-		$str .=  $ie->getEditInPlaceJS($this->defs['panels'], $this->focus);
-
-		return $str;
-	}
-	//END SUGARCRM flav=inlineEdit ONLY
 }
-?>

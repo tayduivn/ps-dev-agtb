@@ -1550,11 +1550,6 @@ function displayStudioForCurrentUser()
     $_SESSION['display_studio_for_user'] = false;
 
     return false;
-
-    //BEGIN SUGARCRM flav!=pro ONLY
-    return true;
-    //END SUGARCRM flav=!pro ONLY
-
 }
 
 function displayWorkflowForCurrentUser()
@@ -2981,20 +2976,6 @@ function nl2html($str)
  */
 function _ppd($mixed)
 {
-    //BEGIN SUGARCRM flav=int ONLY
-    echo "\n<pre>\n";
-    print_r($mixed);
-
-    echo "";
-    $stack  = debug_backtrace();
-    if (!empty($stack) && isset($stack[0]['file']) && $stack[0]['line']) {
-        echo "\n\n _ppd caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
-    }
-
-    echo "\n</pre>\n";
-    die();
-
-    //END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3040,26 +3021,6 @@ function _ppl($mixed, $die=false, $displayStackTrace=false, $loglevel="fatal")
  */
 function _ppf($bean, $die=false)
 {
-    //BEGIN SUGARCRM flav=int ONLY
-    $out = array();
-    foreach ($bean->field_defs as $k => $v) {
-        if(isset($bean->$k))
-        $out[$k] = $bean->$k;
-    }
-    foreach ($bean->column_fields as $k) {
-        if(isset($bean->$k))
-        $out[$k] = $bean->$k;
-    }
-    foreach ($bean->list_fields as $k) {
-        if(isset($bean->$k))
-        $out[$k] = $bean->$k;
-    }
-
-    echo $bean->object_name." values:<br/>";
-    _pp($out);
-    if($die)
-    die();
-    //END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3069,17 +3030,6 @@ function _ppf($bean, $die=false)
  */
 function _pp($mixed)
 {
-    //BEGIN SUGARCRM flav=int ONLY
-    echo "\n<pre>\n";
-    print_r($mixed);
-
-    echo "";
-    $stack  = debug_backtrace();
-    if (!empty($stack) && isset($stack[0]['file']) && $stack[0]['line']) {
-        echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
-    }
-    echo "\n</pre>\n";
-    //END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3089,16 +3039,6 @@ function _pp($mixed)
  */
 function _pstack_trace($mixed=null)
 {
-    //BEGIN SUGARCRM flav=int ONLY
-    echo "\n<pre>\n_pstack_trace: '";
-    if(!empty($mixed))
-    print_r($mixed);
-
-    echo "'<BR>\n";
-    debug_print_backtrace();
-
-    echo "\n</pre>\n";
-    //END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3108,12 +3048,6 @@ function _pstack_trace($mixed=null)
  */
 function _ppt($mixed, $textOnly=false)
 {
-    //BEGIN SUGARCRM flav=int ONLY
-    echo "\n<pre>\n";
-    print_r($mixed);
-    echo "\n</pre>\n";
-    display_stack_trace($textOnly);
-    //END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3123,13 +3057,6 @@ function _ppt($mixed, $textOnly=false)
  */
 function _pptd($mixed)
 {
-    //BEGIN SUGARCRM flav=int ONLY
-    echo "\n<pre>\n";
-    print_r($mixed);
-    echo "\n</pre>\n";
-    display_stack_trace();
-    die();
-    //END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3138,13 +3065,6 @@ function _pptd($mixed)
  */
 function decodeJavascriptUTF8($str)
 {
-    //BEGIN SUGARCRM flav=int ONLY
-    function afunc($matches)
-    {
-        return '&#' . hexdec($matches[1]) . ';';
-    }
-    echo preg_replace_callback('/\\\u([\da-f]{4})/', 'afunc' , $str);
-    //END SUGARCRM flav=int ONLY
 }
 
 /**

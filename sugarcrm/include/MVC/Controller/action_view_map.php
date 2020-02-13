@@ -37,10 +37,6 @@ $action_view_map['wirelesslist'] = 'wirelesslist';
 $action_view_map['wirelessedit'] = 'wirelessedit';
 $action_view_map['wlsave'] = 'wirelesssave';
 
-//BEGIN SUGARCRM flav=int ONLY
-$action_view_map['bronzeview']= 'bronze';
-$action_view_map['silver']= 'silver';
-//END SUGARCRM flav=int ONLY
 // SugarPDF
 $action_view_map['sugarpdf']= 'sugarpdf';
 $action_view_map['dc'] = 'dc';
@@ -57,4 +53,3 @@ $action_view_map['metadata'] = 'metadata';
 
 $action_view_map['cubes'] = 'cubes';
 $action_view_map['debug'] = 'debug';
-?>

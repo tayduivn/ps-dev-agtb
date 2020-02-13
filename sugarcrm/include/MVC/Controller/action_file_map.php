@@ -17,6 +17,3 @@ $action_file_map['targetlistupdate'] = 'modules/ProspectLists/TargetListUpdate.p
 $action_file_map['deleterelationship'] = 'include/generic/DeleteRelationship.php';
 $action_file_map['import'] = 'modules/Import/index.php';
 $action_file_map['viewsugarfieldcollection'] = 'include/SugarFields/Fields/Collection/view.sugarfieldcollection.php';
-//BEGIN SUGARCRM flav=int ONLY
-$action_file_map['bronzeviewer'] = 'include/SubPanel/BronzeSubPanelViewer.php';
-//END SUGARCRM flav=int ONLY

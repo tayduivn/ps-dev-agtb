@@ -16,9 +16,6 @@
 var loader = new YAHOO.util.YUILoader({
     require : ["sugarwidgets"],
     loadOptional: true,
-	//BEGIN SUGARCRM flav=int ONLY
-	filter: 'debug',
-	//END SUGARCRM flav=int ONLY
     skin: { base: 'blank', defaultSkin: '' },
 	onSuccess: function(){console.log("loaded")},
     allowRollup: true,

@@ -658,12 +658,6 @@ EOQ;
 
         $action = $this->request->getValidInputRequest('action');
 
-        //BEGIN SUGARCRM flav=int ONLY
-        //check to see if the script files need to be rebuilt, add needed variables to request array
-        $_REQUEST['root_directory'] = getcwd();
-        $_REQUEST['js_rebuild_concat'] = 'rebuild';
-        require_once ('jssource/minify.php');
-        //END SUGARCRM flav=int ONLY
         if ($this->_getOption('show_javascript')) {
             if (!$this->_getOption('show_header')) {
                 $langHeader = get_language_header();
@@ -864,21 +858,7 @@ EOHTML;
         $deltaTime = $endTime - $GLOBALS['startTime'];
         $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' ' . number_format(round($deltaTime, 2), 2) . ' ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
         $return = $response_time_string;
-        //BEGIN SUGARCRM flav=int ONLY
-        // Output the DB instances only if there is more than one actually created(the error case)
-        $checkDB = DBManagerFactory::getInstance();
-        if ($checkDB->count_id > 1) {
-            $return .= ' (Internal Only)DB Instances: ' . $checkDB->count_id . ' references:' . $checkDB->references . '';
-        }
 
-        //END SUGARCRM flav=int ONLY
-        //BEGIN SUGARCRM flav=int ONLY
-        // Internally, if they have not turned off page resources, set them to true.
-        if (!isset($GLOBALS['sugar_config']['show_page_resources'])) {
-            $GLOBALS['sugar_config']['show_page_resources'] = true;
-        }
-
-        //END SUGARCRM flav=int ONLY
         if (!empty($GLOBALS['sugar_config']['show_page_resources'])) {
             // Print out the resources used in constructing the page.
             $included_files = get_included_files();

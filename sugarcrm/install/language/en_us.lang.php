@@ -60,9 +60,6 @@ $mod_strings = array(
 
     'ERR_CHECKSYS'                      => 'Errors have been detected during compatibility check.  In order for your SugarCRM Installation to function properly, please take the proper steps to address the issues listed below and either press the recheck button, or try installing again.',
     'ERR_CHECKSYS_CALL_TIME'            => 'Allow Call Time Pass Reference is On (this should be set to Off in php.ini)',
-// BEGIN SUGARCRM flav!=pro ONLY
-	'ERR_CHECKSYS_CURL'					=> 'Not found: Sugar Scheduler will run with limited functionality.',
-// END SUGARCRM flav!=pro ONLY
 
 	'ERR_CHECKSYS_CURL'					=> 'Not found: Sugar Scheduler will run with limited functionality. The Email Archiving service will not run.',
     'ERR_CHECKSYS_IMAP'					=> 'Not found: InboundEmail and Campaigns (Email) require the IMAP libraries. Neither will be functional.',

@@ -73,15 +73,6 @@ switch($_REQUEST['routingAction']) {
 		echo $out;
 	break;
 
-	//BEGIN SUGARCRM flav=int ONLY
-	case "test":
-
-		$sdd = new SugarDependentDropdown();
-		$sdd->debugMode = true;
-		$sdd->init("include/SugarDependentDropdown/metadata/dependentDropdown.php");
-	break;
-	//END SUGARCRM flav=int ONLY
-
 	default:
 		echo "NOOP";
 }

@@ -15,10 +15,6 @@ class PackageManagerComm
 {
     const HTTPS_URL = 'https://depot.sugarcrm.com/depot/SugarDepotSoap.php';
 
-//BEGIN SUGARCRM flav=int ONLY
-    const HTTP_URL = 'http://depot.sugarcrm.com/depot/SugarDepotSoap.php';
-//END SUGARCRM flav=int ONLY
-
     /**
      * Initialize the soap client and store in the $GLOBALS object for use
      *
@@ -29,18 +25,7 @@ class PackageManagerComm
         if(empty($GLOBALS['SugarDepot'])){
             $GLOBALS['log']->debug('USING HTTPS TO CONNECT TO HEARTBEAT');
             $soap_client = new nusoapclient(self::HTTPS_URL, false);
-            $ping = $soap_client->call('sugarPing', array());
-            //BEGIN SUGARCRM flav=int ONLY
-            if(empty($ping) || $soap_client->getError()){
-                $soap_client = '';
-            }
-
-			//only internally can we connect over http everyone else must use https
-            if(empty($soap_client)){
-                $GLOBALS['log']->debug('USING HTTP TO CONNECT TO HEARTBEAT');
-                $soap_client = new nusoapclient(self::HTTP_URL, false);
-            }
-            //END SUGARCRM flav=int ONLY
+            $soap_client->call('sugarPing', array());
             $GLOBALS['SugarDepot'] = $soap_client;
         }
         //if we do not have a session, then try to login

@@ -100,10 +100,7 @@ class Bug58089Test extends TestCase
         $modules_exempt_from_availability_check['Teams']='Teams';
         $modules_exempt_from_availability_check['SchedulersJobs']='SchedulersJobs';
         $modules_exempt_from_availability_check['DocumentRevisions']='DocumentRevisions';
-        //BEGIN SUGARCRM flav=dce ONLY
-        $modules_exempt_from_availability_check['DCEActions']='DCEActions';
-        //END SUGARCRM flav=dce ONLY
-        
+
         $GLOBALS['modules_exempt_from_availability_check'] = $modules_exempt_from_availability_check;
     }
     

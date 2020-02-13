@@ -49,9 +49,6 @@ ModuleBuilder.addToHead("{sugar_getjspath file='include/javascript/jquery/markit
 var FBLoader = new YAHOO.util.YUILoader({
     require : ["formulabuilder"],
     loadOptional: true,
-    //BEGIN SUGARCRM flav=int ONLY
-    filter: 'debug',
-    //END SUGARCRM flav=int ONLY
     skin: { base: 'blank', defaultSkin: '' },
     onSuccess: function(){SUGAR.expressions.initFormulaBuilder()},
     allowRollup: true,

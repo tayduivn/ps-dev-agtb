@@ -51,14 +51,4 @@ class Bug42994Test extends TestCase
 
         $this->assertContains('XXVisible ifXX', $output);
     }
-    //BEGIN SUGARCRM flav=een ONLY
-    public function testSetLanguageStringEnforced() 
-    {
-        $this->_lang_manager->setModString('LBL_ENFORCED','XXEnforcedXX','DynamicFields');
-        $this->_lang_manager->save();
-        $output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
-
-        $this->assertContains('XXEnforcedXX', $output);            
-    }
-    //END SUGARCRM flav=een ONLY
 }

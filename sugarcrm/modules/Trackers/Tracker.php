@@ -10,10 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//BEGIN SUGARCRM flav=int ONLY
-// The contents of this file (particularly the logpage() method) is required in combination with mvc_utils.php - do not remove without good reason
-//END SUGARCRM flav=int ONLY
-
 use Doctrine\DBAL\Connection;
 
 class Tracker extends SugarBean

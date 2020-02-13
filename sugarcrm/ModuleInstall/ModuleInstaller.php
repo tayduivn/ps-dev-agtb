@@ -2177,11 +2177,6 @@ class ModuleInstaller
 
     /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:15:18 PM 	*/
     function copy_recursive_with_backup( $source, $dest, $backup_path, $uninstall=false ) {
-        //BEGIN SUGARCRM flav=int ONLY
-        if (strpos($source,".svn") !== false or strpos($dest,".svn") !== false) {
-            return true;
-        }
-        //END SUGARCRM flav=int ONLY
         if(is_file($source)) {
             if($uninstall) {
                 $GLOBALS['log']->debug("Restoring ... " . $source.  " to " .$dest );

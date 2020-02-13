@@ -106,21 +106,15 @@ $pwd_settings=$GLOBALS['sugar_config']['passwordsetting'];
 $pwd_regex=str_replace( "\\","\\\\",$pwd_settings['customregex']);
 $sugar_smarty->assign("REGEX",$pwd_regex);
 
-//BEGIN SUGARCRM flav=dev ONLY
-$sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_dev.png'));
-//END SUGARCRM flav=dev ONLY
-//BEGIN SUGARCRM flav=ent && flav!=dev ONLY
+//BEGIN SUGARCRM flav=ent ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_ent.png'));
-//END SUGARCRM flav=ent && flav!=dev ONLY
+//END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md.png'));
 //END SUGARCRM flav=pro && flav!=ent ONLY
 //BEGIN SUGARCRM flav=ult ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_ult.png'));
 //END SUGARCRM flav=ult ONLY
-//BEGIN SUGARCRM flav=corp ONLY
-$sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_corp.png'));
-//END SUGARCRM flav=corp ONLY
 $sugar_smarty->assign("MOD", $mod_strings);
 $sugar_smarty->assign("IS_ADMIN", '1');
 $sugar_smarty->assign("ENTRY_POINT", 'Changenewpassword');
@@ -130,7 +124,6 @@ $sugar_smarty->assign("INSTRUCTION", $app_strings['NTC_LOGIN_MESSAGE']);
 $sugar_smarty->assign("USERNAME_FIELD", '<td scope="row" width="30%">'.$mod_strings['LBL_USER_NAME'].':</td><td width="70%"><input type="text" size="20" tabindex="1" id="user_name" name="user_name"  value=""</td>');
 $sugar_smarty->assign('PWDSETTINGS', $GLOBALS['sugar_config']['passwordsetting']);
 $sugar_smarty->assign('SITE_URL', $GLOBALS['sugar_config']['site_url']);
-
 
 //BEGIN SUGARCRM flav!=pro ONLY
 $rules = "'','',''";

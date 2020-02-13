@@ -12,9 +12,6 @@
 
 class SugarModule
 {
-    //BEGIN SUGARCRM flav=sugarmdle ONLY
-    protected static $_moduleCache = array();
-    //END SUGARCRM flav=sugarmdle ONLY
     protected static $_instances = array();
 
     protected $_moduleName;

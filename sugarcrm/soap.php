@@ -34,10 +34,6 @@ require_once('soap/SoapSugarUsers.php');
 require_once('soap/SoapData.php');
 require_once('soap/SoapDeprecated.php');
 
-//BEGIN SUGARCRM flav=int ONLY
-require_once('soap/SoapStudio.php');
-//END SUGARCRM flav=int ONLY
-
 /* Begin the HTTP listener service and exit. */
 ob_clean();
 

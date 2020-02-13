@@ -72,13 +72,6 @@
 		<td width="25%" align='right'>{if isset($property.title)}{$property.title}{else}{$property.name}{/if}:</td>
 		<td width="75%">
 			<input class='save' type='hidden' name='{$property.name}' id='editProperty_{$id}{$property.id}' value='no_change'>
-			{* //BEGIN SUGARCRM flav=een ONLY *}
-			{if isset($property.expression)}
-                <input id='display_{$id}{$property.id}'onchange='document.getElementById("editProperty_{$id}{$property.id}").value = this.value' value='{$property.value}'>
-                <input class="button" type=button name="edit{$property.id}Formula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}"
-                    onclick="ModuleBuilder.moduleLoadFormula(Ext.getDom('display_{$id}{$property.id}').value, ['display_{$id}{$property.id}', 'editProperty_{$id}{$property.id}'])"/>
-            {else}
-			{* //END SUGARCRM flav=een ONLY *}
 			{if isset($property.hidden)}
 				{$property.value}
 			{else}
@@ -135,9 +128,6 @@
                     <input onchange='document.getElementById("editProperty_{$id}{$property.id}").value = this.value' value='{$property.value}'>
                 {/if}
 			{/if}
-			{* //BEGIN SUGARCRM flav=een ONLY *}
-			{/if}
-			{* //END SUGARCRM flav=een ONLY *}
 		</td>
 	</tr>
 	{/foreach}

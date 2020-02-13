@@ -1471,9 +1471,6 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 	$error = new SoapError();
     $hasLoginError = false;
 
-    //BEGIN SUGARCRM flav=int ONLY
-    //clee - This empty($user_name) check and !empty($password) check here are for bug 49898
-    //END SUGARCRM flav=int ONLY
     if(empty($user_name) && !empty($password))
     {
         if(!validate_authenticated($password))

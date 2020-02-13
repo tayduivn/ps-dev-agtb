@@ -40,9 +40,6 @@ closeMenus();
 var MBLoader = new YAHOO.util.YUILoader({
     require : ["layout", "element", "tabview", "treeview", "history", "cookie", "sugarwidgets"],
     loadOptional: true,
-	//BEGIN SUGARCRM flav=int ONLY
-	filter: 'debug',
-	//END SUGARCRM flav=int ONLY
     skin: { base: 'blank', defaultSkin: '' },
 	onSuccess: ModuleBuilder.init,
     allowRollup: true,

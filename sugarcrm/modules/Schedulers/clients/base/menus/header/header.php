@@ -25,13 +25,4 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>'',
         'icon' => 'fa-list',
     ),
-    //BEGIN SUGARCRM flav=int ONLY
-    array(
-        'route'=>'#bwc/index.php?module=Schedulers&action=Test',
-        'label' =>'LNK_TEST_SCHEDULER',
-        'acl_action'=>'admin',
-        'acl_module'=>'',
-        'icon' => 'fa-clock-o',
-    ),
-    //END SUGARCRM flav=int ONLY
 );

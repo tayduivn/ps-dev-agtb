@@ -225,7 +225,6 @@ To create an {{module_name}}:
 // END ENT/ULT
 // END SUGARCRM flav=ent ONLY
 // BEGIN SUGARCRM flav!=ent ONLY
-// BEGIN PRO/CORP
     // List View Help Text
     'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module allows you to track individual sales from start to finish. Each {{module_name}} record represents a prospective sale and includes relevant sale data as well as relating to other important records such as {{quotes_module}}, {{contacts_module}}, etc. An {{module_name}} will typically progress through several Sales Stages until it is marked either "Closed Won" or "Closed Lost". {{plural_module_name}} can be leveraged even further by using Sugar\'s {{forecasts_singular_module}}ing module to understand and predict sales trends as well as focus work to achieve sales quotas.',
 
@@ -247,7 +246,6 @@ To create an {{module_name}}:
  - Click "Show More" to expose additional fields if necessary.
 2. Click "Save" to finalize the new record and return to the previous page.',
 
-// END PRO/CORP
 // END SUGARCRM flav!=ent ONLY
 
     //Marketo

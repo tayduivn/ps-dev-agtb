@@ -151,9 +151,6 @@ class Prospect extends Person {
         if(empty($module))
         {
             //The call to retrieveTargetList contains a query that may contain a pound token
-            //BEGIN SUGARCRM flav=int ONLY
-            //See bugs 50342 and 50360
-            //END SUGARCRM flav=int ONLY
             $pattern = '/AND related_type = [\'#]([a-zA-Z]+)[\'#]/i';
             if(preg_match($pattern, $query, $matches))
             {

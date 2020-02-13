@@ -41,9 +41,6 @@
 			    {$panelid}
 			{/if}</span>
           <span class='panel_id' id='le_panelid_{$idCount}'>{$panelid}</span>
-          {* //BEGIN SUGARCRM flav=een ONLY *}
-          <span class='panel_id' id='le_paneldep_{$idCount}'>{$dependencies.$panelid}</span>
-          {* //END SUGARCRM flav=een ONLY *}
         </div>
         {if $panelid ne 'default'}
  

@@ -40,11 +40,6 @@
         {/if}
 
 {if $view == "EditView" || $view == "QuickCreate" || $view == "QuickEdit" || $view == "wirelessedit"}
-
-{* //BEGIN SUGARCRM flav!=pro ONLY *}
-{if $view == "EditView" || $view == "QuickCreate" || $view == "QuickEdit"}
-{* //END SUGARCRM flav!=pro ONLY *}
-
 		<div>
 		    	   	
 		    	<input name="reminder_checked" type="hidden" value="0">

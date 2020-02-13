@@ -208,9 +208,6 @@ $beanList['BusinessCenters'] = 'BusinessCenter';
 $beanList['ChangeTimers'] = 'ChangeTimer';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
-//BEGIN SUGARCRM flav=int ONLY
-$beanList['TeamHierarchy'] = 'TeamHierarchy';
-//END SUGARCRM flav=int ONLY
 $beanList['UpgradeHistory'] = 'UpgradeHistory';
 $beanList['OutboundEmail'] = 'OutboundEmail';
 $beanList['EmailParticipants'] = 'EmailParticipant';
@@ -294,9 +291,6 @@ $beanFiles['ACLField'] = 'modules/ACLFields/ACLField.php';
 $beanFiles['Contract']  = 'modules/Contracts/Contract.php';
 $beanFiles['Team']          = 'modules/Teams/Team.php';
 $beanFiles['TeamMembership']            = 'modules/Teams/TeamMembership.php';
-//BEGIN SUGARCRM flav=int ONLY
-$beanFiles['TeamHierarchy']            = 'modules/Teams/TeamHierarchy.php';
-//END SUGARCRM flav=int ONLY
 $beanFiles['TeamSet']            = 'modules/Teams/TeamSet.php';
 $beanFiles['TeamSetModule']            = 'modules/Teams/TeamSetModule.php';
 $beanFiles['TeamNotice']            = 'modules/TeamNotices/TeamNotice.php';
@@ -398,9 +392,6 @@ $modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
     ,'OptimisticLock', 'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses','EmailText',
-    //BEGIN SUGARCRM flav=int ONLY
-    'TeamHierarchy',
-    //END SUGARCRM flav=int ONLY
     'Schedulers','Schedulers_jobs', /*'Queues',*/ 'EmailTemplates','UserSignature',
     'CampaignTrackers', 'CampaignLog', 'EmailMan', 'Prospects', 'ProspectLists',
     'Groups','InboundEmail',

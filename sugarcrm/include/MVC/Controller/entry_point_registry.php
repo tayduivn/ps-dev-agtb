@@ -37,9 +37,6 @@ $entry_point_registry = array(
     'leadCapture' => array('file' => 'modules/Leads/Capture.php', 'auth' => false),
     'process_queue' => array('file' => 'process_queue.php', 'auth' => true),
 	'process_workflow' => array('file' => 'process_workflow.php', 'auth' => true),
-//BEGIN SUGARCRM flav=int ONLY
-	'schedulers' => array('file' => 'schedulers.php', 'auth' => true),
-//END SUGARCRM flav=int ONLY
 	'zipatcher' => array('file' => 'zipatcher.php', 'auth' => true),
     'mm_get_doc' => array('file' => 'modules/MailMerge/get_doc.php', 'auth' => true),
     'getImage' => array('file' => 'include/SugarTheme/getImage.php', 'auth' => false),

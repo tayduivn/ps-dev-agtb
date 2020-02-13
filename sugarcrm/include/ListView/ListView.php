@@ -1051,10 +1051,6 @@ function getUserVariable($localVarName, $varName) {
 
 
     function processUnionBeans($sugarbean, $subpanel_def, $html_var = 'CELL') {
-        //BEGIN SUGARCRM flav=int ONLY
-        $date_start_time = microtime(true);
-        //END SUGARCRM flav=int ONLY
-
 		$last_detailview_record = $this->getSessionVariable("detailview", "record");
 		if(!empty($last_detailview_record) && $last_detailview_record != $sugarbean->id){
 			$GLOBALS['record_has_changed'] = true;
@@ -1121,10 +1117,7 @@ function getUserVariable($localVarName, $varName) {
             $response = SugarBean::get_union_related_list($sugarbean,$this->sortby, $this->sort_order, $this->query_where, $current_offset, -1,-1,$this->query_limit,$subpanel_def);
             $this->response =& $response;
         }
-        //BEGIN SUGARCRM flav=int ONLY
-        global $total_data_retrieval_time;
-        $total_data_retrieval_time = microtime(true) - $date_start_time;
-        //END SUGARCRM flav=int ONLY
+
         $list = $response['list'];
         $row_count = $response['row_count'];
         $next_offset = $response['next_offset'];

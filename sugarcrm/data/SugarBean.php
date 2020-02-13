@@ -547,17 +547,6 @@ class SugarBean
         }
         if (false == $this->disable_vardefs && (empty(self::$loadedDefs[$this->object_name]) || !empty($GLOBALS['reload_vardefs'])))
         {
-            //BEGIN SUGARCRM flav=int ONLY
-            if(empty($this->module_dir))
-            {
-                display_notice('<b>missing module_dir for ' . $this->object_name . '</b>');
-            }
-            if(empty($this->object_name))
-            {
-                display_notice('<b>missing object_name for ' . $this->object_name . '</b>');
-            }
-            //END SUGARCRM flav=int ONLY
-
             $refresh = inDeveloperMode() || !empty($isModuleInstalling);
 
             if ($refresh && !empty(VardefManager::$inReload["{$this->getModuleName()}:{$this->object_name}"])) {
@@ -2555,15 +2544,6 @@ class SugarBean
             $xtpl         = $this->createNotificationEmailTemplate($templateName, $notify_user);
             $subject      = $xtpl->text($templateName . "_Subject");
             $textBody     = trim($xtpl->text($templateName));
-
-            //BEGIN SUGARCRM flav=notifications ONLY
-            //Save the notification
-            $notification = BeanFactory::newBean('Notifications');
-            $notification->name = $subject;
-            $notification->description = $textBody;
-            $notification->assigned_user_id = $notify_user->id;
-            $notification->save(false);
-            //END SUGARCRM flav=notifications ONLY
 
             $mailTransmissionProtocol = "unknown";
 
@@ -6501,13 +6481,7 @@ class SugarBean
 
                 //Fields hidden by Dependent Fields
                 if (isset($value['hidden']) && $value['hidden'] === true) {
-                    //BEGIN SUGARCRM flav=een ONLY
-                    if ((!empty($value['type']) && $value['type'] == 'bool'))
-                        $return_array[$cache[$field]] = "DF_HIDDEN";
-                    else
-                    //END SUGARCRM flav=een ONLY
-                        $return_array[$cache[$field]] = "";
-
+                    $return_array[$cache[$field]] = "";
                 }
                 //cn: if $field is a _dom, detect and return VALUE not KEY
                 //cl: empty function check for meta-data enum types that have values loaded from a function

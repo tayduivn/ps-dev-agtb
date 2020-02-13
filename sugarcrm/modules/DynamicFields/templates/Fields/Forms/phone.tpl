@@ -52,28 +52,5 @@
 	{/if}
 	</td>
 </tr>
-{* //BEGIN SUGARCRM flav=een ONLY *}
-{include file="modules/DynamicFields/templates/Fields/Forms/coreCalculated.tpl"}
-{* //END SUGARCRM flav=een ONLY *}
-
-{{* //BEGIN SUGARCRM flav=int ONLY*}}
-<tr>
-<td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_VALIDATE_US_FORMAT"}:</td>
-<td>
-<input type="checkbox" name="validate_usa_format" value="1" {if !empty($vardef.validate_usa_format) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-{if $hideLevel > 5}<input type="hidden" name="validate_usa_format" value="{$vardef.validate_usa_format}">{/if}
-{sugar_getimage alt=$mod_strings.LBL_HELP name="helpInline" ext=".gif" other_attributes='id="validatePhoneToolTipIcon" '}
-<script type="text/javascript">
-	if (!ModuleBuilder.validatePhoneToolTip)
-	     ModuleBuilder.validatePhoneToolTip = new YAHOO.widget.Tooltip("validatePhoneToolTip", {ldelim}
-		    context:"validatePhoneToolTipIcon", text:SUGAR.language.get("ModuleBuilder", "LBL_POPHELP_VALIDATE_US_PHONE")
-		 {rdelim});
-    else
-	    ModuleBuilder.validatePhoneToolTip.cfg.setProperty("context", "validatePhoneToolTipIcon");
-</script>
-</td>
-</tr>
-{{* //END SUGARCRM flav=int ONLY*}}
-
 
 {include file="modules/DynamicFields/templates/Fields/Forms/coreBottom.tpl"}

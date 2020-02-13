@@ -264,11 +264,6 @@ class LanguageManager
 			}
 			return $mod_strings;
 		}
-    	////BEGIN SUGARCRM flav=int ONLY
-    	else{
-    		display_notice('<B> MISSING FIELD_DEFS ' . 'modules/'. strtoupper($module) . '/language/'.$lang.'.lang.php </b><BR>');
-    	}
-    		//END SUGARCRM flav=int ONLY
 	}
 
     /**

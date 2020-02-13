@@ -23,8 +23,3 @@ $module_menu[]= array("index.php?module=InboundEmail&action=EditView&mailbox_typ
 $module_menu[]= array("index.php?module=InboundEmail&action=index", $mod_strings['LNK_LIST_MAILBOXES'],"InboundEmail");
 
 if(is_admin($GLOBALS['current_user']))$module_menu[]= array("index.php?module=Schedulers&action=index", $mod_strings['LNK_LIST_SCHEDULER'],"Schedulers");
-	//BEGIN SUGARCRM flav=int ONLY
-$module_menu[]= array("index.php?module=InboundEmail&action=Test", $mod_strings['LNK_LIST_TEST_IMPORT'],"MailboxesTestImport");
-	//END SUGARCRM flav=int ONLY
-	//array("index.php?module=Queues&action=Seed", $mod_strings['LNK_SEED_QUEUES'],"CustomQueries"),
-?>

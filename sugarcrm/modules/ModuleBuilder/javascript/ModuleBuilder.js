@@ -1700,37 +1700,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
             return dialog;
         }
         // END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=een ONLY
-        ,moduleLoadVisibility: function(fieldname, options, trigger , targetId){
-            var EditorWindow = new Ext.Window({
-                id: 'visibilityEditorWindow',
-                title: SUGAR.language.get('ModuleBuilder','LBL_SECTION_VISIBILITY_EDITOR' ),
-                autoLoad: {
-                    url:"index.php",
-                    params: {
-                        embed: true,
-                        module:"ModuleBuilder",
-                        action:"visibilityeditor",
-                        onSave:"function(){Ext.getDom('"+ targetId + "').value = Ext.getCmp('visibilityEditor').commit();Ext.getCmp('visibilityEditorWindow').close();}",
-                        onClose:"function(){Ext.getCmp('visibilityEditorWindow').close();}",
-                        view_module:ModuleBuilder.module,
-                        view_package:ModuleBuilder.MBpackage,
-                        field:fieldname,
-                        options:options,
-                        trigger:trigger
-                    },
-                    scripts: true
-                },
-                modal:true,
-                plain:true,
-                resizable:true,
-                nodyBorder:false,
-                width:800,
-                autoHeight:true
-            });
-            EditorWindow.show();
-        }
-        //END SUGARCRM flav=een ONLY
 	};
 	ModuleBuilder.buttons = {};
 	ModuleBuilder.selected = {};

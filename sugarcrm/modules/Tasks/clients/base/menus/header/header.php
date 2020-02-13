@@ -32,13 +32,4 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-arrow-circle-o-up',
     ),
-    //BEGIN SUGARCRM flav=int ONLY
-    array(
-        'route'=>'#bwc/index.php?module=Reports&action=index&view=tasks&query=true&report_module=Tasks',
-        'label' =>'LNK_ACCOUNT_TASKS',
-        'acl_action'=>'list',
-        'acl_module'=>$module_name,
-        'icon' => 'fa-bar-chart-o',
-    ),
-    //END SUGARCRM flav=int ONLY
 );

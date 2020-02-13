@@ -1187,14 +1187,6 @@ function update_license_settings($users, $expire_date, $key)
 // writable).
 function make_writable($file)
 {
-    //BEGIN SUGARCRM flav=int ONLY
-    //if the file belongs in svn directory
-    //ignore it
-    if (strpos($file,".svn") !== false) {
-        return true;
-    }
-    //END SUGARCRM flav=int ONLY
-
     $ret_val = false;
     if(is_file($file) || is_dir($file))
     {
@@ -1242,17 +1234,6 @@ function make_writable($file)
     return $ret_val;
 }
 
-//BEGIN SUGARCRM flav=int ONLY
-/**
- * @todo the double iteration over the files is redundant.  Move to one while() and perform
- *       the recursion at that time.  Frees up processing and memory.
- * @todo refactor common code used here and recursive_is_writable() into a common class/function so
- *       code is not duplicated.  API would be something like:
- *          $callback = new Sugar_FileSystem_RecursiveCallback('make_writable');
- *          $callback->ignore_system_files = true; // ignore anything that starts with "."
- *          $callback->execute($start_file);
- */
-//END SUGARCRM flav=int ONLY
 function recursive_make_writable($start_file)
     {
     $ret_val = make_writable($start_file);
@@ -1295,11 +1276,6 @@ function recursive_make_writable($start_file)
     return $ret_val;
 }
 
-//BEGIN SUGARCRM flav=int ONLY
-/**
- * see notes in recursive_make_writable()
- */
-//END SUGARCRM flav=int ONLY
 function recursive_is_writable($start_file)
 {
     $ret_val = is_writable($start_file);
@@ -2053,9 +2029,6 @@ function post_install_modules(){
 }
 
 function get_help_button_url(){
-    //BEGIN SUGARCRM flav=corp ONLY
-    $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/03_Sugar_Corporate';
-    //END SUGARCRM flav=corp ONLY
     $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/04_Sugar_Professional';
     //BEGIN SUGARCRM flav=ent ONLY
     $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/02_Sugar_Enterprise';

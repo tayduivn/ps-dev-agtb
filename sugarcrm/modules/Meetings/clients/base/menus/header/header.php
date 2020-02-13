@@ -32,15 +32,4 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module' => $module_name,
         'icon' => 'fa-arrow-circle-o-up',
     ),
-    //BEGIN SUGARCRM flav=int ONLY
-    array(
-        'route' => "#bwc/index.php?module=Reports&action=index&view="
-        . strtolower($module_name)
-        . "&query=true&report_module={$module_name}",
-        'label' => 'LBL_ACTIVITIES_REPORTS',
-        'acl_action' => '',
-        'acl_module' => '',
-        'icon' => 'fa-bar-chart-o',
-    ),
-    //END SUGARCRM flav=int ONLY
 );

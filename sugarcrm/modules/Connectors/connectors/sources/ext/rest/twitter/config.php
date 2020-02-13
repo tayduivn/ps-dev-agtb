@@ -28,9 +28,3 @@ $config = array (
       'oauth_consumer_secret' => '',
       ),
 );
-
-//BEGIN SUGARCRM flav=int ONLY
-$config['properties']['oauth_consumer_key'] = 'ZjoUiIbIeJJT7ONo7JcuAg';
-$config['properties']['oauth_consumer_secret'] = 'GjOjIaes3VzWUBstl3JfxouYMhB4TbZJcTra93KSo0';
-//END SUGARCRM flav=int ONLY
-?>

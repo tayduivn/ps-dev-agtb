@@ -127,34 +127,6 @@ class SugarSpot
 	    return SugarAutoLoader::loadSearchFields($moduleName);
 	}
 
-    //BEGIN SUGARCRM flav=spotactions ONLY
-    /**
-     * Performs a search for actions based upon the query string
-     *
-     * @param  $query           string what we are searching for
-     * @param  $offset          int    search result offset
-     * @param  $max             int    max number of search results returned
-     * @param  $primary_module  string module to search in
-     * @return array
-     */
-    protected function _searchActions($query, $offset = -1, $max, $primary_module)
-    {
-        $action_list = $this->_buildActionCache();
-
-        $GLOBALS['matching_keys'] = array();
-        array_walk($action_list, array($this, '_searchKeys'), array($query, $primary_module));
-        $data = array_slice($GLOBALS['matching_keys'], (($offset == -1) ? 0 : $offset), $max);
-
-        $pageData['bean'] = array('objectName' => 'Action', 'moduleDir' => 'modules/Action');
-        $pageData['offsets'] = array('current' => $offset, 'next' => $offset, 'prev' => $offset, 'end' => $offset, 'total' => count($GLOBALS['matching_keys']), 'totalCounted' => count($GLOBALS['matching_keys']));
-
-
-        return array('data' => $data, 'pageData' => $pageData);
-        ;
-    }
-
-    //END SUGARCRM flav=spotactions ONLY
-
     /**
      * Get count from query
      * @param SugarBean $seed
@@ -742,10 +714,7 @@ class SugarSpot
 
             $results[$moduleName] = array("data" => $data, "pageData" => $pageData);
         }
-        //BEGIN SUGARCRM flav=spotactions ONLY
-        //Search actions...
-        $results['Actions'] = $this->_searchActions($query, $offset, $limit, $primary_module);
-        //END SUGARCRM flav=spotactions ONLY
+
         return $results;
     }
 
@@ -770,92 +739,6 @@ class SugarSpot
 
         return null;
     }
-
-    //BEGIN SUGARCRM flav=spotactions ONLY
-    /**
-     * Builds the search action cache
-     */
-    protected function _buildActionCache()
-    {
-        $action_list = array();
-        $all_menu_files = array();
-        $all_module_menu = array();
-
-        global $current_user, $current_language, $app_list_strings, $mod_list_strings;
-        $current_language = (empty($current_language) ? "en_us" : $current_language);
-
-        $user_action_map_filename = sugar_cached('modules/'. $current_language . '_sugar_actions_' . $current_user->id . ".php");
-
-        if (!file_exists($user_action_map_filename))
-        {
-            $all_menu_files=findAllFiles("modules",$all_menu_files,false,"Menu.php");
-            if (!empty($all_menu_files) and is_array($all_menu_files))
-            {
-                foreach ($all_menu_files as $menu_file)
-                {
-
-                    //skip over the import module for now. but we will need a way to add
-                    //that option everywhere....
-                    if (strpos($menu_file, '/Import/') !== false) {
-                        continue;
-                    }
-
-
-                    $lang_file_name = dirname($menu_file) . '/language/' . $current_language . ".lang.php";
-                    if (!file_exists($lang_file_name)) {
-                        //try the english lang file.
-                        $lang_file_name = dirname($menu_file) . '/language/' . "en_us.lang.php";
-                    }
-
-                    if (file_exists($lang_file_name) && file_exists($menu_file)) {
-                        global $mod_strings;
-                        require($lang_file_name);
-
-                        $module_menu = array();
-                        require($menu_file);
-                        $all_module_menu = array_merge($all_module_menu, $module_menu);
-                    }
-                }
-            }
-
-            foreach ($all_module_menu as $menu_entry) {
-                //0: action //1: Label //2: action name //3: Module
-                $action_list[$menu_entry[1]] = $menu_entry[0];
-            }
-
-
-            //process the admin actions now..
-            if ($current_user->isDeveloperForAnyModule()) {
-                global $admin_group_header;
-                require("modules/Administration/metadata/adminpaneldefs.php");
-
-                global $mod_strings;
-                require("modules/Administration/language/" . $current_language . ".lang.php");
-
-                //access to the menu option is decided in the adminpaneldes.php
-                foreach ($admin_group_header as $key => $values) {
-                    //this will be tue for Module level admins only..
-                    if (count($values[3]) == 0) {
-                        continue;
-                    }
-                    foreach ($values[3] as $link_key => $link_value) {
-                        foreach ($link_value as $def) {
-                            $action_list[$mod_strings[$def[1]]] = $def[3];
-                        }
-                    }
-                }
-            }
-
-            file_put_contents($user_action_map_filename, '<?php $action_list=' . var_export($action_list, true) . '; ?>');
-        }
-        else {
-            require ($user_action_map_filename);
-        }
-
-        return $action_list;
-    }
-
-    //END SUGARCRM flav=spotactions ONLY
 
     /**
      * Function used to walk the array and find keys that map the queried string.

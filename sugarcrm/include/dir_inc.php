@@ -11,13 +11,6 @@
  */
 
 function copy_recursive( $source, $dest ){
-	//BEGIN SUGARCRM flav=int ONLY
-	if (strpos($source,".svn") !== false or strpos($dest,".svn") !== false) {
-		return true;
-	}
-	//END SUGARCRM flav=int ONLY
-
-
     if( is_file( $source ) ){
         return( copy( $source, $dest ) );
     }

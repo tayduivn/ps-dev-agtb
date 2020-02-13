@@ -54,27 +54,4 @@
             onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('dependency').value, 'dependency', 'boolean')"/>
     </td>
 </tr>
-
-{* //BEGIN SUGARCRM flav=een ONLY *}
-<tr id='enforcedRow' {if empty($vardef.enforced)}style="display:none"{/if}><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_ENFORCED"}:</td>
-    <td><input type="checkbox" name="enforced" id="enforced" value="1" onclick="ModuleBuilder.toggleEnforced();"{if !empty($vardef.enforced)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-        {if $hideLevel > 5}<input type="hidden" name="enforced" value="{$vardef.enforced}">{/if}
-    </td>
-</tr>
-{elseif $vardef.type == 'enum'}
-<tr>
-	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DYNAMIC_VALUES_CHECKBOX"}:</td>
-	<td>
-		<input type="checkbox" name="dynamic_values" value="0" {if !empty($vardef.visibility_grid)}checked{/if} onclick="toggleDisplay('{$vardef.name}_dynamic_trigger');"/>
-	</td>
-</tr>
-<tr id='{$vardef.name}_dynamic_trigger' {if empty($vardef.visibility_grid)}style='display:none'{/if} >
-	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DEPENDENT_TRIGGER"}:</td>
-	<td>
-		{html_options name="trigger" id="trigger" selected=$selected_trigger values=$triggers output=$triggers"}
-		<input type='button' value='{sugar_translate module="DynamicFields" label="LBL_BTN_EDIT_VISIBILITY"}' class='button' onclick="ModuleBuilder.moduleLoadVisibility('{$vardef.name}' , this.form.options.value , this.form.trigger.value , 'visibility_grid' );">
-		<input type='hidden' name='visibility_grid' id='visibility_grid' value='{$visiblity_grid}'>
-	</td>
-</tr>
-{* //END SUGARCRM flav=een ONLY *}
 {/if}

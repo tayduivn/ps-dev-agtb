@@ -55,9 +55,6 @@ $job_strings = array (
     25 => 'class::SugarJobRemoveTmpFiles',
     26 => 'class::' . RebuildJob::class,
     27 => 'class::SugarJobActivityStreamPurger',
-    //BEGIN SUGARCRM flav=int ONLY
-	999 => 'testEmail',
-    //END SUGARCRM flav=int ONLY
 );
 
 /**
@@ -499,41 +496,6 @@ function cleanOldRecordLists() {
 
 	return true;
 }
-
-//BEGIN SUGARCRM flav=int ONLY
-/**
- * Job 999
- */
-function testEmail() {
-	// dev only, sends incrementally named emails to agent1/2@sugarcrm.com
-
-	$e = BeanFactory::newBean('Emails');
-	$r = $e->db->query('SELECT count(*) AS c FROM emails WHERE deleted=0 AND type="inbound"');
-	$a = $e->db->fetchByAssoc($r);
-	$e->name = 'Email '.($a['c'] + 1);
-	$e->from_addr = 'autotest@example.com';
-	$e->from_name = 'Auto Test';
-	$e->cc_addrs_arr = array();
-	$e->bcc_addrs_arr = array();
-	$e->to_addrs_arr = array(0 => array('display'=>'Agent 1', 'email'=>'agent1@sugarcrm.com'),
-							 1 => array('display'=>'Agent 2', 'email'=>'agent2@sugarcrm.com'),
-							);
-	$e->description = '
-Although 2D style was starting to look like a lost art on the PSP system, Taito\'s Exit, which comes out December 15th in Japan, will prove otherwise. Today some more details have rolled in about the life of Mr. Escape and what kind of perils he faces.
-
-First up is the mini-map. A potential problem with running around the building rescuing people is that you might lose your bearings, which wouldn\'t be good since you are always fighting against the clock. But now a mini-map has been revealed that instantly takes you to an simple map done up in a retro Atari looking style that shows the entire level layout, the location of trapped victims, and where Mr. Escape is currently located.
-
-Next up is a rundown of usable items you can find in levels. Fire extinguishers can be used to clear paths, ropes and ladders to move between floors after the building ladders have burned down, keys to open locked doors, and flashlights should be useful for finding your way through dark areas. Of course there will be more items than just these, but these starting few should give an idea of what will be available.
-
-When moving around the buildings you need to watch out for all types of hazards that may get in your way. Automatic shutters can lock down in the event of fires, floors may crumble beneath--especially if the person you\'re rescuing is heavy--and even the floors themselves can become electrified. To get around these situations you\'ll need to use not only your items, but look around for levers that activate objects in the stage such as sprinklers, ladders, or doors.
-
-Now when it comes to those in peril, after finding them they\'ll be able to help Mr. Escape out in a variety of ways. By splitting up the characters you can have them activate levers or get them to reach areas that Mr. Escape could normally not reach. For instance kids can crawl through small spaces to find items, and then they can pass them back to Mr. Escape. Mr. Escape has to be careful though because if an innocent person gets injured, a character named Jet will fly in on his jetpack and steal them from Mr. Escape.
-
-All in all, Exit looks like an exciting action puzzle game that should showoff the wonderful 2D capabilities of the PSP system. More likely than not, a US announcement should happen soon after the Japan release next month. But even if it doesn\'t, since the PSP is region-free system, importing is always a possibility.';
-	$e->send();
-	return true;
-}
-//END SUGARCRM flav=int ONLY
 
 function cleanJobQueue($job)
 {

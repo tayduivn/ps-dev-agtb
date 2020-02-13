@@ -230,15 +230,6 @@ class UnifiedSearchApi extends SugarListApi
             $sortByDateModified = false;
         }
 
-        //BEGIN SUGARCRM flav!=pro ONLY
-        $GLOBALS['disable_date_format'] = true;
-        $options = $this->parseSearchOptions($api,$args);
-        $searchEngine = new SugarSpot();
-        $options['resortResults'] = true;
-        $recordSet = $this->globalSearchSpot($api,$args,$searchEngine,$options);
-        $sortByDateModified = true;
-        //END SUGARCRM flav=!pro ONLY
-
         return $recordSet;
     }
 

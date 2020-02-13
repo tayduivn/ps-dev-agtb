@@ -29,13 +29,6 @@ function method_callback (o) {
         result = resp.result;
 
 	if(result == null) {
-		//BEGIN SUGARCRM flav=int ONLY
-	    if (typeof(o) == 'object' && typeof (o.statusText) != 'undefined') {
-			alert("Error from json server: " + o.statusText);
-	    } else {
-			alert("Error calling json server: " + o.statusText);
-	    }
-	   	//END SUGARCRM flav=int ONLY
 	    return;
 	}
     reqid = global_request_registry[request_id];

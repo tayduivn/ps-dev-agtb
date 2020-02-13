@@ -56,27 +56,6 @@
 </tr>
 {/if}
 {/if}
-{* //BEGIN SUGARCRM flav=int ONLY *}
-{*
-{if $globalSearchEnabled == true}
-<tr>
-    <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_GLOBAL_SEARCH"}:</td>
-    <td><input type="checkbox" name="unified_search" value="1" {if !empty($vardef.unified_search) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-    {if $hideLevel > 5}<input type="hidden" name="unified_search" value="{$vardef.unified_search}">{/if}
-    <img id="globalSearchTipIcon" src="{sugar_getimagepath file="helpInline.png"}" />
-<script>
-	if (!ModuleBuilder.globalSearchToolTip)
-		ModuleBuilder.globalSearchToolTip = new YAHOO.widget.Tooltip("globalSearchTipPopup", {ldelim}
-		context:"globalSearchTipIcon", text:"{$mod_strings.LBL_POPHELP_GLOBAL_SEARCH}"
-		{rdelim});
-	else
-		ModuleBuilder.globalSearchToolTip.cfg.setProperty("context", "globalSearchTipIcon");
-</script>
-</td>
-</tr>
-{/if}
-*}
-{* //END SUGARCRM flav=int ONLY *}
 
 {if !$hideImportable}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_IMPORTABLE"}:</td><td>

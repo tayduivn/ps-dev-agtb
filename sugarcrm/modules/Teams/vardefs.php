@@ -173,51 +173,7 @@ $dictionary['TeamMembership'] = array(
         ),
     ),
 );
-//BEGIN SUGARCRM flav=int ONLY
-$dictionary['TeamHierarchy'] = array(
-    'table' => 'team_hierarchies',
-    'fields' => array(
-        'id' => array(
-            'name' => 'id',
-            'type' => 'id',
-            'required' => true,
-        ),
-        'team_id' => array(
-            'name' => 'team_id',
-            'type' => 'id',
-            'comment' => 'The team_id this relationship pertains to',
-        ),
-        'parent_id' => array(
-            'name' => 'parent_id',
-            'type' => 'id',
-            'comment' => 'The parent_id of this record',
-            'reportable' => true,
-        ),
-        'lft' => array(
-            'name' => 'lft',
-            'type' => 'int',
-            'default' => 0,
-            'comment' => 'The left value of the record, this is used for faster select',
-        ),
-        'rgt' => array(
-            'name' => 'rgt',
-            'type' => 'int',
-            'default' => 0,
-            'comment' => 'The right value of the record, this is used for faster select',
-        ),
-        'date_modified' => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        'deleted' => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => 1,
-            'default' => 0,
-        ),
-    ),
-);
-//END SUGARCRM flav=int ONLY
+
 $dictionary['TeamSet'] = array(
     'table' => 'team_sets',
     'fields' => array(

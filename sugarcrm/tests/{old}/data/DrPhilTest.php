@@ -121,9 +121,6 @@ class DrPhilTest extends TestCase
                 'DynamicFields',
                 'Connectors',
                 'CustomFields',
-//BEGIN SUGARCRM flav=int ONLY
-                'TeamHierarchy',
-//END SUGARCRM flav=int ONLY
                 'Empty',
                 'Audit',
                 'MergeRecords',

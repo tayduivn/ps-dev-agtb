@@ -84,11 +84,6 @@
     </div>
 
     <div id="footerLinks" class="yui-hidden"></div>
-    <!--//BEGIN SUGARCRM flav=int ONLY -->
-    <div id="todo" class="yui-hidden">
-        {include file="modules/Emails/templates/_todos.tpl"}
-    </div>
-    <!--//END SUGARCRM flav=int ONLY -->
 </div>
 
 
