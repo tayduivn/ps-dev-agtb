@@ -58,7 +58,6 @@ $config['builds']['pro']['languages']= array(
 'ar_SA',
 'uk_UA',
 );
-$config['builds']['pro']['lic'] = array('sub');
 $config['blackList']['pro'] = array(
 'sugarcrm/build'=>1,
 'sugarcrm/themes/Awesome80s'=>1,
@@ -229,4 +228,3 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/unit-js/modules/ConsoleConfiguration' => 1,
 'sugarcrm/tests/{old}/modules/ConsoleConfiguration' => 1,
 );
-$build = 'pro';

@@ -603,17 +603,14 @@ class User extends Person {
     */
 	public static function getLicensedUsersWhere()
 	{
-		//BEGIN SUGARCRM dep=os ONLY
         $db = DBManagerFactory::getInstance();
-        $where = sprintf(
+
+        return sprintf(
             " deleted != 1 AND user_name IS NOT NULL AND is_group != 1 AND portal_only != 1 AND status = %s AND %s > 0 AND %s",
             $db->quoted('Active'),
             $db->convert('user_name', 'length'),
             self::getSystemUsersWhere()
         );
-        return $where;
-		//END SUGARCRM dep=os ONLY
-	    return "1<>1";
 	}
 
     /**

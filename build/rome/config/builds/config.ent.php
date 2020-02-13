@@ -58,7 +58,6 @@ $config['builds']['ent']['languages']= array(
 'ar_SA',
 'uk_UA',
 );
-$config['builds']['ent']['lic'] = array('sub');
 $config['blackList']['ent'] = array(
 'sugarcrm/build'=>1,
 'sugarcrm/themes/Awesome80s'=>1,
@@ -151,4 +150,3 @@ $config['blackList']['ent'] = array(
 'sugarcrm/modules/Connectors/connectors/sources/ext/rest/insideview'=>1,
 'sugarcrm/modules/Connectors/connectors/sources/ext/eapm/facebook'=>1,
 );
-$build = 'ent';

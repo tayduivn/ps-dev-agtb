@@ -91,11 +91,11 @@ $license_management = false;
 $admin_option_defs=array();
 $license_key = 'no_key';
 
-//BEGIN SUGARCRM flav=pro || dep=od ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['license_management']= $license_management;
 $focus = Administration::getSettings();
 $license_key = $focus->settings['license_key'];
-//END SUGARCRM flav=pro || dep=od ONLY
+//END SUGARCRM flav=pro ONLY
 
 $admin_option_defs['Administration']['update'] = array('sugarupdate','LBL_SUGAR_UPDATE_TITLE','LBL_SUGAR_UPDATE','./index.php?module=Administration&action=Updater');
 $admin_option_defs['Administration']['documentation']= array('OnlineDocumentation','LBL_DOCUMENTATION_TITLE','LBL_DOCUMENTATION',
