@@ -3015,59 +3015,6 @@ function _ppl($mixed, $die=false, $displayStackTrace=false, $loglevel="fatal")
 }
 
 /**
- * private helper function to quickly show the major, direct, field attributes of a given bean.
- * The ppf stands for Pre[formatted] Print Focus [object]
- * @param object bean The focus bean
- */
-function _ppf($bean, $die=false)
-{
-}
-
-/**
- * Private helper function for displaying the contents of a given variable.
- * This function is only intended to be used for SugarCRM internal development.
- * The pp stands for Pre Print.
- */
-function _pp($mixed)
-{
-}
-
-/**
- * Private helper function for displaying the contents of a given variable.
- * This function is only intended to be used for SugarCRM internal development.
- * The pp stands for Pre Print.
- */
-function _pstack_trace($mixed=null)
-{
-}
-
-/**
- * Private helper function for displaying the contents of a given variable.
- * This function is only intended to be used for SugarCRM internal development.
- * The pp stands for Pre Print Trace.
- */
-function _ppt($mixed, $textOnly=false)
-{
-}
-
-/**
- * Private helper function for displaying the contents of a given variable.
- * This function is only intended to be used for SugarCRM internal development.
- * The pp stands for Pre Print Trace Die.
- */
-function _pptd($mixed)
-{
-}
-
-/**
- * Private helper function for decoding javascript UTF8
- * This function is only intended to be used for SugarCRM internal development.
- */
-function decodeJavascriptUTF8($str)
-{
-}
-
-/**
  * Will check if a given PHP version string is supported.
  * Do not pass in any parameter to default to a check against the current environment's PHP version.
  *
