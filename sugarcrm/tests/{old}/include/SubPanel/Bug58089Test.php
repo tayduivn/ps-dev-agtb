@@ -86,8 +86,6 @@ class Bug58089Test extends TestCase
         $modules_exempt_from_availability_check['Calls']='Calls';
         $modules_exempt_from_availability_check['Meetings']='Meetings';
         $modules_exempt_from_availability_check['Tasks']='Tasks';
-        
-        //BEGIN SUGARCRM flav!=sales ONLY
         $modules_exempt_from_availability_check['CampaignLog']='CampaignLog';
         $modules_exempt_from_availability_check['CampaignTrackers']='CampaignTrackers';
         $modules_exempt_from_availability_check['Prospects']='Prospects';
@@ -95,7 +93,6 @@ class Bug58089Test extends TestCase
         $modules_exempt_from_availability_check['EmailMarketing']='EmailMarketing';
         $modules_exempt_from_availability_check['EmailMan']='EmailMan';
         $modules_exempt_from_availability_check['ProjectTask']='ProjectTask';
-        //END SUGARCRM flav!=sales ONLY
         $modules_exempt_from_availability_check['Users']='Users';
         $modules_exempt_from_availability_check['Teams']='Teams';
         $modules_exempt_from_availability_check['SchedulersJobs']='SchedulersJobs';

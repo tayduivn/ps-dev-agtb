@@ -489,10 +489,8 @@ class EmailTemplate extends SugarBean {
 		// cn: bug 9277 - create a replace array with empty strings to blank-out invalid vars
 		$acct = BeanFactory::newBean('Accounts');
 		$contact = BeanFactory::newBean('Contacts');
-		//BEGIN SUGARCRM flav!=sales ONLY
 		$lead = BeanFactory::newBean('Leads');
 		$prospect = BeanFactory::newBean('Prospects');
-		//END SUGARCRM flav!=sales ONLY
 
 		foreach($lead->field_defs as $field_def) {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {

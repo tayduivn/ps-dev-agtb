@@ -355,7 +355,6 @@ foreach ($admin_group_header as $key=>$values) {
                     unset($values[3]['studio']);
                 }
 
-		   	   //BEGIN SUGARCRM PRO ONLY
                 if(displayWorkflowForCurrentUser() == false) {
                     unset($values[3]['any']['workflow_management']);
                 }
@@ -372,7 +371,6 @@ foreach ($admin_group_header as $key=>$values) {
                 if(!in_array('Campaigns', $access)&& isset($values[3]['Campaigns'])){
                     unset($values[3]['Campaigns']);
                 }
-                //END SUGARCRM PRO ONLY
 
                 // Unless a user is a system admin, or module admin, they cannot see Forecasts config links
                 if($mod_val == 'Forecasts'

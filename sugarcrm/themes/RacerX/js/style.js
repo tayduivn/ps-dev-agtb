@@ -586,22 +586,16 @@ YAHOO.util.Event.onContentReady("tabListContainerTable", function()
     YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("anim", function(Y)
     {
         var content = Y.one('#content');
-        //BEGIN SUGARCRM flav!=sales ONLY
         var addPage = Y.one('#add_page');
-        //END SUGARCRM flav!=sales ONLY
         var tabListContainer = Y.one('#tabListContainer');
         var tabList = Y.one('#tabList');
         var dashletCtrlsElem = Y.one('#dashletCtrls');
         var contentWidth = content.get('offsetWidth');
         var dashletCtrlsWidth = (dashletCtrlsElem) ? dashletCtrlsElem.get('offsetWidth') + 10 : 10;
-        //BEGIN SUGARCRM flav!=sales ONLY
         var addPageWidth = (addPage) ? addPage.get('offsetWidth') + 2 : 2;
-        //END SUGARCRM flav!=sales ONLY
         var tabListContainerWidth = tabListContainer.get('offsetWidth');
         var tabListWidthElem = tabList.get('offsetWidth');
-        //BEGIN SUGARCRM flav!=sales ONLY
         var maxWidth = (contentWidth-3)-(dashletCtrlsWidth+addPageWidth+2);
-        //END SUGARCRM flav!=sales ONLY
 
         var tabListChildren = tabList.get('children');
 
@@ -614,14 +608,11 @@ YAHOO.util.Event.onContentReady("tabListContainerTable", function()
 			}
         }
 
-        //BEGIN SUGARCRM flav!=sales ONLY
         if(tabListWidth > maxWidth) {
             tabListContainer.setStyle('width',maxWidth+"px");
             tabList.setStyle('width',tabListWidth+"px");
             tabListContainer.addClass('active');
         }
-        //END SUGARCRM flav!=sales ONLY
-
 
         var node = Y.one('#tabListContainer .yui-bd');
         var anim = new Y.Anim({

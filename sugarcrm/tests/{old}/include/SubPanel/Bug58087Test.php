@@ -33,16 +33,12 @@ class Bug58087Test extends SubPanelTestBase
             'title_key' => 'LBL_ACTIVITIES_SUBPANEL_TITLE',
             'type' => 'collection',
             'subpanel_name' => 'activities',   //this values is not associated with a physical file.
-            //BEGIN SUGARCRM flav!=dce ONLY
             'header_definition_from_subpanel'=> 'meetings',
-            //END SUGARCRM flav!=dce ONLY
             'module'=>'Activities',
             'top_buttons' => array(
                 array('widget_class' => 'SubPanelTopCreateTaskButton'),
-                //BEGIN SUGARCRM flav!=dce ONLY
                 array('widget_class' => 'SubPanelTopScheduleMeetingButton'),
                 array('widget_class' => 'SubPanelTopScheduleCallButton'),
-                //END SUGARCRM flav!=dce ONLY
                 array('widget_class' => 'SubPanelTopComposeEmailButton'),
             ),
             'collection_list' => array(
@@ -51,7 +47,6 @@ class Bug58087Test extends SubPanelTestBase
                     'subpanel_name' => 'ForActivities',
                     'get_subpanel_data' => 'tasks',
                 ),
-                //BEGIN SUGARCRM flav!=dce ONLY
                 'meetings' => array(
                     'module' => 'Meetings',
                     'subpanel_name' => 'ForActivities',
@@ -62,7 +57,6 @@ class Bug58087Test extends SubPanelTestBase
                     'subpanel_name' => 'ForActivities',
                     'get_subpanel_data' => 'calls',
                 ),
-                //END SUGARCRM flav!=dce ONLY
             ),
         );
         

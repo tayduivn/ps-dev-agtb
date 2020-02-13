@@ -21,10 +21,3 @@ $config = array (
     'api_key' => '',
   ),
 );
-
-//BEGIN SUGARCRM flav=int ONLY
-$config['properties']['partner_code'] = 'Sugarcrm';
-$config['properties']['api_key'] = 'zihel20n9';
-//END SUGARCRM flav=int ONLY
-
-?>

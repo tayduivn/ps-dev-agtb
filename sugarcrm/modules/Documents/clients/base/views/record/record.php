@@ -71,10 +71,8 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                 'exp_date',
                 'subcategory_id',
                 'description',
-                //BEGIN SUGARCRM flav!=sales ONLY
                 'related_doc_name',
                 'related_doc_rev_number',
-                //END SUGARCRM flav!=sales ONLY
                 'assigned_user_name',
                 'team_name',
             ),

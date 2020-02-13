@@ -344,7 +344,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             $focus->setUserInvitees($userInvitees, $existingUsers);
             $focus->setContactInvitees($contactInvitees, $existingContacts);
 
-            //BEGIN SUGARCRM flav!=sales ONLY
             $focus->setLeadInvitees($focus->leads_arr, $existingLeads);
 
             // Bug #49195 : update vcal

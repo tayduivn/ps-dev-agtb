@@ -26,13 +26,9 @@ $viewdefs[$module_name]['DetailView'] = array(
     'name',
     'assigned_user_name',
   ),
-   //BEGIN SUGARCRM PRO ONLY
   array (
-
     'team_name',''
   ),
-   //END SUGARCRM PRO ONLY
-
   array (
 	array (
       'name' => 'date_entered',

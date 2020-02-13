@@ -25,12 +25,9 @@ class RS70Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        $params = array();
-        // BEGIN SUGARCRM flav=ent ONLY
-        $params['forecast_by'] = 'RevenueLineItems';
-        // END SUGARCRM flav=end ONLY
-
-        SugarTestForecastUtilities::setUpForecastConfig($params);
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+            'forecast_by' => 'RevenueLineItems',
+        ));
     }
 
     public function tearDown()

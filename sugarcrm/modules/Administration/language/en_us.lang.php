@@ -834,7 +834,6 @@ $mod_strings = array (
     'LBL_UPGRADE_WIZARD_INVALID_PKG' => 'Invalid Package',
     'LBL_UPGRADE_WIZARD_NO_MODE_SPEC' => 'No mode specified.',
     'LBL_UPGRADE_WIZARD_PKG_REMOVED' => 'Package {0} has been removed.',
-    //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_UPGRADE_WIZARD_TITLE' => 'Upgrade Wizard',
     'LBL_UPGRADE_WIZARD' => 'Upload and install Sugar upgrades',
     'LBL_UPGRADE' => 'Check and repair Sugar',

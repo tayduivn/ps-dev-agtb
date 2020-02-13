@@ -34,9 +34,7 @@ $viewdefs[$module_name]['EditView'] = array(
     ),
     array (
         'assigned_user_name',
-      //BEGIN SUGARCRM PRO ONLY
       array('name'=>'team_name', 'displayParams'=>array('display'=>true)),
-      //END SUGARCRM PRO ONLY
     ),
   ),
                                                     

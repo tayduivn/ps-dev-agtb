@@ -18,12 +18,10 @@ $listViewDefs[$module_name] = array(
 		'label' => 'LBL_NAME', 
 		'default' => true,
         'link' => true),         
-//BEGIN SUGARCRM PRO ONLY
 	'TEAM_NAME' => array(
 		'width' => '9', 
 		'label' => 'LBL_TEAM',
         'default' => false),
-//END SUGARCRM PRO ONLY
 	'ASSIGNED_USER_NAME' => array(
 		'width' => '9', 
 		'label' => 'LBL_ASSIGNED_TO_NAME',
