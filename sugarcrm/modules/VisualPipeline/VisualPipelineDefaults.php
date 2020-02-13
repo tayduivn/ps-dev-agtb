@@ -21,11 +21,7 @@ class VisualPipelineDefaults
         $admin = BeanFactory::newBean('Administration');
         // get current settings
         $adminConfig = $admin->getConfigForModule('VisualPipeline');
-        if (empty($adminConfig)) {
-            $pipelineConfig = self::getDefaults();
-        } else {
-            $pipelineConfig = self::updateTo93Defaults($adminConfig);
-        }
+        $pipelineConfig = self::getDefaults();
 
         // if admin has already been set up
         if (!empty($adminConfig['is_setup'])) {
@@ -171,63 +167,5 @@ class VisualPipelineDefaults
                 '#222222',
             ),
         );
-    }
-
-    /**
-     * Returns the default values for Tile View to use post 9.3 along with the availableColumn values
-     *
-     * @param array $adminConfig pass any existing settings/defaults for the tile view
-     * @return array updated config settings for Tile View to use post 9.3
-     */
-    public static function updateTo93Defaults($adminConfig)
-    {
-        if (empty($adminConfig['available_columns'])) {
-            $adminConfig['available_columns'] = array(
-                'Cases' => array(
-                    'status' => array(
-                        'New' => 'New',
-                        'Assigned' => 'Assigned',
-                        'Closed' => 'Closed',
-                        'Pending Input' => 'Pending Input',
-                        'Rejected' => 'Rejected',
-                        'Duplicate' => 'Duplicate',
-                    ),
-                ),
-                'Opportunities' => array(
-                    'sales_stage' => array(
-                        'Prospecting' =>  'Prospecting',
-                        'Qualification' => 'Qualification',
-                        'Needs Analysis' => 'Needs Analysis',
-                        'Value Proposition' => 'Value Proposition',
-                        'Id. Decision Makers' => 'Id. Decision Makers',
-                        'Perception Analysis' => 'Perception Analysis',
-                        'Proposal/Price Quote' => 'Proposal/Price Quote',
-                        'Negotiation/Review' => 'Negotiation/Review',
-                    ),
-                ),
-                'Tasks' => array(
-                    'status' => array(
-                        'Not Started' => 'Not Started',
-                        'In Progress' => 'In Progress',
-                        'Completed' => 'Completed',
-                        'Pending Input' => 'Pending Input',
-                        'Deferred' => 'Deferred',
-                    ),
-                ),
-                'Leads' => array(
-                    'status' => array(
-                        'New' => 'New',
-                        'Assigned' => 'Assigned',
-                        'In Process' => 'In Process',
-                        'Converted' => 'Converted',
-                        'Recycled' => 'Recycled',
-                        'Dead' => 'Dead',
-                    ),
-                ),
-            );
-        }
-
-        // default Tile View config setup
-        return $adminConfig;
     }
 }
