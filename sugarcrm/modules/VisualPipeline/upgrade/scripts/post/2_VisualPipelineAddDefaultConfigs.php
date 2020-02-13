@@ -35,7 +35,7 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
             VisualPipelineDefaults::setupPipelineSettings();
         } elseif ($this->shouldUpdatePipelineDefaults()) {
             $adminConfig = SugarUpgradeVisualPipelineAddDefaultConfigs::updateTo93Defaults($adminConfig);
-            $this->saveUpdates($adminConfig);
+            $this->saveUpdates($adminConfig, $admin);
         }
     }
 
@@ -57,7 +57,7 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
         return ($isConversion || $isBelowOrAt93Ent) && $needsUpdate;
     }
 
-    public function saveUpdates($adminConfig)
+    public function saveUpdates($adminConfig, $admin)
     {
         foreach ($adminConfig as $name => $value) {
             $admin->saveSetting('VisualPipeline', $name, $value, 'base');
