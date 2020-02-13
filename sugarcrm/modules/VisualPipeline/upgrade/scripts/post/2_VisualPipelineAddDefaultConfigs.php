@@ -19,10 +19,11 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
 
     public function run()
     {
+        $admin = BeanFactory::newBean('Administration');
         $adminConfig = $admin->getConfigForModule('VisualPipeline');
         if ($this->shouldInstallPipelineDefaults()) {
             VisualPipelineDefaults::setupPipelineSettings();
-        } else if ($this->shouldUpdatePipelineDefaults()) {
+        } elseif ($this->shouldUpdatePipelineDefaults()) {
             $adminConfig = SugarUpgradeVisualPipelineAddDefaultConfigs::updateTo93Defaults($adminConfig);
             $this->saveUpdates($adminConfig);
         }
@@ -43,7 +44,8 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
         return ($isConversion || $isBelow10Ent) && $needsUpdate;
     }
 
-    public function saveUpdates($adminConfig) {
+    public function saveUpdates($adminConfig)
+    {
         foreach ($adminConfig as $name => $value) {
             $admin->saveSetting('VisualPipeline', $name, $value, 'base');
         }
