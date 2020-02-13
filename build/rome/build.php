@@ -113,13 +113,13 @@ if (!empty($config['base_dir'])) {
             $config['dir'] = realpath($config['base_dir'] . DIRECTORY_SEPARATOR . $config['dir']);
         }
         $config['dir'] = str_replace($config['base_dir'], '', $config['dir']);
-        if (is_dir($config['base_dir'] . DIRECTORY_SEPARATOR . $config['dir'])) {
+        if (is_dir($config['base_dir'] . $config['dir'])) {
             $rome->setStartPath($config['base_dir']);
-            echo "Building " . $config['base_dir'] . DIRECTORY_SEPARATOR . $config['dir'];
-            $rome->build($config['base_dir'] . DIRECTORY_SEPARATOR . $config['dir']);
+            echo "Building " . $config['base_dir'] . $config['dir'];
+            $rome->build($config['base_dir'] . $config['dir']);
         } else {
-            $config_path = $config['base_dir'] . DIRECTORY_SEPARATOR . $config['dir'];
-            echo "Build Stopped.  You entered an invalid directory name: " . $config_path;
+            $config_path = $config['base_dir'] . $config['dir'];
+            echo "Build Stopped. You entered an invalid directory name: " . $config_path;
         }
     } else {
         echo "Building " . $config['base_dir'];
