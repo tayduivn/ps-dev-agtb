@@ -14,26 +14,15 @@
 class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
 {
     public $order = 2100;
-    public $version = '9.1.0';
     public $type = self::UPGRADE_CUSTOM;
-
-    function console_log($output, $with_script_tags = true) {
-        $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) .
-            ');';
-        if ($with_script_tags) {
-            $js_code = '<script>' . $js_code . '</script>';
-        }
-        echo $js_code;
-    }
 
     public function run()
     {
         $admin = BeanFactory::newBean('Administration');
         $adminConfig = $admin->getConfigForModule('VisualPipeline');
-        $this->console_log($adminConfig);
         if ($this->shouldInstallPipelineDefaults()) {
             VisualPipelineDefaults::setupPipelineSettings();
-        } elseif ($this->shouldUpdatePipelineDefaults()) {
+        } elseif ($this->shouldUpdatePipelineDefaults($adminConfig)) {
             $adminConfig = SugarUpgradeVisualPipelineAddDefaultConfigs::updateTo93Defaults($adminConfig);
             $this->saveUpdates($adminConfig, $admin);
         }
@@ -46,14 +35,11 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
         return $isConversion || $isBelowOrAt91Ent;
     }
 
-    public function shouldUpdatePipelineDefaults()
+    public function shouldUpdatePipelineDefaults($adminConfig)
     {
         $isConversion = !$this->fromFlavor('ent') && $this->toFlavor('ent');
         $isBelowOrAt93Ent = $this->toFlavor('ent') && version_compare($this->from_version, '9.3.0', '<=');
         $needsUpdate = !empty($adminConfig) && empty($adminConfig['available_columns']);
-        echo 'Update';
-        $this->console_log($isBelowOrAt93Ent);
-        $this->console_log($needsUpdate);
         return ($isConversion || $isBelowOrAt93Ent) && $needsUpdate;
     }
 
@@ -74,6 +60,13 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
      */
     public static function updateTo93Defaults($adminConfig)
     {
+        array_push($adminConfig['enabled_modules'], 'Leads');
+
+        $adminConfig['table_header']['Leads'] = 'status';
+        $adminConfig['hidden_values']['Leads'] = '';
+        $adminConfig['tile_header']['Leads'] = 'name';
+        $adminConfig['tile_body_fields']['Leads'] = [ 'email', 'account_name', 'phone_work',];
+        $adminConfig['records_per_column']['Leads'] = '10';
         $adminConfig['available_columns'] = array(
             'Cases' => array(
                 'status' => array(
