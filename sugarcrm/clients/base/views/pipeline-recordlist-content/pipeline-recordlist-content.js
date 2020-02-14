@@ -108,7 +108,12 @@
             } else {
                 var tileBodyField = this.pipelineConfig.tile_body_fields[this.module];
                 _.each(tileBodyField, function(tileBody) {
-                    tileBodyArr.push(fieldMetadata[tileBody]);
+                    var tileFieldMeta = app.utils.deepCopy(fieldMetadata[tileBody]);
+                    if (_.isObject(tileFieldMeta.displayParams)) {
+                        _.extend(tileFieldMeta, tileFieldMeta.displayParams);
+                        delete tileFieldMeta.displayParams;
+                    }
+                    tileBodyArr.push(tileFieldMeta);
                 }, this);
                 panel.fields = tileBodyArr;
             }
