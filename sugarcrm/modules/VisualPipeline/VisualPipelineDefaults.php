@@ -48,8 +48,8 @@ class VisualPipelineDefaults
 
         // if admin has already been set up
         if (!empty($adminConfig['is_setup'])) {
-            foreach ($adminConfig as $key => $val) {
-               if ($settings[$key]) {
+            foreach ($adminConfig as $key => $value) {
+               if (!empty($settings[$key])) {
                    // update the existing key value defaults
                    array_push($settings[$key], $value);
                } else {
@@ -57,8 +57,6 @@ class VisualPipelineDefaults
                    $settings[$key] = $value;
                }
             }
-        } else {
-            $settings = self::getDefaults();
         }
 
         foreach ($settings as $key => $value) {
