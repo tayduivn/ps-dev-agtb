@@ -23,8 +23,8 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
         if ($this->shouldInstallPipelineDefaults()) {
             VisualPipelineDefaults::setupPipelineSettings();
         } elseif ($this->shouldUpdatePipelineDefaults($adminConfig)) {
-            $adminConfig = SugarUpgradeVisualPipelineAddDefaultConfigs::updateTo93Defaults($adminConfig);
-            $this->saveUpdates($adminConfig, $admin);
+            $newConfig = $this->getNewDefaults();
+            VisualPipelineDefaults::addDefaults($newConfig);
         }
     }
 
@@ -39,17 +39,7 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
     {
         $isConversion = !$this->fromFlavor('ent') && $this->toFlavor('ent');
         $isBelowOrAt93Ent = $this->toFlavor('ent') && version_compare($this->from_version, '9.3.0', '<=');
-        $needsUpdate = !empty($adminConfig) && empty($adminConfig['available_columns']);
-        return ($isConversion || $isBelowOrAt93Ent) && $needsUpdate;
-    }
-
-    public function saveUpdates($adminConfig, $admin)
-    {
-        foreach ($adminConfig as $name => $value) {
-            $admin->saveSetting('VisualPipeline', $name, $value, 'base');
-        }
-
-        return $adminConfig;
+        return $isConversion || $isBelowOrAt93Ent;
     }
 
     /**
@@ -58,59 +48,74 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
      * @param array $adminConfig pass any existing settings/defaults for the tile view
      * @return array updated config settings for Tile View to use post 9.3
      */
-    public static function updateTo93Defaults($adminConfig)
+    public function getNewDefaults()
     {
-        array_push($adminConfig['enabled_modules'], 'Leads');
-
-        $adminConfig['table_header']['Leads'] = 'status';
-        $adminConfig['hidden_values']['Leads'] = '';
-        $adminConfig['tile_header']['Leads'] = 'name';
-        $adminConfig['tile_body_fields']['Leads'] = [ 'email', 'account_name', 'phone_work',];
-        $adminConfig['records_per_column']['Leads'] = '10';
-        $adminConfig['available_columns'] = array(
-            'Cases' => array(
-                'status' => array(
-                    'New' => 'New',
-                    'Assigned' => 'Assigned',
-                    'Closed' => 'Closed',
-                    'Pending Input' => 'Pending Input',
-                    'Rejected' => 'Rejected',
-                    'Duplicate' => 'Duplicate',
+        return array(
+            'enabled_modules' => array(
+                'Leads',
+            ),
+            'table_header' => array(
+                'Leads' => 'status',
+            ),
+            'hidden_values' => array(
+                'Leads' => array(),
+            ),
+            'tile_header' => array(
+                'Leads' => 'name',
+            ),
+            'tile_body_fields' => array(
+                'Leads' => array(
+                    'email',
+                    'account_name',
+                    'phone_work',
                 ),
             ),
-            'Opportunities' => array(
-                'sales_stage' => array(
-                    'Prospecting' =>  'Prospecting',
-                    'Qualification' => 'Qualification',
-                    'Needs Analysis' => 'Needs Analysis',
-                    'Value Proposition' => 'Value Proposition',
-                    'Id. Decision Makers' => 'Id. Decision Makers',
-                    'Perception Analysis' => 'Perception Analysis',
-                    'Proposal/Price Quote' => 'Proposal/Price Quote',
-                    'Negotiation/Review' => 'Negotiation/Review',
-                ),
+            'records_per_column' => array(
+                'Leads' => '10',
             ),
-            'Tasks' => array(
-                'status' => array(
-                    'Not Started' => 'Not Started',
-                    'In Progress' => 'In Progress',
-                    'Completed' => 'Completed',
-                    'Pending Input' => 'Pending Input',
-                    'Deferred' => 'Deferred',
+            'available_columns' => array(
+                'Cases' => array(
+                    'status' => array(
+                        'New' => 'New',
+                        'Assigned' => 'Assigned',
+                        'Closed' => 'Closed',
+                        'Pending Input' => 'Pending Input',
+                        'Rejected' => 'Rejected',
+                        'Duplicate' => 'Duplicate',
+                    ),
                 ),
-            ),
-            'Leads' => array(
-                'status' => array(
-                    'New' => 'New',
-                    'Assigned' => 'Assigned',
-                    'In Process' => 'In Process',
-                    'Converted' => 'Converted',
-                    'Recycled' => 'Recycled',
-                    'Dead' => 'Dead',
+                'Opportunities' => array(
+                    'sales_stage' => array(
+                        'Prospecting' =>  'Prospecting',
+                        'Qualification' => 'Qualification',
+                        'Needs Analysis' => 'Needs Analysis',
+                        'Value Proposition' => 'Value Proposition',
+                        'Id. Decision Makers' => 'Id. Decision Makers',
+                        'Perception Analysis' => 'Perception Analysis',
+                        'Proposal/Price Quote' => 'Proposal/Price Quote',
+                        'Negotiation/Review' => 'Negotiation/Review',
+                    ),
+                ),
+                'Tasks' => array(
+                    'status' => array(
+                        'Not Started' => 'Not Started',
+                        'In Progress' => 'In Progress',
+                        'Completed' => 'Completed',
+                        'Pending Input' => 'Pending Input',
+                        'Deferred' => 'Deferred',
+                    ),
+                ),
+                'Leads' => array(
+                    'status' => array(
+                        'New' => 'New',
+                        'Assigned' => 'Assigned',
+                        'In Process' => 'In Process',
+                        'Converted' => 'Converted',
+                        'Recycled' => 'Recycled',
+                        'Dead' => 'Dead',
+                    ),
                 ),
             ),
         );
-
-        return $adminConfig;
     }
 }

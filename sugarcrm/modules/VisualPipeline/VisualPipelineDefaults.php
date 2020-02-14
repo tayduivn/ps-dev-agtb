@@ -41,28 +41,30 @@ class VisualPipelineDefaults
      * Updates the default PipelineConfig settings
      * @param array The new config settings to be updated
      */
-//    public static function addDefaults($settings) {
-//        $admin = BeanFactory::newBean('Administration');
-//        // get current settings
-//        $adminConfig = $admin->getConfigForModule('VisualPipeline');
-//
-//        // if admin has already been set up
-//        if (!empty($adminConfig['is_setup'])) {
-//            foreach ($adminConfig as $key => $val) {
-//               if ($settings[$key]) {
-//                   // update the existing key value defaults
-//                   array_push($settings[$key], $value);
-//               } else {
-//                   // add the new key value settings to the defaults
-//                   $settings[$key] = $value;
-//               }
-//            }
-//        }
-//
-//        foreach ($settings as $key => $value) {
-//            $admin->saveSetting('VisualPipeline', $key, $value, 'base');
-//        }
-//    }
+    public static function addDefaults($settings) {
+        $admin = BeanFactory::newBean('Administration');
+        // get current settings
+        $adminConfig = $admin->getConfigForModule('VisualPipeline');
+
+        // if admin has already been set up
+        if (!empty($adminConfig['is_setup'])) {
+            foreach ($adminConfig as $key => $val) {
+               if ($settings[$key]) {
+                   // update the existing key value defaults
+                   array_push($settings[$key], $value);
+               } else {
+                   // add the new key value settings to the defaults
+                   $settings[$key] = $value;
+               }
+            }
+        } else {
+            $settings = self::getDefaults();
+        }
+
+        foreach ($settings as $key => $value) {
+            $admin->saveSetting('VisualPipeline', $key, $value, 'base');
+        }
+    }
 
     /**
      * Returns the default values for Tile View to use
