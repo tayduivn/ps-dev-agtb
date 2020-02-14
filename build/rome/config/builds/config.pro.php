@@ -60,43 +60,9 @@ $config['builds']['pro']['languages']= array(
 );
 $config['blackList']['pro'] = array(
 'sugarcrm/build'=>1,
-'sugarcrm/themes/Awesome80s'=>1,
-'sugarcrm/themes/BoldMove'=>1,
-'sugarcrm/themes/FinalFrontier'=>1,
-'sugarcrm/themes/GoldenGate'=>1,
-'sugarcrm/themes/Legacy'=>1,
-'sugarcrm/themes/Links'=>1,
-'sugarcrm/themes/Love'=>1,
-'sugarcrm/themes/Paradise'=>1,
-'sugarcrm/themes/Retro'=>1,
-'sugarcrm/themes/RipCurl'=>1,
-'sugarcrm/themes/RipCurlorg'=>1,
-'sugarcrm/themes/Shred'=>1,
-'sugarcrm/themes/Sugar2006'=>1,
-'sugarcrm/themes/Sugar5'=>1,
-'sugarcrm/themes/SugarClassic'=>1,
-'sugarcrm/themes/SugarIE6'=>1,
-'sugarcrm/themes/SugarLite'=>1,
-'sugarcrm/themes/Sunset'=>1,
-'sugarcrm/themes/TrailBlazers'=>1,
-'sugarcrm/themes/VintageSugar'=>1,
-'sugarcrm/themes/WhiteSands'=>1,
 'sugarcrm/modules/CustomQueries'=>1,
 'sugarcrm/modules/DataSets'=>1,
 'sugarcrm/modules/ReportMaker'=>1,
-
-'sugarcrm/include/externalAPI/LotusLiveDirect'=>1,
-'sugarcrm/include/externalAPI/LotusLiveCastIron'=>1,
-
-'sugarcrm/themes/default/images/gmail_logo.png'=>1,
-'sugarcrm/themes/default/images/yahoomail_logo.png'=>1,
-'sugarcrm/themes/default/images/exchange_logo.png'=>1,
-
-'sugarcrm/include/EditView/InlineEdit.css'=>1,
-'sugarcrm/include/EditView/InlineEdit.js'=>1,
-'sugarcrm/include/EditView/InlineEdit.php'=>1,
-'sugarcrm/include/MVC/View/views/view.inlinefield.php'=>1,
-'sugarcrm/include/MVC/View/views/view.inlinefieldsave.php'=>1,
 
 'sugarcrm/modules/DCEActions'=>1,
 'sugarcrm/modules/DCEClients'=>1,
@@ -104,7 +70,6 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/DCEDataBases'=>1,
 'sugarcrm/modules/DCEInstances'=>1,
 'sugarcrm/modules/DCEReports'=>1,
-'sugarcrm/modules/DCETemplates'=>1,
 'sugarcrm/modules/Charts/Dashlets/DCEActionsByTypesDashlet'=>1,
 
 'sugarcrm/themes/default/images/dce_settings.gif'=>1,
@@ -124,23 +89,10 @@ $config['blackList']['pro'] = array(
 'sugarcrm/themes/default/images/icon_DCETemplates_32.gif'=>1,
 'sugarcrm/themes/default/images/icon_DCEReports_32.gif'=>1,
 
-'sugarcrm/modules/QueryBuilder'=>1,
 'sugarcrm/modules/Queues'=>1,
 
-'sugarcrm/include/images/sugarsales_lg.png'=>1,
-'sugarcrm/include/images/sugarsales_lg_dce.png'=>1,
-'sugarcrm/include/images/sugarsales_lg_ent.png'=>1,
-'sugarcrm/include/images/sugarsales_lg_express.png'=>1,
-'sugarcrm/include/images/sugarsales_lg_open.png'=>1,
-'sugarcrm/include/images/sugarsales_lg_corp.png'=>1,
 'sugarcrm/include/images/sugarsales_lg_ult.png'=>1,
-'sugarcrm/include/images/sugar_md_dce.png'=>1,
-'sugarcrm/include/images/sugar_md_dev.png'=>1,
 'sugarcrm/include/images/sugar_md_ent.png'=>1,
-'sugarcrm/include/images/sugar_md_express.png'=>1,
-'sugarcrm/include/images/sugar_md_open.png'=>1,
-'sugarcrm/include/images/sugar_md_sales.png'=>1,
-'sugarcrm/include/images/sugar_md_corp.png'=>1,
 'sugarcrm/include/images/sugar_md_ult.png'=>1,
 
 // portal
@@ -162,14 +114,9 @@ $config['blackList']['pro'] = array(
 
 'sugarcrm/styleguide/styleguide'=>1,
 'sugarcrm/styleguide/tests'=>1,
-'sugarcrm/styleguide/build'=>1,
 
 // SP-1071 disable unsupported legacy connectors for 7.0
-'sugarcrm/modules/Connectors/connectors/sources/ext/rest/zoominfocompany'=>1,
-'sugarcrm/modules/Connectors/connectors/sources/ext/rest/zoominfoperson'=>1,
 'sugarcrm/modules/Connectors/connectors/sources/ext/rest/linkedin'=>1,
-'sugarcrm/modules/Connectors/connectors/sources/ext/rest/insideview'=>1,
-'sugarcrm/modules/Connectors/connectors/sources/ext/eapm/facebook'=>1,
 
 // Locked fields implementation for ENT and above
 'sugarcrm/include/SugarObjects/implements/lockable_fields' => 1,
