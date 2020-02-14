@@ -59,37 +59,9 @@ $config['builds']['pro']['languages']= array(
 'uk_UA',
 );
 $config['blackList']['pro'] = array(
-'sugarcrm/build'=>1,
 'sugarcrm/modules/CustomQueries'=>1,
 'sugarcrm/modules/DataSets'=>1,
 'sugarcrm/modules/ReportMaker'=>1,
-
-'sugarcrm/modules/DCEActions'=>1,
-'sugarcrm/modules/DCEClients'=>1,
-'sugarcrm/modules/DCEClusters'=>1,
-'sugarcrm/modules/DCEDataBases'=>1,
-'sugarcrm/modules/DCEInstances'=>1,
-'sugarcrm/modules/DCEReports'=>1,
-'sugarcrm/modules/Charts/Dashlets/DCEActionsByTypesDashlet'=>1,
-
-'sugarcrm/themes/default/images/dce_settings.gif'=>1,
-'sugarcrm/themes/default/images/DCEClusters.gif'=>1,
-'sugarcrm/themes/default/images/DCEInstances.gif'=>1,
-'sugarcrm/themes/default/images/DCElicensingReport.gif'=>1,
-'sugarcrm/themes/default/images/DCETemplates.gif'=>1,
-'sugarcrm/themes/default/images/DCEDataBases.gif'=>1,
-'sugarcrm/themes/default/images/createDCEClusters.gif'=>1,
-'sugarcrm/themes/default/images/createDCEInstances.gif'=>1,
-'sugarcrm/themes/default/images/createDCETemplates.gif'=>1,
-'sugarcrm/themes/default/images/createDCEDataBases.gif'=>1,
-'sugarcrm/themes/default/images/icon_DCEActions_32.gif'=>1,
-'sugarcrm/themes/default/images/icon_DCEDataBases_32.gif'=>1,
-'sugarcrm/themes/default/images/icon_DCEInstances_32.gif'=>1,
-'sugarcrm/themes/default/images/icon_DCEClusters_32.gif'=>1,
-'sugarcrm/themes/default/images/icon_DCETemplates_32.gif'=>1,
-'sugarcrm/themes/default/images/icon_DCEReports_32.gif'=>1,
-
-'sugarcrm/modules/Queues'=>1,
 
 'sugarcrm/include/images/sugarsales_lg_ult.png'=>1,
 'sugarcrm/include/images/sugar_md_ent.png'=>1,
@@ -108,15 +80,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/src/Portal/Search' => 1,
 'sugarcrm/tests/{old}/clients/portal' => 1,
 'sugarcrm/tests/{old}/src/Portal' => 1,
-'sugarcrm/tests/clients/portal' => 1,
-'sugarcrm/tests/portal2' => 1,
 'sugarcrm/tests/unit-php/src/Portal' => 1,
-
-'sugarcrm/styleguide/styleguide'=>1,
-'sugarcrm/styleguide/tests'=>1,
-
-// SP-1071 disable unsupported legacy connectors for 7.0
-'sugarcrm/modules/Connectors/connectors/sources/ext/rest/linkedin'=>1,
 
 // Locked fields implementation for ENT and above
 'sugarcrm/include/SugarObjects/implements/lockable_fields' => 1,
@@ -148,10 +112,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/pmse_Inbox'=>1,
 'sugarcrm/modules/pmse_Project'=>1,
 
-'sugarcrm/tests/unit-php/modules/pmse_Business_Rules'=>1,
-'sugarcrm/tests/unit-php/modules/pmse_Emails_Templates'=>1,
 'sugarcrm/tests/unit-php/modules/pmse_Inbox'=>1,
-'sugarcrm/tests/unit-php/modules/pmse_Project'=>1,
 
 'sugarcrm/src/ProcessManager' => 1,
 'sugarcrm/tests/{old}/src/ProcessManager' => 1,
@@ -167,8 +128,6 @@ $config['blackList']['pro'] = array(
 'sugarcrm/clients/base/views/commentlog-dashlet' => 1,
 'sugarcrm/tests/unit-js/clients/base/views/commentlog-dashlet' => 1,
 'sugarcrm/clients/base/fields/commentlog/dashlet.hbs' => 1,
-
-'sugarcrm/modules/clients/base/views/selection-list-for-bpm' => 1,
 
 // Console configuration
 'sugarcrm/modules/ConsoleConfiguration' => 1,
