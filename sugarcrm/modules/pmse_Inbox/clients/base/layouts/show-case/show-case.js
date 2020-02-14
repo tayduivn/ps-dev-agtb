@@ -573,6 +573,11 @@
                 this.noEditFields = [];
 
                 _.each(panels, function(panel) {
+                    // get user preference for labelsOnTop before iterating through
+                    // fields
+                    if (_.isUndefined(panel.labelsOnTop)) {
+                        panel.labelsOnTop = app.user.getPreference('field_name_placement') === 'field_on_top';
+                    }
                     // it is assumed that a field is an object but it can also be a string
                     // while working with the fields, might as well take the opportunity to check the user's ACLs for the field
                     _.each(panel.fields, function(field, index) {
@@ -600,6 +605,7 @@
                         } else if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
                             this.noEditFields.push(field.name);
                         }
+                        field.labelsOnTop = panel.labelsOnTop;
                     }, this);
 
                     // Set flag so that show more link can be displayed to show hidden panel.
