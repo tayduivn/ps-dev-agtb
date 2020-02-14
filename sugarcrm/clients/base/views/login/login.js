@@ -335,7 +335,7 @@
      * login setup we need to do prior to rendering the rest of the Sugar app.
      */
     postLogin: function() {
-        if (!app.user.get('show_wizard') && !app.user.get('is_password_expired')) {
+        if (!app.user.get('show_wizard') && !app.user.get('is_password_expired') && app.user.get('cookie_consent')) {
 
             this.refreshAdditionalComponents();
 

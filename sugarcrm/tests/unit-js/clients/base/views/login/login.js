@@ -75,7 +75,8 @@ describe("Login View", function() {
     describe('postLogin', function() {
         beforeEach(function() {
             sinon.collection.stub(app.user, 'get')
-                .withArgs('show_wizard').returns(false);
+                .withArgs('show_wizard').returns(false)
+                .withArgs('cookie_consent').returns(true);
         });
 
         it('should only refresh additional components when wizard is not shown', function() {
