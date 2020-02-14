@@ -12,6 +12,7 @@
 
 import {givenStepsHelper, stepsHelper, Given} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
+import {updateAdminCookieConsent} from './steps-helper';
 
 Given(/^I (launch|update) (?:App)\s*(?:(?:with)?\s*config\s*(?:with)?: "([^"]*)")?$/,
     async function (launch: string, schemesList: string): Promise<void> {
@@ -21,6 +22,10 @@ Given(/^I (launch|update) (?:App)\s*(?:(?:with)?\s*config\s*(?:with)?: "([^"]*)"
 Given(/^I use\s*(default)?\s*account\s*(?:"([^"]*)"(?:\/"([^"]*)")?)?$/,
     async function (isDefaultAccount: string, username: string, password: string): Promise<void> {
         await givenStepsHelper.useAccount(isDefaultAccount, username, password);
+        // set cookie consent to 1
+        if (isDefaultAccount) {
+            await updateAdminCookieConsent();
+        }
     });
 
 Given(/^(?:(\d+) )?(\w+) records exist( created by bulk)?:$/,

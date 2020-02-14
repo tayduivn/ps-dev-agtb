@@ -20,6 +20,7 @@ import BaseView from '../views/base-view';
 import * as _ from 'lodash';
 import AlertCmp from '../components/alert-cmp';
 import RecordLayout from '../layouts/record-layout';
+import {updateAdminCookieConsent} from './steps-helper';
 
 /**
  *  Login to Sugar using default admin user account and
@@ -31,6 +32,8 @@ import RecordLayout from '../layouts/record-layout';
 Given(/^I am logged in$/,
     async function () {
         await useDefaultAcct('default', 'admin', 'asdf');
+        // set cookie consent to 1
+        await updateAdminCookieConsent();
         await launchApp('launch', '');
         await whenStepsHelper.setUrlHashAndLogin('about');
     }, {waitForApp: true}

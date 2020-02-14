@@ -171,3 +171,19 @@ export const enum KeyCodes {
 
     COMMAND =      '\uE03D',  // Apple command key
 }
+
+/**
+ *  Update Admin Cookie Consent
+ */
+export const updateAdminCookieConsent = async () => {
+    const options = {
+        record:{
+            module: 'Users',
+            id: 1,
+            fields:{
+                cookie_consent: 1,
+            },
+        }
+    };
+    await seedbed.api.update(options);
+};

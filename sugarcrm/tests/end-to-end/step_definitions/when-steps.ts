@@ -470,6 +470,7 @@ When<string, string>(
                             opt_out: false,
                         },
                     ],
+                    cookie_consent: 1,
                 },
             });
 
