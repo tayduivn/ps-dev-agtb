@@ -38,13 +38,10 @@ $config['replace'] = array();
 //Controls whether or not to include the original line numbering (i.e. commented lines appear as newlines)
 $config['retainCommentSpacing'] = false;
 
-$d = dir('config/builds');
-while($e = $d->read()){
-	$path = 'config/builds/' . $e;
-	if(is_file($path) && substr($e, 0, 6) == 'config'){
-		include($path);
-	}
+foreach (new GlobIterator('config/builds/config.*.php') as $path) {
+    include $path;
 }
+
 foreach($config['skipBuilds'] as $flav=>$x){
 	define($flav, $flav);
 }
