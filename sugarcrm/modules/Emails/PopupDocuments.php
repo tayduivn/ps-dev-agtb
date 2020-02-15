@@ -1,5 +1,4 @@
 <?php
-//_pp($_REQUEST);
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -112,16 +111,4 @@ ob_end_clean();
 		
 $output_html .= insert_popup_footer();
 
-
 echo $output_html;
-
-
-
-
-
-
-
-
-
-
-?>

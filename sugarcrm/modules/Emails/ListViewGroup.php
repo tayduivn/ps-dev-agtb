@@ -51,13 +51,9 @@ $error				= '';
 $storeQuery = new StoreQuery();
 
 if(!isset($_REQUEST['query'])){
-	//_pp('loading: '.$currentModule.'Group');
-	//_pp($current_user->user_preferences[$currentModule.'GroupQ']);
 	$storeQuery->loadQuery($currentModule.'Group');
 	$storeQuery->populateRequest();
 } else {
-	//_pp($current_user->user_preferences[$currentModule.'GroupQ']);
-	//_pp('saving: '.$currentModule.'Group');
 	$storeQuery->saveFromGet($currentModule.'Group');
 }
 
@@ -202,12 +198,10 @@ echo $focus->rolloverStyle; // for email previews
 if(!empty($_REQUEST['error'])) {
 	$error = $app_list_strings['dom_email_errors'][$_REQUEST['error']];	
 }
-//_pp($where);
+
 if(!empty($assigned_to_sel)) {
     $whereClauses['emails.assigned_user_id'] = 'emails.assigned_user_id = ' . $focus->db->quoted($assigned_to_sel);
 }
-
-//_pp($whereClauses);
 
 // CONSTRUCT WHERE STRING FROM WHERECLAUSE ARRAY
 foreach($whereClauses as $clause) {

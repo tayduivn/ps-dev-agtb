@@ -341,7 +341,7 @@ class Scheduler extends SugarBean {
 				$hrName[] = $hrs;
 			}
 		}
-		//_pp($hrName);
+
 		// derive minutes
 		//$currentMin = date('i');
 		$currentMin = $timedate->getNow()->format('i');
@@ -392,7 +392,7 @@ class Scheduler extends SugarBean {
 				$minName[] = $mins;
 			}
 		}
-		//_pp($minName);
+
 		// prep some boundaries - these are not in GMT b/c gmt is a 24hour period, possibly bridging 2 local days
 		if(empty($focus->time_from)  && empty($focus->time_to) ) {
 			$timeFromTs = 0;
@@ -426,7 +426,7 @@ class Scheduler extends SugarBean {
 //			$dateTimeEnd = '2020-12-31 23:59:59'; // if empty, set it to something ridiculous
 		}
 		$timeEndTs++;
-		/*_pp('hours:'); _pp($hrName);_pp('mins:'); _pp($minName);*/
+
 		$dateobj = $timedate->getNow();
 		$nowTs = $dateobj->ts;
         $GLOBALS['log']->debug(sprintf("Constraints: start: %s from: %s end: %s to: %s now: %s",
@@ -446,18 +446,10 @@ class Scheduler extends SugarBean {
                             if( $tsGmt <= $timeEndTs ) { // this is taken care of by the initial query - start is less than the date spec'd by admin
                                 if( $tsGmt <= $timeToTs ) { // start is less than the time_to
                                     $validJobTime[] = $dateobj->asDb();
-                                } else {
-                                    //_pp('Job Time is NOT smaller that TimeTO: '.$tsGmt .'<='. $timeToTs);
                                 }
-                            } else {
-                                //_pp('Job Time is NOT smaller that DateTimeEnd: '.date('Y-m-d H:i:s',$tsGmt) .'<='. $dateTimeEnd); //_pp( $tsGmt .'<='. $timeEndTs );
                             }
                         }
-					} else {
-						//_pp('Job Time is NOT bigger that TimeFrom: '.$tsGmt .'>='. $timeFromTs);
 					}
-				} else {
-					//_pp('Job Time is NOT Bigger than DateTimeStart: '.date('Y-m-d H:i',$tsGmt) .'>='. $dateTimeStart);
 				}
 			}
 		}

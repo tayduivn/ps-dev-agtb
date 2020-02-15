@@ -204,18 +204,18 @@ $chart= new campaign_charts();
 echo $smarty->fetch('modules/Campaigns/TrackDetailView.tpl');
 
 $subpanel = new SubPanelTiles($focus, 'Campaigns');
-    //if latest marketing id is empty, or if it is set to 'all'', then do no filtering, otherwise filter..
-    //.. out the chart and subpanels by marketing id
-    if(empty($latest_marketing_id) || $latest_marketing_id === 'all'){
-        //do nothing, no filtering is needed
-    }else{
-        //get array of layout defs
-        $layoutDefsArr= $subpanel->subpanel_definitions->layout_defs;
 
-        //iterate through layout defs for processing of subpanels.  If a marketing Id is specified, then we need to...
-        //.. filter the subpanels by it so they match the chart rendered in code above.
-        foreach($layoutDefsArr as $subpanels_name => $subpanels){
+// if latest marketing id is empty, or if it is set to 'all', then do no filtering, otherwise filter...
+//... out the chart and subpanels by marketing id
+if (empty($latest_marketing_id) || $latest_marketing_id === 'all') {
+    //do nothing, no filtering is needed
+} else {
+    //get array of layout defs
+    $layoutDefsArr= $subpanel->subpanel_definitions->layout_defs;
 
+    //iterate through layout defs for processing of subpanels.  If a marketing Id is specified, then we need to...
+    //.. filter the subpanels by it so they match the chart rendered in code above.
+    foreach ($layoutDefsArr as $subpanels_name => $subpanels) {
             //process each subpanel definition
              foreach($subpanels as $subpane_key => $subpane){
 
@@ -234,9 +234,8 @@ $subpanel = new SubPanelTiles($focus, 'Campaigns');
                             }
                         }//end if (isset($subpane['function_parameters'])){
             }//end foreach($subpanels as $subpane_key => $subpane){
-
-        }//_pp($subpanel->subpanel_definitions->layout_defs);
-    }//end else
+    }
+}
 
 $deletedCampaignLogLeadsCount = $focus->getDeletedCampaignLogLeadsCount();
 if ($deletedCampaignLogLeadsCount > 0)

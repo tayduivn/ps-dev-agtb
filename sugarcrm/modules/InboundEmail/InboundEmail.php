@@ -1048,7 +1048,6 @@ class InboundEmail extends SugarBean {
 			if(is_resource($this->pop3socket)) {
 				while(!feof($this->pop3socket)) {
 					$buf = fgets($this->pop3socket, 1024); // 8kb max buffer - shouldn't be more than 80 chars via pop3...
-					//_pp(trim($buf));
 
 					if(trim($buf) == '.') {
 						$GLOBALS['log']->debug("*** GOT '.'");
@@ -3353,15 +3352,11 @@ class InboundEmail extends SugarBean {
 
 			// found a multi-part/mixed 'part' - keep digging
 			if($part->type == 1 && (strtoupper($part->subtype) == 'RELATED' || strtoupper($part->subtype) == 'ALTERNATIVE' || strtoupper($part->subtype) == 'MIXED')) {
-				//_pp('in loop: going deeper with subtype: '.$part->subtype.' $k is: '.$k);
 				$thisBc = $this->buildBreadCrumbs($part->parts, $subtype, $thisBc);
 				return $thisBc;
 
 			} elseif(strtolower($part->subtype) == strtolower($subtype)) { // found the subtype we want, return the breadcrumb value
-				//_pp('found '.$subtype.' bc! returning: '.$thisBc);
 				return $thisBc;
-			} else {
-				//_pp('found '.$part->subtype.' instead');
 			}
 		}
 	}
@@ -5655,7 +5650,6 @@ eoq;
 
 			$email->to_addrs = $meta['toaddrs'];
 			$email->date_sent = $meta['date_start'];
-			//_ppf($email,true);
 
 			$this->email = $email;
 			$this->email->email2init();
@@ -6046,15 +6040,12 @@ eoq;
 		if(strtolower($direction) == 'desc') {
 			$revSorts = array();
 			$keys = array_reverse(array_keys($sorts[$sort]));
-//			_pp("count keys in DESC: ".count($keys));
-//			_pp("count elements in sort[sort]: ".count($sorts[$sort]));
 
 			for($i=0; $i<count($keys); $i++) {
 				$v = $keys[$i];
 				$revSorts[$v] = $sorts[$sort][$v];
 			}
 
-			//_pp("count post-sort: ".count($revSorts));
 			$sorts[$sort] = $revSorts;
 		}
         $timedate = TimeDate::getInstance();
@@ -6062,7 +6053,6 @@ eoq;
 		    $arr[$k2]->date = $timedate->fromString($arr[$k2]->date)->asDb();
 			$retArr[] = $arr[$k2];
 		}
-		//_pp("final count: ".count($retArr));
 
 		$finalReturn = array();
 		$finalReturn['retArr'] = $retArr;

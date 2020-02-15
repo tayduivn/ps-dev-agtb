@@ -148,11 +148,9 @@ for($i= 0; $i<$columns;$i++){
 
     if(!empty($_REQUEST['colsFirst'][$i])){
         $colsFirstField = $_REQUEST['colsFirst'][$i];
-        //_pp($_REQUEST['colsFirst']);
      }
     if(!empty($_REQUEST['colsSecond'][$i])){
         $colsSecondField = $_REQUEST['colsSecond'][$i];
-        //_pp($_REQUEST['colsSecond']);
      }
 
     if(isset($lead->field_defs[$colsFirstField]) && $lead->field_defs[$colsFirstField] != null)
