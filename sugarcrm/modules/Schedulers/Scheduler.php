@@ -433,18 +433,7 @@ class Scheduler extends SugarBean {
             gmdate('Y-m-d H:i:s', $timeStartTs), gmdate('Y-m-d H:i:s', $timeFromTs), gmdate('Y-m-d H:i:s', $timeEndTs),
             gmdate('Y-m-d H:i:s', $timeToTs), $timedate->nowDb()
             ));
-//		_pp('currentHour: '. $currentHour);
-//		_pp('timeStartTs: '.date('r',$timeStartTs));
-//		_pp('timeFromTs: '.date('r',$timeFromTs));
-//		_pp('timeEndTs: '.date('r',$timeEndTs));
-//		_pp('timeToTs: '.date('r',$timeToTs));
-//		_pp('mktime: '.date('r',mktime()));
-//		_pp('timeLastRun: '.date('r',$lastRunTs));
-//
-//		_pp('hours: ');
-//		_pp($hrName);
-//		_pp('mins: ');
-//		_ppd($minName);
+
 		foreach($hrName as $kHr=>$hr) {
 			foreach($minName as $kMin=>$min) {
 			    $timedate->tzUser($dateobj);
@@ -472,7 +461,7 @@ class Scheduler extends SugarBean {
 				}
 			}
 		}
-		//_ppd($validJobTime);
+
 		// need ascending order to compare oldest time to last_run
 		sort($validJobTime);
 		/**

@@ -2970,15 +2970,6 @@ function nl2html($str)
 }
 
 /**
- * Private helper function for displaying the contents of a given variable.
- * This function is only intended to be used for SugarCRM internal development.
- * The ppd stands for Pre Print Die.
- */
-function _ppd($mixed)
-{
-}
-
-/**
  * Private helper function for displaying the contents of a given variable in
  * the Logger. This function is only intended to be used for SugarCRM internal
  * development. The pp stands for Pre Print.

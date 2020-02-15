@@ -42,7 +42,7 @@ $web_assigned_user = '';
 $web_team_user = '';
 $web_form_footer = '';
 $regex = "/^\w+(['\.\-\+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+\$/";
-//_ppd($web_required_symbol);
+
 if(!empty($_REQUEST['web_header'])){
     $web_form_header= $_REQUEST['web_header'];
 }

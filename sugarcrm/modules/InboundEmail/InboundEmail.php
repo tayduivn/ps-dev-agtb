@@ -6041,7 +6041,7 @@ eoq;
 
 		// sort by column
 		natcasesort($sorts[$sort]);
-		//_ppd($sorts[$sort]);
+
 		// direction
 		if(strtolower($direction) == 'desc') {
 			$revSorts = array();
@@ -6300,48 +6300,6 @@ eoq;
 		} // if
 
 		return $this->generateMultiDimArrayFromFlatArray($this->mailboxarray, $this->retrieveDelimiter());
-		/*
-		$serviceString = $this->getConnectString('', '', false);
-
-		if(strpos($serviceString, 'pop3')) {
-			$obj = new temp();
-			$obj->name = $serviceString."INBOX";
-			$boxes = array("INBOX" => $obj);
-		} else {
-			$boxes = imap_getmailboxes($this->conn, $serviceString, "*");
-		}
-		$raw = array();
-		//_ppd($boxes);
-		$delimiter = '.';
-		// clean MBOX path names
-		foreach($boxes as $k => $mbox) {
-			$raw[] = str_replace($serviceString, "", $mbox->name);
-			if ($mbox->delimiter) {
-				$delimiter = $mbox->delimiter;
-			}
-		}
-		$storedOptions = Serialized::unserialize($this->stored_options, array(), true);
-		$storedOptions['folderDelimiter'] = $delimiter;
-		$this->stored_options = base64_encode(serialize($storedOptions));
-        $this->save();
-
-		sort($raw);
-		//_ppd($raw);
-
-		// used by $this->search()
-		if($justRaw == true) {
-			return $raw;
-		}
-
-
-		// generate a multi-dimensional array to iterate through
-		$ret = array();
-		foreach($raw as $mbox) {
-			$ret = $this->sortMailboxes($mbox, $ret, $delimiter);
-		}
-		//_ppd($ret);
-		return $ret;
-		*/
 	}
 
 	function getMailBoxesForGroupAccount() {

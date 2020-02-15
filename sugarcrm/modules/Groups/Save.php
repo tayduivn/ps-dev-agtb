@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-//_ppd($_REQUEST);
 $focus = BeanFactory::newBean('Groups');
 
 // New user
@@ -54,4 +52,3 @@ if(isset($_POST['return_id']) && $_POST['return_id'] != "") $return_id = $_POST[
 $GLOBALS['log']->debug("Saved record with id of ".$return_id);
 
 header("Location: index.php?action=$return_action&module=$return_module&record=$return_id");
-?>

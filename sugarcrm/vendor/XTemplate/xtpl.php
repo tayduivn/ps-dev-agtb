@@ -160,7 +160,6 @@ var $AUTORESET=1;										/* auto-reset sub blocks */
 	$this->alternate_include_directory = $alt_include;
 	$this->mainblock=$mainblock;
 	$this->filecontents=$this->r_getfile($file);	/* read in template file */
-	//if(substr_count($file, 'backup') == 1)_ppd($this->filecontents);
 	$this->blocks=$this->maketree($this->filecontents,$mainblock);	/* preprocess some stuff */
 }
 

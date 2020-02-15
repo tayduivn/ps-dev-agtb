@@ -130,9 +130,6 @@ class Common {
 				$theuser='';
 			}
 		}
-
-		//print_r("<BR>my managers <BR>");
-		//_ppd($this->my_managers);
 	}
 
 	//return true if the logged in user is a manager.
