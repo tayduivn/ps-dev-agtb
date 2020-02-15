@@ -41,7 +41,8 @@ class VisualPipelineDefaults
      * Updates the default PipelineConfig settings
      * @param array The new config settings to be updated
      */
-    public static function addDefaults($settings) {
+    public static function addDefaults($settings)
+    {
         $admin = BeanFactory::newBean('Administration');
         // get current settings
         $adminConfig = $admin->getConfigForModule('VisualPipeline');
