@@ -23,10 +23,10 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
         if ($this->shouldInstallPipelineDefaults()) {
             VisualPipelineDefaults::setupPipelineSettings();
         }
-//        elseif ($this->shouldUpdatePipelineDefaults($adminConfig)) {
-//            $newConfig = $this->getNewDefaults();
-//            VisualPipelineDefaults::addDefaults($newConfig);
-//        }
+        elseif ($this->shouldUpdatePipelineDefaults()) {
+            $new93Config = $this->getNew93Defaults();
+            VisualPipelineDefaults::addDefaults($new93Config);
+        }
     }
 
     public function shouldInstallPipelineDefaults()
@@ -36,12 +36,12 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
         return $isConversion || $isBelowOrAt91Ent;
     }
 
-//    public function shouldUpdatePipelineDefaults($adminConfig)
-//    {
-//        $isConversion = !$this->fromFlavor('ent') && $this->toFlavor('ent');
-//        $isBelowOrAt93Ent = $this->toFlavor('ent') && version_compare($this->from_version, '9.3.0', '<=');
-//        return $isConversion || $isBelowOrAt93Ent;
-//    }
+    public function shouldUpdatePipelineDefaults()
+    {
+        $isConversion = !$this->fromFlavor('ent') && $this->toFlavor('ent');
+        $isBelowOrAt93Ent = $this->toFlavor('ent') && version_compare($this->from_version, '9.3.0', '<=');
+        return $isConversion || $isBelowOrAt93Ent;
+    }
 
     /**
      * Returns the default values for Tile View to use post 9.3 along with the availableColumn values
@@ -49,74 +49,65 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
      * @param array $adminConfig pass any existing settings/defaults for the tile view
      * @return array updated config settings for Tile View to use post 9.3
      */
-//    public function getNewDefaults()
-//    {
-//        return array(
-//            'enabled_modules' => array(
-//                'Leads',
-//            ),
-//            'table_header' => array(
-//                'Leads' => 'status',
-//            ),
-//            'hidden_values' => array(
-//                'Leads' => array(),
-//            ),
-//            'tile_header' => array(
-//                'Leads' => 'name',
-//            ),
-//            'tile_body_fields' => array(
-//                'Leads' => array(
-//                    'email',
-//                    'account_name',
-//                    'phone_work',
-//                ),
-//            ),
-//            'records_per_column' => array(
-//                'Leads' => '10',
-//            ),
-//            'available_columns' => array(
-//                'Cases' => array(
-//                    'status' => array(
-//                        'New' => 'New',
-//                        'Assigned' => 'Assigned',
-//                        'Closed' => 'Closed',
-//                        'Pending Input' => 'Pending Input',
-//                        'Rejected' => 'Rejected',
-//                        'Duplicate' => 'Duplicate',
-//                    ),
-//                ),
-//                'Opportunities' => array(
-//                    'sales_stage' => array(
-//                        'Prospecting' =>  'Prospecting',
-//                        'Qualification' => 'Qualification',
-//                        'Needs Analysis' => 'Needs Analysis',
-//                        'Value Proposition' => 'Value Proposition',
-//                        'Id. Decision Makers' => 'Id. Decision Makers',
-//                        'Perception Analysis' => 'Perception Analysis',
-//                        'Proposal/Price Quote' => 'Proposal/Price Quote',
-//                        'Negotiation/Review' => 'Negotiation/Review',
-//                    ),
-//                ),
-//                'Tasks' => array(
-//                    'status' => array(
-//                        'Not Started' => 'Not Started',
-//                        'In Progress' => 'In Progress',
-//                        'Completed' => 'Completed',
-//                        'Pending Input' => 'Pending Input',
-//                        'Deferred' => 'Deferred',
-//                    ),
-//                ),
-//                'Leads' => array(
-//                    'status' => array(
-//                        'New' => 'New',
-//                        'Assigned' => 'Assigned',
-//                        'In Process' => 'In Process',
-//                        'Converted' => 'Converted',
-//                        'Recycled' => 'Recycled',
-//                        'Dead' => 'Dead',
-//                    ),
-//                ),
-//            ),
-//        );
-//    }
+    public function getNew93Defaults()
+    {
+        return [
+            'enabled_modules' => 'Leads',
+            'table_header' => ['Leads' => 'status',],
+
+            'hidden_values' => ['Leads' => [],],
+            'tile_header' => ['Leads' => 'name',],
+            'tile_body_fields' => [
+                'Leads' => [
+                    'email',
+                    'account_name',
+                    'phone_work',
+                ],
+            ],
+            'records_per_column' => ['Leads' => '10',],
+            'available_columns' => [
+                'Cases' => [
+                    'status' => [
+                        'New' => 'New',
+                        'Assigned' => 'Assigned',
+                        'Closed' => 'Closed',
+                        'Pending Input' => 'Pending Input',
+                        'Rejected' => 'Rejected',
+                        'Duplicate' => 'Duplicate',
+                    ],
+                ],
+                'Opportunities' => [
+                    'sales_stage' => [
+                        'Prospecting' =>  'Prospecting',
+                        'Qualification' => 'Qualification',
+                        'Needs Analysis' => 'Needs Analysis',
+                        'Value Proposition' => 'Value Proposition',
+                        'Id. Decision Makers' => 'Id. Decision Makers',
+                        'Perception Analysis' => 'Perception Analysis',
+                        'Proposal/Price Quote' => 'Proposal/Price Quote',
+                        'Negotiation/Review' => 'Negotiation/Review',
+                    ],
+                ],
+                'Tasks' => [
+                    'status' => [
+                        'Not Started' => 'Not Started',
+                        'In Progress' => 'In Progress',
+                        'Completed' => 'Completed',
+                        'Pending Input' => 'Pending Input',
+                        'Deferred' => 'Deferred',
+                    ],
+                ],
+                'Leads' => [
+                    'status' => [
+                        'New' => 'New',
+                        'Assigned' => 'Assigned',
+                        'In Process' => 'In Process',
+                        'Converted' => 'Converted',
+                        'Recycled' => 'Recycled',
+                        'Dead' => 'Dead',
+                    ],
+                ],
+            ],
+        ];
+    }
 }
