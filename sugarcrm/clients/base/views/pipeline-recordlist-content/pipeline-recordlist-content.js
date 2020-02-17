@@ -351,7 +351,7 @@
             });
         }
 
-        return _.findWhere(this.recordsToDisplay, {headerName: model.get(this.headerField)});
+        return _.findWhere(this.recordsToDisplay, {headerKey: model.get(this.headerField)});
     },
 
     /**
