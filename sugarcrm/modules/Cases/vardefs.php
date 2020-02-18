@@ -357,6 +357,14 @@ $dictionary['Case'] = array(
                 'deleted',
             ),
         ),
+        array(
+            'name' => 'idx_cases_del_prim_contact_id',
+            'type' => 'index',
+            'fields' => array(
+                'primary_contact_id',
+                'deleted',
+            ),
+        ),
     ),
     'relationships' => array(
         'case_calls' => array(
