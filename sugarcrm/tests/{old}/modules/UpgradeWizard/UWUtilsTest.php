@@ -100,7 +100,7 @@ class UWUtilsTest extends TestCase
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
 
-        // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+        // BEGIN SUGARCRM flav!=ent ONLY
         // this only pertains to Pro and Corp, not End and Ult
         $product = BeanFactory::newBean('Products');
         $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
@@ -119,6 +119,6 @@ class UWUtilsTest extends TestCase
             'commit_stage' => $product->commit_stage);
 
         $this->assertEquals($exp_product, $act_product, "Product info doesn't equal to related opp's one");
-        // END SUGARCRM flav=pro && flav!=ent ONLY
+        // END SUGARCRM flav!=ent ONLY
     }
 }

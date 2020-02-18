@@ -201,7 +201,6 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'icon' => 'fa-cogs',
         'route' => $adminRoute . 'EnableWirelessModules',
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     // Web Logic Hooks
     array(
         'label' => 'LBL_WEB_LOGIC_HOOKS',
@@ -210,7 +209,6 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'icon' => 'fa-cogs',
         'route' => '#WebLogicHooks',
     ),
-    //END SUGARCRM flav=pro ONLY
     // OAuth Keys
     array(
         'label' => 'LBL_OAUTH_TITLE',

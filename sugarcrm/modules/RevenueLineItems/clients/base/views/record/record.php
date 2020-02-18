@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav!=ent ONLY
 // PRO/CORP only fields
 $fields = array(
     array(
@@ -164,7 +164,7 @@ $fieldsHidden = array(
         ),
     ),
 );
-//END SUGARCRM flav=pro && flav!=ent ONLY
+//END SUGARCRM flav!=ent ONLY
 
 //BEGIN SUGARCRM flav=ent ONLY
 // ENT/ULT only fields

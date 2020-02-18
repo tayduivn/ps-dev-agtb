@@ -301,10 +301,10 @@
                             <!-- END: currency -->
                         </tr>
                         <tr>
-                            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+                            //BEGIN SUGARCRM flav!=ent ONLY
                             <td scope="row"><slot></td>
                             <td scope="row"><slot></td>
-                            //END SUGARCRM flav=pro && flav!=ent ONLY
+                            //END SUGARCRM flav!=ent ONLY
                             <!-- BEGIN: show preferred currency -->
                             <td width="17%" scope="row"><slot>{$MOD.LBL_CURRENCY_SHOW_PREFERRED}:</slot>&nbsp;{sugar_help text=$MOD.LBL_CURRENCY_SHOW_PREFERRED_TEXT }</td>
                             <td ><slot>

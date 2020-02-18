@@ -616,10 +616,7 @@ if (isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::is_array_access(
     updateUpgradeHistory();
 }
 
-
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/Connectors/InstallDefaultConnectors.php');
-//END SUGARCRM flav=pro ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    INSTALL PASSWORD TEMPLATES

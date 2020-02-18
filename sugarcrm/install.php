@@ -56,9 +56,9 @@ $icon = 'include/images/sugar_icon.ico';
 //BEGIN SUGARCRM flav=ent ONLY
 $sugar_md = 'include/images/sugar_md_ent.png';
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav!=ent ONLY
 $sugar_md = 'include/images/sugar_md.png';
-//END SUGARCRM flav=pro && flav!=ent ONLY
+//END SUGARCRM flav!=ent ONLY
 //BEGIN SUGARCRM flav=ult ONLY
 $sugar_md = 'include/images/sugar_md_ult.png';
 //END SUGARCRM flav=ult ONLY

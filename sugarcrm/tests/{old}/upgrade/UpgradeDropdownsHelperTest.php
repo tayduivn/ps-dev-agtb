@@ -56,7 +56,6 @@ class UpgradeDropdownsHelperTest extends TestCase
             array('eapm_list_import'),
             array('extapi_meeting_password'),
             array('Elastic_boost_options'),
-            //BEGIN SUGARCRM flav=pro ONLY
             array('commit_stage_dom'),
             array('commit_stage_custom_dom'),
             array('commit_stage_binary_dom'),
@@ -66,7 +65,6 @@ class UpgradeDropdownsHelperTest extends TestCase
             array('forecasts_config_worksheet_layout_forecast_by_options_dom'),
             array('forecasts_timeperiod_options_dom'),
             array('generic_timeperiod_options'),
-            //END SUGARCRM flav=pro ONLY
             array('sweetspot_theme_options'),
         );
     }

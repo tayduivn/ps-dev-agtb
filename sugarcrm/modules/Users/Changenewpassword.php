@@ -109,9 +109,9 @@ $sugar_smarty->assign("REGEX",$pwd_regex);
 //BEGIN SUGARCRM flav=ent ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_ent.png'));
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav!=ent ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md.png'));
-//END SUGARCRM flav=pro && flav!=ent ONLY
+//END SUGARCRM flav!=ent ONLY
 //BEGIN SUGARCRM flav=ult ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_ult.png'));
 //END SUGARCRM flav=ult ONLY
@@ -125,9 +125,6 @@ $sugar_smarty->assign("USERNAME_FIELD", '<td scope="row" width="30%">'.$mod_stri
 $sugar_smarty->assign('PWDSETTINGS', $GLOBALS['sugar_config']['passwordsetting']);
 $sugar_smarty->assign('SITE_URL', $GLOBALS['sugar_config']['site_url']);
 
-//BEGIN SUGARCRM flav!=pro ONLY
-$rules = "'','',''";
-//END SUGARCRM flav!=pro ONLY
 $rules = "'" . $GLOBALS["sugar_config"]["passwordsetting"]["minpwdlength"]
 	   . "','" . $GLOBALS['sugar_config']['passwordsetting']['maxpwdlength']
 	   . "','" . $GLOBALS['sugar_config']['passwordsetting']['customregex'] . "'";

@@ -29,9 +29,9 @@ class OpportunityTest extends TestCase
         SugarTestForecastUtilities::setUpForecastConfig(array(
                 'sales_stage_won' => array('Closed Won'),
                 'sales_stage_lost' => array('Closed Lost'),
-                //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+                //BEGIN SUGARCRM flav!=ent ONLY
                 'forecast_by' => 'opportunities',
-                //END SUGARCRM flav=pro && flav!=ent ONLY
+                //END SUGARCRM flav!=ent ONLY
             ));
     }
 
@@ -144,7 +144,7 @@ class OpportunityTest extends TestCase
         );
     }
 
-    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+    //BEGIN SUGARCRM flav!=ent ONLY
 
     /**
      * @group opportunities
@@ -173,7 +173,7 @@ class OpportunityTest extends TestCase
         $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($opp, false, true);
         $this->assertEquals(1, $worksheet->deleted);
     }
-    //END SUGARCRM flav=pro && flav!=ent ONLY
+    //END SUGARCRM flav!=ent ONLY
 
     /**
      * @group opportunities

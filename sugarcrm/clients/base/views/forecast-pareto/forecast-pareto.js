@@ -217,9 +217,9 @@
                     this.addRowToChart();
                 }
                 //END SUGARCRM flav=ent ONLY
-                //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+                //BEGIN SUGARCRM flav!=ent ONLY
                 this.addRowToChart();
-                //END SUGARCRM flav=pro && flav!=ent ONLY
+                //END SUGARCRM flav!=ent ONLY
             }, this);
         }
     },

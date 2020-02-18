@@ -26,9 +26,9 @@ class ActivityQueueManager
         'Activities', 'vCals', 'KBArticles', 'KBDocuments',
         'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications',
         'Quotes', //Quotes should not allow admin to enable activities until Quotes are converted to sidecar
-        // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+        // BEGIN SUGARCRM flav!=ent ONLY
         'RevenueLineItems',
-        // END SUGARCRM flav=pro && flav!=ent ONLY
+        // END SUGARCRM flav!=ent ONLY
     );
     public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails', 'Home');
 

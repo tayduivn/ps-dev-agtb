@@ -491,7 +491,7 @@ $mod_strings = array (
     'STOCK_REPORT_TITLE_92' => 'Count of Contacts by Country',
     'STOCK_REPORT_TITLE_93' => 'List of Teams and Licensed Users',
     // Stock reports titles - pro
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav!=ent ONLY
     'STOCK_REPORT_TITLE_97_PRO' => 'Number of Opportunities created by User by Month',
     'STOCK_REPORT_TITLE_98_PRO' => 'Total Sales by Quarter by User',
     'STOCK_REPORT_TITLE_99_PRO' => 'Open Opportunities by User by Expected Close Month',
@@ -514,7 +514,7 @@ $mod_strings = array (
     'STOCK_REPORT_TITLE_119_PRO' => 'Open Opportunities by Type Expected Closed Month',
     'STOCK_REPORT_TITLE_120_PRO' => 'Open Opportunities and Number of Meetings',
     'STOCK_REPORT_TITLE_121_PRO' => 'Total Sales by Quarter',
-//END SUGARCRM flav=pro && flav!=ent ONLY
+//END SUGARCRM flav!=ent ONLY
 
     //'LBL_CHART_ON_DASHLET' => 'Do not Display Chart on Dashlet',
     'LBL_ASSIGNED_TO_NAME'=>'Assigned To:',

@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav!=ent ONLY
 $fields = array(
     'NAME' => array (
         'width' => '40',
@@ -76,7 +76,7 @@ $fields = array(
         'default' => true
     )
 );
-//END SUGARCRM flav=pro && flav!=ent ONLY
+//END SUGARCRM flav!=ent ONLY
  
 //BEGIN SUGARCRM flav=ent ONLY
 // ENT/ULT only fields
