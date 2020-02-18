@@ -537,7 +537,7 @@
 
         this.$('.column').sortable({
             connectWith: '.column',
-            handle: '.span12',
+            handle: '.pipeline-tile',
             cancel: '.portlet-toggle',
             placeholder: 'portlet-placeholder ui-corner-all',
             receive: _.bind(function(event, ui) {
