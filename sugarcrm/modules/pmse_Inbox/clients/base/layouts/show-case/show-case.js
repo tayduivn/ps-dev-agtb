@@ -525,8 +525,8 @@
                         _.indexOf(this.noEditFields, field.def.name) >= 0 ||
                         field.parent || (field.name && this.buttons[field.name]);
 
-                    if (readonlyField) {
-                        // exclude read only fields
+                    // exclude readOnly Fields and record-decor field wrappers
+                    if (readonlyField || field.type === this.decoratorField) {
                         return;
                     }
                     if (this.checkRequired(field)) {
