@@ -97,7 +97,7 @@ class VisualPipelineDefaults
                 'Cases' => 'name',
                 'Opportunities' => 'name',
                 'Tasks' => 'name',
-                'Leads' => 'name',
+                'Leads' => 'full_name',
             ),
             'tile_body_fields' => array(
                 'Cases' => array(

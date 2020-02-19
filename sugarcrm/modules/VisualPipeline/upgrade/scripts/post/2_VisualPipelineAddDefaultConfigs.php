@@ -56,7 +56,7 @@ class SugarUpgradeVisualPipelineAddDefaultConfigs extends UpgradeScript
             'table_header' => ['Leads' => 'status',],
 
             'hidden_values' => ['Leads' => [],],
-            'tile_header' => ['Leads' => 'name',],
+            'tile_header' => ['Leads' => 'full_name',],
             'tile_body_fields' => [
                 'Leads' => [
                     'email',
