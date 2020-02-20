@@ -132,7 +132,6 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
             'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
             'labels' => true,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 'status',

@@ -106,7 +106,6 @@ $viewdefs['Holidays']['base']['view']['record'] = [
             'name' => 'panel_body',
             'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
                 'holiday_date',
@@ -121,7 +120,6 @@ $viewdefs['Holidays']['base']['view']['record'] = [
             'label' => 'LBL_RECORD_SHOWMORE',
             'hide' => true,
             'columns' => 2,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
                 [

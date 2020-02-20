@@ -120,7 +120,6 @@ $viewdefs['BusinessCenters']['base']['view']['record'] = [
             'name' => 'panel_body',
             'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
                 [
@@ -134,7 +133,6 @@ $viewdefs['BusinessCenters']['base']['view']['record'] = [
             'name' => 'business_hours',
             'label' => 'LBL_RECORD_BUSINESS_HOURS_PANEL_HEADER',
             'columns' => 3,
-            'labelsOnTop' => 1,
             'placeholders' => 1,
             'fields' => [
                 // Sunday
@@ -359,7 +357,6 @@ $viewdefs['BusinessCenters']['base']['view']['record'] = [
             'label' => 'LBL_RECORD_SHOWMORE',
             'hide' => true,
             'columns' => 2,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
                 [

@@ -245,7 +245,6 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
             'name' => 'panel_body',
             'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 'quote_num',
@@ -274,7 +273,6 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
             'label' => 'LBL_SHIPPING_BODY',
             'panelDefault' => 'collapsed',
             'columns' => 2,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 'billing_account_name',
@@ -368,7 +366,6 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
             'label' => 'LBL_QUOTESETTINGS',
             'panelDefault' => 'collapsed',
             'columns' => 2,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 array(
@@ -402,7 +399,6 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
             'label' => 'LBL_RECORD_SHOWMORE',
             'panelDefault' => 'collapsed',
             'columns' => 2,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 array(

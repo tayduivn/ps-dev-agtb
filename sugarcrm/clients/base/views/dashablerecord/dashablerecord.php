@@ -44,7 +44,6 @@ $viewdefs['base']['view']['dashablerecord'] = [
         [
             'name' => 'dashlet_settings',
             'columns' => 1,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
 //                [
@@ -71,7 +70,6 @@ $viewdefs['base']['view']['dashablerecord'] = [
             [
                 'name' => 'dashlet_settings',
                 'columns' => 2,
-                'labelsOnTop' => true,
                 'placeholders' => true,
                 'fields' => [
                     [

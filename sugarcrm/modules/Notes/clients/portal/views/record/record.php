@@ -29,7 +29,6 @@ $viewdefs['Notes']['portal']['view']['record'] = array(
             'name' => 'panel_body',
             'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 array(

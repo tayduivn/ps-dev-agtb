@@ -163,7 +163,6 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
             'labels' => true,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 array(
@@ -233,7 +232,6 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'name' => 'panel_hidden',
             'label' => 'LBL_RECORD_SHOWMORE',
             'hide' => true,
-            'labelsOnTop' => true,
             'placeholders' => true,
             'columns' => 2,
             'fields' => array(
