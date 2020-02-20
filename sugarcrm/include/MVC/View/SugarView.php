@@ -264,7 +264,7 @@ class SugarView
         $errors = '';
 
         foreach($this->errors as $error) {
-            $errors .= '<span class="error">' . $error . '</span><br>';
+            $errors .= '<span class="error">' . htmlspecialchars($error) . '</span><br>';
         }
 
         if ( !$this->suppressDisplayErrors ) {
