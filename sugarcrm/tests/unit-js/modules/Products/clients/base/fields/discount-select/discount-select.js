@@ -280,4 +280,11 @@ describe('Products.Base.Field.DiscountSelect', function() {
             expect(field.updateDropdownSymbol).toHaveBeenCalled();
         });
     });
+
+    describe('isFieldEmpty()', function() {
+        it('should always return false', function() {
+            expect(field.isFieldEmpty()).toBeFalsy;
+        });
+    });
+
 });
