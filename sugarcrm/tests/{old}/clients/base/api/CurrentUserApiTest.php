@@ -76,21 +76,26 @@ class CurrentUserApiTest extends TestCase
     /**
      * Test Field Name Placement preference setting is retrieved from getUserPrefField_name_placement()
      * @param string $placement
+     * @param string $expected
      * @dataProvider getUserPrefFieldNamePlacementProvider
      */
-    public function testGetUserPrefFieldNamePlacement(string $placement)
+    public function testGetUserPrefFieldNamePlacement(string $placement, string $expected)
     {
         $current_user = SugarTestHelper::setUp('current_user', [true, true]);
-        $current_user->setPreference('field_name_placement', $placement, 0, 'global');
+        if (!empty($placement)) {
+            $current_user->setPreference('field_name_placement', $placement, 0, 'global');
+        }
         $result = SugarTestReflection::callProtectedMethod($this->currentUserApiMock, 'getUserPrefField_name_placement', [$current_user]);
-        $this->assertEquals($placement, $result['field_name_placement']);
+        $this->assertEquals($expected, $result['field_name_placement']);
     }
 
     public function getUserPrefFieldNamePlacementProvider()
     {
         return [
-            ['field_on_top'],
-            ['field_on_side'],
+            ['field_on_side', 'field_on_side'],
+            ['field_on_top', 'field_on_top'],
+            // default setting is 'field_on_side'
+            ['', 'field_on_side'],
         ];
     }
 }

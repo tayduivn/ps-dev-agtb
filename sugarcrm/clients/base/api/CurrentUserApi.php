@@ -680,6 +680,7 @@ class CurrentUserApi extends SugarApi
 
     /**
      * Utility function to get the users preferred field name placement
+     * Default is 'field_on_side'
      *
      * @param User $user Current User object
      * @param string $category The category for the preference
@@ -689,7 +690,7 @@ class CurrentUserApi extends SugarApi
     {
         return [
             'field_name_placement' =>
-            $user->getPreference('field_name_placement', $category) ?? 'field_on_top',
+            $user->getPreference('field_name_placement', $category) ?? 'field_on_side',
         ];
     }
 
