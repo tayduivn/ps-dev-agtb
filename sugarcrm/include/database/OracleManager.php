@@ -709,7 +709,6 @@ WHERE OWNER = ?
         '%Y-%m' => 'YYYY-MM',
         '%Y' => 'YYYY',
         '%v' => 'IW',
-        '%u' => 'WW',
     );
 
 	 /**
