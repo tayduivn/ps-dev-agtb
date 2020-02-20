@@ -126,11 +126,17 @@ input[type="button"] {
 // Provide *some* extra contrast for those who can get it
 .btn-primary.active,
 .btn-warning.active,
-.btn-danger.active,
-.btn-success.active,
 .btn-info.active,
 .btn-inverse.active {
   color: fade(@white, 75%);
+}
+
+.btn-danger.active {
+  color: fade(@darkRed, 75%);
+}
+
+.btn-success.active {
+  color: fade(@darkArmy, 75%);
 }
 
 .btn-primary {
@@ -347,10 +353,6 @@ input[type="button"] {
 // Set caret text color
 .btn-primary,
 .btn-primary:hover,
-.btn-danger,
-.btn-danger:hover,
-.btn-success,
-.btn-success:hover,
 .btn-info,
 .btn-info:hover,
 .btn-inverse,
@@ -372,23 +374,35 @@ input[type="button"] {
 
 .btn-warning,
 .btn-warning:hover {
-  color: darken(@yellow, 70%);
+  color: darken(@darkYellow, 20%);
 
   .fa {
-    color: darken(@yellow, 70%);
+    color: darken(@darkYellow, 20%);
   }
 
   &:not(.disabled):hover {
     .fa {
-      color: darken(@yellow, 70%);
+      color: darken(@darkYellow, 20%);
     }
   }
 }
 
-.btn-danger,
+.btn-danger {
+  color: @darkRed !important;
+}
+
 .btn-danger:hover,
 .btn-danger:active {
-  color: @darkRed !important;
+  color: darken(@darkRed, 20%) !important;
+}
+
+.btn-success {
+  color: @darkArmy !important;
+}
+
+.btn-success:hover,
+.btn-success:active {
+  color: darken(@darkArmy, 20%) !important;
 }
 
 .btn.btn-input-addon {
