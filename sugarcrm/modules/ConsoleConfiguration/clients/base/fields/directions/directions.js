@@ -28,7 +28,7 @@
      */
     sortDirectionLabels: {
         desc: 'LBL_CONSOLE_DIRECTIONS_DESCENDING',
-        asc: 'LBL_CONSOLE_DIRECTIONS_DESCENDING'
+        asc: 'LBL_CONSOLE_DIRECTIONS_ASCENDING'
     },
 
     /**
@@ -57,7 +57,7 @@
      * @private
      */
     _initDefaults: function() {
-        this.defaults = this.model.get('defaults') || '';
+        this.defaults = this.model.get('defaults') || {};
 
         // Get the tabContent attribute, which includes a mapping of
         // {sort field value} => {sort field label}
@@ -66,16 +66,16 @@
 
         // Initialize the primary sort default template strings
         this.primarySortName = sortFields[this.defaults.order_by_primary] || '';
-        var sortDirection = this.defaults.order_by_primary_direction || 'desc';
+        var sortDirection = this.defaults.order_by_primary_direction || 'asc';
         this.primarySortDirection = app.lang.get(this.sortDirectionLabels[sortDirection], this.module);
 
         // Initialize the secondary sort default template strings
         this.secondarySortName = sortFields[this.defaults.order_by_secondary];
-        var sortDirection = this.defaults.order_by_secondary_direction || 'desc';
-        this.primarySortDirection = app.lang.get(this.sortDirectionLabels[sortDirection], this.module);
+        sortDirection = this.defaults.order_by_secondary_direction || 'asc';
+        this.secondarySortDirection = app.lang.get(this.sortDirectionLabels[sortDirection], this.module);
 
         // Initialize the filter definition default template string
-        this.filter = this._buildFilterString(this.defaults.filter_def);
+        this._buildFilterString(this.defaults.filter_def);
     },
 
     /**
