@@ -893,7 +893,14 @@ describe('Base.View.Dashablerecord', function() {
             expect(view.model).toEqual(model);
             expect(view.module).toEqual(moduleName);
             expect(view.meta.oldMeta).toEqual('somethingOld');
-            expect(view.meta.panels).toEqual([{fields: [], labels: true, grid: []}]);
+            expect(view.meta.panels).toEqual([
+                {
+                    fields: [],
+                    labelsOnTop: true,
+                    labels: true,
+                    grid: []
+                }
+            ]);
             /*expect(view.meta).toEqual({
                 oldMeta: 'somethingOld',
                 panels: [{fields: [], labels: true, grid: []}]
@@ -1098,6 +1105,40 @@ describe('Base.View.Dashablerecord', function() {
                 {name: 'phone_work', label: 'Phone'}
             ];
             expect(view._getFieldMetaForTab(tab)).toEqual(expected);
+        });
+    });
+
+    describe('_getGridsFromPanelsMetadata', function() {
+        using('Different panel settings and user preferences', [
+                {
+                    panelPlacement: 'field_on_top',
+                    userPreference: 'field_on_top'
+                },
+                {
+                    panelPlacement: 'field_on_top',
+                    userPreference: 'field_on_side'
+                },
+                {
+                    panelPlacement: 'field_on_side',
+                    userPreference: 'field_on_top'
+                },
+                {
+                    panelPlacement: 'field_on_side',
+                    userPreference: 'field_on_side'
+                },
+            ], function(params) {
+            it('should set panel label position to top regardless of user preference',
+                function() {
+                view.meta.panels = [{
+                    labelsOnTop: params.panelPlacement,
+                    fields: ['description']
+                }];
+                app.user.setPreference('field_name_placement', params.userPreference);
+                view._buildGridsFromPanelsMetadata();
+                _.each(view.meta.panels, function(panel) {
+                    expect(panel.labelsOnTop).toEqual(true);
+                });
+            });
         });
     });
 

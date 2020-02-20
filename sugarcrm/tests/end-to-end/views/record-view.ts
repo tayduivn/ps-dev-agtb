@@ -70,7 +70,7 @@ export default class RecordView extends BaseView {
                 panelSelector = this.$('panel_hidden');
                 break;
         }
-        return panelSelector;
+        return panelSelector + ' .record-panel-header';
     }
 
     /**

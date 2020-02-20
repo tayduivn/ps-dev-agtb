@@ -592,6 +592,17 @@
     },
 
     /**
+     * @override
+     * Override getLabelPlacement from record.js to always return true since
+     * we always want dashlet record labels on top
+     *
+     * @return {boolean} true
+     */
+    getLabelPlacement: function() {
+        return true;
+    },
+
+    /**
      * Set order by on collection.
      * The event is canceled if an element being dragged is found.
      *

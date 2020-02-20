@@ -116,12 +116,18 @@
              */
             _buildGridsFromPanelsMetadata: function() {
                 _.each(this.meta.panels, function (panel) {
+                    if (!_.isUndefined(this.getLabelPlacement)) {
+                        panel.labelsOnTop = this.getLabelPlacement();
+                    }
                     // it is assumed that a field is an object but it can also be a string
                     // while working with the fields, might as well take the opportunity to check the user's ACLs for the field
                     _.each(panel.fields, function (field, index) {
                         if (_.isString(field)) {
                             panel.fields[index] = field = {name: field};
                         }
+                        // bind labelsonTop preference to field for use in
+                        // templates
+                        field.labelsOnTop = panel.labelsOnTop;
                     }, this);
 
                     // labels: visibility for the label

@@ -64,11 +64,10 @@ describe("Plugins.GridBuilder", function() {
                             span: 6
                         }
                     ];
-
+                app.user.setPreference('field_name_placement', 'field_on_top');
                 view.meta.panels = [{
                     columns:     1,
                     labels:      true,
-                    labelsOnTop: true,
                     fields:      fields
                 }];
                 view.render();
@@ -120,11 +119,10 @@ describe("Plugins.GridBuilder", function() {
                             span: 20
                         }
                     ];
-
+                app.user.setPreference('field_name_placement', 'field_on_top');
                 view.meta.panels = [{
                     columns:     2,
                     labels:      true,
-                    labelsOnTop: true,
                     fields:      fields
                 }];
                 view.render();
@@ -201,11 +199,10 @@ describe("Plugins.GridBuilder", function() {
                             name: "foo10"
                         }
                     ];
-
+                app.user.setPreference('field_name_placement', 'field_on_top');
                 view.meta.panels = [{
                     columns:     3,
                     labels:      true,
-                    labelsOnTop: true,
                     fields:      fields
                 }];
                 view.render();
@@ -303,11 +300,10 @@ describe("Plugins.GridBuilder", function() {
                             dismiss_label: true
                         }
                     ];
-
+                app.user.setPreference('field_name_placement', 'field_on_side');
                 view.meta.panels = [{
                     columns:     1,
                     labels:      true,
-                    labelsOnTop: false,
                     fields:      fields
                 }];
                 view.render();
@@ -403,11 +399,10 @@ describe("Plugins.GridBuilder", function() {
                             dismiss_label: true
                         }
                     ];
-
+                app.user.setPreference('field_name_placement', 'field_on_side');
                 view.meta.panels = [{
                     columns:     2,
                     labels:      true,
-                    labelsOnTop: false,
                     fields:      fields
                 }];
                 view.render();
@@ -468,11 +463,10 @@ describe("Plugins.GridBuilder", function() {
                             name: "foo5"
                         }
                     ];
-
+                app.user.setPreference('field_name_placement', 'field_on_side');
                 view.meta.panels = [{
                     columns:     5,
                     labels:      true,
-                    labelsOnTop: false,
                     fields:      fields
                 }];
                 view.render();

@@ -16,7 +16,7 @@
             {{#each grid}}
                 <div class="row-fluid {{../name}}{{#if ../hide}}{{#if ../../../../view.hidePanel}} hide{{/if}}{{/if}}">
                     {{#each this}}
-                        <div class="{{#if this.labelsOnTop}}span{{span}} {{/if}}record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                        <div class="{{#if ../../labelsOnTop}}span{{span}} {{/if}}record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                             {{decoratedField  ../../../../view.decoratorField ../../../../view model=../../../../view.model template=../../../../view.action}}
                         </div>
                     {{/each}}

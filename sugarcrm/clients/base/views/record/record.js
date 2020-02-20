@@ -1586,9 +1586,7 @@
         _.each(panels, function(panel) {
             // get user preference for labelsOnTop before iterating through
             // fields
-            if (_.isUndefined(panel.labelsOnTop)) {
-                panel.labelsOnTop = app.user.getPreference('field_name_placement') === 'field_on_top';
-            }
+            panel.labelsOnTop = this.getLabelPlacement();
             // it is assumed that a field is an object but it can also be a string
             // while working with the fields, might as well take the opportunity to check the user's ACLs for the field
             _.each(panel.fields, function(field, index) {
@@ -1644,6 +1642,16 @@
                 lastTabIndex = gridResults.lastTabIndex;
             }
         }, this);
+    },
+
+    /**
+     * Used to set labelsOnTop in views. Returns true if user preference is
+     * 'field_on_top', else false.
+     *
+     * @return {boolean} True if user prefers 'field_on_top' otherwise false
+     */
+    getLabelPlacement: function() {
+        return app.user.getPreference('field_name_placement') === 'field_on_top';
     },
 
     /**
