@@ -280,7 +280,8 @@
 
         // figure out if it changed here based
         if (app.math.isDifferentWithPrecision(newValue, oldValue)) {
-            cls = (newValue > oldValue) ? ' fa-arrow-up font-green' : ' fa-arrow-down font-red';
+            var newValueIsGreater = Math.sign(app.math.sub(newValue, oldValue)) > 0;
+            cls = (newValueIsGreater) ? ' fa-arrow-up font-green' : ' fa-arrow-down font-red';
         }
         return cls;
     }

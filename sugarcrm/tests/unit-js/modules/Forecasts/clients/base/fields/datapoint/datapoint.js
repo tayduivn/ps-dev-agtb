@@ -111,34 +111,110 @@ describe("Forecasts.Base.Field.Datapoint", function() {
     describe('_getArrowIconColorClass', function() {
 
         beforeEach(function() {
-            sandbox = sinon.sandbox.create();
             field = SugarTest.createField("base", "best_case", 'datapoint', 'list', fieldDef, moduleName, null, null, true);
         });
 
-        afterEach(function() {
-            sandbox.restore();
-        });
+        using(
+            'various string and number combinations where the new number and old number are equal',
+            [
+                {
+                    newValue: '123.00',
+                    oldValue: '123.00'
+                },
+                {
+                    newValue: '1234567890123456789012345678901234567890123456789012345678901234567890.00',
+                    oldValue: '1234567890123456789012345678901234567890123456789012345678901234567890.00',
+                },
+                {
+                    newValue: '123.00',
+                    oldValue: 123.001
+                },
+                {
+                    newValue: 123.00,
+                    oldValue: '123.00'
+                },
+                {
+                    newValue: 123.00,
+                    oldValue: 123.00
+                },
+            ],
+            function(data) {
+                it('should return empty string', function() {
+                    var result = field._getArrowIconColorClass(data.newValue, data.oldValue);
+                    expect(result).toEqual('');
+                });
+            }
+        );
 
-        it('should return empty string', function() {
-            sandbox.stub(app.math, 'isDifferentWithPrecision', function() {
-                return false;
-            });
-            expect(field._getArrowIconColorClass(100.00, 100.00)).toEqual('');
-        });
+        using(
+            'various string and number combinations where the new number is higher',
+            [
+                {
+                    newValue: '123.01',
+                    oldValue: '123.00'
+                },
+                {
+                    newValue: '1123.00',
+                    oldValue: '123.00'
+                },
+                {
+                    newValue: '1234567890123456789012345678901234567890123456789012345678901234567890.00',
+                    oldValue: '123.00',
+                },
+                {
+                    newValue: '123.01',
+                    oldValue: 123.00
+                },
+                {
+                    newValue: 1123.00,
+                    oldValue: '123.00'
+                },
+                {
+                    newValue: 123.01,
+                    oldValue: 123.00
+                }
+            ], function(data) {
+                it('should return up arrow class', function() {
+                    var result = field._getArrowIconColorClass(data.newValue, data.oldValue);
+                    expect(result).toEqual(' fa-arrow-up font-green');
+                });
+            }
+        );
 
-        it('should return up arrow class', function() {
-            sandbox.stub(app.math, 'isDifferentWithPrecision', function() {
-                return true;
-            });
-            expect(field._getArrowIconColorClass(100.10, 100.00)).toEqual(' fa-arrow-up font-green');
-        });
-
-        it('should return down arrow class', function() {
-            sandbox.stub(app.math, 'isDifferentWithPrecision', function() {
-                return true;
-            });
-            expect(field._getArrowIconColorClass(99.90, 100.00)).toEqual(' fa-arrow-down font-red');
-        });
+        using(
+            'various string and number combinations where the new number is lower',
+            [
+                {
+                    newValue: '123.00',
+                    oldValue: '123.01'
+                },
+                {
+                    newValue: '123.00',
+                    oldValue: '1123.00'
+                },
+                {
+                    newValue: '123.00',
+                    oldValue: '1234567890123456789012345678901234567890123456789012345678901234567890.00',
+                },
+                {
+                    newValue: '123.00',
+                    oldValue: 123.01
+                },
+                {
+                    newValue: 123.00,
+                    oldValue: '1123.00'
+                },
+                {
+                    newValue: 123.00,
+                    oldValue: 123.01
+                }
+            ], function(data) {
+                it('should return down arrow class', function() {
+                    var result = field._getArrowIconColorClass(data.newValue, data.oldValue);
+                    expect(result).toEqual(' fa-arrow-down font-red');
+                });
+            }
+        );
     });
 
     describe('_onCommitCollectionReset after _onWorksheetTotals', function() {
