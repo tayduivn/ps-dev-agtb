@@ -66,6 +66,7 @@ class CurrentUserApi extends SugarApi
                 'shortHelp' => 'Updates current user',
                 'longHelp' => 'include/api/help/me_put_help.html',
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'updatePassword' =>  array(
                 'reqType' => 'PUT',
@@ -74,6 +75,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'updatePassword',
                 'shortHelp' => "Updates current user's password",
                 'longHelp' => 'include/api/help/me_password_put_help.html',
+                'ignoreSystemStatusError' => true,
             ),
             'verifyPassword' =>  array(
                 'reqType' => 'POST',
@@ -82,6 +84,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'verifyPassword',
                 'shortHelp' => "Verifies current user's password",
                 'longHelp' => 'include/api/help/me_password_post_help.html',
+                'ignoreSystemStatusError' => true,
             ),
 
             'userPreferences' =>  array(
@@ -92,6 +95,7 @@ class CurrentUserApi extends SugarApi
                 'shortHelp' => "Returns all the current user's stored preferences",
                 'longHelp' => 'include/api/help/me_preferences_get_help.html',
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
 
             'userPreferencesSave' =>  array(
@@ -101,6 +105,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferencesSave',
                 'shortHelp' => "Mass Save Updated Preferences For a User",
                 'longHelp' => 'include/api/help/me_preferences_put_help.html',
+                'ignoreSystemStatusError' => true,
             ),
 
             'userPreference' =>  array(
@@ -110,6 +115,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreference',
                 'shortHelp' => "Returns a specific preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_get_help.html',
+                'ignoreSystemStatusError' => true,
             ),
 
             'userPreferenceCreate' =>  array(
@@ -119,6 +125,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferenceSave',
                 'shortHelp' => "Create a preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_post_help.html',
+                'ignoreSystemStatusError' => true,
             ),
             'userPreferenceUpdate' =>  array(
                 'reqType' => 'PUT',
@@ -127,6 +134,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferenceSave',
                 'shortHelp' => "Update a specific preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_put_help.html',
+                'ignoreSystemStatusError' => true,
             ),
             'userPreferenceDelete' =>  array(
                 'reqType' => 'DELETE',
@@ -135,6 +143,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferenceDelete',
                 'shortHelp' => "Delete a specific preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_delete_help.html',
+                'ignoreSystemStatusError' => true,
             ),
             'getMyFollowedRecords' => array(
                 'reqType' => 'GET',
@@ -143,6 +152,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'getMyFollowedRecords',
                 'shortHelp' => 'This method retrieves all followed methods for the user.',
                 'longHelp' => 'include/api/help/me_getfollowed_help.html',
+                'ignoreSystemStatusError' => true,
             ),
         );
     }
