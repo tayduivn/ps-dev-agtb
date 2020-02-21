@@ -198,7 +198,11 @@
 
             this.getModuleFields(bean);
             this.addValidationTasks(bean);
-            this.collection.add(bean);
+            // do not add to the collection and render, if the module is not accessible
+            // since if a module is not accessible the dropdownFields will not have any columns to display
+            if (!_.isEmpty(bean.get('tabContent').dropdownFields)) {
+                this.collection.add(bean);
+            }
         }
 
         this.setActiveTabIndex();
@@ -215,7 +219,7 @@
         var dropdownFields = {};
         var allFields = {};
         var studioFields = [];
-        var metaFields = app.metadata.getModule(module).fields;
+        var metaFields = app.metadata.getModule(module) ? app.metadata.getModule(module).fields : {};
 
         _.each(metaFields, function(metaField) {
             if (this.isValidStudioField(metaField)) {
@@ -286,7 +290,8 @@
      * Adds validation tasks to the fields in the layout for the enabled modules
      */
     addValidationTasks: function(bean) {
-        if (bean !== undefined) {
+        // if the bean is defined and has columns to display
+        if (bean !== undefined && !_.isEmpty(bean.get('tabContent').dropdownFields)) {
             bean.addValidationTask('check_table_header', _.bind(this._validateTableHeader, bean));
             bean.addValidationTask('check_tile_header', _.bind(this._validateTileOptionsHeader, bean));
             bean.addValidationTask('check_tile_body_fields', _.bind(this._validateTileOptionsBody, bean));

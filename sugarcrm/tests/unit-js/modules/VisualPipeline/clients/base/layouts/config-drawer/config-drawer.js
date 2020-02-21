@@ -400,6 +400,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
         var module;
         var data;
         var addStub;
+        var getModuleFieldsSpy;
         beforeEach(function() {
             module = 'Cases';
             data = {
@@ -416,7 +417,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 return {Cases: 'Cases'};
             });
             sinon.collection.stub(layout, 'setActiveTabIndex', function() {});
-            sinon.collection.stub(layout, 'getModuleFields', function() {});
+            getModuleFieldsSpy = sinon.collection.spy(layout, 'getModuleFields');
             sinon.collection.stub(layout, 'addValidationTasks', function() {});
         });
 
@@ -479,7 +480,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
 
             it('should call layout.getModuleFields with bean', function() {
 
-                expect(layout.getModuleFields).toHaveBeenCalled();
+                expect(getModuleFieldsSpy).toHaveBeenCalled();
             });
 
             it('should not layout.addValidationTasks method', function() {
@@ -693,7 +694,14 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
 
     describe('addValidationTasks', function() {
         var bean;
-        describe('when bean is not undefined', function() {
+        beforeEach(function() {
+            sinon.collection.stub(layout, '_validateTableHeader', function() {});
+            sinon.collection.stub(layout, '_validateTileOptionsHeader', function() {});
+            sinon.collection.stub(layout, '_validateTileOptionsBody', function() {});
+            sinon.collection.stub(layout, '_validateRecordsDisplayed', function() {});
+            sinon.collection.stub(layout, '_validateNbFieldsInTileOptions', function() {});
+        });
+        describe('when bean is not undefined and dropdownFields are not empty', function() {
             beforeEach(function() {
                 bean = app.data.createBean(layout.module, {
                     enabled: true,
@@ -701,15 +709,15 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                     table_header: 'status',
                     tile_header: 'name',
                     tile_body_fields: ['account_name', 'priority'],
-                    records_per_column: '10'
+                    records_per_column: '10',
+                    tabContent: {
+                        dropdownFields: {
+                            sales_stage: 'Sales Stage'
+                        }
+                    }
                 });
 
                 sinon.collection.stub(bean, 'addValidationTask', function() {});
-                sinon.collection.stub(layout, '_validateTableHeader', function() {});
-                sinon.collection.stub(layout, '_validateTileOptionsHeader', function() {});
-                sinon.collection.stub(layout, '_validateTileOptionsBody', function() {});
-                sinon.collection.stub(layout, '_validateRecordsDisplayed', function() {});
-                sinon.collection.stub(layout, '_validateNbFieldsInTileOptions', function() {});
             });
 
             it('should call bean.addValidationTask method', function() {
@@ -739,6 +747,34 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 });
             });
         });
+
+        describe('when bean is not undefined but dropdownFields are empty', function() {
+            beforeEach(function() {
+                bean = app.data.createBean(layout.module, {
+                    enabled: true,
+                    enabled_module: 'Cases',
+                    table_header: 'status',
+                    tile_header: 'name',
+                    tile_body_fields: ['account_name', 'priority'],
+                    records_per_column: '10',
+                    tabContent: {
+                        dropdownFields: {}
+                    }
+                });
+
+                sinon.collection.stub(bean, 'addValidationTask', function() {});
+            });
+
+            it('should not call bean.addValidationTask method', function() {
+                layout.addValidationTasks(bean);
+
+                expect(bean.addValidationTask).not.toHaveBeenCalledWith('check_table_header');
+                expect(bean.addValidationTask).not.toHaveBeenCalledWith('check_tile_header');
+                expect(bean.addValidationTask).not.toHaveBeenCalledWith('check_tile_body_fields');
+                expect(bean.addValidationTask).not.toHaveBeenCalledWith('check_records_displayed');
+            });
+        });
+
         describe('when bean is undefined', function() {
             var model;
             beforeEach(function() {
@@ -753,11 +789,6 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 };
 
                 model = layout.collection.models[0];
-                sinon.collection.stub(layout, '_validateTableHeader', function() {});
-                sinon.collection.stub(layout, '_validateTileOptionsHeader', function() {});
-                sinon.collection.stub(layout, '_validateTileOptionsBody', function() {});
-                sinon.collection.stub(layout, '_validateRecordsDisplayed', function() {});
-                sinon.collection.stub(layout, '_validateNbFieldsInTileOptions', function() {});
             });
 
             it('should call bean.addValidationTask method', function() {
