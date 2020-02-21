@@ -60,12 +60,12 @@ class ViewMetadata extends SugarView{
  	}
  	
  	function display(){
-        $do = InputValidation::getService()->getValidInputRequest('do', null, '');
-        $do = SugarCleaner::cleanHtml($do, false);
- 		echo "<form method='post'>";
- 		echo "<div><h2>I want to learn about ";
- 		
- 		$this->displaySelect('do', array('Nothing', 'Modules','Fields', 'Field Attributes', 'Relationships'), $do, 'onchange="toggleLearn(this.value)"');
+        $allowed_do_values = ['Nothing', 'Modules','Fields', 'Field Attributes', 'Relationships'];
+        $do = InputValidation::getService()->getValidInputRequest('do', [ 'Assert\Choice' => [ 'choices' => $allowed_do_values ]], 'Nothing');
+        echo "<form method='post'>";
+        echo "<div><h2>I want to learn about ";
+
+        $this->displaySelect('do', $allowed_do_values, $do, 'onchange="toggleLearn(this.value)"');
  		echo "<input type='submit' value='Learn' class='button'></h2></div>";
 		$modules = !empty($_REQUEST['modules'])?$_REQUEST['modules']:array();
 		if(empty($modules) && !empty($_REQUEST['module']) && $_REQUEST['module'] != 'Home'){
@@ -78,6 +78,8 @@ class ViewMetadata extends SugarView{
  		$this->displayCheckBoxes('attributes[]', $allAttributes, $attributes, ' id="_attributes" ');
  		$this->displayTextBoxes($allAttributes, ' id="_fields" ');
  		echo "</form>";
+
+        $doJS = json_encode($do, JSON_HEX_TAG);
  		 		echo <<<EOQ
  		<script>
  			function toggleLearn(value){
@@ -96,7 +98,7 @@ class ViewMetadata extends SugarView{
  					document.getElementById('_attributes').style.display = '';
  				}	
  			}
- 			toggleLearn('$do');
+ 			toggleLearn($doJS);
  			
  		</script>
  		
