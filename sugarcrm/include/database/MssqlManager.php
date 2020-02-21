@@ -949,7 +949,7 @@ WHERE TABLE_NAME = ?
                 }
                 return "ISNULL($string$additional_parameters_string)";
             case 'concat':
-                return implode("+",$all_parameters);
+                return "CONCAT(" . implode(",", $all_parameters) . ")";
             case 'text2char':
                 return "CAST($string AS varchar(8000))";
             case 'quarter':

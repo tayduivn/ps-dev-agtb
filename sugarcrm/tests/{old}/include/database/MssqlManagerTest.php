@@ -75,15 +75,15 @@ abstract class MssqlManagerTest extends TestCase
                     ),
                 array(
                     array('foo','CONCAT',array('1','2','3')),
-                    'foo+1+2+3'
+                    'CONCAT(foo,1,2,3)',
                     ),
                 array(
                     array(array('1','2','3'),'CONCAT'),
-                    '1+2+3'
+                    'CONCAT(1,2,3)',
                     ),
                 array(
                     array(array('1','2','3'),'CONCAT',array('foo', 'bar')),
-                    '1+2+3+foo+bar'
+                    'CONCAT(1,2,3,foo,bar)',
                     ),
                 array(
                     array('foo','text2char'),
@@ -148,7 +148,7 @@ abstract class MssqlManagerTest extends TestCase
      public function testConcat()
      {
          $ret = $this->_db->concat('foo',array('col1','col2','col3'));
-         $this->assertEquals("LTRIM(RTRIM(ISNULL(foo.col1,'')+' '+ISNULL(foo.col2,'')+' '+ISNULL(foo.col3,'')))", $ret);
+         $this->assertEquals("LTRIM(RTRIM(CONCAT(ISNULL(foo.col1,''),' ',ISNULL(foo.col2,''),' ',ISNULL(foo.col3,''))))", $ret);
      }
 
      public function providerFromConvert()
