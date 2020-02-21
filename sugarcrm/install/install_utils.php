@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -694,7 +693,7 @@ function getForbiddenPaths()
         '^upload/',
         '^vendor/(?!ytree.*\.(css|gif|js|png)$)',
 // @codingStandardsIgnoreStart
-        '^(cache|clients|data|examples|include|jssource|metadata|ModuleInstall|modules|soap|xtemplate)/.*\.(php|tpl)$',
+        '^(cache|clients|data|examples|include|install|jssource|metadata|ModuleInstall|modules|soap|xtemplate)/.*\.(php|tpl)$',
 // @codingStandardsIgnoreEnd
     ];
 }
