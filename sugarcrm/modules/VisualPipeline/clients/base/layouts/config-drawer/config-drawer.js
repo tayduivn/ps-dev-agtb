@@ -49,11 +49,10 @@
      * @return {Array} The list of module names.
      */
     getAvailableModules: function() {
-        var moduleNames = app.metadata.getModuleNames();
         var selectedModules = this.model.get('enabled_modules');
 
         return _.filter(selectedModules, function(module) {
-            return _.contains(moduleNames, module);
+            return !_.isEmpty(app.metadata.getModule(module));
         });
     },
 
@@ -61,9 +60,8 @@
      * Sets the list of modules the user has no access to on the model.
      */
     setNotAvailableModules: function() {
-        var moduleNames = app.metadata.getModuleNames();
         var notAvailableModules = _.reject(this.supportedModules, function(module) {
-            return _.contains(moduleNames, module);
+            return !_.isEmpty(app.metadata.getModule(module));
         });
         this.model.set('notAvailableModules', notAvailableModules);
     },
@@ -198,11 +196,7 @@
 
             this.getModuleFields(bean);
             this.addValidationTasks(bean);
-            // do not add to the collection and render, if the module is not accessible
-            // since if a module is not accessible the dropdownFields will not have any columns to display
-            if (!_.isEmpty(bean.get('tabContent').dropdownFields)) {
-                this.collection.add(bean);
-            }
+            this.collection.add(bean);
         }
 
         this.setActiveTabIndex();
@@ -290,8 +284,7 @@
      * Adds validation tasks to the fields in the layout for the enabled modules
      */
     addValidationTasks: function(bean) {
-        // if the bean is defined and has columns to display
-        if (bean !== undefined && !_.isEmpty(bean.get('tabContent').dropdownFields)) {
+        if (bean !== undefined) {
             bean.addValidationTask('check_table_header', _.bind(this._validateTableHeader, bean));
             bean.addValidationTask('check_tile_header', _.bind(this._validateTileOptionsHeader, bean));
             bean.addValidationTask('check_tile_body_fields', _.bind(this._validateTileOptionsBody, bean));

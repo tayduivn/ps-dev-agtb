@@ -8,12 +8,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('VisualPipeline.Layout.ConfigDrawer', function() {
+ddescribe('VisualPipeline.Layout.ConfigDrawer', function() {
     var app;
     var layout;
     var context;
     var options;
     var sandbox;
+    var moduleMeta;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -28,73 +29,75 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
             context: context
         };
 
-        sinon.collection.stub(app.metadata, 'getModule', function() {
-            return {
-                priority: {
-                    audited: true,
-                    name: 'priority',
-                    type: 'enum',
-                    vname: 'LBL_PRIORITY'
+        moduleMeta = {
+            priority: {
+                audited: true,
+                name: 'priority',
+                type: 'enum',
+                vname: 'LBL_PRIORITY'
+            },
+            fields: {
+                name: {
+                    type: 'name'
                 },
-                fields: {
-                    name: {
-                        type: 'name'
-                    },
-                    accept_status_name: {
-                        massupdate: false,
-                        name: 'accept_status_name',
-                        type: 'enum',
-                        source: 'non-db',
-                        vname: 'LBL_LIST_ACCEPT_STATUS',
-                        options: 'dom_meeting_accept_status'
-                    },
-                    priority: {
-                        default: true,
-                        enabled: true,
-                        options: 'case_priority_dom',
-                        vname: 'LBL_PRIORITY',
-                        name: 'priority',
-                        type: 'enum'
-                    },
-                    following: {
-                        massupdate: false,
-                        name: 'following',
-                        vname: 'LBL_FOLLOWING',
-                        type: 'bool',
-                        source: 'non-db',
-                        comment: 'Is user following this record',
-                        studio: 'false',
-                        link: 'following_link',
-                        rname: 'id',
-                        rname_exists: true
-                    },
-                    my_favorite: {
-                        massupdate: false,
-                        name: 'my_favorite',
-                        vname: 'LBL_FAVORITE',
-                        type: 'bool',
-                        source: 'non-db',
-                        comment: 'Favorite for the user',
-                        studio: {
-                            list: false,
-                            recordview: false,
-                            basic_search: false,
-                            advanced_search: false,
-                        }
-                    },
-                    comment_log: {
-                        name: 'commentlog',
-                        vname: 'LBL_COMMENTLOG',
-                        type: 'collection',
-                        studio: {
-                            listview: false,
-                            recordview: true
-                        }
+                accept_status_name: {
+                    massupdate: false,
+                    name: 'accept_status_name',
+                    type: 'enum',
+                    source: 'non-db',
+                    vname: 'LBL_LIST_ACCEPT_STATUS',
+                    options: 'dom_meeting_accept_status'
+                },
+                priority: {
+                    default: true,
+                    enabled: true,
+                    options: 'case_priority_dom',
+                    vname: 'LBL_PRIORITY',
+                    name: 'priority',
+                    type: 'enum'
+                },
+                following: {
+                    massupdate: false,
+                    name: 'following',
+                    vname: 'LBL_FOLLOWING',
+                    type: 'bool',
+                    source: 'non-db',
+                    comment: 'Is user following this record',
+                    studio: 'false',
+                    link: 'following_link',
+                    rname: 'id',
+                    rname_exists: true
+                },
+                my_favorite: {
+                    massupdate: false,
+                    name: 'my_favorite',
+                    vname: 'LBL_FAVORITE',
+                    type: 'bool',
+                    source: 'non-db',
+                    comment: 'Favorite for the user',
+                    studio: {
+                        list: false,
+                        recordview: false,
+                        basic_search: false,
+                        advanced_search: false,
                     }
                 },
-                isBwcEnabled: false
-            };
-        });
+                comment_log: {
+                    name: 'commentlog',
+                    vname: 'LBL_COMMENTLOG',
+                    type: 'collection',
+                    studio: {
+                        listview: false,
+                        recordview: true
+                    }
+                }
+            },
+            isBwcEnabled: false
+        };
+
+        sinon.collection.stub(app.metadata, 'getModule').withArgs('Tasks').returns({})
+            .withArgs('Cases').returns(moduleMeta)
+            .withArgs('Opportunities').returns(moduleMeta);
         SugarTest.loadComponent('base', 'layout', 'config-drawer');
         layout = SugarTest.createLayout('base', 'VisualPipeline', 'config-drawer', {}, context, true);
         sinon.collection.stub(layout, 'checkAccess', function() {
@@ -224,7 +227,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
         it('should return the list of available and supported module names', function() {
             sinon.collection.stub(layout.model, 'get')
                 .withArgs('enabled_modules').returns(['Cases', 'Opportunities', 'Tasks']);
-            expect(layout.getAvailableModules()).toEqual(['Cases', 'Tasks']);
+            expect(layout.getAvailableModules()).toEqual(['Cases', 'Opportunities']);
         });
 
         it('should call layout.setActiveTabIndex with 0', function() {
@@ -400,7 +403,6 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
         var module;
         var data;
         var addStub;
-        var getModuleFieldsSpy;
         beforeEach(function() {
             module = 'Cases';
             data = {
@@ -417,7 +419,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                 return {Cases: 'Cases'};
             });
             sinon.collection.stub(layout, 'setActiveTabIndex', function() {});
-            getModuleFieldsSpy = sinon.collection.spy(layout, 'getModuleFields');
+            sinon.collection.stub(layout, 'getModuleFields', function() {});
             sinon.collection.stub(layout, 'addValidationTasks', function() {});
         });
 
@@ -480,7 +482,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
 
             it('should call layout.getModuleFields with bean', function() {
 
-                expect(getModuleFieldsSpy).toHaveBeenCalled();
+                expect(layout.getModuleFields).toHaveBeenCalled();
             });
 
             it('should not layout.addValidationTasks method', function() {
@@ -701,7 +703,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
             sinon.collection.stub(layout, '_validateRecordsDisplayed', function() {});
             sinon.collection.stub(layout, '_validateNbFieldsInTileOptions', function() {});
         });
-        describe('when bean is not undefined and dropdownFields are not empty', function() {
+        describe('when bean is not undefined', function() {
             beforeEach(function() {
                 bean = app.data.createBean(layout.module, {
                     enabled: true,
@@ -709,12 +711,7 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
                     table_header: 'status',
                     tile_header: 'name',
                     tile_body_fields: ['account_name', 'priority'],
-                    records_per_column: '10',
-                    tabContent: {
-                        dropdownFields: {
-                            sales_stage: 'Sales Stage'
-                        }
-                    }
+                    records_per_column: '10'
                 });
 
                 sinon.collection.stub(bean, 'addValidationTask', function() {});
@@ -745,33 +742,6 @@ describe('VisualPipeline.Layout.ConfigDrawer', function() {
 
                     expect(bean.addValidationTask).not.toHaveBeenCalledWith('check_nb_fields_in_tile_body_fields');
                 });
-            });
-        });
-
-        describe('when bean is not undefined but dropdownFields are empty', function() {
-            beforeEach(function() {
-                bean = app.data.createBean(layout.module, {
-                    enabled: true,
-                    enabled_module: 'Cases',
-                    table_header: 'status',
-                    tile_header: 'name',
-                    tile_body_fields: ['account_name', 'priority'],
-                    records_per_column: '10',
-                    tabContent: {
-                        dropdownFields: {}
-                    }
-                });
-
-                sinon.collection.stub(bean, 'addValidationTask', function() {});
-            });
-
-            it('should not call bean.addValidationTask method', function() {
-                layout.addValidationTasks(bean);
-
-                expect(bean.addValidationTask).not.toHaveBeenCalledWith('check_table_header');
-                expect(bean.addValidationTask).not.toHaveBeenCalledWith('check_tile_header');
-                expect(bean.addValidationTask).not.toHaveBeenCalledWith('check_tile_body_fields');
-                expect(bean.addValidationTask).not.toHaveBeenCalledWith('check_records_displayed');
             });
         });
 
