@@ -166,7 +166,9 @@
         var actionToCheck = toTemplate || field.action || this.view.action || 'detail';
         // In detail mode, we have to show a pill for the label if the field is empty
         if (actionToCheck == 'detail') {
-            if (field.isFieldEmpty()) {
+            const editAccess = app.acl.hasAccessToModel('edit', this.model, field.name);
+
+            if (field.isFieldEmpty() && editAccess) {
                 this.setCellStyle('pill');
                 field.hide();
             } else {

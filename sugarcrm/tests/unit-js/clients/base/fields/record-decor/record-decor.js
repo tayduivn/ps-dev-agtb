@@ -71,5 +71,37 @@ describe('Base.Field.RecordDecor', function() {
             expect(showStub).toHaveBeenCalled();
             child.dispose();
         });
+
+        it('should handle edit mode with edit access in ACL', function() {
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function(action) {
+                return action === 'edit';
+            });
+
+            const child = SugarTest.createField('base', 'name', 'name', 'detail');
+            child.model.set('name', '');
+            const setCellStyleStub = sinon.collection.stub(field, 'setCellStyle');
+            const hideStub = sinon.collection.stub(child, 'hide');
+            child.action = 'detail';
+            field.redecorate(child);
+            expect(setCellStyleStub).toHaveBeenCalledWith('pill');
+            expect(hideStub).toHaveBeenCalled();
+            child.dispose();
+        });
+
+        it('should handle edit mode without edit access in ACL', function() {
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function(action) {
+                return action !== 'edit';
+            });
+
+            const child = SugarTest.createField('base', 'name', 'name', 'detail');
+            child.model.set('name', '');
+            const setCellStyleStub = sinon.collection.stub(field, 'setCellStyle');
+            const showStub = sinon.collection.stub(child, 'show');
+            child.action = 'detail';
+            field.redecorate(child);
+            expect(setCellStyleStub).toHaveBeenCalledWith('none');
+            expect(showStub).toHaveBeenCalled();
+            child.dispose();
+        });
     });
 })
