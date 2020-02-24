@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-ddescribe('VisualPipeline.Layout.ConfigDrawer', function() {
+describe('VisualPipeline.Layout.ConfigDrawer', function() {
     var app;
     var layout;
     var context;
