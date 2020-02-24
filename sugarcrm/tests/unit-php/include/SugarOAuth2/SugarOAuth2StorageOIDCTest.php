@@ -118,6 +118,7 @@ class SugarOAuth2StorageOIDCTest extends TestCase
             ->willThrowException(new AuthenticationException());
         $this->storageMock->checkUserCredentials('sugar', 'user', 'password');
     }
+// BEGIN SUGARCRM flav=ent ONLY
 
     /**
      * @covers ::checkUserCredentials
@@ -136,6 +137,7 @@ class SugarOAuth2StorageOIDCTest extends TestCase
 
         $this->storageMock->checkUserCredentials('sugar', 'user', 'password');
     }
+// END SUGARCRM flav=ent ONLY
 
     /**
      * @return array
@@ -143,11 +145,13 @@ class SugarOAuth2StorageOIDCTest extends TestCase
     public function hasPortalStoreProvider(): array
     {
         return [
+// BEGIN SUGARCRM flav=ent ONLY
             'portalStoreClass' => [
                 'platform' => 'portal',
                 'clientInfo' => null,
                 'expectedResult' => true,
             ],
+// END SUGARCRM flav=ent ONLY
             'noPortalStoreClass' => [
                 'platform' => 'base',
                 'clientInfo' => null,

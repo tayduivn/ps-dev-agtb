@@ -57,6 +57,7 @@ class VisibilityTest extends TestCase
                 'owner_id',
                 ['owner' => ['type' => 'keyword']],
             ],
+// BEGIN SUGARCRM flav=ent ONLY
             [
                 [$this->getACLVisibilityMock(), $this->getTeamBasedACLVisibilityMock()],
                 'owner_id',
@@ -67,6 +68,7 @@ class VisibilityTest extends TestCase
                 'acl_team_set_id',
                 ['set' => ['type' => 'keyword']],
             ],
+// END SUGARCRM flav=ent ONLY
         ];
     }
 
@@ -119,6 +121,7 @@ class VisibilityTest extends TestCase
 
         return $mock;
     }
+// BEGIN SUGARCRM flav=ent ONLY
 
     /**
      * get Mock object of TeamBasedACLVisibility
@@ -131,4 +134,5 @@ class VisibilityTest extends TestCase
             ->setMethods()
             ->getMock();
     }
+// END SUGARCRM flav=ent ONLY
 }

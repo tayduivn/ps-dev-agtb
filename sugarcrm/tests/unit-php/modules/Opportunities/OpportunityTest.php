@@ -1,4 +1,5 @@
 <?php
+// FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -30,7 +31,6 @@ class OpportunityTest extends TestCase
         \BeanFactory::unsetBeanClass('Opportunities');
     }
 
-    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @covers ::getClosedWonRenewableRLIs()
      */
@@ -143,7 +143,6 @@ class OpportunityTest extends TestCase
         $newRliBean = $opBean->createNewRenewalRLI($rliBean);
         $this->assertEquals('2019-10-11', $newRliBean->service_start_date, 'New RLI start date is wrong');
     }
-    //END SUGARCRM flav=ent ONLY
 }
 
 class RliMock extends RevenueLineItem

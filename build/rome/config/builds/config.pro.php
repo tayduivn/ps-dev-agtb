@@ -80,6 +80,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/src/Portal/Search' => 1,
 'sugarcrm/tests/{old}/clients/portal' => 1,
 'sugarcrm/tests/{old}/src/Portal' => 1,
+'sugarcrm/tests/unit-php/clients/portal' => 1,
 'sugarcrm/tests/unit-php/src/Portal' => 1,
 
 // Locked fields implementation for ENT and above
@@ -120,6 +121,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/{old}/modules/pmse_Emails_Templates' => 1,
 'sugarcrm/tests/{old}/modules/pmse_Inbox' => 1,
 'sugarcrm/tests/{old}/modules/pmse_Project' =>1,
+'sugarcrm/tests/{old}/pmse' =>1,
 
 // Out of the box Business Process Management data
 'sugarcrm/install/BusinessProcesses' => 1,

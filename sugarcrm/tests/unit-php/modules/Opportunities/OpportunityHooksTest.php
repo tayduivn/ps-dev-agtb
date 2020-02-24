@@ -1,4 +1,5 @@
 <?php
+// FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -17,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class OpportunityHooksTest extends TestCase
 {
-    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @covers ::generateRenewalOpportunity()
      */
@@ -78,5 +78,4 @@ class OpportunityHooksTest extends TestCase
         $opBean->method('createNewRenewalOpportunity')->willReturn($renewalBean);
         $this->assertTrue(OpportunityHooks::generateRenewalOpportunity($opBean, 'after_save', $args));
     }
-    //END SUGARCRM flav=ent ONLY
 }
