@@ -61,7 +61,7 @@
             <div class="row-fluid record-panel-content {{#eq panelState "collapsed"}}hide{{/eq}}">
         {{/if}}
         {{#each grid}}
-            <div class="row-fluid {{name}}{{#if hide}}{{#if ../../../../view.hidePanel}} hide{{/if}}{{/if}}">
+            <div class="row-fluid {{../name}}">
                 {{#each this}}
                     {{#if name}}
                         <div class="{{#if ../../../labelsOnTop}}span{{span}} {{/if}}record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
