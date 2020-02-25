@@ -35,16 +35,16 @@
         {{/unless}}
     {{else}}
         <div class="labels-on-side">
-            <div class="record-label-wrapper span{{labelSpan}}">
-                {{#unless dismiss_label}}
+            {{#unless dismiss_label}}
+                <div class="record-label-wrapper span{{labelSpan}}">
                     <div class="record-label ellipsis_inline" data-placement="bottom" data-original-title="{{str label ../../../module}}" title="{{str label ../../../module}}" data-name="{{name}}">
                         {{#if label}}
                             <i class="fa fa-plus label-plus"></i>
                             {{str label ../../../../module}}
                         {{/if}}
                     </div>
-                {{/unless}}
-            </div>
+                </div>
+            {{/unless}}
             <div class="record-link-wrapper span{{span}}">
                 {{#if name}}
                     <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
