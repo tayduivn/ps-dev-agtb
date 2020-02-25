@@ -118,6 +118,10 @@ describe("Forecasts.Base.Field.Datapoint", function() {
             'various string and number combinations where the new number and old number are equal',
             [
                 {
+                    newValue: '',
+                    oldValue: ''
+                },
+                {
                     newValue: '123.00',
                     oldValue: '123.00'
                 },
@@ -149,6 +153,10 @@ describe("Forecasts.Base.Field.Datapoint", function() {
         using(
             'various string and number combinations where the new number is higher',
             [
+                {
+                    newValue: '123.00',
+                    oldValue: ''
+                },
                 {
                     newValue: '123.01',
                     oldValue: '123.00'
@@ -184,6 +192,10 @@ describe("Forecasts.Base.Field.Datapoint", function() {
         using(
             'various string and number combinations where the new number is lower',
             [
+                {
+                    newValue: '',
+                    oldValue: '123.00'
+                },
                 {
                     newValue: '123.00',
                     oldValue: '123.01'
