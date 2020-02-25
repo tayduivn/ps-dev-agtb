@@ -162,7 +162,7 @@ describe('Base.View.ExternalAppDashlet', function() {
         });
 
         it('should set a change event listener on settings', function() {
-            expect(view.settings.on).toHaveBeenCalledWith('change:src');
+            expect(view.settings.on).toHaveBeenCalledWith('change');
         });
 
         it('should call setAppUrlTitle when settings src changes', function() {
@@ -356,7 +356,7 @@ describe('Base.View.ExternalAppDashlet', function() {
             expect(result).toBeTruthy();
         });
 
-        it('should return true if this service exists', function() {
+        it('should return false if this service does not exist', function() {
             view.services = [];
 
             result = view._checkCatalogAccess(options);

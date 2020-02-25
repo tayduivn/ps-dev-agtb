@@ -56,10 +56,12 @@
             }, this);
             appDataField.options = options;
 
-            this.settings.on('change:src', function(model) {
-                // if the service source changed,
-                // update the title and config options
-                this.setAppUrlTitle();
+            this.settings.on('change', function(model) {
+                if (model.changed.src) {
+                    // if the service source changed,
+                    // update the title and config options
+                    this.setAppUrlTitle();
+                }
             }, this);
         }
     },
