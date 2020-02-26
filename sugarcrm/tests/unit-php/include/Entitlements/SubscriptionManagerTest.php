@@ -672,6 +672,33 @@ class SubscriptionManagerTest extends TestCase
                 \User::SUPPORT_USER_NAME,
                 [],
             ],
+            'support provision user' =>[
+                [
+                    Subscription::SUGAR_SERVE_KEY => ['quantity' => 10],
+                    Subscription::SUGAR_BASIC_KEY => ['quantity' => 100],
+                ],
+                [Subscription::SUGAR_SERVE_KEY, Subscription::SUGAR_SELL_KEY, Subscription::SUGAR_BASIC_KEY],
+                \User::SUPPORT_PROVISION_USER_NAME,
+                [],
+            ],
+            'support upgrade user' =>[
+                [
+                    Subscription::SUGAR_SERVE_KEY => ['quantity' => 10],
+                    Subscription::SUGAR_BASIC_KEY => ['quantity' => 100],
+                ],
+                [Subscription::SUGAR_SERVE_KEY, Subscription::SUGAR_SELL_KEY, Subscription::SUGAR_BASIC_KEY],
+                \User::SUPPORT_UPGRADE_USER_NAME,
+                [],
+            ],
+            'support portal user' =>[
+                [
+                    Subscription::SUGAR_SERVE_KEY => ['quantity' => 10],
+                    Subscription::SUGAR_BASIC_KEY => ['quantity' => 100],
+                ],
+                [Subscription::SUGAR_SERVE_KEY, Subscription::SUGAR_SELL_KEY, Subscription::SUGAR_BASIC_KEY],
+                \User::SUPPORT_PORTAL_USER,
+                [],
+            ],
         ];
     }
 

@@ -110,9 +110,22 @@ class User extends Person {
     );
 
     /**
-     * support user name
+     * support user names
      */
     const SUPPORT_USER_NAME = 'SugarCRMSupport';
+    const SUPPORT_PROVISION_USER_NAME = 'SugarCRMProvisionUser';
+    const SUPPORT_UPGRADE_USER_NAME = 'SugarCRMUpgradeUser';
+    const SUPPORT_PORTAL_USER = 'SugarCustomerSupportPortalUser';
+
+    /**
+     * array of well known support users
+     */
+    const SUPPORT_USERS = [
+        self::SUPPORT_USER_NAME,
+        self::SUPPORT_PROVISION_USER_NAME,
+        self::SUPPORT_UPGRADE_USER_NAME,
+        self::SUPPORT_PORTAL_USER,
+    ];
 
     /**
      * These modules don't take kindly to the studio trying to play about with them.
@@ -142,6 +155,16 @@ class User extends Person {
         } else {
             return false;
         }
+    }
+
+    /**
+     * check if it is a support user
+     * @param User $user
+     * @return bool
+     */
+    public static function isSupportUser(\User $user) : bool
+    {
+        return in_array($user->user_name, self::SUPPORT_USERS);
     }
 
     /**
@@ -602,9 +625,8 @@ class User extends Person {
     public static function getSystemUsersWhere($comp = '!=', $logic = 'AND')
     {
         $db = DBManagerFactory::getInstance();
-        $users = array(self::SUPPORT_USER_NAME, 'SugarCRMUpgradeUser');
         $where = ' 1=1 ';
-        foreach ($users as $user) {
+        foreach (self::SUPPORT_USERS as $user) {
             $where .= sprintf(
                 " %s user_name %s %s ",
                 $logic,
@@ -2943,7 +2965,7 @@ class User extends Person {
     public function getLicenseTypes() : array
     {
         // support user has the full privilidge to access all flavors
-        if (strcmp($this->user_name, 'SugarCRMSupport') === 0) {
+        if (strcmp($this->user_name, self::SUPPORT_USER_NAME) === 0) {
             return $this->getSystemSubscriptionKeys();
         }
 
