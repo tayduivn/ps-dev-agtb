@@ -160,6 +160,11 @@
             return;
         }
 
+        // Allow fields to prevent their design to be controlled by record-decor
+        if (field.disableDecoration) {
+            return;
+        }
+
         // First check if we are switching templates (setMode will have the new template)
         // Then check if the field is just re-rendering and use its action
         // Render based off the view's action if the field's action is unknown
