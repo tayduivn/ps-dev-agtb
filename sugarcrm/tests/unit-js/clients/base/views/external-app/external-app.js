@@ -8,7 +8,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 describe('Base.View.ExternalApp', function() {
     var view;
     var options;
@@ -94,7 +93,7 @@ describe('Base.View.ExternalApp', function() {
             view.initialize(options);
 
             expect(view._onSugarAppLoad).not.toHaveBeenCalled();
-            expect(view.context.on).toHaveBeenCalledWith('sugarApp:load:w92:some-srn');
+            expect(view.context.on).toHaveBeenCalledWith('sugarApp:w92:load:some-srn');
         });
     });
 
@@ -149,7 +148,7 @@ describe('Base.View.ExternalApp', function() {
                 sinon.collection.stub(view.el, 'appendChild');
 
                 view.mounted = false;
-                view.parcelApp = true;
+                view.parcelLib = true;
 
                 view._mountApp();
             });
@@ -166,31 +165,35 @@ describe('Base.View.ExternalApp', function() {
         describe('when app is mounted', function() {
             beforeEach(function() {
                 view.mounted = true;
-                view.parcel = {
+                view.parcelApp = {
                     update: sinon.collection.stub()
                 };
 
                 view._mountApp();
             });
 
-            it('should call view.parcel.update', function() {
-                expect(view.parcel.update).toHaveBeenCalled();
+            it('should call view.parcelApp.update', function() {
+                expect(view.parcelApp.update).toHaveBeenCalled();
             });
         });
     });
 
     describe('_dispose', function() {
+        var unmountStub;
+
         beforeEach(function() {
-            view.parcel = {
-                unmount: sinon.collection.stub()
+            unmountStub = sinon.collection.stub();
+            view.parcelApp = {
+                unmount: unmountStub
             };
+            view.sugarAppStore = {};
 
             sinon.collection.stub(view, '_super');
             view._dispose();
         });
 
-        it('should call view.parcel.unmount', function() {
-            expect(view.parcel.unmount).toHaveBeenCalled();
+        it('should call view.parcelApp.unmount', function() {
+            expect(unmountStub).toHaveBeenCalled();
         });
     });
 });

@@ -95,7 +95,7 @@
             url = url[0];
         }
 
-        if (!this.currentService || this.currentService !== this.servicesObj[url]) {
+        if (url && (!this.currentService || this.currentService !== this.servicesObj[url])) {
             this.currentService = this.servicesObj[url];
 
             if (this.currentService) {
@@ -112,20 +112,26 @@
     /**
      * @inheritdoc
      */
-    loadData: function(onCompleteFn) {
-        if (!onCompleteFn) {
+    loadData: function(callbacks) {
+        if (!callbacks) {
             // on first load, no onComplete callback is used
             // so call parent loadData to continue operations
             this._super('loadData');
         } else if (!this.parcelApp) {
-            // onCompleteFn exists when user manually clicks "Refresh" button
+            // callbacks exists when user manually clicks "Refresh" button
             // if parcelApp doesn't exist for some reason, try to load it again
             this._onSugarAppLoad();
+        } else if (callbacks && this.parcelApp) {
+            // user has manually clicked Refresh on dashlet and the parcel
+            // is already mounted, so unmount and remount
+            this.parcelApp.unmount().then(function() {
+                this.parcelApp.mount(this.parcelParams);
+            }.bind(this));
         }
 
-        if (onCompleteFn && onCompleteFn.complete) {
+        if (callbacks && callbacks.complete) {
             // if complete() exists, call it
-            onCompleteFn.complete();
+            callbacks.complete();
         }
     },
 
