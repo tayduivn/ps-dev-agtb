@@ -644,45 +644,50 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	}
 }
 
-function handleRedirect($return_id){
-    $return_module = InputValidation::getService()->getValidInputPost(
-        'return_module',
-        'Assert\Mvc\ModuleName',
-        'Contacts'
-    );
-    $return_action = InputValidation::getService()->getValidInputPost(
-        'return_action',
-        '',
-        'DetailView'
-    );
-    $return_id = InputValidation::getService()->getValidInputPost(
-        'return_id',
-        'Assert\Guid',
-        ''
-    );
+    public function handleRedirect($return_id)
+    {
+        $return_module = InputValidation::getService()->getValidInputPost(
+            'return_module',
+            'Assert\Mvc\ModuleName',
+            'Contacts'
+        ) ?: 'Contacts';
 
-    if ($_REQUEST['return_module'] == 'Emails') {
-        $return_action = InputValidation::getService()->getValidInputRequest('return_action', '');
+        $return_action = InputValidation::getService()->getValidInputPost(
+            'return_action',
+            '',
+            'DetailView'
+        ) ?: 'DetailView';
 
-	}
-    // if we create a new record "Save", we want to redirect to the DetailView
-    elseif ($_REQUEST['action'] == 'Save' && $return_module != 'Home') {
-        $return_action = 'DetailView';
+        $return_id = InputValidation::getService()->getValidInputPost(
+            'return_id',
+            'Assert\Guid',
+            ''
+        ) ?: $return_id;
+
+        if ($_REQUEST['return_module'] === 'Emails') {
+            $return_action = InputValidation::getService()->getValidInputRequest('return_action', '');
+        } // if we create a new record "Save", we want to redirect to the DetailView
+        elseif ($_REQUEST['action'] === 'Save' && $return_module !== 'Home') {
+            $return_action = 'DetailView';
+        }
+
+        //eggsurplus Bug 23816: maintain VCR after an edit/save. If it is a duplicate then don't worry about it. The offset is now worthless.
+        $queryData = [
+            'action' => $return_action,
+            'module' => $return_module,
+            'record' => $return_id,
+        ];
+        if (isset($_REQUEST['offset']) && empty($_REQUEST['duplicateSave'])) {
+            $queryData['offset'] = $_REQUEST['offset'];
+        }
+        $redirect_url = 'index.php?' . http_build_query($queryData);
+
+        if (!empty($_REQUEST['ajax_load'])) {
+            echo '<script>SUGAR.ajaxUI.loadContent(' . json_encode($redirect_url, JSON_HEX_TAG) . ');</script>';
+        } else {
+            header("Location: " . $redirect_url);
+        }
     }
-
-	//eggsurplus Bug 23816: maintain VCR after an edit/save. If it is a duplicate then don't worry about it. The offset is now worthless.
-    $redirect_url = "index.php?action=" . urlencode($return_action) . "&module=$return_module&record=$return_id";
- 	if(isset($_REQUEST['offset']) && empty($_REQUEST['duplicateSave'])) {
- 	    $redirect_url .= "&offset=".$_REQUEST['offset'];
- 	}
-
-    if(!empty($_REQUEST['ajax_load'])){
-        echo "<script>SUGAR.ajaxUI.loadContent('$redirect_url');</script>\n";
-    }
-    else {
-        header("Location: ". $redirect_url);
-    }
-}
 
     /**
     * @return Contact
