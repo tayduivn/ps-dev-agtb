@@ -631,13 +631,14 @@
         // record view is opened in a regular drawer for the user to fix the
         // invalid fields
         var sideDrawer = this._getSideDrawer();
+        var beanCollection = app.data.createBeanCollection(this.module, [model]);
         if (sideDrawer) {
             sideDrawer.showComponent({
                 layout: 'tile-validation-drawer',
                 context: {
-                    create: true,
                     skipRouting: true,
                     model: model,
+                    collection: beanCollection,
                     module: self.module,
                     saveImmediately: true,
                     validationCallback: function(isValid) {
@@ -687,13 +688,14 @@
     _handleValidationResults: function(isValid, model, pipelineData) {
         if (!isValid) {
             var self = this;
+            var beanCollection = app.data.createBeanCollection(this.module, [model]);
             app.drawer.open({
                 layout: 'tile-validation-drawer',
                 context: {
-                    create: true,
                     skipRouting: true,
                     module: self.module,
                     model: model,
+                    collection: beanCollection,
                     noEditFields: [self.headerField],
                     saveImmediately: true,
                     saveCallback: function(saved) {
