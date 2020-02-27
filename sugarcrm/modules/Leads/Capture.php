@@ -71,23 +71,20 @@ if (!empty($_POST['user']) && !empty($users[$_POST['user']])) {
 		$return_val = $leadForm->handleSave($prefix, false, true);
 
         if (!empty($redirect)) {
-            //header("Location: ".$redirect);
-			echo '<html ' . get_language_header() .'><head><title>SugarCRM</title></head><body>';
-            echo '<form name="redirect" action="' .$redirect. '" method="POST">';
+            echo '<html ' . get_language_header() . '><head><title>SugarCRM</title></head><body>';
+            echo '<form name="redirect" action="' . htmlspecialchars($redirect) . '" method="POST">';
 
-			foreach($_POST as $param => $value) {
+            foreach ($_POST as $param => $value) {
+                if ($param !== 'redirect' && $param !== 'submit') {
+                    echo '<input type="hidden" name="' . htmlspecialchars($param) . '" value="' . htmlspecialchars($value) . '">';
+                }
+            }
 
-				if($param != 'redirect' && $param != 'submit') {
-					echo '<input type="hidden" name="'.$param.'" value="'.$value.'">';
-				}
-
-			}
-
-			if( ($return_val == '') || ($return_val  == 0) || ($return_val < 0) ) {
-				echo '<input type="hidden" name="error" value="1">';
-			}
-			echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
-			echo '</body></html>';
+            if ($return_val === null) {
+                echo '<input type="hidden" name="error" value="1">';
+            }
+            echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
+            echo '</body></html>';
 		}
 		else{
 			echo "Thank You For Your Submission.";
@@ -100,8 +97,8 @@ if (!empty($_POST['user']) && !empty($users[$_POST['user']])) {
 
 echo "We're sorry, the server is currently unavailable, please try again later.";
 if (!empty($redirect)) {
-	echo '<html ' . get_language_header() . '><head><title>SugarCRM</title></head><body>';
-    echo '<form name="redirect" action="' .$redirect. '" method="POST">';
-	echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
-	echo '</body></html>';
+    echo '<html ' . get_language_header() . '><head><title>SugarCRM</title></head><body>';
+    echo '<form name="redirect" action="' . htmlspecialchars($redirect) . '" method="POST">';
+    echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
+    echo '</body></html>';
 }
