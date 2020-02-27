@@ -108,30 +108,26 @@ if(!empty($error_message))
    	  $user = BeanFactory::getBean('Users', $focus->associated_user_id);
 	  $error_message = string_format($app_strings['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array(Team::getDisplayName($focus->name, $focus->name_2), $user->full_name));
    }
-
-echo <<<EOQ
-<script type="text/javascript">
-	popup_window = new YAHOO.widget.SimpleDialog("emptyLayout", {
-		width: "300px",
-		draggable: true,
-		constraintoviewport: true,
-		modal: true,
-		fixedcenter: true,
-		text: "{$error_message}",
-		bodyStyle: "padding:5px",
-		buttons: [{
-			text: SUGAR.language.get('app_strings', 'LBL_EMAIL_OK'),
-			isDefault:true,
-			handler: function(){
-				popup_window.hide()
-			}
-		}]
-	});
-	popup_window.render(document.body);
-	popup_window.show();
-</script>
-EOQ;
-
-}
-
 ?>
+    <script type="text/javascript">
+        popup_window = new YAHOO.widget.SimpleDialog("emptyLayout", {
+            width: "300px",
+            draggable: true,
+            constraintoviewport: true,
+            modal: true,
+            fixedcenter: true,
+            text: <?= json_encode($error_message, JSON_HEX_TAG) ?>,
+            bodyStyle: "padding:5px",
+            buttons: [{
+                text: SUGAR.language.get('app_strings', 'LBL_EMAIL_OK'),
+                isDefault: true,
+                handler: function () {
+                    popup_window.hide()
+                }
+            }]
+        });
+        popup_window.render(document.body);
+        popup_window.show();
+    </script>
+<?php
+}
