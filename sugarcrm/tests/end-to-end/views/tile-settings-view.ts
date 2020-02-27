@@ -50,6 +50,8 @@ export default class TileViewSettings extends DrawerLayout {
                 // Destination list with at least one item present
                 to: '[data-columnname={{destinationList}}] li:nth-child({{position}})',
             },
+            // field pillar in the tile body
+            field: '.pipeline-fields#{{moduleName}} .select2-choices.ui-sortable li:nth-child({{i}})',
         });
 
         // Global Selectors
@@ -193,7 +195,8 @@ export default class TileViewSettings extends DrawerLayout {
     /**
      * Calculate index of the source item. Return index in the list if item is found. Otherwise return -1
      *
-     * @param {string} source - item name
+     * @param {string} moduleName
+     * @param {string} tileToBeMoved
      * @param {string} sourceList - original list to move item from
      * @return {number}
      */
@@ -206,5 +209,30 @@ export default class TileViewSettings extends DrawerLayout {
             }
         }
         return -1;
+    }
+
+    /**
+     * Remove field from tile body
+     *
+     * @param {string} moduleName name of the tab in Tile View config
+     * @param {string} fieldName name of the field to be removed from tile body
+     * @return {boolean}
+     */
+    public async removeFieldFromTileBody(moduleName: string, fieldName: string): Promise<boolean> {
+
+        for (let i=1; i<7; i++) {
+            let selector = this.$('field', {moduleName, i});
+            if (await this.driver.isElementExist(selector) ) {
+
+                let field = await this.driver.getText(selector + ' div');
+                if (field === fieldName) {
+                    await this.driver.click(selector + ' a');
+                    return true;
+                }
+            } else {
+                throw new Error ('Error. Specified path does not exists');
+            }
+        }
+        return false;
     }
 }

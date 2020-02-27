@@ -30,7 +30,7 @@ Feature: Tile View Settings
       | VisualPipeline | true     |
 
     # Enable Tile View for opportunities module
-    When I show "Opportunities" module in #TileViewSettings view with the following settings:
+    When I enable "Opportunities" module in #TileViewSettings view with the following settings:
       | table_header | tile_options_header | tile_options_body                                      | records_per_column |
       | Sales Stage  | Opportunity Name    | Account Name, Expected Close Date, Likely, Lead Source | 15                 |
 
@@ -132,7 +132,6 @@ Feature: Tile View Settings
       | Prospecting   | white_list  | 3        |
       | Qualification | white_list  | 5        |
 
-
     # Navigate to Opportunities > Tile View
     When I choose Opportunities in modules menu
     And I select VisualPipeline in #OpportunitiesList.FilterView
@@ -158,24 +157,22 @@ Feature: Tile View Settings
     # Provide input for the first (default) RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
       | *name | date_closed | sales_stage | likely_case |
-      | RLI1  | 04/19/2020  | Closed Won  | 2000        |
+      | RLI1  | 04/19/2020  | Prospecting | 2000        |
     # Add second RLI by clicking '+' button on the first row
     When I choose addRLI on #OpportunityDrawer.RLITable view for 1 row
     # Provide input for the second RLI
     When I provide input for #OpportunityDrawer.RLITable view for 2 row
-      | *name | date_closed | sales_stage | likely_case |
-      | RLI2  | 04/19/2021  | Closed Lost | 2000        |
+      | *name | date_closed | sales_stage   | likely_case |
+      | RLI2  | 04/19/2021  | Qualification | 2000        |
     When I click Save button on #OpportunitiesDrawer header
     When I close alert
 
-     # Temporary commented ! uncomment after SS-231 is fixed
+    # Verify column the opportunity tile appears under Qualification column
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
 
-    # Verify column the opportunity tile appears under
-#   Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesPipelineView view
+    When I drag *Opp_1 tile to "Perception Analysis" column in #OpportunitiesPipelineView view
 
-#    When I drag *Opp_1 tile to "Perception Analysis" column in #OpportunitiesPipelineView view
-#
-#    Then I verify the [*Opp_1] records are under "Perception Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Perception Analysis" column in #OpportunitiesPipelineView view
 
     # Restore default order
     When I drag-n-drop column header items on "Opportunities" module in #TileViewSettings view:
@@ -238,16 +235,79 @@ Feature: Tile View Settings
     When I click Save button on #OpportunitiesDrawer header
     When I close alert
 
-    # Verify column the opportunity tile appears under
+    # Verify column the opportunity tile appears under Closed Won column
     Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesPipelineView view
 
-    # # Temporary commented ! uncomment after SS-231 is fixed
-#    When I drag *Opp_1 tile to "Closed Lost" column in #OpportunitiesPipelineView view
-#
-#    Then I verify the [*Opp_1] records are under "Closed Lost" column in #OpportunitiesPipelineView view
+    When I drag *Opp_1 tile to "Closed Lost" column in #OpportunitiesPipelineView view
+
+    Then I verify the [*Opp_1] records are under "Closed Lost" column in #OpportunitiesPipelineView view
 
     # Disable 'Closed Won' and 'Closed Lost' columns in Opportunities Tile View
     When I drag-n-drop column header items on "Opportunities" module in #TileViewSettings view:
       | sourceItem  | destination | position |
       | Closed Won  | black_list  | 0        |
       | Closed Lost | black_list  | 1        |
+
+
+  @tile_view_settings @SS-287 @AT-339 @pr
+  Scenario: Tile View Settings > Cases > Change tile view header
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+
+    # Update Tile View for cases module
+    When I update "Cases" module in #TileViewSettings view with the following settings:
+      | table_header | tile_options_header | tile_options_body | records_per_column |
+      | Priority     | Subject             | Status, Source    | 15                 |
+
+    # Navigate to Cases > Tile View
+    When I choose Cases in modules menu
+    And I select VisualPipeline in #CasesList.FilterView
+    Then I should be redirected to "Cases/pipeline" route
+
+    # Verify tile view is updated
+    Then I verify pipeline column headers in #CasesPipelineView view
+      | value  | position |
+      | High   | 1        |
+      | Medium | 2        |
+      | Low    | 3        |
+
+    # Create a new case while in Tile View
+    When I click pipelineCreate button on #CasesList header
+    When I click show more button on #CasesDrawer view
+    When I provide input for #CasesDrawer.HeaderView view
+      | *   | name               |
+      | C_1 | High Priority Case |
+    When I provide input for #CasesDrawer.RecordView view
+      | *   | account_name | priority | source   | status   |
+      | C_1 | Acc_1        | High     | Internal | Assigned |
+    When I click Save button on #CasesDrawer header
+    When I close alert
+
+    # Verify record's information displayed correctly in the tile
+    Then I verify *C_1 tile field values in #CasesPipelineView view
+      | value              |
+      | High Priority Case |
+      | Acc_1              |
+      | High               |
+      | Assigned           |
+      | Internal           |
+
+    # Verify case appears under correct column
+    Then I verify the [*C_1] records are under "P1" column in #CasesPipelineView view
+
+    # Drag tile to another column and verify
+    When I drag *C_1 tile to "Medium" column in #CasesPipelineView view
+    Then I verify the [*C_1] records are under "P2" column in #CasesPipelineView view
+
+    # Drag tile to another column and verify
+    When I drag *C_1 tile to "Low" column in #CasesPipelineView view
+    Then I verify the [*C_1] records are under "P3" column in #CasesPipelineView view
+
+    # Restore defaults
+    # Update Tile View for cases module
+    When I update "Cases" module in #TileViewSettings view with the following settings:
+      | table_header | tile_options_header | tile_options_body  | records_per_column |
+      | Status       | Subject             | Status~r, Source~r |                    |
+
+    Then I verify the [*C_1] records are under "Assigned" column in #CasesPipelineView view

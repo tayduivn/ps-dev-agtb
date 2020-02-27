@@ -78,7 +78,7 @@ export default class PipelineItemView extends BaseView {
         await driver.buttonDown(0);
         await driver.moveToObject(des_by);
         await driver.pause(1000);
-        await driver.moveTo(null, 0, 3);
+        await driver.moveTo(null, 5, 3);
         await driver.pause(1000);
         await driver.buttonUp(0);
         await driver.pause(1000);
@@ -112,8 +112,7 @@ export default class PipelineItemView extends BaseView {
 
         await this.driver.moveToObject(rowSelector);
         await this.driver.waitForApp();
-        let isDisabled = await this.driver.isElementExist(selector);
-        return isDisabled;
+        return await this.driver.isElementExist(selector);
     }
 
     /**
@@ -153,8 +152,7 @@ export default class PipelineItemView extends BaseView {
 
         let selector = this.$('listItem.tileContent', {id: this.id, tileContentRow});
         await this.driver.scroll(selector);
-        let val = await this.driver.getText(selector);
-        return val;
+        return await this.driver.getText(selector);
     }
 
     /**

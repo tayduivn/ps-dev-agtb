@@ -54,7 +54,7 @@ When(/^I delete (\*[a-zA-Z](?:\w|\S)*) in (#\S+) view$/,
  *  When I hide "Opportunities" module in #TileViewSettings view
  *
  */
-When(/^I hide "(Cases|Opportunities|Tasks)" module in (#\S+) view$/,
+When(/^I hide "(Cases|Opportunities|Tasks|Leads)" module in (#\S+) view$/,
     async function (moduleName: string, view: TileViewSettings) {
 
         const urlHash = 'VisualPipeline/config';
@@ -87,7 +87,7 @@ When(/^I hide "(Cases|Opportunities|Tasks)" module in (#\S+) view$/,
  *      | Sales Stage  | Name                | Account Name,Expected Close Date,Likely | 15                 |
  *
  */
-When(/^I show "(Cases|Opportunities|Tasks)" module in (#\S+) view with the following settings:$/,
+When(/^I enable "(Cases|Opportunities|Tasks|Leads)" module in (#\S+) view with the following settings:$/,
     async function (moduleName: string, view: TileViewSettings, data: TableDefinition) {
 
         if (data.hashes.length > 1) {
@@ -109,22 +109,22 @@ When(/^I show "(Cases|Opportunities|Tasks)" module in (#\S+) view with the follo
         await this.driver.waitForApp();
 
         const rows = data.rows();
-        const row = rows[0];
+        const [tileViewColumnName, tileHeader, tileBody, numberOfRecordsPerColumn ] = rows[0];
 
         // Select Tile View Table Header
-        await view.selectValueFromDropdown(moduleName, 1, 1, row[0]);
+        await view.selectValueFromDropdown(moduleName, 1, 1, tileViewColumnName);
 
         // Select Tile Header field
-        await view.selectValueFromDropdown(moduleName, 3, 1, row[1]);
+        await view.selectValueFromDropdown(moduleName, 3, 1, tileHeader);
 
         // Select Tile Body field
-        let tileBodyFields = rows[0][2].split(',');
+        let tileBodyFields = tileBody.split(',');
         for (let j in tileBodyFields) {
             await view.selectValueFromDropdown(moduleName, 3, 2, tileBodyFields[j].trim());
         }
 
         // Select number of records per column
-        await view.selectValueFromDropdown(moduleName, 4, 1, row[3]);
+        await view.selectValueFromDropdown(moduleName, 4, 1, numberOfRecordsPerColumn);
 
         // Click Save Button
         await view.HeaderView.clickButton(saveButton);
@@ -135,6 +135,78 @@ When(/^I show "(Cases|Opportunities|Tasks)" module in (#\S+) view with the follo
         await closeAlert();
 
     }, {waitForApp: true});
+
+
+/**
+ *  Update Tile View for particular module in Admin Panel > Tile View Settings
+ *
+ *  @example
+ *  When I update "Cases" module in #TileViewSettings view with the following settings:
+ *      | table_header | tile_options_header | tile_options_body  | records_per_column |
+ *      | Status       | Subject             | Status~r, Source~r |                    |
+ */
+When(/^I update "(Cases|Opportunities|Tasks|Leads)" module in (#\S+) view with the following settings:$/,
+    async function (moduleName: string, view: TileViewSettings, data: TableDefinition) {
+
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+        const urlHash = 'VisualPipeline/config';
+        const saveButton = 'save';
+
+        // Navigate to Tile View Config
+        await this.driver.setUrlHash(urlHash);
+        await this.driver.waitForApp();
+
+        // Switch to the enabled module's tab
+        await view.switchTab(moduleName);
+        await this.driver.waitForApp();
+
+        const rows = data.rows();
+        const [tileViewColumnName, tileHeader, tileBody, numberOfRecordsPerColumn ] = rows[0];
+
+        // Select Tile View Table Header
+        if (tileViewColumnName !== null && tileViewColumnName !== '') {
+            await view.selectValueFromDropdown(moduleName, 1, 1, tileViewColumnName);
+        }
+
+        // Select Tile Header field
+        if (tileHeader !== null && tileHeader !== '') {
+            await view.selectValueFromDropdown(moduleName, 3, 1, tileHeader);
+        }
+
+        // Select Tile Body field
+        if (tileBody !== null && tileBody !== '') {
+            let tileBodyFields = tileBody.split(',');
+            for (let j in tileBodyFields) {
+
+                // field name
+                let tileBodyFieldName = tileBodyFields[j].trim();
+
+                // if no '~r' add a new field, otherwise remove existing field
+                if (tileBodyFieldName.indexOf('~r') === -1 ) {
+                    await view.selectValueFromDropdown(moduleName, 3, 2, tileBodyFieldName);
+                } else {
+                    await view.removeFieldFromTileBody(moduleName, tileBodyFieldName.substr(0,tileBodyFieldName.lastIndexOf('~r')));
+                }
+            }
+        }
+
+        // Select number of records per column
+        if (numberOfRecordsPerColumn !== null && numberOfRecordsPerColumn !== '') {
+            await view.selectValueFromDropdown(moduleName, 4, 1, numberOfRecordsPerColumn);
+        }
+
+        // Click Save Button
+        await view.HeaderView.clickButton(saveButton);
+        await this.driver.pause(4000);
+        await this.driver.waitForApp();
+
+        // Close Alert
+        await closeAlert();
+
+    }, {waitForApp: true});
+
 
 /**
  * Activate or disable columns by drag-n-drop list items between white and black lists or re-arrange
