@@ -776,10 +776,10 @@
   }
 
   &:not(:first-child) {
-    margin-left: @labelOnSideGutterWidth;
+    margin-left: @fluidGridGutterWidth;
 
     html.rtl & {
-      margin-right: @labelOnSideGutterWidth;
+      margin-right: @fluidGridGutterWidth;
       margin-left: 0;
     }
   }
@@ -793,11 +793,15 @@
 .spanInputLabelX (@index) when (@index > 0) {
   .labels-on-side > .span@{index} { .spanInputLabel(@index, @labelOnSideNarrowColumnWidth, @labelOnSideGutterWidth); }
 
-  @media (min-width: 995px) {
+  @media (min-width: 768px) {
+    .labels-on-side > .span@{index} { .spanInputLabel(@index, @labelsOnSideColumnWidth768, @labelOnSideGutterWidth); }
+  }
+
+  @media (min-width: 1029px) {
     .labels-on-side > .span@{index} { .spanInputLabel(@index, @gridColumnWidth768, @labelOnSideGutterWidth); }
   }
 
-  @media (min-width: 1320px) {
+  @media (min-width: 1370px) {
     .labels-on-side > .span@{index} { .spanInputLabel(@index, @gridColumnWidth, @labelOnSideGutterWidth); }
   }
 
