@@ -106,6 +106,53 @@ describe('Base.Field.Parent', function() {
         expect(field.href).toEqual("#"+actual_module+"/"+actual_id);
     });
 
+    using('remove or not removing field\'s parent model',
+        [
+            {
+                removeParent: true,
+                labelText: 'Label Text',
+                empty: false,
+                expected: {field: 'parent_name', label: 'Label Text'}
+            },
+            {
+                removeParent: false,
+                labelText: 'Label Text',
+                empty: true,
+                expected: {field: 'parent_name', label: 'Label Text'}
+            },
+            {
+                removeParent: true,
+                labelText: 'Label Text',
+                empty: true,
+                expected: {field: 'parent_name', label: 'Label Text'}
+            },
+            {
+                removeParent: false,
+                labelText: 'Label Text',
+                empty: false,
+                expected: {field: 'parent_name', label: 'Contacts'}
+            },
+        ],
+        function(values) {
+            it('should set label appropriately with or without a parent module',
+                function() {
+                    field.tplName = 'detail';
+                    if (values.removeParent) {
+                        sinon.collection.stub(field, 'getSearchModule', function() {
+                            return undefined;
+                        });
+                    }
+                    sinon.collection.stub(app.lang, 'get', function() {
+                        return values.labelText;
+                    });
+                    sinon.collection.stub(field, 'isFieldEmpty', function() {
+                        return values.empty;
+                    });
+                    field.format();
+                    expect(field.context.get('record_label')).toEqual(values.expected);
+                });
+        });
+
     describe('isAvailableParentType', function () {
         it('should return true if the specified module is an option on the field', function () {
             field.typeFieldTag = 'select';
