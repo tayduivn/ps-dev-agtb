@@ -2260,6 +2260,10 @@ class MetaDataManager implements LoggerAwareInterface
             $sugarConfig['processes_auto_save_interval'] : 30000;
         //END SUGARCRM flav=ent ONLY
 
+        //Allowed Link Schemes Setting
+        $configs['allowedLinkSchemes'] = isset($sugarConfig['allowed_link_schemes']) ?
+            $sugarConfig['allowed_link_schemes'] : ['http', 'https'];
+
         return $configs;
     }
 

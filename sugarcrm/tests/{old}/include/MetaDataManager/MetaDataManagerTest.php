@@ -176,6 +176,7 @@ class MetaDataManagerTest extends TestCase
                         'enabled' => true,
                     ],
                     'idm_mode' => [],
+                    'allowed_link_schemes' => ['http', 'https'],
                 ],
                 'expectedConfig' => [
                     //BEGIN SUGARCRM flav=ent ONLY
@@ -193,6 +194,7 @@ class MetaDataManagerTest extends TestCase
                     ],
                     'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
                     'idmModeEnabled' => false,
+                    'allowedLinkSchemes' => ['http', 'https'],
                 ],
             ],
             'configWithIDMModeEnable' => [
@@ -223,6 +225,7 @@ class MetaDataManagerTest extends TestCase
                         'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                         'cloudConsoleRoutes' => ['forgotPassword' => 'forgot-password'],
                     ],
+                    'allowed_link_schemes' => ['http', 'https'],
                 ],
                 'expectedConfig' => [
                     //BEGIN SUGARCRM flav=ent ONLY
@@ -247,6 +250,7 @@ class MetaDataManagerTest extends TestCase
                     'tenant' => 'srn:cloud:iam:eu:0000000001:tenant',
                     'externalLoginSameWindow' => true,
                     'externalLogin' => true,
+                    'allowedLinkSchemes' => ['http', 'https'],
                 ],
             ],
         ];

@@ -509,10 +509,6 @@ function get_sugar_config_defaults()
                 'KBContents',
             ],
         ],
-        'allowed_link_schemes' => [
-            'http',
-            'https',
-        ],
     );
 
     if (empty($locale)) {
