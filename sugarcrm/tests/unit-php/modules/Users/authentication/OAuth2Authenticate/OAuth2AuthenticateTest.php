@@ -90,6 +90,7 @@ class OAuth2AuthenticateTest extends TestCase
                 'getStateRegistry',
                 'createState',
                 'getIDMModeConfig',
+                'getCurrentUser',
             ])
             ->getMock();
 
@@ -106,6 +107,7 @@ class OAuth2AuthenticateTest extends TestCase
         $this->authMock->method('getTenant')->willReturn('srn:tenant');
         $this->authMock->method('getIdmProvider')->willReturn($this->idmProviderMock);
         $this->authMock->method('getStateRegistry')->willReturn($this->stateRegistryMock);
+        $this->authMock->method('getCurrentUser')->willReturn($this->sugarUser);
         $this->authProviderBuilder->method('buildAuthProviders')->willReturn($this->authManager);
     }
 
@@ -189,7 +191,8 @@ class OAuth2AuthenticateTest extends TestCase
 
         $this->authMock->expects($this->any())->method('getIDMModeConfig')->willReturn($idmMode);
         $this->assertEquals(
-            'http://idp.url/logout?redirect_uri=http://idp.url',
+            'http://idp.url/logout?redirect_uri=http%3A%2F%2Fidp.url&' .
+                'user_hint=srn%3Acloud%3Aiam%3A%3A0000000001%3Auser%3AuserId',
             $this->authMock->getLogoutUrl()
         );
     }

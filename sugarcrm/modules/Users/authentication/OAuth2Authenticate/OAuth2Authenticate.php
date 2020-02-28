@@ -15,6 +15,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordToke
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\OAuth2StateRegistry;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
+use Sugarcrm\IdentityProvider\Srn;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
@@ -65,7 +66,11 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
     public function getLogoutUrl(): string
     {
         $idmModeConfig = $this->getIDMModeConfig();
-        return $idmModeConfig['idpUrl'] . '/logout?redirect_uri='.$idmModeConfig['idpUrl'];
+        $userSrn = $this->getCurrentUserSrn();
+        return $idmModeConfig['idpUrl'] . '/logout?' . http_build_query([
+            'redirect_uri' => $idmModeConfig['idpUrl'],
+            'user_hint' => $userSrn,
+        ]);
     }
 
     /**
@@ -124,5 +129,30 @@ class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterf
     protected function getStateRegistry() : OAuth2StateRegistry
     {
         return new OAuth2StateRegistry();
+    }
+
+    /**
+     * Get SRN of a current user
+     *
+     * @return string
+     */
+    protected function getCurrentUserSrn(): string
+    {
+        $idmModeConfig = $this->getIDMModeConfig();
+        $user = $this->getCurrentUser();
+        $tenantSrn = Srn\Converter::fromString($idmModeConfig['tid']);
+        $srnManager = new Srn\Manager([
+            'partition' => $tenantSrn->getPartition(),
+            'region' => $tenantSrn->getRegion(),
+        ]);
+        return Srn\Converter::toString($srnManager->createUserSrn($tenantSrn->getTenantId(), $user->id));
+    }
+
+    /**
+     * @return \User
+     */
+    protected function getCurrentUser(): \User
+    {
+        return $GLOBALS['current_user'];
     }
 }
