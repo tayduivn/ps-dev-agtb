@@ -72,7 +72,7 @@ export default class TileViewSettings extends DrawerLayout {
      * @returns {Promise<void>}
      */
     public async hideModule(moduleName) {
-        let selector = this.$('generalSettings.module', {moduleName} );
+        let selector = this.$('generalSettings.module', {moduleName});
         await this.driver.click(selector);
     }
 
@@ -99,7 +99,7 @@ export default class TileViewSettings extends DrawerLayout {
      * @returns {Promise<void>}
      */
     public async switchTab(moduleName) {
-        let selector = this.$('moduleSettings.moduleTab', {moduleName} );
+        let selector = this.$('moduleSettings.moduleTab', {moduleName});
         await this.driver.click(selector);
     }
 
@@ -114,7 +114,7 @@ export default class TileViewSettings extends DrawerLayout {
      */
     public async selectValueFromDropdown(moduleName, index, i, val) {
 
-        let  selector = this.$('moduleSettings.fields.dropdown', {moduleName, index, i});
+        let selector = this.$('moduleSettings.fields.dropdown', {moduleName, index, i});
         await this.driver.click(selector);
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${val}`);
@@ -130,7 +130,7 @@ export default class TileViewSettings extends DrawerLayout {
      * @param {string} destinationList
      * @param {string} position to move the tile block to in Tile View settings
      */
-    public async moveItem(moduleName: string, tileToBeMoved: string, destinationList: string, position:string): Promise<void> {
+    public async moveItem(moduleName: string, tileToBeMoved: string, destinationList: string, position: string): Promise<void> {
 
         // Initialize source list and build selectorSource
         let sourceList = 'white_list';
@@ -161,7 +161,7 @@ export default class TileViewSettings extends DrawerLayout {
                 await driver.pause(1000);
 
                 // In case of source and destination lists are the same add span to CSS
-                if ( sourceList === destinationList ) {
+                if (sourceList === destinationList) {
                     selectorTo = selectorTo + ' span';
                 }
 
@@ -170,9 +170,9 @@ export default class TileViewSettings extends DrawerLayout {
 
                 // In case of source and destination lists are the same calculate yOffset based on the index
                 // Otherwise, set zero  offset
-                if ( sourceList === destinationList ) {
+                if (sourceList === destinationList) {
                     let originalColumnPosition = await this.currentColumnIndex(moduleName, tileToBeMoved, sourceList);
-                    if (originalColumnPosition != -1 ) {
+                    if (originalColumnPosition != -1) {
                         let yOffset = (originalColumnPosition > Number(position)) ? -15 : 15;
                         await driver.moveTo(null, 30, yOffset);
                     } else {
@@ -203,8 +203,12 @@ export default class TileViewSettings extends DrawerLayout {
     private async currentColumnIndex(moduleName: string, tileToBeMoved: string, sourceList: string): Promise<number> {
 
         for (let curIndex: number = 1; curIndex < 25; curIndex++) {
-            let selectorSource = this.$('move.source', {moduleName, tileToBeMoved, sourceList}) + `:nth-child(${curIndex})`;
-            if ( await this.driver.isElementExist(selectorSource)) {
+            let selectorSource = this.$('move.source', {
+                moduleName,
+                tileToBeMoved,
+                sourceList
+            }) + `:nth-child(${curIndex})`;
+            if (await this.driver.isElementExist(selectorSource)) {
                 return curIndex;
             }
         }
@@ -220,9 +224,11 @@ export default class TileViewSettings extends DrawerLayout {
      */
     public async removeFieldFromTileBody(moduleName: string, fieldName: string): Promise<boolean> {
 
-        for (let i=1; i<7; i++) {
+        const MAX_NUM_OF_FIELDS = 5;
+
+        for (let i = 1; i <= MAX_NUM_OF_FIELDS; i++) {
             let selector = this.$('field', {moduleName, i});
-            if (await this.driver.isElementExist(selector) ) {
+            if (await this.driver.isElementExist(selector)) {
 
                 let field = await this.driver.getText(selector + ' div');
                 if (field === fieldName) {
@@ -230,7 +236,7 @@ export default class TileViewSettings extends DrawerLayout {
                     return true;
                 }
             } else {
-                throw new Error ('Error. Specified path does not exists');
+                throw new Error('Error. Specified path does not exists');
             }
         }
         return false;

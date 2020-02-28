@@ -257,8 +257,8 @@ Feature: Tile View Settings
 
     # Update Tile View for cases module
     When I update "Cases" module in #TileViewSettings view with the following settings:
-      | table_header | tile_options_header | tile_options_body | records_per_column |
-      | Priority     | Subject             | Status, Source    | 15                 |
+      | table_header | tile_options_header | tile_options_body                          | records_per_column |
+      | Priority     | Subject             | Account Name~r, Priority~r, Status, Source | 15                 |
 
     # Navigate to Cases > Tile View
     When I choose Cases in modules menu
@@ -288,8 +288,6 @@ Feature: Tile View Settings
     Then I verify *C_1 tile field values in #CasesPipelineView view
       | value              |
       | High Priority Case |
-      | Acc_1              |
-      | High               |
       | Assigned           |
       | Internal           |
 
@@ -307,7 +305,15 @@ Feature: Tile View Settings
     # Restore defaults
     # Update Tile View for cases module
     When I update "Cases" module in #TileViewSettings view with the following settings:
-      | table_header | tile_options_header | tile_options_body  | records_per_column |
-      | Status       | Subject             | Status~r, Source~r |                    |
+      | table_header | tile_options_header | tile_options_body                          | records_per_column |
+      | Status       | Subject             | Account Name, Priority, Status~r, Source~r |                    |
 
+    # Verify tile appears under correct column after tile header is changed
     Then I verify the [*C_1] records are under "Assigned" column in #CasesPipelineView view
+
+    # Verify tile contains correct information
+    Then I verify *C_1 tile field values in #CasesPipelineView view
+      | value              |
+      | High Priority Case |
+      | Acc_1              |
+      | Low                |
