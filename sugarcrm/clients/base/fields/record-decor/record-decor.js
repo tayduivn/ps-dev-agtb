@@ -205,11 +205,23 @@
      */
     relocatePencil: function(field) {
         var cell = this.getRecordCell();
+        let isCellHidden = cell.parent().hasClass('hide');
+
+        // if cell is hidden, display it to get non-zero width values
+        if (isCellHidden) {
+            this.toggleRecordCellDisplay(cell);
+        }
+
         var pencil = cell.find('.fa-pencil');
         var wrapper = cell.find('.record-label-wrapper');
         var label = cell.find('.record-label');
         var wrapperWidth = wrapper.outerWidth();
         var labelWidth = label.outerWidth();
+
+        // if cell was originally hidden, re-hide the cell
+        if (isCellHidden) {
+            this.toggleRecordCellDisplay(cell);
+        }
 
         var offset = wrapperWidth - labelWidth + 5;
 
@@ -224,5 +236,14 @@
         css[direction] = offset + 'px';
 
         pencil.css(css);
+    },
+
+    /**
+     * Displays or hides the record cell by toggling the parent div's 'hide' class
+     *
+     * @param {jquery} $cell the record cell
+     */
+    toggleRecordCellDisplay: function($cell) {
+        $cell.parent().toggleClass('hide');
     },
 })
