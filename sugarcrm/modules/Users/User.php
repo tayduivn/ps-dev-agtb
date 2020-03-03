@@ -685,14 +685,16 @@ class User extends Person {
         // validate license type
         if (isset($this->license_type)) {
             $licenseTypes = $this->getLicenseTypes();
-            if (!$this->validateLicenseTypes($licenseTypes)) {
-                throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
-            }
+            if ($this->isLicenseTypeModified($licenseTypes)) {
+                if (!$this->validateLicenseTypes($licenseTypes)) {
+                    throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
+                }
 
-            // make sure only admin can modify the license type
-            global $current_user;
-            if ($this->isLicenseTypeModified($licenseTypes) && !$current_user->isAdmin()) {
-                throw new SugarApiExceptionNotAuthorized('Not authorized to modify license_type in module: Users');
+                // make sure only admin can modify the license type
+                global $current_user;
+                if (!$current_user->isAdmin()) {
+                    throw new SugarApiExceptionNotAuthorized('Not authorized to modify license_type in module: Users');
+                }
             }
             $this->setLicenseType($licenseTypes);
         }
@@ -3025,7 +3027,7 @@ class User extends Person {
             return $value;
         }
 
-        throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
+        throw new SugarApiExceptionInvalidParameter('Invalid license_type in processLicenseTypes');
     }
 
     /**

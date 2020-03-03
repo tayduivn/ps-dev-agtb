@@ -68,7 +68,7 @@ class UsersApi extends ModuleApi
         // need to enforce license type is provided.
         $this->requireArgs($args, array('module', 'license_type'));
         // validate license types and empty is not allowed
-        if (!$this->validateLicenseTypes($args['license_type'], false)) {
+        if (!$this->validateLicenseTypes($args['license_type'])) {
             throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
         }
         $moduleApi = new ModuleApi();
@@ -84,9 +84,6 @@ class UsersApi extends ModuleApi
      */
     public function updateUser(ServiceBase $api, array $args)
     {
-        if (isset($args['license_type']) && !$this->validateLicenseTypes($args['license_type'])) {
-            throw new SugarApiExceptionInvalidParameter('Invalid license_type in module: Users');
-        }
         $moduleApi = new ModuleApi();
         return $moduleApi->updateRecord($api, $args);
     }
