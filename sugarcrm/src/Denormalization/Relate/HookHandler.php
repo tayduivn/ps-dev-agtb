@@ -153,10 +153,7 @@ final class HookHandler
                 continue;
             }
             if (!$options['is_main']) {
-                $bean->{$options['denorm_field_name']} = $bean->$sourceLinkedFieldName;
-                if (!empty($options['synchronization_in_progress'])) {
-                    $this->db->updateTemporaryTableWithValue($bean, $bean->$sourceLinkedFieldName);
-                }
+                $this->handleRelationshipModification($sourceLinkedFieldName, $bean, $options);
             } else {
                 $this->db->updateLinkedBean(
                     $bean,
@@ -203,5 +200,48 @@ final class HookHandler
         $settings = self::$settingsCache[$bean->getModuleName()] ?? [];
 
         return $settings;
+    }
+
+    protected function handleRelationshipModification(string $fieldName, SugarBean $bean, array $options): void
+    {
+        $modifiedLinkId = $this->getModifiedLinkId($fieldName, $bean);
+
+        // if the link ID was modified but the value wasn't updated - update it
+        if ($modifiedLinkId) {
+            $bean->{$options['denorm_field_name']} = $bean->$fieldName = $this->db->fetchValue(
+                $options['link']['linked_table'],
+                $options['link']['linked_field_name'],
+                $modifiedLinkId
+            );
+        } else {
+            $bean->{$options['denorm_field_name']} = $bean->$fieldName;
+            if (!empty($options['synchronization_in_progress'])) {
+                $this->db->updateTemporaryTableWithValue($bean, $bean->$fieldName);
+            }
+        }
+    }
+
+    protected function getModifiedLinkId(string $fieldName, SugarBean $bean): ?string
+    {
+        if (empty($bean->fetched_rel_row)) {
+            return null;
+        }
+        $idName = $bean->getFieldDefinition($fieldName)['id_name'] ?? null;
+        if (!$idName) {
+            return null;
+        }
+
+        $oldId = $bean->fetched_rel_row[$idName] ?? null;
+        $newId = $bean->$idName;
+
+        $oldValue = $bean->fetched_rel_row[$fieldName];
+        $newValue = $bean->$fieldName;
+
+        // the link ID was changed but the value still wasn't updated
+        if ($oldId !== $newId && $oldValue === $newValue) {
+            return $newId;
+        }
+
+        return null;
     }
 }

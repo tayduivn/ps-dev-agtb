@@ -314,4 +314,18 @@ abstract class Db implements OfflineOperations, OnlineOperations
 
         $builder->execute();
     }
+
+    /**
+     * @return false|mixed
+     */
+    public function fetchValue(string $tableName, string $fieldName, string $id)
+    {
+        return $this->connection->createQueryBuilder()
+            ->select($fieldName)
+            ->from($tableName)
+            ->where("id = :link_id")
+            ->setParameter('link_id', $id)
+            ->execute()
+            ->fetchColumn();
+    }
 }

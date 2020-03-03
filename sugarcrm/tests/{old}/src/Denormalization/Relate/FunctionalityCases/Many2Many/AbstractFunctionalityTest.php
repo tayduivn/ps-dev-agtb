@@ -184,6 +184,33 @@ abstract class AbstractFunctionalityTest extends TestCase
     /**
      * @depends testRelationshipAddHandler
      */
+    public function testRelationshipModification(SugarBean $primaryBean)
+    {
+        $primaryBean->{static::$options['relate_link_name']}->resetLoaded();
+
+        $linkedBeans = $primaryBean->{static::$options['relate_link_name']}->getBeans();
+        $this->assertNotEmpty($linkedBeans);
+        $linkedBean = end($linkedBeans);
+        $this->assertNotEmpty($linkedBean);
+
+        $newLinkedBean = $this->createLinkedBean();
+        $idName = $primaryBean->getFieldDefinition(static::$options['field_name'])['id_name'];
+
+        // direct link ID modification should correctly update denormalized field
+        $primaryBean->$idName = $newLinkedBean->id;
+        $primaryBean->save();
+
+        // reload to ensure that changes saved
+        $primaryBean = $this->reloadBean($primaryBean);
+
+        $this->assertEquals($newLinkedBean->{static::$options['relate_field_name']}, $primaryBean->{$this->getDenormFieldName()});
+
+        return $primaryBean;
+    }
+
+    /**
+     * @depends testRelationshipModification
+     */
     public function testHookHandlerAfterTargetDelete(SugarBean $primaryBean)
     {
         $primaryBean->{static::$options['relate_link_name']}->resetLoaded();

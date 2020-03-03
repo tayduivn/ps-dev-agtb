@@ -48,4 +48,6 @@ interface OnlineOperations
         string $linkedTableName,
         string $linkedKey
     ): void;
+
+    public function fetchValue(string $tableName, string $fieldName, string $id);
 }
