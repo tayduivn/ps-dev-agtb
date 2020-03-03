@@ -714,9 +714,7 @@ class SubscriptionManagerTest extends TestCase
         /** @var \User|MockObject $user */
         $user = $this->getMockBuilder(\User::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getLicenseTypes'])
             ->getMock();
-        $user->expects($this->any())->method('getLicenseTypes')->willReturn($userTypes);
         $user->user_name = $userName;
 
         /** @var SubscriptionManager|MockObject $manager */
@@ -725,6 +723,7 @@ class SubscriptionManagerTest extends TestCase
             ->setMethods([
                 'getSystemUserCountByLicenseTypes',
                 'getSystemSubscriptions',
+                'getUserSubscriptions',
             ])->getMock();
 
         $manager->expects($this->any())
@@ -737,6 +736,10 @@ class SubscriptionManagerTest extends TestCase
         $manager->expects($this->any())
             ->method('getSystemSubscriptions')
             ->willReturn($allowedSeats);
+
+        $manager->expects($this->any())
+            ->method('getUserSubscriptions')
+            ->willReturn($userTypes);
 
         $this->assertEquals($expected, $manager->getUserExceededLicenseTypes($user));
     }

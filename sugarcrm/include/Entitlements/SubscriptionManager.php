@@ -568,7 +568,7 @@ class SubscriptionManager
         }
         $usedSeats = $this->getSystemUserCountByLicenseTypes();
         $allowedSeats = $this->getSystemSubscriptions();
-        $userTypes = $user->getLicenseTypes();
+        $userTypes = $this->getUserSubscriptions($user);
 
         if (empty($allowedSeats)) {
             return $userTypes;
