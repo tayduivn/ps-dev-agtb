@@ -58,11 +58,11 @@ class OpportunitiesApi extends ModuleApi
     }
 
     // BEGIN SUGARCRM flav = ent ONLY
-    /*
-     * Rollups data to all RLIs that are not won/lost
+    /**
+     * Rolls up data to all RLIs that are not won/lost.
      *
      * @param $bean SugarBean The Opportunity Bean
-     * @param array $args
+     * @param array $data Data being upgraded on the Opportunity
      */
     protected function updateRevenueLineItems($bean, $data)
     {
@@ -72,9 +72,14 @@ class OpportunitiesApi extends ModuleApi
             $rlis = $bean->revenuelineitems->getBeans();
             foreach ($rlis as $rli) {
                 $hasChanged = false;
+                if (in_array($rli->sales_stage, $bean->getClosedStages())) {
+                    continue;
+                }
                 foreach ($data as $fieldName => $fieldValue) {
+                    if ($rli->{$fieldName} !== $fieldValue) {
                         $hasChanged = true;
                         $rli->{$fieldName} = $fieldValue;
+                    }
                 }
                 if ($hasChanged) {
                     $rli->save();

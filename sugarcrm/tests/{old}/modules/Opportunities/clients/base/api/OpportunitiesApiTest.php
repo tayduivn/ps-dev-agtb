@@ -168,33 +168,44 @@ class OpportunitiesApiTest extends TestCase
         $result = $api->updateRecord($this->service, $args);
     }
 
+    public function dataProviderUpdateRevenueLineItems()
+    {
+        return [
+            [
+                ['sales_stage' => 'Closed Won', 'date_closed' => '2017-05-05'],
+                ['sales_stage' => 'Closed Won', 'date_closed' => '2017-05-05'],
+            ],
+            [
+                ['sales_stage' => 'Closed Lost', 'date_closed' => '2017-06-06'],
+                ['sales_stage' => 'Closed Lost', 'date_closed' => '2017-06-06'],
+            ],
+            [
+                ['sales_stage' => 'Prospecting', 'date_closed' => '2017-02-02'],
+                ['sales_stage' => 'Qualification', 'date_closed' => '2017-01-01'],
+            ],
+        ];
+    }
+
     /**
+     * @dataProvider dataProviderUpdateRevenueLineItems
+     *
      * @covers ::updateRevenueLineItems
      */
-    public function testUpdateRevenueLineItems_RlisUpdated()
+    public function testUpdateRevenueLineItems_RlisUpdated($args, $expected)
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->save();
 
-        $rli1 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $rli1->opportunity_id = $opp->id;
-        $rli1->sales_stage = 'Closed Won';
-        $rli1->save();
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->opportunity_id = $opp->id;
+        $rli->sales_stage = $args['sales_stage'];
+        $rli->date_closed = $args['date_closed'];
+        $rli->save();
 
-        $rli2 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $rli2->opportunity_id = $opp->id;
-        $rli2->sales_stage = 'Closed Lost';
-        $rli2->save();
-
-        $rli3 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $rli3->opportunity_id = $opp->id;
-        $rli3->sales_stage = 'Prospecting';
-        $rli3->save();
-
-        $data = array(
+        $data = [
             'sales_stage' => 'Qualification',
             'date_closed' => '2017-01-01',
-        );
+        ];
 
         SugarTestReflection::callProtectedMethod(
             $this->api,
@@ -205,17 +216,9 @@ class OpportunitiesApiTest extends TestCase
             )
         );
 
-        $rli1 = BeanFactory::retrieveBean('RevenueLineItems', $rli1->id);
-        $rli2 = BeanFactory::retrieveBean('RevenueLineItems', $rli2->id);
-        $rli3 = BeanFactory::retrieveBean('RevenueLineItems', $rli3->id);
+        $rli = BeanFactory::retrieveBean('RevenueLineItems', $rli->id);
 
-        $this->assertSame($rli1->sales_stage, $data['sales_stage']);
-        $this->assertSame($rli1->date_closed, $data['date_closed']);
-
-        $this->assertSame($rli2->sales_stage, $data['sales_stage']);
-        $this->assertSame($rli2->date_closed, $data['date_closed']);
-
-        $this->assertSame($rli3->sales_stage, $data['sales_stage']);
-        $this->assertSame($rli3->date_closed, $data['date_closed']);
+        $this->assertSame($rli->sales_stage, $expected['sales_stage']);
+        $this->assertSame($rli->date_closed, $expected['date_closed']);
     }
 }
