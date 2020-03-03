@@ -71,7 +71,7 @@ final class Oracle extends Db
               );
              DBMS_STATS.GATHER_INDEX_STATS(NULL, '$tmpPrimaryIndexName', NULL, DBMS_STATS.AUTO_SAMPLE_SIZE);
              DBMS_STATS.GATHER_INDEX_STATS(NULL, '$tmpTargetIdIndexName', NULL, DBMS_STATS.AUTO_SAMPLE_SIZE);
-            END;;";
+            END;";
 
         $this->connection->executeQuery($sql);
     }
