@@ -17,13 +17,15 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug56100Test extends TestCase
 {
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         SugarTestHelper::tearDown();
     }
 

@@ -18,7 +18,7 @@ class SugarApplicationTest extends TestCase
     // Run in isolation so that it doesn't mess up other tests
     public $inIsolation = true;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_app = $this->getMockBuilder('SugarApplication')
             ->setMethods(null)
@@ -47,7 +47,7 @@ class SugarApplicationTest extends TestCase
     }
 
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['current_language'] = $GLOBALS['sugar_config']['default_language'];
 

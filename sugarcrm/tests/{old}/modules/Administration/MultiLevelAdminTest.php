@@ -19,7 +19,7 @@ class MultiLevelAdminTest extends TestCase
 {
     private $_role_id;
     
-    public function setup()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -33,7 +33,7 @@ class MultiLevelAdminTest extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->mlaResetSession();
         if ( !empty($this->_role_id) ) {

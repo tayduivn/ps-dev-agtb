@@ -64,7 +64,7 @@ class TeamBasedACLModuleTest extends TestCase
         'massupdate' => true,
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true));
 
@@ -88,7 +88,7 @@ class TeamBasedACLModuleTest extends TestCase
         $this->bean = SugarTestAccountUtilities::createAccount();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $aclActions = new ACLAction();
         $aclActions->clearACLCache();

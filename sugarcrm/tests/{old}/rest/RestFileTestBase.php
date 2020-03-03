@@ -19,7 +19,7 @@ class RestFileTestBase extends RestTestBase {
     protected $_testfile1 = 'Bug55655-01.txt';
     protected $_testfile2 = 'Bug55655-02.txt';
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -44,7 +44,7 @@ class RestFileTestBase extends RestTestBase {
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->_testfile1);
         unlink($this->_testfile2);

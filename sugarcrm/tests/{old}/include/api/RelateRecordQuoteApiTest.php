@@ -29,7 +29,8 @@ class RelateRecordQuoteApiTest extends TestCase
     private $_apiClass;
     private $_address_fields = array('address_street', 'address_city', 'address_state', 'address_street', 'address_street');
 
-    public function setUp(){
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
@@ -51,7 +52,7 @@ class RelateRecordQuoteApiTest extends TestCase
         $this->_apiClass = new RelateRecordApi();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();

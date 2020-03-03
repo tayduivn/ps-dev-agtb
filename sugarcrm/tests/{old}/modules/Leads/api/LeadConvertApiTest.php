@@ -20,7 +20,7 @@ class LeadConvertApiTest extends RestTestBase
 {
     protected $lead;
 
-    public function setup()
+    protected function setUp() : void
     {
         parent::setUp();
         SugarTestHelper::setUp('beanFiles');
@@ -30,7 +30,7 @@ class LeadConvertApiTest extends RestTestBase
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->lead->save();
     }
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestLeadUtilities::removeAllCreatedLeads();

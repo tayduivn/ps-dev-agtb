@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 
 class UpgradeAccessTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         if(!file_exists('.htaccess'))
         {
@@ -41,7 +41,7 @@ class UpgradeAccessTest extends TestCase
     }
 
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

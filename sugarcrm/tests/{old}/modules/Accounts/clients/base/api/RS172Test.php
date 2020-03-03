@@ -32,7 +32,7 @@ class RS172Test extends TestCase
     /** @var Meeting */
     protected $meeting = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -44,7 +44,7 @@ class RS172Test extends TestCase
         $this->account = SugarTestAccountUtilities::createAccount();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->call instanceof Call) {
             $this->call->mark_deleted($this->call->id);

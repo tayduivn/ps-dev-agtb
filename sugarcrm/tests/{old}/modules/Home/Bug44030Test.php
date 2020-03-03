@@ -16,7 +16,7 @@ class Bug44030Test extends TestCase
 {
 	var $unified_search_modules_file;
 
-    public function setUp()
+    protected function setUp() : void
     {
 	    global $beanList, $beanFiles, $dictionary;
 
@@ -58,7 +58,7 @@ EOQ;
 		}
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
 	    global $beanList, $beanFiles, $dictionary;
 

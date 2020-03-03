@@ -18,7 +18,7 @@ class Bug58282Test extends TestCase
     /** @var Account */
     private $account;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
@@ -43,17 +43,17 @@ class Bug58282Test extends TestCase
         );
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->account = SugarTestAccountUtilities::createAccount();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();

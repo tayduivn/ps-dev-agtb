@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PAT1334Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {        
         VardefManager::loadVardef('Contacts', 'Contact');        
     }

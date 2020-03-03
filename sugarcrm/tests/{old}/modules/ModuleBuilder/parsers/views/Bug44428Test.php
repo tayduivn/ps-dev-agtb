@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug44428Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         global $beanList, $beanFiles;
         require('include/modules.php');
@@ -28,7 +28,7 @@ class Bug44428Test extends TestCase
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['beanList']);

@@ -31,7 +31,7 @@ class Bug44206Test extends TestCase
      *
      * Creates a temporary opportunity
      */
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         SugarTestHelper::setUp('beanFiles');
@@ -48,7 +48,7 @@ class Bug44206Test extends TestCase
      *
      * Removes temporary opportunity
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

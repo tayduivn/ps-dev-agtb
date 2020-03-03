@@ -34,7 +34,7 @@ class Bug64655AliasTest extends TestCase
      */
     private static $fieldName = 'bug64655_abcdefghijklmnopqrs';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // this test will fail in developer mode because VarDefManager will
         // rebuild User's vardefs
@@ -60,7 +60,7 @@ class Bug64655AliasTest extends TestCase
         SugarTestHelper::setUp('current_user', array(true, true));
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         // create regular user with custom field populated
         $user = $this->user = SugarTestUserUtilities::createAnonymousUser(false, 0);
@@ -73,7 +73,7 @@ class Bug64655AliasTest extends TestCase
         $account->save();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }

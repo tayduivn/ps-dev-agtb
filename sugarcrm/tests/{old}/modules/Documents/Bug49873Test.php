@@ -26,7 +26,7 @@ class Bug49873Test extends TestCase
 	var $doc = null;
     var $contract = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $currentModule, $beanFiles, $beanList;
         include('include/modules.php');
@@ -46,7 +46,7 @@ class Bug49873Test extends TestCase
         $this->doc->contracts->add($this->contract->id);
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

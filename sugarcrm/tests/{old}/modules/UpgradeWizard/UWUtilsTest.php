@@ -18,7 +18,7 @@ class UWUtilsTest extends TestCase
 {
     private $job;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -33,7 +33,7 @@ class UWUtilsTest extends TestCase
         $db->query("UPDATE opportunities SET deleted = 1");
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         $db = DBManagerFactory::getInstance();
@@ -41,7 +41,7 @@ class UWUtilsTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

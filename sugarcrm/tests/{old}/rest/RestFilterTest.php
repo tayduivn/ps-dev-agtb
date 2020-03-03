@@ -13,7 +13,7 @@
 
 class RestFilterTest extends RestTestBase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -57,7 +57,7 @@ class RestFilterTest extends RestTestBase
         SugarRelationship::resaveRelatedBeans();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
 

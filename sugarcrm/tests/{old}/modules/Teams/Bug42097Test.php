@@ -17,12 +17,12 @@ class Bug42097Test extends TestCase
 {
 	var $testUser;
 	
-    public function setUp() 
+    protected function setUp() : void
     {  
        $this->testUser = SugarTestUserUtilities::createAnonymousUser();
     }    
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	   $this->testUser = null;

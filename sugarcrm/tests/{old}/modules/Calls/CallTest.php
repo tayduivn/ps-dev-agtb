@@ -20,7 +20,7 @@ class CallTest extends TestCase
     private $callid;
     public $contact = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
@@ -31,7 +31,7 @@ class CallTest extends TestCase
         $this->contact = $contact;        
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCallUtilities::removeCallUsers();
         SugarTestCallUtilities::removeCallContacts();

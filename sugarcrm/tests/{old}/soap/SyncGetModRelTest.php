@@ -20,7 +20,7 @@ class SyncGetModRelTest extends SOAPTestCase
 {
     private $_tsk = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         // sync_get_modified_relationships is not registered in Services.
         $this->markTestSkipped("sync_get_modified_relationships is not registered in Services. Probably testing dead code.");
@@ -31,7 +31,7 @@ class SyncGetModRelTest extends SOAPTestCase
         $this->_tsk->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM tasks WHERE id = '{$this->_tsk->id}'");
         parent::tearDown();

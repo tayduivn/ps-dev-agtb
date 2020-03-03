@@ -27,7 +27,7 @@ class RecordListApiTest extends TestCase
      */
     protected $serviceMock;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -37,7 +37,7 @@ class RecordListApiTest extends TestCase
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -22,14 +22,14 @@ class GetEntryListByRelatedFieldTest extends SOAPTestCase
     /** @var Contact */
     private $contact;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->account = SugarTestAccountUtilities::createAccount();
 
@@ -45,7 +45,7 @@ class GetEntryListByRelatedFieldTest extends SOAPTestCase
         $this->_login();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
@@ -53,7 +53,7 @@ class GetEntryListByRelatedFieldTest extends SOAPTestCase
         parent::tearDown();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

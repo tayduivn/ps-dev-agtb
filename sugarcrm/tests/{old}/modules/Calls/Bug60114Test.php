@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug60114Test extends TestCase
 {
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
@@ -24,7 +24,7 @@ class Bug60114Test extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -30,7 +30,7 @@ class FileLoaderTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         foreach (array_unique($this->testFiles) as $file) {
             unlink($file);

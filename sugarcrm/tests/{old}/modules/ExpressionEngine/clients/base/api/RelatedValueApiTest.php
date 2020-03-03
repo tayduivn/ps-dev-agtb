@@ -32,7 +32,7 @@ class RelatedValueApiTest extends TestCase
      */
     protected $contact;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -46,7 +46,7 @@ class RelatedValueApiTest extends TestCase
         $this->account->save();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

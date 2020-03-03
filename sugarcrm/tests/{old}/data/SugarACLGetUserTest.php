@@ -19,7 +19,7 @@ class SugarACLGetUserTest extends TestCase
 {
     protected $bean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarACL::$acls = array();
         if(!$this->bean)
@@ -33,7 +33,7 @@ class SugarACLGetUserTest extends TestCase
         SugarTestHelper::setUp("current_user");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         SugarACL::$acls = array();

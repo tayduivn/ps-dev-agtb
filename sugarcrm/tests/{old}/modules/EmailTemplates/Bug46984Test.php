@@ -22,7 +22,7 @@ class Bug46984Test extends TestCase
 {
     private $_user;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -36,7 +36,7 @@ class Bug46984Test extends TestCase
         $GLOBALS['current_user'] = $this->_user;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

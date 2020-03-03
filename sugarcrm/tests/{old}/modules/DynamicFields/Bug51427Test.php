@@ -30,7 +30,7 @@ class Bug51427Test extends TestCase
     private $test_field;
     private $test_standart_field;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $dictionary, $bean_list;
 
@@ -46,7 +46,7 @@ class Bug51427Test extends TestCase
         $this->bean_name = get_valid_bean_name($this->test_standart_field->module);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $dictionary, $bean_list;
 

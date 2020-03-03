@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class EmailManTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestCampaignUtilities::removeAllCreatedCampaignLogs();

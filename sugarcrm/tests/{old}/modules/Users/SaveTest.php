@@ -22,20 +22,20 @@ class SaveTest extends TestCase
     protected $savedTabs;
     protected $currUser;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user', array(true, 1));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDownAfterClass();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->tabs = new TabController();
@@ -43,7 +43,7 @@ class SaveTest extends TestCase
         $this->currUser = $GLOBALS['current_user'];
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->tabs->set_user_tabs($this->savedTabs, $GLOBALS['current_user'], 'display');
         $GLOBALS['current_user'] = $this->currUser;

@@ -17,7 +17,7 @@ class Bug42915Test extends TestCase
     public $previousCurrentUser;
     public $saved_search_id;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $this->previousCurrentUser = $current_user;
@@ -36,7 +36,7 @@ class Bug42915Test extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['current_user']->setPreference('num_grp_sep', null, 0, 'global');
         $GLOBALS['current_user']->setPreference('dec_sep', null, 0, 'global');

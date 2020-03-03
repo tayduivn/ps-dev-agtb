@@ -21,19 +21,19 @@ class EmailAddressesApiTest extends TestCase
     protected $service;
     private $configOptoutBackUp;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
@@ -42,7 +42,7 @@ class EmailAddressesApiTest extends TestCase
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if (isset($this->configOptoutBackUp)) {
             $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $this->configOptoutBackUp;

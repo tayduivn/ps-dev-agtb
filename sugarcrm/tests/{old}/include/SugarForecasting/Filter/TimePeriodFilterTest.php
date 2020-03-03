@@ -20,7 +20,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
     /**
      * Setup global variables
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts', 'base');
@@ -32,7 +32,8 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
         }
     }
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -45,12 +46,13 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
     /**
      * Call SugarTestHelper to teardown initialization in setUpBeforeClass
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::updateForecastSettings(self::$currentSettings);        
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         SugarTestHelper::tearDown();
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM timeperiods WHERE deleted = 0");

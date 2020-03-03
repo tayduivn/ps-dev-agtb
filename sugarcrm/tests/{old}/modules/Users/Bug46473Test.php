@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug46473Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete('This test will fail when the entire suite is run.  Probably needs mock objects for the list view objects');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
@@ -26,7 +26,7 @@ class Bug46473Test extends TestCase
         $_REQUEST['module'] = 'Users';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['action']);

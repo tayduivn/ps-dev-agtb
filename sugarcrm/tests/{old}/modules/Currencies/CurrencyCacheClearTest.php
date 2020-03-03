@@ -16,7 +16,7 @@ class CurrencyCacheClearTest extends TestCase
 {
     protected $testCacheFile;
 
-    public function setUp()
+    protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -34,7 +34,7 @@ class CurrencyCacheClearTest extends TestCase
         MetaDataManager::clearAPICache(true);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_POST = array();
         if ( file_exists($this->testCacheFile) ) {

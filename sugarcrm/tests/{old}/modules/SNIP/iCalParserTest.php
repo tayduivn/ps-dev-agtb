@@ -19,7 +19,8 @@ class iCalParserTest extends TestCase
 {
     static protected $e;
 
-    static public function setUpBeforeClass() {
+    public static function setUpBeforeClass() : void
+    {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, true));
@@ -31,7 +32,8 @@ class iCalParserTest extends TestCase
         self::$e->save();
     }
 
-    static public function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void
+    {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestEmailUtilities::removeAllCreatedEmails();
         // delete it in case it's created, outlook_id is from Bug53942Test.ics

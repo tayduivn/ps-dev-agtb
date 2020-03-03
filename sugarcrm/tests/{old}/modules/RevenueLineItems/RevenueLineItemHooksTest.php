@@ -19,7 +19,7 @@ class RevenueLineItemHooksTest extends TestCase
      */
     protected $rli;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestForecastUtilities::setUpForecastConfig(array(
             'sales_stage_won' => array('Closed Won'),
@@ -27,7 +27,7 @@ class RevenueLineItemHooksTest extends TestCase
         ));
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
@@ -35,14 +35,14 @@ class RevenueLineItemHooksTest extends TestCase
         $this->rli = $this->createPartialMock('RevenueLineItem', array('save'));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->rli = null;
         SugarTestHelper::tearDown();
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
     }

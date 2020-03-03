@@ -13,7 +13,7 @@
 
 
 class RestBug55141Test extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -21,7 +21,7 @@ class RestBug55141Test extends RestTestBase {
         MetaDataManager::clearAPICache();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
     }

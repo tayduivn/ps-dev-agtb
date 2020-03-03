@@ -15,25 +15,25 @@ use PHPUnit\Framework\TestCase;
 
 class Bug43143Test extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
 
-	public static function tearDownAfterClass()
-	{
+    public static function tearDownAfterClass(): void
+    {
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 	}
 
-	public function setUp()
+    protected function setUp() : void
 	{
 	    $this->bean = new Opportunity();
 	    $this->defs = $this->bean->field_defs;
 	    $this->timedate = $GLOBALS['timedate'];
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    $this->bean->field_defs = $this->defs;
         $GLOBALS['timedate']->clearCache();

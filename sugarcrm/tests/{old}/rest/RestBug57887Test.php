@@ -42,7 +42,7 @@ class RestBug57887Test extends RestTestBase
      */
     protected $_backedUp = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -70,7 +70,7 @@ class RestBug57887Test extends RestTestBase
         TimeDate::getInstance()->allow_cache = false;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Clear the cache
         $this->_clearMetadataCache();

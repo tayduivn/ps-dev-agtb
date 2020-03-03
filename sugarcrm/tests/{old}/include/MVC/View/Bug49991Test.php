@@ -26,8 +26,8 @@ class Bug49991Test extends TestCase
 var $mock;
 var $sourceBackup;
 
-public function setUp()
-{
+    protected function setUp() : void
+    {
     $this->mock = new Bug49991SugarViewMock();
     mkdir_recursive('custom/modules/Connectors/tpls');
     if(file_exists('custom/modules/Connectors/tpls/source_properties.tpl'))
@@ -37,8 +37,8 @@ public function setUp()
     copy('modules/Connectors/tpls/source_properties.tpl', 'custom/modules/Connectors/tpls/source_properties.tpl');
 }
 
-public function tearDown()
-{
+    protected function tearDown() : void
+    {
     if(!empty($this->sourceBackup))
     {
         file_put_contents('custom/modules/Connectors/tpls/source_properties.tpl', $this->sourceBackup);

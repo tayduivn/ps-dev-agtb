@@ -27,13 +27,13 @@ class LoggerApiTest extends TestCase
      */
     protected $serviceMock;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->api = new LoggerApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

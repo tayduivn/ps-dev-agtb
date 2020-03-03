@@ -16,7 +16,7 @@ class Bug41051Test extends TestCase
 {
     private $revert = array();
 
-    public function setup()
+    protected function setUp() : void
     {
         $trackerManager = TrackerManager::getInstance();
         $this->revert['disabledMonitors'] = $trackerManager->getDisabledMonitors();
@@ -26,7 +26,7 @@ class Bug41051Test extends TestCase
         $trackerManager->setDisabledMonitors(array());
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $trackerManager = TrackerManager::getInstance();
         $trackerManager->setDisabledMonitors($this->revert['disabledMonitors']);

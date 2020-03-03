@@ -21,7 +21,7 @@ class GetEntriesCountTest extends SOAPTestCase
     /**
      * Create test user
      */
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
     }

@@ -24,7 +24,7 @@ class Bug58774Test extends TestCase
         'cache/modules/Calls/Callvardefs.php',
     );
     
-    public function setUp()
+    protected function setUp() : void
     {
         if (isset($GLOBALS['dictionary']['Call'])) {
             $this->_originalDictionary = $GLOBALS['dictionary']['Call'];
@@ -49,7 +49,7 @@ class Bug58774Test extends TestCase
         $this->_originalRequest = array('r' => $_REQUEST, 'p' => $_POST);
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_REQUEST = $this->_originalRequest['r'];
         $_POST = $this->_originalRequest['p'];

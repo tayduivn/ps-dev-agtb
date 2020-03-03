@@ -21,19 +21,19 @@ class SugarEmailAddressOptOutTest extends TestCase
 {
     private $configOptoutBackUp;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function setup()
+    protected function setUp() : void
     {
         if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
         }
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
 

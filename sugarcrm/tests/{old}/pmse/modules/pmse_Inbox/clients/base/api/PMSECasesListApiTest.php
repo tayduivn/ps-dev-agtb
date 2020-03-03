@@ -30,7 +30,7 @@ class PMSECasesListApiTest extends TestCase
      * Create the minimum amount of data in the DB needed to get 1 record to return
      * from our API call.
      */
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', [true, 1]);
         $this->api = SugarTestRestUtilities::getRestServiceMock();
@@ -62,7 +62,7 @@ class PMSECasesListApiTest extends TestCase
     /**
      * Clean database of newly created records
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestBpmUtilities::removeAllCreatedBpmObjects();
     }

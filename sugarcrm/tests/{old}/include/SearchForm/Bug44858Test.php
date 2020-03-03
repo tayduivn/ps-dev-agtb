@@ -16,13 +16,13 @@ require_once "include/SearchForm/SearchForm2.php";
 
 class Bug44858Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
 	{
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         //$this->useOutputBuffering = true;
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

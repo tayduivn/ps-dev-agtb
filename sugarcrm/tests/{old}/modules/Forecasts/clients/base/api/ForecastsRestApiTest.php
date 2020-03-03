@@ -25,7 +25,7 @@ class ForecastsRestApiTest extends TestCase
     private static $employee3;
     private static $employee4;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestForecastUtilities::setUpForecastConfig();
 
@@ -54,13 +54,13 @@ class ForecastsRestApiTest extends TestCase
         self::$employee4->save();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();

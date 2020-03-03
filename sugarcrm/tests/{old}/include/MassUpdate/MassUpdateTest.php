@@ -16,13 +16,13 @@ require_once 'include/dir_inc.php';
 
 class MassUpdateTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 		$GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

@@ -16,7 +16,7 @@ class Bug56719Test extends TestCase
 {
     private static $user;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$user  = SugarTestUserUtilities::createAnonymousUser();
 
@@ -51,7 +51,7 @@ class Bug56719Test extends TestCase
         $teams[4]->save();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();

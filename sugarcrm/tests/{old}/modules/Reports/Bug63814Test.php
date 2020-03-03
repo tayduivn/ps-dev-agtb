@@ -19,14 +19,14 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug63814Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestHelper::tearDown();

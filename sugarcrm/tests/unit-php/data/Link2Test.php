@@ -23,12 +23,12 @@ require_once 'data/Relationships/SugarRelationship.php';
  */
 class Link2Test extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['log'] = $this->createMock(LoggerManager::class);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['log']);
     }

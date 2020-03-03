@@ -19,7 +19,7 @@ class Bug46122Test extends TestCase
     var $modulesHookFile = 'custom/modules/logic_hooks.php';
     var $contactsHookFile = 'custom/modules/Contacts/logic_hooks.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         //Setup mock logic hook files
         if(file_exists($this->modulesHookFile))
@@ -41,7 +41,7 @@ class Bug46122Test extends TestCase
         LogicHook::refreshHooks();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //Remove the custom logic hook files
         if($this->hasCustomModulesLogicHookFile && file_exists($this->modulesHookFile.'.bak'))

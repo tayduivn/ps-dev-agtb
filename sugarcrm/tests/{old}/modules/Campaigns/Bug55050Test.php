@@ -47,7 +47,7 @@ class Bug55050Test extends TestCase
         $campaign_log->save();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $timedate, $sugar_config;
 
@@ -162,7 +162,7 @@ class Bug55050Test extends TestCase
         $sugar_config['list_max_entries_per_subpanel'] = 1;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
 

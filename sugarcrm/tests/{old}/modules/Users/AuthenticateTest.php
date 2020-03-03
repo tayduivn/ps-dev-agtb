@@ -16,7 +16,7 @@ class AuthenticateTest extends TestCase
 {
 	protected $_user = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['app'] = new SugarApplication();
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -28,7 +28,7 @@ class AuthenticateTest extends TestCase
     	$_SESSION['isMobile'] = null;
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    unset($GLOBALS['current_user']);
 	    $GLOBALS['sugar_config'] = $this->sugar_config_old;

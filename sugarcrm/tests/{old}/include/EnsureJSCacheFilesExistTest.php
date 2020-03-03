@@ -22,7 +22,7 @@ class EnsureJSCacheFilesExistTest extends TestCase
         "cache/include/javascript/sugar_grp1_jquery.js",
     );
 
-    protected function setup() 
+    protected function setUp() : void
     {
         // Remove all current javascript cache files
         $files = glob("cache/include/javascript/*.js");

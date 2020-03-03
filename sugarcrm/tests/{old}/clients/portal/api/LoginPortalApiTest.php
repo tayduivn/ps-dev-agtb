@@ -38,7 +38,7 @@ class LoginPortalApiTest extends TestCase
      */
     public static $service;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -75,7 +75,7 @@ class LoginPortalApiTest extends TestCase
         self::$service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$service = null;
         self::$OAuthApi = null;

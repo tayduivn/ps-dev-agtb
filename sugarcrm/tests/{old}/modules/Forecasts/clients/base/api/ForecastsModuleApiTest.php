@@ -24,7 +24,7 @@ class ForecastsModuleApiTest extends TestCase
      */
     protected $serviceMock;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
@@ -33,13 +33,13 @@ class ForecastsModuleApiTest extends TestCase
         SugarTestForecastUtilities::setTimePeriod(SugarTestTimePeriodUtilities::createTimePeriod());
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->api = new ForecastsModuleApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::setTimePeriod(null);
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();

@@ -23,7 +23,7 @@ class CheckOutputTest extends TestCase
     /** @var UpgradeDriver */
     protected $upgradeDriver = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -32,7 +32,7 @@ class CheckOutputTest extends TestCase
         $this->upgradeDriver->context = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -243,7 +243,8 @@ class ImportEmailTest extends TestCase
 	}
 
 
-	public function setUp () {
+    protected function setUp() : void
+    {
 	    // setup test user and initiate snip
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("beanList");
@@ -256,8 +257,8 @@ class ImportEmailTest extends TestCase
 		$this->date_time_format = $timedate->get_date_time_format();
 	}
 
-	public function tearDown ()
-	{
+    protected function tearDown() : void
+    {
 		// delete emails that were imported
     	$GLOBALS['db']->query("DELETE FROM emails WHERE id = '{$this->email_id}'");
     	$GLOBALS['db']->query("DELETE FROM emails_text WHERE email_id = '{$this->email_id}'");

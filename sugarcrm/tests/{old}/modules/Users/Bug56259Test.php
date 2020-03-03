@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug56259Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
     }

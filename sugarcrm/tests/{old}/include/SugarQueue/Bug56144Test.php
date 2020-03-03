@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug56144 extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->jq = new SugarJobQueue();
     }
@@ -48,7 +48,7 @@ class Bug56144 extends TestCase
         $this->assertNotEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='unittest'");
     }

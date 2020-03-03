@@ -16,7 +16,7 @@ class Bug50678Test extends TestCase
 {
     private $_backupConfig;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
 
@@ -30,7 +30,7 @@ class Bug50678Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         $sugar_config = $this->_backupConfig;

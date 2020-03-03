@@ -17,7 +17,7 @@ class CronTest extends TestCase
     static public $jobCalled = false;
     public $cron_config;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         // clean up queue
@@ -29,7 +29,7 @@ class CronTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->jq = $jobq = new SugarCronJobs();
         self::$jobCalled = false;
@@ -38,7 +38,7 @@ class CronTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='unittest'");
         if(isset($GLOBALS['sugar_config']['cron'])) {

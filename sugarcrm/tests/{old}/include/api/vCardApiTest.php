@@ -17,14 +17,15 @@ use PHPUnit\Framework\TestCase;
  */
 class vCardApiTest extends TestCase
 {
-    public function setUp(){
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('ACLStatic');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();

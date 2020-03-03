@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug42744Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();

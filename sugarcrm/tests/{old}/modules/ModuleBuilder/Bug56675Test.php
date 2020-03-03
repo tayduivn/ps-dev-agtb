@@ -19,7 +19,8 @@ class Bug56675Test extends TestCase
     public $mbModule;
     public $dirname  = 'custom/modulebuilder/packages/test/modules/test/clients/';
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('current_user');
         $GLOBALS['current_user']->is_admin = true;
         SugarTestHelper::setUp('app_list_strings');
@@ -48,7 +49,8 @@ class Bug56675Test extends TestCase
         unset($_REQUEST['description']);
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         $_REQUEST['package'] = 'test';
         $_REQUEST['module'] = 'test';
         $_REQUEST['view_module'] = 'test';

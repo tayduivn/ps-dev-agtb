@@ -20,7 +20,7 @@ class Bug41985Test extends TestCase
     protected $_contact;
     protected $_account;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
@@ -74,7 +74,7 @@ class Bug41985Test extends TestCase
         $GLOBALS['db']->commit(); // Making sure we commit any changes
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->df->deleteField($this->field);
 

@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PdfManagerHooksTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         \SugarAutoLoader::load('../../modules/PdfManager/PdfManagerHooks.php');
         \SugarAutoLoader::load('../../modules/PdfManager/PdfManager.php');

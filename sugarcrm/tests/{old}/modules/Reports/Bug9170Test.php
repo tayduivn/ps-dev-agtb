@@ -17,7 +17,7 @@ class Bug9170Test extends TestCase
 {
     private $rs;
     
-	public function setUp() 
+    protected function setUp() : void
     {
 		$this->rs = new ReportSchedule();
 	}
@@ -113,7 +113,7 @@ class Bug9170Test extends TestCase
             $expectedDateTimestamp > ($nextRunTimestamp - 60), "Unable to update scheduled report.");
 	}
 	
-	public function tearDown() 
+    protected function tearDown() : void
     {
         $GLOBALS['db']->truncateTableSQL($this->rs->table_name);
 	}

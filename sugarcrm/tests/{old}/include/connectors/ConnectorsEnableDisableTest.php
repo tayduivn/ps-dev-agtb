@@ -29,7 +29,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         'custom/modules/Connectors/metadata/searchdefs.php',
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('app_list_strings');
@@ -38,7 +38,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         $this->removeCustomConnectorFiles();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // This tears down all of the setup items and restores backed up files
         SugarTestHelper::tearDown();

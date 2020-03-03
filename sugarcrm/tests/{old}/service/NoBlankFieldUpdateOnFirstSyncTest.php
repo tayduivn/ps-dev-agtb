@@ -29,7 +29,7 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
     var $c = null;
     var $c2 = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
@@ -69,7 +69,7 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $current_user;
         SugarTestContactUtilities::removeAllCreatedContacts();

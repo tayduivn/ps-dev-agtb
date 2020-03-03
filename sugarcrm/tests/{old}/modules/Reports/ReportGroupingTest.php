@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ReportGroupingTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true));
 
@@ -37,7 +37,7 @@ class ReportGroupingTest extends TestCase
         SugarTestAccountUtilities::createAccount();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();

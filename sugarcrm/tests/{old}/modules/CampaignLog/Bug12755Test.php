@@ -19,14 +19,14 @@ class Bug12755Test extends TestCase
     protected $emailAddress = 'unittest@example.com';
     protected $_user;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $this->_user->emailAddress->addAddress($this->emailAddress, false, false, 0);
         $this->_user->emailAddress->save($this->_user->id, $this->_user->module_dir);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $query = "DELETE from email_addresses where email_address = '{$this->emailAddress}'";

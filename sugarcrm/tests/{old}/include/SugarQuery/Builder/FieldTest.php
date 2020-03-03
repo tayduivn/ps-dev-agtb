@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class FieldTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestCaseUtilities::removeAllCreatedCases();

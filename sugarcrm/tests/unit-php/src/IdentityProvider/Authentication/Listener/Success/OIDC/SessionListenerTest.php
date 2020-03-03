@@ -74,7 +74,7 @@ class SessionListenerTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->accessToken = 'test_' . time();
 
@@ -114,7 +114,7 @@ class SessionListenerTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $_SESSION = $this->currentSession;
         $_SERVER = $this->currentServer;

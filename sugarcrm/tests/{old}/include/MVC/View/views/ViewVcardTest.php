@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ViewVcardTest extends TestCase
 {   
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
     }

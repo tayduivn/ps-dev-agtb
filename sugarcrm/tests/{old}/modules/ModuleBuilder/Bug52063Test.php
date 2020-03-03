@@ -72,7 +72,7 @@ class Bug52063Test extends TestCase
         "view_module" => "Accounts",
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
         return;
@@ -93,7 +93,7 @@ class Bug52063Test extends TestCase
         $mbc->action_SaveField();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
         return;

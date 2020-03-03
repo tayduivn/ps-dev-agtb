@@ -17,7 +17,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase {
         'test' => 'preference'
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -30,7 +30,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase {
         $this->_user->savePreferencesToDB();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         // clean up the preferences
         $this->_user->resetPreferences();

@@ -19,7 +19,7 @@ class Bug59196Test extends TestCase
     protected $_customFile = 'custom/include/MVC/Controller/wireless_module_registry.php';
     protected $_backedUp;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -38,7 +38,7 @@ class Bug59196Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_REQUEST = $this->_request;
 

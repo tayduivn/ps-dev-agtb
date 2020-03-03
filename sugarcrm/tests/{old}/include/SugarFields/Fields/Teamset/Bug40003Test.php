@@ -28,7 +28,7 @@ class Bug40003Test extends TestCase
         );
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -41,7 +41,7 @@ class Bug40003Test extends TestCase
     }
 
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_REQUEST = array();
         $_POST = array();

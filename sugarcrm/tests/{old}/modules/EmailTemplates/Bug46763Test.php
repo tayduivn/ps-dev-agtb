@@ -50,7 +50,7 @@ class Bug46763Test extends TestCase
      *
      * Generates custom module localization file
      */
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -91,7 +91,7 @@ class Bug46763Test extends TestCase
      *
      * Removes custom module localization file
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (file_exists($this->file . '.bak')) {
             rename($this->file . '.bak', $this->file);

@@ -20,8 +20,8 @@ class PopulateOppSeedDataTest extends TestCase
 {
 private $createdOpportunities;
 
-function setUp()
-{
+    protected function setUp() : void
+    {
     SugarTestHelper::setUp('beanFiles');
     SugarTestHelper::setUp('beanList');
     SugarTestHelper::setUp('app_list_strings');
@@ -32,8 +32,8 @@ function setUp()
     $GLOBALS['db']->query("UPDATE opportunities SET deleted = 1");
 }
 
-function tearDown()
-{
+    protected function tearDown() : void
+    {
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     SugarTestAccountUtilities::removeAllCreatedAccounts();
     SugarTestProductUtilities::removeAllCreatedProducts();

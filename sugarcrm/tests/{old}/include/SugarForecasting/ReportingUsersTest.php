@@ -22,7 +22,7 @@ class SugarForecasting_ReportingUsersTest extends TestCase
      */
     protected static $cls;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -59,7 +59,7 @@ class SugarForecasting_ReportingUsersTest extends TestCase
         self::$cls = new SugarForecasting_ReportingUsers(array('user_id' => self::$users['mgr']->id));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

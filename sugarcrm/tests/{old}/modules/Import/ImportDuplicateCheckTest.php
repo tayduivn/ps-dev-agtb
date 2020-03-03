@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ImportDuplicateCheckTest extends TestCase
 {
-    public function setUp() 
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -27,7 +27,7 @@ class ImportDuplicateCheckTest extends TestCase
         $GLOBALS['app_strings'] = $app_strings;
     }
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);

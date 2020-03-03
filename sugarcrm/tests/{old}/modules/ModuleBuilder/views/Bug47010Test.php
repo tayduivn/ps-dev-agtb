@@ -14,7 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug47010Test extends TestCase
 {
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $_SESSION['authenticated_user_language'] = 'en_us';
@@ -23,7 +24,8 @@ class Bug47010Test extends TestCase
         $_REQUEST['dropdown_lang'] = 'en_us';
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($_REQUEST['dropdown_name']);
         unset($_REQUEST['dropdown_lang']);
         unset($_SESSION['authenticated_user_language']);

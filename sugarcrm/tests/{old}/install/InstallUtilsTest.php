@@ -19,7 +19,7 @@ class InstallUtilsTest extends TestCase
 {
     private static $configJSContents;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         if(file_exists('config.js')) {
            self::$configJSContents = file_get_contents('config.js');
@@ -27,7 +27,7 @@ class InstallUtilsTest extends TestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         //If we had existing config.js content, copy it back in
         if(!empty(self::$configJSContents)) {

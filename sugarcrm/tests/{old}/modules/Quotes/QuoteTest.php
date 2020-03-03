@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class QuoteTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -23,7 +23,7 @@ class QuoteTest extends TestCase
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();

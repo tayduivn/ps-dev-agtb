@@ -23,7 +23,7 @@ class RS36Test extends TestCase
     /** @var array */
     protected $beans = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +31,7 @@ class RS36Test extends TestCase
         $this->contact = SugarTestContactUtilities::createContact();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         /** @var $bean SugarBean */
         foreach ($this->beans as $bean) {

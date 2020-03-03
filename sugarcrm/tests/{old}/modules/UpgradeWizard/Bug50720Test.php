@@ -25,7 +25,7 @@ class Bug50720Test extends TestCase
     var $customConnectors;
     var $file = 'custom/modules/Connectors/metadata/connectors.php';
     
-    public function setUp() 
+    protected function setUp() : void
     {
         SugarTestHelper::setup('app_list_strings');
         if(file_exists($this->file))
@@ -37,7 +37,7 @@ class Bug50720Test extends TestCase
         }
     }
 
-    public function tearDown() 
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         if(!empty($this->customConnectors))

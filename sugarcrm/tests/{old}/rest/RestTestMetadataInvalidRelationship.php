@@ -12,7 +12,7 @@
 
 
 class RestTestMetadataInvalidRelationship extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -30,7 +30,7 @@ class RestTestMetadataInvalidRelationship extends RestTestBase {
         $GLOBALS['dictionary']['Opportunity']['relationships']['opportunities_badModule'] = $invalidRelationship;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['dictionary']['Opportunity']['relationships']['opportunities_badModule']);
         unset($GLOBALS['current_user']);

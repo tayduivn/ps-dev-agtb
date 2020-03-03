@@ -18,8 +18,8 @@ use PHPUnit\Framework\TestCase;
  */
 class validDateTest extends TestCase
 {
-	public static function setUpBeforeClass()
-	{
+    public static function setUpBeforeClass() : void
+    {
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference("datef", "n/d/Y");
 	}

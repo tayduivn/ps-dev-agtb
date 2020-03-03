@@ -19,13 +19,13 @@ class Bug43343Test extends TestCase
 {
     private $email;
     
-	public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->email = new Email();
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

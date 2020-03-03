@@ -21,7 +21,7 @@ class SugarFieldTeamsetTest extends TestCase
     var $_teamSetId = null;
     var $_contactId = null;
 
-	public function setUp() 
+    protected function setUp() : void
 	{
 		$this->markTestIncomplete(
             'Need to ensure proper cleanup first.'
@@ -44,7 +44,7 @@ class SugarFieldTeamsetTest extends TestCase
 		$app_strings = return_application_language($current_language);
     }    
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $this->_user = null;

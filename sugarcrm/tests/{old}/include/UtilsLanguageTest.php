@@ -25,7 +25,7 @@ class UtilsLanguageTest extends TestCase
         'languages'
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
 
@@ -49,7 +49,7 @@ class UtilsLanguageTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
 

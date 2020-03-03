@@ -18,7 +18,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug44605Test extends TestCase
 {
-    public function setUp() {
+    protected function setUp() : void
+    {
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;

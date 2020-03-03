@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug54858Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->user->email1 = $email = 'test'.uniqid().'@test.com';
@@ -27,7 +27,7 @@ class Bug54858Test extends TestCase
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
     	unset($GLOBALS['current_user']);
     	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

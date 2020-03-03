@@ -20,7 +20,7 @@ class EmailRecipientRelationshipTest extends TestCase
 {
     private $relationship;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         OutboundEmailConfigurationTestHelper::setUp();
         SugarTestHelper::setUp('beanList');
@@ -29,7 +29,7 @@ class EmailRecipientRelationshipTest extends TestCase
         OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestContactUtilities::removeAllCreatedContacts();
@@ -39,12 +39,12 @@ class EmailRecipientRelationshipTest extends TestCase
         OutboundEmailConfigurationTestHelper::tearDown();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         // Clean up any dangling beans that need to be resaved.
         SugarRelationship::resaveRelatedBeans(false);

@@ -24,7 +24,7 @@ class Bug60664Test extends TestCase
      */
     protected static $_modStrings = null;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // We are working directly on mod_strings, so we won't set it up but rather
         // back it up if necessary
@@ -39,7 +39,7 @@ class Bug60664Test extends TestCase
         );
     }
     
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (self::$_modStrings) {
             $GLOBALS['mod_strings'] = self::$_modStrings;

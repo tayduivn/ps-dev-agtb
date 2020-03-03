@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class JSONTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($_SESSION['asychronous_key']);
     }

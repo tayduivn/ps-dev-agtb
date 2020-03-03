@@ -19,7 +19,7 @@ class Bug62487Test extends TestCase
 {
     var $file = "workflow/plugins/Bug62487Test/component_list.php";
 
-    function setUp()
+    protected function setUp() : void
     {
         $this->file = create_custom_directory($this->file);
 
@@ -37,7 +37,7 @@ class Bug62487Test extends TestCase
         write_array_to_file('component_list', $component_list, $this->file);
     }
 
-    function tearDown()
+    protected function tearDown() : void
     {
         rmdir_recursive(dirname($this->file));
     }

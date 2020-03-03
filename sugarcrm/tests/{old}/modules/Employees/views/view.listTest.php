@@ -25,7 +25,7 @@ class EmployeesViewListTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
         $this->sugarConfigBackup = $sugar_config;
@@ -34,7 +34,7 @@ class EmployeesViewListTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         $sugar_config = $this->sugarConfigBackup;

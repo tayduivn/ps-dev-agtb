@@ -20,14 +20,14 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug44819Test extends TestCase
 {
-	public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user", array(true, 1));
     	// Create admin user
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
 		// Clear the admin user created
         SugarTestHelper::tearDown();

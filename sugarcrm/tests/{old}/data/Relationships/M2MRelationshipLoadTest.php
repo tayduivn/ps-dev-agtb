@@ -22,7 +22,7 @@ class M2MRelationshipLoadTest extends TestCase
     private static $opportunity3;
     private static $contact;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
         self::$contact = SugarTestContactUtilities::createContact();
@@ -47,7 +47,7 @@ class M2MRelationshipLoadTest extends TestCase
         self::$contact->load_relationship('opportunities');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestContactUtilities::removeAllCreatedContacts();

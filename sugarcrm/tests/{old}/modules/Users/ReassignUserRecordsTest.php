@@ -19,7 +19,7 @@ class ReassignUserRecordsTest extends TestCase
     private $user2;
     private $bean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -43,7 +43,7 @@ class ReassignUserRecordsTest extends TestCase
         $this->bean->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

@@ -17,7 +17,7 @@ require_once('vendor/nusoap//nusoap.php');
  */
 class GetEntryListOne2ManyTest extends SOAPTestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -25,7 +25,7 @@ class GetEntryListOne2ManyTest extends SOAPTestCase
         SugarTestHelper::setUp("beanFiles");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ( SugarTestContactUtilities::getCreatedContactIds() as $id ) {
             $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id = '{$id}'");

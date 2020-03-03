@@ -44,7 +44,7 @@ class Bug62783Test extends TestCase
         ),
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -55,7 +55,7 @@ class Bug62783Test extends TestCase
         ForecastsDefaults::setupForecastSettings();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();

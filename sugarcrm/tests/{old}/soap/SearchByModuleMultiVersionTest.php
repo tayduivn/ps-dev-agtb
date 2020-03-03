@@ -14,7 +14,7 @@ class SearchByModuleMultiVersionTest extends SOAPTestCase
 {
     private $account;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");

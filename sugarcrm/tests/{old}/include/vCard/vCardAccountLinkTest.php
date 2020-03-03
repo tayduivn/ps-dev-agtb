@@ -17,7 +17,7 @@ class vCardAccountLinkTest extends TestCase
     private $contactId;
     private $leadId;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -28,7 +28,7 @@ class vCardAccountLinkTest extends TestCase
         $account->save();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contactId}'");
         $GLOBALS['db']->query("DELETE FROM leads WHERE id  = '{$this->leadId}'");

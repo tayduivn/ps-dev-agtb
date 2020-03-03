@@ -31,7 +31,8 @@ class Bug45966 extends TestCase
 
     protected $timezone = 'America/Denver';
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
@@ -61,7 +62,7 @@ class Bug45966 extends TestCase
         $GLOBALS['timedate']->allow_cache = false;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset(
             $this->array,

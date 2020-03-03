@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug56391Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
@@ -26,7 +26,7 @@ class Bug56391Test extends TestCase
         SugarTestHelper::setUp('ACLStatic');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->accounts AS $account_id) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");

@@ -16,7 +16,7 @@ require_once('include/SugarCache/SugarCache.php');
 
 class ExternalCacheAPITest extends TestCase
 {
-    public function setUp() 
+    protected function setUp() : void
     {
         $this->_cacheKey1   = 'test cache key 1 '.date("YmdHis");
         $this->_cacheValue1 = 'test cache value 1'.date("YmdHis");
@@ -30,7 +30,7 @@ class ExternalCacheAPITest extends TestCase
             );
     }
 
-    public function tearDown() 
+    protected function tearDown() : void
     {
        // clear out the test cache if we haven't already
        if ( sugar_cache_retrieve($this->_cacheKey1) )

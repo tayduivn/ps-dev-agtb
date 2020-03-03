@@ -78,7 +78,7 @@ class Bug43805Test extends TestCase
     /**
      * Set up - create prospect list with 1 prospect
      */
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();;
@@ -94,7 +94,7 @@ class Bug43805Test extends TestCase
         self::attachProspectToProspectList($this->_prospectList, $this->_prospects[0]);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestProspectUtilities::removeAllCreatedProspects();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

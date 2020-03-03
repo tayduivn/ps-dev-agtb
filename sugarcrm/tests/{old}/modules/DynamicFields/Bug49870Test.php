@@ -18,11 +18,13 @@ class Bug49870Test extends TestCase
 {
     var $field;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         $this->field = get_widget('html');
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($this->field);
     }
 

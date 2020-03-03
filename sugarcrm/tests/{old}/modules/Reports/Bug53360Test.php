@@ -25,7 +25,7 @@ class Bug53360Test extends TestCase
 {
     private $rowsAndColumnsData, $report;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
@@ -37,7 +37,7 @@ class Bug53360Test extends TestCase
         $this->rowsAndColumnsData = $this->_getData();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -29,7 +29,7 @@ class SugarUpgradeRemoveIdmSettingsFromConfigFileTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->upgradeDriver = $this->getMockBuilder('UpgradeDriver')
             ->disableOriginalConstructor()

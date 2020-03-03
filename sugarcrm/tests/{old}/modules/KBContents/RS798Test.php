@@ -19,7 +19,7 @@ class RS798Test extends TestCase
      */
     protected $bean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true));
         SugarTestHelper::setUp('app_list_strings');
@@ -27,7 +27,7 @@ class RS798Test extends TestCase
         $this->bean = SugarTestKBContentUtilities::createBean();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestKBContentUtilities::removeAllCreatedBeans();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

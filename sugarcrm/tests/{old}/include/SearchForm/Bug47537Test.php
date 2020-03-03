@@ -23,7 +23,7 @@ class Bug47537Test extends TestCase
     var $form;
     var $array;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -48,7 +48,8 @@ class Bug47537Test extends TestCase
         );
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($this->array);
         unset($this->form);
         unset($this->seed);

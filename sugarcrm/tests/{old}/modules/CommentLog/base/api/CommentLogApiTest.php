@@ -30,7 +30,7 @@ class CommentLogApiTest extends TestCase
      */
     private static $created_commentlog;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -42,7 +42,7 @@ class CommentLogApiTest extends TestCase
         self::$created_commentlog = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = DBManagerFactory::getInstance();
         $ids = "'" . implode("','", self::$created_commentlog) . "'";

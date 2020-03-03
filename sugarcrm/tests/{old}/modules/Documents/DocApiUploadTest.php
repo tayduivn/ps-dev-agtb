@@ -18,7 +18,7 @@ class DocApiUploadTest extends TestCase
     public $documents;
 
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setup('current_user');
         SugarTestHelper::setUp('files');
@@ -29,7 +29,7 @@ class DocApiUploadTest extends TestCase
         $_FILES = array();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $_FILES = array();
         foreach($this->documents AS $document) {

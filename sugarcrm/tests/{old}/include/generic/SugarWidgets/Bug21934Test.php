@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  **/
 class Bug21934Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -31,7 +31,7 @@ class Bug21934Test extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         global $timedate;

@@ -16,7 +16,8 @@ class FilterDuplicateCheckTest extends TestCase
 {
     private $metadata;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         $this->metadata = array(
             'filter_template' => array(
                 array(

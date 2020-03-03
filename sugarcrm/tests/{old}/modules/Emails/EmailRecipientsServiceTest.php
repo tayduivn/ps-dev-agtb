@@ -22,14 +22,14 @@ class EmailRecipientsServiceTest extends TestCase
     private $emailRecipientsService,
             $salt;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $this->emailRecipientsService = new EmailRecipientsService;
         $this->salt = create_guid();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

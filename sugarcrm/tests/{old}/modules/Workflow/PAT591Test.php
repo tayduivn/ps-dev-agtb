@@ -27,7 +27,7 @@ class BugPAT591Test extends TestCase
     public $contact1;
     public $contact2;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -50,7 +50,7 @@ class BugPAT591Test extends TestCase
         $this->opportunity->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestContactUtilities::removeAllCreatedContacts();

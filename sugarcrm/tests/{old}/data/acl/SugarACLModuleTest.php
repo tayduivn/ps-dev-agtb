@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 /* This unit test class covers the ACLs added for extra modules, this does not cover the Users/Employees modules, those are more intense. */
 class SugarACLModuleTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -26,12 +26,12 @@ class SugarACLModuleTest extends TestCase
         $new_current_user->retrieve($old_current_user->id);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->getAclAction()->clearACLCache();
         $GLOBALS['current_user']->clearAdminForAllModules();

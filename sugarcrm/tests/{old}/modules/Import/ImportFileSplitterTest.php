@@ -17,7 +17,7 @@ class ImportFileSplitterTest extends TestCase
     protected $_goodFile;
     protected $_badFile;
 
-    public function setUp()
+    protected function setUp() : void
     {
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     	$this->_goodFile = SugarTestImportUtilities::createFile(2000, 3);
@@ -25,7 +25,7 @@ class ImportFileSplitterTest extends TestCase
 		$this->_whiteSpaceFile  = SugarTestImportUtilities::createFileWithWhiteSpace();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
   //      SugarTestImportUtilities::removeAllCreatedFiles();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

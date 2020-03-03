@@ -21,7 +21,7 @@ class Bug66276Test extends TestCase
         array('dir' => 'custom/include', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsCustom {}'),
         array('dir' => 'custom/modules/Test', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsModule {}'));
 
-    public function setUp()
+    protected function setUp() : void
     {
         foreach ($this->testFiles as $testFile) {
             if (!file_exists($testFile['dir'])) {
@@ -32,7 +32,7 @@ class Bug66276Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->testFiles as $testFile) {
             if (file_exists($testFile['dir'] . '/' . $testFile['name'])) {

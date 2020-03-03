@@ -21,13 +21,13 @@ class Bug49397Test extends TestCase
     var $user;
     var $user2;
 
-	public function setUp()
+    protected function setUp() : void
 	{
        $this->user = SugarTestUserUtilities::createAnonymousUser();
        $this->user2 = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($this->user);

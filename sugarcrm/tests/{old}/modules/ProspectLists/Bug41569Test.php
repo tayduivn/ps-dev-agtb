@@ -77,7 +77,7 @@ class Bug41569Test extends TestCase
     /**
      * Set up - create prospect list with 2 contacts
      */
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();;
@@ -99,7 +99,7 @@ class Bug41569Test extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

@@ -23,7 +23,7 @@ class UnifiedSearchAdvancedTest extends TestCase
     private $_hasUnifiedSearchModulesConfig = false;
     private $_hasUnifiedSearchModulesDisplay = false;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestSkipped('Does not test things still in use');
         /*
@@ -53,7 +53,7 @@ class UnifiedSearchAdvancedTest extends TestCase
         */
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         /*
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_contact->id}'");

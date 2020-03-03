@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarTestImportUtilitiesTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown() : void
     {
      //   SugarTestImportUtilities::removeAllCreatedFiles();
     }

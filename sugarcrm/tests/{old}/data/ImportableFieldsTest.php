@@ -17,7 +17,7 @@ class ImportableFieldsTest extends TestCase
 {
     protected $myBean;
 
-	public function setUp()
+    protected function setUp() : void
 	{
         SugarTestHelper::setUp("current_user");
 
@@ -42,7 +42,7 @@ class ImportableFieldsTest extends TestCase
         );
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		unset($this->time_date);
 	}

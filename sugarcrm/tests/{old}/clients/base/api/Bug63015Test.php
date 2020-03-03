@@ -25,14 +25,14 @@ class Bug63015Test extends TestCase
     public $serviceMock;
     public $accountIds;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("current_user");
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->moduleApi = new ModuleApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
@@ -43,13 +43,13 @@ class Bug63015Test extends TestCase
         $this->accountIds[] = $account->id;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // delete the bunch of accounts created
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id in('".implode("','", $this->accountIds)."')");
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

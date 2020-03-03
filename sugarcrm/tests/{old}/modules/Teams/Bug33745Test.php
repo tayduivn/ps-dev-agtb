@@ -18,7 +18,7 @@ class Bug33745 extends TestCase
     var $set_silent_upgrade = false;
     var $created_anonymous_user = false;
     
-    public function setUp() 
+    protected function setUp() : void
     {
        if(!isset($_SESSION['silent_upgrade'])) {
        	  $_SESSION['silent_upgrade'] = true;
@@ -31,7 +31,7 @@ class Bug33745 extends TestCase
        }
     }    
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
        if($this->set_silent_upgrade) {
        	  unset($_SESSION['silent_upgrade']);

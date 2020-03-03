@@ -21,7 +21,7 @@ use SugarTestHelper;
  */
 class ElasticTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -30,7 +30,7 @@ class ElasticTest extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

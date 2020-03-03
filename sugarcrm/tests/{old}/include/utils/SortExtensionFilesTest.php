@@ -18,7 +18,7 @@ class SortExtensionFilesTest extends TestCase
 {
     public static $test_directory = 'custom/sort_extension_files_test/';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         create_custom_directory('sort_extension_files_test');
 
@@ -28,7 +28,7 @@ class SortExtensionFilesTest extends TestCase
         sugar_touch(self::getTestFilePath('_overridefile3.php'));
     } 
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (is_dir(self::$test_directory)) {
             rmdir_recursive(self::$test_directory);

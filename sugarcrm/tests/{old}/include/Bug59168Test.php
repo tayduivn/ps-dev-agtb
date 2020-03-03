@@ -16,7 +16,7 @@ require_once 'include/utils.php';
 
 class Bug59168Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
@@ -41,7 +41,7 @@ class Bug59168Test extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

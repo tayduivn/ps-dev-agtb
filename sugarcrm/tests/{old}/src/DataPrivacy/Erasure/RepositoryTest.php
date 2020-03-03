@@ -37,7 +37,7 @@ class RepositoryTest extends TestCase
      */
     private $id;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $container = Container::getInstance();
         $this->repo = $container->get(Repository::class);

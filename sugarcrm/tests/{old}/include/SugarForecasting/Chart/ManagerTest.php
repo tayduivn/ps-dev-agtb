@@ -20,7 +20,7 @@ class SugarForecasting_Chart_ManagerTest extends TestCase
      */
     protected $obj;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->obj = $this->getMockBuilder('SugarForecasting_Chart_Manager')
             ->setMethods(array('getForecastConfig', 'getTimeperiod', 'getRollupQuota', 'getModuleLanguage'))

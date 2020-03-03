@@ -21,7 +21,7 @@ class MeetingTest extends TestCase
     public $contact = null;
     public $lead = null;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
@@ -47,7 +47,7 @@ class MeetingTest extends TestCase
         $this->lead = $lead;
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeMeetingUsers();
         SugarTestMeetingUtilities::removeMeetingContacts();

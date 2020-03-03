@@ -17,7 +17,7 @@ class SidecarThemeTest extends TestCase
     private $platformTest = 'platform_TEST_123456789E_1234';
     private $themeTest = 'theme_TEST_123456789E_1234';
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarCache::instance()->flush();
         // Clear out the test folders

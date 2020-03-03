@@ -99,7 +99,7 @@ class Bug61736Test extends TestCase
         "view_package" => "p1",
     );
     
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // Basic setup of the environment
         SugarTestHelper::setUp('current_user', array(true, true));
@@ -124,7 +124,7 @@ class Bug61736Test extends TestCase
         $mbc->action_SaveField();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // Set the request to delete the test field
         $vars = self::$_deleteFieldRequestVars;

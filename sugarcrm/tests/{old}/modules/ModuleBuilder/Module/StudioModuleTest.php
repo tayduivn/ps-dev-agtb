@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 class StudioModuleTest extends TestCase
 {
-	public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -29,7 +29,7 @@ class StudioModuleTest extends TestCase
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
     
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);

@@ -40,7 +40,7 @@ class Bug66568Test extends TestCase
         ),
     );
 
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -61,7 +61,7 @@ class Bug66568Test extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
 

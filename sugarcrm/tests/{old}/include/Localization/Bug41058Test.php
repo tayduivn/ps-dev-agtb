@@ -21,7 +21,8 @@ class Bug41058Test extends TestCase
     var $backupSystemLocaleNameFormat;
     var $loc;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         global $sugar_config;
 
         $this->backupConfig = $sugar_config;
@@ -38,7 +39,8 @@ class Bug41058Test extends TestCase
         }
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         global $sugar_config, $sugar_version, $mod_strings;
 
         if (file_exists($this->loc->invalidNameFormatUpgradeFilename)) {

@@ -15,13 +15,14 @@ use PHPUnit\Framework\TestCase;
 
 class TrackerManagerTest extends TestCase
 {
-	function setUp() {
+    protected function setUp() : void
+    {
 		$user = new User();
 		$user->retrieve('1');
 		$GLOBALS['current_user'] = $user;
 	}
-	
-    function tearDown()
+
+    protected function tearDown() : void
     {
     	$trackerManager = TrackerManager::getInstance();
     	$trackerManager->unPause();

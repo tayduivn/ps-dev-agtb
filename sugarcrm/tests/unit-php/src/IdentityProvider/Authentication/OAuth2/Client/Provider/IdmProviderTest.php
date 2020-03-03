@@ -58,7 +58,7 @@ class IdmProviderTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->beanList = isset($GLOBALS['beanList']) ? $GLOBALS['beanList'] : null;
         $GLOBALS['beanList'] = [
@@ -105,7 +105,7 @@ class IdmProviderTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['beanList'] = $this->beanList;
         parent::tearDown();

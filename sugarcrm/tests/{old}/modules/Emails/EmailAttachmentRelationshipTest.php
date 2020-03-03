@@ -20,25 +20,25 @@ class EmailAttachmentRelationshipTest extends TestCase
 {
     private $relationship;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestNoteUtilities::removeAllCreatedNotes();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_attachments');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         // Clean up any dangling beans that need to be resaved.
         SugarRelationship::resaveRelatedBeans(false);

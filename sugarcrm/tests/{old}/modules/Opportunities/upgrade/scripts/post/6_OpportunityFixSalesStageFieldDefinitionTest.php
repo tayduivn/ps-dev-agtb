@@ -13,14 +13,14 @@
 
 class SugarUpgradeOpportunityFixSalesStageFieldDefinitionTest extends UpgradeTestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->db = DBManagerFactory::getInstance();
         $this->scriptFileName = '6_OpportunityFixSalesStageFieldDefinition';
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         parent::tearDown();

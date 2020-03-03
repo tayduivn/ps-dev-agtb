@@ -29,7 +29,7 @@ class PMSEProjectApiAclTest extends TestCase
      */
     private $api;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -38,7 +38,7 @@ class PMSEProjectApiAclTest extends TestCase
         $this->api->getRequest()->setRoute(array('acl' => array()));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();

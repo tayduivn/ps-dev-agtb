@@ -28,7 +28,7 @@ class SimpleQueryTest extends TestCase
     protected $notes = array();
     protected $kbDocuments = array();
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
@@ -36,19 +36,19 @@ class SimpleQueryTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         if (empty($this->db)) {
             $this->db = DBManagerFactory::getInstance();
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (!empty($this->contacts)) {
             $contactList = array();

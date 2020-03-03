@@ -16,7 +16,7 @@ class AdministrationControllerTest extends TestCase
 {
     protected $savedTabs;
     protected $tabs;
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('app_list_strings');
@@ -24,7 +24,7 @@ class AdministrationControllerTest extends TestCase
         $this->savedTabs = $this->tabs->get_system_tabs();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->tabs->set_system_tabs($this->savedTabs);
         SugarTestHelper::tearDown();

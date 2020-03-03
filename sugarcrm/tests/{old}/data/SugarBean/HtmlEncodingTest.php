@@ -22,7 +22,7 @@ class HtmlEncodingTest extends TestCase
      */
     private static $bean;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -32,7 +32,7 @@ class HtmlEncodingTest extends TestCase
         self::$bean->save();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $conn = DBManagerFactory::getConnection();
         $conn->delete(

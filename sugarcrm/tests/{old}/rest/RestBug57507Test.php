@@ -15,7 +15,7 @@
  */
 class RestBug57507Test extends RestTestBase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -33,7 +33,7 @@ class RestBug57507Test extends RestTestBase
         $this->calls = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Transition this to _cleanUpRecords() when it is available
         foreach ( $this->opps as $opp ) {

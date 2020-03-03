@@ -20,7 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class ReportCSVExporterMatrixTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
 
@@ -37,7 +37,7 @@ class ReportCSVExporterMatrixTest extends TestCase
             ->will($this->returnValueMap($preferenceMap));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
     }

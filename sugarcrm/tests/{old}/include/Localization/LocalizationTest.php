@@ -23,12 +23,13 @@ class LocalizationTest extends TestCase
      * @var User
      */
     protected $_user;
+
     /**
      * pre-class environment setup
      *
      * @access public
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -38,7 +39,7 @@ class LocalizationTest extends TestCase
         $app_list_strings['salutation_dom']['Ms.'] = 'Frau';
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $this->_locale = Localization::getObject();
@@ -47,7 +48,7 @@ class LocalizationTest extends TestCase
         $this->_currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // remove test user
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -64,7 +65,7 @@ class LocalizationTest extends TestCase
      *
      * @access public
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

@@ -21,7 +21,8 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
     protected $modBackup;
     protected $changedModuleList = array();
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         parent::setUp();
 
         if (file_exists($this->globalFilename)) {
@@ -43,7 +44,8 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         $this->modBackup = $GLOBALS['mod_strings'];
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         parent::tearDown();
         if (file_exists($this->globalFilename . '.bak')) {
             copy($this->globalFilename . '.bak', $this->globalFilename);

@@ -28,7 +28,7 @@ class Bug49784Test extends TestCase
     var $account='';
     var $email ='';
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->user;
@@ -83,7 +83,7 @@ class Bug49784Test extends TestCase
         $this->email->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //Remove the custom logic hook files
         if($this->hasCustomCasesLogicHookFile && file_exists($this->casesHookFile.'.bak'))

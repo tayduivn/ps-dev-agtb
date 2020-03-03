@@ -26,7 +26,7 @@ class SugarBeanApiHelperTest extends TestCase
     public $roles = array();
     public $serviceMock;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         // Mocking out SugarBean to avoid having to deal with any dependencies other than those that we need for this test
@@ -57,7 +57,7 @@ class SugarBeanApiHelperTest extends TestCase
         $this->beanApiHelper = new SugarBeanApiHelper($this->serviceMock);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (isset($GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir])) {
             unset($GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir]);

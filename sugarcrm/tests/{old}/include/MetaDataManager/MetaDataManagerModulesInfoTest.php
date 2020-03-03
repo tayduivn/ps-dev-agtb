@@ -85,7 +85,7 @@ class MetaDataManagerModulesInfoTest extends TestCase
     /**
      * Set up once before all tests are run
      */
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user', array(true, 1));
@@ -108,7 +108,7 @@ class MetaDataManagerModulesInfoTest extends TestCase
     /**
      * Tear down once after all tests are run
      */
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         // Reset saved system tabs
         self::$tabs->set_system_tabs(self::$savedSystemTabs);
@@ -123,7 +123,7 @@ class MetaDataManagerModulesInfoTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         // Don't allow future tests to be affected by the cache that these tests yield.
         sugar_cache_clear('wireless_module_registry_keys');

@@ -14,13 +14,13 @@ class Merge7TestPost extends UpgradeTestCase
 {
     protected $new_dir;
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->upgrader->setVersions("7.0.0", "ent", "7.2.0", "ent");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         rmdir_recursive("modules/Accounts/clients/test");

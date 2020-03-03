@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ProjectTest extends TestCase
 {
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestProjectTaskUtilities::removeAllCreatedProjectTasks();
         SugarTestProjectUtilities::removeAllCreatedProjects();

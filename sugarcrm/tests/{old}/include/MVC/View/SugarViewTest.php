@@ -21,7 +21,7 @@ class SugarViewTest extends TestCase
      */
     private $_view;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -33,7 +33,7 @@ class SugarViewTest extends TestCase
         $this->dir = getcwd();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         chdir($this->dir);

@@ -24,7 +24,7 @@ class KBContentsApiHelperTest extends TestCase
      */
     protected $notes = [];
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -36,7 +36,7 @@ class KBContentsApiHelperTest extends TestCase
         $this->bean = SugarTestKBContentUtilities::createBean();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // clean up all notes
         if (!empty($this->notes)) {

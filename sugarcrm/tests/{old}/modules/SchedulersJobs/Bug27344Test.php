@@ -19,7 +19,7 @@ class Bug27344Test extends TestCase
     private $_has_initial_server_port;
     private $_cron_test_file = 'cronUnitTestBug27344.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_has_initial_server_port = isset($_SERVER['SERVER_PORT']);
         if ($this->_has_initial_server_port) {
@@ -27,7 +27,7 @@ class Bug27344Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->_has_initial_server_port) {
             $_SERVER['SERVER_PORT'] = $this->_initial_server_port;

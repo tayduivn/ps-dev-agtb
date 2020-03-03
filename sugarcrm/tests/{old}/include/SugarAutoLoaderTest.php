@@ -16,13 +16,13 @@ class SugarAutoLoaderTest extends TestCase
 {
     protected $todelete = array();
 
-    public static function tearDownAfterClass()
-	{
+    public static function tearDownAfterClass(): void
+    {
 		// rebuild the map JIC
 		SugarAutoLoader::buildCache();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    foreach($this->todelete as $file) {
 	        if(is_dir($file)) {

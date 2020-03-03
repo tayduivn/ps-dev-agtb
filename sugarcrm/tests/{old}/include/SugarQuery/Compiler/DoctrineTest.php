@@ -24,7 +24,7 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
      */
     private $account;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->account = BeanFactory::newBean('Accounts');
     }

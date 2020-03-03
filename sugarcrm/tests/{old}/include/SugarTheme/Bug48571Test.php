@@ -18,7 +18,7 @@ class Bug48571Test extends TestCase
     var $unavailableThemes;
     var $customThemeDef;
 
-    public function setUp()
+    protected function setUp() : void
     {
         if(isset($GLOBALS['sugar_config']['default_theme']))
         {
@@ -45,7 +45,7 @@ class Bug48571Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->globalDefaultTheme))
         {

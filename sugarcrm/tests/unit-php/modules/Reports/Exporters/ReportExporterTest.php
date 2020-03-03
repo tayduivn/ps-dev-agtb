@@ -21,7 +21,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class ReportExporterTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
 
@@ -38,7 +38,7 @@ class ReportExporterTest extends TestCase
             ->will($this->returnValueMap($preference_map));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
     }

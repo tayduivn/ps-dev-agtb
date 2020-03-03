@@ -83,7 +83,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
         'invisible-all-1' => 'portal-note-7', // not marked with portal flag but related to visible-b2b-account-3 that can be viewed by both the b2c contact and by b2b account 2
     ];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -93,7 +93,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
         self::createOriginalTestRecords();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestPortalUtilities::restoreOriginalUser();
         self::deleteOriginalTestRecords();

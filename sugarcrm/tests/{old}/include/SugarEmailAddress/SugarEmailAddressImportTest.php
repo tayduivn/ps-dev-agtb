@@ -28,12 +28,12 @@ class SugarEmailAddressImportTest extends TestCase
     private $configOptoutBackUp;
     private $fileName = 'upload://import_email_properties.csv';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
@@ -53,7 +53,7 @@ class SugarEmailAddressImportTest extends TestCase
         SugarTestContactUtilities::setCreatedContact([$id]);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         $this->importData = array();

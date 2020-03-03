@@ -20,7 +20,7 @@ class Bug61011Test extends TestCase
 {
     protected $has_disable_count_query_enabled;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
         $this->has_disable_count_query_enabled = !empty($sugar_config['disable_count_query']);
@@ -31,7 +31,7 @@ class Bug61011Test extends TestCase
      * Tears down the fixture, for example, close a network connection.
      * This method is called after a test is executed.
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         if($this->has_disable_count_query_enabled) {

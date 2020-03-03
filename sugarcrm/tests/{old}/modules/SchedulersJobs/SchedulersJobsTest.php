@@ -17,12 +17,12 @@ class SchedulersJobsTest extends TestCase
     public $jobs = array();
     public $scheduler;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->db = DBManagerFactory::getInstance();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->jobs)) {
             $jobs = implode("','", $this->jobs);

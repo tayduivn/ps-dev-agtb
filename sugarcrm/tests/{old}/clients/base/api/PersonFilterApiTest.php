@@ -19,12 +19,14 @@ class PersonFilterApiTest extends TestCase
 {
     public $personUnifiedSearchApi;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp("current_user");        
         $this->personFilterApi = new PersonFilterApi();
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         SugarTestHelper::tearDown();
     }
 

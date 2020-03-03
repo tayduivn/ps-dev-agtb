@@ -22,7 +22,8 @@ class Bug58087Test extends SubPanelTestBase
     protected $_sugarConfig;
     protected $_testModule = 'Accounts';
     
-    public function setUp() {
+    protected function setUp() : void
+    {
         parent::setUp();
         
         // Set up our test defs - borrowed from Accounts subpaneldefs
@@ -71,7 +72,7 @@ class Bug58087Test extends SubPanelTestBase
         $this->_sugarConfig = $GLOBALS['sugar_config'];
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         

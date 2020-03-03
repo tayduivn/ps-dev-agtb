@@ -17,7 +17,7 @@ class BugCRYS697ParserLabelTest extends TestCase
     private $lang = 'en_us';
     private $testModule = 'Accounts';
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('files');
         SugarTestHelper::saveFile($this->getFileName());
@@ -26,7 +26,7 @@ class BugCRYS697ParserLabelTest extends TestCase
         }
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

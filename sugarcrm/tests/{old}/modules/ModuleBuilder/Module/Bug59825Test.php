@@ -22,11 +22,11 @@ class Bug59825Test extends TestCase
     protected static $_module = 'Bugs';
 
     /**
-     * Rather than setting up and tearing down for each iteration of the data 
+     * Rather than setting up and tearing down for each iteration of the data
      * provider, set up once and tear down once, as these are used as-is throughout
      * each test.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true)); // Admin user
         SugarTestHelper::setUp('beanList');
@@ -36,7 +36,7 @@ class Bug59825Test extends TestCase
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
     }
     
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

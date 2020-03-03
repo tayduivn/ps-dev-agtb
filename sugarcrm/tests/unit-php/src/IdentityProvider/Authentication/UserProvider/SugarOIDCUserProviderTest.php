@@ -33,7 +33,7 @@ class SugarOIDCUserProviderTest extends TestCase
      */
     protected $localUserProvider = null;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->localUserProvider = $this->createMock(SugarLocalUserProvider::class);
         $this->userProvider = new SugarOIDCUserProvider($this->localUserProvider);

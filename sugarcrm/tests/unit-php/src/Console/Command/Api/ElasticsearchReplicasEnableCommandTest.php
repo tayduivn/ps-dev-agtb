@@ -20,7 +20,7 @@ class ElasticsearchReplicasEnableCommandTest extends AbstractApiCommandTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->commandClass = 'Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchReplicasEnableCommand';
         $this->apiClass = 'AdministrationApi';

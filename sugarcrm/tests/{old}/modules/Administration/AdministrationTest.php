@@ -23,12 +23,12 @@ class AdministrationTest extends TestCase
         array('name' => 'AdministrationTest', 'value' => '["Portal"]', 'platform' => 'json', 'category' => 'Forecasts'),
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         sugar_cache_clear('admin_settings_cache');
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('moduleList');
@@ -41,7 +41,7 @@ class AdministrationTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config where name = 'AdministrationTest'");

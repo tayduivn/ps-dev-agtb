@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug50127Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
@@ -29,7 +29,7 @@ class Bug50127Test extends TestCase
         SugarTestHelper::setUp('beanFiles');
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

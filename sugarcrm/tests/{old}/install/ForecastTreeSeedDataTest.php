@@ -17,14 +17,14 @@ require_once('install/install_utils.php');
 
 class ForecastTreeSeedDataTest extends TestCase
 {
-	public static function setUpBeforeClass()
-	{
+    public static function setUpBeforeClass() : void
+    {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         $GLOBALS['db']->query("DELETE FROM forecast_tree WHERE hierarchy_type in ('users','products')");
 	}
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

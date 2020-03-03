@@ -24,7 +24,7 @@ class Bug61859Test extends TestCase
         $this->assertFalse($this->dynamicFields->fieldExists('contact'));
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('dictionary');
@@ -34,7 +34,7 @@ class Bug61859Test extends TestCase
         $this->dynamicFields->setup($leadBean);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

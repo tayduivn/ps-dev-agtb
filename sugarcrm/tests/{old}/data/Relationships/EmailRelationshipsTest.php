@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class EmailRelationshipsTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         if (!empty($GLOBALS['sugar_config']['inbound_email_case_subject_macro'])) {
@@ -24,7 +24,7 @@ class EmailRelationshipsTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();

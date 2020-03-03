@@ -25,14 +25,14 @@ class Bug65942Test extends TestCase
     private $path = 'custom/Extension/modules/relationships';
     private $files = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
 

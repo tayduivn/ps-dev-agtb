@@ -11,7 +11,7 @@
  */
 class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->db = DBManagerFactory::getInstance();
@@ -34,7 +34,7 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
         );
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['app_list_strings']);
         SugarTestHelper::tearDown();

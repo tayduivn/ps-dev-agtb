@@ -28,7 +28,7 @@ class SugarSAMLUserMappingTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->samlResponse = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()

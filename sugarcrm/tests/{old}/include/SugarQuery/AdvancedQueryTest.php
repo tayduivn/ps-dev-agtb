@@ -26,7 +26,7 @@ class AdvancedQueryTest extends TestCase
     protected $contacts = array();
     protected $accounts = array();
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
@@ -35,14 +35,14 @@ class AdvancedQueryTest extends TestCase
         SugarTestHelper::setUp('dictionary');
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         if(empty($this->_db)){
             $this->_db = DBManagerFactory::getInstance();
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
 

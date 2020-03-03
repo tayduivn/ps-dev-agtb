@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug40019Test extends TestCase
 {   
-    public function setUp() 
+    protected function setUp() : void
 	{
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
@@ -35,7 +35,7 @@ class Bug40019Test extends TestCase
 	    $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
 	}
 	
-	public function tearDown() 
+    protected function tearDown() : void
 	{
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();

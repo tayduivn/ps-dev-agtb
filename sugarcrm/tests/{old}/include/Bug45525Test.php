@@ -19,7 +19,7 @@ class Bug45525 extends TestCase
      */
     var $testLangFile = "cache/upload/myLang.php";
 
-    public function setUp()
+    protected function setUp() : void
     {
         if(!file_exists('cache/upload'))
         {

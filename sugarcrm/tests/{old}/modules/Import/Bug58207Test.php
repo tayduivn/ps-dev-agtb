@@ -23,7 +23,7 @@ class Bug58207Test extends TestCase
     private $_file;
     private $_sugarConfig;
 
-    public function setUp()
+    protected function setUp() : void
     {
         // SJIS encoded Japanese CSV
         $this->_file = 'Bug58207Test.csv';
@@ -37,7 +37,7 @@ class Bug58207Test extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         global $sugar_config;

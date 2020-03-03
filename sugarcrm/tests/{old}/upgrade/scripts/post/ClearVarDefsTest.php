@@ -21,7 +21,7 @@ class ClearVarDefsTest extends TestCase
 {
     const MODULE = 'PreScript';
 
-    public function setUp()
+    protected function setUp() : void
     {
         $user = $this->createMock(User::class, ['getFieldDefinitions']);
 
@@ -100,7 +100,7 @@ class ClearVarDefsTest extends TestCase
         VardefManager::$linkFields = array();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         global $dictionary;
         unset($dictionary[self::MODULE]);

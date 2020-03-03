@@ -37,7 +37,7 @@ class UpgradeFixClassConstructorTest extends UpgradeTestCase
         ),
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -47,7 +47,7 @@ class UpgradeFixClassConstructorTest extends UpgradeTestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->modules as $moduleName => $params) {
             rmdir_recursive('modules' . DIRECTORY_SEPARATOR . $moduleName);

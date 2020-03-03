@@ -49,7 +49,7 @@ class Bug49772Test extends TestCase
         $this->assertNotEquals($pref . ' ' . $this->_old_label, $mod_strings[$this->_test_label]);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         ParserLabel::addLabels($this->_lang, array($this->_test_label=>$this->_old_label), $this->_test_module);
     }

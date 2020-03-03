@@ -17,7 +17,7 @@ class FixUpFormattingTest extends TestCase
 {
     protected $myBean;
 
-	public function setUp()
+    protected function setUp() : void
 	{
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         
@@ -44,7 +44,7 @@ class FixUpFormattingTest extends TestCase
         $this->myBean->datetime_field = '2001-07-28 21:19:37';
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

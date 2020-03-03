@@ -21,7 +21,7 @@ class MeetingsApiTest extends TestCase
     private $api,
         $meetingsApi;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->api = SugarTestRestUtilities::getRestServiceMock();
         $this->api->user = SugarTestUserUtilities::createAnonymousUser(false, false);
@@ -31,7 +31,7 @@ class MeetingsApiTest extends TestCase
         $this->meetingsApi = $this->createPartialMock('MeetingsApi', array("isUserInvitedToMeeting"));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         BeanFactory::setBeanClass('Meetings');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

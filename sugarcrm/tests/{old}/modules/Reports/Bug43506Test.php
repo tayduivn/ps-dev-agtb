@@ -23,7 +23,7 @@ require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
  */
 class Bug43506Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -35,7 +35,7 @@ class Bug43506Test extends TestCase
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['beanFiles'], $GLOBALS['beanList']);
         unset($GLOBALS['app_strings'], $GLOBALS['app_list_strings']);

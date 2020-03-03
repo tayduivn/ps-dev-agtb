@@ -28,7 +28,7 @@ class UpgradeSingularListTest extends UpgradeTestCase
         $mi->rebuild_languages(array('en_us' => 'en_us'));
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         SugarTestHelper::setUp('files');
@@ -45,7 +45,7 @@ class UpgradeSingularListTest extends UpgradeTestCase
         $this->upgrader->state['MBModules'] = array($this->testModule);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         SugarTestHelper::tearDown();

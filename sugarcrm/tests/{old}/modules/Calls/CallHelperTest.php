@@ -16,7 +16,7 @@ require_once('modules/Calls/CallHelper.php');
 
 class CallHelperTest extends TestCase
 {
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -24,7 +24,7 @@ class CallHelperTest extends TestCase
         SugarTestHelper::setUp('current_user');
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

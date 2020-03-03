@@ -19,7 +19,7 @@ class SugarThemeRegistryTest extends TestCase
     private $_themeName;
     private $_oldDefaultTheme;
 
-    public function setup()
+    protected function setUp() : void
     {
         $this->_themeName = SugarTestThemeUtilities::createAnonymousTheme();
         if ( isset($GLOBALS['sugar_config']['default_theme']) ) {
@@ -29,7 +29,7 @@ class SugarThemeRegistryTest extends TestCase
         SugarThemeRegistry::buildRegistry();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
         if ( isset($this->_oldDefaultTheme) ) {

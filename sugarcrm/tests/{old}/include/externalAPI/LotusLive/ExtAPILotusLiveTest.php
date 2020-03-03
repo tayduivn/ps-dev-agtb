@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExtAPILotusLiveTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         global $app_strings;
       	$app_strings = return_application_language('en_us');

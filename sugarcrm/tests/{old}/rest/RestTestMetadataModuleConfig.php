@@ -16,7 +16,7 @@ class RestTestMetadataModuleConfig extends RestTestBase {
         array('name' => 'hello', 'value' => 'world', 'platform' => 'base', 'category' => 'Forecasts'),
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
 
@@ -30,7 +30,7 @@ class RestTestMetadataModuleConfig extends RestTestBase {
         $this->_clearMetadataCache();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = DBManagerFactory::getInstance();
         $db->query('DELETE FROM config where name = "hello" and value = "world"');

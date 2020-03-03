@@ -38,7 +38,7 @@ class DownloadArchiveApiTest extends TestCase
      */
     public $account;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('ACLStatic');
@@ -75,7 +75,7 @@ class DownloadArchiveApiTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Notes cleanup
         if (count($this->notes)) {

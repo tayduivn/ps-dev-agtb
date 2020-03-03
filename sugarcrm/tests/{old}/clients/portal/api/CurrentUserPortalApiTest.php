@@ -38,7 +38,7 @@ class CurrentUserPortalApiTest extends TestCase
      */
     public static $nameFormat;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -72,7 +72,7 @@ class CurrentUserPortalApiTest extends TestCase
         self::$service = SugarTestPortalUtilities::loginAsPortalUser(self::$contact->id);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $GLOBALS['sugar_config']['default_locale_name_format'] = self::$nameFormat;
 

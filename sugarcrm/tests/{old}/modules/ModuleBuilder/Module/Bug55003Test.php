@@ -28,7 +28,7 @@ class Bug55003Test extends TestCase
      */
     protected $portalBrowser;
     
-    public function setUp()
+    protected function setUp() : void
     {
         $this->portalBrowser = new SugarPortalBrowser();
         SugarTestHelper::setUp('beanList');
@@ -40,7 +40,7 @@ class Bug55003Test extends TestCase
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         unset($this->portalBrowser);

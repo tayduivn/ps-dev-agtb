@@ -32,7 +32,7 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
     /**
      * {@inheritDoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if (!empty($this->customExistedFile) && file_exists($this->customExistedFile)) {
             unlink($this->customExistedFile);

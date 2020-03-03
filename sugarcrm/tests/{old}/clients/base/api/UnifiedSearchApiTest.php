@@ -23,7 +23,7 @@ class UnifiedSearchApiTest extends TestCase
     public $moduleApi;
     public $serviceMock;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp('ACLStatic');
@@ -44,7 +44,7 @@ class UnifiedSearchApiTest extends TestCase
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['current_user']->is_admin = 1;
         // delete the bunch of accounts crated

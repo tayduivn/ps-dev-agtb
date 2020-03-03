@@ -19,7 +19,7 @@ require_once 'upgrade/scripts/post/3_UpdateAnalyticsSettings.php';
  */
 class SugarUpgradeUpdateAnalyticsSettingsTest extends UpgradeTestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         // Back up the configuration override.

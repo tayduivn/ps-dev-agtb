@@ -24,7 +24,7 @@ class SugarThemeTest extends TestCase
     private $_themeDefChild;
     private $_themeObjectChild;
 
-    public function setup()
+    protected function setUp() : void
     {
         $themedef = array();
         include('themes/'.SugarTestThemeUtilities::createAnonymousTheme().'/themedef.php');
@@ -49,7 +49,7 @@ class SugarThemeTest extends TestCase
         $this->assertTrue(isset($this->_themeObject->dirName));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
     }

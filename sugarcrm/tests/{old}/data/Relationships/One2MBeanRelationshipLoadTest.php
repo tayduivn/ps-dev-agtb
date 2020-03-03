@@ -22,7 +22,7 @@ class One2MBeanRelationshipLoadTest extends TestCase
     private static $opportunity2;
     private static $opportunity3;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$account = SugarTestAccountUtilities::createAccount();
         self::$opportunity = SugarTestOpportunityUtilities::createOpportunity();
@@ -40,7 +40,7 @@ class One2MBeanRelationshipLoadTest extends TestCase
         self::$opportunity3->mark_deleted(self::$opportunity3->id);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

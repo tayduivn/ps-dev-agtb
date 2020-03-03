@@ -38,7 +38,7 @@ class ConvertLayoutMetadataParserTest extends TestCase
 
     protected $customDef = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->parser = new TestConvertLayoutMetadataParser('Contacts');
         $this->parser->setConvertDefs(array(
@@ -65,7 +65,7 @@ class ConvertLayoutMetadataParserTest extends TestCase
         write_array_to_file('viewdefs', $viewdefs, $this->customFile);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (file_exists($this->customFile . '.bak')) {
             rename($this->customFile . '.bak', $this->customFile);

@@ -19,7 +19,7 @@ class Bug46325Test extends TestCase
     public $accountsFile;
     public $prospectsFile;
 
-    function setUp()
+    protected function setUp() : void
     {
         $this->fields = Array(
             'name' => Array(
@@ -39,7 +39,7 @@ class Bug46325Test extends TestCase
         $this->prospectsFile = 'custom/modules/Prospects/metadata/popupdefs.php'; // Add in base/views when ready
     }
 
-    function tearDown()
+    protected function tearDown() : void
     {
         if (is_file($this->accountsFile))
         {

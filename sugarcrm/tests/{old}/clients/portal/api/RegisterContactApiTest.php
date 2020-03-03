@@ -20,13 +20,13 @@ class RegisterContactApiTest extends TestCase
     private $admin;
     private $old_defaultUser;
 
-    public function setup()
+    protected function setUp() : void
     {
         $this->admin = Administration::getSettings(false, true);
         $this->old_defaultUser = $this->admin->settings['portal_defaultUser'] ?? null;
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -34,14 +34,14 @@ class RegisterContactApiTest extends TestCase
         SugarTestHelper::setUp('current_user', [true, false]);
     }
 
-    public function teardown()
+    protected function tearDown() : void
     {
         if ($this->old_defaultUser !== null) {
             $this->admin->saveSetting('portal', 'defaultUser', $this->old_defaultUser, 'support');
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

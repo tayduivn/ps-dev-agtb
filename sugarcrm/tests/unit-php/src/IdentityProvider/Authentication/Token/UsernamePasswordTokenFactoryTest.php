@@ -31,7 +31,7 @@ class UsernamePasswordTokenFactoryTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->tokenFactory = new UsernamePasswordTokenFactory(
             'username',

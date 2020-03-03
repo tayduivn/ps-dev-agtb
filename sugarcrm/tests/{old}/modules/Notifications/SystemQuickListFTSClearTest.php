@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class SystemQuickListFTSClearTest extends TestCase
 {
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -23,7 +23,7 @@ class SystemQuickListFTSClearTest extends TestCase
         SugarTestHelper::setUp('current_user');
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

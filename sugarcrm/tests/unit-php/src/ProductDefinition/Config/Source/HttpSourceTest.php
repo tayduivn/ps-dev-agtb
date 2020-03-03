@@ -45,7 +45,7 @@ class HttpSourceTest extends TestCase
      */
     protected $logger;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->httpClient = $this->createMock(HttpClient::class);
         $this->response = $this->createMock(ResponseInterface::class);

@@ -24,7 +24,7 @@ class BugPAT544Test extends TestCase
     private $account2;
     private $file;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
@@ -34,7 +34,7 @@ class BugPAT544Test extends TestCase
         $this->file = "\"{$this->account1->id}\",\"AÜLLER\"\n\"{$this->account2->id}\",\"ESPAÑA\"";
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

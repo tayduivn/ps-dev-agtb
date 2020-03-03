@@ -15,7 +15,7 @@
  */
 class RestBug59868Test extends RestTestBase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -23,7 +23,7 @@ class RestBug59868Test extends RestTestBase
         $this->_clearMetadataCache();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
     }

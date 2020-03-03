@@ -25,7 +25,7 @@ class RestMetadataModuleListTest extends RestTestBase {
     public $unitTestFiles = array();
     public $createdStudioFile = false;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Marking this test skipped until we can refactor because it's invalid");
         return;
@@ -46,7 +46,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         $this->_clearMetadataCache();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Clear the metadata cache for other tests downstream
         $this->_clearMetadataCache();

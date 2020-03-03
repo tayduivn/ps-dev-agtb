@@ -16,7 +16,7 @@ class TemplateDateTest extends TestCase
 {
     private $hasExistingCustomSearchFields = false;
 
-    public function setUp()
+    protected function setUp() : void
     {
 		if(file_exists('custom/modules/Opportunities/metadata/SearchFields.php'))
 		{
@@ -28,7 +28,7 @@ class TemplateDateTest extends TestCase
 		}
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
     	if(!$this->hasExistingCustomSearchFields)
 		{

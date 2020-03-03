@@ -28,7 +28,7 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
     /** @var Quota */
     protected $quota = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -44,7 +44,7 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         $this->quota->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();

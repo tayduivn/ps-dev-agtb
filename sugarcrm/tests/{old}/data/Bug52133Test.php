@@ -18,25 +18,25 @@ class Bug52133Test extends TestCase
     protected $bean;
     protected $hook;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->bean = new Account();
         Bug52113TestHook::$count = 0;
         LogicHook::refreshHooks();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    if(!empty($this->hook)) {
 	        call_user_func_array('remove_logic_hook', $this->hook);

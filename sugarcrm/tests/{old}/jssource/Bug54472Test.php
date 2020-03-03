@@ -26,7 +26,7 @@ class Bug54472Test extends TestCase
     private $removeJSG_Dir = false;
 
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -80,7 +80,7 @@ $js_groupings [\'testEntryMod\'] = array("include/javascript/calendar.js" => "in
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //remove the 2 grouping files and their directories
         if(file_exists('custom/Extension/application/Ext/JSGroupings/Jgroup0.php')){

@@ -18,12 +18,13 @@ class Bug43211Test extends TestCase
 {
 var $merge;
 
-function setUp() {
+    protected function setUp() : void
+    {
    SugarTestMergeUtilities::setupFiles(array('Leads', 'Accounts'), array('searchdefs'), 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files');
 }
 
-
-function tearDown() {
+    protected function tearDown() : void
+    {
    SugarTestMergeUtilities::teardownFiles();
 }
 

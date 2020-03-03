@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class WebLogicHookTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -24,7 +24,7 @@ class WebLogicHookTest extends TestCase
         SugarTestHelper::setUp('mod_strings', array('WebLogicHooks'));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestWebLogicHookUtilities::removeAllCreatedWebLogicHook();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

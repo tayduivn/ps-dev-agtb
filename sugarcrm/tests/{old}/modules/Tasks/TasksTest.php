@@ -14,23 +14,23 @@ use PHPUnit\Framework\TestCase;
 
 class TasksTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
 
-	public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $_REQUEST['module'] = 'Tasks';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($_REQUEST['module']);
         if(!empty($this->taskid)) {

@@ -26,7 +26,7 @@ class Bug53357Test extends TestCase
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    public function setUp()
+    protected function setUp() : void
     {
         global $beanList, $beanFiles;
         require('include/modules.php');
@@ -50,7 +50,7 @@ class Bug53357Test extends TestCase
      * Tears down the fixture, for example, close a network connection.
      * This method is called after a test is executed.
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         $opportunity = new Opportunity();
         $opportunity->mark_deleted($this->opportunity_id);

@@ -21,7 +21,8 @@ class Bug40247Test extends TestCase
     var $has_custom_leads_detailviewdefs_file;
     var $has_custom_contacts_detailviewdefs_file;
 
-    function setUp() {
+    protected function setUp() : void
+    {
         if(file_exists('custom/modules/connectors/metadata/connectors.php')) {
            $this->has_custom_connectors_file = true;
            copy('custom/modules/connectors/metadata/connectors.php', 'custom/modules/connectors/metadata/connectors.php.bak');
@@ -57,7 +58,8 @@ class Bug40247Test extends TestCase
         }
     }
 
-    function tearDown() {
+    protected function tearDown() : void
+    {
         if($this->has_custom_connectors_file) {
            copy('custom/modules/connectors/metadata/connectors.php.bak', 'custom/modules/connectors/metadata/connectors.php');
            unlink('custom/modules/connectors/metadata/connectors.php.bak');

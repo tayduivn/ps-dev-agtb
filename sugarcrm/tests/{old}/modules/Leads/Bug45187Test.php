@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug45187Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         global $mod_strings;
         $mod_strings = return_module_language($GLOBALS['current_language'], 'Leads');
@@ -24,7 +24,7 @@ class Bug45187Test extends TestCase
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

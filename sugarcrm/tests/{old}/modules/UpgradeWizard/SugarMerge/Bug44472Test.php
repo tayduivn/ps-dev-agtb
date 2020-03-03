@@ -16,12 +16,13 @@ require_once 'include/dir_inc.php';
 
 class Bug44472Test extends TestCase
 {
-function setUp() {
+    protected function setUp() : void
+    {
    SugarTestMergeUtilities::setupFiles(array('Cases'), array('editviewdefs'), 'tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610');
 }
 
-
-function tearDown() {
+    protected function tearDown() : void
+    {
    SugarTestMergeUtilities::teardownFiles();
 }
 

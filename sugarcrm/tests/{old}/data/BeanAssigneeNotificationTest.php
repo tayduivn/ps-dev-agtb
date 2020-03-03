@@ -16,14 +16,14 @@ class BeanAssigneeNotificationTest extends TestCase
 {
     private $siteUrl;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $sugar_config;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $this->siteUrl = $sugar_config['site_url'];
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

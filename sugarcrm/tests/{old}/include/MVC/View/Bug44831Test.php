@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug44831Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -68,7 +68,7 @@ EOQ;
         }
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ( is_dir("cache/modules/Leads") )
             rmdir_recursive("cache/modules/Leads");

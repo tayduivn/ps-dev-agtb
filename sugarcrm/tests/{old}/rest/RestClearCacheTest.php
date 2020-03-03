@@ -15,7 +15,7 @@ class RestClearCacheTest extends RestTestBase {
     protected $_customFile = 'custom/clients/base/api/PongApi.php';
     protected $_customDirMade = false;
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (file_exists($this->_customFile)) {
             unlink($this->_customFile);

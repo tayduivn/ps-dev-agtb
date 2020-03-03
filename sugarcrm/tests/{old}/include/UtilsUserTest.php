@@ -16,7 +16,7 @@ require_once "include/utils.php";
 
 class UtilsUserTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestUserUtilities::createAnonymousUser(
             true,
@@ -56,7 +56,7 @@ class UtilsUserTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

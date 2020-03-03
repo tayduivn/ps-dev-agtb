@@ -18,7 +18,7 @@ class IBMDB2ManagerTest extends TestCase
     /** @var IBMDB2Manager */
     protected $_db = null;
 
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -26,12 +26,12 @@ class IBMDB2ManagerTest extends TestCase
         SugarTestHelper::setUp('app_strings');
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_db = new IBMDB2Manager();
     }

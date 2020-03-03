@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class MaxRelatedDateExpressionTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');

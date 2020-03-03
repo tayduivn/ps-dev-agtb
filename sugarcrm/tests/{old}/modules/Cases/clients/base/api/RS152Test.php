@@ -35,7 +35,7 @@ class RS152Test extends TestCase
     /** @var aCase */
     protected $case = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -61,7 +61,7 @@ class RS152Test extends TestCase
         $_SESSION['contact_id'] = $this->contact->id;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($_SESSION['type'], $_SESSION['contact_id']);
         if ($this->case instanceof aCase) {

@@ -23,7 +23,8 @@ class Bug48846Test extends TestCase
     var $form;
     var $array;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         require('include/modules.php');
 	    $GLOBALS['beanList'] = $beanList;
 	    $GLOBALS['beanFiles'] = $beanFiles;
@@ -47,7 +48,8 @@ class Bug48846Test extends TestCase
         );
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($this->array);
         unset($this->form);
         unset($this->seed);

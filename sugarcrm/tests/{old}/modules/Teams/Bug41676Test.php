@@ -19,7 +19,7 @@ class Bug41676Test extends TestCase
 	var $testAccount;
 	var $teamSet;
 	
-	public function setUp()
+    protected function setUp() : void
 	{
 		//Make sure we are an admin
 		global $current_user;   
@@ -39,7 +39,7 @@ class Bug41676Test extends TestCase
 		$this->testAccount->save();
 	}
 	
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	    SugarTestAccountUtilities::removeAllCreatedAccounts();

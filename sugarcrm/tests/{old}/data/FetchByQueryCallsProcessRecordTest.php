@@ -18,7 +18,7 @@ class FetchByQueryCallsProcessRecordTest extends TestCase
     var $accountsHookFile = 'custom/modules/Accounts/logic_hooks.php';
     var $accountsLogicHookFile = 'custom/modules/Accounts/checkProcess.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -53,7 +53,7 @@ class FetchByQueryCallsProcessRecordTest extends TestCase
         SugarTestAccountUtilities::createAccount();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //Remove the custom logic hook files
         if($this->hasCustomAccountLogicHookFile && file_exists($this->accountsHookFile.'.bak'))

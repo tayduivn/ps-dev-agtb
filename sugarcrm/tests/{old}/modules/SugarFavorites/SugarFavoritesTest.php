@@ -15,12 +15,12 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFavoritesTest extends TestCase
 {
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();

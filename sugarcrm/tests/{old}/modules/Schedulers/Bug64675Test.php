@@ -17,13 +17,13 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug64675Test extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('timedate');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

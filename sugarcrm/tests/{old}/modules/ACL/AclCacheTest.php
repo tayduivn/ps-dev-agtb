@@ -17,13 +17,13 @@ class AclCacheTest extends TestCase
     /** @var AclCache */
     private $cache;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->cache = AclCache::getInstance();
         $this->cache->clear();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if ($this->cache) {
             $this->cache->clear();

@@ -19,12 +19,12 @@ class SugarFieldPasswordTest extends TestCase
     protected $contactBean;
     protected $currentPassword;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->fieldObj = new SugarFieldPassword('Password');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($this->fieldObj);
     }

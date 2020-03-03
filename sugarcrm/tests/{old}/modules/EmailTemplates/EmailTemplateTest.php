@@ -17,14 +17,14 @@ use PHPUnit\Framework\TestCase;
  */
 class EmailTemplateTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();

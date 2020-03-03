@@ -23,7 +23,7 @@ class CalendarTest extends TestCase
 
 	protected $meeting_id = null;
 
-	public function setUp()
+    protected function setUp() : void
 	{
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user');
@@ -34,7 +34,8 @@ class CalendarTest extends TestCase
 		$_REQUEST['day'] = '02';
 	}
 
-	public function tearDown(){
+    protected function tearDown() : void
+    {
 		unset($_REQUEST['module']);
 		unset($_REQUEST['year']);
 		unset($_REQUEST['month']);

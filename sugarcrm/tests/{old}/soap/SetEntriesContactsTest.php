@@ -27,7 +27,7 @@ class SetEntriesContactsTest extends SOAPTestCase
     /**
      * Create test user
      */
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         SugarTestHelper::setUp("beanList");
@@ -72,7 +72,8 @@ class SetEntriesContactsTest extends SOAPTestCase
     /**
      * Remove anything that was used during this test
      */
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         global $soap_version_test_accountId, $soap_version_test_opportunityId, $soap_version_test_contactId;
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c1->id}'");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c2->id}'");

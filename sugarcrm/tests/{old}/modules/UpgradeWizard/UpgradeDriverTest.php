@@ -24,12 +24,12 @@ class UpgradeDriverTest extends TestCase
 {
     protected $driver;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->driver = new CliUpgrader();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->driver);
     }

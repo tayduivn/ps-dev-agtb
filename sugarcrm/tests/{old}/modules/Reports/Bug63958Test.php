@@ -34,7 +34,7 @@ DEFS;
         $this->assertNotEmpty($report->summary_result, 'Verify the query was valid by testing for summary results');
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -43,7 +43,7 @@ DEFS;
         SugarTestHelper::setUp('current_user', array(true, 0));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

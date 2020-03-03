@@ -19,7 +19,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     private static $overrideConfig;
     private static $userConfig;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         parent::setUpBeforeClass();
         static::$systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
@@ -31,7 +31,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         );
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
@@ -41,7 +41,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         parent::tearDownAfterClass();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 

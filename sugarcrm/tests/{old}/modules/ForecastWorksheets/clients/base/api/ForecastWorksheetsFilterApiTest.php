@@ -50,7 +50,7 @@ class ForecastWorksheetsFilterApiTest extends TestCase
      */
     protected $putApi;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp("app_strings");
         SugarTestHelper::setUp("app_list_strings");
@@ -123,19 +123,19 @@ class ForecastWorksheetsFilterApiTest extends TestCase
         );       
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->filterApi = new ForecastWorksheetsFilterApi();
         $this->putApi = new ForecastWorksheetsApi();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->filterApi = null;
         $GLOBALS["current_user"] = null;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestForecastUtilities::tearDownForecastConfig();

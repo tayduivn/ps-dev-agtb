@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug43548Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
     	if(file_exists('custom/modules/Accounts/metadata/SearchFields.php'))
     	{
@@ -27,7 +27,7 @@ class Bug43548Test extends TestCase
         }
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(file_exists('custom/modules/Accounts/metadata/SearchFields.php'))
     	{

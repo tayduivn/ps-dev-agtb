@@ -29,7 +29,7 @@ class RS187Test extends TestCase
 
     protected $dashboard;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -39,7 +39,7 @@ class RS187Test extends TestCase
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM dashboards WHERE id = '{$this->dashboard}'");
         SugarTestHelper::tearDown();

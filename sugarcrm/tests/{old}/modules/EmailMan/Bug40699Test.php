@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug40699Test extends TestCase
 {
-	public function setUp()
+    protected function setUp() : void
 	{
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -23,7 +23,7 @@ class Bug40699Test extends TestCase
         $GLOBALS['db']->commit();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

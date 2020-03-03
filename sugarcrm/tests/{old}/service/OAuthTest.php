@@ -24,7 +24,7 @@ class OAuthTest extends TestCase
     protected $aclRole;
     protected $aclField;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
@@ -43,8 +43,8 @@ class OAuthTest extends TestCase
         self::$_consumer->save();
     }
 
-    public static function tearDownAfterClass()
-	{
+    public static function tearDownAfterClass(): void
+    {
         SugarTestHelper::tearDown();
 	    $GLOBALS['db']->query("DELETE FROM oauth_consumer where c_key='TESTCUSTOMER'");
 	    $GLOBALS['db']->query("DELETE FROM oauth_nonce where conskey='TESTCUSTOMER'");
@@ -52,7 +52,7 @@ class OAuthTest extends TestCase
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}
 
-	public function setUp()
+    protected function setUp() : void
 	{
 	    if(!SugarOAuthServer::enabled() || !extension_loaded('oauth')) {
             $this->markTestSkipped("No OAuth support");

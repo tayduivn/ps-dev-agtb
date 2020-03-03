@@ -37,7 +37,7 @@ class ModuleApiTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->api = $this->createMock(\ServiceBase::class);
         $this->moduleApi = $this->getMockBuilder(\ModuleApi::class)

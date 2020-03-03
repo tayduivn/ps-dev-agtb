@@ -27,7 +27,7 @@ class PMSEBeanHandlerTest extends TestCase
      *     opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         global $beanList, $db;
 
@@ -51,7 +51,7 @@ class PMSEBeanHandlerTest extends TestCase
      *     close a network connection. 
      * This method is called after a test is executed.
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         foreach($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;

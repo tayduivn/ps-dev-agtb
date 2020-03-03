@@ -18,7 +18,7 @@ class Bug15255Test extends TestCase
 	var $a = null;
 	var $ac_id = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $currentModule ;
 		$mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
@@ -50,7 +50,7 @@ class Bug15255Test extends TestCase
 		$GLOBALS['db']->query("insert into accounts_contacts (id , contact_id, account_id, date_modified, deleted) values ('{$ac_id}', '{$contact->id}', '{$account->id}', '$time', 0)");
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

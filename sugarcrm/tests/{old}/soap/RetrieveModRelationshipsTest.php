@@ -17,7 +17,8 @@ class RetrieveModRelationshipsTest extends TestCase
 {
     protected static $call, $call2, $contact, $contact2, $meeting, $meeting2;
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass() : void
+    {
         global $current_user;
 
         // User
@@ -93,7 +94,8 @@ class RetrieveModRelationshipsTest extends TestCase
         $GLOBALS['db']->query("UPDATE meetings SET team_id = 'South', team_set_id = 'South' WHERE id = '".self::$meeting->id."'");
     }
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void
+    {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();

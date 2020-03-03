@@ -30,7 +30,7 @@ class Bug49723Test extends TestCase
      */
     protected $db;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->db = $GLOBALS['db'];
         SugarTestHelper::setUp('beanFiles');
@@ -78,7 +78,7 @@ class Bug49723Test extends TestCase
         LogicHook::refreshHooks();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         // Bad idea, but because of include_once all tests that run after this one need the workflow..
         // rmdir_recursive('custom/modules/Contacts/workflow');

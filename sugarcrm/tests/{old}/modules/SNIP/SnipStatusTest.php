@@ -20,7 +20,8 @@ class SnipStatusTest extends TestCase
 {
     private $snip;
 
-    public function setUp(){
+    protected function setUp() : void
+    {
     	$this->snip = SugarSNIP::getInstance();
     }
 

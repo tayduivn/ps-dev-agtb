@@ -25,7 +25,7 @@ class Bug55733CurrencyTest extends TestCase
     private $vardef = array('precision' => '6');
     private $sfr;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $locale, $current_user;
         SugarTestHelper::setUp('current_user', array(true));
@@ -52,7 +52,7 @@ class Bug55733CurrencyTest extends TestCase
         $this->assertSame($this->expectedValue, $testVal2,' The currency precision was not formatted correctly.');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         get_number_seperators(true);

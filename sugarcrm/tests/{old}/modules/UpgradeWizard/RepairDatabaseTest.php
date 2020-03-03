@@ -16,7 +16,7 @@ class RepairDatabaseTest extends TestCase
 {
     private $db;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->db = DBManagerFactory::getInstance();
         if ($this->db->dbType == 'mysql') {
@@ -36,7 +36,7 @@ class RepairDatabaseTest extends TestCase
 
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->db->dbType == 'mysql') {
             $sql = "ALTER TABLE meetings MODIFY COLUMN status varchar(100) NULL DEFAULT 'Planned'";

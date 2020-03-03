@@ -26,7 +26,7 @@ class RS108Test extends TestCase
     /** @var string */
     protected $file = '';
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -44,7 +44,7 @@ class RS108Test extends TestCase
         imagedestroy($img);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

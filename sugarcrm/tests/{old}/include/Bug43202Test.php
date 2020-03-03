@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug43202Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -39,7 +39,7 @@ class Bug43202Test extends TestCase
         $this->assertTrue($focus->db->validateQuery($query));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

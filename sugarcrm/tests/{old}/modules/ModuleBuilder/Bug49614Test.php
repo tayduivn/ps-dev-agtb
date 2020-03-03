@@ -17,13 +17,13 @@ class Bug49614Test extends TestCase
     private $package;
     private $orgSoftFail;
     
-	public function setUp()
+    protected function setUp() : void
 	{
         $this->package = new MBPackage('SugarTestPackage');
         $GLOBALS['sugar_config']['validation']['soft_fail'] = false;
 	}
 	
-	public function tearDown()
+    protected function tearDown() : void
 	{
         unset($this->package);
 	}

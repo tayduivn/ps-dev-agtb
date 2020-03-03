@@ -14,14 +14,15 @@ use PHPUnit\Framework\TestCase;
 
 class OpportunitySalesStageExpressionTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
     }
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('app_list_strings');
 
         $GLOBALS['app_list_strings'] = array(
@@ -40,7 +41,7 @@ class OpportunitySalesStageExpressionTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         Forecast::$settings = array();
         unset($GLOBALS['app_list_strings']);

@@ -20,7 +20,7 @@ class ResaveRelatedBeansTest extends TestCase
 {
     private $id;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -29,7 +29,7 @@ class ResaveRelatedBeansTest extends TestCase
         $this->id = 'ResaveRelatedBeansTestId';
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();

@@ -24,7 +24,7 @@ class Bug46941Test extends TestCase
     var $hasCustomSearchFields;
     var $filename = 'custom/modulebuilder/packages/test/modules/test/metadata/SearchFields.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true));
 
@@ -51,7 +51,7 @@ class Bug46941Test extends TestCase
         unset($_REQUEST['description']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (!$this->mbController) {
             return;

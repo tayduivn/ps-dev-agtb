@@ -19,7 +19,7 @@ class Bug36845Test extends TestCase
     var $module_dir = 'modules/clabc_Bug36845Test';
     var $module = 'clabc_Bug36845Test';
 
-    public function setUp()
+    protected function setUp() : void
     {
         //$this->markTestIncomplete('Revisit this test.  Seems to be corrupting unified search');
 
@@ -123,7 +123,7 @@ EOQ;
         $beanList['clabc_Bug36845Test'] = 'clabc_Bug36845Test';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //Unset the clabc_Bug36845Test references
         unset($GLOBALS['beanList']['clabc_Bug36845Test']);

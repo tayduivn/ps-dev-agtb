@@ -22,7 +22,7 @@ class Bug67439Test extends TestCase
         'cache/modules/Teams/DetailView.tpl',
     );
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('mod_strings', array('Teams'));
@@ -38,7 +38,7 @@ class Bug67439Test extends TestCase
         $GLOBALS['objectList']['Teams'] = 'Team';
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['objectList'] = static::$oldObjectList;
         foreach(static::$filesToUnlink as $file) {

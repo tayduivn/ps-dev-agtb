@@ -21,8 +21,8 @@ class SugarSpriteBuilderTest extends TestCase
 {
 var $useSprites;
 
-public function setUp()
-{
+    protected function setUp() : void
+    {
     if(!function_exists('imagecreatetruecolor'))
     {
         $this->markTestSkipped('imagecreatetruecolor function not found.  skipping test');
@@ -42,8 +42,8 @@ public function setUp()
     }
 }
 
-public function tearDown()
-{
+    protected function tearDown() : void
+    {
     $GLOBALS['sugar_config']['use_sprites'] = $this->useSprites;
 }
 

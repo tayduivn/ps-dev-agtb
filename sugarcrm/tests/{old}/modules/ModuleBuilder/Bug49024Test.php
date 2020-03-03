@@ -19,7 +19,7 @@ class Bug49024Test extends TestCase
 {
     private $objOneToOneRelationship;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -42,7 +42,7 @@ class Bug49024Test extends TestCase
                 )));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

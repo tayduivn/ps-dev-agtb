@@ -17,8 +17,8 @@ class LeadFormBaseTest extends TestCase
 var $form;
 var $lead1;
 
-public function setup()
-{
+    protected function setUp() : void
+    {
     $GLOBALS['db']->query("DELETE FROM leads WHERE first_name = 'Mike' AND last_name = 'TheSituationSorrentino'");
     $this->form = new LeadFormBase();
     $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -34,8 +34,8 @@ public function setup()
     $this->lead1->emailAddress->save($this->lead1->id, $this->lead1->module_dir);
 }
 
-public function tearDown()
-{
+    protected function tearDown() : void
+    {
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     SugarTestLeadUtilities::removeAllCreatedLeads();
     SugarTestLeadUtilities::removeCreatedLeadsEmailAddresses();

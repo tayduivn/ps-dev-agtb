@@ -23,14 +23,14 @@ class UsersLastImportTest extends TestCase
     private $cstmTableExistBefore;
     private $oldCustomFields;
     
-    public function setUp() 
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         $this->_usersLastImport = new UsersLastImport();
         $this->_addImportedRecords();
     }
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         $focus = $this->_loadBean($this->_importModule);
         

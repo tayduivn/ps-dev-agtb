@@ -24,14 +24,14 @@ class Bug49982Test extends TestCase
 	var $doc = null;
     var $contract = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
        $_POST = array();
        $_FILES = array();
        $_SERVER['REQUEST_METHOD'] = null;
    	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($_SERVER['REQUEST_METHOD']);
         $_POST = array();

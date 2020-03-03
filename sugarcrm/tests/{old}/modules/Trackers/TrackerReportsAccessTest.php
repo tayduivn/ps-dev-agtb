@@ -18,7 +18,7 @@ class TrackerReportsAccessTest extends TestCase
 	var $non_admin_user;
     var $current_user;
 
-    function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -35,7 +35,7 @@ class TrackerReportsAccessTest extends TestCase
         $this->non_admin_user = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $this->non_admin_user = null;

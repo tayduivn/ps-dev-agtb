@@ -55,7 +55,7 @@ class ForecastsTimePeriodTest extends TestCase
     /**
      * Setup global variables
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$configDateFormat = $GLOBALS['sugar_config']['datef'];
         $db = DBManagerFactory::getInstance();
@@ -65,14 +65,14 @@ class ForecastsTimePeriodTest extends TestCase
     /**
      * Call SugarTestHelper to teardown initialization in setUpBeforeClass
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $GLOBALS['sugar_config']['datef'] = self::$configDateFormat;
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         SugarTestHelper::setUp('app_strings');
@@ -118,7 +118,7 @@ class ForecastsTimePeriodTest extends TestCase
         SugarTestTimePeriodUtilities::setCreatedTimePeriods($createdTimePeriods);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = DBManagerFactory::getInstance();
 

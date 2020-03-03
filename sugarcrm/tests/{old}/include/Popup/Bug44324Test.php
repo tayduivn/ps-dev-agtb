@@ -16,7 +16,7 @@ class Bug44324Test extends TestCase
 {
 	var $contact;
 
-	public function setUp()
+    protected function setUp() : void
 	{
         $GLOBALS['current_language'] = 'en_us';
 
@@ -35,7 +35,7 @@ class Bug44324Test extends TestCase
         $this->contact->save();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
         unset($GLOBALS['current_user']);
         SugarTestContactUtilities::removeAllCreatedContacts();

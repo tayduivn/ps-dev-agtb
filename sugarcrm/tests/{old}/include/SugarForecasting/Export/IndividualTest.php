@@ -48,7 +48,7 @@ class SugarForecasting_Export_IndividualTest extends TestCase
      */
     protected static $current_config;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -57,7 +57,7 @@ class SugarForecasting_Export_IndividualTest extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestForecastUtilities::setUpForecastConfig(array(
                 'forecast_by' => 'Opportunities'
@@ -115,7 +115,7 @@ class SugarForecasting_Export_IndividualTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();

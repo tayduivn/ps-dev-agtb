@@ -36,7 +36,7 @@ class Bug51596Test extends TestCase
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('mod_strings', array('Administration'));
         SugarTestHelper::setUp('current_user', array(true, true));
@@ -105,7 +105,7 @@ class Bug51596Test extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($_REQUEST['massupdate'], $_REQUEST['entire'], $_REQUEST['module'], $_POST['do_not_call']);
 

@@ -23,7 +23,7 @@ class ForecastTest extends TestCase
      */
     protected $currency;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +31,7 @@ class ForecastTest extends TestCase
         SugarTestForecastUtilities::setUpForecastConfig();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

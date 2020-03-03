@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug51242Test extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
@@ -28,7 +28,7 @@ class Bug51242Test extends TestCase
         SugarTestHelper::setUp('beanFiles');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

@@ -24,14 +24,14 @@ class MetaDataLocationChangeTest extends TestCase
     );
     //END SUGARCRM flav=ent ONLY
     
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('moduleList');
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -24,7 +24,7 @@ class CalendarEventsApiTest extends TestCase
 
     private $meetingIds = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $this->meetingIds = array();
@@ -35,7 +35,7 @@ class CalendarEventsApiTest extends TestCase
         $this->calendarEventsApi = new CalendarEventsApi();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         BeanFactory::setBeanClass('Meetings');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

@@ -41,7 +41,7 @@ class AdministrationControllerTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->controller = $this->getMockBuilder(\AdministrationController::class)
             ->disableOriginalConstructor()

@@ -17,8 +17,8 @@ class ContactFormBaseTest extends TestCase
 var $form;
 var $contact1;
 
-public function setup()
-{
+    protected function setUp() : void
+    {
     $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name = 'Mike' AND last_name = 'TheSituationSorrentino'");
     $this->form = new ContactFormBase();
     $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -34,14 +34,13 @@ public function setup()
     $this->contact1->emailAddress->save($this->contact1->id, $this->contact1->module_dir);
 }
 
-public function tearDown()
-{
+    protected function tearDown() : void
+    {
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     SugarTestContactUtilities::removeAllCreatedContacts();
     unset($this->form);
     unset($this->contact1);
 }
-
 
 /**
  * contactsProvider

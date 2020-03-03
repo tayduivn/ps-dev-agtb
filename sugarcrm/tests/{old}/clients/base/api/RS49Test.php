@@ -30,7 +30,7 @@ class RS49Test extends TestCase
     /** @var Note */
     protected $note = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -52,7 +52,7 @@ class RS49Test extends TestCase
         $_FILES = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_FILES = array();
 

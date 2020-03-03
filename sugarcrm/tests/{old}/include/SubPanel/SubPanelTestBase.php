@@ -24,7 +24,8 @@ class SubPanelTestBase extends TestCase
     protected $_testModule; // This needs to be set in the child
     protected $_testBean; // Will be created from the testModule
     
-    public function setUp() {
+    protected function setUp() : void
+    {
         // Globals setup
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
@@ -83,8 +84,9 @@ class SubPanelTestBase extends TestCase
         $GLOBALS['modules_exempt_from_availability_check'] = $modules_exempt_from_availability_check;
     }
     
-    public function tearDown() {
-        // Restore the globals 
+    protected function tearDown() : void
+    {
+        // Restore the globals
         $GLOBALS['moduleList'] = $this->_modListGlobal;
         if (!empty($this->_exemptModules)) {
             $GLOBALS['modules_exempt_from_availability_check'] = $this->_exemptModules;

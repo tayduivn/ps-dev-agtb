@@ -53,7 +53,7 @@ class Bug53944Test extends TestCase
      */
     private $pt;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -85,7 +85,7 @@ class Bug53944Test extends TestCase
         ));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         if ($this->pt)

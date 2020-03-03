@@ -19,7 +19,7 @@ class Bug66034Test extends TestCase
 {
     protected $aclAction;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +31,7 @@ class Bug66034Test extends TestCase
         $this->aclAction = new ACLAction();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->aclAction->clearSessionCache();
         SugarTestHelper::tearDown();

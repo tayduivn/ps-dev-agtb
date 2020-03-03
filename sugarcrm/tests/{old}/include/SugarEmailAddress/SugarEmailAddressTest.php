@@ -51,18 +51,18 @@ class SugarEmailAddressTest extends TestCase
         'invalid_email'   => false,
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->ea = BeanFactory::newBean('EmailAddresses');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestHelper::tearDown();

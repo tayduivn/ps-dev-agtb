@@ -17,15 +17,15 @@ require_once 'include/utils/zip_utils.php';
  */
 class ShadowTest extends RestTestBase
 {
-        public function setUp()
-        {
+    protected function setUp() : void
+    {
                 $this->dir = getcwd();
                 chdir(sugar_root_dir());
                 parent::setUp();
         }
 
-        public function tearDown()
-        {
+    protected function tearDown() : void
+    {
                 chdir($this->dir);
                 SugarTestContactUtilities::removeAllCreatedContacts();
                 parent::tearDown();

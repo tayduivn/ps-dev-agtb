@@ -19,14 +19,14 @@ class Bug59193Test extends TestCase
 {
 	var $disableCountQuery;
 
-	public function setUp()
+    protected function setUp() : void
 	{
 	    global $sugar_config;
 	    $this->disableCountQuery = isset($sugar_config['disable_count_query']) ? $sugar_config['disable_count_query'] : false;
 	    $sugar_config['disable_count_query'] = true;
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		global $sugar_config;
 		$sugar_config['disable_count_query'] = $this->disableCountQuery;

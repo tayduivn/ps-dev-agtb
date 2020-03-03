@@ -18,12 +18,12 @@ use PHPUnit\Framework\TestCase;
  */
 class NotesTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestNoteUtilities::removeAllCreatedNotes();

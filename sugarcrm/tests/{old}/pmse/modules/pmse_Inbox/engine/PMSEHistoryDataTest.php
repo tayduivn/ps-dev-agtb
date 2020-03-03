@@ -23,7 +23,8 @@ class PMSEHistoryDataTest extends TestCase
      */
     private $object;
 
-    protected function setUp() {
+    protected function setUp() : void
+    {
         $this->object = ProcessManager\Factory::getPMSEObject('PMSEHistoryData');
         $this->object->setModule($this->module);
     }

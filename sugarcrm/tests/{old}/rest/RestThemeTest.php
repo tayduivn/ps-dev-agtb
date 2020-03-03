@@ -16,7 +16,7 @@ class RestThemeTest extends RestTestBase
     private $platformTest = 'platform_TEST_123456789';
     private $themeTest = 'theme_TEST_123456789';
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Clear out the test folders
         $customDir = 'custom/themes/clients/' . $this->platformTest;

@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  */
 class OutboundEmailVisibilityTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -38,12 +38,12 @@ class OutboundEmailVisibilityTest extends TestCase
         OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfiguration(Uuid::uuid1());
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         OutboundEmailConfigurationTestHelper::tearDown();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         OutboundEmailConfigurationTestHelper::restoreAllowDefaultOutbound();
     }

@@ -12,7 +12,8 @@
 
 
 class RestEnumTest extends RestTestBase {
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         if(isset($this->contract_types)) {
             foreach($this->contract_types AS $id => $name) {
                 $GLOBALS['db']->query("DELETE FROM contract_types WHERE id='{$id}'");                

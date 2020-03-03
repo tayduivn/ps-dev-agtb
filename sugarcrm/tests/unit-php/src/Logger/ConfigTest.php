@@ -22,7 +22,7 @@ use Sugarcrm\Sugarcrm\Logger\Config;
  */
 class ConfigTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarConfig::getInstance()->clearCache();
     }

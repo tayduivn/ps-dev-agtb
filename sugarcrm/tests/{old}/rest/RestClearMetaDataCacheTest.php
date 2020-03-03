@@ -54,7 +54,7 @@ class RestClearMetadataCacheTest extends RestTestBase
      */
     protected $_modListHeaderSet = false;
     
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         
@@ -89,7 +89,7 @@ class RestClearMetadataCacheTest extends RestTestBase
         $this->_clearMetadataCache();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (file_exists($this->_requestMock->ddlCustomFile . '.testbackup')) {
             rename($this->_requestMock->ddlCustomFile . '.testbackup', $this->_requestMock->ddlCustomFile);

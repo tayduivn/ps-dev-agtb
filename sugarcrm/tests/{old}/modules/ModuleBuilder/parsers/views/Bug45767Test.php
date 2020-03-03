@@ -17,14 +17,16 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug45767Test extends TestCase
 {
-    public function setUp() {
+    protected function setUp() : void
+    {
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);

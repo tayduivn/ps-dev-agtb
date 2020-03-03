@@ -19,7 +19,7 @@ require_once 'modules/Meetings/Meeting.php';
  */
 class Bug20626Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
     	$GLOBALS['reload_vardefs'] = true;
         global $current_user;
@@ -27,7 +27,7 @@ class Bug20626Test extends TestCase
         $current_user = SugarTestUserUtilities::createAnonymousUser();
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

@@ -23,7 +23,7 @@ class Bug46869Test extends TestCase
      */
     private $customVardefPath;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->customVardefPath = 'custom' . DIRECTORY_SEPARATOR .
                                   'Extension' . DIRECTORY_SEPARATOR .
@@ -52,7 +52,7 @@ PHP;
         SugarTestHelper::setUp('app_list_strings');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->customVardefPath);
 

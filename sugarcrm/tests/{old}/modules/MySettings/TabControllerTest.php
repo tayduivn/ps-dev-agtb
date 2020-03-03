@@ -20,7 +20,7 @@ class TabControllerTest extends TestCase
 {
     private $oldPortalTabs;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
 
@@ -29,7 +29,7 @@ class TabControllerTest extends TestCase
         $this->oldPortalTabs = \TabController::getPortalTabs();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Restore the original value of the Portal tab list
         \TabController::setPortalTabs($this->oldPortalTabs);

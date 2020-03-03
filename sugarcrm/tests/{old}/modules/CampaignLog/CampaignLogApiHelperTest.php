@@ -17,7 +17,7 @@ class CampaignLogApiHelperTest extends TestCase
     protected $bean = null;
     protected $helper = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -32,7 +32,7 @@ class CampaignLogApiHelperTest extends TestCase
         $this->helper = new CampaignLogApiHelper(new CampaignLogServiceMockup());
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->helper);
         unset($this->bean);

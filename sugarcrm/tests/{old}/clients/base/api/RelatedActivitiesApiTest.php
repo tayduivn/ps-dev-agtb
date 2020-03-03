@@ -37,7 +37,7 @@ class RelatedActivitiesApiTest extends TestCase
      */
     protected $call = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -57,7 +57,7 @@ class RelatedActivitiesApiTest extends TestCase
         $this->call->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->filterApi);
         unset($this->serviceMock);

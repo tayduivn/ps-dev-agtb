@@ -14,13 +14,15 @@ use PHPUnit\Framework\TestCase;
 
 class TrackerMonitorTest extends TestCase
 {
-    function setUp() {
+    protected function setUp() : void
+    {
     	$trackerManager = TrackerManager::getInstance();
         $trackerManager->unsetMonitors();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-    }    
-    
-    function tearDown() {
+    }
+
+    protected function tearDown() : void
+    {
         unset($GLOBALS['app_strings']);
     }
     

@@ -22,7 +22,7 @@ class Bug64166Test extends TestCase
      */
     private $contact;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -30,7 +30,7 @@ class Bug64166Test extends TestCase
         $this->contact = SugarTestContactUtilities::createContact();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();

@@ -835,7 +835,8 @@ class Bug45716Helper {
 
 class Bug45716Test extends TestCase
 {
-    public function setUp() {
+    protected function setUp() : void
+    {
         $GLOBALS['action'] = 'index';
         $GLOBALS['module'] = 'Reports';
         $GLOBALS['app_strings'] = return_application_language('en_us');
@@ -846,7 +847,8 @@ class Bug45716Test extends TestCase
         $GLOBALS['current_user']->retrieve('1');
     }
     
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($GLOBALS['module']);
         unset($GLOBALS['action']);
         unset($GLOBALS['mod_strings']);

@@ -13,7 +13,7 @@
 
 class RestMetadataViewTemplatesTest extends RestTestBase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 

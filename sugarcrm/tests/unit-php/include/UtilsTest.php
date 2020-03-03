@@ -24,7 +24,7 @@ class UtilsTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->sugar_config_bak = $GLOBALS['sugar_config'] ?? [];
@@ -33,7 +33,7 @@ class UtilsTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config'] = $this->sugar_config_bak;
         parent::tearDown();

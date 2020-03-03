@@ -24,7 +24,7 @@ class ArchivedEmailsBeanLinkTest extends TestCase
      */
     private $account;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -85,7 +85,7 @@ class ArchivedEmailsBeanLinkTest extends TestCase
         return $email->fetchFromQuery($query);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();

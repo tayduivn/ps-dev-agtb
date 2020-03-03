@@ -26,13 +26,13 @@ class Bug47406Test extends TestCase
     private $mbvardef;
     private $smarty;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->smarty = new Smarty();
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($this->mbvardef);

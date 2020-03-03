@@ -23,7 +23,7 @@ class RelateCollectionDefinitionTest extends TestCase
      */
     private $definition;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->definition = $this->getMockBuilder('RelateCollectionDefinition')
             ->disableOriginalConstructor()

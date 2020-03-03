@@ -23,13 +23,13 @@ class CampaignEmailPropertiesTest extends TestCase
     private $contact;
     private $emailAddress;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->emailAddress = 'test_' . Uuid::uuid1() . '@test.net';
         $this->contact = SugarTestContactUtilities::createContact(null, ['email' => $this->emailAddress]);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         $GLOBALS['db']->query("DELETE from email_addresses where email_address = '{$this->emailAddress}'");

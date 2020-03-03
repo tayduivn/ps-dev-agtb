@@ -20,14 +20,14 @@ use SugarNullLogger;
  */
 class InboundEmailTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['log'] = new SugarNullLogger();
 
         $GLOBALS['locale'] = \Localization::getObject();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['log']);
         unset($GLOBALS['locale']);

@@ -17,7 +17,7 @@ class SugarBeanAfterSaveLogicHookTest extends TestCase
 {
     protected $hook;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -27,7 +27,7 @@ class SugarBeanAfterSaveLogicHookTest extends TestCase
         call_user_func_array('check_logic_hook_file', $this->hook);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         call_user_func_array('remove_logic_hook', $this->hook);
         SugarTestAccountUtilities::removeAllCreatedAccounts();

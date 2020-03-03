@@ -36,7 +36,7 @@ class TeamSecurityTest extends TestCase
      */
     private static $accounts = [];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -53,7 +53,7 @@ class TeamSecurityTest extends TestCase
         self::createFixtures();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();

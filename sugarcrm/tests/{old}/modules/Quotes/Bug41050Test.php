@@ -18,7 +18,7 @@ class Bug41050Test extends TestCase
 	var $quote;
 	var $account;
     
-    public function setup()
+    protected function setUp() : void
     {
         global $current_user, $currentModule ;
 		 
@@ -58,7 +58,7 @@ class Bug41050Test extends TestCase
         $GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', '{$quote->id}', '{$account->id}', 'Ship To', '$time', 0)");
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         //delete the account, quote and relationship table
         $GLOBALS['db']->query('DELETE FROM quotes WHERE id = \''.$this->quote->id.'\' ');

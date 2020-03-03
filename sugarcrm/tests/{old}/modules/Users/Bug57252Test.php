@@ -23,14 +23,14 @@ class Bug57252Test extends TestCase
 {
     public $testUser;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setup('current_user');
         $this->testUser = SugarTestUserUtilities::createAnonymousUser();
         $this->testUser->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->testUser->resetPreferences();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

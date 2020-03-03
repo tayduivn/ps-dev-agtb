@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 class Bug58307Test extends TestCase
 {
     protected $_fv;
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
@@ -27,7 +27,7 @@ class Bug58307Test extends TestCase
         $this->_fv = new FieldViewer();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

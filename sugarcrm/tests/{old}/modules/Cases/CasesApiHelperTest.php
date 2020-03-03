@@ -18,12 +18,12 @@ use PHPUnit\Framework\TestCase;
  */
 class CasesApiHelperTest extends TestCase
 {
-    public function setup()
+    protected function setUp() : void
     {
         $_SESSION['type'] = 'support_portal';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($_SESSION['type']);
     }

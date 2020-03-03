@@ -20,7 +20,7 @@ class FixCustomLabelsForCoreModulesTest extends UpgradeTestCase
     /** @var SugarUpgradeFixCustomLabelsForCoreModules */
     protected $script;
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -141,7 +141,7 @@ END;
         sugar_file_put_contents($fileListViewDefs, $dataListViewDefs);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         rmdir_recursive('custom/modules/TestModule1');

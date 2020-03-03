@@ -35,7 +35,7 @@ class TeamTest extends TestCase
      */
     private $teamTwo;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->userOne = SugarTestUserUtilities::createAnonymousUser();
         $this->userTwo = SugarTestUserUtilities::createAnonymousUser();
@@ -45,7 +45,7 @@ class TeamTest extends TestCase
         $this->teamTwo = SugarTestTeamUtilities::createAnonymousTeam();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();

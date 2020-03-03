@@ -22,7 +22,7 @@ class CurrencyRateSchedulerJobTest extends TestCase
     private $quota;
     private $forecast;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -30,12 +30,12 @@ class CurrencyRateSchedulerJobTest extends TestCase
         SugarTestForecastUtilities::setUpForecastConfig();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $this->currency = SugarTestCurrencyUtilities::createCurrency('UpdateBaseRateSchedulerJob', 'UBRSJ', 'UBRSJ', 1.234);
@@ -61,7 +61,7 @@ class CurrencyRateSchedulerJobTest extends TestCase
         $this->forecast->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestJobQueueUtilities::removeAllCreatedJobs();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();

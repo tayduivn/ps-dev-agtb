@@ -12,7 +12,7 @@
 
 
 class RestListTest extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->accounts = array();
@@ -34,7 +34,7 @@ class RestListTest extends RestTestBase {
         file_put_contents('config_override.php', $this->config_file_override . "\r\n" . $new_line);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // restore FTS and config override
         SugarSearchEngineAbstractBase::markSearchEngineStatus(false);

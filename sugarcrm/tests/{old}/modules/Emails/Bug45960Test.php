@@ -16,14 +16,14 @@ class Bug45960 extends TestCase
 {
     protected $email_id = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
         $this->_account = SugarTestAccountUtilities::createAccount();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->email_id) {
             $GLOBALS['db']->query("delete from emails where id='{$this->email_id}'");

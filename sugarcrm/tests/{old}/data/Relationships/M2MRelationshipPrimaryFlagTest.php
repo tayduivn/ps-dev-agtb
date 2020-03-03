@@ -17,7 +17,7 @@ class M2MRelationshipPrimaryFlagTest extends TestCase
     private $accounts;
     private $contact;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -30,7 +30,7 @@ class M2MRelationshipPrimaryFlagTest extends TestCase
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $db;
 

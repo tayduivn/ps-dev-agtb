@@ -36,12 +36,12 @@ class PMSEProjectWrapperTest extends TestCase
 //    protected $mockApi;
     protected $args;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
 //        require_once 'modules/ProcessMaker/ADAMWrapperProject.php';
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()

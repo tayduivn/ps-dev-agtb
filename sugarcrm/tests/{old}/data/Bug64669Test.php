@@ -25,7 +25,7 @@ class Bug64669Test extends TestCase
     public $export_query;
     private $campaign_name = 'sugar test campaign 64669 ';
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -50,7 +50,7 @@ class Bug64669Test extends TestCase
     }
 
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach($this->createdBeans as $bean) {
             $bean->retrieve($bean->id);

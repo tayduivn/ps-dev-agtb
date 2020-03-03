@@ -28,17 +28,17 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
         'timeperiod_shown_backward' => '2'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user', array(true, 1));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -64,7 +64,7 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
         $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
 

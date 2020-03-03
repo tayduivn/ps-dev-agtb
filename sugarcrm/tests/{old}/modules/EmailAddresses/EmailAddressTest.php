@@ -20,12 +20,12 @@ class EmailAddressTest extends TestCase
 	private $emailaddress;
 	private $testEmailAddressString  = 'unitTest@sugarcrm.com';
 
-	public function setUp()
+    protected function setUp() : void
 	{
 		$this->emailaddress = new EmailAddress();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		unset($this->emailaddress);
 		$query = "delete from email_addresses where email_address = '".$this->testEmailAddressString."'";

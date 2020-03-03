@@ -20,7 +20,8 @@ class ForecastsConfigApiTest extends TestCase
 {
     protected $createdBeans = array();
 
-    public function setUp(){
+    protected function setUp() : void
+    {
         SugarTestHelper::setup('beanList');
         SugarTestHelper::setup('moduleList');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -34,7 +35,7 @@ class ForecastsConfigApiTest extends TestCase
         $GLOBALS['current_user']->is_admin = 1;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         $db = DBManagerFactory::getInstance();

@@ -17,7 +17,7 @@ class Bug42727Test extends TestCase
     protected $_opportunity;
     protected $_opportunityIds = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +31,7 @@ class Bug42727Test extends TestCase
         $this->_opportunity->date_closed = TimeDate::getInstance()->getNow()->asDbDate();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", $this->_opportunityIds) . '\')');

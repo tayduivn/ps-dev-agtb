@@ -21,7 +21,7 @@ class TeamMembershipTest extends TestCase
     var $_users = array();
     var $_original_path = null;
 
-    public function setUp() 
+    protected function setUp() : void
     {
     	//TODO fix this test
     	 $this->markTestIncomplete(
@@ -39,7 +39,7 @@ class TeamMembershipTest extends TestCase
         }
     }
 
-    public function tearDown() 
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

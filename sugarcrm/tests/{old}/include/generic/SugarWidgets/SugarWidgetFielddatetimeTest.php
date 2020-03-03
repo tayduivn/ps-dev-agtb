@@ -20,7 +20,7 @@ class SugarWidgetFielddatetimeTest extends TestCase
     private $widgetField;
     private $meetingIds;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -31,7 +31,7 @@ class SugarWidgetFielddatetimeTest extends TestCase
         $this->widgetField = new SugarWidgetFieldDateTime($layoutManager);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($this->widgetField);
         if (!empty($this->meetingIds)) {

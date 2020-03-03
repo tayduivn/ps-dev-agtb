@@ -22,7 +22,7 @@ class SugarWidgetReportFieldmultienumTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +31,7 @@ class SugarWidgetReportFieldmultienumTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

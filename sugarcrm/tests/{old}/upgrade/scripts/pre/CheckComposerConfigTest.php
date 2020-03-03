@@ -32,7 +32,7 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 

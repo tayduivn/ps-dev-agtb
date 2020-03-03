@@ -17,7 +17,7 @@ class CompanyTemplateTest extends TestCase
 {
     private $bean;
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->bean);
     }

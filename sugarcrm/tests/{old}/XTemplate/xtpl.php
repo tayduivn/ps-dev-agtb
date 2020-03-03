@@ -16,7 +16,7 @@ class XTemplateTest extends TestCase
 {
     protected $files;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $file1 = 'upload/' . uniqid().'.xtpl';
         $fp = fopen($file1, "w");
@@ -32,7 +32,7 @@ class XTemplateTest extends TestCase
         $this->files['secondary'] = $file1;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->files as $file ) {
             @unlink($file);

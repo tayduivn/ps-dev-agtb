@@ -21,7 +21,7 @@ class vCalTest extends TestCase
     /** @var vCal */
     protected $bean = null;
 
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -30,7 +30,7 @@ class vCalTest extends TestCase
         $this->bean = new vCal();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

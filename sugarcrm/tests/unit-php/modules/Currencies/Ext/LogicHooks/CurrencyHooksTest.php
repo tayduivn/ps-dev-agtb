@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class CurrencyHooksTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         \SugarAutoLoader::load('../../modules/Currencies/Ext/LogicHooks/CurrencyHooks.php');
         \SugarAutoLoader::load('../../modules/Currencies/Currency.php');

@@ -30,7 +30,7 @@ class CRYS926 extends TestCase
     /**
      * @inheritdoc
      */
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true));
         SugarTestHelper::setUp('beanList');
@@ -81,7 +81,7 @@ class CRYS926 extends TestCase
     /**
      * @inheritdoc
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->account->field_defs = $this->fieldDefs;
         SugarTestAccountUtilities::removeAllCreatedAccounts();

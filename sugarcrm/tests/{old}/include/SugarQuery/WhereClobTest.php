@@ -18,17 +18,17 @@ class SugarQuery_WhereClobTest extends TestCase
     /** @var Account */
     private $account;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->account->description = 'SUGAR_QUERY_WHERE_CLOB_TEST';

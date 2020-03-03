@@ -29,7 +29,7 @@ class ContextTest extends TestCase
      */
     private $context;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $logger = $this->createMock(LoggerInterface::class);
         $this->context = new Context($logger);

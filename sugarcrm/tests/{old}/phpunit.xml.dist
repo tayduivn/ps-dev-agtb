@@ -114,9 +114,6 @@
             <!-- <file>./rest/RestMassUpdateTest.php</file> -->
             <!-- <file>./rest/RestPortalMetadataviewDefsTest.php</file> -->
             <!-- <file>./rest/RestPortalSecurityTest.php</file> -->
-            <file>./upgrade/UpgradeFixPdfTest.php</file>
-            <file>./upgrade/UpgradeMigrateDashableLists.php</file>
-            <file>./upgrade/scripts/post/RemoveDuplicateAccountsContactsTest.php</file>
             <directory>./include/MassUpdate</directory>
             <directory>./include/tcpdf</directory>
             <directory>./modules/Accounts/</directory>
@@ -193,7 +190,6 @@
         <testsuite name="Emails">
             <file>./data/Relationships/EmailRelationshipsTest.php</file>
             <file>./data/visibility/EmailsVisibilityTest.php</file>
-            <file>./data/visibility/OutboundEmailEmailVisibilityTest.php</file>
             <directory>./include/OutboundEmail</directory>
             <directory>./include/SugarEmailAddress</directory>
             <directory>./include/SugarFields/Fields/Email</directory>

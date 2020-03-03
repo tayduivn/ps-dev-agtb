@@ -22,13 +22,13 @@ class Bug63989Test extends TestCase
      */
     private $case;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         $this->case = BeanFactory::newBean('Cases');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         /** @var DBManager */
         global $db;

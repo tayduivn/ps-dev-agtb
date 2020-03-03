@@ -18,7 +18,7 @@ class ExtTest extends TestCase
 {
     protected $module_installer;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         if (extension_loaded('shadow')) {
             self::markTestSkipped('Does not work on Shadow because of a custom module installed before test run, see TDD-80');
@@ -31,7 +31,7 @@ class ExtTest extends TestCase
         mkdir_recursive("cache/ExtTest");
     }
 
-	public function setUp()
+    protected function setUp() : void
 	{
         $this->module_installer = new ModuleInstaller();
         $this->module_installer->silent = true;
@@ -41,7 +41,7 @@ class ExtTest extends TestCase
         file_put_contents($this->module_installer->base_dir."/test.ext.php", "<?php \$testvalue = '$this->testvalue';");
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    if($this->module_installer) {
 	        $this->module_installer->uninstall_extensions();
@@ -52,8 +52,8 @@ class ExtTest extends TestCase
 	    SugarCache::$isCacheReset = false;
 	}
 
-	public static function tearDownAfterClass()
-	{
+    public static function tearDownAfterClass() : void
+    {
         SugarTestHelper::tearDown();
         if(file_exists("cache/ExtTest/test.ext.php")) {
 	        @unlink("cache/ExtTest/test.ext.php");

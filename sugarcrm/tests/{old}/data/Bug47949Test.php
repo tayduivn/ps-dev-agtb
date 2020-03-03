@@ -15,13 +15,13 @@ use PHPUnit\Framework\TestCase;
 
 class Bug47949Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete('Marking this skipped until we figure out why it is failing.');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

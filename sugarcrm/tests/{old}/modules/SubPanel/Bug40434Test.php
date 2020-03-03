@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug40434Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = true;
@@ -23,7 +23,7 @@ class Bug40434Test extends TestCase
         $GLOBALS['current_user'] = $user;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

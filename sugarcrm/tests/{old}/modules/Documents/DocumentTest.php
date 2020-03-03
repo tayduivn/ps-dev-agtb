@@ -16,12 +16,12 @@ class DocumentTest extends TestCase
 {
     var $doc = null;
     
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

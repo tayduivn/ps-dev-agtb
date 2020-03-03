@@ -21,7 +21,7 @@ class Bug45053Test extends TestCase
 	var $requestArray = null;
 	var $searchForm = null;
    
-    public function setUp()
+    protected function setUp() : void
     {    	
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();	
     	$this->account = SugarTestAccountUtilities::createAccount();
@@ -35,7 +35,7 @@ class Bug45053Test extends TestCase
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);    	
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE id='{$this->opportunity->id}'");

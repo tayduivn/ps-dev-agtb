@@ -21,7 +21,7 @@ class Bug33861Test extends TestCase
     public $has_custom_leads_detailviewdefs_file;
     public $has_custom_contacts_detailviewdefs_file;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Marked as skipped until we can resolve Hoovers nusoapclient issues.");
 
@@ -62,7 +62,7 @@ class Bug33861Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->has_custom_connectors_file) {
             copy('custom/modules/connectors/metadata/connectors.php.bak', 'custom/modules/connectors/metadata/connectors.php');

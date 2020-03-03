@@ -19,7 +19,8 @@ use PHPUnit\Framework\TestCase;
  */
 class MailerExceptionTest extends TestCase
 {
-    public function setUp(){
+    protected function setUp() : void
+    {
         global $current_language;
         $this->mod_strings = return_module_language($current_language, 'Emails');
     }

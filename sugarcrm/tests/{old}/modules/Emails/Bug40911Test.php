@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 class Bug40911 extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestEmailUtilities::removeAllCreatedEmails();

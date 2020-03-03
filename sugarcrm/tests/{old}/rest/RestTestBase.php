@@ -28,7 +28,7 @@ abstract class RestTestBase extends TestCase
     protected $bugs = array();
     protected $notes = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -42,7 +42,7 @@ abstract class RestTestBase extends TestCase
         SugarTestHelper::setUp('files');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE 'UNIT%'");

@@ -22,13 +22,13 @@ class UserTest extends TestCase
      */
     protected $_user = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

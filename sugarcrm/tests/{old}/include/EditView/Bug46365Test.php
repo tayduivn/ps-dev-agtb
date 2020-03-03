@@ -18,7 +18,7 @@ class Bug46365Test extends TestCase
 {
     protected $_o = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_o = $this->getMockBuilder('EditView')
             ->setMethods(array('requiredFirst'))

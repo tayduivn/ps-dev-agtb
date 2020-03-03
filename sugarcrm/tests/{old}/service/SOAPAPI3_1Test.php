@@ -19,7 +19,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
     static protected $_contactId = '';
     static protected $_opportunities = array();
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +31,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
     /**
      * Create test user
      */
-	public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
 		parent::setUp();
@@ -41,13 +41,14 @@ class SOAPAPI3_1Test extends SOAPTestCase
     /**
      * Remove anything that was used during this test
      */
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
         parent::tearDown();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if(!empty(self::$_opportunities)) {
             $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", self::$_opportunities) . '\')');

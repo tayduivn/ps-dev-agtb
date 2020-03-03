@@ -31,7 +31,7 @@ class RS266Test extends TestCase
      */
     protected $tableName = 'RS266Test';
 
-    public function setUp()
+    protected function setUp() : void
     {
         $db = DBManagerFactory::getInstance();
 
@@ -50,7 +50,7 @@ class RS266Test extends TestCase
         $this->db->query("IF OBJECT_ID('{$this->tableName}', 'Table') IS NOT NULL DROP TABLE {$this->tableName}");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->db) {
             $this->dropTestTableIfExists();

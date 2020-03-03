@@ -26,7 +26,7 @@ class Bug10329Test extends TestCase
 {
 	private $_parser;
 	 
-    public function setUp()
+    protected function setUp() : void
     {
 		require('include/modules.php');
 		$GLOBALS['beanList'] = $beanList;
@@ -35,7 +35,7 @@ class Bug10329Test extends TestCase
 		$this->_parser = ParserFactory::getParser('EditView','Accounts');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
 	{
 		//unset($GLOBALS['app_list_strings']);
 		//unset($this->_parser);

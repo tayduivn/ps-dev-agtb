@@ -31,7 +31,7 @@ class ConstraintBuilderTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->builder = new ConstraintBuilder();
     }

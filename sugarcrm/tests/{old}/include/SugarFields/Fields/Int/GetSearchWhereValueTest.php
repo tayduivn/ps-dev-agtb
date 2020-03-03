@@ -16,11 +16,13 @@ class GetSearchWhereValueTest extends TestCase
 {
     var $intField;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         $this->intField = SugarFieldHandler::getSugarField('int');
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($this->intField);
     }
 

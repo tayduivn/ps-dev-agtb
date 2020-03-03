@@ -22,7 +22,7 @@ class AppListStringsTest extends TestCase
     protected $created_files = array();
     private $configBackup = [];
 
-    public function setUp()
+    protected function setUp() : void
     {
         \SugarConfig::getInstance()->clearCache();
         // Backup current language settings so manipulation can be tested
@@ -38,7 +38,7 @@ class AppListStringsTest extends TestCase
         sugar_cache_clear('app_list_strings.fr_test');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (!empty($this->created_files)) {
             $this->created_files = array();

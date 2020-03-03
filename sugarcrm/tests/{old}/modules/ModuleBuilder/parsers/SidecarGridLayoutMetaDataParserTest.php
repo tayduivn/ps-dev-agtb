@@ -21,7 +21,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
      */
     protected $_parser;
 
-    public function setUp()
+    protected function setUp() : void
     {
         //echo "Setup";
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -37,7 +37,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //echo "TearDown";
         unset($GLOBALS['mod_strings']);

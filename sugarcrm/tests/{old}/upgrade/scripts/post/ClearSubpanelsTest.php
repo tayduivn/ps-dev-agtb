@@ -28,7 +28,7 @@ class ClearSubpanelsTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         global $beanList;
         SugarTestHelper::setUp('files');
@@ -41,7 +41,7 @@ class ClearSubpanelsTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -33,7 +33,7 @@ class Bug50677Test extends SOAPTestCase
      * setUp
      * Override the setup from SOAPTestCase to also create the seed search data for Accounts and Contacts.
      */
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
    		parent::setUp();
@@ -44,7 +44,7 @@ class Bug50677Test extends SOAPTestCase
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM product_bundle_product WHERE bundle_id = '{$this->_product_bundle->id}'");
 

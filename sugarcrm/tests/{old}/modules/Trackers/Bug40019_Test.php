@@ -21,7 +21,7 @@ class Bug40019_Test extends TestCase
     private $anonymous_user;
     private $saved_current_user;
 	
-    public function setUp()
+    protected function setUp() : void
     {
     	$this->anonymous_user = SugarTestUserUtilities::createAnonymousUser();
     	if(!empty($GLOBALS['current_user']))
@@ -70,7 +70,7 @@ class Bug40019_Test extends TestCase
 		$GLOBALS['sugar_config']['history_max_viewed'] = 50;
     } 
 
-    public function tearDown()
+    protected function tearDown() : void
     {
     	$GLOBALS['db']->query("DELETE FROM tracker WHERE user_id = '{$this->anonymous_user->id}'");
     	SugarTestAccountUtilities::removeAllCreatedAccounts();

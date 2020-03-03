@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class Bug23934Test extends TestCase
 {
     private $_reportId = "ad832c9b-59be-bf94-9b8d-4cdab4d3f1e8";
-    public function setUp()
+    protected function setUp() : void
     {
         // If only there were some sort of mechanism that handled queries for us...
         $sql = "INSERT INTO report_maker
@@ -56,7 +56,7 @@ class Bug23934Test extends TestCase
         $this->assertArrayHasKey($this->_reportId, $results, "Report Maker Id does not exist in the results to email.");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM report_maker WHERE id = '{$this->_reportId}'", "Unable to cleanup Bug 23934 Test");
         $GLOBALS['db']->query("DELETE FROM report_schedules WHERE id = '728f6b40-2f41-01c6-6e13-4cdac466c862'", "Unable to cleanup Bug 23934 Test");

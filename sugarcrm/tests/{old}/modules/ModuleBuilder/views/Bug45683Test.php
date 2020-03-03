@@ -20,7 +20,8 @@ class Bug45683Test extends TestCase
     var $mbmod;
     var $module_name = 'ThisModule';
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $_SESSION['authenticated_user_language'] = 'en_us';
         $this->mbmod = new MBModule($this->module_name, 'custom/modulebuilder/packages/testPkg', 'testPkg', 'testPkg');
@@ -30,7 +31,8 @@ class Bug45683Test extends TestCase
         $_REQUEST['dropdown_lang'] = 'en_us';
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($_REQUEST['dropdown_name']);
         unset($_REQUEST['dropdown_lang']);
         unset($_REQUEST['view_module']);

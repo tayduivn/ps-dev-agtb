@@ -16,7 +16,7 @@ class Bug41738Test extends TestCase
 {   	
     protected $bean;
 
-	public function setUp()
+    protected function setUp() : void
 	{
 	    global $moduleList, $beanList, $beanFiles;
         require('include/modules.php');
@@ -27,7 +27,7 @@ class Bug41738Test extends TestCase
         $this->bean = new Opportunity();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

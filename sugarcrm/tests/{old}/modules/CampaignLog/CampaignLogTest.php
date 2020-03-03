@@ -28,7 +28,7 @@ class CampaignLogTest extends TestCase
 	var $campaign_tracker;
 	var	$campaign_log;
 
-    public function setup()
+    protected function setUp() : void
     {
 		global $current_user;
 
@@ -105,7 +105,7 @@ class CampaignLogTest extends TestCase
 		$this->campaign_log = $cl;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
 		global $current_user;
 		//for each type, delete the object and it's email

@@ -34,20 +34,20 @@ class CategoriesTest extends TestCase
      */
     public static $root;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true));
         $root = SugarTestCategoryUtilities::createRootBean();
         self::$root = $root;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         self::$root = null;
         SugarTestCategoryUtilities::removeAllCreatedBeans();

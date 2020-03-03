@@ -19,7 +19,7 @@ class RetrieveEmailFieldsTest extends SOAPTestCase
     var $acc;
 	var $email_id;
 
-	public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();

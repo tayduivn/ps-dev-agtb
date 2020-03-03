@@ -33,7 +33,7 @@ class Bug62026Test extends TestCase
         'view_module' => 'Accounts',
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
@@ -53,7 +53,7 @@ class Bug62026Test extends TestCase
         VardefManager::refreshVardefs('Tasks', 'Task');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $mbc = new ModuleBuilderController();
 

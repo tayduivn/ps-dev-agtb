@@ -25,7 +25,7 @@ class PortalDashboardHelperTest extends TestCase
     private $bean;
     private $platform;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->helper = new PortalDashboardHelper();
         $this->bean = $this->createMock('Dashboard');
@@ -35,7 +35,7 @@ class PortalDashboardHelperTest extends TestCase
         }
     }
     
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if (isset($this->platform)) {
             $_SESSION['platform'] = $this->platform;

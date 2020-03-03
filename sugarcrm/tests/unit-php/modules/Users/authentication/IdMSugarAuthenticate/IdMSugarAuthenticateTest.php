@@ -48,7 +48,7 @@ class IdMSugarAuthenticateTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->idmLocalAuth = $this->getMockBuilder(\IdMSugarAuthenticate::class)
             ->disableOriginalConstructor()

@@ -22,7 +22,7 @@ class WorkFlowBugsTest extends TestCase
     private $test_team1;
     private $test_team2;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         if(file_exists('custom/modules/Accounts/workflow'))
         {
@@ -111,7 +111,7 @@ class WorkFlowBugsTest extends TestCase
     	unset($GLOBALS['triggeredWorkflows']);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
     	$this->test_team1 = SugarTestTeamUtilities::createAnonymousTeam();
         $this->test_team2 = SugarTestTeamUtilities::createAnonymousTeam();
@@ -123,7 +123,7 @@ class WorkFlowBugsTest extends TestCase
     	$this->test_account->save();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if(self::$has_workflow_directory)
         {
@@ -169,7 +169,7 @@ class WorkFlowBugsTest extends TestCase
         unset($GLOBALS['current_user']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $sql = "DELETE FROM accounts WHERE id = '{$this->test_account->id}'";
         $GLOBALS['db']->query($sql);

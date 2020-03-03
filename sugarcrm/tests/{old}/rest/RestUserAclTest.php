@@ -12,7 +12,7 @@
 
 
 class RestUserAclTest extends RestTestBase {
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->new_user_id}'");
         $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->admin_user_id}'");

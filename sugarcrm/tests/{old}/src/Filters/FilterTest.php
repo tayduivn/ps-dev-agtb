@@ -23,13 +23,13 @@ use Sugarcrm\Sugarcrm\Filters\Filter;
  */
 class FilterTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         parent::tearDownAfterClass();

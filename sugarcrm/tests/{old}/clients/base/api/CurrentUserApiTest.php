@@ -19,7 +19,7 @@ class CurrentUserApiTest extends TestCase
 {
     public $currentUserApiMock;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         OutboundEmailConfigurationTestHelper::setUp();
@@ -32,7 +32,7 @@ class CurrentUserApiTest extends TestCase
         $this->currentUserApiMock = $apiMock;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         OutboundEmailConfigurationTestHelper::tearDown();

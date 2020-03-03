@@ -17,12 +17,12 @@ use PHPUnit\Framework\TestCase;
  */
 class CommentsTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestActivityUtilities::removeAllCreatedActivities();
         SugarTestCommentUtilities::removeAllCreatedComments();

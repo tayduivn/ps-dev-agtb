@@ -27,7 +27,7 @@ class RNameLinkFieldTest extends TestCase
      */
     private static $meeting;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -71,7 +71,7 @@ class RNameLinkFieldTest extends TestCase
         return $row['accept_status_users'];
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

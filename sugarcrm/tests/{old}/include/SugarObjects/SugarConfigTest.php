@@ -16,13 +16,13 @@ class SugarConfigTest extends TestCase
 {
     private $_old_sugar_config = null;
 
-    public function setUp() 
+    protected function setUp() : void
     {
         $this->_old_sugar_config = $GLOBALS['sugar_config'];
         $GLOBALS['sugar_config'] = array();
     }
 
-    public function tearDown() 
+    protected function tearDown() : void
     {
         $config = SugarConfig::getInstance();
         $config->clearCache();

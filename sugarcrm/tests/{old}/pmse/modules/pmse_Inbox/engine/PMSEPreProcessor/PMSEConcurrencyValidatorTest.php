@@ -25,7 +25,7 @@ class PMSEConcurrencyValidatorTest extends TestCase
      *     opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->registry = Registry\Registry::getInstance();
     }
@@ -35,7 +35,7 @@ class PMSEConcurrencyValidatorTest extends TestCase
      *     close a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->registry->reset();
     }

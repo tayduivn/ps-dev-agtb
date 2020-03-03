@@ -19,12 +19,12 @@ class UploadFileTest extends TestCase
 {
     private $db;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->db = SugarTestHelper::setUp('mock_db');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -179,7 +179,7 @@ final class SugarUpgradeUpgradeAuthenticationClassTest extends TestCase
         $this->upgrader->run();
     }
 
-    protected function setUp():void
+    protected function setUp() : void
     {
         parent::setUp();
         $this->sugarConfig = $this->createMock(\SugarConfig::class);

@@ -42,7 +42,7 @@ class RS46Test extends TestCase
     /** @var array */
     protected $emails = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -52,7 +52,7 @@ class RS46Test extends TestCase
         $this->api = new LeadsApi();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query('DELETE FROM accounts WHERE id IN (\'' . implode("', '", $this->accounts) . '\')');
         $GLOBALS['db']->query('DELETE FROM leads WHERE id IN (\'' . implode("', '", $this->leads) . '\')');

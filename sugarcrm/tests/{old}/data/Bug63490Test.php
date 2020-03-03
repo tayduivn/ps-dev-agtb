@@ -22,7 +22,7 @@ class Bug63490Test extends TestCase
      */
     private static $bean;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$bean = new SugarBean();
         self::$bean->table_name = 'bean';

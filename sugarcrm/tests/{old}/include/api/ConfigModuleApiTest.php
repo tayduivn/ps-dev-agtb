@@ -20,7 +20,8 @@ class ConfigModuleApiTest extends TestCase
 {
     protected $createdBeans = array();
 
-    public function setUp(){
+    protected function setUp() : void
+    {
         SugarTestHelper::setup('beanList');
         SugarTestHelper::setup('moduleList');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -28,7 +29,7 @@ class ConfigModuleApiTest extends TestCase
         $GLOBALS['current_user']->is_admin = 1;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config where name = 'testSetting'");

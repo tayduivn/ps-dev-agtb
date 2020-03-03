@@ -16,7 +16,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
     public $unitTestFiles = array();
     public $oppTestPath ='modules/Accounts/clients/portal/views/list/list.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         // Portal test needs this one, tear down happens in parent
@@ -29,7 +29,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->createdStudioFile && file_exists('modules/Accounts/metadata/studio.php')) {
             unlink('modules/Accounts/metadata/studio.php');

@@ -27,7 +27,7 @@ class QuotesApiHelperTest extends TestCase
         'address_street'
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         $mock_service = new QuotesServiceMock();
         $mock_service->user = SugarTestHelper::setUp('current_user');
@@ -35,7 +35,7 @@ class QuotesApiHelperTest extends TestCase
         $this->helper = $this->getMockBuilder('QuotesApiHelper')->setMethods(array('execute'))->setConstructorArgs(array($mock_service))->getMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->helper);
         SugarTestAccountUtilities::removeAllCreatedAccounts();

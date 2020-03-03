@@ -21,7 +21,7 @@ class TemplateEnumTest extends TestCase
     private $_originaldbType = '';
     private $field;
     
-    public function setUp()
+    protected function setUp() : void
     {
         $this->field = get_widget('enum');
         $this->field->id = $this->_modulename.'foofighter_c';

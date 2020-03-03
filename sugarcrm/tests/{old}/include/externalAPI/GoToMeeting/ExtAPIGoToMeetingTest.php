@@ -22,7 +22,7 @@ class ExtAPIGoToMeetingTest extends TestCase
 {
     private $eapm;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -34,7 +34,7 @@ class ExtAPIGoToMeetingTest extends TestCase
         $this->eapm->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM {$this->eapm->table_name} WHERE id = '{$this->eapm->id}'");
         SugarTestMeetingUtilities::removeAllCreatedMeetings();

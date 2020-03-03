@@ -14,13 +14,13 @@ class SetNoteAttachmentTest extends SOAPTestCase
 {
     private $noteId;
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->_login();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = $GLOBALS['db'];
         $conn = $db->getConnection();

@@ -36,7 +36,7 @@ class Bug60688Test extends TestCase
      */
     protected $contact = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true));
         SugarTestHelper::setUp('beanFiles');
@@ -58,7 +58,7 @@ class Bug60688Test extends TestCase
         $this->role->users->add($GLOBALS['current_user']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->role->mark_deleted($this->role->id);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

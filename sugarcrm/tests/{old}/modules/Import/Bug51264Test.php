@@ -22,7 +22,7 @@ class Bug51264Test extends TestCase
 {
     private $contact;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -34,7 +34,7 @@ class Bug51264Test extends TestCase
         $this->contact = SugarTestContactUtilities::createContact();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         unset($this->contact);

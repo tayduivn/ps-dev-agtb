@@ -22,7 +22,7 @@ class Bug52584Test extends TestCase
     private $field;
     private $toClean = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -49,7 +49,7 @@ class Bug52584Test extends TestCase
         $this->focus->fetched_row[$this->field] = $this->value;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->toClean as $key => $value) {
             $GLOBALS['db']->query("DELETE FROM $key WHERE id = '$value'");

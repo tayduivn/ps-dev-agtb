@@ -17,7 +17,7 @@ class Bug48800Test extends TestCase
     var $emailTemplate;
     var $user;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $app_list_strings;
         $this->user = SugarTestUserUtilities::createAnonymousUser();
@@ -36,7 +36,7 @@ class Bug48800Test extends TestCase
         //$this->useOutputBuffering = false;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

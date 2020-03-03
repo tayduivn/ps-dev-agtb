@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class SearchViewMetaDataParserTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         //echo "Setup";
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //echo "TearDown";
     }

@@ -20,7 +20,7 @@ class WorkFlowProcessActionsTest extends TestCase
     private $_wf_array;
     private $_workflow_id;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
         $team = SugarTestTeamUtilities::createAnonymousTeam();
@@ -78,7 +78,7 @@ class WorkFlowProcessActionsTest extends TestCase
             ),
         );
     }
-    public function tearDown()
+    protected function tearDown() : void
     {
         rmdir_recursive('custom/modules/Quotes/workflow');
         rmdir_recursive('custom/modules/Quotes/logic_hooks.php');

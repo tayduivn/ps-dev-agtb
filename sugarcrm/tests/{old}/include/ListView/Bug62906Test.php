@@ -24,7 +24,7 @@ class Bug62906Test extends TestCase
     protected $lead = null;
     protected $task = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -34,7 +34,7 @@ class Bug62906Test extends TestCase
         $this->task = SugarTestTaskUtilities::createTask();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($_SESSION['ACL']);
         ACLField::$acl_fields = array();

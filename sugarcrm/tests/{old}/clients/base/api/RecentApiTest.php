@@ -23,7 +23,7 @@ class RecentApiTest extends TestCase
      */
     private $api;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('timedate');
@@ -31,7 +31,7 @@ class RecentApiTest extends TestCase
         $this->api = new RecentApi();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         global $current_user;
         global $db;

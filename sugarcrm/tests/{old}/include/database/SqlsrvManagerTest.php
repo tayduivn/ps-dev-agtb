@@ -12,7 +12,7 @@
 
 class SqlsrvManagerTest extends MssqlManagerTest
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->_db = new SqlsrvManager();

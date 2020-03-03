@@ -19,7 +19,7 @@ class ForecastWorksheetsApiHelperTest extends TestCase
      */
     protected $db;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -27,7 +27,7 @@ class ForecastWorksheetsApiHelperTest extends TestCase
         $this->db = SugarTestHelper::setUp('mock_db');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

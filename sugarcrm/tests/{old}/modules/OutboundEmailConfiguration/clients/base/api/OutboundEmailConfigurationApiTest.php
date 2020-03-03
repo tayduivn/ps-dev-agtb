@@ -16,13 +16,13 @@
  */
 class OutboundEmailConfigurationApiTest extends RestTestBase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         OutboundEmailConfigurationTestHelper::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         OutboundEmailConfigurationTestHelper::tearDown();
         parent::tearDown();

@@ -24,7 +24,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class SugarWidgetFieldMultiEnumTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->reporter = $this->createPartialMock(\Report::class, []);
 

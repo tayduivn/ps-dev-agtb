@@ -16,7 +16,7 @@ class Bug46276Test extends TestCase
 {
 	var $opportunities;
 
-	public function setUp()
+    protected function setUp() : void
 	{
         // in case someone wipes out these globals.
         SugarTestHelper::setUp('beanList');
@@ -47,7 +47,7 @@ class Bug46276Test extends TestCase
 		$this->opportunities->save();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		$GLOBALS['db']->query('DELETE FROM opportunities WHERE id = \'' . $this->opportunities->id . '\' ');
 		unset($this->opportunities);

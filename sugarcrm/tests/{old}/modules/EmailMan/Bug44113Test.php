@@ -22,7 +22,7 @@ class Bug44113Test extends TestCase
     private $email_xss; // the security settings to be saved in config_ovverride
     private $original_email_xss = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->is_admin = '1';
@@ -47,7 +47,7 @@ class Bug44113Test extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (isset($this->original_email_xss)) {
             $this->cfg                      = new Configurator();

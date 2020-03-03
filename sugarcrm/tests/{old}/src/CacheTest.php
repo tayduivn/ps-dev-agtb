@@ -25,7 +25,7 @@ abstract class CacheTest extends TestCase
      */
     protected $backend;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         try {
             $this->backend = $this->newInstance();

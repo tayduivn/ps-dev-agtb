@@ -16,7 +16,7 @@ class Bug38424FloatTest extends TestCase
 {
     private $_fieldOutput;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $sfr = new SugarFieldFloat('float');
         $vardef = array(

@@ -23,7 +23,7 @@ class Bug42379Test extends TestCase
     private $teamSetsId = '';
 
 	
-	public function setUp()
+    protected function setUp() : void
 	{
 		$this->teamIds[] = '8744c7d9-9e4b-2338-cb76-4ab0a3d0a65f';
 		$this->teamIds[] = '8749a110-1d85-4562-fa23-4ab0a3c65e16';
@@ -32,7 +32,7 @@ class Bug42379Test extends TestCase
         sort($this->teamIds, SORT_STRING);
 	}
 	
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		unset($this->teamSets);
         unset($this->teamIds);

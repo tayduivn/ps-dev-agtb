@@ -55,7 +55,7 @@ class GetRelCustFieldsTest extends SOAPTestCase
     /**
      * Creating new field, account, contact with filled custom field, relationship between them
      */
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         SugarTestHelper::setUp('beanList');
@@ -96,7 +96,7 @@ class GetRelCustFieldsTest extends SOAPTestCase
     /**
      * Removing field, account, contact
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

@@ -19,7 +19,7 @@ class CustomFieldsTest extends TestCase
      */
     private static $accounts;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -56,7 +56,7 @@ class CustomFieldsTest extends TestCase
         ];
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }

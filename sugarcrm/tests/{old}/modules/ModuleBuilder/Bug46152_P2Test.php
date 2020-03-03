@@ -39,7 +39,7 @@ class Bug46152_P2Test extends TestCase
         $this->assertNotEquals($GLOBALS['mod_strings'][$vName1], $GLOBALS['mod_strings'][$vName2]);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('Notes'));
@@ -75,7 +75,7 @@ class Bug46152_P2Test extends TestCase
         $this->fields[] = $field;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->deleteFields();
 

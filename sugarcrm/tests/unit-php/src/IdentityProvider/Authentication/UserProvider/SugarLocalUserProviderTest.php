@@ -56,7 +56,7 @@ class SugarLocalUserProviderTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->user = $this->createMock(\User::class);
         $this->emailAddress = $this->createMock(\EmailAddress::class);

@@ -17,7 +17,7 @@ class Bug34993Test extends TestCase
     private $_tablename;
     private $_old_installing;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->accountMockBean = $this->getMockBuilder('Account')
             ->setMethods(array('hasCustomFields'))
@@ -44,7 +44,7 @@ class Bug34993Test extends TestCase
         $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id in ('Accountsbug34993_test_c', 'Accountsbug34993_test2_c', 'Accountsfloat_test1_c', 'Accountsfloat_test2_c')");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->dropTableName($this->_tablename . '_cstm');
         $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id in ('Accountsbug34993_test_c', 'Accountsbug34993_test2_c', 'Accountsfloat_test1_c', 'Accountsfloat_test2_c')");

@@ -29,7 +29,8 @@ class RelateApiTest extends TestCase
 
     private $db = null;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp("current_user");
         // load up the unifiedSearchApi for good times ahead
         $this->relateApi = new RelateApi();
@@ -83,8 +84,9 @@ class RelateApiTest extends TestCase
         $this->db = $db;
     }
 
-    public function tearDown() {
-        $GLOBALS['current_user']->is_admin = 1;        
+    protected function tearDown() : void
+    {
+        $GLOBALS['current_user']->is_admin = 1;
         // delete the bunch of accounts crated
         foreach($this->accounts AS $account) {
             $account->mark_deleted($account->id);

@@ -24,7 +24,7 @@ There is no way this test will ever pass, since _getTestFilePermissions will alw
 value and decoct() will return an octal as a string but expressed in integer format (without the leading 0).
 SKIPIT;
 
-    public function setUp()
+    protected function setUp() : void
     {
         if (is_windows())
             $this->markTestSkipped('Skipping on Windows');
@@ -43,7 +43,7 @@ SKIPIT;
         $this->testDirectory = $GLOBALS['sugar_config']['cache_dir'] . md5($GLOBALS['sugar_config']['cache_dir']) . '/';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(file_exists($this->_filename)) {
             unlink($this->_filename);

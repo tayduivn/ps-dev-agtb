@@ -20,14 +20,14 @@ class Bug31013Test extends TestCase
 {
 	public $_user = null;
 
-	public function setUp() 
+    protected function setUp() : void
     {
     	$this->_user = SugarTestUserUtilities::createAnonymousUser(false);
     	$this->_user->portal_only = true;
     	$this->_user->save();
 	}
 
-	public function tearDown() 
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}

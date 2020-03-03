@@ -24,7 +24,7 @@ class RESTAPI4_1Test extends TestCase
     protected $call1;
     protected $call2;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         SugarTestHelper::setUp("beanList");
@@ -97,7 +97,7 @@ class RESTAPI4_1Test extends TestCase
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
 	{
         SugarTestContactUtilities::removeCreatedContactsUsersRelationships();
         SugarTestContactUtilities::removeAllCreatedContacts();

@@ -23,7 +23,7 @@ class ImportEmailsTest extends TestCase
     private $cleanId;
     private $emails = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->file = 'Bug25736Test.csv';
 
@@ -43,7 +43,7 @@ class ImportEmailsTest extends TestCase
         $_REQUEST['importlocale_num_grp_sep'] = ',';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM email_addr_bean_rel WHERE bean_id = '{$this->cleanId}' AND bean_module = '{$this->importObject->module_dir}'");
         $GLOBALS['db']->query("DELETE FROM email_addresses WHERE email_address IN ('" . implode("', '", $this->emails) . "')");

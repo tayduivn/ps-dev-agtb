@@ -16,7 +16,7 @@ require_once 'modules/Import/Forms.php';
 
 class ImportFormsTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         require('include/modules.php');
@@ -29,7 +29,7 @@ class ImportFormsTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

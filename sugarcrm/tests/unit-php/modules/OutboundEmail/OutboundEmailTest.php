@@ -23,7 +23,7 @@ class OutboundEmailTest extends TestCase
 {
     private $bean;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->bean = $this->createPartialMock('\\OutboundEmail', []);
         $this->bean->field_defs = [
@@ -222,7 +222,7 @@ class OutboundEmailTest extends TestCase
     /**
      * A few test cases require a current user. Unsets the current user from $GLOBALS.
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
     }

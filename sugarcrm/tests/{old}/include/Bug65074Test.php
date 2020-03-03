@@ -40,7 +40,7 @@ class Bug65074Test extends TestCase
     protected $customIncludeDir = 'custom/include';
     protected $customIncludeFile = 'bug65074_include.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         // create a custom include file
         $customIncludeFileContent = <<<EOQ
@@ -57,7 +57,7 @@ EOQ;
         file_put_contents($this->customIncludeDir . '/' . $this->customIncludeFile, $customIncludeFileContent);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // remove the custom include file
         if (file_exists($this->customIncludeDir . '/' . $this->customIncludeFile)) {

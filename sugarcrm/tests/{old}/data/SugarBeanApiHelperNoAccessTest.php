@@ -22,7 +22,7 @@ class SugarBeanApiHelperNoAccessTest extends TestCase
     public $beanApiHelper;
     public $apiMock;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         // Mocking out SugarBean to avoid having to deal with any dependencies other than those that we need for this test
@@ -52,7 +52,7 @@ class SugarBeanApiHelperNoAccessTest extends TestCase
         $this->beanApiHelper = new SugarBeanApiHelper($this->apiMock);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($_SESSION['ACL']);
         SugarTestHelper::tearDown();

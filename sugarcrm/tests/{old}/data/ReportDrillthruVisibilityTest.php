@@ -22,7 +22,7 @@ class ReportDrillthruVisibilityTest extends TestCase
     protected $account;
     protected $report;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $user = SugarTestHelper::setUp('current_user');
 
@@ -57,7 +57,7 @@ class ReportDrillthruVisibilityTest extends TestCase
         $this->report = new Report($def);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();

@@ -12,7 +12,7 @@
 
 
 class RestPublicMetadataSugarViewsTest extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->oldFiles = array();
@@ -21,7 +21,7 @@ class RestPublicMetadataSugarViewsTest extends RestTestBase {
         $this->authToken = 'LOGGING_IN';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ( $this->oldFiles as $filename => $filecontents ) {
             if ( $filecontents == '_NO_FILE' ) {

@@ -16,7 +16,7 @@ class JavascriptTest extends TestCase
 {
     protected $_javascript;
     
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_javascript = new javascript();
     }

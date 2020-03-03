@@ -23,7 +23,7 @@ class Bug66230Test extends TestCase
     protected $workFlowId;
     protected $workFlowTriggerShellId;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -64,7 +64,7 @@ class Bug66230Test extends TestCase
         $_SESSION['workflow_cron'] = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Remove workflow defs
         rmdir_recursive('custom/modules/Quotes/workflow');

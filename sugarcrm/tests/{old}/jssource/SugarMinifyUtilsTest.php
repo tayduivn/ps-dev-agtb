@@ -23,7 +23,7 @@ class SugarMinifyUtilsTest extends TestCase
     protected $builtFile = 'include/javascript/unit_test_built.min.js';
 
     /** {@inheritDoc} */
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::saveFile(sugar_cached($this->builtFile));
     }

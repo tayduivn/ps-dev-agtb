@@ -32,14 +32,14 @@ class ModuleApiTest extends TestCase
     public $moduleApi;
     public $serviceMock;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("current_user");
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         // load up the unifiedSearchApi for good times ahead
         $this->moduleApi = new ModuleApi();
@@ -54,12 +54,12 @@ class ModuleApiTest extends TestCase
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarACL::resetACLs();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // delete the bunch of accounts crated
         $GLOBALS['db']->query("DELETE FROM accounts WHERE assigned_user_id = '{$GLOBALS['current_user']->id}'");

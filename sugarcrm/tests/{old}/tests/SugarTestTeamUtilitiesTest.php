@@ -17,12 +17,12 @@ class SugarTestTeamUtilitiesTest extends TestCase
 {
     private $_before_snapshot = array();
     
-    public function setUp() 
+    protected function setUp() : void
     {
         $this->_before_snapshot = $this->_takeTeamDBSnapshot();
     }
 
-    public function tearDown() 
+    protected function tearDown() : void
     {
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
     }

@@ -17,7 +17,7 @@ class M2MRelationshipTestDuplicateRows extends TestCase
     protected $def;
     protected $origDB;
 
-    public function setUp()
+    protected function setUp() : void
         {
             $this->origDB = $GLOBALS['db'];
             $this->db = new SugarTestDatabaseMock();
@@ -41,10 +41,10 @@ class M2MRelationshipTestDuplicateRows extends TestCase
            );
         }
 
-        public function tearDown()
-        {
-            $GLOBALS['db'] = $this->origDB;
-        }
+    protected function tearDown() : void
+    {
+        $GLOBALS['db'] = $this->origDB;
+    }
 
     /**
      * @dataProvider dupeRowProvider

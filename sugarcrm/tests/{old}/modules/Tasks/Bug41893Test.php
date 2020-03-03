@@ -17,7 +17,7 @@ class Bug41893Test extends TestCase
 {
     private $created_anonymous_user = false;
 
-    public function setUp()
+    protected function setUp() : void
     {
        if(!isset($GLOBALS['current_user'])) {
        	  $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -25,7 +25,7 @@ class Bug41893Test extends TestCase
        }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
        if($this->created_anonymous_user) {
        	  SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

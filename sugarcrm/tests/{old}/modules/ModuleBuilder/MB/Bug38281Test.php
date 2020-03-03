@@ -19,7 +19,7 @@ class Bug38281Test extends TestCase
     private $tmp_dir;
     private $tmp_file;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->tmp_dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'bug32821';
         mkdir($this->tmp_dir);
@@ -27,7 +27,7 @@ class Bug38281Test extends TestCase
         file_put_contents($this->tmp_file, '$dashletData[\'oldnameDashlet\'][\'searchFields\']');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->tmp_file);
         rmdir($this->tmp_dir);

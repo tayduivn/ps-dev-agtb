@@ -19,7 +19,7 @@ class TimeElapsedSaveOnceTest extends TestCase
 {
     private $beanId;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -27,7 +27,7 @@ class TimeElapsedSaveOnceTest extends TestCase
         $this->beanId = create_guid();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM workflow_schedules WHERE bean_id = '{$this->beanId}'");
         SugarTestHelper::tearDown();

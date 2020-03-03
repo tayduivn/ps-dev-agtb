@@ -19,7 +19,7 @@ class M2MRelationshipTest extends TestCase
     private $contact;
     private $def;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -39,7 +39,7 @@ class M2MRelationshipTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestContactUtilities::removeAllCreatedContacts();

@@ -13,7 +13,7 @@
 
 
 class RestListFTSTest extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->accounts = array();
@@ -26,7 +26,7 @@ class RestListFTSTest extends RestTestBase {
         $this->search_engine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig(), array(), false);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $accountIds = array();
         foreach ( $this->accounts as $account ) {

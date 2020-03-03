@@ -18,7 +18,7 @@ class Bug49896Test extends TestCase
     var $_passwordSetting;
     var $_currentUser;
 
-    public function setUp()
+    protected function setUp() : void
     {
         if(isset($GLOBALS['sugar_config']['passwordsetting']))
         {
@@ -33,7 +33,7 @@ class Bug49896Test extends TestCase
         $this->_currentUser = SugarTestUserUtilities::createAnonymousUser(false);        
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->_passwordSetting))
         {

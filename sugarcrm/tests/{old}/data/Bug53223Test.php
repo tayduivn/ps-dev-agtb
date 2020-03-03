@@ -85,7 +85,7 @@ class Bug53223Test extends TestCase
         }
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("This test is not yet complete. Artem is working on it");
         $beanList = array();
@@ -104,7 +104,7 @@ class Bug53223Test extends TestCase
         $this->parentAccount = SugarTestAccountUtilities::createAccount();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->markTestIncomplete("This test is not yet complete. Artem is working on it");
         $this->deleteRelationship('Accounts');

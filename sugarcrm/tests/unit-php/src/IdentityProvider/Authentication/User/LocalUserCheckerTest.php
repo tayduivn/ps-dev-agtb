@@ -39,7 +39,7 @@ class LocalUserCheckerTest extends TestCase
      */
     protected $lockout;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->sugarUser = $this->createMock(\User::class);
         $this->user = $this->createMock(User::class);

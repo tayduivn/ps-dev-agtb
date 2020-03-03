@@ -25,7 +25,7 @@ class PMSEEvalCriteriaTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->object = ProcessManager\Factory::getPMSEObject('PMSEEvalCriteria');
         // The default timezone is set to phoenix because the server could

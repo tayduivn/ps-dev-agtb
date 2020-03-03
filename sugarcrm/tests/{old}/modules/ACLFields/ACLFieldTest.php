@@ -17,13 +17,13 @@ use PHPUnit\Framework\TestCase;
  */
 class ACLFieldTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setup('dictionary');
         SugarTestHelper::setup('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestACLUtilities::tearDown();
         ACLField::clearACLCache();

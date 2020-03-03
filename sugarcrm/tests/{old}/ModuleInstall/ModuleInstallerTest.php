@@ -21,7 +21,7 @@ class ModuleInstallerTest extends TestCase
     protected $caseDeflection;
     protected $installing;
 
-    public function setUp()
+    protected function setUp() : void
     {
         // save current value
         $settings = Administration::getSettings('portal', true)->settings;
@@ -30,7 +30,7 @@ class ModuleInstallerTest extends TestCase
         unset($GLOBALS['installing']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // restore current value
         if (isset($this->caseDeflection)) {

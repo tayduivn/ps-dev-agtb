@@ -13,7 +13,7 @@
 
 
 class RestBug54528Test extends RestTestPortalBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         // Create a portal API user
@@ -48,7 +48,7 @@ class RestBug54528Test extends RestTestPortalBase {
         $GLOBALS['db']->commit();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ( isset($this->bug_id) ) {
             $GLOBALS['db']->query("DELETE FROM bugs WHERE id = '{$this->bug_id}'");

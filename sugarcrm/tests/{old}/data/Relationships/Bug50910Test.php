@@ -16,14 +16,14 @@ class Bug50910Test extends TestCase
 {
     protected $emailAddress;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $beanFiles, $beanList, $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         if(!empty($this->emailAddress))

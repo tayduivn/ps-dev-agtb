@@ -16,7 +16,7 @@ require_once('include/SugarSmarty/plugins/function.multienum_to_array.php');
 
 class FunctionMultienumToArrayTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_smarty = new Sugar_Smarty;
     }

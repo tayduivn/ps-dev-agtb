@@ -27,7 +27,7 @@ class Bug56694Test extends TestCase
      */
     protected $templateInt = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->templateInt = new TemplateInt();
         $this->templateInt->importable = "true";

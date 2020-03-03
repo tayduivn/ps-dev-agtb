@@ -33,7 +33,7 @@ class SoapRelationshipHelperTest extends TestCase
     var $tenMinutesLaterTime;
     var $testData;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $timedate, $current_user;
         $timedate = TimeDate::getInstance();
@@ -97,7 +97,7 @@ class SoapRelationshipHelperTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $current_user;
         $GLOBALS['db']->query("DELETE FROM meetings_users WHERE user_id = '{$current_user->id}'");

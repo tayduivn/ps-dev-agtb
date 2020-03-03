@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class TemplateDateTimeTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         global $timedate;
         $timedate->setNow(new SugarDateTime());

@@ -22,7 +22,8 @@ class RESTAPI3Test extends TestCase
 
     private $_unified_search_modules_content;
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass() : void
+    {
         if(isset($_SESSION['ACL'])) {
             unset($_SESSION['ACL']);
         }
@@ -33,7 +34,7 @@ class RESTAPI3Test extends TestCase
         SugarTestHelper::setUp('mod_strings', array('Accounts'));
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -60,7 +61,7 @@ class RESTAPI3Test extends TestCase
         //$this->useOutputBuffering = false;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
         if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
@@ -80,7 +81,8 @@ class RESTAPI3Test extends TestCase
         unset($GLOBALS['reload_vardefs']);
     }
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void
+    {
         SugarTestHelper::tearDown();
     }
 

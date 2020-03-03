@@ -21,7 +21,7 @@ class Bug45181 extends TestCase
     private $sugar_config;
     private $sugarView;
 
-    function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         global $sugar_config;
@@ -35,7 +35,7 @@ class Bug45181 extends TestCase
         }
     }
 
-    function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         if (is_file('memory_usage.log'))

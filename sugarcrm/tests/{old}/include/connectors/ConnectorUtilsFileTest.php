@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 class ConnectorUtilsFileTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->timestamp = time();
         $this->test_path = 'custom/modules/Connectors/connectors/sources/test' . $this->timestamp;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         rmdir_recursive($this->test_path);
     }

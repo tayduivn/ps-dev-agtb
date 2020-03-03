@@ -30,7 +30,7 @@ class MailApiTest extends TestCase
         $userCacheDir,
         $dp;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user", [true, 1]);
         SugarTestHelper::setUp('app_list_strings');
@@ -44,7 +44,7 @@ class MailApiTest extends TestCase
         $this->dp = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();

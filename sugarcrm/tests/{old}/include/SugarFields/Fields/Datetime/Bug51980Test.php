@@ -17,7 +17,7 @@ class Bug51980Test extends TestCase
     private $user;
     private $opp;
 
-	public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Disabling after discussing with Eddy.  Eddy will take a look at why this is breaking Stack 66 build");
         //create user
@@ -46,7 +46,7 @@ class Bug51980Test extends TestCase
         $this->opp->save();
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'Test_51980_%'");

@@ -42,7 +42,7 @@ class RS192Test extends TestCase
      */
     protected $records;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -52,13 +52,13 @@ class RS192Test extends TestCase
         SugarTestHelper::setUp('current_user', array(true, false));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
         DBManagerFactory::getInstance()->setEncode(self::$encode);
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->api = new ExportApi();
         $this->recordList = new RecordListApi();
@@ -70,7 +70,7 @@ class RS192Test extends TestCase
         SugarTestAccountUtilities::createAccount();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->recordList->recordListDelete(
             SugarTestRestUtilities::getRestServiceMock(),

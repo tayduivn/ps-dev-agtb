@@ -18,7 +18,7 @@ class SugarFieldFileTest extends TestCase
     protected $origNote;
     protected $newNote;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +31,7 @@ class SugarFieldFileTest extends TestCase
         file_put_contents("upload://{$this->origNote->id}", 'test');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         if (!empty($this->origNote->id)) {

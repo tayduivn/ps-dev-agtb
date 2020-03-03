@@ -17,14 +17,14 @@ class SugarControllerTest extends TestCase
 {
     protected $module_name;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('moduleList');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->module_name = null;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

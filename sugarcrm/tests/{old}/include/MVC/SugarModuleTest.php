@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarModuleTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->is_admin = '1';

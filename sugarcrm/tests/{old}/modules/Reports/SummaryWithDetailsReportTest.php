@@ -22,7 +22,7 @@ class SummaryWithDetailsReportTest extends TestCase
     private $rowsAndColumnsData;
     private $report;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
@@ -34,7 +34,7 @@ class SummaryWithDetailsReportTest extends TestCase
         $this->rowsAndColumnsData = $this->getData();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

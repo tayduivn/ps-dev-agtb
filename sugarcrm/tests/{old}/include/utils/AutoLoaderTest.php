@@ -25,13 +25,13 @@ class AutoLoaderTests extends TestCase
      */
     protected $cleanupFiles = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->namespaceMap = SugarAutoLoader::$namespaceMap;
         $this->namespaceMapPsr4 = SugarAutoLoader::$namespaceMapPsr4;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->cleanupFiles as $file) {
             @unlink($file);
@@ -50,7 +50,7 @@ class AutoLoaderTests extends TestCase
         SugarAutoLoader::$namespaceMapPsr4 = $this->namespaceMapPsr4;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarAutoLoader::buildCache();
     }

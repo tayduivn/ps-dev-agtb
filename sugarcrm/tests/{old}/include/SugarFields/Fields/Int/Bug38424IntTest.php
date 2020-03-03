@@ -16,7 +16,7 @@ class Bug38424IntTest extends TestCase
 {
     private $_fieldOutput;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $sfr = new SugarFieldInt('int');
         $vardef = array(

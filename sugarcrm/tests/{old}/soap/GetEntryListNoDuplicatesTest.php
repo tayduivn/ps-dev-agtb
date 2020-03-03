@@ -29,7 +29,7 @@ class GetEntryListNoDuplicatesTest extends SOAPTestCase
     /** @var Meeting */
     protected $meeting2 = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -49,7 +49,7 @@ class GetEntryListNoDuplicatesTest extends SOAPTestCase
         $this->_login();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeMeetingContacts();
         SugarTestMeetingUtilities::removeMeetingUsers();

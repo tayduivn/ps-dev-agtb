@@ -27,13 +27,13 @@ class DownloadArchiveTest extends TestCase
      */
     public $notes = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Notes cleanup
         if (count($this->notes)) {

@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class SetValueActionTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
 	{
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference('datef', "Y-m-d");
@@ -23,7 +23,7 @@ class SetValueActionTest extends TestCase
         $GLOBALS['current_user']->setPreference('timef', "H:i:s");
 	}
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestTaskUtilities::removeAllCreatedTasks();
     }

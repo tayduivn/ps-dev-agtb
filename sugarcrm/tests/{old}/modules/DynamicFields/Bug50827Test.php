@@ -17,12 +17,12 @@ class Bug50827Test extends TestCase
 {
     private $_smarty;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_smarty = new Sugar_Smarty();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->_smarty);
     }

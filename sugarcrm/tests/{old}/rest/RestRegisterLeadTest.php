@@ -13,12 +13,12 @@
 
 class RestRegisterLeadTest extends RestTestBase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (isset($this->lead_id)) {
             $GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead_id}'");

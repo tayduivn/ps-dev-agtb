@@ -16,12 +16,12 @@ class BasicTemplateTest extends TestCase
 {
     private $_bean;
     
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_bean = new Basic;
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->_bean);
     }

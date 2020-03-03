@@ -26,7 +26,7 @@ class SoapHelperWebServiceTest extends TestCase
 {
     private static $original_service_object;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         global $service_object;
         if (!empty($service_object)) {
@@ -34,7 +34,7 @@ class SoapHelperWebServiceTest extends TestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (!empty(self::$original_service_object)) {
             global $service_object;

@@ -17,7 +17,7 @@ class SugarJobActivityStreamPurgerTest extends TestCase
     protected $sugarConfig;
     protected $schedulersJob;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->sugarConfig = $GLOBALS['sugar_config'];
 
@@ -25,7 +25,7 @@ class SugarJobActivityStreamPurgerTest extends TestCase
         $this->schedulersJob->expects($this->any())->method('succeedJob')->will($this->returnValue(true));
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestActivityUtilities::removeAllCreatedActivities();
         $GLOBALS['sugar_config'] = $this->sugarConfig;

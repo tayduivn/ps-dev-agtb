@@ -27,7 +27,7 @@ class Bug51719Test extends TestCase
      */
     protected $account = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -36,7 +36,7 @@ class Bug51719Test extends TestCase
         $this->account = SugarTestAccountUtilities::createAccount();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();

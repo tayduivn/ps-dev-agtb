@@ -39,7 +39,7 @@ class QuoteConvertApiTest extends TestCase
      */
     protected $quote_link2;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
 
@@ -64,7 +64,7 @@ class QuoteConvertApiTest extends TestCase
             ->getMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->opp, $this->quote, $this->quote_link2, $this->opp_link2);
         SugarTestHelper::tearDown();

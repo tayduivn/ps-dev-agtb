@@ -17,7 +17,7 @@ class PMSEUserRoleParserTest extends TestCase
 {
     protected $dataParser;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->dataParser = $this->getMockBuilder('PMSEUserRoleParser')
                 ->disableOriginalConstructor()

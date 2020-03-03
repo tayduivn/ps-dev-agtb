@@ -19,7 +19,7 @@ class UpdateRelatedCalcFieldTest extends TestCase
     protected $createdBeans = array();
     protected $createdFiles = array();
 
-    public function setUp()
+    protected function setUp() : void
 	{
 	    $this->markTestIncomplete('Disabled by John Mertic');
 	    require('include/modules.php');
@@ -47,27 +47,6 @@ EOQ;
         $rc = new RepairAndClear();
         $rc->repairAndClearAll(array("rebuildExtensions", "clearVardefs"), array("Accounts", "Contacts"),  false, false);
 	}
-
-	/*public function tearDown()
-	{
-	    foreach($this->createdBeans as $bean)
-        {
-            $bean->retrieve($bean->id);
-            $bean->mark_deleted($bean->id);
-        }
-        foreach($this->createdFiles as $file)
-        {
-            if (is_file($file))
-                unlink($file);
-        }
-        $rc = new RepairAndClear();
-        $rc->repairAndClearAll(array("rebuildExtensions", "clearVardefs"), array("Accounts", "Contacts"), false, false);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	    unset($GLOBALS['current_user']);
-	    unset($GLOBALS['beanList']);
-	    unset($GLOBALS['beanFiles']);
-	}*/
-	
 
 	public function testUpdateAccountCFWhenContactSave()
 	{

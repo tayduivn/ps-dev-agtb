@@ -18,7 +18,7 @@ class DropdownListItemsTest extends TestCase
 {
     protected static $custFilePath = 'custom/include/required_list_items.php';
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // Create a custom file that adds a new list and overrides the current
         $testItems = array(
@@ -35,7 +35,7 @@ class DropdownListItemsTest extends TestCase
         write_array_to_file('app_list_strings_required', $testItems, self::$custFilePath);
     }
     
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         unlink(self::$custFilePath);
     }

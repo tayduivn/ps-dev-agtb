@@ -22,7 +22,7 @@ class SugarFieldFullnameTest extends TestCase
      */
     private $sf;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->sf = new SugarFieldFullname('fullname');
     }

@@ -22,7 +22,7 @@ class SOAPAPI4Test extends SOAPTestCase
     /**
      * Create test user
      */
-	public function setUp()
+    protected function setUp() : void
     {
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v4/soap.php';
 		parent::setUp();
@@ -31,7 +31,7 @@ class SOAPAPI4Test extends SOAPTestCase
         $this->cleanup = false;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->cleanup)) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");

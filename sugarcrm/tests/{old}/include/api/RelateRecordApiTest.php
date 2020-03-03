@@ -22,7 +22,7 @@ class RelateRecordApiTest extends TestCase
 
     protected $createdBeans = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -31,7 +31,7 @@ class RelateRecordApiTest extends TestCase
         $this->api = new RelateRecordApi();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach($this->createdBeans as $bean)
         {

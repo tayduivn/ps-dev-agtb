@@ -18,7 +18,7 @@ class CallsApiHelperTest extends TestCase
     protected $bean =null;
     protected $contact = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -40,7 +40,7 @@ class CallsApiHelperTest extends TestCase
         $this->bean->contact_id = $this->contact->id;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->bean);
         unset($this->contact);

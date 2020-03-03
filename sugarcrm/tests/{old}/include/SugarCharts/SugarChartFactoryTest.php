@@ -16,7 +16,7 @@ class SugarChartFactoryTest extends TestCase
 {
     var $engine;
 
-	public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
@@ -27,7 +27,7 @@ class SugarChartFactoryTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->engine))
         {

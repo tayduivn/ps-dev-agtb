@@ -29,7 +29,7 @@ class M2MRelationshipTest extends TestCase
      */
     protected $def;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['log'] = $this->getMockBuilder('LoggerManager')
             ->disableOriginalConstructor()
@@ -45,7 +45,7 @@ class M2MRelationshipTest extends TestCase
 
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['log']);
     }

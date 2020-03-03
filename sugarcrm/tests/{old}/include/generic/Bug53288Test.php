@@ -23,7 +23,7 @@ class Bug53288Test extends TestCase
     protected $_oProspectList;
     protected $_oProspect;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         SugarTestHelper::setUp('beanFiles');
@@ -34,7 +34,7 @@ class Bug53288Test extends TestCase
         $this->createProspectList();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestProspectListsUtilities::removeProspectsListToProspectRelation($this->_oProspectList->id, $this->_oProspect->id);
         SugarTestProspectUtilities::removeAllCreatedProspects();

@@ -12,12 +12,12 @@
 
 
 class RestZeroSpotSearchTest extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ( isset($this->account_id) ) {
             foreach($this->account_id AS $account_id) {

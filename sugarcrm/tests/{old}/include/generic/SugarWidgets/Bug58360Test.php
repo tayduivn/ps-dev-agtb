@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug58360Test extends TestCase
 {
-    function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -41,7 +41,7 @@ class Bug58360Test extends TestCase
         $GLOBALS['db']->query("UPDATE {$lead->table_name} SET date_modified = " . $GLOBALS['db']->convert("'2000-01-01 23:30:00'", 'datetime') . " WHERE id = " . $GLOBALS['db']->quoted($lead->id));
     }
 
-    function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['timedate']->setUser();
         SugarTestLeadUtilities::removeAllCreatedLeads();

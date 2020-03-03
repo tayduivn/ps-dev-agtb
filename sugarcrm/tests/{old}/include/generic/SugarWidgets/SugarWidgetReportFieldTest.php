@@ -32,7 +32,7 @@ class SugarWidgetReportFieldTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user', array(true, false));
@@ -53,7 +53,7 @@ class SugarWidgetReportFieldTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->bean->mark_deleted($this->bean->id);
     }

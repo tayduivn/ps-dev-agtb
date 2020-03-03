@@ -17,7 +17,7 @@ require_once 'include/utils/file_utils.php';
 
 class FilePutContentsAtomicTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUpFiles();
     }

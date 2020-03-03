@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug24095Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('custom_field', array(
@@ -31,7 +31,7 @@ class Bug24095Test extends TestCase
         $GLOBALS['db']->query("INSERT INTO accounts_cstm (id_c,foo_c) VALUES ('12345','67890')");
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '12345'");
         SugarTestHelper::tearDown();

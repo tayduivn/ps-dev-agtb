@@ -71,7 +71,7 @@ class OAuth2AuthenticateTest extends TestCase
     /**
      * set up
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
         $GLOBALS['sugar_config'] = [
@@ -112,7 +112,7 @@ class OAuth2AuthenticateTest extends TestCase
     /**
      * tear down
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config'] = $this->sugarConfig;
         $this->config->clearCache();

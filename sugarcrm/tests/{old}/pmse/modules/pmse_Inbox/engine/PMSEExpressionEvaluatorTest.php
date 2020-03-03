@@ -20,7 +20,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
      *     opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         // The default timezone is set to phoenix because the server could
         // have a different timezone that triggers failures with the tests

@@ -23,7 +23,8 @@ class Bug49691bTest extends TestCase
     var $oldDate;
     var $oldTime;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         global $sugar_config;
         $this->oldDate = $sugar_config['default_date_format'];
         $sugar_config['default_date_format'] = 'm/d/Y';
@@ -34,7 +35,8 @@ class Bug49691bTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         global $sugar_config;
         unset($GLOBALS['current_user']);
         $sugar_config['default_date_format'] = $this->oldDate;

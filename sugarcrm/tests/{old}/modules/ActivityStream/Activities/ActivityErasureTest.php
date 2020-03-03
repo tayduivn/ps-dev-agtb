@@ -21,7 +21,7 @@ class ActivityErasureTest extends TestCase
 {
     private $dp;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = $GLOBALS['current_user']->getSystemUser();
         $this->dp = array();
@@ -29,7 +29,7 @@ class ActivityErasureTest extends TestCase
         $GLOBALS['db']->query('DELETE FROM comments');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
 

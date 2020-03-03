@@ -20,14 +20,14 @@ class MetaDataHacksTest extends TestCase
      */
     protected $mdh;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         $this->mdh = new MetaDataHacks();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

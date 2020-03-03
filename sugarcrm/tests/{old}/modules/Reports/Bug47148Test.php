@@ -38,7 +38,7 @@ class Bug47148Test extends TestCase
 {
     private $_backup = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $beanFiles, $beanList;
         require('include/modules.php');
@@ -46,7 +46,7 @@ class Bug47148Test extends TestCase
         $GLOBALS['do_thousands'] = true;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['do_thousands'] = $this->_backup['do_thousands'];
     }

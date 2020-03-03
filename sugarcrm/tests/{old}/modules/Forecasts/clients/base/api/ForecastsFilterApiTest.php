@@ -38,7 +38,7 @@ class ForecastsCommittedApiTest extends TestCase
      */
     protected $api;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -56,7 +56,7 @@ class ForecastsCommittedApiTest extends TestCase
         self::$reportee->save();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
@@ -64,12 +64,12 @@ class ForecastsCommittedApiTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->api = new ForecastsFilterApi();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->api);
     }

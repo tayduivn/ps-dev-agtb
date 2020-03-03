@@ -29,7 +29,7 @@ class Bug64815Test extends TestCase
      */
     protected $db;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->db = $GLOBALS['db'];
         SugarTestHelper::setUp('beanFiles');
@@ -75,7 +75,7 @@ class Bug64815Test extends TestCase
         LogicHook::refreshHooks();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         TimeDate::getInstance()->clearCache();
 

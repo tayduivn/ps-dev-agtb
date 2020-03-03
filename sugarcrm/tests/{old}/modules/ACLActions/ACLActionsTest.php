@@ -16,7 +16,7 @@ class ACLActionsTest extends TestCase
 {
     protected $roles = [];
 
-    public function setup()
+    protected function setUp() : void
     {
         if ($this->hasDependencies()) {
             return;
@@ -54,7 +54,7 @@ class ACLActionsTest extends TestCase
         $this->roles[2]->users->add($GLOBALS['current_user']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->hasDependencies()) {
             return;

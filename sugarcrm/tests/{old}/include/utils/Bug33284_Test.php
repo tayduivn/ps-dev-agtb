@@ -17,14 +17,16 @@ class Bug33284_Test extends TestCase
     var $max_display_set = false;
     var $max_display_length;
     
-    public function setUp() {
+    protected function setUp() : void
+    {
     	if(isset($sugar_config['tracker_max_display_length'])) {
     	   $this->max_display_set = true;
     	   $this->max_display_length = $sugar_config['tracker_max_display_length'];
     	}
     }
     
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         if($this->max_display_set) {
            global $sugar_config; 
            $sugar_config['tracker_max_display_length'] = $this->max_display_length;

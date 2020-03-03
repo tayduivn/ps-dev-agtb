@@ -18,13 +18,13 @@ use PHPUnit\Framework\TestCase;
  */
 class OutboundEmailTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         OutboundEmailConfigurationTestHelper::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();

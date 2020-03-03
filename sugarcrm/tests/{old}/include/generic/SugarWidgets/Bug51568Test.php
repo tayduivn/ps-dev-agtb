@@ -41,7 +41,7 @@ class Bug51568Test extends TestCase
      */
     protected $backupSymbol;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $sugar_config;
         SugarTestHelper::setUp('current_user', array(true));
@@ -181,7 +181,7 @@ class Bug51568Test extends TestCase
         return $sf->displayListPlain($layout_def);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         $currency = BeanFactory::newBean('Currencies');

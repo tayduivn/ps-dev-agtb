@@ -12,7 +12,7 @@
 
 
 class RestMeetingHelperTest extends RestTestBase {
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");

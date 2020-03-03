@@ -20,7 +20,7 @@ class ElasticsearchRefreshTriggerCommandTest extends AbstractApiCommandTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->commandClass = 'Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRefreshTriggerCommand';
         $this->apiClass = 'AdministrationApi';

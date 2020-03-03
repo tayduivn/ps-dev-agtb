@@ -22,12 +22,12 @@ use Symfony\Component\Security\Csrf\Exception\TokenNotFoundException;
  */
 class CsrfTokenStorageTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         $_SESSION = array();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($_SESSION);
     }

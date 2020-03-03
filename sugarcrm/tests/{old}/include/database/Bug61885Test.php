@@ -22,14 +22,14 @@ class Bug61885 extends TestCase
 
     /*
      */
-    public function setUp()
+    protected function setUp() : void
     {
         $this->db = DBManagerFactory::getInstance();
     }
 
     /*
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->created as $table => $dummy) {
             $this->dropTableName($table);

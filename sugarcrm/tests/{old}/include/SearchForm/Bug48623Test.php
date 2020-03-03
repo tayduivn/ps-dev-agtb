@@ -16,7 +16,7 @@ require_once('include/SearchForm/SearchForm2.php');
 
 class Bug48623Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
@@ -25,7 +25,7 @@ class Bug48623Test extends TestCase
         $GLOBALS['current_user']->setPreference('timezone', 'EDT');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
         SugarTestHelper::tearDown();

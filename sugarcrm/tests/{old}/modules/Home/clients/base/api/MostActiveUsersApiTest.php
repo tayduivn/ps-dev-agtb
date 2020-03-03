@@ -53,7 +53,7 @@ class MostActiveUsersApiTest extends TestCase
      */
     protected $api;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, 1));
 
@@ -82,7 +82,7 @@ class MostActiveUsersApiTest extends TestCase
         $this->inboundEmail->save();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestCallUtilities::removeAllCreatedCalls();

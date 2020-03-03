@@ -79,13 +79,13 @@ class Bug59126Test extends TestCase
         return $Widget;
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $this->contact = SugarTestContactUtilities::createContact();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();

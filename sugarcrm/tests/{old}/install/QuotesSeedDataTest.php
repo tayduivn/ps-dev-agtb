@@ -17,7 +17,7 @@ class QuotesSeedDataTest extends TestCase
 {
 	protected $quote_name;
 	
-	public function setUp()
+    protected function setUp() : void
 	{
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -56,7 +56,7 @@ class QuotesSeedDataTest extends TestCase
 		);
 	}
 
-	public function tearDown() 
+    protected function tearDown() : void
 	{
 		$sql = "SELECT * FROM quotes WHERE name = '{$this->quote_name}'";
 		$results = $GLOBALS['db']->query($sql);

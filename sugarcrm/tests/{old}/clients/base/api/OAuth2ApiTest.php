@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class OAuth2ApiTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $_SESSION = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_SESSION = array();
         SugarTestHelper::tearDown();

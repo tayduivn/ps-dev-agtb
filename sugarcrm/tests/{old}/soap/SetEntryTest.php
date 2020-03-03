@@ -20,7 +20,7 @@ class SetEntryTest extends SOAPTestCase
     public $_soapURL = null;
     private $_tsk = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
@@ -30,7 +30,7 @@ class SetEntryTest extends SOAPTestCase
         $this->_tsk->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM tasks WHERE id = '{$this->_tsk->id}'");
         parent::tearDown();

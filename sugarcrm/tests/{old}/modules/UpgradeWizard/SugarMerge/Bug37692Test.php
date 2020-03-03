@@ -20,7 +20,8 @@ var $merge;
 var $has_dir;
 var $modules;
 
-function setUp() {
+    protected function setUp() : void
+    {
    $this->modules = array('Project');
    $this->has_dir = array();
 
@@ -50,7 +51,7 @@ function setUp() {
    } //foreach
 }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->modules as $module) {
             if (!$this->has_dir[$module]) {

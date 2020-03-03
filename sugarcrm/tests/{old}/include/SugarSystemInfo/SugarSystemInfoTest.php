@@ -23,7 +23,7 @@ class SugarSystemInfoTest extends TestCase
      */
     protected $sysInfo;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestTrackerUtility::setup();
         $bean = new Account();
@@ -45,7 +45,7 @@ class SugarSystemInfoTest extends TestCase
         $user6 = SugarTestUserUtilities::createAnonymousUser(true, false, array('is_group' => 1));
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestTrackerUtility::restore();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

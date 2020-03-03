@@ -16,7 +16,7 @@ require_once 'service/v4/SugarWebServiceImplv4.php';
 
 class Bug48889Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
@@ -26,7 +26,7 @@ class Bug48889Test extends TestCase
         $GLOBALS['current_user']->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class QuotaTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -22,7 +22,7 @@ class QuotaTest extends TestCase
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();

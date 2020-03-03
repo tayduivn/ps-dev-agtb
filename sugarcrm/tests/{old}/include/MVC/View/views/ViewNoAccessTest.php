@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ViewNoAccessTest extends TestCase
 {
-	public function setUp()
+    protected function setUp() : void
 	{
 		$this->markTestIncomplete('FRM needs to fix this.');
 	}

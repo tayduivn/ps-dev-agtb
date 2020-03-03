@@ -19,7 +19,7 @@ class PostUpgradeAccessTest extends UpgradeTestCase
     protected $test_site_url = '/foo123';
     protected $original_site_url;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
         parent::setUp();
@@ -92,7 +92,7 @@ EOQ;
         file_put_contents($this->testHtacessPath, $htaccessContent);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         parent::tearDown();

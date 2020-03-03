@@ -22,7 +22,7 @@ abstract class StorageTest extends TestCase
      */
     protected $storage;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->storage = $this->createStorage();
     }

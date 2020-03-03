@@ -20,7 +20,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
 {
     private $systemOverrideConfiguration;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("app_list_strings");
@@ -35,7 +35,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();

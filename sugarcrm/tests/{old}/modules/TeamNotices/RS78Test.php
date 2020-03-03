@@ -22,7 +22,7 @@ class RS78Test extends TestCase
      */
     protected $bean;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -34,7 +34,7 @@ class RS78Test extends TestCase
         $this->bean->save();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->bean->mark_deleted($this->bean->id);
         SugarTestHelper::tearDown();

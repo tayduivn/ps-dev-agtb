@@ -43,7 +43,7 @@ class Bug45339Test extends TestCase
     private $df = null;
     private $field = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
         return;
@@ -152,7 +152,7 @@ class Bug45339Test extends TestCase
         $this->mbPackage = new Bug45339MBPackageMock($this->packName);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
         return;

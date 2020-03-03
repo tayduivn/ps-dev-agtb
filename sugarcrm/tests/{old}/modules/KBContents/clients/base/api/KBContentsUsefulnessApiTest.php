@@ -32,7 +32,7 @@ class KBContentsUsefulnessApiTest extends TestCase
      */
     protected $kbcontent;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -48,7 +48,7 @@ class KBContentsUsefulnessApiTest extends TestCase
         DBManagerFactory::getInstance()->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         DBManagerFactory::getInstance()
             ->query('DELETE FROM kbcontents WHERE id = \'' . $this->kbcontent->id . '\'');

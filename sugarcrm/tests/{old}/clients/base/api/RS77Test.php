@@ -34,7 +34,7 @@ class RS77Test extends TestCase
      */
     protected $subscription;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -44,7 +44,7 @@ class RS77Test extends TestCase
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if($this->subscription) {
             $GLOBALS['db']->query("DELETE FROM subscriptions WHERE id = '{$this->subscription}'");

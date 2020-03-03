@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarPortalModuleTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -26,7 +26,7 @@ class SugarPortalModuleTest extends TestCase
         SugarTestHelper::setUp('current_user', [true, true]);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $file = 'custom/modules/Opportunities/clients/portal/views/record/record.php';
         if (file_exists($file)) {

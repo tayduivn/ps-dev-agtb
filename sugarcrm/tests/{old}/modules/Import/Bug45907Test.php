@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug45907Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         // if beanList got unset, set it back
         if (!isset($GLOBALS['beanList'])) {

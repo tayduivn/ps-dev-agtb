@@ -23,7 +23,8 @@ class Bug49691aTest extends TestCase
     var $oldDate;
     var $oldTime;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         global $sugar_config;
         $this->bean = new Bug49691aMockBean();
         $this->sugarField = new SugarFieldDatetimecombo("Accounts");
@@ -34,7 +35,8 @@ class Bug49691aTest extends TestCase
         $sugar_config['default_time_format'] = 'H:i';
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         global $sugar_config;
         unset($GLOBALS['current_user']);
         $sugar_config['default_date_format'] = $this->oldDate;

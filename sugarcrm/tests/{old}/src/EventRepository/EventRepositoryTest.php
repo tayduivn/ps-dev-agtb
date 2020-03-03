@@ -45,12 +45,12 @@ class EventRepositoryTest extends TestCase
      */
     private $context;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $container = Container::getInstance();
         $this->context = $container->get(Context::class);
@@ -59,7 +59,7 @@ class EventRepositoryTest extends TestCase
         $this->conn = $container->get(Connection::class);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();

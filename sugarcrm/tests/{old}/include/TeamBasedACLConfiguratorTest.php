@@ -43,7 +43,7 @@ class TeamBasedACLConfiguratorTest extends TestCase
      */
     protected $role;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $this->tbaConfig = $this->createPartialMock(
@@ -59,7 +59,7 @@ class TeamBasedACLConfiguratorTest extends TestCase
         $this->role->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->role->mark_deleted($this->role->id);
         $this->tbaConfig->setGlobal($this->globalTBA);

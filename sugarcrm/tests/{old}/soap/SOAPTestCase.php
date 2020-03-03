@@ -22,13 +22,13 @@ abstract class SOAPTestCase extends TestCase
 	public $_sessionId;
     public $_soapURL;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$_user = BeanFactory::retrieveBean('Users', '1');
         $GLOBALS['current_user'] = self::$_user;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();
@@ -40,7 +40,7 @@ abstract class SOAPTestCase extends TestCase
     /**
      * Create test user
      */
-	public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
@@ -56,7 +56,7 @@ abstract class SOAPTestCase extends TestCase
     /**
      * Remove anything that was used during this test
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->_sessionId = '';
 

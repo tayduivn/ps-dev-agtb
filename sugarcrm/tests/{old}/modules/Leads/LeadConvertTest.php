@@ -26,7 +26,7 @@ class LeadConvertTest extends TestCase
     private $rliDef;
     private $modulesDef;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -91,7 +91,7 @@ class LeadConvertTest extends TestCase
         SugarTestHelper::setUp('dictionary');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();

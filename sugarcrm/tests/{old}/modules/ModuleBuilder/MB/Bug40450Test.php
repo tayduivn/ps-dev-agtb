@@ -21,13 +21,13 @@ class Bug40450Test extends TestCase
 {
     var $MBModule;
     
-    public function setUp()
+    protected function setUp() : void
 	{
 	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->MBModule = new MBModule('testModule', 'custom/modulebuilder/packages/testPkg', 'testPkg', 'testPkg');
 	}
 	
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		unset($GLOBALS['current_user']);

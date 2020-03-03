@@ -23,14 +23,14 @@ class RemoveInlineHTMLSpacingTest extends TestCase
     /** @var UpgradeDriver */
     protected $upgradeDriver = null;
     
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('files');
         $this->upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
         $this->upgradeDriver->context = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

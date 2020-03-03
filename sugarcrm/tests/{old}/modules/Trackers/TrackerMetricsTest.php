@@ -15,12 +15,14 @@ use PHPUnit\Framework\TestCase;
 class TrackerMetricsTest extends TestCase
 {
 	var $trackerSettings;
-	
-	function setUp() {
+
+    protected function setUp() : void
+    {
 		TrackerTestUtility::setUp(); 		
 	}
-	
-    function tearDown() {
+
+    protected function tearDown() : void
+    {
     	TrackerTestUtility::tearDown();
     }
     

@@ -16,7 +16,7 @@ class EmailUITest extends TestCase
 {
     private $_folders = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -31,7 +31,7 @@ class EmailUITest extends TestCase
         $this->_folders = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$GLOBALS['current_user']->id}'");
         foreach ($this->_folders as $f) {

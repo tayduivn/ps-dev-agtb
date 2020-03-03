@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExpressionEngine_ControllerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $_REQUEST = array();
     }

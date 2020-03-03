@@ -20,9 +20,8 @@ var $module = 'Contacts'; //Just do this for Contacts module for now
 var $team_set_ids = array();
 var $team_ids = array();
 
-function setUp() 
-
-{
+    protected function setUp() : void
+    {
     if($this->skipTest) {
        $this->markTestSkipped("Skipping unless otherwise specified");
     }	
@@ -52,7 +51,8 @@ function setUp()
 	$GLOBALS['db']->deleteColumn($bean, $bean->field_defs['team_set_id']);
 }
 
-function tearDown() {
+    protected function tearDown() : void
+    {
 	foreach($this->team_set_ids as $id=>$team_set_id) {
 		    $GLOBALS['db']->query("UPDATE {$this->module} SET team_set_id = '{$team_set_id}' WHERE id = '{$id}'");
 	}

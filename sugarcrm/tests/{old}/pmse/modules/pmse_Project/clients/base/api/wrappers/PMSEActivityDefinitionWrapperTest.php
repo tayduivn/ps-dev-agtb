@@ -28,7 +28,7 @@ class PMSEActivityDefinitionWrapperTest extends TestCase
     protected $mocActivity;
     protected $activityWrapper;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->mocActDef = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableAutoload()

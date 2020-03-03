@@ -32,7 +32,7 @@ class PasswordApiTest extends TestCase
      */
     private $passwordApi;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp('app_strings');
@@ -61,7 +61,7 @@ class PasswordApiTest extends TestCase
         $this->passwordApi->usr->username = $this->args['username'];
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->passwordApi);
         SugarTestHelper::tearDown();

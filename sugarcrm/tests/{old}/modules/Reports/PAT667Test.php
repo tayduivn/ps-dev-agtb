@@ -39,7 +39,7 @@ class BugPAT667Test extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('custom_field', array('Accounts', static::$custom_field_def));
@@ -51,7 +51,7 @@ class BugPAT667Test extends TestCase
     /**
      * @inheritDoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

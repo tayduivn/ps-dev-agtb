@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class CronForkTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         // Unfortunately, this test can not be run automatically, since it uses parallel processes
         // and long timeouts. I check it in to make possible to run it manually if needed.
@@ -30,7 +30,7 @@ class CronForkTest extends TestCase
         // $jobq->allow_fork = false;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Disabling delete since we want it for manual test run
    //     $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='unittest'");

@@ -18,8 +18,8 @@ class RelationshipRoleTest extends TestCase
     protected $createdBeans = array();
     protected $createdFiles = array();
 
-    public static function setUpBeforeClass()
-	{
+    public static function setUpBeforeClass() : void
+    {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -28,12 +28,12 @@ class RelationshipRoleTest extends TestCase
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");
 	}
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    SugarTestQuoteUtilities::removeAllCreatedQuotes();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

@@ -44,71 +44,9 @@ class Bug54193Test extends TestCase
     /** @var string */
     protected static $custom_field_name = 'currency_54193_c';
 
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     */
-
-     public function setup()
-     {
-         $this->markTestIncomplete('Needs to be fixed by FRM team.');
-     }
-
-/*
-    public static function setUpBeforeClass()
+    protected function setUp() : void
     {
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
-        SugarTestHelper::setUp('mod_strings', array(self::$module_name));
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('app_list_strings');
-
-        self::createRelationship();
-
-        self::createCurrency();
-
-        self::createCustomField();
-
-        // create opportunities
-        $opportunity1 = self::createOpportunity('O1', -99, 10, 20);
-        $opportunity2 = self::createOpportunity('O2', self::$currency->id, 15, 22.5);
-        $opportunity3 = self::createOpportunity('O3', self::$currency->id, 75, 75);
-
-        /** @var Link2 $link */
-/*
-        $relation_name = self::$relationship->getName();
-
-        // create relationship O1 -> O2
-        $opportunity1->load_relationship($relation_name);
-        $link = $opportunity1->{$relation_name};
-        $link->add(array($opportunity2));
-
-        // create relationship O2 -> O3
-        $opportunity2->load_relationship($relation_name);
-        $link = $opportunity2->{$relation_name};
-        $link->add(array($opportunity3));
-    }
-
-    /**
-     * Tears down the fixture, for example, close a network connection.
-     * This method is called after a test is executed.
-     */
-/*
-    public static function tearDownAfterClass()
-    {
-        self::$df->deleteField(self::$field);
-
-        self::$relationships->delete(self::$relationship->getName());
-        self::$relationships->save();
-
-        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        self::$currency->mark_deleted(self::$currency->id);
-
-        SugarTestHelper::tearDown();
-
-        // Adding a relationship adds this, and we want to turn it off to not slow down the other tests
-        $GLOBALS['reload_vardefs'] = false;
+        $this->markTestIncomplete('Needs to be fixed by FRM team.');
     }
 
     /**

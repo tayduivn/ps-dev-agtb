@@ -23,7 +23,7 @@ class SugarBeanApiHelper_FormatRelateTest extends TestCase
     /** @var Task */
     private static $task;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         /** @var User $user */
         $user = SugarTestHelper::setUp('current_user');
@@ -46,7 +46,7 @@ class SugarBeanApiHelper_FormatRelateTest extends TestCase
         $task->contacts->add($contact);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestTaskUtilities::removeAllCreatedTasks();
         SugarTestContactUtilities::removeAllCreatedContacts();

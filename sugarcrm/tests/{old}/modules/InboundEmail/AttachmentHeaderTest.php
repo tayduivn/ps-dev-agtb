@@ -16,7 +16,7 @@ class AttachmentHeaderTest extends TestCase
 {
     protected $ie = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->ie = new InboundEmail();
     }

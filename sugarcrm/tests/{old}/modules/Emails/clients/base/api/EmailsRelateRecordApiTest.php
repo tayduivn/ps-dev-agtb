@@ -22,19 +22,19 @@ class EmailsRelateRecordApiTest extends TestCase
 {
     protected $service;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();

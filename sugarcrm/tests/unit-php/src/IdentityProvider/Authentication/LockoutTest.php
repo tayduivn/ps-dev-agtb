@@ -52,7 +52,7 @@ class LockoutTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->lockout = $this->getMockBuilder(Lockout::class)
             ->disableOriginalConstructor()

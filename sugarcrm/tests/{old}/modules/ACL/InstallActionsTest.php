@@ -15,12 +15,12 @@ use PHPUnit\Framework\TestCase;
 
 class InstallActionsTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete('Test is no longer valid as the tested upgrades are no longer supported');
     }
 
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         return; // See above - skipped
         $admin = new User();
@@ -50,7 +50,7 @@ class InstallActionsTest extends TestCase
         ob_end_clean();
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         return; // see above - skipped
     }

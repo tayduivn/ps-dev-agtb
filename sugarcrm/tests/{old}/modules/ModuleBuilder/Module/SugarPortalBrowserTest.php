@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarPortalBrowserTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -26,7 +26,7 @@ class SugarPortalBrowserTest extends TestCase
         SugarTestHelper::setUp('current_user', [true, true]);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $file = 'custom/modules/Accounts/clients/portal/views/list/list.php';
         if (file_exists($file)) {

@@ -17,7 +17,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
  */
 class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 {
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestNoteUtilities::removeAllCreatedNotes();
         parent::tearDownAfterClass();

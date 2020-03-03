@@ -22,7 +22,7 @@ class RestTestPortalBase extends RestTestBase
      */
     protected $contact;
 
-    public function setUp()
+    protected function setUp() : void
     {
         // Setup the original settings
         $system_config = Administration::getSettings();
@@ -95,7 +95,7 @@ class RestTestPortalBase extends RestTestBase
 
         $GLOBALS['db']->commit();
     }
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $db;
         // Re-enable the old portal users

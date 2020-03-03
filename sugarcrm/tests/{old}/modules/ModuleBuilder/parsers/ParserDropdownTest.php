@@ -20,7 +20,7 @@ class ParserDropdownTest extends TestCase
     // Custom modlist file path
     private $customModList;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
@@ -41,7 +41,7 @@ class ParserDropdownTest extends TestCase
         SugarTestHelper::setUp('moduleList');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (isset($this->fileBackup)) {
             file_put_contents($this->customFile, $this->fileBackup);

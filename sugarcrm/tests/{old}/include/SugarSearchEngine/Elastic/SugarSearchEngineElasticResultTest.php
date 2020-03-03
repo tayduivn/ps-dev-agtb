@@ -22,7 +22,7 @@ class SugarSearchEngineElasticResultTest extends TestCase
     private $_responseString = '{"took":4,"timed_out":false,"_shards":{"total":1,"successful":1,"failed":0},"hits":{"total":1,"max_score":1.0,"hits":[{"_index":"c5368b06edf5dabf62a27e146d35ab3f","_type":"Accounts","_id":"e7abbd8c-1daa-80cc-bdce-4f3ab8cf1cca","_score":1.0, "_source":{"module":"Accounts","name":"test account"}, "highlight" : {"name":["<span class=\"highlight\">test</span>2 account"]}}]},"facets":{"_type":{"_type":"terms","missing":0,"total":1,"other":0,"terms":[{"term":"Accounts","count":1}]}}}';
     private $_elasticResult;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -33,7 +33,7 @@ class SugarSearchEngineElasticResultTest extends TestCase
         $this->_elasticResult = new SugarSeachEngineElasticResult($result);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

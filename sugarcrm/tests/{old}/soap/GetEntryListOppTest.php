@@ -22,7 +22,7 @@ class GetEntryListOppTest extends SOAPTestCase
 
     private $currency;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
 
@@ -42,7 +42,7 @@ class GetEntryListOppTest extends SOAPTestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();

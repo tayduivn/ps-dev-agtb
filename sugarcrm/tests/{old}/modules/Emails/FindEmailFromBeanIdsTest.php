@@ -20,8 +20,8 @@ class FindEmailFromBeanIdsTest extends TestCase
 	private $emailUI;
 	private $beanIds, $beanType, $whereArr;
 	private $resultQuery, $expectedQuery;
-	
-	function setUp()
+
+    protected function setUp() : void
 	{
 		global $current_user, $currentModule ;
 		$current_user = SugarTestUserUtilities::createAnonymousUser();
@@ -40,8 +40,8 @@ EOQ;
 		// @codingStandardsIgnoreEnd
     }
 
-	function tearDown()
-	{
+    protected function tearDown() : void
+    {
 		unset($this->emailUI);
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

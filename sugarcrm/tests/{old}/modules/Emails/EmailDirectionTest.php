@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class EmailDirectionTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         parent::setUpBeforeClass();
         OutboundEmailConfigurationTestHelper::setUp();
@@ -27,13 +27,13 @@ class EmailDirectionTest extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         OutboundEmailConfigurationTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestContactUtilities::removeAllCreatedContacts();

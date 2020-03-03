@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug61201Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         //Turn off caching now() or else date_modified checks are invalid
         TimeDate::getInstance()->allow_cache = false;
@@ -22,7 +22,7 @@ class Bug61201Test extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestReflection::setProtectedValue('MetaDataManager', 'isQueued', false);
         SugarTestReflection::setProtectedValue('MetaDataManager', 'inProcess', false);

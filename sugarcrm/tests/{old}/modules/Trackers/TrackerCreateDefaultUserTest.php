@@ -19,8 +19,9 @@ class TrackerCreateDefaultUserTest extends TestCase
 	var $nonAdminUserId;
 	var $adminUser;
 	var $adminUserId;
-    
-    function setUp() {
+
+    protected function setUp() : void
+    {
     	if($this->skipTest) {
     	   $this->markTestSkipped("Skipping unless otherwise specified");
     	}
@@ -48,8 +49,9 @@ class TrackerCreateDefaultUserTest extends TestCase
         require('include/modules.php');
         $modListHeader = $moduleList;
     }
-    
-    function tearDown() {
+
+    protected function tearDown() : void
+    {
     	TrackerTestUtility::tearDown(); 
     	$GLOBALS['db']->query("DELETE FROM users WHERE id IN ('{$this->adminUser->id}', '{$this->nonAdminUser->id}')");    	
     	$GLOBALS['db']->query("DELETE FROM team_memberships WHERE user_id IN ('{$this->adminUser->id}', '{$this->nonAdminUser->id}')");

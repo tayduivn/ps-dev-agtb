@@ -37,7 +37,7 @@ class Bug56423Test extends TestCase
      */
     protected $opportunityField;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -103,7 +103,7 @@ class Bug56423Test extends TestCase
         );
     } 
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->accountFieldWidget)
         {

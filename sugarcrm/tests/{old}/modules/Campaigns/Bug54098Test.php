@@ -27,12 +27,12 @@ class Bug54098Test extends TestCase
     private $_aProspectlists_Prospects;
     private $_aProspectlists_Campaigns;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();

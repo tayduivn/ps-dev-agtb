@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class DataPrivacyTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -20,7 +20,7 @@ class SearchReindexCommandTest extends AbstractApiCommandTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->commandClass = 'Sugarcrm\Sugarcrm\Console\Command\Api\SearchReindexCommand';
         $this->apiClass = 'AdministrationApi';

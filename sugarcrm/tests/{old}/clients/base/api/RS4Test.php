@@ -32,7 +32,7 @@ class RS4Test extends TestCase
      */
     protected $config;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -40,12 +40,12 @@ class RS4Test extends TestCase
         self::$admin = SugarTestHelper::setUp('current_user', array(true, true));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $this->api = new ConfigModuleApi();
@@ -56,7 +56,7 @@ class RS4Test extends TestCase
         $current_user = SugarTestUserUtilities::createAnonymousUser(true, false);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->api->configSave(
             SugarTestRestUtilities::getRestServiceMock(self::$admin),

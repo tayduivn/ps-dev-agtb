@@ -24,7 +24,7 @@ class Bug46230Test extends TestCase
     private $stored_service_object;
 	private $account2;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -44,7 +44,7 @@ class Bug46230Test extends TestCase
         $this->account2->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();

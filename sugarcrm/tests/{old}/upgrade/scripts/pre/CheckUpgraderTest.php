@@ -19,7 +19,7 @@ class CheckUpgraderTest extends UpgradeTestCase
 {
     protected $script = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->script = $this->upgrader->getScript('pre', 'CheckUpgrader');

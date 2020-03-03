@@ -12,7 +12,7 @@
 
 
 class RestMetadataSugarViewsTest extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->oldFiles = array();

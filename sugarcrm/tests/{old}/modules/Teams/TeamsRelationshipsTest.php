@@ -27,7 +27,7 @@ class TeamsRelationshipsTest extends TestCase
     public $_teamSetId = null;
     public $_contactId = null;
    
-	public function setUp() 
+    protected function setUp() : void
     {
     	$this->markTestIncomplete(
               'fixing this test'
@@ -49,7 +49,8 @@ class TeamsRelationshipsTest extends TestCase
         //    rmdir_recursive(dirname(__FILE__).'/../../../cache/modules/Teams/');
     }    
     
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         $this->_user = null;

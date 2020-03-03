@@ -34,7 +34,7 @@ class MetaDataManagerCacheRefreshTest extends TestCase
     protected $accountsFile = 'modules/Accounts/clients/mobile/views/herfy/herfy.php';
     protected $casesFile = 'modules/Cases/clients/mobile/views/fandy/fandy.php';
     
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user', array(true, false));
@@ -50,7 +50,7 @@ class MetaDataManagerCacheRefreshTest extends TestCase
         MetaDataManager::clearAPICache();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Reset build number
         if ($this->buildNumber) {

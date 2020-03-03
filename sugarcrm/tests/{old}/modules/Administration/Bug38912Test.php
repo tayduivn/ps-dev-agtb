@@ -32,7 +32,7 @@ class Bug38912 extends TestCase
 	private $_nonWhiteListAction		= 'SomeNonWhiteListAction';
 
 
-	public function setUp()
+    protected function setUp() : void
 	{
 		// read format in function getModuleWhiteListForLicenseCheck() description
 		$this->_whiteList		= array(

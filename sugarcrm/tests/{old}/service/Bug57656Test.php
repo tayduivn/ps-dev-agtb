@@ -15,7 +15,7 @@
  */
 class Bug57656Test extends SOAPTestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
 
@@ -28,7 +28,7 @@ class Bug57656Test extends SOAPTestCase
         $this->tabs->set_system_tabs($tabs);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->bugid)) {
             $GLOBALS['db']->query("DELETE FROM bugs WHERE id='{$this->bugid}'");

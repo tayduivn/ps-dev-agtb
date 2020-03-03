@@ -20,7 +20,7 @@ class Bug43554Test extends TestCase
 	static $ie = null;
     static $_user = null;
 
-	static public function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = self::$_user;
@@ -28,7 +28,7 @@ class Bug43554Test extends TestCase
 		self::$ie = new InboundEmail();
 	}
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

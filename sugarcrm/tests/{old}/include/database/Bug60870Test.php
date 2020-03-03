@@ -17,7 +17,7 @@ class Bug60780Test extends TestCase
 {
     protected $has_disable_count_query_enabled;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
 
@@ -30,7 +30,7 @@ class Bug60780Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         if(!empty($this->bugid)) {

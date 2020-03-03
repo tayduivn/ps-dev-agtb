@@ -17,14 +17,14 @@ class Bug39780Test extends TestCase
 {
     protected $contact;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->contact = SugarTestContactUtilities::createContact();
 	    $this->defs = $this->contact->field_defs;
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    $this->contact->field_defs = $this->defs;
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

@@ -18,7 +18,7 @@ class Bug42994Test extends TestCase
     private $_smarty;
     private $_lang_manager;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_smarty = new Sugar_Smarty();
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -26,7 +26,7 @@ class Bug42994Test extends TestCase
         $GLOBALS['current_language'] = 'en_us';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

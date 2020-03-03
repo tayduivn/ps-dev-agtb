@@ -15,13 +15,13 @@ use PHPUnit\Framework\TestCase;
 
 class WorksheetTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

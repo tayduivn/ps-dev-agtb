@@ -15,14 +15,14 @@ use PHPUnit\Framework\TestCase;
 
 class Bug43452Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['app_strings']);
     }

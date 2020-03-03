@@ -12,7 +12,7 @@
 
 
 class RestCallHelperTest extends RestTestBase {
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         $GLOBALS['db']->query("DELETE FROM calls WHERE id = '{$this->call_id}'");

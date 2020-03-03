@@ -29,7 +29,7 @@ class UpgradeFixCustomMultienumFieldsTest extends UpgradeTestCase
      */
     public $metaFileName = 'sugarfield_test_multienum_field.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -63,7 +63,7 @@ EOQ;
             );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         rmdir_recursive($this->metaFolder);
         SugarTestHelper::tearDown();

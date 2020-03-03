@@ -45,7 +45,7 @@ class ACLVisibilityTest extends TestCase
      */
     protected $leadBean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true));
         $this->user = SugarTestUserUtilities::createAnonymousUser();
@@ -77,7 +77,7 @@ class ACLVisibilityTest extends TestCase
         $this->leadBean = SugarTestLeadUtilities::createLead();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestLeadUtilities::removeAllCreatedLeads();

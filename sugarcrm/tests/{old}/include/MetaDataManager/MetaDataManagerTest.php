@@ -19,7 +19,7 @@ class MetaDataManagerTest extends TestCase
     protected $mdc;
     protected $configBackup;
 
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setup('beanFiles');
         SugarTestHelper::setup('beanList');
@@ -40,7 +40,7 @@ class MetaDataManagerTest extends TestCase
         $this->mdc = new MetaDataCache(DBManagerFactory::getInstance());
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         MetaDataManager::enableCache();
 

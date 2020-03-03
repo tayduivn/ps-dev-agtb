@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug39980Test extends TestCase
 {
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (is_file(Bug39980PackageManger::$manifest_location))
             unlink(Bug39980PackageManger::$manifest_location);

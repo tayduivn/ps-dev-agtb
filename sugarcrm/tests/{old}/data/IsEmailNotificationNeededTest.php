@@ -17,12 +17,12 @@ use PHPUnit\Framework\TestCase;
  */
 class isEmailNotificationNeededTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCallUtilities::removeCallUsers();
         SugarTestCallUtilities::removeAllCreatedCalls();

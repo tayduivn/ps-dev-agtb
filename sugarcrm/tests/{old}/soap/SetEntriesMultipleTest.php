@@ -20,7 +20,7 @@ class SetEntriesMultipleTest extends SOAPTestCase
     public $cont1;
     public $cont2;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
         parent::setUp();
@@ -29,7 +29,8 @@ class SetEntriesMultipleTest extends SOAPTestCase
     /**
      * Remove anything that was used during this test
      */
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->cont1->id}'");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->cont2->id}'");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id= '{$this->cont1->id}'");

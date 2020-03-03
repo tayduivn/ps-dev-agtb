@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class GetAclForModuleTest extends TestCase
 {
     public $roles = array();
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
@@ -26,7 +26,7 @@ class GetAclForModuleTest extends TestCase
         SugarACL::$acls = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = DBManagerFactory::getInstance();
         foreach($this->accounts AS $account_id) {

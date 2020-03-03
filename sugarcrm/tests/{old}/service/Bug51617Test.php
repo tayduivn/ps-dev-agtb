@@ -16,7 +16,7 @@ class Bug51617Test extends SOAPTestCase
 {
     protected $_account;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
 
@@ -70,7 +70,7 @@ class Bug51617Test extends SOAPTestCase
         parent::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->df->deleteField($this->field);
         if ($GLOBALS['db']->tableExists('accounts_cstm')) {

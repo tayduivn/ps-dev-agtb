@@ -16,7 +16,7 @@ class LoadMenuTest extends TestCase
 {
     protected $_moduleName;
 
-    public function setUp()
+    protected function setUp() : void
 	{
 		global $mod_strings, $app_strings;
 		$mod_strings = return_module_language($GLOBALS['current_language'], 'Accounts');
@@ -32,7 +32,7 @@ class LoadMenuTest extends TestCase
         sugar_mkdir("modules/{$this->_moduleName}",null,true);
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		unset($GLOBALS['mod_strings']);
 		unset($GLOBALS['app_strings']);

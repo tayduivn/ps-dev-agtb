@@ -27,7 +27,7 @@ class SugarFieldCollectionTest extends TestCase
     private $role;
     private $bean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         \SugarTestHelper::setUp('dictionary');
         \SugarTestHelper::setUp('current_user');
@@ -35,7 +35,7 @@ class SugarFieldCollectionTest extends TestCase
         $this->nonOwnerUser = \SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         \SugarTestACLUtilities::tearDown();
         \ACLField::clearACLCache();

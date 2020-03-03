@@ -25,7 +25,7 @@ class Bug50431Test extends TestCase
     private $outOfBoxTestFile = 'modules/Import/maps/ImportMapTestImportToken.php';
     private $source = 'TestImportToken';
 
-    public function setUp()
+    protected function setUp() : void
     {
         if (!is_dir('custom/modules/Import/maps'))
         {
@@ -38,7 +38,7 @@ class Bug50431Test extends TestCase
         file_put_contents($this->outOfBoxTestFile, '<?php class ImportMapTestImportTokenOutOfBox { } ');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(file_exists($this->customMappingFile))
         {

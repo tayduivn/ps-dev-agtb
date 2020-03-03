@@ -21,7 +21,7 @@ class Bug45287Test extends TestCase
     var $searchFields;
     var $timedate;
 
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
@@ -86,7 +86,7 @@ class Bug45287Test extends TestCase
                                    );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->meetingsArr as $m)
         {

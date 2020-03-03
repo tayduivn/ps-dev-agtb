@@ -20,7 +20,7 @@ class PanelVisibilityActionTest extends TestCase
      */
     private $action;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->action = new PanelVisibilityAction(array('target' => 'a', 'value' => 'b'));
     }

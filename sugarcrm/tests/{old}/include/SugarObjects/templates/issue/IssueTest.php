@@ -19,12 +19,12 @@ class IssueTest extends TestCase
     protected $changeTimers = [];
     protected $caseIds = [];
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (!empty($this->changeTimers)) {
             $GLOBALS['db']->query('DELETE FROM changetimers WHERE id IN (\'' . implode("', '", $this->changeTimers) . '\')');

@@ -28,7 +28,7 @@ class RS64Test extends TestCase
     /** @var Bug */
     protected $bug = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -50,7 +50,7 @@ class RS64Test extends TestCase
         $_SESSION['contact_id'] = $this->contact->id;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($_SESSION['type'], $_SESSION['contact_id']);
         if ($this->bug instanceof Bug) {

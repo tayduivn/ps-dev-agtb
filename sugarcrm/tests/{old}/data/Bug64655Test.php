@@ -20,7 +20,7 @@ class Bug64655Test extends TestCase
     /** @var SugarBean */
     private $bean;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -29,7 +29,7 @@ class Bug64655Test extends TestCase
         $this->bean = new Bug64655Test_SugarBean1();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();

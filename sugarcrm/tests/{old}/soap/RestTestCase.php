@@ -27,7 +27,7 @@ abstract class RestTestCase extends TestCase
     protected $_sessionId;
     protected $_lastRawResponse;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
@@ -43,7 +43,7 @@ abstract class RestTestCase extends TestCase
      *
      * This function helps clean up global variables that may have been set and removes the anonymous user created
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);

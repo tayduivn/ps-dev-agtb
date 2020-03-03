@@ -33,7 +33,7 @@ class KBContentsTest extends TestCase
      */
     protected $config;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -65,7 +65,7 @@ class KBContentsTest extends TestCase
         $this->categoryRoot = SugarTestCategoryUtilities::createRootBean();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCategoryUtilities::removeAllCreatedBeans();
         SugarTestKBContentUtilities::removeAllCreatedBeans();

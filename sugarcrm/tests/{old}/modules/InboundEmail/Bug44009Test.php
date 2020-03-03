@@ -19,7 +19,7 @@ class Bug44009Test extends TestCase
 {
 	protected $ie = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
 		$this->ie = new InboundEmail();
 	}

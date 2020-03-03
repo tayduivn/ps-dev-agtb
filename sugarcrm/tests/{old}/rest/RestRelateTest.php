@@ -12,7 +12,7 @@
 
 
 class RestRelateTest extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -22,7 +22,7 @@ class RestRelateTest extends RestTestBase {
         $this->opps = array();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         $accountIds = array();
         foreach ( $this->accounts as $account ) {

@@ -30,7 +30,7 @@ class Bug59155Test extends TestCase
         'view_module' => 'Cases',
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // if shadow is detected, we need to skip this test as it doesn't play nice with shadow
         if (extension_loaded('shadow')) {
@@ -50,7 +50,7 @@ class Bug59155Test extends TestCase
         VardefManager::refreshVardefs('Cases', 'Case');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $custom_field_def = self::$custom_field_def;
         $custom_field_def['name'] .= '_c';

@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RS174Test extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -25,7 +25,7 @@ class RS174Test extends TestCase
         SugarTestHelper::setUp('current_user', array(true, false));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestProjectTaskUtilities::removeAllCreatedProjectTasks();
         SugarTestProjectUtilities::removeAllCreatedProjects();

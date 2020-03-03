@@ -50,7 +50,7 @@ class PipelineChartApiTest extends TestCase
     protected $service;
 
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->service = $this->createPartialMock(
             'ServiceBase',

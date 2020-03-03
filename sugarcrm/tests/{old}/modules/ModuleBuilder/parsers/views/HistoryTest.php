@@ -24,14 +24,14 @@ class HistoryTest extends TestCase
      */
     private $_history;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_path = sugar_cached('/history/' . time());
         sugar_mkdir($this->getHistoryDir());
         $this->_history = new History($this->_path);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Clean all temporary files created
         $files = glob($this->getHistoryDir() . '/*');

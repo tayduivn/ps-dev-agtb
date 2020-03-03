@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ApiHeaderTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->headers = array(
             'Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
@@ -28,7 +28,7 @@ class ApiHeaderTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

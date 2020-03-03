@@ -27,7 +27,7 @@ class RS164Test extends TestCase
      */
     protected static $rest;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -36,13 +36,13 @@ class RS164Test extends TestCase
         self::$rest = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestFilterUtilities::removeAllCreatedFilters();
         SugarTestHelper::tearDown();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->api = new ThemeApi();
     }

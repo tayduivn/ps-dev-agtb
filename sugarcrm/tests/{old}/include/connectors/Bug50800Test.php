@@ -23,7 +23,8 @@ class Bug50800Test extends TestCase
     var $custom_path = 'custom/modules/Connectors/metadata';
     var $custom_contents;
 
-    function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('app_strings');
         if(file_exists($this->custom_path.'/connectors.php'))
         {
@@ -34,7 +35,8 @@ class Bug50800Test extends TestCase
         }
     }
 
-    function tearDown() {
+    protected function tearDown() : void
+    {
         //remove connector file
         if(!empty($this->custom_contents))
         {

@@ -18,12 +18,13 @@ class Bug43226PartBTest extends TestCase
 {
 var $merge;
 
-function setUp() {
+    protected function setUp() : void
+    {
     SugarTestMergeUtilities::setupFiles(array('Documents'), array('detailviewdefs'), 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files');
 }
 
-
-function tearDown() {
+    protected function tearDown() : void
+    {
    SugarTestMergeUtilities::teardownFiles();
 }
 function test_uploadfile_convert_merge_610() {

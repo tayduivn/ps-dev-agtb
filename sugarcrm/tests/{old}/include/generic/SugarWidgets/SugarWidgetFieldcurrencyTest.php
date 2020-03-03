@@ -20,7 +20,7 @@ class SugarWidgetFieldcurrencyTest extends TestCase
      */
     protected $widgetField;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $layoutManager = new LayoutManager();
@@ -28,7 +28,7 @@ class SugarWidgetFieldcurrencyTest extends TestCase
         $current_user = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->widgetField);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

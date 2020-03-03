@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 class Bug47737Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         global $beanList, $beanFiles;
         require('include/modules.php');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         restore_error_handler();
     }

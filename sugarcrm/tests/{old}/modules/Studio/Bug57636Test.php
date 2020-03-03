@@ -25,7 +25,7 @@ class Bug57636Test extends TestCase
     protected $testModule = 'Meetings';
     protected $testFields  = array('duration_hours', 'duration_minutes');
     
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setup('beanList');
         SugarTestHelper::setup('beanFiles');
@@ -33,7 +33,7 @@ class Bug57636Test extends TestCase
         SugarTestHelper::setup('mod_strings', array($this->testModule));
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

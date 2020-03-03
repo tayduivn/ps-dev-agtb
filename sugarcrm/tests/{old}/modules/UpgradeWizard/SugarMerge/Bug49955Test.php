@@ -18,7 +18,8 @@ class Bug49955Test extends TestCase
 {
 var $merge;
 
-function setUp() {
+    protected function setUp() : void
+    {
    SugarTestMergeUtilities::setupFiles(array('Notes'), array('editviewdefs'), 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files');
 
     if(file_exists('custom/backup/modules/DocumentRevisions'))
@@ -32,7 +33,7 @@ function setUp() {
     file_put_contents('modules/DocumentRevisions/DetailView.php', 'test');
 }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMergeUtilities::teardownFiles();
 

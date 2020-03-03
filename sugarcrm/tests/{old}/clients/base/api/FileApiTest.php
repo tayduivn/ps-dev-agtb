@@ -25,7 +25,8 @@ class FileApiTest extends TestCase
     public $tempFileFrom = 'tests/{old}/clients/base/api/FileApiTempFileFrom.txt';
     public $tempFileTo;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("ACLStatic");
         // load up the unifiedSearchApi for good times ahead
@@ -44,7 +45,8 @@ class FileApiTest extends TestCase
         $this->documents[] = $document;
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         // Clean up temp file stuff
         if ($this->tempFileTo && file_exists($this->tempFileTo)) {
             @unlink($this->tempFileTo);

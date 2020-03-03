@@ -18,7 +18,7 @@ class PMSEDynaFormTest extends TestCase
 {
     protected $adamDynaform;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->adamDynaform = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');
     }

@@ -14,20 +14,20 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldIntTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $current_user = $GLOBALS['current_user'];
         $current_user->setPreference('dec_sep', '.');
@@ -38,7 +38,7 @@ class SugarFieldIntTest extends TestCase
         get_number_seperators(true);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $current_user = $GLOBALS['current_user'];
         $current_user->setPreference('dec_sep', '.');

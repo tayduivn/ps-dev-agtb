@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49109Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         require('include/modules.php');
 	    $GLOBALS['beanList'] = $beanList;

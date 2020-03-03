@@ -20,12 +20,12 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         return parent::_restLogin($username,$password,$platform);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->unitTestFiles[] = 'custom/include/MVC/Controller/wireless_module_registry.php';
     }
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach($this->unitTestFiles as $unitTestFile ) {
             if ( file_exists($unitTestFile) ) {

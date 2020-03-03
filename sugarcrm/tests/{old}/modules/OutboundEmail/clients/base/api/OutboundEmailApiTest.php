@@ -24,18 +24,18 @@ class OutboundEmailApiTest extends TestCase
     private $service;
     private static $createdIds = [];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $sql = "DELETE FROM outbound_email WHERE id IN ('" . implode("','", static::$createdIds) . "')";
         DBManagerFactory::getInstance()->query($sql);
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->api = new OutboundEmailApi();

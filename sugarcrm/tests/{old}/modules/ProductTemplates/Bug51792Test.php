@@ -26,7 +26,7 @@ class Bug51792Test extends TestCase
     private $_category2;
     private $_category3;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -50,7 +50,7 @@ class Bug51792Test extends TestCase
         $this->_category3->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestProductCategoryUtilities::removeAllCreatedProductCategories();
         SugarTestHelper::tearDown();

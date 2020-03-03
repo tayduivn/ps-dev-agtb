@@ -22,14 +22,14 @@ class LogicHookRefTest extends TestCase
     protected $bean;
     protected $hook;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->bean = new Account();
         SugarTestHelper::setUp('current_user');
         LogicHook::refreshHooks();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    if(!empty($this->hook)) {
 	        call_user_func_array('remove_logic_hook', $this->hook);

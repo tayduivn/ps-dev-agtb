@@ -35,7 +35,7 @@ class ConfigTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->sugarConfig = isset($GLOBALS['sugar_config']) ? $GLOBALS['sugar_config'] : null;
         $this->config = \SugarConfig::getInstance();
@@ -45,7 +45,7 @@ class ConfigTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config'] = $this->sugarConfig;
         $this->config->clearCache();

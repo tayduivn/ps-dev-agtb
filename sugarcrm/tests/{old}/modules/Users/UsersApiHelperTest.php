@@ -17,7 +17,7 @@ class UsersApiHelperTest extends TestCase
     protected $helper;
     protected $bean = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -30,7 +30,7 @@ class UsersApiHelperTest extends TestCase
             ->getMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->bean);
         SugarTestHelper::tearDown();

@@ -18,12 +18,12 @@ use PHPUnit\Framework\TestCase;
  */
 class EmailParticipantTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         // Clean up any dangling beans that need to be resaved.
         SugarRelationship::resaveRelatedBeans(false);

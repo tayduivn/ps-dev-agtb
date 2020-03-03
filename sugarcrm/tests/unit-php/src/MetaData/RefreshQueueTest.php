@@ -25,7 +25,7 @@ class RefreshQueueTest extends TestCase
      */
     private $queue;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->queue = new RefreshQueue();
     }

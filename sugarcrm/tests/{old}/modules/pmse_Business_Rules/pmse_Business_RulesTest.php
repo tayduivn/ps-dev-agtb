@@ -28,7 +28,7 @@ class pmse_Business_RulesTest extends TestCase
      */
     private $db;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->db = DBManagerFactory::getInstance();
 
@@ -40,7 +40,7 @@ class pmse_Business_RulesTest extends TestCase
         $this->bean = $bean;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->db->query(sprintf(
             'DELETE FROM %s WHERE id = %s',

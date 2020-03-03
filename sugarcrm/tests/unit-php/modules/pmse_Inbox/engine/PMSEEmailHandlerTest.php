@@ -82,7 +82,7 @@ class PMSEEmailHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -97,7 +97,7 @@ class PMSEEmailHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
 

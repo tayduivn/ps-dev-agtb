@@ -22,7 +22,7 @@ class DropdownMergerTest extends TestCase
      */
     protected $merger;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->merger = new DropdownMerger();
     }

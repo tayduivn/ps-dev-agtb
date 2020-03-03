@@ -23,7 +23,7 @@ class Bug40793Test extends TestCase
     private $_notIncludeDir;
     private $_includeDir;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_notIncludeDir = self::WEBALIZER_DIR_NAME . "/this_dir_should_not_include";
         $this->_includeDir = self::WEBALIZER_DIR_NAME . "/1";
@@ -32,7 +32,7 @@ class Bug40793Test extends TestCase
         mkdir($this->_includeDir, 0755);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         rmdir($this->_notIncludeDir);
         rmdir($this->_includeDir);

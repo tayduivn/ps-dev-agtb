@@ -38,7 +38,7 @@ class Bug55923Test extends TestCase
      */
     protected $db;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->db = $GLOBALS['db'];
         $_REQUEST['base_module'] = 'Meetings';
@@ -94,7 +94,7 @@ class Bug55923Test extends TestCase
         LogicHook::refreshHooks();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
 

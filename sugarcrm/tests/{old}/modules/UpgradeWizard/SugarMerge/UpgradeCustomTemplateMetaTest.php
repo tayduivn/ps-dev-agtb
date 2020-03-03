@@ -18,13 +18,12 @@ class UpgradeCustomTemplateMetaTest extends TestCase
 {
     var $merge;
 
-    function setUp()
+    protected function setUp() : void
     {
         SugarTestMergeUtilities::setupFiles(array('Calls', 'Meetings', 'Notes'), array('editviewdefs'), 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files');
     }
 
-
-    function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMergeUtilities::teardownFiles();
     }

@@ -19,7 +19,7 @@ require_once 'modules/Reports/SavedReport.php';
  */
 class Bug45686Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         $this->reportDefs = <<<DEFS
@@ -33,7 +33,7 @@ class Bug45686Test extends TestCase
 DEFS;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM saved_reports WHERE assigned_user_id='{$GLOBALS['current_user']->id}'");
         SugarTestHelper::tearDown();

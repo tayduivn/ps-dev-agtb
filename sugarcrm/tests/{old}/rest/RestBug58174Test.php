@@ -18,7 +18,7 @@ class RestBug58174Test extends RestTestBase
     protected $_testLangFile;
     private $_customContents;
     
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -52,7 +52,7 @@ class RestBug58174Test extends RestTestBase
         $this->_clearMetadataCache();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Get rid of our test file and restore if there's a need
         unlink($this->_testLangFile);

@@ -73,7 +73,7 @@ class Bug50768Test extends TestCase
         "view_module" => "Accounts",
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("This test breaks others tests on 644 on CI.  Disabling for sanity check");
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -86,7 +86,7 @@ class Bug50768Test extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 

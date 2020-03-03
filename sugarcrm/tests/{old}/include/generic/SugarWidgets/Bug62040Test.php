@@ -23,7 +23,7 @@ class Bug62040Test extends TestCase
 {
     private $contact;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $this->contact = SugarTestContactUtilities::createContact();
@@ -56,7 +56,7 @@ class Bug62040Test extends TestCase
         return $Widget;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();

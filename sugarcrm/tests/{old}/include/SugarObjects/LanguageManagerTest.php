@@ -44,7 +44,7 @@ class LanguageManagerTest extends TestCase
         );
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('files');
     }

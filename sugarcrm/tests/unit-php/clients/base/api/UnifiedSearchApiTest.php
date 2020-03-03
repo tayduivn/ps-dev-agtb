@@ -35,7 +35,7 @@ class UnifiedSearchApiTest extends TestCase
      * {@inheritdoc}
      * @throws \ReflectionException
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->api = $this->createMock(\ServiceBase::class);
     }

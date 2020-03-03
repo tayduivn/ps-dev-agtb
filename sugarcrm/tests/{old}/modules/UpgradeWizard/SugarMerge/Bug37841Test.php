@@ -20,7 +20,8 @@ class Bug37841Test extends TestCase
     var $has_dir;
     var $modules;
 
-    function setUp() {
+    protected function setUp() : void
+    {
        $this->modules = array('Accounts');
        $this->has_dir = array();
 
@@ -37,7 +38,7 @@ class Bug37841Test extends TestCase
        $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
 

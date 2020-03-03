@@ -21,27 +21,27 @@ class TimeDateTest extends TestCase
 
 	const DEFAULT_TIME_FORMAT = 'H:i';
 
-	public static function setUpBeforeClass()
-	{
+    public static function setUpBeforeClass() : void
+    {
 	    unset($GLOBALS['disable_date_format']);
         SugarTestHelper::setUp('current_user');
 	}
 
-	public function setUp()
+    protected function setUp() : void
 	{
 		$this->time_date = new TimeDate();
 		unset($GLOBALS['disable_date_format']);
 		$this->_noUserCache();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    SugarDateTime::$use_php_parser = true;
 	    SugarDateTime::$use_strptime = true;
 	}
 
-	public static function tearDownAfterClass()
-	{
+    public static function tearDownAfterClass(): void
+    {
         SugarTestHelper::tearDown();
 	}
 

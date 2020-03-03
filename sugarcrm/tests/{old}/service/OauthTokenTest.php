@@ -16,12 +16,12 @@ require_once 'modules/OAuthTokens/OAuthToken.php';
 
 class OAuthTokenTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         OAuthToken::deleteByUser($GLOBALS['current_user']->id);
         SugarTestHelper::tearDown();

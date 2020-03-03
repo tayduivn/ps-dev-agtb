@@ -20,7 +20,7 @@ class Bug48748Test extends RestTestCase
     protected $aclField;
 
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -65,7 +65,7 @@ EOQ;
         $_SESSION['avail_modules'][$this->package] = 'write';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         if($this->packageExists)

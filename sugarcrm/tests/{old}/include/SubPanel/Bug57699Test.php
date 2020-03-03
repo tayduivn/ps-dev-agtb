@@ -19,7 +19,8 @@ class Bug57699Test extends SubPanelTestBase
 {
     protected $_testModule = 'Accounts';
     
-    public function setUp() {
+    protected function setUp() : void
+    {
         parent::setUp();
         
         // Set up our test defs

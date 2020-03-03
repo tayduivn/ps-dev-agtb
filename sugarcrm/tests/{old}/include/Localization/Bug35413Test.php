@@ -23,7 +23,7 @@ class Bug35413Test extends TestCase
 {
     private $_localization = null;
 
-    function setUp()
+    protected function setUp() : void
     {
         $this->_localization = Localization::getObject();
     }

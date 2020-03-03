@@ -24,7 +24,7 @@ class SessionTest extends TestCase
 {
     protected static $ps;
 
-    public static function setupBeforeClass(): void
+    public static function setUpBeforeClass() : void
     {
         self::$ps = new Session();
     }

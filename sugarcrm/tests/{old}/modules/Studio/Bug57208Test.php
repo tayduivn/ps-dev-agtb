@@ -16,7 +16,7 @@ class Bug57208Test extends TestCase
 {
     protected $_testModule = 'Bug57208Test';
     
-    public function setUp() 
+    protected function setUp() : void
     {
         sugar_mkdir("modules/{$this->_testModule}");
         SugarTestHelper::setUp('app_list_strings');
@@ -25,7 +25,7 @@ class Bug57208Test extends TestCase
         SugarTestHelper::setUp('moduleList');
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         rmdir("modules/{$this->_testModule}");
         SugarTestHelper::tearDown();

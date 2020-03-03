@@ -17,7 +17,7 @@ class ConditionTest extends TestCase
     protected static $products = array();
     protected static $prodIds = array();
 
-    static public function setupBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
@@ -46,7 +46,7 @@ class ConditionTest extends TestCase
         }
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
 

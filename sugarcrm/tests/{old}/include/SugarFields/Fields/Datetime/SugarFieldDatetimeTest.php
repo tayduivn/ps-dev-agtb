@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldDatetimeTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -23,7 +23,7 @@ class SugarFieldDatetimeTest extends TestCase
         $GLOBALS['timedate']->allow_cache = false;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

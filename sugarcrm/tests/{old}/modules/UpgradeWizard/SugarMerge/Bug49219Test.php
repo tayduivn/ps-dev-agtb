@@ -28,15 +28,16 @@ class Bug49219Test extends TestCase
 {
 var $merge;
 
-function setUp() {
+    protected function setUp() : void
+    {
    global $beanList, $beanFiles, $current_user;
    require('include/modules.php');
    $current_user = SugarTestUserUtilities::createAnonymousUser();
    SugarTestMergeUtilities::setupFiles(array('Meetings'), array('quickcreatedefs'), 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files');
 }
 
-
-function tearDown() {
+    protected function tearDown() : void
+    {
    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
    SugarTestMergeUtilities::teardownFiles();
    unset($current_user);

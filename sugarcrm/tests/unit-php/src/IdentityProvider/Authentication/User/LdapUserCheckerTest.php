@@ -50,7 +50,7 @@ class LdapUserCheckerTest extends TestCase
      */
     protected $lockout;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->provider = $this->createMock(SugarLocalUserProvider::class);
         $this->sugarUser = $this->createMock(\User::class);

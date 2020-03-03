@@ -47,7 +47,7 @@ class ConfigTest extends TestCase
     /**
      * @codeCoverageIgnore
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->source = $this->createMock(SourceInterface::class);
         $this->cache = $this->createMock(CacheInterface::class);

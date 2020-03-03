@@ -17,14 +17,14 @@ class SetEntryEmailTest extends SOAPTestCase
     /**
      * Create test account
      */
-    public function setUp()
+    protected function setUp() : void
     {
     	$this->acc = SugarTestAccountUtilities::createAccount();
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
 		parent::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->email_id)) {
             $GLOBALS['db']->query("DELETE FROM emails WHERE id='{$this->email_id}'");

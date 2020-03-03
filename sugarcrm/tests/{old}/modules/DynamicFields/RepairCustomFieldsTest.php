@@ -32,7 +32,7 @@ class RepairCustomFieldsTest extends TestCase
         $this->seed->field_defs = $GLOBALS['dictionary'][$this->objectname]['fields'];
     }
     
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Skipping for now...");
         $this->field = get_widget('varchar');
@@ -68,7 +68,7 @@ class RepairCustomFieldsTest extends TestCase
         $this->repairDictionary();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ( isset($this->field) && ( $this->field instanceOf TemplateField ) ) {
             $this->field->delete ( $this->df ) ;

@@ -23,7 +23,7 @@ require_once('vendor/nusoap//nusoap.php');
 
 class Bug50780Test extends SOAPTestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
@@ -38,7 +38,7 @@ class Bug50780Test extends SOAPTestCase
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestMeetingUtilities::removeMeetingUsers();

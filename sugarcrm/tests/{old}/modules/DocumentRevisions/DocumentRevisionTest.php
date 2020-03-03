@@ -18,7 +18,7 @@ class DocumentRevisionTest extends TestCase
     private static $docs = array();
     private static $files = array();
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         foreach (static::$docs as $doc) {
             $doc->mark_deleted($doc->id);

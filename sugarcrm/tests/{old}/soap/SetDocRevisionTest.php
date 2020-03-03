@@ -15,13 +15,13 @@ class SetDocRevisionTest extends SOAPTestCase
     private $docId;
     private $documentRevisionId;
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->_login();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = $GLOBALS['db'];
         $conn = $db->getConnection();

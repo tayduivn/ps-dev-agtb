@@ -23,7 +23,7 @@ class Bug20955Test extends TestCase
 	public $_user = null;
 	public $_team = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
 		global $current_user;
 		$time = date($GLOBALS['timedate']->get_db_date_time_format());
@@ -39,7 +39,7 @@ class Bug20955Test extends TestCase
 		$current_user=$this->_user;
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();

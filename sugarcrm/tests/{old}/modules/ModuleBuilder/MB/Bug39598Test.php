@@ -17,7 +17,7 @@ class Bug39598Test extends TestCase
     private $relationshipFileDir;
     private $relationshipFilePath;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->relationshipFilePath = 'custom/modulebuilder/packages/Bug39598Test/relationships.php';
         $this->relationshipFileDir = dirname($this->relationshipFilePath);
@@ -62,7 +62,7 @@ class Bug39598Test extends TestCase
         file_put_contents($this->relationshipFilePath, $contents);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->relationshipFilePath);
         rmdir($this->relationshipFileDir);

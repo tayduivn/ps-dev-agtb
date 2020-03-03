@@ -12,14 +12,14 @@
 
 
 class BugEmptyFieldsListTest extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
         $this->accounts = array();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ( $this->accounts as $account ) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account->id}'");

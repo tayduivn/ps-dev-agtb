@@ -21,131 +21,130 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49627Test extends TestCase
 {
-var $normalUser;
-//BEGIN SUGARCRM flav=ent ONLY
-var $portalUser;
-//END SUGARCRM flav=ent ONLY
-var $groupUser;
+    private $normalUser;
+// BEGIN SUGARCRM flav=ent ONLY
+    private $portalUser;
+// END SUGARCRM flav=ent ONLY
+    private $groupUser;
 
+    protected function setUp(): void
+    {
+        global $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
 
-public function setUp()
-{
-    global $current_user;
-    $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $this->normalUser = SugarTestUserUtilities::createAnonymousUser(false);
+        $this->normalUser->id = create_guid();
+        $this->normalUser->user_type = 'RegularUser';
 
-    $this->normalUser = SugarTestUserUtilities::createAnonymousUser(false);
-    $this->normalUser->id = create_guid();
-    $this->normalUser->user_type = 'RegularUser';
+// BEGIN SUGARCRM flav=ent ONLY
+        $this->portalUser = SugarTestUserUtilities::createAnonymousUser(false);
+        $this->portalUser->id = create_guid();
+        $this->portalUser->is_portal = 1;
+        $this->portalUser->user_type = 'PORTAL_ONLY';
+// END SUGARCRM flav=ent ONLY
 
-    //BEGIN SUGARCRM flav=ent ONLY
-    $this->portalUser = SugarTestUserUtilities::createAnonymousUser(false);
-    $this->portalUser->id = create_guid();
-    $this->portalUser->is_portal = 1;
-    $this->portalUser->user_type = 'PORTAL_ONLY';
-    //END SUGARCRM flav=ent ONLY
+        $this->groupUser = SugarTestUserUtilities::createAnonymousUser(false);
+        $this->groupUser->id = create_guid();
+        $this->groupUser->is_group = 1;
+        $this->groupUser->user_type = 'GROUP';
 
-    $this->groupUser = SugarTestUserUtilities::createAnonymousUser(false);
-    $this->groupUser->id = create_guid();
-    $this->groupUser->is_group = 1;
-    $this->groupUser->user_type = 'GROUP';
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+    }
 
-    $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-    $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-}
+    protected function tearDown(): void
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
 
-public function tearDown()
-{
-    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-}
+    public function testSetupUserTypeDropdownNormalUser()
+    {
+        $smarty = new Sugar_Smarty();
+        $userViewHelper = new UserViewHelperMock($smarty, $this->normalUser);
+        $userViewHelper->usertype = 'RegularUser';
+        $userViewHelper->setupUserTypeDropdown();
+        $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
+        $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
+        $this->assertRegExp('/RegularUser/', $dropdown);
+        $this->assertRegExp('/RegularUser/', $user_type_readonly);
+        $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
+        $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertNotRegExp('/GROUP/', $dropdown);
+        $this->assertNotRegExp('/GROUP/', $user_type_readonly);
 
-public function testSetupUserTypeDropdownNormalUser()
-{
-    $smarty = new Sugar_Smarty();
-    $userViewHelper = new UserViewHelperMock($smarty, $this->normalUser);
-    $userViewHelper->usertype = 'RegularUser';
-    $userViewHelper->setupUserTypeDropdown();
-    $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
-    $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-    $this->assertRegExp('/RegularUser/', $dropdown);
-    $this->assertRegExp('/RegularUser/', $user_type_readonly);
-    $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
-    $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
-    $this->assertNotRegExp('/GROUP/', $dropdown);
-    $this->assertNotRegExp('/GROUP/', $user_type_readonly);
+        $this->normalUser->id = '';
+        $userViewHelper = new UserViewHelperMock($smarty, $this->normalUser);
+        $userViewHelper->usertype = 'RegularUser';
+        $userViewHelper->setupUserTypeDropdown();
+        $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
+        $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
+        $this->assertRegExp('/RegularUser/', $dropdown);
+        $this->assertRegExp('/RegularUser/', $user_type_readonly);
+        $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
+        $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertNotRegExp('/GROUP/', $dropdown);
+        $this->assertNotRegExp('/GROUP/', $user_type_readonly);
+    }
 
-    $this->normalUser->id = '';
-    $userViewHelper = new UserViewHelperMock($smarty, $this->normalUser);
-    $userViewHelper->usertype = 'RegularUser';
-    $userViewHelper->setupUserTypeDropdown();
-    $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
-    $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-    $this->assertRegExp('/RegularUser/', $dropdown);
-    $this->assertRegExp('/RegularUser/', $user_type_readonly);
-    $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
-    $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
-    $this->assertNotRegExp('/GROUP/', $dropdown);
-    $this->assertNotRegExp('/GROUP/', $user_type_readonly);
-}
+    public function testSetupUserTypeDropdownGroupUser()
+    {
+        $smarty = new Sugar_Smarty();
+        $userViewHelper = new UserViewHelperMock($smarty, $this->groupUser);
+        $userViewHelper->usertype = 'GROUP';
+        $userViewHelper->setupUserTypeDropdown();
+        $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
+        $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
+        $this->assertRegExp('/GROUP/', $dropdown);
+        $this->assertRegExp('/GROUP/', $user_type_readonly);
+        $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
+        $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertNotRegExp('/RegularUser/', $dropdown);
+        $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
 
-public function testSetupUserTypeDropdownGroupUser()
-{
-    $smarty = new Sugar_Smarty();
-    $userViewHelper = new UserViewHelperMock($smarty, $this->groupUser);
-    $userViewHelper->usertype = 'GROUP';
-    $userViewHelper->setupUserTypeDropdown();
-    $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
-    $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-    $this->assertRegExp('/GROUP/', $dropdown);
-    $this->assertRegExp('/GROUP/', $user_type_readonly);
-    $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
-    $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
-    $this->assertNotRegExp('/RegularUser/', $dropdown);
-    $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
+        $userViewHelper = new UserViewHelperMock($smarty, $this->groupUser);
+        $this->groupUser->id = '';
+        $userViewHelper->usertype = 'GROUP';
+        $userViewHelper->setupUserTypeDropdown();
+        $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
+        $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
+        $this->assertRegExp('/GROUP/', $dropdown);
+        $this->assertRegExp('/GROUP/', $user_type_readonly);
+        $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
+        $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertNotRegExp('/RegularUser/', $dropdown);
+        $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
+    }
+// BEGIN SUGARCRM flav=ent ONLY
 
-    $userViewHelper = new UserViewHelperMock($smarty, $this->groupUser);
-    $this->groupUser->id = '';
-    $userViewHelper->usertype = 'GROUP';
-    $userViewHelper->setupUserTypeDropdown();
-    $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
-    $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-    $this->assertRegExp('/GROUP/', $dropdown);
-    $this->assertRegExp('/GROUP/', $user_type_readonly);
-    $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
-    $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
-    $this->assertNotRegExp('/RegularUser/', $dropdown);
-    $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
-}
+    public function testSetupUserTypeDropdownPortalUser()
+    {
+        $smarty = new Sugar_Smarty();
+        $userViewHelper = new UserViewHelperMock($smarty, $this->portalUser);
+        $userViewHelper->usertype = 'PORTAL_ONLY';
+        $userViewHelper->setupUserTypeDropdown();
+        $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
+        $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
+        $this->assertRegExp('/PORTAL_ONLY/', $dropdown);
+        $this->assertRegExp('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertNotRegExp('/RegularUser/', $dropdown);
+        $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
+        $this->assertNotRegExp('/GROUP/', $dropdown);
+        $this->assertNotRegExp('/GROUP/', $user_type_readonly);
 
-//BEGIN SUGARCRM flav=ent ONLY
-public function testSetupUserTypeDropdownPortalUser()
-{
-    $smarty = new Sugar_Smarty();
-    $userViewHelper = new UserViewHelperMock($smarty, $this->portalUser);
-    $userViewHelper->usertype = 'PORTAL_ONLY';
-    $userViewHelper->setupUserTypeDropdown();
-    $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
-    $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-    $this->assertRegExp('/PORTAL_ONLY/', $dropdown);
-    $this->assertRegExp('/PORTAL_ONLY/', $user_type_readonly);
-    $this->assertNotRegExp('/RegularUser/', $dropdown);
-    $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
-    $this->assertNotRegExp('/GROUP/', $dropdown);
-    $this->assertNotRegExp('/GROUP/', $user_type_readonly);
-
-    $this->portalUser->id = '';
-    $userViewHelper = new UserViewHelperMock($smarty, $this->portalUser);
-    $userViewHelper->usertype = 'PORTAL_ONLY';
-    $userViewHelper->setupUserTypeDropdown();
-    $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
-    $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-    $this->assertRegExp('/PORTAL_ONLY/', $dropdown);
-    $this->assertRegExp('/PORTAL_ONLY/', $user_type_readonly);
-    $this->assertNotRegExp('/RegularUser/', $dropdown);
-    $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
-    $this->assertNotRegExp('/GROUP/', $dropdown);
-    $this->assertNotRegExp('/GROUP/', $user_type_readonly);
-}
-//END SUGARCRM flav=ent ONLY
+        $this->portalUser->id = '';
+        $userViewHelper = new UserViewHelperMock($smarty, $this->portalUser);
+        $userViewHelper->usertype = 'PORTAL_ONLY';
+        $userViewHelper->setupUserTypeDropdown();
+        $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
+        $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
+        $this->assertRegExp('/PORTAL_ONLY/', $dropdown);
+        $this->assertRegExp('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertNotRegExp('/RegularUser/', $dropdown);
+        $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
+        $this->assertNotRegExp('/GROUP/', $dropdown);
+        $this->assertNotRegExp('/GROUP/', $user_type_readonly);
+    }
+// END SUGARCRM flav=ent ONLY
 }
 
 //UserViewHelperMock

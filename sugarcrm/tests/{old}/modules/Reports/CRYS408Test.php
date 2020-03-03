@@ -52,7 +52,7 @@ class CRYS408Test extends TestCase
         'view_module' => 'Accounts',
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
@@ -73,7 +73,7 @@ class CRYS408Test extends TestCase
         $this->account->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->request['action'] = 'DeleteField';
         $this->request['name'] = 'cur_crys408_c';

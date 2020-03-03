@@ -17,14 +17,14 @@ class QuickSearchTest extends TestCase
 {
 	private $quickSearch;
 	
-	public function setUp() 
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user', array(true, 1));
     }
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         unset($_REQUEST['data']);
         unset($_REQUEST['query']);

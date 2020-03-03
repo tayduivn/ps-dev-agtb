@@ -113,7 +113,7 @@ class MetaDataFilesTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         \BeanFactory::setBeanClass($this->modName, MockBean::class);
     }
@@ -121,7 +121,7 @@ class MetaDataFilesTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         MetaDataFilesTestMock::reset();
         MockBean::setFieldDef([]);

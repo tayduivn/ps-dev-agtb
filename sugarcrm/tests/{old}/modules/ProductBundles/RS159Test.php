@@ -23,7 +23,7 @@ class RS159Test extends TestCase
     /** @var array */
     protected $remove = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -32,7 +32,7 @@ class RS159Test extends TestCase
         $this->productBundle = new ProductBundle();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->remove as $k => $bundleId) {
             $GLOBALS['db']->query("DELETE FROM " . $this->productBundle->$k . " WHERE bundle_id=" . $GLOBALS['db']->quoted($bundleId));

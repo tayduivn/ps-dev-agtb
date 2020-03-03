@@ -21,12 +21,12 @@ class OpportunityReportsTest extends TestCase
      */
     protected $db;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->db = SugarTestHelper::setup('mock_db');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

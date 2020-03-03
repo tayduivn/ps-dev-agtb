@@ -14,7 +14,7 @@ class Merge7TestPre extends UpgradeTestCase
 {
     protected $new_dir;
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->new_dir = sugar_cached("merge7test");
@@ -23,7 +23,7 @@ class Merge7TestPre extends UpgradeTestCase
         $this->upgrader->setVersions("7.0.0", "ent", "7.2.0", "ent");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         rmdir_recursive("modules/Accounts/clients/test");

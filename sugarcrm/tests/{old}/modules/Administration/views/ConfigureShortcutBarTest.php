@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigureShortcutBarTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

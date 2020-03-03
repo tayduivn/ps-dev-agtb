@@ -23,7 +23,7 @@ class Bug44507Test extends TestCase
 	var $disableCountQuery;
 	var $skipped = false;
 
-    public function setUp()
+    protected function setUp() : void
     {
     	if($GLOBALS['db']->variant != 'mysql' || !function_exists('mysqli_connect'))
     	{
@@ -49,7 +49,7 @@ class Bug44507Test extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
     	if($this->skipped)
     	{

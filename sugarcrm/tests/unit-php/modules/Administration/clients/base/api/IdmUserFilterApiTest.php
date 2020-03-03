@@ -46,7 +46,7 @@ class IdmUserFilterApiTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -74,7 +74,7 @@ class IdmUserFilterApiTest extends TestCase
     /**
      * A few test cases require a current user. Unsets the current user from $GLOBALS.
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_strings']);

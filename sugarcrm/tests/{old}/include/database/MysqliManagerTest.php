@@ -14,7 +14,7 @@ class MysqliManagerTest extends MysqlManagerTest
 {
     protected $configOptions = array();
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -30,7 +30,7 @@ class MysqliManagerTest extends MysqlManagerTest
         $this->db->setOptions(array());
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if ($this->db) {
             $this->db->disconnect();

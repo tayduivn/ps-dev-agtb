@@ -23,7 +23,7 @@ class Bug54374Test extends TestCase
 {
     private $_db;
 
-    public function setUp()
+    protected function setUp() : void
     {
         if(empty($this->_db)){
             $this->_db = DBManagerFactory::getInstance();

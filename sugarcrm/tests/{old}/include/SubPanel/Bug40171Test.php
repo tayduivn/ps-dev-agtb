@@ -20,7 +20,7 @@ class Bug40171Test extends TestCase
 {
     protected $bean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Tests old subpanel overrides, needs rewritten");
         global $moduleList, $beanList, $beanFiles;
@@ -29,7 +29,7 @@ class Bug40171Test extends TestCase
         $this->bean = new Contact();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         /*
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

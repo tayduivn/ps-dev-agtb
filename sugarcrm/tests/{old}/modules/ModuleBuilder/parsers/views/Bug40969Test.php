@@ -90,14 +90,14 @@ class Bug40969Test extends TestCase
                               ),
         );
 
-    public function setUp()
+    protected function setUp() : void
     {
         $_POST = array(
                      'group_0' => array('name', 'date_entered', 'parent_name'),
                  );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_POST = array();
     }

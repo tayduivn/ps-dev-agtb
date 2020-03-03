@@ -26,7 +26,7 @@ class Bug57409Test extends TestCase
      */
     protected $contact = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -40,7 +40,7 @@ class Bug57409Test extends TestCase
         $this->contact->opportunities->add($opp1->id);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestContactUtilities::removeAllCreatedContacts();

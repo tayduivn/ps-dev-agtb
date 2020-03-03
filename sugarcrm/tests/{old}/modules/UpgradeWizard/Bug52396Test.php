@@ -31,21 +31,19 @@ class Bug52396Test extends TestCase
      */
     protected $original_db;
 
-    public function setUp()
+    protected function setUp() : void
     {
         if ($GLOBALS['db']->dbType != 'oci8')
         {
             $this->markTestSkipped('Oracle is required');
-            return false;
         }
-
 
         $this->original_db = $GLOBALS['db'];
         $GLOBALS['db'] = new Bug52396OracleManager();
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'UpgradeWizard');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($GLOBALS['db'] instanceof Bug52396OracleManager)
         {

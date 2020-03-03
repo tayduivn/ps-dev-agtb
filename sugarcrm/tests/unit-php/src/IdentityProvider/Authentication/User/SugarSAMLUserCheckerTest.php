@@ -49,7 +49,7 @@ class SugarSAMLUserCheckerTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->localUserProvider = $this->createMock(SugarLocalUserProvider::class);
         $this->user = $this->createMock(User::class);

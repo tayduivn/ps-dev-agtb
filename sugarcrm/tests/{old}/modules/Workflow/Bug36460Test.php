@@ -16,12 +16,12 @@ class Bug36460Test extends TestCase
 {
     public $glueClass;
     
-    public function setUp()
+    protected function setUp() : void
     {
         $this->glueClass = new WorkFlowGlue();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->glueClass);
     }

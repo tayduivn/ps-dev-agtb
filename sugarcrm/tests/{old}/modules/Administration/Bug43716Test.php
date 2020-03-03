@@ -28,7 +28,7 @@ class Bug43716Test extends TestCase
     private $filenamePostfix = '-restore';
 
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -39,7 +39,7 @@ class Bug43716Test extends TestCase
      * @brief create user, two patches with different dates
      * @return void
      */
-    public function setUp()
+    protected function setUp() : void
     {
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->upgradeHistory = new UpgradeHistory();
@@ -128,7 +128,7 @@ class Bug43716Test extends TestCase
      * @brief remove user and patches information
      * @return void
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->moreResetPatchFile.$this->filenamePostfix);
         unlink($this->patchToCheckFile.$this->filenamePostfix);

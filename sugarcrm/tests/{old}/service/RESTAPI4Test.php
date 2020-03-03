@@ -22,7 +22,7 @@ class RESTAPI4Test extends TestCase
 
     protected $aclRole;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
@@ -57,7 +57,7 @@ class RESTAPI4Test extends TestCase
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
     }
 
-    public function tearDown()
+    protected function tearDown() : void
 	{
 	    $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id IN ( SELECT id FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}' ) )");
 	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}' )");

@@ -39,7 +39,7 @@ class CommonTest extends TestCase
      */
     protected $rep;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // Needed for some of the cache refreshes that happen downstream
         SugarTestHelper::setUp('current_user');
@@ -50,13 +50,13 @@ class CommonTest extends TestCase
         self::$common_obj = new Common();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$common_obj = null;
         SugarTestHelper::tearDown();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->manager = SugarTestUserUtilities::createAnonymousUser();
 
@@ -75,7 +75,7 @@ class CommonTest extends TestCase
         SugarTestForecastUtilities::createForecast($this->timeperiod, $this->rep);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();

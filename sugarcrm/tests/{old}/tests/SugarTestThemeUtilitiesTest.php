@@ -16,7 +16,7 @@ class SugarTestThemeUtilitiesTest extends TestCase
 {
     private $_before_snapshot = array();
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
     }

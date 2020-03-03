@@ -20,7 +20,7 @@ class EmailsVisibilityTest extends TestCase
 {
     protected static $subject;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -48,7 +48,7 @@ class EmailsVisibilityTest extends TestCase
         SugarTestEmailUtilities::createEmail('', $data);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
     }

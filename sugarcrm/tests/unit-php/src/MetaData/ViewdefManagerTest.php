@@ -23,7 +23,7 @@ class ViewdefManagerTest extends TestCase
     private $sugarConfig;
     private $config;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         \SugarAutoLoader::load('include/utils.php');
         require 'include/modules.php';
@@ -42,7 +42,7 @@ class ViewdefManagerTest extends TestCase
         $GLOBALS['bwcModules'] = $bwcModules;
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config'] = $this->sugarConfig;
         $this->config->clearCache();

@@ -24,12 +24,12 @@ class CsvAutoDetectTest extends TestCase
         6 => "\"date_entered\"|\"description\"\n\"3/26/2011 10:02am\"|\"test description\"",
     );
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('files');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

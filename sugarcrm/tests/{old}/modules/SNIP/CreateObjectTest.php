@@ -147,7 +147,8 @@ class CreateObjectTest extends TestCase
         $this->assertSame($e->id, $emails[0]->id);
 	}
 
-	public function setUp () {
+    protected function setUp() : void
+    {
 	    global $current_user;
 
 	    // setup new anonymous user
@@ -170,7 +171,8 @@ class CreateObjectTest extends TestCase
 		$this->snip = SugarSNIP::getInstance();
 	}
 
-	public function tearDown () {
+    protected function tearDown() : void
+    {
 		// delete emails that were imported
     	$GLOBALS['db']->query("DELETE FROM emails WHERE id = '{$this->email_id}'");
     	$GLOBALS['db']->query("DELETE FROM emails_text WHERE email_id = '{$this->email_id}'");

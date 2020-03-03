@@ -21,7 +21,7 @@ class URLFieldTest extends TestCase
 {
     private $_modulename = 'Accounts';
     
-    public function setUp()
+    protected function setUp() : void
     {
         $this->field = get_widget('url');
         $this->field->id = $this->_modulename.'foo_c';

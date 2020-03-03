@@ -24,7 +24,7 @@ class ReportCSVExporterSummationTest extends TestCase
 {
     static protected $IdxToPass = 4;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
 
@@ -41,7 +41,7 @@ class ReportCSVExporterSummationTest extends TestCase
             ->will($this->returnValueMap($preferenceMap));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
     }

@@ -21,7 +21,7 @@ class Bug11203Test extends TestCase
 {
     public $_user = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
         //set the global user to an admin
         global $current_user;
@@ -70,7 +70,7 @@ class Bug11203Test extends TestCase
 
           );
 	}
-    public function tearDown()
+    protected function tearDown() : void
     {   global $current_user;
         $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$current_user->id}'");
         $current_user = $this->_user;

@@ -18,15 +18,15 @@ class SugarLoggerTest extends TestCase
     /**
      * Backup of real loggers
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         LoggerManagerSugarLoggerTestMock::backupLoggers();
     }
-    
+
     /**
      * Restoration of real loggers
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         LoggerManagerSugarLoggerTestMock::restoreLoggers();
     }

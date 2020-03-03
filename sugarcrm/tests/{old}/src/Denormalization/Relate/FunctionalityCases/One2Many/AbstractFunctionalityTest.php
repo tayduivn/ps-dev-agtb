@@ -42,7 +42,7 @@ abstract class AbstractFunctionalityTest extends TestCase
     /**
      * @inheritdoc
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -63,7 +63,7 @@ abstract class AbstractFunctionalityTest extends TestCase
     /**
      * @inheritdoc
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         static::removeCreatedBeans();
         SugarTestHelper::tearDown();
@@ -73,7 +73,7 @@ abstract class AbstractFunctionalityTest extends TestCase
         $process->normalize($processEntity);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         self::$linkedBean = $this->createLinkedBean();
         $primaryBean = $this->createPrimaryBean(self::$linkedBean);

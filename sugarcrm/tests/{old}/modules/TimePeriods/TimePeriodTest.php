@@ -19,7 +19,7 @@ class TimePeriodTest extends TestCase
 {
     private $preTestIds = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -31,7 +31,7 @@ class TimePeriodTest extends TestCase
         $db->query('UPDATE timeperiods set deleted = 1');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = DBManagerFactory::getInstance();
 

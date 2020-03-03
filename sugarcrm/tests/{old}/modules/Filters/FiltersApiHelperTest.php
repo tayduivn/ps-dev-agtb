@@ -20,20 +20,20 @@ class FiltersApiHelperTest extends TestCase
 {
     private $helper;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $api = SugarTestRestUtilities::getRestServiceMock();
         $this->helper = new FiltersApiHelper($api);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestLeadUtilities::removeAllCreatedLeads();

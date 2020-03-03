@@ -16,7 +16,7 @@ class Bug43770Test extends TestCase
 {
     private $_fieldOutput;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $sfr = new SugarFieldRelate('relate');
         $vardef = array(

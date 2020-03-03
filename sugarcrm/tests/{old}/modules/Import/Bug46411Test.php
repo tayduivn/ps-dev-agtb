@@ -26,7 +26,7 @@ class Bug46411Test extends TestCase
      *
      * @group 46411
      */
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         
@@ -47,7 +47,7 @@ class Bug46411Test extends TestCase
         $this->importSource->importlocale_num_grp_sep = ',';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

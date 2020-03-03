@@ -29,7 +29,7 @@ class Bug46805Test extends TestCase
      * @ticket 40433
      * @return void
      */
-	public function setUp()
+    protected function setUp() : void
 	{
 		require('include/modules.php');
 	    $GLOBALS['beanList'] = $beanList;
@@ -37,7 +37,7 @@ class Bug46805Test extends TestCase
 	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
 	
-	public function tearDown()
+    protected function tearDown() : void
 	{
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	    unset($GLOBALS['current_user']);

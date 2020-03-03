@@ -29,7 +29,7 @@ class KBContentsFilterApiTest extends TestCase
      */
     protected $bean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -40,7 +40,7 @@ class KBContentsFilterApiTest extends TestCase
         $this->bean = SugarTestKBContentUtilities::createBean();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->service = null;
         $this->api = null;

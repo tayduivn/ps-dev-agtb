@@ -16,7 +16,7 @@ class Bug45573Test extends TestCase
 {
 	var $hasCustomSearchFields;
 
-	public function setUp()
+    protected function setUp() : void
 	{
 	    require('include/modules.php');
 	    $GLOBALS['beanList'] = $beanList;
@@ -34,7 +34,7 @@ class Bug45573Test extends TestCase
 		}
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 

@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  */
 class OutboundEmailVisibilityAdminTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // create an admin user
         SugarTestHelper::setUp('current_user', [true, true]);
@@ -36,12 +36,12 @@ class OutboundEmailVisibilityAdminTest extends TestCase
         );
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         OutboundEmailConfigurationTestHelper::tearDown();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         OutboundEmailConfigurationTestHelper::restoreAllowDefaultOutbound();
     }

@@ -33,14 +33,14 @@ class SugarEmailAddressAddChangeTest extends TestCase
         return $sea;
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $this->email = SugarTestSugarEmailAddressUtilities::createEmailAddress($this->old_email);
         $this->old_uuid = SugarTestSugarEmailAddressUtilities::fetchEmailIdByAddress($this->old_email);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestSugarEmailAddressUtilities::removeCreatedContactAndRelationships();
         SugarTestSugarEmailAddressUtilities::removeAllCreatedEmailAddresses();

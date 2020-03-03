@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class SugarSpotTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['app_strings']);
     }

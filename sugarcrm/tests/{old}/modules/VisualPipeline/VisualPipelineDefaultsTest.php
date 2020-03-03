@@ -17,7 +17,7 @@ class VisualPipelineDefaultsTest extends TestCase
     // holds any current config already set up in the DB for VisualPipelines
     private static $currentConfig;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -26,7 +26,7 @@ class VisualPipelineDefaultsTest extends TestCase
         $this->clearVisualPipelineConfigs();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->saveConfig($this->currentConfig);
 

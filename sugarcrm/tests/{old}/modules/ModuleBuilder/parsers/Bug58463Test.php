@@ -20,7 +20,7 @@ class Bug58463Test extends TestCase
     protected $_testCustomFile = 'custom/application/Ext/Language/en_us.lang.ext.php';
     protected $_currentRequest;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
@@ -38,7 +38,7 @@ class Bug58463Test extends TestCase
         $this->_currentRequest = $_REQUEST;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
 

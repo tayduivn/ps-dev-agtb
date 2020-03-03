@@ -20,13 +20,13 @@ class OpportunitiesApiTest extends TestCase
      */
     protected $api;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->api = new OpportunitiesApi();
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestForecastUtilities::setUpForecastConfig(array(
             'sales_stage_won' => array('Closed Won'),
@@ -34,13 +34,13 @@ class OpportunitiesApiTest extends TestCase
         ));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

@@ -19,7 +19,7 @@ class Bug38864Test extends TestCase
 {
 	protected $modListHeader = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->modListHeader = query_module_access_list($GLOBALS['current_user']);
@@ -34,7 +34,7 @@ class Bug38864Test extends TestCase
             );
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
         unlink("custom/modules/Reports/metadata/reportmodulesdefs.php");
 	    unset($GLOBALS['current_user']);

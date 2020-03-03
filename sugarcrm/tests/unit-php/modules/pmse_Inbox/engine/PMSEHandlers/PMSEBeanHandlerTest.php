@@ -30,7 +30,7 @@ class PMSEBeanHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         static::$bh = new PMSEBeanHandler();
     }

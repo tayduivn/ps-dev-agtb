@@ -17,7 +17,7 @@ class GetTemplateNameForNotificationEmailTest extends TestCase
     protected $accountBeanName;
     protected $accountObjectName;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -33,7 +33,7 @@ class GetTemplateNameForNotificationEmailTest extends TestCase
         $objectList['Accounts'] = 'Account';
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         global $beanList, $objectList;
         if (isset($this->accountBeanName)) {

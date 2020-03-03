@@ -26,7 +26,7 @@ class Bug39665Test extends TestCase
 	var $clear_database = true;
 	var $remove_beans = true;
 	
-	public function setUp()
+    protected function setUp() : void
     {
     	$this->saved_current_user = $GLOBALS['current_user'];
     	$user = new User();
@@ -145,7 +145,7 @@ class Bug39665Test extends TestCase
         }
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
     	$GLOBALS['current_user'] = $this->saved_current_user;
     	

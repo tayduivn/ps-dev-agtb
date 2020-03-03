@@ -18,7 +18,7 @@ class SugarQueryAclFieldTest extends TestCase
     /** @var User */
     private static $otherUser;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         global $current_user;
         
@@ -34,7 +34,7 @@ class SugarQueryAclFieldTest extends TestCase
         );
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         ACLField::$acl_fields = array();
         SugarTestHelper::tearDown();

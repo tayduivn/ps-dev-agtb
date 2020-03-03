@@ -28,7 +28,7 @@ class FilterApiTest extends TestCase
     /** @var FilterApi */
     private $filterApi;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -91,13 +91,13 @@ class FilterApiTest extends TestCase
         }
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->filterApi = new FilterApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '" . $GLOBALS['current_user']->id . "'");
         $GLOBALS['db']->query("DELETE FROM subscriptions WHERE created_by = '{$GLOBALS['current_user']->id}'");
@@ -105,7 +105,7 @@ class FilterApiTest extends TestCase
         SugarConfig::getInstance()->clearCache();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (count(self::$accounts)) {
             $accountIds = array();

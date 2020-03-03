@@ -16,13 +16,13 @@ require_once 'include/SugarSmarty/plugins/function.sugar_help.php';
 
 class FunctionSugarHelpTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_strings');
         $this->_smarty = new Sugar_Smarty;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

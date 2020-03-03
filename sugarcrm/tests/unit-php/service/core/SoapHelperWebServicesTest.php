@@ -23,7 +23,7 @@ class SoapHelperWebServicesTest extends TestCase
     private $helper;
     private $idmConfig;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->idmConfig = $this->createMock(Config::class);
         $this->helper = $this->getMockBuilder(\SoapHelperWebServices::class)

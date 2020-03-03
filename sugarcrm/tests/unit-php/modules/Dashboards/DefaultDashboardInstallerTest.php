@@ -18,12 +18,12 @@ use PHPUnit\Framework\TestCase;
  */
 class DefaultDashboardInstallerTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         \BeanFactory::setBeanClass('Reports', ReportMock::class);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         \BeanFactory::unsetBeanClass('Reports');
     }

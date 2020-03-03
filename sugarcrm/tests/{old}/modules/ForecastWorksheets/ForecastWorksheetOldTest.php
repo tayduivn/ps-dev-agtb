@@ -27,7 +27,7 @@ class ForecastWorksheetOldTest extends TestCase
      */
     protected static $user;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("SFA, please resolve the issue, where in strict mode the test fails because forecast_worksheet does not have a date closed set");
         SugarTestHelper::setUp('beanFiles');
@@ -49,7 +49,7 @@ class ForecastWorksheetOldTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
 

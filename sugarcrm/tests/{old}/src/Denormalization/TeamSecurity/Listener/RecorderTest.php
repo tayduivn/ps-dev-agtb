@@ -31,13 +31,13 @@ class RecorderTest extends TestCase
      */
     private $conn;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->conn = DBManagerFactory::getConnection();
         $this->cleanUp();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->cleanUp();
     }

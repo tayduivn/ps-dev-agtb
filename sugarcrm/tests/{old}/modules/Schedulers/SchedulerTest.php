@@ -26,8 +26,8 @@ class SchedulerTest extends TestCase
      */
     protected $preferencesOld;
 
-	public static function setUpBeforeClass()
-	{
+    public static function setUpBeforeClass() : void
+    {
 		self::$old_timedate = $GLOBALS['timedate'];
 	    unset($GLOBALS['disable_date_format']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -36,14 +36,14 @@ class SchedulerTest extends TestCase
 		$GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	}
 
-	public static function tearDownAfterClass()
-	{
+    public static function tearDownAfterClass(): void
+    {
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 		$GLOBALS['timedate'] = self::$old_timedate;
 	}
 
-	public function setUp()
+    protected function setUp() : void
     {
         $this->scheduler = new TestScheduler(false);
         $GLOBALS['timedate'] = $this->timedate = TimeDate::getInstance();
@@ -66,7 +66,7 @@ class SchedulerTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->timedate->setNow($this->now);
         $GLOBALS['db']->query("DELETE FROM schedulers WHERE id='{$this->scheduler->id}'");

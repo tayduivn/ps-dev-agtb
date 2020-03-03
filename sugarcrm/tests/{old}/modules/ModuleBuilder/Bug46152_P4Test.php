@@ -59,7 +59,7 @@ class Bug46152_P4Test extends TestCase
         return $field;
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array($this->module));
@@ -74,7 +74,7 @@ class Bug46152_P4Test extends TestCase
         $this->dynamicField->setup(BeanFactory::newBean($this->module));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

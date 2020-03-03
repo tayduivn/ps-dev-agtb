@@ -23,7 +23,7 @@ class RestBug55655Test extends RestTestPortalBase
     protected $_testfile1 = 'Bug55655-01.txt';
     protected $_testfile2 = 'Bug55655-02.txt';
     
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         
@@ -32,7 +32,7 @@ class RestBug55655Test extends RestTestPortalBase
         sugar_file_put_contents($this->_testfile2, create_guid());
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->_testfile1);
         unlink($this->_testfile2);

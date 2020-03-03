@@ -23,14 +23,14 @@ class Bug43652Test extends TestCase
     /** @var ExternalAPIBase */
     private $extAPI;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->extAPI = $this->getMockForAbstractClass('ExternalAPIBase');
         $this->fileData1 = sugar_cached('unittest');
         file_put_contents($this->fileData1, "Unit test for mime type");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
 	{
         unlink($this->fileData1);
 	}

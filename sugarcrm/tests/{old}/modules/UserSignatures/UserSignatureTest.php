@@ -17,12 +17,12 @@ class UserSignatureTest extends TestCase
 {
     private static $createdSignatures = array();
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (!empty(static::$createdSignatures)) {
             $ids = implode("','", static::$createdSignatures);

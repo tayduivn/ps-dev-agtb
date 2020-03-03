@@ -99,7 +99,7 @@ class Bug46152_P5Test extends TestCase
         $module->save();
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
@@ -134,7 +134,7 @@ class Bug46152_P5Test extends TestCase
         self::$moduleBuilder->save();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$moduleBuilder->getPackage(self::$packageName)->delete ();
 

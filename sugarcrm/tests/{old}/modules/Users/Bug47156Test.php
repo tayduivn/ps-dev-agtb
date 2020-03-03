@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug47156Test extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

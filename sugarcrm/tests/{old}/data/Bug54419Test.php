@@ -37,7 +37,7 @@ class Bug54419Test extends TestCase
      */
     protected $quote = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -62,7 +62,7 @@ class Bug54419Test extends TestCase
         $this->quote->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Restoring $GLOBALS
         $_REQUEST = array();

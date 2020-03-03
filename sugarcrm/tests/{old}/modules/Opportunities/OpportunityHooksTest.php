@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class OpportunityHooksTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestForecastUtilities::setUpForecastConfig(array(
             'sales_stage_won' => array('Closed Won'),
@@ -22,12 +22,12 @@ class OpportunityHooksTest extends TestCase
         ));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();

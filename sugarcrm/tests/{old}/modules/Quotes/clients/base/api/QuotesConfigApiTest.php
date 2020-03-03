@@ -24,7 +24,7 @@ class QuotesConfigApiTest extends TestCase
     protected $moduleList = array();
     protected $oldStrings = array();
 
-    protected function setUp()
+    protected function setUp() : void
     {
         require 'config.php';
         require 'include/language/en_us.lang.php';
@@ -47,7 +47,7 @@ class QuotesConfigApiTest extends TestCase
         $GLOBALS['app_strings'] = $app_strings;
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config'] = $this->oldConfig;
         $GLOBALS['moduleList'] = $this->moduleList;

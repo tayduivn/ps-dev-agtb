@@ -19,7 +19,7 @@ class ForecastWorksheetHooksTest extends TestCase
      */
     protected $worksheet;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
@@ -27,7 +27,7 @@ class ForecastWorksheetHooksTest extends TestCase
         $this->worksheet = $this->createPartialMock('ForecastWorksheet', array('save', 'load_relationship'));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->worksheet = null;
         SugarTestHelper::tearDown();

@@ -31,7 +31,7 @@ class SugarACLTest extends TestCase
         );
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarACL::resetACLs();
         if(!$this->bean)
@@ -45,7 +45,7 @@ class SugarACLTest extends TestCase
         $GLOBALS['beanList']['test'] = 'test';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = array();

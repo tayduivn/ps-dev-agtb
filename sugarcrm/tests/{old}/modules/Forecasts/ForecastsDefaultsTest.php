@@ -18,7 +18,7 @@ class ForecastsDefaultsTest extends TestCase
     // holds any current config already set up in the DB for forecasts
     private static $currentConfig;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         /*
         SugarTestHelper::setUp('current_user');
@@ -29,7 +29,7 @@ class ForecastsDefaultsTest extends TestCase
         self::$currentConfig = $admin->getConfigForModule('Forecasts');*/
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestSkipped('Skipping by SFA');
 
@@ -46,12 +46,12 @@ class ForecastsDefaultsTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //SugarTestForecastUtilities::tearDownForecastConfig();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         /*
         // Clear config table of Forecasts values after the last test in case tests

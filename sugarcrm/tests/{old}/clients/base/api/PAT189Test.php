@@ -34,14 +34,14 @@ class PAT189Test extends TestCase
     /** @var Call */
     private $call;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->api = new AccountsRelateApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
@@ -58,14 +58,14 @@ class PAT189Test extends TestCase
         $this->call->contacts->add($this->contact);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

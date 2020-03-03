@@ -19,7 +19,7 @@ class Bug46486Test extends TestCase
     private $defaultPortalUsersCount;
     private $enforce;
 
-    function setUp()
+    protected function setUp() : void
     {
         $admin = new Administration();
         $admin->retrieveSettings('license');
@@ -48,7 +48,7 @@ class Bug46486Test extends TestCase
         sugar_cache_clear('admin_settings_cache');
     }
 
-    function tearDown()
+    protected function tearDown() : void
     {
         $admin = new Administration();
         $admin->saveSetting('license', 'num_portal_users', $this->defaultPortalUsersCount);

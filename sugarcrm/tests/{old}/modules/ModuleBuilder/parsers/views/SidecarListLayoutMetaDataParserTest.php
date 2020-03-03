@@ -19,7 +19,7 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     protected $parser;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->parser = $this->createPartialMock('SidecarListLayoutMetaDataParser', array('handleSave'));
 
@@ -41,7 +41,7 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
         $this->parser->client = 'unittest';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->parser);
     }

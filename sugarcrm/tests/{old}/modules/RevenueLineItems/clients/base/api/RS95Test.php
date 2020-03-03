@@ -27,7 +27,7 @@ class RevenueLineItemsGlobeChartApiTest extends TestCase
      */
     protected $current_user;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -36,7 +36,7 @@ class RevenueLineItemsGlobeChartApiTest extends TestCase
         $this->api = new RevenueLineItemsGlobeChartApi();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();

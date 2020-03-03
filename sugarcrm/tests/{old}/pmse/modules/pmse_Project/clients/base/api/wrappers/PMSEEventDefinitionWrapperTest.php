@@ -21,7 +21,7 @@ class PMSEEventDefinitionWrapperTest extends TestCase
     protected $mockDefinition;
     protected $mockCrmDataWrapper;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->mockElement = $this->getMockBuilder("pmse_BpmnEvent")
                 ->disableAutoload()

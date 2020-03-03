@@ -19,7 +19,8 @@ class Bug67201Test extends TestCase
 {
     protected $role = null;
 
-    public function setup() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -35,7 +36,8 @@ class Bug67201Test extends TestCase
         $this->role->users->add($GLOBALS['current_user']);
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         $GLOBALS['db']->query("delete from acl_roles_users where role_id = '{$this->role->id}'");
         $GLOBALS['db']->query("delete from acl_roles_actions where role_id = '{$this->role->id}'");
         $GLOBALS['db']->query("delete from acl_roles where id = '{$this->role->id}'");

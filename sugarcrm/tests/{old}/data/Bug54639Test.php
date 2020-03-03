@@ -20,7 +20,7 @@ class Bug54639Test extends TestCase
 {
     private $contact = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->contact = new Contact();
         $this->contact->field_defs["as_tetrispe_accounts_name"] = array (

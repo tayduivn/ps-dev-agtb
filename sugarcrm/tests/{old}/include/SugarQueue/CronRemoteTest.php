@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class CronRemoteTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         // clean up queue
@@ -22,13 +22,13 @@ class CronRemoteTest extends TestCase
 		$GLOBALS['sugar_config']['job_server'] = "http://test.job.server/";
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['sugar_config']['job_server']);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->jq = $jobq = new SugarCronRemoteJobs();
         $this->client = $this->getMockBuilder('SugarHttpClient')
@@ -37,7 +37,7 @@ class CronRemoteTest extends TestCase
         $this->jq->setClient($this->client);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='unittest'");
     }

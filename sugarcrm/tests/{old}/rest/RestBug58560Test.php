@@ -75,7 +75,7 @@ class Bug58560Test extends RestTestBase
         "view_module" => "Accounts",
     );
     
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // Basic setup of the environment
         SugarTestHelper::setUp('current_user', array(true, true));
@@ -94,7 +94,7 @@ class Bug58560Test extends RestTestBase
         self::$_mb->action_SaveField();
     }
     
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // Set the request to delete the test field
         $_REQUEST = self::$_deleteFieldRequestVars;
@@ -119,7 +119,7 @@ class Bug58560Test extends RestTestBase
      * we will simply override the rest base setup method, setting up only the
      * current user.
      */
-    public function setUp()
+    protected function setUp() : void
     {
         // Copied from RestTestBase and modified for our use here
         // Create an anonymous user for login purposes

@@ -20,7 +20,7 @@ class ReportsToHierarchyTest extends TestCase
     private $employee3;
     private $employee4;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['db']->preInstall();
         global $beanList, $beanFiles, $current_user;
@@ -51,7 +51,7 @@ class ReportsToHierarchyTest extends TestCase
         $this->employee4->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

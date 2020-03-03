@@ -21,13 +21,13 @@ use PHPUnit\Framework\TestCase;
  */
 class BugPAT543Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

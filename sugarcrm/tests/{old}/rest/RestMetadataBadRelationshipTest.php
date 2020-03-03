@@ -16,7 +16,7 @@
 
 class RestMetadataBadRelationshipTest extends RestTestBase
 {
-    public function tearDown()
+    protected function tearDown() : void
     {
         // delete file
         foreach($this->files AS $file) {

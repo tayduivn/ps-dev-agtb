@@ -19,7 +19,7 @@ class UserPreferenceTest extends TestCase
      */
     protected static $user;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -27,18 +27,18 @@ class UserPreferenceTest extends TestCase
         self::$user = SugarTestHelper::setUp('current_user', array(true, false));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $current_user = self::$user;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_SESSION = array();
     }

@@ -23,7 +23,7 @@ class RS44Test extends TestCase
      */
     protected static $testBean;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -31,7 +31,7 @@ class RS44Test extends TestCase
         SugarTestHelper::setUp('current_user', array(true, false));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
 

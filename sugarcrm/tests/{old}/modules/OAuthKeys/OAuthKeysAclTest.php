@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 /* This unit test class covers the ACLs added for extra modules, this does not cover the Users/Employees modules, those are more intense. */
 class OAuthKeysAclTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -24,7 +24,7 @@ class OAuthKeysAclTest extends TestCase
         $GLOBALS['current_user']->is_admin = 1;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

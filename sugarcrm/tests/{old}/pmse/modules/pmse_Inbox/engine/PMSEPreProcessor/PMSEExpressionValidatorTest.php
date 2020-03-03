@@ -26,7 +26,7 @@ class PMSEExpressionValidatorTest extends TestCase
      *     opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()

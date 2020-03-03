@@ -20,7 +20,7 @@ class Bug25964v2Test extends SOAPTestCase
     var $c = null;
     var $c2 = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
         parent::setUp();
@@ -41,7 +41,7 @@ class Bug25964v2Test extends SOAPTestCase
         $this->_login();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c->id}'");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_resultId}'");

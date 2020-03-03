@@ -22,14 +22,14 @@ class PortalConfigParserTest extends TestCase
         'maxQueryResult' => '5'
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (isset($this->user->id)) {
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->user->id}'");

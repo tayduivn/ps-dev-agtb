@@ -57,7 +57,7 @@ class BusinessCenterTest extends TestCase
     /**
      * Simply loads the environment and sets up some of the needed data
      */
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         \SugarTestHelper::init();
         static::$bc = static::getDecoratedBusinessCenterBean();
@@ -65,7 +65,7 @@ class BusinessCenterTest extends TestCase
         static::$recordViewDefs = \MetaDataManager::getManager()->getModuleViewFields('BusinessCenters', 'record');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $db = \DBManagerFactory::getInstance();
         foreach (static::$deleteCache as $table => $ids) {

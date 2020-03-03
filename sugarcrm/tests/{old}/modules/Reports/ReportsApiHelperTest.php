@@ -19,7 +19,7 @@ class ReportsApiHelperTest extends TestCase
 
     protected $helper;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -40,7 +40,7 @@ class ReportsApiHelperTest extends TestCase
         $this->helper = new ReportsApiHelper(new ReportsServiceMockup());
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->bean);
         SugarTestHelper::tearDown();

@@ -23,7 +23,7 @@ class HealthCheckCasesTest extends TestCase
     /** @var HealthCheckScannerCasesTestMock */
     protected $scanner = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->currentDirectory = getcwd();
         $this->currentPath = ini_get('include_path');
@@ -33,7 +33,7 @@ class HealthCheckCasesTest extends TestCase
         sugar_mkdir($this->cachedPath);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         chdir($this->currentDirectory);
         $this->currentDirectory = '';

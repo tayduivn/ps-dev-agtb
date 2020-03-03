@@ -17,7 +17,7 @@ class Bug50887Test extends TestCase
     protected $user;
     protected $loc;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->user = $GLOBALS['current_user'];
@@ -26,7 +26,7 @@ class Bug50887Test extends TestCase
         $this->loc = Localization::getObject();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
     }

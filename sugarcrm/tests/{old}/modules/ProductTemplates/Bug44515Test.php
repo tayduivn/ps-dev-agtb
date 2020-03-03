@@ -19,7 +19,7 @@ class Bug44515Test extends TestCase
 {
     var $customDir = "custom/modules/ProductTemplates/formulas";
 
-    public function setUp()
+    protected function setUp() : void
     {
         if (!is_dir($this->customDir))
           mkdir($this->customDir, 0700, TRUE); // Creating nested directories at a glance
@@ -29,7 +29,7 @@ class Bug44515Test extends TestCase
     }
 
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->customDir . "/customformula1.php");
         unlink($this->customDir . "/customformula2.php");

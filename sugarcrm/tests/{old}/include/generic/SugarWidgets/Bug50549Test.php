@@ -17,7 +17,8 @@ class Bug50549Test extends TestCase
 {
     var $field;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         global $beanList, $beanFiles;
         require('include/modules.php');
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
@@ -26,7 +27,8 @@ class Bug50549Test extends TestCase
         $this->field = new SugarWidgetFieldMultiEnum($mock);
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);

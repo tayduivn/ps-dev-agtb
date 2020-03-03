@@ -48,7 +48,7 @@ class TeamBasedACLImportTest extends TestCase
      */
     protected $enclosure = '"';
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, false));
 
@@ -70,7 +70,7 @@ class TeamBasedACLImportTest extends TestCase
             ->getMock();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestImportUtilities::removeAllCreatedFiles();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

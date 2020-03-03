@@ -32,7 +32,7 @@ class RS99Test extends TestCase
     /** @var Revenuelineitem */
     protected $revenuelineitem = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -56,7 +56,7 @@ class RS99Test extends TestCase
         $this->opportunity->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         Opportunity::$settings = array();
 

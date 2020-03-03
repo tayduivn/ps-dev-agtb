@@ -22,7 +22,7 @@ class ForecastManagerWorksheetsExportApiTest extends TestCase
     /** @var RestService */
     protected $service = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -35,7 +35,7 @@ class ForecastManagerWorksheetsExportApiTest extends TestCase
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

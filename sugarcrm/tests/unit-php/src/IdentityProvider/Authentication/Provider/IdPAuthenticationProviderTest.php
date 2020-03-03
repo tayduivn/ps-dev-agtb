@@ -68,7 +68,7 @@ class IdPAuthenticationProviderTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->userChecker = $this->createMock(UserCheckerInterface::class);
         $this->userProvider = $this->createMock(SugarOIDCUserProvider::class);

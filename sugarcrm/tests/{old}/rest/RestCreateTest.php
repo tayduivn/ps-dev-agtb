@@ -12,7 +12,7 @@
 
 
 class RestCreateTest extends RestTestBase {
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ( isset($this->account_id) ) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account_id}'");

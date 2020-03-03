@@ -17,8 +17,8 @@ class Bug36978Test extends TestCase
     private $rel_guid;
     private $moduleList;
 
-function setUp() 
-{
+    protected function setUp() : void
+    {
     $this->markTestIncomplete("Skipping unless otherwise specified");
     
     $admin = new User();
@@ -225,7 +225,8 @@ EOQ;
     $this->moduleList = $GLOBALS['moduleList'];
 }
 
-function tearDown() {
+    protected function tearDown() : void
+    {
     if(file_exists('custom/Extension/modules/abc_Test/Ext/Vardefs/test.php')) {
        unlink('custom/Extension/modules/abc_Test/Ext/Vardefs/test.php'); 
     }

@@ -19,7 +19,7 @@ class CurrencyTest extends TestCase
     /** @var Currency */
     private static $currency;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -28,7 +28,7 @@ class CurrencyTest extends TestCase
         self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87);
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         global $current_user;
 
@@ -40,7 +40,7 @@ class CurrencyTest extends TestCase
         get_number_seperators(true);
     }
 
-    public static function tearDownAfterClass() 
+    public static function tearDownAfterClass(): void
     {
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();

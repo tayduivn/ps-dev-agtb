@@ -23,7 +23,7 @@ class Bug32489Test extends TestCase
     
 	var $outbound_id = null;
 	
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $currentModule,$timedate ;
 		$mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
@@ -51,7 +51,7 @@ class Bug32489Test extends TestCase
 	    
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

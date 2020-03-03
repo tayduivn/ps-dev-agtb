@@ -32,7 +32,7 @@ class AdminSettingsStorageTest extends StorageTest
      */
     private $backup;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -44,7 +44,7 @@ class AdminSettingsStorageTest extends StorageTest
             ? $this->admin->settings[$key] : null;
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->admin->saveSetting(Storage::CATEGORY, Storage::NAME, $this->backup);
 

@@ -20,7 +20,7 @@ class Bug33906Test extends TestCase
     protected $folder = null;
     protected $_user = null;
     
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $currentModule;
 
@@ -29,7 +29,7 @@ class Bug33906Test extends TestCase
 		$this->folder = new SugarFolder(); 
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

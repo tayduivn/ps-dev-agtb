@@ -17,7 +17,8 @@ class RESTAPI4FieldACLsTest extends TestCase
 {
     protected $v4;
     
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("current_user");
@@ -30,7 +31,8 @@ class RESTAPI4FieldACLsTest extends TestCase
         $this->v4 = new SugarWebServiceUtilv4();
     }
     
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         // Copied from RESTAPI4Test, minus the isset check which is unnecessary
         unset($GLOBALS['listViewDefs']);
         unset($GLOBALS['viewdefs']);

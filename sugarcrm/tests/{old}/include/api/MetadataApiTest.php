@@ -24,20 +24,20 @@ class MetadataApiTest extends TestCase
      */
     protected $serviceMock;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("current_user");
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->api = new MetadataApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

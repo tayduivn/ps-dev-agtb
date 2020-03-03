@@ -45,7 +45,7 @@ class RequestTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->validator = Validator::create();
         $this->logger = $this->createMock('Psr\Log\LoggerInterface');

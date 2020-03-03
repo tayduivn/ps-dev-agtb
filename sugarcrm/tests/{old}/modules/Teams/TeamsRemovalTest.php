@@ -39,8 +39,7 @@ class TeamsRemovalTest extends TestCase
     var $_teamB = null;
     var $_teamBId = null;
 
-
-	function setUp() 
+    protected function setUp() : void
 	{
 	    $this->markTestIncomplete("Skipping unless otherwise specified");
 
@@ -68,9 +67,10 @@ class TeamsRemovalTest extends TestCase
         $this->_teamB = BeanFactory::newBean('Teams');
         $this->_teamB->name = 'Team B';
         $this->_teamBId = $this->_teamB->save();        
-    }    
-    
-    function tearDown() {
+    }
+
+    protected function tearDown() : void
+    {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         $this->_user = null;

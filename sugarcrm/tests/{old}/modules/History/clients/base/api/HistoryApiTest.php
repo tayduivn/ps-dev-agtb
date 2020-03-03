@@ -26,7 +26,7 @@ class HistoryApiTest extends TestCase
     /** @var Account */
     protected $account = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -37,7 +37,7 @@ class HistoryApiTest extends TestCase
         $this->account = SugarTestAccountUtilities::createAccount();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->filterApi);
         unset($this->serviceMock);

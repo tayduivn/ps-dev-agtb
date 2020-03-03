@@ -22,13 +22,13 @@ use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
  */
 class OpportunityTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         \BeanFactory::setBeanClass('RevenueLineItems', RliMock::class);
         \BeanFactory::setBeanClass('Opportunities', OpMock::class);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         \BeanFactory::unsetBeanClass('RevenueLineItems');
         \BeanFactory::unsetBeanClass('Opportunities');

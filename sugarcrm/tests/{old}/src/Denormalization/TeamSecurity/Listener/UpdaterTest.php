@@ -41,7 +41,7 @@ class UpdaterTest extends TestCase
      */
     private $table;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         global $sugar_config;
         $sugar_config['perfProfile']['TeamSecurity']['default']['use_denorm'] = true;
@@ -56,7 +56,7 @@ class UpdaterTest extends TestCase
         $command();
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $container = Container::getInstance();
         $state = $container->get(State::class);
@@ -65,7 +65,7 @@ class UpdaterTest extends TestCase
         $this->table = $state->getActiveTable();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();

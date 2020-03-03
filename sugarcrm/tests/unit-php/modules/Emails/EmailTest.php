@@ -27,7 +27,7 @@ class EmailTest extends TestCase
 {
     private $mockDb;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['log'] = new SugarNullLogger();
 
@@ -55,7 +55,7 @@ class EmailTest extends TestCase
         $GLOBALS['current_user']->id = Uuid::uuid1();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
         unset($GLOBALS['timedate']);

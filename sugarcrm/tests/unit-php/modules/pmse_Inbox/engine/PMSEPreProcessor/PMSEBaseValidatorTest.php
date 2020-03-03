@@ -28,7 +28,7 @@ class PMSEBaseValidatorTest extends TestCase
         return static::$regKey . '-' . $name;
     }
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // Test data to use
         static::$keyStack['foo'] = static::getCacheKey('foo');
@@ -50,7 +50,7 @@ class PMSEBaseValidatorTest extends TestCase
         );
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // Reset the internal stack to empty... this is just good business
         static::$keyStack = [];

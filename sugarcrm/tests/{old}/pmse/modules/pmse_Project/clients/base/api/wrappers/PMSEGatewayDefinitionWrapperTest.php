@@ -22,7 +22,7 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
     protected $mocGateway;
     protected $mocGatewayDefinition;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->mocGateway = $this->getMockBuilder("pmse_BpmnGateway")
                 ->disableAutoload()

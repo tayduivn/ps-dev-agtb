@@ -24,7 +24,7 @@ class Bug56584Test extends TestCase
      */
     private $testFile;
     
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -53,7 +53,7 @@ class Bug56584Test extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $uid  = $GLOBALS['current_user']->id;
         $GLOBALS['db']->query("DELETE FROM contacts " .

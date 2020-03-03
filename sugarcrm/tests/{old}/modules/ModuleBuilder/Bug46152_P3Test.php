@@ -40,7 +40,7 @@ class Bug46152_P3Test extends TestCase
     }
 
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
@@ -51,7 +51,7 @@ class Bug46152_P3Test extends TestCase
         $this->dynamicField->setup(BeanFactory::newBean($this->module));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         ParserLabel::removeLabel(
             $GLOBALS['current_language'],

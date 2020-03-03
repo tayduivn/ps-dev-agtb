@@ -23,7 +23,7 @@ class CalendarUtilsTest extends TestCase
 
 	protected $meeting_id = null;
 
-	public function setUp()
+    protected function setUp() : void
 	{
 		global $current_user;
         SugarTestHelper::setUp('app_list_strings');
@@ -50,7 +50,7 @@ class CalendarUtilsTest extends TestCase
 		$this->lead = $lead;
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         unset($GLOBALS['mod_strings']);

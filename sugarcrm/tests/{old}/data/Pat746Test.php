@@ -16,7 +16,7 @@ class Pat746Test extends TestCase
 {
     private $lead;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -25,7 +25,8 @@ class Pat746Test extends TestCase
         $this->lead = new Pat746Test_SugarBean();
     }
 
-    protected function tearDown() {
+    protected function tearDown() : void
+    {
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestHelper::tearDown();
     }

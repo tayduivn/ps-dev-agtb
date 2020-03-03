@@ -19,7 +19,7 @@ class SugarFieldLinkTest extends TestCase
     /** @var Lead */
     private $lead;
 
-	public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -39,7 +39,7 @@ class SugarFieldLinkTest extends TestCase
         );
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         unset($this->lead->field_defs['test_c']);

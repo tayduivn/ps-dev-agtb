@@ -18,9 +18,9 @@ class TrackerQueriesTest extends TestCase
 	var $slow_query_time_msec;
 	var $paused;
     var $query_hash = '01968500dc05a7c938343c02f58f833a';
-    
 
-    function setUp() {
+    protected function setUp() : void
+    {
         TrackerTestUtility::setUp(); 
 
     	$this->dump_slow_queries = isset($GLOBALS['sugar_config']['dump_slow_queries']) ? $GLOBALS['sugar_config']['dump_slow_queries'] : false;
@@ -37,8 +37,8 @@ class TrackerQueriesTest extends TestCase
     	$GLOBALS['sugar_config']['dump_slow_queries'] = true;
         $GLOBALS['sugar_config']['slow_query_time_msec'] = 0; //force it to dump
     }
-    
-    function tearDown()
+
+    protected function tearDown() : void
     {
     	TrackerTestUtility::tearDown(); 
     	

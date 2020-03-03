@@ -31,7 +31,7 @@ class ConfigTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->currentIdmConfig = [];
         $this->currentUser = $GLOBALS['current_user'];
@@ -52,7 +52,7 @@ class ConfigTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config'] = $this->sugarConfig;
         $this->config->clearCache();

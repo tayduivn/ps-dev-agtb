@@ -15,12 +15,12 @@ class RestAuditTest extends RestTestBase
 {
     private $account_id;
     
-    public function setUp() 
+    protected function setUp() : void
     {
         parent::setUp();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ( isset($this->account_id) ) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account_id}'");

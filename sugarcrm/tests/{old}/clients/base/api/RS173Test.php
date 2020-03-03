@@ -27,7 +27,7 @@ class RS173Test extends TestCase
      */
     protected $serviceMock;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -42,7 +42,7 @@ class RS173Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestDashboardUtilities::removeAllCreatedDashboards();
         SugarTestHelper::tearDown();

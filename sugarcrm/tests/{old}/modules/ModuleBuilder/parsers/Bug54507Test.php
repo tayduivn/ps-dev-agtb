@@ -24,7 +24,7 @@ class Bug54507Test extends TestCase
 {
     protected $editModule = 'Bugs';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
@@ -34,7 +34,7 @@ class Bug54507Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

@@ -51,7 +51,7 @@ class Bug46740Test extends TestCase
      *
      * Generates custom module localization file
      */
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('moduleList');
         global $sugar_config;
@@ -85,7 +85,7 @@ FILE;
      *
      * Removes custom module localization file
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         if (file_exists($this->file . '.bak')) {

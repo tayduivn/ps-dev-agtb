@@ -20,7 +20,7 @@ class CalendarEventsTest extends TestCase
     protected $calendarEventsService;
     protected $meetingIds = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $this->calendarEventsService = new CalendarEvents();
@@ -30,7 +30,7 @@ class CalendarEventsTest extends TestCase
         $GLOBALS['current_user']->setPreference('timef', 'H:i');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (!empty($this->meetingIds)) {
             $ids = implode("','", $this->meetingIds);

@@ -21,12 +21,12 @@ class Bug45645Test extends TestCase
     protected $oldLabel;
     protected $newLabel;
     
-    protected function setup()
+    protected function setUp() : void
     {
         $this->custLangFile = "custom/modules/{$this->testModule}/Ext/Language/en_us.lang.ext.php";
     }
     
-    protected function tearDown()
+    protected function tearDown() : void
     {
         // Set things back to what they were
         $params = array($this->testLabel => $this->oldLabel);

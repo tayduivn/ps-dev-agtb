@@ -231,7 +231,7 @@ class UserTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->timeDate = $this->getMockBuilder(\TimeDate::class)
             ->disableOriginalConstructor()

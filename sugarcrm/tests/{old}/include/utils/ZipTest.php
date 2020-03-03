@@ -18,7 +18,7 @@ require_once('include/utils/zip_utils.php');
  */
 class ZipTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         if(!class_exists('ZipArchive'))
         {
@@ -32,7 +32,7 @@ class ZipTest extends TestCase
         sugar_mkdir($this->testdir.'/testarchiveoutput',null,true);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ( is_dir($this->testdir) )
             rmdir_recursive($this->testdir);

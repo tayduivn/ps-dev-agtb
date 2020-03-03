@@ -23,7 +23,7 @@ class AutoCreateImportFolderTest extends TestCase
     var $_user = null;
     
     
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $currentModule;
 
@@ -34,7 +34,7 @@ class AutoCreateImportFolderTest extends TestCase
 		$this->ie = new InboundEmail();
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

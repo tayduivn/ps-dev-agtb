@@ -18,13 +18,13 @@ class RemoveMeTest extends TestCase
     /** @var Campaign */
     private $campaign;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('mod_strings', array('Campaigns'));
         $this->campaign = SugarTestCampaignUtilities::createCampaign();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCampaignUtilities::removeAllCreatedCampaignLogs();
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();

@@ -16,7 +16,7 @@ class SilentUpgradeSessionVarsTest extends TestCase
 {
     private $varsCacheFileName;
     
-    public function setUp() 
+    protected function setUp() : void
     {
         $this->varsCacheFileName = sugar_cached("/silentUpgrader/silentUpgradeCache.php");
         if(file_exists($this->varsCacheFileName)) {

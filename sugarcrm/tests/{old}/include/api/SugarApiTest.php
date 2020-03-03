@@ -18,7 +18,7 @@ class SugarApiTest extends TestCase
 
     static public $monitorList;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -27,7 +27,7 @@ class SugarApiTest extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         ApiHelper::$moduleHelpers = array();
         TrackerManager::getInstance()->setDisabledMonitors(self::$monitorList);
@@ -38,14 +38,16 @@ class SugarApiTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         $this->mock = new SugarApiMock();
         $this->contact = SugarTestContactUtilities::createContact();
         // We can override the module helpers with mocks.
         ApiHelper::$moduleHelpers = array();
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         SugarTestContactUtilities::removeAllCreatedContacts();
     }
 

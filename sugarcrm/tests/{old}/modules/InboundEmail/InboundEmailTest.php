@@ -21,7 +21,7 @@ class InboundEmailTest extends TestCase
     /**
      * Create test user
      */
-	public function setUp() 
+    protected function setUp() : void
 	{
     	global $inbound_account_id;
 
@@ -123,7 +123,8 @@ class InboundEmailTest extends TestCase
     /**
      * Remove anything that was used during this test
      */
-    function tearDown() {
+    protected function tearDown() : void
+    {
     	global $inbound_account_id;
         $this->_tearDownTestUser();
     }

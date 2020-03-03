@@ -17,13 +17,13 @@ class PopulateTimePeriodsSeedDataTest extends TestCase
 {
 private $createdTimePeriods;
 
-function setUp()
-{
+    protected function setUp() : void
+    {
     $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 1");
 }
 
-function tearDown()
-{
+    protected function tearDown() : void
+    {
     $GLOBALS['db']->query("DELETE FROM timeperiods WHERE deleted = 0");
     $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 0");
 }

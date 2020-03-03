@@ -20,7 +20,7 @@ class ElasticsearchRoutingCommandTest extends AbstractApiCommandTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->commandClass = 'Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRoutingCommand';
         $this->apiClass = 'AdministrationApi';

@@ -31,7 +31,7 @@ class Bug45374Test extends TestCase
 
     protected $report;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Failing on Stack52.  Working with dev to fix");
 
@@ -144,7 +144,7 @@ class Bug45374Test extends TestCase
         $this->assertEquals(count($this->team_name_list), $count);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         SugarTestHelper::tearDown();

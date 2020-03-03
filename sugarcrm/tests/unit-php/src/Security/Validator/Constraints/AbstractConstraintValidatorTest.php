@@ -28,7 +28,7 @@ abstract class AbstractConstraintValidatorTest extends ConstraintValidatorTestCa
      * Overwrite base method to be able to avoid calling \Locale which may
      * not be present on every stack as `intl` is not a required module.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->group = 'MyGroup';
         $this->metadata = null;

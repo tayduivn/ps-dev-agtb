@@ -25,7 +25,7 @@ class PMSERelatedModulesTest extends TestCase
     /** @var  Contact */
     private $contact;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -42,7 +42,7 @@ class PMSERelatedModulesTest extends TestCase
         $this->accountOne = SugarTestAccountUtilities::createAccount();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();

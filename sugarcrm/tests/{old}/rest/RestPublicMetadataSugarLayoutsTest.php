@@ -25,7 +25,7 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
 
     protected $_oldFileContents = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -48,7 +48,7 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
         $this->_clearMetadataCache();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->_oldFileContents as $file => $contents) {
             file_put_contents($file, $contents);

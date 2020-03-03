@@ -20,12 +20,12 @@ class Bug55455Test extends TestCase
     protected $_actualFile = 'upload/sugartestfile.txt';
     protected $_mockFile   = 'thisfilenamedoesnotexist.doc';
     
-    public function setUp()
+    protected function setUp() : void
     {
         sugar_file_put_contents($this->_actualFile, create_guid());
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->_actualFile);
     }

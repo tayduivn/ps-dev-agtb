@@ -20,13 +20,13 @@ class FileUtilsTests extends TestCase
     protected $_testFileNoExt     = 'upload/noextfile';
     protected $_testFileNotExists = 'thisfilenamedoesnotexist.doc';
 
-    public function setUp()
+    protected function setUp() : void
     {
         sugar_file_put_contents($this->_testFileWithExt, create_guid());
         sugar_file_put_contents($this->_testFileNoExt, create_guid());
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->_testFileWithExt);
         unlink($this->_testFileNoExt);

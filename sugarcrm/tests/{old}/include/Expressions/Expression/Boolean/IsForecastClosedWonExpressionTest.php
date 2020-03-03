@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class IsForecastClosedWonExpressionTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         Forecast::$settings = array();
     }

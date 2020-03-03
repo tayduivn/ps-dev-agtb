@@ -27,7 +27,8 @@ var $tableDictionaryExtFile1 = 'custom/Extension/application/Ext/TableDictionary
 var $tableDictionaryExtFile2 = 'custom/application/Ext/TableDictionary/tabledictionary.ext.php';
 var $corruptExtModuleFile = 'custom/Extension/application/Ext/TableDictionary/Bug43208_module.php';
 
-function setUp() {
+    protected function setUp() : void
+    {
     if(file_exists($this->tableDictionaryExtFile1)) {
        copy($this->tableDictionaryExtFile1, $this->tableDictionaryExtFile1 . '.backup');
        unlink($this->tableDictionaryExtFile1);
@@ -88,7 +89,8 @@ EOQ;
     }
 }
 
-function tearDown() {
+    protected function tearDown() : void
+    {
     if(file_exists($this->tableDictionaryExtFile1 . '.backup'))
     {
        copy($this->tableDictionaryExtFile1 . '.backup', $this->tableDictionaryExtFile1);

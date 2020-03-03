@@ -22,7 +22,7 @@ class WorkFlowTest extends TestCase
     private static $has_logic_hooks_file;
     private static $wf_files = array('actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php');
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         if(file_exists('custom/modules/Accounts/workflow'))
         {
@@ -54,7 +54,7 @@ class WorkFlowTest extends TestCase
         LogicHook::refreshHooks();
     }
 
-	public function setUp()
+    protected function setUp() : void
     {
     	$this->testWFName = "WFUnitTest" . mt_rand();
     	$this->testAccName = "WFTestAccount" . mt_rand();
@@ -67,7 +67,7 @@ class WorkFlowTest extends TestCase
     	$this->wf->save();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    $this->wf->deleted = true;
 	    $this->wf->mark_deleted($this->wf->id);
@@ -75,7 +75,7 @@ class WorkFlowTest extends TestCase
         $GLOBALS['db']->query($sql);
 	}
 
-	public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if(self::$has_workflow_directory)
         {

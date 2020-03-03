@@ -16,13 +16,13 @@
  */
 class Bug42683Test extends SOAPTestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
 		parent::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestLeadUtilities::removeAllCreatedLeads();
         parent::tearDown();

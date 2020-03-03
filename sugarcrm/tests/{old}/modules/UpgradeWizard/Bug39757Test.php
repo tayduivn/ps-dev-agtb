@@ -22,7 +22,7 @@ class Bug39757Test extends TestCase
 {
 	private $_meetingId;
 	
-	public function setUp() 
+    protected function setUp() : void
 	{
 		if ( $GLOBALS['db']->dbType != 'mysql' ) {
             $this->markTestSkipped('Only applies to MySQL');
@@ -34,7 +34,7 @@ class Bug39757Test extends TestCase
 		$this->_meetingId = $id;
 	}
 	
-	public function tearDown() 
+    protected function tearDown() : void
 	{
 	    $sql = "DELETE FROM meetings WHERE id = '{$this->_meetingId}'";
 	    $GLOBALS['db']->query($sql);

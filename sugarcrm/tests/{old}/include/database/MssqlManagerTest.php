@@ -19,7 +19,7 @@ abstract class MssqlManagerTest extends TestCase
      */
     protected $_db;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');

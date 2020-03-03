@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarTestLangPackCreatorTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarCache::$isCacheReset = false;
 

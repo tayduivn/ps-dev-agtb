@@ -27,7 +27,7 @@ class TimestampExpressionTest extends TestCase
     /**
      * Setup before the test is run
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         static::$user = SugarTestHelper::setUp('current_user');
     }
@@ -35,7 +35,7 @@ class TimestampExpressionTest extends TestCase
     /**
      * Clean up after the full test is done.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
@@ -45,7 +45,7 @@ class TimestampExpressionTest extends TestCase
      *
      * The cache needs to be reset since it caches the user preferences
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         sugar_cache_reset_full();
     }

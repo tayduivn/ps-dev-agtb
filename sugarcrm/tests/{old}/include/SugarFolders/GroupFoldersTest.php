@@ -23,7 +23,7 @@ class GroupFoldersTest extends TestCase
     /**
      * Create test user
      */
-	public function setUp() 
+    protected function setUp() : void
 	{
     	global $groupfolder_id;
     	if (empty($groupfolder_id)) {
@@ -33,13 +33,13 @@ class GroupFoldersTest extends TestCase
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['mod_strings']);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
     }

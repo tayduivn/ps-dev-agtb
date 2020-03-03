@@ -16,7 +16,7 @@ class Bug48369Test extends TestCase
 {
     var $backupContents;
 
-    public function setUp()
+    protected function setUp() : void
     {
         if(!file_exists('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php'))
         {
@@ -39,7 +39,7 @@ EOQ;
         file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $contents);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->backupContents))
         {

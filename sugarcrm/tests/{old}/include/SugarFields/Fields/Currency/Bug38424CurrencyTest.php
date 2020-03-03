@@ -16,7 +16,7 @@ class Bug38424CurrencyTest extends TestCase
 {
     private $_fieldOutput;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $sfr = new SugarFieldCurrency('currency');
         $vardef = array(

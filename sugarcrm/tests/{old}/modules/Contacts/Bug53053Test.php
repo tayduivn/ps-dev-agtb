@@ -15,13 +15,13 @@ use PHPUnit\Framework\TestCase;
 
 class Bug53053Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ( count($this->contactsToClean) > 0) {
             $list = "'" . implode("','", $this->contactsToClean) . "'";

@@ -19,7 +19,7 @@ class ConvertLeadTest extends TestCase
      */
     protected $license_expires_in = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $file = 'custom/modules/Leads/metadata/editviewdefs.php';
         SugarTestHelper::saveFile($file);
@@ -40,7 +40,7 @@ class ConvertLeadTest extends TestCase
         $_SESSION['LICENSE_EXPIRES_IN'] = '5';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestStudioUtilities::removeAllCreatedFields();

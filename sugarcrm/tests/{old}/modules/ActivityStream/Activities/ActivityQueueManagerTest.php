@@ -25,13 +25,13 @@ class ActivityQueueManagerTest extends TestCase
     const USER_TWO    = '2';
     const PORTAL_USER = '3';
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setup();
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();

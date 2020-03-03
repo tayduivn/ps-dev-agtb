@@ -19,12 +19,12 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarChartTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['app_strings'] = ['LBL_THOUSANDS_SYMBOL' => 'K'];
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['app_strings']);
     }

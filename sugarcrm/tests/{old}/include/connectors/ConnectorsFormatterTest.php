@@ -19,7 +19,7 @@ class ConnectorsFormatterTest extends Sugar_Connectors_TestCase
     public $tabindex;
     public $ss;
 
-    public function setUp()
+    protected function setUp() : void
     {
         //Store original files
         if (!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE)) {
@@ -78,7 +78,7 @@ EOQ;
         ConnectorFactory::$source_map = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         if (file_exists('custom/modules/Connectors/connectors/sources/ext/rest/twitter_backup/twitter.php')) {

@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class EmailReminderTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         parent::tearDown();

@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug67014Test extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $_GET = array();
     }

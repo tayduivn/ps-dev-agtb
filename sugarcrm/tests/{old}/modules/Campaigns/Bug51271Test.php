@@ -24,7 +24,7 @@ class Bug51271Test extends TestCase
 	var $saved_current_user = null;
 	var $clear_database = true;
 
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $beanFiles, $beanList, $timedate;
         include('include/modules.php');
@@ -145,7 +145,7 @@ class Bug51271Test extends TestCase
        }
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
 		SugarTestContactUtilities::removeAllCreatedContacts();
 		SugarTestLeadUtilities::removeAllCreatedLeads();

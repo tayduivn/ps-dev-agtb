@@ -30,7 +30,7 @@ class TimePeriodsCurrentApiTest extends TestCase
     );
 
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -52,19 +52,19 @@ class TimePeriodsCurrentApiTest extends TestCase
         }
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->api = new TimePeriodsCurrentApi();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // delete all current timeperiods
         $db = DBManagerFactory::getInstance();
         $db->query('UPDATE timeperiods SET deleted = 0 where deleted = 1');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }

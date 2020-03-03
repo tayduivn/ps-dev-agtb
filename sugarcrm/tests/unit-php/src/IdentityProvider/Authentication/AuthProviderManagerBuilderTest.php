@@ -25,7 +25,7 @@ class AuthProviderManagerBuilderTest extends TestCase
     /** @var array */
     protected $beanList;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->beanList = isset($GLOBALS['beanList']) ? $GLOBALS['beanList'] : null;
@@ -34,7 +34,7 @@ class AuthProviderManagerBuilderTest extends TestCase
         ];
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['beanList'] = $this->beanList;
         parent::tearDown();

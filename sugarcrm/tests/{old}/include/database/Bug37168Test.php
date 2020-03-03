@@ -18,7 +18,7 @@ class Bug37168Test extends TestCase
     protected $has_disable_count_query_enabled;	
     protected $previous_current_user;	
     
-    public function setUp() 
+    protected function setUp() : void
     {
         global $sugar_config, $current_user;
         
@@ -34,7 +34,7 @@ class Bug37168Test extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }	
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         global $sugar_config;
         

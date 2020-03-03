@@ -79,7 +79,7 @@ class Bug36422Test extends TestCase
     /**
      * Set up - create prospect list with 2 contacts
      */
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $beanList, $beanFiles;
         $beanList = array();
@@ -93,7 +93,7 @@ class Bug36422Test extends TestCase
         self::attachContactToProspectList($this->_prospectList, $this->_contacts[1]);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

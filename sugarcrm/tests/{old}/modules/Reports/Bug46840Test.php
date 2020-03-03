@@ -17,7 +17,7 @@ class Bug46840Test extends TestCase
 {
     private $reportInstance;
 
-	public function setUp()
+    protected function setUp() : void
     {
     	$beanList = array();
 		$beanFiles = array();
@@ -27,7 +27,7 @@ class Bug46840Test extends TestCase
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    unset($GLOBALS['current_user']);
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

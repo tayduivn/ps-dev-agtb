@@ -19,7 +19,7 @@ class Bug36989Test extends TestCase
      private $customSearchFields;
      private $customSearchdefs;
 
-     public function setUp()
+    protected function setUp() : void
     {
           SugarTestHelper::setUp('files');
           SugarTestHelper::setUp('beanList');
@@ -37,7 +37,7 @@ class Bug36989Test extends TestCase
           file_put_contents('modules/Contacts/metadata/SearchFields.php', '<?php $searchFields[\'Contacts\'] = array(\'test\' => array());');
      }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -23,7 +23,7 @@ class ProductConsoleHelperTest extends TestCase
 {
     private $bean;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->bean = $this->createMock('Dashboard');
     }

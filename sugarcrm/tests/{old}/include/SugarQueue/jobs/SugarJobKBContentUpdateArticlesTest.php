@@ -29,7 +29,7 @@ class SugarJobKBContentUpdateArticlesTest extends TestCase
      */
     protected $approvedArticle;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('beanList');
@@ -52,7 +52,7 @@ class SugarJobKBContentUpdateArticlesTest extends TestCase
         $this->job->setJob($schedulersJob);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestKBContentUtilities::removeAllCreatedBeans();
         SugarTestHelper::tearDown();

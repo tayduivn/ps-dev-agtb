@@ -18,20 +18,20 @@ class OracleManagerTest extends TestCase
     /** @var OracleManager */
     protected $_db = null;
 
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_strings']);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_db = new OracleManager();
     }

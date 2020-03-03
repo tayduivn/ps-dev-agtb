@@ -28,7 +28,7 @@ class CodeTokenTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->token = new CodeToken('code', 'offline profile');
         parent::setUp();

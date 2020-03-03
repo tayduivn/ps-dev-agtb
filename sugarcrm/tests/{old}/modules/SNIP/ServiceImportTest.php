@@ -16,7 +16,7 @@ class ServiceImportTest extends TestCase
 {
 	private $email_id = '';
 
-	public function setUp()
+    protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -26,7 +26,7 @@ class ServiceImportTest extends TestCase
 		$this->date_time_format = $timedate->get_date_time_format($this->_user);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
 		// delete emails that were imported
     	$GLOBALS['db']->query("DELETE FROM emails WHERE id = '{$this->email_id}'");

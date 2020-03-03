@@ -16,7 +16,7 @@ class Bug49008Test extends TestCase
 {
     var $sugarWidgetField;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $layoutManager = new LayoutManager();
         $this->sugarWidgetField = new SugarWidgetFieldDateTime49008Mock($layoutManager);
@@ -28,7 +28,7 @@ class Bug49008Test extends TestCase
         $current_user->db->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

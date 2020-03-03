@@ -14,7 +14,7 @@
 class RestMetadataTest extends RestTestBase {
     public $createdFiles = array();
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Cleanup
         foreach($this->createdFiles as $file)

@@ -19,7 +19,7 @@ class SugarSearchEngineMetadataHelperTest extends TestCase
     private $_cacheFile;
     private $_backupCacheFile;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -41,7 +41,7 @@ class SugarSearchEngineMetadataHelperTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->_cacheRenamed)
         {

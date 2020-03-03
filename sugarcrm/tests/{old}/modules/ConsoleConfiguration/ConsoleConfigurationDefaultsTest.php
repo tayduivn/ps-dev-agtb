@@ -17,7 +17,7 @@ class ConsoleConfigurationDefaultsTest extends TestCase
     // holds any current config already set up in the DB for ConsoleConfiguration
     private $currentConfig;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $admin = BeanFactory::newBean('Administration');
         $this->currentConfig = $admin->getConfigForModule('ConsoleConfiguration', 'base', true);
@@ -25,7 +25,7 @@ class ConsoleConfigurationDefaultsTest extends TestCase
         $this->clearConsoleConfigurationConfigs();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->saveConfig($this->currentConfig);
     }

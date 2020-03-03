@@ -26,7 +26,7 @@ class Bug52796Test extends TestCase
 	private $reportInstance;
 	private $saved = array();
 
-    protected function setUp()
+    protected function setUp() : void
     {
         // Change default currency to check conversion
         global $sugar_config;
@@ -38,7 +38,7 @@ class Bug52796Test extends TestCase
         $sugar_config['currency'] = $currency->id;
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
 	{
 		// Set back the default currency value
 		global $sugar_config;

@@ -17,7 +17,7 @@ class Bug67650Test extends TestCase
     protected $customIncludeDir = 'custom/data';
     protected $customIncludeFile = 'SugarBeanApiHelper.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         // create a custom include file
         $customIncludeFileContent = <<<EOQ
@@ -35,7 +35,7 @@ EOQ;
         unset(ApiHelper::$moduleHelpers['Campaigns']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // clean cache
         unset(ApiHelper::$moduleHelpers['Campaigns']);

@@ -24,7 +24,7 @@ class EmailsApiTest extends TestCase
     protected $currentUserConfiguration;
     protected $service;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         OutboundEmailConfigurationTestHelper::setUp();
         SugarTestHelper::setUp('beanList');
@@ -39,7 +39,7 @@ class EmailsApiTest extends TestCase
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

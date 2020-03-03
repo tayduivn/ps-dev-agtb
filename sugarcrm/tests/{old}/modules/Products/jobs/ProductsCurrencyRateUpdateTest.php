@@ -24,14 +24,14 @@ class ProductsCurrencyRateUpdateTest extends TestCase
      */
     private $mock;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->db = SugarTestHelper::setUp('mock_db');
         $this->setupMockClass();
         SugarTestHelper::setUp('app_strings');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->tearDownMockClass();
         SugarTestHelper::tearDown();

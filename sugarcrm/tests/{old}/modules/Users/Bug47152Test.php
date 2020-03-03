@@ -22,7 +22,7 @@ class Bug47152Test extends TestCase
 
 	protected static $admin_settings;
 
-	static public function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -37,7 +37,7 @@ class Bug47152Test extends TestCase
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Users');
     }
 
-	static public function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         $admin = new Administration();
         $admin->settings = self::$admin_settings;
@@ -51,7 +51,7 @@ class Bug47152Test extends TestCase
         unset($GLOBALS['request_string']);
 	}
 
-	public function setUp()
+    protected function setUp() : void
 	{
         $this->markTestIncomplete('Temporarily marking test as incomplete to debug DB2 failing test');
         return;
@@ -70,7 +70,7 @@ class Bug47152Test extends TestCase
         }
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($_SESSION['EXCEEDS_MAX_USERS']);

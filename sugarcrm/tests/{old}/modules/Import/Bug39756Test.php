@@ -19,7 +19,7 @@ class Bug39756Test extends TestCase
      */
     var $_account = null;
 
-    public function setUp() 
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->_account = new Account();
@@ -27,7 +27,7 @@ class Bug39756Test extends TestCase
         $this->_account->save();
     }
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

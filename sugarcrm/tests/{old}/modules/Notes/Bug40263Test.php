@@ -20,12 +20,12 @@ class Bug40263Test extends TestCase
 	var $user;
 	var $note;
 
-	public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestNoteUtilities::removeAllCreatedNotes();
 	}

@@ -18,7 +18,7 @@ class iCalTest extends TestCase
     var $timedate;
     var $project;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->timedate = new TimeDate();
 
@@ -51,7 +51,7 @@ class iCalTest extends TestCase
         $projectTask->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestMeetingUtilities::removeMeetingUsers();

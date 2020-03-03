@@ -21,7 +21,7 @@ class RangeSearchTest extends TestCase
     var $originalDbType;
     var $smartyTestFile;
 
-    public function setUp()
+    protected function setUp() : void
     {
 		if(file_exists('custom/modules/Opportunities/metadata/SearchFields.php'))
 		{
@@ -84,7 +84,7 @@ class RangeSearchTest extends TestCase
 		$this->originalDbType = $GLOBALS['db']->dbType;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
 		$GLOBALS['db']->dbType = $this->originalDbType;
 

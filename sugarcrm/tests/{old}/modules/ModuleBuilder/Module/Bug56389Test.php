@@ -57,7 +57,7 @@ class Bug56389Test extends TestCase
     protected $filesToTearDown = array();
     protected $fieldToTest = 'name';
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('moduleList');
@@ -84,7 +84,7 @@ class Bug56389Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

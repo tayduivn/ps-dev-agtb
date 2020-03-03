@@ -12,12 +12,12 @@
 
 
 class RestUpdateTest extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (isset($this->account->id)) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");

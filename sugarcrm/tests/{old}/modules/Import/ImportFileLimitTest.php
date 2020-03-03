@@ -24,7 +24,7 @@ class ImportFileLimitTest extends TestCase
     protected $_fileLineCount3 = 2;
     protected $_fileLineCount4 = 0;
 
-    public function setUp()
+    protected function setUp() : void
     {
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->_fileSample1 = SugarTestImportUtilities::createFile( $this->_fileLineCount1, 3 );
@@ -33,7 +33,7 @@ class ImportFileLimitTest extends TestCase
         $this->_fileSample4 = SugarTestImportUtilities::createFile( $this->_fileLineCount4, 3 );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestImportUtilities::removeAllCreatedFiles();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

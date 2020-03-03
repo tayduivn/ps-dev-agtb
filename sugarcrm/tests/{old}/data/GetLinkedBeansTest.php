@@ -16,14 +16,14 @@ class GetLinkedBeansTest extends TestCase
 {
     protected $createdBeans = array();
 
-    public function setUp()
+    protected function setUp() : void
 	{
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    foreach($this->createdBeans as $bean)
         {

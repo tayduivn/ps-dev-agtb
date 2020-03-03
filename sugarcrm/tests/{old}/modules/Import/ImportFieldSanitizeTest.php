@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ImportFieldSanitizeTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->_ifs = new ImportFieldSanitize();
         $this->_ifs->timezone = 'America/Los_Angeles';
@@ -27,7 +27,7 @@ class ImportFieldSanitizeTest extends TestCase
         $GLOBALS['timedate'] = TimeDate::getInstance();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
 	 	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

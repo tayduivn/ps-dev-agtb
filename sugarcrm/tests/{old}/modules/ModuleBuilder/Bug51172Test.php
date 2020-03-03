@@ -33,7 +33,7 @@ class Bug51172Test extends TestCase
     protected $module = 'Employees';
     protected $add_module = 'Users';
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_REQUEST = array();
         sugar_cache_clear('mod_strings.en_us');

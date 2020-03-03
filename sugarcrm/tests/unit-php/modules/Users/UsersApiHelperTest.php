@@ -46,7 +46,7 @@ class UsersApiHelperTest extends TestCase
      */
     protected $IdpConfig;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->IdpConfig = $this->createMock(IdpConfig::class);
         $this->IdpConfig

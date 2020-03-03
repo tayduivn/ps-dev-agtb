@@ -18,7 +18,7 @@ class RestBug59121Test extends RestTestBase
     protected $_customFile = 'custom/include/MVC/Controller/wireless_module_registry.php';
     protected $_request = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         
@@ -37,7 +37,7 @@ class RestBug59121Test extends RestTestBase
         $this->_clearMetadataCache();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_REQUEST = $this->_request;
         

@@ -55,7 +55,7 @@ class PMSEEngineUtilsTest extends TestCase
      */
     protected $oldRequest;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         global $current_user, $beanList, $bwcModules;
 
@@ -103,7 +103,7 @@ class PMSEEngineUtilsTest extends TestCase
         \BeanFactory::setBeanClass('Emails', 'EmailMock');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         global $current_user, $beanList, $bwcModules;
 

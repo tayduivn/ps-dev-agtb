@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConnectorsAdminViewTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         global $mod_strings, $app_strings, $theme;
         $theme = SugarTestThemeUtilities::createAnonymousTheme();
@@ -27,7 +27,7 @@ class ConnectorsAdminViewTest extends TestCase
         $app_strings = return_application_language($GLOBALS['current_language']);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         global $mod_strings, $app_strings, $theme;
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();

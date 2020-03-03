@@ -18,7 +18,7 @@ class RenameModulesTest extends TestCase
     private $language_contents;
     private $global_language_contents;
 
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -39,7 +39,7 @@ class RenameModulesTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->removeCustomAppStrings();
         $this->removeModuleStrings(array('Accounts'));

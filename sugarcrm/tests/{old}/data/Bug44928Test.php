@@ -71,7 +71,7 @@ class Bug44928Test extends TestCase
      *
      * Creates temporary records and sets anonymous current user
      */
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Test is failing on Oracle, working with sergei to fix");
         return;
@@ -102,7 +102,7 @@ class Bug44928Test extends TestCase
      *
      * Marks temporary records as deleted and restores current user
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
        /* $this->lead->mark_deleted($this->lead->id);
         $this->campaign->mark_deleted($this->campaign->id);

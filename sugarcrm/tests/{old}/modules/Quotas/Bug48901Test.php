@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 class Bug48901Test extends TestCase
 {
     private $_timeperiod;
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true));
         SugarTestHelper::setUp('app_list_strings');
@@ -88,7 +88,7 @@ class Bug48901Test extends TestCase
         return $result;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();

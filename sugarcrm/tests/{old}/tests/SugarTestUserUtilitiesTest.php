@@ -19,12 +19,12 @@ class SugarTestUserUtilitiesTest extends TestCase
 {
     private $_before_snapshot = array();
     
-    public function setUp() 
+    protected function setUp() : void
     {
         $this->_before_snapshot = $this->_takeUserDBSnapshot();
     }
 
-    public function tearDown() 
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestUserUtilities::removeAllCreatedUserSignatures();

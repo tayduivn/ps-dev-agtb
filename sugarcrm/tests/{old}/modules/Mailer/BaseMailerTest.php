@@ -18,12 +18,12 @@ use PHPUnit\Framework\TestCase;
  */
 class BaseMailerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -21,7 +21,7 @@ class SOAPAPI3Test extends SOAPTestCase
     /**
      * Create test user
      */
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3/soap.php';
         parent::setUp();
@@ -32,7 +32,7 @@ class SOAPAPI3Test extends SOAPTestCase
         self::$helperObject = new APIv3Helper();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");

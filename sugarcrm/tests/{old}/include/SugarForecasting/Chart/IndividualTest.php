@@ -20,19 +20,19 @@ class SugarForecasting_Chart_IndividualTest extends TestCase
      */
     protected $obj;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
 
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->obj = $this->createPartialMock(
             'SugarForecasting_Chart_Individual',

@@ -23,12 +23,12 @@ class ForecastWorksheetTest extends TestCase
      */
     protected static $db;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$db = SugarTestHelper::setUp('mock_db');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

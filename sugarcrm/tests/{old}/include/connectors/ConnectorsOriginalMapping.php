@@ -15,13 +15,13 @@ require_once 'include/utils.php';
 
 class ConnectorsOriginalMapping extends Sugar_Connectors_TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->customMappingFile = 'custom/modules/Connectors/connectors/sources/ext/rest/twitter/mapping.php';
         $mapping = array();
         write_array_to_file('mapping', $mapping, $this->customMappingFile);
     }
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->customMappingFile);
     }

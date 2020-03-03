@@ -20,7 +20,7 @@ class DropdownUpgradeTest extends TestCase
     protected $_custDir = array('include' => 'custom/include/language/', 'ext' => 'custom/application/Ext/Language/');
     protected $_backedUp = false;
     
-    public function setUp()
+    protected function setUp() : void
     {
         // Back up existing custom app list strings if they exist
         foreach($this->_custFile as $custFile) {
@@ -44,7 +44,8 @@ class DropdownUpgradeTest extends TestCase
         }
     }
     
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         foreach($this->_custFile as $custFile) {
             // Delete the custom file we just created
             unlink($custFile);

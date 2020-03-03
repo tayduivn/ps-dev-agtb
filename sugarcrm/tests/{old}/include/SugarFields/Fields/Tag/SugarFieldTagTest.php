@@ -25,12 +25,12 @@ class SugarFieldTagTest extends TestCase
     protected $tag1;
     protected $tag2;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         VardefManager::loadVardef('Tags', 'Tag', true);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -40,7 +40,7 @@ class SugarFieldTagTest extends TestCase
         $this->tag2 = SugarTestTagUtilities::createTag();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestTagUtilities::deleteM2MRelationships('Contacts', $this->contact->id);
         SugarTestContactUtilities::removeAllCreatedContacts();

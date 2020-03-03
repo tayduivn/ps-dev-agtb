@@ -15,13 +15,13 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 {
     protected $_sessionType;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE c_key = 'support_portal'");
         parent::setUpBeforeClass();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -61,7 +61,7 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Handle session 'type' resetting
         if (!empty($this->_sessionType)) {

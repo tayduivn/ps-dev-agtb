@@ -58,7 +58,7 @@ class TeamBasedACLVisibilityTest extends TestCase
      */
     protected $tbaModule;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true));
         $this->tbaConfig = new TeamBasedACLConfigurator();
@@ -79,7 +79,7 @@ class TeamBasedACLVisibilityTest extends TestCase
         $this->bean->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

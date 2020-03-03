@@ -19,7 +19,7 @@
  */
 class SearchByModuleTest extends SOAPTestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
     }

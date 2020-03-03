@@ -19,14 +19,14 @@ use PHPUnit\Framework\TestCase;
  */
 class TeamSetManagerTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();

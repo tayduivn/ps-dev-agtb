@@ -20,14 +20,14 @@ class ActivitiesApiTest extends TestCase
 {
     private $api;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
         $this->api       = SugarTestRestUtilities::getRestServiceMock();
         $this->api->user = $GLOBALS['current_user'];
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestLeadUtilities::removeAllCreatedLeads();

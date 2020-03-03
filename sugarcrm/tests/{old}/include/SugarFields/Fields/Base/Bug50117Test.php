@@ -17,7 +17,7 @@ class Bug50117Test extends TestCase
 	private $_listViewSmartyOutput1;
 	private $_listViewSmartyOutput2;
 	
-	public function setUp()
+    protected function setUp() : void
     {
         $enumField = SugarFieldHandler::getSugarField('enum');
    		$parentFieldArray = array(

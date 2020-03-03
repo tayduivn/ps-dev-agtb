@@ -19,7 +19,7 @@ class ITR27836Test extends TestCase
 {   	
     protected $bean;
 
-	public function setUp()
+    protected function setUp() : void
 	{
 	    global $moduleList, $beanList, $beanFiles;
         require('include/modules.php');
@@ -27,7 +27,7 @@ class ITR27836Test extends TestCase
         $this->bean = new Contact();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

@@ -19,7 +19,7 @@ class FileLocatorTest extends TestCase
     protected $form;
     protected $tempfiles = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
@@ -27,7 +27,7 @@ class FileLocatorTest extends TestCase
         $this->form = new SearchFormMock($acc, "Accounts");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['app_strings']);
         unset($GLOBALS['current_user']);

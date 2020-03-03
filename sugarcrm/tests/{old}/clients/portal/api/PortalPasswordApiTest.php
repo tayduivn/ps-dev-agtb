@@ -21,7 +21,7 @@ class PortalPasswordApiTest extends TestCase
     protected $oldConfig;
     protected $bean_id;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->oldConfig = $GLOBALS['sugar_config'] ?? null;
 
@@ -51,7 +51,7 @@ class PortalPasswordApiTest extends TestCase
         $GLOBALS['db']->query($query);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config'] = $this->oldConfig;
 

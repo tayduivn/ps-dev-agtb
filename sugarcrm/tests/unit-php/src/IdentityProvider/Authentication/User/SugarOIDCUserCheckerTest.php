@@ -58,7 +58,7 @@ class SugarOIDCUserCheckerTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->localUserProvider = $this->createMock(SugarLocalUserProvider::class);
         $this->userChecker = new SugarOIDCUserChecker($this->localUserProvider);

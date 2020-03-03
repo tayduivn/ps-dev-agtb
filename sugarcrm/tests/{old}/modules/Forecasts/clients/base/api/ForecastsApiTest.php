@@ -21,12 +21,12 @@ class ForecastsApiTest extends TestCase
 {
     protected $api;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->api = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->api);
         SugarTestHelper::tearDown();

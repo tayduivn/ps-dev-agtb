@@ -24,7 +24,7 @@ class Bug50438Test extends TestCase
     var $contact;
     var $fileArr;
     var $call_id;
-    public function setUp()
+    protected function setUp() : void
     {
         global $currentModule ;
         $this->call_id = create_guid();
@@ -44,7 +44,7 @@ class Bug50438Test extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM calls WHERE id='{$this->call_id}'");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id='{$this->contact->id}'");

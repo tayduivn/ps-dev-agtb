@@ -248,7 +248,7 @@ class SessionProxyTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         if (isset($_SESSION)) {
             $this->oldSession = $_SESSION;
@@ -264,7 +264,7 @@ class SessionProxyTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if (is_null($this->oldSession)) {
             unset($_SESSION);

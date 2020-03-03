@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug58685Test extends TestCase
 {
-	public function setUp()
+    protected function setUp() : void
     {
         $this->oldPost = $_POST;
         if (isset($_SERVER['REQUEST_METHOD'])) {
@@ -33,7 +33,7 @@ class Bug58685Test extends TestCase
         SugarTestHelper::setUp('app_strings');
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_POST = $this->oldPost ;
         if (isset($this->oldRM)) {

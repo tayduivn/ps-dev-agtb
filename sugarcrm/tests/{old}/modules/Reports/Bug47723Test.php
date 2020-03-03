@@ -24,7 +24,7 @@ class Bug47723Test extends TestCase
 {
     private $reportInstance;
 
-    public function setUp() 
+    protected function setUp() : void
     {
         require('include/modules.php');
 	    $GLOBALS['beanList'] = $beanList;
@@ -36,7 +36,7 @@ class Bug47723Test extends TestCase
         $this->reportInstance->db->dbType = 'mssql';
     }
 	
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->reportInstance->db->dbType = $this->dbType;
  	    $this->reportInstance = null;

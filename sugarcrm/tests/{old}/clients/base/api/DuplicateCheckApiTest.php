@@ -93,7 +93,7 @@ class DuplicateCheckApiTest extends TestCase
             $newLead2FirstName = "SugarLeadNewFirst2", // different first name
             $newLead2LastName  = "SugarLeadLast"; // same last name
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('app_list_strings');
@@ -130,7 +130,7 @@ class DuplicateCheckApiTest extends TestCase
         $this->newLead2->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestLeadUtilities::removeAllCreatedLeads();

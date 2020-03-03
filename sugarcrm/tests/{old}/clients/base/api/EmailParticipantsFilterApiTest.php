@@ -23,7 +23,7 @@ class EmailParticipantsFilterApiTest extends TestCase
     protected $api;
     protected $service;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -31,7 +31,7 @@ class EmailParticipantsFilterApiTest extends TestCase
         $this->api = new FilterApi();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestContactUtilities::removeAllCreatedContacts();

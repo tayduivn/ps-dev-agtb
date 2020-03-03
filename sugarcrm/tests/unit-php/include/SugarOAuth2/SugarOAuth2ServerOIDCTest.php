@@ -122,7 +122,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->storage = $this->createMock(\SugarOAuth2StorageOIDC::class);
         $this->storage->refreshToken = $this->createMock(\OAuthToken::class);
@@ -203,7 +203,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         \BeanFactory::unregisterBean($this->mockedUser);
 

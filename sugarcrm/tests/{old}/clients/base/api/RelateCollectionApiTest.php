@@ -36,14 +36,14 @@ class RelateCollectionApiTest extends TestCase
      */
     private $user;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true));
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->bean = SugarTestMeetingUtilities::createMeeting('', $this->user);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

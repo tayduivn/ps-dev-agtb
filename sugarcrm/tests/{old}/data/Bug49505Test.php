@@ -23,14 +23,14 @@ class Bug49505Test extends TestCase
      */
     private $_createdBeans = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->_createdBeans as $bean) {
             $bean->retrieve($bean->id);

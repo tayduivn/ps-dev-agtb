@@ -22,7 +22,7 @@ class EmailTest extends TestCase
 {
 	private $email;
 
-	public function setUp()
+    protected function setUp() : void
 	{
 	    global $current_user;
 
@@ -33,7 +33,7 @@ class EmailTest extends TestCase
 	    $this->email->email2init();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
         VardefManager::$linkFields = [];
         VardefManager::loadVardef('Contacts', 'Contact', true);

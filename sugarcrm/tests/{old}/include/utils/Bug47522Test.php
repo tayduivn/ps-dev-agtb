@@ -22,7 +22,7 @@ require_once 'include/utils.php';
 class Bug47522Test extends TestCase
 {
     var $orig_ini_encoding_val;
-    	public function setUp()
+    protected function setUp() : void
 	{
         $this->orig_ini_encoding_val = ini_get('mbstring.encoding_translation');
 
@@ -30,7 +30,7 @@ class Bug47522Test extends TestCase
         ini_set('mbstring.encoding_translation',1);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //set back value of ini setting
         ini_set('mbstring.encoding_translation',$this->orig_ini_encoding_val);

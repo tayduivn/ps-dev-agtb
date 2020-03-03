@@ -29,7 +29,7 @@ class Bug56746Test extends TestCase
     protected $account;
     private $stored_service_object;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         //Unset global service_object variable so that the code in updateDependencyBean is run in SugarBean.php
         if(isset($GLOBALS['service_object'])) {
@@ -59,7 +59,7 @@ class Bug56746Test extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->stored_service_object)) {
             $GLOBALS['service_object'] = $this->stored_service_object;

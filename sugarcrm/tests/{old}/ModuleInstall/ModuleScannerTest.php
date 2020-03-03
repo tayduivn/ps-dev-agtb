@@ -18,14 +18,14 @@ class ModuleScannerTest extends TestCase
 {
     public $fileLoc = "cache/moduleScannerTemp.php";
 
-	public function setUp()
+    protected function setUp() : void
 	{
         SugarTestHelper::setUp('files');
         SugarTestHelper::saveFile($this->fileLoc);
         SugarTestHelper::saveFile('files.md5');
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         if (is_dir(sugar_cached("ModuleScannerTest"))) {

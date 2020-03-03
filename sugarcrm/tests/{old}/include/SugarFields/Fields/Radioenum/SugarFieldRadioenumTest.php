@@ -22,13 +22,13 @@ class SugarFieldRadioenumTest extends TestCase
 	protected $_testingArrayName = "new_radio_list";
 	protected $_testingFieldType = "Radioenum";
 	
-	public function setUp()
+    protected function setUp() : void
 	{
 		global $app_list_strings;
 		$app_list_strings[$this->_testingArrayName] = $this->_testingArray;
 	}
     
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		if (!empty($app_list_strings[$this->_testingArrayName])) {
 			unset($app_list_strings[$this->_testingArrayName]);

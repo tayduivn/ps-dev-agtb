@@ -25,7 +25,7 @@ class Bug65044Test extends TestCase
     private $account;
     private $contact;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("beanList");
@@ -59,7 +59,7 @@ class Bug65044Test extends TestCase
         $this->ie->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS["db"]->query("DELETE FROM inbound_email WHERE id = '{$this->ie->id}'");
         $GLOBALS["db"]->query("DELETE FROM cases WHERE name = '{$this->ie->casename}'");

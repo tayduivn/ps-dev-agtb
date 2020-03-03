@@ -17,7 +17,7 @@ require_once 'include/SugarSmarty/plugins/function.sugar_menu.php';
 
 class FunctionSugarButtonTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_smarty = new Sugar_Smarty;
     }

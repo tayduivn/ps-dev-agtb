@@ -17,8 +17,8 @@ class DateExpressionTest extends TestCase
 {
     static $createdBeans = array();
 
-	public static function setUpBeforeClass()
-	{
+    public static function setUpBeforeClass() : void
+    {
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
@@ -26,8 +26,8 @@ class DateExpressionTest extends TestCase
 		unset($GLOBALS['disable_date_format']);
 	}
 
-	public static function tearDownAfterClass()
-	{
+    public static function tearDownAfterClass(): void
+    {
 	    foreach(self::$createdBeans as $bean)
         {
             $bean->mark_deleted($bean->id);

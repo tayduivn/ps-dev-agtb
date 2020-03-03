@@ -18,12 +18,12 @@ class RSSFeedApiTest extends TestCase
 
     protected static $api;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$api = new RSSFeedApi;
     }
 
-    public function setup()
+    protected function setUp() : void
     {
         global $sugar_config;
         if (isset($sugar_config['rss_feed_max_entries'])) {
@@ -31,7 +31,7 @@ class RSSFeedApiTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         if (self::$rssFeedMaxEntries) {

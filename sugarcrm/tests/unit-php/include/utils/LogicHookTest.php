@@ -29,7 +29,7 @@ class LogicHookTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         // backup trigger global
         if (isset($GLOBALS['trigger'])) {
@@ -42,7 +42,7 @@ class LogicHookTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         // remove files from disk and autoloader map
         foreach ($this->toDelete as $file) {

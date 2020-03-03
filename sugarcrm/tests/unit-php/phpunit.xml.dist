@@ -26,8 +26,8 @@
     </php>
     <testsuites>
         <testsuite name="all">
-            <directory>./</directory>
-            <directory>modules/</directory>
+            <directory>.</directory>
+            <exclude>src/Security/Validator</exclude>
         </testsuite>
         <testsuite name="custom">
             <directory>../../custom/tests/unit-php/</directory>

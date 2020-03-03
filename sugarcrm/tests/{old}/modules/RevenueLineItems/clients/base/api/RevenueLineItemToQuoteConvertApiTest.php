@@ -25,7 +25,7 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
      */
     protected static $revenueLineItem;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -43,7 +43,7 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
         SugarTestRevenueLineItemUtilities::setCreatedRevenueLineItem(array(self::$revenueLineItem->id));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();

@@ -22,12 +22,12 @@ class Bug62050Test extends TestCase
 {
     private $files = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->files = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->files as $file)
         {

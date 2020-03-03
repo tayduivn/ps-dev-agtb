@@ -37,7 +37,7 @@ class Bug50342Test extends TestCase
 
     var $campaign;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $beanList, $beanFiles;
         $beanList = array();
@@ -66,7 +66,7 @@ class Bug50342Test extends TestCase
         $this->campaign->prospectlists->add($this->prospectList->id);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestProspectUtilities::removeAllCreatedProspects();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

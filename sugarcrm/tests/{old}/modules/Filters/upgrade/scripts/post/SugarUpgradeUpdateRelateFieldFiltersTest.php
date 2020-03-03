@@ -51,7 +51,7 @@ class SugarUpgradeUpdateRelateFieldFiltersTest extends TestCase
         ],
     ];
 
-    public function setup()
+    protected function setUp() : void
     {
         // We need a log way down the line for this
         SugarTestHelper::setup('log', ['name' => 'unit-php']);
@@ -67,7 +67,7 @@ class SugarUpgradeUpdateRelateFieldFiltersTest extends TestCase
         $this->bean->field_defs = $this->defs;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

@@ -23,7 +23,7 @@ class ReportCSVExporterRowsAndColumnsTest extends TestCase
 {
     static protected $IdxToPass = 3;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user;
 
@@ -40,7 +40,7 @@ class ReportCSVExporterRowsAndColumnsTest extends TestCase
             ->will($this->returnValueMap($preferenceMap));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
     }

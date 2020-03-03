@@ -17,7 +17,7 @@ class UserSignaturesApiHelperTest extends TestCase
 {
     protected $bean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -25,7 +25,7 @@ class UserSignaturesApiHelperTest extends TestCase
         $this->bean->id = Uuid::uuid1();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->bean);
         SugarTestHelper::tearDown();

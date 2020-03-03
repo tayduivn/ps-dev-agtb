@@ -17,12 +17,12 @@ class RestBug57839Test extends RestTestBase
 {
     protected $_accountId;
     
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->_accountId}'");
         $GLOBALS['db']->commit();

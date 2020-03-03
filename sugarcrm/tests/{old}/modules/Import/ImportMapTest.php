@@ -16,7 +16,7 @@ class ImportMapTest extends TestCase
 {
     private $_importMap;
     
-    public function setUp() 
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -29,7 +29,7 @@ class ImportMapTest extends TestCase
         $this->_importMap->enclosure = '"';
     }
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);

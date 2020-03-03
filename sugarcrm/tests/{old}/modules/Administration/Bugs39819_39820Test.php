@@ -19,13 +19,13 @@ class Bugs39819_39820Test extends TestCase
      * @ticket 39819
      * @ticket 39820
      */
-    public function setUp()
+    protected function setUp() : void
     {
         SugarAutoLoader::ensureDir("custom/modules/Accounts/language"); // Creating nested directories at a glance
         SugarTestHelper::setUp('mod_strings', array('Administration'));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

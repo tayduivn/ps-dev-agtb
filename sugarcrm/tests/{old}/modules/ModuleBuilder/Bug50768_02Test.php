@@ -73,7 +73,7 @@ class Bug50768_02Test extends TestCase
         "view_module" => "Accounts",
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("This test breaks others tests on 644 on CI.  Disabling for sanity check");
 
@@ -94,7 +94,7 @@ class Bug50768_02Test extends TestCase
         $mbc->action_SaveField();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
       /*  $mbc = new ModuleBuilderController();
         $this->currencyFieldDef1['name'] = 'c1_c';

@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class ProspectListsServiceTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -28,7 +28,7 @@ class ProspectListsServiceTest extends TestCase
         SugarTestHelper::setUp('beanList');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

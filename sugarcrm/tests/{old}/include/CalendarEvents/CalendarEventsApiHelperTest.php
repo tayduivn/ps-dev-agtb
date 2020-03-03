@@ -54,12 +54,12 @@ class CalendarEventsApiHelperTest extends TestCase
         );
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->api = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();

@@ -23,7 +23,7 @@ class AddTeamsTest extends TestCase
 	private $teamSetsId = '';
 	private $teamSetsIdSecondOne = '';
 	
-	public function setUp()
+    protected function setUp() : void
 	{
 		$this->teamSets = BeanFactory::newBean('TeamSets');
 		$this->anotherTeamSets = BeanFactory::newBean('TeamSets');
@@ -32,7 +32,7 @@ class AddTeamsTest extends TestCase
 		$this->teamIds[] = '874c1242-4645-898d-238a-4ab0a3f7e7c1';
 	}
 	
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		$q = "DELETE from team_sets where id = '$this->teamSetsId'";
 		$GLOBALS['db']->query($q);

@@ -45,7 +45,7 @@ class Bug48484Test extends TestCase
      */
     protected $range = 'this_year';
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->massUpdate = new MassUpdateStub($this->customFieldName);
         global $current_user;
@@ -53,7 +53,7 @@ class Bug48484Test extends TestCase
         SugarTestHelper::setUp('app_strings');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();

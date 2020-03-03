@@ -181,7 +181,7 @@ class ForecastUserReassignmentTest extends TestCase
             SugarTestForecastUtilities::setUpForecastConfig();
         }
     */
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete('needs to be refactored since WorksheetSeedData has been removed');
         /*
@@ -200,7 +200,7 @@ class ForecastUserReassignmentTest extends TestCase
         */
     }
     /*
-        public function tearDown()
+        protected function tearDown() : void
         {
             SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
             SugarTestOpportunityUtilities::removeAllCreatedOpportunities();

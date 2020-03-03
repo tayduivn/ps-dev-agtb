@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class SugarACLProductTest extends TestCase
 {
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // Set up a non-admin user
         \SugarTestHelper::setUp('current_user', array(true, false));

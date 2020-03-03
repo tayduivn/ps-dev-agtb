@@ -28,7 +28,7 @@ class Bug45709_53785_Test extends TestCase
 	var $requestArray = null;
 	var $searchForm = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
 		SugarTestHelper::setUp('app_list_strings');
 		SugarTestHelper::setUp('app_strings');
@@ -44,7 +44,7 @@ class Bug45709_53785_Test extends TestCase
     	$this->team->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestTaskUtilities::removeAllCreatedTasks();

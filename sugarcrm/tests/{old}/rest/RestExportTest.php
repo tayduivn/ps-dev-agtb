@@ -18,7 +18,7 @@ class RestExportTest extends RestTestBase
     private $singleRestPath = 'Accounts/export';
     private $massRestPath = 'Accounts/export';
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         // multiple uids
@@ -28,7 +28,7 @@ class RestExportTest extends RestTestBase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
 

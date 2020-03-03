@@ -46,7 +46,7 @@ class PMSEEventTest extends TestCase
      */
     protected static $threads = [];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // test threads for testCheckIfExistEventBased
         $thread1 = BeanFactory::newBean('pmse_BpmThread');
@@ -66,7 +66,7 @@ class PMSEEventTest extends TestCase
         self::$threads[] = $thread2->id;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (count(self::$threads)) {
             $conn = DBManagerFactory::getConnection();
@@ -79,7 +79,7 @@ class PMSEEventTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->flowMock = $this->getMockBuilder('pmse_BpmnFlow')
                 ->disableAutoload()

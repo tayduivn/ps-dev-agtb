@@ -24,7 +24,7 @@ class Bug43683Test extends TestCase
      */
     private $user2;
 
-    public function setUp() 
+    protected function setUp() : void
     {
         $this->user1 = SugarTestUserUtilities::createAnonymousUser();
         $this->user2 = SugarTestUserUtilities::createAnonymousUser(false);
@@ -32,7 +32,7 @@ class Bug43683Test extends TestCase
         $this->user2->save();
     }
 
-    public function tearDown() 
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

@@ -19,7 +19,7 @@ require_once 'modules/ACLActions/actiondefs.php';
  */
 class ActivitiesTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestActivityUtilities::removeAllCreatedActivities();
         SugarTestCommentUtilities::removeAllCreatedComments();

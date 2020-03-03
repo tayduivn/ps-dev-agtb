@@ -18,14 +18,14 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug43643Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $beanList, $beanFiles;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         require('include/modules.php');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();

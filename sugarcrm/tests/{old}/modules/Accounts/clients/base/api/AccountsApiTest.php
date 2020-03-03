@@ -19,7 +19,7 @@ class AccountsApiTest extends TestCase
      */
     protected $api;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->api = new AccountsApi();
 
@@ -28,7 +28,7 @@ class AccountsApiTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         Opportunity::$settings = array();
     }

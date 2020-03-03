@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class ListViewTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_lv = new ListView();
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->_lv);
     	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

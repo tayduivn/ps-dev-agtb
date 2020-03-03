@@ -21,7 +21,8 @@ class Bug57571Test extends TestCase
     protected $_panel;
     protected $_testFile = 'custom/modules/Quotes/metadata/editviewdefs.php';
     
-    public function setUp() {
+    protected function setUp() : void
+    {
         // Setup our environment
         SugarTestHelper::init();
         SugarTestHelper::setUp('current_user');
@@ -41,7 +42,8 @@ class Bug57571Test extends TestCase
         $this->_addTabIndex();
     }
     
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         // Get rid of the custom file we created
         unlink($this->_testFile);
         

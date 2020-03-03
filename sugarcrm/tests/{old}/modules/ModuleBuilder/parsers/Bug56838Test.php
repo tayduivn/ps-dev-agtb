@@ -25,7 +25,7 @@ class Bug56838Test extends TestCase
 {
     protected static $testModule = 'Cases';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setup('beanList');
         SugarTestHelper::setup('beanFiles');
@@ -33,7 +33,7 @@ class Bug56838Test extends TestCase
         SugarTestHelper::setup('mod_strings', array(self::$testModule));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

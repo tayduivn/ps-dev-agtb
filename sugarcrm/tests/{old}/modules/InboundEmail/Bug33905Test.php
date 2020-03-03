@@ -23,7 +23,7 @@ class Bug33905Test extends TestCase
     public $_team = null;
     public $_ie = null;
     
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $currentModule;
 
@@ -38,7 +38,7 @@ class Bug33905Test extends TestCase
 		$this->_ie = $ie->retrieve($ieID);
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$this->_user->id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

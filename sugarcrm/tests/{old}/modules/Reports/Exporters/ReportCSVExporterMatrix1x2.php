@@ -15,13 +15,13 @@ use Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportExporter;
 
 class ReportCSVExporterMatrix1x1Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $GLOBALS['current_user']->setPreference('export_delimiter', ',');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

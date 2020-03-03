@@ -16,7 +16,7 @@ require_once 'modules/Administration/updater_utils.php';
 
 class UpdaterUtilsTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->oldLicense = $GLOBALS['license'];
         $GLOBALS['license'] = new UpdateUtilsSettingMock();
@@ -33,7 +33,7 @@ class UpdaterUtilsTest extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['license'] = $this->oldLicense;
     }

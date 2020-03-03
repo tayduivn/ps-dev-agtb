@@ -23,7 +23,7 @@ class DecimalTest extends TestCase
      */
     protected $eval;
 
-    public function setup()
+    protected function setUp() : void
     {
         $this->eval = new Evaluator\Decimal;
     }

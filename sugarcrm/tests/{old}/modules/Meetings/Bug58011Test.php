@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug58011Test extends TestCase
 {
-    protected function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
@@ -25,7 +25,7 @@ class Bug58011Test extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeMeetingUsers();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();

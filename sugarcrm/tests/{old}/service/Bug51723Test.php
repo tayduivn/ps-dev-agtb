@@ -23,7 +23,7 @@ class Bug51723Test extends SOAPTestCase
     private $_contact;
     private $_opt = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete("Test breaking on CI, working with dev to fix");
         $administration = new Administration();
@@ -48,7 +48,7 @@ class Bug51723Test extends SOAPTestCase
         $this->_contact->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         //$this->_contact->mark_deleted($this->_contact->id);
         parent::tearDown();

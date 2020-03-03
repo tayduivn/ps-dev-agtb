@@ -37,7 +37,7 @@ class SugarOidcUserMappingTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->userMapper = new SugarOidcUserMapping();
 
@@ -49,7 +49,7 @@ class SugarOidcUserMappingTest extends TestCase
         Validator::clearValidatorsCache();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
 

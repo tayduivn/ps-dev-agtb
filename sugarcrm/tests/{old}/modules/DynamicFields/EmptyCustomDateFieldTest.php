@@ -69,7 +69,7 @@ class EmptyCustomDateFieldTest extends TestCase
 
     protected $testOpp;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete('causes all sorts of damage downhill');
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -88,7 +88,7 @@ class EmptyCustomDateFieldTest extends TestCase
         $mbc->action_SaveField();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         /*$mbc = new ModuleBuilderController();
         $_REQUEST = array(

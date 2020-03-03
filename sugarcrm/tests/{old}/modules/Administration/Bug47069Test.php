@@ -14,7 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug47069Test extends TestCase
 {
-    public function setUp() {
+    protected function setUp() : void
+    {
         $GLOBALS['action'] = 'async';
         $GLOBALS['module'] = 'Administration';
         $GLOBALS['app_strings'] = return_application_language('en_us');
@@ -25,7 +26,8 @@ class Bug47069Test extends TestCase
         $GLOBALS['current_user']->retrieve('1');
     }
     
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($GLOBALS['module']);
         unset($GLOBALS['action']);
         unset($GLOBALS['mod_strings']);

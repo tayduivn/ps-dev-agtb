@@ -23,7 +23,7 @@ class Bug64650Test extends TestCase
     /** @var SugarFavorites */
     private $favorite;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -39,7 +39,7 @@ class Bug64650Test extends TestCase
         $this->favorite->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $db = $this->favorite->db;
         $db->query(

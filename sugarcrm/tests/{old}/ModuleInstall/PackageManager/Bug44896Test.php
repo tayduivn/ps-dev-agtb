@@ -17,7 +17,7 @@ require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
 class Bug44896Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         if (is_dir(dirname(Bug44896PackageManger::$location))) {
             rmdir_recursive(dirname(Bug44896PackageManger::$location));
@@ -33,7 +33,7 @@ class Bug44896Test extends TestCase
         $manage->createTempModule();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink(Bug44896PackageManger::$manifest_location);
         if (is_dir(dirname(Bug44896PackageManger::$location))) {

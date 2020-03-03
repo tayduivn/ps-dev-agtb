@@ -43,7 +43,7 @@ class Bug55520Test extends TestCase
      */
     protected $currentUser;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -78,7 +78,7 @@ class Bug55520Test extends TestCase
         $this->assertStringStartsNotWith(self::BOM, $export);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->currentUser->setPreference(self::DEFAULT_EXPORT_CHARSET_PREF_NAME, $this->defaultExportCharset);
         SugarTestHelper::tearDown();

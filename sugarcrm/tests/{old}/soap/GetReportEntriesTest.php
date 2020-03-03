@@ -22,7 +22,7 @@ class GetReportEntriesTest extends SOAPTestCase
     /**
      * Create test user
      */
-	public function setUp()
+    protected function setUp() : void
     {
         $this->markTestSkipped("App code executed by this test has php error. Probably dead code.");
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
@@ -32,7 +32,7 @@ class GetReportEntriesTest extends SOAPTestCase
 		parent::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         parent::tearDown();

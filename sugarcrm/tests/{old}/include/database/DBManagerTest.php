@@ -27,21 +27,21 @@ class DBManagerTest extends TestCase
      */
     protected $dbEncode;
 
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['db']->query('DELETE FROM forecast_tree');
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_strings']);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         if(empty($this->_db))
         {
@@ -51,7 +51,7 @@ class DBManagerTest extends TestCase
         $this->created = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->_db->setEncode($this->dbEncode);
         foreach($this->created as $table => $dummy) {

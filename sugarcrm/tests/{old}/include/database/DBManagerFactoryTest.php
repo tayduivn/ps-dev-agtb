@@ -16,12 +16,12 @@ class DBManagerFactoryTest extends TestCase
 {
     private $_oldSugarConfig;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_oldSugarConfig = $GLOBALS['sugar_config'];
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config'] = $this->_oldSugarConfig;
     }

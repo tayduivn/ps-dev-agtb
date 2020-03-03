@@ -92,7 +92,7 @@ class ConnectorManagerTest extends ConnectorManager
 
 class ConnectorsValidTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown() : void
     {
         $cacheFile = sugar_cached('api/metadata/connectors.php');
         if (file_exists($cacheFile)) {

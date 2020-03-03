@@ -65,7 +65,7 @@ class Bug51423Test extends TestCase
      */
     protected $origin_isCacheReset;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->origin_isCacheReset = SugarCache::$isCacheReset;
         SugarTestHelper::setUp("beanList");
@@ -107,7 +107,7 @@ class Bug51423Test extends TestCase
         $this->_account_2->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->_req['action'] = 'DeleteField';
         $this->_req['name'] = 'relate_contacts_c';

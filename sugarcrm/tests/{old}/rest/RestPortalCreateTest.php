@@ -17,7 +17,8 @@ class RestPortalCreateTest extends RestTestPortalBase
     /**
      * We need to associate an Account with the Contact in order to create Cases
      */
-    public function setUp(){
+    protected function setUp() : void
+    {
         parent::setUp();
         // create account
         $this->account = new Account();
@@ -35,7 +36,8 @@ class RestPortalCreateTest extends RestTestPortalBase
     /**
      * Make sure the relationship is removed, parent should clean everything else
      */
-    public function tearDown(){
+    protected function tearDown() : void
+    {
         if (isset($this->account->id)) {
             $this->contact->accounts->delete($this->account->id);
         }

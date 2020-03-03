@@ -23,7 +23,7 @@ class XssTest extends TestCase
      */
     protected $html_allow_objects = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
         if(isset($sugar_config['email_xss']))
@@ -38,7 +38,7 @@ class XssTest extends TestCase
         SugarCleaner::$instance = null;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config']['html_allow_objects'] = $this->html_allow_objects;
         if(!empty($this->email_xss))

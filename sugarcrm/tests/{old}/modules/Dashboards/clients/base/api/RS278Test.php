@@ -24,7 +24,7 @@ class RS278Test extends TestCase
     /** @var array */
     protected $beans = array();
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -32,7 +32,7 @@ class RS278Test extends TestCase
         self::$service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->beans as $module => $ids) {
             foreach ($ids as $id) {
@@ -44,7 +44,7 @@ class RS278Test extends TestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$service = null;
         SugarTestHelper::tearDown();

@@ -18,7 +18,7 @@ class CreateDefaultTeamsTest extends TestCase
     private $_user = null;
     private $_contact = null;
 
-    public function setUp() 
+    protected function setUp() : void
     {
         // in case these globals are deleted before the test is run
         SugarTestHelper::setUp('beanFiles');
@@ -29,7 +29,7 @@ class CreateDefaultTeamsTest extends TestCase
 		$GLOBALS['db']->query("DELETE FROM contacts WHERE first_name = 'Collin' AND last_name = 'Lee'");
     }    
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
      

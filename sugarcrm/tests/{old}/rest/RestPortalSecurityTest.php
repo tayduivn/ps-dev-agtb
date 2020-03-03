@@ -24,7 +24,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
     // the API implementation classes.
 
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
     }

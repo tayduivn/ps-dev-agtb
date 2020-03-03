@@ -19,7 +19,7 @@ class UserManagerFunctionsTest extends TestCase
     private $employee3;
     private $employee4;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -50,7 +50,7 @@ class UserManagerFunctionsTest extends TestCase
         $this->employee4->save();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();

@@ -41,13 +41,14 @@ class Bug54901TestGridParser extends SidecarGridLayoutMetaDataParser {
 
 class Bug54901Test extends TestCase
 {
-    public function setUp() {
+    protected function setUp() : void
+    {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
     }
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

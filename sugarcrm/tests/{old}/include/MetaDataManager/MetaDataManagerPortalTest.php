@@ -18,7 +18,7 @@ class MetaDataManagerPortalTest extends TestCase
 {
     protected $mm;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -29,7 +29,7 @@ class MetaDataManagerPortalTest extends TestCase
         $this->mm = MetaDataManager::getManager('portal');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $dir = 'custom/modules/Opportunities/clients/portal';
         if (is_dir($dir)) {

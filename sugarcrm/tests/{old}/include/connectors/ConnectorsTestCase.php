@@ -19,7 +19,7 @@ class Sugar_Connectors_TestCase extends TestCase
     public $original_searchdefs;
     public $original_connectors;
 
-    public function setUp()
+    protected function setUp() : void
     {
         ConnectorUtils::getDisplayConfig();
         require(CONNECTOR_DISPLAY_CONFIG_FILE);
@@ -32,7 +32,7 @@ class Sugar_Connectors_TestCase extends TestCase
         $this->original_connectors = ConnectorUtils::getConnectors(true);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->original_modules_sources != null) {
             write_array_to_file('modules_sources', $this->original_modules_sources, CONNECTOR_DISPLAY_CONFIG_FILE);

@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class RESTAPIRSSTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -24,7 +24,7 @@ class RESTAPIRSSTest extends TestCase
         $this->_contact = SugarTestContactUtilities::createContact();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         unset($GLOBALS['current_user']);

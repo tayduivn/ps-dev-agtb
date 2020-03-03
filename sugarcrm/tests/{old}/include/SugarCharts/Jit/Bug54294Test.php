@@ -47,7 +47,7 @@ class Bug54294Test extends TestCase
      */
     protected $savedReport = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestIncomplete('This test is not written correctly, need to merge changes from 6_5_3');
         SugarTestHelper::setUp('beanFiles');
@@ -166,7 +166,7 @@ class Bug54294Test extends TestCase
     }
 
     /*
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->opportunity->mark_deleted($this->opportunity->id);
         $this->savedReport->mark_deleted($this->savedReport->id);

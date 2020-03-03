@@ -21,7 +21,7 @@ class DocSaveTest extends TestCase
      */
     public $doc = null;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
@@ -32,7 +32,7 @@ class DocSaveTest extends TestCase
         $this->doc = $document;
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

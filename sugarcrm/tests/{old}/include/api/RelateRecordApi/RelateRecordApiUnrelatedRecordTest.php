@@ -24,14 +24,14 @@ class RelateRecordApiUnrelatedRecordTest extends TestCase
     private static $account2;
     /**#@-*/
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
         self::$account1 = SugarTestAccountUtilities::createAccount();
         self::$account2 = SugarTestAccountUtilities::createAccount();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

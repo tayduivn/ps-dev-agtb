@@ -24,7 +24,7 @@ class RestBug57210Test extends RestFileTestBase {
     private $_config_override_existed = false;
     private $_config_override_name = 'config_override.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -47,7 +47,7 @@ class RestBug57210Test extends RestFileTestBase {
         file_put_contents($this->_config_override_name, $newContents);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
 

@@ -26,7 +26,7 @@ class Bug53963Test extends TestCase
     private $bean;
     private $audit_table_name;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->db = $GLOBALS['db'];
         $this->bean = new SugarBean();
@@ -35,7 +35,7 @@ class Bug53963Test extends TestCase
         $this->cleanUpAuditTable();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
         $this->cleanUpAuditTable();
 	}

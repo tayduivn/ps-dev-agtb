@@ -26,7 +26,7 @@ class IssueTemplateTest extends TestCase
     private $bc;
     private $delete;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->bean = \SugarTestCaseUtilities::createCase();
         $this->manager = \MetaDataManager::getManager();
@@ -45,7 +45,7 @@ class IssueTemplateTest extends TestCase
         $this->delete[$this->bc->getTableName()][$this->bc->id] = $this->bc->id;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         \SugarTestCaseUtilities::removeAllCreatedCases();
         unset($this->bean);

@@ -32,7 +32,7 @@ class Bug61373Test extends TestCase
      */
     protected $bean = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
@@ -47,7 +47,7 @@ class Bug61373Test extends TestCase
         $this->role->users->add($GLOBALS['current_user']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->role->mark_deleted($this->role->id);
 

@@ -22,7 +22,8 @@ class Bug58089Test extends TestCase
     protected $_testDefs;
     protected $_exemptModules;
     
-    public function setUp() {
+    protected function setUp() : void
+    {
         // Set up our test defs
         $this->_testDefs = array(
             'order' => 40,
@@ -101,8 +102,9 @@ class Bug58089Test extends TestCase
         $GLOBALS['modules_exempt_from_availability_check'] = $modules_exempt_from_availability_check;
     }
     
-    public function tearDown() {
-        // Restore the globals 
+    protected function tearDown() : void
+    {
+        // Restore the globals
         $GLOBALS['moduleList'] = $this->_modListGlobal;
         if (!empty($this->_exemptModules)) {
             $GLOBALS['modules_exempt_from_availability_check'] = $this->_exemptModules;

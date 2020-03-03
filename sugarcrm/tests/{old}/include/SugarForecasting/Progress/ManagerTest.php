@@ -30,7 +30,7 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
      */
     protected static $currency;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -83,14 +83,15 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
     /**
      * reset after each test back to manager id, some tests may have changed to use top manager
      */
-    public function setup() {
+    protected function setUp() : void
+    {
         self::$args['user_id'] = self::$users['manager']['user']->id;
 
         global $current_user;
         $current_user = self::$users['manager']['user'];
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();
@@ -105,7 +106,8 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
     /**
      * destroy some parts after each test
      */
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
     }
 

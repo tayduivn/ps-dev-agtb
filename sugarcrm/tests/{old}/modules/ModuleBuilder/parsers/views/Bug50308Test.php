@@ -23,7 +23,7 @@ class Bug50308Test extends TestCase
     var $originalPopupMeta = array();
     var $newPopupMeta = array('moduleMain'=>array('one','two'), 'varName'=>array('one','two') , 'orderBy'=>array('one','two'), 'whereClauses'=>array('one','two'), 'searchInputs'=>array('one','two'), 'create'=>array('one','two'));
 
-    public function setUp()
+    protected function setUp() : void
     {
         //back up users popup if it exists
         if(is_file($this->customFilePath)){
@@ -44,7 +44,8 @@ class Bug50308Test extends TestCase
         $this->newPopupMeta['disappear'] = 'this element was not defined and should be processed';
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         //remove custom file
         unlink($this->customFilePath);
         //recreate custom file using old data if it was collected

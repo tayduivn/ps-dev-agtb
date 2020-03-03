@@ -20,7 +20,7 @@ class Bug36329Test extends TestCase
 	var $save_query;
 	var $current_language;
 
-	public function setUp()
+    protected function setUp() : void
 	{
 		global $sugar_config;
 		if(isset($sugar_config['save_query']))
@@ -47,7 +47,7 @@ class Bug36329Test extends TestCase
 		$GLOBALS['sugar_version'] = $sugar_version;
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    global $sugar_config;
 		if(!empty($this->save_query)) {

@@ -19,7 +19,7 @@ class Bug42427Test extends TestCase
 {
     private $configBackup = [];
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
         \SugarConfig::getInstance()->clearCache();
@@ -38,7 +38,7 @@ class Bug42427Test extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink('include/language/fr_test.lang.php');
         unlink('include/language/de_test.lang.php');

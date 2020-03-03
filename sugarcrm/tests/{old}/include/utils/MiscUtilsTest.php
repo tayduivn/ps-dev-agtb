@@ -16,7 +16,7 @@ require_once 'include/utils.php';
 
 class MiscUtilsTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $_REQUEST = array();
     }

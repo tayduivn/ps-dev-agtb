@@ -19,14 +19,14 @@ use PHPUnit\Framework\TestCase;
  */
 class MetaDataFilesTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->createdFiles = array();
         $this->createdDirs = array();
         SugarTestHelper::setUp('app_list_strings');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ( $this->createdFiles as $file ) {
             unlink($file);

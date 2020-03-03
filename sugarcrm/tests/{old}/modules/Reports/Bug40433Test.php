@@ -26,7 +26,7 @@ class Bug40433Test extends TestCase
 {
     private $reportInstance;
 
-	public function setUp()
+    protected function setUp() : void
     {
     	$beanList = array();
 		$beanFiles = array();
@@ -40,7 +40,7 @@ class Bug40433Test extends TestCase
 	    $this->reportInstance->from = "\n FROM CONTRACTS ";
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 	    $this->reportInstance->db->dbType = $this->dbType;
 		$this->reportInstance = null;

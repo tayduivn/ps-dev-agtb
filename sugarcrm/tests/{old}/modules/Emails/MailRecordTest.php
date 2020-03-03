@@ -20,7 +20,7 @@ class MailRecordTest extends TestCase
     private $mailRecord,
             $mockEmail;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
 
@@ -30,7 +30,7 @@ class MailRecordTest extends TestCase
         $this->mockEmail = $this->createPartialMock("Email", array("email2Send"));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_REQUEST = array();
         SugarTestEmailUtilities::removeAllCreatedEmails();

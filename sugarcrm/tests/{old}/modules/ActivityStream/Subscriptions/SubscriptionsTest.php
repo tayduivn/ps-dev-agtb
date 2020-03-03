@@ -20,14 +20,14 @@ class SubscriptionsTest extends TestCase
     private $user;
     private $record;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $this->user   = $GLOBALS['current_user'];
         $this->record = self::getUnsavedRecord();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestActivityUtilities::removeAllCreatedActivities();

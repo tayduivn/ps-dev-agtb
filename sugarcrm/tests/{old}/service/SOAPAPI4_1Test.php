@@ -38,7 +38,7 @@ class SOAPAPI4_1Test extends SOAPTestCase
     /**
      * setUp
      */
-	public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
@@ -142,7 +142,7 @@ class SOAPAPI4_1Test extends SOAPTestCase
     /**
      * tearDown
      */
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         SugarTestContactUtilities::removeCreatedContactsUsersRelationships();

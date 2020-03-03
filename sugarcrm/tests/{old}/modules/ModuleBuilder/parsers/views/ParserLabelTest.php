@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ParserLabelTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 1;
@@ -25,7 +25,7 @@ class ParserLabelTest extends TestCase
         SugarTestHelper::setUp('files');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         global $current_language;
 

@@ -30,7 +30,7 @@ class PMSEImporterTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         if (!empty($GLOBALS['current_user'])) {
             $this->currentUserBackUp = $GLOBALS['current_user'];
@@ -43,7 +43,7 @@ class PMSEImporterTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if ($this->currentUserBackUp) {
             $GLOBALS['current_user'] = $this->currentUserBackUp;

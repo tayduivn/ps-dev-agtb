@@ -20,14 +20,14 @@ use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Retrieve;
  */
 class RetrieveVisibilityTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config']['perfProfile']['TeamSecurity']['default']['prefetch_for_retrieve'] = false;
         SugarConfig::getInstance()->clearCache();

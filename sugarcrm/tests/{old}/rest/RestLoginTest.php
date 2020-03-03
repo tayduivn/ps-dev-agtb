@@ -12,7 +12,7 @@
 
 class RestLoginTest extends RestTestBase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         // Start out with a fake auth token to prevent _restCall from auto logging in
         $this->authToken = 'LOGGING_IN';
@@ -20,7 +20,7 @@ class RestLoginTest extends RestTestBase
         parent::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
 

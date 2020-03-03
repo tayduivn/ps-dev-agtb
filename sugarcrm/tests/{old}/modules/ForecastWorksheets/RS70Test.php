@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RS70Test extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -30,12 +30,12 @@ class RS70Test extends TestCase
         ));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();

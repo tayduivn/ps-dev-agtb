@@ -16,7 +16,7 @@ class Bug42378Test extends TestCase
 {
     public $saved_search_id;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->saved_search_id = md5(time());
         //Safety cleanup
@@ -32,7 +32,7 @@ class Bug42378Test extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM saved_search where id = '{$this->saved_search_id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

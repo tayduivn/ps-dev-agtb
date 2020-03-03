@@ -17,14 +17,16 @@ class Bug50000Test extends TestCase
 {
     var $reporter;
 
-    public function setUp() {
+    protected function setUp() : void
+    {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['mod_strings'] = return_module_language('en_us', 'Reports');
         require_once('modules/Reports/templates/templates_reports.php');
         $this->reporter = new Bug50000MockReporter();
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['mod_strings']);

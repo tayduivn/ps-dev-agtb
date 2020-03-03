@@ -22,7 +22,8 @@ class Bug59273Test extends TestCase
     protected $_request = array();
     protected $_mbc;
     
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user', array(true, true));
@@ -47,7 +48,8 @@ class Bug59273Test extends TestCase
         unset($_REQUEST);
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         $_REQUEST['package'] = 'test';
         $_REQUEST['module'] = 'test';
         $_REQUEST['view_module'] = 'test';

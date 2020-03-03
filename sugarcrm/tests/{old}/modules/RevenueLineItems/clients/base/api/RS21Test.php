@@ -28,7 +28,7 @@ class RS21Test extends TestCase
     protected $user;
 
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -39,7 +39,7 @@ class RS21Test extends TestCase
     }
 
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

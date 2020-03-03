@@ -30,7 +30,7 @@ class RS147Test extends TestCase
      */
     protected static $db;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -39,7 +39,7 @@ class RS147Test extends TestCase
         self::$db = DBManagerFactory::getInstance();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $_REQUEST = array();
         foreach (self::$createdBeans as $bean) {

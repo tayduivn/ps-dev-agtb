@@ -21,14 +21,14 @@ class Bug47735Test extends TestCase
 	var $requestArray = null;
 	var $searchForm = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
 		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 		$GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
 		$GLOBALS['current_user'] = $this->user = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($this->user);

@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug44836Test extends TestCase
 {
-	public function setUp()
+    protected function setUp() : void
 	{
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -25,7 +25,7 @@ class Bug44836Test extends TestCase
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
         SugarTestHelper::tearDown();
 	}

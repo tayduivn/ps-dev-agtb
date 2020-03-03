@@ -24,13 +24,13 @@ use PHPUnit\Framework\TestCase;
 class Bug50358Test extends TestCase
 {
     public $view;
-    public function setUp()
+    protected function setUp() : void
     {
         $_REQUEST['module'] = 'Accounts';
         $this->view = new ViewWizard;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->view);
     }

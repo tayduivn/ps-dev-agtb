@@ -16,7 +16,7 @@ require_once('include/dir_inc.php');
 
 class Bug46027Test extends TestCase
 {
-	public function setUp()
+    protected function setUp() : void
 	{		
 		if(file_exists('custom/backup/include/utils/external_cache'))
 		{
@@ -38,7 +38,7 @@ class Bug46027Test extends TestCase
 	/**
 	 * ensure that the test directory and file are removed at the end of the test
 	 */
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		if(file_exists('include/utils/external_cache'))
 		{

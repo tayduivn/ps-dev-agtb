@@ -18,7 +18,7 @@ class CreateCacheDirectoryTest extends TestCase
 {
     private $_original_cwd = '';
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
         $this->_original_cwd = getcwd();
@@ -28,7 +28,7 @@ class CreateCacheDirectoryTest extends TestCase
         $this->_removeCacheDirectory('./cache');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->_removeCacheDirectory('./cache');
         chdir($this->_original_cwd);

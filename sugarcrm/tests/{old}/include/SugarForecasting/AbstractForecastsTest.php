@@ -20,7 +20,7 @@ class SugarForecasting_AbstractForecastTest extends TestCase
      */
     protected static $obj;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('timedate');
         SugarTestHelper::setUp('current_user');
@@ -32,7 +32,7 @@ class SugarForecasting_AbstractForecastTest extends TestCase
         $reportee->save();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

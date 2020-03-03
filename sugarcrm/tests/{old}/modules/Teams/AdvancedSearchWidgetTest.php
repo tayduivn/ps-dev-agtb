@@ -22,7 +22,7 @@ class AdvancedSearchWidgetTest extends TestCase
     private $_params;
     private $_customSugarFieldTeamsetContents;
 
-	public function setUp()
+    protected function setUp() : void
 	{
         if(file_exists('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php'))
         {
@@ -53,7 +53,7 @@ class AdvancedSearchWidgetTest extends TestCase
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     	if(!empty($this->_customSugarFieldTeamsetContents))

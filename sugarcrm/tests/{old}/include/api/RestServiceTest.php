@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 class RestServiceTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         while ( ob_get_level() > 1 ) {
             ob_end_flush();

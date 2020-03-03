@@ -28,7 +28,7 @@ class Bug46246Test extends TestCase
     private $test_team_sets_teams_id;
     private $doc_id;
     
-    public function setUp()
+    protected function setUp() : void
     {
         if ($GLOBALS['sugar_flavor'] !== 'PRO') {
             $this->markTestSkipped('This test is for PRO flavor');
@@ -57,7 +57,7 @@ class Bug46246Test extends TestCase
         }
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         if($GLOBALS['sugar_flavor']==$this->accepted_flav){
             // delete all created records

@@ -30,7 +30,7 @@ class Bug52757Test extends TestCase
     /**
      * Filling default report object
      */
-    function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -57,7 +57,7 @@ class Bug52757Test extends TestCase
     /**
      * Removing default report object
      */
-    function tearDown()
+    protected function tearDown() : void
     {
         unset($this->report);
         unset($GLOBALS['beanFiles']);

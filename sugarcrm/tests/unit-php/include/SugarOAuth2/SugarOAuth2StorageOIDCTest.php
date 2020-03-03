@@ -35,7 +35,7 @@ class SugarOAuth2StorageOIDCTest extends TestCase
      */
     protected $authController;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->authController = $this->createMock(AuthenticationController::class);
 
@@ -51,7 +51,7 @@ class SugarOAuth2StorageOIDCTest extends TestCase
             ->getMock();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['log']);
     }

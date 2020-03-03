@@ -791,7 +791,7 @@ class AuthSettingsApiTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->sugar_config_bak = $GLOBALS['sugar_config'] ?? [];
@@ -812,7 +812,7 @@ class AuthSettingsApiTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_strings']);

@@ -21,7 +21,7 @@ class SetEntryWithAccessTest extends SOAPTestCase
     var $teamSet;
     var $testTeam;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
@@ -42,7 +42,7 @@ class SetEntryWithAccessTest extends SOAPTestCase
         $GLOBALS['db']->commit();
     }
 
-    public function  tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

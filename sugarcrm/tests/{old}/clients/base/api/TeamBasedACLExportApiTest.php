@@ -66,7 +66,7 @@ class TeamBasedACLExportApiTest extends TestCase
      */
     protected $beanNotTBA;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, false));
         SugarTestHelper::setUp('app_list_strings');
@@ -125,7 +125,7 @@ class TeamBasedACLExportApiTest extends TestCase
         ACLAction::setACLData($GLOBALS['current_user']->id, $this->module, $aclData);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->recordList->recordListDelete(
             SugarTestRestUtilities::getRestServiceMock(),

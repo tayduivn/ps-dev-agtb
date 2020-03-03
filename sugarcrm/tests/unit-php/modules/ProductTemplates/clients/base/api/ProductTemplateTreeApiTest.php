@@ -19,7 +19,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class ProductTemplateTreeApiTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         \SugarAutoLoader::load('../../modules/ProductTemplates/clients/base/api/ProductTemplateApi.php');
         \SugarAutoLoader::load('../../include/SugarObjects/SugarConfig.php');

@@ -16,7 +16,7 @@ class SavedReportTest extends TestCase
 {
     protected $dbMock = null;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -29,7 +29,7 @@ class SavedReportTest extends TestCase
         $this->dbMock = SugarTestHelper::setUp('mock_db');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $id = static::$reportId;
         if ($id) {

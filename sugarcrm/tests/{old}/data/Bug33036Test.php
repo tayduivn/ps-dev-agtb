@@ -17,7 +17,7 @@ class Bug33036Test extends TestCase
 {
     private $obj;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
@@ -25,17 +25,17 @@ class Bug33036Test extends TestCase
 	}
 
 
-	public static function tearDownAfterClass()
-	{
+    public static function tearDownAfterClass(): void
+    {
         SugarTestHelper::tearDown();
 	}
 
-	public function setUp()
+    protected function setUp() : void
 	{
 	    $this->obj = new Contact();
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
         if (! empty($this->obj->id)) {
             $this->obj->db->query("DELETE FROM contacts WHERE id = '" . $this->obj->id . "'");

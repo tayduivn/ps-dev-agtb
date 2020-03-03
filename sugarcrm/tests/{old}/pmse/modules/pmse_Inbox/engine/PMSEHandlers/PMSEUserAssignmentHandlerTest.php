@@ -17,13 +17,13 @@ class PMSEUserAssignmentHandlerTest extends TestCase
 {
     protected $originals = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->originals['current_user'] = $GLOBALS['current_user'];
         $this->originals['db'] = $GLOBALS['db'];
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;

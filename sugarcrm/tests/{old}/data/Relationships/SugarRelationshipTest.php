@@ -18,7 +18,7 @@ class SugarRelationshipTest extends TestCase
 {
     protected $hooks;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -33,7 +33,7 @@ class SugarRelationshipTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach ($this->hooks as $hook) {
             call_user_func_array('remove_logic_hook', $hook);

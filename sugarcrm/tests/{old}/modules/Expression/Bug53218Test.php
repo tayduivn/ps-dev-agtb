@@ -25,7 +25,7 @@ class Bug53218Test extends TestCase
      */
     protected $relationship = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('current_user', array(true, 1));
@@ -48,7 +48,7 @@ class Bug53218Test extends TestCase
         ));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->relationships->delete($this->relationship->getName());
         $this->relationships->save();

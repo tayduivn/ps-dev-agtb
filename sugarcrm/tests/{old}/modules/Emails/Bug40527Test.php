@@ -18,7 +18,7 @@ class Bug40527Test extends TestCase
     private $account;
     private $email;
     
-	public function setUp()
+    protected function setUp() : void
     {
         global $app_strings, $app_list_strings;
         $app_strings = return_application_language($GLOBALS['current_language']);
@@ -34,7 +34,7 @@ class Bug40527Test extends TestCase
         $this->email   = SugarTestEmailUtilities::createEmail('', $override_data);
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

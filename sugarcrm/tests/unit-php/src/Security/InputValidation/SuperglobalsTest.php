@@ -54,7 +54,7 @@ class SuperglobalsTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->logger = $this->createMock('Psr\Log\LoggerInterface');
         $this->globals = new Superglobals($this->inputGet, $this->inputPost, $this->logger);
@@ -63,7 +63,7 @@ class SuperglobalsTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         // reset superglobals
         $_GET = array();

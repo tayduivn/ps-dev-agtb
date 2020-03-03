@@ -19,7 +19,7 @@ class Bug40216Test extends TestCase
 {
     private $moduleName;
 
-    public function setUp()
+    protected function setUp() : void
     {
     	   $this->moduleName = 'TestModule'.mt_rand();
 
@@ -27,7 +27,7 @@ class Bug40216Test extends TestCase
         sugar_mkdir("custom/modules/{$this->moduleName}/metadata",null,true);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         rmdir_recursive("modules/{$this->moduleName}");
         rmdir_recursive("custom/modules/{$this->moduleName}");

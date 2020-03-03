@@ -34,7 +34,7 @@ class ForecastsProgressApiTest extends TestCase
      */
     protected $service;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
@@ -45,19 +45,19 @@ class ForecastsProgressApiTest extends TestCase
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->api = new ForecastsProgressApi();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->service);
         unset($this->api);

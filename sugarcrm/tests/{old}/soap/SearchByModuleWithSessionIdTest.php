@@ -29,7 +29,7 @@ class SearchByModuleWithSessionIdTest extends SOAPTestCase
      * setUp
      * Override the setup from SOAPTestCase to also create the seed search data for Accounts and Contacts.
      */
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();

@@ -16,7 +16,7 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
     protected $qual_module;
     protected $mock;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->markTestSkipped(
             'skip legacy connector test'
@@ -54,7 +54,7 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
         $this->person_props = $this->person_source->getProperties();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         /* Commenting this out so that errors don't happen while the test is skipped.
         parent::tearDown();

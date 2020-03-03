@@ -37,7 +37,7 @@ class Bug56694v2Test extends TestCase
      */
     protected $bean = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->templateInt = new TemplateInt();
         $this->templateInt->importable = "true";

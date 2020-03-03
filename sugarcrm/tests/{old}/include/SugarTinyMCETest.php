@@ -28,7 +28,7 @@ class SugarTinyMCETest extends TestCase
     /*
      * Setup: Backup old custom files and create new ones for the test
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarAutoLoader::ensureDir(self::$customDir);
 
@@ -66,7 +66,7 @@ class SugarTinyMCETest extends TestCase
     /*
      * Teardown: remove new custom files and restore the previous ones
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (file_exists(self::$customConfigFile . ".bak")) {
             unlink(self::$customConfigFile);

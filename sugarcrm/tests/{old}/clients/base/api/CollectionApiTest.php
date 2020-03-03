@@ -20,7 +20,7 @@ class CollectionApiTest extends TestCase
 {
     private $api;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->api = $this->getMockForAbstractClass('CollectionApi');
     }

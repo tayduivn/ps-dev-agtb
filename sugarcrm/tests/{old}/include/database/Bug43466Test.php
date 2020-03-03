@@ -20,7 +20,7 @@ class Bug43466 extends TestCase
      */
     private $_db;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->_db = DBManagerFactory::getInstance();
     }

@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug51185Test extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {        
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
@@ -32,7 +32,7 @@ class Bug51185Test extends TestCase
         $current_user->save();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

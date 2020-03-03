@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 class ViewFactoryTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['app_strings'] = array();
         $GLOBALS['mod_strings'] = array();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['app_strings']);
         unset($GLOBALS['mod_strings']);

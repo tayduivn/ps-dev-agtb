@@ -26,7 +26,7 @@ class FiltersTest extends TestCase
         'custom/clients/latrop/filters/operators/operators.php'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('files');
 
@@ -39,12 +39,13 @@ class FiltersTest extends TestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         foreach (self::$generatedOperatorsFile as $file) {
             if (file_exists($file)) {
                 unlink($file);

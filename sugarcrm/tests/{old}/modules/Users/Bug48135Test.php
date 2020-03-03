@@ -24,7 +24,7 @@ class Bug48135Test extends TestCase
     public $user2;
     public $eapm;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -59,7 +59,7 @@ class Bug48135Test extends TestCase
     }
 
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
         unset($GLOBALS['beanFiles']);

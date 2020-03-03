@@ -26,7 +26,7 @@ class Bug46448AutoFillTest extends TestCase
         $this->assertEquals($Account->assigned_user_id, $this->user->id);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -43,7 +43,7 @@ class Bug46448AutoFillTest extends TestCase
         $this->connectAclRoles2Users($role, $user);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         $this->removeAllCreatedAclRoles();

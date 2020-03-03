@@ -17,7 +17,7 @@ class NotesApiHelperTest extends TestCase
     protected $contact;
     protected $note;
 
-    public function setup()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -25,7 +25,7 @@ class NotesApiHelperTest extends TestCase
         $this->setupNote();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Good housekeeping is always appreciated
         unset($this->contact, $this->note);

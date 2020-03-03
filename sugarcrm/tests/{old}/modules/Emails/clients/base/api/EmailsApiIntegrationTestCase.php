@@ -17,7 +17,7 @@ class EmailsApiIntegrationTestCase extends TestCase
 {
     protected $service;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         OutboundEmailConfigurationTestHelper::setUp();
         SugarTestHelper::setUp('beanList');
@@ -25,19 +25,19 @@ class EmailsApiIntegrationTestCase extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         OutboundEmailConfigurationTestHelper::tearDown();
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         // Clean up any dangling beans that need to be resaved.
         SugarRelationship::resaveRelatedBeans(false);

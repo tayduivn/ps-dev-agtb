@@ -23,7 +23,7 @@ class ListViewDisplayTest extends TestCase
      */
     private $_lvd;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setup("moduleList");
         $GLOBALS['moduleList'][] = 'foo';
@@ -39,7 +39,7 @@ class ListViewDisplayTest extends TestCase
         }
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
         if(!empty($this->save_query))

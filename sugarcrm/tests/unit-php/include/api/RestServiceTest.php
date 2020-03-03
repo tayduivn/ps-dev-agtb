@@ -23,7 +23,7 @@ class RestServiceTest extends TestCase
 {
     const SITE_URL = 'sugarcrm.com/';
 
-    protected function setup()
+    protected function setUp() : void
     {
         // pre-setting
         $_REQUEST['__sugar_url'] = 'sugar.com';

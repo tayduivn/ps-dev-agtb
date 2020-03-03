@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 class ForecastSalesStageExpressionTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
     }
 
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

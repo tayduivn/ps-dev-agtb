@@ -27,7 +27,7 @@ class ForecastsChartApiTest extends TestCase
         ['id' => '6d014904-99d1-11e6-a9d3-9801a7ade577', 'createReportUser' => true],
     ];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         foreach (self::$users as $userData) {
             if ($userData['createReportUser']) {
@@ -40,12 +40,12 @@ class ForecastsChartApiTest extends TestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

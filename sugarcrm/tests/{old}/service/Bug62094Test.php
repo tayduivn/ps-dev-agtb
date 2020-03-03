@@ -16,7 +16,7 @@ class Bug62094Test extends SOAPTestCase
 {
     protected $definition;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->definition = Array(
             'id' => 'a3468352-8fd0-ec13-708a-517087f79ada',
@@ -45,7 +45,7 @@ class Bug62094Test extends SOAPTestCase
         parent::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
     }

@@ -20,14 +20,14 @@ class CaseTest extends TestCase
 
     protected $businessCenters = [];
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $sugar_config;
 
         $this->old_sugar_config = $sugar_config;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         global $sugar_config;
 
@@ -42,7 +42,7 @@ class CaseTest extends TestCase
         $sugar_config = $this->old_sugar_config;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestCaseUtilities::removeAllCreatedCases();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

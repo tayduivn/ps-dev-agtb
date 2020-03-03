@@ -34,7 +34,7 @@ class CommandRegistryTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->registry = new CommandRegistry();
     }

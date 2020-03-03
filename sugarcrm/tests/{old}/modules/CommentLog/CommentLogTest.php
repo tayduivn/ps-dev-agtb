@@ -27,23 +27,23 @@ class CommentLogTest extends TestCase
      */
     private static $created_commentlogs;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         SugarTestHelper::tearDown();
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->bean = BeanFactory::newBean('CommentLog');
         self::$created_commentlogs = array();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->removeCommentLog();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();

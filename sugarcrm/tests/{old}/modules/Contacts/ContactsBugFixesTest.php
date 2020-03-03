@@ -14,7 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class ContactsBugFixesTest extends TestCase
 {
-    public function setUp() {
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         $this->fields = array('first_name' => 'contact', 'last_name' => 'unitTester', 'sync_contact' => '1');
@@ -22,7 +23,8 @@ class ContactsBugFixesTest extends TestCase
         $this->contacts = array();
     }
 
-    public function tearDown() {
+    protected function tearDown() : void
+    {
         foreach($this->fields AS $fieldName => $fieldValue) {
             unset($_POST[$fieldName]);
         }

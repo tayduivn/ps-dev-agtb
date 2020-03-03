@@ -18,7 +18,7 @@ class PMSEBusinessRuleParserTest extends TestCase
 {
     protected $dataParser;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->dataParser = ProcessManager\Factory::getPMSEObject('PMSEBusinessRuleParser');
         

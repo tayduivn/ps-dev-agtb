@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class OpportunityViewsTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarAutoLoader::load('modules/Opportunities/include/OpportunityViews.php');
     }

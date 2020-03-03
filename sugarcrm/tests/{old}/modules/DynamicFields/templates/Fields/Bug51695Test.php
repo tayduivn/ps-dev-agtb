@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 class Bug51695Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['app_strings']);
         unset($GLOBALS['current_user']);

@@ -22,7 +22,7 @@ class MBModuleTest extends TestCase
     protected $target;
     protected $path;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('files');
@@ -32,7 +32,7 @@ class MBModuleTest extends TestCase
         SugarTestHelper::saveFile($this->target);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

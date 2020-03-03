@@ -20,7 +20,7 @@ class SearchStatusCommandTest extends AbstractApiCommandTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->commandClass = 'Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand';
         $this->apiClass = 'AdministrationApi';

@@ -24,13 +24,13 @@ class Bug56573Test extends TestCase
      */
     protected $id;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->id = null;
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if (!empty($this->id)) {
             $job = new SchedulersJob();

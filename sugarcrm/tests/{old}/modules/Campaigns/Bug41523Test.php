@@ -22,7 +22,7 @@ class Bug41523Test extends TestCase
 {
     private $campaign;
 
-    public function setUp()
+    protected function setUp() : void
     {
         global $focus;
 
@@ -42,7 +42,7 @@ class Bug41523Test extends TestCase
         $_REQUEST['record']        = $this->campaign->id;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($_SERVER['REQUEST_METHOD']);
         $_REQUEST = array();

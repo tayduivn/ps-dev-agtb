@@ -25,7 +25,7 @@ class RS81Test extends TestCase
     /** @var MeetingsApi */
     protected $api = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -37,7 +37,7 @@ class RS81Test extends TestCase
         SugarTestMeetingUtilities::createMeeting();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestHelper::tearDown();

@@ -18,13 +18,13 @@ class VardefManagerTest extends TestCase
     protected $object = 'Test';
     protected $objectName = 'test';
 
-    public function setup()
+    protected function setUp() : void
     {
         // For testing table name getting
         $GLOBALS['dictionary']['Hillbilly']['table'] = 'hillbillies';
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Get rid of the globals stuff that was setup just for this test
         unset($GLOBALS['dictionary']['Hillbilly']);

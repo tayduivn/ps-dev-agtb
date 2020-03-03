@@ -20,7 +20,7 @@ class UpdateDateModifiedTest extends TestCase
         array(1, 'Accounts::before_save', __FILE__, 'UpdateDateModifiedTestHook', 'beforeSave')
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         global $disable_date_format;
         $disable_date_format = true;
@@ -29,7 +29,7 @@ class UpdateDateModifiedTest extends TestCase
         SugarTestHelper::setUp('timedate');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         unset($GLOBALS['PHPUNIT_BEAN_DATE_MODIFIED']);
 

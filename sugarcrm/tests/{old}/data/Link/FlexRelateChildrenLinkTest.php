@@ -28,9 +28,11 @@ class FlexRelateChildrenLinkTest extends TestCase
     private static $task1;
     private static $task2;
     private static $task3;
-    /**#@-*/
 
-    public static function setUpBeforeClass()
+    /**#@-
+     */
+
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
 
@@ -51,7 +53,7 @@ class FlexRelateChildrenLinkTest extends TestCase
         $taskParent->add(array(self::$task2, self::$task3));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestTaskUtilities::removeAllCreatedTasks();
         SugarTestContactUtilities::removeAllCreatedContacts();

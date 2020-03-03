@@ -21,7 +21,7 @@ class Bug49175Test extends TestCase
 {
     private $user;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->user = SugarTestUserUtilities::createAnonymousUser();
     }

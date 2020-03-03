@@ -17,7 +17,7 @@ class PMSEFieldParserTest extends TestCase
 {
     protected $dataParser;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->setMethods(null)

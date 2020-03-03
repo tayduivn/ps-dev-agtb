@@ -20,12 +20,12 @@ class Bug38016Test extends TestCase
     private $report;
     private $summaryView;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$fixturesPath = __DIR__ . '/Fixtures/';
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -39,7 +39,7 @@ class Bug38016Test extends TestCase
         $this->summaryView->bean = & $this->report;
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['module']);
         unset($GLOBALS['beanFiles']);

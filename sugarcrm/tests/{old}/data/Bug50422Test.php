@@ -30,7 +30,7 @@ class Bug50422Test extends TestCase
     /** @var OneToManyRelationship */
     private $relationship;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -63,7 +63,7 @@ class Bug50422Test extends TestCase
         $this->call->$relationshipName->add($this->contact);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();

@@ -17,13 +17,14 @@ use PHPUnit\Framework\TestCase;
  */
 class RestAddToProspectListTest extends TestCase
 {
-    public function setUp(){
+    protected function setUp() : void
+    {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

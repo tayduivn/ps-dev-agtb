@@ -23,7 +23,7 @@ class BugPAT416Test extends TestCase
 {
     private $dummy_defs;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->dummy_defs = array(
             'account_name' => array(

@@ -18,7 +18,7 @@ class CampaignTrackersTest extends TestCase
 	var $campaign_tracker;
 
     
-    public function setup()
+    protected function setUp() : void
     {
 		global $current_user;	
 
@@ -48,7 +48,7 @@ class CampaignTrackersTest extends TestCase
 		
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
 		//delete the campaign and campaign tracker
 		$GLOBALS['db']->query('DELETE FROM campaign_log WHERE campaign_id = \''.$this->campaign->id.'\' ');

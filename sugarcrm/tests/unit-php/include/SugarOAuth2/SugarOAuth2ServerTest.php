@@ -40,7 +40,7 @@ class SugarOAuth2ServerTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
 
@@ -54,7 +54,7 @@ class SugarOAuth2ServerTest extends TestCase
         $GLOBALS['current_user'] = $this->createMock(\User::class);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['sugar_config'] = $this->sugarConfig;
         $this->config->clearCache();

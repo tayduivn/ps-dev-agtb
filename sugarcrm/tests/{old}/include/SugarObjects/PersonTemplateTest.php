@@ -16,7 +16,7 @@ class PersonTemplateTest extends TestCase
 {
     private $_bean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         // Can't use Person since Localization needs actual bean
         $this->_bean = $this->getMockBuilder('Contact')
@@ -26,7 +26,7 @@ class PersonTemplateTest extends TestCase
         SugarTestHelper::setUp('files');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         BeanFactory::setBeanClass('vCals');
         unset($this->_bean);

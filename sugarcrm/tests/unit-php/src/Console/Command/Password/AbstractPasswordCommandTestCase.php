@@ -27,7 +27,7 @@ abstract class AbstractPasswordCommandTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         self::$fixturePath = __DIR__ . '/../../Fixtures/Password/';
     }

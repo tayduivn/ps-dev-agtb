@@ -16,7 +16,7 @@ class OwnerVisibilityTest extends TestCase
 {
     private $account;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         /** @var User $user */
         $user = SugarTestHelper::setUp('current_user');
@@ -30,7 +30,7 @@ class OwnerVisibilityTest extends TestCase
         ));
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }

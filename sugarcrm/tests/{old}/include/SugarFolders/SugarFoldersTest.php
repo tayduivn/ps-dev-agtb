@@ -21,7 +21,7 @@ class SugarFoldersTest extends TestCase
     var $emails = null;
     private $toDelete = [];
 
-	public function setUp()
+    protected function setUp() : void
     {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user = $this->_user;
@@ -35,7 +35,7 @@ class SugarFoldersTest extends TestCase
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 

@@ -45,7 +45,7 @@ class AdministrationApiTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp(): void
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -67,7 +67,7 @@ class AdministrationApiTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         unset($GLOBALS['current_user'], $GLOBALS['app_strings']);
 

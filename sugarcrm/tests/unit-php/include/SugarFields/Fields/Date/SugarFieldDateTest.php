@@ -38,7 +38,7 @@ class SugarFieldDateTest extends TestCase
     /**
      * test set up
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->focus = $this->createMock(\SugarBean::class);
         $this->field = new \SugarFieldDate('date');

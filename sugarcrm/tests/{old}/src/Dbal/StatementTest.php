@@ -21,7 +21,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
  */
 class StatementTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         $table = new Table('type_conversion');
         $table->addColumn('id', 'string', array(
@@ -37,7 +37,7 @@ class StatementTest extends TestCase
         $sm->createTable($table);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $conn = \DBManagerFactory::getConnection();
         $sm = $conn->getSchemaManager();

@@ -24,7 +24,7 @@ class DynamicFieldsCurrencyTest extends TestCase
     private $_originaldbType = '';
     private $field;
     
-    public function setUp()
+    protected function setUp() : void
     {
         // Set Original Global dbType
         $this->_originaldbType = $GLOBALS['db']->dbType;
@@ -54,7 +54,7 @@ class DynamicFieldsCurrencyTest extends TestCase
         $this->field->ext4 = NULL;
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         // Reset Original Global dbType
         $GLOBALS['db']->dbType = $this->_originaldbType;

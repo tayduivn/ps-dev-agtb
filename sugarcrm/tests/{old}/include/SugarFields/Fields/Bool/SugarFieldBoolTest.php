@@ -20,7 +20,7 @@ class SugarFieldBoolTest extends TestCase
     /** @var SugarFieldBool */
     private $sf;
 
-	public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $this->meeting = BeanFactory::newBean('Meetings');
@@ -31,7 +31,7 @@ class SugarFieldBoolTest extends TestCase
         $this->sf = SugarFieldHandler::getSugarField('bool');
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
         unset($this->meeting);

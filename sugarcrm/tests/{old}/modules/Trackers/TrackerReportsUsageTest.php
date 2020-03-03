@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class TrackerReportsUsageTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestTrackerUtility::setup();
         
@@ -58,7 +58,7 @@ class TrackerReportsUsageTest extends TestCase
         $trackerManager->save();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         $query = "DELETE FROM tracker WHERE session_id = 'test_session'";
         $GLOBALS['db']->query($query);

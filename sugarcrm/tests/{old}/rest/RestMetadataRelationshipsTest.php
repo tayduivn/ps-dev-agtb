@@ -12,12 +12,12 @@
 
 
 class RestMetadataRelationshipsTest extends RestTestBase {
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
     }
     
-    public function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
     }

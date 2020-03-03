@@ -24,7 +24,7 @@ class SugarJobHeartbeatTest extends TestCase
      */
     protected $job;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->job = $this->getMockBuilder('SugarJobHeartbeat')
             ->setMethods(array('sendHeartbeat', 'getSystemInfo'))

@@ -24,7 +24,7 @@ class ImporterTest extends TestCase
         2 => "\"3.26.2011 10.02\",\"Doe\"",
     );
 
-    public function setUp()
+    protected function setUp() : void
     {
         $beanList = array();
         $beanFiles = array();
@@ -37,7 +37,7 @@ class ImporterTest extends TestCase
         $this->_importObject = 'Contact';
     }
     
-    public function tearDown() 
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM contacts where created_by='{$GLOBALS['current_user']->id}'");
 

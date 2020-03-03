@@ -33,7 +33,7 @@ class OAuth2StateRegistryTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->stateRegistry = new OAuth2StateRegistry();
         parent::setUp();

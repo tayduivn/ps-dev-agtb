@@ -18,7 +18,7 @@ class Pat756Test extends TestCase
 {
     private $task;
 
-    function setUp()
+    protected function setUp() : void
     {
         $current_user = SugarTestUserUtilities::createAnonymousUser();
 
@@ -26,7 +26,7 @@ class Pat756Test extends TestCase
         $this->task->assigned_user_id = $current_user->id;
     }
 
-    function tearDown()
+    protected function tearDown() : void
     {
         SugarTestTaskUtilities::removeAllCreatedTasks();
         $GLOBALS['db']->query("DELETE FROM notes WHERE name = 'note756'", true);

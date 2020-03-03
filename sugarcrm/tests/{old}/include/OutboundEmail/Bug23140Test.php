@@ -23,7 +23,7 @@ class Bug23140Test extends TestCase
 	var $ob = null;
 	var $userOverideAccont = null;
 
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $currentModule ;
 		$this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -31,7 +31,7 @@ class Bug23140Test extends TestCase
         OutboundEmailConfigurationTestHelper::setUp();
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         //unset($GLOBALS['current_user']);

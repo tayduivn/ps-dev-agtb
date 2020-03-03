@@ -63,7 +63,7 @@ class TeamBasedACLFieldTest extends TestCase
      */
     protected $bean;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user', array(true, true));
 
@@ -88,7 +88,7 @@ class TeamBasedACLFieldTest extends TestCase
         $this->bean = SugarTestAccountUtilities::createAccount();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->aclField->clearACLCache();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

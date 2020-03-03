@@ -23,7 +23,7 @@ class ProdBundlesRelWithProdQuotesTest extends SOAPTestCase
     protected $quote = null;
     protected $product = null;
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -35,7 +35,7 @@ class ProdBundlesRelWithProdQuotesTest extends SOAPTestCase
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->_tearDownTestUser();
 

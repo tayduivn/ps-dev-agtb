@@ -24,13 +24,13 @@ class Bug38053Test extends TestCase
     public $_user = null;
     public $_team = null;
     
-	public function setUp()
+    protected function setUp() : void
     {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$this->_user->id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

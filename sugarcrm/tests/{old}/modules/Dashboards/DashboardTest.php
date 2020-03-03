@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class DashboardTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestDashboardUtilities::removeAllCreatedDashboards();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

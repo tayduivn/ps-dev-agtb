@@ -20,7 +20,7 @@ class SugarQueryPortalVisibilityTest extends TestCase
     public $vis = null;
     public $query = null;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
@@ -28,7 +28,7 @@ class SugarQueryPortalVisibilityTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }

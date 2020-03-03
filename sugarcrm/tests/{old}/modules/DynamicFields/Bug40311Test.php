@@ -25,7 +25,7 @@ class Bug40311Test extends TestCase
      */
     private $db;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->db = SugarTestHelper::setUp('mock_db');
 
@@ -36,7 +36,7 @@ class Bug40311Test extends TestCase
         $GLOBALS['installing'] = true;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ( isset($this->_old_installing) ) {
             $GLOBALS['installing'] = $this->_old_installing;

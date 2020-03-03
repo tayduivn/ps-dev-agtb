@@ -21,7 +21,7 @@ class RESTAPI3_1Test extends TestCase
 
     private static $helperObject;
 
-    public function setUp()
+    protected function setUp() : void
     {
         //Reload langauge strings
         SugarTestHelper::setUp('app_strings');
@@ -39,7 +39,7 @@ class RESTAPI3_1Test extends TestCase
         self::$helperObject = new APIv3Helper();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
 	{
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);

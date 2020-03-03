@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class OpportunityTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
@@ -35,7 +35,7 @@ class OpportunityTest extends TestCase
             ));
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
@@ -45,7 +45,7 @@ class OpportunityTest extends TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();

@@ -23,7 +23,7 @@ class UserGeneratePasswordTest extends TestCase
 {
     var $_passwordSetting;
 
-    public function setUp()
+    protected function setUp() : void
     {
         if(isset($GLOBALS['sugar_config']['passwordsetting']))
         {
@@ -36,7 +36,7 @@ class UserGeneratePasswordTest extends TestCase
                                                             'minpwdlength'=>6);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if(!empty($this->_passwordSetting))
         {

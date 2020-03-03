@@ -27,7 +27,7 @@ class EmailTest extends TestCase
     private static $emailAddress = [];
     private static $contact;
     private static $lead;
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user', [true, true]);
         self::$contact = SugarTestContactUtilities::createContact();
@@ -40,7 +40,7 @@ class EmailTest extends TestCase
             self::$emailAddress[] = $emailAddress;
         }
     }
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestLeadUtilities::removeAllCreatedLeads();

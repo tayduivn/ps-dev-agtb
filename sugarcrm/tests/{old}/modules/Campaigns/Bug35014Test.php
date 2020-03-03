@@ -16,14 +16,14 @@ class Bug35014Test extends TestCase
 {
 	private $campaign_id;
 
-	public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $campaign = SugarTestCampaignUtilities::createCampaign();
         $this->campaign_id = $campaign->id;
 	}
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

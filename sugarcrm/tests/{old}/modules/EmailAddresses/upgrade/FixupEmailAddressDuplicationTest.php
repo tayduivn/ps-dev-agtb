@@ -15,7 +15,7 @@
  */
 class FixupEmailAddressDuplicationTest extends UpgradeTestCase
 {
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();

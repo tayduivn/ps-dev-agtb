@@ -27,7 +27,7 @@ class GetEntriesCustomTest extends SOAPTestCase
 
     protected $session = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -92,7 +92,7 @@ class GetEntriesCustomTest extends SOAPTestCase
         $this->assertNotSame(NULL, $actual['result_count'], 'Null value returned by get_entries_count.');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->_df->deleteField($this->_field);
 

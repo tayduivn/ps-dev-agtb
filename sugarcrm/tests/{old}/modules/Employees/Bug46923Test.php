@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug46923Test extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
         $beanList = array();
@@ -25,7 +25,7 @@ class Bug46923Test extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

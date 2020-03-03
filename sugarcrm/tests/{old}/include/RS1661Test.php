@@ -41,7 +41,7 @@ class RS1661Test extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $db = DBManagerFactory::getInstance();
         $this->db = $db;
@@ -51,7 +51,7 @@ class RS1661Test extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         $this->dropTestTableIfExists();
         SugarTestHelper::tearDown();

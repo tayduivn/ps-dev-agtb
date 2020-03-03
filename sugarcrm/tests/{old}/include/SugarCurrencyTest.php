@@ -37,9 +37,8 @@ class SugarCurrencyTest extends TestCase
 
     /**
      * pre-class environment setup
-     *
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         // setup test user
         SugarTestHelper::setUp('current_user');
@@ -61,9 +60,8 @@ class SugarCurrencyTest extends TestCase
 
     /**
      * post-object environment teardown
-     *
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // remove test currencies
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();

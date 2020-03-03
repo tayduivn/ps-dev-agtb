@@ -20,7 +20,7 @@ class Bug48475Test extends TestCase
     var $contractType;
     var $contract;
 
-	public function setUp()
+    protected function setUp() : void
 	{
 		include('include/modules.php');
 	    $GLOBALS['beanList'] = $beanList;
@@ -29,7 +29,7 @@ class Bug48475Test extends TestCase
         $GLOBALS['current_user']->is_admin = 1;
 	}
 
-	public function tearDown()
+    protected function tearDown() : void
 	{
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}

@@ -20,7 +20,7 @@ class Bug47403Test extends TestCase
     protected $_focus;
     protected $_actionArray;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -38,7 +38,7 @@ class Bug47403Test extends TestCase
         );
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->_actionArray);
         SugarTestAccountUtilities::removeAllCreatedAccounts();

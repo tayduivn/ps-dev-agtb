@@ -20,18 +20,18 @@ class EmailsApiHelperTest extends TestCase
 {
     private $helper;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $api = SugarTestRestUtilities::getRestServiceMock();
         $this->helper = new EmailsApiHelper($api);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestNoteUtilities::removeAllCreatedNotes();
     }

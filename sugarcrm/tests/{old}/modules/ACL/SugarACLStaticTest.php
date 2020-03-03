@@ -20,12 +20,12 @@ class SugarACLStaticTest extends TestCase
     public $testUser;
     public static $_modules = array();
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setup('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();

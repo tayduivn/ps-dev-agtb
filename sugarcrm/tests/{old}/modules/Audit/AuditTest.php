@@ -27,14 +27,14 @@ class AuditTest extends TestCase
      */
     private $registeredBeans = [];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
@@ -61,7 +61,7 @@ class AuditTest extends TestCase
         $this->registeredBeans[] = $bean;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unset($this->bean);
         foreach ($this->registeredBeans as $bean) {

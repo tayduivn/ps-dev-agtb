@@ -15,14 +15,14 @@ use PHPUnit\Framework\TestCase;
 
 class SubPanelTilesBase extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestHelper::tearDown();

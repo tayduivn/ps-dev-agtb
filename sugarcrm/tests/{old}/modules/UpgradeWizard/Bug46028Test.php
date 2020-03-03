@@ -23,18 +23,15 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 
 class Bug46028Test extends TestCase
 {
-var $customOpportunitiesSearchFields;
-var $opportunitiesSearchFields;
+    protected function setUp() : void
+    {
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('files');
+        SugarTestHelper::saveFile('custom/modules/Opportunities/metadata/SearchFields.php');
+        SugarTestHelper::saveFile('modules/Opportunities/metadata/SearchFields.php');
 
-public function setUp()
-{
-    SugarTestHelper::setUp('beanList');
-    SugarTestHelper::setUp('beanFiles');
-    SugarTestHelper::setUp('files');
-    SugarTestHelper::saveFile('custom/modules/Opportunities/metadata/SearchFields.php');
-    SugarTestHelper::saveFile('modules/Opportunities/metadata/SearchFields.php');
-
-$searchFieldContents = <<<EOQ
+        $searchFieldContents = <<<EOQ
 <?php
 \$searchFields['Opportunities'] =
 array (
@@ -61,23 +58,20 @@ array (
 EOQ;
 
         file_put_contents('modules/Opportunities/metadata/SearchFields.php', $searchFieldContents);
-}
+    }
 
-public function tearDow()
-{
-    SugarTestHelper::tearDown();
-}
+    public function testRepairSearchFields()
+    {
+        repairSearchFields('modules/Opportunities/metadata/SearchFields.php');
+        $this->assertFileExists('custom/modules/Opportunities/metadata/SearchFields.php');
 
-public function testRepairSearchFields()
-{
-    repairSearchFields('modules/Opportunities/metadata/SearchFields.php');
-    $this->assertTrue(file_exists('custom/modules/Opportunities/metadata/SearchFields.php'));
-    require('custom/modules/Opportunities/metadata/SearchFields.php');
-    $this->assertArrayHasKey('range_date_entered', $searchFields['Opportunities']);
-    $this->assertArrayHasKey('start_range_date_entered', $searchFields['Opportunities']);
-    $this->assertArrayHasKey('end_range_date_entered', $searchFields['Opportunities']);
-    $this->assertArrayHasKey('range_date_modified', $searchFields['Opportunities']);
-    $this->assertArrayHasKey('start_range_date_modified', $searchFields['Opportunities']);
-    $this->assertArrayHasKey('end_range_date_modified', $searchFields['Opportunities']);
-}
+        require 'custom/modules/Opportunities/metadata/SearchFields.php';
+
+        $this->assertArrayHasKey('range_date_entered', $searchFields['Opportunities']);
+        $this->assertArrayHasKey('start_range_date_entered', $searchFields['Opportunities']);
+        $this->assertArrayHasKey('end_range_date_entered', $searchFields['Opportunities']);
+        $this->assertArrayHasKey('range_date_modified', $searchFields['Opportunities']);
+        $this->assertArrayHasKey('start_range_date_modified', $searchFields['Opportunities']);
+        $this->assertArrayHasKey('end_range_date_modified', $searchFields['Opportunities']);
+    }
 }

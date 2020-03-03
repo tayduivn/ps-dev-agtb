@@ -23,7 +23,7 @@ class Bug52783Test extends TestCase
 {
 	private $_db;
 
-	public function setUp()
+    protected function setUp() : void
 	{
         $this->_db = new SqlsrvManager();
 	}

@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class JobQueueTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->jq = new TestSugarJobQueue();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='unittest'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

@@ -19,12 +19,12 @@ class WebToLeadTest extends TestCase
     private $configOptoutBackUp;
     private $configFileOverride;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
@@ -40,7 +40,7 @@ class WebToLeadTest extends TestCase
         }
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarAutoLoader::put('config_override.php', $this->configFileOverride);
 

@@ -34,7 +34,7 @@ final class IsolationTest extends TestCase
     private $tenant2;
     /**#@-*/
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $instanceKey1 = Uuid::uuid4()->toString();
         $instanceKey2 = Uuid::uuid4()->toString();

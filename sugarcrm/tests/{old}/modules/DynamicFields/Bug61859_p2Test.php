@@ -68,7 +68,7 @@ class Bug61859_p2Test extends TestCase
         self::$field = $field;
     }
 
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array(self::$module));
@@ -83,7 +83,7 @@ class Bug61859_p2Test extends TestCase
         self::$dynamicField->setup(BeanFactory::newBean(self::$module));
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (isset(self::$field)) {
             self::$field->delete(self::$dynamicField);

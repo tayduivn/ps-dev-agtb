@@ -21,7 +21,7 @@ class Bug62969Test extends TestCase
 {
     protected $customFile = 'custom/application/Ext/Language/en_us.lang.ext.php';
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
@@ -58,7 +58,7 @@ EOQ;
        	sugar_cache_clear($cache_key);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->customFile);
 

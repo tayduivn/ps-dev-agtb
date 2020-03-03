@@ -22,7 +22,7 @@ abstract class SugarCacheAbstractTest extends TestCase
      */
     protected static $cache;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $backend = $this->getInstance();
 

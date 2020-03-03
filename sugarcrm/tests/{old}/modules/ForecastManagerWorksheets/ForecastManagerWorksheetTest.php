@@ -58,7 +58,7 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     protected static $manager_quota;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -120,7 +120,7 @@ class ForecastManagerWorksheetTest extends TestCase
         $GLOBALS['current_user'] = self::$manager;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM forecast_manager_worksheets WHERE user_id = '" . self::$user->id . "'");

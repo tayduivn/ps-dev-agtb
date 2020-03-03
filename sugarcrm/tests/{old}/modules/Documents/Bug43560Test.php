@@ -16,7 +16,7 @@ class Bug43560Test extends TestCase
 {
 	var $doc = null;
 	
-	public function setUp()
+    protected function setUp() : void
     {
         global $current_user, $currentModule ;
 		$mod_strings = return_module_language($GLOBALS['current_language'], "Documents");
@@ -28,7 +28,7 @@ class Bug43560Test extends TestCase
 		$this->doc = $document;
 	}
 	
-    public function tearDown()
+    protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

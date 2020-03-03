@@ -21,7 +21,7 @@ class SubscriptionsApiTest extends TestCase
     private $api;
     private $subscriptionApi;
 
-    public function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         $this->api             = SugarTestRestUtilities::getRestServiceMock();
@@ -29,7 +29,7 @@ class SubscriptionsApiTest extends TestCase
         $this->subscriptionApi = new SubscriptionsApi();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         BeanFactory::setBeanClass('Leads');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

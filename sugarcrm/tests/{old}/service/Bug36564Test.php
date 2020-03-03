@@ -17,7 +17,7 @@ class Bug36564Test extends SOAPTestCase
     /**
      * Create test user
      */
-	public function setUp()
+    protected function setUp() : void
     {
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
 		parent::setUp();

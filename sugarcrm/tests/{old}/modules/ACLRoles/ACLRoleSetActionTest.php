@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ACLRoleSetActionTest extends TestCase
 {
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         BeanFactory::clearCache();
     }

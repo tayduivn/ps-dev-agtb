@@ -30,7 +30,7 @@ class Bug44696Test extends TestCase
      */
     protected $currentUser;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         SugarTestHelper::init();
         SugarTestHelper::setUp('current_user');
@@ -63,7 +63,7 @@ class Bug44696Test extends TestCase
         $this->sugarChartObject = $sugarChartObject;
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }

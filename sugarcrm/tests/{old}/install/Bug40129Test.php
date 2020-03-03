@@ -21,7 +21,8 @@ var $original_argv;
 var $has_original_config_si_file;
 var $current_working_dir;
 
-public function setUp() {
+    protected function setUp() : void
+    {
 	global $argv;
 	if(isset($argv))
 	{
@@ -95,7 +96,8 @@ public function setUp() {
 	}
 }
 
-public function tearDown() {
+    protected function tearDown() : void
+    {
 	if(isset($this->original_argv))
 	{
 		global $argv;

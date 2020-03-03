@@ -20,7 +20,7 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
         //END SUGARCRM flav=ent ONLY
     );
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         foreach($this->testMetaDataFiles as $file ) {
             if (file_exists($file)) {

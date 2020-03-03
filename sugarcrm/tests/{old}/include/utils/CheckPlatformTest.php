@@ -16,7 +16,7 @@ require_once 'include/utils.php';
 
 class CheckPlatformTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->_isOnWindows = (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN');
     }

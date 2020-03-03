@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class Bug42193Test extends TestCase
 {
-	public function setUp()
+    protected function setUp() : void
 	{
 	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	    $GLOBALS['current_user']->is_admin = '1';
 	    $GLOBALS['current_user']->save();
 	}
 	
-	public function tearDown()
+    protected function tearDown() : void
 	{
         unset($GLOBALS['current_user']);
 	}
