@@ -12,13 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
-use Symfony\Component\Validator\Tests\Constraints\AbstractConstraintValidatorTest as AbstractBase;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
- * Abstract contraint validator test.
+ * Abstract constraint validator test.
  */
-abstract class AbstractConstraintValidatorTest extends AbstractBase
+abstract class AbstractConstraintValidatorTest extends ConstraintValidatorTestCase
 {
     /**
      * {@inheritdoc}

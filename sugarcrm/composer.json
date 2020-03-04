@@ -124,7 +124,7 @@
         "symfony/security-core": "v3.4.16",
         "symfony/security-csrf": "v3.4.16",
         "symfony/translation": "v3.4.16",
-        "symfony/validator": "v3.4.16",
+        "symfony/validator": "^v3.4.31",
         "tedivm/jshrink": "v1.3.1",
         "vanderlee/php-stable-sort-functions": "2.0.2",
         "symfony/process": "v3.4.11",

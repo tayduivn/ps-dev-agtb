@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4e0c94eee0f03a1f2b45e0c44cec782",
+    "content-hash": "30513b7ec630f7ba4ca41c5302d28cf4",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -3230,17 +3230,17 @@
         },
         {
             "name": "symfony/validator",
-            "version": "v3.4.16",
+            "version": "v3.4.38",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Validator.git",
-                "reference": "f0ff630b5f8cbe498d5c70c84e18cccaec8084b7"
+                "reference": "4a4785cd528bc53a09c0bd6e4b12a1a0210ed542"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/validator/symfony-validator-v3.4.16-07cce7.tar",
-                "reference": "f0ff630b5f8cbe498d5c70c84e18cccaec8084b7",
-                "shasum": "f4991df3d1bd7236e2aee33fe88c15a33c5640e6"
+                "url": "https://satis.sugardev.team/dist/symfony/validator/symfony-validator-v3.4.38-01d3e6.tar",
+                "reference": "4a4785cd528bc53a09c0bd6e4b12a1a0210ed542",
+                "shasum": "5abcb8b2a9acd8037a5ed5a468e94dfa32d58fb1"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -3249,15 +3249,16 @@
                 "symfony/translation": "~2.8|~3.0|~4.0"
             },
             "conflict": {
+                "doctrine/lexer": "<1.0.2",
                 "phpunit/phpunit": "<4.8.35|<5.4.3,>=5.0",
                 "symfony/dependency-injection": "<3.3",
                 "symfony/http-kernel": "<3.3.5",
                 "symfony/yaml": "<3.4"
             },
             "require-dev": {
-                "doctrine/annotations": "~1.0",
+                "doctrine/annotations": "~1.7",
                 "doctrine/cache": "~1.0",
-                "egulias/email-validator": "^1.2.8|~2.0",
+                "egulias/email-validator": "^2.1.10",
                 "symfony/cache": "~3.1|~4.0",
                 "symfony/config": "~2.8|~3.0|~4.0",
                 "symfony/dependency-injection": "~3.3|~4.0",
@@ -3310,7 +3311,7 @@
             ],
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
-            "time": "2018-09-30T03:32:28+00:00"
+            "time": "2020-02-29T09:08:42+00:00"
         },
         {
             "name": "tedivm/jshrink",
@@ -3821,7 +3822,7 @@
             "version": "v3.6.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/protobuf.git",
+                "url": "https://github.com/protocolbuffers/protobuf-php.git",
                 "reference": "d215c455f2f6852a95f50ebf2357349c4bb75c14"
             },
             "dist": {

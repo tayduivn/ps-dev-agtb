@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
-use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Constraints\UrlValidator;
 
