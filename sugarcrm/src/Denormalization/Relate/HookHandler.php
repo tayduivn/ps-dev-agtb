@@ -186,7 +186,7 @@ final class HookHandler
         self::$settingsCache = null;
     }
 
-    protected function getSettings($bean): array
+    private function getSettings($bean): array
     {
         if (!$bean instanceof SugarBean) {
             return [];
@@ -202,7 +202,7 @@ final class HookHandler
         return $settings;
     }
 
-    protected function handleRelationshipModification(string $fieldName, SugarBean $bean, array $options): void
+    private function handleRelationshipModification(string $fieldName, SugarBean $bean, array $options): void
     {
         $modifiedLinkId = $this->getModifiedLinkId($fieldName, $bean);
 
@@ -221,11 +221,8 @@ final class HookHandler
         }
     }
 
-    protected function getModifiedLinkId(string $fieldName, SugarBean $bean): ?string
+    private function getModifiedLinkId(string $fieldName, SugarBean $bean): ?string
     {
-        if (empty($bean->fetched_rel_row)) {
-            return null;
-        }
         $idName = $bean->getFieldDefinition($fieldName)['id_name'] ?? null;
         if (!$idName) {
             return null;
@@ -234,7 +231,7 @@ final class HookHandler
         $oldId = $bean->fetched_rel_row[$idName] ?? null;
         $newId = $bean->$idName;
 
-        $oldValue = $bean->fetched_rel_row[$fieldName];
+        $oldValue = $bean->fetched_rel_row[$fieldName] ?? null;
         $newValue = $bean->$fieldName;
 
         // the link ID was changed but the value still wasn't updated

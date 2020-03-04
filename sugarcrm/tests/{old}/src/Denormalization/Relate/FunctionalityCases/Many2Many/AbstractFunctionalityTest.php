@@ -260,12 +260,12 @@ abstract class AbstractFunctionalityTest extends TestCase
         $this->assertEquals($testName, $value);
     }
 
-    private function getDenormFieldName()
+    protected function getDenormFieldName()
     {
         return 'denorm_' . static::$options['field_name'];
     }
 
-    private function reloadBean(SugarBean $bean): SugarBean
+    protected function reloadBean(SugarBean $bean): SugarBean
     {
         return BeanFactory::getBean($bean->getModuleName(), $bean->id, ['use_cache' => false]);
     }

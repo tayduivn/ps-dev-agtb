@@ -26,6 +26,21 @@ class ContactAccountM2MFunctionalityTest extends AbstractFunctionalityTest
         'relate_field_name' => 'name',
     ];
 
+    /**
+     * Setting account_id on a new contact and saving should update denorm_account_name
+     */
+    public function testRelationshipCreationDuringSave(): void
+    {
+        $account = $this->createLinkedBean();
+        $contact = \SugarTestContactUtilities::createContact('', ['account_id' => $account->id]);
+
+        $this->assertEquals($account->{static::$options['relate_field_name']}, $contact->{$this->getDenormFieldName()});
+
+        // reload and re-check to ensure that changes saved
+        $contact = $this->reloadBean($contact);
+        $this->assertEquals($account->{static::$options['relate_field_name']}, $contact->{$this->getDenormFieldName()});
+    }
+
     protected function createPrimaryBean(?SugarBean $linkedBean): SugarBean
     {
         $contact = \SugarTestContactUtilities::createContact();
