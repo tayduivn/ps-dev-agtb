@@ -19,6 +19,16 @@ use PHPUnit\Framework\TestCase;
  */
 class PMSEBusinessRulesApiAclTest extends TestCase
 {
+    /**
+     * @var PMSEBusinessRules
+     */
+    private $PMSEBusinessRules;
+
+    /**
+     * @var RestService
+     */
+    private $api;
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -34,27 +44,22 @@ class PMSEBusinessRulesApiAclTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testBusinessRuleDownload()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEBusinessRules->businessRuleDownload(
             $this->api,
             array('module' => 'pmse_Business_Rules')
         );
     }
 
-
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testBusinessRulesImport()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEBusinessRules->businessRulesImport($this->api, array('module' => 'pmse_Business_Rules'));
     }
 
-    /*
+    /**
      * Check if valid user is allowed to pass ACL access
      */
     public function testBusinessRuleDownloadValidUser()

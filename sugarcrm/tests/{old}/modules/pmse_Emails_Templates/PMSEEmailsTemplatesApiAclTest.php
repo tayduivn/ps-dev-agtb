@@ -19,6 +19,16 @@ use PHPUnit\Framework\TestCase;
  */
 class PMSEEmailsTemplatesApiAclTest extends TestCase
 {
+    /**
+     * @var PMSEEmailsTemplates
+     */
+    private $PMSEEmailsTemplates;
+
+    /**
+     * @var RestService
+     */
+    private $api;
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -34,51 +44,43 @@ class PMSEEmailsTemplatesApiAclTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testEmailTemplateDownload()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEmailsTemplates->emailTemplateDownload(
             $this->api,
             array('module' => 'pmse_Emails_Templates')
         );
     }
 
-   /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testFindVariables()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEmailsTemplates->findVariables(
             $this->api,
             array('module' => 'pmse_Emails_Templates')
         );
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testRetrieveRelatedBeans()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEmailsTemplates->retrieveRelatedBeans(
             $this->api,
             array('module' => 'pmse_Emails_Templates')
         );
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testEmailTemplatesImport()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEmailsTemplates->emailTemplatesImport(
             $this->api,
             array('module' => 'pmse_Emails_Templates')
         );
     }
 
-    /*
+    /**
      * Check if valid user is allowed to pass ACL access
      */
     public function testFindVariablesValidUser()

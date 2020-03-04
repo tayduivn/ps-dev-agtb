@@ -130,10 +130,10 @@ class One2MBeanRelationshipLoadTest extends TestCase
 
     /**
      * @covers ::load
-     * @expectedException \Exception
      */
     public function testOffsetException()
     {
+        $this->expectException(Exception::class);
         self::$account->opportunities->query(['limit' => 1, 'offset' => -1]);
     }
 

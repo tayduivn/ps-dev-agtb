@@ -456,11 +456,9 @@ class MailApiTest extends TestCase
 
     /**
      * @group mailattachment
-     * @expectedException SugarApiExceptionRequestTooLarge
      */
     public function testSaveAttachment_AttachmentIsTooLarge_ThrowsException()
     {
-        $_files = $_FILES;
         $_FILES = array();
 
         $api = $this->getMockBuilder('MailApi')
@@ -469,9 +467,9 @@ class MailApiTest extends TestCase
             ->getMock();
         $api->expects($this->once())->method('getContentLength')->willReturn(500);
         $api->expects($this->once())->method('getPostMaxSize')->willReturn(100);
-        $api->saveAttachment($this->api, array());
 
-        $_FILES = $_files;
+        $this->expectException(SugarApiExceptionRequestTooLarge::class);
+        $api->saveAttachment($this->api, array());
     }
 
     /**

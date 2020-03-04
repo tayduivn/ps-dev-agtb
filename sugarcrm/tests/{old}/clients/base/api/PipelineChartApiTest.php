@@ -73,19 +73,14 @@ class PipelineChartApiTest extends TestCase
         return $api;
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotFound
-     */
     public function testNotFoundExceptionThrownWithInvalidModule()
     {
         $api = $this->getMockPipelineApi();
 
+        $this->expectException(SugarApiExceptionNotFound::class);
         $api->pipeline($this->service, array('module' => 'MyInvalidModule'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testNotAuthorizedThrownWhenACLAccessDenied()
     {
         $api = $this->getMockPipelineApi(array('loadBean'));
@@ -103,6 +98,7 @@ class PipelineChartApiTest extends TestCase
             ->method('loadBean')
             ->will($this->returnValue($rli));
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->pipeline($this->service, array('module' => 'RevenueLineItems'));
     }
 

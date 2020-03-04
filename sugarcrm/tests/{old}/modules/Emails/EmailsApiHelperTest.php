@@ -125,7 +125,6 @@ EOHTML;
 
     /**
      * @covers ::populateFromApi
-     * @expectedException SugarApiExceptionNotFound
      */
     public function testPopulateFromApi_OutboundEmailIdNotFound()
     {
@@ -138,6 +137,7 @@ EOHTML;
             'outbound_email_id' => Uuid::uuid1(),
         ];
 
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->helper->populateFromApi($bean, $submittedData);
     }
 
@@ -232,7 +232,6 @@ EOHTML;
 
     /**
      * @covers ::populateFromApi
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testPopulateFromApi_AssignedUserSuppliedDoesNotMatchCurrentUserId()
     {
@@ -244,12 +243,12 @@ EOHTML;
             'assigned_user_id' => Uuid::uuid1(),
         ];
 
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->helper->populateFromApi($bean, $submittedData);
     }
 
     /**
      * @covers ::populateFromApi
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testPopulateFromApi_CannotSpecifySenderForDraft()
     {
@@ -266,6 +265,7 @@ EOHTML;
             ],
         ];
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->helper->populateFromApi($bean, $submittedData);
     }
 
@@ -280,7 +280,6 @@ EOHTML;
     /**
      * @dataProvider isUpdateProvider
      * @covers ::populateFromApi
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testPopulateFromApi_StateChangeIsInvalid($isUpdate)
     {
@@ -292,6 +291,7 @@ EOHTML;
             'state' => 'Foo',
         ];
 
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->helper->populateFromApi($bean, $submittedData);
     }
 

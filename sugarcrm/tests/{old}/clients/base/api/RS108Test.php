@@ -77,12 +77,12 @@ class RS108Test extends TestCase
 
     /**
      * We should get exception if field isn't passed
-     *
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testGetTempImageWithoutField()
     {
         $api = new FileTempApi();
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $api->getTempImage($this->service, array());
     }
 

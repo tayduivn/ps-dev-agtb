@@ -74,11 +74,9 @@ class RS164Test extends TestCase
         $this->assertNotEmpty($result);
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testUpdateCustomThemeException()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->updateCustomTheme(
             self::$rest,
             array()

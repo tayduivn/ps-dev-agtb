@@ -55,11 +55,9 @@ class CommentLogApiTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     * @expectedException SugarApiExceptionNoMethod
-     */
     public function testAccessBlocker()
     {
+        $this->expectException(SugarApiExceptionNoMethod::class);
         $this->api->accessBlocker($this->service, array());
     }
 

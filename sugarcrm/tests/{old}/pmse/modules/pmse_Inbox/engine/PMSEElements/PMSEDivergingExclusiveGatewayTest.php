@@ -42,10 +42,6 @@ class PMSEDivergingExclusiveGatewayTest extends TestCase
         $this->divergingExclusiveGateway->run($flowData);
     }
 
-    /**
-     * @expectedException PMSEElementException
-     */
-    
     public function testRunWithoutFilters()
     {
         $this->divergingExclusiveGateway = $this->getMockBuilder('PMSEDivergingExclusiveGateway')
@@ -60,8 +56,8 @@ class PMSEDivergingExclusiveGatewayTest extends TestCase
         $flowData = array(
             'id' => 'some_data'
         );
-               
+
+        $this->expectException(PMSEElementException::class);
         $this->divergingExclusiveGateway->run($flowData);
     }
-    //put your code here
 }

@@ -196,12 +196,13 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
     /**
      * We should get exception if current_user isn't manager
      *
-     * @expectedException SugarApiExceptionNotAuthorized
      * @covers ::getDirectHierarchyUsers
      */
     public function testGetDirectHierarchyUsersNotAuthorized()
     {
         $api = new ForecastManagerWorksheetsFilterApi();
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', array(
                 $this->service,
                 array(),
@@ -234,7 +235,6 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
     /**
      * We should get exception if custom user doesn't present in system
      *
-     * @expectedException SugarApiExceptionInvalidParameter
      * @covers ::getDirectHierarchyUsers
      */
     public function testGetDirectHierarchyUsersCustomUserInvalidParameter()
@@ -244,6 +244,8 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         );
         $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
+
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', array(
                 $this->service,
                 array(
@@ -349,12 +351,13 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
     /**
      * We should get exception if current_user isn't manager
      *
-     * @expectedException SugarApiExceptionNotAuthorized
      * @covers ::createFilter
      */
     public function testCreateFilterNotAuthorized()
     {
         $api = new ForecastManagerWorksheetsFilterApi();
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
                 false,
@@ -389,7 +392,6 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
     /**
      * We should get exception if custom user isn't present in system
      *
-     * @expectedException SugarApiExceptionInvalidParameter
      * @covers ::createFilter
      */
     public function testCreateFilterCustomUserInvalidParameter()
@@ -399,6 +401,8 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         );
         $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
+
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
                 '-1',
@@ -434,7 +438,6 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
     /**
      * We should get exception if time period isn't present in system
      *
-     * @expectedException SugarApiExceptionInvalidParameter
      * @covers ::createFilter
      */
     public function testCreateFilterTimePeriodInvalidParameter()
@@ -444,6 +447,8 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         );
         $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
+
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
                 false,

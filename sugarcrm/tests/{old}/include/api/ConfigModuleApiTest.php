@@ -125,7 +125,6 @@ class ConfigModuleApiTest extends TestCase
     /**
      * test the create api using bad credentials, should receive a failure
      *
-     * @expectedException SugarApiExceptionNotAuthorized
      * @group api
      * @covers ::configSave
      */
@@ -142,14 +141,8 @@ class ConfigModuleApiTest extends TestCase
             "testSetting" => "My voice is my passport, verify me",
         );
         $apiClass = new ConfigModuleApi();
-        $result = $apiClass->configSave($api, $args);
-
-        /* @var $admin Administration */
-        $admin = BeanFactory::newBean('Administration');
-
-        $results = $admin->getConfigForModule('Contacts', 'base');
-
-        $this->assertArrayNotHasKey("testSetting", $results);
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
+        $apiClass->configSave($api, $args);
     }
 
     /**

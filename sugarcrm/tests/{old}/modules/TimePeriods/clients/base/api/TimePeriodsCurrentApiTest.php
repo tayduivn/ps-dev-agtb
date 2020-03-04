@@ -70,12 +70,13 @@ class TimePeriodsCurrentApiTest extends TestCase
     }
 
     /**
-     * @expectedException SugarApiExceptionNotFound
      * @group timeperiods
      */
     public function testInvalidTimePeriodThrowsException()
     {
         $restService = SugarTestRestUtilities::getRestServiceMock();
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->api->getCurrentTimePeriod($restService, array());
     }
 
@@ -108,15 +109,15 @@ class TimePeriodsCurrentApiTest extends TestCase
 
     /**
      * @group timeperiods
-     *
-     * @expectedException SugarApiExceptionNotFound
      */
     public function testGetTimePeriodByDateNoDate()
     {
-        $tp = SugarTestTimePeriodUtilities::createTimePeriod();
+        SugarTestTimePeriodUtilities::createTimePeriod();
         $args = array();
 
         $restService = SugarTestRestUtilities::getRestServiceMock();
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->api->getTimePeriodByDate($restService, $args);
     }
 }

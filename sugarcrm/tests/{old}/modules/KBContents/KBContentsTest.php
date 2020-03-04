@@ -293,23 +293,23 @@ class KBContentsTest extends TestCase
 
     /**
      * Test save usefulness on empty bean.
-     *
-     * @expectedException SugarApiException
      */
     public function testSaveUsefulnessWithBeanWithoutId()
     {
         $this->bean->id = false;
+
+        $this->expectException(SugarApiException::class);
         $this->bean->saveUsefulness();
     }
 
     /**
      * Test save usefulness on new bean.
-     *
-     * @expectedException SugarApiException
      */
     public function testSaveUsefulnessWithNewBean()
     {
         $this->bean->new_with_id = true;
+
+        $this->expectException(SugarApiException::class);
         $this->bean->saveUsefulness();
     }
 
@@ -443,9 +443,6 @@ class KBContentsTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException SugarApiException
-     */
     public function testExceptionGeneratedIfNoAvailableLocalizationLanguage()
     {
         $bean = SugarTestKBContentUtilities::createBean(array(), false);
@@ -474,6 +471,8 @@ class KBContentsTest extends TestCase
         $newLocalization = SugarTestKBContentUtilities::createBean(array(), false);
         $newLocalization->kbdocument_id = $bean->kbdocument_id;
         $newLocalization->language = '';
+
+        $this->expectException(SugarApiException::class);
         SugarTestKBContentUtilities::saveBean($newLocalization);
     }
 

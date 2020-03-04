@@ -284,7 +284,6 @@ class EmailTest extends TestCase
 
     /**
      * @covers ::getOutboundEmailDropdown
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testGetOutboundEmailDropdown_SystemOverrideIsNotConfigured()
     {
@@ -298,12 +297,13 @@ class EmailTest extends TestCase
         $overrideConfig->save();
 
         $email = new Email();
-        $options = $email->getOutboundEmailDropdown();
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
+        $email->getOutboundEmailDropdown();
     }
 
     /**
      * @covers ::getOutboundEmailDropdown
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testGetOutboundEmailDropdown_SystemIsNotConfigured()
     {
@@ -316,7 +316,9 @@ class EmailTest extends TestCase
         $systemConfig->save();
 
         $email = new Email();
-        $options = $email->getOutboundEmailDropdown();
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
+        $email->getOutboundEmailDropdown();
     }
 
     /**

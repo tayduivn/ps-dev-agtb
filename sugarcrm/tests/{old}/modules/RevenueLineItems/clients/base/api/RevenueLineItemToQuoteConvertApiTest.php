@@ -100,9 +100,6 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
         $this->assertEquals(RevenueLineItem::STATUS_QUOTED, $revenueLineItem->status);
     }
 
-    /**
-     * @expectedException SugarApiExceptionRequestMethodFailure
-     */
     public function testCreateProductBundleFromRLIListThrowsException()
     {
         $mock_rli = $this->getMockBuilder('RevenueLineItem')
@@ -119,8 +116,7 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
 
         $api = new RevenueLineItemToQuoteConvertApi();
 
-        SugarTestReflection::callProtectedMethod($api, 'createProductBundleFromRLIList', array(array('unit_test_1')));
-
-        BeanFactory::unregisterBean($mock_rli);
+        $this->expectException(\SugarApiExceptionRequestMethodFailure::class);
+        SugarTestReflection::callProtectedMethod($api, 'createProductBundleFromRLIList', [['unit_test_1']]);
     }
 }

@@ -205,7 +205,6 @@ class EmailsApiTest extends TestCase
 
     /**
      * @covers ::sendEmail
-     * @expectedException SugarApiException
      */
     public function testSendEmail_SpecifiedConfigurationCouldNotBeFound()
     {
@@ -218,12 +217,13 @@ class EmailsApiTest extends TestCase
         $email->outbound_email_id = Uuid::uuid1();
 
         $api = new EmailsApi();
+
+        $this->expectException(SugarApiException::class);
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 
     /**
      * @covers ::sendEmail
-     * @expectedException SugarApiException
      */
     public function testSendEmail_ConfigurationIsNotComplete()
     {
@@ -236,12 +236,13 @@ class EmailsApiTest extends TestCase
         $email->outbound_email_id = $oe->id;
 
         $api = new EmailsApi();
+
+        $this->expectException(SugarApiException::class);
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 
     /**
      * @covers ::sendEmail
-     * @expectedException SugarApiExceptionError
      */
     public function testSendEmail_UnknownError()
     {
@@ -254,6 +255,8 @@ class EmailsApiTest extends TestCase
             ->willThrowException(new Exception('something happened'));
 
         $api = new EmailsApi();
+
+        $this->expectException(SugarApiExceptionError::class);
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 

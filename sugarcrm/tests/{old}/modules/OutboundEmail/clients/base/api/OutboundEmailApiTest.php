@@ -52,15 +52,14 @@ class OutboundEmailApiTest extends TestCase
     /**
      * @covers ::createRecord
      * @dataProvider createRecordForTypeSystemOrSystemOverrideProvider
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testCreateRecord_TypeIsSystemOrSystemOverride($type)
     {
-        $args = [
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
+        $this->api->createRecord($this->service, [
             'module' => 'OutboundEmail',
             'type' => $type,
-        ];
-        $response = $this->api->createRecord($this->service, $args);
+        ]);
     }
 
     /**
@@ -91,7 +90,6 @@ class OutboundEmailApiTest extends TestCase
 
     /**
      * @covers ::createRecord
-     * @expectedException SugarApiException
      */
     public function testCreateRecord_TypeIsUser_ConnectionFails()
     {
@@ -101,12 +99,12 @@ class OutboundEmailApiTest extends TestCase
         $api = $this->createPartialMock('OutboundEmailApi', ['getMailer']);
         $api->method('getMailer')->willReturn($mailer);
 
-        $args = [
+        $this->expectException(SugarApiException::class);
+        $api->createRecord($this->service, [
             'module' => 'OutboundEmail',
             'mail_smtpserver' => 'smtp.a.b',
             'mail_smtpport' => 465,
-        ];
-        $response = $api->createRecord($this->service, $args);
+        ]);
     }
 
     public function updateRecordProvider()

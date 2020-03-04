@@ -68,14 +68,14 @@ class EmailAttachmentRelationshipTest extends TestCase
      * Email attachments cannot be linked when an email is archived.
      *
      * @covers ::add
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testAdd_CannotLinkWhenEmailIsArchived()
     {
         $email = SugarTestEmailUtilities::createEmail();
         $note = SugarTestNoteUtilities::createNote();
 
-        $result = $this->relationship->add($email, $note);
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
+        $this->relationship->add($email, $note);
     }
 
     /**
@@ -125,14 +125,14 @@ class EmailAttachmentRelationshipTest extends TestCase
      * Email attachments cannot be unlinked when an email is archived.
      *
      * @covers ::remove
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testRemove_CannotUnlinkWhenEmailIsArchived()
     {
         $email = SugarTestEmailUtilities::createEmail();
         $note = SugarTestNoteUtilities::createNote('', ['email_type' => 'Emails', 'email_id' => $email->id]);
 
-        $result = $this->relationship->remove($email, $note);
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
+        $this->relationship->remove($email, $note);
     }
 
     /**

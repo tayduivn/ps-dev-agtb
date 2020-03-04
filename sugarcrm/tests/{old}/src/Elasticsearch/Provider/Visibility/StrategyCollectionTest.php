@@ -19,12 +19,11 @@ use PHPUnit\Framework\TestCase;
 
 class StrategyCollectionTest extends TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testHashInvalidArgument()
     {
         $strategyCollection = new StrategyCollection();
+
+        $this->expectException(InvalidArgumentException::class);
         $strategyCollection->getHash(new stdClass());
     }
 

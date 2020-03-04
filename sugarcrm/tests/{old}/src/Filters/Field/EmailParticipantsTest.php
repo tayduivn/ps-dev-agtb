@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Filters\Field;
 
+use SugarApiExceptionNotFound;
 use SugarTestContactUtilities;
 use SugarTestEmailAddressUtilities;
 use SugarTestHelper;
@@ -218,7 +219,6 @@ class EmailParticipantsTest extends TestCase
      * @covers ::apiSerialize
      * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiSerialize
      * @dataProvider fieldNameProvider
-     * @expectedException \SugarApiExceptionNotFound
      */
     public function testApiSerializeParentNotFound(string $fieldName, string $link)
     {
@@ -234,14 +234,14 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $field = new EmailParticipants($fieldName, $filter);
 
-        $actual = $field->apiSerialize($api);
+        $this->expectException(SugarApiExceptionNotFound::class);
+        $field->apiSerialize($api);
     }
 
     /**
      * @covers ::apiSerialize
      * @covers \Sugarcrm\Sugarcrm\Filters\Operand\EmailParticipants::apiSerialize
      * @dataProvider fieldNameProvider
-     * @expectedException \SugarApiExceptionNotFound
      */
     public function testApiSerializeEmailAddressNotFound(
         string $fieldName,
@@ -258,6 +258,7 @@ class EmailParticipantsTest extends TestCase
         $api = SugarTestRestUtilities::getRestServiceMock();
         $field = new EmailParticipants($fieldName, $filter);
 
-        $actual = $field->apiSerialize($api);
+        $this->expectException(SugarApiExceptionNotFound::class);
+        $field->apiSerialize($api);
     }
 }

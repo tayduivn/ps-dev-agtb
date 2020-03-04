@@ -78,12 +78,11 @@ class CalendarEventsTest extends TestCase
         $this->assertTrue($result, "Expected Meeting Event to be recognized as Recurring");
     }
 
-    /**
-     * @expectedException SugarException
-     */
     public function testCalendarEvents_Account_EventRecurring_UnsupportedCalendarEventModule()
     {
         $account = BeanFactory::newBean('Accounts');
+
+        $this->expectException(SugarException::class);
         $this->calendarEventsService->isEventRecurring($account);
     }
 

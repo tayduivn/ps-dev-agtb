@@ -381,9 +381,6 @@ class SaveTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testNonAdminSetLicenseTypeException()
     {
         // setup non-admin user
@@ -391,12 +388,11 @@ class SaveTest extends TestCase
 
         $_POST['record'] = $current_user->id;
         $_POST['LicenseTypes'] = ['SUGAR_SERVE'];
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         include 'modules/Users/Save.php';
     }
 
-    /**
-     * @expectedException SugarApiExceptionInvalidParameter
-     */
     public function testSetLicenseTypeInvalidException()
     {
         // setup admin user
@@ -404,6 +400,8 @@ class SaveTest extends TestCase
 
         $_POST['record'] = $current_user->id;
         $_POST['LicenseTypes'] = ['INVALID_TYPE'];
+
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         include 'modules/Users/Save.php';
     }
 

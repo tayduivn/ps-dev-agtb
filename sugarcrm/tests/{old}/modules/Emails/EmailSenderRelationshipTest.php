@@ -53,13 +53,13 @@ class EmailSenderRelationshipTest extends TestCase
      * Only the current user can be added as the sender of a draft.
      *
      * @covers ::add
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testAdd_OnlyCurrentUserCanBeLinkedAsParent()
     {
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->add($email, $this->createEmailParticipant($contact));
     }
 
@@ -68,13 +68,13 @@ class EmailSenderRelationshipTest extends TestCase
      *
      * @covers ::add
      * @covers ::assertParentModule
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testAdd_CannotLinkParticipantWhoseParentModuleDoesNotUseTheEmailAddressTemplate()
     {
         $email = SugarTestEmailUtilities::createEmail();
         $task = SugarTestTaskUtilities::createTask();
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->add($email, $this->createEmailParticipant($task));
     }
 
@@ -338,7 +338,6 @@ class EmailSenderRelationshipTest extends TestCase
      *
      * @covers ::add
      * @covers ::setEmailAddress
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testAdd_TheEmailAddressMustComeFromTheConfiguration()
     {
@@ -362,6 +361,7 @@ class EmailSenderRelationshipTest extends TestCase
         // Add the current user as the sender again, but with an email address.
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
     }
 
@@ -370,7 +370,6 @@ class EmailSenderRelationshipTest extends TestCase
      *
      * @covers ::add
      * @covers ::setEmailAddress
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testAdd_CannotOverrideTheEmailAddressOfTheConfiguration()
     {
@@ -399,6 +398,7 @@ class EmailSenderRelationshipTest extends TestCase
         // Add the current user as the sender again, but with a different email address.
         $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
 
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address2));
     }
 
@@ -408,7 +408,6 @@ class EmailSenderRelationshipTest extends TestCase
      *
      * @covers ::add
      * @covers ::setEmailAddress
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testAdd_FailedToLoadTheConfiguration()
     {
@@ -434,6 +433,7 @@ class EmailSenderRelationshipTest extends TestCase
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         $email->outbound_email_id = Uuid::uuid1();
 
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
     }
 
@@ -656,20 +656,19 @@ class EmailSenderRelationshipTest extends TestCase
      * The sender of an archived email cannot change.
      *
      * @covers ::add
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testAdd_CannotLinkParticipantAfterEmailIsArchived()
     {
         $email = SugarTestEmailUtilities::createEmail();
         $contact = SugarTestContactUtilities::createContact();
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->add($email, $this->createEmailParticipant($contact));
     }
 
     /**
      * The sender of an archived email cannot change.
      *
-     * @expectedException SugarApiExceptionNotAuthorized
      * @covers ::add
      */
     public function testAdd_EmailAddressForParticipantCannotChangeAfterEmailIsArchived()
@@ -687,13 +686,13 @@ class EmailSenderRelationshipTest extends TestCase
         $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
     }
 
     /**
      * The sender of an archived email cannot be unlinked.
      *
-     * @expectedException SugarApiExceptionNotAuthorized
      * @covers ::remove
      */
     public function testRemove_CannotUnlinkParticipantAfterEmailIsArchived()
@@ -711,13 +710,13 @@ class EmailSenderRelationshipTest extends TestCase
         $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->remove($email, $ep);
     }
 
     /**
      * The sender of a draft cannot be unlinked.
      *
-     * @expectedException SugarApiExceptionNotAuthorized
      * @covers ::remove
      */
     public function testRemove_CannotUnlinkSenderOfDraft()
@@ -728,6 +727,8 @@ class EmailSenderRelationshipTest extends TestCase
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->remove($email, $bean);
     }
 

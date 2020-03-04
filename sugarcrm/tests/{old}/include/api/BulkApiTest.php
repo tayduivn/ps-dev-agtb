@@ -105,9 +105,6 @@ class BulkApiTest extends TestCase
         $this->assertEquals("200", $result[14]['status'], "Bad status for request 14");
     }
 
-    /**
-     * @expectedException SugarApiExceptionMissingParameter
-     */
     public function testBulkApiError()
     {
         $api = new RestService();
@@ -117,6 +114,8 @@ class BulkApiTest extends TestCase
         );
         $apiClass = new BulkApi();
         $args = array("requests" => $requests);
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $apiClass->bulkCall($api, $args);
     }
 }

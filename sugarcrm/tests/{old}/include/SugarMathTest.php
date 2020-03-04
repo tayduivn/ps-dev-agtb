@@ -433,8 +433,7 @@ class SugarMathTest extends TestCase
      * test setValue exceptions on class
      *
      * @dataProvider setValueExceptionsProvider
-     * @expectedException SugarMath_Exception
-     * @expectedExceptionMessage must be numeric
+     *
      * @param mixed  $val the value to pass
      * @group math
      * @access public
@@ -442,6 +441,9 @@ class SugarMathTest extends TestCase
     public function testSetValueExceptions($val)
     {
         $math = new SugarMath();
+
+        $this->expectException(SugarMath_Exception::class);
+        $this->expectExceptionMessage('must be numeric');
         $math->setValue($val);
     }
 
@@ -466,8 +468,7 @@ class SugarMathTest extends TestCase
      * test setScale exceptions on class
      *
      * @dataProvider setScaleExceptionsProvider
-     * @expectedException SugarMath_Exception
-     * @expectedExceptionMessage scale must be a positive integer
+     *
      * @param mixed  $val the value to pass
      * @group math
      * @access public
@@ -475,6 +476,9 @@ class SugarMathTest extends TestCase
     public function testSetScaleExceptions($val)
     {
         $math = new SugarMath();
+
+        $this->expectException(SugarMath_Exception::class);
+        $this->expectExceptionMessage('scale must be a positive integer');
         $math->setScale($val);
     }
 
@@ -498,8 +502,7 @@ class SugarMathTest extends TestCase
      * test expression exceptions
      *
      * @dataProvider nonStringExpressionExceptionsProvider
-     * @expectedException SugarMath_Exception
-     * @expectedExceptionMessage expression must be a string
+     *
      * @param string $exp string the expression
      * @param array  $args array the argument array for the expression
      * @param int    $scale the decimal precision to use
@@ -509,6 +512,9 @@ class SugarMathTest extends TestCase
     public function testNonStringExpressionExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
+
+        $this->expectException(SugarMath_Exception::class);
+        $this->expectExceptionMessage('expression must be a string');
         $math->exp($exp,$args)->result();
     }
 
@@ -528,8 +534,7 @@ class SugarMathTest extends TestCase
      * test non-array args exceptions
      *
      * @dataProvider nonArrayArgsExceptionsProvider
-     * @expectedException SugarMath_Exception
-     * @expectedExceptionMessage expression args must be an array
+     *
      * @param string $exp string the expression
      * @param array  $args array the argument array for the expression
      * @param int    $scale the decimal precision to use
@@ -539,6 +544,9 @@ class SugarMathTest extends TestCase
     public function testNonArrayArgsExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
+
+        $this->expectException(SugarMath_Exception::class);
+        $this->expectExceptionMessage('expression args must be an array');
         $math->exp($exp,$args)->result();
     }
 
@@ -558,18 +566,17 @@ class SugarMathTest extends TestCase
      * test scale exceptions
      *
      * @dataProvider scaleExceptionsProvider
-     * @expectedException SugarMath_Exception
-     * @expectedExceptionMessage scale must be a positive integer
-     * @param string $exp string the expression
-     * @param array  $args array the argument array for the expression
+     *
      * @param int    $scale the decimal precision to use
      * @group math
      * @access public
      */
-    public function testScaleExceptions($exp,$args,$scale)
+    public function testScaleExceptions($scale)
     {
-        $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args)->result();
+        $this->expectException(SugarMath_Exception::class);
+        $this->expectExceptionMessage('scale must be a positive integer');
+
+        new SugarMath(0, $scale);
     }
 
     /**
@@ -580,7 +587,7 @@ class SugarMathTest extends TestCase
      */
     public static function scaleExceptionsProvider() {
         return array(
-            array('1+2',array(),-99),
+            array(-99),
         );
     }
 
@@ -588,8 +595,7 @@ class SugarMathTest extends TestCase
      * test non-matching parenthesis exceptions
      *
      * @dataProvider nonMatchingParenthesisExceptionsProvider
-     * @expectedException SugarMath_Exception
-     * @expectedExceptionMessage parenthesis mismatch
+     *
      * @param string $exp string the expression
      * @param array  $args array the argument array for the expression
      * @param int    $scale the decimal precision to use
@@ -599,6 +605,9 @@ class SugarMathTest extends TestCase
     public function testNonMatchingParenthesisExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
+
+        $this->expectException(SugarMath_Exception::class);
+        $this->expectExceptionMessage('parenthesis mismatch');
         $math->exp($exp,$args)->result();
     }
 
@@ -619,8 +628,7 @@ class SugarMathTest extends TestCase
      * test non-numeric args exceptions
      *
      * @dataProvider nonNumericArgsExceptionsProvider
-     * @expectedException SugarMath_Exception
-     * @expectedExceptionMessage arguments must be numeric
+     *
      * @param string $exp string the expression
      * @param array  $args array the argument array for the expression
      * @param int    $scale the decimal precision to use
@@ -630,6 +638,9 @@ class SugarMathTest extends TestCase
     public function testNonNumericArgsExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
+
+        $this->expectException(SugarMath_Exception::class);
+        $this->expectExceptionMessage('arguments must be numeric');
         $math->exp($exp,$args)->result();
     }
 
@@ -650,8 +661,7 @@ class SugarMathTest extends TestCase
      * test invalid expressions exceptions
      *
      * @dataProvider nonInvalidExpressionsExceptionsProvider
-     * @expectedException SugarMath_Exception
-     * @expectedExceptionMessage invalid expression syntax
+     *
      * @param string $exp string the expression
      * @param array  $args array the argument array for the expression
      * @param int    $scale the decimal precision to use
@@ -661,6 +671,9 @@ class SugarMathTest extends TestCase
     public function testInvalidExpressionsExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
+
+        $this->expectException(SugarMath_Exception::class);
+        $this->expectExceptionMessage('invalid expression syntax');
         $math->exp($exp,$args)->result();
     }
 
@@ -680,8 +693,7 @@ class SugarMathTest extends TestCase
      * test groups operators expressions exceptions
      *
      * @dataProvider nonGroupedOperatorsExpressionsExceptionsProvider
-     * @expectedException SugarMath_Exception
-     * @expectedExceptionMessage grouped operators error
+     *
      * @param string $exp string the expression
      * @param array  $args array the argument array for the expression
      * @param int    $scale the decimal precision to use
@@ -691,6 +703,9 @@ class SugarMathTest extends TestCase
     public function testGroupedOperatorsExpressionExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
+
+        $this->expectException(SugarMath_Exception::class);
+        $this->expectExceptionMessage('grouped operators error');
         $math->exp($exp,$args)->result();
     }
 

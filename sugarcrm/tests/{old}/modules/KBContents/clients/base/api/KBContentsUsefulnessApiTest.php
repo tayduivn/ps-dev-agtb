@@ -130,13 +130,15 @@ class KBContentsUsefulnessApiTest extends TestCase
      * Test for votes when not specified module
      *
      * @dataProvider dataProviderUsefulAndNotUseful
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testVoteNotSpecifiedModule($isUseful)
     {
         $args = array(
             'record' => '123'
         );
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
+
         if ($isUseful) {
             $this->api->voteUseful($this->service, $args);
         } else {
@@ -148,13 +150,15 @@ class KBContentsUsefulnessApiTest extends TestCase
      * Test for votes when not specified module
      *
      * @dataProvider dataProviderUsefulAndNotUseful
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testVoteNotSpecifiedRecord($isUseful)
     {
         $args = array(
             'module' => 'KBContents'
         );
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
+
         if ($isUseful) {
             $this->api->voteUseful($this->service, $args);
         } else {
@@ -166,7 +170,6 @@ class KBContentsUsefulnessApiTest extends TestCase
      * Test for votes when record not found
      *
      * @dataProvider dataProviderUsefulAndNotUseful
-     * @expectedException SugarApiExceptionNotFound
      */
     public function testVoteNotFoundRecord($isUseful)
     {
@@ -174,6 +177,9 @@ class KBContentsUsefulnessApiTest extends TestCase
             'module' => 'KBContents',
             'record' => 'some_id_123'
         );
+
+        $this->expectException(SugarApiExceptionNotFound::class);
+
         if ($isUseful) {
             $this->api->voteUseful($this->service, $args);
         } else {
@@ -185,7 +191,6 @@ class KBContentsUsefulnessApiTest extends TestCase
      * Test for votes when record not authorized
      *
      * @dataProvider dataProviderUsefulAndNotUseful
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testVoteNotUsefulNotAuthorized($isUseful)
     {
@@ -209,6 +214,8 @@ class KBContentsUsefulnessApiTest extends TestCase
             'module' => 'KBContents',
             'record' => $this->kbcontent->id
         );
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
 
         if ($isUseful) {
             $apiMock->voteUseful($this->service, $args);

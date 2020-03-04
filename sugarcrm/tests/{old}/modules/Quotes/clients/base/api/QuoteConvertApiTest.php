@@ -85,7 +85,6 @@ class QuoteConvertApiTest extends TestCase
     }
 
     /**
-     * @expectedException SugarApiExceptionNotAuthorized
      * @covers ::convertQuote
      */
     public function testConvertQuoteThrowsExceptionWhenNoSaveAccessToOpportunity()
@@ -120,11 +119,11 @@ class QuoteConvertApiTest extends TestCase
             'record' => 'test_record'
         );
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $convert_api->convertQuote($mockServiceBase, $args);
     }
 
     /**
-     * @expectedException SugarApiExceptionEditConflict
      * @covers ::convertQuote
      */
     public function testConvertQuoteThrowsExceptionWhenQuoteHasOpportunity()
@@ -167,6 +166,7 @@ class QuoteConvertApiTest extends TestCase
             'record' => 'test_record'
         );
 
+        $this->expectException(SugarApiExceptionEditConflict::class);
         $convert_api->convertQuote($mockServiceBase, $args);
     }
 

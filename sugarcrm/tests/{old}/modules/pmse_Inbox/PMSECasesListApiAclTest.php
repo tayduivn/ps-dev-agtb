@@ -19,6 +19,16 @@ use PHPUnit\Framework\TestCase;
  */
 class PMSECasesListApiActTest extends TestCase
 {
+    /**
+     * @var PMSECasesListApi
+     */
+    private $PMSECasesListApi;
+
+    /**
+     * @var RestService
+     */
+    private $api;
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -34,63 +44,49 @@ class PMSECasesListApiActTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testSelectCasesList()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSECasesListApi->selectCasesList($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testSelectLogLoad()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSECasesListApi->selectLogLoad($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testClearLog()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSECasesListApi->clearLog($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testConfigLogLoad()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSECasesListApi->configLogLoad($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testConfigLogPut()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSECasesListApi->configLogPut($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testReturnProcessUsersChart()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSECasesListApi->returnProcessUsersChart($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testReturnProcessStatusChart()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSECasesListApi->returnProcessStatusChart($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /*
+    /**
      * Check if valid user is allowed to pass ACL access
      */
     public function testReturnProcessUsersChartValidUser()

@@ -684,11 +684,12 @@ class CollectionApiTest extends TestCase
 
     /**
      * @dataProvider normalizeOffsetFailure
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testNormalizeOffsetFailure(array $offset)
     {
         $definition = $this->createMock('CollectionDefinitionInterface');
+
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod(
             $this->api,
             'normalizeOffset',
@@ -748,9 +749,6 @@ class CollectionApiTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException SugarApiExceptionInvalidParameter
-     */
     public function testNormalizeStoredFilterFailure()
     {
         $definition = $this->createMock('CollectionDefinitionInterface');
@@ -758,6 +756,7 @@ class CollectionApiTest extends TestCase
             ->method('hasStoredFilter')
             ->willReturn(false);
 
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod(
             $this->api,
             'normalizeStoredFilter',
@@ -1706,10 +1705,10 @@ class CollectionApiTest extends TestCase
 
     /**
      * @dataProvider mapFilterFailureProvider
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testMapFilterFailure(array $filter, array $fieldMap)
     {
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod($this->api, 'mapFilter', array($filter, $fieldMap));
     }
 
@@ -1762,10 +1761,10 @@ class CollectionApiTest extends TestCase
 
     /**
      * @dataProvider mapOrderByFailureProvider
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testMapOrderByFailure(array $orderBy, array $fieldMap)
     {
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod($this->api, 'mapOrderBy', array($orderBy, $fieldMap));
     }
 

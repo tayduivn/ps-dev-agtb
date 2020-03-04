@@ -157,10 +157,11 @@ class M2MRelationshipLoadTest extends TestCase
 
     /**
      * @covers ::load
-     * @expectedException \Exception
+     *
      */
     public function testOffsetException()
     {
+        $this->expectException(Exception::class);
         self::$contact->opportunities->query(
             ['limit' => 1, 'offset' => -1]
         );

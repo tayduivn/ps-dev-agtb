@@ -53,7 +53,6 @@ class EmailAddressesApiTest extends TestCase
 
     /**
      * @covers ::createBean
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testCreateBean_CannotCreateWithoutAnEmailAddress()
     {
@@ -61,12 +60,13 @@ class EmailAddressesApiTest extends TestCase
         $args = array(
             'module' => 'EmailAddresses',
         );
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $api->createBean($this->service, $args);
     }
 
     /**
      * @covers ::createBean
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testCreateBean_CannotCreateWithAnInvalidEmailAddress()
     {
@@ -75,6 +75,8 @@ class EmailAddressesApiTest extends TestCase
             'module' => 'EmailAddresses',
             'email_address' => 'a',
         );
+
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $api->createBean($this->service, $args);
     }
 

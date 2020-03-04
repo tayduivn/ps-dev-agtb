@@ -106,7 +106,6 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
     /**
      * @group bug57572
-     * @expectedException SugarApiExceptionNeedLogin
      */
     public function testPortalInactiveErrorInactive()
     {
@@ -121,6 +120,8 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
     	$storage = new SugarOAuth2Storage();
         $storage->setPlatform('portal');
+
+        $this->expectException(SugarApiExceptionNeedLogin::class);
     	$storage->checkUserCredentials('support_portal','unittestportal2','unittestportal2');
     }
 

@@ -385,9 +385,6 @@ class ModuleApiTest extends TestCase
         $this->assertEquals($id, $result['id']);
     }
 
-    /**
-     * @expectedException SugarApiExceptionEditConflict
-     */
     public function testUpdateConflict()
     {
         $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'Test Account',
@@ -401,16 +398,21 @@ class ModuleApiTest extends TestCase
         $dm = $timedate->fromIso($result['date_modified'])->get("-1 minute");
 
         try {
-            $result = $this->moduleApi->updateRecord($this->serviceMock,
-                    array('module' => 'Accounts', 'record' => $id, 'name' => 'Changed Account',
-                            '_headers' => array('X_TIMESTAMP' => $timedate->asIso($dm)),
-                    ));
-        } catch(SugarApiExceptionEditConflict $e) {
+            $this->moduleApi->updateRecord($this->serviceMock, array(
+                'module' => 'Accounts',
+                'record' => $id,
+                'name' => 'Changed Account',
+                '_headers' => array('X_TIMESTAMP' => $timedate->asIso($dm)),
+            ));
+        } catch (SugarApiExceptionEditConflict $e) {
             $this->assertNotEmpty($e->extraData);
             $this->arrayHasKey("record", $e->extraData);
             $this->assertEquals('Test Account', $e->extraData['record']['name']);
-            throw $e;
+
+            return;
         }
+
+        $this->fail('Expected a SugarApiExceptionEditConflict to be thrown');
     }
 
     public function testViewNoneCreate()
@@ -637,10 +639,10 @@ class ModuleApiTest extends TestCase
 
     /**
      * @dataProvider getRelatedRecordArgumentsFailureProvider
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testGetRelatedRecordArgumentsFailure(array $fieldDefs, array $args, $action)
     {
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->getRelatedRecordArguments($fieldDefs, $args, $action);
     }
 

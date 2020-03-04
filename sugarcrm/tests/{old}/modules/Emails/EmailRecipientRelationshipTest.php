@@ -610,13 +610,13 @@ class EmailRecipientRelationshipTest extends TestCase
      *
      * @covers ::add
      * @covers ::assertParentModule
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testAdd_CannotLinkParticipantWhoseParentModuleDoesNotUseTheEmailAddressTemplate()
     {
         $email = SugarTestEmailUtilities::createEmail();
         $task = SugarTestTaskUtilities::createTask();
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->add($email, $this->createEmailParticipant($task));
     }
 
@@ -624,20 +624,19 @@ class EmailRecipientRelationshipTest extends TestCase
      * The participants of an archived email cannot change.
      *
      * @covers ::add
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testAdd_CannotLinkParticipantAfterEmailIsArchived()
     {
         $email = SugarTestEmailUtilities::createEmail();
         $contact = SugarTestContactUtilities::createContact();
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->add($email, $this->createEmailParticipant($contact));
     }
 
     /**
      * The participants of an archived email cannot change.
      *
-     * @expectedException SugarApiExceptionNotAuthorized
      * @covers ::add
      */
     public function testAdd_EmailAddressForParticipantCannotChangeAfterEmailIsArchived()
@@ -655,6 +654,7 @@ class EmailRecipientRelationshipTest extends TestCase
         $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
     }
 
@@ -773,7 +773,6 @@ class EmailRecipientRelationshipTest extends TestCase
     /**
      * The participants of an archived email cannot be unlinked.
      *
-     * @expectedException SugarApiExceptionNotAuthorized
      * @covers ::remove
      */
     public function testRemove_CannotUnlinkParticipantAfterEmailIsArchived()
@@ -791,6 +790,7 @@ class EmailRecipientRelationshipTest extends TestCase
         $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->relationship->remove($email, $ep);
     }
 

@@ -19,6 +19,16 @@ use PHPUnit\Framework\TestCase;
  */
 class PMSEEngineApiActTest extends TestCase
 {
+    /**
+     * @var PMSEEngineApi
+     */
+    private $PMSEEngineApi;
+
+    /**
+     * @var RestService
+     */
+    private $api;
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -34,71 +44,55 @@ class PMSEEngineApiActTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testReactivateFlows()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEngineApi->reactivateFlows($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testReassignFlows()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEngineApi->reassignFlows($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testGetReassignFlows()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEngineApi->getReassignFlows($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testSelectCase()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEngineApi->selectCase($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testCancelCase()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEngineApi->cancelCase($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testGetUnattendedCases()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEngineApi->getUnattendedCases($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testGetSettingsEngine()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEngineApi->getSettingsEngine($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testPutSettingsEngine()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEngineApi->putSettingsEngine($this->api, array('module' => 'pmse_Inbox'));
     }
 
-    /*
+    /**
      * Check if valid user is allowed to pass ACL access
      */
     public function testGetSettingsEngineValidUser()

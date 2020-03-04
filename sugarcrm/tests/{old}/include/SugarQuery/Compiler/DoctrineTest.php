@@ -125,12 +125,11 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException SugarQueryException
-     */
     public function testCompileFromNoBean()
     {
         $query = new SugarQuery();
+
+        $this->expectException(SugarQueryException::class);
         $query->compile();
     }
 

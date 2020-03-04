@@ -64,22 +64,18 @@ class RS4Test extends TestCase
         );
     }
 
-    /**
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
     public function testNoAccess()
     {
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->configSave(
             SugarTestRestUtilities::getRestServiceMock(),
             array('module' => 'Accounts')
         );
     }
 
-    /**
-     * @expectedException SugarApiExceptionMissingParameter
-     */
     public function testEmptyModule()
     {
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->config(
             SugarTestRestUtilities::getRestServiceMock(self::$admin),
             array()

@@ -37,13 +37,11 @@ class SubscriptionsApiTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     * @expectedException     SugarApiExceptionNotFound
-     */
     public function testSubscribeToRecord_RecordNotFound_ThrowsException()
     {
         Activity::enable();
 
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->subscriptionApi->subscribeToRecord(
             $this->api,
             array(
@@ -53,9 +51,6 @@ class SubscriptionsApiTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException     SugarApiExceptionNotAuthorized
-     */
     public function testSubscribeToRecord_NoAccess_ThrowsException()
     {
         $mockLead = $this->getMockBuilder('Lead')->setMethods(array('ACLAccess'))->getMock();
@@ -69,6 +64,8 @@ class SubscriptionsApiTest extends TestCase
         BeanFactory::registerBean($mockLead);
 
         Activity::enable();
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->subscriptionApi->subscribeToRecord(
             $this->api,
             array(
@@ -76,13 +73,8 @@ class SubscriptionsApiTest extends TestCase
                 'record' => $mockLead->id,
             )
         );
-
-        BeanFactory::unregisterBean($mockLead);
     }
 
-    /**
-     * @expectedException     SugarApiExceptionNotFound
-     */
     public function testUnSubscribeFromRecord_RecordNotFound_ThrowsException()
     {
         $lead = SugarTestLeadUtilities::createLead();
@@ -90,6 +82,7 @@ class SubscriptionsApiTest extends TestCase
 
         Activity::enable();
 
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->subscriptionApi->unsubscribeFromRecord(
             $this->api,
             array(
@@ -99,9 +92,6 @@ class SubscriptionsApiTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException     SugarApiExceptionNotAuthorized
-     */
     public function testUnSubscribeFromRecord_NoAccess_ThrowsException()
     {
         $mockLead = $this->getMockBuilder('Lead')->setMethods(array('ACLAccess'))->getMock();
@@ -115,6 +105,8 @@ class SubscriptionsApiTest extends TestCase
         BeanFactory::registerBean($mockLead);
 
         Activity::enable();
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->subscriptionApi->unsubscribeFromRecord(
             $this->api,
             array(
@@ -122,7 +114,5 @@ class SubscriptionsApiTest extends TestCase
                 'record' => $mockLead->id,
             )
         );
-
-        BeanFactory::unregisterBean($mockLead);
     }
 }

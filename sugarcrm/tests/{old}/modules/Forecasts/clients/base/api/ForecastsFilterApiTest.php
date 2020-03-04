@@ -96,7 +96,6 @@ class ForecastsCommittedApiTest extends TestCase
     }
 
     /**
-     * @expectedException SugarApiExceptionNotAuthorized
      * @group forecastapi
      * @group forecasts
      */
@@ -104,6 +103,7 @@ class ForecastsCommittedApiTest extends TestCase
     {
         $GLOBALS["current_user"] = self::$reportee;
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
             array('module' => 'Forecasts', 'user_id' => self::$manager['user']->id)
@@ -126,7 +126,6 @@ class ForecastsCommittedApiTest extends TestCase
     }
 
     /**
-     * @expectedException SugarApiExceptionInvalidParameter
      * @group forecastapi
      * @group forecasts
      */
@@ -134,6 +133,7 @@ class ForecastsCommittedApiTest extends TestCase
     {
         $GLOBALS["current_user"] = self::$manager['user'];
 
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
             array('module' => 'Forecasts', 'user_id' => 'im_not_valid')
@@ -141,7 +141,6 @@ class ForecastsCommittedApiTest extends TestCase
     }
 
     /**
-     * @expectedException SugarApiExceptionInvalidParameter
      * @group forecastapi
      * @group forecasts
      */
@@ -149,6 +148,7 @@ class ForecastsCommittedApiTest extends TestCase
     {
         $GLOBALS["current_user"] = self::$reportee;
 
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
             array('module' => 'Forecasts', 'timeperiod_id' => 'im_not_valid')
@@ -156,7 +156,6 @@ class ForecastsCommittedApiTest extends TestCase
     }
 
     /**
-     * @expectedException SugarApiExceptionInvalidParameter
      * @group forecastapi
      * @group forecasts
      */
@@ -171,7 +170,7 @@ class ForecastsCommittedApiTest extends TestCase
                     array("next_offset" => -1,"records" => array())
                 ));
 
-
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
             array('module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id, 'forecast_type' => 'invalid_type')

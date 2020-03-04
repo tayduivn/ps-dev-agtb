@@ -47,19 +47,15 @@ class RS189Test extends TestCase
         $this->api = new MassUpdateApi();
     }
 
-    /**
-     * @expectedException SugarApiExceptionMissingParameter
-     */
     public function testDeleteException()
     {
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->massDelete(self::$rest, array());
     }
 
-    /**
-     * @expectedException SugarApiExceptionMissingParameter
-     */
     public function testEmptyDelete()
     {
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->massDelete(
             self::$rest,
             array('massupdate_params' => array(), 'module' => 'Accounts')

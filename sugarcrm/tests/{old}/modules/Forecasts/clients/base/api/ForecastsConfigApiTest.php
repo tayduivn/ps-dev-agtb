@@ -259,7 +259,6 @@ class ForecastsConfigApiTest extends TestCase
      * test the create api using bad credentials, should receive a failure
      *
      * @group forecasts
-     * @expectedException SugarApiExceptionNotAuthorized
      * @covers ::forecastsConfigSave
      */
     public function testCreateBadCredentialsConfig() {
@@ -275,14 +274,9 @@ class ForecastsConfigApiTest extends TestCase
             "testSetting" => "testValue",
         );
         $apiClass = $this->createPartialMock('ForecastsConfigApi', array('refreshForecastByMetadata', 'rebuildExtensions'));
-        $result = $apiClass->forecastsConfigSave($api, $args);
 
-        /* @var $admin Administration */
-        $admin = BeanFactory::newBean('Administration');
-
-        $results = $admin->getConfigForModule('Forecasts', 'base');
-
-        $this->assertArrayNotHasKey("testSetting", $results);
+        $this->expectException(\SugarApiExceptionNotAuthorized::class);
+        $apiClass->forecastsConfigSave($api, $args);
     }
 
     /**

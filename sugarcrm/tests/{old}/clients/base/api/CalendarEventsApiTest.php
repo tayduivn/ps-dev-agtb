@@ -110,9 +110,6 @@ class CalendarEventsApiTest extends TestCase
         BeanFactory::unregisterBean($mockMeeting);
     }
 
-    /**
-     * @expectedException     SugarApiExceptionNotAuthorized
-     */
     public function testDeleteRecordAndRecurrences_NoAccess_ThrowsException()
     {
         $mockMeeting = $this->getMockBuilder('Meeting')->setMethods(array('ACLAccess'))->getMock();
@@ -130,9 +127,8 @@ class CalendarEventsApiTest extends TestCase
             'record' => $mockMeeting->id,
         );
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->calendarEventsApi->deleteRecordAndRecurrences($this->api, $args);
-
-        BeanFactory::unregisterBean($mockMeeting);
     }
 
     public function testDeleteRecordAndRecurrences_RetrievesParentRecord_DeletesAllMeetings()
@@ -248,9 +244,6 @@ class CalendarEventsApiTest extends TestCase
         $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
-    /**
-     * @expectedException SugarApiException
-     */
     public function testCreateRecord_RecurringMeeting_NoTerminationArgs_ThrowsException()
     {
         $id = create_guid();
@@ -274,6 +267,7 @@ class CalendarEventsApiTest extends TestCase
         $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
+        $this->expectException(SugarApiException::class);
         $calendarEventsApiMock->createBean($this->api, $args);
     }
 
@@ -504,9 +498,6 @@ class CalendarEventsApiTest extends TestCase
         $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);
     }
 
-    /**
-     * @expectedException SugarApiException
-     */
      public function testUpdateRecurringCalendarEvent_UsingChildRecord_ThrowsException()
      {
          $meeting                   = BeanFactory::newBean('Meetings');
@@ -527,6 +518,7 @@ class CalendarEventsApiTest extends TestCase
          $calendarEventsApiMock->expects($this->never())
              ->method('updateRecord');
 
+         $this->expectException(SugarApiException::class);
          $calendarEventsApiMock->updateRecurringCalendarEvent(
              $meeting,
              $this->api,
@@ -623,24 +615,20 @@ class CalendarEventsApiTest extends TestCase
         $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
-    /**
-     * @expectedException     SugarApiExceptionMissingParameter
-     */
     public function testUpdateCalendarEvent_EventIdMissing_rebuildFBCacheNotInvoked()
     {
-        $args = array();
-        $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
+        $this->expectException(SugarApiExceptionMissingParameter::class);
+        $this->calendarEventsApi->updateCalendarEvent($this->api, array());
     }
 
-    /**
-     * @expectedException     SugarApiExceptionNotFound
-     */
     public function testUpdateCalendarEvent_EventNotFound_rebuildFBCacheNotInvoked()
     {
         $args = array();
         $args['module'] = 'Meetings';
         $args['record'] = create_guid();
         $args['date_start'] = $this->dateTimeAsISO('2014-12-25 13:00:00');
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
     }
 

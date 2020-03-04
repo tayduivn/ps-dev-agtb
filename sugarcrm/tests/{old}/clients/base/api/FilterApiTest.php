@@ -152,11 +152,10 @@ class FilterApiTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     * @expectedException SugarApiExceptionInvalidParameter
-     */
     public function testFilterListSetupStringFilterUnsupported()
     {
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
+
         // Making $args['filter'] a JSON-encoded string is only supported
         // on endpoints where 'filter' is a jsonParam. They must be converted
         // before FilterApi::filterListSetup is called.

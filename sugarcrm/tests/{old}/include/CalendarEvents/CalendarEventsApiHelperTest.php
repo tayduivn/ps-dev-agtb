@@ -140,7 +140,6 @@ class CalendarEventsApiHelperTest extends TestCase
 
     /**
      * @dataProvider throwsMissingParameterExceptionProvider
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testPopulateFromApi_ThrowsMissingParameterException($starts, $hours, $minutes)
     {
@@ -151,12 +150,13 @@ class CalendarEventsApiHelperTest extends TestCase
         $meeting->duration_minutes = $minutes;
 
         $helper = new CalendarEventsApiHelper($this->api);
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $helper->populateFromApi($meeting, array());
     }
 
     /**
      * @dataProvider throwsInvalidParameterExceptionProvider
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testPopulateFromApi_ThrowsInvalidParameterException($hours, $minutes)
     {
@@ -167,6 +167,8 @@ class CalendarEventsApiHelperTest extends TestCase
         $meeting->duration_minutes = $minutes;
 
         $helper = new CalendarEventsApiHelper($this->api);
+
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $helper->populateFromApi($meeting, array());
     }
 

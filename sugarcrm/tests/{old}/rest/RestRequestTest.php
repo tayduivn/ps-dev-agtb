@@ -86,13 +86,14 @@ class RestRequestTest extends TestCase
     }
 
     /**
-     *  @expectedException SugarApiExceptionIncorrectVersion
      * @dataProvider versionExceptionProvider
      */
     public function testVersionException($req, $header)
     {
         $service = array_merge(array('REQUEST_METHOD' => 'GET'), $header);
         $restRequest = new RestRequest($service, array('__sugar_url' => $req));
+
+        $this->expectException(SugarApiExceptionIncorrectVersion::class);
         $restRequest->getVersion();
     }
 

@@ -1728,17 +1728,16 @@ class EmailParticipantsFilterApiTest extends TestCase
     /**
      * @covers ::addParticipantFilter
      * @dataProvider throwsSugarApiExceptionInvalidParameterProvider
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testAddParticipantFilter_ThrowsSugarApiExceptionInvalidParameter($def)
     {
-        $args = [
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
+        $this->api->filterList($this->service, [
             'module' => 'Emails',
             'filter' => $def,
             'fields' => 'id,parent_name',
             'order_by' => 'parent_name:ASC',
-        ];
-        $response = $this->api->filterList($this->service, $args);
+        ]);
     }
 
     /**

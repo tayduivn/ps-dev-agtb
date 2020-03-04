@@ -60,9 +60,6 @@ class SmtpMailerTest extends TestCase
         $mockMailer->connect();
     }
 
-    /**
-     *  @expectedException MailerException
-     */
     public function testConnect_ConnectionFails_ExceptionThrown()
     {
         $config = new OutboundSmtpEmailConfiguration($GLOBALS['current_user']);
@@ -80,6 +77,7 @@ class SmtpMailerTest extends TestCase
         $mockMailer->expects($this->once())->method('transferConfigurations')->will($this->returnValue(true));
         $mockMailer->expects($this->once())->method('connectToHost')->will($this->throwException(new MailerException()));
 
+        $this->expectException(MailerException::class);
         $mockMailer->connect();
     }
 

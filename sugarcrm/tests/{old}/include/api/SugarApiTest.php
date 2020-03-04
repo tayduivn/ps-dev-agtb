@@ -596,10 +596,10 @@ class SugarApiTest extends TestCase
 
     /**
      * @dataProvider normalizeFieldsFailureProvider
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testNormalizeFieldsFailure($fields)
     {
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->normalizeFields($fields, $displayParams);
     }
 
@@ -652,10 +652,11 @@ class SugarApiTest extends TestCase
 
     /**
      * @dataProvider parseFieldsFailureProvider
-     * @expectedException SugarApiExceptionInvalidParameter
+     *
      */
     public function testParseFieldsFailure($fields)
     {
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->parseFields($fields);
     }
 

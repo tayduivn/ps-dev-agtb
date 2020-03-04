@@ -68,10 +68,10 @@ class AbstractCollectionDefinitionTest extends TestCase
 
     /**
      * @dataProvider normalizeSourcesFailureProvider
-     * @expectedException SugarApiExceptionError
      */
     public function testNormalizeSourcesFailure($sources)
     {
+        $this->expectException(SugarApiExceptionError::class);
         SugarTestReflection::callProtectedMethod(
             $this->definition,
             'normalizeSources',

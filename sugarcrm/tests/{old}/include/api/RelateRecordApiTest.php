@@ -502,10 +502,10 @@ class RelateRecordApiTest extends TestCase
 
     /**
      * @dataProvider normalizeLinkIdsFailureProvider
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testNormalizeLinkIdsFailure($ids)
     {
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->normalizeLinkIds($ids);
     }
 

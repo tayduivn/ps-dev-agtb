@@ -66,7 +66,6 @@ class EmailsRelateRecordApiTest extends TestCase
      *
      * @dataProvider readOnlyLinkProvider
      * @covers ::updateRelatedLink
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testUpdateRelatedLink($linkName)
     {
@@ -90,6 +89,7 @@ class EmailsRelateRecordApiTest extends TestCase
         $api->expects($this->once())->method('loadBean')->willReturn($email);
         $api->expects($this->once())->method('checkRelatedSecurity')->willReturn([$linkName, $note]);
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->updateRelatedLink($this->service, $args);
     }
 }

@@ -34,7 +34,6 @@ class ForecastsApiTest extends TestCase
 
 
     /**
-     * @expectedException SugarApiExceptionInvalidHash
      * @covers ::compareSettingsToDefaults
      */
     public function testCompareConfigsThrowsException()
@@ -45,6 +44,7 @@ class ForecastsApiTest extends TestCase
 
         $obj = new ForecastsApi();
 
+        $this->expectException(SugarApiExceptionInvalidHash::class);
         SugarTestReflection::callProtectedMethod(
             $obj,
             'compareSettingsToDefaults',

@@ -47,13 +47,14 @@ class vCardTest extends TestCase
      *
      * @ticket 60613
      * @dataProvider vCardsWithoutRequiredFields
-     * @expectedException SugarException
      */
     public function testImportVCardWithoutRequiredFields($filename, $module)
     {
         $filename  = dirname(__FILE__)."/vcf/$filename";
 
         $vcard = new vCard();
+
+        $this->expectException(SugarException::class);
         $vcard->importVCard($filename, $module);
     }
 

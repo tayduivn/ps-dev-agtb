@@ -27,7 +27,12 @@ class PasswordApiTest extends TestCase
         'username' => 'test'
     );
 
-    public function setUp()
+    /**
+     * @var PasswordApi
+     */
+    private $passwordApi;
+
+    protected function setUp()
     {
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp('app_strings');
@@ -108,35 +113,30 @@ class PasswordApiTest extends TestCase
     }
 
 
-    /**
-     * @expectedException SugarApiExceptionMissingParameter
-     */
     public function testMissingParamException()
     {
         unset($this->args['email']);
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->passwordApi->requestPassword($this->serviceMock, $this->args);
     }
 
-    /**
-     * @expectedException SugarApiExceptionMissingParameter
-     */
     public function testEmptyParam()
     {
         $this->args['email'] = '';
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->passwordApi->requestPassword($this->serviceMock, $this->args);
     }
 
-    /**
-     * @expectedException SugarApiExceptionRequestMethodFailure
-     */
     public function testForgotPasswordException()
     {
+        $this->expectException(SugarApiExceptionRequestMethodFailure::class);
         $this->passwordApi->requestPassword($this->serviceMock, $this->args);
     }
 
     /**
      * @dataProvider providerEmailData
-     * @expectedException SugarApiExceptionRequestMethodFailure
      */
     public function testRequestException($data)
     {
@@ -157,6 +157,7 @@ class PasswordApiTest extends TestCase
         );
         $this->passwordApi->usr->portal_only = $data['portalOnly'];
 
+        $this->expectException(SugarApiExceptionRequestMethodFailure::class);
         $this->passwordApi->requestPassword($this->serviceMock, $this->args);
     }
 

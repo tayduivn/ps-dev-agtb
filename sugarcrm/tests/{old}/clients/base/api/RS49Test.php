@@ -82,14 +82,14 @@ class RS49Test extends TestCase
 
     /**
      * On empty size of file we should get exception
-     *
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testSaveFilePutFileSize()
     {
         file_put_contents($this->file, '');
         $api = $this->createPartialMock('FileApi', array('saveFilePost'));
         $api->expects($this->never())->method('saveFilePost');
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $api->saveFilePut($this->service, array(), $this->file);
     }
 
@@ -124,8 +124,6 @@ class RS49Test extends TestCase
 
     /**
      * We should get exception if ACLAccess returns false
-     *
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testSaveFilePostBeanACLAccessView()
     {
@@ -141,13 +139,13 @@ class RS49Test extends TestCase
             'record' => $bean->id,
             'field' => 'filename',
         );
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->saveFilePost($this->service, $parameters);
     }
 
     /**
      * We should get exception if $_FILES isn't set
-     *
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testSaveFilePostFilesAreNotSet()
     {
@@ -159,13 +157,12 @@ class RS49Test extends TestCase
             'field' => 'filename',
         );
 
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->saveFilePost($this->service, $parameters);
     }
 
     /**
      * We should get exception if $_FILES is empty
-     *
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testSaveFilePostFilesAreSetAndEmpty()
     {
@@ -177,13 +174,12 @@ class RS49Test extends TestCase
             'field' => 'filename',
         );
 
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->saveFilePost($this->service, $parameters);
     }
 
     /**
      * We should get exception if $_FILES is present but doesn't contain current file
-     *
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testSaveFilePostFilesAreSetButWithoutCurrentFile()
     {
@@ -199,12 +195,10 @@ class RS49Test extends TestCase
             'field' => 'filename',
         );
 
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->saveFilePost($this->service, $parameters);
     }
 
-    /**
-     * @expectedException SugarApiExceptionError
-     */
     public function testSaveFilePostIncorrectFieldType()
     {
         $_FILES = array(
@@ -219,14 +213,13 @@ class RS49Test extends TestCase
             'field' => 'name',
         );
 
+        $this->expectException(SugarApiExceptionError::class);
         $this->api->saveFilePost($this->service, $parameters);
     }
 
     /**
      * We should get exception if $_FILES is empty
      * Also mark_deleted method should be called if delete_if_fails parameter is present
-     *
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testDeleteIfFailsWithParameter()
     {
@@ -247,14 +240,13 @@ class RS49Test extends TestCase
         $api = $this->createPartialMock('FileApi', array('loadBean'));
         $api->expects($this->any())->method('loadBean')->will($this->returnValue($bean));
 
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $api->saveFilePost($this->service, $parameters);
     }
 
     /**
      * We should get exception if $_FILES is empty
      * Also mark_deleted method shouldn't be called if delete_if_fails parameter isn't present
-     *
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testDeleteIfFailsWithoutParameter()
     {
@@ -274,6 +266,7 @@ class RS49Test extends TestCase
         $api = $this->createPartialMock('FileApi', array('loadBean'));
         $api->expects($this->any())->method('loadBean')->will($this->returnValue($bean));
 
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $api->saveFilePost($this->service, $parameters);
     }
 
@@ -293,8 +286,6 @@ class RS49Test extends TestCase
 
     /**
      * We should get exception if ACLAccess returns false
-     *
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testGetFileListACLAccessView()
     {
@@ -309,14 +300,13 @@ class RS49Test extends TestCase
             'module' => $bean->module_dir,
             'record' => $bean->id,
         );
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->getFileList($this->service, $parameters);
     }
 
     /**
      * We should get exception about incorrect file, it means success of getFile method.
-     *
-     * @expectedException        SugarApiExceptionNotFound
-     * @expectedExceptionMessage File information could not be retrieved for this record
      */
     public function testGetFile()
     {
@@ -333,13 +323,14 @@ class RS49Test extends TestCase
             'record' => $bean->id,
             'field' => 'filename',
         );
+
+        $this->expectException(SugarApiExceptionNotFound::class);
+        $this->expectExceptionMessage('File information could not be retrieved for this record');
         $api->getFile($this->service, $parameters);
     }
 
     /**
      * We should get exception if field is not present in $parameters
-     *
-     * @expectedException SugarApiExceptionMissingParameter
      */
     public function testGetFileWithoutField()
     {
@@ -347,13 +338,13 @@ class RS49Test extends TestCase
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
         );
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->getFile($this->service, $parameters);
     }
 
     /**
      * We should get exception if ACLAccess returns false
-     *
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testGetFileACLAccessView()
     {
@@ -369,13 +360,13 @@ class RS49Test extends TestCase
             'record' => $bean->id,
             'field' => 'filename',
         );
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->getFile($this->service, $parameters);
     }
 
     /**
      * We should get exception if field is empty
-     *
-     * @expectedException SugarApiExceptionNotFound
      */
     public function testGetFileACLEmptyField()
     {
@@ -392,6 +383,8 @@ class RS49Test extends TestCase
             'record' => $bean->id,
             'field' => 'filename',
         );
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $api->getFile($this->service, $parameters);
     }
 
@@ -444,8 +437,6 @@ class RS49Test extends TestCase
 
     /**
      * We should get exception if field isn't file or image
-     *
-     * @expectedException SugarApiExceptionError
      */
     public function testRemoveFileIncorrectFieldType()
     {
@@ -458,13 +449,13 @@ class RS49Test extends TestCase
             'record' => $this->note->id,
             'field' => 'id',
         );
+
+        $this->expectException(SugarApiExceptionError::class);
         $api->removeFile($this->service, $parameters);
     }
 
     /**
      * We should get exception if deleteAttachment fails
-     *
-     * @expectedException SugarApiExceptionRequestMethodFailure
      */
     public function testRemoveFileDeleteAttachmentFails()
     {
@@ -482,6 +473,8 @@ class RS49Test extends TestCase
             'record' => $bean->id,
             'field' => 'filename',
         );
+
+        $this->expectException(SugarApiExceptionRequestMethodFailure::class);
         $api->removeFile($this->service, $parameters);
     }
 }
