@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;

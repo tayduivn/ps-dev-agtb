@@ -13,12 +13,10 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\Relate\FunctionalityCases\One2Many;
 
 use SugarBean;
-use SugarTestAccountUtilities;
 use SugarTestContactUtilities;
-use SugarTestOpportunityUtilities;
 use SugarTestTaskUtilities;
 
-class TasksContactO2MFunctionalityTest extends AbstractFunctionalityTest
+class TasksContactFunctionalityTest extends AbstractFunctionalityTest
 {
     protected static $options = [
         'primary_module' => 'Tasks',

@@ -12,14 +12,14 @@
 
 /** @noinspection PhpUndefinedFieldInspection */
 
-namespace Sugarcrm\SugarcrmTestUnit\inc\generic\SugarWidgets;
+namespace Sugarcrm\SugarcrmTestsUnit\inc\generic\SugarWidgets;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * Class SugarWidgetFieldEnumTest
- * @package Sugarcrm\SugarcrmTestUnit\inc\generic\SugarWidgets
+ * @package Sugarcrm\SugarcrmTestsUnit\inc\generic\SugarWidgets
  * @coversDefaultClass \SugarWidgetFieldMultiEnum
  */
 class SugarWidgetFieldMultiEnumTest extends TestCase

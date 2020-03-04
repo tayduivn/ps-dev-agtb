@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\modules\Currencies\Ext\LogicHooks;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Currencies\Ext\LogicHooks;
 
 use PHPUnit\Framework\TestCase;
 

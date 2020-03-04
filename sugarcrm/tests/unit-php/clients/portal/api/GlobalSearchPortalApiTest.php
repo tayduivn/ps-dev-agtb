@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @coversDefaultClass \GlobalSearchPortalApi
  */
-class GlobalSearchApiPortalTest extends TestCase
+class GlobalSearchPortalApiTest extends TestCase
 {
     /**
      * @expectedException \SugarApiExceptionNoMethod

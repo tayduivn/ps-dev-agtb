@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\inc\MetaDataManagerMobile;
+namespace Sugarcrm\SugarcrmTestsUnit\inc\MetaDataManager;
 
 use PHPUnit\Framework\TestCase;
 

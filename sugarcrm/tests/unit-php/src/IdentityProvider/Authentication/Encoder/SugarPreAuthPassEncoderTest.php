@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Encoder;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Encoder;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Encoder\SugarPreAuthPassEncoder;

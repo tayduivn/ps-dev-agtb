@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Success\OIDC;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Listener\Success\OIDC;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDC\UpdateUserLastLoginListener;

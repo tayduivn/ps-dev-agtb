@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSugarAuthenticate;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Users\authentication\IdMSugarAuthenticate;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,7 +22,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout
  */
-class Lockout2Test extends TestCase
+class LockoutTest extends TestCase
 {
     /**
      * @var Lockout|MockObject

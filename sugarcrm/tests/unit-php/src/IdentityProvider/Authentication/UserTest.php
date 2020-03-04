@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +18,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User
  */
-class IdMUserTest extends TestCase
+class UserTest extends TestCase
 {
     /**
      * @var \TimeDate|MockObject

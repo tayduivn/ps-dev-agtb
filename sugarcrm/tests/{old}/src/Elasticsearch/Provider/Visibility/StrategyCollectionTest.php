@@ -9,6 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+namespace Sugarcrm\SugarcrmTests\Elasticsearch\Provider\Visibility;
+
+use InvalidArgumentException;
+use stdClass;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\StrategyCollection;
 use PHPUnit\Framework\TestCase;
 

@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Success;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Listener\Success\OIDC;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

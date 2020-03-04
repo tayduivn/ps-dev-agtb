@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\CommentLog;
 
 use PHPUnit\Framework\TestCase;
 

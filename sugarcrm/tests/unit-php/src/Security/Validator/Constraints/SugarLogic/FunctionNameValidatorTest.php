@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\SugarLogic;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\SugarLogic\FunctionName;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\SugarLogic\FunctionNameValidator;
-use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\SugarLogic\FunctionNameValidator

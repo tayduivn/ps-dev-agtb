@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarFields\Fields\Base;
+namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarFields\Fields\Date;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;

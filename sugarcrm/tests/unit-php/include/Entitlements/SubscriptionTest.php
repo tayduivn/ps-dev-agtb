@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\inc\Entitlements;
+namespace Sugarcrm\SugarcrmTestsUnit\inc\Entitlements;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;

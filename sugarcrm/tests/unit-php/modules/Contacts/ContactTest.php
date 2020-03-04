@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Contacts;
+
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \Contact

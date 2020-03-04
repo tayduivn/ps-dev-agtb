@@ -10,14 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\EventRepositoryTest;
+namespace Sugarcrm\SugarcrmTests\EventRepository;
 
 use BeanFactory;
 use PHPUnit\Framework\TestCase;
 use Doctrine\DBAL\Connection;
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
-use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
-use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;

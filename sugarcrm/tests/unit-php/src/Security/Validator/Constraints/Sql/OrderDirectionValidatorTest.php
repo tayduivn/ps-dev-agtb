@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\Sql;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Sql\OrderDirection;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Sql\OrderDirectionValidator;
-use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\Sql\OrderDirectionValidator

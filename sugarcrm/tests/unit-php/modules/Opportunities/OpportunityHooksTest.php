@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Opportunities;
 
+use Opportunity;
+use OpportunityHooks;
 use PHPUnit\Framework\TestCase;
 
 /**

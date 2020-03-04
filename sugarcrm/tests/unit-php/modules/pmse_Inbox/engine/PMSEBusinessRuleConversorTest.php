@@ -10,8 +10,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine;
 
 use PHPUnit\Framework\TestCase;
+use PMSEBusinessRuleConversor;
+use stdClass;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**

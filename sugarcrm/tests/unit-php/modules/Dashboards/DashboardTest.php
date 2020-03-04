@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Dashboards;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;

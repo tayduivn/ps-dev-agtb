@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Delimited;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\DelimitedValidator;
-use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;

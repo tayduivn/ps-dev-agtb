@@ -10,19 +10,22 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Opportunities;
 
+use Opportunity;
 use PHPUnit\Framework\TestCase;
+use RevenueLineItem;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 
 /**
- * @coversDefaultClass Opportunity
+ * @coversDefaultClass \Opportunity
  */
 class OpportunityTest extends TestCase
 {
     protected function setUp()
     {
-        \BeanFactory::setBeanClass('RevenueLineItems', 'RliMock');
-        \BeanFactory::setBeanClass('Opportunities', 'OpMock');
+        \BeanFactory::setBeanClass('RevenueLineItems', RliMock::class);
+        \BeanFactory::setBeanClass('Opportunities', OpMock::class);
     }
 
     protected function tearDown()

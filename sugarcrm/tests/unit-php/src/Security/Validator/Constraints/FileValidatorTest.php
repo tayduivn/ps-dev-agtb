@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\File;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator;
-use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator

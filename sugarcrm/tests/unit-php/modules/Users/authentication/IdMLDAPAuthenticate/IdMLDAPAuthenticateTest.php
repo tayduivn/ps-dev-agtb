@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMLDAPAuthenticate;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Users\authentication\IdMLDAPAuthenticate;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;

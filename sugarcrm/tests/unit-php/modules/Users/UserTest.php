@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\modules\Users;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Users;
 
 use PHPUnit\Framework\TestCase;
 

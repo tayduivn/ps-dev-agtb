@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\modules\Users\upgrade\scripts\post;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Users\upgrade\scripts\post;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;

@@ -9,11 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\CommentLog;
 
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass commentlog
+ * @coversDefaultClass \CommentLog
  */
 class CommentLogTest extends TestCase
 {

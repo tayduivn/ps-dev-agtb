@@ -9,9 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\src\MetaData\VardefManager;
+namespace Sugarcrm\SugarcrmTestsUnit\MetaData;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\MetaData\ViewdefManager;
 

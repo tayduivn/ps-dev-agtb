@@ -16,7 +16,7 @@ use SugarBean;
 use SugarTestAccountUtilities;
 use SugarTestOpportunityUtilities;
 
-class OpportunityAccountM2MFunctionalityTest extends AbstractFunctionalityTest
+class OpportunityAccountFunctionalityTest extends AbstractFunctionalityTest
 {
     protected static $options = [
         'primary_module' => 'Opportunities',

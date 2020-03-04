@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Security\Validator\Constraints;
+namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\ArrayRecursive;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\ArrayRecursiveValidator;

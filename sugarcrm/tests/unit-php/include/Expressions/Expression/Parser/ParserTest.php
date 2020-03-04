@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestsUnit\inc\Expression\Parser;
+namespace Sugarcrm\SugarcrmTestsUnit\inc\Expressions\Expression\Parser;
 
 use PHPUnit\Framework\TestCase;
 

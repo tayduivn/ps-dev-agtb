@@ -10,8 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine;
 
 use PHPUnit\Framework\TestCase;
+use PMSELogger;
 
 /**
  * @coversDefaultClass \PMSELogger

@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\OAuth2Authenticate;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Users\authentication\OAuth2Authenticate;
 
 use OAuth2Authenticate;
 use PHPUnit\Framework\MockObject\MockObject;

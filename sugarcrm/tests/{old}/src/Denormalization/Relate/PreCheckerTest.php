@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestsUnit\Denormalization;
+namespace Sugarcrm\SugarcrmTests\Denormalization\Relate;
 
 use BeanFactory;
 use PHPUnit\Framework\TestCase;

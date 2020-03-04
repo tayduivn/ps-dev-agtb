@@ -11,9 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine\PMSEHandlers;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine\PMSEHandlers;
 
 use PHPUnit\Framework\TestCase;
+use PMSEBeanHandler;
 
 /**
  * @coversDefaultClass \PMSEBeanHandler
@@ -380,7 +381,7 @@ TMP;
      * Tests the methods that get the last key and last value of an array
      * @param array $array Array of values to test
      * @param int $key Expected key
-     * @param string $value Expected value
+     * @param string $val Expected value
      * @dataProvider getLastArrayTestDataProvider
      * @covers ::getLastArrayKey
      * @covers ::getLastArrayValue

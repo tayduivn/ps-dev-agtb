@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\inc\AccessControl;
+namespace Sugarcrm\SugarcrmTestsUnit\inc\AccessControl;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\AccessControl\AccessConfigurator;

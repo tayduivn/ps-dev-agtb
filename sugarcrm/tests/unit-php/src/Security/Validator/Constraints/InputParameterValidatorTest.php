@@ -15,7 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\InputParameters;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\InputParametersValidator;
-use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\InputParametersValidator

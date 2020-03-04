@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\TestsUnit\Elasticsearch\Analysis;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Analysis;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;

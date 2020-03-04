@@ -20,7 +20,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand
  */
-class PasswordConfigCommandTestCase extends AbstractPasswordCommandTestCase
+class PasswordConfigCommandTest extends AbstractPasswordCommandTestCase
 {
     /**
      * @covers ::configure

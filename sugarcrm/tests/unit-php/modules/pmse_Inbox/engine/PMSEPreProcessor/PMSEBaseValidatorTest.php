@@ -9,9 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine\PMSEPreProcessor;
 
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\ProcessManager;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 /**

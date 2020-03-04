@@ -13,7 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\Bean;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Bean\ModuleName;
-use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\Bean\ModuleNameValidator

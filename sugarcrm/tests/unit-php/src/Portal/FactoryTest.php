@@ -20,16 +20,8 @@ use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
  */
 class FactoryTest extends TestCase
 {
-    public static function setupBeforeClass(): void
-    {
-    }
-
-    public static function tearDownAfterClass() : void
-    {
-    }
-
     /**
-     * @covers Sugarcrm\Sugarcrm\Portal\Factory::getInstance
+     * @covers \Sugarcrm\Sugarcrm\Portal\Factory::getInstance
      */
     public function testFactory() : void
     {

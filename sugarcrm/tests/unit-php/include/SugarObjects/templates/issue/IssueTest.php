@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\inc\SugarObjects\templates\issue;
+namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarObjects\templates\issue;
 
 use PHPUnit\Framework\TestCase;
 

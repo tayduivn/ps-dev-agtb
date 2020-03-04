@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Success;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Listener\Success;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\LoadUserOnSessionListener;

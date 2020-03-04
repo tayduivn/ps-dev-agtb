@@ -10,8 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine;
 
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -25,7 +27,6 @@ class PMSECriteriaEvaluatorTest extends TestCase
      */
     public function testIsCriteriaToken(stdClass $token, $expect)
     {
-
         $criteriaEvaluatorMock = $this->getMockBuilder('\PMSECriteriaEvaluator')
             // The original constructor instantiates the PMSEExpressionEvaluator class by using
             // ProcessManager\Factory::getPMSEObject. Easiest way to avoid that is not running it.

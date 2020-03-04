@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\modules\Administration;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Administration;
 
 use OneLogin\Saml2\Error;
 use OneLogin\Saml2\Settings;

@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSAMLAuthenticate;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Users\authentication\IdMSAMLAuthenticate;
 
 use OneLogin\Saml2\Constants;
 use PHPUnit\Framework\MockObject\MockObject;

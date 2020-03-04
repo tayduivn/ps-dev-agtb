@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Security\Validator\Constraints;
+namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
 use Symfony\Component\Validator\Tests\Constraints\AbstractConstraintValidatorTest as AbstractBase;
 use Symfony\Component\Validator\Constraints\NotNull;

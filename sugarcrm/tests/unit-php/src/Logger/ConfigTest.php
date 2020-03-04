@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Tests\Logger;
+namespace Sugarcrm\SugarcrmTestsUnit\Logger;
 
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;

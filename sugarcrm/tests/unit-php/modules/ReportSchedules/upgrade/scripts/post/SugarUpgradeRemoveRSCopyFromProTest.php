@@ -10,7 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\modules\ReportSchedules\upgrade\scripts\post;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\ReportSchedules\upgrade\scripts\post;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;

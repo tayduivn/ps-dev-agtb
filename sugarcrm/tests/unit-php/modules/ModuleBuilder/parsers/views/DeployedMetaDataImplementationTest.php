@@ -9,11 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\ModuleBuilder\parsers\views;
 
 use PHPUnit\Framework\TestCase;
+use SugarTestReflection;
 
 /**
- * @coversDefaultClass DeployedMetaDataImplementation
+ * @coversDefaultClass \DeployedMetaDataImplementation
  */
 class DeployedMetaDataImplementationTest extends TestCase
 {

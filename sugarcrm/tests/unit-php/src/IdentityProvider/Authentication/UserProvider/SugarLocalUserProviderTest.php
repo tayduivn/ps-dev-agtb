@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\UserProvider;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\UserProvider;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 

@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine\PMSEElements;
 
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 use PHPUnit\Framework\TestCase;

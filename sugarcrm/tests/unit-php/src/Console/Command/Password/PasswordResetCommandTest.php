@@ -19,7 +19,7 @@ use User;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand
  */
-class PasswordResetCommandTestCase extends AbstractPasswordCommandTestCase
+class PasswordResetCommandTest extends AbstractPasswordCommandTestCase
 {
     /**
      * @covers ::configure

@@ -10,8 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTests\Portal;
+
+use BeanFactory;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+use SugarTestHelper;
 
 /**
  * @covers \Sugarcrm\Sugarcrm\Portal\Session::getAccountIds

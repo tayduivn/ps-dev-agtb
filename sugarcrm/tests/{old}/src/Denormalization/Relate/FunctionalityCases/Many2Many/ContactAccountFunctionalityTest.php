@@ -15,7 +15,7 @@ namespace Sugarcrm\SugarcrmTests\Denormalization\Relate\FunctionalityCases\Many2
 use SugarBean;
 use SugarTestAccountUtilities;
 
-class ContactAccountM2MFunctionalityTest extends AbstractFunctionalityTest
+class ContactAccountFunctionalityTest extends AbstractFunctionalityTest
 {
     protected static $options = [
         'primary_module' => 'Contacts',

@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\SugarcrmTestsUnit\modules\Dashboards;
 
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +20,7 @@ class DefaultDashboardInstallerTest extends TestCase
 {
     protected function setUp()
     {
-        \BeanFactory::setBeanClass('Reports', 'ReportMock');
+        \BeanFactory::setBeanClass('Reports', ReportMock::class);
     }
 
     protected function tearDown()

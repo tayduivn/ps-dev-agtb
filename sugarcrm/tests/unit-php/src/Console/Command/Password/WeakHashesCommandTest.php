@@ -19,7 +19,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Command\Password\WeakHashesCommand
  */
-class WeakHashesCommandTestCase extends AbstractPasswordCommandTestCase
+class WeakHashesCommandTest extends AbstractPasswordCommandTestCase
 {
     /**
      * @covers ::configure

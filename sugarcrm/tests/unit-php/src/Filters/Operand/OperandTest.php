@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Filters\Operand;
+namespace Sugarcrm\SugarcrmTestsUnit\Filters\Operand;
 
 use ServiceBase;
 use PHPUnit\Framework\TestCase;

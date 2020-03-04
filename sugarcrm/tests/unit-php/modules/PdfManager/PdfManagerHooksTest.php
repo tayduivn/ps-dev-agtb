@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\modules\PdfManager;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\PdfManager;
 
 use PHPUnit\Framework\TestCase;
 

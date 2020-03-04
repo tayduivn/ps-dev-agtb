@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestUnit\modules\ProductTemplates\clients\base\api;
+namespace Sugarcrm\SugarcrmTestsUnit\modules\ProductTemplates\clients\base\api;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;

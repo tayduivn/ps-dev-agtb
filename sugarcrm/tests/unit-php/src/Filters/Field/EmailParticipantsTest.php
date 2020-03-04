@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Filters\Field;
+namespace Sugarcrm\SugarcrmTestsUnit\Filters\Field;
 
 use BeanFactory;
 use ServiceBase;

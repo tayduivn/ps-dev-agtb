@@ -18,7 +18,7 @@ use Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger
  */
-class DbalXhprofLoggerTest extends TestCase
+class XhprofLoggerTest extends TestCase
 {
     /**
      * @see testStartQuery

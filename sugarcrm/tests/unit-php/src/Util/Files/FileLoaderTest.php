@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\Files;
+namespace Sugarcrm\SugarcrmTestsUnit\Util\Files;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;

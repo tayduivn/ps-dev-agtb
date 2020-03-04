@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\PhpSerialized;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\PhpSerializedValidator;
-use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\PhpSerializedValidator

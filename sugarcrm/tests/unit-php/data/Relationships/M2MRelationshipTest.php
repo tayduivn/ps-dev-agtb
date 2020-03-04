@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\Relationships;
 
+use Exception;
 use M2MRelationship;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

@@ -10,8 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTests\Portal\Search;
+
 use Sugarcrm\Sugarcrm\Portal\Search\Elastic;
 use PHPUnit\Framework\TestCase;
+use SugarTestHelper;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\Portal\Search\Elastic

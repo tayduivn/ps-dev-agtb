@@ -10,10 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTestsUnit\data\duplicatecheck;
+
 use PHPUnit\Framework\TestCase;
+use TagsFilterDuplicateCheck;
 
 /**
- * @coversDefaultClass TagsFilterDuplicateCheck
+ * @coversDefaultClass \TagsFilterDuplicateCheck
  */
 class TagsFilterDuplicateCheckTest extends TestCase
 {

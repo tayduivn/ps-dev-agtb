@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\DataPrivacy\Erasure;
+namespace Sugarcrm\SugarcrmTestsUnit\DataPrivacy\Erasure;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
