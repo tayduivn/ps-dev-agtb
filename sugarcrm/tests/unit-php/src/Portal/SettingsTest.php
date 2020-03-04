@@ -36,13 +36,14 @@ class SettingsTest extends TestCase
      */
     public function testIsServe() : void
     {
-        $psMock = $this->createPartialMock(Settings, ['getSubscriptions']);
+        $psMock = $this->createPartialMock(Settings::class, ['getSubscriptions']);
 
         $psMock->method('getSubscriptions')
             ->willReturn(['SUGAR_SERVE' => ['more info here']]);
 
         $this->assertTrue($psMock->isServe());
 
+        $psMock = $this->createPartialMock(Settings::class, ['getSubscriptions']);
         $psMock->method('getSubscriptions')
             ->willReturn([]);
 
