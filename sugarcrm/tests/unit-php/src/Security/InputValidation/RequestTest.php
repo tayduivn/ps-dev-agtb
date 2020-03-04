@@ -80,7 +80,11 @@ class RequestTest extends TestCase
                 array(),
                 'foo',
                 'getValidInputGet',
-                'Assert\ConstraintA',
+                array(
+                    'Assert\EqualTo' => array(
+                        'value' => 'VALID',
+                    ),
+                ),
                 null,
                 'VALID',
             ),
@@ -90,7 +94,11 @@ class RequestTest extends TestCase
                 array('foo' => 'VALID'),
                 'foo',
                 'getValidInputPost',
-                'Assert\ConstraintA',
+                array(
+                    'Assert\EqualTo' => array(
+                        'value' => 'VALID',
+                    ),
+                ),
                 null,
                 'VALID',
             ),
@@ -100,7 +108,11 @@ class RequestTest extends TestCase
                 array('foo' => 'VALID'),
                 'foo',
                 'getValidInputRequest',
-                'Assert\ConstraintA',
+                array(
+                    'Assert\EqualTo' => array(
+                        'value' => 'VALID',
+                    ),
+                ),
                 null,
                 'VALID',
             ),
@@ -305,7 +317,9 @@ class RequestTest extends TestCase
         $request->setSoftFail(true);
         $request->getValidInput(Superglobals::GET, 'foo', array(
             'Assert\FailingConstraint',
-            'Assert\ConstraintA',
+            'Assert\EqualTo' => array(
+                'value' => 'VALID',
+            ),
             'Assert\FailingConstraint',
         ));
         $request->setSoftFail(false);
