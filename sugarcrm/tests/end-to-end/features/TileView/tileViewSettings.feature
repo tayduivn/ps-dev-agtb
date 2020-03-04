@@ -249,7 +249,7 @@ Feature: Tile View Settings
       | Closed Lost | black_list  | 1        |
 
 
-  @tile_view_settings @SS-287 @AT-339 @pr @stress-test
+  @tile_view_settings @SS-287 @AT-339 @pr
   Scenario: Tile View Settings > Cases > Change tile view header
     Given Accounts records exist:
       | *name |
@@ -317,3 +317,4 @@ Feature: Tile View Settings
       | High Priority Case |
       | Acc_1              |
       | Low                |
+
