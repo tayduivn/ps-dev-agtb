@@ -21,7 +21,6 @@ require_once 'modules/DynamicFields/templates/Fields/TemplateField.php';
  *
  * This is a simple test to assert that we can correctly remove the XSS attack strings set in the help field
  * via Studio.
- *
  */
 
 class Bug49939Test extends TestCase
@@ -29,7 +28,6 @@ class Bug49939Test extends TestCase
 /**
  * xssFields
  * This is the provider function for testPopulateFromPostWithXSSHelpField
- *
  */
 public function xssFields() {
    return array(

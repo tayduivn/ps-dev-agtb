@@ -9,10 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
 /**
  * Bug 58087 - Compose Email in activities sub panel
- * 
+ *
  * Tests the presence of the notes module in subpanels for offline client. Extends
  * the SubPanelTestBase which handle most of the setup and tear down.
  */
@@ -95,7 +95,7 @@ class Bug58087Test extends SubPanelTestBase
 
     /**
      * Helper method that scans an array and checks for the presence of a value
-     * 
+     *
      * @param array $buttons
      * @return bool
      */

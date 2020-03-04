@@ -14,7 +14,6 @@
  * SugarTestJobQueueUtilities
  *
  * utility class for job queues
- *
  */
 class SugarTestJobQueueUtilities
 {

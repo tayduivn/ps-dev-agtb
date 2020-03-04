@@ -107,8 +107,7 @@ class Bug46486Test extends TestCase
         );
     }
 
-     /**
-     *
+    /**
      * @dataProvider providerPortalSessionLoginCount
      */
     function testPortalSessionLoginCount($systemPortalUsers, $activeSessions, $expectedResult)

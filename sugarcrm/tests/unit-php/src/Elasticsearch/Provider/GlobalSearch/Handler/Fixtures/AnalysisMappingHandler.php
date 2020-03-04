@@ -18,9 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AnalysisHandle
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
 
 /**
- *
  * AnalysisMappingHandler fixture
- *
  */
 class AnalysisMappingHandler extends BaseHandler implements AnalysisHandlerInterface, MappingHandlerInterface
 {

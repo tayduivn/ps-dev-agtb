@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  * Report fails when displaying "Teams" field of teams module
  *
  * @author asokol
- *
  */
 
 class Bug45374Test extends TestCase

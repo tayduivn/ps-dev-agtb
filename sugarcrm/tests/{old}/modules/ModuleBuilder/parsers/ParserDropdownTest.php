@@ -65,9 +65,6 @@ class ParserDropdownTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     *
-     */
     public function testSavingEmptyLabels()
     {
         $_REQUEST['view_package'] = 'studio';

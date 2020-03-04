@@ -20,9 +20,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\DelimitedValidator
- *
  */
 class DelimitedValidatorTest extends AbstractConstraintValidatorTest
 {

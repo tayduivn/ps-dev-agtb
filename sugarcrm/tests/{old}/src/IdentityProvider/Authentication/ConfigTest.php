@@ -464,12 +464,10 @@ class ConfigTest extends TestCase
     }
 
     /**
-     *
      * @param $sugarConfig
      * @param $expected
      *
      * @dataProvider getIDMModeConfigProvider
-     *
      */
     public function testGetIDMModeConfig($sugarConfig, $expected)
     {

@@ -102,7 +102,6 @@ class ProductTest extends TestCase
     }
 
     /**
-     *
      * @dataProvider dataProviderUpdateCurrencyBaseRate
      * @param string $stage
      * @param boolean $expected

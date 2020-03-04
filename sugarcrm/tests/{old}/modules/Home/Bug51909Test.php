@@ -16,10 +16,8 @@ use PHPUnit\Framework\TestCase;
 require_once("include/utils.php");
 
 /**
- * 
  * Testing function getReportNameTranslations in utils.php
  * If test fails, update data provider with new language strings 
- *
  */
 class Bug51909Test extends TestCase
 {

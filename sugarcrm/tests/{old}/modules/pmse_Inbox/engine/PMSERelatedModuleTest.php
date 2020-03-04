@@ -77,7 +77,6 @@ class PMSERelatedModulesTest extends TestCase
     }
 
     /**
-     *
      * @covers ::addRelatedRecord
      */
     public function testAddRelatedRecord()

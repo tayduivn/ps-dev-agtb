@@ -127,7 +127,6 @@ class SugarTestTimePeriodUtilities
     /**
      * @static
      * This is a static function to remove all created test TimePeriod instance
-     *
      */
     public static function removeAllCreatedTimePeriods()
     {

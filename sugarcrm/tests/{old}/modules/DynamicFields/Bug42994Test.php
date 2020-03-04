@@ -42,7 +42,7 @@ class Bug42994Test extends TestCase
 
         $this->assertContains('XXDependentXX', $output);
     }
-    
+
     public function testSetLanguageStringVisible() 
     {
         $this->_lang_manager->setModString('LBL_VISIBLE_IF','XXVisible ifXX','DynamicFields');

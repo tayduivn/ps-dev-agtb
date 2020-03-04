@@ -120,7 +120,7 @@ class Bug58089Test extends TestCase
 
     /**
      * Tests that Notes is a shown subpanel for Accounts out of the box
-     * 
+     *
      * @group Bug58089
      */
     public function testNotesSubpanelOnAccountsAllowedOnDefaultInstallation() {
@@ -130,7 +130,7 @@ class Bug58089Test extends TestCase
     
     /**
      * Tests that Notes is not a shown subpanel for Accounts when removed from subpanels
-     * 
+     *
      * @group Bug58089
      */
     public function testNotesSubpanelOnAccountsNotAllowedWhenNotesIsHiddenFromSubpanels() {

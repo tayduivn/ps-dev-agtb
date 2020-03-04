@@ -66,7 +66,6 @@ class Bug43805Test extends TestCase
     }
 
     /**
-     *
      * Attach Prospect to prospect list
      * @param ProspectList $prospectList prospect list instance
      * @param prospect $prospect prospect instance

@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\ArrayRecursiveValidator;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\ArrayRecursiveValidator
- *
  */
 class ArrayRecursiveValidatorTest extends AbstractConstraintValidatorTest
 {

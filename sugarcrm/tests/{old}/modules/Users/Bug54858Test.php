@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @group 54858
- *
  */
 class Bug54858Test extends TestCase
 {

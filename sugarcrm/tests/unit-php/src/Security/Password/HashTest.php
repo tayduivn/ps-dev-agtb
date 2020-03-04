@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Security\Password\Backend\Native;
 use Sugarcrm\Sugarcrm\Security\Password\Hash;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Hash
  *
  */

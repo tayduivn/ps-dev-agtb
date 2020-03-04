@@ -12,7 +12,6 @@
 
 /**
  * This class is meant to test everything SOAP
- *
  */
 class SOAPAPI1Test extends SOAPTestCase
 {
@@ -23,7 +22,6 @@ class SOAPAPI1Test extends SOAPTestCase
 
     /**
      * Create test user
-     *
      */
     public function setUp()
     {
@@ -36,7 +34,6 @@ class SOAPAPI1Test extends SOAPTestCase
 
     /**
      * Remove anything that was used during this test
-     *
      */
     public function tearDown()
     {
@@ -50,7 +47,6 @@ class SOAPAPI1Test extends SOAPTestCase
 
     /**
      * Ensure we can create a session on the server.
-     *
      */
     public function testCanLogin()
     {

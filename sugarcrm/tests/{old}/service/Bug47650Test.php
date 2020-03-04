@@ -11,7 +11,6 @@
  */
 /**
  * This class is meant to test everything SOAP
- *
  */
 class Bug47650Test extends SOAPTestCase
 {
@@ -19,7 +18,6 @@ class Bug47650Test extends SOAPTestCase
 
     /**
      * Create test user
-     *
      */
 	public function setUp()
     {
@@ -31,7 +29,6 @@ class Bug47650Test extends SOAPTestCase
 
     /**
      * Remove anything that was used during this test
-     *
      */
     public function tearDown()
     {

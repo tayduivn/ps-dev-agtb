@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Security\Password\Backend\Sha2;
 use Sugarcrm\Sugarcrm\Security\Password\Salt;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Backend\Sha2
  *
  */

@@ -14,10 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldIntTest extends TestCase
 {
-    /**
-     *
-     * @access public
-     */
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
@@ -25,10 +21,6 @@ class SugarFieldIntTest extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    /**
-     *
-     * @access public
-     */
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();

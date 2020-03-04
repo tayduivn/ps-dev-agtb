@@ -12,7 +12,6 @@
 
 /**
  * This class tests that get_modified_entries returns xml with CDATA for <value> tags
- *
  */
 class Bug47683Test extends SOAPTestCase
 {
@@ -21,7 +20,6 @@ class Bug47683Test extends SOAPTestCase
 
     /**
      * Create test user
-     *
      */
     public function setUp()
     {
@@ -34,7 +32,6 @@ class Bug47683Test extends SOAPTestCase
 
     /**
      * Remove anything that was used during this test
-     *
      */
     public function tearDown()
     {

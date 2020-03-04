@@ -17,7 +17,6 @@ require_once 'include//utils/file_utils.php';
 /**
  * Tests function cleanDirName
  * @author hqi
- *
  */
 class CleanDirNameTest extends TestCase
 {

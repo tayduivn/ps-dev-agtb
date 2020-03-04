@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Formatter\Enum;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\Formatter\Email
- *
  */
 class EnumTest extends TestCase
 {

@@ -29,7 +29,7 @@ class Bug46152_P5Test extends TestCase
 
     /**
      * Testing creation a field in Module Builder. Also test MBModule::getField
-     * 
+     *
      * @group 46152
      */
     public function testMBAddField()
@@ -60,7 +60,7 @@ class Bug46152_P5Test extends TestCase
 
     /**
      * Testing deleting a field in Module Builder. Also test MBModule::getField
-     * 
+     *
      * @group 46152
      * @depends testMBAddField
      */

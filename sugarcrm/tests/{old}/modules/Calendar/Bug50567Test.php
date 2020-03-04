@@ -27,7 +27,6 @@ class Bug50567Test extends TestCase
 
     /**
      * providerCorrectNextMonth
-     *
      */
     public function providerCorrectNextMonth()
     {
@@ -47,7 +46,6 @@ class Bug50567Test extends TestCase
 
     /**
      * @dataProvider providerCorrectNextMonth
-     *
      */
     public function testCorrectNextMonth($testDate, $direction, $expectedString)
     {

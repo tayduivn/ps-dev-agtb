@@ -16,8 +16,7 @@ use PHPUnit\Framework\TestCase;
 class PMSEBeanHandlerTest extends TestCase
 {
     /**
-     *
-     * @var PMSELogger 
+     * @var PMSELogger
      */
     protected $loggerMock;
 

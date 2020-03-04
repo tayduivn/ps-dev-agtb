@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenGenerator;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenGenerator
- *
  */
 class CsrfTokenGeneratorTest extends TestCase
 {

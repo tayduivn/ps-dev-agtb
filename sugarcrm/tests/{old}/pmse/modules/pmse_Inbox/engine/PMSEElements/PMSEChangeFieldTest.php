@@ -16,8 +16,7 @@ use PHPUnit\Framework\TestCase;
 class PMSEChangeFieldTest extends TestCase
 {
     /**
-     *
-     * @var type 
+     * @var type
      */
     protected $loggerMock;
 

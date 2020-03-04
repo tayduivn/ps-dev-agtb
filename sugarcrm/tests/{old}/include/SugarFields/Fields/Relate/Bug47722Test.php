@@ -14,9 +14,7 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * Bug #47722
- * 	Imports to Custom Relate Fields Do Not Work
- * @ticket 47722
+ * Imports to Custom Relate Fields Do Not Work
  */
 class Bug47722Test extends TestCase
 {

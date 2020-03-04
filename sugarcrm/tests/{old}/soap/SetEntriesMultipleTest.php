@@ -28,7 +28,6 @@ class SetEntriesMultipleTest extends SOAPTestCase
 
     /**
      * Remove anything that was used during this test
-     *
      */
     public function tearDown() {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->cont1->id}'");

@@ -19,9 +19,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintBuilderException;
 use Symfony\Component\Validator\Constraints as AssertBasic;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder
- *
  */
 class ConstraintBuilderTest extends TestCase
 {

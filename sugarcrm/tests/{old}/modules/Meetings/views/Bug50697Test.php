@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
  * Bug50697Test.php
  * This test checks the alterations made to modules/Meetings/views/view.listbytype.php to remove the hard-coded
  * UTC_TIMESTAMP function that was used which appears to be MYSQL specific.  Changed to use timedate code instead
- *
  */
 class Bug50697Test extends TestCase
 {

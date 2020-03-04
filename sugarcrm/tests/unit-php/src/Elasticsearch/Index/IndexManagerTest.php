@@ -18,9 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexManager;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexManager
- *
  */
 class IndexManagerTest extends TestCase
 {

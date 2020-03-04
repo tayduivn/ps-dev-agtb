@@ -23,7 +23,7 @@ class Bug46152_P2Test extends TestCase
      * Test is id fields have unique label
      *
      * Create 2 equal fields. Test is id fields have unique label. For correct import we must have unique label of id fields.
-     * 
+     *
      * @group 46152
      */
     public function testDoubleLabel()

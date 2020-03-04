@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter
  */
 class HighlighterTest extends TestCase

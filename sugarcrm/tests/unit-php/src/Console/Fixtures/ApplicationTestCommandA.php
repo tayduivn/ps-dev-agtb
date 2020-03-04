@@ -19,9 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- *
  * Command to test application flow
- *
  */
 class ApplicationTestCommandA extends Command implements StandaloneModeInterface, InstanceModeInterface
 {

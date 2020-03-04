@@ -1016,14 +1016,12 @@ class ConfigTest extends TestCase
     }
 
     /**
-     *
      * @covers ::getIDMModeConfig
      *
      * @param $sugarConfig
      * @param $expected
      *
      * @dataProvider getIDMModeConfigProvider
-     *
      */
     public function testGetIDMModeConfig($sugarConfig, $expected)
     {
@@ -1090,14 +1088,12 @@ class ConfigTest extends TestCase
     }
 
     /**
-     *
      * @covers ::isIDMModeEnabled
      *
      * @param $sugarConfig
      * @param $expected
      *
      * @dataProvider isIDMModeEnabledProvider
-     *
      */
     public function testIsIDMModeEnabled($sugarConfig, $expected)
     {

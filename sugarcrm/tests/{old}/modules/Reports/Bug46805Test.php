@@ -21,7 +21,6 @@ require_once('include/modules.php');
  * SQL error when Edit 'Opportunities By Lead Source' chart using MSSQL
  *
  * @author mgusev
- *
  */
 class Bug46805Test extends TestCase
 {

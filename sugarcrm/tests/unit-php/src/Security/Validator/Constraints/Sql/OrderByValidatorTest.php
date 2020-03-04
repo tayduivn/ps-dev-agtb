@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Sql\OrderByValidator;
 use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\Sql\OrderByValidator
- *
  */
 class OrderByValidatorTest extends AbstractConstraintValidatorTest
 {

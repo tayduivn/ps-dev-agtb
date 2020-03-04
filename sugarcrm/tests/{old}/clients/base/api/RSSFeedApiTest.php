@@ -41,7 +41,7 @@ class RSSFeedApiTest extends TestCase
 
     /**
      * Tests validation of an RSS Feed URL
-     * 
+     *
      * @param string $url An URL for testing
      * @param boolean $expect True or false for validation
      * @dataProvider providerTestValidateFeedUrl
@@ -60,7 +60,7 @@ class RSSFeedApiTest extends TestCase
 
     /**
      * Tests feed limit max settings
-     * 
+     *
      * @param array $args Mock array of args that could specify a feed limit
      * @param mixed $configMax A value to set the sugar_config max value to
      * @param int $expect The expected value to test against
@@ -77,7 +77,7 @@ class RSSFeedApiTest extends TestCase
 
     /**
      * Tests that an XML string is parseable
-     * 
+     *
      * @param string $data XML String data
      * @param boolean $expect Expected result
      * @dataProvider providerTestGetFeedXMLObject
@@ -96,7 +96,7 @@ class RSSFeedApiTest extends TestCase
 
     /**
      * Tests that a parse XML object yields proper and expected results
-     * 
+     *
      * @param string $data The XML string to parse
      * @param int $limit The limit of entries to return
      * @param array Expected result

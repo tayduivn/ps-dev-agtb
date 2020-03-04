@@ -24,10 +24,10 @@ class TrackerQueriesTest extends TestCase
 
     function setUp() {
         TrackerTestUtility::setUp(); 
-		
+
     	$this->dump_slow_queries = isset($GLOBALS['sugar_config']['dump_slow_queries']) ? $GLOBALS['sugar_config']['dump_slow_queries'] : false;
     	$this->slow_query_time_msec = isset($GLOBALS['sugar_config']['slow_query_time_msec']) ? $GLOBALS['sugar_config']['slow_query_time_msec'] : 100;
-    	
+
     	$trackerManager = TrackerManager::getInstance();
     	$this->paused = $trackerManager->isPaused();
 
@@ -35,7 +35,7 @@ class TrackerQueriesTest extends TestCase
     	$query = "DELETE FROM tracker_queries WHERE query_hash = '{$this->query_hash}'";
     	$GLOBALS['db']->query($query);
     	$trackerManager->unPause();
-    	
+
     	$GLOBALS['sugar_config']['dump_slow_queries'] = true;
         $GLOBALS['sugar_config']['slow_query_time_msec'] = 0; //force it to dump
     }

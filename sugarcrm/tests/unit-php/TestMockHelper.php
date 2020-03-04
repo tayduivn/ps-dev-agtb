@@ -50,7 +50,6 @@ class TestMockHelper
     }
 
     /**
-     *
      * helper method, create mock for abstract class
      *
      * @param TestCase $testCase

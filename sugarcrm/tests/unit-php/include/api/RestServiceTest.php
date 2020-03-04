@@ -30,7 +30,6 @@ class RestServiceTest extends TestCase
     }
 
     /**
-     *
      * @covers ::getResourceURI
      * @covers ::setResourceURIBase
      *
@@ -172,7 +171,6 @@ class RestServiceTest extends TestCase
     }
 
     /**
-     *
      * @covers ::checkVersionSupport
      *
      * @dataProvider providerCheckVersionSupport

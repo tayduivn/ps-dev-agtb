@@ -22,9 +22,7 @@ use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\SymfonyCommandA;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\CommandRegistry\CommandRegistry
- *
  */
 class CommandRegistryTest extends TestCase
 {

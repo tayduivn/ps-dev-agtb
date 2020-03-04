@@ -22,9 +22,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\ProcessDocumen
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\ErasedFieldsHandler
- *
  */
 class ErasedFieldsHandlerTest extends TestCase
 {
@@ -84,7 +82,6 @@ class ErasedFieldsHandlerTest extends TestCase
     /**
      * @covers ::processDocumentPreIndex
      * @dataProvider providerTestProcessDocumentPreIndex
-     *
      */
     public function testProcessDocumentPreIndex($module, $erasedFields, $expected)
     {

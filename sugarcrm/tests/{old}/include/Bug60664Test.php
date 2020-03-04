@@ -19,7 +19,7 @@ class Bug60664Test extends TestCase
 {
     /**
      * Holder for the current mod_strings if there are any
-     * 
+     *
      * @var null|array
      */
     protected static $_modStrings = null;
@@ -48,7 +48,7 @@ class Bug60664Test extends TestCase
 
     /**
      * Tests that a translation occurred properly
-     * 
+     *
      * @dataProvider labelProvider
      * @group Bug60664
      * @param string $label The label to translate
@@ -63,7 +63,7 @@ class Bug60664Test extends TestCase
 
     /**
      * Tests that the GLOBALS['mod_strings'] did not get manipulated
-     * 
+     *
      * @group Bug60664
      */
     public function testGlobalModStringsWasNotMutated()

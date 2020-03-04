@@ -16,8 +16,7 @@ use PHPUnit\Framework\TestCase;
 class PMSEAssignUserTest extends TestCase
 {
     /**
-     *
-     * @var type 
+     * @var type
      */
     protected $loggerMock;
 
@@ -38,9 +37,6 @@ class PMSEAssignUserTest extends TestCase
                 ->getMock();
     }
 
-    /**
-     *
-     */
     public function testRun()
     {
         $this->assignUser = $this->getMockBuilder('PMSEAssignUser')

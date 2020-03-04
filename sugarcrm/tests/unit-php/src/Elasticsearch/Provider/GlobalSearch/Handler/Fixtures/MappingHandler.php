@@ -16,9 +16,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
 
 /**
- *
  * MappingHandler fixture
- *
  */
 class MappingHandler extends BaseHandler implements MappingHandlerInterface
 {

@@ -16,9 +16,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AnalysisHandlerInterface;
 
 /**
- *
  * AnalysisHandler fixture
- *
  */
 class AnalysisHandler extends BaseHandler implements AnalysisHandlerInterface
 {

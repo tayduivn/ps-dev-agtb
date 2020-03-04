@@ -15,9 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 require_once 'upgrade/scripts/pre/CheckComposerConfig.php';
 
 /**
- *
  * CheckComposerConfig pre script test suite
- *
  */
 class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
 {

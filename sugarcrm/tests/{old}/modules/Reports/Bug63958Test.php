@@ -13,11 +13,8 @@
 use PHPUnit\Framework\TestCase;
 
 /**
-* Bug #63958
-* Use subselect team joins instead of inner joins for non-admin users
-*
-* @ticket 63958
-*/
+ * Use subselect team joins instead of inner joins for non-admin users
+ */
 class Bug63958Test extends TestCase
 {
     /**

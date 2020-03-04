@@ -126,14 +126,10 @@ class TeamsRelationshipsTest extends TestCase
     	$contact->load_relationship('teams');
     	$contact->teams->delete($contact->id, 'West');
     	$contact->retrieve($contact->id);
-    	
+
     	$teamSet = BeanFactory::newBean('TeamSets');
     	$team_ids = $teamSet->getTeamIds($contact->team_set_id);
 
     	$this->assertNotContains('West', $team_ids, 'The list of associated teams still contains West.');
-    	//TODO come back to fix this test
-    	//$this->assertContains('East', $team_ids, 'The list of associated teams does not contain East.');
     }
-    
-   
 }

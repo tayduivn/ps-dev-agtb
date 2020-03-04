@@ -79,11 +79,10 @@ class Bug46941Test extends TestCase
         unset($GLOBALS['current_user']);
     }
 
-	/**
-	 * testActionAdvancedSearchSaveForCustomModule
-	 * Tests that adding a search field to a custom module does not generate errors due to the module name not being
+    /**
+     * Tests that adding a search field to a custom module does not generate errors due to the module name not being
      * in beanList
-	 */
+     */
     public function testActionAdvancedSearchSaveForCustomModule()
     {
         $this->mbController->action_searchViewSave();

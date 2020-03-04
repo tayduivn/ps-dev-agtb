@@ -67,9 +67,6 @@ class CalendarUtilsTest extends TestCase
         SugarTestHelper::tearDown();
 	}
 
-	/**
-	 *
-	 */
 	public function testGetInvites()
 	{
 		global $current_user;

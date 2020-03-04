@@ -20,9 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping
- *
  */
 class MappingTest extends TestCase
 {

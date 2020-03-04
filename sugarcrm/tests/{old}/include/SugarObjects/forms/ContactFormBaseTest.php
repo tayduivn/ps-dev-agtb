@@ -45,7 +45,6 @@ public function tearDown()
 
 /**
  * contactsProvider
- *
  */
 public function contactsProvider()
 {

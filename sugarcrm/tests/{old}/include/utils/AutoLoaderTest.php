@@ -126,7 +126,6 @@ class AutoLoaderTests extends TestCase
     }
 
     /**
-     *
      * Test prefix/directory namespace mapping to filename
      * @dataProvider providerTestGetFilenameForFQCN
      */
@@ -261,7 +260,6 @@ class AutoLoaderTests extends TestCase
     }
 
     /**
-     *
      * Test actual class loading using namespaces
      */
     public function testAutoloadNamespaces()
@@ -288,10 +286,6 @@ class AutoLoaderTests extends TestCase
         unlink($fileName);
     }
 
-    /**
-     *
-     * Test addNamespace
-     */
     public function testAddNamespace()
     {
         SugarAutoLoader::$namespaceMap = array();

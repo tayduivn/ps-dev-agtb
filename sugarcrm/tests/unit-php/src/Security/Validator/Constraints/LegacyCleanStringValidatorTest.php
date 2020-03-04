@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\LegacyCleanStringValidator;
 use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\LegacyCleanStringValidator
- *
  */
 class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
 {

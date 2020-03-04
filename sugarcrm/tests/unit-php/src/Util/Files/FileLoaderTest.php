@@ -16,10 +16,8 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 /**
- *
  * FileLoader unit tests
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Files\FileLoader
- *
  */
 class FileLoaderTest extends TestCase
 {

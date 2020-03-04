@@ -13,13 +13,11 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * 
  * Test is used for testing returnOrderBy() through limitQuery() because returnOrderBy() is private
  * In MSSQL we use a different way of limiting a query using TOP and ROW_NUMBER() OVER( ORDER BY ordering )
  * the 'ordering' attribute is tested on correctness with this test
- * 
- * @author avucinic@sugarcrm.com
  *
+ * @author avucinic@sugarcrm.com
  */
 class Bug52783Test extends TestCase
 {

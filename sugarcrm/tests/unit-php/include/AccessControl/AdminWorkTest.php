@@ -30,7 +30,6 @@ class AdminWorkTest extends TestCase
      * @covers ::endAdminWork
      * @covers ::startAdminWork
      * @covers ::reset
-     *
      */
     public function testAdminWork()
     {
@@ -64,7 +63,6 @@ class AdminWorkTest extends TestCase
     /**
      * @covers ::__construct
      * @covers ::__destruct
-     *
      */
     public function testAdminWorkInFunction()
     {

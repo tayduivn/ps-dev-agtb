@@ -112,7 +112,6 @@ class SugarSpotTest extends TestCase
     /**
      * providerTestSearchType
      * This is the provider function for testFilterSearchType
-     *
      */
     public function providerTestSearchType()
     {

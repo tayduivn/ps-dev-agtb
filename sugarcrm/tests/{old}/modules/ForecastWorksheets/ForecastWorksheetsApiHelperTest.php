@@ -41,7 +41,6 @@ class ForecastWorksheetsApiHelperTest extends TestCase
     }
 
     /**
-     *
      * @dataProvider dataProviderFormatForApiSetsParentDeleted
      *
      * @param $parent_deleted

@@ -17,7 +17,6 @@
  * This is a mock object to simulate calls to the ExtAPILotusLive class
  *
  * @author Collin Lee
- *
  */
 
 
@@ -33,10 +32,7 @@ class ExtAPILotusLiveMock extends ExtAPILotusLive
     }
 
     /**
-     * getErrorStringFromCode
      * This method overrides a protected method
-     *
-     *
      */
     public function getErrorStringFromCode($error='')
     {
@@ -44,7 +40,6 @@ class ExtAPILotusLiveMock extends ExtAPILotusLive
     }
 
     /**
-     * getClient
      * This method is used to override the getClient method
      *
      * @return mixed The SugarOauth instance

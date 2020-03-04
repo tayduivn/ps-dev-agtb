@@ -53,14 +53,13 @@ class SugarFieldTeamsetTest extends TestCase
         SugarTestContactUtilities::removeCreatedContactsUsersRelationships();
         $this->_contact = null;   
     }     
-    
+
     /**
      * test_massupdate_replace_team
      * This teast adds three teams to the contact record and then attempts to replace
      * the teams with just the West team
-     * 
      */
-    public function testReplaceTeamsWithAnotherTeamFromMassupdate() 
+    public function testReplaceTeamsWithAnotherTeamFromMassUpdate()
     {
     	$contact = new Contact();
     	$contact = $contact->retrieve($this->_contactId);
@@ -68,9 +67,9 @@ class SugarFieldTeamsetTest extends TestCase
 		$contact->load_relationship('teams');
 		$contact->teams->add($teams);
 		$contact->teams->save();
-		
+
 		$sugar_field = new SugarFieldTeamset('Teamset');
-		
+
 		//Seed the $_POST variable to simulate removing the West team
 		$_POST['team_name_new_on_update'] = false;
 		$_POST['team_name_allow_update'] = '';
@@ -78,21 +77,20 @@ class SugarFieldTeamsetTest extends TestCase
 		$_POST['team_name_collection_0'] = 'West';
 		$_POST['id_team_name_collection_0'] = 'West';
 		$_POST['team_name_type'] = 'replace';
-		
+
 		//Seed the $_REQUEST variable for the getTeamsFromRequest method in SugarFieldTeamset.php
 		$_REQUEST['team_name_collection_0'] = 'West';
 		$_REQUEST['id_team_name_collection_0'] = 'West';	
-		
+
 		$sugar_field->save($contact, $_POST, 'team_name', array());
 		$contact->teams->save();
-		
+
 		$teamIds = array();
 		$result = $GLOBALS['db']->query("SELECT team_id FROM team_sets_teams WHERE team_set_id = '{$contact->team_set_id}'");
 		while($row = $GLOBALS['db']->fetchByAssoc($result))
 		      $teamIds[] = $row['team_id'];
-		
+
     	$this->assertFalse(in_array('East',$teamIds), "Assert that East team has been removed");
-    	//$this->assertEquals("West", $contact->team_id, "Assert that primary team is Global");          	
     }
     
     public function testAddingWestTeamViaMassupdate() 
@@ -101,7 +99,7 @@ class SugarFieldTeamsetTest extends TestCase
     	$contact = $contact->retrieve($this->_contactId);
 
 		$sugar_field = new SugarFieldTeamset('Teamset');
-		
+
 		//Seed the $_POST variable to simulate removing the Global team
 		$_POST['team_name_new_on_update'] = false;
 		$_POST['team_name_allow_update'] = '';
@@ -109,15 +107,15 @@ class SugarFieldTeamsetTest extends TestCase
 		$_POST['team_name_collection_0'] = 'West';
 		$_POST['id_team_name_collection_0'] = 'West';
 		$_POST['team_name_type'] = 'add';
-		
+
 		//Seed the $_REQUEST variable for the getTeamsFromRequest method in SugarFieldTeamset.php
 		$_REQUEST['team_name_collection_0'] = 'West';
 		$_REQUEST['id_team_name_collection_0'] = 'West';	
-		
+
 		$contact->load_relationships('teams');
 		$sugar_field->save($contact, $_POST, 'team_name', array());
 		$contact->teams->save();
-		
+
 		$result = $GLOBALS['db']->query("SELECT count(team_id) as total FROM team_sets_teams WHERE team_set_id = '{$contact->team_set_id}'");     
     	$row = $GLOBALS['db']->fetchByAssoc($result);
 		$this->assertEquals($row['total'], 2, "Assert that the West team was added to the team sets for the contact"); //West, user's private team and global team       	

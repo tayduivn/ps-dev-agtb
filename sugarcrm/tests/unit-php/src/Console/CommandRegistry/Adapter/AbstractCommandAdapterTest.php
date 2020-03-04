@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\SymfonyCommandA;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\CommandRegistry\Adapter\AbstractCommandAdapter
- *
  */
 class AbstractCommandAdapterTest extends TestCase
 {

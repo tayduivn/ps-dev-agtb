@@ -66,7 +66,6 @@ class ParserTest extends TestCase
     /**
      * @covers ::getFormulaRelateFields
      * @dataProvider dataProviderGetFormulaRelatedFields
-     *
      */
     public function testGetFormulaRelateFields($formula, $linkName, $function_map, $expected)
     {

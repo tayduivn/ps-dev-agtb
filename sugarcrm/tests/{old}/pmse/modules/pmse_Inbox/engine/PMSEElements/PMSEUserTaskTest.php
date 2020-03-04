@@ -44,9 +44,6 @@ class PMSEUserTaskTest extends TestCase
         $this->registry->reset();
     }
 
-    /**
-     *
-     */
     public function testRunAssignment()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
@@ -118,9 +115,6 @@ class PMSEUserTaskTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     *
-     */
     public function testRunAssignmentForm()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')

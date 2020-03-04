@@ -20,9 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client
- *
  */
 class ClientTest extends TestCase
 {
@@ -32,7 +30,6 @@ class ClientTest extends TestCase
      * @covers ::__construct
      * @covers ::setLogger
      * @covers ::parseConfig
-     *
      */
     public function testConstructor()
     {

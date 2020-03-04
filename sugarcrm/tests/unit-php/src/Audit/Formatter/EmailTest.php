@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Formatter\Email;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\Formatter\Email
- *
  */
 class EmailTest extends TestCase
 {

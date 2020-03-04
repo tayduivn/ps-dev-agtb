@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer
  */
 class IndexerTest extends TestCase

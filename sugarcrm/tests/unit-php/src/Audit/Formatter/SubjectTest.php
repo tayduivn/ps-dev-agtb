@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Audit\Formatter\Subject;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter as SubFormatter;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\Formatter\Email
- *
  */
 class SubjectTest extends TestCase
 {

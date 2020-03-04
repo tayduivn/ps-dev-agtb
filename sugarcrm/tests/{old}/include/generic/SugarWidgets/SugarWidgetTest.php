@@ -27,7 +27,6 @@ class SugarWidgetTest extends TestCase
 
     /**
      * This is a test to ensure that the global list of exempt modules will not cause SugarWidget::isModuleHidden to return true
-     *
      */
     public function testIsHiddenModuleForExemptModules() {
         global $modules_exempt_from_availability_check;

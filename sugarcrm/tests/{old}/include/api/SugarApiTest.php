@@ -92,7 +92,7 @@ class SugarApiTest extends TestCase
     public function testFormatBeanCallsTrackView()
     {
         $this->markTestIncomplete("SugarApi needs a user to pass along to other objects, and user is not getting passed along. Sending to FRM for fix.");
-        
+
         $apiMock = $this->createPartialMock('SugarApi', array('htmlDecodeReturn', 'trackAction'));
         $apiMock->expects($this->any())
                 ->method('htmlDecodeReturn');
@@ -146,13 +146,13 @@ class SugarApiTest extends TestCase
         $managerMock
             ->expects($this->once())
             ->method('saveMonitor');
-        
+
         $sugarApi = $this->createPartialMock('SugarApi', array('getTrackerManager'));
         $sugarApi
             ->expects($this->any())
             ->method('getTrackerManager')
             ->will($this->returnValue($managerMock));
-        
+
         $sugarApi->api = $this->createMock('RestService');
         $sugarApi->api->user = $this->createPartialMock('User', array('getPrivateTeamID'));
         $sugarApi->api->user
@@ -165,16 +165,16 @@ class SugarApiTest extends TestCase
         $fakeBean->expects($this->any())
             ->method('get_summary_text')
             ->will($this->returnValue('Rickroll'));
-        
-        
+
+
         $sugarApi->action = 'unittest';
-        
+
         // Emulate the tracker being disabled, then enabled
         $managerMock
             ->expects($this->any())
             ->method('getMonitor')
             ->will($this->onConsecutiveCalls(null,$monitorMock,$monitorMock,$monitorMock,$monitorMock));
-        
+
         $sugarApi->trackAction($fakeBean);
 
         // This one should actually save

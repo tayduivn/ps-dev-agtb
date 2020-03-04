@@ -56,7 +56,6 @@ class ViewdefManagerTest extends TestCase
     }
 
     /**
-     *
      * @covers ::loadViewdef
      * @covers ::getClientFiles
      * @covers ::findModuleViewdef
@@ -81,7 +80,6 @@ class ViewdefManagerTest extends TestCase
     }
     
     /**
-     *
      * @covers ::saveViewdef
      */
     public function testSaveViewdef()

@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  * Bug44507Test
  * This test simulates the query that is run when a non-admin user makes a call to the get_bean_select_array method
  * in include/utils.php.  Bug 44507 is due to the problem
- *
  */
 class Bug44507Test extends TestCase
 {

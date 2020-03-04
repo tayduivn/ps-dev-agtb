@@ -16,9 +16,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleName;
 use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleNameValidator
- *
  */
 class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
 {

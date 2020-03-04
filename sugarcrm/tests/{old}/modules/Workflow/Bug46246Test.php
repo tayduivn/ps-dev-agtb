@@ -13,14 +13,12 @@
 
 use PHPUnit\Framework\TestCase;
 
-/**
-* Bug #46246
-* Relation to the document didn't created when workflow action is a document creating.
-* Test creating of the document-case relation
-*/
-
 require_once('include/workflow/action_utils.php');
 
+/**
+ * Relation to the document didn't created when workflow action is a document creating.
+ * Test creating of the document-case relation
+ */
 class Bug46246Test extends TestCase
 {
     private $accepted_flav='PRO';

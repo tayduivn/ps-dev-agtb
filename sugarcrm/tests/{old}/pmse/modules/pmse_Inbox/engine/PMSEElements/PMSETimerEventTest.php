@@ -65,7 +65,7 @@ class PMSETimerEventTest extends TestCase
      * In this test the method tries to wake up a timer event after 
      * their due date passed, the condition is set to wake up the flow 
      * in this case
-     */   
+     */
     public function testRunTryWakeUpAfterTime()
     {
         $this->timerEvent = $this->getMockBuilder('PMSETimerEvent')

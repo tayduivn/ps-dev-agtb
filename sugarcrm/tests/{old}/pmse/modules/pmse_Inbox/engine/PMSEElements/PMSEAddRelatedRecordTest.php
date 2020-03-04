@@ -43,9 +43,6 @@ class PMSEAddRelatedRecordTest extends TestCase
         SugarTestHelper::tearDown();
     }
     
-    /**
-     * 
-     */
     public function testRunFixedDate()
     {
         $beanMock = $this->getMockBuilder('SugarBean')
@@ -155,9 +152,6 @@ class PMSEAddRelatedRecordTest extends TestCase
         $this->addRelatedRecord->run($flowData, $beanMock);
     }
 
-    /**
-     *
-     */
     public function testRunFixedDatetime()
     {
         $beanMock = $this->getMockBuilder('SugarBean')

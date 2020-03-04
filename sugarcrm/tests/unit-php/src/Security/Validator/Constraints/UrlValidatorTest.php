@@ -17,11 +17,9 @@ use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Constraints\UrlValidator;
 
 /**
- *
  * This test adds some additional coverage for the OOTB Symfony URL constraint.
  *
  * @coversDefaultClass \Symfony\Component\Validator\Constraints\UrlValidator
- *
  */
 class UrlValidatorTest extends AbstractConstraintValidatorTest
 {

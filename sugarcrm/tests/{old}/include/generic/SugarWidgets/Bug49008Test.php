@@ -33,9 +33,6 @@ class Bug49008Test extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    /**
-     *
-     */
     public function testExpandDateLosAngeles()
     {
         $start = $this->sugarWidgetField->expandDate('2011-12-17');

@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingManager
- *
  */
 class MappingManagerTest extends TestCase
 {

@@ -57,7 +57,6 @@ class SugarFoldersTest extends TestCase
 
     /**
      * Test the Set Folder method.
-     *
      */
     function testSetFolder()
     {
@@ -89,7 +88,6 @@ class SugarFoldersTest extends TestCase
 
     /**
      * Test sugar folder subscriptions: create, clear, insert, clear specific folder.
-     *
      */
     function testFolderSubscriptions()
     {
@@ -114,7 +112,6 @@ class SugarFoldersTest extends TestCase
 
     /**
      * Test the getParentIDRecursive function which is used to find a grouping of folders.
-     *
      */
     function testgetParentIDRecursive()
     {
@@ -159,7 +156,6 @@ class SugarFoldersTest extends TestCase
 
     /**
      * Test to ensure that for a new user, the My Email, My Drafts, Sent Email, etc. folders can be retrieved.
-     *
      */
     function testGetUserFolders()
     {
@@ -179,7 +175,6 @@ class SugarFoldersTest extends TestCase
 
     /**
      * Test the addBean, getCountUnread,getCountItems functions.
-     *
      */
     function testAddBean()
     {
@@ -210,7 +205,6 @@ class SugarFoldersTest extends TestCase
 
     /**
      * Tests sugar folder methods that deal with emails.
-     *
      */
     function testFolderEmailMethods()
     {
@@ -249,7 +243,6 @@ class SugarFoldersTest extends TestCase
 
     /**
      * Test retreiving a list of emails for a particular folder.
-     *
      */
     function testGetListItemsForEmailXML()
     {

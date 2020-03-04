@@ -13,13 +13,11 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * 
  * Check if getTrackerSubstring() utils function returns a html decoded value
  * which is also chopped to the tracker_max_display_length parameter
- * 
+ *
  * @ticket 55650
  * @author avucinic@sugarcrm.com
- *
  */
 class Bug55650Test extends TestCase
 {

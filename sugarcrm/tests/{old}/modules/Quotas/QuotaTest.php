@@ -29,10 +29,9 @@ class QuotaTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /*
+    /**
      * Test that the base_rate field is populated with rate
      * of currency_id
-     *
      */
     public function testQuotaRate()
     {

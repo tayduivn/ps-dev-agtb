@@ -18,9 +18,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\InputParametersValidator;
 use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\InputParametersValidator
- *
  */
 class InputParameterValidatorTest extends AbstractConstraintValidatorTest
 {

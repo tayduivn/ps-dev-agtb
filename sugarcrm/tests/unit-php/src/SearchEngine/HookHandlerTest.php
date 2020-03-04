@@ -15,9 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine;
 use PHPUnit\Framework\TestCase;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\HookHandler
- *
  */
 class HookHandlerTest extends TestCase
 {

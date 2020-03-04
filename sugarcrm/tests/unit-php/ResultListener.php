@@ -20,10 +20,8 @@ use PHPUnit\Framework\TestListenerDefaultImplementation;
 use Throwable;
 
 /**
- *
  * Result listener ensuring that any risky or incomplete tests are marked a failures,
  * since they should not be merged into master
- *
  */
 final class ResultListener implements TestListener
 {

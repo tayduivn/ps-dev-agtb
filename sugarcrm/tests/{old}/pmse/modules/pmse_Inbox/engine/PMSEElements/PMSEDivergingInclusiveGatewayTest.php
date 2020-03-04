@@ -26,19 +26,19 @@ class PMSEDivergingInclusiveGatewayTest extends TestCase
             ->setMethods(array('filterFlows', 'retrieveFollowingFlows', 'prepareResponse'))
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $this->divergingInclusiveGateway->expects($this->once())
             ->method('filterFlows')
             ->will($this->returnValue(array('some_flow')));
-        
+
         $flowData = array(
             'id' => 'some_data'
         );
-        
+
         $this->divergingInclusiveGateway->expects($this->once())
             ->method('prepareResponse')
             ->with($flowData, 'ROUTE', 'CREATE', array('some_flow'));
-        
+
         $this->divergingInclusiveGateway->run($flowData);
     }
 
@@ -48,20 +48,19 @@ class PMSEDivergingInclusiveGatewayTest extends TestCase
             ->setMethods(array('filterFlows', 'retrieveFollowingFlows', 'prepareResponse'))
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $this->divergingInclusiveGateway->expects($this->once())
             ->method('filterFlows')
             ->will($this->returnValue(array()));
-        
+
         $flowData = array(
             'id' => 'some_data'
         );
-        
+
         $this->divergingInclusiveGateway->expects($this->once())
             ->method('prepareResponse')
             ->with($flowData, 'WAIT', 'CREATE', array());
-        
+
         $this->divergingInclusiveGateway->run($flowData);
     }
-    //put your code here
 }

@@ -550,7 +550,6 @@ class PMSEProjectImporterTest extends TestCase
 
     /**
      * @covers PMSEProjectImporter::saveProjectElementsData
-     * 
      */
     public function testSaveProjectElementsData()
     {
@@ -641,7 +640,6 @@ class PMSEProjectImporterTest extends TestCase
     
     /**
      * @covers PMSEProjectImporter::saveProjectElementsData
-     * 
      */
     public function testSaveProjectElementsDataWithBounds()
     {

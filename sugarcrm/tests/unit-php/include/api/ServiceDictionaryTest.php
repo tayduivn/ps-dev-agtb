@@ -286,7 +286,6 @@ class ServiceDictionaryTest extends TestCase
     }
 
     /**
-     *
      * @covers ::<public>
      * @covers ::<protected>
      * @covers ::<private>
@@ -538,7 +537,6 @@ class ServiceDictionaryTest extends TestCase
     }
 
     /**
-     *
      * @covers ::<public>
      * @covers ::<protected>
      * @covers ::<private>

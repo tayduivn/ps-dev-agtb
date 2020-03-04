@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
  * SugarMathTest
  *
  * unit tests for math library
- *
  */
 class SugarMathTest extends TestCase
 {

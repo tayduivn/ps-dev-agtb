@@ -16,10 +16,8 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * LogicHook tests
  * @coversDefaultClass \LogicHook
- *
  */
 class LogicHookTest extends TestCase
 {

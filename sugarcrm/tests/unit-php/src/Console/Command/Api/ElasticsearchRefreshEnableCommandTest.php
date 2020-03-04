@@ -13,9 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Console\Command\Api;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRefreshEnableCommand
- *
  */
 class ElasticsearchRefreshEnableCommandTest extends AbstractApiCommandTestCase
 {

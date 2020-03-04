@@ -18,9 +18,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatchQuery
- *
  */
 class MultiMatchQueryTest extends TestCase
 {

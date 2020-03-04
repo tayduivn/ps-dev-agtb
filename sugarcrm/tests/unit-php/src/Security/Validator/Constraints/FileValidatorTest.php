@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator;
 use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator
- *
  */
 class FileValidatorTest extends AbstractConstraintValidatorTest
 {

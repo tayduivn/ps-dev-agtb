@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator
- *
  */
 class CsrfAuthenticatorTest extends TestCase
 {

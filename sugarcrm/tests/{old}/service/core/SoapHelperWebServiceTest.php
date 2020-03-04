@@ -44,7 +44,6 @@ class SoapHelperWebServiceTest extends TestCase
 
     /**
      * retrieveCheckQueryProvider
-     *
      */
     public function retrieveCheckQueryProvider()
     {

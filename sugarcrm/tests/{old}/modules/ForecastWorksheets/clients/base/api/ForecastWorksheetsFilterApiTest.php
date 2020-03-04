@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
- *
  */
 class ForecastWorksheetsFilterApiTest extends TestCase
 {

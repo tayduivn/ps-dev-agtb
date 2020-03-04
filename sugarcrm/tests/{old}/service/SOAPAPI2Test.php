@@ -11,7 +11,6 @@
  */
 /**
  * This class is meant to test everything SOAP
- *
  */
 class SOAPAPI2Test extends SOAPTestCase
 {
@@ -51,7 +50,6 @@ class SOAPAPI2Test extends SOAPTestCase
 
     /**
 	 * Ensure we can create a session on the server.
-	 *
 	 */
     public function testCanLogin(){
 		$result = $this->_login();

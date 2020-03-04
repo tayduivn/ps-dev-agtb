@@ -14,10 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test checks Import when not using UTF-8 encoding
- * 
+ *
  * @ticket 58207
  * @author avucinic
- *
  */
 class Bug58207Test extends TestCase
 {

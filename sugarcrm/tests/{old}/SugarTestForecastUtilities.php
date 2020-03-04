@@ -85,7 +85,6 @@ class SugarTestForecastUtilities
     /**
      * @static
      * This is a static function to remove all created test Forecast instance
-     *
      */
     public static function removeAllCreatedForecasts()
     {
@@ -323,7 +322,6 @@ class SugarTestForecastUtilities
     }
 
     /**
-     *
      * @param array $manager        A manager created from createForecastUser
      * @param $user                 N+ number of users that report to $manager to create in the forecast
      * @return Forecast

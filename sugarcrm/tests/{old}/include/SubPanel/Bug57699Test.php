@@ -12,7 +12,7 @@
 
 /**
  * Bug 57699
- * 
+ *
  * Setup and TearDown are called in the parent
  */
 class Bug57699Test extends SubPanelTestBase
@@ -47,7 +47,7 @@ class Bug57699Test extends SubPanelTestBase
     
     /**
      * Tests that Notes is a shown subpanel for Calls out of the box
-     * 
+     *
      * @group Bug57699
      */
     public function testNotesSubpanelOnCallsAllowedOnDefaultInstallation() {
@@ -58,7 +58,7 @@ class Bug57699Test extends SubPanelTestBase
     /**
      * Tests that Notes is a shown subpanel for Calls even when removed from the
      * module tabs
-     * 
+     *
      * @group Bug57699
      */
     public function testNotesSubpanelOnCallsAllowedWhenNotesIsHiddenFromNav() {
@@ -73,7 +73,7 @@ class Bug57699Test extends SubPanelTestBase
     
     /**
      * Tests that Notes is not a shown subpanel for Calls when removed from subpanels
-     * 
+     *
      * @group Bug57699
      */
     public function testNotesSubpanelOnCallsNotAllowedWhenNotesIsHiddenFromSubpanels() {

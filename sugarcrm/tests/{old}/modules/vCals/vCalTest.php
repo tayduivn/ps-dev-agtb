@@ -76,7 +76,6 @@ class vCalTest extends TestCase
 
     /**
      * Test an empty string and see if it gets added
-     *
      */
     public function testLineBreaks()
     {

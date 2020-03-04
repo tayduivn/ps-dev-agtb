@@ -156,7 +156,6 @@ class Bug34993Test extends TestCase
 
     /**
      * test custom field with float type
-     *
      */
     public function testCustomFieldFloatType()
     {

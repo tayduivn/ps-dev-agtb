@@ -16,10 +16,9 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 
 /**
  * Bug50720Test.php
- * 
+ *
  * This test checks the upgrade_connectors method in modules/UpgradeWizard/uw_utils.php file.  In particular,
  * we want to ensure that upgrade_connectors will delete the custom connectors.php file.
- *
  */
 class Bug50720Test extends TestCase
 {

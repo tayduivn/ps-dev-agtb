@@ -129,7 +129,6 @@ class ImporterTest extends TestCase
 
 /**
  * Mock importer class
- *
  */
 class PAT784ImporterStub extends Importer
 {

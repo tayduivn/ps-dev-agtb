@@ -19,7 +19,6 @@ class SugarTestContactUtilities
     private function __construct() {}
 
     /**
-     *
      * @param string $id
      * @param array $contactValues
      * @return Contact

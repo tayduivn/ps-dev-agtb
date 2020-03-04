@@ -17,7 +17,6 @@ class EditViewMergeTest extends TestCase
     /**
      * @dataProvider deepMergeProvider
      * @group unit
-     *
      */
     function testDeepMergeDef($old, $new, $custom, $expected)
     {
@@ -993,7 +992,6 @@ class EditViewMergeTest extends TestCase
     /**
      * @dataProvider mergeTemplateProvider
      * @group unit
-     *
      */
     function testMergeTemplateMeta($old, $new, $custom, $expected)
     {

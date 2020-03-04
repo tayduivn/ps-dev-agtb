@@ -42,7 +42,6 @@ class ForecastTest extends TestCase
     }
 
     /**
-     *
      * @dataProvider constructProvider
      * @covers Forecast::__construct
      * @param $customCurrency

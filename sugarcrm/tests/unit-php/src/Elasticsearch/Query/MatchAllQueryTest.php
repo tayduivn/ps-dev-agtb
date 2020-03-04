@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\MatchAllQuery
- *
  */
 class MatchAllQueryTest extends TestCase
 {

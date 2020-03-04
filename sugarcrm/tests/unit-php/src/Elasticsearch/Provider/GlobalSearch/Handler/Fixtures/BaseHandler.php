@@ -16,9 +16,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerInterface;
 
 /**
- *
  * BaseHandler fixture
- *
  */
 class BaseHandler implements HandlerInterface
 {

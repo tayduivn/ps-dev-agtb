@@ -131,7 +131,6 @@ public function test_silent_upgrade_parameters() {
  * (imagine the caes of something like >php silentUpgrade.php xxx yyy zzz).  This is to prove that the
  * merge_config_si_settings() can correctly determine the presence of the config_si.php file given the
  * current directory.
- *
  */
 public function test_silent_upgrade_parameters2() {
 	if(!file_exists('config.php'))

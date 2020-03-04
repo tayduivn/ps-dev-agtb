@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Change\Scalar;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\FieldChangeList
- *
  */
 class ScalarTest extends TestCase
 {

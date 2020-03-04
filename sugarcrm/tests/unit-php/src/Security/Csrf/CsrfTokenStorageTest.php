@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenStorage;
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenStorage
- *
  */
 class CsrfTokenStorageTest extends TestCase
 {

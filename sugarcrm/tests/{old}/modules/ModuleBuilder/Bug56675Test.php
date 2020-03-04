@@ -71,24 +71,24 @@ class Bug56675Test extends TestCase
 
 	/**
      * @group Bug56675
-     * 
+     *
      * Tests that a clients directory and metadata files for clients exist after
      * creating a custom module
-	 */
+     */
     public function testClientsDirectoryCreatedWhenCustomModuleSaved() {
         // Make sure the clients directory is there
         $this->assertFileExists($this->dirname, "$this->dirname was not created when the custom module was saved.");
-        
+
         // Make sure the child directories and files are there for mobile
         $types = array('list', 'edit', 'detail');
         foreach ($types as $type) {
             $dir = $this->dirname . 'mobile/views/' . $type;
             $this->assertFileExists($dir, "$dir directory was not created when the module was saved");
-            
+
             $file = $dir . '/' . $type . '.php';
             $this->assertFileExists($file, "$file was not created when module was saved");
         }
-        
+
         //BEGIN SUGARCRM flav=ent ONLY
         // Modified this test for Bug 57259 to test NOT exists for portal viewdefs
         $dir = $this->dirname . 'portal';

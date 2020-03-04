@@ -30,7 +30,7 @@ class Bug58926Test extends TestCase
     /**
      * Tests if an app_list_string or app_string has special html characters in it if it will be decoded properly in the MetadataManager
      * when requested
-     * 
+     *
      * @group Bug58926
      */
     public function testAppStringsWithSpecialChars()

@@ -35,7 +35,7 @@ class Bug46152_P1Test extends TestCase
 
     /**
      * Testing ModuleBuilder::getModuleAliases
-     * 
+     *
      * @dataProvider getModuleAliasesData
      * @group 46152
      */

@@ -21,9 +21,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\InputValidation\Request
- *
  */
 class RequestTest extends TestCase
 {

@@ -64,7 +64,7 @@ class Bug59273Test extends TestCase
 
     /**
      * Tests field name casing for mobile list views
-     * 
+     *
      * @group Bug59273
      */
     public function testCustomModuleListViewDefsUseCorrectCase()
@@ -82,7 +82,7 @@ class Bug59273Test extends TestCase
 
     /**
      * Simple field searcher
-     * 
+     *
      * @param string $field The field to look for
      * @param array $fields The fields array to search in
      * @return bool

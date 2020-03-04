@@ -17,11 +17,7 @@ use PHPUnit\Framework\TestCase;
  * Bug51242Test.php
  *
  * This test checks to see that the parsers may be properly loaded depending on the layout requested.
- *
- *
  */
-
-
 class Bug51242Test extends TestCase
 {
     public static function setUpBeforeClass()

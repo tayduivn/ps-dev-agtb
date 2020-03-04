@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\ResultParser;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\ResultParser
- *
  */
 class ResultParserTest extends TestCase
 {

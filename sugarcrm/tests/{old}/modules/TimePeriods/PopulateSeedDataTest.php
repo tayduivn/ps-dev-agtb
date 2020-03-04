@@ -28,8 +28,6 @@ function tearDown()
     $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 0");
 }
 
-/**
- */
 function testPopulateSeedData()
 {
     $this->createdTimePeriods = TimePeriodsSeedData::populateSeedData();

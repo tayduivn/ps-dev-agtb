@@ -144,15 +144,6 @@ class PMSEBusinessRuleConversorTest extends TestCase
         return $returnArray;
     }
 
-    /*
-     *
-     *
-     * HELPER FUNCTIONS
-     *
-     *
-     *
-     */
-
     /**
      * Used to mock the return from processValueExpression with less mess
      * @param mixed $value The $value property of the returned class

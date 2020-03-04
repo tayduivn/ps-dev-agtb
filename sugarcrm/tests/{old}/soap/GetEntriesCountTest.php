@@ -20,7 +20,6 @@ class GetEntriesCountTest extends SOAPTestCase
 {
     /**
      * Create test user
-     *
      */
     public function setUp()
     {

@@ -16,7 +16,7 @@ class Bug59825Test extends TestCase
 {
     /**
      * The test module
-     * 
+     *
      * @var string
      */
     protected static $_module = 'Bugs';
@@ -43,7 +43,7 @@ class Bug59825Test extends TestCase
 
     /**
      * Tests not null parsers for views
-     * 
+     *
      * @param string $type A type of view to get a parser for
      * @dataProvider _layoutProvider
      */
@@ -57,7 +57,7 @@ class Bug59825Test extends TestCase
      * Gets a list of 'types' of metadata views to be used in the test. Includes
      * basic layouts from all OOTB and, where applicable, wireless and portal
      * layouts.
-     * 
+     *
      * @return array
      */
     public function _layoutProvider()

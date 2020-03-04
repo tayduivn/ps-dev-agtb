@@ -32,7 +32,6 @@ class AddExpressionTest extends TestCase
     }
 
     /**
-     *
      * @bug 63681
      * @throws Exception
      */

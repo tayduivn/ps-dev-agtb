@@ -59,7 +59,7 @@ class DropdownUpgradeTest extends TestCase
     /**
      * Tests that both $app_list_strings and $GLOBALS['app_list_strings'] are picked
      * up when getting app_list_strings
-     * 
+     *
      * @group Bug60008
      */
     public function testAppListStringsParsedEvenWhenInGlobals()

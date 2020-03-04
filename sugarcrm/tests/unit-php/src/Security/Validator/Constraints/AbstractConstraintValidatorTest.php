@@ -16,9 +16,7 @@ use Symfony\Component\Validator\Tests\Constraints\AbstractConstraintValidatorTes
 use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
- *
  * Abstract contraint validator test.
- *
  */
 abstract class AbstractConstraintValidatorTest extends AbstractBase
 {

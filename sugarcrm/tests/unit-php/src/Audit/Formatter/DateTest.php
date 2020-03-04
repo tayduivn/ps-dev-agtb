@@ -18,9 +18,7 @@ use Sugarcrm\Sugarcrm\Audit\Formatter\Date;
 use TimeDate;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\Formatter\Email
- *
  */
 class DateTest extends TestCase
 {

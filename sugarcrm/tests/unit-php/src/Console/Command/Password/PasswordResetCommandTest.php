@@ -17,9 +17,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use User;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand
- *
  */
 class PasswordResetCommandTestCase extends AbstractPasswordCommandTestCase
 {

@@ -28,7 +28,7 @@ class RS192Test extends TestCase
     protected $recordList;
 
     /**
-     * @var bool;
+     * @var bool
      */
     protected static $encode;
 

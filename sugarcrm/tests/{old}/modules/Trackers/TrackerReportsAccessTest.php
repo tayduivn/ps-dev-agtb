@@ -73,39 +73,4 @@ class TrackerReportsAccessTest extends TestCase
 		    	$this->assertTrue(checkSavedReportACL($args['reporter'], $args));
 		}
     }
-
-    /**
-     * Test whereby a non-admin user is given the Tracker Role and attempts to access both of the TrackerSessions reports
-     *
-     */
-    /*
-    public function test_NonAdmin_Tracker_Session_Report_access () {
-    	$GLOBALS['current_user'] = $this->non_admin_user;
-    	$queryTrackerRole = "SELECT id FROM acl_roles where name='Tracker'";
-		$result = $GLOBALS['db']->query($queryTrackerRole);
-		$trackerRoleId = $GLOBALS['db']->fetchByAssoc($result);
-		if(!empty($trackerRoleId['id'])) {
-		   $role1= new ACLRole();
-		   $role1->retrieve($trackerRoleId['id']);
-		   $role1->set_relationship('acl_roles_users', array('role_id'=>$role1->id ,'user_id'=>$this->non_admin_user->id), false);
-
-		   global $theme, $mod_strings;
-	       $theme = 'Sugar';
-	       $mod_strings = return_module_language($GLOBALS['current_language'], 'Reports');
-	       $GLOBALS['_REQUEST']['action'] = 'ReportCriteriaResults';
-	       $GLOBALS['request_string'] = '';
-
-	       $saved_report_seed = new SavedReport();
-		   $saved_report_seed->disable_row_level_security = true;
-		   $query = "SELECT id FROM saved_reports WHERE module = 'TrackerSessions'";
-		   $results = $GLOBALS['db']->query($query);
-	       while($row = $GLOBALS['db']->fetchByAssoc($results)) {
-			      $id = $row['id'];
-	              $GLOBALS['_REQUEST']['id'] = $id;
-			      include('modules/Reports/ReportCriteriaResults.php');
-			      $this->assertTrue(checkSavedReportACL($args['reporter'],$args));
-	       }
-		}
-    }
-    */
 }

@@ -55,7 +55,7 @@ class CustomOneToManyTest extends TestCase
 
         // print_r($vardefs);
         $this->assertEquals(4,count($vardefs['Opportunities']),"Doesn't have all four entries (link, link2, id, name)");
-        
+
         $sortedDefs = array();
         foreach($vardefs['Opportunities'] as $def ) {
             if ( $def['type'] == 'link' ) {
@@ -111,7 +111,7 @@ class CustomOneToManyTest extends TestCase
         // print_r($vardefs);
         $this->assertEquals(3,count($vardefs['bugs']),"Doesn't have the three right entries (link2, id, name)");
         $this->assertEquals(1,count($vardefs['Opportunities']),"Doesn't have just one left entry)");
-        
+
         $sortedDefs = array();
         foreach($vardefs['bugs'] as $def ) {
             if ( $def['type'] == 'link' ) {

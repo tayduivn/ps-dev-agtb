@@ -75,10 +75,10 @@ class Bug57260Test extends TestCase
 
 	/**
      * @group Bug57260
-     * 
+     *
      * Tests that the default panel label of LBL_PANEL_DEFAULT correctly translates
      * to 'Default' when rendered for undeployed modules in studio
-	 */
+     */
     public function testUndeployedModuleHasDefaultLabelInStudioLayoutEditor() {
         // Mock the request
         $req = array(

@@ -17,9 +17,8 @@ use PHPUnit\Framework\TestCase;
  * This unit test attempts to simulate a summation report with details for MSSQL. 
  * The code in Report.php leaves an extra bracket in the $groupby variable (e.g. '(leads.status' )
  * which was fixed, but only for the summary_query and not the details query
- * 
- * @author dlind
  *
+ * @author dlind
  */
 class Bug47723Test extends TestCase
 {
@@ -46,7 +45,7 @@ class Bug47723Test extends TestCase
     /**
      * test_create_query
      * This method simulates a summation report with details for the leads module and checks whether the select query will be valid in MSSQL.
-     */	
+     */
     function test_create_query()
     {
         $this->reportInstance->from = "\n FROM leads ";
@@ -62,7 +61,7 @@ class Bug47723Test extends TestCase
 	    4=>"leads.status='Converted' DESC",
     	    5=>"leads.status='Recycled' DESC",
 	    6=>"leads.status='Dead' DESC",		);
-																		
+
 	$this->reportInstance->create_query('query', 'select_fields');
 	$query = $this->reportInstance->query;
 

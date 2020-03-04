@@ -20,7 +20,7 @@ class Bug46152_P4Test extends TestCase
 
     /**
      * Tested removing a field in studio.
-     * 
+     *
      * @group 46152
      */
     public function testDelete()

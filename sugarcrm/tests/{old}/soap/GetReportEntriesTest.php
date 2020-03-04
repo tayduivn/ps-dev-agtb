@@ -21,7 +21,6 @@ class GetReportEntriesTest extends SOAPTestCase
 
     /**
      * Create test user
-     *
      */
 	public function setUp()
     {

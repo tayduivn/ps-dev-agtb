@@ -20,9 +20,6 @@ class PMSEEndSendMessageEventTest extends TestCase
      */
     protected $endSendMessageEvent;
 
-    /**
-     *
-     */
     public function testRun()
     {
         $this->endSendMessageEvent = $this->getMockBuilder('PMSEEndSendMessageEvent')

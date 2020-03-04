@@ -162,10 +162,6 @@ class RESTAPI4_1Test extends TestCase
             );
     }
 
-
-    /**
-     *
-     */
     public function testGetModifiedRelationships()
     {
         $result = $this->_login();

@@ -55,7 +55,6 @@ class QuotesConfigApiTest extends TestCase
     }
 
     /**
-     *
      * @covers ::configSave
      */
     public function testConfigSave()
@@ -100,7 +99,6 @@ class QuotesConfigApiTest extends TestCase
     }
 
     /**
-     *
      * @param array $settings
      * @covers ::applyWorksheetColumnsConfig
      * @dataProvider applyConfigProvider

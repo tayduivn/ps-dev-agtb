@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 class SugarACLDataPrivacyTest extends TestCase
 {
     /**
-     *
      * @covers ::checkAccess
      *
      * @dataProvider providerTestCheckAccess

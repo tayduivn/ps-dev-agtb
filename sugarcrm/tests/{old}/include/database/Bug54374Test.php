@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  * This is a test for the massageValue function.  There was a problem with the IBMDB2Manager implementation in that some
  * code we had assumed that this function would return a value, but the IBMDB2Manager implementation had a few mistakes
  * in that the code was never written correctly and there was no guarantee that a value would be returned form massageValue.
- *
  */
 
 class Bug54374Test extends TestCase

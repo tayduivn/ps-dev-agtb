@@ -26,7 +26,6 @@ class SetEntriesContactsTest extends SOAPTestCase
 
     /**
      * Create test user
-     *
      */
     public function setUp()
     {
@@ -72,7 +71,6 @@ class SetEntriesContactsTest extends SOAPTestCase
 
     /**
      * Remove anything that was used during this test
-     *
      */
     public function tearDown() {
         global $soap_version_test_accountId, $soap_version_test_opportunityId, $soap_version_test_contactId;

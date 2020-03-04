@@ -40,7 +40,7 @@ class Bug57636Test extends TestCase
 
     /**
      * @group Bug57636
-     * 
+     *
      * Tests that duration_minutes and duration_hours are not in both default fields
      * and available fields for mobile edit and detail layout editors
      */
@@ -83,7 +83,7 @@ class Bug57636Test extends TestCase
     
     /**
      * Utility method to parse field defs for MOST grid type layouts
-     * 
+     *
      * @param string $name The field name to check for
      * @param array $fields The defs to search
      * @return bool
@@ -100,7 +100,7 @@ class Bug57636Test extends TestCase
     
     /**
      * Utility method to search layout defs for mobile grid layouts for a field
-     * 
+     *
      * @param string $name The field name to search for
      * @param array $layout The defs to search
      * @return bool

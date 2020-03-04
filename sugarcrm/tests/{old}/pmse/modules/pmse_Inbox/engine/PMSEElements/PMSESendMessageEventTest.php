@@ -16,8 +16,7 @@ use PHPUnit\Framework\TestCase;
 class PMSESendMessageEventTest extends TestCase
 {
     /**
-     *
-     * @var type 
+     * @var type
      */
     protected $loggerMock;
 

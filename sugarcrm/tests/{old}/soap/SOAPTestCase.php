@@ -39,7 +39,6 @@ abstract class SOAPTestCase extends TestCase
 
     /**
      * Create test user
-     *
      */
 	public function setUp()
     {
@@ -56,7 +55,6 @@ abstract class SOAPTestCase extends TestCase
 
     /**
      * Remove anything that was used during this test
-     *
      */
     public function tearDown()
     {
@@ -82,7 +80,6 @@ abstract class SOAPTestCase extends TestCase
 
     /**
      * Create a test user
-     *
      */
 	public function _setupTestUser() {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -95,7 +92,6 @@ abstract class SOAPTestCase extends TestCase
 
     /**
      * Remove user created for test
-     *
      */
 	public function _tearDownTestUser() {
        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

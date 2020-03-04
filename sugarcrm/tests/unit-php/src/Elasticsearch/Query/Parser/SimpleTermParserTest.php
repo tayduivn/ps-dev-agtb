@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SimpleTermParser;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SimpleTermParser
- *
  */
 class SimpleTermParserTest extends TestCase
 {
@@ -33,7 +31,6 @@ class SimpleTermParserTest extends TestCase
      * @covers ::setUseShortcutOperator
      *
      * @dataProvider providerParseTest
-     *
      */
     public function testParse(string $terms, string $defaultOperator, bool $useShortcut, array $expectecd)
     {

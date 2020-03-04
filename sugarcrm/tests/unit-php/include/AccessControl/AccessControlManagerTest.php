@@ -33,7 +33,6 @@ class AccessControlManagerTest extends TestCase
      * @covers ::instance
      * @covers ::getRegisteredVoter
      * @covers ::__construct
-     *
      */
     public function testRegisterVoters()
     {
@@ -52,13 +51,11 @@ class AccessControlManagerTest extends TestCase
     }
 
     /**
-     *
      * @covers ::init
      * @covers ::setAdminWork
      * @covers ::__construct
      *
      * @dataProvider setAdminWorkProvider
-     *
      */
     public function testSetAdminWork(bool $adminwork, $isAdmin, $expected)
     {

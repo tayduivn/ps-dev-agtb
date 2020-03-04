@@ -18,7 +18,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals
  *
  */

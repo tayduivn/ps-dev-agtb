@@ -13,9 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Console\Command\Api;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand
- *
  */
 class SearchStatusCommandTest extends AbstractApiCommandTestCase
 {

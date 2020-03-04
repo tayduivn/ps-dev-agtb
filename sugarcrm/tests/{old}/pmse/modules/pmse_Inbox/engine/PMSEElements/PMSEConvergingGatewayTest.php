@@ -20,9 +20,6 @@ class PMSEConvergingGatewayTest extends TestCase
      */
     protected $convergingGateway;
 
-    /**
-     * 
-     */
     public function testRetrievePreviousFlowsALL()
     {
         $this->convergingGateway = $this->getMockBuilder('PMSEConvergingGateway')
@@ -97,9 +94,6 @@ class PMSEConvergingGatewayTest extends TestCase
         
     }
     
-    /**
-     * 
-     */
     public function testRetrievePreviousFlowsPASSED()
     {
         $this->convergingGateway = $this->getMockBuilder('PMSEConvergingGateway')

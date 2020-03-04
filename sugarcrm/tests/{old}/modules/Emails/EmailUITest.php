@@ -66,7 +66,6 @@ class EmailUITest extends TestCase
 
     /**
      * Save the user preference for list view order per IE account.
-     *
      */
     public function testSaveListViewSortOrder()
     {

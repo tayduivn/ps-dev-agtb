@@ -126,7 +126,6 @@ class RESTAPI4Test extends TestCase
 
     /**
      * Test the get_entry_list call with Export access disabled to ensure results are returned.
-     *
      */
     public function testGetEntryListWithExportRole()
     {
@@ -162,7 +161,6 @@ class RESTAPI4Test extends TestCase
 
     /**
      * Test the ability to retrieve quote PDFs
-     *
      */
     public function testGetQuotesPDF()
     {
@@ -203,7 +201,6 @@ class RESTAPI4Test extends TestCase
     }
     /**
      * Ensure the ability to retrieve a module list of recrods that are favorites.
-     *
      */
     public function testGetModuleFavoriteList()
     {
@@ -237,7 +234,6 @@ class RESTAPI4Test extends TestCase
 
     /**
      * Test set entries call with name value list format key=>value.
-     *
      */
     public function testSetEntriesCall()
     {
@@ -274,7 +270,6 @@ class RESTAPI4Test extends TestCase
 
     /**
      * Test search by module with favorites flag enabled.
-     *
      */
     public function testSearchByModuleWithFavorites()
     {

@@ -16,12 +16,11 @@ use PHPUnit\Framework\TestCase;
 /**
  * @ticket 10329
  *
- *		Original Bug: Studio Layout Fields should be alphabetical and detail view should remove used fields 
- *		1. Admin > Studio
- *		2. Module Name > Layouts > Edit and or Detail View
- *		3. Note fields in lower left and upper left quadrants.
- *		Desired behavior: alphabetized fields.  
- *
+ * Original Bug: Studio Layout Fields should be alphabetical and detail view should remove used fields
+ *   1. Admin > Studio
+ *   2. Module Name > Layouts > Edit and or Detail View
+ *   3. Note fields in lower left and upper left quadrants.
+ * Desired behavior: alphabetized fields.
  */
 class Bug10329Test extends TestCase
 {

@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
- *
  */
 class ForecastsCommittedApiTest extends TestCase
 {

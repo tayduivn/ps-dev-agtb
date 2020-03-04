@@ -14,10 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldFloatTest extends TestCase
 {
-    /**
-     *
-     * @access public
-     */
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
@@ -25,10 +21,6 @@ class SugarFieldFloatTest extends TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    /**
-     *
-     * @access public
-     */
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
@@ -161,7 +153,6 @@ class SugarFieldFloatTest extends TestCase
     }
 
     /**
-     *
      * @dataProvider dataProviderFixForForFloats
      * @param String $op                The Filer Operation
      * @param Number $value             The Value we are looking for

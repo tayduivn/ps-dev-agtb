@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty
- *
  */
 class MultiFieldPropertyTest extends TestCase
 {

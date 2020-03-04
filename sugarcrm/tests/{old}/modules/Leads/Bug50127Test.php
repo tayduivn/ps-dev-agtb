@@ -13,13 +13,11 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * 
  * Test if Contact is properly linked to Lead if we are not creating a contact
  * but linking an existing one.
  * Check if Account is linked with Contact.
- * 
- * @author avucinic@sugarcrm.com
  *
+ * @author avucinic@sugarcrm.com
  */
 class Bug50127Test extends TestCase
 {

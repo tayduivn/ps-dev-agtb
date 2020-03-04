@@ -16,7 +16,6 @@ class Bug36564Test extends SOAPTestCase
 {
     /**
      * Create test user
-     *
      */
 	public function setUp()
     {

@@ -15,9 +15,7 @@ use PHPUnit\Framework\TestCase;
 require_once 'SugarTestACLUtilities.php';
 
 /**
- *
  * Unit test for SugarACLStatic
- *
  */
 class SugarACLStaticTest extends TestCase
 {
@@ -37,7 +35,6 @@ class SugarACLStaticTest extends TestCase
 
     /**
      * @group pat-851
-     *
      */
     public function testTrackerTypeForBeanACL()
     {

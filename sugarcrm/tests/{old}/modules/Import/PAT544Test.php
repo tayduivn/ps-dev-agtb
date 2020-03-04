@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Export as iso-8859-1 and reimport breaks special characters
- * 
+ *
  * @author bsitnikovski@sugarcrm.com
  * @ticket PAT-544
  */

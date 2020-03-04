@@ -15,7 +15,6 @@ require_once 'modules/Currencies/Currency.php';
 
 /**
  * Test Opportunity retrieve with currency
- *
  */
 class GetEntryListOppTest extends SOAPTestCase
 {

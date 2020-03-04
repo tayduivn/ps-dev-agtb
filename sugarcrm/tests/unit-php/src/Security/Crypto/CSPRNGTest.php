@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG
- *
  */
 class CSPRNGTest extends TestCase
 {

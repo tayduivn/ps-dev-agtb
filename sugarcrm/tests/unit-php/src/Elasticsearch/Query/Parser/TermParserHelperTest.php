@@ -16,16 +16,13 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper
- *
  */
 class TermParserHelperTest extends TestCase
 {
     /**
      * @covers ::isOperator
      * @dataProvider providerIsOperatorTest
-     *
      */
     public function testIsOperator($operaor, $expectecd)
     {
@@ -56,7 +53,6 @@ class TermParserHelperTest extends TestCase
     /**
      * @covers ::isAndOperator
      * @dataProvider providerIsAndOperatorTest
-     *
      */
     public function testIsAndOperator($operaor, $expectecd)
     {
@@ -79,7 +75,6 @@ class TermParserHelperTest extends TestCase
     /**
      * @covers ::isOrOperator
      * @dataProvider providerIsOrOperatorTest
-     *
      */
     public function testIsOrOperator($operaor, $expectecd)
     {
@@ -102,7 +97,6 @@ class TermParserHelperTest extends TestCase
     /**
      * @covers ::isNotOperator
      * @dataProvider providerIsNotOperatorTest
-     *
      */
     public function testIsNotOperator($operaor, $expectecd)
     {
@@ -125,7 +119,6 @@ class TermParserHelperTest extends TestCase
     /**
      * @covers ::getOperator
      * @dataProvider providerGetOperatorTest
-     *
      */
     public function testGetOperator($operaor, $expectecd)
     {

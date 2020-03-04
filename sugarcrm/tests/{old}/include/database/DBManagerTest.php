@@ -2342,9 +2342,6 @@ SQL;
         $result = $this->_db->query($sql);
     }
 
-
-    /**
-     */
     public function testRecursiveQueryMultiHierarchy()
     {
         if ( !$this->_db->supports('recursive_query') )
@@ -2428,7 +2425,6 @@ SQL;
      * @group db
      *
      * @dataProvider providerTestMassageValueEmptyValue
-     *
      */
     public function testMassageValueEmptyValue($fieldDef, $value, $expected)
     {

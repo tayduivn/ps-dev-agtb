@@ -46,7 +46,6 @@ public function testModuleRenameForReportsTree()
 /**
  * ReportsViewBuildreportmoduletreeMock
  * This is a mock class to override the protected function _populateNodeItem so we may test it
- *
  */
 class ReportsViewBuildreportmoduletreeMock extends ReportsViewBuildreportmoduletree
 {

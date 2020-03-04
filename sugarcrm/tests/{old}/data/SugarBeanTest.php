@@ -502,7 +502,6 @@ class SugarBeanTest extends TestCase
     }
 
     /**
-     *
      * Test logging for distinct mismatch/compensation and the
      * proper return of offending record ids.
      *
@@ -588,7 +587,6 @@ class SugarBeanTest extends TestCase
     }
 
     /**
-     *
      * Test fetchFromQuery with distinct compensation.
      *
      * @covers SugarBean::fetchFromQuery

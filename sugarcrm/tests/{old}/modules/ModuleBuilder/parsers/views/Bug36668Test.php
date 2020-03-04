@@ -23,7 +23,7 @@ class LinkFieldTest extends SubpanelMetaDataParser
     /**
      * Field defs without id_name properties were throwing errors. Adding id_name
      * here to allow tests to run around modification to the core code.
-     * 
+     *
      * @var array
      */
     public $_fielddefs = array(

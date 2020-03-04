@@ -108,7 +108,6 @@ class RESTAPI3_1Test extends TestCase
 
     /**
      * Test the available modules returned from the login call to make sure they are correct.
-     *
      */
     public function testLoginAvailableModulesResults()
     {
@@ -209,9 +208,8 @@ class RESTAPI3_1Test extends TestCase
         $this->assertTrue( !empty($results['file_contents']) );
     }
 
-     /**
+    /**
      * Test the available modules returned from the login call to make sure they are correct.
-     *
      */
     public function testLoginVardefsMD5Results()
     {

@@ -18,9 +18,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- *
  * InstanceModeInterface fixture returning success
- *
  */
 class InstanceCommandA extends Command implements InstanceModeInterface
 {

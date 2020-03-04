@@ -148,7 +148,6 @@ END;
     }
 
     /**
-     *
      * @dataProvider providerDataForUpgradeLabels
      * @param string $module
      * @param string $language

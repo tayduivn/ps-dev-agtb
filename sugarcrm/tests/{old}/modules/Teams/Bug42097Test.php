@@ -31,10 +31,10 @@ class Bug42097Test extends TestCase
     
     /**
      * testRemoveUserFromTeam
-     * 
+     *
      * This test checks the case where a user is removed from his own private team.  
      * We are expecting an exception to be thrown.
-     */    
+     */
     public function testRemoveUserFromTeam() 
     {
 	   $team = BeanFactory::getBean('Teams', $this->testUser->getPrivateTeamID());

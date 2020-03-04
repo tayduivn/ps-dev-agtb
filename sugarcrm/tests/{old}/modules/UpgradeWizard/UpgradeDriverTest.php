@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
  * UpgradeDriverTest
  *
  * This class tests functions inside the file UpgradeDriver.php.
- *
  */
 
 require_once('modules/UpgradeWizard/CliUpgrader.php');

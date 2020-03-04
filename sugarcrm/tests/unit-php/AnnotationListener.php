@@ -19,9 +19,7 @@ use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestListenerDefaultImplementation;
 
 /**
- *
  * Annotation listener ensuring every test has @covers annotation.
- *
  */
 final class AnnotationListener implements TestListener
 {

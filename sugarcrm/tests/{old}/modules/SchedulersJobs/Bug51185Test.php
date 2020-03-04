@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
  * This unit tests checks to ensure the value returned from handleDateFormat in SchedulersJob.php is properly returned
  * depending on the arguments passed in.  By default, the handleDateFormat call should return a database formatted date
  * time value.
- *
  */
 class Bug51185Test extends TestCase
 {
@@ -40,7 +39,6 @@ class Bug51185Test extends TestCase
 
     /**
      * testSchedulersJobHandleDateFormatWithNow
-     *
      */
     public function testSchedulersJobHandleDateFormatWithNow()
     {
@@ -62,7 +60,6 @@ class Bug51185Test extends TestCase
 
     /**
      * testSchedulersJobHandleDateFormatWithoutNow
-     *
      */
     public function testSchedulersJobHandleDateFormatWithoutNow()
     {
@@ -74,7 +71,6 @@ class Bug51185Test extends TestCase
 
     /**
      * testSchedulersJobHandleDateFormatWithOtherTime
-     *
      */
     public function testSchedulersJobHandleDateFormatWithOtherTime()
     {

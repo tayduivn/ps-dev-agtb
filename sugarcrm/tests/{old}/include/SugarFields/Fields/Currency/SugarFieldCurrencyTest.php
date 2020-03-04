@@ -16,10 +16,6 @@ class SugarFieldCurrencyTest extends TestCase
 {
     static $currency, $currency2, $currency3;
 
-    /**
-     *
-     * @access public
-     */
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
@@ -30,10 +26,6 @@ class SugarFieldCurrencyTest extends TestCase
         self::$currency3 = SugarTestCurrencyUtilities::createCurrency('Bitcoin', '฿', 'XBT', 0.001057, 'currency-btc');
     }
 
-    /**
-     *
-     * @access public
-     */
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
@@ -63,9 +55,7 @@ class SugarFieldCurrencyTest extends TestCase
     }
 
     /**
-     *
      * @group currency
-     * @access public
      */
     public function testGetListViewSmarty()
     {
@@ -176,10 +166,8 @@ class SugarFieldCurrencyTest extends TestCase
     }
 
     /**
-     *
      * @group export
      * @group currency
-     * @access public
      */
     public function testExportSanitize()
     {
@@ -210,7 +198,6 @@ class SugarFieldCurrencyTest extends TestCase
     }
 
     /**
-     *
      * @group export
      * @group currency
      * @access public

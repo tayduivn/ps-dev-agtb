@@ -75,7 +75,6 @@ class Bug45181 extends TestCase
      * call nor is the memory_usage.log file created.
      *
      * @outputBuffering enabled
-     *
      */
     function testLogMemoryUsageOff()
     {

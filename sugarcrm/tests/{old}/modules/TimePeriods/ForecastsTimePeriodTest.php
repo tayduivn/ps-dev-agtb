@@ -151,7 +151,6 @@ class ForecastsTimePeriodTest extends TestCase
      *
      * @group timeperiods
      * @group forecasts
-     *
      */
     public function testTimePeriodDeleteTimePeriodsWithSamePreviousSettings()
     {
@@ -745,7 +744,6 @@ class ForecastsTimePeriodTest extends TestCase
 
     /**
      * This is the data provider to simulate arguments we pass to the testCreateTimePeriodsForUpgrade test
-     *
      */
     public function createTimePeriodsForUpgradeProvider()
     {
@@ -1213,47 +1211,12 @@ class ForecastsTimePeriodTest extends TestCase
         $this->assertNotNull($currentTimePeriod);
     }
 
-    /*
-     * This is a test to see how the TimePeriod code handles specifying corner cases like a leap year as the starting forecasting date
-     *
-     * @group timeperiods
-     * @group forecasts
-    public function testCreateLeapYearTimePeriods() {
-        $db = DBManagerFactory::getInstance();
-        $db->query("UPDATE timeperiods SET deleted = 1");
-
-        $settings['timeperiod_start_date'] = "2012-02-29";
-        $settings['timeperiod_interval'] = TimePeriod::ANNUAL_TYPE;
-        $settings['timeperiod_leaf_interval'] = TimePeriod::QUARTER_TYPE;
-        $settings['timeperiod_shown_backward'] = 4;
-        $settings['timeperiod_shown_forward'] = 4;
-
-        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
-        $timePeriod->setStartDate('2012-02-29');
-        $timePeriod->rebuildForecastingTimePeriods(array(), $settings);
-
-        $timePeriods = TimePeriod::get_not_fiscal_timeperiods_dom();
-
-        //We are basically asserting that for 8 years of timeperiods created, we should have two leaf timeperiods
-        $leapYearFoundCount = 0;
-        foreach($timePeriods as $id=>$name) {
-            $timePeriod = TimePeriod::getByType(TimePeriod::QUARTER_TYPE, $id);
-            if(preg_match('/\d{4}\-02-29/', $timePeriod->start_date)) {
-                $leapYearFoundCount++;
-            }
-        }
-        $this->assertTrue($leapYearFoundCount >= 2, "Failed to find at least 2 leap year leaf timeperiods for 8 years of timeperiods");
-    }
-    */
-
-
     /**
      * This is the provider function for the testGetChartLabels method.  We return a multi-dimensional Array where each
      * entry of the top level Array contains the arguments in the following order:
      * 1) TimePeriod type as String
      * 2) TimePeriod start date as String
      * 3) Array of expected chart labels for TimePeriod
-     *
      */
     public function getChartLabelsProvider()
     {
@@ -1863,7 +1826,6 @@ class ForecastsTimePeriodTest extends TestCase
 
     /**
      * buildTimePeriodsProvider
-     *
      */
     public function buildTimePeriodsProvider()
     {
@@ -1885,7 +1847,6 @@ class ForecastsTimePeriodTest extends TestCase
     /**
      * @dataProvider buildTimePeriodsProvider
      * @outputBuffering disabled
-     *
      */
     public function testBuildTimePeriods($type, $startDate, $timePeriods, $direction, $lastStartDate, $lastEndDate)
     {
@@ -1907,7 +1868,6 @@ class ForecastsTimePeriodTest extends TestCase
 
     /**
      * createTimePeriodsProvider
-     *
      */
     public function createTimePeriodsProvider()
     {

@@ -39,9 +39,6 @@ class Bug51679Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     *
-     */
     public function testM2MRelationships()
     {
         $def = array(

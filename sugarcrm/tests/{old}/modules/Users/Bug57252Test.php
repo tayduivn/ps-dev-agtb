@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  *
  * This unit test checks to make sure that we are pulling the Admin panel date/time format
  * preferences when a user does not have an existing date/time format preference.
- *
  */
 class Bug57252Test extends TestCase
 {
@@ -40,7 +39,6 @@ class Bug57252Test extends TestCase
 
     /**
      * @group bug57252
-     *
      */
     public function testDefaultDateTimeFormatFromSystemConfig()
     {
@@ -52,7 +50,6 @@ class Bug57252Test extends TestCase
 
     /**
      * @group bug57252
-     *
      */
     public function testDefaultDateTimeFormatFromUserPref()
     {

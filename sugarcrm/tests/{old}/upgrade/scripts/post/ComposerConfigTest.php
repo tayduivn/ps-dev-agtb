@@ -13,9 +13,7 @@
 require_once 'upgrade/scripts/post/8_ComposerConfig.php';
 
 /**
- *
  * ComposerConfig post script test suite
- *
  */
 class ComposerConfigTest extends UpgradeTestCase
 {

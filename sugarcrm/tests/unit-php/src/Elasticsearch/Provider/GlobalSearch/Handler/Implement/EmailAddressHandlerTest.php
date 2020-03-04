@@ -20,9 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\EmailAddressHandler
- *
  */
 class EmailAddressHandlerTest extends TestCase
 {
@@ -574,7 +572,6 @@ class EmailAddressHandlerTest extends TestCase
     }
 
     /**
-     *
      * @param boolean $hasFetched
      * @param boolean $dontLegacySave
      * @param array $values

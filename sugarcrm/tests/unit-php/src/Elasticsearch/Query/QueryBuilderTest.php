@@ -20,9 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder
- *
  */
 class QueryBuilderTest extends TestCase
 {

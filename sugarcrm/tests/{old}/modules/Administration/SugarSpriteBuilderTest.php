@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
  * SugarSpriteBuilderTest
  *
  * This test simply checks that we can run the rebuildSprite function which in turn runs SugarSpriteBuilder
- *
  */
 class SugarSpriteBuilderTest extends TestCase
 {

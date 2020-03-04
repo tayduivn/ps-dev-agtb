@@ -17,9 +17,7 @@ use Psr\Log\LogLevel;
 use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Logger\LoggerTransition
- *
  */
 class LoggerTransitionTest extends TestCase
 {

@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Uuid
  *
  */

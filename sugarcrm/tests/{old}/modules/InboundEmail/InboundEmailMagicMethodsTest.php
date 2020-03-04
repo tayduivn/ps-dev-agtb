@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * This class is meant to test that \InboundEmail::$server_url may be get and set via magic methods
- *
  */
 class InboundEmailMagicMethodsTest extends TestCase
 {

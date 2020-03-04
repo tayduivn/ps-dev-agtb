@@ -123,9 +123,6 @@ class SugarThemeTest extends TestCase
             'themes/'.$this->_themeDef['name'].'/css');
     }
 
-    /**
-     *
-     */
     public function testGetCSS()
     {
         $matches = array();

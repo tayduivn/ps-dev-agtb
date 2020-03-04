@@ -16,7 +16,6 @@ class SetEntryEmailTest extends SOAPTestCase
 {
     /**
      * Create test account
-     *
      */
     public function setUp()
     {

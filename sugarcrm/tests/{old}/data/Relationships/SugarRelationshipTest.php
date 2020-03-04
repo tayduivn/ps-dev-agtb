@@ -59,7 +59,7 @@ class SugarRelationshipTest extends TestCase
 
     /**
      * Tests getting the optional where clause
-     * 
+     *
      * @param array $options The options array
      * @param string $where Existing where table
      * @param SugarBean $related Related bean

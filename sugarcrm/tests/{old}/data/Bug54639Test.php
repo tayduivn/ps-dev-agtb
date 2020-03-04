@@ -20,9 +20,6 @@ class Bug54639Test extends TestCase
 {
     private $contact = null;
 
-    /**
-     *
-     */
     public function setUp()
     {
         $this->contact = new Contact();

@@ -46,7 +46,6 @@ public function tearDown()
 
 /**
  * leadsProvider
- *
  */
 public function leadsProvider()
 {

@@ -74,7 +74,6 @@ class Bug37841Test extends TestCase
 
     /**
      * Ensure that no custom metadata is created and no history item created.
-     *
      */
     function testHistoryCreationForNonUpgradedMetadataFiles()
     {
@@ -90,7 +89,6 @@ class Bug37841Test extends TestCase
 
     /**
      * Ensure that a history item is created when SugarMerge executes and that the file contents are identical.
-     *
      */
     function testHistoryCreationForUpgradedMetadataFiles()
     {

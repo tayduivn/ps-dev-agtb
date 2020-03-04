@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 55003
- * 
+ *
  * Notes showing up in portal browser and portal layout editor when Notes is not
  * a portal module
  */
@@ -23,7 +23,7 @@ class Bug55003Test extends TestCase
 {
     /**
      * SugarPortalBrowser object
-     * 
+     *
      * @var SugarPortalBrowser
      */
     protected $portalBrowser;
@@ -48,7 +48,7 @@ class Bug55003Test extends TestCase
     
     /**
      * Tests known portal modules
-     * 
+     *
      * @dataProvider getKnownPortalModules
      * @param string $module
      */
@@ -69,7 +69,7 @@ class Bug55003Test extends TestCase
     
     /**
      * Data provider for the known modules test
-     * 
+     *
      * @return array
      */
     public function getKnownPortalModules()

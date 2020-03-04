@@ -106,7 +106,6 @@ class EventRepositoryTest extends TestCase
     /**
      * @test
      * @covers ::getLatestBeanEvents()
-     *
      */
     public function getLatestBeanEventsCheckSource()
     {
@@ -170,7 +169,6 @@ class EventRepositoryTest extends TestCase
     /**
      * @test
      * @covers ::getLatestBeanEvents()
-     *
      */
     public function getLatestBeanEventsOnlyEmailFieldButNoEmailValue()
     {

@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
  * Bug50431Test.php
  *
  * This file tests the getMappingClassName function in modules/Import/views/view.step3.php
- *
  */
 class Bug50431Test extends TestCase
 {

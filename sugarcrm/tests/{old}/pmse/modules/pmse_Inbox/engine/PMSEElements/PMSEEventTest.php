@@ -17,26 +17,22 @@ use Doctrine\DBAL\Connection;
 class PMSEEventTest extends TestCase
 {
     /**
-     *
-     * @var type 
+     * @var type
      */
     protected $caseFlowHandlerMock;
     
     /**
-     *
-     * @var type 
+     * @var type
      */
     protected $flowMock;
     
     /**
-     *
-     * @var type 
+     * @var type
      */
     protected $caseFlowMock;
     
     /**
-     *
-     * @var type 
+     * @var type
      */
     protected $gatewayMock;
     

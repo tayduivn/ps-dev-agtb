@@ -21,16 +21,13 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Index\Strategy\StaticStrategy;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexPool
- *
  */
 class IndexPoolTest extends TestCase
 {
     /**
      * @covers ::registerStrategies
-     *  @covers ::addStrategy
-     *
+     * @covers ::addStrategy
      */
     public function testRegisterStrategies()
     {

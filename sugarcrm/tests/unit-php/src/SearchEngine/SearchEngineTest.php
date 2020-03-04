@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
  */
 class SearchEngineTest extends TestCase

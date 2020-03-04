@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty
- *
  */
 class RawPropertyTest extends TestCase
 {

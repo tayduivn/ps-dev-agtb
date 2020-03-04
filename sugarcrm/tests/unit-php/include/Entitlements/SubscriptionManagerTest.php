@@ -466,7 +466,6 @@ class SubscriptionManagerTest extends TestCase
     }
 
     /**
-     *
      * @covers ::getSystemSubscriptionKeysInSortedValueArray
      * @param array $userSubscriptions
      * @param array $sysSubscriptions

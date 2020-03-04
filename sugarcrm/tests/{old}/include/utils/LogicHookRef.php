@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 /**
  * @ticket BR-1345
  * Test byref logic hooks
- *
  */
 class LogicHookRefTest extends TestCase
 {

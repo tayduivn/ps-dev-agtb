@@ -16,11 +16,7 @@ use PHPUnit\Framework\TestCase;
  * MetaDataFilesTest
  *
  * This test checks to see that the correct files are loaded from the clients/ directories
- *
- *
  */
-
-
 class MetaDataFilesTest extends TestCase
 {
     public function setUp()

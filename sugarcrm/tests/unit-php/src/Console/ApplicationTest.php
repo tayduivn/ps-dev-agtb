@@ -22,9 +22,7 @@ use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\ApplicationTestCommandA;
 use Symfony\Component\Console\Tester\ApplicationTester;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Application
- *
  */
 class ApplicationTest extends TestCase
 {

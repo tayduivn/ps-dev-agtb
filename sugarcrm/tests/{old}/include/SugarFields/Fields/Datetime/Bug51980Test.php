@@ -59,9 +59,6 @@ class Bug51980Test extends TestCase
         unset($GLOBALS['current_user']);
     }
 
-     /**
-
-     */
 	public function testDateProperUserFormat()
 	{
         //manipulate the date on the bean AFTER it's been created, making sure it is

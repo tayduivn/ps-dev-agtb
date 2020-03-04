@@ -28,10 +28,6 @@ class PMSECaseFlowHandlerTest extends TestCase
         }
     }
 
-    /**
-     *
-     *
-     */
     public function testRetrieveFlowData()
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')

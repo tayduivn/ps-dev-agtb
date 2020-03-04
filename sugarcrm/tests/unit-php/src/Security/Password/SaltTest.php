@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Password\Salt;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Salt
  *
  */

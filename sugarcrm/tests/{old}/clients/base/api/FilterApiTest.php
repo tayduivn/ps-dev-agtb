@@ -884,14 +884,12 @@ class FilterApiTest extends TestCase
     }
 
     /**
-     *
      * Test query execution with distinct/offset compensation
      *
      * @covers FilterApi::runQuery
      * @covers FilterApi::parseQueryResults
      * @dataProvider providerTestRunQueryOffsetCompensation
      * @group unit
-     *
      */
     public function testRunQueryOffsetCompensation($numBeans, $compensation, $limit, $offset, $expected)
     {

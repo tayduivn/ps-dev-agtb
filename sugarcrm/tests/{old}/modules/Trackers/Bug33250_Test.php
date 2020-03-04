@@ -13,13 +13,9 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * Bug33250_Test.php
- * 
- * This test will check the TrackerUtility functionality and how it attempts to create 
+ * This test will check the TrackerUtility functionality and how it attempts to create
  * a generic SQL statement that gets tracked and logged when slow queries are tracked.
- * 
  */
-
 class Bug33250_Test extends TestCase
 {
     public function test_generic_sql_with_matched_quotes() 

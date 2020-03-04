@@ -45,7 +45,7 @@ class AbstractMetaDataParserTest extends TestCase
 
     /**
      * Tests validation of studio defs for client and view specific rules
-     * 
+     *
      * @dataProvider studioValidationDefProvider
      * @param array $def Array of fields defs
      * @param string $view The view name to check defs for

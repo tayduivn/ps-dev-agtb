@@ -39,7 +39,6 @@ class StudioModuleTest extends TestCase
 
     /**
      * @ticket 39407
-     *
      */
     public function testRemoveFieldFromLayoutsDocumentsException()
     {

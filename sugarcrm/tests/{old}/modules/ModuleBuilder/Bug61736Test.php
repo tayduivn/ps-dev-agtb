@@ -17,35 +17,35 @@ class Bug61736Test extends TestCase
     /**
      * Holds the vardef after first require so we don't have to keep including the
      * custom vardef file
-     * 
+     *
      * @var array
      */
     protected static $_vardef = null;
 
     /**
      * The custom vardef file created during the test
-     * 
+     *
      * @var string
      */
     protected static $_vardefFile = 'custom/modulebuilder/packages/p1/modules/bbb/vardefs.php';
     
     /**
      * Module Builder Controller
-     * 
+     *
      * @var ModuleBuilderController
      */
     protected static $_mb;
 
     /**
      * Holder for the current request array
-     * 
+     *
      * @var array
      */
     protected static $_request = array();
 
     /**
      * Mock REQUEST array used to create the test package
-     * 
+     *
      * @var array
      */
     protected static $_createPackageRequestVars = array(
@@ -58,7 +58,7 @@ class Bug61736Test extends TestCase
 
     /**
      * Mock REQUEST array used to create the test module
-     * 
+     *
      * @var array
      */
     protected static $_createModuleRequestVars = array(
@@ -72,7 +72,7 @@ class Bug61736Test extends TestCase
     
     /**
      * Mock request for creating the field
-     * 
+     *
      * @var array
      */
     protected static $_createFieldRequestVars = array(
@@ -86,7 +86,7 @@ class Bug61736Test extends TestCase
 
     /**
      * Mock request for deleting the field
-     * 
+     *
      * @var array
      */
     protected static $_deleteFieldRequestVars = array(
@@ -200,7 +200,7 @@ class Bug61736Test extends TestCase
     /**
      * Gets the newly created custom vardef. Fetches the vardef from the file 
      * system one time and holds it for this test.
-     * 
+     *
      * @return array|null
      */
     protected static function _getTestVardef()

@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Container
  */
 class ContainerTest extends TestCase
@@ -136,7 +135,6 @@ class ContainerTest extends TestCase
 
     /**
      * @covers ::getInstance
-     *
      */
     public function testGetInstance()
     {
@@ -148,7 +146,6 @@ class ContainerTest extends TestCase
 
     /**
      * @covers ::create
-     *
      */
     public function testCreate()
     {

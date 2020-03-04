@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\BasicTerms;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\BasicTerms
- *
  */
 class BasicTermsTest extends TestCase
 {
@@ -32,7 +30,6 @@ class BasicTermsTest extends TestCase
      * @covers ::hasTerm
      *
      * @dataProvider providerBasicTermsTest
-     *
      */
     public function testBasicTerms($operaor, array $terms, $additionalTerm, $expectecd)
     {

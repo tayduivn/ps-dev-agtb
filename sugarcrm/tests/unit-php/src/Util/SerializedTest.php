@@ -15,7 +15,6 @@ namespace Sugarcrm\SugarcrmTestsUnit\Util;
 use PHPUnit\Framework\TestCase;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Serialized
  *
  */

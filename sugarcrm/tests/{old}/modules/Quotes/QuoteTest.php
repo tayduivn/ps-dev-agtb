@@ -47,10 +47,9 @@ class QuoteTest extends TestCase
         $this->assertEquals($expected->id, $actual->id, "Unable to get quote related product bundle.");
     }
 
-    /*
+    /**
      * Test that the base_rate field is populated with rate
      * of currency_id
-     *
      */
     public function testQuoteRate()
     {

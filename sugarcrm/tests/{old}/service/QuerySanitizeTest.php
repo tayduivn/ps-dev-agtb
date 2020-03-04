@@ -52,7 +52,6 @@ class QuerySanitizeTest extends TestCase
 
     /**
      * @dataProvider  getQueries
-     *
      */
     public function testCheckQuery($where, $order_by, $ok)
     {

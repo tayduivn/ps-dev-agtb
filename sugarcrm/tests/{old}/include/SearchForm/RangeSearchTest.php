@@ -174,7 +174,6 @@ class RangeSearchTest extends TestCase
      * testRangeSearchWithSavedReportValues
      * This test attempts to simulate testing what would happen should a saved report be invoked against
      * a range search field
-     *
      */
     public function testRangeSearchWithSavedReportValues()
     {

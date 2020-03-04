@@ -19,9 +19,7 @@ use Sugarcrm\Sugarcrm\Audit\Change\Scalar;
 use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\FieldChangeList
- *
  */
 class FieldListTest extends TestCase
 {

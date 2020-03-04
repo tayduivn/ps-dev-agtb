@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Logger;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Logger
- *
  */
 class LoggerTest extends TestCase
 {

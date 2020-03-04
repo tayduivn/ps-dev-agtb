@@ -15,9 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Queue;
 use PHPUnit\Framework\TestCase;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Queue\QueueManager
- *
  */
 class QueueManagerTest extends TestCase
 {

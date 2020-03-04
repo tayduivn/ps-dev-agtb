@@ -15,12 +15,10 @@ use PHPUnit\Framework\TestCase;
 require_once "include/SearchForm/SearchForm2.php";
 
 /**
- * 
  * Test checks if SearchDef with 'force_unifiedsearch' => true concatenates the db_field array properly,
  * when the search value is a multiple word term (contains space between the words)
- * 
- * @author snigam@sugarcrm.com, avucinic@sugarcrm.com
  *
+ * @author snigam@sugarcrm.com, avucinic@sugarcrm.com
  */
 class Bug45709_53785_Test extends TestCase
 {

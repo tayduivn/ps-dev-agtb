@@ -18,9 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchField;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields
- *
  */
 class SearchFieldsTest extends TestCase
 {

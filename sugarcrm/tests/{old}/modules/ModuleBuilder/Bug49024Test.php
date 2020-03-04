@@ -13,10 +13,7 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * Bug 49024
- * Relationships Created in Earlier Versions Cause Conflicts and AJAX Errors After Upgrade 
- * 
- * @ticket 49024
+ * Relationships Created in Earlier Versions Cause Conflicts and AJAX Errors After Upgrade
  */
 class Bug49024Test extends TestCase
 {

@@ -15,13 +15,12 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Bug44607Test
- * 
+ *
  * This bug tests the case where a user with a reports to id value that pointed to a user
  * that did not exist in the system or was deleted (record not just deleted flag) would cause
  * the code in Team.php (add_user_to_team) to run in an infinite loop.  Obviously, we do not
  * set the code to run in an infinite loop, but we do test that we get out of it and that no
  * team_membership entries are created for a user that does not exist.
- *
  */
 class Bug44607Test extends TestCase
 {
@@ -43,8 +42,6 @@ class Bug44607Test extends TestCase
 	
     /**
      * testAddUserToTeam
-     * 
-     * 
      */
     public function testAddUserToTeam()
     {

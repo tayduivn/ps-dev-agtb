@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
  * This test is for the ExtAPILotusLive.php class and the related functionality towards the Lotus Live web service
  *
  * @author Collin Lee
- *
  */
 class ExtAPILotusLiveTest extends TestCase
 {
@@ -33,55 +32,9 @@ class ExtAPILotusLiveTest extends TestCase
      * testUploadDocConflictErrorMessage
      *
      * This method tests that we get a unique error message for duplicate upload document conflicts
-     *
      */
     public function testUploadDocConflictErrorMessage()
     {
-        /*
-        $responseMock = $this->createPartialMock('Response', array('getBody', 'getMessage', 'isSuccessful'));
-        $responseMock->expects($this->any())
-            ->method('isSuccessful')
-            ->with($this->any())
-            ->will($this->returnValue(false));
-        $responseMock->expects($this->any())
-            ->method('getBody')
-            ->with($this->any())
-            ->will($this->returnValue('<?xml version="1.0" encoding="UTF-8"?><lcmis:error xmlns:lcmis="http://www.ibm.com/xmlns/prod/sn/cmis"><lcmis:code>contentAlreadyExists</lcmis:code><lcmis:message>EJPVJ9037E: Unable to add media.</lcmis:message><lcmis:userAction></lcmis:userAction></lcmis:error>'));
-        $responseMock->expects($this->any())
-            ->method('getMessage')
-            ->with($this->any())
-            ->will($this->returnValue('Conflict'));
-
-        $clientMock3 = $this->createPartialMock('Client', array('request'));
-        $clientMock3->expects($this->any())
-            ->method('request')
-            ->with($this->any())
-            ->will($this->returnValue($responseMock));
-
-        $clientMock2 = $this->createPartialMock('Client', array('setHeaders'));
-        $clientMock2->expects($this->any())
-            ->method('setHeaders')
-            ->with($this->any())
-            ->will($this->returnValue($clientMock3));
-
-        $clientMock = $this->createPartialMock('Client', array('setRawData'));
-        $clientMock->expects($this->any())
-            ->method('setRawData')
-            ->with($this->any())
-            ->will($this->returnValue($clientMock2));
-
-        $oauthMock = $this->createPartialMock('SugarOAuth', array('setUri'));
-        $oauthMock->expects($this->any())
-            ->method('setUri')
-            ->will($this->returnValue($clientMock));
-
-        $externalAPILotusLiveMock = new ExtAPILotusLiveMock();
-        ExtAPILotusLiveMock::$llMimeWhitelist = array();
-        $externalAPILotusLiveMock->sugarOauthMock = $oauthMock;
-
-        //$result = $externalAPILotusLiveMock->uploadDoc(new Document(), 'data/SugarBean.php', 'Bug50322Test.doc', 'application/msword');
-        */
-
         $externalAPILotusLiveMock = new ExtAPILotusLiveMock();
         $msg = $externalAPILotusLiveMock->getErrorStringFromCode('Conflict');
         $this->assertEquals('A file with the same name already exists in the system.', $msg);

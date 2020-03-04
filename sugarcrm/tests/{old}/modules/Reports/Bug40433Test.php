@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  * the mssql specific formatting to certain fields in the query.
  *
  * @author clee
- *
  */
 class Bug40433Test extends TestCase
 {

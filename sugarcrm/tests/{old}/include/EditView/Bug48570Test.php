@@ -39,7 +39,7 @@ class Bug48570Test extends TestCase
      * Create new currency
      * Create fake Opportunity with created currency
      * Try to get select for currency field and assert that new currency is selected
-     * 
+     *
      * @return void
      * @group 48570
      */

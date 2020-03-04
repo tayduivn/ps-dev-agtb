@@ -140,7 +140,6 @@ class OpportunitiesApiTest extends TestCase
     }
 
     /**
-     *
      * @covers ::updateReords
      * @covers ::updateRevenueLineItems
      */

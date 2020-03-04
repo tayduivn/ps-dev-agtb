@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  *		1) Start on the Contacts listview, click on a contact name to open the record in the detailview.
  *		2) Notice the VCR controls in the upper right of the layout - now click the edit button to go to the editview.
  *		3) Save an edit - which will return you back to the detailview
- *
  */
 class Bug23816Test extends TestCase
 {

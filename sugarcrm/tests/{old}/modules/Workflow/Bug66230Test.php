@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  * Class Bug66230Test
  *
  * Test that nothing breaks time elapsed workflows with only one trigger
- *
  */
 class Bug66230Test extends TestCase
 {

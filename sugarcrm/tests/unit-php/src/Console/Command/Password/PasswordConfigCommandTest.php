@@ -18,9 +18,7 @@ use Sugarcrm\Sugarcrm\Security\Password\Hash;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand
- *
  */
 class PasswordConfigCommandTestCase extends AbstractPasswordCommandTestCase
 {

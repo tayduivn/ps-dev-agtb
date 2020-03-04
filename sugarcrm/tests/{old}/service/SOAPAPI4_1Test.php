@@ -37,7 +37,6 @@ class SOAPAPI4_1Test extends SOAPTestCase
 
     /**
      * setUp
-     *
      */
 	public function setUp()
     {
@@ -142,7 +141,6 @@ class SOAPAPI4_1Test extends SOAPTestCase
 
     /**
      * tearDown
-     *
      */
     public function tearDown()
     {
@@ -156,7 +154,6 @@ class SOAPAPI4_1Test extends SOAPTestCase
 
     /**
      * testGetModifiedRelationships
-     *
      */
     public function testGetModifiedRelationships()
     {

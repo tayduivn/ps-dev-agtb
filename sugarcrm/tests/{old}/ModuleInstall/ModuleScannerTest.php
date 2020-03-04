@@ -243,9 +243,7 @@ EOQ;
     }
 
     /**
-     *
      * When ModuleScanner is enabled, validating allowed and disallowed file extension names.
-     *
      */
     public function testValidExtsAllowed() {
         // Allowed file names

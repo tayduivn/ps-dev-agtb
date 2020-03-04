@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SearchStringProcessor;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SearchStringProcessor
- *
  */
 class SearchStringProcessorTest extends TestCase
 {
@@ -27,7 +25,6 @@ class SearchStringProcessorTest extends TestCase
      * @covers ::getSubString
      *
      * @dataProvider providerParseTest
-     *
      */
     public function testParse($terms, $expectecd)
     {

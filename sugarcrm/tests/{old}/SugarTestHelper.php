@@ -900,7 +900,6 @@ class SugarTestHelper
     }
 
     /**
-     *
      * @var ACLAction
      */
     static public $aclAction;

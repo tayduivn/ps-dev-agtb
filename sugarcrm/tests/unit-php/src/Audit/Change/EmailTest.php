@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Change\Email;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\FieldChangeList
- *
  */
 class EmailTest extends TestCase
 {

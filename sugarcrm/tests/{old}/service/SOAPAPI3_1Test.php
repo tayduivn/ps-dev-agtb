@@ -13,7 +13,6 @@
 
 /**
  * This class is meant to test everything SOAP
- *
  */
 class SOAPAPI3_1Test extends SOAPTestCase
 {
@@ -31,7 +30,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
 
     /**
      * Create test user
-     *
      */
 	public function setUp()
     {
@@ -42,7 +40,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
 
     /**
      * Remove anything that was used during this test
-     *
      */
     public function tearDown() {
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
@@ -61,7 +58,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
 
     /**
 	 * Ensure we can create a session on the server.
-	 *
 	 */
     public function testCanLogin(){
 		$result = $this->_login();
@@ -101,7 +97,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
     }
     /**
      * Test get avaiable modules call
-     *
      */
     function testGetAvailableModulesForMobile()
     {
@@ -115,7 +110,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
     }
     /**
      * Test get avaiable modules call
-     *
      */
     function testGetAllAvailableModules()
     {

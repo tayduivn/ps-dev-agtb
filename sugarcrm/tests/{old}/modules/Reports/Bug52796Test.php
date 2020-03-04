@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  * using the latest conversion rate for the users currency.
  *
  * @author avucinic
- *
  */
 class Bug52796Test extends TestCase
 {

@@ -30,7 +30,7 @@ class Bug42286Test extends TestCase
 	
     /**
      * testRemoveUserFromTeam
-     * 
+     *
      * This test checks the case where a user is removed from a team.  The user in this case is not the user for
      * the private team so we do not expect an exception to be thrown.
      */

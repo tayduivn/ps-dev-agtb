@@ -21,7 +21,7 @@ class Bug46152_P3Test extends TestCase
 
     /**
      * Test saving Label of id field.
-     * 
+     *
      * @group 46152
      */
     public function testSaveIdLabel()

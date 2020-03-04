@@ -59,8 +59,6 @@ class Bug58282Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    /**
-     */
     public function testRelatedBeanIsSaved()
     {
         $account = new Account();
@@ -73,8 +71,6 @@ class Bug58282Test extends TestCase
         $account->save();
     }
 
-    /**
-     */
     public function testRelatedBeanIsNotSaved()
     {
         $account = new Account();

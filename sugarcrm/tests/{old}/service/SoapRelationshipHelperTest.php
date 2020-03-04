@@ -115,7 +115,6 @@ class SoapRelationshipHelperTest extends TestCase
     /**
      * testRetrieveModifiedRelationships
      * This test checks to make sure we can correctly retrieve related Meetings and Calls (see bugs 50092 & 50093)
-     *
      */
     public function testRetrieveModifiedRelationships()
     {

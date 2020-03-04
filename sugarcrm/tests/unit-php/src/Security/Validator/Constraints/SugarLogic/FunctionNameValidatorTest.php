@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\SugarLogic\FunctionNameVali
 use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\SugarLogic\FunctionNameValidator
- *
  */
 class FunctionNameValidatorTest extends AbstractConstraintValidatorTest
 {

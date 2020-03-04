@@ -28,7 +28,7 @@ class MetaDataManagerCacheRefreshTest extends TestCase
     
     /**
      * Test files for used in testing of pickup of new files during refresh
-     * 
+     *
      * @var string
      */
     protected $accountsFile = 'modules/Accounts/clients/mobile/views/herfy/herfy.php';

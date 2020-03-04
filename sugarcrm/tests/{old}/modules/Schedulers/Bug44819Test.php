@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Bug44819Test
  * Test Scheduler static function initUser() which returns a valid admin user
- * 
+ *
  * @author avucinic@sugarcrm.com
  */
 class Bug44819Test extends TestCase

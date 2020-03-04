@@ -21,7 +21,6 @@ class SOAPAPI4Test extends SOAPTestCase
 
     /**
      * Create test user
-     *
      */
 	public function setUp()
     {
@@ -198,7 +197,6 @@ class SOAPAPI4Test extends SOAPTestCase
 
     /**
      * Test get avaiable modules call
-     *
      */
     function testGetAllAvailableModules()
     {
@@ -223,7 +221,6 @@ class SOAPAPI4Test extends SOAPTestCase
 
     /**
      * Test get avaiable modules call
-     *
      */
     function testGetAvailableModules()
     {

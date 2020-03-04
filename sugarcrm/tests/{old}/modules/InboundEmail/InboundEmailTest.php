@@ -14,21 +14,19 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * This class is meant to test everything for InboundEmail
- *
  */
 class InboundEmailTest extends TestCase
 {
 	var $_user = null;
     /**
      * Create test user
-     *
      */
 	public function setUp() 
 	{
     	global $inbound_account_id;
 
     	$this->markTestSkipped('Functional Tests: ALL Require/Access a Real IMAP Sever:  This Test File should Probaly Be Removed');
-    	
+
     	if (empty($inbound_account_id)) {
         	$this->_setupTestUser();
         	$this->_createInboundAccount();
@@ -73,7 +71,6 @@ class InboundEmailTest extends TestCase
     
 	/**
 	 * retrieve an inbound account.
-	 *
 	 */
     function _retrieveInboundAccount() {
     	global $inbound_account_id;
@@ -87,7 +84,6 @@ class InboundEmailTest extends TestCase
     
 	/**
 	 * Create a folder in inbound account.
-	 *
 	 */
     function testCreateFolder() {
     	$focus = $this->_retrieveInboundAccount();
@@ -97,7 +93,6 @@ class InboundEmailTest extends TestCase
     
 	/**
 	 * Delete a folder in inbound account.
-	 *
 	 */
     function testDeleteFolder() {
     	global $inbound_account_id;
@@ -127,7 +122,6 @@ class InboundEmailTest extends TestCase
     
     /**
      * Remove anything that was used during this test
-     *
      */
     function tearDown() {
     	global $inbound_account_id;
@@ -136,7 +130,6 @@ class InboundEmailTest extends TestCase
 
 	/**
 	 * Delete this inbound account.
-	 *
 	 */
     function _tearDownInboundAccount($inbound_account_id) {
 		$focus = new InboundEmail();
@@ -147,7 +140,6 @@ class InboundEmailTest extends TestCase
     
     /**
      * Create a test user
-     *
      */
 	function _setupTestUser() {
 		global $current_user;
@@ -161,7 +153,6 @@ class InboundEmailTest extends TestCase
         
     /**
      * Remove user created for test
-     *
      */
 	function _tearDownTestUser() {
        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

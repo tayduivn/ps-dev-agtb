@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Session\SessionStorage
  *
  */

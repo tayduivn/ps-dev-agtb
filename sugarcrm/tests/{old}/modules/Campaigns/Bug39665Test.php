@@ -115,13 +115,13 @@ class Bug39665Test extends TestCase
             $contact->load_relationship('prospect_lists');
 	        $contact->prospect_lists->add($this->prospectlist->id);
 	        $contact->prospect_lists->add($this->prospectlist2->id);
-	        
+
 	        $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing, $this->prospectlist, 'targeted');
 	        $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing, $this->prospectlist, $campaign_log_states[mt_rand(0, 7)]);
 
 	        //$this->create_campaign_log($this->campaign, $contact, $this->emailmarketing, $this->prospectlist2, 'targeted');
 	        //$this->create_campaign_log($this->campaign, $contact, $this->emailmarketing, $this->prospectlist2, $campaign_log_states[mt_rand(0, 7)]);
-	        
+
 	        $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing2, $this->prospectlist, 'targeted');
 	        $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing2, $this->prospectlist, $campaign_log_states[mt_rand(0, 7)]);
 
@@ -138,20 +138,13 @@ class Bug39665Test extends TestCase
  			$lead->load_relationship('prospect_lists');
 	        $lead->prospect_lists->add($this->prospectlist->id);
 	        $lead->prospect_lists->add($this->prospectlist2->id);
-	        
+
 	        $this->create_campaign_log($this->campaign, $lead, $this->emailmarketing, $this->prospectlist, 'targeted');
 	        $this->create_campaign_log($this->campaign, $lead, $this->emailmarketing, $this->prospectlist, $campaign_log_states[mt_rand(0, 7)]);
 
-	        //$this->create_campaign_log($this->campaign, $lead, $this->emailmarketing, $this->prospectlist2, 'targeted');
-	        //$this->create_campaign_log($this->campaign, $lead, $this->emailmarketing, $this->prospectlist2, $campaign_log_states[mt_rand(0, 7)]);	        
-	        
 	        $this->create_campaign_log($this->campaign, $lead, $this->emailmarketing2, $this->prospectlist, 'targeted');
 	        $this->create_campaign_log($this->campaign, $lead, $this->emailmarketing2, $this->prospectlist, $campaign_log_states[mt_rand(0, 7)]);        
-
-	        //$this->create_campaign_log($this->campaign, $lead, $this->emailmarketing2, $this->prospectlist2, 'targeted');
-	        //$this->create_campaign_log($this->campaign, $lead, $this->emailmarketing2, $this->prospectlist2, $campaign_log_states[mt_rand(0, 7)]);         
-        }        
-         	
+        }
 	}
 
     public function tearDown()

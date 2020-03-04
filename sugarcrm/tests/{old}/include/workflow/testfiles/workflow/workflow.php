@@ -24,7 +24,7 @@ if ( !class_exists('Accounts_workflow') ) {
 		include("custom/modules/Accounts/workflow/alerts_array.php");
 		include("custom/modules/Accounts/workflow/actions_array.php");
 		include("custom/modules/Accounts/workflow/plugins_array.php");
-		
+
  if(true){ 
 	 //Frame Secondary 
 
@@ -37,12 +37,10 @@ if ( !class_exists('Accounts_workflow') ) {
 		 unset($alertshell_array); 
 		 process_workflow_actions($focus, $action_meta_array['Accounts0_action0']); 
  	}
- 
 
 	 //End Frame Secondary 
 
 	 unset($secondary_array); 
- 
 
  //End if trigger is true 
  } 
@@ -61,12 +59,10 @@ if ( !class_exists('Accounts_workflow') ) {
 		 unset($alertshell_array); 
 		 process_workflow_actions($focus, $action_meta_array['Accounts1_action0']); 
  	}
- 
 
 	 //End Frame Secondary 
 
 	 unset($secondary_array); 
- 
 
  //End if trigger is true 
  } 

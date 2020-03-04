@@ -13,11 +13,8 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * Bug45566Test
- * 
  * A simple test to verify that we still have a uid form element even when the ListViewSmarty multiSelect class variable is set to false
  * Other verifications will be needed, but this was a critical variable that was missing
- *
  */
 class Bug45566Test extends TestCase
 {

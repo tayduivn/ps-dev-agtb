@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Delimited;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\Delimited
- *
  */
 class DelimitedTest extends TestCase
 {

@@ -20,9 +20,6 @@ class PMSERoundRobinTest extends TestCase
      */
     protected $roundRobin;
 
-    /**
-     *
-     */
     public function testRun()
     {
         $this->roundRobin = $this->getMockBuilder('PMSERoundRobin')

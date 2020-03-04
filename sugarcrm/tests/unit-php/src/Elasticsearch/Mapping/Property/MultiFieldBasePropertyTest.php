@@ -18,9 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
- *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty
- *
  */
 class MultiFieldBasePropertyTest extends TestCase
 {

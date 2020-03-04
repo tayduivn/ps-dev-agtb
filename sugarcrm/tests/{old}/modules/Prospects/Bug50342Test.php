@@ -81,7 +81,6 @@ class Bug50342Test extends TestCase
      * This method tests the Prospect.php retrieveTargetList method.  The previous errors here were that the query to
      * retrieve the related target list entries were using the module name in the table query, but the module name was
      * not in lowercase so these queries would fail because the table names were in lowercase.
-     *
      */
     public function testRetrieveTargetList()
     {

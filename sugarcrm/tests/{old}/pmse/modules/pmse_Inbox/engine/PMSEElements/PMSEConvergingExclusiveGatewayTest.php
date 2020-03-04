@@ -26,18 +26,18 @@ class PMSEConvergingExclusiveGatewayTest extends TestCase
             ->setMethods(array('retrievePreviousFlows', 'prepareResponse'))
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $this->convergingExclusiveGateway->expects($this->exactly(1))
             ->method('retrievePreviousFlows')
             ->will($this->returnValue(array()));
-        
+
         $flowData = array('bpmn_id' => '9872398ue23', 'cas_id' => 1);
         $bean = null;
-        
+
         $this->convergingExclusiveGateway->expects($this->once())
             ->method('prepareResponse')
             ->with($flowData, 'WAIT', 'NONE', array());
-        
+
         $this->convergingExclusiveGateway->run($flowData, $bean);
     }
 
@@ -47,23 +47,22 @@ class PMSEConvergingExclusiveGatewayTest extends TestCase
             ->setMethods(array('retrievePreviousFlows', 'prepareResponse'))
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $previousFlows = array(
             array('id' => '1234567'),
         );
-        
+
         $flowData = array('bpmn_id' => '9872398ue23', 'cas_id' => 1);
         $bean = null;
-        
+
         $this->convergingExclusiveGateway->expects($this->exactly(1))
             ->method('retrievePreviousFlows')
             ->will($this->returnValue($previousFlows));
-        
+
         $this->convergingExclusiveGateway->expects($this->once())
             ->method('prepareResponse')
             ->with($flowData, 'ROUTE', 'CREATE', array());
-        
+
         $this->convergingExclusiveGateway->run($flowData, $bean);
     }
-    //put your code here
 }

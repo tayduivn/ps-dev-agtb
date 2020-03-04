@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  * Original Bug: 27655
  *
  * This test was expanded to hit both major paths in this file.
- *
  */
 class SugarTinyMCETest extends TestCase
 {

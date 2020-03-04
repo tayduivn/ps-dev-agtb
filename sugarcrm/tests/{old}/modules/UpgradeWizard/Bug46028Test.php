@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  *
  * This class contains the unit test to check that the repairSearchFields method will create a SearchFields.php file
  * to correctly handle range searching for date fields.
- *
  */
 
 require_once('modules/UpgradeWizard/uw_utils.php');

@@ -17,9 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- *
  * Plain symfony command fixture returning success
- *
  */
 class SymfonyCommandA extends Command
 {

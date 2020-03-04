@@ -13,9 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures;
 
 /**
- *
  * Multi Field Handler
- *
  */
 class MultiFieldHandler extends BaseHandler
 {

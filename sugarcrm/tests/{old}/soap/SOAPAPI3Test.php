@@ -12,7 +12,6 @@
 
 /**
  * This class is meant to test everything SOAP
- *
  */
 class SOAPAPI3Test extends SOAPTestCase
 {
@@ -21,7 +20,6 @@ class SOAPAPI3Test extends SOAPTestCase
 
     /**
      * Create test user
-     *
      */
     public function setUp()
     {
@@ -45,7 +43,6 @@ class SOAPAPI3Test extends SOAPTestCase
 
     /**
      * Ensure we can create a session on the server.
-     *
      */
     public function testCanLogin(){
         $result = $this->_login();
@@ -183,7 +180,6 @@ class SOAPAPI3Test extends SOAPTestCase
 
     /**
      * Get Module Layout functions not exposed to soap service, make sure they are not available.
-     *
      */
     public function testGetModuleLayoutMD5()
     {

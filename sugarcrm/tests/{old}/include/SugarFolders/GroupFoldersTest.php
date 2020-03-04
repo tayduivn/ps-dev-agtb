@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * This class is meant to test everything for InboundEmail
- *
  */
 class GroupFoldersTest extends TestCase
 {
@@ -23,7 +22,6 @@ class GroupFoldersTest extends TestCase
 	
     /**
      * Create test user
-     *
      */
 	public function setUp() 
 	{
@@ -48,7 +46,6 @@ class GroupFoldersTest extends TestCase
 
     /**
 	 * Create a group folder
-	 *
 	 */
     public function testCreateGroupFolder() 
     { 
@@ -69,7 +66,6 @@ class GroupFoldersTest extends TestCase
     
     /**
      * Create an Email
-     *
      */
     public function testCreateEmail() 
     {
@@ -101,7 +97,6 @@ class GroupFoldersTest extends TestCase
     
     /**
      * Assign this email to group folder
-     *
      */
     public function testAssignEmailToGroupFolder() 
     {
@@ -116,7 +111,6 @@ class GroupFoldersTest extends TestCase
     
     /**
      * Retrieve Email for this folder
-     *
      */
     public function retrieveEmailForGroupFolder() 
     {
@@ -128,7 +122,6 @@ class GroupFoldersTest extends TestCase
     
     /**
      * Delete this email
-     *
      */
     public function testDeleteEmailForGroupFolder() 
     {
@@ -141,7 +134,6 @@ class GroupFoldersTest extends TestCase
 	
     /**
 	 * Delete a folder
-	 *
 	 */
     public function testDeleteGroupFolder() 
     {
@@ -158,7 +150,6 @@ class GroupFoldersTest extends TestCase
     
 	/**
 	 * retrieve a group folder
-	 *
 	 */
     protected function _retrieveGroupFolder() 
     {
@@ -170,7 +161,6 @@ class GroupFoldersTest extends TestCase
         
     /**
 	 * Delete this inbound account.
-	 *
 	 */
     protected function _tearDownGroupFolder() 
     {
@@ -180,7 +170,6 @@ class GroupFoldersTest extends TestCase
     
     /**
      * Create a test user
-     *
      */
 	protected function _setupTestUser() 
 	{
@@ -195,7 +184,6 @@ class GroupFoldersTest extends TestCase
         
     /**
      * Remove user created for test
-     *
      */
 	protected function _tearDownTestUser() 
 	{
