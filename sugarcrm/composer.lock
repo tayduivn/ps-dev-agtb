@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c8553dadab45af018a1d4ab3479fc88f",
+    "content-hash": "a4e0c94eee0f03a1f2b45e0c44cec782",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -96,79 +96,6 @@
                 "issues": "https://github.com/aws/aws-sdk-php/issues"
             },
             "time": "2018-04-26T21:09:13+00:00"
-        },
-        {
-            "name": "beberlei/assert",
-            "version": "v2.9.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/beberlei/assert.git",
-                "reference": "124317de301b7c91d5fce34c98bba2c6925bec95"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/beberlei/assert/beberlei-assert-v2.9.9-c4d214.tar",
-                "reference": "124317de301b7c91d5fce34c98bba2c6925bec95",
-                "shasum": "861254bd97558313adfd44bf73626d2a281fd46a"
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "php": ">=5.3"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.1.1",
-                "phpunit/phpunit": "^4.8.35|^5.7"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Assert\\": "lib/Assert"
-                },
-                "files": [
-                    "lib/Assert/functions.php"
-                ]
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Assert\\Tests\\": "tests/Assert/Tests"
-                },
-                "files": [
-                    "tests/Assert/Tests/Fixtures/functions.php"
-                ]
-            },
-            "scripts": {
-                "assert:generate-docs": [
-                    "php bin/generate_method_docs.php"
-                ],
-                "assert:cs-lint": [
-                    "php-cs-fixer fix --diff -vvv --dry-run"
-                ],
-                "assert:cs-fix": [
-                    "php-cs-fixer fix . -vvv || true"
-                ]
-            },
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Benjamin Eberlei",
-                    "email": "kontakt@beberlei.de",
-                    "role": "Lead Developer"
-                },
-                {
-                    "name": "Richard Quadling",
-                    "email": "rquadling@gmail.com",
-                    "role": "Collaborator"
-                }
-            ],
-            "description": "Thin assertion library for input validation in business models.",
-            "keywords": [
-                "assert",
-                "assertion",
-                "validation"
-            ],
-            "time": "2019-05-28T15:27:37+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -546,124 +473,6 @@
             "time": "2014-02-15T12:42:32+00:00"
         },
         {
-            "name": "fgrosse/phpasn1",
-            "version": "v2.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fgrosse/PHPASN1.git",
-                "reference": "424edea8884073c5e01da2b90a2e291544cc758e"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/fgrosse/phpasn1/fgrosse-phpasn1-v2.1.1-20cd2d.tar",
-                "reference": "424edea8884073c5e01da2b90a2e291544cc758e",
-                "shasum": "aaca77fba8ce7577187f74f2426cfe456dacf701"
-            },
-            "require": {
-                "php": ">=7.0.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~6.3",
-                "satooshi/php-coveralls": "~2.0"
-            },
-            "suggest": {
-                "ext-gmp": "GMP is the preferred extension for big integer calculations",
-                "php-curl": "For loading OID information from the web if they have not bee defined statically"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "FG\\": "lib/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "FG\\Test\\": "tests/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Friedrich Große",
-                    "email": "friedrich.grosse@gmail.com",
-                    "homepage": "https://github.com/FGrosse",
-                    "role": "Author"
-                },
-                {
-                    "name": "All contributors",
-                    "homepage": "https://github.com/FGrosse/PHPASN1/contributors"
-                }
-            ],
-            "description": "A PHP Framework that allows you to encode and decode arbitrary ASN.1 structures using the ITU-T X.690 Encoding Rules.",
-            "homepage": "https://github.com/FGrosse/PHPASN1",
-            "keywords": [
-                "asn.1",
-                "asn1",
-                "ber",
-                "binary",
-                "decoding",
-                "der",
-                "encoding",
-                "x.509",
-                "x.690",
-                "x509",
-                "x690"
-            ],
-            "time": "2018-12-02T01:34:34+00:00"
-        },
-        {
-            "name": "firebase/php-jwt",
-            "version": "v5.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/firebase/php-jwt/firebase-php-jwt-v5.0.0-333b39.tar",
-                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
-                "shasum": "1022751b726049fecad9032fe974ffd901023f60"
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": " 4.8.35"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Firebase\\JWT\\": "src"
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Neuman Vong",
-                    "email": "neuman+pear@twilio.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Anant Narayanan",
-                    "email": "anant@php.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
-            "homepage": "https://github.com/firebase/php-jwt",
-            "time": "2017-06-27T22:17:23+00:00"
-        },
-        {
             "name": "google/apiclient",
             "version": "1.1.4",
             "source": {
@@ -703,199 +512,6 @@
                 "google"
             ],
             "time": "2015-05-21T19:35:32+00:00"
-        },
-        {
-            "name": "google/auth",
-            "version": "v1.6.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "45635ac69d0b95f38885531d4ebcdfcb2ebb6f36"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/google/auth/google-auth-v1.6.1-596257.tar",
-                "reference": "45635ac69d0b95f38885531d4ebcdfcb2ebb6f36",
-                "shasum": "117d8c3bfcb86f09ad8ed78272dd54ca8f6663e7"
-            },
-            "require": {
-                "firebase/php-jwt": "~2.0|~3.0|~4.0|~5.0",
-                "guzzlehttp/guzzle": "~5.3.1|~6.0",
-                "guzzlehttp/psr7": "^1.2",
-                "php": ">=5.4",
-                "psr/cache": "^1.0",
-                "psr/http-message": "^1.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^1.11",
-                "guzzlehttp/promises": "0.1.1|^1.3",
-                "phpseclib/phpseclib": "^2",
-                "phpunit/phpunit": "^4.8.36|^5.7",
-                "sebastian/comparator": ">=1.2.3"
-            },
-            "suggest": {
-                "phpseclib/phpseclib": "May be used in place of OpenSSL for signing strings or for token management. Please require version ^2."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Google\\Auth\\": "src"
-                }
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "Google Auth Library for PHP",
-            "homepage": "http://github.com/google/google-auth-library-php",
-            "keywords": [
-                "authentication",
-                "google",
-                "oauth2"
-            ],
-            "time": "2019-10-29T20:13:04+00:00"
-        },
-        {
-            "name": "google/gax",
-            "version": "0.36.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/googleapis/gax-php.git",
-                "reference": "9dd3911738aaf61bafd861917820317402cba798"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/google/gax/google-gax-0.36.0-0e8e0c.tar",
-                "reference": "9dd3911738aaf61bafd861917820317402cba798",
-                "shasum": "8c10cbf5ab6bd2084aebc4db94d9f8820b7ad5dc"
-            },
-            "require": {
-                "google/auth": "^1.2.0",
-                "google/protobuf": "^3.5.1",
-                "grpc/grpc": "^1.4",
-                "guzzlehttp/promises": "^1.3",
-                "guzzlehttp/psr7": "^1.2",
-                "php": ">=5.5"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.36",
-                "sami/sami": "*",
-                "squizlabs/php_codesniffer": "2.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Google\\Api\\": "src/Api",
-                    "Google\\ApiCore\\": "src/ApiCore",
-                    "Google\\Cloud\\": "src/Cloud",
-                    "Google\\Iam\\": "src/Iam",
-                    "Google\\Jison\\": "src/Jison",
-                    "Google\\LongRunning\\": "src/LongRunning",
-                    "Google\\Rpc\\": "src/Rpc",
-                    "Google\\Type\\": "src/Type",
-                    "GPBMetadata\\Google\\": "metadata"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Google\\ApiCore\\Dev\\": "dev/src",
-                    "Google\\": "tests",
-                    "GPBMetadata\\": "metadata"
-                }
-            },
-            "scripts": {
-                "regenerate-test-protos": [
-                    "dev/sh/regenerate-test-protos.sh"
-                ]
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Google API Core for PHP",
-            "homepage": "https://github.com/googleapis/gax-php",
-            "keywords": [
-                "google"
-            ],
-            "time": "2018-07-18T21:57:44+00:00"
-        },
-        {
-            "name": "google/protobuf",
-            "version": "v3.6.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/google/protobuf.git",
-                "reference": "d215c455f2f6852a95f50ebf2357349c4bb75c14"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/google/protobuf/google-protobuf-v3.6.0.1-c19008.tar",
-                "reference": "d215c455f2f6852a95f50ebf2357349c4bb75c14",
-                "shasum": "4b76670e3ff8a3ee52b6c0225bb45fb59fce5be5"
-            },
-            "require": {
-                "php": ">=5.5.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=4.8.0"
-            },
-            "suggest": {
-                "ext-bcmath": "Need to support JSON deserialization"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Google\\Protobuf\\": "php/src/Google/Protobuf",
-                    "GPBMetadata\\Google\\Protobuf\\": "php/src/GPBMetadata/Google/Protobuf"
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "proto library for PHP",
-            "homepage": "https://developers.google.com/protocol-buffers/",
-            "keywords": [
-                "proto"
-            ],
-            "time": "2018-06-08T01:16:44+00:00"
-        },
-        {
-            "name": "grpc/grpc",
-            "version": "1.26.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/grpc/grpc-php.git",
-                "reference": "342b5fba4d6fb742cdef30d84624d9a3d80c7dfb"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/grpc/grpc/grpc-grpc-1.26.2-1ec062.tar",
-                "reference": "342b5fba4d6fb742cdef30d84624d9a3d80c7dfb",
-                "shasum": "f4ff07fb0ae6ddf239004ca337eeb2eb1d28d86f"
-            },
-            "require": {
-                "php": ">=5.5.0"
-            },
-            "require-dev": {
-                "google/auth": "^v1.3.0"
-            },
-            "suggest": {
-                "ext-protobuf": "For better performance, install the protobuf C extension.",
-                "google/protobuf": "To get started using grpc quickly, install the native protobuf library."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Grpc\\": "src/lib/"
-                }
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "gRPC library for PHP",
-            "homepage": "https://grpc.io",
-            "keywords": [
-                "rpc"
-            ],
-            "time": "2020-01-14T06:21:20+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1201,57 +817,6 @@
             "time": "2014-10-12T19:12:31+00:00"
         },
         {
-            "name": "jimdo/prometheus_client_php",
-            "version": "v0.9.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Jimdo/prometheus_client_php.git",
-                "reference": "331530d69545f4949fcfe738622d5e5df3ae142f"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/jimdo/prometheus_client_php/jimdo-prometheus_client_php-v0.9.1-ef0766.tar",
-                "reference": "331530d69545f4949fcfe738622d5e5df3ae142f",
-                "shasum": "79d512656b711f35c2a4fb124d644ba6c86258f8"
-            },
-            "require": {
-                "guzzlehttp/guzzle": "^6.2",
-                "php": ">=5.6.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.1.0"
-            },
-            "suggest": {
-                "ext-apc": "Required if using APCu.",
-                "ext-redis": "Required if using Redis."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Prometheus\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-0": {
-                    "Test\\Prometheus\\": "tests/"
-                }
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Joscha",
-                    "email": "joscha@schnipseljagd.org"
-                },
-                {
-                    "name": "Jan Brauer",
-                    "email": "jan.brauer@jimdo.com"
-                }
-            ],
-            "time": "2017-11-06T11:00:07+00:00"
-        },
-        {
             "name": "league/oauth2-client",
             "version": "2.2.1",
             "source": {
@@ -1321,83 +886,6 @@
                 "sso"
             ],
             "time": "2017-04-25T14:43:14+00:00"
-        },
-        {
-            "name": "mdanter/ecc",
-            "version": "v0.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpecc/phpecc.git",
-                "reference": "64c62e71bde5e2447e62f3242596a520abbbabae"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/mdanter/ecc/mdanter-ecc-v0.5.2-86f30f.tar",
-                "reference": "64c62e71bde5e2447e62f3242596a520abbbabae",
-                "shasum": "8fc0e056db92a578501063a90dbf07ded291596b"
-            },
-            "require": {
-                "ext-gmp": "*",
-                "fgrosse/phpasn1": "^2.0",
-                "php": "^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^6.0",
-                "squizlabs/php_codesniffer": "^2.0",
-                "symfony/yaml": "^2.6|^3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Mdanter\\Ecc\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Mdanter\\Ecc\\Tests\\": "tests/unit",
-                    "Mdanter\\Ecc\\WycheProof\\": "tests/wycheproof"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Matyas Danter",
-                    "homepage": "http://matejdanter.com/",
-                    "role": "Author"
-                },
-                {
-                    "name": "Thibaud Fabre",
-                    "email": "thibaud@aztech.io",
-                    "homepage": "http://aztech.io",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Thomas Kerin",
-                    "email": "afk11@users.noreply.github.com",
-                    "role": "Maintainer"
-                }
-            ],
-            "description": "PHP Elliptic Curve Cryptography library",
-            "homepage": "https://github.com/phpecc/phpecc",
-            "keywords": [
-                "ECDH",
-                "ECDSA",
-                "curve",
-                "diffie",
-                "elliptic",
-                "hellman",
-                "nistp192",
-                "nistp224",
-                "nistp256",
-                "nistp384",
-                "nistp521",
-                "phpecc",
-                "secp256k1",
-                "secp256r1"
-            ],
-            "time": "2018-12-02T01:36:34+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -1581,60 +1069,6 @@
                 "jsonpath"
             ],
             "time": "2019-12-30T18:03:34+00:00"
-        },
-        {
-            "name": "onelogin/php-saml",
-            "version": "3.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/onelogin/php-saml.git",
-                "reference": "c9026b26395a65184550055d9a01bdf9dbd30861"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/onelogin/php-saml/onelogin-php-saml-3.1.1-3712e4.tar",
-                "reference": "c9026b26395a65184550055d9a01bdf9dbd30861",
-                "shasum": "30d214a13eb422038b5acb17246243e29160739d"
-            },
-            "require": {
-                "php": ">=5.4",
-                "robrichards/xmlseclibs": ">=3.0.3"
-            },
-            "require-dev": {
-                "pdepend/pdepend": "^2.5.0",
-                "php-coveralls/php-coveralls": "^1.0.2 || ^2.0",
-                "phploc/phploc": "^2.1 || ^3.0 || ^4.0",
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5 || ^7.1",
-                "sebastian/phpcpd": "^2.0 || ^3.0 || ^4.0",
-                "squizlabs/php_codesniffer": "^3.1.1"
-            },
-            "suggest": {
-                "ext-curl": "Install curl lib to be able to use the IdPMetadataParser for parsing remote XMLs",
-                "ext-gettext": "Install gettext and php5-gettext libs to handle translations",
-                "ext-openssl": "Install openssl lib in order to handle with x509 certs (require to support sign and encryption)"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "OneLogin\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "OneLogin PHP SAML Toolkit",
-            "homepage": "https://developers.onelogin.com/saml/php",
-            "keywords": [
-                "onelogin",
-                "saml",
-                "saml2"
-            ],
-            "support": {
-                "email": "sixto.garcia@onelogin.com",
-                "issues": "https://github.com/onelogin/php-saml/issues",
-                "source": "https://github.com/onelogin/php-saml/"
-            },
-            "time": "2018-08-06T10:12:02+00:00"
         },
         {
             "name": "oyejorge/less.php",
@@ -1848,55 +1282,6 @@
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "time": "2017-01-09T09:33:47+00:00"
-        },
-        {
-            "name": "pimple/pimple",
-            "version": "v3.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/silexphp/Pimple",
-                "reference": "59a4bc26bc19c09ebf9373ca6783a0fce0e04330"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/pimple/pimple/pimple-pimple-v3.2.3-48c5a6.tar",
-                "reference": "59a4bc26bc19c09ebf9373ca6783a0fce0e04330",
-                "shasum": "3ac59ec4cf5104ae7d1dad68b33d11d35c75a094"
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "psr/container": "^1.0"
-            },
-            "require-dev": {
-                "symfony/phpunit-bridge": "^3.2"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Pimple": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "Pimple, a simple Dependency Injection Container",
-            "homepage": "http://pimple.sensiolabs.org",
-            "keywords": [
-                "container",
-                "dependency injection"
-            ],
-            "time": "2018-01-21T07:42:36+00:00"
         },
         {
             "name": "psr/cache",
@@ -2281,43 +1666,6 @@
             "time": "2019-01-07T21:25:54+00:00"
         },
         {
-            "name": "robrichards/xmlseclibs",
-            "version": "3.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/robrichards/xmlseclibs.git",
-                "reference": "85dad434f66909252e5451b1dcb801a971d23a77"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/robrichards/xmlseclibs/robrichards-xmlseclibs-3.0.4-57c7b7.tar",
-                "reference": "85dad434f66909252e5451b1dcb801a971d23a77",
-                "shasum": "41ad3202125605e883306fb6fce5217a56314832"
-            },
-            "require": {
-                "ext-openssl": "*",
-                "php": ">= 5.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "RobRichards\\XMLSecLibs\\": "src"
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "A PHP library for XML Security",
-            "homepage": "https://github.com/robrichards/xmlseclibs",
-            "keywords": [
-                "security",
-                "signature",
-                "xml",
-                "xmldsig"
-            ],
-            "time": "2019-11-05T11:44:22+00:00"
-        },
-        {
             "name": "ruflin/elastica",
             "version": "6.0.1",
             "source": {
@@ -2380,392 +1728,12 @@
             "time": "2018-02-18T21:12:53+00:00"
         },
         {
-            "name": "silex/silex",
-            "version": "v2.2.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/silexphp/Silex.git",
-                "reference": "f83c62e73b5ac6e7de5b770d9f07a94e0829d487"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/silex/silex/silex-silex-v2.2.4-cc38e7.tar",
-                "reference": "f83c62e73b5ac6e7de5b770d9f07a94e0829d487",
-                "shasum": "615c5f2d1bd3e13c6e4ae3344922eb19e4c5ab2e"
-            },
-            "require": {
-                "php": ">=5.5.9",
-                "pimple/pimple": "~3.0",
-                "symfony/event-dispatcher": "~2.8|^3.0",
-                "symfony/http-foundation": "~2.8|^3.0",
-                "symfony/http-kernel": "~2.8|^3.0",
-                "symfony/routing": "~2.8|^3.0"
-            },
-            "conflict": {
-                "phpunit/phpunit": "<4.8.35 || >= 5.0, <5.4.3"
-            },
-            "replace": {
-                "silex/api": "self.version",
-                "silex/providers": "self.version"
-            },
-            "require-dev": {
-                "doctrine/dbal": "~2.2",
-                "monolog/monolog": "^1.4.1",
-                "swiftmailer/swiftmailer": "~5",
-                "symfony/asset": "~2.8|^3.0",
-                "symfony/browser-kit": "~2.8|^3.0",
-                "symfony/config": "~2.8|^3.0",
-                "symfony/css-selector": "~2.8|^3.0",
-                "symfony/debug": "~2.8|^3.0",
-                "symfony/doctrine-bridge": "~2.8|^3.0",
-                "symfony/dom-crawler": "~2.8|^3.0",
-                "symfony/expression-language": "~2.8|^3.0",
-                "symfony/finder": "~2.8|^3.0",
-                "symfony/form": "~2.8|^3.0",
-                "symfony/intl": "~2.8|^3.0",
-                "symfony/monolog-bridge": "~2.8|^3.0",
-                "symfony/options-resolver": "~2.8|^3.0",
-                "symfony/phpunit-bridge": "^3.2",
-                "symfony/process": "~2.8|^3.0",
-                "symfony/security": "~2.8|^3.0",
-                "symfony/serializer": "~2.8|^3.0",
-                "symfony/translation": "~2.8|^3.0",
-                "symfony/twig-bridge": "~2.8|^3.0",
-                "symfony/validator": "~2.8|^3.0",
-                "symfony/var-dumper": "~2.8|^3.0",
-                "symfony/web-link": "^3.3",
-                "twig/twig": "~1.28|~2.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Silex\\": "src/Silex"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Silex\\Tests\\": "tests/Silex/Tests"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Igor Wiedler",
-                    "email": "igor@wiedler.ch"
-                }
-            ],
-            "description": "The PHP micro-framework based on the Symfony Components",
-            "homepage": "http://silex.sensiolabs.org",
-            "keywords": [
-                "microframework"
-            ],
-            "time": "2018-03-14T07:44:24+00:00"
-        },
-        {
-            "name": "spomky-labs/aes-key-wrap",
-            "version": "v3.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Spomky-Labs/aes-key-wrap.git",
-                "reference": "072e312ea119c4cc33012edc5e7e8c3f3def0d66"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/spomky-labs/aes-key-wrap/spomky-labs-aes-key-wrap-v3.0.3-ee9975.tar",
-                "reference": "072e312ea119c4cc33012edc5e7e8c3f3def0d66",
-                "shasum": "7c8a729a3ba40657229bc0812a8603d9d5d99fa5"
-            },
-            "require": {
-                "beberlei/assert": "^2.4",
-                "ext-mbstring": "*",
-                "lib-openssl": "*",
-                "php": "^5.4|^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.5|^5.0",
-                "satooshi/php-coveralls": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AESKW\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "AESKW\\Tests\\": "tests/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Florent Morselli",
-                    "homepage": "https://github.com/Spomky-Labs/aes-key-wrap/contributors"
-                }
-            ],
-            "description": "AES Key Wrap for PHP.",
-            "homepage": "https://github.com/Spomky-Labs/aes-key-wrap",
-            "keywords": [
-                "A128KW",
-                "A192KW",
-                "A256KW",
-                "AES",
-                "Key",
-                "Padding",
-                "RFC3394",
-                "RFC5649",
-                "Wrap"
-            ],
-            "time": "2017-03-25T21:07:11+00:00"
-        },
-        {
-            "name": "spomky-labs/base64url",
-            "version": "v1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Spomky-Labs/base64url.git",
-                "reference": "ef6d5fb93894063d9cee996022259fd08d6646ea"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/spomky-labs/base64url/spomky-labs-base64url-v1.0.2-1c5219.tar",
-                "reference": "ef6d5fb93894063d9cee996022259fd08d6646ea",
-                "shasum": "dbe3891fdb7b6288b3b9f065f9416751695f4d90"
-            },
-            "require": {
-                "php": "^5.3|^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.0|^5.0",
-                "satooshi/php-coveralls": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Base64Url\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Florent Morselli",
-                    "homepage": "https://github.com/Spomky-Labs/base64url/contributors"
-                }
-            ],
-            "description": "Base 64 URL Safe Encoding/decoding PHP Library",
-            "homepage": "https://github.com/Spomky-Labs/base64url",
-            "keywords": [
-                "Base64",
-                "RFC4648",
-                "Safe",
-                "URL"
-            ],
-            "time": "2016-01-21T19:50:30+00:00"
-        },
-        {
-            "name": "spomky-labs/jose",
-            "version": "v7.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Spomky-Labs/jose.git",
-                "reference": "8ff3cceba70ffc7e9d08fa681918ca4474bd4154"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/spomky-labs/jose/spomky-labs-jose-v7.0.1-acd9c1.tar",
-                "reference": "8ff3cceba70ffc7e9d08fa681918ca4474bd4154",
-                "shasum": "2c92e28361b07af26dcb0bb4fd36a257d0312b9d"
-            },
-            "require": {
-                "beberlei/assert": "^2.4",
-                "fgrosse/phpasn1": "^2.0",
-                "lib-openssl": "*",
-                "mdanter/ecc": "0.5.*",
-                "php": "^7.0",
-                "psr/cache": "^1.0",
-                "spomky-labs/aes-key-wrap": "^3.0",
-                "spomky-labs/base64url": "^1.0",
-                "spomky-labs/php-aes-gcm": "^1.2",
-                "symfony/polyfill-mbstring": "^1.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^6.0",
-                "satooshi/php-coveralls": "^1.0",
-                "symfony/cache": "^2.0|^3.0"
-            },
-            "suggest": {
-                "ext-crypto": "Highly recommended when you use AES GCM based algorithms.",
-                "ext-curve25519": "For EdDSA with X25519 curves support.",
-                "ext-ed25519": "For EdDSA with Ed25519 curves support."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "6.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Jose\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Jose\\Test\\": "tests/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Florent Morselli",
-                    "homepage": "https://github.com/Spomky"
-                },
-                {
-                    "name": "All contributors",
-                    "homepage": "https://github.com/Spomky-Labs/jose/contributors"
-                }
-            ],
-            "description": "JSON Object Signing and Encryption library for PHP.",
-            "homepage": "https://github.com/Spomky-Labs/Jose",
-            "keywords": [
-                "JWA",
-                "JWE",
-                "JWK",
-                "JWKSet",
-                "JWS",
-                "JWT",
-                "Jose",
-                "Jot",
-                "RFC7515",
-                "RFC7516",
-                "RFC7517",
-                "RFC7518",
-                "RFC7519",
-                "RFC7520"
-            ],
-            "time": "2018-02-14T08:25:35+00:00"
-        },
-        {
-            "name": "spomky-labs/php-aes-gcm",
-            "version": "v1.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Spomky-Labs/php-aes-gcm.git",
-                "reference": "e3900f2eb29a98476ae94c25c5c4aebb32ebf338"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/spomky-labs/php-aes-gcm/spomky-labs-php-aes-gcm-v1.2.1-efd0e6.tar",
-                "reference": "e3900f2eb29a98476ae94c25c5c4aebb32ebf338",
-                "shasum": "386431a0e06dc8629877cdf794998b95eecd31ef"
-            },
-            "require": {
-                "beberlei/assert": "^2.4",
-                "lib-openssl": "*",
-                "php": ">=5.4",
-                "symfony/polyfill-mbstring": "^1.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.5|^5.0",
-                "satooshi/php-coveralls": "^1.0"
-            },
-            "suggest": {
-                "ext-crypto": "Highly recommended for better performance."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AESGCM\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Florent Morselli",
-                    "homepage": "https://github.com/Spomky"
-                },
-                {
-                    "name": "All contributors",
-                    "homepage": "https://github.com/Spomky-Labs/php-aes-gcm/contributors"
-                }
-            ],
-            "description": "AES GCM (Galois Counter Mode) PHP implementation.",
-            "homepage": "https://github.com/Spomky-Labs/php-aes-gcm",
-            "keywords": [
-                "AES",
-                "AES-GCM",
-                "GCM",
-                "Galois Counter Mode"
-            ],
-            "time": "2018-11-07T14:39:44+00:00"
-        },
-        {
             "name": "sugarcrm/identity-provider",
             "version": "1.9.0",
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "38e3a9af014894e6aa6da2b1fe1ef6811bf6c8f6"
-            },
-            "require": {
-                "doctrine/dbal": "~2.2",
-                "etechnika/idna-convert": "1.0.3",
-                "google/gax": "^0.36.0",
-                "google/protobuf": "v3.6.0.1",
-                "grpc/grpc": "^1.13",
-                "guzzlehttp/guzzle": "^6.2",
-                "jimdo/prometheus_client_php": "^0.9.1",
-                "league/oauth2-client": "2.2.1",
-                "monolog/monolog": "^1.21",
-                "onelogin/php-saml": "~3.1.0",
-                "php": "^7.1",
-                "ramsey/uuid": "3.8.0",
-                "silex/silex": "~2.0",
-                "spomky-labs/jose": "7.0.1",
-                "symfony/asset": "~2.8|^3.0",
-                "symfony/console": "^3.1",
-                "symfony/expression-language": "^3.1",
-                "symfony/ldap": "^3.1",
-                "symfony/security-core": "^3.1",
-                "symfony/security-csrf": "^3.1",
-                "symfony/translation": "^3.1",
-                "symfony/twig-bridge": "^3.1",
-                "symfony/validator": "^3.1",
-                "twig/twig": "^1.24"
+                "reference": "db1bdf6ce0d78be1bc487280e3a7cf06b9039324"
             },
             "require-dev": {
                 "behat/behat": "3.4.3",
@@ -2815,61 +1783,6 @@
                 "forum": "https://community.sugarcrm.com/sugarcrm",
                 "irc": "irc://irc.freenode.org/sugarcrm"
             }
-        },
-        {
-            "name": "symfony/asset",
-            "version": "v3.4.37",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/asset",
-                "reference": "787b09046b02ff00d66ba7be006ab133f4484ca2"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/asset/symfony-asset-v3.4.37-626a99.tar",
-                "reference": "787b09046b02ff00d66ba7be006ab133f4484ca2",
-                "shasum": "c55d80e55510d6b936bdf2f7420d0e9085e2fbf5"
-            },
-            "require": {
-                "php": "^5.5.9|>=7.0.8"
-            },
-            "require-dev": {
-                "symfony/http-foundation": "~2.8|~3.0|~4.0",
-                "symfony/http-kernel": "~2.8|~3.0|~4.0"
-            },
-            "suggest": {
-                "symfony/http-foundation": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Asset\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Asset Component",
-            "homepage": "https://symfony.com",
-            "time": "2020-01-01T11:03:25+00:00"
         },
         {
             "name": "symfony/cache",
@@ -3314,56 +2227,6 @@
             "time": "2019-12-20T22:13:14+00:00"
         },
         {
-            "name": "symfony/expression-language",
-            "version": "v3.4.37",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/expression-language.git",
-                "reference": "1b429eebf1468bc26ede6661c1fe0605757bb3ee"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/expression-language/symfony-expression-language-v3.4.37-e98289.tar",
-                "reference": "1b429eebf1468bc26ede6661c1fe0605757bb3ee",
-                "shasum": "9b010875265524817075d1f9f3294ffd0dd1dfec"
-            },
-            "require": {
-                "php": "^5.5.9|>=7.0.8",
-                "symfony/cache": "~3.1|~4.0",
-                "symfony/polyfill-php70": "~1.6"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\ExpressionLanguage\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony ExpressionLanguage Component",
-            "homepage": "https://symfony.com",
-            "time": "2020-01-01T11:03:25+00:00"
-        },
-        {
             "name": "symfony/filesystem",
             "version": "v3.4.37",
             "source": {
@@ -3716,114 +2579,6 @@
             "time": "2020-01-21T12:29:51+00:00"
         },
         {
-            "name": "symfony/ldap",
-            "version": "v3.4.37",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/ldap",
-                "reference": "8ddaacca8b5d2ec88e4b2bfee7e3d02cd3fe865e"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/ldap/symfony-ldap-v3.4.37-8985e1.tar",
-                "reference": "8ddaacca8b5d2ec88e4b2bfee7e3d02cd3fe865e",
-                "shasum": "49bec35a3703f5fe614fa2f9058669b7253eab5a"
-            },
-            "require": {
-                "ext-ldap": "*",
-                "php": "^5.5.9|>=7.0.8",
-                "symfony/options-resolver": "~2.8|~3.0|~4.0",
-                "symfony/polyfill-php56": "~1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Ldap\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Charles Sarrazin",
-                    "email": "charles@sarraz.in"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "An abstraction in front of PHP's LDAP functions, compatible with PHP 5.3.9 onwards.",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "active directory",
-                "ldap"
-            ],
-            "time": "2020-01-01T11:03:25+00:00"
-        },
-        {
-            "name": "symfony/options-resolver",
-            "version": "v3.4.37",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/options-resolver",
-                "reference": "2950566c946926321cdce8380d43d8f0b8ed8893"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/options-resolver/symfony-options-resolver-v3.4.37-c8b8a5.tar",
-                "reference": "2950566c946926321cdce8380d43d8f0b8ed8893",
-                "shasum": "5f4c8c7ce747178006ed760ffe06d93e0bec4125"
-            },
-            "require": {
-                "php": "^5.5.9|>=7.0.8"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\OptionsResolver\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony OptionsResolver Component",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "config",
-                "configuration",
-                "options"
-            ],
-            "time": "2020-01-01T11:03:25+00:00"
-        },
-        {
             "name": "symfony/polyfill-apcu",
             "version": "v1.13.1",
             "source": {
@@ -3880,17 +2635,17 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.13.1",
+            "version": "v1.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "7f3a2ce141648efb48beb3474426290f68290a54"
+                "reference": "57d42e06846eaf7a9a22df4f99a53cbd0bde303e"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/polyfill-ctype/symfony-polyfill-ctype-v1.13.1-a40ad3.tar",
-                "reference": "7f3a2ce141648efb48beb3474426290f68290a54",
-                "shasum": "c322be5faf026879996f0da9d8164c7e6254d682"
+                "url": "https://satis.sugardev.team/dist/symfony/polyfill-ctype/symfony-polyfill-ctype-v1.14.0-83bdd0.tar",
+                "reference": "57d42e06846eaf7a9a22df4f99a53cbd0bde303e",
+                "shasum": "7e3180b34eac639302bcb4d85608bef1cba32f9a"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -3901,7 +2656,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.13-dev"
+                    "dev-master": "1.14-dev"
                 }
             },
             "autoload": {
@@ -3933,7 +2688,7 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2019-10-31T10:12:35+00:00"
+            "time": "2019-11-26T06:12:57+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -4474,96 +3229,6 @@
             "time": "2018-09-21T12:47:38+00:00"
         },
         {
-            "name": "symfony/twig-bridge",
-            "version": "v3.4.37",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/twig-bridge",
-                "reference": "fe7607479888f221b52e028dc1befb91070d6f21"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/twig-bridge/symfony-twig-bridge-v3.4.37-8bea1a.tar",
-                "reference": "fe7607479888f221b52e028dc1befb91070d6f21",
-                "shasum": "0b867879455957391704f52fa1eb1eddccfb156f"
-            },
-            "require": {
-                "php": "^5.5.9|>=7.0.8",
-                "twig/twig": "^1.41|^2.10"
-            },
-            "conflict": {
-                "symfony/console": "<3.4",
-                "symfony/form": "<3.4.31|>=4.0,<4.3.4"
-            },
-            "require-dev": {
-                "fig/link-util": "^1.0",
-                "symfony/asset": "~2.8|~3.0|~4.0",
-                "symfony/console": "~3.4|~4.0",
-                "symfony/dependency-injection": "~2.8|~3.0|~4.0",
-                "symfony/expression-language": "~2.8|~3.0|~4.0",
-                "symfony/finder": "~2.8|~3.0|~4.0",
-                "symfony/form": "^3.4.31|^4.3.4",
-                "symfony/http-foundation": "^3.3.11|~4.0",
-                "symfony/http-kernel": "~3.2|~4.0",
-                "symfony/polyfill-intl-icu": "~1.0",
-                "symfony/routing": "~2.8|~3.0|~4.0",
-                "symfony/security": "^2.8.31|^3.3.13|~4.0",
-                "symfony/security-acl": "~2.8|~3.0",
-                "symfony/stopwatch": "~2.8|~3.0|~4.0",
-                "symfony/templating": "~2.8|~3.0|~4.0",
-                "symfony/translation": "~2.8|~3.0|~4.0",
-                "symfony/var-dumper": "~2.8.10|~3.1.4|~3.2|~4.0",
-                "symfony/web-link": "~3.3|~4.0",
-                "symfony/workflow": "~3.3|~4.0",
-                "symfony/yaml": "~2.8|~3.0|~4.0"
-            },
-            "suggest": {
-                "symfony/asset": "For using the AssetExtension",
-                "symfony/expression-language": "For using the ExpressionExtension",
-                "symfony/finder": "",
-                "symfony/form": "For using the FormExtension",
-                "symfony/http-kernel": "For using the HttpKernelExtension",
-                "symfony/routing": "For using the RoutingExtension",
-                "symfony/security": "For using the SecurityExtension",
-                "symfony/stopwatch": "For using the StopwatchExtension",
-                "symfony/templating": "For using the TwigEngine",
-                "symfony/translation": "For using the TranslationExtension",
-                "symfony/var-dumper": "For using the DumpExtension",
-                "symfony/web-link": "For using the WebLinkExtension",
-                "symfony/yaml": "For using the YamlExtension"
-            },
-            "type": "symfony-bridge",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Bridge\\Twig\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Twig Bridge",
-            "homepage": "https://symfony.com",
-            "time": "2020-01-07T19:28:14+00:00"
-        },
-        {
             "name": "symfony/validator",
             "version": "v3.4.16",
             "source": {
@@ -4693,76 +3358,6 @@
             "time": "2018-09-16T00:02:51+00:00"
         },
         {
-            "name": "twig/twig",
-            "version": "v1.42.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/twigphp/Twig",
-                "reference": "b7cfe91529449acbada5366a40e3c3f74be91a90"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/twig/twig/twig-twig-v1.42.4-3b9856.tar",
-                "reference": "b7cfe91529449acbada5366a40e3c3f74be91a90",
-                "shasum": "f13d0737849c1e25ba4f2c90d2e06d4a1ebfade1"
-            },
-            "require": {
-                "php": ">=5.5.0",
-                "symfony/polyfill-ctype": "^1.8"
-            },
-            "require-dev": {
-                "psr/container": "^1.0",
-                "symfony/debug": "^3.4|^4.2",
-                "symfony/phpunit-bridge": "^4.4@dev|^5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.42-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Twig_": "lib/"
-                },
-                "psr-4": {
-                    "Twig\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Twig\\Tests\\": "tests"
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
-                },
-                {
-                    "name": "Twig Team",
-                    "homepage": "https://twig.symfony.com/contributors",
-                    "role": "Contributors"
-                },
-                {
-                    "name": "Armin Ronacher",
-                    "email": "armin.ronacher@active-4.com",
-                    "role": "Project Founder"
-                }
-            ],
-            "description": "Twig, the flexible, fast, and secure template language for PHP",
-            "homepage": "https://twig.symfony.com",
-            "keywords": [
-                "templating"
-            ],
-            "time": "2019-11-11T16:49:32+00:00"
-        },
-        {
             "name": "ultra-lite/container",
             "version": "6.2.0",
             "source": {
@@ -4856,6 +3451,79 @@
     ],
     "packages-dev": [
         {
+            "name": "beberlei/assert",
+            "version": "v2.9.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/assert.git",
+                "reference": "124317de301b7c91d5fce34c98bba2c6925bec95"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/beberlei/assert/beberlei-assert-v2.9.9-c4d214.tar",
+                "reference": "124317de301b7c91d5fce34c98bba2c6925bec95",
+                "shasum": "861254bd97558313adfd44bf73626d2a281fd46a"
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.1.1",
+                "phpunit/phpunit": "^4.8.35|^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Assert\\": "lib/Assert"
+                },
+                "files": [
+                    "lib/Assert/functions.php"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Assert\\Tests\\": "tests/Assert/Tests"
+                },
+                "files": [
+                    "tests/Assert/Tests/Fixtures/functions.php"
+                ]
+            },
+            "scripts": {
+                "assert:generate-docs": [
+                    "php bin/generate_method_docs.php"
+                ],
+                "assert:cs-lint": [
+                    "php-cs-fixer fix --diff -vvv --dry-run"
+                ],
+                "assert:cs-fix": [
+                    "php-cs-fixer fix . -vvv || true"
+                ]
+            },
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Richard Quadling",
+                    "email": "rquadling@gmail.com",
+                    "role": "Collaborator"
+                }
+            ],
+            "description": "Thin assertion library for input validation in business models.",
+            "keywords": [
+                "assert",
+                "assertion",
+                "validation"
+            ],
+            "time": "2019-05-28T15:27:37+00:00"
+        },
+        {
             "name": "doctrine/instantiator",
             "version": "1.3.0",
             "source": {
@@ -4918,6 +3586,445 @@
             "time": "2019-10-21T16:45:58+00:00"
         },
         {
+            "name": "fgrosse/phpasn1",
+            "version": "v2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fgrosse/PHPASN1.git",
+                "reference": "424edea8884073c5e01da2b90a2e291544cc758e"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/fgrosse/phpasn1/fgrosse-phpasn1-v2.1.1-20cd2d.tar",
+                "reference": "424edea8884073c5e01da2b90a2e291544cc758e",
+                "shasum": "aaca77fba8ce7577187f74f2426cfe456dacf701"
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.3",
+                "satooshi/php-coveralls": "~2.0"
+            },
+            "suggest": {
+                "ext-gmp": "GMP is the preferred extension for big integer calculations",
+                "php-curl": "For loading OID information from the web if they have not bee defined statically"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FG\\": "lib/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "FG\\Test\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Friedrich Große",
+                    "email": "friedrich.grosse@gmail.com",
+                    "homepage": "https://github.com/FGrosse",
+                    "role": "Author"
+                },
+                {
+                    "name": "All contributors",
+                    "homepage": "https://github.com/FGrosse/PHPASN1/contributors"
+                }
+            ],
+            "description": "A PHP Framework that allows you to encode and decode arbitrary ASN.1 structures using the ITU-T X.690 Encoding Rules.",
+            "homepage": "https://github.com/FGrosse/PHPASN1",
+            "keywords": [
+                "asn.1",
+                "asn1",
+                "ber",
+                "binary",
+                "decoding",
+                "der",
+                "encoding",
+                "x.509",
+                "x.690",
+                "x509",
+                "x690"
+            ],
+            "time": "2018-12-02T01:34:34+00:00"
+        },
+        {
+            "name": "firebase/php-jwt",
+            "version": "v5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/firebase/php-jwt.git",
+                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/firebase/php-jwt/firebase-php-jwt-v5.0.0-333b39.tar",
+                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
+                "shasum": "1022751b726049fecad9032fe974ffd901023f60"
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": " 4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Firebase\\JWT\\": "src"
+                }
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Neuman Vong",
+                    "email": "neuman+pear@twilio.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Anant Narayanan",
+                    "email": "anant@php.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
+            "homepage": "https://github.com/firebase/php-jwt",
+            "time": "2017-06-27T22:17:23+00:00"
+        },
+        {
+            "name": "google/auth",
+            "version": "v1.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/googleapis/google-auth-library-php.git",
+                "reference": "45635ac69d0b95f38885531d4ebcdfcb2ebb6f36"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/google/auth/google-auth-v1.6.1-596257.tar",
+                "reference": "45635ac69d0b95f38885531d4ebcdfcb2ebb6f36",
+                "shasum": "117d8c3bfcb86f09ad8ed78272dd54ca8f6663e7"
+            },
+            "require": {
+                "firebase/php-jwt": "~2.0|~3.0|~4.0|~5.0",
+                "guzzlehttp/guzzle": "~5.3.1|~6.0",
+                "guzzlehttp/psr7": "^1.2",
+                "php": ">=5.4",
+                "psr/cache": "^1.0",
+                "psr/http-message": "^1.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^1.11",
+                "guzzlehttp/promises": "0.1.1|^1.3",
+                "phpseclib/phpseclib": "^2",
+                "phpunit/phpunit": "^4.8.36|^5.7",
+                "sebastian/comparator": ">=1.2.3"
+            },
+            "suggest": {
+                "phpseclib/phpseclib": "May be used in place of OpenSSL for signing strings or for token management. Please require version ^2."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Google\\Auth\\": "src"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Google Auth Library for PHP",
+            "homepage": "http://github.com/google/google-auth-library-php",
+            "keywords": [
+                "authentication",
+                "google",
+                "oauth2"
+            ],
+            "time": "2019-10-29T20:13:04+00:00"
+        },
+        {
+            "name": "google/gax",
+            "version": "0.36.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/googleapis/gax-php.git",
+                "reference": "9dd3911738aaf61bafd861917820317402cba798"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/google/gax/google-gax-0.36.0-0e8e0c.tar",
+                "reference": "9dd3911738aaf61bafd861917820317402cba798",
+                "shasum": "8c10cbf5ab6bd2084aebc4db94d9f8820b7ad5dc"
+            },
+            "require": {
+                "google/auth": "^1.2.0",
+                "google/protobuf": "^3.5.1",
+                "grpc/grpc": "^1.4",
+                "guzzlehttp/promises": "^1.3",
+                "guzzlehttp/psr7": "^1.2",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.36",
+                "sami/sami": "*",
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Google\\Api\\": "src/Api",
+                    "Google\\ApiCore\\": "src/ApiCore",
+                    "Google\\Cloud\\": "src/Cloud",
+                    "Google\\Iam\\": "src/Iam",
+                    "Google\\Jison\\": "src/Jison",
+                    "Google\\LongRunning\\": "src/LongRunning",
+                    "Google\\Rpc\\": "src/Rpc",
+                    "Google\\Type\\": "src/Type",
+                    "GPBMetadata\\Google\\": "metadata"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Google\\ApiCore\\Dev\\": "dev/src",
+                    "Google\\": "tests",
+                    "GPBMetadata\\": "metadata"
+                }
+            },
+            "scripts": {
+                "regenerate-test-protos": [
+                    "dev/sh/regenerate-test-protos.sh"
+                ]
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Google API Core for PHP",
+            "homepage": "https://github.com/googleapis/gax-php",
+            "keywords": [
+                "google"
+            ],
+            "time": "2018-07-18T21:57:44+00:00"
+        },
+        {
+            "name": "google/protobuf",
+            "version": "v3.6.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/google/protobuf.git",
+                "reference": "d215c455f2f6852a95f50ebf2357349c4bb75c14"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/google/protobuf/google-protobuf-v3.6.0.1-c19008.tar",
+                "reference": "d215c455f2f6852a95f50ebf2357349c4bb75c14",
+                "shasum": "4b76670e3ff8a3ee52b6c0225bb45fb59fce5be5"
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=4.8.0"
+            },
+            "suggest": {
+                "ext-bcmath": "Need to support JSON deserialization"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Google\\Protobuf\\": "php/src/Google/Protobuf",
+                    "GPBMetadata\\Google\\Protobuf\\": "php/src/GPBMetadata/Google/Protobuf"
+                }
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "proto library for PHP",
+            "homepage": "https://developers.google.com/protocol-buffers/",
+            "keywords": [
+                "proto"
+            ],
+            "time": "2018-06-08T01:16:44+00:00"
+        },
+        {
+            "name": "grpc/grpc",
+            "version": "1.26.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/grpc/grpc-php.git",
+                "reference": "342b5fba4d6fb742cdef30d84624d9a3d80c7dfb"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/grpc/grpc/grpc-grpc-1.26.2-1ec062.tar",
+                "reference": "342b5fba4d6fb742cdef30d84624d9a3d80c7dfb",
+                "shasum": "f4ff07fb0ae6ddf239004ca337eeb2eb1d28d86f"
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "google/auth": "^v1.3.0"
+            },
+            "suggest": {
+                "ext-protobuf": "For better performance, install the protobuf C extension.",
+                "google/protobuf": "To get started using grpc quickly, install the native protobuf library."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Grpc\\": "src/lib/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "gRPC library for PHP",
+            "homepage": "https://grpc.io",
+            "keywords": [
+                "rpc"
+            ],
+            "time": "2020-01-14T06:21:20+00:00"
+        },
+        {
+            "name": "jimdo/prometheus_client_php",
+            "version": "v0.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Jimdo/prometheus_client_php.git",
+                "reference": "331530d69545f4949fcfe738622d5e5df3ae142f"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/jimdo/prometheus_client_php/jimdo-prometheus_client_php-v0.9.1-ef0766.tar",
+                "reference": "331530d69545f4949fcfe738622d5e5df3ae142f",
+                "shasum": "79d512656b711f35c2a4fb124d644ba6c86258f8"
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2",
+                "php": ">=5.6.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.1.0"
+            },
+            "suggest": {
+                "ext-apc": "Required if using APCu.",
+                "ext-redis": "Required if using Redis."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Prometheus\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-0": {
+                    "Test\\Prometheus\\": "tests/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Joscha",
+                    "email": "joscha@schnipseljagd.org"
+                },
+                {
+                    "name": "Jan Brauer",
+                    "email": "jan.brauer@jimdo.com"
+                }
+            ],
+            "time": "2017-11-06T11:00:07+00:00"
+        },
+        {
+            "name": "mdanter/ecc",
+            "version": "v0.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpecc/phpecc.git",
+                "reference": "64c62e71bde5e2447e62f3242596a520abbbabae"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/mdanter/ecc/mdanter-ecc-v0.5.2-86f30f.tar",
+                "reference": "64c62e71bde5e2447e62f3242596a520abbbabae",
+                "shasum": "8fc0e056db92a578501063a90dbf07ded291596b"
+            },
+            "require": {
+                "ext-gmp": "*",
+                "fgrosse/phpasn1": "^2.0",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.0",
+                "squizlabs/php_codesniffer": "^2.0",
+                "symfony/yaml": "^2.6|^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mdanter\\Ecc\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Mdanter\\Ecc\\Tests\\": "tests/unit",
+                    "Mdanter\\Ecc\\WycheProof\\": "tests/wycheproof"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matyas Danter",
+                    "homepage": "http://matejdanter.com/",
+                    "role": "Author"
+                },
+                {
+                    "name": "Thibaud Fabre",
+                    "email": "thibaud@aztech.io",
+                    "homepage": "http://aztech.io",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Thomas Kerin",
+                    "email": "afk11@users.noreply.github.com",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "PHP Elliptic Curve Cryptography library",
+            "homepage": "https://github.com/phpecc/phpecc",
+            "keywords": [
+                "ECDH",
+                "ECDSA",
+                "curve",
+                "diffie",
+                "elliptic",
+                "hellman",
+                "nistp192",
+                "nistp224",
+                "nistp256",
+                "nistp384",
+                "nistp521",
+                "phpecc",
+                "secp256k1",
+                "secp256r1"
+            ],
+            "time": "2018-12-02T01:36:34+00:00"
+        },
+        {
             "name": "myclabs/deep-copy",
             "version": "1.9.5",
             "source": {
@@ -4969,6 +4076,60 @@
                 "object graph"
             ],
             "time": "2020-01-17T21:11:47+00:00"
+        },
+        {
+            "name": "onelogin/php-saml",
+            "version": "3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/onelogin/php-saml.git",
+                "reference": "c9026b26395a65184550055d9a01bdf9dbd30861"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/onelogin/php-saml/onelogin-php-saml-3.1.1-3712e4.tar",
+                "reference": "c9026b26395a65184550055d9a01bdf9dbd30861",
+                "shasum": "30d214a13eb422038b5acb17246243e29160739d"
+            },
+            "require": {
+                "php": ">=5.4",
+                "robrichards/xmlseclibs": ">=3.0.3"
+            },
+            "require-dev": {
+                "pdepend/pdepend": "^2.5.0",
+                "php-coveralls/php-coveralls": "^1.0.2 || ^2.0",
+                "phploc/phploc": "^2.1 || ^3.0 || ^4.0",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5 || ^7.1",
+                "sebastian/phpcpd": "^2.0 || ^3.0 || ^4.0",
+                "squizlabs/php_codesniffer": "^3.1.1"
+            },
+            "suggest": {
+                "ext-curl": "Install curl lib to be able to use the IdPMetadataParser for parsing remote XMLs",
+                "ext-gettext": "Install gettext and php5-gettext libs to handle translations",
+                "ext-openssl": "Install openssl lib in order to handle with x509 certs (require to support sign and encryption)"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OneLogin\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "OneLogin PHP SAML Toolkit",
+            "homepage": "https://developers.onelogin.com/saml/php",
+            "keywords": [
+                "onelogin",
+                "saml",
+                "saml2"
+            ],
+            "support": {
+                "email": "sixto.garcia@onelogin.com",
+                "issues": "https://github.com/onelogin/php-saml/issues",
+                "source": "https://github.com/onelogin/php-saml/"
+            },
+            "time": "2018-08-06T10:12:02+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -5129,48 +4290,43 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "4.3.4",
+            "version": "5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "da3fd972d6bafd628114f7e7e036f45944b62e9c"
+                "reference": "cd72d394ca794d3466a3b2fc09d5a6c1dc86b47e"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpdocumentor/reflection-docblock/phpdocumentor-reflection-docblock-4.3.4-a971c5.tar",
-                "reference": "da3fd972d6bafd628114f7e7e036f45944b62e9c",
-                "shasum": "28b8da720e5107bc5b2872e8951b6a69fc6950e5"
+                "url": "https://satis.sugardev.team/dist/phpdocumentor/reflection-docblock/phpdocumentor-reflection-docblock-5.1.0-f79ac8.tar",
+                "reference": "cd72d394ca794d3466a3b2fc09d5a6c1dc86b47e",
+                "shasum": "dcb7348099afba119c8032d9941f038def70688e"
             },
             "require": {
-                "php": "^7.0",
-                "phpdocumentor/reflection-common": "^1.0.0 || ^2.0.0",
-                "phpdocumentor/type-resolver": "~0.4 || ^1.0.0",
-                "webmozart/assert": "^1.0"
+                "ext-filter": "^7.1",
+                "php": "^7.2",
+                "phpdocumentor/reflection-common": "^2.0",
+                "phpdocumentor/type-resolver": "^1.0",
+                "webmozart/assert": "^1"
             },
             "require-dev": {
-                "doctrine/instantiator": "^1.0.5",
-                "mockery/mockery": "^1.0",
-                "phpdocumentor/type-resolver": "0.4.*",
-                "phpunit/phpunit": "^6.4"
+                "doctrine/instantiator": "^1",
+                "mockery/mockery": "^1"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.x-dev"
+                    "dev-master": "5.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "phpDocumentor\\Reflection\\": [
-                        "src/"
-                    ]
+                    "phpDocumentor\\Reflection\\": "src"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "phpDocumentor\\Reflection\\": [
-                        "tests/unit"
-                    ]
+                    "phpDocumentor\\Reflection\\": "tests/unit"
                 }
             },
             "license": [
@@ -5180,33 +4336,36 @@
                 {
                     "name": "Mike van Riel",
                     "email": "me@mikevanriel.com"
+                },
+                {
+                    "name": "Jaap van Otterdijk",
+                    "email": "account@ijaap.nl"
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2019-12-28T18:55:12+00:00"
+            "time": "2020-02-22T12:28:44+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver",
-                "reference": "2e32a6d48972b2c1976ed5d8967145b6cec4a4a9"
+                "reference": "7462d5f123dfc080dfdf26897032a6513644fc95"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpdocumentor/type-resolver/phpdocumentor-type-resolver-1.0.1-829383.tar",
-                "reference": "2e32a6d48972b2c1976ed5d8967145b6cec4a4a9",
-                "shasum": "1dfbb9bbebbec51befd4d8d4d82674954373705e"
+                "url": "https://satis.sugardev.team/dist/phpdocumentor/type-resolver/phpdocumentor-type-resolver-1.1.0-2792c9.tar",
+                "reference": "7462d5f123dfc080dfdf26897032a6513644fc95",
+                "shasum": "586896435fd2173d34b4aa7e7995af7e64c5cdf4"
             },
             "require": {
-                "php": "^7.1",
+                "php": "^7.2",
                 "phpdocumentor/reflection-common": "^2.0"
             },
             "require-dev": {
-                "ext-tokenizer": "^7.1",
-                "mockery/mockery": "~1",
-                "phpunit/phpunit": "^7.0"
+                "ext-tokenizer": "^7.2",
+                "mockery/mockery": "~1"
             },
             "type": "library",
             "extra": {
@@ -5234,7 +4393,7 @@
                 }
             ],
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
-            "time": "2019-08-22T18:11:29+00:00"
+            "time": "2020-02-18T18:59:58+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -5305,45 +4464,52 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "6.1.4",
+            "version": "8.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "132a65667f23852f1362eaf18705d612695f4288"
+                "reference": "142f4b80df81c901da238b8f3723e2ab54c957e5"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit/php-code-coverage/phpunit-php-code-coverage-6.1.4-b66633.tar",
-                "reference": "132a65667f23852f1362eaf18705d612695f4288",
-                "shasum": "b0b7cdb9708f53703455db8be30149bad1bc68d8"
+                "url": "https://satis.sugardev.team/dist/phpunit/php-code-coverage/phpunit-php-code-coverage-8.0.1-f5238b.tar",
+                "reference": "142f4b80df81c901da238b8f3723e2ab54c957e5",
+                "shasum": "6ef11e4c4e5b4d9106fe51e56f1a302b0bee7d66"
             },
             "require": {
                 "ext-dom": "*",
                 "ext-xmlwriter": "*",
-                "php": "^7.1",
-                "phpunit/php-file-iterator": "^2.0",
-                "phpunit/php-text-template": "^1.2.1",
-                "phpunit/php-token-stream": "^3.0",
-                "sebastian/code-unit-reverse-lookup": "^1.0.1",
-                "sebastian/environment": "^3.1 || ^4.0",
-                "sebastian/version": "^2.0.1",
-                "theseer/tokenizer": "^1.1"
+                "php": "^7.3",
+                "phpunit/php-file-iterator": "^3.0",
+                "phpunit/php-text-template": "^2.0",
+                "phpunit/php-token-stream": "^4.0",
+                "sebastian/code-unit-reverse-lookup": "^2.0",
+                "sebastian/environment": "^5.0",
+                "sebastian/version": "^3.0",
+                "theseer/tokenizer": "^1.1.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.0"
+                "phpunit/phpunit": "^9.0"
             },
             "suggest": {
-                "ext-xdebug": "^2.6.0"
+                "ext-pcov": "*",
+                "ext-xdebug": "*"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.1-dev"
+                    "dev-master": "8.0-dev"
                 }
             },
             "autoload": {
                 "classmap": [
                     "src/"
+                ]
+            },
+            "autoload-dev": {
+                "files": [
+                    "tests/TestCase.php",
+                    "tests/_files/BankAccountTest.php"
                 ]
             },
             "license": [
@@ -5366,32 +4532,32 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues"
             },
-            "time": "2018-10-31T16:06:48+00:00"
+            "time": "2020-02-19T13:41:19+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
-            "version": "2.0.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-file-iterator.git",
-                "reference": "44c38edcefc48dd4641c245d60758363b3ee6bd3"
+                "reference": "4f0b00937aaa6aa41af9930005bcfb4398edb3b7"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit/php-file-iterator/phpunit-php-file-iterator-2.0.2-06f450.tar",
-                "reference": "44c38edcefc48dd4641c245d60758363b3ee6bd3",
-                "shasum": "06b880900b35ab769bae51a6981bc3316781832d"
+                "url": "https://satis.sugardev.team/dist/phpunit/php-file-iterator/phpunit-php-file-iterator-3.0.0-5d3b2a.tar",
+                "reference": "4f0b00937aaa6aa41af9930005bcfb4398edb3b7",
+                "shasum": "250847cad082b667f260971402e30481c79e622e"
             },
             "require": {
-                "php": "^7.1"
+                "php": "^7.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.1"
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "3.0-dev"
                 }
             },
             "autoload": {
@@ -5418,26 +4584,91 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-file-iterator/issues"
             },
-            "time": "2018-09-13T20:33:42+00:00"
+            "time": "2020-02-07T06:05:22+00:00"
         },
         {
-            "name": "phpunit/php-text-template",
-            "version": "1.2.1",
+            "name": "phpunit/php-invoker",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sebastianbergmann/php-text-template.git",
-                "reference": "75aefe65c90fa77db317125ac746ed158f136c25"
+                "url": "https://github.com/sebastianbergmann/php-invoker.git",
+                "reference": "0753d0499ac06a6c30868da7a06b7bf86275e337"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit/php-text-template/phpunit-php-text-template-1.2.1-638b73.tar",
-                "reference": "75aefe65c90fa77db317125ac746ed158f136c25",
-                "shasum": "af74327f0a392af89652377be8653698de3e41a7"
+                "url": "https://satis.sugardev.team/dist/phpunit/php-invoker/phpunit-php-invoker-3.0.0-a1c35a.tar",
+                "reference": "0753d0499ac06a6c30868da7a06b7bf86275e337",
+                "shasum": "b4a488382b5f828e566d5832dec268c72fb15c1f"
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": "^7.3"
+            },
+            "require-dev": {
+                "ext-pcntl": "*",
+                "phpunit/phpunit": "^9.0"
+            },
+            "suggest": {
+                "ext-pcntl": "*"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "autoload-dev": {
+                "classmap": [
+                    "tests/_fixture/"
+                ]
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "Invoke callables with a timeout",
+            "homepage": "https://github.com/sebastianbergmann/php-invoker/",
+            "keywords": [
+                "process"
+            ],
+            "support": {
+                "issues": "https://github.com/sebastianbergmann/php-invoker/issues"
+            },
+            "time": "2020-02-07T06:06:11+00:00"
+        },
+        {
+            "name": "phpunit/php-text-template",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/php-text-template.git",
+                "reference": "68a6f3697124b7224f65aac84496ea2f898419a9"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/phpunit/php-text-template/phpunit-php-text-template-2.0.0-c3c2d7.tar",
+                "reference": "68a6f3697124b7224f65aac84496ea2f898419a9",
+                "shasum": "38e2aee636e87c04ceb8313b2d787aec5695481e"
+            },
+            "require": {
+                "php": "^7.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
             "autoload": {
                 "classmap": [
                     "src/"
@@ -5461,32 +4692,32 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-text-template/issues"
             },
-            "time": "2015-06-21T13:50:34+00:00"
+            "time": "2020-02-01T07:43:44+00:00"
         },
         {
             "name": "phpunit/php-timer",
-            "version": "2.1.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "d720f2aae72257b1c4095edafa6d6268969dad10"
+                "reference": "e48c37f5eb2325dd46ff2cc78a2d609dead5897b"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit/php-timer/phpunit-php-timer-2.1.2-c71444.tar",
-                "reference": "d720f2aae72257b1c4095edafa6d6268969dad10",
-                "shasum": "c1d091401cedb1b70e22420b154749c89dfdc01c"
+                "url": "https://satis.sugardev.team/dist/phpunit/php-timer/phpunit-php-timer-3.0.0-2aea81.tar",
+                "reference": "e48c37f5eb2325dd46ff2cc78a2d609dead5897b",
+                "shasum": "0c00594c5b28dca0c05e8854cedcc3a611717f64"
             },
             "require": {
-                "php": "^7.1"
+                "php": "^7.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.0"
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "3.0-dev"
                 }
             },
             "autoload": {
@@ -5512,33 +4743,33 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-timer/issues"
             },
-            "time": "2019-06-07T04:22:29+00:00"
+            "time": "2020-02-07T06:08:11+00:00"
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "3.1.1",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "8577a646c5c240c9d3977e50d934bdadffa11333"
+                "reference": "72273e715ebf358a8d35ebf073739764ccc1be81"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit/php-token-stream/phpunit-php-token-stream-3.1.1-fa8e17.tar",
-                "reference": "8577a646c5c240c9d3977e50d934bdadffa11333",
-                "shasum": "1830fb226caa83ccfacdf294a1469fe6c0a0fb7b"
+                "url": "https://satis.sugardev.team/dist/phpunit/php-token-stream/phpunit-php-token-stream-4.0.0-3500c9.tar",
+                "reference": "72273e715ebf358a8d35ebf073739764ccc1be81",
+                "shasum": "59909447294e37692b0ad49f5f0585c9caf34007"
             },
             "require": {
                 "ext-tokenizer": "*",
-                "php": "^7.1"
+                "php": "^7.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.0"
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -5563,57 +4794,56 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-token-stream/issues"
             },
-            "time": "2019-09-17T06:23:10+00:00"
+            "time": "2020-02-07T06:19:00+00:00"
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.1",
+            "version": "9.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "5e1281dd69b9de1afd03005ac7fb44b1b343fad9"
+                "reference": "c0cef959c143d0affc1805049d88efdad6318fde"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit/phpunit/phpunit-phpunit-7.5.1-d6402e.tar",
-                "reference": "5e1281dd69b9de1afd03005ac7fb44b1b343fad9",
-                "shasum": "eb0259a599eda23ba4a40135493a18f8aa1df0a2"
+                "url": "https://satis.sugardev.team/dist/phpunit/phpunit/phpunit-phpunit-9.0.1-45e44b.tar",
+                "reference": "c0cef959c143d0affc1805049d88efdad6318fde",
+                "shasum": "4b13a0d65caef23c1baa7eba9efb257403a9a7cd"
             },
             "require": {
-                "doctrine/instantiator": "^1.1",
+                "doctrine/instantiator": "^1.2.0",
                 "ext-dom": "*",
                 "ext-json": "*",
                 "ext-libxml": "*",
                 "ext-mbstring": "*",
                 "ext-xml": "*",
-                "myclabs/deep-copy": "^1.7",
-                "phar-io/manifest": "^1.0.2",
-                "phar-io/version": "^2.0",
-                "php": "^7.1",
-                "phpspec/prophecy": "^1.7",
-                "phpunit/php-code-coverage": "^6.0.7",
-                "phpunit/php-file-iterator": "^2.0.1",
-                "phpunit/php-text-template": "^1.2.1",
-                "phpunit/php-timer": "^2.0",
-                "sebastian/comparator": "^3.0",
-                "sebastian/diff": "^3.0",
-                "sebastian/environment": "^4.0",
-                "sebastian/exporter": "^3.1",
-                "sebastian/global-state": "^2.0",
-                "sebastian/object-enumerator": "^3.0.3",
-                "sebastian/resource-operations": "^2.0",
-                "sebastian/version": "^2.0.1"
-            },
-            "conflict": {
-                "phpunit/phpunit-mock-objects": "*"
+                "ext-xmlwriter": "*",
+                "myclabs/deep-copy": "^1.9.1",
+                "phar-io/manifest": "^1.0.3",
+                "phar-io/version": "^2.0.1",
+                "php": "^7.3",
+                "phpspec/prophecy": "^1.8.1",
+                "phpunit/php-code-coverage": "^8.0",
+                "phpunit/php-file-iterator": "^3.0",
+                "phpunit/php-invoker": "^3.0",
+                "phpunit/php-text-template": "^2.0",
+                "phpunit/php-timer": "^3.0",
+                "sebastian/comparator": "^4.0",
+                "sebastian/diff": "^4.0",
+                "sebastian/environment": "^5.0",
+                "sebastian/exporter": "^4.0",
+                "sebastian/global-state": "^4.0",
+                "sebastian/object-enumerator": "^4.0",
+                "sebastian/resource-operations": "^3.0",
+                "sebastian/type": "^2.0",
+                "sebastian/version": "^3.0"
             },
             "require-dev": {
                 "ext-pdo": "*"
             },
             "suggest": {
                 "ext-soap": "*",
-                "ext-xdebug": "*",
-                "phpunit/php-invoker": "^2.0"
+                "ext-xdebug": "*"
             },
             "bin": [
                 "phpunit"
@@ -5621,12 +4851,15 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "7.5-dev"
+                    "dev-master": "9.0-dev"
                 }
             },
             "autoload": {
                 "classmap": [
                     "src/"
+                ],
+                "files": [
+                    "src/Framework/Assert/Functions.php"
                 ]
             },
             "autoload-dev": {
@@ -5634,7 +4867,6 @@
                     "tests/"
                 ],
                 "files": [
-                    "src/Framework/Assert/Functions.php",
                     "tests/_files/CoverageNamespacedFunctionTest.php",
                     "tests/_files/CoveredFunction.php",
                     "tests/_files/NamespaceCoveredFunction.php"
@@ -5660,32 +4892,118 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues"
             },
-            "time": "2018-12-12T07:20:32+00:00"
+            "time": "2020-02-13T07:30:12+00:00"
         },
         {
-            "name": "sebastian/code-unit-reverse-lookup",
-            "version": "1.0.1",
+            "name": "pimple/pimple",
+            "version": "v3.2.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sebastianbergmann/code-unit-reverse-lookup.git",
-                "reference": "6c94d94dd070ad8487bcf60628c8d2065d71d7f3"
+                "url": "https://github.com/silexphp/Pimple",
+                "reference": "59a4bc26bc19c09ebf9373ca6783a0fce0e04330"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/code-unit-reverse-lookup/sebastian-code-unit-reverse-lookup-1.0.1-2cfa00.tar",
-                "reference": "6c94d94dd070ad8487bcf60628c8d2065d71d7f3",
-                "shasum": "acb589d4404e128b01ba1afa650158c8dd93422c"
+                "url": "https://satis.sugardev.team/dist/pimple/pimple/pimple-pimple-v3.2.3-48c5a6.tar",
+                "reference": "59a4bc26bc19c09ebf9373ca6783a0fce0e04330",
+                "shasum": "3ac59ec4cf5104ae7d1dad68b33d11d35c75a094"
             },
             "require": {
-                "php": "^5.6 || ^7.0"
+                "php": ">=5.3.0",
+                "psr/container": "^1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.7 || ^6.0"
+                "symfony/phpunit-bridge": "^3.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "3.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Pimple": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Pimple, a simple Dependency Injection Container",
+            "homepage": "http://pimple.sensiolabs.org",
+            "keywords": [
+                "container",
+                "dependency injection"
+            ],
+            "time": "2018-01-21T07:42:36+00:00"
+        },
+        {
+            "name": "robrichards/xmlseclibs",
+            "version": "3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/robrichards/xmlseclibs.git",
+                "reference": "85dad434f66909252e5451b1dcb801a971d23a77"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/robrichards/xmlseclibs/robrichards-xmlseclibs-3.0.4-57c7b7.tar",
+                "reference": "85dad434f66909252e5451b1dcb801a971d23a77",
+                "shasum": "41ad3202125605e883306fb6fce5217a56314832"
+            },
+            "require": {
+                "ext-openssl": "*",
+                "php": ">= 5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "RobRichards\\XMLSecLibs\\": "src"
+                }
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "A PHP library for XML Security",
+            "homepage": "https://github.com/robrichards/xmlseclibs",
+            "keywords": [
+                "security",
+                "signature",
+                "xml",
+                "xmldsig"
+            ],
+            "time": "2019-11-05T11:44:22+00:00"
+        },
+        {
+            "name": "sebastian/code-unit-reverse-lookup",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/code-unit-reverse-lookup.git",
+                "reference": "5b90e56821a7fc9ec51535903da9112febf18ee4"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/sebastian/code-unit-reverse-lookup/sebastian-code-unit-reverse-lookup-2.0.0-3af573.tar",
+                "reference": "5b90e56821a7fc9ec51535903da9112febf18ee4",
+                "shasum": "6b32fa1818394167194586d8ceb81a1f0b70a8ab"
+            },
+            "require": {
+                "php": "^7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
@@ -5704,34 +5022,34 @@
             ],
             "description": "Looks up which function or method a line of code belongs to",
             "homepage": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/",
-            "time": "2017-03-04T06:30:41+00:00"
+            "time": "2020-02-07T06:20:13+00:00"
         },
         {
             "name": "sebastian/comparator",
-            "version": "3.0.2",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "456d15b491cf7cbfbc840381a79efc7434315b83"
+                "reference": "b8f4faa924ca9497619bd75a15be151aa2c33093"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/comparator/sebastian-comparator-3.0.2-0413e0.tar",
-                "reference": "456d15b491cf7cbfbc840381a79efc7434315b83",
-                "shasum": "0dcf42423e7b9d6ad432c3b843dedabfa576d828"
+                "url": "https://satis.sugardev.team/dist/sebastian/comparator/sebastian-comparator-4.0.0-3a3754.tar",
+                "reference": "b8f4faa924ca9497619bd75a15be151aa2c33093",
+                "shasum": "145cf54134a84031ff84c87355c1e7e583d8b864"
             },
             "require": {
-                "php": "^7.1",
-                "sebastian/diff": "^3.0",
-                "sebastian/exporter": "^3.1"
+                "php": "^7.3",
+                "sebastian/diff": "^4.0",
+                "sebastian/exporter": "^4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.1"
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -5772,33 +5090,33 @@
                 "compare",
                 "equality"
             ],
-            "time": "2018-07-12T15:12:46+00:00"
+            "time": "2020-02-07T06:08:51+00:00"
         },
         {
             "name": "sebastian/diff",
-            "version": "3.0.2",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "133d8678769738353a573fe4525aa21ad365ada5"
+                "reference": "057b94eabb1643e963ea9f7f3353ba25b079e041"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/diff/sebastian-diff-3.0.2-285d7c.tar",
-                "reference": "133d8678769738353a573fe4525aa21ad365ada5",
-                "shasum": "287f75df936e94ee35eeb86db6c2cb5c38f3c8bd"
+                "url": "https://satis.sugardev.team/dist/sebastian/diff/sebastian-diff-4.0.0-397815.tar",
+                "reference": "057b94eabb1643e963ea9f7f3353ba25b079e041",
+                "shasum": "8dabac2ef1f60b4f4250e5e3bbc57d364f51417d"
             },
             "require": {
-                "php": "^7.1"
+                "php": "^7.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.5 || ^8.0",
-                "symfony/process": "^2 || ^3.3 || ^4"
+                "phpunit/phpunit": "^9.0",
+                "symfony/process": "^4 || ^5"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -5832,27 +5150,27 @@
                 "unidiff",
                 "unified diff"
             ],
-            "time": "2019-02-04T06:01:07+00:00"
+            "time": "2020-02-07T06:09:38+00:00"
         },
         {
             "name": "sebastian/environment",
-            "version": "4.2.3",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "31ed6e017dc762664340e0aa90151a4d6fd5b79f"
+                "reference": "b26fd12b13553cf255f81d8a04840bd1ac4d0620"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/environment/sebastian-environment-4.2.3-ccbe3e.tar",
-                "reference": "31ed6e017dc762664340e0aa90151a4d6fd5b79f",
-                "shasum": "d73cb0b8140d139b7c38024aac4549847943642a"
+                "url": "https://satis.sugardev.team/dist/sebastian/environment/sebastian-environment-5.0.1-ef8925.tar",
+                "reference": "b26fd12b13553cf255f81d8a04840bd1ac4d0620",
+                "shasum": "6a790e193ed73ba5bbc0118decf49968714831b7"
             },
             "require": {
-                "php": "^7.1"
+                "php": "^7.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.5"
+                "phpunit/phpunit": "^9.0"
             },
             "suggest": {
                 "ext-posix": "*"
@@ -5860,7 +5178,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -5884,34 +5202,34 @@
                 "hhvm",
                 "xdebug"
             ],
-            "time": "2019-11-20T08:46:58+00:00"
+            "time": "2020-02-19T13:40:20+00:00"
         },
         {
             "name": "sebastian/exporter",
-            "version": "3.1.2",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
-                "reference": "84e6174f9b8f70c8c6b9bc212551263325f235c2"
+                "reference": "7f55ba5bb7ae2b383863564ec6ef43357ed44c7d"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/exporter/sebastian-exporter-3.1.2-6c9382.tar",
-                "reference": "84e6174f9b8f70c8c6b9bc212551263325f235c2",
-                "shasum": "9b4ef434195c7d6d0996c2d650b09bdb2819716b"
+                "url": "https://satis.sugardev.team/dist/sebastian/exporter/sebastian-exporter-4.0.0-36189b.tar",
+                "reference": "7f55ba5bb7ae2b383863564ec6ef43357ed44c7d",
+                "shasum": "fa2158540a96d7d054d3f9c2bc6f81ddbe913566"
             },
             "require": {
-                "php": "^7.0",
-                "sebastian/recursion-context": "^3.0"
+                "php": "^7.3",
+                "sebastian/recursion-context": "^4.0"
             },
             "require-dev": {
                 "ext-mbstring": "*",
-                "phpunit/phpunit": "^6.0"
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1.x-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -5950,27 +5268,30 @@
                 "export",
                 "exporter"
             ],
-            "time": "2019-09-14T09:02:43+00:00"
+            "time": "2020-02-07T06:10:52+00:00"
         },
         {
             "name": "sebastian/global-state",
-            "version": "2.0.0",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/global-state.git",
-                "reference": "147ede13c40497a83f67718ae891c8e87cd76a64"
+                "reference": "421df24aed59aba94745041b9ad02370631cce34"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/global-state/sebastian-global-state-2.0.0-b1b9ac.tar",
-                "reference": "147ede13c40497a83f67718ae891c8e87cd76a64",
-                "shasum": "c79484436ed0d5b9af78a1e0491f2512372c27a8"
+                "url": "https://satis.sugardev.team/dist/sebastian/global-state/sebastian-global-state-4.0.0-dfe129.tar",
+                "reference": "421df24aed59aba94745041b9ad02370631cce34",
+                "shasum": "4d4fe19772d5453b3e8ced0929f7e33fa44a17df"
             },
             "require": {
-                "php": "^7.0"
+                "php": "^7.3",
+                "sebastian/object-reflector": "^2.0",
+                "sebastian/recursion-context": "^4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.0"
+                "ext-dom": "*",
+                "phpunit/phpunit": "^9.0"
             },
             "suggest": {
                 "ext-uopz": "*"
@@ -5978,7 +5299,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -6008,34 +5329,34 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2017-04-27T15:39:26+00:00"
+            "time": "2020-02-07T06:11:37+00:00"
         },
         {
             "name": "sebastian/object-enumerator",
-            "version": "3.0.3",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/object-enumerator.git",
-                "reference": "e15f444d586256055c878c632096b5aee3683c71"
+                "reference": "c3b77cb4a0a80d54acaa78814f13c2038d9a36dc"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/object-enumerator/sebastian-object-enumerator-3.0.3-faf7b7.tar",
-                "reference": "e15f444d586256055c878c632096b5aee3683c71",
-                "shasum": "42f25cae2e3140539e3d5b171932e11a07d7b146"
+                "url": "https://satis.sugardev.team/dist/sebastian/object-enumerator/sebastian-object-enumerator-4.0.0-c0cc6c.tar",
+                "reference": "c3b77cb4a0a80d54acaa78814f13c2038d9a36dc",
+                "shasum": "5e3a3b6a0e59a580bd0442c260634f3022b66f7c"
             },
             "require": {
-                "php": "^7.0",
-                "sebastian/object-reflector": "^1.1.1",
-                "sebastian/recursion-context": "^3.0"
+                "php": "^7.3",
+                "sebastian/object-reflector": "^2.0",
+                "sebastian/recursion-context": "^4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.0"
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -6059,32 +5380,32 @@
             ],
             "description": "Traverses array structures and object graphs to enumerate all referenced objects",
             "homepage": "https://github.com/sebastianbergmann/object-enumerator/",
-            "time": "2017-08-03T12:34:48+00:00"
+            "time": "2020-02-07T06:12:23+00:00"
         },
         {
             "name": "sebastian/object-reflector",
-            "version": "1.1.1",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/object-reflector.git",
-                "reference": "2bd547e7a40bd5bf8d16d2efaf6b16c5d53c611c"
+                "reference": "eb7eba4876403fdc32c0b59fa9d1b0452fa9c5dd"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/object-reflector/sebastian-object-reflector-1.1.1-111e85.tar",
-                "reference": "2bd547e7a40bd5bf8d16d2efaf6b16c5d53c611c",
-                "shasum": "63ac4a14a04c50d2831622744bcf7815fe74900c"
+                "url": "https://satis.sugardev.team/dist/sebastian/object-reflector/sebastian-object-reflector-2.0.0-ed26e0.tar",
+                "reference": "eb7eba4876403fdc32c0b59fa9d1b0452fa9c5dd",
+                "shasum": "c4b11c6d4de553a718dc59bf37dbd69e0a76e459"
             },
             "require": {
-                "php": "^7.0"
+                "php": "^7.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.0"
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
@@ -6108,32 +5429,32 @@
             ],
             "description": "Allows reflection of object attributes, including inherited and non-public ones",
             "homepage": "https://github.com/sebastianbergmann/object-reflector/",
-            "time": "2017-03-29T09:07:27+00:00"
+            "time": "2020-02-07T06:19:40+00:00"
         },
         {
             "name": "sebastian/recursion-context",
-            "version": "3.0.0",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/recursion-context.git",
-                "reference": "2535fa784b0322b08d071f7de163df7727557390"
+                "reference": "230a51dcb3a0a92190e84ffec64193eaf087c100"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/recursion-context/sebastian-recursion-context-3.0.0-6e0f8b.tar",
-                "reference": "2535fa784b0322b08d071f7de163df7727557390",
-                "shasum": "2168405af72defd2164767ee64c8c5ef12eada16"
+                "url": "https://satis.sugardev.team/dist/sebastian/recursion-context/sebastian-recursion-context-4.0.0-b3b0f5.tar",
+                "reference": "230a51dcb3a0a92190e84ffec64193eaf087c100",
+                "shasum": "0587ae2e3ea1e90250a351e748e6b9ba618ef5e1"
             },
             "require": {
-                "php": "^7.0"
+                "php": "^7.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.0"
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -6160,29 +5481,32 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2017-03-03T06:23:57+00:00"
+            "time": "2020-02-07T06:18:20+00:00"
         },
         {
             "name": "sebastian/resource-operations",
-            "version": "2.0.1",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/resource-operations.git",
-                "reference": "b7f1d17cc55cd03cd2e261f8dd1c5753aac526a2"
+                "reference": "6f5840d27e9e172d8599bcecbaa654b4554afdcd"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/resource-operations/sebastian-resource-operations-2.0.1-a25127.tar",
-                "reference": "b7f1d17cc55cd03cd2e261f8dd1c5753aac526a2",
-                "shasum": "b6fa95ff1ea047c6996b75b1852a60f952fc3a56"
+                "url": "https://satis.sugardev.team/dist/sebastian/resource-operations/sebastian-resource-operations-3.0.0-f98c60.tar",
+                "reference": "6f5840d27e9e172d8599bcecbaa654b4554afdcd",
+                "shasum": "14a1f3b6e03b8c61a316b7f64277d0e04291378f"
             },
             "require": {
-                "php": "^7.1"
+                "php": "^7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "3.0-dev"
                 }
             },
             "autoload": {
@@ -6201,29 +5525,85 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
-            "time": "2018-10-04T04:07:39+00:00"
+            "time": "2020-02-07T06:13:02+00:00"
         },
         {
-            "name": "sebastian/version",
-            "version": "2.0.1",
+            "name": "sebastian/type",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sebastianbergmann/version.git",
-                "reference": "be8fddb7f814c4907bbbe3dcadee2473385d88d0"
+                "url": "https://github.com/sebastianbergmann/type.git",
+                "reference": "0403e04bc79e909313fba060dfb5f6958e6f713a"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/version/sebastian-version-2.0.1-b999a9.tar",
-                "reference": "be8fddb7f814c4907bbbe3dcadee2473385d88d0",
-                "shasum": "bf9f20f28003d5db6562b324b1d95c0acbae5d9f"
+                "url": "https://satis.sugardev.team/dist/sebastian/type/sebastian-type-2.0.0-fae66a.tar",
+                "reference": "0403e04bc79e909313fba060dfb5f6958e6f713a",
+                "shasum": "0a61850ccda2708c1f7ec612fbc2887ad259638e"
             },
             "require": {
-                "php": ">=5.6"
+                "php": "^7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "autoload-dev": {
+                "classmap": [
+                    "tests/_fixture"
+                ],
+                "files": [
+                    "tests/_fixture/callback_function.php"
+                ]
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "Collection of value objects that represent the types of the PHP type system",
+            "homepage": "https://github.com/sebastianbergmann/type",
+            "support": {
+                "issues": "https://github.com/sebastianbergmann/type/issues"
+            },
+            "time": "2020-02-07T06:13:43+00:00"
+        },
+        {
+            "name": "sebastian/version",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/version.git",
+                "reference": "e544a718472eba2e5257249e1cd48229dee5ba58"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/sebastian/version/sebastian-version-3.0.0-1c9bfc.tar",
+                "reference": "e544a718472eba2e5257249e1cd48229dee5ba58",
+                "shasum": "083a6081a5864c881bcd143c85c3a33c5aa4dcee"
+            },
+            "require": {
+                "php": "^7.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
                 }
             },
             "autoload": {
@@ -6246,7 +5626,664 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/version/issues"
             },
-            "time": "2016-10-03T07:35:21+00:00"
+            "time": "2020-01-21T06:36:37+00:00"
+        },
+        {
+            "name": "silex/silex",
+            "version": "v2.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/silexphp/Silex.git",
+                "reference": "f83c62e73b5ac6e7de5b770d9f07a94e0829d487"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/silex/silex/silex-silex-v2.2.4-cc38e7.tar",
+                "reference": "f83c62e73b5ac6e7de5b770d9f07a94e0829d487",
+                "shasum": "615c5f2d1bd3e13c6e4ae3344922eb19e4c5ab2e"
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "pimple/pimple": "~3.0",
+                "symfony/event-dispatcher": "~2.8|^3.0",
+                "symfony/http-foundation": "~2.8|^3.0",
+                "symfony/http-kernel": "~2.8|^3.0",
+                "symfony/routing": "~2.8|^3.0"
+            },
+            "conflict": {
+                "phpunit/phpunit": "<4.8.35 || >= 5.0, <5.4.3"
+            },
+            "replace": {
+                "silex/api": "self.version",
+                "silex/providers": "self.version"
+            },
+            "require-dev": {
+                "doctrine/dbal": "~2.2",
+                "monolog/monolog": "^1.4.1",
+                "swiftmailer/swiftmailer": "~5",
+                "symfony/asset": "~2.8|^3.0",
+                "symfony/browser-kit": "~2.8|^3.0",
+                "symfony/config": "~2.8|^3.0",
+                "symfony/css-selector": "~2.8|^3.0",
+                "symfony/debug": "~2.8|^3.0",
+                "symfony/doctrine-bridge": "~2.8|^3.0",
+                "symfony/dom-crawler": "~2.8|^3.0",
+                "symfony/expression-language": "~2.8|^3.0",
+                "symfony/finder": "~2.8|^3.0",
+                "symfony/form": "~2.8|^3.0",
+                "symfony/intl": "~2.8|^3.0",
+                "symfony/monolog-bridge": "~2.8|^3.0",
+                "symfony/options-resolver": "~2.8|^3.0",
+                "symfony/phpunit-bridge": "^3.2",
+                "symfony/process": "~2.8|^3.0",
+                "symfony/security": "~2.8|^3.0",
+                "symfony/serializer": "~2.8|^3.0",
+                "symfony/translation": "~2.8|^3.0",
+                "symfony/twig-bridge": "~2.8|^3.0",
+                "symfony/validator": "~2.8|^3.0",
+                "symfony/var-dumper": "~2.8|^3.0",
+                "symfony/web-link": "^3.3",
+                "twig/twig": "~1.28|~2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Silex\\": "src/Silex"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Silex\\Tests\\": "tests/Silex/Tests"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Igor Wiedler",
+                    "email": "igor@wiedler.ch"
+                }
+            ],
+            "description": "The PHP micro-framework based on the Symfony Components",
+            "homepage": "http://silex.sensiolabs.org",
+            "keywords": [
+                "microframework"
+            ],
+            "time": "2018-03-14T07:44:24+00:00"
+        },
+        {
+            "name": "spomky-labs/aes-key-wrap",
+            "version": "v3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Spomky-Labs/aes-key-wrap.git",
+                "reference": "072e312ea119c4cc33012edc5e7e8c3f3def0d66"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/spomky-labs/aes-key-wrap/spomky-labs-aes-key-wrap-v3.0.3-ee9975.tar",
+                "reference": "072e312ea119c4cc33012edc5e7e8c3f3def0d66",
+                "shasum": "7c8a729a3ba40657229bc0812a8603d9d5d99fa5"
+            },
+            "require": {
+                "beberlei/assert": "^2.4",
+                "ext-mbstring": "*",
+                "lib-openssl": "*",
+                "php": "^5.4|^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.5|^5.0",
+                "satooshi/php-coveralls": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AESKW\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "AESKW\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florent Morselli",
+                    "homepage": "https://github.com/Spomky-Labs/aes-key-wrap/contributors"
+                }
+            ],
+            "description": "AES Key Wrap for PHP.",
+            "homepage": "https://github.com/Spomky-Labs/aes-key-wrap",
+            "keywords": [
+                "A128KW",
+                "A192KW",
+                "A256KW",
+                "AES",
+                "Key",
+                "Padding",
+                "RFC3394",
+                "RFC5649",
+                "Wrap"
+            ],
+            "time": "2017-03-25T21:07:11+00:00"
+        },
+        {
+            "name": "spomky-labs/base64url",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Spomky-Labs/base64url.git",
+                "reference": "ef6d5fb93894063d9cee996022259fd08d6646ea"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/spomky-labs/base64url/spomky-labs-base64url-v1.0.2-1c5219.tar",
+                "reference": "ef6d5fb93894063d9cee996022259fd08d6646ea",
+                "shasum": "dbe3891fdb7b6288b3b9f065f9416751695f4d90"
+            },
+            "require": {
+                "php": "^5.3|^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0|^5.0",
+                "satooshi/php-coveralls": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Base64Url\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florent Morselli",
+                    "homepage": "https://github.com/Spomky-Labs/base64url/contributors"
+                }
+            ],
+            "description": "Base 64 URL Safe Encoding/decoding PHP Library",
+            "homepage": "https://github.com/Spomky-Labs/base64url",
+            "keywords": [
+                "Base64",
+                "RFC4648",
+                "Safe",
+                "URL"
+            ],
+            "time": "2016-01-21T19:50:30+00:00"
+        },
+        {
+            "name": "spomky-labs/jose",
+            "version": "v7.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Spomky-Labs/jose.git",
+                "reference": "8ff3cceba70ffc7e9d08fa681918ca4474bd4154"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/spomky-labs/jose/spomky-labs-jose-v7.0.1-acd9c1.tar",
+                "reference": "8ff3cceba70ffc7e9d08fa681918ca4474bd4154",
+                "shasum": "2c92e28361b07af26dcb0bb4fd36a257d0312b9d"
+            },
+            "require": {
+                "beberlei/assert": "^2.4",
+                "fgrosse/phpasn1": "^2.0",
+                "lib-openssl": "*",
+                "mdanter/ecc": "0.5.*",
+                "php": "^7.0",
+                "psr/cache": "^1.0",
+                "spomky-labs/aes-key-wrap": "^3.0",
+                "spomky-labs/base64url": "^1.0",
+                "spomky-labs/php-aes-gcm": "^1.2",
+                "symfony/polyfill-mbstring": "^1.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.0",
+                "satooshi/php-coveralls": "^1.0",
+                "symfony/cache": "^2.0|^3.0"
+            },
+            "suggest": {
+                "ext-crypto": "Highly recommended when you use AES GCM based algorithms.",
+                "ext-curve25519": "For EdDSA with X25519 curves support.",
+                "ext-ed25519": "For EdDSA with Ed25519 curves support."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "6.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jose\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Jose\\Test\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florent Morselli",
+                    "homepage": "https://github.com/Spomky"
+                },
+                {
+                    "name": "All contributors",
+                    "homepage": "https://github.com/Spomky-Labs/jose/contributors"
+                }
+            ],
+            "description": "JSON Object Signing and Encryption library for PHP.",
+            "homepage": "https://github.com/Spomky-Labs/Jose",
+            "keywords": [
+                "JWA",
+                "JWE",
+                "JWK",
+                "JWKSet",
+                "JWS",
+                "JWT",
+                "Jose",
+                "Jot",
+                "RFC7515",
+                "RFC7516",
+                "RFC7517",
+                "RFC7518",
+                "RFC7519",
+                "RFC7520"
+            ],
+            "time": "2018-02-14T08:25:35+00:00"
+        },
+        {
+            "name": "spomky-labs/php-aes-gcm",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Spomky-Labs/php-aes-gcm.git",
+                "reference": "e3900f2eb29a98476ae94c25c5c4aebb32ebf338"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/spomky-labs/php-aes-gcm/spomky-labs-php-aes-gcm-v1.2.1-efd0e6.tar",
+                "reference": "e3900f2eb29a98476ae94c25c5c4aebb32ebf338",
+                "shasum": "386431a0e06dc8629877cdf794998b95eecd31ef"
+            },
+            "require": {
+                "beberlei/assert": "^2.4",
+                "lib-openssl": "*",
+                "php": ">=5.4",
+                "symfony/polyfill-mbstring": "^1.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.5|^5.0",
+                "satooshi/php-coveralls": "^1.0"
+            },
+            "suggest": {
+                "ext-crypto": "Highly recommended for better performance."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AESGCM\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florent Morselli",
+                    "homepage": "https://github.com/Spomky"
+                },
+                {
+                    "name": "All contributors",
+                    "homepage": "https://github.com/Spomky-Labs/php-aes-gcm/contributors"
+                }
+            ],
+            "description": "AES GCM (Galois Counter Mode) PHP implementation.",
+            "homepage": "https://github.com/Spomky-Labs/php-aes-gcm",
+            "keywords": [
+                "AES",
+                "AES-GCM",
+                "GCM",
+                "Galois Counter Mode"
+            ],
+            "time": "2018-11-07T14:39:44+00:00"
+        },
+        {
+            "name": "symfony/asset",
+            "version": "v3.4.37",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/asset",
+                "reference": "787b09046b02ff00d66ba7be006ab133f4484ca2"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/symfony/asset/symfony-asset-v3.4.37-626a99.tar",
+                "reference": "787b09046b02ff00d66ba7be006ab133f4484ca2",
+                "shasum": "c55d80e55510d6b936bdf2f7420d0e9085e2fbf5"
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8"
+            },
+            "require-dev": {
+                "symfony/http-foundation": "~2.8|~3.0|~4.0",
+                "symfony/http-kernel": "~2.8|~3.0|~4.0"
+            },
+            "suggest": {
+                "symfony/http-foundation": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Asset\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Asset Component",
+            "homepage": "https://symfony.com",
+            "time": "2020-01-01T11:03:25+00:00"
+        },
+        {
+            "name": "symfony/expression-language",
+            "version": "v3.4.37",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/expression-language.git",
+                "reference": "1b429eebf1468bc26ede6661c1fe0605757bb3ee"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/symfony/expression-language/symfony-expression-language-v3.4.37-e98289.tar",
+                "reference": "1b429eebf1468bc26ede6661c1fe0605757bb3ee",
+                "shasum": "9b010875265524817075d1f9f3294ffd0dd1dfec"
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8",
+                "symfony/cache": "~3.1|~4.0",
+                "symfony/polyfill-php70": "~1.6"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\ExpressionLanguage\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony ExpressionLanguage Component",
+            "homepage": "https://symfony.com",
+            "time": "2020-01-01T11:03:25+00:00"
+        },
+        {
+            "name": "symfony/ldap",
+            "version": "v3.4.37",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/ldap",
+                "reference": "8ddaacca8b5d2ec88e4b2bfee7e3d02cd3fe865e"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/symfony/ldap/symfony-ldap-v3.4.37-8985e1.tar",
+                "reference": "8ddaacca8b5d2ec88e4b2bfee7e3d02cd3fe865e",
+                "shasum": "49bec35a3703f5fe614fa2f9058669b7253eab5a"
+            },
+            "require": {
+                "ext-ldap": "*",
+                "php": "^5.5.9|>=7.0.8",
+                "symfony/options-resolver": "~2.8|~3.0|~4.0",
+                "symfony/polyfill-php56": "~1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Ldap\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Charles Sarrazin",
+                    "email": "charles@sarraz.in"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "An abstraction in front of PHP's LDAP functions, compatible with PHP 5.3.9 onwards.",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "active directory",
+                "ldap"
+            ],
+            "time": "2020-01-01T11:03:25+00:00"
+        },
+        {
+            "name": "symfony/options-resolver",
+            "version": "v3.4.37",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/options-resolver",
+                "reference": "2950566c946926321cdce8380d43d8f0b8ed8893"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/symfony/options-resolver/symfony-options-resolver-v3.4.37-c8b8a5.tar",
+                "reference": "2950566c946926321cdce8380d43d8f0b8ed8893",
+                "shasum": "5f4c8c7ce747178006ed760ffe06d93e0bec4125"
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\OptionsResolver\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony OptionsResolver Component",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "config",
+                "configuration",
+                "options"
+            ],
+            "time": "2020-01-01T11:03:25+00:00"
+        },
+        {
+            "name": "symfony/twig-bridge",
+            "version": "v3.4.37",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/twig-bridge",
+                "reference": "fe7607479888f221b52e028dc1befb91070d6f21"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/symfony/twig-bridge/symfony-twig-bridge-v3.4.37-8bea1a.tar",
+                "reference": "fe7607479888f221b52e028dc1befb91070d6f21",
+                "shasum": "0b867879455957391704f52fa1eb1eddccfb156f"
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8",
+                "twig/twig": "^1.41|^2.10"
+            },
+            "conflict": {
+                "symfony/console": "<3.4",
+                "symfony/form": "<3.4.31|>=4.0,<4.3.4"
+            },
+            "require-dev": {
+                "fig/link-util": "^1.0",
+                "symfony/asset": "~2.8|~3.0|~4.0",
+                "symfony/console": "~3.4|~4.0",
+                "symfony/dependency-injection": "~2.8|~3.0|~4.0",
+                "symfony/expression-language": "~2.8|~3.0|~4.0",
+                "symfony/finder": "~2.8|~3.0|~4.0",
+                "symfony/form": "^3.4.31|^4.3.4",
+                "symfony/http-foundation": "^3.3.11|~4.0",
+                "symfony/http-kernel": "~3.2|~4.0",
+                "symfony/polyfill-intl-icu": "~1.0",
+                "symfony/routing": "~2.8|~3.0|~4.0",
+                "symfony/security": "^2.8.31|^3.3.13|~4.0",
+                "symfony/security-acl": "~2.8|~3.0",
+                "symfony/stopwatch": "~2.8|~3.0|~4.0",
+                "symfony/templating": "~2.8|~3.0|~4.0",
+                "symfony/translation": "~2.8|~3.0|~4.0",
+                "symfony/var-dumper": "~2.8.10|~3.1.4|~3.2|~4.0",
+                "symfony/web-link": "~3.3|~4.0",
+                "symfony/workflow": "~3.3|~4.0",
+                "symfony/yaml": "~2.8|~3.0|~4.0"
+            },
+            "suggest": {
+                "symfony/asset": "For using the AssetExtension",
+                "symfony/expression-language": "For using the ExpressionExtension",
+                "symfony/finder": "",
+                "symfony/form": "For using the FormExtension",
+                "symfony/http-kernel": "For using the HttpKernelExtension",
+                "symfony/routing": "For using the RoutingExtension",
+                "symfony/security": "For using the SecurityExtension",
+                "symfony/stopwatch": "For using the StopwatchExtension",
+                "symfony/templating": "For using the TwigEngine",
+                "symfony/translation": "For using the TranslationExtension",
+                "symfony/var-dumper": "For using the DumpExtension",
+                "symfony/web-link": "For using the WebLinkExtension",
+                "symfony/yaml": "For using the YamlExtension"
+            },
+            "type": "symfony-bridge",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Bridge\\Twig\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Twig Bridge",
+            "homepage": "https://symfony.com",
+            "time": "2020-01-07T19:28:14+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -6291,18 +6328,88 @@
             "time": "2019-06-13T22:48:21+00:00"
         },
         {
-            "name": "webmozart/assert",
-            "version": "1.6.0",
+            "name": "twig/twig",
+            "version": "v1.42.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert",
-                "reference": "573381c0a64f155a0d9a23f4b0c797194805b925"
+                "url": "https://github.com/twigphp/Twig",
+                "reference": "b7cfe91529449acbada5366a40e3c3f74be91a90"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/webmozart/assert/webmozart-assert-1.6.0-cda370.tar",
-                "reference": "573381c0a64f155a0d9a23f4b0c797194805b925",
-                "shasum": "02f69cf4a21f66ddf50c250fab862ac23b9d498e"
+                "url": "https://satis.sugardev.team/dist/twig/twig/twig-twig-v1.42.4-3b9856.tar",
+                "reference": "b7cfe91529449acbada5366a40e3c3f74be91a90",
+                "shasum": "f13d0737849c1e25ba4f2c90d2e06d4a1ebfade1"
+            },
+            "require": {
+                "php": ">=5.5.0",
+                "symfony/polyfill-ctype": "^1.8"
+            },
+            "require-dev": {
+                "psr/container": "^1.0",
+                "symfony/debug": "^3.4|^4.2",
+                "symfony/phpunit-bridge": "^4.4@dev|^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.42-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Twig_": "lib/"
+                },
+                "psr-4": {
+                    "Twig\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Twig\\Tests\\": "tests"
+                }
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Twig Team",
+                    "homepage": "https://twig.symfony.com/contributors",
+                    "role": "Contributors"
+                },
+                {
+                    "name": "Armin Ronacher",
+                    "email": "armin.ronacher@active-4.com",
+                    "role": "Project Founder"
+                }
+            ],
+            "description": "Twig, the flexible, fast, and secure template language for PHP",
+            "homepage": "https://twig.symfony.com",
+            "keywords": [
+                "templating"
+            ],
+            "time": "2019-11-11T16:49:32+00:00"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozart/assert",
+                "reference": "aed98a490f9a8f78468232db345ab9cf606cf598"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/webmozart/assert/webmozart-assert-1.7.0-7d7973.tar",
+                "reference": "aed98a490f9a8f78468232db345ab9cf606cf598",
+                "shasum": "5e349a997f0d5ed18597c61de2a872a36bc26c36"
             },
             "require": {
                 "php": "^5.3.3 || ^7.0",
@@ -6340,7 +6447,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2019-11-24T13:36:37+00:00"
+            "time": "2020-02-14T12:15:55+00:00"
         }
     ],
     "aliases": [],
