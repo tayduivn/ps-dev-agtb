@@ -136,6 +136,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             array(
                 'commit_stage' => false,
                 'sales_status' => true,
+                'service_start_date' => true,
                 'sales_stage' => false,
                 'probability' => false,
                 'renewal' => true,
@@ -155,6 +156,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             array(
                 'sales_stage' => false,
                 'sales_status' => true,
+                'service_start_date' => true,
                 'probability' => false,
             )
         );

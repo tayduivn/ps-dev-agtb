@@ -138,6 +138,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             array(
                 'commit_stage' => $this->isForecastSetup(),
                 'sales_status' => false,
+                'service_start_date' => false,
                 'sales_stage' => true,
                 'probability' => true,
                 'renewal' => false,
@@ -150,6 +151,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             array(
                 'commit_stage' => $this->isForecastSetup(),
                 'sales_status' => 'sales_stage',
+                'service_start_date' => false,
                 'probability' => true,
                 'renewal' => false,
                 'renewal_parent_name' => false,
@@ -160,6 +162,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             array(
                 'sales_stage' => true,
                 'sales_status' => false,
+                'service_start_date' => false,
                 'probability' => true,
             )
         );
@@ -185,6 +188,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
 \$dictionary['Opportunity']['fields']['renewal'] = null;
 \$dictionary['Opportunity']['fields']['renewal_parent_name'] = null;
 \$dictionary['Opportunity']['fields']['renewal_parent_id'] = null;
+\$dictionary['Opportunity']['fields']['service_start_date'] = null;
 EOL;
         sugar_file_put_contents($this->moduleExtFolder . '/Vardefs/' . $this->dupeCheckExtFile, $file_contents);
 

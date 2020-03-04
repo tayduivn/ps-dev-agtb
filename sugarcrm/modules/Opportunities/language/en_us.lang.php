@@ -79,6 +79,7 @@ $mod_strings = array(
     'LBL_TYPE' => 'Type:',
     'LBL_CAMPAIGN' => 'Campaign:',
     'LBL_NEXT_STEP' => 'Next Step:',
+    'LBL_SERVICE_START_DATE' => 'Service Start Date',
     'LBL_LEAD_SOURCE' => 'Lead Source',
     'LBL_SALES_STAGE' => 'Sales Stage',
     'LBL_SALES_STATUS' => 'Status',
