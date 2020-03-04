@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Query\Parser;
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\BasicTerms;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 
@@ -121,12 +122,11 @@ class BasicTermsTest extends TestCase
     /**
      * @covers ::__construct
      * @dataProvider providerBasicTermsTestException
-     *
-     * @expectedException Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException
      */
-    public function testBasicTermsException($operaor)
+    public function testBasicTermsException($operator)
     {
-        new BasicTerms($operaor, array('abc'));
+        $this->expectException(QueryBuilderException::class);
+        new BasicTerms($operator, array('abc'));
     }
 
     public function providerBasicTermsTestException()

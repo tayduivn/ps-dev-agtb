@@ -14,8 +14,14 @@ namespace Sugarcrm\SugarcrmTestsUnit\modules\Administration\clients\base\api;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject;
+use RestService;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
+use SugarApiExceptionMissingParameter;
+use SugarApiExceptionNotAuthorized;
+use SugarApiExceptionNotFound;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
+use User;
 
 require_once 'modules/Administration/clients/base/api/AuthSettingsApi.php';
 
@@ -27,22 +33,22 @@ require_once 'modules/Administration/clients/base/api/AuthSettingsApi.php';
 class AuthSettingsApiTest extends TestCase
 {
     /**
-     * @var \User | MockObject
+     * @var User|MockObject
      */
     private $currentUser;
 
     /**
-     * @var \RestService | MockObject
+     * @var RestService|MockObject
      */
     private $service;
 
     /**
-     * @var Authentication\Config | MockObject
+     * @var Config|MockObject
      */
     private $config;
 
     /**
-     * @var Authentication\Lockout | MockObject
+     * @var Lockout|MockObject
      */
     private $lockout;
 
@@ -220,7 +226,7 @@ class AuthSettingsApiTest extends TestCase
         ];
 
         $loginLockoutDisabled = [
-            'type' => Authentication\Lockout::LOCKOUT_DISABLED,
+            'type' => Lockout::LOCKOUT_DISABLED,
             'attempt' => 0,
             'time' => 0,
         ];
@@ -301,7 +307,7 @@ class AuthSettingsApiTest extends TestCase
                     'passwordSetting' => array_replace(
                         $passwordSetting,
                         [
-                            'lockoutexpiration' => Authentication\Lockout::LOCK_TYPE_TIME,
+                            'lockoutexpiration' => Lockout::LOCK_TYPE_TIME,
                             'lockoutexpirationlogin' => 3,
                             'LockoutDurationMins' => 60,
                         ]
@@ -315,7 +321,7 @@ class AuthSettingsApiTest extends TestCase
                         'password_requirements' => $localConfExpPassReq,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => [
-                            'type' => Authentication\Lockout::LOCK_TYPE_TIME,
+                            'type' => Lockout::LOCK_TYPE_TIME,
                             'attempt' => 3,
                             'time' => 3600,
                         ],
@@ -331,7 +337,7 @@ class AuthSettingsApiTest extends TestCase
                     'passwordSetting' => array_replace(
                         $passwordSetting,
                         [
-                            'lockoutexpiration' => Authentication\Lockout::LOCK_TYPE_PERMANENT,
+                            'lockoutexpiration' => Lockout::LOCK_TYPE_PERMANENT,
                             'lockoutexpirationlogin' => 4,
                             'LockoutDurationMins' => 2,
                         ]
@@ -345,7 +351,7 @@ class AuthSettingsApiTest extends TestCase
                         'password_requirements' => $localConfExpPassReq,
                         'password_expiration' => $localConfExpExpirDisabled,
                         'login_lockout' => [
-                            'type' => Authentication\Lockout::LOCK_TYPE_PERMANENT,
+                            'type' => Lockout::LOCK_TYPE_PERMANENT,
                             'attempt' => 4,
                             'time' => 120,
                         ],
@@ -603,7 +609,6 @@ class AuthSettingsApiTest extends TestCase
 
     /**
      * @covers ::authSettings
-     * @expectedException \SugarApiExceptionNotAuthorized
      */
     public function testNoAdminRequest(): void
     {
@@ -614,12 +619,12 @@ class AuthSettingsApiTest extends TestCase
         $this->config->expects($this->never())->method('getSAMLConfig');
         $this->config->expects($this->never())->method('get');
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->authSettings($this->service, []);
     }
 
     /**
      * @covers ::authSettings
-     * @expectedException \SugarApiExceptionNotAuthorized
      */
     public function testAuthorizedRequest(): void
     {
@@ -630,12 +635,12 @@ class AuthSettingsApiTest extends TestCase
         $this->config->expects($this->never())->method('getSAMLConfig');
         $this->config->expects($this->never())->method('get');
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->authSettings($this->service, []);
     }
 
     /**
      * @covers ::authSettings
-     * @expectedException \SugarApiExceptionNotFound
      */
     public function testAuthSettingsMigrationDisabled(): void
     {
@@ -646,6 +651,7 @@ class AuthSettingsApiTest extends TestCase
         $this->config->expects($this->never())->method('getSAMLConfig');
         $this->config->expects($this->never())->method('get');
 
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->api->authSettings($this->service, []);
     }
 
@@ -681,7 +687,6 @@ class AuthSettingsApiTest extends TestCase
 
     /**
      * @covers ::switchOnIdmMode
-     * @expectedException SugarApiExceptionMissingParameter
      * @dataProvider switchOnIdmModeExceptionDataProvider
      */
     public function testSwitchOnIdmModeException($args): void
@@ -693,12 +698,13 @@ class AuthSettingsApiTest extends TestCase
             ->method('setIDMMode');
         $this->config->expects($this->never())
             ->method('getIDMModeConfig');
+
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->switchOnIdmMode($this->service, $args);
     }
 
     /**
      * @covers ::switchOnIdmMode
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testSwitchOnIdmModeUnauthorized(): void
     {
@@ -709,12 +715,13 @@ class AuthSettingsApiTest extends TestCase
             ->method('setIDMMode');
         $this->config->expects($this->never())
             ->method('getIDMModeConfig');
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->switchOnIdmMode($this->service, ['idmMode' => ['enabled' => true]]);
     }
 
     /**
      * @covers ::switchOnIdmMode
-     * @expectedException SugarApiExceptionNotFound
      */
     public function testSwitchOnIdmModeMigrationDisabled(): void
     {
@@ -725,6 +732,8 @@ class AuthSettingsApiTest extends TestCase
             ->method('setIDMMode');
         $this->config->expects($this->never())
             ->method('getIDMModeConfig');
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->api->switchOnIdmMode($this->service, ['idmMode' => ['enabled' => true]]);
     }
 
@@ -747,7 +756,6 @@ class AuthSettingsApiTest extends TestCase
 
     /**
      * @covers ::switchOffIdmMode
-     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testSwitchOffIdmModeUnauthorized(): void
     {
@@ -758,12 +766,13 @@ class AuthSettingsApiTest extends TestCase
             ->method('setIDMMode');
         $this->config->expects($this->never())
             ->method('getIDMModeConfig');
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->switchOffIdmMode($this->service, []);
     }
 
     /**
      * @covers ::switchOffIdmMode
-     * @expectedException SugarApiExceptionNotFound
      */
     public function testSwitchOffIdmModeMigrationDisabled(): void
     {
@@ -774,6 +783,8 @@ class AuthSettingsApiTest extends TestCase
             ->method('setIDMMode');
         $this->config->expects($this->never())
             ->method('getIDMModeConfig');
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->api->switchOffIdmMode($this->service, []);
     }
 
@@ -784,10 +795,10 @@ class AuthSettingsApiTest extends TestCase
     {
         parent::setUp();
         $this->sugar_config_bak = $GLOBALS['sugar_config'] ?? [];
-        $this->service = $this->createMock(\RestService::class);
-        $this->currentUser = $this->createMock(\User::class);
-        $this->config = $this->createMock(Authentication\Config::class);
-        $this->lockout = $this->createMock(Authentication\Lockout::class);
+        $this->service = $this->createMock(RestService::class);
+        $this->currentUser = $this->createMock(User::class);
+        $this->config = $this->createMock(Config::class);
+        $this->lockout = $this->createMock(Lockout::class);
         $this->api = $this->createPartialMock(
             \AuthSettingsApi::class,
             ['getAuthConfig', 'get', 'getLockout', 'getLdapSetting']

@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Adapter;
 
 use Elastica\Response;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Logger;
@@ -146,7 +147,6 @@ class ClientTest extends TestCase
     /**
      * @covers ::getVersion
      *
-     * @expectedException \Exception
      * @dataProvider providerTestGetVersionException
      */
     public function testGetVersionException(?string $responseString)
@@ -155,6 +155,8 @@ class ClientTest extends TestCase
         $clientMock->expects($this->any())
             ->method('ping')
             ->will($this->returnValue(new Response($responseString)));
+
+        $this->expectException(Exception::class);
         $clientMock->getVersion();
     }
 
@@ -464,14 +466,13 @@ class ClientTest extends TestCase
     /**
      * @covers ::verifyConnectivity
      * @covers ::onConnectionFailure
-     *
      */
     public function testVerifyConnectivityHandleException()
     {
         $clientMock = $this->getClientMock(array('ping'));
         $clientMock->expects($this->any())
             ->method('ping')
-            ->will($this->throwException(new \Exception()));
+            ->will($this->throwException(new Exception()));
 
         $status = $clientMock->verifyConnectivity(false);
         $this->assertSame(Client::CONN_FAILURE, $status);
@@ -479,8 +480,6 @@ class ClientTest extends TestCase
 
     /**
      * @covers ::request
-     *
-     * @expectedException \Exception
      */
     public function testRequestException()
     {
@@ -489,6 +488,7 @@ class ClientTest extends TestCase
             ->method('isAvailable')
             ->will($this->returnValue(false));
 
+        $this->expectException(Exception::class);
         $clientMock->request('/');
     }
 

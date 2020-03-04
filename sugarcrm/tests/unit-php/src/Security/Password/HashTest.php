@@ -18,7 +18,6 @@ use Sugarcrm\Sugarcrm\Security\Password\Hash;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Hash
- *
  */
 class HashTest extends TestCase
 {

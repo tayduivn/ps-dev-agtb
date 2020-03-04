@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\Mvc;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleName;
 use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleNameValidator
@@ -62,10 +63,10 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
      */
     public function testExpectsStringCompatibleType()
     {
+        $this->expectException(UnexpectedTypeException::class);
         $this->validator->validate(new \stdClass(), new ModuleName());
     }
 

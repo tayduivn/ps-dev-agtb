@@ -15,9 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarSearchEngine\Elastic;
 use PHPUnit\Framework\TestCase;
 
 /**
- *
  * @coversDefaultClass \SugarSearchEngineElastic
- *
  */
 class SugarSearchEngineElasticTest extends TestCase
 {

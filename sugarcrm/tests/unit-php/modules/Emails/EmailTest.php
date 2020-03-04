@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use SugarException;
 
 /**
  * @coversDefaultClass \Email
@@ -437,7 +438,6 @@ class EmailTest extends TestCase
 
     /**
      * @covers ::sendEmail
-     * @expectedException \SugarException
      */
     public function testSendEmail_OnlyDraftsCanBeSent()
     {
@@ -447,6 +447,8 @@ class EmailTest extends TestCase
 
         $email = $this->createPartialMock('\\Email', []);
         $email->state = \Email::STATE_ARCHIVED;
+
+        $this->expectException(SugarException::class);
         $email->sendEmail($config);
     }
 

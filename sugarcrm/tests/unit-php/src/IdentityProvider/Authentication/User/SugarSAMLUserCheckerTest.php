@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserExce
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
@@ -91,7 +92,6 @@ class SugarSAMLUserCheckerTest extends TestCase
 
     /**
      * @covers ::checkPostAuth
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
      */
     public function testCheckPostAuthNotFoundLocalUserAndUserProvisioningIsNotSet()
     {
@@ -107,6 +107,7 @@ class SugarSAMLUserCheckerTest extends TestCase
             ->with($value, $field)
             ->will($this->throwException(new UsernameNotFoundException()));
 
+        $this->expectException(AuthenticationException::class);
         $this->samlUserChecker->checkPostAuth($user);
     }
 
@@ -146,8 +147,6 @@ class SugarSAMLUserCheckerTest extends TestCase
 
     /**
      * @covers ::checkPostAuth
-     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException
-     * @expectedExceptionMessage Found inactive user
      */
     public function testCheckPostDoesNothingWhenLocalUserExistsAndIsInactive()
     {
@@ -166,6 +165,8 @@ class SugarSAMLUserCheckerTest extends TestCase
         $this->localUserProvider->expects($this->never())->method('createUser');
         $user->expects($this->never())->method('setSugarUser');
 
+        $this->expectException(InactiveUserException::class);
+        $this->expectExceptionMessage('Found inactive user');
         $this->samlUserChecker->checkPostAuth($user);
     }
 

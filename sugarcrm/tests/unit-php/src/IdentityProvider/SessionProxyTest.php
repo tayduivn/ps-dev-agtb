@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider;
 
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
@@ -78,7 +79,7 @@ class SessionProxyTest extends TestCase
      * @dataProvider unsupportedMethodsProvider
      * @param $methods
      * @param $arguments
-     * @expectedException \LogicException
+     *
      * @covers ::setId
      * @covers ::setName
      * @covers ::invalidate
@@ -89,6 +90,7 @@ class SessionProxyTest extends TestCase
      */
     public function testUnsupportedMethods($methods, $arguments)
     {
+        $this->expectException(LogicException::class);
         call_user_func_array([$this->sessionProxy, $methods], $arguments);
     }
 

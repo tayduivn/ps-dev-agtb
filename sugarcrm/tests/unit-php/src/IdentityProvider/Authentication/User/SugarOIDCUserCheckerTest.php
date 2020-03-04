@@ -587,8 +587,6 @@ class SugarOIDCUserCheckerTest extends TestCase
 
     /**
      * @covers ::checkPostAuth
-     *
-     * @expectedException Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException
      */
     public function testCheckPostAuthWithInactiveUserInSugarAndInactiveInCloud(): void
     {
@@ -609,13 +607,13 @@ class SugarOIDCUserCheckerTest extends TestCase
             ->willThrowException(new InactiveUserException('', 0, null, $this->sugarUser));
 
         $this->user->expects($this->never())->method('setSugarUser');
+
+        $this->expectException(InactiveUserException::class);
         $this->userChecker->checkPostAuth($this->user);
     }
 
     /**
      * @covers ::checkPostAuth
-     *
-     * @expectedException Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException
      */
     public function testCheckPostAuthWithInactiveUserInSugarNoUserInException(): void
     {
@@ -636,6 +634,8 @@ class SugarOIDCUserCheckerTest extends TestCase
             ->willThrowException(new InactiveUserException('', 0, null, null));
 
         $this->user->expects($this->never())->method('setSugarUser');
+
+        $this->expectException(InactiveUserException::class);
         $this->userChecker->checkPostAuth($this->user);
     }
 }

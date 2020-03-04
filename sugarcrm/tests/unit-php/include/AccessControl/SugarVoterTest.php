@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\AccessControl;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 use Sugarcrm\Sugarcrm\AccessControl\SugarVoter;
@@ -26,14 +27,14 @@ class SugarVoterTest extends TestCase
 {
     /**
      * @covers ::getCurrentUserSubscriptions
-     *
-     * @expectedException \Exception
      */
     public function testGetCurrentUserSubscriptionsException()
     {
         global $current_user;
         $current_user = null;
         $voter = new SugarVoter();
+
+        $this->expectException(Exception::class);
         TestReflection::callProtectedMethod($voter, 'getCurrentUserSubscriptions', []);
     }
     
@@ -41,7 +42,7 @@ class SugarVoterTest extends TestCase
      * @covers ::vote
      * @covers ::supports
      * @covers ::getSupportedKeys
-     * 
+     *
      * @dataProvider voteProvider
      */
     public function testVote($notAccessibleList, $module, $entitled, $expected)

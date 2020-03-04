@@ -12,7 +12,9 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Util\Arrays\OrderedHash;
 
+use OutOfRangeException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash;
 
 /**
@@ -113,23 +115,24 @@ class OrderedHashTest extends TestCase
     /**
      * @covers ::add
      * @dataProvider invalidHashKeys
-     * @expectedException \OutOfRangeException
      */
     public function testAddInvalidKey($key)
     {
+        $this->expectException(OutOfRangeException::class);
         $hash = new OrderedHash();
         $hash->add(null, $key, 'Foo');
     }
 
     /**
      * @covers ::add
-     * @expectedException \RuntimeException
      */
     public function testAddDuplicateKey()
     {
         $hash = new OrderedHash(array(
             'sally' => 'Sally',
         ));
+
+        $this->expectException(RuntimeException::class);
         $hash->add($hash->top(), 'sally', 'Foo');
     }
 
@@ -154,11 +157,12 @@ class OrderedHashTest extends TestCase
 
     /**
      * @covers ::bottom
-     * @expectedException \RuntimeException
      */
     public function testBottomOnEmpty()
     {
         $hash = new OrderedHash();
+
+        $this->expectException(RuntimeException::class);
         $hash->bottom();
     }
 
@@ -298,11 +302,12 @@ class OrderedHashTest extends TestCase
     /**
      * @covers ::move
      * @dataProvider invalidHashKeys
-     * @expectedException \OutOfRangeException
      */
     public function testMoveInvalidKey($key)
     {
         $hash = new OrderedHash();
+
+        $this->expectException(OutOfRangeException::class);
         $hash->move($key, null);
     }
 
@@ -336,7 +341,6 @@ class OrderedHashTest extends TestCase
     /**
      * @covers ::offsetGet
      * @dataProvider invalidHashKeys
-     * @expectedException \OutOfRangeException
      */
     public function testOffsetGetInvalid($key)
     {
@@ -345,13 +349,14 @@ class OrderedHashTest extends TestCase
             'suzy' => 'Suzy',
             'sally' => 'Sally',
         ));
+
+        $this->expectException(OutOfRangeException::class);
         $hash[$key];
     }
 
     /**
      * @covers ::offsetSet
      * @dataProvider invalidHashKeys
-     * @expectedException \OutOfRangeException
      */
     public function testOffsetSetInvalid($key)
     {
@@ -360,6 +365,8 @@ class OrderedHashTest extends TestCase
             'suzy' => 'Suzy',
             'sally' => 'Sally',
         ));
+
+        $this->expectException(OutOfRangeException::class);
         $hash[$key] = 'Foo';
     }
 
@@ -385,7 +392,6 @@ class OrderedHashTest extends TestCase
     /**
      * @covers ::offsetUnset
      * @dataProvider invalidHashKeys
-     * @expectedException \OutOfRangeException
      */
     public function testOffsetUnsetInvalid($key)
     {
@@ -394,6 +400,8 @@ class OrderedHashTest extends TestCase
             'suzy' => 'Suzy',
             'sally' => 'Sally',
         ));
+
+        $this->expectException(OutOfRangeException::class);
         unset($hash[$key]);
     }
 
@@ -459,11 +467,12 @@ class OrderedHashTest extends TestCase
 
     /**
      * @covers ::pop
-     * @expectedException \RuntimeException
      */
     public function testPopOnEmpty()
     {
         $hash = new OrderedHash();
+
+        $this->expectException(RuntimeException::class);
         $hash->pop();
     }
 
@@ -508,11 +517,12 @@ class OrderedHashTest extends TestCase
 
     /**
      * @covers ::shift
-     * @expectedException \RuntimeException
      */
     public function testShiftOnEmpty()
     {
         $hash = new OrderedHash();
+
+        $this->expectException(RuntimeException::class);
         $hash->shift();
     }
 
@@ -560,11 +570,12 @@ class OrderedHashTest extends TestCase
 
     /**
      * @covers ::top
-     * @expectedException \RuntimeException
      */
     public function testTopOnEmpty()
     {
         $hash = new OrderedHash();
+
+        $this->expectException(RuntimeException::class);
         $hash->top();
     }
 

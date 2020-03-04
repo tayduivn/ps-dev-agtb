@@ -14,12 +14,12 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\InputValidation;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\SuperglobalException;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals
- *
  */
 class SuperglobalsTest extends TestCase
 {
@@ -139,7 +139,6 @@ class SuperglobalsTest extends TestCase
      * @covers ::getGet
      * @covers ::getPost
      * @covers ::getRequest
-     *
      */
     public function testCompatLayer()
     {
@@ -224,10 +223,10 @@ class SuperglobalsTest extends TestCase
 
     /**
      * @covers ::getCompatValue
-     * @expectedException \Sugarcrm\Sugarcrm\Security\InputValidation\Exception\SuperglobalException
      */
     public function testRejectInvalidType()
     {
+        $this->expectException(SuperglobalException::class);
         TestReflection::callProtectedMethod($this->globals, 'getCompatValue', array('XXX', 'test'));
     }
 }

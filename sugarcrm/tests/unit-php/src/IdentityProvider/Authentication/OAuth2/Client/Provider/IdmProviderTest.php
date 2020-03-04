@@ -14,8 +14,10 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\OAuth2\Clie
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use InvalidArgumentException;
 use League\OAuth2\Client\Grant\AuthorizationCode;
 use League\OAuth2\Client\Grant\ClientCredentials;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\RequestFactory;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -195,12 +197,12 @@ class IdmProviderTest extends TestCase
 
     /**
      * @covers ::getRequiredOptions
-     * @expectedException \InvalidArgumentException
      *
      * @dataProvider getRequiredOptionsProvider
      */
     public function testGetRequiredOptions(array $options)
     {
+        $this->expectException(InvalidArgumentException::class);
         new IdmProvider($options);
     }
 
@@ -268,7 +270,6 @@ class IdmProviderTest extends TestCase
 
     /**
      * @covers ::checkResponse
-     * @expectedException \League\OAuth2\Client\Provider\Exception\IdentityProviderException
      */
     public function testInvalidResponse()
     {
@@ -300,6 +301,7 @@ class IdmProviderTest extends TestCase
         $provider->method('getRequest')->willReturn($request);
         $provider->method('getResponse')->willReturn($response);
 
+        $this->expectException(IdentityProviderException::class);
         $provider->getAccessToken('authorization_code');
     }
 

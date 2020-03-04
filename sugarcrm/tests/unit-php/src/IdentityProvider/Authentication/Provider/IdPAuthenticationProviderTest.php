@@ -21,6 +21,8 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\IdpUsernamePasswordT
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\ProviderNotFoundException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 
 /**
@@ -116,11 +118,12 @@ class IdPAuthenticationProviderTest extends TestCase
 
     /**
      * @covers ::authenticate
-     * @expectedException \Symfony\Component\Security\Core\Exception\ProviderNotFoundException
      */
     public function testAuthenticateWithUnsupportedToken()
     {
         $token = new UsernamePasswordToken('test', 'test', 'test');
+
+        $this->expectException(ProviderNotFoundException::class);
         $this->provider->authenticate($token);
     }
 
@@ -152,8 +155,6 @@ class IdPAuthenticationProviderTest extends TestCase
      *
      * @covers ::authenticate
      * @dataProvider authenticateWithLegacyTokenAuthenticationErrorProvider
-     *
-     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationException
      */
     public function testAuthenticateWithLegacyTokenAuthenticationError(array $data)
     {
@@ -169,6 +170,7 @@ class IdPAuthenticationProviderTest extends TestCase
                             ->with('user', 'password')
                             ->willReturn($data);
 
+        $this->expectException(AuthenticationException::class);
         $this->provider->authenticate($token);
     }
 

@@ -23,17 +23,17 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 class ServiceAccountTest extends TestCase
 {
     /**
-     * @var ServiceAccount | MockObject
+     * @var ServiceAccount|MockObject
      */
     protected $serviceAccount;
 
     /**
-     * @var \User | MockObject
+     * @var \User|MockObject
      */
     protected $userBean;
 
     /**
-     * @var \User | MockObject
+     * @var \User|MockObject
      */
     protected $systemUser;
 

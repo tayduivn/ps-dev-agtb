@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Security\Password\Salt;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Salt
- *
  */
 class SaltTest extends TestCase
 {

@@ -62,12 +62,12 @@ class SessionListenerTest extends TestCase
     protected $accessToken = null;
 
     /**
-     * @var array | null
+     * @var array|null
      */
     protected $currentSession = null;
 
     /**
-     * @var array | null
+     * @var array|null
      */
     protected $currentServer = null;
 

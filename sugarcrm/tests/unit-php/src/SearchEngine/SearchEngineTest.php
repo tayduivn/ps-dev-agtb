@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
@@ -78,11 +79,11 @@ class SearchEngineTest extends TestCase
 
     /**
      * @covers ::newEngine
-     * @expectedException \RuntimeException
      */
     public function testNewEngineExceptions()
     {
-        $engine = SearchEngine::newEngine('Unknown');
+        $this->expectException(RuntimeException::class);
+        SearchEngine::newEngine('Unknown');
     }
 
     /**

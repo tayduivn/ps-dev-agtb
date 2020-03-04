@@ -41,7 +41,6 @@ class SugarUserCheckerTest extends TestCase
     protected $checker;
 
     /**
-     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException
      * @covers ::checkPreAuth
      */
     public function testLockedUser()
@@ -58,6 +57,7 @@ class SugarUserCheckerTest extends TestCase
             ->with($this->isInstanceOf(User::class))
             ->willThrowException(new TemporaryLockedUserException('test'));
 
+        $this->expectException(TemporaryLockedUserException::class);
         $this->checker->checkPreAuth($this->user);
     }
 

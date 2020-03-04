@@ -18,7 +18,6 @@ use Sugarcrm\Sugarcrm\Security\Password\Salt;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Backend\Sha2
- *
  */
 class Sha2Test extends TestCase
 {

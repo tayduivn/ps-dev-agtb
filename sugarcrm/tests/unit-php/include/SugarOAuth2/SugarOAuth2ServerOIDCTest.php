@@ -12,9 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
+use OAuth2AuthenticateException;
+use OAuth2ServerException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use SugarApiExceptionNeedLogin;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
@@ -27,12 +30,13 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\RefreshToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use SugarOAuth2ServerOIDC;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- * @coversDefaultClass \SugarOAuth2ServerOIDC
+ * @coversDefaultClass SugarOAuth2ServerOIDC
  */
 class SugarOAuth2ServerOIDCTest extends TestCase
 {
@@ -42,7 +46,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
     protected $storage;
 
     /**
-     * @var \SugarOAuth2ServerOIDC|MockObject
+     * @var SugarOAuth2ServerOIDC|MockObject
      */
     protected $oAuth2Server;
 
@@ -57,7 +61,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
     protected $authProviderBasicBuilder;
 
     /**
-     * @var AuthProviderApiLoginManagerBuilder | MockObject
+     * @var AuthProviderApiLoginManagerBuilder|MockObject
      */
     protected $authProviderApiLoginBuilder;
 
@@ -122,7 +126,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
     {
         $this->storage = $this->createMock(\SugarOAuth2StorageOIDC::class);
         $this->storage->refreshToken = $this->createMock(\OAuthToken::class);
-        $this->oAuth2Server = $this->getMockBuilder(\SugarOAuth2ServerOIDC::class)
+        $this->oAuth2Server = $this->getMockBuilder(SugarOAuth2ServerOIDC::class)
                                    ->disableOriginalConstructor()
                                    ->setMethods([
                                        'getAuthProviderBuilder',
@@ -211,9 +215,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
 
     /**
      * @covers ::grantAccessToken
-     *
-     * @expectedException \OAuth2ServerException
-     * @expectedExceptionMessage invalid_client
      */
     public function testGrantAccessTokenWithInvalidClient()
     {
@@ -225,14 +226,13 @@ class SugarOAuth2ServerOIDCTest extends TestCase
         $this->storage->expects($this->never())->method('checkRestrictedGrantType');
         $this->storage->expects($this->never())->method('checkUserCredentials');
 
+        $this->expectException(OAuth2ServerException::class);
+        $this->expectExceptionMessage('invalid_client');
         $this->oAuth2Server->grantAccessToken($this->inputData);
     }
 
     /**
      * @covers ::grantAccessToken
-     *
-     * @expectedException \OAuth2ServerException
-     * @expectedExceptionMessage unauthorized_client
      */
     public function testGrantAccessTokenWithInvalidGrantType()
     {
@@ -247,6 +247,8 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                       ->willReturn(false);
         $this->storage->expects($this->never())->method('checkUserCredentials');
 
+        $this->expectException(OAuth2ServerException::class);
+        $this->expectExceptionMessage('unauthorized_client');
         $this->oAuth2Server->grantAccessToken($this->inputData);
     }
 
@@ -275,9 +277,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      * @param string $username
      * @param string $password
      *
-     * @expectedException \OAuth2ServerException
-     * @expectedExceptionMessage invalid_request
-     *
      * @dataProvider grantAccessTokenWithEmptyUsernameOrPasswordProvider
      */
     public function testGrantAccessTokenWithEmptyUsernameOrPassword($username, $password)
@@ -296,13 +295,13 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                       ->willReturn(true);
         $this->storage->expects($this->never())->method('checkUserCredentials');
 
+        $this->expectException(OAuth2ServerException::class);
+        $this->expectExceptionMessage('invalid_request');
         $this->oAuth2Server->grantAccessToken($this->inputData);
     }
 
     /**
      * @covers ::grantAccessToken
-     *
-     * @expectedException \SugarApiExceptionNeedLogin
      */
     public function testGrantAccessTokenWithInvalidUsernameOrPassword()
     {
@@ -319,15 +318,14 @@ class SugarOAuth2ServerOIDCTest extends TestCase
         $this->storage->expects($this->once())
                       ->method('checkUserCredentials')
                       ->with($this->inputData['client_id'], $this->inputData['username'], $this->inputData['password'])
-                      ->willThrowException(new \SugarApiExceptionNeedLogin(null));
+                      ->willThrowException(new SugarApiExceptionNeedLogin(null));
 
+        $this->expectException(SugarApiExceptionNeedLogin::class);
         $this->oAuth2Server->grantAccessToken($this->inputData);
     }
 
     /**
      * @covers ::grantAccessToken
-     *
-     * @expectedException \SugarApiExceptionNeedLogin
      */
     public function testGrantAccessTokenWithValidUsernameOrPasswordUserJWTBearerFlowError()
     {
@@ -364,6 +362,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
             }
         );
 
+        $this->expectException(SugarApiExceptionNeedLogin::class);
         $this->oAuth2Server->grantAccessToken($this->inputData);
     }
 
@@ -470,8 +469,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
     /**
      * @covers ::verifyAccessToken
      * @covers ::setPlatform
-     * @expectedException \OAuth2AuthenticateException
-     * @expectedExceptionMessage invalid_grant
      */
     public function testVerifyAccessTokenWithAuthenticationException()
     {
@@ -494,13 +491,14 @@ class SugarOAuth2ServerOIDCTest extends TestCase
         );
 
         $this->oAuth2Server->setPlatform('testPlatform');
+
+        $this->expectException(OAuth2AuthenticateException::class);
+        $this->expectExceptionMessage('invalid_grant');
         $this->oAuth2Server->verifyAccessToken($this->stsAccessToken);
     }
 
     /**
      * @covers ::verifyAccessToken
-     * @expectedException \OAuth2AuthenticateException
-     * @expectedExceptionMessage idm_nonrecoverable_error
      */
     public function testVerifyAccessTokenWithNonrecoverableException(): void
     {
@@ -520,6 +518,9 @@ class SugarOAuth2ServerOIDCTest extends TestCase
         );
 
         $this->oAuth2Server->setPlatform('testPlatform');
+
+        $this->expectException(OAuth2AuthenticateException::class);
+        $this->expectExceptionMessage('idm_nonrecoverable_error');
         $this->oAuth2Server->verifyAccessToken($this->stsAccessToken);
     }
 
@@ -673,12 +674,11 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      * @covers ::grantAccessToken()
      *
      * @dataProvider grantAccessTokenWillThrowExceptionProvider
-     *
-     * @expectedException \OAuth2ServerException
-     * @expectedExceptionMessage invalid_request
      */
     public function testGrantAccessTokenWillThrowException(array $inputData): void
     {
+        $this->expectException(OAuth2ServerException::class);
+        $this->expectExceptionMessage('invalid_request');
         $this->oAuth2Server->grantAccessToken($inputData);
     }
 
@@ -687,7 +687,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      *
      * @covers ::grantAccessToken()
      *
-     * @throws \OAuth2ServerException
+     * @throws OAuth2ServerException
      */
     public function testGrantAccessTokenHandledByParentRefreshFlow(): void
     {
@@ -698,8 +698,8 @@ class SugarOAuth2ServerOIDCTest extends TestCase
             'client_secret' => 'client_secret',
         ];
 
-        /** @var \SugarOAuth2ServerOIDC | MockObject $oAuth2ServerMock */
-        $oAuth2ServerMock = $this->getMockBuilder(\SugarOAuth2ServerOIDC::class)
+        /** @var SugarOAuth2ServerOIDC|MockObject $oAuth2ServerMock */
+        $oAuth2ServerMock = $this->getMockBuilder(SugarOAuth2ServerOIDC::class)
             ->setConstructorArgs([$this->storage, []])
             ->setMethods([
                 'getAuthProviderBuilder',
@@ -740,9 +740,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      * Checks logic handled by parent method on auth code flow.
      *
      * @covers ::grantAccessToken()
-     *
-     * @expectedException \OAuth2ServerException
-     * @expectedExceptionMessage unsupported_grant_type
      */
     public function testGrantAccessTokenHandledByParentAuthCodeFlow(): void
     {
@@ -754,8 +751,8 @@ class SugarOAuth2ServerOIDCTest extends TestCase
             'scope' => 'offline',
         ];
 
-        /** @var \SugarOAuth2ServerOIDC | MockObject $oAuth2ServerMock */
-        $oAuth2ServerMock = $this->getMockBuilder(\SugarOAuth2ServerOIDC::class)
+        /** @var SugarOAuth2ServerOIDC|MockObject $oAuth2ServerMock */
+        $oAuth2ServerMock = $this->getMockBuilder(SugarOAuth2ServerOIDC::class)
             ->setConstructorArgs([$this->storage, []])
             ->setMethods([
                 'getAuthProviderBuilder',
@@ -775,6 +772,8 @@ class SugarOAuth2ServerOIDCTest extends TestCase
             ->with($inputData['client_id'], $inputData['grant_type'])
             ->willReturn(true);
 
+        $this->expectException(OAuth2ServerException::class);
+        $this->expectExceptionMessage('unsupported_grant_type');
         $oAuth2ServerMock->grantAccessToken($inputData);
     }
 

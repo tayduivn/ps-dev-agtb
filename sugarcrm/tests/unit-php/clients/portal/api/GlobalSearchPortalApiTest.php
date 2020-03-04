@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\clients\portal\api;
 
 use PHPUnit\Framework\TestCase;
+use SugarApiExceptionNoMethod;
 
 /**
  * @coversDefaultClass \GlobalSearchPortalApi
@@ -20,13 +21,14 @@ use PHPUnit\Framework\TestCase;
 class GlobalSearchPortalApiTest extends TestCase
 {
     /**
-     * @expectedException \SugarApiExceptionNoMethod
      * @covers ::globalSearchPortal
      */
     public function testGlobalSearchPortal()
     {
         $sut = $this->getGlobalSearchPortalApiMock();
         $api = $this->getRestServiceMock();
+
+        $this->expectException(SugarApiExceptionNoMethod::class);
         $sut->globalSearchPortal($api, []);
     }
 

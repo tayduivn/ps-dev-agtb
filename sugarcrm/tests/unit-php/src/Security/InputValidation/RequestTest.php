@@ -14,6 +14,8 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\InputValidation;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\SuperglobalException;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
 use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
@@ -260,12 +262,13 @@ class RequestTest extends TestCase
     /**
      * @covers ::getValidInput
      * @dataProvider providerTestGetInvalidInput
-     * @expectedException \Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException
      */
     public function testGetInvalidInput($data, $constraint)
     {
         $superglobals = new Superglobals(array('data' => $data), array(), $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
+
+        $this->expectException(ViolationException::class);
         $request->getValidInput(Superglobals::GET, 'data', $constraint);
     }
 
@@ -285,21 +288,22 @@ class RequestTest extends TestCase
 
     /**
      * @covers ::getValidInput
-     * @expectedException \Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException
      */
     public function testGetValidInputViolationException()
     {
         $superglobals = new Superglobals(array('foo' => 'bar'), array(), $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
+
+        $this->expectException(ViolationException::class);
         $request->getValidInput(Superglobals::GET, 'foo', 'Assert\FailingConstraint');
     }
 
     /**
      * @covers ::getValidInput
-     * @expectedException \Sugarcrm\Sugarcrm\Security\InputValidation\Exception\SuperglobalException
      */
     public function testGetValidInputSuperglobalException()
     {
+        $this->expectException(SuperglobalException::class);
         $superglobals = new Superglobals(array(), array(), $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
         $request->getValidInput('foo', 'bar');

@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\modules\Users\authentication\OAuth2Authenti
 use OAuth2Authenticate;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderApiLoginManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
@@ -29,7 +30,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 class OAuth2AuthenticateTest extends TestCase
 {
     /**
-     * @var OAuth2Authenticate | MockObject
+     * @var OAuth2Authenticate|MockObject
      */
     protected $authMock;
 
@@ -39,7 +40,7 @@ class OAuth2AuthenticateTest extends TestCase
     protected $authProviderBuilder;
 
     /**
-     * @var AuthenticationProviderManager | MockObject
+     * @var AuthenticationProviderManager|MockObject
      */
     protected $authManager;
 
@@ -49,12 +50,12 @@ class OAuth2AuthenticateTest extends TestCase
     protected $sugarUser;
 
     /**
-     * @var OAuth2StateRegistry | MockObject
+     * @var OAuth2StateRegistry|MockObject
      */
     protected $stateRegistryMock;
 
     /**
-     * @var IdmProvider | MockObject
+     * @var IdmProvider|MockObject
      */
     protected $idmProviderMock;
 
@@ -161,12 +162,12 @@ class OAuth2AuthenticateTest extends TestCase
 
     /**
      * @covers ::getLoginUrl
-     *
-     * @expectedException \RuntimeException
      */
     public function testGetLoginUrlWithEmptyConfig()
     {
         $this->authMock->expects($this->any())->method('getIDMModeConfig')->willReturn([]);
+
+        $this->expectException(RuntimeException::class);
         $this->authMock->getLoginUrl();
     }
 
@@ -196,7 +197,6 @@ class OAuth2AuthenticateTest extends TestCase
 
     /**
      * @covers ::loginAuthenticate
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
      */
     public function testLoginAuthenticateAuthenticationException()
     {
@@ -207,6 +207,8 @@ class OAuth2AuthenticateTest extends TestCase
                 throw new AuthenticationException();
             }
         );
+
+        $this->expectException(AuthenticationException::class);
         $this->authMock->loginAuthenticate('user', 'password');
     }
 

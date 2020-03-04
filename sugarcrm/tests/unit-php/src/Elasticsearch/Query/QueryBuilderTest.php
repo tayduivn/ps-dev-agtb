@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Query;
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\MatchAllQuery;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
@@ -368,19 +369,16 @@ class QueryBuilderTest extends TestCase
 
     /**
      * @covers ::executeSearch
-     *
-     * @expectedException \Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException
      */
     public function testExcuteSearchNoUserException()
     {
         $queryBuilderMock = $this->getQueryBuilderMock();
+        $this->expectException(QueryBuilderException::class);
         $queryBuilderMock->executeSearch();
     }
 
     /**
      * @covers ::executeSearch
-     *
-     * @expectedException \Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException
      */
     public function testExcuteSearchNoModuleException()
     {
@@ -388,14 +386,15 @@ class QueryBuilderTest extends TestCase
         $userMock = TestMockHelper::getObjectMock($this, '\User');
         $queryBuilderMock->setUser($userMock);
 
+        $this->expectException(QueryBuilderException::class);
         $queryBuilderMock->executeSearch();
     }
 
     /**
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder
+     * @return QueryBuilder
      */
     protected function getQueryBuilderMock(array $methods = null)
     {
-        return TestMockHelper::getObjectMock($this, 'Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder', $methods);
+        return TestMockHelper::getObjectMock($this, QueryBuilder::class, $methods);
     }
 }

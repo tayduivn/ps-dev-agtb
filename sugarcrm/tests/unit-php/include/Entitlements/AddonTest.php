@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\Entitlements;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Entitlements\Addon;
@@ -64,11 +65,10 @@ class AddonTest extends TestCase
      * @covers ::parse
      *
      * @dataProvider addonExceptionProvider
-     *
-     * @expectedException \Exception
      */
     public function testGetDataException($id, $data)
     {
+        $this->expectException(Exception::class);
         new Addon($id, $data);
     }
 

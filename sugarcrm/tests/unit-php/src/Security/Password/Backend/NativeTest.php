@@ -18,7 +18,6 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Backend\Native
- *
  */
 class NativeTest extends TestCase
 {

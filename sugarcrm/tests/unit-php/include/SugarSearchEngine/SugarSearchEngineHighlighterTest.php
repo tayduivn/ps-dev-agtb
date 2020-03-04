@@ -15,9 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarSearchEngine;
 use PHPUnit\Framework\TestCase;
 
 /**
- *
  * @coversDefaultClass \SugarSearchEngineHighlighter
- *
  */
 class SugarSearchEngineHighlighterTest extends TestCase
 {

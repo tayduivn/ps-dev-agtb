@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\LegacyCleanString;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\LegacyCleanStringValidator;
 use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\LegacyCleanStringValidator
@@ -31,7 +32,6 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @coversNothing
-     * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
      */
     public function testExpectValidFilter()
     {
@@ -39,6 +39,7 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
             'filter' => 'foobar',
         ));
 
+        $this->expectException(ConstraintDefinitionException::class);
         $this->validator->validate('xyz', $constraint);
     }
 

@@ -18,7 +18,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Psr\SimpleCache\CacheInterface;
 
 /**
- * @coversDefaultClass Session
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Portal\Session
  */
 class SessionTest extends TestCase
 {

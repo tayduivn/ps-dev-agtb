@@ -13,6 +13,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
 use AuthenticationController;
 use PHPUnit\Framework\TestCase;
+use SugarApiExceptionNeedLogin;
 use SugarOAuth2StorageOIDC;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
@@ -68,8 +69,6 @@ class SugarOAuth2StorageOIDCTest extends TestCase
      *
      * @dataProvider providerCheckUserCredentialsFailedLogin
      * @param mixed $loginResult
-     *
-     * @expectedException \SugarApiExceptionNeedLogin
      */
     public function testCheckUserCredentialsFailedLogin($loginResult)
     {
@@ -80,6 +79,8 @@ class SugarOAuth2StorageOIDCTest extends TestCase
                 ['passwordEncrypted' => false, 'noRedirect' => true, 'noHooks' => true]
             )
             ->willReturn($loginResult);
+
+        $this->expectException(SugarApiExceptionNeedLogin::class);
         $this->storageMock->checkUserCredentials('sugar', 'user', 'password');
     }
 
@@ -104,8 +105,6 @@ class SugarOAuth2StorageOIDCTest extends TestCase
 
     /**
      * @covers ::checkUserCredentials
-     *
-     * @expectedException \SugarApiExceptionNeedLogin
      */
     public function testCheckUserCredentialsLoginException()
     {
@@ -116,6 +115,8 @@ class SugarOAuth2StorageOIDCTest extends TestCase
                 ['passwordEncrypted' => false, 'noRedirect' => true, 'noHooks' => true]
             )
             ->willThrowException(new AuthenticationException());
+
+        $this->expectException(SugarApiExceptionNeedLogin::class);
         $this->storageMock->checkUserCredentials('sugar', 'user', 'password');
     }
 // BEGIN SUGARCRM flav=ent ONLY

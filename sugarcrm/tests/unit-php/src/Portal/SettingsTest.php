@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Portal\Settings;
 
 /**
- * @coversDefaultClass Settings
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Portal\Settings
  */
 class SettingsTest extends TestCase
 {

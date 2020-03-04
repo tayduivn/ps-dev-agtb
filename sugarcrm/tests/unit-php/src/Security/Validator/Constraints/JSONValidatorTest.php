@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\JSON;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\JSONValidator;
 use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\JSONValidator
@@ -49,10 +50,10 @@ class JSONValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
      */
     public function testExpectsStringCompatibleType()
     {
+        $this->expectException(UnexpectedTypeException::class);
         $this->validator->validate(new \stdClass(), new JSON());
     }
 

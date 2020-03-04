@@ -20,9 +20,8 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class SugarFieldDateTest extends TestCase
 {
-
     /**
-     * @var \SugarBean | MockObject
+     * @var \SugarBean|MockObject
      */
     protected $focus;
 

@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\ExternalAuthUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LocalUserChecker;
@@ -62,8 +63,6 @@ class LocalUserCheckerTest extends TestCase
      * @dataProvider withExternalOnlyAuthProvider
      *
      * @param mixed $externalAuthOnlyValue
-     *
-     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\ExternalAuthUserException
      */
     public function testCheckPreAuthOfUserWithExternalAuthOnly($externalAuthOnlyValue)
     {
@@ -78,6 +77,7 @@ class LocalUserCheckerTest extends TestCase
 
         $checker = new LocalUserChecker($this->lockout);
 
+        $this->expectException(ExternalAuthUserException::class);
         $checker->checkPreAuth($this->user);
     }
 

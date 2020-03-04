@@ -12,7 +12,9 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\ProductDefinition\Config;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use SugarConfig;
 use Sugarcrm\Sugarcrm\ProductDefinition\Config\Cache\CacheInterface;
 use Sugarcrm\Sugarcrm\ProductDefinition\Config\Source\SourceInterface;
 use Sugarcrm\Sugarcrm\ProductDefinition\Config\Config;
@@ -23,22 +25,22 @@ use Sugarcrm\Sugarcrm\ProductDefinition\Config\Config;
 class ConfigTest extends TestCase
 {
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject | \SugarConfig
+     * @var MockObject|SugarConfig
      */
     protected $sugarConfig;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject | SourceInterface
+     * @var MockObject|SourceInterface
      */
     protected $source;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject | CacheInterface
+     * @var MockObject|CacheInterface
      */
     protected $cache;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject | Config
+     * @var MockObject|Config
      */
     protected $config;
 
@@ -51,7 +53,7 @@ class ConfigTest extends TestCase
         $this->cache = $this->createMock(CacheInterface::class);
 
         $this->config = $this->getMockBuilder(Config::class)
-            ->setConstructorArgs([\SugarConfig::getInstance()])
+            ->setConstructorArgs([SugarConfig::getInstance()])
             ->setMethods(['getSource', 'getCache', 'isInstallInProgress'])
             ->getMock();
     }
@@ -63,7 +65,7 @@ class ConfigTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $sugarConfig = $this->createMock(\SugarConfig::class);
+        $sugarConfig = $this->createMock(SugarConfig::class);
         $sugarConfig->expects($this->once())
             ->method('get')
             ->with('product_definition', $this->anything())

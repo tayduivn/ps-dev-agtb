@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\ServiceAccount;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\ServiceAccount\Checker;
 
@@ -125,11 +126,11 @@ class CheckerTest extends TestCase
 
     /**
      * @covers ::isAllowed()
-     * @expectedException \InvalidArgumentException
      * @dataProvider badOrMissingSRNsIsAllowedDataProvider
      */
     public function testIsAllowedThrowsExceptionWhenGivenInvalidSRNs($accessTokenInfo, $config)
     {
+        $this->expectException(InvalidArgumentException::class);
         $checker = new Checker($config);
         $checker->isAllowed($accessTokenInfo);
     }

@@ -25,7 +25,6 @@ class EmailParticipantsTest extends TestCase
 {
     /**
      * @covers ::__construct
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testUnrecognizedOperand()
     {
@@ -36,8 +35,8 @@ class EmailParticipantsTest extends TestCase
             ],
         ];
 
-        $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $operand = new EmailParticipants('$foo', $filter);
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
+        new EmailParticipants('$foo', $filter);
     }
 
     public function operandProvider()

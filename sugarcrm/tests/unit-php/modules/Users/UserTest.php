@@ -12,6 +12,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\modules\Users;
 
 use PHPUnit\Framework\TestCase;
+use SugarApiExceptionInvalidParameter;
 
 /**
  * @coversDefaultClass \User
@@ -97,8 +98,6 @@ class UserTest extends TestCase
     /**
      * @covers ::processLicenseTypes
      *
-     * @expectedException \SugarApiExceptionInvalidParameter
-     *
      * @dataProvider processLicenseTypesExceptionProvider
      */
     public function testProcessLicenseTypesException($value)
@@ -108,6 +107,7 @@ class UserTest extends TestCase
             ->setMethods()
             ->getMock();
 
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $userMock->processLicenseTypes($value);
     }
 

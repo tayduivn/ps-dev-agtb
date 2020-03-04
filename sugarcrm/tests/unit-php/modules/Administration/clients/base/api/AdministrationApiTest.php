@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\modules\Administration\clients\base\api;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use SugarApiExceptionNotAuthorized;
 
 /**
  * Class AdministrationApiTest
@@ -22,22 +23,22 @@ use PHPUnit\Framework\TestCase;
 class AdministrationApiTest extends TestCase
 {
     /**
-     * @var \Configurator | MockObject
+     * @var \Configurator|MockObject
      */
     private $configurator;
 
     /**
-     * @var \User | MockObject
+     * @var \User|MockObject
      */
     private $currentUser;
 
     /**
-     * @var \ServiceBase | MockObject
+     * @var \ServiceBase|MockObject
      */
     private $apiService;
 
     /**
-     * @var \AdministrationApi | MockObject
+     * @var \AdministrationApi|MockObject
      */
     private $api;
 
@@ -74,22 +75,24 @@ class AdministrationApiTest extends TestCase
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotAuthorized
      * @covers ::enableIdmMigration
      */
     public function testEnableIdmMigrationUserNotAuthorized(): void
     {
         $GLOBALS['current_user']->method('isAdmin')->willReturn(false);
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->enableIdmMigration($this->apiService, []);
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotAuthorized
      * @covers ::disableIdmMigration
      */
     public function testDisableIdmMigrationUserNotAuthorized(): void
     {
         $GLOBALS['current_user']->method('isAdmin')->willReturn(false);
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->disableIdmMigration($this->apiService, []);
     }
 

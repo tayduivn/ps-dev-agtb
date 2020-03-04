@@ -12,8 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\Entitlements;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Entitlements\Subscription;
 
 /**
@@ -90,11 +90,10 @@ class SubscriptionTest extends TestCase
      * @covers ::parse
      *
      * @dataProvider subscriptionExceptionProvider
-     *
-     * @expectedException \Exception
      */
     public function testGetDataException($data)
     {
+        $this->expectException(Exception::class);
         new Subscription($data);
     }
 

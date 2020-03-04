@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Delimited;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\Delimited
@@ -21,11 +22,11 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Delimited;
 class DelimitedTest extends TestCase
 {
     /**
-     * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
      * @covers ::__construct
      */
     public function testRejectNonStringDelimiter()
     {
+        $this->expectException(ConstraintDefinitionException::class);
         new Delimited(array(
             'constraints' => array(),
             'delimiter' => true,
@@ -33,11 +34,11 @@ class DelimitedTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
      * @covers ::__construct
      */
     public function testRejectEmptyStringDelimiter()
     {
+        $this->expectException(ConstraintDefinitionException::class);
         new Delimited(array(
             'constraints' => array(),
             'delimiter' => '',

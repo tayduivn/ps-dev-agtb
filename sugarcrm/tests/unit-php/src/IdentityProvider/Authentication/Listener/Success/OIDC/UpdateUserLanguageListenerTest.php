@@ -31,12 +31,12 @@ class UpdateUserLanguageListenerTest extends TestCase
     protected $listener;
 
     /**
-     * @var UsernamePasswordToken | MockObject
+     * @var UsernamePasswordToken|MockObject
      */
     protected $token;
 
     /**
-     * @var \User | MockObject
+     * @var \User|MockObject
      */
     protected $sugarUser;
 
@@ -46,7 +46,7 @@ class UpdateUserLanguageListenerTest extends TestCase
     protected $event;
 
     /**
-     * @var User | MockObject
+     * @var User|MockObject
      */
     protected $user;
 

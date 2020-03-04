@@ -139,7 +139,6 @@ class M2MRelationshipTest extends TestCase
 
     /**
      * @covers ::getSugarQuery
-     * @expectedException \Exception
      */
     public function testLoadException()
     {
@@ -150,6 +149,8 @@ class M2MRelationshipTest extends TestCase
         $relationship->expects($this->once())
             ->method('linkIsLHS')
             ->will($this->returnValue(true));
+
+        $this->expectException(Exception::class);
         $relationship->load($this->createMock('Link2'), []);
     }
 

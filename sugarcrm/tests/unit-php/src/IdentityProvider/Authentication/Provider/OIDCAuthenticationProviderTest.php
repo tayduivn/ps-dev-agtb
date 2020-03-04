@@ -29,6 +29,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUser
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 
 /**
@@ -151,11 +152,12 @@ class OIDCAuthenticationProviderTest extends TestCase
 
     /**
      * @covers ::authenticate
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationServiceException
      */
     public function testAuthenticateWithUnsupportedToken()
     {
         $token = new UsernamePasswordToken('test', 'test', 'test');
+
+        $this->expectException(AuthenticationServiceException::class);
         $this->provider->authenticate($token);
     }
 
@@ -180,8 +182,6 @@ class OIDCAuthenticationProviderTest extends TestCase
      *
      * @covers ::authenticate
      * @dataProvider authenticateWithInvalidTokenProvider
-     *
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
      */
     public function testAuthenticateWithInvalidToken($tokenResult)
     {
@@ -194,6 +194,8 @@ class OIDCAuthenticationProviderTest extends TestCase
                             ->method('introspectToken')
                             ->with('token')
                             ->willReturn($tokenResult);
+
+        $this->expectException(AuthenticationException::class);
         $this->provider->authenticate($token);
     }
 
@@ -251,7 +253,6 @@ class OIDCAuthenticationProviderTest extends TestCase
 
     /**
      * @covers ::authenticate
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
      */
     public function testAuthenticateWithServiceAccountIntrospectTokenException(): void
     {
@@ -293,7 +294,8 @@ class OIDCAuthenticationProviderTest extends TestCase
         $this->oAuthProvider->expects($this->never())->method('getUserInfo');
         $this->userChecker->expects($this->never())->method('checkPostAuth');
 
-        $resultToken = $this->provider->authenticate($token);
+        $this->expectException(AuthenticationException::class);
+        $this->provider->authenticate($token);
     }
 
     /**
@@ -580,8 +582,6 @@ class OIDCAuthenticationProviderTest extends TestCase
 
     /**
      * @covers ::authenticate
-     *
-     * @expectedException Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\IdmNonrecoverableException
      */
     public function testIntrospectTokenCheckPostAuthThrowsException(): void
     {
@@ -614,6 +614,7 @@ class OIDCAuthenticationProviderTest extends TestCase
             ->with('token')
             ->willReturn($introspectResult);
 
+        $this->expectException(IdmNonrecoverableException::class);
         $this->provider->authenticate($token);
     }
 
@@ -681,10 +682,6 @@ class OIDCAuthenticationProviderTest extends TestCase
 
     /**
      * @covers ::authenticate()
-     *
-     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationException
-     * @expectedExceptionMessage testCode
-     * @expectedExceptionCode 500
      */
     public function testAuthCodeGrantTypeAuthWillThrowException(): void
     {
@@ -695,15 +692,15 @@ class OIDCAuthenticationProviderTest extends TestCase
                 'authorization_code',
                 ['code' => 'code', 'scope' => ['offline', 'profile']]
             )->willThrowException(new \Exception('testCode', 500));
+
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionCode(500);
+        $this->expectExceptionMessage('testCode');
         $this->provider->authenticate($token);
     }
 
     /**
      * @covers ::authenticate()
-     *
-     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationException
-     * @expectedExceptionMessage testRefresh
-     * @expectedExceptionCode 500
      */
     public function testRefreshTokenGrantTypeAuthWillThrowException(): void
     {
@@ -714,6 +711,10 @@ class OIDCAuthenticationProviderTest extends TestCase
                 'refresh_token',
                 ['refresh_token' => 'refreshToken']
             )->willThrowException(new \Exception('testRefresh', 500));
+
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionCode(500);
+        $this->expectExceptionMessage('testRefresh');
         $this->provider->authenticate($token);
     }
 }

@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Session\SessionStorage;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Session\SessionStorage
- *
  */
 class SessionStorageTest extends TestCase
 {

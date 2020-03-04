@@ -15,6 +15,8 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\File;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator;
 use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator
@@ -66,21 +68,22 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
      */
     public function testExpectsStringCompatibleType()
     {
+        $this->expectException(UnexpectedTypeException::class);
         $this->validator->validate(new \stdClass(), new File());
     }
 
     /**
      * @covers ::validate
-     * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
      */
     public function testExpectsBaseDirsToBeSet()
     {
         $constraint = new File();
         $constraint->baseDirs = array();
+
+        $this->expectException(ConstraintDefinitionException::class);
         $this->validator->validate('xxx', $constraint);
     }
 

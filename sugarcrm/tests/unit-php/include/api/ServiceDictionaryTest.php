@@ -13,11 +13,10 @@
 namespace Sugarcrm\SugarcrmTestsUnit\inc\api;
 
 use PHPUnit\Framework\TestCase;
+use SugarApiExceptionNoMethod;
 
 /**
- *
  * @coversDefaultClass \ServiceDictionaryRest
- *
  */
 class ServiceDictionaryTest extends TestCase
 {
@@ -563,16 +562,12 @@ class ServiceDictionaryTest extends TestCase
     }
 
     /**
-     *
      * @covers ::<public>
      * @covers ::<protected>
      * @covers ::<private>
-     *
-     * @expectedException \SugarApiExceptionNoMethod
      */
     public function testExceptionNoEntry()
     {
-
         require_once 'include/utils.php';
         $vServiceDict = $this->getServiceDictionaryRestMock();
         $vServiceDict->preRegisterEndpoints();
@@ -580,21 +575,17 @@ class ServiceDictionaryTest extends TestCase
         $vServiceDict->registerEndpoints($this->registerApiVersionRest(), 'fake/foo.php', 'fooClass', 'base', 0);
         $vServiceDict->dict = $vServiceDict->getRegisteredEndpoints();
 
-        // test no entry
-        $route = $vServiceDict->lookupRoute(array('Accounts'), '11', 'GET', 'base');
+        $this->expectException(SugarApiExceptionNoMethod::class);
+        $vServiceDict->lookupRoute(array('Accounts'), '11', 'GET', 'base');
     }
 
     /**
-     *
      * @covers ::<public>
      * @covers ::<protected>
      * @covers ::<private>
-     *
-     * @expectedException \SugarApiExceptionNoMethod
      */
     public function testExceptionNoRoute()
     {
-
         require_once 'include/utils.php';
         $vServiceDict = $this->getServiceDictionaryRestMock();
         $vServiceDict->preRegisterEndpoints();
@@ -617,8 +608,8 @@ class ServiceDictionaryTest extends TestCase
 
         $vServiceDict->dict = $vServiceDict->getRegisteredEndpoints();
 
-        // test no route exception
-        $route = $vServiceDict->lookupRoute(array('Accounts', 'config'), '10', 'GET', 'base');
+        $this->expectException(SugarApiExceptionNoMethod::class);
+        $vServiceDict->lookupRoute(array('Accounts', 'config'), '10', 'GET', 'base');
     }
 
     /**

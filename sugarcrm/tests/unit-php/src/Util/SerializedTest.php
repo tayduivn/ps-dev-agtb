@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Serialized
- *
  */
 class SerializedTest extends TestCase
 {

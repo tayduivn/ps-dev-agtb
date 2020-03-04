@@ -80,7 +80,6 @@ class LdapUserCheckerTest extends TestCase
 
     /**
      * @covers ::checkPostAuth
-     * @expectedException \Symfony\Component\Security\Core\Exception\UsernameNotFoundException
      */
     public function testCheckPostAuthUserDoesNotExistLdapDisabled()
     {
@@ -89,6 +88,8 @@ class LdapUserCheckerTest extends TestCase
             ->with($this->equalTo('user1'))
             ->willThrowException(new UsernameNotFoundException());
         $checker = new LdapUserChecker($this->lockout, $this->provider, []);
+
+        $this->expectException(UsernameNotFoundException::class);
         $checker->checkPostAuth($this->user);
     }
 

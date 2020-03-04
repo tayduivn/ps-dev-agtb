@@ -18,6 +18,7 @@ use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraint
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\DelimitedValidator
@@ -60,10 +61,10 @@ class DelimitedValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
      */
     public function testExpectsStringCompatibleType()
     {
+        $this->expectException(UnexpectedTypeException::class);
         $constraint = new Delimited(array(
             'constraints' => new NotBlank(),
         ));

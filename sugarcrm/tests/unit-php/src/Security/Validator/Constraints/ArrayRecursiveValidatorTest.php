@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\ArrayRecursive;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\ArrayRecursiveValidator;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\ArrayRecursiveValidator
@@ -55,13 +56,14 @@ class ArrayRecursiveValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
      */
     public function testExpectsArrayType()
     {
         $constraint = new ArrayRecursive(array(
             'constraints' => new NotBlank(),
         ));
+
+        $this->expectException(UnexpectedTypeException::class);
         $this->validator->validate(new \stdClass(), $constraint);
     }
 

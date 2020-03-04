@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\InputParameters;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\InputParametersValidator;
 use Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\InputParametersValidator
@@ -50,7 +51,6 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @coversNothing
-     * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
      */
     public function testExpectValidInputType()
     {
@@ -58,6 +58,7 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
             'inputType' => 'foobar',
         ));
 
+        $this->expectException(ConstraintDefinitionException::class);
         $this->validator->validate('xyz', $constraint);
     }
 

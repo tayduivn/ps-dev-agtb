@@ -110,7 +110,7 @@ class DateTest extends TestCase
      */
     public function testFormatRowsCantConvertFromDbFormat()
     {
-        /** @var TimeDate | MockObject $tdMock */
+        /** @var TimeDate|MockObject $tdMock */
         $tdMock = $this->createMock(\TimeDate::class);
 
         $tdMock->expects($this->exactly(2))

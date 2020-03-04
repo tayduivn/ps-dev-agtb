@@ -15,8 +15,12 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -79,7 +83,6 @@ class SugarLocalUserProviderTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\UsernameNotFoundException
      * @covers ::loadUserByUsername
      */
     public function testLoadUserByUsernameNoId()
@@ -90,11 +93,11 @@ class SugarLocalUserProviderTest extends TestCase
 
         $this->sugarQuery->expects($this->any())->method('getOne')->willReturn(null);
 
+        $this->expectException(UsernameNotFoundException::class);
         $this->userProvider->loadUserByUsername($name);
     }
 
     /**
-     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException
      * @covers ::loadUserByUsername
      */
     public function testLoadUserByUsernameInactive()
@@ -120,6 +123,7 @@ class SugarLocalUserProviderTest extends TestCase
         $this->user->portal_only = 0;
         $this->user->status = User::USER_STATUS_INACTIVE;
 
+        $this->expectException(InactiveUserException::class);
         $this->userProvider->loadUserByUsername($name);
     }
 
@@ -137,7 +141,7 @@ class SugarLocalUserProviderTest extends TestCase
 
     /**
      * @dataProvider providerLoadUserByUsernameInvalid
-     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException
+     *
      * @covers ::loadUserByUsername
      * @param $isGroup
      * @param $portalOnly
@@ -165,6 +169,7 @@ class SugarLocalUserProviderTest extends TestCase
         $this->user->portal_only = $portalOnly;
         $this->user->status = User::USER_STATUS_ACTIVE;
 
+        $this->expectException(InvalidUserException::class);
         $this->userProvider->loadUserByUsername($name);
     }
 
@@ -279,12 +284,13 @@ class SugarLocalUserProviderTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\UnsupportedUserException
      * @covers ::refreshUser
      */
     public function testRefreshUserNonSupported()
     {
         $userMock = $this->createMock(UserInterface::class);
+
+        $this->expectException(UnsupportedUserException::class);
         $this->userProvider->refreshUser($userMock);
     }
 

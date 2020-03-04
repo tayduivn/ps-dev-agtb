@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\ProductDefinition\Config\Source;
 
+use LoggerManager;
+use PHPUnit\Framework\MockObject\MockObject;
 use Sugarcrm\Sugarcrm\ProductDefinition\Config\Source\HttpSource as HttpSource;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Client as HttpClient;
@@ -24,22 +26,22 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 class HttpSourceTest extends TestCase
 {
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject | HttpClient
+     * @var MockObject|HttpClient
      */
     protected $httpClient;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject | ResponseInterface
+     * @var MockObject|ResponseInterface
      */
     protected $response;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject | HttpSource
+     * @var MockObject|HttpSource
      */
     protected $source;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject | \LoggerManager
+     * @var MockObject|LoggerManager
      */
     protected $logger;
 
@@ -47,7 +49,7 @@ class HttpSourceTest extends TestCase
     {
         $this->httpClient = $this->createMock(HttpClient::class);
         $this->response = $this->createMock(ResponseInterface::class);
-        $this->logger = $this->createMock(\LoggerManager::class);
+        $this->logger = $this->createMock(LoggerManager::class);
 
         $this->source = $this->getMockBuilder(HttpSource::class)
             ->setConstructorArgs([[

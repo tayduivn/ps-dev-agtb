@@ -12,9 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\clients\base\api;
 
+use FilterApi;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use SugarSearchEngine;
+use UnifiedSearchApi;
 
 /**
  * @coversDefaultClass \UnifiedSearchApi
@@ -133,11 +136,11 @@ class UnifiedSearchApiTest extends TestCase
 
     /**
      * @param null|array $methods
-     * @return \UnifiedSearchApi | MockObject
+     * @return UnifiedSearchApi|MockObject
      */
     protected function getUnifiedSearchApiMock($methods = null)
     {
-        return $this->getMockBuilder(\UnifiedSearchApi::class)
+        return $this->getMockBuilder(UnifiedSearchApi::class)
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();
@@ -145,11 +148,11 @@ class UnifiedSearchApiTest extends TestCase
 
     /**
      * @param null|array $methods
-     * @return \SugarSearchEngine | MockObject
+     * @return SugarSearchEngine|MockObject
      */
     protected function getSearchEngineMock($methods = null)
     {
-        return $this->getMockBuilder(\SugarSearchEngine::class)
+        return $this->getMockBuilder(SugarSearchEngine::class)
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();
@@ -157,11 +160,11 @@ class UnifiedSearchApiTest extends TestCase
 
     /**
      * @param null|array $methods
-     * @return \FilterApi | MockObject
+     * @return FilterApi|MockObject
      */
     protected function getFilterApiMock($methods = null)
     {
-        return $this->getMockBuilder(\FilterApi::class)
+        return $this->getMockBuilder(FilterApi::class)
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();

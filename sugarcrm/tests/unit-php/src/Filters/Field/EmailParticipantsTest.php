@@ -25,7 +25,6 @@ class EmailParticipantsTest extends TestCase
 {
     /**
      * @covers ::__construct
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testInOperandIsRequired()
     {
@@ -38,13 +37,12 @@ class EmailParticipantsTest extends TestCase
             ],
         ];
 
-        $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new EmailParticipants('from_collection', $filter);
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
+        new EmailParticipants('from_collection', $filter);
     }
 
     /**
      * @covers ::__construct
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testOnlyInOperandIsSupported()
     {
@@ -64,13 +62,12 @@ class EmailParticipantsTest extends TestCase
             '$equals' => 'ghi',
         ];
 
-        $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new EmailParticipants('from_collection', $filter);
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
+        new EmailParticipants('from_collection', $filter);
     }
 
     /**
      * @covers ::__construct
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testUnrecognizedFieldname()
     {
@@ -83,8 +80,8 @@ class EmailParticipantsTest extends TestCase
             ],
         ];
 
-        $api = $this->getMockForAbstractClass(ServiceBase::class);
-        $field = new EmailParticipants('foo', $filter);
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
+        new EmailParticipants('foo', $filter);
     }
 
     public function fieldNameProvider()

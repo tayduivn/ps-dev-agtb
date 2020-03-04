@@ -14,6 +14,8 @@ namespace Sugarcrm\SugarcrmTestsUnit\modules\Administration\clients\base\api;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use SugarApiExceptionNotAuthorized;
+use SugarApiExceptionNotFound;
 
 /**
  * @coversDefaultClass \IdmUserFilterApi
@@ -21,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 class IdmUserFilterApiTest extends TestCase
 {
     /**
-     * @var \User | MockObject
+     * @var \User|MockObject
      */
     private $currentUser;
 
@@ -82,42 +84,47 @@ class IdmUserFilterApiTest extends TestCase
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotFound
      * @covers ::getIdmUsers
      */
     public function testGetIdmUserApiParameterNotPresentInConfig(): void
     {
         unset($GLOBALS['sugar_config']['idmMigration']);
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->api->getIdmUsers($this->apiService, []);
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotFound
      * @covers ::getIdmUsers
      */
     public function testGetIdmUserApiParameterIsFalseInConfig(): void
     {
         $GLOBALS['sugar_config']['idmMigration'] = false;
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->api->getIdmUsers($this->apiService, []);
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotAuthorized
+     *
      * @covers ::getIdmUsers
      */
     public function testGetIdmUsersNotAdmin()
     {
         $GLOBALS['current_user']->method('isAdmin')->willReturn(false);
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->getIdmUsers($this->apiService, []);
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotAuthorized
      * @covers ::getIdmUsers
      */
     public function testGetIdmUsersNotAuthorized()
     {
         unset($GLOBALS['current_user']);
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->getIdmUsers($this->apiService, []);
     }
 

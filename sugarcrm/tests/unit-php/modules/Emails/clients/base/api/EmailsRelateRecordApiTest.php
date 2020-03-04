@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\modules\Emails\clients\base\api;
 
 use PHPUnit\Framework\TestCase;
+use SugarApiExceptionNotAuthorized;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 require_once 'include/utils.php';
@@ -48,7 +49,6 @@ class EmailsRelateRecordApiTest extends TestCase
      *
      * @dataProvider linkProvider
      * @covers ::createRelatedLinks
-     * @expectedException \SugarApiExceptionNotAuthorized
      */
     public function testCreateRelatedLinks($linkName)
     {
@@ -60,6 +60,8 @@ class EmailsRelateRecordApiTest extends TestCase
         ];
         $service = $this->createPartialMock('\\RestService', []);
         $api = new \EmailsRelateRecordApi();
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->createRelatedLinks($service, $args);
     }
 
@@ -68,7 +70,6 @@ class EmailsRelateRecordApiTest extends TestCase
      *
      * @dataProvider linkProvider
      * @covers ::createRelatedLinksFromRecordList
-     * @expectedException \SugarApiExceptionNotAuthorized
      */
     public function testCreateRelatedLinksFromRecordList($linkName)
     {
@@ -80,6 +81,8 @@ class EmailsRelateRecordApiTest extends TestCase
         ];
         $service = $this->createPartialMock('\\RestService', []);
         $api = new \EmailsRelateRecordApi();
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->createRelatedLinksFromRecordList($service, $args);
     }
 
@@ -87,7 +90,6 @@ class EmailsRelateRecordApiTest extends TestCase
      * Cannot break the link between an email and its sender.
      *
      * @covers ::deleteRelatedLink
-     * @expectedException \SugarApiExceptionNotAuthorized
      */
     public function testDeleteRelatedLink()
     {
@@ -99,6 +101,8 @@ class EmailsRelateRecordApiTest extends TestCase
         ];
         $service = $this->createPartialMock('\\RestService', []);
         $api = new \EmailsRelateRecordApi();
+
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->deleteRelatedLink($service, $args);
     }
 }

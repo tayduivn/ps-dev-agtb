@@ -13,6 +13,8 @@
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
 use PHPUnit\Framework\TestCase;
+use SugarApiExceptionNeedLogin;
+use SugarApiExceptionNotFound;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
@@ -129,7 +131,6 @@ class SugarOAuth2ServerTest extends TestCase
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotFound
      * @covers ::getSudoToken
      */
     public function testGetSudoTokenStorageThrowException()
@@ -139,12 +140,13 @@ class SugarOAuth2ServerTest extends TestCase
         $storage->expects($this->once())
                 ->method('loadUserFromName')
                 ->with('testUser')
-                ->willThrowException(new \SugarApiExceptionNeedLogin());
+                ->willThrowException(new SugarApiExceptionNeedLogin());
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $ouath2Server->getSudoToken('testUser', 'testClient', 'base');
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotFound
      * @covers ::getSudoToken
      */
     public function testGetSudoTokenStorageReturnNull()
@@ -155,6 +157,8 @@ class SugarOAuth2ServerTest extends TestCase
             ->method('loadUserFromName')
             ->with('testUser')
             ->willReturn(null);
+
+        $this->expectException(SugarApiExceptionNotFound::class);
         $ouath2Server->getSudoToken('testUser', 'testClient', 'base');
     }
 }

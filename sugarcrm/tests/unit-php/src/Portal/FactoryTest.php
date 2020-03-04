@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
 
 /**
- * @coversDefaultClass PortalFactory
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Portal\Factory
  */
 class FactoryTest extends TestCase
 {

@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\clients\base\api;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use SugarApiExceptionNotAuthorized;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 require_once 'include/utils.php';
@@ -59,7 +60,6 @@ class ModuleApiTest extends TestCase
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotAuthorized
      * @dataProvider moduleProvider
      * @param string $module
      * @covers ::createBean
@@ -67,11 +67,11 @@ class ModuleApiTest extends TestCase
     public function testCreateBeanException($module)
     {
         TestReflection::setProtectedValue($this->moduleApi, 'idmModeDisabledModules', ['Users', 'Employees']);
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->moduleApi->createBean($this->api, ['module' => $module]);
     }
 
     /**
-     * @expectedException \SugarApiExceptionNotAuthorized
      * @dataProvider moduleProvider
      * @param string $module
      * @covers ::deleteRecord
@@ -79,6 +79,7 @@ class ModuleApiTest extends TestCase
     public function testDeleteRecordException($module)
     {
         TestReflection::setProtectedValue($this->moduleApi, 'idmModeDisabledModules', ['Users', 'Employees']);
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->moduleApi->deleteRecord($this->api, ['module' => $module, 'record' => 'not_exist']);
     }
 }

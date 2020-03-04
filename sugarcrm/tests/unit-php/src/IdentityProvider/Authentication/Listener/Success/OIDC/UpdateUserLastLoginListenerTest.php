@@ -31,12 +31,12 @@ class UpdateUserLastLoginListenerTest extends TestCase
     protected $listener;
 
     /**
-     * @var UsernamePasswordToken | MockObject
+     * @var UsernamePasswordToken|MockObject
      */
     protected $token;
 
     /**
-     * @var \User | MockObject
+     * @var \User|MockObject
      */
     protected $sugarUser;
 
@@ -46,7 +46,7 @@ class UpdateUserLastLoginListenerTest extends TestCase
     protected $event;
 
     /**
-     * @var SessionProxy | MockObject
+     * @var SessionProxy|MockObject
      */
     protected $session;
 

@@ -17,6 +17,7 @@ use Sugarcrm\IdentityProvider\Authentication\User as IdmUser;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarOidcUserMapping;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarOidcUserMapping
@@ -156,12 +157,12 @@ class SugarOidcUserMappingTest extends TestCase
 
     /**
      * @dataProvider providerMapIdentityException
-     * @expectedException \Symfony\Component\Security\Core\Exception\UsernameNotFoundException
      * @param array $response
      * @covers ::mapIdentity
      */
     public function testMapIdentityException($response)
     {
+        $this->expectException(UsernameNotFoundException::class);
         $this->userMapper->mapIdentity($response);
     }
 
