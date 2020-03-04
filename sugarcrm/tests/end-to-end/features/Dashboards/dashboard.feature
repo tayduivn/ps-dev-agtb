@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job4 @pr @scenario-stress-test
+@dashboard @dashlets @job4 @pr
 Feature: Dashboard main functionality verification
 
   Background:
