@@ -258,7 +258,7 @@ Feature: Tile View Settings
     # Update Tile View for cases module
     When I update "Cases" module in #TileViewSettings view with the following settings:
       | table_header | tile_options_header | tile_options_body                          | records_per_column |
-      | Priority     | Subject             | Account Name~r, Priority~r, Status, Source | 15                 |
+      | Priority     | Subject             | Account Name~r, Status, Priority~r, Source | 15                 |
 
     # Navigate to Cases > Tile View
     When I choose Cases in modules menu
