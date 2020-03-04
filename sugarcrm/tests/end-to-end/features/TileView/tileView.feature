@@ -656,3 +656,55 @@ Feature: Tile View feature
     # Verify that tiles are moved successfully
     Then I verify the [*T3, *T2, *T1] records are under "Pending Input" column in #TasksPipelineView view
 
+
+  @cases_tileView_move_plus_validation @SS-194 @SS-195 @SS-196 @AT-340 @pr @stress-test
+  Scenario: Cases > Tile View > Trigger record validation by moving tile to another column
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+    And Cases records exist:
+      | *   | name        | status |
+      | C_1 | My New Case | New    |
+
+    # Navigate to Cases > Tile View
+    When I choose Cases in modules menu
+    When I select VisualPipeline in #CasesList.FilterView
+
+    # Verify that the tile appears under correct column
+    Then I verify the [*C_1] records are under "New" column in #CasesPipelineView view
+
+    # Move the tile to another column to trigger record validation
+    When I drag *C_1 tile to "Assigned" column in #CasesPipelineView view
+    When I provide input for #C_1Drawer.RecordView view
+      | account_name | priority | type           | source   | description |
+      | Acc_1        | High     | Administration | Internal | My Case     |
+    # Cancel Changes
+    When I click Cancel button on #C_1Drawer header
+
+    # Verify the tile is returned to the original column
+    Then I verify the [*C_1] records are under "New" column in #CasesPipelineView view
+
+    # Move case tile to another column to trigger record validation
+    When I drag *C_1 tile to "Assigned" column in #CasesPipelineView view
+    When I provide input for #C_1Drawer.RecordView view
+      | account_name | priority | type           | source   | description |
+      | Acc_1        | High     | Administration | Internal | My Case     |
+    # Save changes
+    When I click Save button on #C_1Drawer header
+    When I close alert
+
+    # Verify the case tile appears under correct column
+    Then I verify the [*C_1] records are under "Assigned" column in #CasesPipelineView view
+
+    # Verify tile contains correct information
+    Then I verify *C_1 tile field values in #CasesPipelineView view
+      | value       |
+      | My New Case |
+      | Acc_1       |
+      | High        |
+
+    # Move case tile to another column
+    When I drag *C_1 tile to "Rejected" column in #CasesPipelineView view
+
+    # Verify the case tile appears under correct column & no drawer opens
+    Then I verify the [*C_1] records are under "Rejected" column in #CasesPipelineView view
