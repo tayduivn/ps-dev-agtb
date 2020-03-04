@@ -151,6 +151,12 @@ abstract class Db implements OfflineOperations, OnlineOperations
         }
     }
 
+    public function finalizeTemporaryTable(): void
+    {
+        // At least Oracle DB requires an additional step to make the table ready
+        // And this step should be performed after all operations were done
+    }
+
     public function ensureColumnExists(string $tableName, array $fieldDef): void
     {
         $sql = $this->getAlterSql($tableName, $fieldDef);

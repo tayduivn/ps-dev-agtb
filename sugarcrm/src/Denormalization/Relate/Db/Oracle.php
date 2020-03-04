@@ -37,22 +37,9 @@ final class Oracle extends Db
         return $this->connection->executeUpdate($sql);
     }
 
-    public function populateTemporaryTable(
-        string $idField,
-        string $sourceFieldName,
-        string $fromTable,
-        string $joinTable,
-        string $joinConditionTargetField,
-        string $joinConditionSourceField
-    ): void {
-        parent::populateTemporaryTable(
-            $idField,
-            $sourceFieldName,
-            $fromTable,
-            $joinTable,
-            $joinConditionTargetField,
-            $joinConditionSourceField
-        );
+    public function finalizeTemporaryTable(): void
+    {
+        parent::finalizeTemporaryTable();
         $this->gatherTemporaryTableStats();
     }
 

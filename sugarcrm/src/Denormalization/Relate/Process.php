@@ -93,6 +93,7 @@ final class Process
         $this->populateTemporaryTable($entity);
         // create index for tmp table
         $this->db->ensureTemporaryTableIndex();
+        $this->db->finalizeTemporaryTable();
     }
 
     /**

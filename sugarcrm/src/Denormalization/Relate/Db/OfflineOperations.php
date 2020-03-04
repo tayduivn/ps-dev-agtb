@@ -38,6 +38,10 @@ interface OfflineOperations
 
     public function getAlterSql(string $tableName, array $fieldDef): ?string;
 
+    public function ensureTemporaryTableIndex(): void;
+
+    public function finalizeTemporaryTable(): void;
+
     public function ensureColumnExists(string $tableName, array $fieldDef): void;
 
     public function isAltered(string $tableName, string $fieldName): bool;
