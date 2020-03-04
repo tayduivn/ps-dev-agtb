@@ -15,7 +15,6 @@ namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Command;
 use PHPUnit\Framework\MockObject\Matcher\Invocation;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
@@ -69,8 +68,8 @@ class StateAwareRebuildTest extends TestCase
         $state = $this->createState(true);
         $state->activateTable('team_sets_users_1');
 
-        $rebuild = $this->createPartialMock(stdClass::class, ['__invoke']);
-        $rebuild->expects($matcher)
+        $rebuild = $this->createMock(Invokable::class);
+        $rebuild->expects($invocationRule)
             ->method('__invoke')
             ->with('team_sets_users_2');
 
@@ -94,7 +93,7 @@ class StateAwareRebuildTest extends TestCase
 
     private function assertRebuildNotHappened(State $state)
     {
-        $rebuild = $this->createPartialMock(stdClass::class, ['__invoke']);
+        $rebuild = $this->createMock(Invokable::class);
         $rebuild->expects($this->never())
             ->method('__invoke');
 
@@ -161,7 +160,7 @@ class StateAwareRebuildTest extends TestCase
         $state->activateTable('team_sets_users_1');
         $state->markOutOfDate();
 
-        $rebuild = $this->createPartialMock(stdClass::class, ['__invoke']);
+        $rebuild = $this->createMock(Invokable::class);
         $rebuild->expects($this->once())
             ->method('__invoke')
             ->with('team_sets_users_2')

@@ -121,7 +121,7 @@ class IssueTest extends TestCase
      */
     public function testSave2($setOperation, $expected)
     {
-        $methods = ['getChangeTimerFields', 'callStatic', 'processChangeTimers', 'isNewlyResolved',
+        $methods = ['getChangeTimerFields', 'processChangeTimers', 'isNewlyResolved',
             'populateFetchedEmail', 'fixUpFormatting', 'commitAuditedStateChanges', 'saveData', 'call_custom_logic'];
         $issue = $this->createPartialMock(\aCase::class, $methods);
         $issue->method('getChangeTimerFields')->willReturn(['status']);

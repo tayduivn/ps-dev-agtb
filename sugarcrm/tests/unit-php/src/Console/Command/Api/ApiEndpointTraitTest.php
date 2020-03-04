@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Console\Command\Api;
 
 use PHPUnit\Framework\TestCase;
+use PingApi;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -39,19 +40,19 @@ class ApiEndpointTraitTest extends TestCase
             ->method('getService')
             ->will($this->returnValue($service));
 
-        $api = $this->createPartialMock('SugarApi', array('test1'));
+        $api = $this->createMock(PingApi::class);
 
         $apiCallArgs = array('foo', 'bar', array('more' => 'beer'));
 
         $api->expects($this->once())
-            ->method('test1')
+            ->method('ping')
             ->with($this->equalTo($service), $this->equalTo($apiCallArgs));
 
         TestReflection::callProtectedMethod($trait, 'initApi', array($api));
         TestReflection::callProtectedMethod(
             $trait,
             'callApi',
-            array('test1', $apiCallArgs)
+            array('ping', $apiCallArgs)
         );
     }
 }

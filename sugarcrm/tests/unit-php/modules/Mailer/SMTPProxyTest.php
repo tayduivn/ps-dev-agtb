@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\modules\Mailer;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use SugarNullLogger;
 
 /**
  * @coversDefaultClass \SMTPProxy
@@ -53,14 +54,8 @@ class SMTPProxyTest extends TestCase
      */
     public function testSetError_NothingIsLogged($message, $detail, $smtpCode, $smtpCodeEx)
     {
-        $levels = \LoggerManager::getLoggerLevels();
-        $levels = array_keys($levels);
-
-        $GLOBALS['log'] = $this->createPartialMock(\stdClass::class, $levels);
-
-        foreach ($levels as $level) {
-            $GLOBALS['log']->expects($this->never())->method($level);
-        }
+        $GLOBALS['log'] = $this->createMock(SugarNullLogger::class);
+        $GLOBALS['log']->expects($this->never())->method('__call');
 
         $proxy = new \SMTPProxy();
         TestReflection::callProtectedMethod($proxy, 'setError', [$message, $detail, $smtpCode, $smtpCodeEx]);
@@ -97,8 +92,10 @@ class SMTPProxyTest extends TestCase
      */
     public function testSetError_ErrorIsLogged($level, $message, $detail, $smtpCode, $smtpCodeEx)
     {
-        $GLOBALS['log'] = $this->createPartialMock(\stdClass::class, [$level]);
-        $GLOBALS['log']->expects($this->once())->method($level);
+        $GLOBALS['log'] = $this->createMock(SugarNullLogger::class);
+        $GLOBALS['log']->expects($this->once())
+            ->method('__call')
+            ->with($level);
 
         $proxy = new \SMTPProxy();
         TestReflection::callProtectedMethod($proxy, 'setError', [$message, $detail, $smtpCode, $smtpCodeEx]);

@@ -196,7 +196,7 @@ class AuthSettingsApiTest extends TestCase
             'systexpirationtime' => 7,
             'systexpirationtype' => '0',
             'systexpirationlogin' => '',
-            'lockoutexpiration' => '0',
+            'lockoutexpiration' => 0,
             'lockoutexpirationtime' => '',
             'lockoutexpirationtype' => '1',
             'lockoutexpirationlogin' => '',

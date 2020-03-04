@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\modules\InboundEmail;
 
 use PHPUnit\Framework\TestCase;
+use SugarNullLogger;
 
 /**
  * @coversDefaultClass \InboundEmail
@@ -21,9 +22,7 @@ class InboundEmailTest extends TestCase
 {
     protected function setUp()
     {
-        $levels = \LoggerManager::getLoggerLevels();
-        $levels = array_keys($levels);
-        $GLOBALS['log'] = $this->createPartialMock(\stdClass::class, $levels);
+        $GLOBALS['log'] = new SugarNullLogger();
 
         $GLOBALS['locale'] = \Localization::getObject();
     }

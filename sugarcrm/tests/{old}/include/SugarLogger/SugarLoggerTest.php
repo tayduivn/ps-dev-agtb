@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SugarLoggerTest extends TestCase
@@ -56,14 +57,14 @@ class SugarLoggerTest extends TestCase
     {
         $logMessages = '';
         
-        /** @var SugarLogger|MockObject $log */
+        /** @var SugarLogger|MockObject $logWriter */
         $logWriter = $this->getMockBuilder('SugarLogger')->setMethods(array('write'))->getMock();
         $logWriter->expects($this->any())->method('write')->will($this->returnCallback(function($message) use (&$logMessages) {
             $logMessages .= $message;
         }));
         
         /** @var LoggerManagerSugarLoggerTestMock|MockObject $logManager */
-        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array('log'));
+        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array());
         $logManager->setWriter($logWriter);
         
         $logManager->setLevel($currentLevel);
@@ -87,7 +88,7 @@ class SugarLoggerTest extends TestCase
         }));
         
         /** @var LoggerManagerSugarLoggerTestMock|MockObject $logManager */
-        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array('log'));
+        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array());
         $logManager->setWriter($logWriter);
         
         $logManager->setLevel('debug');
@@ -191,7 +192,7 @@ class SugarLoggerTest extends TestCase
         )
     {
         /** @var LoggerManagerSugarLoggerTestMock|MockObject $logManager */
-        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array('log'));
+        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array());
         
         $logManager ->setLevel($currentLevel);
         $this->assertEquals($shouldMessageBeWritten, $logManager->wouldLog($logLevel));

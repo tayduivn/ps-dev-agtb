@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use SugarException;
+use SugarNullLogger;
 
 /**
  * @coversDefaultClass \Email
@@ -28,9 +29,7 @@ class EmailTest extends TestCase
 
     protected function setUp()
     {
-        $levels = \LoggerManager::getLoggerLevels();
-        $levels = array_keys($levels);
-        $GLOBALS['log'] = $this->createPartialMock(\stdClass::class, $levels);
+        $GLOBALS['log'] = new SugarNullLogger();
 
         $GLOBALS['timedate'] = \TimeDate::getInstance();
 

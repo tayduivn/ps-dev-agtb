@@ -57,7 +57,7 @@ class ReportExporterTest extends TestCase
         string $format,
         string $exporterClass
     ) {
-        $reporter = $this->createPartialMock('\Report', array('getReportType', 'getSubTypeExporter'));
+        $reporter = $this->createPartialMock('\Report', array('getReportType'));
         $reporter->method('getReportType')
             ->willReturn($reportType);
 

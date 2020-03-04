@@ -384,13 +384,10 @@ class PMSECrmDataWrapperTest extends TestCase
     {
         $this->object->setSugarQueryObject($this->sugarQueryMock);
 
-        $queryAndMock = $this->createPartialMock(SugarQuery::class, array('addRaw'));
-
-        $whereMock = $this->createPartialMock(SugarQuery::class, array('queryAnd'));
+        $whereMock = $this->createMock(SugarQuery_Builder_Where::class);
         $whereMock->expects($this->any())
             ->method('queryAnd')
-            ->will($this->returnValue($queryAndMock)
-        );
+            ->willReturn($whereMock);
 
         $this->sugarQueryMock->expects($this->any())
             ->method('execute')
@@ -558,17 +555,12 @@ class PMSECrmDataWrapperTest extends TestCase
         $filter = '';
         $this->object->setSugarQueryObject($this->sugarQueryMock);
 
-        $queryAndMock = $this->createPartialMock(SugarQuery::class, array('addRaw'));
-
-        $whereMock = $this->createPartialMock(SugarQuery::class, array('queryAnd'));
+        $whereMock = $this->createMock(SugarQuery_Builder_Where::class);
         $whereMock->expects($this->any())
             ->method('queryAnd')
-            ->will($this->returnValue($queryAndMock)
-        );
+            ->willReturn($whereMock);
 
-        $selectMock = $this->createPartialMock(SugarQuery::class, array('fieldRaw'));
-        $selectMock->expects($this->any())
-            ->method('fieldRaw');
+        $selectMock = $this->createMock(SugarQuery_Builder_Select::class);
 
         $this->sugarQueryMock->expects($this->any())
             ->method('execute')
@@ -923,13 +915,10 @@ class PMSECrmDataWrapperTest extends TestCase
     {
         $this->object->setSugarQueryObject($this->sugarQueryMock);
 
-        $queryAndMock = $this->createPartialMock(SugarQuery::class, array('addRaw'));
-
-        $whereMock = $this->createPartialMock(SugarQuery::class, array('queryAnd', 'equals'));
+        $whereMock = $this->createMock(SugarQuery_Builder_Where::class);
         $whereMock->expects($this->any())
             ->method('queryAnd')
-            ->will($this->returnValue($queryAndMock)
-        );
+            ->willReturn($whereMock);
 
         $whereMock->expects($this->any())
             ->method('equals')

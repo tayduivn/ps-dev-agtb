@@ -68,7 +68,7 @@ class OAuth2ApiTest extends TestCase
         $_SESSION = array();
 
         // Deny the oauth2 request
-        $oauth2 = $this->createPartialMock('stdClass', array('getSudoToken'));
+        $oauth2 = $this->createMock(SugarOAuth2Server::class);
         $oauth2->expects($this->once())
             ->method('getSudoToken')
             ->will($this->returnValue(false));
@@ -87,7 +87,7 @@ class OAuth2ApiTest extends TestCase
         $this->assertTrue($caughtException,'Did not fail when the token was false');
 
         // Try a successful run
-        $oauth2 = $this->createPartialMock('stdClass', array('getSudoToken'));
+        $oauth2 = $this->createMock(SugarOAuth2Server::class);
         $oauth2->expects($this->once())
             ->method('getSudoToken')
             ->will($this->returnValue(array('access_token'=>'i_am_only_a_test')));
@@ -125,7 +125,7 @@ class OAuth2ApiTest extends TestCase
     {
         $serviceBase = SugarTestRestUtilities::getRestServiceMock();
 
-        $oauth2 = $this->createPartialMock('stdClass', array('unsetRefreshToken'));
+        $oauth2 = $this->createMock(SugarOAuth2Server::class);
         $oauth2->expects($this->once())
         ->method('unsetRefreshToken')
         ->with($this->equalTo("test_refresh"))
