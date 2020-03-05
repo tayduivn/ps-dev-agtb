@@ -901,10 +901,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
             $response = (new FilterApi())->filterList(self::$service, $args);
             $this->assertNotEmpty($response);
-            $this->assertInternalType('array', $response);
+            $this->assertIsArray($response);
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
-            $this->assertInternalType('array', $response['records']);
+            $this->assertIsArray($response['records']);
             $this->assertEquals(count($response['records']), count($recordIdList));
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
@@ -939,10 +939,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
             $response = (new FilterApi())->filterList(self::$service, $args);
             $this->assertNotEmpty($response);
-            $this->assertInternalType('array', $response);
+            $this->assertIsArray($response);
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
-            $this->assertInternalType('array', $response['records']);
+            $this->assertIsArray($response['records']);
             $this->assertEquals(count($response['records']), count($recordIdList));
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
@@ -977,10 +977,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
             $response = (new FilterApi())->filterList(self::$service, $args);
             $this->assertNotEmpty($response);
-            $this->assertInternalType('array', $response);
+            $this->assertIsArray($response);
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
-            $this->assertInternalType('array', $response['records']);
+            $this->assertIsArray($response['records']);
             $this->assertEquals(count($response['records']), count($recordIdList));
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
@@ -1018,10 +1018,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
             $response = (new FilterApi())->filterList(self::$service, $args);
             $this->assertNotEmpty($response);
-            $this->assertInternalType('array', $response);
+            $this->assertIsArray($response);
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
-            $this->assertInternalType('array', $response['records']);
+            $this->assertIsArray($response['records']);
             $this->assertEquals(count($response['records']), count($recordIdList));
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
@@ -1063,10 +1063,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
             $response = (new FilterApi())->filterList(self::$service, $args);
             $this->assertNotEmpty($response);
-            $this->assertInternalType('array', $response);
+            $this->assertIsArray($response);
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
-            $this->assertInternalType('array', $response['records']);
+            $this->assertIsArray($response['records']);
             $this->assertEquals(count($response['records']), count($recordIdList));
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
@@ -1100,10 +1100,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
             $response = (new FilterApi())->filterList(self::$service, $args);
             $this->assertNotEmpty($response);
-            $this->assertInternalType('array', $response);
+            $this->assertIsArray($response);
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
-            $this->assertInternalType('array', $response['records']);
+            $this->assertIsArray($response['records']);
             $this->assertCount(count($recordIdList), $response['records']);
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
@@ -1136,10 +1136,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
                 $response = (new FilterApi())->filterList(self::$service, $args);
                 $this->assertNotEmpty($response);
-                $this->assertInternalType('array', $response);
+                $this->assertIsArray($response);
                 $this->assertArrayHasKey('next_offset', $response);
                 $this->assertArrayHasKey('records', $response);
-                $this->assertInternalType('array', $response['records']);
+                $this->assertIsArray($response['records']);
                 $this->assertEquals(count($response['records']), 0);
             }
         }
@@ -1178,7 +1178,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
             $response = (new ModulePortalApi())->retrieveRecord(self::$service, $args);
             $this->assertNotEmpty($response);
-            $this->assertInternalType('array', $response);
+            $this->assertIsArray($response);
             $this->assertArrayHasKey('id', $response);
             $this->assertEquals($response['id'], $recordId);
         }
@@ -1211,7 +1211,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
                 $response = (new ModulePortalApi())->retrieveRecord(self::$service, $args);
                 $this->assertNotEmpty($response);
-                $this->assertInternalType('array', $response);
+                $this->assertIsArray($response);
                 $this->assertArrayHasKey('id', $response);
                 $this->assertEquals($response['id'], $recordId);
             }
@@ -1272,7 +1272,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
                 $response = (new ModulePortalApi())->retrieveRecord(self::$service, $args);
                 $this->assertNotEmpty($response);
-                $this->assertInternalType('array', $response);
+                $this->assertIsArray($response);
                 $this->assertArrayHasKey('id', $response);
                 $this->assertEquals($response['id'], $recordId);
             }
@@ -1333,7 +1333,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
                 $response = (new ModulePortalApi())->retrieveRecord(self::$service, $args);
                 $this->assertNotEmpty($response);
-                $this->assertInternalType('array', $response);
+                $this->assertIsArray($response);
                 $this->assertArrayHasKey('id', $response);
                 $this->assertEquals($response['id'], $recordId);
             }
@@ -1397,7 +1397,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
                 $response = (new ModulePortalApi())->retrieveRecord(self::$service, $args);
                 $this->assertNotEmpty($response);
-                $this->assertInternalType('array', $response);
+                $this->assertIsArray($response);
                 $this->assertArrayHasKey('id', $response);
                 $this->assertEquals($response['id'], $recordId);
             }
@@ -1465,7 +1465,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
                 $response = (new ModulePortalApi())->retrieveRecord(self::$service, $args);
                 $this->assertNotEmpty($response);
-                $this->assertInternalType('array', $response);
+                $this->assertIsArray($response);
                 $this->assertArrayHasKey('id', $response);
                 $this->assertEquals($response['id'], $recordId);
             }
@@ -1536,10 +1536,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
                 $response = (new RelateApi())->filterRelated(self::$service, $args);
                 $this->assertNotEmpty($response);
-                $this->assertInternalType('array', $response);
+                $this->assertIsArray($response);
                 $this->assertArrayHasKey('next_offset', $response);
                 $this->assertArrayHasKey('records', $response);
-                $this->assertInternalType('array', $response['records']);
+                $this->assertIsArray($response['records']);
                 $this->assertEquals(count($response['records']), count($relatedNotesIds));
                 foreach ($response['records'] as $record) {
                     $this->assertContains($record['id'], $relatedNotesIds);
@@ -1597,10 +1597,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
                 $response = (new RelateApi())->filterRelated(self::$service, $args);
                 $this->assertNotEmpty($response);
-                $this->assertInternalType('array', $response);
+                $this->assertIsArray($response);
                 $this->assertArrayHasKey('next_offset', $response);
                 $this->assertArrayHasKey('records', $response);
-                $this->assertInternalType('array', $response['records']);
+                $this->assertIsArray($response['records']);
                 $this->assertEquals(count($response['records']), count($relatedNotesIds));
                 foreach ($response['records'] as $record) {
                     $this->assertContains($record['id'], $relatedNotesIds);
@@ -1661,10 +1661,10 @@ class PortalStandardFunctionalityApiTest extends TestCase
 
                 $response = (new RelateApi())->filterRelated(self::$service, $args);
                 $this->assertNotEmpty($response);
-                $this->assertInternalType('array', $response);
+                $this->assertIsArray($response);
                 $this->assertArrayHasKey('next_offset', $response);
                 $this->assertArrayHasKey('records', $response);
-                $this->assertInternalType('array', $response['records']);
+                $this->assertIsArray($response['records']);
                 $this->assertEquals(count($response['records']), count($relatedNotesIds));
                 foreach ($response['records'] as $record) {
                     $this->assertContains($record['id'], $relatedNotesIds);

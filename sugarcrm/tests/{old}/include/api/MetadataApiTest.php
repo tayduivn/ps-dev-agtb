@@ -49,7 +49,7 @@ class MetadataApiTest extends TestCase
         $data = $mm->getModuleTabMap();
 
         // Test see that the map is not empty and an array
-        $this->assertInternalType('array', $data, "module_tab_map is not an array");
+        $this->assertIsArray($data, "module_tab_map is not an array");
         $this->assertNotEmpty($data, "Module Tab Map is empty");
 
         // Test that a known value is in the data
@@ -64,7 +64,7 @@ class MetadataApiTest extends TestCase
         $result = $this->api->getAllMetadata($this->serviceMock, array());
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
 
         $this->assertArrayHasKey('full_module_list', $result);
         $this->assertArrayHasKey('modules', $result);
@@ -85,23 +85,23 @@ class MetadataApiTest extends TestCase
         $this->assertArrayHasKey('_hash', $result);
 
 
-        $this->assertInternalType('array', $result['full_module_list']);
-        $this->assertInternalType('array', $result['modules']);
-        $this->assertInternalType('array', $result['hidden_subpanels']);
-        $this->assertInternalType('array', $result['currencies']);
-        $this->assertInternalType('array', $result['module_tab_map']);
-        $this->assertInternalType('array', $result['fields']);
-        $this->assertInternalType('array', $result['views']);
-        $this->assertInternalType('array', $result['layouts']);
-        $this->assertInternalType('array', $result['labels']);
-        $this->assertInternalType('array', $result['config']);
-        $this->assertInternalType('array', $result['relationships']);
-        $this->assertInternalType('string', $result['jssource']);
-        $this->assertInternalType('array', $result['server_info']);
-        $this->assertInternalType('string', $result['logo_url']);
-        $this->assertInternalType('array', $result['languages']);
-        $this->assertInternalType('array', $result['_override_values']);
-        $this->assertInternalType('string', $result['_hash']);
+        $this->assertIsArray($result['full_module_list']);
+        $this->assertIsArray($result['modules']);
+        $this->assertIsArray($result['hidden_subpanels']);
+        $this->assertIsArray($result['currencies']);
+        $this->assertIsArray($result['module_tab_map']);
+        $this->assertIsArray($result['fields']);
+        $this->assertIsArray($result['views']);
+        $this->assertIsArray($result['layouts']);
+        $this->assertIsArray($result['labels']);
+        $this->assertIsArray($result['config']);
+        $this->assertIsArray($result['relationships']);
+        $this->assertIsString($result['jssource']);
+        $this->assertIsArray($result['server_info']);
+        $this->assertIsString($result['logo_url']);
+        $this->assertIsArray($result['languages']);
+        $this->assertIsArray($result['_override_values']);
+        $this->assertIsString($result['_hash']);
     }
 
     /**
@@ -112,7 +112,7 @@ class MetadataApiTest extends TestCase
         $result = $this->api->getPublicMetadata($this->serviceMock, array());
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
 
         $this->assertArrayHasKey('modules', $result);
         $this->assertArrayHasKey('fields', $result);
@@ -126,16 +126,16 @@ class MetadataApiTest extends TestCase
         $this->assertArrayHasKey('_hash', $result);
 
 
-        $this->assertInternalType('array', $result['modules']);
-        $this->assertInternalType('array', $result['fields']);
-        $this->assertInternalType('array', $result['views']);
-        $this->assertInternalType('array', $result['layouts']);
-        $this->assertInternalType('array', $result['labels']);
-        $this->assertInternalType('array', $result['config']);
-        $this->assertInternalType('string', $result['jssource']);
-        $this->assertInternalType('string', $result['logo_url']);
-        $this->assertInternalType('array', $result['_override_values']);
-        $this->assertInternalType('string', $result['_hash']);
+        $this->assertIsArray($result['modules']);
+        $this->assertIsArray($result['fields']);
+        $this->assertIsArray($result['views']);
+        $this->assertIsArray($result['layouts']);
+        $this->assertIsArray($result['labels']);
+        $this->assertIsArray($result['config']);
+        $this->assertIsString($result['jssource']);
+        $this->assertIsString($result['logo_url']);
+        $this->assertIsArray($result['_override_values']);
+        $this->assertIsString($result['_hash']);
     }
 
     /**
@@ -149,7 +149,7 @@ class MetadataApiTest extends TestCase
         $this->assertJson($result);
         $result = json_decode($result, true);
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
 
         $this->assertArrayHasKey('app_list_strings', $result);
         $this->assertArrayHasKey('app_strings', $result);
@@ -157,10 +157,10 @@ class MetadataApiTest extends TestCase
         $this->assertArrayHasKey('_hash', $result);
 
 
-        $this->assertInternalType('array', $result['app_list_strings']);
-        $this->assertInternalType('array', $result['app_strings']);
-        $this->assertInternalType('array', $result['mod_strings']);
-        $this->assertInternalType('string', $result['_hash']);
+        $this->assertIsArray($result['app_list_strings']);
+        $this->assertIsArray($result['app_strings']);
+        $this->assertIsArray($result['mod_strings']);
+        $this->assertIsString($result['_hash']);
     }
 
     /**
@@ -174,14 +174,14 @@ class MetadataApiTest extends TestCase
         $this->assertJson($result);
         $result = json_decode($result, true);
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
 
         $this->assertArrayHasKey('app_list_strings', $result);
         $this->assertArrayHasKey('app_strings', $result);
         $this->assertArrayHasKey('_hash', $result);
 
-        $this->assertInternalType('array', $result['app_list_strings']);
-        $this->assertInternalType('array', $result['app_strings']);
-        $this->assertInternalType('string', $result['_hash']);
+        $this->assertIsArray($result['app_list_strings']);
+        $this->assertIsArray($result['app_strings']);
+        $this->assertIsString($result['_hash']);
     }
 }

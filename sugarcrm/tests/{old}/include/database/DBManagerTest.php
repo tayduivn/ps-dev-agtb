@@ -3950,7 +3950,7 @@ SQL;
         $subQuery = $this->_db->limitQuery('SELECT id FROM users WHERE 1=1 ORDER BY id', 0, 1, false, '', false);
         $query = 'SELECT id FROM users WHERE id IN (' . $subQuery . ')';
         $row = $this->_db->fetchOne($query);
-        $this->assertInternalType('array', $row);
+        $this->assertIsArray($row);
     }
 
     public function testLimitSubQueryWithUnionAndComment()

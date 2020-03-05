@@ -226,7 +226,7 @@ class PMSEProjectWrapperTest extends TestCase
         $this->args = array('id' => '2193798123');
 
         $result = $this->projectWrapper->retrieveProject($this->args['id']);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(2, count($result));
 
         $this->assertArrayHasKey('success', $result);
@@ -255,7 +255,7 @@ class PMSEProjectWrapperTest extends TestCase
         $args = array('id' => 'pro01');
         
         $result = $this->projectWrapper->retrieveProject($args['id']);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(1, $result);
         $this->assertArrayHasKey('success', $result);
         $this->assertFalse($result['success']);
@@ -271,7 +271,7 @@ class PMSEProjectWrapperTest extends TestCase
 //        $this->mockApi = $this->createMock('ServiceBase');
 //        $this->args = array('id' => '2193798123');
 //        $result = $this->projectWrapper->_get($this->args);
-//        $this->assertInternalType('array', $result);
+//        $this->assertIsArray($result);
 //        $this->assertEquals(1, count($result));
 //        $this->assertArrayHasKey('success', $result);
 //        $this->assertArrayNotHasKey('project', $result);
@@ -316,7 +316,7 @@ class PMSEProjectWrapperTest extends TestCase
         
         $result = $this->projectWrapper->updateProject(1, $this->args);
         
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('success', $result);
         $this->assertEquals(true, $result['success']);
     }
@@ -345,7 +345,7 @@ class PMSEProjectWrapperTest extends TestCase
         
         $result = $this->projectWrapper->updateProject(1, $this->args);
         
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('success', $result);
         $this->assertEquals(false, $result['success']);
     }
@@ -369,7 +369,7 @@ class PMSEProjectWrapperTest extends TestCase
 //        $this->args = array('id' => '2193798123');
 //        $result = $this->projectWrapper->projectList($this->args);
 //
-//        $this->assertInternalType('array', $result);
+//        $this->assertIsArray($result);
 //        $this->assertArrayHasKey('success', $result);
 //        $this->assertEquals(true, $result['success']);
 //    }
@@ -384,7 +384,7 @@ class PMSEProjectWrapperTest extends TestCase
 //                        )
 //        );
 //        $result = $this->projectWrapper->projectList($this->args);
-//        $this->assertInternalType('array', $result);
+//        $this->assertIsArray($result);
 //        $this->assertArrayHasKey('success', $result);
 //        $this->assertEquals(false, $result['success']);
 //    }
@@ -633,7 +633,7 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->setBoundBean($this->mockBoundBean);
 
         $result = $this->projectWrapper->getProjectDiagram($prjID);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(1, count($result));
         $this->assertArrayHasKey('activities', $result[0]);
         $this->assertArrayHasKey('flows', $result[0]);
@@ -677,7 +677,7 @@ class PMSEProjectWrapperTest extends TestCase
         $prjID = 'someID';
 
         $result = $this->projectWrapper->getProjectDiagram($prjID);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(2, count($result));
     }
     

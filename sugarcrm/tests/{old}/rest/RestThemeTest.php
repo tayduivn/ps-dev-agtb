@@ -62,7 +62,7 @@ class RestThemeTest extends RestTestBase
         $restReply2 = $this->_restCall('css/preview' . $this->rawurlencode($args2));
 
         // TEST the two generated css are different
-        $this->assertInternalType('string', $restReply1['replyRaw']);
+        $this->assertIsString($restReply1['replyRaw']);
         $this->assertNotEquals($restReply1['replyRaw'], $restReply2['replyRaw']);
     }
 

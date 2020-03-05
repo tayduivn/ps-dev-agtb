@@ -194,7 +194,7 @@ class DrPhilTest extends TestCase
 
         //Check correct definitions for fields in primary keys.
         foreach ($this->getBeanPrimaryIndexes($bean) as $index) {
-            $this->assertInternalType('array', $index['fields'], 'Fields for primary index should be as array');
+            $this->assertIsArray($index['fields'], 'Fields for primary index should be as array');
             foreach ($index['fields'] as $field) {
                 $def = $bean->getFieldDefinition($field);
                 $this->assertNotEmpty($def, 'Field for primary key should exists');
@@ -225,7 +225,7 @@ class DrPhilTest extends TestCase
         }
 
         foreach ($this->getMetaPrimaryIndexes($metadata) as $index) {
-            $this->assertInternalType('array', $index['fields'], 'Fields for primary index should be as array');
+            $this->assertIsArray($index['fields'], 'Fields for primary index should be as array');
             foreach ($index['fields'] as $field) {
                 $def = $metadata['fields'][$field];
                 $this->assertNotEmpty($def, 'Field for primary key should exists');

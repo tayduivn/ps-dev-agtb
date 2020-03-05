@@ -226,7 +226,7 @@ class Bug45339Test extends TestCase
         $this->assertNotContains($accountContactMetaPath, $accountsOnlyMetaFile);
         $this->assertNotContains($contactAccountMetaPath, $accountsOnlyMetaFile);
 
-        $this->assertInternalType('array', $wrongModuleName);
+        $this->assertIsArray($wrongModuleName);
         $this->assertEmpty($wrongModuleName);
     }
 
@@ -294,11 +294,11 @@ class Bug45339Test extends TestCase
         $this->assertNotContains($leadAccountRelInAccountVardefExtensions, $accountExtContacts,'Leads rels should NOT be present when exporting Contacts and Accounts');
 
         //assert that requesting a wrong relationship returns an empty array
-        $this->assertInternalType('array', $contactExtWithWrongRelationship,'array type should be returned when no relationships are exported, and no other changes exist');
+        $this->assertIsArray($contactExtWithWrongRelationship);
         $this->assertEmpty($contactExtWithWrongRelationship,'An empty array should be returned when no relationships are exported, and no other changes exist');
 
         //assert that requesting a wrong module name returns an empty array
-        $this->assertInternalType('array', $wrongModuleName,'An array type should be returned when a bad module is requested for export');
+        $this->assertIsArray($wrongModuleName);
         $this->assertEmpty($wrongModuleName,'An empty array should be returned when a bad module is requested for export');
     }
 

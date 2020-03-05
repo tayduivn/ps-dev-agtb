@@ -97,12 +97,12 @@ class Bug50422Test extends TestCase
         );
 
         $this->assertArrayHasKey('data', $response, 'Response doesn\'t contain data');
-        $this->assertInternalType('array', $response['data'], 'Response data is not array');
+        $this->assertIsArray($response['data'], 'Response data is not array');
         $this->assertEquals(1, count($response['data']), 'Response data should contain exactly 1 item');
 
         $relateFieldName = strtoupper($relateFieldName);
         $row = array_shift($response['data']);
-        $this->assertInternalType('array', $row, 'Data row is not array');
+        $this->assertIsArray($row, 'Data row is not array');
         $this->assertArrayHasKey($relateFieldName, $row, 'Row doesn\'t contain contact name');
         $this->assertEquals('Mr. Bug50422Ln, Bug50422Fn', $row[$relateFieldName], 'Full name format is incorrect');
     }

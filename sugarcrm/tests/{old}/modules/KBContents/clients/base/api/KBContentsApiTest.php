@@ -68,9 +68,9 @@ class KBContentsApiTest extends TestCase
             'record' => $this->bean->id,
         ));
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('next_offset', $result);
         $this->assertArrayHasKey('records', $result);
-        $this->assertInternalType('array', $result['records']);
+        $this->assertIsArray($result['records']);
     }
 }

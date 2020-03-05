@@ -174,9 +174,9 @@ class KBContentsFilterApiTest extends TestCase
             'order_by' => 'name'
         ));
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('next_offset', $result);
         $this->assertArrayHasKey('records', $result);
-        $this->assertInternalType('array', $result['records']);
+        $this->assertIsArray($result['records']);
     }
 }

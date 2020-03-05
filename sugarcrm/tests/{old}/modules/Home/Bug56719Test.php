@@ -150,9 +150,9 @@ class Bug56719Test extends TestCase
         $data = $query->get_non_private_teams_array($args);
         $data = json_decode($data, true);
 
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
         $this->assertArrayHasKey('fields', $data);
-        $this->assertInternalType('array', $data['fields']);
+        $this->assertIsArray($data['fields']);
 
         $teams = array();
         foreach ($data['fields'] as $row) {

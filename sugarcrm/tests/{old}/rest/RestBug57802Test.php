@@ -27,11 +27,11 @@ class RestBug57802Test extends RestTestBase
         // Handle assertions for all defs
         foreach ($reply['reply']['modules']['Accounts']['fields'] as $field => $def) {
             if (isset($def['len'])) {
-                $this->assertInternalType('int', $def['len'], "$field len property should of type int");
+                $this->assertIsInt($def['len'], "$field len property should of type int");
             }
             
             if (isset($def['size'])) {
-                $this->assertInternalType('int', $def['size'], "$field size property should of type int");
+                $this->assertIsInt($def['size'], "$field size property should of type int");
             }
         }
     }
@@ -69,11 +69,11 @@ class RestBug57802Test extends RestTestBase
         
         foreach ($cleaned as $field => $def) {
             if (isset($def['len'])) {
-                $this->assertInternalType('int', $def['len'], "$field len property should of type int");
+                $this->assertIsInt($def['len'], "$field len property should of type int");
             }
             
             if (isset($def['size'])) {
-                $this->assertInternalType('int', $def['size'], "$field size property should of type int");
+                $this->assertIsInt($def['size'], "$field size property should of type int");
             }
         }
     }

@@ -63,7 +63,7 @@ class SidecarThemeTest extends TestCase
         // The fake theme doesn't have a variables.php, so it should only set a
         // cache key for the default theme.
         $this->assertNull(sugar_cache_retrieve($themePaths['hashKey']));
-        $this->assertInternalType('array', sugar_cache_retrieve($defaultPaths['hashKey']));
+        $this->assertIsArray(sugar_cache_retrieve($defaultPaths['hashKey']));
 
         if (is_dir($defaultPaths['cache'])) {
             rmdir_recursive($defaultPaths['cache']);
@@ -98,7 +98,7 @@ class SidecarThemeTest extends TestCase
 
         $this->assertFileNotExists($themePaths['cache']);
         $css = $theme->previewCss();
-        $this->assertInternalType('string', $css);
+        $this->assertIsString($css);
         $this->assertFileNotExists($themePaths['cache']);
     }
 

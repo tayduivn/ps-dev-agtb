@@ -46,7 +46,7 @@ class RS159Test extends TestCase
     public function testGetProducts()
     {
         $actual = $this->productBundle->get_products();
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
     }
 
     /**
@@ -55,7 +55,7 @@ class RS159Test extends TestCase
     public function testGetQuotes()
     {
         $actual = $this->productBundle->get_quotes();
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
     }
 
     /**
@@ -64,7 +64,7 @@ class RS159Test extends TestCase
     public function testGetNotes()
     {
         $actual = $this->productBundle->get_notes();
-        $this->assertInternalType('array', $actual);
+        $this->assertIsArray($actual);
     }
 
     /**

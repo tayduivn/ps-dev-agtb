@@ -98,7 +98,7 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
         
         $result = $this->gatDefWrapper->_get($this->arguments);
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(2, count($result));
 
         $this->assertArrayHasKey('success', $result);
@@ -123,7 +123,7 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
         $arguments = array ( 'id' => '1', 'record' => 1, 'data' => array(array('flo_uid' => '1', 'flo_condition'=>'a>0')));
         
         $result = $this->gatDefWrapper->_put($arguments);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('success', $result);
         $this->assertEquals(true, $result['success']);
     }
@@ -135,7 +135,7 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
         $expectedResult = array(
             "success" => false
         );        
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals($expectedResult, $result);
     }
 }

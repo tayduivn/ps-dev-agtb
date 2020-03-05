@@ -136,7 +136,7 @@ class LoginPortalApiTest extends TestCase
         ]);
  
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('access_token', $result);
         $this->assertNotEmpty($result['access_token']);
         $this->assertArrayHasKey('expires_in', $result);
@@ -165,7 +165,7 @@ class LoginPortalApiTest extends TestCase
         ]);
  
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('access_token', $result);
         $this->assertNotEmpty($result['access_token']);
         $this->assertArrayHasKey('expires_in', $result);
@@ -188,7 +188,7 @@ class LoginPortalApiTest extends TestCase
         ]);
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('success', $result);
         $this->assertNotEmpty($result['success']);
     }

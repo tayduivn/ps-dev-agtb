@@ -346,9 +346,9 @@ class Bug54193Test extends TestCase
         $report->run_total_query();
         $total = $report->get_summary_total_row();
 
-        $this->assertInternalType('array', $total);
+        $this->assertIsArray($total);
         $this->assertArrayHasKey('cells', $total);
-        $this->assertInternalType('array', $total['cells']);
+        $this->assertIsArray($total['cells']);
         return $total['cells'];
     }
 }

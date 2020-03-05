@@ -95,7 +95,7 @@ class PAT189Test extends TestCase
         );
 
         $this->assertArrayHasKey('records', $result, 'Filter result doesn\'t have "records" key');
-        $this->assertInternalType('array', $result['records'], 'Filter result "records" is not an array');
+        $this->assertIsArray($result['records'], 'Filter result "records" is not an array');
 
         $calls = array();
         foreach ($result['records'] as $record) {

@@ -68,7 +68,7 @@ class RecordListFactoryTest extends TestCase
         $result = RecordListFactory::getRecordList($id);
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
 
         $this->arrayHasKey('records', $result);
         $this->arrayHasKey('module_name', $result);
@@ -123,7 +123,7 @@ class RecordListFactoryTest extends TestCase
         $records = RecordListFactory::getRecordList($recordListId);
 
         $this->assertNotEmpty($records);
-        $this->assertInternalType('array', $records);
+        $this->assertIsArray($records);
         $this->arrayHasKey('records', $records);
         $this->arrayHasKey('module_name', $records);
         $this->assertEquals($module, $records['module_name']);
@@ -137,7 +137,7 @@ class RecordListFactoryTest extends TestCase
         $records = RecordListFactory::getRecordList($newRecordListId);
 
         $this->assertNotEmpty($records);
-        $this->assertInternalType('array', $records);
+        $this->assertIsArray($records);
         $this->arrayHasKey('records', $records);
         $this->arrayHasKey('module_name', $records);
         $this->assertEquals($module, $records['module_name']);

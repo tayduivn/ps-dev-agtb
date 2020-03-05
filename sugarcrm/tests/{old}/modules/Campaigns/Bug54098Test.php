@@ -71,8 +71,8 @@ class Bug54098Test extends TestCase
 
         $aResult = get_subscription_lists($oContact2);
 
-        $this->assertInternalType('array', $aResult['unsubscribed']);
-        $this->assertInternalType('array', $aResult['subscribed']);
+        $this->assertIsArray($aResult['unsubscribed']);
+        $this->assertIsArray($aResult['subscribed']);
         $this->assertArrayHasKey($oCampaign->name, $aResult['subscribed']);
         $this->assertArrayNotHasKey($oCampaign->name, $aResult['unsubscribed']);
     }

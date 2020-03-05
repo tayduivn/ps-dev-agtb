@@ -27,7 +27,7 @@ class RestBug57890Test extends RestTestBase
         // Handle assertions for all defs
         foreach ($reply['reply']['modules']['Leads']['fields'] as $field => $def) {
             if (isset($def['required'])) {
-                $this->assertInternalType('bool', $def['required'], "$field required property should of type boolean");
+                $this->assertIsBool($def['required'], "$field required property should of type boolean");
             }
         }
     }
@@ -78,7 +78,7 @@ class RestBug57890Test extends RestTestBase
         
         foreach ($cleaned as $field => $def) {
             if (isset($def['required'])) {
-                $this->assertInternalType('bool', $def['required'], "$field required property should of type boolean");
+                $this->assertIsBool($def['required'], "$field required property should of type boolean");
             }
         }
     }

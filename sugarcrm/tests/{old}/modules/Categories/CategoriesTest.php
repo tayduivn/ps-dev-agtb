@@ -69,7 +69,7 @@ class CategoriesTest extends TestCase
     public function testGetTreeData()
     {
         $bean = new CategoryMock();
-        $this->assertInternalType('array', $bean->getTreeDataMock('test'));
+        $this->assertIsArray($bean->getTreeDataMock('test'));
     }
 
     /**
@@ -204,12 +204,12 @@ class CategoriesTest extends TestCase
 
         $tree = self::$root->getTree();
 
-        $this->assertInternalType('array', $tree);
+        $this->assertIsArray($tree);
         $node = current($tree);
         $this->assertTrue(array_key_exists('children', $node));
         $this->assertTrue(array_key_exists('root', $node));
         $this->assertEquals(self::$root->id, $node['root']);
-        $this->assertInternalType('array', $node['children']);
+        $this->assertIsArray($node['children']);
     }
 
     /**
@@ -217,8 +217,8 @@ class CategoriesTest extends TestCase
      */
     public function testGetChildren()
     {
-        $this->assertInternalType('array', self::$root->getChildren());
-        $this->assertInternalType('array', self::$root->getChildren(1));
+        $this->assertIsArray(self::$root->getChildren());
+        $this->assertIsArray(self::$root->getChildren(1));
     }
 
     /**
@@ -226,7 +226,7 @@ class CategoriesTest extends TestCase
      */
     public function testGetNextSibling()
     {
-        $this->assertInternalType('null', self::$root->getNextSibling());
+        $this->assertNull(self::$root->getNextSibling());
 
         $subnode = new CategoryMock();
         $subnode->name = 'SugarCategory' . mt_rand();
@@ -246,7 +246,7 @@ class CategoriesTest extends TestCase
 
         $result = $subnode2->getNextSibling();
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals($subnode->id, $result['id']);
     }
 
@@ -255,7 +255,7 @@ class CategoriesTest extends TestCase
      */
     public function testGetPrevSibling()
     {
-        $this->assertInternalType('null', self::$root->getPrevSibling());
+        $this->assertNull(self::$root->getPrevSibling());
 
         $subnode = new CategoryMock();
         $subnode->name = 'SugarCategory' . mt_rand();
@@ -275,7 +275,7 @@ class CategoriesTest extends TestCase
 
         $result = $subnode->getPrevSibling();
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals($subnode2->id, $result['id']);
     }
 
@@ -284,8 +284,8 @@ class CategoriesTest extends TestCase
      */
     public function testGetParents()
     {
-        $this->assertInternalType('array', self::$root->getParents());
-        $this->assertInternalType('array', self::$root->getParents(1));
+        $this->assertIsArray(self::$root->getParents());
+        $this->assertIsArray(self::$root->getParents(1));
     }
 
     /**
@@ -330,6 +330,6 @@ class CategoriesTest extends TestCase
     public function test_mark_deleted()
     {
         $result = self::$root->mark_deleted(self::$root->id);
-        $this->assertInternalType('null', $result);
+        $this->assertNull($result);
     }
 }

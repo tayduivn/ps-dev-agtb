@@ -38,7 +38,7 @@ class CommentsTest extends TestCase
         $activity = SugarTestActivityUtilities::createActivity();
         $comment = SugarTestCommentUtilities::createComment($activity);
         $json = $comment->toJson();
-        $this->assertInternalType('string', $json);
+        $this->assertIsString($json);
         $this->assertNotEquals(false, json_decode($json, true));
     }
 

@@ -227,7 +227,7 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
         $result = $caseFlowHandlerMock->retrieveFollowingElements($flowData);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
     }
 
     public function testRetrieveFollowingElementsIfIsNotFlow()
@@ -279,7 +279,7 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->will($this->returnValue($flowMock));
 
         $result = $caseFlowHandlerMock->retrieveFollowingElements($flowData);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
     }
 
     public function testRetrieveData()
@@ -435,7 +435,7 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $result = $caseFlowHandlerMock->processFlowData($flowData);
         $this->assertTrue(!empty($result));
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
     }
 
     public function testCreateThread()

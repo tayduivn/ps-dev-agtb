@@ -30,7 +30,7 @@ class Bug59168Test extends TestCase
     public function testBug59168($module, $searchFields, $where)
     {
         $exportQuery = create_export_query_relate_link_patch($module, $searchFields, $where);
-        $this->assertInternalType('string', $exportQuery['join']);
+        $this->assertIsString($exportQuery['join']);
     }
 
     public function searchFields()

@@ -53,8 +53,7 @@ class Bug50800Test extends TestCase
 
         //create the connector and call getConnectors
         $cu = new ConnectorUtils();
-        $this->assertInternalType(
-            'array',
+        $this->assertIsArray(
             $cu->getConnectors(true),
             'ConnectorsUtils::getConnectors() failed to return an array when $connectors is a string'
         );
@@ -67,8 +66,7 @@ class Bug50800Test extends TestCase
 
         //create the connector and call getConnectors
         $cu = new ConnectorUtils();
-        $this->assertInternalType(
-            'array',
+        $this->assertIsArray(
             $cu->getConnectors(true),
             'ConnectorsUtils::getConnectors() failed to return an array when connectors array was missing.'
         );

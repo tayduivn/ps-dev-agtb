@@ -71,7 +71,7 @@ class SessionTest extends TestCase
         $accountIds = $portalSession->getAccountIds();
 
         $this->assertNotEmpty($accountIds);
-        $this->assertInternalType('array', $accountIds);
+        $this->assertIsArray($accountIds);
         $this->assertCount(1, $accountIds);
         $this->assertContains($accountId, $accountIds);
 

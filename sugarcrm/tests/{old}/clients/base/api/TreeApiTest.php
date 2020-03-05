@@ -113,10 +113,10 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('records', $result));
         $this->assertNotEmpty($result['records'][0]['children']);
-        $this->assertInternalType('array', $result['records'][0]['children']);
+        $this->assertIsArray($result['records'][0]['children']);
     }
 
     /**
@@ -131,7 +131,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('id', $result));
         $this->assertTrue(array_key_exists('lvl', $result));
 
@@ -156,7 +156,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('id', $result));
         $this->assertTrue(array_key_exists('lvl', $result));
 
@@ -186,7 +186,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('id', $result));
         $this->assertTrue(array_key_exists('lvl', $result));
 
@@ -229,7 +229,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('id', $result));
         $this->assertTrue(array_key_exists('lvl', $result));
 
@@ -272,7 +272,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('id', $result));
 
         $tree = $this->treeApi->tree($this->serviceMock, array(
@@ -300,7 +300,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('id', $result));
 
         $tree = $this->treeApi->tree($this->serviceMock, array(
@@ -322,7 +322,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(2, count($result));
 
         foreach ($result['records'] as $item) {
@@ -348,7 +348,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(self::$root->id, $result['id']);
     }
 
@@ -368,7 +368,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(self::$root->id, $result['root']);
         $this->assertEquals($tree['records'][0]['id'], $result['id']);
     }
@@ -389,7 +389,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(self::$root->id, $result['root']);
         $this->assertEquals($tree['records'][1]['id'], $result['id']);
     }
@@ -412,7 +412,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(2, count($result));
 
         list($root, $parent) = $result;
@@ -440,7 +440,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('id', $result));
         $this->assertEquals($tree['records'][1]['id'], $result['id']);
 
@@ -471,7 +471,7 @@ class TreeApiTest extends TestCase
         ));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('id', $result));
         $this->assertEquals($tree['records'][0]['id'], $result['id']);
 

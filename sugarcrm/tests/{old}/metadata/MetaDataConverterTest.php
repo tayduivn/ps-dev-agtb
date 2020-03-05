@@ -144,7 +144,7 @@ class MetaDataConverterTest extends TestCase
         $file = 'tests/{old}/metadata/supportfiles/Callsmobileedit.php';
         require $file;
         
-        $this->assertInternalType('array', $viewdefs['Calls']['mobile']['view']['edit'], 'Expected view def structure not found for Calls mobile edit');
+        $this->assertIsArray($viewdefs['Calls']['mobile']['view']['edit'], 'Expected view def structure not found for Calls mobile edit');
         $converted = MetaDataConverter::toLegacy('edit', $viewdefs['Calls']['mobile']['view']['edit']);
         $converted = MetaDataConverter::fromGridFieldsets($converted);
         

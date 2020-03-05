@@ -553,7 +553,7 @@ class ModuleApiTest extends TestCase
             ))
         );
 
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
         $this->assertArrayHasKey('id', $data, 'API response does not contain ID');
         $this->assertEquals($data['id'], $account->id, 'API has returned wrong ID');
         $this->assertArrayHasKey('date_modified', $data, 'API response does not contain last modification date');

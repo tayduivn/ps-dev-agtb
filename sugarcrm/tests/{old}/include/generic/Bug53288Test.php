@@ -53,7 +53,7 @@ class Bug53288Test extends TestCase
         require('include/generic/Save2.php');
         $res = $GLOBALS['db']->query("SELECT * FROM prospect_lists_prospects WHERE prospect_list_id='{$this->_oProspectList->id}' AND related_id='{$this->_oProspect->id}'");
         $row = $GLOBALS['db']->fetchByAssoc($res);
-        $this->assertInternalType('array', $row);
+        $this->assertIsArray($row);
     }
 
     protected function createProspectList()

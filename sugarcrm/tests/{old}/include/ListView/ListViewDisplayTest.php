@@ -56,7 +56,7 @@ class ListViewDisplayTest extends TestCase
     public function testConstructor()
     {
         $this->assertInstanceOf('ListViewData',$this->_lvd->lvd);
-        $this->assertInternalType('array',$this->_lvd->searchColumns);
+        $this->assertIsArray($this->_lvd->searchColumns);
     }
 
     public function testShouldProcessWhenConfigSaveQueryIsNotSet()

@@ -92,7 +92,7 @@ class ReportGroupingTest extends TestCase
         $report->run_summary_query();
 
         $row1 = $report->get_summary_next_row();
-        $this->assertInternalType('array', $row1);
+        $this->assertIsArray($row1);
         $this->assertEquals(2, $row1['count'], 'Summary row should contain 2 records');
 
         $row2 = $report->get_summary_next_row();

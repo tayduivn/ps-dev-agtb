@@ -66,7 +66,7 @@ class KBContentsApiHelperTest extends TestCase
 
         $this->assertEquals($data['name'], $this->bean->name);
         $this->assertEquals($data['language'], $lang['key']);
-        $this->assertInternalType('array', $data['attachment_list']);
+        $this->assertIsArray($data['attachment_list']);
     }
 
     /**
@@ -92,7 +92,7 @@ class KBContentsApiHelperTest extends TestCase
 
         $resp = $kbHelper->formatForApi($this->bean);
         $this->assertNotEmpty($resp);
-        $this->assertInternalType('array', $resp);
+        $this->assertIsArray($resp);
         $this->assertEmpty($resp['attachment_list']);
 
         // test note with attachment
@@ -112,8 +112,8 @@ class KBContentsApiHelperTest extends TestCase
 
         $resp = $kbHelper->formatForApi($this->bean);
         $this->assertNotEmpty($resp);
-        $this->assertInternalType('array', $resp);
-        $this->assertInternalType('array', $resp['attachment_list']);
+        $this->assertIsArray($resp);
+        $this->assertIsArray($resp['attachment_list']);
         $this->assertCount(1, $resp['attachment_list']);
         $this->assertEquals($resp['attachment_list'][0]['id'], $noteId);
         $this->assertEquals($resp['attachment_list'][0]['filename'], $n->filename);

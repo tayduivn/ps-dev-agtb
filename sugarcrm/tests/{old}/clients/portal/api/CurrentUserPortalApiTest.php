@@ -94,9 +94,9 @@ class CurrentUserPortalApiTest extends TestCase
         $result = self::$currentUserApi->retrieveCurrentUser(self::$service, array());
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('current_user', $result);
-        $this->assertInternalType('array', $result['current_user']);
+        $this->assertIsArray($result['current_user']);
         $this->assertArrayHasKey('preferences', $result['current_user']);
         $this->assertArrayHasKey('module_list', $result['current_user']);
         $this->assertArrayHasKey('type', $result['current_user']);
@@ -146,9 +146,9 @@ class CurrentUserPortalApiTest extends TestCase
         $result = self::$currentUserApi->updateCurrentUser(self::$service, $args);
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('current_user', $result);
-        $this->assertInternalType('array', $result['current_user']);
+        $this->assertIsArray($result['current_user']);
         $this->assertArrayHasKey('preferences', $result['current_user']);
         $this->assertArrayHasKey('module_list', $result['current_user']);
         $this->assertArrayHasKey('type', $result['current_user']);

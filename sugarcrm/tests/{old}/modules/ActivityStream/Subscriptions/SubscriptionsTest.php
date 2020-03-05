@@ -45,12 +45,12 @@ class SubscriptionsTest extends TestCase
     {
         $kls = BeanFactory::getBeanClass('Subscriptions');
         $return = $kls::getSubscribedUsers($this->record);
-        $this->assertInternalType('array', $return);
+        $this->assertIsArray($return);
         $this->assertCount(0, $return);
 
         $kls::subscribeUserToRecord($this->user, $this->record);
         $return = $kls::getSubscribedUsers($this->record);
-        $this->assertInternalType('array', $return);
+        $this->assertIsArray($return);
         $this->assertCount(1, $return);
         $this->assertEquals($return[0]['created_by'], $this->user->id);
     }
@@ -62,12 +62,12 @@ class SubscriptionsTest extends TestCase
     {
         $kls = BeanFactory::getBeanClass('Subscriptions');
         $return = $kls::getSubscribedRecords($this->user);
-        $this->assertInternalType('array', $return);
+        $this->assertIsArray($return);
         $this->assertCount(0, $return);
 
         $kls::subscribeUserToRecord($this->user, $this->record);
         $return = $kls::getSubscribedRecords($this->user);
-        $this->assertInternalType('array', $return);
+        $this->assertIsArray($return);
         $this->assertCount(1, $return);
         $this->assertEquals($return[0]['parent_id'], $this->record->id);
     }
@@ -94,7 +94,7 @@ class SubscriptionsTest extends TestCase
         $kls = BeanFactory::getBeanClass('Subscriptions');
         $return = $kls::subscribeUserToRecord($this->user, $this->record);
         // Expect a Subscription bean GUID if we're creating the subscription.
-        $this->assertInternalType('string', $return);
+        $this->assertIsString($return);
 
         $return = $kls::subscribeUserToRecord($this->user, $this->record);
         // Expect false if we cannot add another subscription for the user.

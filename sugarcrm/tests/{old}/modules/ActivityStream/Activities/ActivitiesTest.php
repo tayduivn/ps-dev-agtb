@@ -54,7 +54,7 @@ class ActivitiesTest extends TestCase
         $activity = SugarTestActivityUtilities::createActivity();
         $comment = SugarTestCommentUtilities::createComment($activity);
 
-        $this->assertInternalType('string', $comment->id);
+        $this->assertIsString($comment->id);
         $this->assertEquals($comment->id, $activity->last_comment_bean->id);
         $this->assertEquals(1, $activity->comment_count);
         $this->assertEquals($comment->toJson(), $activity->last_comment);
@@ -181,18 +181,18 @@ class ActivitiesTest extends TestCase
     public function testValidJson()
     {
         $activity = SugarTestActivityUtilities::createActivity();
-        $this->assertInternalType('string', $activity->data);
+        $this->assertIsString($activity->data);
         $this->assertNotEquals(false, json_decode($activity->data, true));
 
         $activity->retrieve($activity->id);
-        $this->assertInternalType('string', $activity->data);
+        $this->assertIsString($activity->data);
         $this->assertNotEquals(false, json_decode($activity->data, true));
-        $this->assertInternalType('string', $activity->last_comment);
+        $this->assertIsString($activity->last_comment);
         $this->assertNotEquals(false, json_decode($activity->last_comment, true));
 
         $comment = SugarTestCommentUtilities::createComment($activity);
 
-        $this->assertInternalType('string', $activity->last_comment);
+        $this->assertIsString($activity->last_comment);
         $this->assertNotEquals(false, json_decode($activity->last_comment, true));
     }
 

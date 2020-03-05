@@ -87,7 +87,7 @@ class KBContentsTest extends TestCase
 
         $this->assertEquals($data['name'], $this->bean->name);
         $this->assertEquals($data['language'], $lang['key']);
-        $this->assertInternalType('array', $data['attachment_list']);
+        $this->assertIsArray($data['attachment_list']);
     }
 
     public function testKBContentsDefaults()
@@ -128,7 +128,7 @@ class KBContentsTest extends TestCase
         $query->from($this->bean);
 
         $joinSugarQuery = $this->bean->localizations->buildJoinSugarQuery($query);
-        $this->assertInternalType('object', $joinSugarQuery);
+        $this->assertIsObject($joinSugarQuery);
     }
 
     public function testRevisionsLink()
@@ -140,7 +140,7 @@ class KBContentsTest extends TestCase
         $query->from($this->bean);
 
         $joinSugarQuery = $this->bean->revisions->buildJoinSugarQuery($query);
-        $this->assertInternalType('object', $joinSugarQuery);
+        $this->assertIsObject($joinSugarQuery);
     }
 
     /**

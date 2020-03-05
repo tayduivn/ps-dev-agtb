@@ -128,7 +128,7 @@ class GetRelCustFieldsTest extends SOAPTestCase
             'deleted' => '0',
         ]);
 
-        $this->assertInternalType('array', $actual, 'Soap call returned incorrect response');
+        $this->assertIsArray($actual, 'Soap call returned incorrect response');
         $this->assertNotEmpty($actual['entry_list'], 'get_relationships did not return any data.');
 
         $actualById= array_combine(array_column($actual['entry_list'], 'id'), $actual['entry_list']);

@@ -122,7 +122,7 @@ class ForecastsCommittedApiTest extends TestCase
             array('module' => 'Forecasts', 'user_id' => self::$reportee->id, 'timeperiod_id' => self::$timeperiod->id)
         );
 
-        $this->assertInternalType('array', $return);
+        $this->assertIsArray($return);
     }
 
     /**

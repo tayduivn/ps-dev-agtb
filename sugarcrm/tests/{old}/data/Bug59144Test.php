@@ -79,7 +79,7 @@ class Bug59144Test extends TestCase
             )
         );
 
-        $this->assertInternalType('array', $calls);
+        $this->assertIsArray($calls);
         $this->assertEquals(1, count($calls));
 
         $call = array_shift($calls);
@@ -92,7 +92,7 @@ class Bug59144Test extends TestCase
                 )
         );
 
-        $this->assertInternalType('array', $calls);
+        $this->assertIsArray($calls);
         $this->assertEquals(1, count($calls));
 
         $call = array_shift($calls);

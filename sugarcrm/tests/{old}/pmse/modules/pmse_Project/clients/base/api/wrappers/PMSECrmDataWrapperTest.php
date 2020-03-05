@@ -947,7 +947,7 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->object->setInboxBean($inboxBeanMock);
         $result = $this->object->validateReclaimCase($casId, $casIndex);
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(3, $result);
     }
 
@@ -1031,7 +1031,7 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $filter = 'some filter';
         $result = $this->object->getTargetAndRelatedFields($filter);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
     }
 
     public function testGetTargetAndRelatedFieldsFailure()
@@ -1068,7 +1068,7 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $filter = 'some filter';
         $result = $this->object->getTargetAndRelatedFields($filter);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
     }
 
     public function testGetAjaxRelationships()

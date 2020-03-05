@@ -72,7 +72,7 @@ class AutoLoaderTests extends TestCase
         $class_map = null;
         include sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE);
 
-        $this->assertInternalType('array', $class_map);
+        $this->assertIsArray($class_map);
         $this->assertArrayNotHasKey('dont', $class_map, 'Class map was not rebuilt');
 
         // Clear out the class cache file
@@ -88,7 +88,7 @@ class AutoLoaderTests extends TestCase
         $class_map = null;
         include sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE);
 
-        $this->assertInternalType('array', $class_map);
+        $this->assertIsArray($class_map);
         $this->assertArrayNotHasKey('dont', $class_map, 'Class map was not rebuilt');
         $this->assertArrayHasKey('voice_of', $class_map, 'Class map did not pickup custom files');
     }

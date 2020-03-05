@@ -43,7 +43,7 @@ class LoggerApiTest extends TestCase
         $result = $this->api->logMessage($this->serviceMock, array('level' => 'fatal', 'message' => 'Unit Test'));
 
         $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('status', $result);
     }
 }

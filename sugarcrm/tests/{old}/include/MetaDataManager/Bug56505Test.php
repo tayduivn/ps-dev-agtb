@@ -48,7 +48,7 @@ class Bug56505Test extends TestCase
 
         $this->assertArrayHasKey('aaa_test_c', $newdefs, "New defs did not return custom test field");
         $this->assertArrayHasKey('default', $newdefs['aaa_test_c'], "Test field def default value is missing");
-        $this->assertInternalType('array', $newdefs['aaa_test_c']['default'], "Expected the default value to be an array");
+        $this->assertIsArray($newdefs['aaa_test_c']['default'], "Expected the default value to be an array");
         $this->assertTrue(in_array('bobby', $newdefs['aaa_test_c']['default']), "Expected the string 'bobby' to be in the default value array");
         $this->assertTrue(in_array('billy', $newdefs['aaa_test_c']['default']), "Expected the string 'billy' to be in the default value array");
     }

@@ -70,7 +70,7 @@ class Bug59196Test extends TestCase
         include $this->_customFile;
 
         $this->assertTrue(isset($wireless_module_registry), "Wireless module registry not found in the custom file");
-        $this->assertInternalType('array', $wireless_module_registry, "Wireless module registry is not an array");
+        $this->assertIsArray($wireless_module_registry, "Wireless module registry is not an array");
         $this->assertEquals(4, count($wireless_module_registry), "Expected wireless module registry to contain 4 modules");
 
         // Grab the keys and compare

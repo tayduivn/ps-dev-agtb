@@ -211,7 +211,7 @@ class PMSEDivergingGatewayTest extends TestCase
         $type = 'SINGLE';
 
         $filters = $this->divergingGateway->filterFlows($type, $flows, $mockBean, $flowData);
-        $this->assertInternalType('array', $filters);
+        $this->assertIsArray($filters);
         $this->assertCount(1, $filters);
     }
 
@@ -256,7 +256,7 @@ class PMSEDivergingGatewayTest extends TestCase
         $type = 'ALL';
 
         $filters = $this->divergingGateway->filterFlows($type, $flows, $mockBean, $flowData);
-        $this->assertInternalType('array', $filters);
+        $this->assertIsArray($filters);
         $this->assertCount(2, $filters);
     }
 }
