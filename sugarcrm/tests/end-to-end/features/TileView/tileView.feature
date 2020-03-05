@@ -657,7 +657,7 @@ Feature: Tile View feature
     Then I verify the [*T3, *T2, *T1] records are under "Pending Input" column in #TasksPipelineView view
 
 
-  @cases_tileView_move_plus_validation @SS-194 @SS-195 @SS-196 @AT-340 @pr @stress-test
+  @cases_tileView_move_plus_validation @SS-194 @SS-195 @SS-196 @AT-340
   Scenario: Cases > Tile View > Trigger record validation by moving tile to another column
     Given Accounts records exist:
       | *name |
