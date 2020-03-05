@@ -272,6 +272,8 @@
         this.model.on('change', function() {
             app.events.trigger('create:model:changed', this.hasUnsavedChanges());
         }, this);
+
+        this.focusFirstInput();
     },
 
     /**

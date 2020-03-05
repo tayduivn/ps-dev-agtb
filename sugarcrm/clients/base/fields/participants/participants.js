@@ -189,6 +189,10 @@
 
         this.hideShowMoreButton();
 
+        if (this.options.viewName === 'edit') {
+            this.focusFirstInput();
+        }
+
         return this;
     },
 
@@ -1022,6 +1026,25 @@
 
         if (this.view.name === 'preview') {
             this.template = app.template.getField('participants', 'preview', this.model.module);
+        }
+    },
+
+    /**
+     * Focus the first text input in the topmost active drawer when the DOM is ready, if
+     * it's not focused already. ParticipantsField is the last item to finish
+     * rendering in a drawer, so the similar function in record.js will not work
+     */
+    focusFirstInput: function() {
+        if (app.drawer && _.isFunction(app.drawer.count) && app.drawer.count()) {
+            $(() => {
+                let $firstInput = app.drawer._components[app.drawer.count() - 1].$el
+                    .find('input[type=text]')
+                    .first();
+
+                if ($firstInput.length && !$firstInput.is(':focus') && $firstInput.is(':visible')) {
+                    $firstInput.focus();
+                }
+            });
         }
     }
 })

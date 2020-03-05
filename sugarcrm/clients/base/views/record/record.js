@@ -950,6 +950,7 @@
         this.action = 'edit';
         this.toggleEdit(true);
         this.setRoute('edit');
+        this.focusFirstInput();
     },
 
     saveClicked: function() {
@@ -2153,5 +2154,35 @@
             app.alert.dismiss(alert);
         });
         this._viewAlerts = [];
+    },
+
+    /**
+     * Focus the first text input in the topmost active drawer (or content element)
+     * when the DOM is ready
+     */
+    focusFirstInput: function() {
+        $(() => {
+            let $element = (app.drawer && _.isFunction(app.drawer.count) && app.drawer.count()) ?
+                app.drawer._components[app.drawer.count() - 1].$el
+                : app.$contentEl;
+            let $firstInput = $element.find('input[type=text]').first();
+
+            if ($firstInput.length && $firstInput.is(':visible')) {
+                $firstInput.focus();
+                this.setCaretToEnd($firstInput);
+            }
+        });
+    },
+
+    /**
+     * Move the input cursor to the end
+     *
+     * @param {jQuery} $element
+     */
+    setCaretToEnd: function($element) {
+        if ($element.val().length) {
+            let elementVal = $element.val();
+            $element.val('').val(elementVal);
+        }
     }
 })
