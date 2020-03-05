@@ -54,7 +54,7 @@ class Bug60372Test extends TestCase
 
         $result = $SWFDT->$qualifier($layoutDef);
 
-        $this->assertContains($expected, $result, 'Query contains improper dates.');
+        $this->assertStringContainsString($expected, $result);
     }
 
     public static function filterDataProvider()

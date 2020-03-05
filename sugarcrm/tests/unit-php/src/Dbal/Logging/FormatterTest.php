@@ -13,7 +13,6 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Dbal\Logging;
 
 use Monolog\Formatter\FormatterInterface;
-use PHPUnit\Framework\Constraint\ArraySubset;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Dbal\Logging\Formatter;
 
@@ -50,9 +49,7 @@ class FormatterTest extends TestCase
         $mock = $this->createMock(FormatterInterface::class);
         $mock->expects($this->once())
             ->method('format')
-            ->with(new ArraySubset([
-                'message' => $expectedMessage,
-            ]));
+            ->with($this->containsEqual($expectedMessage));
 
         $formatter = new Formatter($mock);
         $formatter->format([

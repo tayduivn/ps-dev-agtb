@@ -75,7 +75,7 @@ class BulkApiTest extends TestCase
         $this->assertArrayHasKey('ETag', $result[0]['headers']);
         // test headers
         $this->assertEquals("200", $result[1]['status'], "Bad status for request 1");
-        $this->assertContains("app_list_strings", $result[1]['contents']);
+        $this->assertStringContainsString('app_list_strings', $result[1]['contents']);
         $this->assertArrayHasKey('Content-Type', $result[1]['headers']);
         $this->assertEquals('application/json', $result[1]['headers']['Content-Type']);
         // test 404 from unknown endpoint

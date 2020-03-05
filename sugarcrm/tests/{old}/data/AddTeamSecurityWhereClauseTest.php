@@ -41,7 +41,7 @@ class AddTeamSecurityWhereClauseTest extends TestCase
 
         $query = preg_replace("/[\t \n]+/", " ", $query);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id ",
             $query
             );
@@ -62,7 +62,7 @@ class AddTeamSecurityWhereClauseTest extends TestCase
         $visibility->addVisibilityFrom($query);
 
         $query = preg_replace("/[\t \n]+/", " ", $query);
-        $this->assertContains(
+        $this->assertStringContainsString(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_membershipsmyfoo ON tst.team_id = team_membershipsmyfoo.team_id AND team_membershipsmyfoo.user_id = '{$GLOBALS['current_user']->id}' AND team_membershipsmyfoo.deleted=0 group by tst.team_set_id) myfoo_tf on myfoo_tf.team_set_id = myfoo.team_set_id ",
             $query
             );
@@ -83,7 +83,7 @@ class AddTeamSecurityWhereClauseTest extends TestCase
         $visibility->addVisibilityFrom($query);
 
         $query = preg_replace("/[\t \n]+/", " ", $query);
-        $this->assertContains(
+        $this->assertStringContainsString(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id INNER JOIN teams ON teams.id = team_memberships.team_id AND teams.deleted=0 ",
             $query
         );

@@ -1085,10 +1085,10 @@ class DBManagerTest extends TestCase
         );
 
         if (!empty($query)) {
-            $this->assertContains("ALTER TABLE $tablename1", $sql);
-            $this->assertContains($query, $sql);
+            $this->assertStringContainsString('ALTER TABLE ' . $tablename1, $sql);
+            $this->assertStringContainsString($query, $sql);
         } else {
-            $this->assertNotContains("ALTER TABLE $tablename1", $sql);
+            $this->assertStringNotContainsString('ALTER TABLE ' . $tablename1, $sql);
         }
     }
 
@@ -2761,9 +2761,9 @@ SQL;
 
         $result = SugarTestReflection::callProtectedMethod($db, 'oneColumnSQLRep', array($fieldDef));
         if ($expected == 'once') {
-            $this->assertContains('correct', $result);
+            $this->assertStringContainsString('correct', $result);
         } elseif ($expected == 'never') {
-            $this->assertNotContains('correct', $result);
+            $this->assertStringNotContainsString('correct', $result);
         }
     }
 

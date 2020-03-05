@@ -107,10 +107,10 @@ class SugarBeanTest extends TestCase
             'tricky-(select * from config)' => 'test',
         ));
 
-        $this->assertNotContains('bad\'string', $where);
-        $this->assertContains('quoted string', $where);
-        $this->assertNotContains('evil\'key', $where);
-        $this->assertNotContains('select * from config', $where);
+        $this->assertStringNotContainsString('bad\'string', $where);
+        $this->assertStringContainsString('quoted string', $where);
+        $this->assertStringNotContainsString('evil\'key', $where);
+        $this->assertStringNotContainsString('select * from config', $where);
     }
 
     /**
@@ -737,8 +737,8 @@ class SugarBeanTest extends TestCase
         );
         $query = $bean->create_new_list_query("", "", $filter, $params, 0, "", true);
 
-        $this->assertNotContains("opportunity_role_fields", $query["secondary_select"], "secondary_select should not contain fields with relationship_fields defined (e.g. opportunity_role_fields).");
-        $this->assertContains("opportunity_role_id", $query["secondary_select"], "secondary_select should contain the fields that's defined in relationship_fields (e.g. opportunity_role_id).");
+        $this->assertStringNotContainsString('opportunity_role_fields', $query['secondary_select']);
+        $this->assertStringContainsString('opportunity_role_id', $query['secondary_select']);
 
         $bean = BeanFactory::newBean("Contacts");
         $filter = array(
@@ -757,7 +757,7 @@ class SugarBeanTest extends TestCase
         $bean = BeanFactory::newBean('Calls');
         $query = $bean->create_new_list_query('', '', array('contact_name', 'contact_id'), array(), 0, '', true);
 
-        $this->assertContains("contact_id", $query["secondary_select"], "secondary_select should contain rel_key field (e.g. contact_id).");
+        $this->assertStringContainsString('contact_id', $query['secondary_select']);
     }
 
     /**

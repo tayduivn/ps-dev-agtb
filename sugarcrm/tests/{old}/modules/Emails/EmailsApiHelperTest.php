@@ -119,8 +119,8 @@ EOHTML;
 
         $data = $this->helper->formatForApi($bean, $fieldList);
 
-        $this->assertContains($expected1, $data['description_html'], 'Image 1 not converted');
-        $this->assertContains($expected2, $data['description_html'], 'Image 2 not converted');
+        $this->assertStringContainsString($expected1, $data['description_html'], 'Image 1 not converted');
+        $this->assertStringContainsString($expected2, $data['description_html'], 'Image 2 not converted');
     }
 
     /**

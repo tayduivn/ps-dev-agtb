@@ -55,6 +55,6 @@ class Bug43554Test extends TestCase
 	{
         $data = "Test: <img src=\"$url\">";
         $res = str_replace("<img />", "", SugarCleaner::cleanHtml($data));
-        $this->assertNotContains("<img", $res);
+        $this->assertStringNotContainsString('<img', $res);
 	}
 }

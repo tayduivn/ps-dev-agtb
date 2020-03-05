@@ -44,7 +44,7 @@ class Bug62040Test extends TestCase
             'module' => 'Contacts',
         );
         $html = $this->getSugarWidgetFieldRelate()->displayInput($layoutDef);
-        $this->assertContains("Boro SugarTest", $html);
+        $this->assertStringContainsString('Boro SugarTest', $html);
     }
 
     private function getSugarWidgetFieldRelate()

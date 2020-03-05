@@ -176,13 +176,13 @@ class SugarFieldFloatTest extends TestCase
         $ret = $field->fixForFilter($value, 'unit_test', $bean, $q, $where, $op);
 
         $this->assertFalse($ret);
-        if (!is_array($value)) {
-            $this->assertContains('(ROUND(unit_test, 2) ' . $query_op . ' ' . $value . ')', $q->compile()->getSQL());
+
+        if (is_array($value)) {
+            $expected = '(ROUND(unit_test, 2) ' . $query_op . ' ' . $value[0] . ' AND ' . $value[1] . ')';
         } else {
-            $this->assertContains(
-                '(ROUND(unit_test, 2) ' . $query_op . ' ' . $value[0] . ' AND ' . $value[1] . ')',
-                $q->compile()->getSQL()
-            );
+            $expected = '(ROUND(unit_test, 2) ' . $query_op . ' ' . $value . ')';
         }
+
+        $this->assertStringContainsString($expected, $q->compile()->getSQL());
     }
 }

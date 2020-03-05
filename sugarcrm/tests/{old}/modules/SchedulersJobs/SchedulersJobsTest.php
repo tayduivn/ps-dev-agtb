@@ -89,7 +89,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("very good!", $job->message);
+        $this->assertStringContainsString('very good!', $job->message);
         $this->assertEmpty($job->failure_count, "Wrong failure count");
     }
 
@@ -110,7 +110,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("very bad!", $job->message);
+        $this->assertStringContainsString('very bad!', $job->message);
     }
 
     public function testJobPartial()
@@ -132,7 +132,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_PARTIAL, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_QUEUED, $job->status, "Wrong status");
-        $this->assertContains("who knows?", $job->message);
+        $this->assertStringContainsString('who knows?', $job->message);
         // then succeed
         $job->succeedJob();
         $job->retrieve($job->id);
@@ -236,7 +236,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("nosuchfun", $job->message);
+        $this->assertStringContainsString('nosuchfun', $job->message);
         // No user
         $job = $this->createJob(array("name" => "Test Bad Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
         	"target" => "function::testJobFunction1"));
@@ -244,7 +244,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("No User ID", $job->message);
+        $this->assertStringContainsString('No User ID', $job->message);
         // Bad user ID
         $job = $this->createJob(array("name" => "Test Bad Func 3", "status" => SchedulersJob::JOB_STATUS_RUNNING,
         	"target" => "function::testJobFunction1", "assigned_user_id" => "Unexisting User"));
@@ -252,7 +252,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("Unexisting User", $job->message);
+        $this->assertStringContainsString('Unexisting User', $job->message);
         // Private function
         $testJobFunction1Args = array();
         $job = $this->createJob(array("name" => "Test Bad Func 4", "status" => SchedulersJob::JOB_STATUS_RUNNING,
@@ -261,7 +261,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("staticJobFunctionPrivate", $job->message);
+        $this->assertStringContainsString('staticJobFunctionPrivate', $job->message);
         // Bad target type
         $testJobFunction1Args = array();
         $job = $this->createJob(array("name" => "Test Bad Func 5", "status" => SchedulersJob::JOB_STATUS_RUNNING,
@@ -270,7 +270,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("whatever", $job->message);
+        $this->assertStringContainsString('whatever', $job->message);
     }
 
     public function testJobErrors()
@@ -282,8 +282,8 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("User Warning", $job->message);
-        $this->assertContains("nosuchfile", $job->message);
+        $this->assertStringContainsString('User Warning', $job->message);
+        $this->assertStringContainsString('nosuchfile', $job->message);
         // failing
         $job = $this->createJob(array("name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
         	"target" => "function::SchedulersJobsTest::staticJobFunctionErrors", "data" => "failme", "assigned_user_id" => $GLOBALS['current_user']->id));
@@ -291,8 +291,8 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("User Warning", $job->message);
-        $this->assertContains("nosuchfile", $job->message);
+        $this->assertStringContainsString('User Warning', $job->message);
+        $this->assertStringContainsString('nosuchfile', $job->message);
     }
 
     public function testJobResolution()
@@ -304,7 +304,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("Job OK", $job->message);
+        $this->assertStringContainsString('Job OK', $job->message);
         // failing
         $job = $this->createJob(array("name" => "Test Func Errors 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
         	"target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "data" => "failme", "assigned_user_id" => $GLOBALS['current_user']->id));
@@ -312,7 +312,7 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("Job Failed", $job->message);
+        $this->assertStringContainsString('Job Failed', $job->message);
         // errors
         $job = $this->createJob(array("name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
         	"target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "data" => "errors",
@@ -321,8 +321,8 @@ class SchedulersJobsTest extends TestCase
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("Job OK", $job->message);
-        $this->assertContains("User Warning", $job->message);
+        $this->assertStringContainsString('Job OK', $job->message);
+        $this->assertStringContainsString('User Warning', $job->message);
     }
 
     public function testJobClients()
@@ -336,7 +336,7 @@ class SchedulersJobsTest extends TestCase
         $this->assertTrue($res, "Bad result from runJobId");
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains("Job OK", $job->message);
+        $this->assertStringContainsString('Job OK', $job->message);
         // wrong client
         $job = $this->createJob(array("name" => "Test Func Clients 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
         	"target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "client" => "UnitTests",

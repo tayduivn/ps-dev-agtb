@@ -75,7 +75,7 @@ class Bug48484Test extends TestCase
         $this->massUpdate->generateSearchWhere($this->moduleName, $query);
 
         // ensure that field name is contained in SQL where clause
-        $this->assertContains($this->customFieldName, $this->massUpdate->where_clauses);
+        $this->assertStringContainsString($this->customFieldName, $this->massUpdate->where_clauses);
     }
 }
 

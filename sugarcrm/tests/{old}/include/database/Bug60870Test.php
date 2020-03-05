@@ -64,7 +64,10 @@ class Bug60780Test extends TestCase
                                         ON accounts.assigned_user_id=users.id  LEFT JOIN  team_sets ts ON accounts.team_set_id=ts.id  AND ts.deleted=0
                 LEFT JOIN  teams teams ON teams.id=ts.id AND teams.deleted=0 AND teams.deleted=0";
         SugarTestReflection::callProtectedMethod($GLOBALS['db'], 'addDistinctClause', array(&$query));
-        $this->assertContains("INNER JOIN team_sets_teams tst ON tst.team_set_id = accounts.team_set_id", $query);
-        $this->assertContains("accounts_cstm.selected_c", $query);
+        $this->assertStringContainsString(
+            'INNER JOIN team_sets_teams tst ON tst.team_set_id = accounts.team_set_id',
+            $query
+        );
+        $this->assertStringContainsString('accounts_cstm.selected_c', $query);
     }
 }

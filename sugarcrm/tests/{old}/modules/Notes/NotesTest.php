@@ -110,9 +110,9 @@ class NotesTest extends TestCase
         $note->disable_row_level_security = true;
         $note->retrieve();
 
-        $this->assertContains($contact->first_name,$note->contact_name);
-        $this->assertContains($contact->last_name,$note->contact_name);
-        
+        $this->assertStringContainsString($contact->first_name, $note->contact_name);
+        $this->assertStringContainsString($contact->last_name, $note->contact_name);
+
         $GLOBALS['db']->query('DELETE FROM contacts WHERE id =\''.$contact_id.'\'');
     }
 

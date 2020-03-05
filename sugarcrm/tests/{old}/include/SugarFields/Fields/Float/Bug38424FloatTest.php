@@ -28,6 +28,6 @@ class Bug38424FloatTest extends TestCase
     
     public function testMaxLength()
     {
-        $this->assertContains('maxlength=\'10\'', $this->_fieldOutput);
+        $this->assertStringContainsString("maxlength='10'", $this->_fieldOutput);
     }
 }

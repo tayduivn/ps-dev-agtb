@@ -57,7 +57,7 @@ class SugarMinifyUtilsTest extends TestCase
         $content = file_get_contents(sugar_cached($this->builtFile));
         $expect1 = file_get_contents('tests/{old}/jssource/minify/expect/var.js');
         $expect2 = file_get_contents('tests/{old}/jssource/minify/expect/if.js');
-        $this->assertContains($expect1, $content);
-        $this->assertContains($expect2, $content);
+        $this->assertStringContainsString($expect1, $content);
+        $this->assertStringContainsString($expect2, $content);
     }
 }

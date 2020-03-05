@@ -323,6 +323,6 @@ class Bug45966 extends TestCase
         $this->array['range_date_entered_advanced'] = $range;
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
-        $this->assertContains($expected, $query[0]);
+        $this->assertStringContainsString($expected, $query[0]);
     }
 }

@@ -63,9 +63,17 @@ class IBMDB2ManagerTest extends TestCase
             'type' => 'int',
             'isnull' => false
         );
-        $this->assertNotContains('NOT NULL', $this->_db->addColumnSQL('testTable', $fieldDef), 'New column should be nullable if required but no default');
+
+        $this->assertStringNotContainsString(
+            'NOT NULL',
+            $this->_db->addColumnSQL('testTable', $fieldDef)
+        );
+
         $fieldDef['default'] = 0;
-        $this->assertContains('NOT NULL', $this->_db->addColumnSQL('testTable', $fieldDef), 'New column should be not null if required with default');
+        $this->assertStringContainsString(
+            'NOT NULL',
+            $this->_db->addColumnSQL('testTable', $fieldDef)
+        );
     }
 
     public function providerConvert()

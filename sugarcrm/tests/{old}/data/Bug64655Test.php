@@ -102,9 +102,12 @@ class Bug64655Test extends TestCase
         $bean = new Bug64655Test_SugarBean3();
         $query = $bean->getRelateFieldQuery($this->bean->field_defs['contact_name'], 'jt');
 
-        $this->assertContains('jt.foo rel_contact_name_foo', $query['select']);
-        $this->assertContains('jt_cstm.bar rel_contact_name_bar', $query['select']);
-        $this->assertContains('LEFT JOIN bug64655test2_cstm jt_cstm ON jt_cstm.id_c = jt.id', $query['join']);
+        $this->assertStringContainsString('jt.foo rel_contact_name_foo', $query['select']);
+        $this->assertStringContainsString('jt_cstm.bar rel_contact_name_bar', $query['select']);
+        $this->assertStringContainsString(
+            'LEFT JOIN bug64655test2_cstm jt_cstm ON jt_cstm.id_c = jt.id',
+            $query['join']
+        );
     }
 
     public static function provider()

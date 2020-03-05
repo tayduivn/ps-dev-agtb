@@ -86,12 +86,10 @@ class AdministrationControllerTest extends TestCase
 
         $this->controller->expects($this->once())
             ->method('addErrorLogMessage')
-            ->with($this->contains('parse metadata error'));
+            ->with($this->containsEqual('parse metadata error'));
 
-        ob_start();
         $this->controller->action_exportMetaDataFile();
-        $content = ob_get_clean();
-        $this->assertContains('action=PasswordManager', $content);
+        $this->expectOutputRegex('/action=PasswordManager/');
     }
 
     /**
@@ -110,12 +108,10 @@ class AdministrationControllerTest extends TestCase
 
         $this->controller->expects($this->once())
             ->method('addErrorLogMessage')
-            ->with($this->contains('validate error'));
+            ->with($this->containsEqual('validate error'));
 
-        ob_start();
         $this->controller->action_exportMetaDataFile();
-        $content = ob_get_clean();
-        $this->assertContains('action=PasswordManager', $content);
+        $this->expectOutputRegex('/action=PasswordManager/');
     }
 
     /**
@@ -131,10 +127,9 @@ class AdministrationControllerTest extends TestCase
             ->method('validateMetadata')
             ->with($this->isType('string'))
             ->willReturn([]);
-        ob_start();
+
         $this->controller->action_exportMetaDataFile();
-        $content = ob_get_clean();
-        $this->assertContains('metadata', $content);
+        $this->expectOutputRegex('/metadata/');
     }
 
     /**
@@ -150,10 +145,8 @@ class AdministrationControllerTest extends TestCase
             ->with($this->equalTo('WRONG_IMPORT_FILE_NOT_FOUND_ERROR'))
             ->willReturn('error');
 
-        ob_start();
+        $this->expectOutputRegex('/error/');
         $this->controller->action_parseImportSamlXmlFile();
-        $content = ob_get_clean();
-        $this->assertContains('error', $content);
     }
 
     /**
@@ -180,10 +173,8 @@ class AdministrationControllerTest extends TestCase
             ->with($this->equalTo('dump'))
             ->willReturn([]);
 
-        ob_start();
+        $this->expectOutputRegex('/error/');
         $this->controller->action_parseImportSamlXmlFile();
-        $content = ob_get_clean();
-        $this->assertContains('error', $content);
     }
 
     public function parseImportSamlXmlFileDataProvider()

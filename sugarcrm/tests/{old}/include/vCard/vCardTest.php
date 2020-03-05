@@ -163,8 +163,8 @@ class vCardTest extends TestCase
         $vcard->loadContact('person-id', 'Person');
         $cardtext = $vcard->toString();
 
-        $this->assertContains("N;CHARSET=utf-8:$lname;$fname", $cardtext, "Cannot find N name", true);
-        $this->assertContains("FN;CHARSET=utf-8: $fname $lname", $cardtext, "Cannot find FN name", true);
+        $this->assertStringContainsStringIgnoringCase("N;CHARSET=utf-8:$lname;$fname", $cardtext);
+        $this->assertStringContainsStringIgnoringCase("FN;CHARSET=utf-8: $fname $lname", $cardtext);
     }
     
     public function testClear()

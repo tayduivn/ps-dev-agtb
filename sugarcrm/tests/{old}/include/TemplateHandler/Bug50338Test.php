@@ -35,10 +35,8 @@ class Bug50338Test extends TestCase
                            );
         $fieldDefs = $this->TemplateHandler->mockPrepareCalculationFields($this->fieldDefs, 'Opportunities');
         $this->assertArrayHasKey('Opportunitiesamount', $fieldDefs);
-        $this->assertContains('Opportunitiescalc1_c', $fieldDefs['Opportunitiesamount']['formula']);
-        $this->assertContains('Opportunitiescalc2_c', $fieldDefs['Opportunitiesamount']['formula']);
-        unset($this->TemplateHandler);
-        unset($this->fieldDefs);
+        $this->assertStringContainsString('Opportunitiescalc1_c', $fieldDefs['Opportunitiesamount']['formula']);
+        $this->assertStringContainsString('Opportunitiescalc2_c', $fieldDefs['Opportunitiesamount']['formula']);
     }
 }
 

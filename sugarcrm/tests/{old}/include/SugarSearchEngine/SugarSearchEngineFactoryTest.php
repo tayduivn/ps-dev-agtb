@@ -22,7 +22,7 @@ class SugarSearchEngineFactoryTest extends TestCase
     public function testFactoryMethod($engineName, $expectedClass)
     {
         $instance = SugarSearchEngineFactory::getInstance($engineName);
-        $this->assertContains($expectedClass, get_class($instance));
+        $this->assertInstanceOf($expectedClass, $instance);
     }
 
     /**

@@ -880,6 +880,6 @@ class Bug45716Test extends TestCase
         
         $output = $sugarWidget->displayList($layout_def);
 
-        $this->assertContains('record=13ce',$output, 'Missing the id in the output url');
+        $this->assertStringContainsString('record=13ce', $output);
     }
 }

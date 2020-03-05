@@ -49,7 +49,8 @@ class Bug50549Test extends TestCase
 	    		$function = "";
 	    		break;
         }
-        $this->assertContains($expected, $this->field->$function($layout_def), "Filter: '" . strtoupper($layout_def['qualifier_name']) . "' not adding carets.");
+
+        $this->assertStringContainsString($expected, $this->field->$function($layout_def));
     }
 
     /**

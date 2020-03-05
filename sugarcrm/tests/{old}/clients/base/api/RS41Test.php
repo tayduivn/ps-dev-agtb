@@ -39,7 +39,7 @@ class RS41Test extends TestCase
             $rest,
             array()
         );
-        $this->assertContains('API Help', $result);
+        $this->assertStringContainsString('API Help', $result);
     }
 }
 

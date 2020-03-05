@@ -104,8 +104,8 @@ class SugarSpotTest extends TestCase
             
         $returnValue = $sugarSpot->searchAndDisplay('','');
 
-        $this->assertNotContains('(99 more)',$returnValue);
-        $this->assertContains('(99 XXmoreXX)',$returnValue);
+        $this->assertStringNotContainsString('(99 more)', $returnValue);
+        $this->assertStringContainsString('(99 XXmoreXX)', $returnValue);
     }
 
 

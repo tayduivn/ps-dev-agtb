@@ -94,7 +94,7 @@ class GlueTest extends TestCase
         );
         $output = $method->invokeArgs(new WorkFlowGlue(), $args);
 
-        $this->assertContains($expected, $output);
+        $this->assertStringContainsString($expected, $output);
     }
 
     public static function dataProviderGetCompareText()

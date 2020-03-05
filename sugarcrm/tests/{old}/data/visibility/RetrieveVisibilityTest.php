@@ -50,9 +50,8 @@ class RetrieveVisibilityTest extends TestCase
         $query->where()->equals("$bean->table_name.id", 'test_id');
 
         $sql = $query->compile()->getSQL();
-        $params = $query->compile()->getParameters();
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'WHERE tst.team_set_id = ? GROUP BY tst.team_set_id',
             $sql
         );

@@ -237,17 +237,19 @@ class DateExpressionTest extends TestCase
         $this->assertEquals($result, "false");
 	}
 
+    public function testInvalidDateValue() : void
+    {
+        $task = new Task();
+        $task->name = 'Chuck Norris';
+        $expr = 'date($name)';
+
+        $this->expectExceptionMessage('attempt to convert invalid value to date: Chuck Norris');
+        Parser::evaluate($expr, $task)->evaluate();
+    }
+
 	public function testBadDates()
 	{
 	    $task = new Task();
-        $task->name = 'Chuck Norris';
-	    $expr = 'date($name)';
-        try {
-            $result = Parser::evaluate($expr, $task)->evaluate();
-	        $this->assertTrue(false, "Incorrecty converted '{$task->name }' to date $result");
-        } catch (Exception $e){
-            $this->assertContains("invalid value to date", $e->getMessage());
-        }
         $task->date_due = 'Chuck Norris';
 	    $expr = 'addDays($date_due, 3)';
         $result = Parser::evaluate($expr, $task)->evaluate();

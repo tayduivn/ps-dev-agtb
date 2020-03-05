@@ -36,9 +36,9 @@ class Bug50827Test extends TestCase
     	$output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
         
         if ($expected) {
-        	$this->assertContains('name="calculated" id="calculated"', $output);
+            $this->assertStringContainsString('name="calculated" id="calculated"', $output);
 		} else {
-			$this->assertNotContains('name="calculated" id="calculated"', $output);
+            $this->assertStringNotContainsString('name="calculated" id="calculated"', $output);
 		}
     }
     

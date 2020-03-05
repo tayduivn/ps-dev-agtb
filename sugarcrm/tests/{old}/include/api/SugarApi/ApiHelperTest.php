@@ -58,7 +58,7 @@ class ApiHelperTest extends TestCase
         $bean = BeanFactory::newBean($moduleName);
         $helper = ApiHelper::getHelper($api, $bean);
 
-        $this->assertContains("/", $bean->module_dir);
+        $this->assertStringContainsString('/', $bean->module_dir);
         $this->assertNotEquals($bean->module_name, $bean->module_dir);
         $this->assertEquals("{$moduleName}ApiHelper", get_class($helper));
     }

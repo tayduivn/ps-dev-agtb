@@ -25,9 +25,9 @@ class SortByRelateFullNameTest extends TestCase
         $order_by = $query['order_by'];
 
         // ORDER BY should contain "last_name" since it's in "sort_on" attribute of contact.name
-        $this->assertContains('last_name', $order_by);
+        $this->assertStringContainsString('last_name', $order_by);
 
         // but shouldn't contain "first_name" since it's not in "sort_on" attribute of contact.name
-        $this->assertNotContains('first_name', $order_by);
+        $this->assertStringNotContainsString('first_name', $order_by);
     }
 }

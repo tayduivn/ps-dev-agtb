@@ -47,11 +47,10 @@ class GetNamePlusEmailAddressesForComposeTest extends TestCase
 
 	    $email = BeanFactory::newBean('Emails');
 	    $addressString = $email->getNamePlusEmailAddressesForCompose('Accounts',array($account1->id,$account2->id,$account3->id));
-	    $this->assertContains("{$account1->name} <{$account1->email1}>",$addressString);
-	    $this->assertContains("{$account2->name} <{$account2->email1}>",$addressString);
-	    $this->assertContains("{$account3->name} <{$account3->email1}>",$addressString);
+        $this->assertStringContainsString("{$account1->name} <{$account1->email1}>", $addressString);
+        $this->assertStringContainsString("{$account2->name} <{$account2->email1}>", $addressString);
+        $this->assertStringContainsString("{$account3->name} <{$account3->email1}>", $addressString);
     }
-
 
 	public function testGetNamePlusEmailAddressesForComposePersonModule()
 	{

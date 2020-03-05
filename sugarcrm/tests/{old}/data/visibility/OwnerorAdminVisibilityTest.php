@@ -31,7 +31,7 @@ class OwnerOrAdminVisibilityTest extends TestCase
         $owner = new OwnerOrAdminVisibility($bean);
         $query = "";
         $query = $owner->addVisibilityWhere($query);
-        $this->assertContains('assigned_user_id', $query);
+        $this->assertStringContainsString('assigned_user_id', $query);
     }
 
     public function testModuleAdminVisibility()

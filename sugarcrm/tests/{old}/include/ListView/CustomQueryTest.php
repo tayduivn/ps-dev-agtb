@@ -55,7 +55,7 @@ class CustomQueryTest extends TestCase
           'duplicate_merge'=>'disabled',
       );
           $result = $bean->create_new_list_query('', '');
-          $this->assertContains("2+2 four /* for testquery */", $result);
+        $this->assertStringContainsString("2+2 four /* for testquery */", $result);
     }
 
     public function testCustomQueryForced()
@@ -74,10 +74,10 @@ class CustomQueryTest extends TestCase
           'duplicate_merge'=>'disabled',
           );
         $result = $bean->create_new_list_query('', '', array('id', 'name'));
-        $this->assertNotContains("2+2 four /* for testquery */", $result);
+        $this->assertStringNotContainsString('2+2 four /* for testquery */', $result);
 
         $bean->field_defs['testquery']['force_exists'] = true;
         $result = $bean->create_new_list_query('', '', array('id', 'name'));
-        $this->assertContains("2+2 four /* for testquery */", $result);
+        $this->assertStringContainsString('2+2 four /* for testquery */', $result);
     }
 }

@@ -53,7 +53,7 @@ class vCardApiTest extends TestCase
         $apiClass = new vCardApi();
         $result = $apiClass->vCardSave($api, $args);
 
-        $this->assertContains('BEGIN:VCARD', $result, 'Failed to get contact vCard.');
+        $this->assertStringContainsString('BEGIN:VCARD', $result);
     }
 
     /**

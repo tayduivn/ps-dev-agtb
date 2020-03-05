@@ -19,6 +19,11 @@ class PostUpgradeAccessTest extends UpgradeTestCase
     protected $test_site_url = '/foo123';
     protected $original_site_url;
 
+    /**
+     * @var SugarUpgradeUpgradeAccessTest
+     */
+    private $upgradeAccess;
+
     protected function setUp() : void
     {
         global $sugar_config;
@@ -107,14 +112,14 @@ EOQ;
     {
         $this->upgradeAccess->testhandleHtaccess();
         $newContent = file_get_contents($this->testHtacessPath);
-        $this->assertContains("# Customization above restrictions", $newContent);
-        $this->assertContains("# Customization below restrictions", $newContent);
-        $this->assertNotContains("# Customization inside restrictions", $newContent);
+        $this->assertStringContainsString("# Customization above restrictions", $newContent);
+        $this->assertStringContainsString("# Customization below restrictions", $newContent);
+        $this->assertStringNotContainsString("# Customization inside restrictions", $newContent);
 
         //Verify that the 6.x sugar directives outside of the sugar block are removed
         $contentsWithoutBlock = $this->getContentsWithoutSugarBlock($this->testHtacessPath);
-        $this->assertNotContains('RewriteEngine On', $contentsWithoutBlock);
-        $this->assertNotContains('Header set Cache-Control "max-age=2592000"', $contentsWithoutBlock);
+        $this->assertStringNotContainsString('RewriteEngine On', $contentsWithoutBlock);
+        $this->assertStringNotContainsString('Header set Cache-Control "max-age=2592000"', $contentsWithoutBlock);
     }
 
     protected function getContentsWithoutSugarBlock($htaccess_file)

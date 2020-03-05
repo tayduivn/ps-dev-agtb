@@ -28,7 +28,6 @@ class Bug67170Test extends TestCase
         SugarTestHelper::setUp('current_user', array(true, 1));
     }
 
-
     protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
@@ -44,7 +43,7 @@ class Bug67170Test extends TestCase
         //simulate call from export_utils to retrieve export query
         $query = $bean->create_export_query('', 'contacts.deleted id = 0');
 
-        $this->assertNotContains('calls_contacts',$query, ' calls_contacts was found in string, extra table joins have been introduced into export query');
-        $this->assertNotContains('opportunities',$query, ' opportunities was found in string, extra table joins have been introduced into export query');
+        $this->assertStringNotContainsString('calls_contacts', $query, ' calls_contacts was found in string, extra table joins have been introduced into export query');
+        $this->assertStringNotContainsString('opportunities', $query, ' opportunities was found in string, extra table joins have been introduced into export query');
     }
 }

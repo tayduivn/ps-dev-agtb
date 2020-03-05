@@ -71,9 +71,9 @@ class SugarLoggerTest extends TestCase
         $logManager->$logLevel($logMessage);
         
         if ($shouldMessageBeWritten) {
-            $this->assertContains($messageWritten, $logMessages);
+            $this->assertStringContainsString($messageWritten, $logMessages);
         } else {
-            $this->assertNotContains($messageWritten, $logMessages);
+            $this->assertStringNotContainsString($messageWritten, $logMessages);
         }
     }
 
@@ -95,8 +95,8 @@ class SugarLoggerTest extends TestCase
         $logManager->assert('this was asserted true',true);
         $logManager->assert('this was asserted false',false);
         
-        $this->assertContains('[DEBUG] this was asserted false', $logMessages);
-        $this->assertNotContains('[DEBUG] this was asserted true', $logMessages);
+        $this->assertStringContainsString('[DEBUG] this was asserted false', $logMessages);
+        $this->assertStringNotContainsString('[DEBUG] this was asserted true', $logMessages);
     }
 
     /**

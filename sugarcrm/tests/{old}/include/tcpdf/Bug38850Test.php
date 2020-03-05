@@ -42,7 +42,7 @@ class Bug38850Test extends TestCase
         SugarTestReflection::callProtectedMethod($pdf, 'openHTMLTagHandler', array(&$dom, 1));
 
         $this->setOutputCallback(function ($output) {
-            $this->assertNotContains('Can Interject Code', $output);
+            $this->assertStringNotContainsString('Can Interject Code', $output);
         });
     }
 }

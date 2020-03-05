@@ -273,16 +273,16 @@ class AdvancedQueryTest extends TestCase
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
         $sqCount->from(BeanFactory::newBean('Accounts'));
-        $this->assertContains('count', $sqCount->compile()->getSQL());
+        $this->assertStringContainsString('count', $sqCount->compile()->getSQL());
 
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
         $sqCount->select(array('name', 'account_type'));
         $sqCount->from(BeanFactory::newBean('Accounts'));
         $sql = $sqCount->compile()->getSQL();
-        $this->assertContains('COUNT(0)', $sql);
-        $this->assertContains('name', $sql);
-        $this->assertContains('account_type', $sql);
+        $this->assertStringContainsString('COUNT(0)', $sql);
+        $this->assertStringContainsString('name', $sql);
+        $this->assertStringContainsString('account_type', $sql);
     }
 
     public function testSelectCountGroupBy()
@@ -290,17 +290,17 @@ class AdvancedQueryTest extends TestCase
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
         $sqCount->from(BeanFactory::newBean('Accounts'));
-        $this->assertContains('count', $sqCount->compile()->getSQL());
+        $this->assertStringContainsString('count', $sqCount->compile()->getSQL());
 
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
         $sqCount->select(array('name', 'account_type'));
         $sqCount->from(BeanFactory::newBean('Accounts'));
         $sql = $sqCount->compile()->getSQL();
-        $this->assertContains('COUNT(0)', $sql);
-        $this->assertContains('name', $sql);
-        $this->assertContains('account_type', $sql);
-        $this->assertContains('GROUP BY', $sql);
+        $this->assertStringContainsString('COUNT(0)', $sql);
+        $this->assertStringContainsString('name', $sql);
+        $this->assertStringContainsString('account_type', $sql);
+        $this->assertStringContainsString('GROUP BY', $sql);
     }
 
     public function testBadFields()
@@ -312,9 +312,9 @@ class AdvancedQueryTest extends TestCase
         $sq->orderBy('yesIAmCertainlyAField');
         $sql = $sq->compile()->getSQL();
 
-        $this->assertNotContains("yesIAmCertainlyAField", $sql);
-        $this->assertNotContains("noWhere", $sql);
-        $this->assertNotContains("notARealField", $sql);
+        $this->assertStringNotContainsString("yesIAmCertainlyAField", $sql);
+        $this->assertStringNotContainsString("noWhere", $sql);
+        $this->assertStringNotContainsString("notARealField", $sql);
     }
 
     public function testUniqueAliases()
@@ -324,7 +324,7 @@ class AdvancedQueryTest extends TestCase
         $sq->from(BeanFactory::newBean('Contacts'));
         $sq->where()->equals("id", "2");
         $sql = $sq->compile()->getSQL();
-        $this->assertcontains('id superAwesomeField', $sql);
+        $this->assertStringContainsString('id superAwesomeField', $sql);
     }
 
     /**
@@ -343,9 +343,12 @@ class AdvancedQueryTest extends TestCase
 
         $sql = $sq->compile()->getSQL();
         // ensure the query looks good
-        $this->assertContains("contacts_cstm.bigname_c", $sql);
-        $this->assertContains("_cstm.bigname_c report_to_bigname", $sql);
-        $this->assertContains('LEFT JOIN contacts_cstm contacts_cstm ON contacts_cstm.id_c = contacts.id', $sql);
+        $this->assertStringContainsString('contacts_cstm.bigname_c', $sql);
+        $this->assertStringContainsString('_cstm.bigname_c report_to_bigname', $sql);
+        $this->assertStringContainsString(
+            'LEFT JOIN contacts_cstm contacts_cstm ON contacts_cstm.id_c = contacts.id',
+            $sql
+        );
         $this->assertRegExp('/LEFT JOIN contacts_cstm jt(\w+)_cstm ON jt\1_cstm.id_c = jt\1\.id/', $sql);
     }
 
@@ -400,7 +403,7 @@ class AdvancedQueryTest extends TestCase
         $sq->where()->equals('sync_contact',1);
         $sql = $sq->compile()->getSQL();
         // the field should not be there now
-        $this->assertContains("id IS NOT NULL", $sql);
+        $this->assertStringContainsString('id IS NOT NULL', $sql);
     }
 
     /**
@@ -416,7 +419,7 @@ class AdvancedQueryTest extends TestCase
         $sq->where()->equals('email_and_name1','Awesome');
         $sql = $sq->compile()->getSQL();
         // the field should not be there now
-        $this->assertNotContains("email_and_name1 = 'Awesome'", $sql);
+        $this->assertStringNotContainsString("email_and_name1 = 'Awesome'", $sql);
     }
 
     public function testRelatedOrderBy()
@@ -462,7 +465,7 @@ class AdvancedQueryTest extends TestCase
         $sq->from(BeanFactory::newBean('Contacts'));
         $sq->orderByRaw("last_name+1", 'DESC');
         $sql = $sq->compile()->getSQL();
-        $this->assertContains("ORDER BY last_name+1 DESC", $sql);
+        $this->assertStringContainsString('ORDER BY last_name+1 DESC', $sql);
     }
 
     public function testGroupByRaw()
@@ -472,7 +475,7 @@ class AdvancedQueryTest extends TestCase
         $sq->from(BeanFactory::newBean("Contacts"));
         $sq->groupByRaw("last_name is awesome");
         $sql = $sq->compile()->getSQL();
-        $this->assertContains("GROUP BY last_name is awesome", $sql);
+        $this->assertStringContainsString('GROUP BY last_name is awesome', $sql);
     }
 
     public function testHavingRaw()
@@ -482,7 +485,7 @@ class AdvancedQueryTest extends TestCase
         $sq->from(BeanFactory::newBean("Contacts"));
         $sq->havingRaw("last_name > 55");
         $sql = $sq->compile()->getSQL();
-        $this->assertContains("HAVING last_name > 55", $sql);
+        $this->assertStringContainsString('HAVING last_name > 55', $sql);
     }
 
     public function testChildJoins()

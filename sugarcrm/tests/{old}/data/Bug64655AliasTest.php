@@ -90,6 +90,6 @@ class Bug64655AliasTest extends TestCase
         $this->assertNotEmpty($account);
 
         // formatted assigned user name must contain the value of custom field
-        $this->assertContains('Custom Value', $account->assigned_user_name);
+        $this->assertStringContainsString('Custom Value', $account->assigned_user_name);
     }
 }

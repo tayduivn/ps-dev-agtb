@@ -34,11 +34,14 @@ class Bug43770Test extends TestCase
      */
     public function testCustomIdName()
     {
-        $this->assertContains('id="Contacts{$Array.assigned_user_name.id_name}"', $this->_fieldOutput);
+        $this->assertStringContainsString(
+            'id="Contacts{$Array.assigned_user_name.id_name}"',
+            $this->_fieldOutput
+        );
     }
 
     public function testCustomIdNameJS()
     {
-        $this->assertContains('"id":"Contactsassigned_user_id"', $this->_fieldOutput);
+        $this->assertStringContainsString('"id":"Contactsassigned_user_id"', $this->_fieldOutput);
     }
 }

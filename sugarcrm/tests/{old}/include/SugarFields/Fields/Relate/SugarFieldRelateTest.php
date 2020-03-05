@@ -99,7 +99,7 @@ class SugarFieldRelateTest extends TestCase
 		$displayParams = array();
 		$sfr = new SugarFieldRelate('relate');
 		$output = $sfr->getSearchViewSmarty(array(), $vardef, $displayParams, 0);
-		$this->assertContains('name="{$Array.assigned_user_id', $output, 'Testing that the name property is in the form for thr assigned_user_id field');
+        $this->assertStringContainsString('name="{$Array.assigned_user_id', $output);
 		
 		$vardef =  array (
 				    'name' => 'account_name',
@@ -118,11 +118,10 @@ class SugarFieldRelateTest extends TestCase
 				   	 'unified_search' => true,
 				   	 'required' => true,
 				   	 'importable' => 'required',
-				     'required' => true,
 				  );
 		$displayParams = array();
 		$sfr = new SugarFieldRelate('relate');
 		$output = $sfr->getSearchViewSmarty(array(), $vardef, $displayParams, 0);
-		$this->assertNotContains('name="{$Array.account_id', $output, 'Testing that the name property for account_id is not in the form.');
+        $this->assertStringNotContainsString('name="{$Array.account_id', $output);
     }
 }

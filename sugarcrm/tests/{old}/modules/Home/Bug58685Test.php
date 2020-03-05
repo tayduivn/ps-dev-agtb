@@ -57,6 +57,9 @@ class Bug58685Test extends TestCase
         $view = new HomeViewList();
         $view->suppressDisplayErrors = true;
         $view->processMaxPostErrors();
-        $this->assertContains('There was an error during your upload', join('\n', $view->errors));
+        $this->assertContains(
+            'ERROR: There was an error during your upload, please contact an administrator for help.',
+            $view->errors
+        );
     }
 }

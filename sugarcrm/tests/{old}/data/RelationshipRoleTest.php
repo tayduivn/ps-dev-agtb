@@ -99,8 +99,8 @@ class RelationshipRoleTest extends TestCase
             'left_join_table_link_alias' => "jtl_2",
             'primary_table_name' => "jt2",
         ));
-        $this->assertContains("jt1.parent_type = 'Opportunities'", $join);
-        $this->assertContains("jt1.parent_id=jt2.id", $join);
+        $this->assertStringContainsString("jt1.parent_type = 'Opportunities'", $join);
+        $this->assertStringContainsString("jt1.parent_id=jt2.id", $join);
         $result = $db->query("SELECT count(jt1.id) as count FROM tasks jt1 $join WHERE jt1.id='{$task->id}'");
         $this->assertTrue($result != false, "One2M getJoin returned invalid SQL");
         //sqlsrv_num_rows seems buggy
@@ -120,8 +120,8 @@ class RelationshipRoleTest extends TestCase
             'left_join_table_link_alias' => "jtl_2",
             'primary_table_name' => "jt1",
         ));
-        $this->assertContains("jt2.parent_type = 'Opportunities'", $join);
-        $this->assertContains("jt1.id=jt2.parent_id", $join);
+        $this->assertStringContainsString("jt2.parent_type = 'Opportunities'", $join);
+        $this->assertStringContainsString("jt1.id=jt2.parent_id", $join);
         $result = $db->query("SELECT count(jt1.id) as count FROM opportunities jt1 $join WHERE jt1.id='{$opp->id}'");
         $this->assertTrue($result != false, "One2M getJoin returned invalid SQL");
 

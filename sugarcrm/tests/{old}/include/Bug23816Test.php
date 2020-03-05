@@ -39,6 +39,6 @@ class Bug23816Test extends TestCase
         unset($_REQUEST['return_id']);
         unset($_REQUEST['offset']);
         
-        $this->assertContains('offset=4',$url,"Offset was not included in the redirect url");     
+        $this->assertStringContainsString('offset=4', $url);
     }
 }

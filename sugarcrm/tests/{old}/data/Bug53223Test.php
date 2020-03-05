@@ -154,7 +154,7 @@ class Bug53223Test extends TestCase
         $subpanel->setTemplateFile('include/SubPanel/SubPanelDynamic.html');
         $subpanel->display();
         $actual = $this->getActualOutput();
-        $this->assertContains($objAccount->name, $actual, 'Account name is not displayed in subpanel of parent account');
+        $this->assertStringContainsString($objAccount->name, $actual);
 
         ob_clean();
 

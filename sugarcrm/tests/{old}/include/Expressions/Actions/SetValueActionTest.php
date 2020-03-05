@@ -37,7 +37,7 @@ class SetValueActionTest extends TestCase
         $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
 
         $value = SugarTestReflection::getProtectedValue($action, 'expression');
-        $this->assertNotContains("\n", $value);
+        $this->assertStringNotContainsString("\n", $value);
     }
 
     public function testGetJavascriptFireReturnsTheCorrectMethod()

@@ -54,7 +54,7 @@ FROM t6_test61011
 AND  t6_test61011.deleted=0
 END;
         SugarTestReflection::callProtectedMethod($GLOBALS['db'], 'addDistinctClause', array(&$query));
-        $this->assertContains("SELECT sum(", $query);
-        $this->assertContains("group by tst.team_set_id", $query);
+        $this->assertStringContainsString('SELECT sum(', $query);
+        $this->assertStringContainsString('group by tst.team_set_id', $query);
     }
 }

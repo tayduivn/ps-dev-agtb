@@ -298,27 +298,45 @@ class ListViewDisplayTest extends TestCase
     {
         $output = $this->_lvd->buildSelectLink();
         $output = implode($output['buttons'],"");
-        $this->assertContains("<a id='select_link'",$output);
-        $this->assertContains("sListView.check_all(document.MassUpdate, \"mass[]\", true, 0)",$output);
-        $this->assertContains("sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,0);",$output);
+        $this->assertStringContainsString("<a id='select_link'", $output);
+        $this->assertStringContainsString(
+            'sListView.check_all(document.MassUpdate, "mass[]", true, 0)',
+            $output
+        );
+        $this->assertStringContainsString(
+            'sListView.check_entire_list(document.MassUpdate, "mass[]",true,0);',
+            $output
+        );
     }
 
     public function testBuildSelectLinkWithParameters()
     {
         $output = $this->_lvd->buildSelectLink('testtest',1,2);
         $output = implode($output['buttons'],"");
-        $this->assertContains("<a id='testtest'",$output);
-        $this->assertContains("sListView.check_all(document.MassUpdate, \"mass[]\", true, 2)",$output);
-        $this->assertContains("sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,1);",$output);
+        $this->assertStringContainsString("<a id='testtest'", $output);
+        $this->assertStringContainsString(
+            'sListView.check_all(document.MassUpdate, "mass[]", true, 2)',
+            $output
+        );
+        $this->assertStringContainsString(
+            'sListView.check_entire_list(document.MassUpdate, "mass[]",true,1);',
+            $output
+        );
     }
 
     public function testBuildSelectLinkWithPageTotalLessThanZero()
     {
         $output = $this->_lvd->buildSelectLink('testtest',1,-1);
         $output = implode($output['buttons'],"");
-        $this->assertContains("<a id='testtest'",$output);
-        $this->assertContains("sListView.check_all(document.MassUpdate, \"mass[]\", true, 1)",$output);
-        $this->assertContains("sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,1);",$output);
+        $this->assertStringContainsString("<a id='testtest'", $output);
+        $this->assertStringContainsString(
+            'sListView.check_all(document.MassUpdate, "mass[]", true, 1)',
+            $output
+        );
+        $this->assertStringContainsString(
+            'sListView.check_entire_list(document.MassUpdate, "mass[]",true,1);',
+            $output
+        );
     }
 
     public function testBuildExportLink()
@@ -327,7 +345,10 @@ class ListViewDisplayTest extends TestCase
         $this->_lvd->seed->module_dir = 'testtest';
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildExportLink');
 
-        $this->assertContains("return sListView.send_form(true, 'testtest', 'index.php?entryPoint=export',",$output);
+        $this->assertStringContainsString(
+            "return sListView.send_form(true, 'testtest', 'index.php?entryPoint=export',",
+            $output
+        );
     }
 
     public function testBuildMassUpdateLink()
@@ -379,7 +400,7 @@ class ListViewDisplayTest extends TestCase
 
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', array(5));
 
-        $this->assertContains(', \'foobarfoobar\', \'5\', ',$output);
+        $this->assertStringContainsString(", 'foobarfoobar', '5', ", $output);
 
         unset($GLOBALS['dictionary']['foobar']);
     }
@@ -403,7 +424,7 @@ class ListViewDisplayTest extends TestCase
 
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', array(5));
 
-        $this->assertContains('sListView.use_external_mail_client',$output);
+        $this->assertStringContainsString('sListView.use_external_mail_client', $output);
 
         unset($GLOBALS['dictionary']['foobar']);
         unset($_REQUEST['module']);
@@ -413,19 +434,17 @@ class ListViewDisplayTest extends TestCase
     {
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildDeleteLink');
 
-        $this->assertContains("return sListView.send_mass_update",$output);
+        $this->assertStringContainsString('return sListView.send_mass_update', $output);
     }
 
     public function testBuildSelectedObjectsSpan()
     {
         $output = $this->_lvd->buildSelectedObjectsSpan(1,1);
 
-        $this->assertContains("<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' id='selectCountTop' readonly name='selectCount[]' value='1' />",$output);
-    }
-
-    public function testBuildMergeDuplicatesLinkWithNoAccess()
-    {
-        $this->markTestIncomplete('This test has not been implemented yet.');
+        $this->assertStringContainsString(
+            "<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' id='selectCountTop' readonly name='selectCount[]' value='1' />",
+            $output
+        );
     }
 
     public function testBuildMergeDuplicatesLinkWhenModuleDoesNotHaveItEnabled()
@@ -449,7 +468,7 @@ class ListViewDisplayTest extends TestCase
 
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeDuplicatesLink');
 
-        $this->assertContains('"foobarfoobar", "");}', htmlspecialchars_decode($output));
+        $this->assertStringContainsString('"foobarfoobar", "");}', htmlspecialchars_decode($output));
     }
 
     public function testBuildMergeDuplicatesLinkBuildsReturnString()
@@ -469,7 +488,7 @@ class ListViewDisplayTest extends TestCase
 
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeDuplicatesLink');
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             '"foobarfoobar", "&return_module=Accounts&return_action=bar&return_id=1");}',
             htmlspecialchars_decode($output)
         );
@@ -539,7 +558,7 @@ class ListViewDisplayTest extends TestCase
         sugar_cache_put('admin_settings_cache',$settings_cache);
 
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink', array(array('foobarfoobar' => 'foobarfoobar')));
-        $this->assertContains("index.php?action=index&module=MailMerge&entire=true",$output);
+        $this->assertStringContainsString('index.php?action=index&module=MailMerge&entire=true', $output);
 
         sugar_cache_clear('admin_settings_cache');
     }
@@ -552,8 +571,8 @@ class ListViewDisplayTest extends TestCase
 
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildTargetList');
 
-        $this->assertContains("input.setAttribute ( 'name' , 'module' );			    input.setAttribute ( 'value' , 'foobarfoobar' );",$output);
-        $this->assertContains("input.setAttribute ( 'name' , 'current_query_by_page' );			    input.setAttribute ( 'value', '".base64_encode(serialize($_REQUEST))."' );",$output);
+        $this->assertStringContainsString("input.setAttribute ( 'name' , 'module' );			    input.setAttribute ( 'value' , 'foobarfoobar' );", $output);
+        $this->assertStringContainsString("input.setAttribute ( 'name' , 'current_query_by_page' );			    input.setAttribute ( 'value', '" . base64_encode(serialize($_REQUEST)) . "' );", $output);
     }
 
     public function testDisplayEndWhenNotShowingMassUpdateForm()

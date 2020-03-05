@@ -101,8 +101,8 @@ class PasswordApiTest extends TestCase
                 $GLOBALS['sugar_config']['passwordsetting']['lostpasswordtmpl'],
                 $this->logicalAnd(
                     $this->arrayHasKey('url'),
-                    $this->contains(true), // Link.
-                    $this->contains('') // Password.
+                    $this->containsEqual(true), // Link.
+                    $this->containsEqual('') // Password.
                 )
             )
             ->will($this->returnValue(array('status' => true)));

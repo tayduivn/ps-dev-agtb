@@ -51,6 +51,7 @@ class Bug39682Test extends TestCase
         );
         $aCase->new_field_here_c = "^Analyst^,^Competitor^,^Customer^,^Integrator^";
         $resultBody = reconstruct_target_body($aCase, $targetBody, $componentArray);
-        $this->assertNotContains('^,^', $resultBody);
+
+        $this->assertStringNotContainsString('^,^', $resultBody);
 	}
 }

@@ -105,11 +105,8 @@ class Bug45287_2Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-
     public function testRetrieveByExactDate()
     {
-        global $current_user;
-
         $_REQUEST = $_POST = array("module" => "Meetings",
                                    "action" => "index",
                                    "searchFormTab" => "basic_search",
@@ -137,14 +134,12 @@ class Bug45287_2Test extends TestCase
         // Asking for meeting of 14 July 2011, I expect to search (GMT) from 14 July at 07:00 until 15 July at 07:00 (excluded)
         $expectedWhere = "meetings.date_start >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDates['start']), 'datetime') .
         	" AND meetings.date_start <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDates['end']), 'datetime');
-        $this->assertContains($expectedWhere, $w[0]);
-    }
 
+        $this->assertStringContainsString($expectedWhere, $w[0]);
+    }
 
     public function testRetrieveByDaterange()
     {
-        global $current_user;
-
         $_REQUEST = $_POST = array("module" => "Meetings",
                                    "action" => "index",
                                    "searchFormTab" => "basic_search",
@@ -174,6 +169,7 @@ class Bug45287_2Test extends TestCase
         // Asking for meeting between 13 and 14 July 2011, I expect to search from 13 July at 07:00 until 15 July at 07:00 (excluded)
         $expectedWhere = "meetings.date_start >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDatesStart['start']), 'datetime') .
         	" AND meetings.date_start <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDatesEnd['end']), 'datetime');
-        $this->assertContains($expectedWhere, $w[0]);
+
+        $this->assertStringContainsString($expectedWhere, $w[0]);
     }
 }

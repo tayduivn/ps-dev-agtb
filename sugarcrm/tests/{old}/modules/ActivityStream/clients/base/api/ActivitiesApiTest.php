@@ -50,8 +50,8 @@ class ActivitiesApiTest extends TestCase
             )
         );
         $sql = $query->compile()->getSQL();
-        $this->assertContains('activities.parent_type IS NULL', $sql);
-        $this->assertContains('activities_users.parent_type = ?', $sql);
+        $this->assertStringContainsString('activities.parent_type IS NULL', $sql);
+        $this->assertStringContainsString('activities_users.parent_type = ?', $sql);
     }
 
     /**

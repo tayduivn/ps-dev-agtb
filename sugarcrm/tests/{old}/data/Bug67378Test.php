@@ -67,6 +67,6 @@ class Bug67378Test extends TestCase
         $this->assertEquals('whatever.last_name', $relate_query['fields']['assigned_user_name']);
 
         // sorting field should be in the select array
-        $this->assertContains('whatever.last_name assigned_user_name', $relate_query['select']);
+        $this->assertStringContainsString('whatever.last_name assigned_user_name', $relate_query['select']);
     }
 }

@@ -31,6 +31,6 @@ class Bug41615Test extends TestCase
 		$params['massupdate'] = 1;
 		
         $query = $emailMan->create_new_list_query('date_entered DESC', '', $filter, $params);
-		$this->assertContains('ORDER BY emailman.date_entered', $query, 'Assert that the ORDER BY clause includes the table name'); 
+        $this->assertStringContainsString('ORDER BY emailman.date_entered', $query);
     }
 }

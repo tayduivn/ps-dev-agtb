@@ -39,6 +39,6 @@ class Bug43905Test extends TestCase
 
         $workFlowGlue = new WorkFlowGlue();
         $result = $workFlowGlue->glue_normal_expression($object);
-        $this->assertContains($myFieldEnc, $result, 'Password in condition must be encrypted');
+        $this->assertStringContainsString($myFieldEnc, $result);
     }
 }

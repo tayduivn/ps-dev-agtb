@@ -52,6 +52,6 @@ class Bug52610Test extends TestCase
         $field->default_value = '';
         $field->no_default = 1;
         $query = $field->get_db_add_alter_table('bug52610_cstm');
-        $this->assertNotContains(" DEFAULT ", $query, "DEFAULT part is present in query");
+        $this->assertStringNotContainsString(' DEFAULT ', $query);
     }
 }

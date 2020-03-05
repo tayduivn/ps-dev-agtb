@@ -61,7 +61,7 @@ class Bug65942Test extends TestCase
         $generatedLabels = file_get_contents($this->path . '/language/' . $labelDefinitions[0]['module'] . '.php');
         $this->files[] = $this->path . '/language/' . $labelDefinitions[0]['module'] . '.php';
 
-        $this->assertContains($testLabel, $generatedLabels);
+        $this->assertStringContainsString($testLabel, $generatedLabels);
     }
 
     public static function getLabelDefinitions()

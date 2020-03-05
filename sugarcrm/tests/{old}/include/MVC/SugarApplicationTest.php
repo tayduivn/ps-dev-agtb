@@ -306,7 +306,7 @@ class SugarApplicationTest extends TestCase
 
         $url = $method->invoke($this->_app);
 
-        $this->assertContains("index.php?action=sidecar#Home", $url);
+        $this->assertStringContainsString('index.php?action=sidecar#Home', $url);
     }
 
     /**
@@ -322,7 +322,7 @@ class SugarApplicationTest extends TestCase
         
         $url = $method->invoke($this->_app);
 
-        $this->assertContains("index.php?module=Home&action=index", $url);
+        $this->assertStringContainsString('index.php?module=Home&action=index', $url);
     }
 
     /**
@@ -337,7 +337,7 @@ class SugarApplicationTest extends TestCase
         $_POST = $post_data;
         $url = $method->invoke($this->_app, $add_empty);
 
-        $this->assertContains($result_query, $url);
+        $this->assertStringContainsString($result_query, $url);
     }
 
     function providerGetLoginRedirect() {

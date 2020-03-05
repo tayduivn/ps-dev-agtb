@@ -150,7 +150,7 @@ class StateAwareRebuildTest extends TestCase
         list($result, $message) = $stateAwareRebuild();
 
         $this->assertFalse($result);
-        $this->assertContains('Something went wrong', $message);
+        $this->assertStringContainsString('Something went wrong', $message);
         $this->assertEquals('team_sets_users_1', $state->getActiveTable());
         $this->assertFalse($state->isRebuildRunning());
     }

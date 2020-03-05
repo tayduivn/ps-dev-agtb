@@ -130,7 +130,7 @@ class PipelineChartApiTest extends TestCase
         /* @var $sq SugarQuery */
         $sql = $sq->compile()->getSQL();
 
-        $this->assertContains('likely_case', $sql);
+        $this->assertStringContainsString('likely_case', $sql);
     }
 
     public function testBuildQueryContainsAllReportingUsers()
@@ -170,7 +170,7 @@ class PipelineChartApiTest extends TestCase
         /* @var $sq SugarQuery */
         $sql = $sq->compile()->getSQL();
 
-        $this->assertContains("('test','1','2')", $sql);
+        $this->assertStringContainsString("('test','1','2')", $sql);
     }
 
     public function testPipelineReturnsCorrectData()

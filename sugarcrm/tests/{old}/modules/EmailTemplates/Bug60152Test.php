@@ -34,7 +34,7 @@ class Bug60152Test extends TestCase
         $bean = new EmailTemplate();
         $bean->body_html = $html;
         $bean->cleanBean();
-        $this->assertContains($needle, $bean->body_html);
+        $this->assertStringContainsString($needle, $bean->body_html);
     }
 
     static public function dataProvider()

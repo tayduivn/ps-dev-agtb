@@ -67,8 +67,8 @@ class Bug53218Test extends TestCase
         $_GET['opener_id']= 'rel_module';
         $expression = new Expression();
         $relations = $expression->get_selector_array('field', '', 'Products');
-        $this->assertContains('Users (products_users_1)', $relations);
-        $this->assertContains('products_users_1', $relations);
+        $this->assertStringContainsString('Users (products_users_1)', $relations);
+        $this->assertStringContainsString('products_users_1', $relations);
     }
 
     /**

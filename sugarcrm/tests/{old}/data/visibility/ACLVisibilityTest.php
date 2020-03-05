@@ -162,8 +162,8 @@ class ACLVisibilityTest extends TestCase
 
         $GLOBALS['current_user'] = $oldCurrentUser;
 
-        $this->assertContains("l1.assigned_user_id", $query);
-        $this->assertContains("l1.acl_team_set_id", $query);
+        $this->assertStringContainsString('l1.assigned_user_id', $query);
+        $this->assertStringContainsString('l1.acl_team_set_id', $query);
     }
     //END SUGARCRM flav=ent ONLY
 }

@@ -69,11 +69,9 @@ class iCalTest extends TestCase
         $iCal = new iCal();
         $iCalString = $iCal->getVcalIcal($GLOBALS['current_user'], null);
 
-        // echo "***********BEGIN iCalString*************\n".$iCalString."***********END iCalString***************\n";
-
-        $this->assertContains("VeryImportantMeeting", $iCalString, "Cannot find VEVENT: VeryImportantMeeting");
-        $this->assertContains("VeryImportantTask", $iCalString, "Cannot find VTODO: VeryImportantTask");
-        $this->assertContains("VeryImportantProjectTask", $iCalString, "Cannot find VTODO: VeryImportantProjectTask");
+        $this->assertStringContainsString('VeryImportantMeeting', $iCalString);
+        $this->assertStringContainsString('VeryImportantTask', $iCalString);
+        $this->assertStringContainsString('VeryImportantProjectTask', $iCalString);
     }
 
     public function testiCalNewline()
@@ -82,7 +80,7 @@ class iCalTest extends TestCase
 
         $desc = $this->grabiCalField($res, "DESCRIPTION");
         // Test to see if there are two newlines after url for description
-        $this->assertContains("http://www.sugarcrm.com/\r\n\r\n", $desc);
+        $this->assertStringContainsString("http://www.sugarcrm.com/\r\n\r\n", $desc);
     }
 
     public function testiCalEmptyJoinURL()
@@ -92,7 +90,7 @@ class iCalTest extends TestCase
         $desc = $this->grabiCalField($res, "DESCRIPTION");
 
         // Test to see if there are no newlines for empty url for description
-        $this->assertNotContains("\\n\\n", $desc);
+        $this->assertStringNotContainsString("\\n\\n", $desc);
     }
 
     private function grabiCalField($iCal, $field)

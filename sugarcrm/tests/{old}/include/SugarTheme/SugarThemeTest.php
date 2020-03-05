@@ -197,7 +197,10 @@ class SugarThemeTest extends TestCase
         // check two definitely should hit cache
         $this->assertRegExp('/style\.css\?/',$this->_themeObject->getCSSURL('style.css'));
         // check three for the jspath not being added
-        $this->assertNotContains('?',$this->_themeObject->getCSSURL('style.css',false));
+        $this->assertStringNotContainsString(
+            '?',
+            $this->_themeObject->getCSSURL('style.css', false)
+        );
     }
 
     public function testGetJS()
@@ -252,7 +255,10 @@ class SugarThemeTest extends TestCase
         // check two definitely should hit cache
         $this->assertRegExp('/style-min\.js\?/',$this->_themeObject->getJSURL('style.js'));
         // check three for the jspath not being added
-        $this->assertNotContains('?',$this->_themeObject->getJSURL('style.js',false));
+        $this->assertStringNotContainsString(
+            '?',
+            $this->_themeObject->getJSURL('style.js', false)
+        );
     }
 
     public function testGetImageURL()
@@ -311,7 +317,10 @@ class SugarThemeTest extends TestCase
         // check two definitely should hit cache
         $this->assertRegExp('/Accounts\.gif\?/',$this->_themeObject->getImageURL('Accounts.gif'));
         // check three for the jspath not being added
-        $this->assertNotContains('?',$this->_themeObject->getImageURL('Accounts.gif',false));
+        $this->assertStringNotContainsString(
+            '?',
+            $this->_themeObject->getImageURL('Accounts.gif', false)
+        );
     }
 
     public function testGetImageURLWithParentTheme()
@@ -374,9 +383,10 @@ class SugarThemeTest extends TestCase
             $this->_themeObjectChild->getImageURL('Accounts.gif',false),
             $images['Accounts.gif']);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             $this->_themeObject->getImagePath(),
-            $images['Accounts.gif']);
+            $images['Accounts.gif']
+        );
     }
 
     public function testGetImageSpecifyingWidthAndHeightAndOtherAttributes()

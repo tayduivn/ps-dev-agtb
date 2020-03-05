@@ -148,11 +148,11 @@ class TeamBasedACLExportApiTest extends TestCase
             array('module' => 'Accounts', 'record_list_id' => $this->recordListId)
         );
 
-        $this->assertContains($this->beanTBA->id, $result);
-        $this->assertNotContains($this->beanNotTBA->id, $result);
+        $this->assertStringContainsString($this->beanTBA->id, $result);
+        $this->assertStringNotContainsString($this->beanNotTBA->id, $result);
 
-        $this->assertContains($this->teamSetUserIn->id, $result);
-        $this->assertContains($this->teamUserIn->name, $result);
+        $this->assertStringContainsString($this->teamSetUserIn->id, $result);
+        $this->assertStringContainsString($this->teamUserIn->name, $result);
     }
 
     /**

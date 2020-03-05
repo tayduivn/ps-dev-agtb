@@ -39,7 +39,10 @@ class UpgradeCustomTemplateMetaTest extends TestCase
         //Load file
         require('custom/modules/Calls/metadata/editviewdefs.php');
 
-        $this->assertNotContains('forms[0]', $viewdefs['Calls']['EditView']['templateMeta']['form']['buttons'][0]['customCode'], "forms[0] did not get replaced");
+        $this->assertStringNotContainsString(
+            'forms[0]',
+            $viewdefs['Calls']['EditView']['templateMeta']['form']['buttons'][0]['customCode']
+        );
     }
 
     /**
@@ -53,7 +56,10 @@ class UpgradeCustomTemplateMetaTest extends TestCase
         //Load file
         require('custom/modules/Meetings/metadata/editviewdefs.php');
 
-        $this->assertNotContains('this.form.', $viewdefs['Meetings']['EditView']['templateMeta']['form']['buttons'][0]['customCode'], "this.form did not get replaced");
+        $this->assertStringNotContainsString(
+            'this.form.',
+            $viewdefs['Meetings']['EditView']['templateMeta']['form']['buttons'][0]['customCode']
+        );
     }
 
 

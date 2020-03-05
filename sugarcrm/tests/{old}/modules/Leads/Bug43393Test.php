@@ -47,8 +47,8 @@ class Bug43393Test extends TestCase
 
         // we don't want leads or users to show up in the list
         $this->setOutputCallback(function ($output) {
-            $this->assertNotContains('/Leads<\/option>', $output);
-            $this->assertNotContains('/Users<\/option>', $output);
+            $this->assertStringNotContainsString('/Leads<\/option>', $output);
+            $this->assertStringNotContainsString('/Users<\/option>', $output);
         });
 
         // cleanup

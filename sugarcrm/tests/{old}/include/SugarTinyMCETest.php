@@ -84,7 +84,7 @@ class SugarTinyMCETest extends TestCase
 
     public function testCheckValidCustomButtonOverrdide()
     {
-        $this->assertContains("testcase", self::$MCE, "TinyMCE custom button not found.");
+        $this->assertStringContainsString("testcase", self::$MCE);
     }
 
     public function testCheckInvalidCustomButtonOverrdide()
@@ -98,7 +98,7 @@ class SugarTinyMCETest extends TestCase
 
     public function testCheckValidDefaultOverrdide()
     {
-        $this->assertContains("download", self::$MCE, "TinyMCE custom config not found.");
+        $this->assertStringContainsString('download', self::$MCE);
     }
 
     public function testCheckInvalidDefaultOverrdide()

@@ -142,10 +142,10 @@ class ImportFormsTest extends TestCase
 
 
         $string = str_ireplace('</select>','<option value="">'.$app_strings['LBL_NONE'].'</option></select>',getCurrencyDropDown($focus, 'currency_id', '', 'EditView'));
-        $this->assertContains($string,$html,"Failed to find string '$string' in '$html'");
+        $this->assertStringContainsString($string, $html, "Failed to find string '$string' in '$html'");
 
         $string = "<script>function CurrencyConvertAll() { return; }</script>";
-        $this->assertContains($string,$html,"Failed to find string '$string' in '$html'");
+        $this->assertStringContainsString($string, $html, "Failed to find string '$string' in '$html'");
     }
 
     public function testGetControlVardef()
@@ -182,6 +182,6 @@ class ImportFormsTest extends TestCase
         global $timedate;
         $string = '", "' . $timedate->get_user_time_format() . '", "';
 
-        $this->assertContains($string, $html);
+        $this->assertStringContainsString($string, $html);
     }
 }

@@ -113,7 +113,7 @@ class SugarWidgetReportFieldTest extends TestCase
 
         $output = $sugarWidget->queryOrderBy($layoutDef);
 
-        $this->assertContains($expected, $output, 'Order by generated improperly');
+        $this->assertStringContainsString($expected, $output);
     }
 
     public static function queryOrderByDataProvider()

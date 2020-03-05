@@ -2052,6 +2052,7 @@ abstract class UpgradeDriver
  * Base class for upgrade scripts
  *
  * @property DBManager db
+ * @property array context
  */
 abstract class UpgradeScript
 {

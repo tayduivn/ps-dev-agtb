@@ -14,6 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 class CronRemoteTest extends TestCase
 {
+    /**
+     * @var SugarCronRemoteJobs
+     */
+    private $jq;
+
     public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -133,6 +138,6 @@ class CronRemoteTest extends TestCase
         $job->retrieve($jobid);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        $this->assertContains('This is not the server you are looking for', $job->message, "Wrong message");
+        $this->assertStringContainsString('This is not the server you are looking for', $job->message);
     }
 }

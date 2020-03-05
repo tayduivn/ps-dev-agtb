@@ -39,10 +39,9 @@ class Bug48616Test extends TestCase
 
         $result = SugarTestReflection::callProtectedMethod($widget, 'expandDate', array('Today'));
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             $timedate->asDbDate($timedate->getNow(true)),
-            $result,
-            "'Today' macro was not processed properly by expandDate()"
+            $result
         );
     }
 }

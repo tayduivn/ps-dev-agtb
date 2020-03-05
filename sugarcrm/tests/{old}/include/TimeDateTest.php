@@ -1085,7 +1085,7 @@ class TimeDateTest extends TestCase
 
         $value = $this->time_date->fromUserType($date, $type, $user);
 
-        $this->assertContains($expected, $value->$function());
+        $this->assertStringContainsString($expected, $value->$function());
     }
 
     public static function fromUserTypeDataProvider()

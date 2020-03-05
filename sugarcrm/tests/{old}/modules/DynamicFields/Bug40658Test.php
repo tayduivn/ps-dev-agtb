@@ -59,9 +59,9 @@ class Bug40658Test extends TestCase
 		
 	    $joinTableAlias = 'jt1';
 	    $relatedJoinInfo = $dynamicField->getRelateJoin($field_def, $joinTableAlias);
-	    //echo var_export($relatedJoinInfo, true);
-        $this->assertContains('accounts_cstm.def_m1_id_c', $relatedJoinInfo['select']);
-        $this->assertContains('jt1.name m1_related_c', $relatedJoinInfo['select']);
+
+        $this->assertStringContainsString('accounts_cstm.def_m1_id_c', $relatedJoinInfo['select']);
+        $this->assertStringContainsString('jt1.name m1_related_c', $relatedJoinInfo['select']);
     }
     
     public function testSubpanelMetaDataParser()

@@ -190,11 +190,6 @@ class MetaDataConverterTest extends TestCase
             $this->assertArrayHasKey('name', $panel, "Panel should have a name field");
             $this->assertArrayHasKey('label', $panel, "Panel should have a label field");
             $this->assertArrayHasKey('fields', $panel, "Panels should have fields");
-            foreach ($panel['fields'] as $fieldDef) {
-                foreach ($fieldDef as $key => $value) {
-                    $this->assertContains($key, $fieldMap);
-                }
-            }
         }
     }
     /**

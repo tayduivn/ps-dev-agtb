@@ -94,7 +94,7 @@ class Bug36329Test extends TestCase
         $popup->bean = new Account();
 
         $this->setOutputCallback(function ($output) {
-            $this->assertNotContains('Perform a search using the search form above', $output);
+            $this->assertStringNotContainsString('Perform a search using the search form above', $output);
         });
 
         $popup->display();

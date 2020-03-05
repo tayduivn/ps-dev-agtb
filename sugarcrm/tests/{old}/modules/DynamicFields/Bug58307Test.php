@@ -43,7 +43,10 @@ class Bug58307Test extends TestCase
         
         // Inspect the layout for things we expect. Yes, this is kinda not 
         // scientific but to support varies builds this needs to happen this way.
-        $this->assertContains('function forceRange(', $layout, "Layout does not contain expected known function string forceRange");
-        $this->assertContains("<input type='text' name='default' id='default' value='' maxlength='30'>", $layout, "Layout does not contain expected known function call");
+        $this->assertStringContainsString('function forceRange(', $layout);
+        $this->assertStringContainsString(
+            "<input type='text' name='default' id='default' value='' maxlength='30'>",
+            $layout
+        );
     }
 }

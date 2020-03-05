@@ -176,7 +176,7 @@ class GlobalSearchTest extends TestCase
         $gsMock = $this->getGlobalSearchMock(['buildSearchFields']);
         $gsMock->expects($this->any())
             ->method('buildSearchFields')
-            ->with($this->logicalNot($this->contains('Tags')))
+            ->with($this->logicalNot($this->containsEqual('Tags')))
             ->willReturn($sfs);
 
         $containerMock = $this->getMockBuilder(Container::class)

@@ -58,7 +58,7 @@ class Bug25736ExportTest extends TestCase
         // Export the record
         $content = export($bean->module_name, [$bean->id], false, false);
 
-        $this->assertContains($expected, $content, 'Email addresses are not properly exported.');
+        $this->assertStringContainsString($expected, $content);
     }
 
     /**

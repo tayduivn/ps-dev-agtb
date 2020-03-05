@@ -12,7 +12,9 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\ReportSchedules;
 
+use DBManager;
 use PHPUnit\Framework\TestCase;
+use ReportSchedule;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -22,51 +24,28 @@ class ReportScheduleTest extends TestCase
 {
     /**
      * @covers ::getQuery
-     * @dataProvider providerTestGetQuery
      */
-    public function testGetQuery($scheduleType, $expected)
+    public function testGetQueryPro()
     {
-        $mockObject = $this->getReportsScheduleMock();
-        $mockDb = $this->createMock(\DBManager::class);
-        $mockObject->db = $mockDb;
-        $result = TestReflection::callProtectedMethod($mockObject, 'getQuery', array('test_id', $scheduleType));
-        call_user_func(array($this, $expected['assert']), $expected['subString'], $result);
+        $this->assertStringContainsString('reportschedules_users', $this->getQuery('pro'));
     }
 
     /**
-     * @return array
+     * @covers ::getQuery
      */
-    public function providerTestGetQuery()
+    public function testGetQueryEnt()
     {
-        return array(
-            // pro
-            array(
-                'pro',
-                array(
-                    'assert' => 'assertContains',
-                    'subString' => 'reportschedules_users',
-                ),
-            ),
-            // ent
-            array(
-                'ent',
-                array(
-                    'assert' => 'assertNotContains',
-                    'subString' => 'reportschedules_users',
-                ),
-            ),
-        );
+        $this->assertStringNotContainsString('reportschedules_users', $this->getQuery('ent'));
     }
 
     /**
-     * @param null|array $methods
-     * @return \ReportsSchedule
+     * @covers ::getQuery
      */
-    protected function getReportsScheduleMock($methods = null)
+    private function getQuery(string $scheduleType)
     {
-        return $this->getMockBuilder('ReportSchedule')
-            ->disableOriginalConstructor()
-            ->setMethods($methods)
-            ->getMock();
+        $schedule = $this->createMock(ReportSchedule::class);
+        $schedule->db = $this->createMock(DBManager::class);
+
+        return TestReflection::callProtectedMethod($schedule, 'getQuery', array('test_id', $scheduleType));
     }
 }

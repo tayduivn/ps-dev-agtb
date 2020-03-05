@@ -148,7 +148,7 @@ class Bug46763Test extends TestCase
         // ensure that all localized values are contained within drop down list
         foreach ($this->modules as $singular)
         {
-            $this->assertContains($singular, $vars['DROPDOWN']);
+            $this->assertStringContainsString($singular, $vars['DROPDOWN']);
         }
     }
 }

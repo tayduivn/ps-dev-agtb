@@ -52,7 +52,7 @@ class Bug43452Test extends TestCase
         $popup->searchForm->searchFields = $_searchFields['Leads'];
         $tWhere = $popup->_get_where_clause();
 
-        $this->assertContains('(leads.converted = 0 OR leads.converted IS NULL)', $tWhere);
-        $this->assertContains($db->getLikeSQL('leads.first_name', 'Fabio%'), $tWhere);
+        $this->assertStringContainsString('(leads.converted = 0 OR leads.converted IS NULL)', $tWhere);
+        $this->assertStringContainsString($db->getLikeSQL('leads.first_name', 'Fabio%'), $tWhere);
     }
 }

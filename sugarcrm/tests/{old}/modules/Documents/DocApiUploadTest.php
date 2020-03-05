@@ -65,7 +65,10 @@ class DocApiUploadTest extends TestCase
         $this->assertEquals('test.txt', $result['record']['filename'], "Wrong filename");
         $this->assertNotEmpty($result['record']['document_revision_id'], "Revision missing");
         $this->assertEquals('test.txt', $result['filename']['name'], "Filename missing");
-        $this->assertContains("{$this->documents[0]->id}/file/filename", $result['filename']['uri'], "Wrong URI");
+        $this->assertStringContainsString(
+            $this->documents[0]->id . '/file/filename',
+            $result['filename']['uri']
+        );
         $this->assertEquals("1", $result['record']['revision'], "Wrong revision");
         $this->assertNotEmpty($result['record']['last_rev_create_date'], "Revision date not set");
 
@@ -90,7 +93,10 @@ class DocApiUploadTest extends TestCase
         $this->assertEquals('test2.txt', $result['record']['filename'], "Wrong filename");
         $this->assertNotEmpty($result['record']['document_revision_id'], "Revision missing");
         $this->assertEquals('test2.txt', $result['filename']['name'], "Filename missing");
-        $this->assertContains("{$this->documents[0]->id}/file/filename", $result['filename']['uri'], "Wrong URI");
+        $this->assertStringContainsString(
+            $this->documents[0]->id . '/file/filename',
+            $result['filename']['uri']
+        );
         $this->assertEquals("2", $result['record']['revision'], "Wrong revision");
         $this->assertNotEmpty($result['record']['last_rev_create_date'], "Revision date not set");
 

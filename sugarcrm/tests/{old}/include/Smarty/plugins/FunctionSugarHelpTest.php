@@ -16,10 +16,15 @@ require_once 'include/SugarSmarty/plugins/function.sugar_help.php';
 
 class FunctionSugarHelpTest extends TestCase
 {
+    /**
+     * @var Sugar_Smarty
+     */
+    private $smarty;
+
     protected function setUp() : void
     {
         SugarTestHelper::setUp('app_strings');
-        $this->_smarty = new Sugar_Smarty;
+        $this->smarty = new Sugar_Smarty;
     }
 
     protected function tearDown() : void
@@ -44,20 +49,23 @@ class FunctionSugarHelpTest extends TestCase
     /**
      * @dataProvider providerSpecialCharactersHandledInTextParameter
      */
-	public function testSpecialCharactersHandledInTextParameter(
-        $string,
-        $returnedString
-        )
+    public function testSpecialCharactersHandledInTextParameter($string, $returnedString)
     {
-        $this->assertContains($returnedString, smarty_function_sugar_help(array('text'=>$string),$this->_smarty));
+        $this->assertStringContainsString(
+            $returnedString,
+            smarty_function_sugar_help(['text' => $string], $this->smarty)
+        );
     }
-    
+
     public function testExtraParametersAreAdded()
     {
-        $string = 'my string';
-        
-        $output = smarty_function_sugar_help(array('text'=>$string,'myPos'=>'foo', 'atPos'=>'bar'),$this->_smarty);
-        
-        $this->assertContains(",'foo','bar'",$output);
+        $this->assertStringContainsString(
+            ",'foo','bar'",
+            smarty_function_sugar_help([
+                'text' => 'my string',
+                'myPos' => 'foo',
+                'atPos' => 'bar',
+            ], $this->smarty)
+        );
     }
 }

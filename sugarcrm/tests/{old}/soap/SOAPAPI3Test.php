@@ -184,9 +184,8 @@ class SOAPAPI3Test extends SOAPTestCase
     public function testGetModuleLayoutMD5()
     {
         $result = $this->_getModuleLayoutMD5();
-        $this->assertContains('Client',$result['faultcode']);
+        $this->assertStringContainsString('Client', $result['faultcode']);
     }
-
 
     /**********************************
      * HELPER PUBLIC FUNCTIONS

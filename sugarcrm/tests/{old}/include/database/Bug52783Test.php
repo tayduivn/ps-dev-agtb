@@ -36,7 +36,7 @@ class Bug52783Test extends TestCase
 	{
 		$expected = strtolower($expected);
 		$result = strtolower($this->_db->limitQuery($sql, 21, 20, false, '', false));
-		$this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
 	}
 
 	public function orderProvider()

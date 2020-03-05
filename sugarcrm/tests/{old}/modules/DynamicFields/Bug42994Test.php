@@ -40,7 +40,7 @@ class Bug42994Test extends TestCase
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'DynamicFields');
         $output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
 
-        $this->assertContains('XXDependentXX', $output);
+        $this->assertStringContainsString('XXDependentXX', $output);
     }
 
     public function testSetLanguageStringVisible() 
@@ -49,6 +49,6 @@ class Bug42994Test extends TestCase
         $this->_lang_manager->save();
         $output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
 
-        $this->assertContains('XXVisible ifXX', $output);
+        $this->assertStringContainsString('XXVisible ifXX', $output);
     }
 }

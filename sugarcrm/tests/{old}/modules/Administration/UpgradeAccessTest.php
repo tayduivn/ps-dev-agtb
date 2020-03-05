@@ -59,7 +59,7 @@ class UpgradeAccessTest extends TestCase
 
         preg_match('/RewriteRule \^rest\/\(\.\*\)\$ api\/rest.php\?\_\_sugar\_url=\$1 \[L\,QSA\]/', $contents, $matches);
         $this->assertNotEmpty($matches, 'Could not find RewriteRule');
-        $this->assertEquals(1, count($matches), 'Duplicate blocks were created for the RewriteRule');
-        $this->assertContains('<FilesMatch', $contents, 'Code outside of restrictions was not copied over');
+        $this->assertCount(1, $matches);
+        $this->assertStringContainsString('<FilesMatch', $contents);
     }
 }

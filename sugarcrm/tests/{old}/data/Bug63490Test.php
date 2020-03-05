@@ -52,16 +52,16 @@ class Bug63490Test extends TestCase
             $suppress_table_name,
             $field_map
         );
-        $this->assertContains($expected, $actual);
+        $this->assertStringContainsString($expected, $actual);
 
         // Test order stability column
         $stability = $suppress_table_name ? 'id' : 'bean.id';
         if (!self::$bean->db->supports('order_stability')) {
             $msg = 'Missing ORDER BY stability column';
-            $this->assertContains($stability, $actual, $msg);
+            $this->assertStringContainsString($stability, $actual, $msg);
         } else {
             $msg = 'Unexpected ORDER BY stability column';
-            $this->assertNotContains($stability, $actual, $msg);
+            $this->assertStringNotContainsString($stability, $actual, $msg);
         }
     }
 
@@ -73,7 +73,7 @@ class Bug63490Test extends TestCase
     public function testIncorrectColumns($input)
     {
         $actual = self::$bean->process_order_by($input);
-        $this->assertNotContains($input, $actual);
+        $this->assertStringNotContainsString($input, $actual);
     }
 
     /**

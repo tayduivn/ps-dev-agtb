@@ -102,7 +102,7 @@ class Bug54419Test extends TestCase
         $subpanel->display();
         $actual = $this->getActualOutput();
 
-        $this->assertContains($this->quote->name, $actual, 'Quote name is not displayed in subpanel');
+        $this->assertStringContainsString($this->quote->name, $actual);
     }
 
 
@@ -133,6 +133,6 @@ class Bug54419Test extends TestCase
         $subpanel->display();
         $actual = $this->getActualOutput();
 
-        $this->assertContains('(1 - 1 of 1)', $actual, 'Number of quotes is incorrect in subpanel');
+        $this->assertStringContainsString('(1 - 1 of 1)', $actual);
     }
 }
