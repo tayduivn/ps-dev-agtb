@@ -26,7 +26,7 @@ class HttpSource implements SourceInterface
     /**
      * Default server uri
      */
-    const DEFAULT_BASE_URI = 'https://spds.service.sugarcrm.com';
+    const DEFAULT_BASE_URI = 'https://updates.sugarcrm.com/spds';
 
     /**
      * Default fallback version
