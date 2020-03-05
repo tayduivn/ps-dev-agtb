@@ -18,6 +18,7 @@ class SugarWidgetFielddatetimeTest extends TestCase
      * @var SugarWidgetFieldDateTime
      */
     private $widgetField;
+    private $meetingIds;
 
     protected function setUp()
     {
@@ -26,12 +27,16 @@ class SugarWidgetFielddatetimeTest extends TestCase
         SugarTestHelper::setUp('current_user');
 
         $layoutManager = new LayoutManager();
+        $layoutManager->defs['reporter'] = new Report();
         $this->widgetField = new SugarWidgetFieldDateTime($layoutManager);
     }
 
     protected function tearDown()
     {
         unset($this->widgetField);
+        if (!empty($this->meetingIds)) {
+            $GLOBALS['db']->query("DELETE FROM meetings WHERE id IN ('" . implode("','", $this->meetingIds) . "')");
+        }
 
         SugarTestHelper::tearDown();
     }
@@ -100,5 +105,54 @@ class SugarWidgetFielddatetimeTest extends TestCase
                 'W19 2015'
             ),
         );
+    }
+
+    /**
+     * Check if the returned data is correct ISO Year-Week
+     *
+     * @param string $date_start Start Date of the meeting
+     * @param string $expected Expected ISO Year-Week
+     *
+     * @dataProvider providerTestQuerySelectWeek
+     */
+    public function testQuerySelectweek(string $date_start, string $expected)
+    {
+        $layoutDef = [
+            'name' => 'date_start',
+            'label' => "Week: Start Date",
+            'column_function' => 'week',
+            'qualifier' => 'week',
+            'table_key' => 'self',
+            'table_alias' => 'meetings',
+            'column_key' => 'self:date_start',
+            'type' => 'datetimecombo',
+            'fields' => [],
+        ];
+        $meeting = SugarTestMeetingUtilities::createMeeting();
+        $meeting->name = "Meeting";
+        $meeting->date_start = $date_start;
+        $this->meetingIds[] = $meeting->save();
+
+        $query = $this->widgetField->querySelectweek($layoutDef);
+
+        $result = $GLOBALS['db']->query("SELECT {$query} FROM meetings WHERE id = '{$meeting->id}'");
+        $row = $GLOBALS['db']->fetchByAssoc($result);
+
+        $this->assertEquals($expected, $row['meetings_week_date_start']);
+    }
+
+    /**
+     * @return array
+     */
+    public function providerTestQuerySelectWeek()
+    {
+        return [
+            ['2019-12-29 13:00:00', '2019-52'],
+            ['2019-12-31 13:00:00', '2020-01'],
+            ['2020-01-01 13:00:00', '2020-01'],
+            ['2020-12-31 13:00:00', '2020-53'],
+            ['2021-01-01 13:00:00', '2020-53'],
+            ['2021-01-05 13:00:00', '2021-01'],
+        ];
     }
 }

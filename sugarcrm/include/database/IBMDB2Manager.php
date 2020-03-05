@@ -321,7 +321,7 @@ class IBMDB2Manager  extends DBManager
         if (empty($tablename)) {
             $this->logger->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
-        }        
+        }
 
         $query = 'SELECT COLNAME, TYPENAME, LENGTH, SCALE, DEFAULT, NULLS, GENERATED
 FROM SYSCAT.COLUMNS
@@ -687,6 +687,7 @@ WHERE TABSCHEMA = ?
         '%Y-%m-%d' => 'YYYY-MM-DD',
         '%Y-%m' => 'YYYY-MM',
         '%Y' => 'YYYY',
+        '%x' => 'IYYY',
         '%v' => 'IW',
     );
 

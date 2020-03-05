@@ -808,7 +808,7 @@ abstract class MssqlManager extends DBManager
 
     /**
      * @see DBManager::getAffectedRowCount()
-     * 
+     *
      * Returns the number of rows affected by the last query
 	 * See also affected_rows capability, will return 0 unless the DB supports it
      * @param resource $result query result resource
@@ -900,6 +900,9 @@ WHERE TABLE_NAME = ?
         '%Y-%m-%d' => 10,
         '%Y-%m' => 7,
         '%Y' => 4,
+        '%x' => [
+            'format' => 'isoyear',
+        ],
         '%v' => array(
             'format' => 'isoww',
             'function' => 'datepart',
@@ -937,6 +940,14 @@ WHERE TABLE_NAME = ?
                     $parameters = $this->date_formats[$additional_parameters[0]];
                     if (is_array($parameters) && isset($parameters['format']) && isset($parameters['function'])) {
                         return "{$parameters['function']}({$parameters['format']}, $string)";
+                    } elseif (!empty($parameters['format']) && $parameters['format'] === 'isoyear') {
+                        // SQL Server doesn't support date_format ISO Year code like other DBs
+                        // but ISO Week is supported (use isoww or isowk)
+                        // We need to calculate the associated ISO Year for SQL Server
+                        return "CASE
+                            WHEN DATEPART(isoww, {$string}) > 50 AND MONTH({$string}) = 1 THEN YEAR({$string}) - 1
+                            WHEN DATEPART(isoww, {$string}) = 1 AND MONTH({$string}) = 12 THEN YEAR({$string}) + 1
+                            ELSE YEAR({$string}) END";
                     } else {
                         return "LEFT(CONVERT(varchar($parameters)," . $string . ",120),$parameters)";
                     }
@@ -1401,7 +1412,7 @@ INNER JOIN sys.columns c
         if (empty($tablename)) {
             $this->logger->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
-        }        
+        }
 
         //find all unique indexes and primary keys.
         $result = $this->query("sp_columns $tablename");

@@ -708,6 +708,7 @@ WHERE OWNER = ?
         '%Y-%m-%d' => 'YYYY-MM-DD',
         '%Y-%m' => 'YYYY-MM',
         '%Y' => 'YYYY',
+        '%x' => 'IYYY',
         '%v' => 'IW',
     );
 
@@ -1468,7 +1469,7 @@ LEFT JOIN all_constraints c
         if (empty($tablename)) {
             $this->logger->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
-        }        
+        }
 
         $columns = array(
             'column_name',
