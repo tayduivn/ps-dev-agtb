@@ -600,6 +600,9 @@ $dictionary['BusinessCenter'] = [
         ],
     ],
     'uses' => ['basic', 'assignable', 'team_security'],
+    'portal_visibility' => [
+        'class' => 'BusinessCenters',
+    ],
 ];
 
 VardefManager::createVardef('BusinessCenters', 'BusinessCenter');
