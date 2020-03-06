@@ -183,14 +183,8 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         foreach ($actual['records'] as $value) {
             array_push($result, $value['id']);
         }
-        $this->assertEquals(
-            array($GLOBALS['current_user']->id, $user->id),
-            $result,
-            'Should contains 2 users',
-            0,
-            1,
-            true
-        );
+
+        $this->assertEqualsCanonicalizing(array($GLOBALS['current_user']->id, $user->id), $result);
     }
 
     /**

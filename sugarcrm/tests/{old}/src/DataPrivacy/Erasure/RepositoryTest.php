@@ -59,7 +59,7 @@ class RepositoryTest extends TestCase
         $this->repo->addBeanFields($this->table, $this->id, $fields);
 
         $res = $this->repo->getBeanFields($this->table, $this->id);
-        $this->assertEquals($expected, $res, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $res);
     }
 
     public static function providerTestAddGet()
@@ -107,7 +107,7 @@ class RepositoryTest extends TestCase
         $this->repo->removeBeanFields($this->table, $this->id, $fields);
 
         $res = $this->repo->getBeanFields($this->table, $this->id);
-        $this->assertEquals($expected, $res, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $res);
     }
 
     public static function providerTestRemoveGet()
