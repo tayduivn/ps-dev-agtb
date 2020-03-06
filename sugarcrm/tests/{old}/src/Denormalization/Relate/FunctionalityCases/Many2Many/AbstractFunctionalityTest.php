@@ -72,6 +72,29 @@ abstract class AbstractFunctionalityTest extends TestCase
         $processEntity = new Entity(self::$primaryBean, static::$options['field_name']);
         $process = new Process();
         $process->normalize($processEntity);
+
+        $db = DBManagerFactory::getInstance();
+        $indexName = $db->getValidDBName(
+            'idx_' . static::$options['primary_link_name'] . '_denorm_account_name'
+        );
+        $sql = $db->dropIndexes(
+            self::$primaryBean->getTableName(),
+            [
+                [
+                    'name' => $indexName,
+                    'type' => 'index',
+                ],
+            ]
+        );
+        $db->query($sql);
+        $sql = $db->dropColumnSQL(
+            self::$primaryBean->getTableName(),
+            [
+                'name' => 'denorm_account_name',
+                'type' => 'varchar',
+            ]
+        );
+        $db->query($sql);
     }
 
     public function setUp()
@@ -79,6 +102,18 @@ abstract class AbstractFunctionalityTest extends TestCase
         self::$linkedBean = $this->createLinkedBean();
         self::$primaryBean = $this->createPrimaryBean(self::$linkedBean);
         self::$primaryBean = $this->reloadBean(self::$primaryBean);
+    }
+
+    public function testIndexCreated()
+    {
+        $db = DBManagerFactory::getInstance();
+        $indices = $db->get_indices(self::$primaryBean->getTableName());
+        $indexName = $db->getValidDBName(
+            'idx_' . static::$options['primary_link_name'] . '_denorm_account_name'
+        );
+        $this->assertArrayHasKey($indexName, $indices);
+
+        $this->assertArrayHasKey('denorm_account_name', array_flip($indices[$indexName]['fields']));
     }
 
     public function testBeanUpdateHandler()

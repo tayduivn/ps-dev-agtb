@@ -19,6 +19,8 @@ use SugarAutoLoader;
 use Sugarcrm\Sugarcrm\Denormalization\Relate\Db\Db;
 use Sugarcrm\Sugarcrm\Denormalization\Relate\Db\OfflineOperations;
 use Sugarcrm\Sugarcrm\Denormalization\Relate\Process\Entity;
+use BeanFactory;
+use VardefManager;
 
 final class Process
 {
@@ -146,6 +148,11 @@ final class Process
     {
         $this->moduleInstaller->rebuild_vardefs([$entity->getTargetModuleName()]);
         $this->clearApiCache();
+        VardefManager::refreshVardefs(
+            $entity->getTargetModuleName(),
+            $entity->getTargetObjectName()
+        );
+        $entity->targetBean = BeanFactory::newBean($entity->getTargetModuleName());
     }
 
     private function configSetField(Entity $entity, bool $isDenormalized, bool $isInSync = true): void
