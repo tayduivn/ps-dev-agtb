@@ -316,6 +316,10 @@
      * @private
      */
     _onProductCatalogDashletAddItem: function(productData) {
+        // Set the assigned user as the currently logged in user
+        productData.assigned_user_id = app.user.get('id');
+        productData.assigned_user_name = app.user.get('full_name');
+
         var defaultGroup = this._getComponentByGroupId(this.defaultGroupId);
 
         if (defaultGroup) {

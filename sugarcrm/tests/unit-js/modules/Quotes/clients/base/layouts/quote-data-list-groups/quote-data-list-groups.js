@@ -559,12 +559,27 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             layout._components.push(defaultGroupMock);
             layout.defaultGroupId = defaultGroupId;
             sinon.collection.stub(app.controller.context, 'trigger');
+            sinon.collection.stub(app.user, 'get').withArgs('id').returns('seed_test_id')
+                .withArgs('full_name').returns('Test Name');
         });
 
         afterEach(function() {
             defaultGroupId = null;
             defaultGroupMock = null;
             defaultGroupTriggerStub = null;
+        });
+
+        it('should update the assigned user info', function() {
+            var productData = {};
+            layout._onProductCatalogDashletAddItem(productData);
+
+            expect(app.user.get).toHaveBeenCalledWith('id');
+            expect(app.user.get).toHaveBeenCalledWith('full_name');
+
+            expect(productData.assigned_user_id).toEqual('seed_test_id');
+            expect(productData.assigned_user_name).toEqual('Test Name');
+
+            productData = null;
         });
 
         it('should call trigger on default group', function() {
