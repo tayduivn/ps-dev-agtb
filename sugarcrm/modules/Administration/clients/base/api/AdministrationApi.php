@@ -191,6 +191,7 @@ class AdministrationApi extends SugarApi
                 'longHelp' => 'include/api/help/administration_enable_idm_migrations_post_help.html',
                 'exceptions' => ['SugarApiExceptionNotAuthorized'],
                 'minVersion' => '11.2',
+                'ignoreSystemStatusError' => true,
             ],
             // Disable migration mode for Idm
             'disableIdmMigration' => [
@@ -202,6 +203,7 @@ class AdministrationApi extends SugarApi
                 'longHelp' => 'include/api/help/administration_disable_idm_migrations_post_help.html',
                 'exceptions' => ['SugarApiExceptionNotAuthorized'],
                 'minVersion' => '11.2',
+                'ignoreSystemStatusError' => true,
             ],
         );
     }
