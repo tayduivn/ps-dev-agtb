@@ -1299,9 +1299,9 @@ Any integrations that rely on this platform will stop working.',
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_PIPELINE_LINK_NAME' => 'Tile View Settings',
     'LBL_PIPELINE_LINK_DESCRIPTION' => 'Configure Tile View',
-    'LBL_PIPELINE_SECTION_HEADER' => 'Tile View Settings',
+    'LBL_PIPELINE_SECTION_HEADER' => 'Tile View',
     'LBL_PIPELINE_DEFAULT_SETTING_TITLE' => 'Tile View Settings',
-    'LBL_PIPELINE_SECTION_DESCRIPTION' => 'Configure Tile View',
+    'LBL_PIPELINE_SECTION_DESCRIPTION' => 'Enable tile view for various modules and select columns and tile fields for each.',
     //END SUGARCRM flav=ent ONLY
 
     // Cloud Insights
