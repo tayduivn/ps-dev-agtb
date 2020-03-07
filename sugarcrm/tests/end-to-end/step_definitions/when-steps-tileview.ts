@@ -14,6 +14,7 @@ import TileView from '../views/tile-view';
 import {closeAlert, closeWarning} from './general_bdd';
 import TileViewSettings from '../views/tile-settings-view';
 import {TableDefinition} from 'cucumber';
+import * as _ from 'lodash';
 
 /**
  *  Select tab in Opportunities tile view
@@ -166,17 +167,17 @@ When(/^I update "(Cases|Opportunities|Tasks|Leads)" module in (#\S+) view with t
         const [tileViewColumnName, tileHeader, tileBody, numberOfRecordsPerColumn ] = rows[0];
 
         // Select Tile View Table Header
-        if (tileViewColumnName !== null && tileViewColumnName !== '') {
+        if (!_.isEmpty(tileViewColumnName)) {
             await view.selectValueFromDropdown(moduleName, 1, 1, tileViewColumnName);
         }
 
         // Select Tile Header field
-        if (tileHeader !== null && tileHeader !== '') {
+        if (!_.isEmpty(tileHeader)) {
             await view.selectValueFromDropdown(moduleName, 3, 1, tileHeader);
         }
 
         // Select Tile Body field
-        if (tileBody !== null && tileBody !== '') {
+        if (!_.isEmpty(tileBody)) {
             let tileBodyFields = tileBody.split(',');
             for (let j in tileBodyFields) {
 
@@ -193,7 +194,7 @@ When(/^I update "(Cases|Opportunities|Tasks|Leads)" module in (#\S+) view with t
         }
 
         // Select number of records per column
-        if (numberOfRecordsPerColumn !== null && numberOfRecordsPerColumn !== '') {
+        if (!_.isEmpty(numberOfRecordsPerColumn)) {
             await view.selectValueFromDropdown(moduleName, 4, 1, numberOfRecordsPerColumn);
         }
 

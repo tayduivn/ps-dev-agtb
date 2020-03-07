@@ -996,3 +996,100 @@ Feature: Tile View feature
       | sourceItem  | destination | position |
       | Closed Won  | black_list  | 0        |
       | Closed Lost | black_list  | 1        |
+
+
+  @cases_tileView @pr @stress-test
+  Scenario: Cases > Tile View > Support for Comment Log field in Tile View
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+    And Cases records exist related via Cases link to *Acc_1:
+      | *   | name        | status | priority |
+      | C_1 | My New Case | New    | P2       |
+
+    # Create custom user
+    Given I create custom user "user"
+
+    # Update Case record to add Comment Log field to tile body
+    When I update "Cases" module in #TileViewSettings view with the following settings:
+      | table_header | tile_options_header | tile_options_body | records_per_column |
+      |              |                     | Comment Log       |                    |
+
+    # Update the case's Comment Log field
+    When I choose Cases in modules menu
+    When I select *C_1 in #CasesList.ListView
+    When I click Edit button on #C_1Record header
+    When I provide input for #C_1Record.RecordView view
+      | commentlog                   |
+      | Please update case info ASAP |
+    When I click Save button on #C_1Record header
+    When I close alert
+
+    # Navigate to Cases > Tile View
+    When I choose Cases in modules menu
+    When I select VisualPipeline in #CasesList.FilterView
+
+    # Verify value of comment log field in tile view body
+    Then I verify *C_1 tile field values in #CasesPipelineView view
+      | value                        |
+      | My New Case                  |
+      | Acc_1                        |
+      | Medium                       |
+      | Please update case info ASAP |
+
+    # Logout from Admin and Login as another user
+    When I logout
+    When I use account "user"
+    When I open Cases view and login
+
+    # Update the case's Comment Log field
+    When I select *C_1 in #CasesList.ListView
+    When I click Edit button on #C_1Record header
+    When I provide input for #C_1Record.RecordView view
+      | commentlog                          |
+      | Case was resolved today! Sugar won! |
+    When I click Save button on #C_1Record header
+    When I close alert
+
+    # Navigate to Cases > Tile View
+    When I choose Cases in modules menu
+    When I select VisualPipeline in #CasesList.FilterView
+
+    # Verify value of comment log field in tile view body
+    Then I verify *C_1 tile field values in #CasesPipelineView view
+      | value                                                             |
+      | My New Case                                                       |
+      | Acc_1                                                             |
+      | Medium                                                            |
+      | Please update case info ASAP, Case was resolved today! Sugar won! |
+
+    # Logout from Admin and Login as another user
+    When I logout
+    When I use default account
+    When I open Cases view and login
+
+    # Update the case's Comment Log field
+    When I select *C_1 in #CasesList.ListView
+    When I click Edit button on #C_1Record header
+    When I provide input for #C_1Record.RecordView view
+      | commentlog                  |
+      | Congratulation on a big Win |
+    When I click Save button on #C_1Record header
+    When I close alert
+
+    # Navigate to Cases > Tile View
+    When I choose Cases in modules menu
+    When I select VisualPipeline in #CasesList.FilterView
+
+    # Verify value of comment log field in tile view body
+    Then I verify *C_1 tile field values in #CasesPipelineView view
+      | value                                                                                          |
+      | My New Case                                                                                    |
+      | Acc_1                                                                                          |
+      | Medium                                                                                         |
+      | Please update case info ASAP, Case was resolved today! Sugar won!, Congratulation on a big Win |
+
+    # Update Case record to remove Comment Log field from tile body
+    When I update "Cases" module in #TileViewSettings view with the following settings:
+      | table_header | tile_options_header | tile_options_body | records_per_column |
+      |              |                     | Comment Log~r     |                    |

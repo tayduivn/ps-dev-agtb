@@ -34,7 +34,14 @@ export default class TileViewItem extends BaseView {
                 },
                 tileName: '.name',
                 tileBody: '.tile-body .ui-corner-all div',
-                tileContent: '.tile-body span:nth-child({{tileContentRow}})',
+                tileContent: {
+                  $: '.tile-body',
+                  rowOfData: {
+                      $: 'span:nth-child({{tileContentRow}})',
+                      div: 'div',
+                      commentLog: '.commentLog',
+                  }
+                }
             },
         });
 
@@ -150,9 +157,19 @@ export default class TileViewItem extends BaseView {
      */
     public async getTileFieldValue(tileContentRow) {
 
-        let selector = this.$('listItem.tileContent', {id: this.id, tileContentRow});
-        await this.driver.scroll(selector);
-        return await this.driver.getText(selector);
+        // construct selector to comment log
+        let selector = this.$('listItem.tileContent.rowOfData.commentLog', {id: this.id, tileContentRow});
+
+        // get tile body row value if it is not comment log
+        let isCommentLog = await this.driver.isElementExist(selector);
+        if ( !isCommentLog ) {
+            selector = this.$('listItem.tileContent.rowOfData.div', {id: this.id, tileContentRow});
+            return this.driver.getText(selector);
+        } else {
+            // process comment log field differently
+            selector = this.$('listItem.tileContent.rowOfData.commentLog', {id: this.id, tileContentRow});
+            return this.getDataFromCommentLog(selector);
+        }
     }
 
     /**
@@ -173,12 +190,45 @@ export default class TileViewItem extends BaseView {
      * @param columnName
      * @returns {Promise<boolean>}
      */
-    public async checkTileViewColumn (columnName): Promise<boolean> {
+    public async checkTileViewColumn(columnName): Promise<boolean> {
 
         // Prepend record css with part containing column name
         let selector = `.column[data-column-name="${columnName}"] ${this.$()}`;
 
         // Check if css containing column name exists
         return this.driver.isElementExist(selector);
+    }
+
+    /**
+     * Return Messages from Comment Log
+     *
+     * @param {string} selector
+     */
+    private async getDataFromCommentLog (selector: string) {
+
+        var returnedValues: string = '';
+        var value: string = '';
+
+        const MAX_NUMBER_OF_MESSAGES_IN_COMMENTS_LOG = 10;
+
+        for (var i=1; i <= MAX_NUMBER_OF_MESSAGES_IN_COMMENTS_LOG; i++ ) {
+            let msgSelector = `${selector} .msg-div:nth-child(${i})`;
+            let isMsgSelector  = await this.driver.isElementExist(msgSelector);
+            if (isMsgSelector) {
+                if (i!== 1) {
+                    returnedValues = returnedValues.concat(', ');
+                }
+                // construct selector for actual text in the message
+                let contentSelector  = `${selector} .msg-div:nth-child(${i}) .msg-content`;
+                // extract text fro the message
+                value = await this.driver.getText(contentSelector);
+                returnedValues = returnedValues.concat(value);
+            // if no more messages found in the comment log
+            } else {
+                break;
+            }
+        }
+
+        return returnedValues;
     }
 }
