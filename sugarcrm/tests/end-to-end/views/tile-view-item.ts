@@ -32,17 +32,30 @@ export default class TileViewItem extends BaseView {
                 buttons: {
                     delete: '.rowaction.btn.delete',
                 },
+
                 tileName: '.name',
                 tileBody: '.tile-body .ui-corner-all div',
+
                 tileContent: {
                   $: '.tile-body',
                   rowOfData: {
                       $: 'span:nth-child({{tileContentRow}})',
                       div: 'div',
-                      commentLog: '.commentLog',
+                      // Comment Log field in the tile view
+                      commentLog: {
+                          $: '.commentLog',
+                          // Comment log message div
+                          message: {
+                              $: 'div.msg-div:nth-child({{msgIndex}})',
+                              // Message author
+                              messageAuthor: '[data-fieldname=author_name] a',
+                              // Message content
+                              messageContent: '.msg-content',
+                            }
+                          }
+                      }
                   }
                 }
-            },
         });
 
         this.id = options.id;
@@ -167,8 +180,7 @@ export default class TileViewItem extends BaseView {
             return this.driver.getText(selector);
         } else {
             // process comment log field differently
-            selector = this.$('listItem.tileContent.rowOfData.commentLog', {id: this.id, tileContentRow});
-            return this.getDataFromCommentLog(selector);
+            return this.getDataFromCommentLog(tileContentRow);
         }
     }
 
@@ -200,30 +212,43 @@ export default class TileViewItem extends BaseView {
     }
 
     /**
-     * Return Messages from Comment Log
+     * Return string of Authors & Messages from Comment Log field
      *
-     * @param {string} selector
+     * @param {string} tileContentRow - index of the comment log row in the tile body
+     * @return {string} returnedValues comma separated string of all messages in Comment Log
      */
-    private async getDataFromCommentLog (selector: string) {
+    private async getDataFromCommentLog (tileContentRow: string): Promise<string> {
 
-        var returnedValues: string = '';
-        var value: string = '';
+        let returnedValues: string = '';
+        let value: string = '';
+        let selector: string = '';
 
         const MAX_NUMBER_OF_MESSAGES_IN_COMMENTS_LOG = 10;
 
-        for (var i=1; i <= MAX_NUMBER_OF_MESSAGES_IN_COMMENTS_LOG; i++ ) {
-            let msgSelector = `${selector} .msg-div:nth-child(${i})`;
-            let isMsgSelector  = await this.driver.isElementExist(msgSelector);
-            if (isMsgSelector) {
-                if (i!== 1) {
+        for (var msgIndex=1; msgIndex <= MAX_NUMBER_OF_MESSAGES_IN_COMMENTS_LOG; msgIndex++ ) {
+            let msgSelector = this.$('listItem.tileContent.rowOfData.commentLog.message', {id: this.id, tileContentRow, msgIndex});
+
+            // If message exists in comment log
+            if ( await this.driver.isElementExist(msgSelector) ) {
+                // add comma separator
+                if (msgIndex !== 1) {
                     returnedValues = returnedValues.concat(', ');
                 }
-                // construct selector for actual text in the message
-                let contentSelector  = `${selector} .msg-div:nth-child(${i}) .msg-content`;
-                // extract text fro the message
-                value = await this.driver.getText(contentSelector);
+                // Construct selector to get the author of the message
+                selector  = this.$('listItem.tileContent.rowOfData.commentLog.message.messageAuthor', {id: this.id, tileContentRow, msgIndex});
+                value = await this.driver.getText(selector);
+                returnedValues = returnedValues.concat(value + ': ');
+
+                //returnedValues = returnedValues.concat(': ');
+
+                // Construct selector to get the text of the message
+                selector  = this.$('listItem.tileContent.rowOfData.commentLog.message.messageContent', {id: this.id, tileContentRow, msgIndex});
+
+                // get text of the message
+                value = await this.driver.getText(selector);
                 returnedValues = returnedValues.concat(value);
-            // if no more messages found in the comment log
+
+            // exist the loop if no more messages found in the comment log
             } else {
                 break;
             }

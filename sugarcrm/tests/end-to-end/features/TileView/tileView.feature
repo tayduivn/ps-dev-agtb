@@ -998,7 +998,7 @@ Feature: Tile View feature
       | Closed Lost | black_list  | 1        |
 
 
-  @cases_tileView @pr @stress-test
+  @cases_tileView @pr @stress-test @AT-341 @SS-282 @pr
   Scenario: Cases > Tile View > Support for Comment Log field in Tile View
     Given Accounts records exist:
       | *name |
@@ -1031,11 +1031,11 @@ Feature: Tile View feature
 
     # Verify value of comment log field in tile view body
     Then I verify *C_1 tile field values in #CasesPipelineView view
-      | value                        |
-      | My New Case                  |
-      | Acc_1                        |
-      | Medium                       |
-      | Please update case info ASAP |
+      | value                                       |
+      | My New Case                                 |
+      | Acc_1                                       |
+      | Medium                                      |
+      | Administrator: Please update case info ASAP |
 
     # Logout from Admin and Login as another user
     When I logout
@@ -1057,11 +1057,11 @@ Feature: Tile View feature
 
     # Verify value of comment log field in tile view body
     Then I verify *C_1 tile field values in #CasesPipelineView view
-      | value                                                             |
-      | My New Case                                                       |
-      | Acc_1                                                             |
-      | Medium                                                            |
-      | Please update case info ASAP, Case was resolved today! Sugar won! |
+      | value                                                                                            |
+      | My New Case                                                                                      |
+      | Acc_1                                                                                            |
+      | Medium                                                                                           |
+      | Administrator: Please update case info ASAP, user userLName: Case was resolved today! Sugar won! |
 
     # Logout from Admin and Login as another user
     When I logout
@@ -1083,11 +1083,11 @@ Feature: Tile View feature
 
     # Verify value of comment log field in tile view body
     Then I verify *C_1 tile field values in #CasesPipelineView view
-      | value                                                                                          |
-      | My New Case                                                                                    |
-      | Acc_1                                                                                          |
-      | Medium                                                                                         |
-      | Please update case info ASAP, Case was resolved today! Sugar won!, Congratulation on a big Win |
+      | value                                                                                                                                        |
+      | My New Case                                                                                                                                  |
+      | Acc_1                                                                                                                                        |
+      | Medium                                                                                                                                       |
+      | Administrator: Please update case info ASAP, user userLName: Case was resolved today! Sugar won!, Administrator: Congratulation on a big Win |
 
     # Update Case record to remove Comment Log field from tile body
     When I update "Cases" module in #TileViewSettings view with the following settings:
