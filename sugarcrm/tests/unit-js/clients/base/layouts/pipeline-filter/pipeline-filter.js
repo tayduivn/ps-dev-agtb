@@ -47,6 +47,39 @@ describe('Base.Layouts.PipelineFilter', function() {
         layout = null;
     });
 
+    describe('getFilterEditStateKey', function() {
+        var currentModule;
+        var layoutType;
+
+        beforeEach(function() {
+            layoutType = layout.layoutType;
+            currentModule = layout.layout.currentModule;
+        });
+
+        afterEach(function() {
+            sinon.collection.restore();
+            layout.layout.currentModule = currentModule;
+            currentModule = null;
+            layout.layoutType = layoutType;
+            layoutType = null;
+        });
+
+        it('should return key for records if layoutType is pipeline-records', function() {
+            var keyStub = sinon.collection.stub(app.user.lastState, 'key');
+            layout.layoutType = 'pipeline-records';
+            layout.layout.currentModule = 'Opportunities';
+            layout.getFilterEditStateKey();
+            expect(keyStub.lastCall.args[0]).toEqual('edit-Opportunities-records');
+        });
+
+        it('should call _super if layoutType is not pipeline-records', function() {
+            var superStub = sinon.collection.stub(layout, '_super');
+            layout.layoutType = 'someType';
+            layout.getFilterEditStateKey();
+            expect(superStub).toHaveBeenCalledWith('getFilterEditStateKey');
+        });
+    });
+
     describe('applyFilter', function() {
         describe('when layout.layoutType is pipeline-records', function() {
             it('should call filterPipeline() method', function() {
