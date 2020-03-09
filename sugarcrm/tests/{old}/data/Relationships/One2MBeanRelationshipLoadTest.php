@@ -92,12 +92,16 @@ class One2MBeanRelationshipLoadTest extends TestCase
         $relId2 = key($opportunities['rows']);
 
         $opportunities = self::$account->opportunities->query(['orderby' => 'name DESC']);
-        $expected = [
-            $relId2 => ['id' => $relId2, 'opportunities__name' => 'Opportunity2'],
-            $relId1 => ['id' => $relId1, 'opportunities__name' => 'Opportunity1'],
-        ];
-        $this->assertArraySubset($expected, $opportunities['rows']);
-        $this->assertEquals(array_keys($expected), array_keys($opportunities['rows']));
+
+        $this->assertCount(2, $opportunities['rows']);
+
+        $row1 = $opportunities['rows'][$relId1];
+        $this->assertSame($relId1, $row1['id']);
+        $this->assertSame('Opportunity1', $row1['opportunities__name']);
+
+        $row2 = $opportunities['rows'][$relId2];
+        $this->assertSame($relId2, $row2['id']);
+        $this->assertSame('Opportunity2', $row2['opportunities__name']);
     }
 
     /**
@@ -113,10 +117,10 @@ class One2MBeanRelationshipLoadTest extends TestCase
         $opportunities = self::$account->opportunities->query(
             ['limit' => 1, 'offset' => 1, 'orderby' => 'name ASC']
         );
-        $this->assertArraySubset(
-            [$relId2 => ['id' => $relId2, 'opportunities__name' => 'Opportunity2']],
-            $opportunities['rows']
-        );
+
+        $row = $opportunities['rows'][$relId2];
+        $this->assertSame($relId2, $row['id']);
+        $this->assertSame('Opportunity2', $row['opportunities__name']);
     }
 
     /**

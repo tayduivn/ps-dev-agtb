@@ -3984,9 +3984,8 @@ SQL;
         $query = $dummy . ' UNION ALL ' . $dummy;
 
         $result = $this->_db->limitQuery($query, 0, 1);
+        $row = $this->_db->fetchRow($result);
 
-        $this->assertArraySubset(array(
-            'id' => 1,
-        ), $this->_db->fetchRow($result));
+        $this->assertEquals('1', $row['id']);
     }
 }

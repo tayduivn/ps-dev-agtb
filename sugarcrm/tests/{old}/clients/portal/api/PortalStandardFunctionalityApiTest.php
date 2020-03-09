@@ -610,7 +610,13 @@ class PortalStandardFunctionalityApiTest extends TestCase
             // retrieve and compare the contact
             $bugRetrieved->load_relationship('contacts');
             $contactIds = array_map('trim', $bugRetrieved->contacts->get());
-            $this->assertArraySubset([self::$contactIds['b2b-account-1']], $contactIds);
+            $this->assertSame(
+                array_intersect(
+                    [self::$contactIds['b2b-account-1']],
+                    $contactIds
+                ),
+                [self::$contactIds['b2b-account-1']]
+            );
 
             // retrieve the contact, to get the account
             $contact = BeanFactory::retrieveBean('Contacts', self::$contactIds['b2b-account-1']);
@@ -621,7 +627,13 @@ class PortalStandardFunctionalityApiTest extends TestCase
             if (!empty($contact) && !empty($contact->account_id)) {
                 $bugRetrieved->load_relationship('accounts');
                 $accountIds = array_map('trim', $bugRetrieved->accounts->get());
-                $this->assertArraySubset([trim($contact->account_id)], $accountIds);
+                $this->assertSame(
+                    array_intersect(
+                        [trim($contact->account_id)],
+                        $accountIds
+                    ),
+                    [trim($contact->account_id)]
+                );
             }
 
             // cleanup the bug
@@ -688,7 +700,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
             // retrieve and compare the contact
             $caseRetrieved->load_relationship('contacts');
             $contactIds = array_map('trim', $caseRetrieved->contacts->get());
-            $this->assertArraySubset([self::$contactIds['b2b-account-1']], $contactIds);
+            $this->assertContains(self::$contactIds['b2b-account-1'], $contactIds);
 
             // retrieve the contact, to get the account
             $contact = BeanFactory::retrieveBean('Contacts', self::$contactIds['b2b-account-1']);
@@ -699,7 +711,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
             if (!empty($contact) && !empty($contact->account_id)) {
                 $caseRetrieved->load_relationship('accounts');
                 $accountIds = array_map('trim', $caseRetrieved->accounts->get());
-                $this->assertArraySubset([trim($contact->account_id)], $accountIds);
+                $this->assertContains(trim($contact->account_id), $accountIds);
             }
 
             // cleanup the case

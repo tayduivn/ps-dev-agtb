@@ -99,16 +99,17 @@ class M2MRelationshipLoadTest extends TestCase
         );
         $relId2 = key($opportunities['rows']);
 
-        $expected = [
-            $relId2 => ['id' => $relId2, 'contact_role' => 'test2'],
-            $relId1 => ['id' => $relId1, 'contact_role' => 'test1'],
-        ];
         $opportunities = self::$contact->opportunities->query(['orderby' => 'contact_role DESC']);
-        $this->assertArraySubset(
-            $expected,
-            $opportunities['rows']
-        );
-        $this->assertEquals(array_keys($expected), array_keys($opportunities['rows']));
+
+        $this->assertCount(2, $opportunities['rows']);
+
+        $row1 = $opportunities['rows'][$relId1];
+        $this->assertSame($relId1, $row1['id']);
+        $this->assertSame('test1', $row1['contact_role']);
+
+        $row2 = $opportunities['rows'][$relId2];
+        $this->assertSame($relId2, $row2['id']);
+        $this->assertSame('test2', $row2['contact_role']);
     }
 
     /**
@@ -124,7 +125,10 @@ class M2MRelationshipLoadTest extends TestCase
         $opportunities = self::$contact->opportunities->query(
             ['limit' => 1, 'offset' => 1, 'orderby' => 'contact_role ASC']
         );
-        $this->assertArraySubset([$relId2 => ['id' => $relId2, 'contact_role' => 'test2']], $opportunities['rows']);
+
+        $row2 = $opportunities['rows'][$relId2];
+        $this->assertEquals($relId2, $row2['id']);
+        $this->assertEquals('test2', $row2['contact_role']);
     }
 
     /**

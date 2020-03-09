@@ -202,7 +202,10 @@ abstract class CacheTest extends TestCase
             $values = iterator_to_array($values);
         }
 
-        $this->assertArraySubset($expected, $values);
+        foreach ($expected as $key => $value) {
+            $this->assertArrayHasKey($key, $values);
+            $this->assertEquals($value, $values[$key]);
+        }
     }
 
     private function assertValueNotCached(CacheInterface $cache, string $key) : void

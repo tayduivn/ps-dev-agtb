@@ -48,18 +48,21 @@ class TeamSetManagerTest extends TestCase
 
         $teams = TeamSetManager::getUnformattedTeamsFromSet($contact->team_set_id);
 
-        $this->assertArraySubset([
+        $this->assertEquals([
             [
                 'id' => $team1->id,
                 'name' => 'Accounting',
+                'name_2' => '',
             ],
             [
                 'id' => $team1->global_team,
                 'name' => 'Global',
+                'name_2' => '',
             ],
             [
                 'id' => $team2->id,
                 'name' => 'Science',
+                'name_2' => '',
             ],
         ], $teams);
     }

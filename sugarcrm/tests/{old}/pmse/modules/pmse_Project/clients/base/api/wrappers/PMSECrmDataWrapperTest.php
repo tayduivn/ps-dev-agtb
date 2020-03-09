@@ -802,11 +802,10 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     public function testRolesList()
     {
-        $expected = array(
-            array('value' => 'is_admin', 'text' => translate('LBL_PMSE_FORM_OPTION_ADMINISTRATOR', 'pmse_Project')),
-        );
-        $result = $this->object->rolesList();
-        $this->assertArraySubset($expected, $result);
+        $this->assertContains([
+            'value' => 'is_admin',
+            'text' => translate('LBL_PMSE_FORM_OPTION_ADMINISTRATOR', 'pmse_Project'),
+        ], $this->object->rolesList());
     }
 
     /**

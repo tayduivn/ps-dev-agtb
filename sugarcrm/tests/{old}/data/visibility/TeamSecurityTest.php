@@ -83,8 +83,7 @@ class TeamSecurityTest extends TestCase
         $query->orderBy('last_name', 'ASC');
         $data = $query->execute();
 
-        $this->assertCount(count($expected), $data);
-        $this->assertArraySubset($expected, $data);
+        $this->assertEquals($expected, $this->filterColumns($data, ['last_name', 'account_name']));
     }
 
     public static function sugarQuerySelectWithRelatedFieldProvider()
@@ -99,6 +98,7 @@ class TeamSecurityTest extends TestCase
                     'account_name' => 'Account #T2',
                 ], [
                     'last_name' => 'Contact #T2A3',
+                    'account_name' => 'Account #T3',
                 ],
             ],
             'User #2' => [
@@ -107,11 +107,13 @@ class TeamSecurityTest extends TestCase
                     'account_name' => 'Account #T2',
                 ], [
                     'last_name' => 'Contact #T2A3',
+                    'account_name' => 'Account #T3',
                 ],
             ],
             'User #3' => [
                 [
                     'last_name' => 'Contact #T3A2',
+                    'account_name' => 'Account #T2',
                 ], [
                     'last_name' => 'Contact #T3A3',
                     'account_name' => 'Account #T3',
@@ -157,8 +159,7 @@ class TeamSecurityTest extends TestCase
         $query->orderBy('last_name', 'ASC');
         $data = $query->execute();
 
-        $this->assertCount(count($expected), $data);
-        $this->assertArraySubset($expected, $data);
+        $this->assertEquals($expected, $data);
     }
 
     public function sugarQueryFilterByRelatedFieldProvider()
@@ -254,8 +255,7 @@ class TeamSecurityTest extends TestCase
 
         $data = $this->runReport($definition, $useDenorm, $prefetchForRetrieve, $useWhere, $userName);
 
-        $this->assertCount(count($expected), $data);
-        $this->assertArraySubset($expected, $data);
+        $this->assertEquals($expected, $this->filterColumns($data, ['opportunities_name']));
     }
 
     public static function reportByTwoModulesProvider()
@@ -363,8 +363,7 @@ class TeamSecurityTest extends TestCase
 
         $data = $this->runReport($definition, $useDenorm, $prefetchForRetrieve, $useWhere, $userName);
 
-        $this->assertCount(count($expected), $data);
-        $this->assertArraySubset($expected, $data);
+        $this->assertEquals($expected, $this->filterColumns($data, ['contacts_last_name', 'l1_name']));
     }
 
     public static function reportByTwoModulesWithAnOptionalJoinProvider()
@@ -462,42 +461,34 @@ class TeamSecurityTest extends TestCase
 
     public static function retrieveAccountProvider()
     {
-        $names = [
-            'Account #T1',
-            'Account #T2',
-            'Account #T3',
-        ];
-
         $expected = [
             'User #1' => [
-                'Account #T1',
-                'Account #T2',
-                null,
+                'Account #T1' => 'Account #T1',
+                'Account #T2' => 'Account #T2',
+                'Account #T3' => null,
             ],
             'User #2' => [
-                null,
-                'Account #T2',
-                null,
+                'Account #T1' => null,
+                'Account #T2' => 'Account #T2',
+                'Account #T3' => null,
             ],
             'User #3' => [
-                null,
-                null,
-                'Account #T3',
+                'Account #T1' => null,
+                'Account #T2' => null,
+                'Account #T3' => 'Account #T3',
             ],
         ];
 
-        foreach ($expected as $userName => $beans) {
-            foreach (self::configurationProvider() as
-                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
-                $i = 0;
-                foreach ($beans as $bean) {
-                    yield sprintf('%s, %s', $userName, $configName) => [
+        foreach ($expected as $userName => $accounts) {
+            foreach (self::configurationProvider() as $configName => [$useDenorm, $useWhere, $prefetchForRetrieve]) {
+                foreach ($accounts as $accountName => $expected) {
+                    yield sprintf('%s, %s, %s', $userName, $accountName, $configName) => [
                         $useDenorm,
                         $useWhere,
                         $prefetchForRetrieve,
                         $userName,
-                        $names[$i++],
-                        $bean,
+                        $accountName,
+                        $expected,
                     ];
                 }
             }
@@ -622,5 +613,22 @@ class TeamSecurityTest extends TestCase
         ];
 
         SugarConfig::getInstance()->clearCache();
+    }
+
+    /**
+     * Filters the given tabular data set by leaving only the specified columns.
+     *
+     * @param array<int,array<string,mixed>> $data    Tabular data
+     * @param array<int,string>              $columns Column names to leave
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    private function filterColumns(array $data, array $columns) : array
+    {
+        return array_map(function (array $row) use ($columns) : array {
+            return array_filter($row, function (string $key) use ($columns) {
+                return in_array($key, $columns, true);
+            }, ARRAY_FILTER_USE_KEY);
+        }, $data);
     }
 }

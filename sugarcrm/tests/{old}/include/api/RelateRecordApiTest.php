@@ -548,9 +548,7 @@ class RelateRecordApiTest extends TestCase
             'erased_fields' => true,
         ]);
 
-        $this->assertArraySubset([
-            '_erased_fields' => ['first_name'],
-        ], $response);
+        $this->assertSame(['first_name'], $response['_erased_fields']);
     }
 }
 

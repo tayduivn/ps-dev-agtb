@@ -39,13 +39,11 @@ class QueryBuilderTest extends TestCase
         $q2->select('*')
             ->from('(' . $q2->importSubQuery($q1) . ')', 'q1');
 
-        $data = $q2->execute()->fetchAll();
-        $this->assertArraySubset(array(
-            array(
-                'id' => $current_user->id,
-                'last_name' => $current_user->last_name,
-            ),
-        ), $data);
+        $row = $q2->execute()->fetch();
+
+        $this->assertIsArray($row);
+        $this->assertEquals($current_user->id, $row['id']);
+        $this->assertEquals($current_user->last_name, $row['last_name']);
     }
 
     public function testJoinSubQuery()
@@ -63,13 +61,11 @@ class QueryBuilderTest extends TestCase
             ->from('users', 'q2')
             ->join('q2', '(' . $q2->importSubQuery($q1) . ')', 'q1', 'q2.id = q1.id');
 
-        $data = $q2->execute()->fetchAll();
-        $this->assertArraySubset(array(
-            array(
-                'id' => $current_user->id,
-                'last_name' => $current_user->last_name,
-            ),
-        ), $data);
+        $row = $q2->execute()->fetch();
+
+        $this->assertIsArray($row);
+        $this->assertEquals($current_user->id, $row['id']);
+        $this->assertEquals($current_user->last_name, $row['last_name']);
     }
 
     public function testInSubQuery()
@@ -87,12 +83,10 @@ class QueryBuilderTest extends TestCase
             ->from('users')
             ->where('id IN(' . $q2->importSubQuery($q1) . ')');
 
-        $data = $q2->execute()->fetchAll();
-        $this->assertArraySubset(array(
-            array(
-                'id' => $current_user->id,
-                'last_name' => $current_user->last_name,
-            ),
-        ), $data);
+        $row = $q2->execute()->fetch();
+
+        $this->assertIsArray($row);
+        $this->assertEquals($current_user->id, $row['id']);
+        $this->assertEquals($current_user->last_name, $row['last_name']);
     }
 }

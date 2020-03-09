@@ -119,22 +119,8 @@ class EventRepositoryTest extends TestCase
         $this->context->deactivateSubject($subject);
 
         $actual = $this->eventRepo->getLatestBeanEvents($contact, ['phone_mobile']);
-        $expected = [
-            [
-                'source' => [
-                    'subject' => [
-                        'id' => $user1->id,
-                    ],
-                ],
-            ],
-        ];
 
-        $this->assertArraySubset(
-            $expected,
-            $actual,
-            false,
-            'Expected source subject id not returned before update.'
-        );
+        $this->assertEquals($user1->id, $actual[0]['source']['subject']['id']);
 
         $subject = new User($user2, new RestApiClient());
         $this->context->activateSubject($subject);
@@ -145,23 +131,9 @@ class EventRepositoryTest extends TestCase
 
         $this->context->deactivateSubject($subject);
 
-        $actualUpd = $this->eventRepo->getLatestBeanEvents($updContact, ['phone_mobile']);
-        $expectedUpd = [
-            [
-                'source' => [
-                    'subject' => [
-                        'id' => $user2->id,
-                    ],
-                ],
-            ],
-        ];
+        $actual = $this->eventRepo->getLatestBeanEvents($updContact, ['phone_mobile']);
 
-        $this->assertArraySubset(
-            $expectedUpd,
-            $actualUpd,
-            false,
-            'Expected source subject id not returned after update.'
-        );
+        $this->assertEquals($user2->id, $actual[0]['source']['subject']['id']);
     }
 
     /**
@@ -209,18 +181,13 @@ class EventRepositoryTest extends TestCase
         }
 
         if (in_array('email', $fields)) {
-            $expEmailId1 = $contact->emailAddress->addresses[0]['email_address_id'];
-            $expSubset1 = [
-                $expEmailId1 => ['field_name' => 'email', 'after_value_string' => $expEmailId1,],
-            ];
-            $expEmailId2 = $contact->emailAddress->addresses[1]['email_address_id'];
-            $expSubset2 = [
-                $expEmailId2 => ['field_name' => 'email', 'after_value_string' => $expEmailId2,],
-            ];
+            $actualByAfterValue = array_combine(array_column($actual, 'after_value_string'), $actual);
 
-            $actualByAfterValue= array_combine(array_column($actual, 'after_value_string'), $actual);
-            $this->assertArraySubset($expSubset1, $actualByAfterValue, 'Email1 not returned as expected.');
-            $this->assertArraySubset($expSubset2, $actualByAfterValue, 'Email2 not returned as expected.');
+            $email1 = $actualByAfterValue[$contact->emailAddress->addresses[0]['email_address_id']];
+            $this->assertEquals('email', $email1['field_name']);
+
+            $email2 = $actualByAfterValue[$contact->emailAddress->addresses[1]['email_address_id']];
+            $this->assertEquals('email', $email2['field_name']);
         }
     }
 

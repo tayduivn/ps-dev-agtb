@@ -140,17 +140,16 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
             'joinType' => 'left',
         ))->on()->equalsField('opportunities.account_id', 'accounts.id');
         $builder = $query->compile();
+        $join = $builder->getQueryPart('join');
 
-        $this->assertArraySubset(array(
-            'accounts' => array(
-                array(
-                    'joinType' => 'left',
-                    'joinTable' => 'opportunities',
-                    'joinAlias' => 'opportunities',
-                    'joinCondition' => 'opportunities.account_id = accounts.id',
-                ),
-            ),
-        ), $builder->getQueryPart('join'));
+        $this->assertSame([
+            [
+                'joinType' => 'left',
+                'joinTable' => 'opportunities',
+                'joinAlias' => 'opportunities',
+                'joinCondition' => 'opportunities.account_id = accounts.id',
+            ],
+        ], $join['accounts']);
     }
 
     public function testCompileJoinSubQuery()
@@ -175,17 +174,16 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
             'alias' => 'q',
         ));
         $builder = $compiler->compile($query);
+        $join = $builder->getQueryPart('join');
 
-        $this->assertArraySubset(array(
-            'accounts' => array(
-                array(
-                    'joinType' => 'inner',
-                    'joinTable' => '(SELECT 1 FROM DUAL)',
-                    'joinAlias' => 'q',
-                    'joinCondition' => null,
-                ),
-            ),
-        ), $builder->getQueryPart('join'));
+        $this->assertSame([
+            [
+                'joinType' => 'inner',
+                'joinTable' => '(SELECT 1 FROM DUAL)',
+                'joinAlias' => 'q',
+                'joinCondition' => null,
+            ],
+        ], $join['accounts']);
     }
 
     /**
@@ -337,7 +335,7 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
         $builder = $query->compile();
 
         // this is not us enforcing the DESC order by default, this is how Sugar works now
-        $this->assertArraySubset($expected, $builder->getQueryPart('orderBy'));
+        $this->assertEquals($expected, $builder->getQueryPart('orderBy'));
     }
 
     /**
@@ -380,7 +378,9 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
                 array(
                     array('members'),
                 ),
-                array(),
+                array(
+                    'accounts.id DESC',
+                ),
             ),
         );
     }

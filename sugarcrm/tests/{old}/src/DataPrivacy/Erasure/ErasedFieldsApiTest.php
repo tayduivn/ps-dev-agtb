@@ -94,18 +94,12 @@ class ErasedFieldsApiTest extends TestCase
             return $this->format($bean);
         }, $contacts);
 
-        $this->assertArraySubset([
-            self::$contact1->id => [
-                '_erased_fields' => [
-                    'first_name',
-                ],
-            ],
-            self::$contact2->id => [
-                '_erased_fields' => [
-                    'last_name',
-                ],
-            ],
-        ], $data);
+        $this->assertSame([
+            'first_name',
+        ], $data[self::$contact1->id]['_erased_fields']);
+        $this->assertSame([
+            'last_name',
+        ], $data[self::$contact2->id]['_erased_fields']);
     }
 
     /**
@@ -136,19 +130,14 @@ class ErasedFieldsApiTest extends TestCase
     public function relateAndParentFields(callable $load)
     {
         $note = $load(self::$note, ['contact_name', 'parent_name']);
+        $data = $this->format($note);
 
-        $this->assertArraySubset([
-            'contact' => [
-                '_erased_fields' => [
-                    'first_name',
-                ],
-            ],
-            'parent' => [
-                '_erased_fields' => [
-                    'last_name',
-                ],
-            ],
-        ], $this->format($note));
+        $this->assertSame([
+            'first_name',
+        ], $data['contact']['_erased_fields']);
+        $this->assertSame([
+            'last_name',
+        ], $data['parent']['_erased_fields']);
     }
 
     /**
@@ -158,17 +147,14 @@ class ErasedFieldsApiTest extends TestCase
     public function ownAndRelateFields(callable $load)
     {
         $contact = $load(self::$contact2, ['report_to_name']);
+        $data = $this->format($contact);
 
-        $this->assertArraySubset([
-            '_erased_fields' => [
-                'last_name',
-            ],
-            'reports_to_link' => [
-                '_erased_fields' => [
-                    'first_name',
-                ],
-            ],
-        ], $this->format($contact));
+        $this->assertSame([
+            'last_name',
+        ], $data['_erased_fields']);
+        $this->assertSame([
+            'first_name',
+        ], $data['reports_to_link']['_erased_fields']);
     }
 
     /**
@@ -178,12 +164,11 @@ class ErasedFieldsApiTest extends TestCase
     public function relateFieldWithoutLink(callable $load)
     {
         $lead = $load(self::$lead, ['report_to_name']);
+        $data = $this->format($lead);
 
-        $this->assertArraySubset([
-            '_erased_fields' => [
-                'report_to_name',
-            ],
-        ], $this->format($lead));
+        $this->assertSame([
+            'report_to_name',
+        ], $data['_erased_fields']);
     }
 
     public static function loaderProvider() : iterable

@@ -116,13 +116,7 @@ class RecentApiTest extends TestCase
             )
         );
 
-        $this->assertArraySubset([
-            'records' => [
-                [
-                    '_erased_fields' => ['field_list'],
-                ],
-            ],
-        ], $response);
+        $this->assertSame(['field_list'], $response['records'][0]['_erased_fields']);
     }
 
     private function trackAction(SugarBean $bean, $date)

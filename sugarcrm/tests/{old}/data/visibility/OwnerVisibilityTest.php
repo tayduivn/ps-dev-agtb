@@ -68,9 +68,8 @@ class OwnerVisibilityTest extends TestCase
     private function assertVisibilityApplied(array $data)
     {
         $this->assertCount(1, $data);
+        $row = array_shift($data);
 
-        $this->assertArraySubset(array(
-            'id' => $this->account->id,
-        ), array_shift($data));
+        $this->assertSame($this->account->id, $row['id']);
     }
 }

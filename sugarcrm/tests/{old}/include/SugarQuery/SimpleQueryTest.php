@@ -499,14 +499,8 @@ class SimpleQueryTest extends TestCase
         $expected = array($user1->id, $user2->id);
         sort($expected);
 
-        $this->assertArraySubset(array(
-            array(
-                'id' => $expected[0],
-            ),
-            array(
-                'id' => $expected[1],
-            ),
-        ), $data);
+        $this->assertEquals($data[0]['id'], $expected[0]);
+        $this->assertEquals($data[1]['id'], $expected[1]);
     }
 
     public function testSelectAssignedUserNameOwner()
