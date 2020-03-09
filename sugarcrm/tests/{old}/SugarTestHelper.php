@@ -10,198 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use PHPUnit\Framework\DataProviderTestSuite;
-use PHPUnit\Framework\Exception;
-use PHPUnit\Framework\Test;
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\TestListener;
-use PHPUnit\Framework\TestListenerDefaultImplementation;
-use PHPUnit\Framework\TestSuite;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
-
-if(!defined('sugarEntry')) define('sugarEntry', true);
-
-set_include_path(
-    dirname(__FILE__) . PATH_SEPARATOR .
-    dirname(__FILE__) . '/..' . PATH_SEPARATOR .
-    dirname(__FILE__) . '/../..' . PATH_SEPARATOR .
-    get_include_path()
-);
-
-// constant to indicate that we are running tests
-if (!defined('SUGAR_PHPUNIT_RUNNER'))
-    define('SUGAR_PHPUNIT_RUNNER', true);
-
-// prevent ext/session from trying to send headers, since it doesn't make sense in CLI mode
-// and will conflict with PHPUnit output
-ini_set('session.use_cookies', false);
-session_cache_limiter(false);
-
-// initialize the various globals we use
-global $sugar_config, $db, $fileName, $current_user, $locale, $current_language;
-if ( !isset($_SERVER['HTTP_USER_AGENT']) )
-    // we are probably running tests from the command line
-    $_SERVER['HTTP_USER_AGENT'] = 'cli';
-
-// move current working directory
-if (basename(getcwd()) == '{old}' || !is_file('include/entryPoint.php')) {
-  chdir(dirname(__FILE__) . '/../..');
-}
-
-// this is needed so modules.php properly registers the modules globals, otherwise they
-// end up defined in wrong scope
-global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList, $bwcModules, $sugar_version, $sugar_flavor;
-require_once 'include/entryPoint.php';
-require_once 'include/utils/layout_utils.php';
-require_once 'modules/DynamicFields/FieldCases.php';
-
-chdir(sugar_root_dir());
-
-$GLOBALS['db'] = DBManagerFactory::getInstance();
-
-$current_language = $sugar_config['default_language'];
-// disable the SugarLogger
-$sugar_config['logger']['level'] = 'fatal';
-
-$GLOBALS['sugar_config']['default_permissions'] = array (
-        'dir_mode' => 02770,
-        'file_mode' => 0777,
-        'chown' => '',
-        'chgrp' => '',
-    );
-
-$GLOBALS['js_version_key'] = 'testrunner';
-
-if ( !isset($_SERVER['SERVER_SOFTWARE']) )
-    $_SERVER["SERVER_SOFTWARE"] = 'PHPUnit';
-
-// helps silence the license checking when running unit tests.
-$_SESSION['VALIDATION_EXPIRES_IN'] = 'valid';
-
-$GLOBALS['startTime'] = microtime(true);
-
-// clean out the cache directory
-$repair = new RepairAndClear();
-$repair->module_list = array();
-$repair->show_output = false;
-$repair->clearJsLangFiles();
-$repair->clearJsFiles();
-
-// make sure the client license has been validated
-$license = new Administration();
-$license = $license->retrieveSettings('license', true);
-if ( !isset($license->settings['license_vk_end_date']))
-    $license->saveSetting('license', 'vk_end_date', date('Y-m-d',strtotime('+1 year')));
-// mark that we got by the admin wizard already
-$focus = new Administration();
-$focus->retrieveSettings();
-$focus->saveSetting('system','adminwizard',1);
-
-require_once 'modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
-
-// custom helper support
-$customHelperIncludeFile = 'custom/tests/SugarTestHelperInclude.php';
-if (file_exists($customHelperIncludeFile)) {
-    require_once $customHelperIncludeFile;
-}
-
-$GLOBALS['db']->commit();
-
-// define our testcase subclass
-if (function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false && !empty($sc['template'])) {
-    // shadow is enabled
-    define('SHADOW_ENABLED', true);
-    define('SHADOW_CHECK', false); // disable for faster tests
-} else {
-    define('SHADOW_ENABLED', false);
-    define('SHADOW_CHECK', false);
-}
-
-// Disables sending email.
-define('DISABLE_EMAIL_SEND', true);
-
-class IntegrationListener implements TestListener
-{
-    use TestListenerDefaultImplementation;
-
-    /**
-     * @var int
-     */
-    private $maxExecutionTime;
-
-    public function startTestSuite(TestSuite $suite) : void
-    {
-        if ($suite instanceof DataProviderTestSuite) {
-            return;
-        }
-
-        SugarTestHelper::init();
-    }
-
-    public function startTest(Test $test) : void
-    {
-        // Prevent the activity stream from creating messages.
-        Activity::disable();
-
-        // shared bean definitions may contain properties like $disable_row_level_security
-        // set on them by previous tests which shouldn't be shared between tests
-        BeanFactory::clearCache();
-
-        //track the original max execution time limit
-        $this->maxExecutionTime = ini_get('max_execution_time');
-    }
-
-    public function endTest(Test $test, float $time) : void
-    {
-        $_GET = $_POST = $_REQUEST = [];
-
-        //sometimes individual tests change the max time execution limit, reset back to original
-        set_time_limit($this->maxExecutionTime);
-
-        restore_error_handler();
-
-        SugarRelationship::resaveRelatedBeans();
-
-        // clean up prepared statements
-        $connection = DBManagerFactory::getConnection()->getWrappedConnection();
-
-        $ro = new ReflectionObject($connection);
-
-        if ($ro->hasProperty('statements')) {
-            $rp = $ro->getProperty('statements');
-            $rp->setAccessible(true);
-            $rp->setValue($connection, []);
-        }
-    }
-
-    public function endTestSuite(TestSuite $suite) : void
-    {
-        if ($suite instanceof DataProviderTestSuite) {
-            return;
-        }
-
-        unset($GLOBALS['disable_date_format']);
-        SugarBean::resetOperations();
-        $GLOBALS['timedate']->clearCache();
-
-        SugarTestHelper::tearDown();
-    }
-}
-
-/**
- * @deprecated
- */
-class Sugar_PHPUnit_Framework_TestCase extends TestCase
-{
-    public function expectOutputNotRegex($expectedRegex)
-    {
-        $this->setOutputCallback(function ($output) use ($expectedRegex) {
-            $this->assertNotRegExp($expectedRegex, $output);
-        });
-    }
-}
-
-require_once 'ModuleInstall/ModuleInstaller.php';
 
 /**
  * Helper for initialization of global variables of SugarCRM
@@ -258,13 +67,11 @@ class SugarTestHelper
 
     /**
      * Initialization of main variables of SugarCRM in global scope
-     *
-     * @static
      */
     public static function init()
     {
-        if (self::$isInited == true) {
-            return true;
+        if (self::$isInited) {
+            return;
         }
 
         SugarCache::instance()->flush();
@@ -411,7 +218,7 @@ class SugarTestHelper
         SugarCache::$isCacheReset = false;
 
         SugarConfig::getInstance()->clearCache();
-        \TimeDate::getInstance()->allow_cache = true;
+        TimeDate::getInstance()->allow_cache = true;
 
         // Clear validator constraint factory caches. This is necessary as some of
         // the validators rely on system state like SugarConfig, moduleList, etc.
@@ -919,7 +726,6 @@ class SugarTestHelper
         self::$aclAction->clearACLCache();
     }
 
-
     /**
      * Reinitialization of $dictionary in global scope because we can't unset that variable
      *
@@ -1035,7 +841,6 @@ class SugarTestHelper
 
     /**
      * Tears down the global log variable and replaces it with the OOTB one
-     * @return LoggerManager
      */
     protected static function tearDown_log()
     {

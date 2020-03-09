@@ -20,7 +20,7 @@
          timeoutForLargeTests="165"
          failOnRisky="true"
          failOnWarning="true"
-         bootstrap="SugarTestHelper.php"
+         bootstrap="bootstrap.php"
 >
     <php>
         <ini name="intl.default_locale" value="en"/>
