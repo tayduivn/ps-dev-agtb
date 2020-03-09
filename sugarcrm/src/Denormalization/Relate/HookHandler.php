@@ -195,11 +195,52 @@ final class HookHandler
         if (is_null(self::$settingsCache)) {
             self::$settingsCache = Administration::getSettings('denormalization')->settings['denormalization_fields']
                 ?? [];
+
+            // special case:
+            // APCu cache for the web server and the CLI environments are isolated and
+            // there is no way for Denormalization Job to invalidate Administration::$settings cache.
+            // So the solution for the web server process is to confirm that a module is in sync.
+            $this->checkSynchronizationStatus($bean->getModuleName());
         }
 
         $settings = self::$settingsCache[$bean->getModuleName()] ?? [];
 
         return $settings;
+    }
+
+    private function checkSynchronizationStatus(string $moduleName): void
+    {
+        // check and get a list of out of sync fields
+        $potentiallyOutOfSync = array_filter(
+            self::$settingsCache[$moduleName],
+            function ($fieldOptions) {
+                return empty($fieldOptions['synchronization_confirmed']);
+            }
+        );
+
+        if (count($potentiallyOutOfSync) > 0) {
+            // here we reset cache and populating it again
+            $administration = Administration::getSettings('denormalization', true);
+            $updatedSettings = $administration->settings['denormalization_fields']
+                ?? [];
+            $updatedModuleSettings = $updatedSettings[$moduleName] ?? [];
+
+            // now set up confirmation flags
+            $updateRequired = false;
+            foreach ($potentiallyOutOfSync as $field => $options) {
+                if (!empty($updatedModuleSettings)
+                    && $updatedModuleSettings[$field]['synchronization_in_progress'] === false) {
+                    $updatedSettings[$moduleName][$field]['synchronization_confirmed'] = true;
+                    $updateRequired = true;
+                }
+            }
+
+            // update if confirmed
+            if ($updateRequired) {
+                $administration->saveSetting('denormalization', 'fields', $updatedSettings, 'base');
+                self::$settingsCache = $updatedSettings;
+            }
+        }
     }
 
     private function handleRelationshipModification(string $fieldName, SugarBean $bean, array $options): void
