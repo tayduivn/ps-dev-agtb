@@ -998,8 +998,8 @@ Feature: Tile View feature
       | Closed Lost | black_list  | 1        |
 
 
-  @cases_tileView @pr @stress-test @AT-341 @SS-282 @pr
-  Scenario: Cases > Tile View > Support for Comment Log field in Tile View
+  @cases_tileView @CommentLog @pr @AT-341 @SS-282
+  Scenario Outline: Cases > Tile View > Support for Comment Log field in Tile View
     Given Accounts records exist:
       | *name |
       | Acc_1 |
@@ -1010,18 +1010,18 @@ Feature: Tile View feature
     # Create custom user
     Given I create custom user "user"
 
-    # Update Case record to add Comment Log field to tile body
+    # Update Case record to add Comment Log & Status fields to tile body
     When I update "Cases" module in #TileViewSettings view with the following settings:
-      | table_header | tile_options_header | tile_options_body | records_per_column |
-      |              |                     | Comment Log       |                    |
+      | table_header | tile_options_header | tile_options_body   | records_per_column |
+      |              |                     | Comment Log, Status |                    |
 
     # Update the case's Comment Log field
     When I choose Cases in modules menu
     When I select *C_1 in #CasesList.ListView
     When I click Edit button on #C_1Record header
     When I provide input for #C_1Record.RecordView view
-      | commentlog                   |
-      | Please update case info ASAP |
+      | commentlog  |
+      | <message_1> |
     When I click Save button on #C_1Record header
     When I close alert
 
@@ -1031,11 +1031,12 @@ Feature: Tile View feature
 
     # Verify value of comment log field in tile view body
     Then I verify *C_1 tile field values in #CasesPipelineView view
-      | value                                       |
-      | My New Case                                 |
-      | Acc_1                                       |
-      | Medium                                      |
-      | Administrator: Please update case info ASAP |
+      | value                |
+      | My New Case          |
+      | Acc_1                |
+      | Medium               |
+      | <admin>: <message_1> |
+      | New                  |
 
     # Logout from Admin and Login as another user
     When I logout
@@ -1046,8 +1047,8 @@ Feature: Tile View feature
     When I select *C_1 in #CasesList.ListView
     When I click Edit button on #C_1Record header
     When I provide input for #C_1Record.RecordView view
-      | commentlog                          |
-      | Case was resolved today! Sugar won! |
+      | commentlog  |
+      | <message_2> |
     When I click Save button on #C_1Record header
     When I close alert
 
@@ -1057,11 +1058,12 @@ Feature: Tile View feature
 
     # Verify value of comment log field in tile view body
     Then I verify *C_1 tile field values in #CasesPipelineView view
-      | value                                                                                            |
-      | My New Case                                                                                      |
-      | Acc_1                                                                                            |
-      | Medium                                                                                           |
-      | Administrator: Please update case info ASAP, user userLName: Case was resolved today! Sugar won! |
+      | value                                     |
+      | My New Case                               |
+      | Acc_1                                     |
+      | Medium                                    |
+      | <admin>: <message_1>, <user>: <message_2> |
+      | New                                       |
 
     # Logout from Admin and Login as another user
     When I logout
@@ -1072,8 +1074,8 @@ Feature: Tile View feature
     When I select *C_1 in #CasesList.ListView
     When I click Edit button on #C_1Record header
     When I provide input for #C_1Record.RecordView view
-      | commentlog                  |
-      | Congratulation on a big Win |
+      | commentlog  |
+      | <message_3> |
     When I click Save button on #C_1Record header
     When I close alert
 
@@ -1083,13 +1085,31 @@ Feature: Tile View feature
 
     # Verify value of comment log field in tile view body
     Then I verify *C_1 tile field values in #CasesPipelineView view
-      | value                                                                                                                                        |
-      | My New Case                                                                                                                                  |
-      | Acc_1                                                                                                                                        |
-      | Medium                                                                                                                                       |
-      | Administrator: Please update case info ASAP, user userLName: Case was resolved today! Sugar won!, Administrator: Congratulation on a big Win |
+      | value                                                           |
+      | My New Case                                                     |
+      | Acc_1                                                           |
+      | Medium                                                          |
+      | <admin>: <message_1>, <user>: <message_2>, <admin>: <message_3> |
+      | New                                                             |
 
     # Update Case record to remove Comment Log field from tile body
     When I update "Cases" module in #TileViewSettings view with the following settings:
       | table_header | tile_options_header | tile_options_body | records_per_column |
       |              |                     | Comment Log~r     |                    |
+
+    # Verify value of comment log field in removed from tile body
+    Then I verify *C_1 tile field values in #CasesPipelineView view
+      | value       |
+      | My New Case |
+      | Acc_1       |
+      | Medium      |
+      | New         |
+
+    # Update Case record to remove Status field from tile body - restore default set of fields
+    When I update "Cases" module in #TileViewSettings view with the following settings:
+      | table_header | tile_options_header | tile_options_body | records_per_column |
+      |              |                     | Status~r          |                    |
+
+    Examples:
+      | admin         | user           | message_1                    | message_2                                        | message_3                   |
+      | Administrator | user userLName | Please update case info ASAP | Case was successfully resolved today! Sugar won! | Congratulation on a big Win |
