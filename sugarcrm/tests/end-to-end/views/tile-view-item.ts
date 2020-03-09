@@ -239,8 +239,6 @@ export default class TileViewItem extends BaseView {
                 value = await this.driver.getText(selector);
                 returnedValues = returnedValues.concat(value + ': ');
 
-                //returnedValues = returnedValues.concat(': ');
-
                 // Construct selector to get the text of the message
                 selector  = this.$('listItem.tileContent.rowOfData.commentLog.message.messageContent', {id: this.id, tileContentRow, msgIndex});
 
