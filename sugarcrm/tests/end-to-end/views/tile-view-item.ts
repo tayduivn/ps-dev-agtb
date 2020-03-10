@@ -221,12 +221,13 @@ export default class TileViewItem extends BaseView {
 
         let returnedValues: string = '';
         let value: string = '';
+        let cssPath: string =  'listItem.tileContent.rowOfData.commentLog.message';
         let selector: string = '';
 
         const MAX_NUMBER_OF_MESSAGES_IN_COMMENTS_LOG = 10;
 
         for (var msgIndex=1; msgIndex <= MAX_NUMBER_OF_MESSAGES_IN_COMMENTS_LOG; msgIndex++ ) {
-            let msgSelector = this.$('listItem.tileContent.rowOfData.commentLog.message', {id: this.id, tileContentRow, msgIndex});
+            let msgSelector = this.$(cssPath, {id: this.id, tileContentRow, msgIndex});
 
             // If message exists in comment log
             if ( await this.driver.isElementExist(msgSelector) ) {
@@ -235,18 +236,15 @@ export default class TileViewItem extends BaseView {
                     returnedValues = returnedValues.concat(', ');
                 }
                 // Construct selector to get the author of the message
-                selector  = this.$('listItem.tileContent.rowOfData.commentLog.message.messageAuthor', {id: this.id, tileContentRow, msgIndex});
+                selector  = this.$(cssPath + '.messageAuthor', {id: this.id, tileContentRow, msgIndex});
                 value = await this.driver.getText(selector);
                 returnedValues = returnedValues.concat(value + ': ');
 
                 // Construct selector to get the text of the message
-                selector  = this.$('listItem.tileContent.rowOfData.commentLog.message.messageContent', {id: this.id, tileContentRow, msgIndex});
-
-                // get text of the message
+                selector  = this.$(cssPath + '.messageContent', {id: this.id, tileContentRow, msgIndex});
                 value = await this.driver.getText(selector);
                 returnedValues = returnedValues.concat(value);
-
-            // exist the loop if no more messages found in the comment log
+            // exit the loop if no more messages found in the comment log
             } else {
                 break;
             }
