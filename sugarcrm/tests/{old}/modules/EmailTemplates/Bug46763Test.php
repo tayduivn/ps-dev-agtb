@@ -123,6 +123,7 @@ class Bug46763Test extends TestCase
         $app_list_strings = return_app_list_strings_language($this->language, false);
         $xtpl = null;
 
+        require_once 'include/utils/layout_utils.php';
         ob_start();
         require 'modules/EmailTemplates/EditView.php';
         ob_get_clean();

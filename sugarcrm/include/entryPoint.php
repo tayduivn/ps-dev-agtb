@@ -62,7 +62,7 @@ if (strpos(PHP_SAPI, 'cli') !== 0
     stream_wrapper_unregister('phar');
 }
 
-$GLOBALS['starttTime'] = microtime(true);
+$GLOBALS['startTime'] = microtime(true);
 
 if(empty($GLOBALS['installing']) && !file_exists('config.php'))
 {

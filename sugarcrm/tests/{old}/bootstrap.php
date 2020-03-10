@@ -12,13 +12,6 @@
 
 define('sugarEntry', true);
 
-set_include_path(
-    dirname(__FILE__) . PATH_SEPARATOR .
-    dirname(__FILE__) . '/..' . PATH_SEPARATOR .
-    dirname(__FILE__) . '/../..' . PATH_SEPARATOR .
-    get_include_path()
-);
-
 // constant to indicate that we are running tests
 define('SUGAR_PHPUNIT_RUNNER', true);
 
@@ -27,28 +20,25 @@ define('SUGAR_PHPUNIT_RUNNER', true);
 ini_set('session.use_cookies', false);
 session_cache_limiter(false);
 
-// initialize the various globals we use
-global $sugar_config, $db, $fileName, $current_user, $locale, $current_language;
-if (!isset($_SERVER['HTTP_USER_AGENT'])) {
-    // we are probably running tests from the command line
-    $_SERVER['HTTP_USER_AGENT'] = 'cli';
-}
+set_include_path(__DIR__ . PATH_SEPARATOR . get_include_path());
 
-if (!isset($_SERVER['SERVER_SOFTWARE'])) {
-    $_SERVER['SERVER_SOFTWARE'] = 'PHPUnit';
-}
-
-// move current working directory
+// move current working directory to the web root directory
 chdir(__DIR__ . '/../..');
 
-// this is needed so modules.php properly registers the modules globals, otherwise they
-// end up defined in wrong scope
-global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList, $bwcModules, $sugar_version, $sugar_flavor;
+// initialize the various globals we use
+global $beanFiles;
+global $beanList;
+global $bwcModules;
+global $current_language;
+global $current_user;
+global $locale;
+global $modInvisList;
+global $moduleList;
+global $objectList;
+global $sugar_config;
+global $sugar_flavor;
+global $sugar_version;
 require_once 'include/entryPoint.php';
-require_once 'include/utils/layout_utils.php';
-require_once 'modules/DynamicFields/FieldCases.php';
-
-$GLOBALS['db'] = DBManagerFactory::getInstance();
 
 $current_language = $sugar_config['default_language'];
 // disable the SugarLogger
@@ -66,8 +56,6 @@ $GLOBALS['js_version_key'] = 'testrunner';
 // helps silence the license checking when running unit tests.
 $_SESSION['VALIDATION_EXPIRES_IN'] = 'valid';
 
-$GLOBALS['startTime'] = microtime(true);
-
 // clean out the cache directory
 $repair = new RepairAndClear();
 $repair->module_list = array();
@@ -75,34 +63,18 @@ $repair->show_output = false;
 $repair->clearJsLangFiles();
 $repair->clearJsFiles();
 
+$focus = Administration::getSettings();
+
 // make sure the client license has been validated
-$license = new Administration();
-$license = $license->retrieveSettings('license', true);
-if (!isset($license->settings['license_vk_end_date'])) {
-    $license->saveSetting('license', 'vk_end_date', date('Y-m-d', strtotime('+1 year')));
-}
+$focus->saveSetting('license', 'vk_end_date', date('Y-m-d', strtotime('+1 year')));
 
 // mark that we got by the admin wizard already
-$focus = new Administration();
-$focus->retrieveSettings();
 $focus->saveSetting('system', 'adminwizard', 1);
 
 // custom helper support
-if (file_exists('custom/tests/SugarTestHelperInclude.php')) {
-    require_once 'custom/tests/SugarTestHelperInclude.php';
-}
+SugarAutoLoader::requireWithCustom('tests/SugarTestHelperInclude.php');
 
 $GLOBALS['db']->commit();
-
-// define our testcase subclass
-if (function_exists('shadow_get_config') && ($sc = shadow_get_config()) != false && !empty($sc['template'])) {
-    // shadow is enabled
-    define('SHADOW_ENABLED', true);
-    define('SHADOW_CHECK', false); // disable for faster tests
-} else {
-    define('SHADOW_ENABLED', false);
-    define('SHADOW_CHECK', false);
-}
 
 // Disables sending email.
 define('DISABLE_EMAIL_SEND', true);

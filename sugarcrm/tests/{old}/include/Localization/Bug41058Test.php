@@ -195,6 +195,8 @@ class Bug41058Test extends TestCase
         upgradeUserPreferences();
         $this->assertFileExists($this->loc->invalidNameFormatUpgradeFilename);
 
+        require_once 'include/utils/layout_utils.php';
+
         $this->expectOutputRegex('/'.$mod_strings['ERR_INVALID_LOCALE_NAME_FORMAT_UPGRADE'].'/');
         require('modules/Administration/Locale.php');
     }

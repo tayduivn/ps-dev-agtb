@@ -512,6 +512,7 @@ class SugarTestHelper
             throw new Exception('Field type is not specified');
         }
 
+        require_once 'modules/DynamicFields/FieldCases.php';
         $field = get_widget($vardefs['type']);
 
         foreach ($vardefs as $param => $value) {
@@ -675,7 +676,7 @@ class SugarTestHelper
     public static function tearDownFiles() : void
     {
         foreach (self::$oldFiles as $filename => $filecontents) {
-            if (SHADOW_ENABLED) {
+            if (defined('SHADOW_INSTANCE_DIR')) {
                 if (substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && $filename != 'config_override.php' && file_exists($filename)) {
                     // Delete shadow files always
                     @unlink($filename);

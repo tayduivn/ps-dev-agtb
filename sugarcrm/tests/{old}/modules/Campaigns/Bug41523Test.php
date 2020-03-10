@@ -74,6 +74,7 @@ class Bug41523Test extends TestCase
         $this->assertEquals(1, $logDeletedLeadsCount);
 
         // test subpanel output
+        require_once 'include/utils/layout_utils.php';
         $subpanel = new SubPanelTiles($this->campaign, 'Campaigns');
         $html     = $subpanel->display();
 
