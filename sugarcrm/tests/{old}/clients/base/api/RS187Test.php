@@ -66,7 +66,6 @@ class RS187Test extends TestCase
         $dashboard = BeanFactory::newBean('Dashboards');
         $dashboard->retrieve($result['id']);
 
-        $this->assertAttributeNotEmpty('id', $dashboard);
         $this->assertEquals('Test Dashboard', $dashboard->name);
     }
 
@@ -89,7 +88,6 @@ class RS187Test extends TestCase
         $dashboard = BeanFactory::newBean('Dashboards');
         $dashboard->retrieve($result['id']);
 
-        $this->assertAttributeNotEmpty('id', $dashboard);
         $this->assertEquals('Test Dashboard', $dashboard->name);
     }
 }

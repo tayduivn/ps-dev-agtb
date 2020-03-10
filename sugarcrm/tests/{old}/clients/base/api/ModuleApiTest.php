@@ -250,7 +250,6 @@ class ModuleApiTest extends TestCase
 
         $account = BeanFactory::newBean('Accounts');
         $account->retrieve($result['id']);
-        $this->assertAttributeNotEmpty('id',$account);
         $this->assertEquals("Test Account", $account->name);
     }
 
@@ -362,7 +361,6 @@ class ModuleApiTest extends TestCase
 
         $account = BeanFactory::newBean('Accounts');
         $account->retrieve($result['id']);
-        $this->assertAttributeNotEmpty('id',$account);
         $this->assertEquals("Changed Account", $account->name);
     }
 

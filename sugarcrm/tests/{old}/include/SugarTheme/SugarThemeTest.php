@@ -96,7 +96,8 @@ class SugarThemeTest extends TestCase
         // populate image cache first
         $this->_themeObject->getAllImages();
         $this->_themeObject->clearImageCache();
-        $this->assertAttributeEmpty('_imageCache', $this->_themeObject);
+
+        $this->assertCount(0, SugarTestReflection::getProtectedValue($this->_themeObject, '_imageCache'));
     }
 
     public function testCreateInstance()

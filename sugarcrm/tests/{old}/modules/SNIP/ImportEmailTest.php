@@ -53,7 +53,7 @@ class ImportEmailTest extends TestCase
 		// get the email object if it imported correctly
 		$e = BeanFactory::newBean('Emails');
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
+        $this->assertNotEmpty($e->id);
 		$this->email_id = $e->id;
 
 		// populate the whole bean
@@ -97,7 +97,7 @@ class ImportEmailTest extends TestCase
 		// get the email object if it imported correctly
 		$e = BeanFactory::newBean('Emails');
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
+        $this->assertNotEmpty($e->id);
 		$this->email_id = $e->id;
 
 		// populate the whole bean
@@ -137,7 +137,7 @@ class ImportEmailTest extends TestCase
 		// get the email object if it imported correctly
 		$e = BeanFactory::newBean('Emails');
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
+        $this->assertNotEmpty($e->id);
 		$this->email_id = $e->id;
 
 		// populate the whole bean
@@ -181,7 +181,7 @@ class ImportEmailTest extends TestCase
 		// now, get the email with the mesage id '2002'
 		$e = BeanFactory::newBean('Emails');
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
+        $this->assertNotEmpty($e->id);
 		$this->email_id = $e->id;
 
 		// populate the whole bean
