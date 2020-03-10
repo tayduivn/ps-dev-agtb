@@ -74,9 +74,6 @@ class UserPreferenceTest extends TestCase
         $this->assertEmpty(self::$user->getPreference('test_pref'));
     }
 
-    /**
-     * @depends testSettingAUserPreferenceInSession
-     */
     public function testResetPreferences()
     {
         self::$user->setPreference('reminder_time', 25);
