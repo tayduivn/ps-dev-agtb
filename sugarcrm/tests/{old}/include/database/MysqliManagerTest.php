@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/database/MysqlManagerTest.php';
-
 class MysqliManagerTest extends MysqlManagerTest
 {
     protected $configOptions = array();

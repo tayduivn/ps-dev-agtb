@@ -13,7 +13,6 @@
 use PHPUnit\Framework\TestCase;
 
 require_once "include/export_utils.php";
-require_once "SugarTestProspectUtilities.php";
 
 class Bug43805Test extends TestCase
 {

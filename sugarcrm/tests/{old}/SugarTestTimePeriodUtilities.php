@@ -11,13 +11,9 @@
  */
 
 /**
- * SugarTestTimePeriodUtilities.php
  *
  * This is a test class to create test TimePeriod instances
  */
-
-require_once 'modules/TimePeriods/TimePeriod.php';
-
 class SugarTestTimePeriodUtilities
 {
     public static $_createdTimePeriods = array();

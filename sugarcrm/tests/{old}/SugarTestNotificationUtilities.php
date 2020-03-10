@@ -12,7 +12,6 @@
  */
 
 /**
- * SugarTestNotificationUtilities.php
  * This is a helper utility to create Notification bean instances for testing
  */
 class SugarTestNotificationUtilities

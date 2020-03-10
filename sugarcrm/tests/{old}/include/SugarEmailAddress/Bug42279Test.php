@@ -12,15 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
-require_once 'SugarTestContactUtilities.php';
-
-
-/**
- * 
- * Bug 42279
- */
-
 class Bug42279Test extends TestCase
 {
     private $contact;	

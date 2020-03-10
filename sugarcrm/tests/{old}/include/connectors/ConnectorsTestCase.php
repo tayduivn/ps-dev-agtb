@@ -13,9 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'include/connectors/ConnectorsTestUtility.php';
-require_once 'include/connectors/utils/ConnectorUtils.php';
-
 class Sugar_Connectors_TestCase extends TestCase
 {
     public $original_modules_sources;

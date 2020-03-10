@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/database/MssqlManagerTest.php';
-
 class SqlsrvManagerTest extends MssqlManagerTest
 {
     protected function setUp()

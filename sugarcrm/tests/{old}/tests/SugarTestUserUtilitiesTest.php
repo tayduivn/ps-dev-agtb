@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'SugarTestUserUtilities.php';
-
 /**
  * @group utilities
  */

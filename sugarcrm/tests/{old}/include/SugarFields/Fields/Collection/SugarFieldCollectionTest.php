@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'SugarTestACLUtilities.php';
-
 /**
  * Class SugarFieldCollectionTest
  *

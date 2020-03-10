@@ -13,9 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/connectors/utils/ConnectorUtils.php');
-
-/*
+/**
  * This test makes sure that connectors::getConnectors() can handle a badly formed custom metadata file that is either
  * missing the connectors array or the array has been defined as a string
  * @ticket 50800

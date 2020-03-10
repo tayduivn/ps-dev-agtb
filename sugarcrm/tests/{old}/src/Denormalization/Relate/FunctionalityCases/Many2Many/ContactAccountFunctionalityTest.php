@@ -14,7 +14,6 @@ namespace Sugarcrm\SugarcrmTests\Denormalization\Relate\FunctionalityCases\Many2
 
 use SugarBean;
 use SugarTestAccountUtilities;
-use SugarTestOpportunityUtilities;
 
 class ContactAccountM2MFunctionalityTest extends AbstractFunctionalityTest
 {

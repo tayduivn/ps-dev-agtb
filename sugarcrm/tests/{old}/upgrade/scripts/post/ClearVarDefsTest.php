@@ -13,7 +13,6 @@
 use PHPUnit\Framework\TestCase;
 
 require_once 'upgrade/scripts/post/1_ClearVarDefs.php';
-require_once 'SugarTestReflection.php';
 
 /**
  * Test asserts correct removal of wrong field definitions from a bean.

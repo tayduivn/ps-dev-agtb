@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'ModuleInstall/PackageManager/PackageManager.php';
-
 class Bug39980Test extends TestCase
 {
     public function tearDown()

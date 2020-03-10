@@ -13,8 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'include/connectors/utils/ConnectorUtils.php';
-
 class Bug33861Test extends TestCase
 {
     public $has_custom_connectors_file;
@@ -185,7 +183,6 @@ class Bug33861Test extends TestCase
             $GLOBALS['log']->fatal('Cannot write file custom/modules/Connectors/metadata/display_config.php');
         }
 
-        require_once 'include/connectors/utils/ConnectorUtils.php';
         if (!ConnectorUtils::updateMetaDataFiles()) {
             $GLOBALS['log']->fatal('Cannot update metadata files for connectors');
         }

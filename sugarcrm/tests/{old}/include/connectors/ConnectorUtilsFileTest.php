@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'include/connectors/utils/ConnectorUtils.php';
-
 class ConnectorUtilsFileTest extends TestCase
 {
     public function setUp()

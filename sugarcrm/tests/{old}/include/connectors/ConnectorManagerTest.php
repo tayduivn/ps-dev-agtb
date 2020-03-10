@@ -12,15 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * ConnectorsManagerTest
- */
-
-
-require_once 'include/connectors/utils/ConnectorUtils.php';
-require_once 'modules/EAPM/EAPM.php';
-
-
 class SourceTest
 {
     private $id;

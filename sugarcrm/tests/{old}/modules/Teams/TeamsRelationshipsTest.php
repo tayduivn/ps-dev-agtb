@@ -14,7 +14,6 @@
 use PHPUnit\Framework\TestCase;
 
 require_once('vendor/nusoap//nusoap.php');
-require_once('SugarTestUserUtilities.php');
 
 /**
  * Test cases for the Team object

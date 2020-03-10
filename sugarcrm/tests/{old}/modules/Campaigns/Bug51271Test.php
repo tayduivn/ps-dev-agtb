@@ -13,10 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Campaigns/utils.php');
-require_once('SugarTestContactUtilities.php');
-require_once('SugarTestLeadUtilities.php');
-
 class Bug51271Test extends TestCase
 {
 	var $campaign = null;

@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/connectors/ConnectorsTestCase.php');
 
 class ConnectorsWebexPropertiesTest extends Sugar_Connectors_TestCase {
 	function setUp() {

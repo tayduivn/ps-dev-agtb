@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/EmailAddresses/upgrade/FixupEmailAddressDuplicationTest.php';
-
 /**
  * @coversDefaultClass SugarUpgradeFixupEmailAddressDuplication
  */

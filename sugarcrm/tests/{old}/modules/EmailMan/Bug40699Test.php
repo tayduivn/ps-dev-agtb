@@ -13,8 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'SugarTestAccountUtilities.php';
-
 class Bug40699Test extends TestCase
 {
 	public function setUp()

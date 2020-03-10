@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'modules/Trackers/TrackerTestUtility.php';
-
 class TrackerMetricsTest extends TestCase
 {
 	var $trackerSettings;

@@ -13,8 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'modules/Bugs/Bug.php';
-
 class Bug60780Test extends TestCase
 {
     protected $has_disable_count_query_enabled;

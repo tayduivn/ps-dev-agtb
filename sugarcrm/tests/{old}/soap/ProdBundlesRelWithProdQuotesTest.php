@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-require_once('tests/{old}/SugarTestQuoteUtilities.php');
-
 /**
  * Bug #32064
  * Setting a relationship between ProductBundles and Quotes or Products and ProductBundles results in a PHP fatal error

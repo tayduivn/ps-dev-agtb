@@ -12,13 +12,8 @@
  */
 
 /**
- * SugarTestForecastUtilities.php
- *
  * This is a test class to create test Forecast instances
  */
-
-require_once 'modules/Forecasts/Forecast.php';
-
 class SugarTestForecastUtilities
 {
     private static $_createdForecasts = array();
