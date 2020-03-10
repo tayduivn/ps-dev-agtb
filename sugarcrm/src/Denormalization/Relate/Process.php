@@ -351,7 +351,9 @@ final class Process
                 $indexedFieldDefs[] = $indexedFieldDef;
             }
         }
-        $indexName = "idx_" . strtolower($entity->getTargetModuleName()) . "_{$entity->targetFieldName}";
+        $indexName = \DBManagerFactory::getInstance()->getValidDBName(
+            "idx_" . $entity->getTargetTableName() . "_{$entity->targetFieldName}"
+        );
 
         $this->db->replicateIndex(
             $entity->getTargetTableName(),
