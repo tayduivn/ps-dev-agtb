@@ -20,7 +20,7 @@ describe('Emails.Views.Recordlist', function() {
         var viewName = 'recordlist';
 
         app = SugarTest.app;
-        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop};
+        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop, count: $.noop};
         sandbox = sinon.sandbox.create();
 
         SugarTest.testMetadata.init();

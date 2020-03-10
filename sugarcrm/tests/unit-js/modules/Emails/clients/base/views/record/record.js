@@ -32,7 +32,7 @@ describe('Emails.Views.Record', function() {
         app = SugarTest.app;
         app.data.declareModels();
         app.routing.start();
-        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop};
+        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop, count: $.noop};
 
         context = app.context.getContext({module: moduleName});
         context.prepare(true);

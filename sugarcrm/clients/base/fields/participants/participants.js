@@ -1035,13 +1035,13 @@
      * rendering in a drawer, so the similar function in record.js will not work
      */
     focusFirstInput: function() {
-        if (app.drawer && _.isFunction(app.drawer.count) && app.drawer.count()) {
+        if (app.drawer && (app.drawer.count() > 0)) {
             $(() => {
                 let $firstInput = app.drawer._components[app.drawer.count() - 1].$el
                     .find('input[type=text]')
                     .first();
 
-                if ($firstInput.length && !$firstInput.is(':focus') && $firstInput.is(':visible')) {
+                if (($firstInput.length > 0) && !$firstInput.is(':focus') && $firstInput.is(':visible')) {
                     $firstInput.focus();
                 }
             });

@@ -159,7 +159,8 @@ describe('Base.View.Create', function() {
         drawer = app.drawer;
         app.drawer = {
             close: $.noop,
-            reset: $.noop
+            reset: $.noop,
+            count: $.noop
         };
 
         context = app.context.getContext();
