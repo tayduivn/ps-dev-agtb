@@ -20,6 +20,8 @@ class UsersLastImportTest extends TestCase
     private $_importIds = array();
     private $_usersLastImport;
     private $_usersLastImportIds;
+    private $cstmTableExistBefore;
+    private $oldCustomFields;
     
     public function setUp() 
     {
@@ -37,6 +39,17 @@ class UsersLastImportTest extends TestCase
         
         $sql = 'DELETE FROM users_last_import WHERE id IN (\'' . implode("','",$this->_usersLastImportIds) . '\')';
         $GLOBALS['db']->query($sql);
+
+        if (!$this->cstmTableExistBefore && $GLOBALS['db']->tableExists('notes_cstm')) {
+            $GLOBALS['db']->dropTableName('notes_cstm');
+        }
+
+        if (!empty($this->oldCustomFields)) {
+            $GLOBALS['dictionary']['Note']['custom_fields'] = $this->oldCustomFields;
+        } else {
+            unset($GLOBALS['dictionary']['Note']['custom_fields']);
+        }
+
         SugarTestHelper::tearDown();
     }
     
@@ -89,6 +102,49 @@ class UsersLastImportTest extends TestCase
         $result = $GLOBALS['db']->query($query);
         
         $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+    }
+
+    /**
+     * Test undo() to remove the imported custom fields
+     */
+    public function testUndoLastImportedCustomFields()
+    {
+        $this->cstmTableExistBefore = false;
+        if (!$GLOBALS['db']->tableExists('notes_cstm')) {
+            $GLOBALS['db']->createTableParams(
+                'notes_cstm',
+                [
+                    'id_c' => array (
+                        'name' => 'id_c',
+                        'type' => 'id',
+                    ),
+                ],
+                [],
+            );
+        } else {
+            $this->cstmTableExistBefore = true;
+        }
+        $this->oldCustomFields = $GLOBALS['dictionary']['Note']['custom_fields'] ?? null;
+        $GLOBALS['dictionary']['Note']['custom_fields'] = ['customField'];
+
+        $focus = SugarTestNoteUtilities::createNote();
+
+        $GLOBALS['db']->query("INSERT INTO notes_cstm (id_c) VALUES ('{$focus->id}')");
+
+        $last_import = new UsersLastImport();
+        $last_import->assigned_user_id = $GLOBALS['current_user']->id;
+        $last_import->import_module = 'Notes';
+        $last_import->bean_type = 'Note';
+        $last_import->bean_id = $focus->id;
+        $this->_usersLastImportIds[] = $last_import->save();
+
+        $last_import->undo(
+            $last_import->import_module
+        );
+
+        $result = $GLOBALS['db']->query("SELECT * FROM notes_cstm where id_c = '{$focus->id}'");
+        $row = $GLOBALS['db']->fetchByAssoc($result);
+        $this->assertFalse($row, 'There should not be any records in the table now');
     }
     
     /**
