@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Command;
 
-use PHPUnit\Framework\MockObject\Matcher\Invocation;
+use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
 use SugarConfig;
@@ -63,7 +63,7 @@ class StateAwareRebuildTest extends TestCase
      * @test
      * @dataProvider ignoreUpToDateProvider
      */
-    public function upToDateDataIsRebuildOnlyIfForced($ignoreUpToDate, Invocation $matcher)
+    public function upToDateDataIsRebuildOnlyIfForced($ignoreUpToDate, InvocationOrder $invocationRule)
     {
         $state = $this->createState(true);
         $state->activateTable('team_sets_users_1');
