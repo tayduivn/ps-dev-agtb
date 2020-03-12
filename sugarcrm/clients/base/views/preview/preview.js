@@ -103,6 +103,12 @@
                 app.router.navigate(route, {trigger: true});
             }
         };
+
+        this.saveCallback = function(wasSaved) {
+            if (wasSaved) {
+                app.events.trigger('preview:edit:save');
+            }
+        };
     },
 
     /**

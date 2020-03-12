@@ -1465,4 +1465,24 @@ describe("Record View", function () {
             expect(tooltipStub).not.toHaveBeenCalled();
         });
     });
+
+    describe('when a subpanel record preview is saved', function() {
+        let preview;
+
+        beforeEach(function() {
+            preview = SugarTest.createView('base', moduleName, 'preview', null, null);
+        });
+
+        afterEach(function() {
+            preview.dispose();
+            preview = null;
+        });
+
+        it('should reload the record view data', function() {
+            const callBackStub = sinon.collection.stub(view.context, 'reloadData');
+
+            preview.saveCallback(true);
+            expect(callBackStub).toHaveBeenCalled();
+        });
+    });
 });

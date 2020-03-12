@@ -233,6 +233,12 @@
 
         // Option to avoid navigating to other routes during edit/save (useful for opening in a drawer)
         this.skipRouting = this.context.get('skipRouting') || false;
+
+        // Listening for the save from preview to finish and reload data on the main record view
+        // to reflect changes from preview's edit
+        app.events.on('preview:edit:save', function() {
+            this.context.reloadData();
+        }, this);
     },
 
     /**
