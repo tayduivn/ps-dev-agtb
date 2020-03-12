@@ -205,6 +205,10 @@
         $(window).on('resize.' + this.cid, this.adjustHeaderpane);
         $(window).on('resize.' + this.cid, _.bind(this.overflowTabs, this));
 
+        if (!this.getLabelPlacement()) {
+            $(window).on('resize.' + this.cid, _.bind(_.debounce(this.relocatePencils, 500), this));
+        }
+
         // initialize tab view after the component is attached to DOM
         this.on('append', function() {
             this.overflowTabs();
@@ -229,6 +233,17 @@
 
         // Option to avoid navigating to other routes during edit/save (useful for opening in a drawer)
         this.skipRouting = this.context.get('skipRouting') || false;
+    },
+
+    /**
+     * Relocate all pencils of the record
+     */
+    relocatePencils: function() {
+        _.each(this.fields, function(field) {
+            if (field.type === 'record-decor') {
+                field.relocatePencil();
+            }
+        });
     },
 
     /**

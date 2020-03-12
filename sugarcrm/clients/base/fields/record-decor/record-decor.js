@@ -65,9 +65,6 @@
             field.setElement(fieldElems[field.sfId]);
             field.render();
             this.redecorate(field);
-            if (!field.def.labelsOnTop) {
-                this.relocatePencil(field);
-            }
         }, this);
     },
 
@@ -184,6 +181,10 @@
             this.setCellStyle('none');
             field.show();
         }
+
+        if (!field.def.labelsOnTop) {
+            this.relocatePencil();
+        }
     },
 
     /**
@@ -200,10 +201,10 @@
     /**
      * In labelsOnSide view, the pencil icon needs to be moved to the left
      * so it hovers near the text
-     *
-     * @param {field} field whose pencil we're moving
      */
-    relocatePencil: function(field) {
+    relocatePencil: function() {
+        var field = this.getActualField();
+
         var cell = this.getRecordCell();
         let isCellHidden = cell.parent().hasClass('hide');
 
@@ -223,16 +224,20 @@
             this.toggleRecordCellDisplay(cell);
         }
 
-        var offset = wrapperWidth - labelWidth + 5;
+        var offset = wrapperWidth - labelWidth - 6;
 
-        // bool fields' element wrappers aren't the same size as other fields,
-        // so we need to change their offset
-        if (field.type === 'bool') {
-            offset -= 15;
+        let css = {};
+
+        // change offset if it's showed children's label instead of label of field
+        if (field && field.type === 'fieldset' && field.def.show_child_labels) {
+            offset += 26;
+        }
+
+        if (field && !field.def.show_child_labels) {
+            css = {top: '6px'};
         }
 
         var direction = app.lang.direction === 'ltr' ? 'left' : 'right';
-        var css = {top: '6px'};
         css[direction] = offset + 'px';
 
         pencil.css(css);
