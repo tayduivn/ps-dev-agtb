@@ -3131,7 +3131,7 @@ function sugar_cleanup($exit = false)
     }
 
     // Now write the cached tracker_queries
-    if (class_exists("TrackerManager")) {
+    if (class_exists(TrackerManager::class, false)) {
         $trackerManager = TrackerManager::getInstance();
         if ($monitor = $trackerManager->getMonitor('tracker_queries')) {
             $trackerManager->saveMonitor($monitor, true);
