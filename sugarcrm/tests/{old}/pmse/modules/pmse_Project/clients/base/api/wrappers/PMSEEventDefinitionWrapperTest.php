@@ -20,10 +20,6 @@ class PMSEEventDefinitionWrapperTest extends TestCase
     protected $mockElement;
     protected $mockDefinition;
     protected $mockCrmDataWrapper;
-    
-    public static function setUpBeforeClass()
-    {
-    }
 
     protected function setUp()
     {

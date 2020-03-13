@@ -40,10 +40,6 @@ class AuditTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function setUp()
-    {
-    }
-
     private function createContactBeanWithAuditLog()
     {
         $context = Container::getInstance()->get(Context::class);

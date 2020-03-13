@@ -14,14 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class RestBug56791Test extends TestCase
 {
-    public function setUp()
-    {
-    }
-
-    public function tearDown()
-    {
-    }
-
     public function testEmptyQueryReturn()
     {
         $api = new RestService();

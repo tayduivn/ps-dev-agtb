@@ -34,10 +34,6 @@ class SugarQueryAclFieldTest extends TestCase
         );
     }
 
-    protected function setUp()
-    {
-    }
-
     public static function tearDownAfterClass()
     {
         ACLField::$acl_fields = array();

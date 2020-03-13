@@ -28,10 +28,6 @@ class PMSEActivityDefinitionWrapperTest extends TestCase
     protected $mocActivity;
     protected $activityWrapper;
 
-    public static function setUpBeforeClass()
-    {
-    }
-
     protected function setUp()
     {
         $this->mocActDef = $this->getMockBuilder('pmse_BpmActivityDefinition')

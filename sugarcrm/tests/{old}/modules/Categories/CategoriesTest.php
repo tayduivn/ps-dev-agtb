@@ -40,10 +40,6 @@ class CategoriesTest extends TestCase
         SugarTestHelper::setUp('beanList');
     }
 
-    public static function tearDownAfterClass()
-    {
-    }
-
     public function setUp()
     {
         SugarTestHelper::setUp('current_user', array(true, true));

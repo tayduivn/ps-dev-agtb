@@ -14,14 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class ActivitiesApiHelperTest extends TestCase
 {
-    public function setUp()
-    {
-    }
-
-    public function tearDown()
-    {
-    }
-
     public function dataProviderForGetDisplayModule()
     {
         $emptyAccount = BeanFactory::newBean('Accounts');

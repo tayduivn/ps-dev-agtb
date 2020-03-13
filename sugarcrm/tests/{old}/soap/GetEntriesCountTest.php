@@ -27,13 +27,6 @@ class GetEntriesCountTest extends SOAPTestCase
         parent::setUp();
     }
 
-    /**
-     * Remove anything that was used during this test
-     *
-     */
-    public function tearDown() {
-    }
-
     public function testRetrieveUsersList() {
         $this->_login();
         //First retrieve the users count (should be at least 1)

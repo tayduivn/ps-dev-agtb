@@ -18,10 +18,6 @@ class PMSEDataParserGatewayTest extends TestCase
 {
     private $parserGateway;
 
-    public static function setUpBeforeClass()
-    {
-    }
-
     protected function setUp()
     {
         $this->parserGateway = ProcessManager\Factory::getPMSEObject('PMSEDataParserGateway');

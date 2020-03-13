@@ -121,10 +121,6 @@ class SugarForecasting_Export_IndividualTest extends TestCase
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
     }
 
-    public static function tearDownAfterClass()
-    {
-    }
-
     /**
      * exportForecastWorksheetsProvider
      *

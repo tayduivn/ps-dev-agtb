@@ -33,10 +33,6 @@ class Bug51172Test extends TestCase
     protected $module = 'Employees';
     protected $add_module = 'Users';
 
-    public function setUp()
-    {
-    }
-
     public function tearDown()
     {
         $_REQUEST = array();

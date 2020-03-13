@@ -21,9 +21,6 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
     protected $newId = '';
     protected $mocGateway;
     protected $mocGatewayDefinition;
-    public static function setUpBeforeClass()
-    {
-    }
 
     protected function setUp()
     {
