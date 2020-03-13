@@ -44,6 +44,7 @@ class SugarOidcUserMappingTest extends TestCase
             $this->sugarConfig = $GLOBALS['sugar_config'];
         }
         $GLOBALS['sugar_config']['languages'] = ['de_DE' => 'de_DE', 'en_us' => 'en_us', 'it_it' => 'it_it'];
+        $GLOBALS['sugar_config']['disabled_languages'] = 'bg_BG,da_DK';
         Validator::clearValidatorsCache();
     }
 
@@ -117,6 +118,12 @@ class SugarOidcUserMappingTest extends TestCase
             'notExistingLanguageMapping' => [
                 'source' => [
                     'locale' => 'rt_RT',
+                ],
+                'expectedMapping' => [],
+            ],
+            'disabledLanguageMapping' => [
+                'source' => [
+                    'locale' => 'bg_BG',
                 ],
                 'expectedMapping' => [],
             ],
