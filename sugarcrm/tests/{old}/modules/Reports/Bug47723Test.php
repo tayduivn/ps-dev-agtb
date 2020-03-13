@@ -101,20 +101,5 @@ class Bug47723Test extends TestCase
 
 
     $this->assertTrue(empty($stack) && $balanced, "{$query} is not balanced");
-    //$this->assertEmpty($stack, 'Number or opening and closing brackets in the ORDER BY statement is not equal');
-
-    //I've commented out for now because it is causing test failures
-    /*
-	//extract the order by
-	$order_by = substr($query,strpos($query,'ORDER BY'));
-	//get the parts until the first quote and after the last quote
-	$left_part = substr($order_by,0,strpos($order_by,"'"));
-	$right_part = substr($order_by,strrpos($order_by,"'"));
-	//get the left round brackets
-	preg_match_all('|\(|',$left_part,$left_part_matches);
-	//get the right round brackets
-	preg_match_all('|\)|',$right_part,$right_part_matches);
-	$this->assertEquals(count($left_part_matches[0]),count($right_part_matches[0]),'Number or opening and closing brackets in the ORDER BY statement is not equal');
-    */
     }
 }

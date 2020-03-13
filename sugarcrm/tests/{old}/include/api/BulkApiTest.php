@@ -63,7 +63,7 @@ class BulkApiTest extends TestCase
         $args = array("requests" => $requests);
         $result = $apiClass->bulkCall($api, $args);
 
-        $this->assertEquals(count($requests), count($result), "Response is missing elements");
+        $this->assertSameSize($requests, $result);
         foreach($result as $i => $item) {
             $this->assertArrayHasKey("contents", $result[$i], "Missing contents for response $i");
             $this->assertArrayHasKey("status", $result[$i], "Missing status for response $i");

@@ -637,13 +637,6 @@ class RESTAPI4Test extends TestCase
         
         $panels = $result[$module][$type][$view]['panels'];
         $this->assertTrue(isset($panels[0][0]['name']), 'No name index in the first row array of panel fields');
-        $this->assertEquals(count($legacyFields), count($currentFields), 'Field count differs between legacy and current metadata');
+        $this->assertSameSize($legacyFields, $currentFields);
     }
-    
-    /*
-    public function testAddFieldLevelACLsToWirelessList() {
-        $v4 = new SugarWebServiceUtilv4();
-        $defs = $v4->get_module_view_defs('Cases', 'wireless', 'list');
-    }
-    */
 }

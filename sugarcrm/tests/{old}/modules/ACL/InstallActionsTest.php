@@ -66,7 +66,7 @@ class InstallActionsTest extends TestCase
         $result = $GLOBALS['db']->query($query);
         $id = $GLOBALS['db']->fetchByAssoc($result);
         $this->assertTrue(!empty($id));
-        $this->assertEquals(count($id),1);
+        $this->assertCount(1, $id);
 
         $query = "select count(role_id) as count from acl_roles_actions where role_id = '{$id['id']}'";
         $result = $GLOBALS['db']->query($query);
@@ -90,7 +90,7 @@ class InstallActionsTest extends TestCase
         $result = $GLOBALS['db']->query($query);
         $id = $GLOBALS['db']->fetchByAssoc($result);
         $this->assertTrue(!empty($id));
-        $this->assertEquals(count($id),1);
+        $this->assertCount(1, $id);
 
         $query = "select count(role_id) as count from acl_roles_actions where role_id = '{$id['id']}'";
         $result = $GLOBALS['db']->query($query);

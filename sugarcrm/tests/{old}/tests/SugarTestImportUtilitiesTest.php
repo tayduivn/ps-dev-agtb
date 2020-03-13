@@ -34,8 +34,8 @@ class SugarTestImportUtilitiesTest extends TestCase
                 $i++;
         }
         fclose($fp);
-        $this->assertEquals($i,2000);
-        $this->assertEquals(count($columns),3);
+        $this->assertEquals(2000, $i);
+        $this->assertCount(3, $columns);
     }
 
     public function testCanCreateFileAndSpecifyLines()
@@ -72,8 +72,8 @@ class SugarTestImportUtilitiesTest extends TestCase
                 $i++;
         }
         fclose($fp);
-        $this->assertEquals($i,2);
-        $this->assertEquals(count($columns),5);
+        $this->assertEquals(2, $i);
+        $this->assertCount(5, $columns);
     }
 
     public function testCanRemoveAllCreatedFiles()

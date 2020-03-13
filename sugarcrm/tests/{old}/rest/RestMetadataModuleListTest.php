@@ -110,7 +110,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         $GLOBALS['db']->commit();
         // Do this to load the tab list into cache
         $moduleListFromSystem = $tabs->get_tabs_system();
-        $this->assertEquals(count($newModuleList),count($moduleListFromSystem[0]),"The get_tabs_system() is returning an incorrect number of modules, changing the tab list failed, it is: ".var_export($moduleListFromSystem[0],true));
+        $this->assertSameSize($newModuleList, $moduleListFromSystem[0]);
 
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal&test=2');
         $this->_clearMetadataCache();
@@ -169,7 +169,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         foreach ( $enabledMobile as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list.');
         }
-        $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list');
+        $this->assertSameSize($enabledMobile, $restModules);
 
         // Create a custom set of wireless modules to test if it is loading those properly
         SugarAutoLoader::ensureDir('custom/include/MVC/Controller');
@@ -188,7 +188,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         foreach ( $enabledMobile as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list on the second pass');
         }
-        $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list on the second pass');
+        $this->assertSameSize($enabledMobile, $restModules);
     }
 
 

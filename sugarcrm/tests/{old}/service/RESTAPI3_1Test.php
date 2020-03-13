@@ -120,7 +120,7 @@ class RESTAPI3_1Test extends TestCase
         $availModules = array_keys($sh->get_user_module_list($this->_user));
         $expectedModuleList = $sh->get_visible_mobile_modules($availModules);
 
-        $this->assertEquals(count($actualModuleList), count($expectedModuleList), "Could not get available modules during login" );
+        $this->assertSameSize($actualModuleList, $expectedModuleList);
     }
 
     public function testGetSingleModuleLanguage()
@@ -238,7 +238,7 @@ class RESTAPI3_1Test extends TestCase
             $expectedMD5 = md5(serialize($actualVardef));
             $this->assertEquals($expectedMD5, $actualMD5);
         }
-        $this->assertEquals(count($actualModuleList), count($expectedModuleList), "Could not get available modules during login" );
+        $this->assertSameSize($actualModuleList, $expectedModuleList, "Could not get available modules during login");
     }
 
     function _aclEditViewFieldProvider()
@@ -404,7 +404,7 @@ class RESTAPI3_1Test extends TestCase
 
             $panels = $result[$module][$type][$view]['panels'];
             $this->assertTrue(isset($panels[0][0]['name']), 'No name index in the first row array of panel fields');
-            $this->assertEquals(count($legacyFields), count($currentFields), 'Field count differs between legacy and current metadata');
+            $this->assertSameSize($legacyFields, $currentFields);
         }
     public function testGetEmployee()
     {

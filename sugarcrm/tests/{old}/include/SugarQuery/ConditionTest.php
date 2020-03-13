@@ -366,7 +366,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 2, "Wrong row count, actually received: " . count($result) . " back.");
+        $this->assertCount(2, $result);
 
         $low = $result[0]['quantity'];
         $high = $result[1]['quantity'];
@@ -382,7 +382,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 2, "Wrong row count, actually received: " . count($result) . " back.");
+        $this->assertCount(2, $result);
 
         $low = $result[0]['quantity'];
         $high = $result[1]['quantity'];

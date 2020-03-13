@@ -250,7 +250,7 @@ class RelateRecordApiTest extends TestCase
         );
         $apiClass = new RelateRecordApi();
         $result = $apiClass->createRelatedRecord($api, $args);
-        $this->assertEquals(count($result['related_record']), 1, "More than one field was returned");
+        $this->assertCount(1, $result['related_record']);
         $this->assertNotEmpty($result['related_record']['id'], "ID was empty");
         unset($_SESSION['ACL']);
         $this->createdBeans[] = BeanFactory::getBean("Notes", $result['related_record']['id']);

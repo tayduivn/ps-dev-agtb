@@ -244,7 +244,7 @@ class MultiLevelAdminTest extends TestCase
         ACLAction::clearACLCache();
         $this->mlaResetSession();
 
-        $this->assertEquals(count($user->getDeveloperModules()),1);
+        $this->assertCount(1, $user->getDeveloperModules());
     }
     
     public function testGetAdminModulesForCurrentUserIfTheyAreNotDeveloperOfAnyModules()
@@ -274,7 +274,7 @@ class MultiLevelAdminTest extends TestCase
         ACLAction::clearACLCache();
         $this->mlaResetSession();
 
-        $this->assertEquals(count($user->getDeveloperModules()),0);
+        $this->assertCount(0, $user->getDeveloperModules());
     }
     
     public function testCanDisplayStudioForCurrentUserThatDoesNotHaveDeveloperAccessToAStudioModule()

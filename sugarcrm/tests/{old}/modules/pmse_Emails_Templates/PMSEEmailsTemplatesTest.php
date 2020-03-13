@@ -35,7 +35,7 @@ class PMSEEmailsTemplatesTest extends TestCase
 
         $output = $this->object->retrieveFields('Emails', null, 20, 0, 'Emails');
         $fields = $this->getOutputFields($output['records']);
-        $this->assertEquals(count($fields), 9);
+        $this->assertCount(9, $fields);
         $this->assertContains("direction", $fields, "direction should be a supported field in ET.");
         $this->assertNotContains("type", $fields, "type should not be a supported field in ET.");
     }

@@ -139,7 +139,7 @@ class UnifiedSearchAdvancedTest extends TestCase
     	$usa->search();
 
     	$modules = $current_user->getPreference('globalSearch', 'search');
-    	$this->assertEquals(count($modules), 2, 'Assert that there are two modules in the user preferences as defined from the global search');
+        $this->assertCount(2, $modules);
 
         $this->assertEquals('Accounts', $modules[0], 'Assert that the Accounts module has been added');
         $this->assertEquals('Contacts', $modules[1], 'Assert that the Contacts module has been added');

@@ -118,7 +118,7 @@ class MetaDataManagerTest extends TestCase
 
         // We verify our assumptions that we should have an empty set of metadata.
         $this->assertArrayHasKey("_hash", $moduleMeta, "Metadata does not contain a hash");
-        $this->assertEquals(count($moduleMeta), 1, "Metadata has incorrect amount of elements");
+        $this->assertCount(1, $moduleMeta);
 
         // Clear our metadata cache.
         MetaDataFiles::clearModuleClientCache("TestModule");
@@ -130,7 +130,7 @@ class MetaDataManagerTest extends TestCase
 
         // We now verify if we have additional controller metadata in our return.
         $this->assertArrayHasKey("model", $moduleMeta, "Metadata does not contain a controller");
-        $this->assertEquals(count($moduleMeta), 2, "Metadata doesn't include the controller");
+        $this->assertCount(2, $moduleMeta);
 
         // Clean up our test.
         MetaDataFiles::clearModuleClientCache("TestModule");

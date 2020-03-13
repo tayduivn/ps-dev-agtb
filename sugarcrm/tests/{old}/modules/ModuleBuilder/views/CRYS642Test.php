@@ -35,6 +35,6 @@ class CRYS642Test extends TestCase
                 return (!empty($item['rhs_module']));
         });
 
-        $this->assertEquals(count($allData), count($noLabelValuesArray), 'All entries should have rhs_module label');
+        $this->assertSameSize($allData, $noLabelValuesArray);
     }
 }

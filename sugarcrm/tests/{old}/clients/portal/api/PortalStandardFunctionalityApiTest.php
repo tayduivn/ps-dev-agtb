@@ -905,7 +905,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
             $this->assertIsArray($response['records']);
-            $this->assertEquals(count($response['records']), count($recordIdList));
+            $this->assertSameSize($response['records'], $recordIdList);
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
             }
@@ -943,7 +943,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
             $this->assertIsArray($response['records']);
-            $this->assertEquals(count($response['records']), count($recordIdList));
+            $this->assertSameSize($response['records'], $recordIdList);
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
             }
@@ -981,7 +981,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
             $this->assertIsArray($response['records']);
-            $this->assertEquals(count($response['records']), count($recordIdList));
+            $this->assertSameSize($response['records'], $recordIdList);
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
             }
@@ -1022,7 +1022,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
             $this->assertIsArray($response['records']);
-            $this->assertEquals(count($response['records']), count($recordIdList));
+            $this->assertSameSize($response['records'], $recordIdList);
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
             }
@@ -1067,7 +1067,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
             $this->assertArrayHasKey('next_offset', $response);
             $this->assertArrayHasKey('records', $response);
             $this->assertIsArray($response['records']);
-            $this->assertEquals(count($response['records']), count($recordIdList));
+            $this->assertSameSize($response['records'], $recordIdList);
             foreach ($response['records'] as $record) {
                 $this->assertContains($record['id'], $recordIdList);
             }
@@ -1140,7 +1140,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
                 $this->assertArrayHasKey('next_offset', $response);
                 $this->assertArrayHasKey('records', $response);
                 $this->assertIsArray($response['records']);
-                $this->assertEquals(count($response['records']), 0);
+                $this->assertCount(0, $response['records']);
             }
         }
     }
@@ -1540,7 +1540,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
                 $this->assertArrayHasKey('next_offset', $response);
                 $this->assertArrayHasKey('records', $response);
                 $this->assertIsArray($response['records']);
-                $this->assertEquals(count($response['records']), count($relatedNotesIds));
+                $this->assertSameSize($response['records'], $relatedNotesIds);
                 foreach ($response['records'] as $record) {
                     $this->assertContains($record['id'], $relatedNotesIds);
                 }
@@ -1601,7 +1601,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
                 $this->assertArrayHasKey('next_offset', $response);
                 $this->assertArrayHasKey('records', $response);
                 $this->assertIsArray($response['records']);
-                $this->assertEquals(count($response['records']), count($relatedNotesIds));
+                $this->assertSameSize($response['records'], $relatedNotesIds);
                 foreach ($response['records'] as $record) {
                     $this->assertContains($record['id'], $relatedNotesIds);
                 }
@@ -1665,7 +1665,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
                 $this->assertArrayHasKey('next_offset', $response);
                 $this->assertArrayHasKey('records', $response);
                 $this->assertIsArray($response['records']);
-                $this->assertEquals(count($response['records']), count($relatedNotesIds));
+                $this->assertSameSize($response['records'], $relatedNotesIds);
                 foreach ($response['records'] as $record) {
                     $this->assertContains($record['id'], $relatedNotesIds);
                 }

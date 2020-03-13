@@ -73,14 +73,14 @@ class Bug32489Test extends TestCase
 	    //Simple search by name
         $_REQUEST['name'] = $this->em1->name;
 	    $results = $this->em1->searchImportedEmails();
-		$this->assertEquals(1, count($results['out']), "Could not perform a simple search for imported emails" );
+        $this->assertCount(1, $results['out']);
 		$this->assertEquals(count($results['out']), $results['totalCount'], "Imported emails search, total count of result set and count query not equal.");
 		
 		//Search should return nothing
 		$_REQUEST['name'] =  uniqid() . uniqid(); //Should be enough entropy.	
 		$results = $this->em1->searchImportedEmails();	
-		$this->assertEquals(0, count($results['out']), "Could not perform a simple search for imported emails, expected no results" );
-		
+        $this->assertCount(0, $results['out']);
+
 		//Search by date filters.
 		$tomm = gmdate('Y-m-d H:i:s',(gmmktime() + 3600 * 24));
 		$tommDisplay = $timedate->to_display_date_time($tomm);

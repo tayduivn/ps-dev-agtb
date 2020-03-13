@@ -1279,7 +1279,7 @@ class ForecastsTimePeriodTest extends TestCase
         $timePeriod->save();
         SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
         $chartLabels = $timePeriod->getChartLabels(array());
-        $this->assertEquals(count($expectedLabels), count($chartLabels));
+        $this->assertSameSize($expectedLabels, $chartLabels);
         foreach ($expectedLabels as $key => $expectedLabel) {
             $this->assertEquals($expectedLabel, $chartLabels[$key]['label']);
         }

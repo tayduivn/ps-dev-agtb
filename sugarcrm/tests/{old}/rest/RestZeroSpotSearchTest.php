@@ -56,7 +56,7 @@ class RestZeroSpotSearchTest extends RestTestBase {
 
         $this->assertEquals($this->account_id[0], $restReply['reply']['records'][0]['id'], "The record returned does not match the 0 record");
 
-        $this->assertEquals(count($restReply['reply']['records']), 1, "Should only return the 0 record");
+        $this->assertCount(1, $restReply['reply']['records']);
         
     }
 }

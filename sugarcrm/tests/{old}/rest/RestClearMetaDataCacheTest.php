@@ -185,7 +185,10 @@ class RestClearMetadataCacheTest extends RestTestBase
         // Test custom field no longer shows in metadata
         $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
         $this->assertFalse(isset($reply['reply']['modules']['Accounts']['fields']['unit_testy_c']), "The created custom field was found in the metadata response and it should not have been");
-        $this->assertEquals(count($initialMetadata['reply']['modules']['Accounts']['fields']), count($reply['reply']['modules']['Accounts']['fields']), "Starting and ending field counts do not match");
+        $this->assertSameSize(
+            $initialMetadata['reply']['modules']['Accounts']['fields'],
+            $reply['reply']['modules']['Accounts']['fields']
+        );
     }
 
     /**

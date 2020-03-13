@@ -86,7 +86,7 @@ class TeamsRelationshipsTest extends TestCase
 		
 	    $result = $this->_soapClient->call('get_relationships',array('session'=>$this->_sessionId,'module_name'=>'Contacts', 'module_id'=>$this->_contactId, 'link_field_name'=>'teams', 'related_module_query'=>'', 'related_fields' => array('name', 'id'), 'related_module_link_name_to_fields_array' => '' ));
 	    $this->assertTrue(!empty($result),'Results not returned. HTTP Response: '.$this->_soapClient->response); 
-	    $this->assertEquals(count($result['entry_list']), 4);
+        $this->assertCount(4, $result['entry_list']);
     }
    
     public function testRegularRelationshipCalls() {

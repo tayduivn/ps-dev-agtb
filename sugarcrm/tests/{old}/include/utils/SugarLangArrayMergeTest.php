@@ -46,6 +46,6 @@ class SugarLangArrayMergeTest extends TestCase
             $merged['LBL_DOM'],
             'Should merge subarrays too'
         );
-        $this->assertEquals(count($target), count($merged), 'Merged array should be same size as target.');
+        $this->assertSameSize($target, $merged);
     }
 }

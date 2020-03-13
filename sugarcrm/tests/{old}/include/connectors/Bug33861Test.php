@@ -105,8 +105,8 @@ class Bug33861Test extends TestCase
         require 'custom/modules/connectors/metadata/connectors.php';
         require 'custom/modules/connectors/metadata/display_config.php';
 
-        $this->assertEquals(count($connectors), 4, "Assert that there are four connectors enabled.");
-        $this->assertEquals(count($modules_sources), 3, "Assert that there are two modules (Accounts, Contacts) enabled.");
+        $this->assertCount(4, $connectors);
+        $this->assertCount(3, $modules_sources);
 
         $viewdefs = array();
 

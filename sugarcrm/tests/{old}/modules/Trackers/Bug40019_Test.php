@@ -90,33 +90,9 @@ class Bug40019_Test extends TestCase
     	$GLOBALS['sugar_config']['history_max_viewed'] = 50;
     	$breadCrumbStack = new BreadCrumbStack($GLOBALS['current_user']->id);
     	$list = $breadCrumbStack->getBreadCrumbList('Accounts');
-    	$this->assertEquals(count($list), 10, 'Assert that there are 10 entries for Accounts module');
+        $this->assertCount(10, $list);
 
     	$list = $breadCrumbStack->getBreadCrumbList('Contacts');
-    	$this->assertEquals(count($list), 10, 'Assert that there are 10 entries for Contacts module');    	
-    	
-    	/*
-    	$GLOBALS['sugar_config']['history_max_viewed'] = 10;
-    	$breadCrumbStack = new BreadCrumbStack($GLOBALS['current_user']->id);
-    	$list = $breadCrumbStack->getBreadCrumbList(array('Accounts', 'Contacts'));
-    	$contacts = 0;
-    	$accounts = 0;
-    	foreach($list as $list_entry)
-    	{
-    		switch ($list_entry['module_name'])
-    		{
-    			case 'Contacts': 
-    				 $contacts++;
-    			     break;
-    			case 'Accounts': 
-    				 $accounts++;
-    			     break;
-    		}
-    	}
-    	
-    	$this->assertEquals($contacts, 5, 'Assert there are 5 entries found for Contacts using array filter of Contacts & Accounts');
-    	$this->assertEquals($accounts, 5, 'Assert there are 5 entries found for Accounts using array filter of Contacts & Accounts');
-        */
+        $this->assertCount(10, $list);
     }
-    
 }

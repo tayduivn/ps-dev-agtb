@@ -109,6 +109,6 @@ class WorkFlowProcessActionsTest extends TestCase
         $task->load_relationship('teams');
         $task_teams = $task->teams->get();
 
-        $this->assertEquals(count(array_diff($quote_teams, $task_teams)), 0, 'Team sets are different');
+        $this->assertCount(0, array_diff($quote_teams, $task_teams));
     }
 }

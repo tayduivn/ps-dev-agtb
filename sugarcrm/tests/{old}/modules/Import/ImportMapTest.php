@@ -287,7 +287,7 @@ class ImportMapTest extends TestCase
             array('assigned_user_id' => $GLOBALS['current_user']->id)
             );
         
-        $this->assertEquals(count($objarr),3);
+        $this->assertCount(3, $objarr);
         
         $this->assertEquals($objarr[0]->assigned_user_id,
             $GLOBALS['current_user']->id);

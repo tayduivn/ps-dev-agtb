@@ -61,7 +61,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         foreach ( $enabledMobile as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list.');
         }
-        $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list');
+        $this->assertSameSize($enabledMobile, $restModules);
 
         // Create a custom set of wireless modules to test if it is loading those properly
         SugarAutoLoader::ensureDir('custom/include/MVC/Controller');
@@ -80,7 +80,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         foreach ( $enabledMobile as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list on the second pass');
         }
-        $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list on the second pass');
+        $this->assertSameSize($enabledMobile, $restModules);
     }
 
     public function testMetadataMobileUsers() {

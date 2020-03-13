@@ -61,7 +61,7 @@ class RESTAPI4FieldACLsTest extends TestCase
         $known = $viewdefs[$module]['mobile']['view']['list'];
         
         $this->assertArrayHasKey('panels', $known, 'No panels array found in the known metadata');
-        $this->assertEquals(count($defs), count($known['panels'][0]['fields']), 'Metadata converted field count different than known count');
+        $this->assertSameSize($defs, $known['panels'][0]['fields']);
     }
     
     /**
@@ -79,7 +79,7 @@ class RESTAPI4FieldACLsTest extends TestCase
         require $metadatafile;
         $known = $viewdefs[$module]['mobile']['view'][$view];
         $this->assertArrayHasKey('panels', $known, 'No panels array found in the known metadata');
-        $this->assertEquals(count($defs['panels']), count($known['panels'][0]['fields']), 'Metadata converted field count different than known count');
+        $this->assertSameSize($defs['panels'], $known['panels'][0]['fields']);
     }
     
     /**
