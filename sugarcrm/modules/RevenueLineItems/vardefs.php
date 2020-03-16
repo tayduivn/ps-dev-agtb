@@ -928,6 +928,16 @@ $dictionary['RevenueLineItem'] = array(
                 'product_template_id',
             ),
         ),
+        array(
+            'name' => 'idx_accountid_type_ren_dateclosed',
+            'type' => 'index',
+            'fields' => array(
+                'account_id',
+                'product_type',
+                'renewable',
+                'date_closed',
+            ),
+        ),
     ),
     'relationships' => array(
         'revenuelineitem_tasks' => array(

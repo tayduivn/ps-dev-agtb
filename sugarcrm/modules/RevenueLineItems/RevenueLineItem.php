@@ -214,6 +214,7 @@ class RevenueLineItem extends SugarBean
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
         $this->saveProductWorksheet();
+        $this->updateRelatedAccount($this->account_id);
         //END SUGARCRM flav=ent ONLY
 
         return $id;
@@ -255,6 +256,38 @@ class RevenueLineItem extends SugarBean
             $this->service_duration_unit = null;
         }
     }
+
+    /**
+     * Updates next_renewal_date on related Account if necessary
+     *
+     * @param string $id the ID of the account to update
+     * @throws SugarQueryException
+     */
+    protected function updateRelatedAccount($id = null)
+    {
+        $accountBean = BeanFactory::retrieveBean('Accounts', $id);
+        if (!empty($accountBean->id)) {
+            // Get the minimum date_closed of all RLIs related to the account
+            // that are of type "Existing Business" and are renewable
+            $db = DBManagerFactory::getInstance();
+            $q = new SugarQuery();
+            $q->from($this);
+            $q->select('date_closed');
+            $q->where()->queryAnd()
+                ->equals('account_id', $accountBean->id)
+                ->equals('product_type', 'Existing Business')
+                ->equals('renewable', 1);
+            $q->orderBy('date_closed', 'ASC');
+            $result = $db->fromConvert($q->getOne(), 'date');
+            $result = !empty($result) ? $result : '';
+
+            // If the value is different, update the account
+            if ($accountBean->next_renewal_date !== $result) {
+                $accountBean->next_renewal_date = $result;
+                $accountBean->save();
+            }
+        }
+    }
     //END SUGARCRM flav=ent ONLY
 
     /**
@@ -280,17 +313,25 @@ class RevenueLineItem extends SugarBean
     
     /**
      * Override the current SugarBean functionality to make sure that when this method is called that it will also
-     * take care of any draft worksheets by rolling-up the data
+     * take care of any draft worksheets by rolling-up the data, as well as
+     * updating rollup fields on the related Account
      *
-     * @param string $id            The ID of the record we want to delete
+     * @param string $id The ID of the record we want to delete
      */
     public function mark_deleted($id)
     {
+        // Grab the ID of the related Account as this field is removed in the
+        // call to the parent mark_deleted
+        $account_id = $this->account_id;
+
         parent::mark_deleted($id);
            
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
         $this->saveProductWorksheet();
+
+        // Re-calculate the related Account's next_renewal_date
+        $this->updateRelatedAccount($account_id);
         //END SUGARCRM flav=ent ONLY
     }
 

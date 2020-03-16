@@ -378,14 +378,7 @@ $dictionary['Account'] = array(
             'name' => 'next_renewal_date',
             'vname' => 'LBL_NEXT_RENEWAL_DATE',
             'type' => 'date',
-            'calculated' => true,
-            'formula' => 'rollupConditionalMinDate(
-                $revenuelineitems,
-                "date_closed",
-                createList("product_type","renewable","sales_stage"),
-                createList("Existing Business","1",forecastSalesStages(false, false))
-            )',
-            'enforced' => true,
+            'readonly' => true,
         ),
         // END SUGARCRM flav=ent ONLY
     ),

@@ -21,6 +21,7 @@ class RevenueLineItemTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('RevenueLineItems'));
     }
@@ -28,6 +29,12 @@ class RevenueLineItemTest extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+    }
+
+    public function tearDown()
+    {
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
     }
 
     /**
@@ -597,6 +604,72 @@ class RevenueLineItemTest extends TestCase
                 true,
             ],
         ];
+    }
+
+    /**
+     * @covers ::updateRelatedAccount
+     * @dataProvider providerTestUpdateRelatedAccount
+     *
+     * @param Array $rliDataArray array of RLIs to create
+     * @param string $expected the expected next_renewal_date of the Account affected
+     */
+    public function testUpdateRelatedAccount($rliDataArray, $expected)
+    {
+        // Create an account
+        $account = SugarTestAccountUtilities::createAccount();
+
+        // Create RLIs that point to the account. On save, they should update
+        // that account's next_renewal_date field
+        foreach ($rliDataArray as $rliData) {
+            $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+            $rli->product_type = $rliData['product_type'];
+            $rli->renewable = $rliData['renewable'];
+            $rli->date_closed = $rliData['date_closed'];
+            $rli->account_id = $account->id;
+            $rli->save();
+        }
+
+        // Check that the account's next_renewal_date was correctly calculated
+        // on RLI save
+        $resultAccount = BeanFactory::retrieveBean('Accounts', $account->id, ['use_cache' => false]);
+        $this->assertEquals($expected, $resultAccount->next_renewal_date);
+    }
+
+    public function providerTestUpdateRelatedAccount()
+    {
+        return array(
+            // No related RLIs
+            array(
+                array(
+                ),
+                '',
+            ),
+            // 2 related RLIs, but none that fit the criteria
+            array(
+                array(
+                    array('product_type' => 'New Business', 'renewable' => 1, 'date_closed' => '2020-01-01'),
+                    array('product_type' => 'Existing Business', 'renewable' => 0, 'date_closed' => '2019-01-01'),
+                ),
+                '',
+            ),
+            // 2 related RLIs, only one of which fits the criteria
+            array(
+                array(
+                    array('product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2020-01-01'),
+                    array('product_type' => 'New Business', 'renewable' => 1, 'date_closed' => '2019-01-01'),
+                ),
+                '2020-01-01',
+            ),
+            // 3 related RLIs, all of which fit the criteria but with different close dates
+            array(
+                array(
+                    array('product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2020-01-01'),
+                    array('product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2019-01-01'),
+                    array('product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2021-01-01'),
+                ),
+                '2019-01-01',
+            ),
+        );
     }
     //END SUGARCRM flav=ent ONLY
 }
