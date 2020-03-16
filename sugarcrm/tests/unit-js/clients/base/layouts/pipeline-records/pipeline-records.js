@@ -54,6 +54,7 @@ describe('Base.Layouts.PipelineRecords', function() {
 
     describe('loadData', function() {
         var filter;
+        var mockHtml;
 
         beforeEach(function() {
             filter = {
@@ -65,12 +66,19 @@ describe('Base.Layouts.PipelineRecords', function() {
                     },
                 ],
             };
+
             sinon.collection.stub(app.user, 'get', function() {
                 return 'testId';
             });
             sinon.collection.spy(layout.collection, 'setOption');
             sinon.collection.spy(layout.collection, 'fetch');
+
             layout.loadData(options);
+        });
+
+        afterEach(function() {
+            filter = null;
+            mockHtml = null;
         });
 
         it('should set options for layout.collection', function() {
@@ -80,6 +88,42 @@ describe('Base.Layouts.PipelineRecords', function() {
             });
             expect(layout.collection.setOption).toHaveBeenCalledWith('limit', 2);
             expect(layout.collection.fetch).toHaveBeenCalled();
+        });
+    });
+
+    describe('render', function() {
+        var filter;
+        var mockHtml;
+
+        beforeEach(function() {
+            mockHtml = '<div class="pipeline-records">' +
+                            '<div class="pipeline-refresh-btn">' +
+                                '<div class="btn-group refresh pipeline-refresh-btn">' +
+                                    '<button class="btn" title="Refresh list">' +
+                                        '<i class="fa fa-refresh"></i>' +
+                                    '</button>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+
+            sinon.collection.stub(app.lang, 'get').withArgs('LBL_TILE_REFRESH').returns('Refresh Tiles');
+            sinon.collection.stub(layout, '_super');
+
+            layout.$el = $(mockHtml);
+            layout.render();
+        });
+
+        afterEach(function() {
+            mockHtml = null;
+        });
+
+        it('should call _super with render', function() {
+            expect(layout._super).toHaveBeenCalledWith('render');
+        });
+
+        it('should update the refresh button title', function() {
+            expect(app.lang.get).toHaveBeenCalledWith('LBL_TILE_REFRESH');
+            expect(layout.$('.btn')[0].title).toEqual('Refresh Tiles');
         });
     });
 });

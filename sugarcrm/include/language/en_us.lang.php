@@ -5326,6 +5326,8 @@ Sincerely, SugarCRM',
 
     // Refresh button on list views
     'LBL_LIST_REFRESH' => 'Refresh list',
+    // Refresh button on tile views
+    'LBL_TILE_REFRESH' => 'Refresh Tiles',
 
     // Textarea field.
     'LBL_TEXTAREA_MORE' => 'more',
