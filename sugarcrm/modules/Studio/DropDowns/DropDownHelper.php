@@ -102,6 +102,6 @@ class DropDownHelper
             $count++;
         }
 
-        return save_custom_dropdown_strings(array($dropdown_name => $dropdown));
+        return save_custom_dropdown_strings(array($dropdown_name => $dropdown), $selected_lang);
     }
 }
