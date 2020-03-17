@@ -14,6 +14,7 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
     var view;
     var app;
     var viewMeta;
+    var viewModeStub;
 
     beforeEach(function() {
         app = SUGAR.App;
@@ -40,7 +41,10 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
         );
 
         sinon.collection.stub(view.context, 'on', function() {});
-        sinon.collection.stub(view, '_super', function() {});
+        //sinon.collection.stub(view, '_super', function() {});
+        viewModeStub = sinon.collection.stub(app.metadata, 'getModule').withArgs('Opportunities', 'config').returns({
+            opps_view_by: 'RevenueLineItems'
+        });
     });
 
     afterEach(function() {
@@ -52,6 +56,7 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
     describe('saveModel', function() {
         var model;
         var ui;
+        var pipelineData;
 
         beforeEach(function() {
             view.headerField = 'testHeader';
@@ -59,6 +64,11 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                 item: 'test'
             };
             model = app.data.createBean('Opportunities');
+            pipelineData = {
+                ui: ui,
+                oldCollection: 'oldCollection',
+                newCollection: 'newCollection'
+            };
 
             sinon.collection.stub(model, 'set', function() {});
             sinon.collection.stub(model, 'save', function() {});
@@ -88,11 +98,7 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                         }
                     };
                 });
-                view.saveModel(model, {
-                    ui: ui,
-                    oldCollection: 'oldCollection',
-                    newCollection: 'newCollection'
-                });
+                view.saveModel(model, pipelineData);
                 expect(model.set).toHaveBeenCalledWith('date_closed', '2019-05-31');
             });
         });
@@ -108,12 +114,73 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                     };
                 });
 
-                view.saveModel(model, {
-                    ui: ui,
-                    oldCollection: 'oldCollection',
-                    newCollection: 'newCollection'
-                });
+                view.saveModel(model, pipelineData);
                 expect(model.set).toHaveBeenCalledWith(view.headerField, status);
+            });
+        });
+
+        describe('when certain readonly values are being changed', function() {
+            using('different values', [
+                {
+                    headerField: 'date_closed',
+                    attr: {'sales_status': 'Closed Won'},
+                    mode: 'RevenueLineItems',
+                    shouldSave: false
+                },
+                {
+                    headerField: 'date_closed',
+                    attr: {'sales_status': 'Closed Lost'},
+                    mode: 'RevenueLineItems',
+                    shouldSave: false
+                },
+                {
+                    headerField: 'date_closed',
+                    attr: {'sales_status': 'In Progress'},
+                    mode: 'RevenueLineItems',
+                    shouldSave: true
+                },
+                {
+                    headerField: 'date_closed',
+                    attr: {'sales_status': 'Closed Won'},
+                    mode: 'Opportunities',
+                    shouldSave: true
+                },
+                {
+                    headerField: 'date_closed',
+                    attr: {'sales_status': 'Closed Won'},
+                    mode: 'Opportunities',
+                    shouldSave: true
+                },
+                {
+                    headerField: 'sales_stage',
+                    attr: {'sales_status': 'Closed Won'},
+                    mode: 'RevenueLineItems',
+                    shouldSave: false
+                },
+                {
+                    headerField: 'sales_stage',
+                    attr: {'sales_status': 'Closed Won'},
+                    mode: 'Opportunities',
+                    shouldSave: true
+                },
+            ], function(data) {
+                it('should not move the tile', function() {
+                    viewModeStub.withArgs('Opportunities', 'config').returns({
+                        opps_view_by: data.mode
+                    });
+                    var postChangeStub = sinon.collection.stub(view, '_postChange');
+                    var superStub = sinon.collection.stub(view, '_super', function() {});
+                    view.headerField = data.headerField;
+                    var model = app.data.createBean('Opportunities', data.attr);
+                    view.saveModel(model, pipelineData);
+
+                    if (data.shouldSave) {
+                        expect(postChangeStub).not.toHaveBeenCalled();
+                        expect(superStub).toHaveBeenCalled();
+                    } else {
+                        expect(postChangeStub).toHaveBeenCalledWith(model, true, pipelineData);
+                    }
+                });
             });
         });
     });

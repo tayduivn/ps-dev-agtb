@@ -17,6 +17,49 @@
 ({
     extendsFrom: 'PipelineRecordlistContentView',
 
+    /**
+     * Don't change the expected close date or the sales stage of an opp that is already closed
+     * @inheritdoc
+     */
+    saveModel: function(model, pipelineData) {
+        var cfg = app.metadata.getModule('Opportunities', 'config');
+        var rliMode = cfg.opps_view_by === 'RevenueLineItems';
+
+        if (this.headerField === 'date_closed' && rliMode) {
+            var status = model.get('sales_status');
+            if (_.contains(['Closed Won', 'Closed Lost'], status)) {
+                this._postChange(model, true, pipelineData);
+                var moduleName = app.lang.getModuleName(this.module, {plural: false});
+                app.alert.show('error_converted', {
+                    level: 'error',
+                    messages: app.lang.get(
+                        'LBL_PIPELINE_ERR_CLOSED_DATE_CLOSED',
+                        this.module,
+                        {moduleSingular: moduleName}
+                        )
+                });
+                return;
+            }
+        }
+
+        if (this.headerField === 'sales_stage' && rliMode) {
+            var status = model.get('sales_status');
+            if (_.contains(['Closed Won', 'Closed Lost'], status)) {
+                this._postChange(model, true, pipelineData);
+                var moduleName = app.lang.getModuleName(this.module, {plural: false});
+                app.alert.show('error_converted', {
+                    level: 'error',
+                    messages: app.lang.get(
+                        'LBL_PIPELINE_ERR_CLOSED_SALES_STAGE',
+                        this.module, {moduleSingular: moduleName}
+                        )
+                });
+                return;
+            }
+        }
+
+        this._super('saveModel', [model, pipelineData]);
+    },
 
     /**
      * @inheritdoc

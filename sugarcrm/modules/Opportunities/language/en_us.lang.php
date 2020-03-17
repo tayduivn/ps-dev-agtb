@@ -257,4 +257,9 @@ To create an {{module_name}}:
     'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten Opportunities in a bubble chart.',
     'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
     'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Opportunities",
+
+    // BEGIN SUGARCRM flav=ent ONLY
+    'LBL_PIPELINE_ERR_CLOSED_DATE_CLOSED' => 'Unable to change Expected Close Date as this Opportunity has no open line items.',
+    'LBL_PIPELINE_ERR_CLOSED_SALES_STAGE' => 'Unable to change Sales Stage as this Opportunity has no open line items.',
+    // END SUGARCRM flav=ent ONLY
 );
