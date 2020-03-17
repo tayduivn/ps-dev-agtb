@@ -3329,6 +3329,9 @@ class HealthCheckScanner
             if (!empty($def['source']) && $def['source'] != 'db') {
                 continue;
             }
+            if (empty($full_vardefs['fields'][$name])) {
+                continue;
+            }
             $real_type = $this->db->getFieldType($full_vardefs['fields'][$name]);
             $original_type = $this->db->getFieldType($def);
             if (empty($real_type)) {
