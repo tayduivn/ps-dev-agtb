@@ -211,7 +211,10 @@ class sucroseReports extends sucrose
                     'currency_symbol' => $this->currency_symbol,
                     'decimals' => ($this->chart_properties['thousands'] ? 0 : null),
                 ));
+            } elseif (is_numeric($label)) {
+                $label = $this->formatNumber($this->chart_properties['thousands'] ? $label / 1000 : $label, 0);
             }
+
             if ($this->chart_properties['thousands']) {
                 $label .= $app_strings['LBL_THOUSANDS_SYMBOL'];
             }
