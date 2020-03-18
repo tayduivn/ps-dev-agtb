@@ -785,28 +785,37 @@
   }
 }
 
-.spanInputLabel (@columns, @columnWidth, @gutterWidth) {
-  width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1));
-}
-
 // override default grid values for labels-on-side
 .spanInputLabelX (@index) when (@index > 0) {
-  .labels-on-side > .span@{index} { .spanInputLabel(@index, @labelOnSideNarrowColumnWidth, @labelOnSideGutterWidth); }
+  @labelViewPortWidth: @columnViewPortWith * @index + 2;
 
-  @media (min-width: 768px) {
-    .labels-on-side > .span@{index} { .spanInputLabel(@index, @labelsOnSideColumnWidth768, @labelOnSideGutterWidth); }
+  .labels-on-side > .record-label-wrapper.span@{index} { width: @labelViewPortWidth - 3; }
+
+  .labels-on-side {
+    //used adjacent sibling combinator in order to fill up the extra whitespace in the record-cell
+    .record-label-wrapper.span@{index} + .record-link-wrapper {
+      width: calc(~"100% - @{labelViewPortWidth}");
+    }
   }
 
-  @media (min-width: 1029px) {
-    .labels-on-side > .span@{index} { .spanInputLabel(@index, @gridColumnWidth768, @labelOnSideGutterWidth); }
+  @media (min-width: 600px) {
+    @labelViewPortWidth: @columnViewPortWith * @index + 1;
+
+    .labels-on-side {
+      .record-label-wrapper.span@{index} + .record-link-wrapper {
+        width: calc(~"100% - @{labelViewPortWidth}");
+      }
+    }
   }
 
-  @media (min-width: 1370px) {
-    .labels-on-side > .span@{index} { .spanInputLabel(@index, @gridColumnWidth, @labelOnSideGutterWidth); }
-  }
+  @media (min-width: 1200px) {
+    @labelViewPortWidth: @columnViewPortWith * @index;
 
-  @media (min-width: 1550px) {
-    .labels-on-side.record-cell > .span@{index} { .spanInputLabel(@index, @gridColumnWidth1200, @labelOnSideGutterWidth); }
+    .labels-on-side {
+      .record-label-wrapper.span@{index} + .record-link-wrapper {
+        width: calc(~"100% - @{labelViewPortWidth}");
+      }
+    }
   }
 
   .spanInputLabelX(@index - 1);

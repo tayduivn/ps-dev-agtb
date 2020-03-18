@@ -126,7 +126,7 @@
                         <div class="row-fluid {{../name}}">
                             {{#each this}}
                                 {{#if name}}
-                                    <div class="{{#if ../../../labelsOnTop}}span{{span}} {{/if}}record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                                    <div class="{{#if ../../../labelsOnTop}}span{{span}} {{else}}span{{cellSpan}} {{/if}}record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                                         {{decoratedField  ../../../../../../decoratorField ../../../../../../this model=../../../../../../model template=../../../../../../action}}
                                     </div>
                                 {{else}}
@@ -167,7 +167,7 @@
                             <div class="row-fluid {{../name}}{{#if ../hide}}{{#if ../../../../../hidePanel}} hide{{/if}}{{/if}}">
                                 {{#each this}}
                                     {{#if name}}
-                                        <div class="{{#if ../../../labelsOnTop}}span{{span}} {{/if}}record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                                        <div class="{{#if ../../../labelsOnTop}}span{{span}} {{else}}span{{cellSpan}} {{/if}}record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                                             {{decoratedField  ../../../../../../decoratorField ../../../../../../this model=../../../../../../model template=../../../../../../action}}
                                         </div>
                                     {{else}}
