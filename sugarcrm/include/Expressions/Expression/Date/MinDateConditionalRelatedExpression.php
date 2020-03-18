@@ -28,8 +28,15 @@
  */
 class MinDateConditionalRelatedExpression extends DateExpression
 {
+    /**
+     * @deprecated
+     * @return int|string
+     */
     public function evaluate()
     {
+        LoggerManager::getLogger()->deprecated('The rollupConditionalMinDate SugarLogic function has been ' .
+            'deprecated since 10.0.0 and will be removed in a later release');
+
         // Parse the relationship arguments
         $params = $this->getParameters();
         $relatedBeans = $params[0]->evaluate();
@@ -61,9 +68,14 @@ class MinDateConditionalRelatedExpression extends DateExpression
     public static function getJSEvaluate()
     {
         return <<<JS
+
         if (App === undefined) {
+            console.log('The rollupConditionalMinDate SugarLogic function has been deprecated since 10.0.0 ' +
+            'and will be removed in a later release');
             return SUGAR.expressions.Expression.FALSE;
         }
+        App.logger.warn('The rollupConditionalMinDate SugarLogic function has been deprecated since 10.0.0 ' +
+            'and will be removed in a later release');
         
         // Parse the arguments
         var params = this.params;
