@@ -33,6 +33,7 @@ class MetaDataManagerTest extends TestCase
         if (isset($GLOBALS['sugar_config']['disabled_languages'])) {
             $this->configBackup['disabled_languages'] = $GLOBALS['sugar_config']['disabled_languages'];
         }
+        $this->configBackup['activity_streams_enabled'] = $GLOBALS['sugar_config']['activity_streams_enabled'];
 
         $this->setTestLanguageSettings();
         $this->mm = MetaDataManager::getManager();
@@ -48,6 +49,7 @@ class MetaDataManagerTest extends TestCase
         if (isset($this->configBackup['disabled_languages'])) {
             $GLOBALS['sugar_config']['disabled_languages'] = $this->configBackup['disabled_languages'];
         }
+        $GLOBALS['sugar_config']['activity_streams_enabled'] = $this->configBackup['activity_streams_enabled'];
 
         MetaDataFiles::clearModuleClientCache();
         $this->mdc->reset();
@@ -891,6 +893,44 @@ PLATFORMS;
         );
     }
 
+    public function getActivityStreamDataProvider()
+    {
+        $moduleName = "Meetings";
+
+        return [
+            'It should assert true when config\'s activity_streams_enabled is set to true and activity is enabled for module' => [
+                $moduleName,
+                true,
+                true,
+            ],
+            'It should assert false when config\'s activity_streams_enabled is set to false regardless of module' => [
+                $moduleName,
+                false,
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getActivityStreamDataProvider
+     *
+     * @param $moduleName
+     * @param $isActivityStreamEnabled
+     * @param $expected
+     */
+    public function testActivityStreamDataWhenConfigIsEnabledAndDisabled($moduleName, $isActivityStreamEnabled, $expected)
+    {
+        Activity::enable();
+
+        $GLOBALS['sugar_config']['activity_streams_enabled'] = $isActivityStreamEnabled;
+        \SugarConfig::getInstance()->clearCache('activity_streams_enabled');
+        $data = $this->mm->getModuleData($moduleName);
+
+        Activity::restoreToPreviousState();
+
+        $this->assertEquals($expected, $data['activityStreamEnabled']);
+    }
+
     public function testGetFilterModulesFlag()
     {
         $mm = $this->createPartialMock('MetaDataManager', []);
@@ -903,7 +943,6 @@ PLATFORMS;
         $this->assertTrue(SugarTestReflection::callProtectedMethod($mm, 'getFilterModulesFlag', [$userContextMock]));
         // END SUGARCRM flav=ent ONLY
     }
-
 
 // BEGIN SUGARCRM flav=ent ONLY
 

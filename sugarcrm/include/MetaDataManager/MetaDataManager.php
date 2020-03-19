@@ -870,7 +870,9 @@ class MetaDataManager implements LoggerAwareInterface
         $data['dupCheckEnabled'] = isset($vardefs['duplicate_check']) && isset($vardefs['duplicate_check']['enabled']) && ($vardefs['duplicate_check']['enabled']===true);
 
         // Indicate whether a Module has activity stream enabled
-        $data['activityStreamEnabled'] = ActivityQueueManager::isEnabledForModule($moduleName);
+        $data['activityStreamEnabled'] = SugarConfig::getInstance()->get('activity_streams_enabled', false) ?
+            ActivityQueueManager::isEnabledForModule($moduleName) : false;
+
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
 
         // TODO we need to have this kind of information on the module itself not hacked around on globals
