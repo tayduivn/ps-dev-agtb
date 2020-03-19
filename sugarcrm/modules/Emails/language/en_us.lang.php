@@ -106,6 +106,7 @@ $mod_strings = array(
     'LBL_FROM' => 'From:',
     'LBL_REPLY_TO' => 'Reply To:',
     'LBL_HTML_BODY' => 'HTML Body',
+    'LBL_MESSAGE_BODY' => 'Body',
     'LBL_INVITEE' => 'Recipients',
     'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
     'LBL_MESSAGE_SENT' => 'Message Sent',

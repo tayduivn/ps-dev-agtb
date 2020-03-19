@@ -234,13 +234,13 @@
     setViewContent: function(value) {
         var field;
         // Pad this to the final height due to the iframe margins/padding
-        var padding = 25;
+        var padding = (this.tplName === 'detail') ? 0 : 25;
         var contentHeight = 0;
 
         this._super('setViewContent', [value]);
 
-        // Only set this field height if it is in the preview pane
-        if (this.tplName !== 'preview') {
+        // Only set this field height if it is in the preview or delail pane
+        if (!['preview', 'detail'].includes(this.tplName)) {
             return;
         }
 
