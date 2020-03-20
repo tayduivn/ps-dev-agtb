@@ -75,7 +75,7 @@ function sugar_mkdir($pathname, $mode=null, $recursive=false, $context='') {
  * @param $mode - The integer value of the permissions mode to set the created file to
  * @param $$use_include_path - boolean value indicating whether or not to search the the included_path
  * @param $context
- * @return boolean - Returns a file pointer on success, false otherwise
+ * @return resource|false - Returns a file pointer on success, false otherwise
  */
 function sugar_fopen($filename, $mode, $use_include_path=false, $context=null){
 	//check to see if the file exists, if not then use touch to create it.
