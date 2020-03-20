@@ -928,6 +928,7 @@ $dictionary['RevenueLineItem'] = array(
                 'product_template_id',
             ),
         ),
+        //BEGIN SUGARCRM flav=ent ONLY
         array(
             'name' => 'idx_accountid_type_ren_dateclosed',
             'type' => 'index',
@@ -938,6 +939,7 @@ $dictionary['RevenueLineItem'] = array(
                 'date_closed',
             ),
         ),
+        //END SUGARCRM flav=ent ONLY
     ),
     'relationships' => array(
         'revenuelineitem_tasks' => array(
