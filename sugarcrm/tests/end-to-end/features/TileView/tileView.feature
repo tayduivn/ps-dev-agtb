@@ -708,3 +708,140 @@ Feature: Tile View feature
 
     # Verify the case tile appears under correct column & no drawer opens
     Then I verify the [*C_1] records are under "Rejected" column in #CasesPipelineView view
+
+
+  @tileView_not_saved_filter @SS-324 @AT-344 @stress-test @pr
+  Scenario: Opportunities > Tile View > Filter is created but not saved
+    Given Accounts records exist:
+      | *name     |
+      | Account_1 |
+
+    Given Opportunities records exist:
+      | *name | lead_source | opportunity_type  |
+      | Opp_1 | Cold Call   | Existing Business |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed               | likely_case | sales_stage   |
+      | RLI_1 | 2020-12-12T19:20:22+00:00 | 1000        | Qualification |
+
+    Given Opportunities records exist:
+      | *name | lead_source       | opportunity_type  |
+      | Opp_2 | Existing Customer | Existing Business |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_2:
+      | *name | date_closed               | likely_case | sales_stage |
+      | RLI_2 | 2020-12-12T19:20:22+00:00 | 2000        | Prospecting |
+
+    Given Opportunities records exist:
+      | *name | lead_source | opportunity_type |
+      | Opp_3 | Direct Mail | New Business     |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_3:
+      | *name | date_closed               | likely_case | sales_stage    |
+      | RLI_3 | 2020-12-12T19:20:22+00:00 | 3000        | Needs Analysis |
+
+    Given Leads records exist:
+      | *      | first_name | last_name | account_name     | title             | email              | lead_source | status     |
+      | Lead_1 | John       | Barlow    | John's Account   | Software Engineer | lead_1@example.net | Partner     | New        |
+      | Lead_2 | Travis     | Hubbard   | Travis's Account | Software Engineer | lead_2@example.net | Employee    | Assigned   |
+      | Lead_3 | Alex       | Nisevich  | Alex's Account   | Quality Engineer  | lead_3@example.net | Partner     | In Process |
+
+    # Link opportunities to the account to re-enforce the calculations
+    When I perform mass update of all Opportunities with the following values:
+      | fieldName    | value     |
+      | account_name | Account_1 |
+
+    # Navigate to Opportunities > Tile View
+    When I select VisualPipeline in #OpportunitiesList.FilterView
+    # Switch to Opportunities by Stage tab
+    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+
+    # Verify that tiles are displayed in the tile view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+
+    # Build custom filter but don't save it in List View
+    When I add but do not save custom filter 'New Filter 1' on the Opportunities list view with the following values:
+      | fieldName        | filter_operator | filter_value           |
+      | lead_source      | is any of       | Cold Call, Direct Mail |
+      | opportunity_type | is any of       | Existing Business      |
+
+    # Navigate to Opportunities > Tile View
+    When I select VisualPipeline in #OpportunitiesList.FilterView
+    # Switch to Opportunities by Stage tab
+    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+
+    # Verify that tiles are filtered properly
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
+
+    # Build custom filter but don't save it in Tile View
+    When I add but do not save custom filter 'New Filter 2' on the Leads tile view with the following values:
+      | fieldName   | filter_operator | filter_value |
+      | lead_source | is any of       | Partner      |
+      | first_name  | starts with     | Alex         |
+
+    # Verify that tiles are filtered properly in Leads Tile View
+    Then I verify the [*Lead_3] records are under "In Process" column in #LeadsPipelineView view
+    Then I verify the [*Lead_1] records are not under "New" column in #LeadsPipelineView view
+    Then I verify the [*Lead_2] records are not under "Assigned" column in #LeadsPipelineView view
+
+    # Return to Opportunities List view
+    When I choose Opportunities in modules menu
+
+    # Verify Opportunities list view content
+    Then I should see [*Opp_1] on Opportunities list view
+    And I should not see [*Opp_2, *Opp_3] on Opportunities list view
+
+    # Switch to Opportunities > Tile View > Opportunities by Stage tab
+    When I select VisualPipeline in #OpportunitiesList.FilterView
+    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+
+    # Verify that tiles are filtered properly
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
+
+    # Return to the Leads list view
+    When I choose Opportunities in modules menu
+
+    # Verify Leads list view content
+    Then I should see [*Lead_3] on Leads list view
+    And I should not see [*Lead_1, *Lead_2] on Leads list view
+
+    # Switch to Tile View > Leads
+    When I select VisualPipeline in #LeadsList.FilterView
+
+    # Verify that tiles are filtered properly in Leads Tile View
+    Then I verify the [*Lead_3] records are under "In Process" column in #LeadsPipelineView view
+    Then I verify the [*Lead_1] records are not under "New" column in #LeadsPipelineView view
+    Then I verify the [*Lead_2] records are not under "Assigned" column in #LeadsPipelineView view
+
+    When I cancel custom filter on the Leads tile view
+
+    # Verify that tiles are no longer filtered in Leads Tile View
+    Then I verify the [*Lead_3] records are under "In Process" column in #LeadsPipelineView view
+    Then I verify the [*Lead_1] records are under "New" column in #LeadsPipelineView view
+    Then I verify the [*Lead_2] records are under "Assigned" column in #LeadsPipelineView view
+
+    When I choose Opportunities in modules menu
+    # Navigate to Opportunities > Tile View
+    When I select VisualPipeline in #OpportunitiesList.FilterView
+    # Switch to Opportunities by Stage tab
+    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+
+#    When I name custom filter as 'Opp_Filter' on the Opportunities tile view
+    # Save previously unsaved filter
+    When I save custom filter on the Opportunities tile view
+
+    # Verify that tiles are filtered properly
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
+
+    # Delete custom filter
+    When I delete custom filter 'New Filter 1' on the Opportunities tile view
+
+    # Verify that tiles are no longer filtered
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view

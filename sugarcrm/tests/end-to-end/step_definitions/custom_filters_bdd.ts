@@ -25,13 +25,16 @@ import FilterView from '../views/filter-view';
  *  | quote_stage                | is any of       | On Hold, Draft |
  *  | date_quote_expected_closed | is equal to     | 10/20/2020     |
  */
-When(/^I (add|cancel) custom filter '([^"]*)' on the (\w+) list view with the following values:$/,
-    async function (action: string, filterName: string, module: string, table: TableDefinition) {
+When(/^I (add|cancel|add but do not save) custom filter '([^"]*)' on the (\w+) (list|tile) view with the following values:$/,
+    async function (action: string, filterName: string, module: string, view: string, table: TableDefinition) {
 
         await chooseModule(module);
+        let filterView = await seedbed.components[`${module}List`].FilterView;
 
-        // Get FilterView
-        const filterView = await seedbed.components[`${module}List`].FilterView;
+        if (view === 'tile') {
+            // navigate to tile view
+            await filterView.toggleListViewMode('VisualPipeline'.toLowerCase());
+        }
 
         // Click Create button
         await filterView.clickCreateButton();
@@ -54,11 +57,48 @@ When(/^I (add|cancel) custom filter '([^"]*)' on the (\w+) list view with the fo
                 // Cancel custom filter creation
                 await filterView.performAction('filter-close');
                 break;
+            case 'add but do not save' :
+                // Do NOT save custom filter
+                break;
             default:
                 throw new Error('Invalid action name');
         }
     }, {waitForApp: true}
 );
+
+/**
+ *  Save or cancel previously created but not saved custom filter
+ *
+ *  Note: This step does not provide any navigation to the filter.
+ *  Page with the filter should already be opened before this step is invoked.
+ *
+ *  The custom filter should have a name typed in so it can be saved successfully
+ *
+ *  @example
+ *  When I save custom filter on the Opportunities tile view
+ */
+When(/^I (save|cancel) custom filter on the (\w+) (list|tile) view$/,
+    async function (action: string, module: string, view: string) {
+
+        let filterView = await seedbed.components[`${module}List`].FilterView;
+
+        switch (action) {
+            case 'save':
+                // Save custom filter
+                await filterView.performAction('filter-save');
+                await this.driver.waitForApp();
+                await closeAlert();
+                break;
+            case 'cancel':
+                // Cancel custom filter creation
+                await filterView.performAction('filter-close');
+                break;
+            default:
+                throw new Error('Invalid action name');
+        }
+    }, {waitForApp: true}
+);
+
 
 /**
  * Populate custom filter with values
@@ -149,13 +189,18 @@ const populateFilter = async function (filterView: FilterView, module: string, t
  *  @example
  *  When I hide custom filter 'New Filter 1' on the Quotes list view
  */
-When(/^I (hide|apply|delete) custom filter '([^"]*)' on the (\w+) list view$/,
-    async function (action: string, filterName: string, module: string) {
+When(/^I (hide|apply|delete) custom filter '([^"]*)' on the (\w+) (list|tile) view$/,
+    async function (action: string, filterName: string, module: string, view: string) {
 
         await chooseModule(module);
 
         // Get FilterView
         const filterView = await seedbed.components[`${module}List`].FilterView;
+
+        if (view === 'tile') {
+            // navigate to tile view
+            await filterView.toggleListViewMode('VisualPipeline'.toLowerCase());
+        }
 
         switch (action) {
             case 'hide':
