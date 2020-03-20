@@ -110,14 +110,30 @@
             case 'Weekly':
             case 'Monthly':
             case 'Yearly':
-                this.show();
+                this.showFieldBlock();
                 break;
             default:
-                this.hide();
+                this.hideFieldBlock();
                 break;
         }
 
         this.prepareView();
+    },
+
+    /**
+     * Show the field and its wrapper
+     */
+    showFieldBlock: function() {
+        this.show();
+        this.$el.closest('.record-cell').show();
+    },
+
+    /**
+     * Hide the field and its wrapper
+     */
+    hideFieldBlock: function() {
+        this.hide();
+        this.$el.closest('.record-cell').hide();
     },
 
     /**
