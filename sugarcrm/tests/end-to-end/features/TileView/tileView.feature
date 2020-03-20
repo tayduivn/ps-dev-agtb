@@ -710,12 +710,13 @@ Feature: Tile View feature
     Then I verify the [*C_1] records are under "Rejected" column in #CasesPipelineView view
 
 
-  @tileView_not_saved_filter @SS-324 @AT-344 @stress-test @pr
-  Scenario: Opportunities > Tile View > Filter is created but not saved
+  @tileView_not_saved_filter @SS-324 @AT-344
+  Scenario: Opportunities/Leads > Tile View > Filter is created but not saved
     Given Accounts records exist:
       | *name     |
       | Account_1 |
 
+    # Create opportunity records with linked RLIs
     Given Opportunities records exist:
       | *name | lead_source | opportunity_type  |
       | Opp_1 | Cold Call   | Existing Business |
@@ -737,6 +738,7 @@ Feature: Tile View feature
       | *name | date_closed               | likely_case | sales_stage    |
       | RLI_3 | 2020-12-12T19:20:22+00:00 | 3000        | Needs Analysis |
 
+    # Create lead records
     Given Leads records exist:
       | *      | first_name | last_name | account_name     | title             | email              | lead_source | status     |
       | Lead_1 | John       | Barlow    | John's Account   | Software Engineer | lead_1@example.net | Partner     | New        |
@@ -758,7 +760,7 @@ Feature: Tile View feature
     Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesPipelineView view
     Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
 
-    # Build custom filter but don't save it in List View
+    # Build custom filter in Opportunities List View but Do NOT save it
     When I add but do not save custom filter 'New Filter 1' on the Opportunities list view with the following values:
       | fieldName        | filter_operator | filter_value           |
       | lead_source      | is any of       | Cold Call, Direct Mail |
@@ -774,7 +776,7 @@ Feature: Tile View feature
     Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
     Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
 
-    # Build custom filter but don't save it in Tile View
+    # Build custom filter in Leads Tile View but do NOT save it
     When I add but do not save custom filter 'New Filter 2' on the Leads tile view with the following values:
       | fieldName   | filter_operator | filter_value |
       | lead_source | is any of       | Partner      |
@@ -801,9 +803,6 @@ Feature: Tile View feature
     Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
     Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
 
-    # Return to the Leads list view
-    When I choose Opportunities in modules menu
-
     # Verify Leads list view content
     Then I should see [*Lead_3] on Leads list view
     And I should not see [*Lead_1, *Lead_2] on Leads list view
@@ -829,7 +828,6 @@ Feature: Tile View feature
     # Switch to Opportunities by Stage tab
     And I select pipelineByStage tab in #OpportunitiesPipelineView view
 
-#    When I name custom filter as 'Opp_Filter' on the Opportunities tile view
     # Save previously unsaved filter
     When I save custom filter on the Opportunities tile view
 
