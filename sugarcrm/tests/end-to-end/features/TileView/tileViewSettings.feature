@@ -225,21 +225,26 @@ Feature: Tile View Settings
     # Provide input for the first (default) RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
       | *name | date_closed | sales_stage | likely_case |
-      | RLI1  | 04/19/2020  | Closed Won  | 2000        |
+      | RLI1  | 04/19/2020  | Prospecting | 2000        |
     # Add second RLI by clicking '+' button on the first row
     When I choose addRLI on #OpportunityDrawer.RLITable view for 1 row
     # Provide input for the second RLI
     When I provide input for #OpportunityDrawer.RLITable view for 2 row
-      | *name | date_closed | sales_stage | likely_case |
-      | RLI2  | 04/19/2021  | Closed Lost | 2000        |
+      | *name | date_closed | sales_stage   | likely_case |
+      | RLI2  | 04/19/2020  | Qualification | 2000        |
     When I click Save button on #OpportunitiesDrawer header
     When I close alert
 
-    # Verify column the opportunity tile appears under Closed Won column
-    Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesPipelineView view
-
+    # Verify the opportunity tile appears under 'Qualification' column
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    # Drag opportunity tile to 'Closed Lost' column
     When I drag *Opp_1 tile to "Closed Lost" column in #OpportunitiesPipelineView view
+    # Verify that the opportunity tile appears under 'Closed Lost' column
+    Then I verify the [*Opp_1] records are under "Closed Lost" column in #OpportunitiesPipelineView view
 
+    # Drag opportunity tile to 'Closed Won' column
+    When I drag *Opp_1 tile to "Closed Won" column in #OpportunitiesPipelineView view
+    # Verify that the opportunity tile cannot be moved to 'Closed Won' column and is under 'Closed Lost' column
     Then I verify the [*Opp_1] records are under "Closed Lost" column in #OpportunitiesPipelineView view
 
     # Disable 'Closed Won' and 'Closed Lost' columns in Opportunities Tile View
