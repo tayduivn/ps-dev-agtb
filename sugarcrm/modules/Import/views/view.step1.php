@@ -352,6 +352,9 @@ YAHOO.util.Event.onDOMReady(function(){
 
     $(window).on("message", function(e) {
         var data = $.parseJSON(e.originalEvent.data);
+        if (data.dataSource !== 'googleOauthRedirect' {
+            return;
+        }
         if (data.result) {
             if (!data.hasRefreshToken) {
                 alert("The application is unable to work in offline mode. Please sign out and sign in again.");

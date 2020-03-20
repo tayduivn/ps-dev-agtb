@@ -27,6 +27,7 @@ class EAPMViewGoogleOauth2Redirect extends SugarView
             $response = array(
                 'result' => true,
                 'hasRefreshToken' => isset($token['refresh_token']),
+                'dataSource' => 'googleOauthRedirect',
             );
         } else {
             $response = array(
