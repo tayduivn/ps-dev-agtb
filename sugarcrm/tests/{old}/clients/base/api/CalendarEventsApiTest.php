@@ -11,6 +11,8 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\SugarConnect\Configuration\Configuration as SugarConnectConfiguration;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @group api
@@ -47,6 +49,122 @@ class CalendarEventsApiTest extends TestCase
             $GLOBALS['db']->query("DELETE FROM meetings WHERE id IN ('" . $ids . "')");
             $this->meetingIds = [];
         }
+    }
+
+    public function testCreateMeeting_EmailAddressesArgumentIsMapped()
+    {
+        $config = new SugarConnectConfiguration();
+        $config->enable();
+
+        $contactId = Uuid::uuid1();
+        $meeting = BeanFactory::newBean('Meetings');
+
+        $args = [
+            'module' => 'Meetings',
+            'name' => 'Test Meeting',
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'date_end' => $this->dateTimeAsISO('2014-12-25 14:30:00'),
+            'duration_hours' => 1,
+            'duration_minutes' => 30,
+            'email_addresses' => [
+                'create' => [
+                    [
+                        'email_address' => 'foo@bar.com',
+                    ],
+                ],
+            ],
+        ];
+
+        $mock = $this->getMockForCalendarEventsApi(
+            [
+                'getAttendees',
+                'convertEmailAddressToPerson',
+                'saveBean',
+                'reloadBean',
+                'linkRelatedRecords',
+            ]
+        );
+        $mock->expects($this->once())->method('getAttendees')->willReturn([]);
+        $mock->expects($this->once())
+            ->method('convertEmailAddressToPerson')
+            ->willReturn(
+                [
+                    'bean_module' => 'Contacts',
+                    'bean_id' => $contactId,
+                    'email_address' => 'foo@bar.com',
+                ]
+            );
+        $mock->expects($this->once())
+            ->method('linkRelatedRecords')
+            ->with(
+                $this->api,
+                $this->isInstanceOf('SugarBean'),
+                [
+                    'contacts' => [
+                        $contactId,
+                    ],
+                ],
+                'create',
+                'view'
+            );
+        $mock->expects($this->once())->method('saveBean');
+        $mock->expects($this->once())->method('reloadBean')->willReturn($meeting);
+
+        $bean = $mock->createBean($this->api, $args);
+
+        $this->assertSame($meeting, $bean);
+    }
+
+    public function testCreateMeeting_EmailAddressesArgumentIsNotMapped()
+    {
+        $config = new SugarConnectConfiguration();
+        $config->disable();
+
+        $contactId = Uuid::uuid1();
+        $meeting = BeanFactory::newBean('Meetings');
+
+        $args = [
+            'module' => 'Meetings',
+            'name' => 'Test Meeting',
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'date_end' => $this->dateTimeAsISO('2014-12-25 14:30:00'),
+            'duration_hours' => 1,
+            'duration_minutes' => 30,
+            'email_addresses' => [
+                'create' => [
+                    [
+                        'email_address' => 'foo@bar.com',
+                    ],
+                ],
+            ],
+        ];
+
+        $mock = $this->getMockForCalendarEventsApi(
+            [
+                'getAttendees',
+                'convertEmailAddressToPerson',
+                'saveBean',
+                'reloadBean',
+                'linkRelatedRecords',
+            ]
+        );
+        $mock->expects($this->never())->method('getAttendees');
+        $mock->expects($this->never())->method('convertEmailAddressToPerson');
+        $mock->expects($this->once())
+            ->method('linkRelatedRecords')
+            ->with(
+                $this->api,
+                $this->isInstanceOf('SugarBean'),
+                [],
+                'create',
+                'view'
+            );
+        $mock->expects($this->once())->method('saveBean');
+        $mock->expects($this->once())->method('reloadBean')->willReturn($meeting);
+
+        $bean = $mock->createBean($this->api, $args);
+
+        $this->assertSame($meeting, $bean);
     }
 
     public function testDeleteRecord_NotRecurringMeeting_CallsDeleteMethod()

@@ -15,6 +15,7 @@ use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestListenerDefaultImplementation;
 use PHPUnit\Framework\TestSuite;
+use Sugarcrm\Sugarcrm\SugarConnect\Configuration\Configuration as SugarConnectConfiguration;
 
 class IntegrationListener implements TestListener
 {
@@ -24,6 +25,11 @@ class IntegrationListener implements TestListener
      * @var int
      */
     private $maxExecutionTime;
+
+    /**
+     * @var bool
+     */
+    private $isSugarConnectEnabled;
 
     public function startTestSuite(TestSuite $suite) : void
     {
@@ -45,6 +51,12 @@ class IntegrationListener implements TestListener
 
         //track the original max execution time limit
         $this->maxExecutionTime = ini_get('max_execution_time');
+
+        // Disable Sugar Connect for every test to prevent notifications from
+        // being sent to the Sugar Connect webhook.
+        $config = new SugarConnectConfiguration();
+        $this->isSugarConnectEnabled = $config->isEnabled();
+        $config->disable();
     }
 
     public function endTest(Test $test, float $time) : void
@@ -67,6 +79,15 @@ class IntegrationListener implements TestListener
             $rp = $ro->getProperty('statements');
             $rp->setAccessible(true);
             $rp->setValue($connection, []);
+        }
+
+        // Restore the Sugar Connect configuration.
+        $config = new SugarConnectConfiguration();
+
+        if ($this->isSugarConnectEnabled) {
+            $config->enable();
+        } else {
+            $config->disable();
         }
     }
 

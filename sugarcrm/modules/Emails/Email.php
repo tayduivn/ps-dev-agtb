@@ -4331,7 +4331,7 @@ eoq;
                INNER JOIN email_addr_bean_rel eabr ON ea.id = eabr.email_address_id
                WHERE eabr.bean_module = ? AND email_address IN (?)
                AND eabr.bean_id = a.id AND a.deleted = 0 LIMIT 1
-             SQL;
+SQL;
 
         $conn = $this->db->getConnection();
         $stmt = $conn->executeQuery($sql, [$module, $addresses], [null, Connection::PARAM_STR_ARRAY]);
