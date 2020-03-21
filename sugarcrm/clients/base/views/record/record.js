@@ -1508,12 +1508,20 @@
         if (field.view.meta && field.view.meta.useTabsAndPanels) {
             // If field's panel is a tab, switch to the tab that contains the field with the error
             if (fieldTab.length > 0) {
+                // Make sure all previous active tab content is hidden
+                this.$('.tab-pane').removeClass('active in');
+
+                // Switch to the tab with the error
                 tabLink = this.$('[href="#' + fieldTab.attr('id') + '"][data-toggle="tab"]');
                 tabLink.tab('show');
+
                 // Put a ! next to the tab if one doesn't already exist
                 if (tabLink.find('.fa-exclamation-circle').length === 0) {
                     tabLink.append(' <i class="fa fa-exclamation-circle tab-warning"></i>');
                 }
+
+                // Make sure the new current active tab is shown
+                this.$('.tab-content [id="' + fieldTab.attr('id') + '"]').addClass('active in');
             }
 
             // If field's panel is a panel that is closed, open it and change arrow
