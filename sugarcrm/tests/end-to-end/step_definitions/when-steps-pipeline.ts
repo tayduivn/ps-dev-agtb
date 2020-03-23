@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {When} from '@sugarcrm/seedbed';
+import {When, seedbed} from '@sugarcrm/seedbed';
 import PipelineView from '../views/pipeline-view';
 import {closeAlert, closeWarning} from './general_bdd';
 import TileViewSettings from '../views/tile-settings-view';
@@ -260,15 +260,21 @@ When(/^I drag-n-drop column header items on "(Cases|Opportunities|Tasks)" module
  *  @example
  *  When I drag *Opp_1 tile to "Prospecting" column in #OpportunitiesPipelineView view
  */
-When(/^I drag (\*[a-zA-Z](?:\w|\S)*) tile to "(\w+\s?\w+)" column in (#\S+) view$/,
+When(/^I drag (\*[a-zA-Z](?:\w|\S)*) tile to "(\w+[\/\s\+]*\w+)" column in (#\S+) view$/,
     async function (record: { id: string }, columnName: string, view: any) {
-            let listItem = view.getListItem({id: record.id});
-            await listItem.dragAndDropTile(columnName);
+        let listItem = view.getListItem({id: record.id});
 
-            // In case the tile is dragged to 'Converted' column in Leads tile view
-            // the alert is handled differently because conversion process is triggered
-            if (columnName !== 'Converted') {
-                await closeAlert();
-            }
+        // this is used in Opportunities by Time
+        if (columnName.search('now') !== -1) {
+            columnName = seedbed.support.fixDateInput(columnName, "MMMM YYYY");
+        }
+
+        await listItem.dragAndDropTile(columnName);
+
+        // In case the tile is dragged to 'Converted' column in Leads tile view
+        // the alert is handled differently because conversion process is triggered
+        if (columnName !== 'Converted') {
+            await closeAlert();
+        }
     }, {waitForApp: true});
 
