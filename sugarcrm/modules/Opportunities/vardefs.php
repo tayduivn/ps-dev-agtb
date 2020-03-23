@@ -312,6 +312,7 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_SERVICE_START_DATE',
             'type' => 'date',
             'comment' => 'Service start date field.',
+            'readonly' => true,
         ),
         'total_revenue_line_items' => array(
             'name' => 'total_revenue_line_items',
