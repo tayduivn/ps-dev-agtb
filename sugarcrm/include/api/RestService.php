@@ -76,6 +76,17 @@ class RestService extends ServiceBase
     protected $request;
 
     /**
+     * access allowed methods for user api
+     * @var array
+     */
+    protected $accessAllowedMethodsForUsersModuleApi = [
+        'retrieveRecord',
+        'createRecord',
+        'updateRecord',
+        'deleteRecord',
+    ];
+
+    /**
      * Get request object
      * @return RestRequest
      */
@@ -217,8 +228,11 @@ class RestService extends ServiceBase
                 // but user detail request needs to be honored to check if user should be deactivated
                 if (isset($this->user) && $this->user->allowNonAdminToContinue($systemStatus)) {
                     // let non admin with valid license go through
-                } elseif (!(!empty($argArray['module']) && $argArray['module'] === 'Users'
-                    && !empty($route['method']) && $route['method'] === 'retrieveRecord')) {
+                } elseif (!(!empty($argArray['module'])
+                    && $argArray['module'] === 'Users'
+                    && !empty($route['method'])
+                    && in_array($route['method'], $this->accessAllowedMethodsForUsersModuleApi))
+                ) {
                     $e = new SugarApiExceptionMaintenance(
                         $systemStatus['message'],
                         null,
