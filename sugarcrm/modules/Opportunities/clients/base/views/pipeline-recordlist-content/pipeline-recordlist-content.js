@@ -22,36 +22,26 @@
      * @inheritdoc
      */
     saveModel: function(model, pipelineData) {
-        var cfg = app.metadata.getModule('Opportunities', 'config');
-        var rliMode = cfg.opps_view_by === 'RevenueLineItems';
+        var oppCfg = app.metadata.getModule('Opportunities', 'config');
+        var rliMode = oppCfg.opps_view_by === 'RevenueLineItems';
 
-        if (this.headerField === 'date_closed' && rliMode) {
+        if (_.contains(['date_closed', 'sales_stage'], this.headerField) && rliMode) {
+            var forecastConfig = app.metadata.getModule('Forecasts', 'config') || {};
+            var closedWon = forecastConfig.sales_stage_won || ['Closed Won'];
+            var closedLost = forecastConfig.sales_stage_lost || ['Closed Lost'];
+            var closedStatuses = closedWon.concat(closedLost);
             var status = model.get('sales_status');
-            if (_.contains(['Closed Won', 'Closed Lost'], status)) {
+
+            if (_.contains(closedStatuses, status)) {
                 this._postChange(model, true, pipelineData);
                 var moduleName = app.lang.getModuleName(this.module, {plural: false});
-                app.alert.show('error_converted', {
-                    level: 'error',
-                    messages: app.lang.get(
-                        'LBL_PIPELINE_ERR_CLOSED_DATE_CLOSED',
-                        this.module,
-                        {moduleSingular: moduleName}
-                        )
-                });
-                return;
-            }
-        }
-
-        if (this.headerField === 'sales_stage' && rliMode) {
-            var status = model.get('sales_status');
-            if (_.contains(['Closed Won', 'Closed Lost'], status)) {
-                this._postChange(model, true, pipelineData);
-                var moduleName = app.lang.getModuleName(this.module, {plural: false});
+                var fieldLabel = app.metadata.getField({module: 'Opportunities', name: this.headerField}).vname;
+                var fieldName = app.lang.get(fieldLabel, this.module);
                 app.alert.show('error_converted', {
                     level: 'error',
                     messages: app.lang.get(
                         'LBL_PIPELINE_ERR_CLOSED_SALES_STAGE',
-                        this.module, {moduleSingular: moduleName}
+                        this.module, {moduleSingular: moduleName, fieldName: fieldName}
                         )
                 });
                 return;

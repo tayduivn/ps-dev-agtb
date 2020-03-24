@@ -259,7 +259,6 @@ To create an {{module_name}}:
     'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Opportunities",
 
     // BEGIN SUGARCRM flav=ent ONLY
-    'LBL_PIPELINE_ERR_CLOSED_DATE_CLOSED' => 'Unable to change Expected Close Date as this Opportunity has no open line items.',
-    'LBL_PIPELINE_ERR_CLOSED_SALES_STAGE' => 'Unable to change Sales Stage as this Opportunity has no open line items.',
+    'LBL_PIPELINE_ERR_CLOSED_SALES_STAGE' => 'Unable to change {{fieldName}} as this {{moduleSingular}} has no open line items.',
     // END SUGARCRM flav=ent ONLY
 );

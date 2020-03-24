@@ -170,6 +170,9 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                     });
                     var postChangeStub = sinon.collection.stub(view, '_postChange');
                     var superStub = sinon.collection.stub(view, '_super', function() {});
+                    var fieldDef = {name: data.headerField, vname: 'LBL_FIELD'};
+                    sinon.collection.stub(app.metadata, 'getField').returns(fieldDef);
+                    sinon.collection.stub(app.lang, 'get');
                     view.headerField = data.headerField;
                     var model = app.data.createBean('Opportunities', data.attr);
                     view.saveModel(model, pipelineData);
