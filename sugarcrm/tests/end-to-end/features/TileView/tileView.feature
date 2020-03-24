@@ -845,7 +845,7 @@ Feature: Tile View feature
     Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
 
 
-  @tileView_closedRLIs @SS-312 @AT-346 @pr @stress-test
+  @tileView_closedRLIs @SS-312 @AT-346 @pr
   Scenario: Opportunities/Leads > Tile View > Closed RLIs should not be updated
     Given Accounts records exist:
       | *name     |
