@@ -886,8 +886,8 @@ Feature: Tile View feature
       | name        | RLI_2 |
       | date_closed | now   |
     Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName   | value     |
-      | name        | RLI_3     |
+      | fieldName | value |
+      | name      | RLI_3 |
 
     # Navigate to Opportunities module
     When I choose Opportunities in modules menu
@@ -917,3 +917,81 @@ Feature: Tile View feature
       | fieldName   | value         |
       | name        | RLI_3         |
       | sales_stage | Qualification |
+
+
+  @tileView_closedRLIs @SS-341 @AT-347
+  Scenario: Opportunities/Leads > Tile View > Closed RLIs should not be updated
+    Given Accounts records exist:
+      | *name     |
+      | Account_1 |
+    # Create 'Closed Won' opportunity records with linked RLIs
+    And Opportunities records exist related via opportunities link to *Account_1:
+      | *name | lead_source | opportunity_type  |
+      | Opp_1 | Cold Call   | Existing Business |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed | likely_case | sales_stage |
+      | RLI_1 | now         | 1000        | Closed Won  |
+      | RLI_2 | now         | 2000        | Closed Lost |
+    # Create 'Closed Lost' opportunity records with linked RLIs
+    And Opportunities records exist related via opportunities link to *Account_1:
+      | *name | lead_source | opportunity_type  |
+      | Opp_2 | Cold Call   | Existing Business |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_2:
+      | *name | date_closed | likely_case | sales_stage |
+      | RLI_3 | now         | 1000        | Closed Lost |
+      | RLI_4 | now         | 2000        | Closed Lost |
+
+    # Enable 'Closed Won' and 'Closed Lost' columns in Opportunities Tile View
+    When I drag-n-drop column header items on "Opportunities" module in #TileViewSettings view:
+      | sourceItem  | destination | position |
+      | Closed Won  | white_list  | 2        |
+      | Closed Lost | white_list  | 4        |
+
+    # Navigate to Opportunities module
+    When I choose Opportunities in modules menu
+    # Navigate to Opportunities > Tile View
+    And I select VisualPipeline in #OpportunitiesList.FilterView
+    # Switch to Opportunities by Time tab
+    And I select pipelineByTime tab in #OpportunitiesPipelineView view
+
+    # Verify tile is located in the correct column
+    Then I verify the [*Opp_1] records are under "now" column in #OpportunitiesPipelineView view
+    # Move tile from current month to the next month
+    When I drag *Opp_1 tile to "now + 30d" column in #OpportunitiesPipelineView view
+    # Verify that tile with all closed RLIs is not moved to a new column
+    Then I verify the [*Opp_1] records are under "now" column in #OpportunitiesPipelineView view
+
+    # Open RLI subpanel in the opportunity record view and verify Expected Close Date of each RLI
+    When I select *Opp_1 in #OpportunitiesPipelineView
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value |
+      | name        | RLI_1 |
+      | date_closed | now   |
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value |
+      | name        | RLI_2 |
+      | date_closed | now   |
+
+    # Navigate to Opportunities module
+    When I choose Opportunities in modules menu
+    # Navigate to Opportunities > Tile View
+    And I select VisualPipeline in #OpportunitiesList.FilterView
+    # Switch to Opportunities by Stage tab
+    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+
+    # Verify tile is located in the correct column
+    Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are under "Closed Lost" column in #OpportunitiesPipelineView view
+    # Move tile from one sales stage to another
+    When I drag *Opp_1 tile to "Qualification" column in #OpportunitiesPipelineView view
+    When I drag *Opp_2 tile to "Qualification" column in #OpportunitiesPipelineView view
+    # Verify that tile with all closed RLIs is not moved to a new column
+    Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_2] records are under "Closed Lost" column in #OpportunitiesPipelineView view
+
+    # Disable 'Closed Won' and 'Closed Lost' columns in Opportunities Tile View
+    When I drag-n-drop column header items on "Opportunities" module in #TileViewSettings view:
+      | sourceItem  | destination | position |
+      | Closed Won  | black_list  | 0        |
+      | Closed Lost | black_list  | 1        |
