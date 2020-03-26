@@ -449,4 +449,75 @@ class OpportunityTest extends TestCase
 
         $opp->set_opportunity_contact_relationship('test_contact_id');
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @covers ::updateRLIRollupFields
+     * @dataProvider providerTestUpdateRLIRollupFields
+     *
+     * @param array $rliDataArray array of RLIs to create
+     * @param array $expected the array of expected field values for the rollup fields
+     */
+    public function testUpdateRLIRollupFields($rliDataArray, $expected)
+    {
+        // Create an opportunity
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+
+        // Create RLIs related to the opportunity. On save, they should update
+        // the rollup fields of the Opportunity
+        foreach ($rliDataArray as $rliData) {
+            $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+            $opportunity->revenuelineitems->add($rli);
+            $rli->sales_stage = $rliData['sales_stage'];
+            $rli->service = $rliData['service'];
+            $rli->service_start_date = $rliData['service_start_date'];
+            $rli->service_duration_value = 1;
+            $rli->service_duration_unit = 'year';
+            $rli->opportunity_id = $opportunity->id;
+            $rli->save();
+        }
+
+        // Check that the Opportunity's rollup fields were correctly calculated
+        $opportunity = BeanFactory::retrieveBean('Opportunities', $opportunity->id, ['use_cache' => false]);
+        $this->assertEquals($expected['service_start_date'], $opportunity->service_start_date);
+    }
+
+    public function providerTestUpdateRLIRollupFields()
+    {
+        return array(
+            array(
+                array(),
+                array('service_start_date' => ''),
+            ),
+            array(
+                array(
+                    array('sales_stage' => 'Prospecting', 'service' => 0, 'service_start_date' => ''),
+                ),
+                array('service_start_date' => ''),
+            ),
+            array(
+                array(
+                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2019-01-01'),
+                    array('sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2020-01-01'),
+                ),
+                array('service_start_date' => '2020-01-01'),
+            ),
+            array(
+                array(
+                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2019-01-01'),
+                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2020-01-01'),
+                ),
+                array('service_start_date' => '2019-01-01'),
+            ),
+            array(
+                array(
+                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2020-01-01'),
+                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2018-01-01'),
+                    array('sales_stage' => 'Qualification', 'service' => 1, 'service_start_date' => '2019-01-01'),
+                ),
+                array('service_start_date' => '2019-01-01'),
+            ),
+        );
+    }
+    //END SUGARCRM flav=ent ONLY
 }

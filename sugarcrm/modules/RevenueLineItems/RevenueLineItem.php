@@ -293,68 +293,17 @@ class RevenueLineItem extends SugarBean
     }
 
     /**
-     * Updates rollup fields on related Opportunity if necessary
+     * Updates rollup fields on related Opportunity
      *
      * @param string $opportunityId the ID of the Opportunity to update
-     * @throws SugarQueryException
      */
     protected function updateRelatedOpportunity($opportunityId)
     {
         $opportunityBean = BeanFactory::retrieveBean('Opportunities', $opportunityId);
         if (!empty($opportunityBean->id)) {
-            // Calculate the parent Opportunity's service_start_date
-            $newServiceStartDate = $this->calculateOpportunityServiceStartDate($opportunityBean->id);
-
-            // If the value is different, update the Opportunity
-            if ($opportunityBean->service_start_date !== $newServiceStartDate) {
-                $opportunityBean->service_start_date = $newServiceStartDate;
-                $opportunityBean->save();
-            }
+            // Update the rollup values on the Opportunity
+            $opportunityBean->updateRLIRollupFields();
         }
-    }
-
-    /**
-     * Runs a DB query to calculate the rollup value for the related Opportunity's
-     * Service Start Date field
-     *
-     * @param string $opportunityId the ID of the related Opportunity
-     * @return string containing the calculated Service Start Date of the Opportunity
-     * @throws SugarQueryException
-     */
-    private function calculateOpportunityServiceStartDate($opportunityId)
-    {
-        // Get the configured lists of "Closed Won" and "Closed Lost" stages
-        $closedLostStatuses = ['Closed Lost'];
-        $closedWonStatuses = ['Closed Won'];
-        $forecastConfig = Forecast::getSettings();
-        if ($forecastConfig['is_setup']) {
-            $closedLostStatuses = $forecastConfig['sales_stage_lost'];
-            $closedWonStatuses = $forecastConfig['sales_stage_won'];
-        }
-
-        // Get the earliest Service Start Date of a non-closed-lost service RLI
-        // related to the Opportunity. If any of the related service RLIs are
-        // open, their value takes precedence over closed-won service RLIs.
-        $q = new SugarQuery();
-
-        $stageCases = [];
-        foreach ($closedWonStatuses as $stage) {
-            $stageCases[] = $q->getDBManager()->quoted($stage);
-        }
-        $stageCases = implode(',', $stageCases);
-
-        $q->from($this);
-        $q->select(['service_start_date'])
-            ->fieldRaw('CASE WHEN sales_stage IN (' . $stageCases . ') THEN 1 ELSE 0 END', 'is_closed');
-        $q->where()->queryAnd()
-            ->equals('opportunity_id', $opportunityId)
-            ->equals('service', 1)
-            ->notIn('sales_stage', $closedLostStatuses);
-        $q->orderByRaw('is_closed', 'ASC');
-        $q->orderBy('service_start_date', 'ASC');
-        $result = $q->getDBManager()->fromConvert($q->getOne(), 'date');
-
-        return !empty($result) ? $result : '';
     }
     //END SUGARCRM flav=ent ONLY
 
@@ -388,10 +337,12 @@ class RevenueLineItem extends SugarBean
      */
     public function mark_deleted($id)
     {
+        //BEGIN SUGARCRM flav=ent ONLY
         // Grab the IDs of the related modules as these fields are removed in the
         // call to the parent mark_deleted
         $accountId = $this->account_id;
         $opportunityId = $this->opportunity_id;
+        //END SUGARCRM flav=ent ONLY
 
         parent::mark_deleted($id);
 

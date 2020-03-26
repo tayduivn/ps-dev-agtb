@@ -577,6 +577,7 @@ class Opportunity extends SugarBean
         return static::$settings;
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Return an array of RLI closed won stage names.
      *
@@ -587,7 +588,16 @@ class Opportunity extends SugarBean
         return Forecast::getSettings()['sales_stage_won'] ?? ['Closed Won'];
     }
 
-    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Return an array of RLI closed lost stage names.
+     *
+     * @return array array of RLI closed lost stage values
+     */
+    public function getRliClosedLostStages(): array
+    {
+        return Forecast::getSettings()['sales_stage_lost'] ?? ['Closed Lost'];
+    }
+
     /**
      * Check if we can renew opportunity.
      *
@@ -795,6 +805,88 @@ class Opportunity extends SugarBean
         }
 
         return $newRliBean;
+    }
+
+    /**
+     * Updates the non-SugarLogic rollup fields on the Opportunity
+     *
+     * @return $this
+     * @throws SugarQueryException
+     */
+    public function updateRLIRollupFields()
+    {
+        $settings = Opportunity::getSettings();
+        $rliMode = isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems';
+        if (!empty($this->id) && $rliMode) {
+            $rollupFields = [
+                'service_start_date' => $this->calculateOpportunityServiceStartDate(),
+            ];
+
+            // Update the Opportunity with the calculated rollup values. If any
+            // values have changed on the Opportunity, then save it afterward
+            $shouldSave = false;
+            foreach ($rollupFields as $field => $calculatedValue) {
+                if ($this->$field !== $calculatedValue) {
+                    $this->$field = $calculatedValue;
+                    $shouldSave = true;
+                }
+            }
+            if ($shouldSave) {
+                $this->save();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Runs a DB query to calculate the rollup value for the Service Start Date
+     * field from the related RLIs
+     *
+     * @return string containing the calculated Service Start Date
+     * @throws SugarQueryException
+     */
+    private function calculateOpportunityServiceStartDate()
+    {
+        $closedWonStages = $this->getRliClosedWonStages();
+        $closedLostStages = $this->getRliClosedLostStages();
+
+        // Build the case statement for the query. This will be used to order the
+        // query results so that open RLIs come before closed-won
+        $quotedWonStages = implode(',', $this->getQuotedStringArray($closedWonStages));
+        $caseStatement = 'CASE WHEN sales_stage IN (' . $quotedWonStages . ') THEN 1 ELSE 0 END';
+
+        // Get the earliest Service Start Date of a non-closed-lost service RLI
+        // related to the Opportunity. If any of the related service RLIs are
+        // open, their value takes precedence over closed-won service RLIs.
+        $q = new SugarQuery();
+        $q->from(BeanFactory::newBean('RevenueLineItems'));
+        $q->select(['service_start_date'])
+            ->fieldRaw($caseStatement, 'is_closed');
+        $q->where()->queryAnd()
+            ->equals('opportunity_id', $this->id)
+            ->equals('service', 1)
+            ->notIn('sales_stage', $closedLostStages);
+        $q->orderByRaw('is_closed', 'ASC');
+        $q->orderBy('service_start_date', 'ASC');
+        $result = $q->getDBManager()->fromConvert($q->getOne(), 'date');
+
+        return !empty($result) ? $result : '';
+    }
+
+    /**
+     * Adds proper DB quotation to an array of strings for use in SQL queries
+     * @param array $array the array of strings to quote
+     * @return array an array of the passed-in strings quoted correctly for the DB
+     */
+    private function getQuotedStringArray(array $array): array
+    {
+        $db = DBManagerFactory::getInstance();
+        $quotedArray = [];
+        foreach ($array as $key => $value) {
+            $quotedArray[] = $db->quoted($value);
+        }
+        return $quotedArray;
     }
     //END SUGARCRM flav=ent ONLY
 }
