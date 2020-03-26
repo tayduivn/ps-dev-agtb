@@ -243,7 +243,7 @@ Feature: RLI module verification
 
 
   @T_20161
-  Scenario Outline: RLI > Verify that default Likely/Best/Worst amounts is copied from Calculated Revenue Line Item amount when create a new RLI
+  Scenario Outline: RLI > Verify that default Likely/Best/Worst amounts is copied from Calculated amount when create a new RLI
     # Create Opportunity linked to account
     Given Opportunities records exist:
       | name  |
