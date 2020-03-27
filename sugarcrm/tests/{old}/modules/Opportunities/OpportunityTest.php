@@ -472,11 +472,13 @@ class OpportunityTest extends TestCase
             foreach ($rliDataArray as $rliData) {
                 $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
                 $rli->sales_stage = $rliData['sales_stage'];
-                $rli->service = $rliData['service'];
                 $rli->service_start_date = $rliData['service_start_date'];
-                $rli->service_duration_value = 1;
-                $rli->service_duration_unit = 'year';
-                $rli->opportunity_id = $opportunity->id;
+                $rli->date_closed = $rliData['date_closed'];
+                $rli->service = $rliData['service'];
+                if (!empty($rli->service)) {
+                    $rli->service_duration_value = 1;
+                    $rli->service_duration_unit = 'year';
+                }
                 $opportunity->revenuelineitems->add($rli);
             }
         }
@@ -484,6 +486,7 @@ class OpportunityTest extends TestCase
         // Check that the Opportunity's rollup fields were correctly calculated
         $this->assertEquals($expected['service_start_date'], $opportunity->service_start_date);
         $this->assertEquals($expected['sales_stage'], $opportunity->sales_stage);
+        $this->assertEquals($expected['date_closed'], $opportunity->date_closed);
     }
 
     public function providerTestUpdateRLIRollupFields()
@@ -491,28 +494,29 @@ class OpportunityTest extends TestCase
         return array(
             array(
                 array(),
-                array('service_start_date' => '', 'sales_stage' => ''),
+                array('service_start_date' => '', 'sales_stage' => '', 'date_closed' => ''),
             ),
             array(
                 array(
-                    array('sales_stage' => 'Prospecting', 'service' => 0, 'service_start_date' => ''),
+                    array('sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2020-04-01', 'date_closed' => '2020-03-15'),
                 ),
-                array('service_start_date' => '', 'sales_stage' => 'Prospecting'),
+                array('service_start_date' => '2020-04-01', 'sales_stage' => 'Prospecting', 'date_closed' => '2020-03-15'),
             ),
             array(
                 array(
-                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2019-01-01'),
-                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2020-01-01'),
+                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2019-01-01', 'date_closed' => '2019-10-15'),
+                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2020-01-01', 'date_closed' => '2020-01-10'),
                 ),
-                array('service_start_date' => '2019-01-01', 'sales_stage' => 'Closed Won'),
+                array('service_start_date' => '2019-01-01', 'sales_stage' => 'Closed Won', 'date_closed' => '2019-10-15'),
             ),
             array(
                 array(
-                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2020-01-01'),
-                    array('sales_stage' => 'Qualification', 'service' => 1, 'service_start_date' => '2019-01-01'),
-                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2018-01-01'),
+                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2020-01-01', 'date_closed' => '2020-03-15'),
+                    array('sales_stage' => 'Qualification', 'service' => 1, 'service_start_date' => '2019-01-01', 'date_closed' => '2020-01-20'),
+                    array('sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2019-06-01', 'date_closed' => '2020-03-05'),
+                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2018-01-01', 'date_closed' => '2020-03-15'),
                 ),
-                array('service_start_date' => '2019-01-01', 'sales_stage' => 'Qualification'),
+                array('service_start_date' => '2019-01-01', 'sales_stage' => 'Qualification', 'date_closed' => '2020-03-05'),
             ),
         );
     }

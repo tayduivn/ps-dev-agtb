@@ -54,9 +54,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'massupdate' => true,
         ),
         'date_closed' => array(
-            'calculated' => false,
-            'enforced' => false,
-            'formula' => '',
             'audited' => true,
             'importable' => 'required',
             'required' => true,
@@ -90,9 +87,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'audited' => false,
             'massupdate' => false,
             'importable' => false,
-        ),
-        'date_closed_timestamp' => array(
-            'formula' => 'timestamp($date_closed)'
         ),
         'total_revenue_line_items' => array(
             'reportable' => false,

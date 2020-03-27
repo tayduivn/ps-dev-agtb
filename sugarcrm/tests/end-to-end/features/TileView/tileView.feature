@@ -127,7 +127,7 @@ Feature: Tile View feature
       | value           |
       | New Opportunity |
       | Acc_1           |
-      | 12/12/2020      |
+      | 05/20/2020      |
       | $4,300.00       |
 
     # Verify state of the tile delete button

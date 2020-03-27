@@ -859,6 +859,7 @@ class Opportunity extends SugarBean
             $rollupFields = [
                 'service_start_date' => $this->calculateOpportunityServiceStartDate(),
                 'sales_stage' => $this->calculateOpportunitySalesStage(),
+                'date_closed' => $this->calculateOpportunityExpectedCloseDate(),
             ];
 
             // Update the Opportunity with the calculated rollup values. If any
@@ -880,7 +881,7 @@ class Opportunity extends SugarBean
      * @return string containing the calculated Service Start Date
      * @throws SugarQueryException
      */
-    private function calculateOpportunityServiceStartDate()
+    private function calculateOpportunityServiceStartDate(): string
     {
         $closedWonStages = $this->getRliClosedWonStages();
         $closedLostStages = $this->getRliClosedLostStages();
@@ -915,7 +916,7 @@ class Opportunity extends SugarBean
      * @return string containing the calculated Sales Stage
      * @throws SugarQueryException
      */
-    private function calculateOpportunitySalesStage()
+    private function calculateOpportunitySalesStage(): string
     {
         // Get the lists of sales stages needed for the query
         $listStrings = return_app_list_strings_language('en_us');
@@ -948,6 +949,44 @@ class Opportunity extends SugarBean
         $q->orderByRaw('closed_order', 'ASC');
         $q->orderByRaw('stage_order', 'DESC');
         $result = $q->getOne();
+
+        return !empty($result) ? $result : '';
+    }
+
+    /**
+     * Runs a DB query to calculate the rollup value for the Expected Close Date
+     * field from the related RLIs
+     *
+     * @return string containing the calculated Expected Close Date
+     * @throws SugarQueryException
+     */
+    private function calculateOpportunityExpectedCloseDate(): string
+    {
+        // Get the lists of sales stages needed for the query
+        $quotedClosedWonStages = $this->getQuotedStringArray($this->getRliClosedWonStages());
+        $quotedClosedLostStages = $this->getQuotedStringArray($this->getRliClosedLostStages());
+
+        // Build the case statement. This will be used to order query results so
+        // that open RLIs take precedence over closed RLIs, and closed-won RLIs
+        // take precedence over closed-lost RLIs
+        $wonStages = implode(',', $quotedClosedWonStages);
+        $lostStages = implode(',', $quotedClosedLostStages);
+        $closedOrderCases = 'CASE WHEN sales_stage IN (' . $wonStages . ') THEN 1 ' .
+            'WHEN sales_stage IN (' . $lostStages . ') THEN 2 ' .
+            'ELSE 0 END';
+
+        // Execute the query. If any RLIs are open, we get the latest expected
+        // close date of the open RLIs. Otherwise, if any are closed-won, we get
+        // the latest expected close date of the closed-won. Otherwise, we get
+        // the latest expected close date of the closed-lost RLIs
+        $q = new SugarQuery();
+        $q->from(BeanFactory::newBean('RevenueLineItems'));
+        $q->select(['date_closed'])
+            ->fieldRaw($closedOrderCases, 'closed_order');
+        $q->where()->equals('opportunity_id', $this->id);
+        $q->orderByRaw('closed_order', 'ASC');
+        $q->orderByRaw('date_closed', 'DESC');
+        $result = $q->getDBManager()->fromConvert($q->getOne(), 'date');
 
         return !empty($result) ? $result : '';
     }
