@@ -64,10 +64,7 @@ class DependencyManager
                 if ($view == 'CreateView') {
                     $dep->setFireOnLoad(true);
                 }
-                if (isset($def['enforced']) && $def['enforced'] &&
-                    //Check for the string "false"
-                    (!is_string($def['enforced']) || strtolower($def['enforced']) !== "false")
-                ) {
+                if (isset($def['enforced']) && !isFalsy($def['enforced'])) {
                     if ($includeReadOnly) {
                         $readOnlyDep = new Dependency("readOnly$field");
                         $readOnlyDep->setFireOnLoad(true);

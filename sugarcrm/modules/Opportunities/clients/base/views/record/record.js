@@ -50,7 +50,7 @@
 
         app.utils.hideForecastCommitStageField(this.meta.panels);
     },
-    
+
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Add the initListener if RLI's are being used and the current user has Edit access to RLI's

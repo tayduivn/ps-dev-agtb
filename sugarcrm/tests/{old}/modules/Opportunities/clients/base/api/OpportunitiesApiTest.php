@@ -84,7 +84,7 @@ class OpportunitiesApiTest extends TestCase
                     'date_closed' => '2019-01-01',
                     'other_field' => 'test',
                 ),
-                1,
+                0,
             ),
             // sales stage
             array(
@@ -92,7 +92,7 @@ class OpportunitiesApiTest extends TestCase
                     'sales_stage' => 'Proposed',
                     'other_field' => 'test',
                 ),
-                1,
+                0,
             ),
             // date closed
             array(
@@ -100,7 +100,7 @@ class OpportunitiesApiTest extends TestCase
                     'date_closed' => '2019-01-01',
                     'other_field' => 'test',
                 ),
-                1,
+                0,
             ),
             // other fields
             array(
@@ -158,9 +158,8 @@ class OpportunitiesApiTest extends TestCase
         );
 
         $api = $this->createPartialMock('OpportunitiesApi', array('updateRevenueLineItems', 'loadBean'));
-        $api->expects($this->once())
-            ->method('updateRevenueLineItems')
-            ->with($opp, array('sales_stage' => 'Prospecting', 'date_closed' => '2019-01-01'));
+        $api->expects($this->never())
+            ->method('updateRevenueLineItems');
         $api->expects($this->any())
             ->method('loadBean')
             ->willReturn($opp);

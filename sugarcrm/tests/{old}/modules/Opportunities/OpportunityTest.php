@@ -519,5 +519,103 @@ class OpportunityTest extends TestCase
             ),
         );
     }
+
+    /**
+     * @dataProvider dataProviderCascade
+     * @covers::cascade
+     */
+    public function testCascade($sales_stage)
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->load_relationship('revenuelineitems');
+
+        $rli1 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli1->opportunity_id = $opp->id;
+        $rli1->sales_stage = 'Closed Won';
+        $rli1->save();
+        $opp->revenuelineitems->add($rli1);
+
+        $rli2 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli2->opportunity_id = $opp->id;
+        $rli2->sales_stage = 'Closed Lost';
+        $rli2->save();
+        $opp->revenuelineitems->add($rli2);
+
+        $rli3 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli3->opportunity_id = $opp->id;
+        $rli3->sales_stage = 'Needs Analysis';
+        $rli3->save();
+        $opp->revenuelineitems->add($rli3);
+
+        $opp->save();
+
+        // sales stage will have been recalculated above, so reset it
+        $opp->sales_stage_cascade = $sales_stage;
+        SugarTestReflection::callProtectedMethod(
+            $opp,
+            'cascade',
+        );
+
+        $rli1 = BeanFactory::retrieveBean('RevenueLineItems', $rli1->id);
+        $rli2 = BeanFactory::retrieveBean('RevenueLineItems', $rli2->id);
+        $rli3 = BeanFactory::retrieveBean('RevenueLineItems', $rli3->id);
+
+        $this->assertSame($rli1->sales_stage, 'Closed Won');
+
+        $this->assertSame($rli2->sales_stage, 'Closed Lost');
+
+        $this->assertSame($rli3->sales_stage, $sales_stage);
+    }
+
+    public function dataProviderCascade()
+    {
+        return [
+            ['Prospecting',],
+            ['Value Proposition',],
+            ['Negotiation/Review',],
+            ['Qualification',],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderCalculate
+     * @param string $stages
+     * @param string $expected
+     * @covers::save
+     */
+    public function testCalculationDoesNotCascade($stages, $expected)
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->sales_stage = 'Prospecting';
+
+        for ($i = 0; $i < count($stages); $i++) {
+            $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+            $opp->revenuelineitems->add($rli);
+            $rli->sales_stage = $stages[$i];
+            $opp->updateCalculatedFields();
+            $rli = BeanFactory::retrieveBean('RevenueLineItems', $rli->id);
+            $opp = BeanFactory::retrieveBean('Opportunities', $opp->id);
+            $this->assertEquals($stages[$i], $rli->sales_stage);
+            $this->assertEquals($expected[$i], $opp->sales_stage);
+        }
+    }
+
+    public function dataProviderCalculate()
+    {
+        return [
+            [
+                'stages' => ['Prospecting', 'Qualification', 'Needs Analysis', 'Value Proposition',],
+                'expected' => ['Prospecting', 'Qualification', 'Needs Analysis', 'Value Proposition',],
+            ],
+            [
+                'stages' => ['Value Proposition', 'Needs Analysis', 'Qualification', 'Prospecting',],
+                'expected' => ['Value Proposition', 'Value Proposition', 'Value Proposition', 'Value Proposition',],
+            ],
+            [
+                'stages' => ['Closed Lost', 'Closed Lost', 'Closed Won', 'Value Proposition', 'Qualification',],
+                'expected' => ['Closed Lost', 'Closed Lost', 'Closed Won', 'Value Proposition', 'Value Proposition',],
+            ],
+        ];
+    }
     //END SUGARCRM flav=ent ONLY
 }

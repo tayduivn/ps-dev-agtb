@@ -5534,6 +5534,21 @@ function isTruthy($value)
 }
 
 /**
+ * Evaluates if a value is isFalsy
+ * @param mixed $value
+ * @return bool
+ */
+function isFalsy($value)
+{
+    return ($value === false ||
+            $value === 'false' ||
+            $value === 0 ||
+            $value === '0' ||
+            $value === 'off' ||
+            $value === 'no') ? true : false;
+}
+
+/**
  * Warn a message to log
  * @param string $param
  * @param array $backtrace

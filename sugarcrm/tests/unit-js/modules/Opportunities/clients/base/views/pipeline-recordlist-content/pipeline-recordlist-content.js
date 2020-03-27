@@ -100,6 +100,40 @@ describe('Opportunities.Base.Views.PipelineRecordlistContent', function() {
                 });
                 view.saveModel(model, pipelineData);
                 expect(model.set).toHaveBeenCalledWith('date_closed', '2019-05-31');
+                expect(model.set).toHaveBeenCalledWith('date_closed_cascade', '2019-05-31');
+            });
+        });
+
+        describe('when pipeline_type is sales_stage', function() {
+            it('should set probability, commit stage, and sales_stage_cascade', function() {
+                view.headerField = 'sales_stage';
+                sinon.collection.stub(jQuery.fn, 'parent', function() {
+                    return {
+                        attr: function() {
+                            return 'Qualification';
+                        }
+                    };
+                });
+                sinon.collection.stub(view.context, 'get', function() {
+                    return {
+                        get: function() {
+                            return 'sales_stage';
+                        }
+                    };
+                });
+                sinon.collection.stub(app.utils, 'getProbabilityBySalesStage', function() {
+                    return '10%';
+                });
+                sinon.collection.stub(app.utils, 'getCommitStageBySalesStage', function() {
+                    return 'test_stage';
+                });
+                view.saveModel(model, pipelineData);
+                expect(model.set).toHaveBeenCalledWith('sales_stage', 'Qualification');
+                expect(model.set).toHaveBeenCalledWith({
+                    probability: '10%',
+                    commit_stage: 'test_stage',
+                    sales_stage_cascade: 'Qualification'
+                });
             });
         });
 

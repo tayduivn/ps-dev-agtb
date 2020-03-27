@@ -123,4 +123,29 @@ class UtilsTest extends TestCase
 
         $this->assertEquals(true, \getValueFromConfig('berry'));
     }
+
+    /**
+     * @dataProvider isFalsyDataProvider
+     * @covers \isFalsy
+     * @param mixed $value param to pass
+     * @param bool $expected expected return
+     */
+    public function testIsFalsy($value, $expected)
+    {
+        $this->assertEquals($expected, \isFalsy($value));
+    }
+
+    public function isFalsyDataProvider()
+    {
+        return [
+            ['value' => false, 'expected' => true],
+            ['value' => 'false', 'expected' => true],
+            ['value' => 0, 'expected' => true],
+            ['value' => '0', 'expected' => true],
+            ['value' => 'off', 'expected' => true],
+            ['value' => true, 'expected' => false],
+            ['value' => 'banana', 'expected' => false],
+            ['value' => -1, 'expected' => false],
+        ];
+    }
 }

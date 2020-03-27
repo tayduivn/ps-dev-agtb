@@ -68,10 +68,9 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'calculated' => true,
             'enforced' => true,
             'formula' => 'opportunitySalesStage($revenuelineitems, "sales_stage")',
-            'readonly' => true,
             'audited' => false,
             'required' => false,
-            'studio' => true,
+            'studio' => ['fields' => true],
             'massupdate' => false,
             'reportable' => false,
             'workflow' => false,
@@ -137,7 +136,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
                 'commit_stage' => false,
                 'sales_status' => true,
                 'service_start_date' => true,
-                'sales_stage' => false,
                 'probability' => false,
                 'renewal' => true,
                 'renewal_parent_name' => true,
@@ -154,7 +152,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
 
         $this->fixFilter(
             array(
-                'sales_stage' => false,
+                'sales_stage' => true,
                 'sales_status' => true,
                 'service_start_date' => true,
                 'probability' => false,

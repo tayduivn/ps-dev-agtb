@@ -394,6 +394,27 @@ $dictionary['Opportunity'] = array(
             'unified_search' => true,
             'importable' => 'true',
         ],
+        'sales_stage_cascade' => [
+            'name' => 'sales_stage_cascade',
+            'type' => 'enum',
+            'options' => 'sales_stage_dom',
+            'source' => 'non-db',
+            'required' => false,
+            'reportable' => false,
+            'audited' => false,
+            'studio' => false,
+            'importable' => false,
+        ],
+        'date_closed_cascade' => [
+            'name' => 'date_closed_cascade',
+            'type' => 'date',
+            'source' => 'non-db',
+            'required' => false,
+            'reportable' => false,
+            'audited' => false,
+            'studio' => false,
+            'importable' => false,
+        ],
         //END SUGARCRM flav=ent ONLY
         'accounts' => array(
             'name' => 'accounts',

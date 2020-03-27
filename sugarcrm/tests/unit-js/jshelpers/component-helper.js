@@ -141,7 +141,12 @@
         }
 
         var view = new app.view.View({ name: viewName, context: context });
-        var def = { name: name, type: type, events: (fieldDef) ? fieldDef.events : {} };
+        var def = {
+            name: name,
+            type: type,
+            events: (fieldDef) ? fieldDef.events : {},
+            fields: (fieldDef) ? fieldDef.fields : undefined
+        };
         if (!context) {
             context = app.context.getContext();
             context.set({

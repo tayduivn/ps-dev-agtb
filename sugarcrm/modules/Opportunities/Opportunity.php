@@ -72,6 +72,24 @@ class Opportunity extends SugarBean
     public $timeperiod_id;
     public $commit_stage;
 
+    /**
+     * Fields that should cascade down to RLIs on save in Opps + RLIs mode.
+     *
+     * These are in the form of
+     * [
+     *   $oppFieldName => $methodName
+     * ]
+     *
+     * These will cascade the given opportunity field down to related RLIs when the method returns true.
+     * Methods should be non-static, defined here in Opportunity.php, and take one RLI a a parameter,
+     * and return a boolean indicating whether or not values should cascade to that RLI.
+     */
+    public const CASCADE_FIELD_CONDITIONS = [
+        'date_closed' => 'cascadeWhenOpen',
+        'sales_stage' => 'cascadeWhenOpen',
+    ];
+    private const OPERATION_CASCADE = 'cascading_opportunity_';
+
     //Marketo
     var $mkto_sync;
     var $mkto_id;
@@ -416,6 +434,10 @@ class Opportunity extends SugarBean
         //if the id is set (previously saved bean) and sales_status is still New, update to in progress
         if (isset($this->id) && !$this->new_with_id && $this->sales_status == Opportunity::STATUS_NEW) {
             $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
+        }
+        // trigger cascading changes down to open RLIs based on what data is being updated here
+        if ($this->isUpdate() && $this->shouldCascade()) {
+            $this->cascade();
         }
         //END SUGARCRM flav=ent ONLY
 
@@ -809,12 +831,16 @@ class Opportunity extends SugarBean
 
     /**
      * Overrides the parent updateCalculatedFields to also include recalculating
-     * non-SugarLogic rollup fields
+     * non-SugarLogic rollup fields, and prevent recalculating fields if we're in
+     * a cascade operation
      *
      * @throws SugarQueryException
      */
     public function updateCalculatedFields()
     {
+        if (SugarBean::inOperation(self::OPERATION_CASCADE . $this->id)) {
+            return;
+        }
         $this->updateRLIRollupFields();
         parent::updateCalculatedFields();
     }
@@ -894,6 +920,83 @@ class Opportunity extends SugarBean
             $quotedArray[] = $db->quoted($value);
         }
         return $quotedArray;
+    }
+
+    /**
+     * Cascades certain Opportunity fields down to related RLIs upon save depending on
+     * the {field}=>{condition} mappings defined in CASCADE_FIELD_CONDITIONS. This is
+     * only called if at least one of our '_cascade' fields has a value.
+     */
+    private function cascade()
+    {
+        // If entering a cascade operation fails (because we're already in one) return early
+        if (!SugarBean::enterOperation(self::OPERATION_CASCADE . $this->id)) {
+            return;
+        }
+
+        // entering/leaving operations is entirely static, and incurs really low overhead
+        // Checking settings and local variables is a little more expensive, so we check these conditions
+        // after our static operations to avoid work we don't need to do.
+        $settings = Opportunity::getSettings();
+        if ($settings['opps_view_by'] !== 'RevenueLineItems') {
+            SugarBean::leaveOperation(self::OPERATION_CASCADE . $this->id);
+            return;
+        }
+
+        if ($this->load_relationship('revenuelineitems')) {
+            $rlis = $this->revenuelineitems->getBeans();
+            if (!is_array($rlis) || empty($rlis)) {
+                return;
+            }
+            $updated_rlis = [];
+
+            foreach (self::CASCADE_FIELD_CONDITIONS as $field => $callback) {
+                $cascadeField = $field . '_cascade';
+                if (!empty($this->{$cascadeField})) {
+                    foreach ($rlis as $rli) {
+                        if ($rli->{$field} !== $this->{$cascadeField} &&
+                            call_user_func([$this, $callback], $rli)) {
+                            $rli->{$field} = $this->{$cascadeField};
+                            $updated_rlis[] = $rli;
+                        }
+                    }
+                    $this->{$cascadeField} = null;
+                }
+            }
+            foreach ($updated_rlis as $rli) {
+                $rli->save();
+            }
+        }
+        SugarBean::leaveOperation(self::OPERATION_CASCADE . $this->id);
+        // After updating all associated RLIs, update the calculated fields on this Opportunity
+        // to set the original fields correctly.
+        $this->updateCalculatedFields();
+    }
+
+    /**
+     * Returns true when RLI is open.
+     *
+     * @param RevenueLineItem rli
+     * @return bool True if RLI is open
+     */
+    public function cascadeWhenOpen($rli)
+    {
+        return !in_array($rli->sales_stage, $this->getClosedStages());
+    }
+
+    /**
+     * If at least one '_cascade' field has a value set, we should cascade. Because they're
+     * non-db fields, on non-cascading saves they will be the empty string or null.
+     * @return bool
+     */
+    private function shouldCascade()
+    {
+        foreach (array_keys(self::CASCADE_FIELD_CONDITIONS) as $field) {
+            if (!empty($this->{$field . '_cascade'})) {
+                return true;
+            }
+        }
+        return false;
     }
     //END SUGARCRM flav=ent ONLY
 }

@@ -139,7 +139,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'commit_stage' => $this->isForecastSetup(),
                 'sales_status' => false,
                 'service_start_date' => false,
-                'sales_stage' => true,
                 'probability' => true,
                 'renewal' => false,
                 'renewal_parent_name' => false,

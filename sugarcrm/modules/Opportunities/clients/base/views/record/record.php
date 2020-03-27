@@ -177,9 +177,21 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'date_closed_timestamp'
                     )
                 ),
+                // BEGIN SUGARCRM flav!=ent && flav!=ult ONLY
                 array(
                     'name' => 'sales_stage',
                 ),
+                // END SUGARCRM flav!=ent && flav!=ult ONLY
+                // BEGIN SUGARCRM flav=ent || flav=ult ONLY
+                [
+                    'name' => 'conditional_sales_stage',
+                    'type' => 'opportunities-conditional-fieldset',
+                    'label' => 'LBL_SALES_STAGE',
+                    'fields' => [
+                        'sales_stage',
+                    ],
+                ],
+                // END SUGARCRM flav=ent || flav=ult ONLY
                 'probability',
                 array(
                     'name' => 'commit_stage',

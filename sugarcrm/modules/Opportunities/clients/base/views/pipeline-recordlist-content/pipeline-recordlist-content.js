@@ -80,13 +80,15 @@
                 .formatServer(true);
 
             model.set('date_closed', dateClosed);
+            model.set('date_closed_cascade', dateClosed);
         } else {
             model.set(this.headerField, headerFieldValue);
 
             if (this.headerField === 'sales_stage') {
                 model.set({
                     probability: app.utils.getProbabilityBySalesStage(headerFieldValue),
-                    commit_stage: app.utils.getCommitStageBySalesStage(headerFieldValue)
+                    commit_stage: app.utils.getCommitStageBySalesStage(headerFieldValue),
+                    sales_stage_cascade: headerFieldValue
                 });
             }
         }

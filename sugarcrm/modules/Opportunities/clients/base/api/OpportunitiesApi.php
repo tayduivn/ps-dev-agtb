@@ -42,7 +42,7 @@ class OpportunitiesApi extends ModuleApi
             $data = array();
             $bean = $this->loadBean($api, $args, 'save');
 
-            foreach (['date_closed', 'sales_stage', 'commit_stage', 'probability'] as $prop) {
+            foreach (['commit_stage', 'probability',] as $prop) {
                 if (!empty($args[$prop]) && $bean->{$prop} !== $args[$prop]) {
                     $data[$prop] = $args[$prop];
                 }
