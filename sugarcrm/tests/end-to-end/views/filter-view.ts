@@ -33,7 +33,7 @@ export default class FilterView extends BaseView {
             filter: '.search-filter .select2-choice-type',
             activitystream: '.fa.fa-clock-o',
             listview: '.fa.fa-table',
-            visualpipeline: '.btn.pipeline-view-button',
+            tileview: '.btn.pipeline-view-button',
             createButton: '.choice-filter',
             closeFilterButton: '.choice-filter-clickable .choice-filter-close',
             editFilterButton: '.choice-filter-clickable .choice-filter-label',
@@ -259,7 +259,7 @@ export default class FilterView extends BaseView {
     }
 
     /**
-     * Check state of the button (such as Activities Streams, Pipeline View) in Filter bar
+     * Check state of the button (such as Activities Streams, Tile View) in Filter bar
      *
      * @param buttonName
      * @returns {Promise<boolean>}

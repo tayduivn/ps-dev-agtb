@@ -115,8 +115,8 @@ export default class RecordHeaderView extends BaseView {
                 // Home Dashboard control
                 'addbutton': 'a[name="add_button"]:not(.hide)',
 
-                // Pipeline View
-                'pipelinecreate': 'a[name="pipeline_create_button"]:not(.hide)',
+                // Tile View Create button
+                'tileviewcreate': 'a[name="pipeline_create_button"]:not(.hide)',
 
                 // Serve Console and Renewal Console
                 'edit_overview_tab_button': 'a[name="edit_overview_tab_button"]:not(.hide)',

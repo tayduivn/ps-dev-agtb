@@ -12,8 +12,8 @@
 import {seedbed, Then} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
-import pipelineView from '../views/pipeline-view';
 import {parseInputArray} from './general_bdd';
+import TileView from '../views/tile-view';
 
 /**
  *  Verify tile content fields value in Pipeline View
@@ -173,7 +173,7 @@ Then(/I verify (\*[a-zA-Z](?:\w|\S)*) tile delete button state in (#[a-zA-Z](?:\
  *  Verify that the column in present and located in the correct position in Tile View
  *
  *  @example
- *  Then I verify pipeline column headers in #LeadsPipelineView view
+ *  Then I verify tile view column headers in #LeadsPipelineView view
  *      | value      |  position |
  *      | New        |  1        |
  *      | Assigned   |  2        |
@@ -182,8 +182,8 @@ Then(/I verify (\*[a-zA-Z](?:\w|\S)*) tile delete button state in (#[a-zA-Z](?:\
  *      | Recycled   |  5        |
  *      | Dead       |  6        |
  */
-Then(/^I verify pipeline column headers in (#\S+) view$/,
-    async function (view: pipelineView, data: TableDefinition) {
+Then(/^I verify tile view column headers in (#\S+) view$/,
+    async function (view: TileView, data: TableDefinition) {
 
         let rows = data.rows();
         let errors = [];

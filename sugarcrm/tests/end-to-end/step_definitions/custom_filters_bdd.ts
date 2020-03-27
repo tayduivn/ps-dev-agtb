@@ -33,7 +33,7 @@ When(/^I (add|cancel|add but do not save) custom filter '([^"]*)' on the (\w+) (
 
         if (view === 'tile') {
             // navigate to tile view
-            await filterView.toggleListViewMode('VisualPipeline'.toLowerCase());
+            await filterView.toggleListViewMode('tileview');
         }
 
         // Click Create button

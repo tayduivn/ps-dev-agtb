@@ -12,10 +12,10 @@
 import BaseView from './base-view';
 
 /**
- * @class PipelineItemView
+ * @class TileItemView
  * @extends BaseView
  */
-export default class PipelineItemView extends BaseView {
+export default class TileItemView extends BaseView {
 
     public id: string;
     public index: number;
@@ -46,9 +46,9 @@ export default class PipelineItemView extends BaseView {
     /**
      * Drag and Drop tile to specified column in the Tile View
      *
-     * @param toColumn
+     * @param colName {string} name of the column to drag tile to
      */
-    public async dragAndDropTile ( colName: string) {
+    public async dragAndDropTile (colName: string) {
         let src_by = this.$('listItem.tileBody', {id: this.id} );
 
         let columnNumber: number = 0;

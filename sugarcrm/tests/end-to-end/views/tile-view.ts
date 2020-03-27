@@ -9,24 +9,23 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import PipelineItemView from './pipeline-item-view';
+import TileItemView from './tile-item-view';
 import BaseListView from './baselist-view';
 
 /**
- * Represents Pipeline View
+ * Represents Tile View
  *
- * @class PipelineView
+ * @class TileView
  * @extends BaseListView
  */
-export default class PipelineView extends BaseListView {
+export default class TileView extends BaseListView {
 
     constructor(options) {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '',
-            pipelineByTime: '.stageButton[data-pipeline="date_closed"]',
-            pipelineByStage: '.stageButton[data-pipeline="sales_stage"]',
+            opportunitiesByTime: '.stageButton[data-pipeline="date_closed"]',
+            opportunitiesByStage: '.stageButton[data-pipeline="sales_stage"]',
             content: {
                 $: '.main-content',
             },
@@ -62,23 +61,23 @@ export default class PipelineView extends BaseListView {
             return null;
         }
 
-        let pipelineViewItem = this.createComponent<PipelineItemView>(PipelineItemView, {
+        let tileViewItem = this.createComponent<TileItemView>(TileItemView, {
             id: conditions.id,
             module: this.module,
         });
 
-        this.listItems.push(pipelineViewItem as any);
-        return pipelineViewItem as any;
+        this.listItems.push(tileViewItem as any);
+        return tileViewItem as any;
     }
 
     /**
      * Check whether the column with specified name exists in Tile View
      *
-     * @param {string} columnName
-     * @columnIndex {columnIndex} index of the column in Tile View starting from 1
+     * @columnName {string} columnName
+     * @columnIndex {string} index of the column in Tile View starting from 1
      * @returns {Promise<any>}
      */
-    public async getColumnHeader(columnName: string, columnIndex:string):Promise<boolean> {
+    public async getColumnHeader(columnName: string, columnIndex: string):Promise<boolean> {
 
         let selector = this.$('columnHeader', {columnName, columnIndex} );
         return await this.driver.isElementExist(selector);

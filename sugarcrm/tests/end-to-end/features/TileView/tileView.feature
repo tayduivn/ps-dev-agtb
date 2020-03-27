@@ -30,14 +30,14 @@ Feature: Tile View feature
 
     # Navigate to Opportunities > Tile View
     When I choose Opportunities in modules menu
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     Then I should be redirected to "Opportunities/pipeline" route
 
     # Switch to Opportunities by Sales Stage tab
-    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+    When I select opportunitiesByStage tab in #OpportunitiesTileView view
 
-    # Verify column headers in Pipeline By Stage tab
-    Then I verify pipeline column headers in #OpportunitiesPipelineView view
+    # Verify column headers in Opportunities By Stage tab
+    Then I verify tile view column headers in #OpportunitiesTileView view
       | value                | position |
       | Prospecting          | 1        |
       | Qualification        | 2        |
@@ -48,8 +48,8 @@ Feature: Tile View feature
       | Proposal/Price Quote | 7        |
       | Negotiation/Review   | 8        |
 
-    # Create New opportunity while in pipeline view
-    When I click pipelineCreate button on #OpportunitiesList header
+    # Create New opportunity while in tile view
+    When I click tileViewCreate button on #OpportunitiesList header
     When I provide input for #OpportunitiesDrawer.HeaderView view
       | *     | name            |
       | Opp_1 | New Opportunity |
@@ -67,7 +67,7 @@ Feature: Tile View feature
     When I search for "New Opportunity" in #OpportunitiesList.FilterView view
 
     # Verify record's information displayed in the tile
-    Then I verify *Opp_1 tile field values in #OpportunitiesPipelineView view
+    Then I verify *Opp_1 tile field values in #OpportunitiesTileView view
       | value           |
       | New Opportunity |
       | Acc_1           |
@@ -75,15 +75,15 @@ Feature: Tile View feature
       | $2,000.00       |
 
     # Verify column the opportunity tile appears under
-    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
 
     # Verify state of the tile delete button
-    Then I verify *Opp_1 tile delete button state in #OpportunitiesPipelineView view
+    Then I verify *Opp_1 tile delete button state in #OpportunitiesTileView view
       | Disabled |
       | false    |
 
     # Add second RLI record to opportunity
-    When I select *Opp_1 in #OpportunitiesPipelineView
+    When I select *Opp_1 in #OpportunitiesTileView
     When I create_new record from revenuelineitems subpanel on #Opp_1Record view
     When I provide input for #RevenueLineItemsDrawer.HeaderView view
       | *name |
@@ -94,14 +94,14 @@ Feature: Tile View feature
     When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
 
-    # Navigate to Pipeline View
+    # Navigate to Tile View
     When I choose Opportunities in modules menu
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Sales Stage tab
-    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+    When I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify record's information displayed in the tile
-    Then I verify *Opp_1 tile field values in #OpportunitiesPipelineView view
+    Then I verify *Opp_1 tile field values in #OpportunitiesTileView view
       | value           |
       | New Opportunity |
       | Acc_1           |
@@ -109,21 +109,21 @@ Feature: Tile View feature
       | $4,000.00       |
 
     # Verify column the opportunity tile appears under
-    Then I verify the [*Opp_1] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Needs Analysis" column in #OpportunitiesTileView view
 
     # Add Closed Won RLI and Closed Lost RLI to opportunity through mass update
     When I perform mass update of RevenueLineItems [*RLI3, *RLI4] with the following values:
       | fieldName        | value           |
       | opportunity_name | New Opportunity |
 
-    # Navigate to Pipeline View
+    # Navigate to Tile View
     When I choose Opportunities in modules menu
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Sales Stage tab
-    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+    When I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify record's information displayed in the tile
-    Then I verify *Opp_1 tile field values in #OpportunitiesPipelineView view
+    Then I verify *Opp_1 tile field values in #OpportunitiesTileView view
       | value           |
       | New Opportunity |
       | Acc_1           |
@@ -131,34 +131,34 @@ Feature: Tile View feature
       | $4,300.00       |
 
     # Verify state of the tile delete button
-    Then I verify *Opp_1 tile delete button state in #OpportunitiesPipelineView view
+    Then I verify *Opp_1 tile delete button state in #OpportunitiesTileView view
       | Disabled |
       | true     |
 
     # Verify column the opportunity tile appears under
-    Then I verify the [*Opp_1] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Needs Analysis" column in #OpportunitiesTileView view
 
     # remove Closed Won RLI and Closed Lost RLI from opportunity through mass update
     When I perform mass update of RevenueLineItems [*RLI3, *RLI4] with the following values:
       | fieldName        | value |
       | opportunity_name | Opp_2 |
 
-    # Navigate to Pipeline View
+    # Navigate to Tile View
     When I choose Opportunities in modules menu
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Sales Stage tab
-    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+    When I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify column the opportunity tile appears under
-    Then I verify the [*Opp_1] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Needs Analysis" column in #OpportunitiesTileView view
     # Closed Won and closed lost columns have to be activated first
-    # Then I verify the [*Opp_2] records are under "Closed Won" column in #OpportunitiesPipelineView view
+    # Then I verify the [*Opp_2] records are under "Closed Won" column in #OpportunitiesTileView view
 
-    # Delete record in pipeline view
-    When I delete *Opp_1 in #OpportunitiesPipelineView view
+    # Delete record in Tile View
+    When I delete *Opp_1 in #OpportunitiesTileView view
 
-    # Switch tab in opportunities pipeline view
-    When I select pipelineByTime tab in #OpportunitiesPipelineView view
+    # Switch tab in Opportunities Tile View
+    When I select opportunitiesByTime tab in #OpportunitiesTileView view
 
     # Navigate to the list view
     When I select ListView in #OpportunitiesList.FilterView
@@ -172,11 +172,11 @@ Feature: Tile View feature
 
     # Navigate to Cases > Tile View
     When I choose Cases in modules menu
-    When I select VisualPipeline in #CasesList.FilterView
+    When I select TileView in #CasesList.FilterView
     Then I should be redirected to "Cases/pipeline" route
 
-    # Verify column headers in Pipeline By Stage tab
-    Then I verify pipeline column headers in #CasesPipelineView view
+    # Verify column headers in Opportunities By Stage tab
+    Then I verify tile view column headers in #CasesTileView view
       | value         | position |
       | New           | 1        |
       | Assigned      | 2        |
@@ -186,7 +186,7 @@ Feature: Tile View feature
       | Duplicate     | 6        |
 
     # Create New Case while in Tile View
-    When I click pipelineCreate button on #CasesList header
+    When I click tileViewCreate button on #CasesList header
     When I provide input for #CasesDrawer.HeaderView view
       | *  | name   |
       | C2 | Case 2 |
@@ -197,17 +197,17 @@ Feature: Tile View feature
     When I close alert
 
     # Verify column the case tile appears under
-    Then I verify the [*C2] records are under "Assigned" column in #CasesPipelineView view
+    Then I verify the [*C2] records are under "Assigned" column in #CasesTileView view
 
     # Verify record's information displayed in the tile
-    Then I verify *C2 tile field values in #CasesPipelineView view
+    Then I verify *C2 tile field values in #CasesTileView view
       | value  |
       | Case 2 |
       | Acc_1  |
       | Medium |
 
     # Change Case Status
-    When I select *C2 in #CasesPipelineView
+    When I select *C2 in #CasesTileView
     When I click Edit button on #C2Record header
     When I provide input for #C2Record.RecordView view
       | *  | priority | status |
@@ -216,13 +216,13 @@ Feature: Tile View feature
     When I close alert
 
     When I choose Cases in modules menu
-    When I select VisualPipeline in #CasesList.FilterView
+    When I select TileView in #CasesList.FilterView
 
     # Verify column the case tile appears under
-    Then I verify the [*C2] records are under "Closed" column in #CasesPipelineView view
+    Then I verify the [*C2] records are under "Closed" column in #CasesTileView view
 
     # Verify record's information displayed in the tile
-    Then I verify *C2 tile field values in #CasesPipelineView view
+    Then I verify *C2 tile field values in #CasesTileView view
       | value  |
       | Case 2 |
       | Acc_1  |
@@ -244,11 +244,11 @@ Feature: Tile View feature
 
     # Navigate to Tasks > Tile View
     When I choose Tasks in modules menu
-    When I select VisualPipeline in #TasksList.FilterView
+    When I select TileView in #TasksList.FilterView
     Then I should be redirected to "Tasks/pipeline" route
 
-    # Verify column headers in Pipeline By Stage tab
-    Then I verify pipeline column headers in #TasksPipelineView view
+    # Verify column headers in Opportunities By Stage tab
+    Then I verify tile view column headers in #TasksTileView view
       | value         | position |
       | Not Started   | 1        |
       | In Progress   | 2        |
@@ -257,7 +257,7 @@ Feature: Tile View feature
       | Deferred      | 5        |
 
     # Create New Task while in Tile View
-    When I click pipelineCreate button on #TasksList header
+    When I click tileViewCreate button on #TasksList header
     When I click show more button on #TasksDrawer view
     When I provide input for #TasksDrawer.HeaderView view
       | *  | name   |
@@ -270,10 +270,10 @@ Feature: Tile View feature
     When I close alert
 
     # Verify column the task tile appears under
-    Then I verify the [*T1] records are under "Not Started" column in #TasksPipelineView view
+    Then I verify the [*T1] records are under "Not Started" column in #TasksTileView view
 
     # Verify record's information displayed in the tile
-    Then I verify *T1 tile field values in #TasksPipelineView view
+    Then I verify *T1 tile field values in #TasksTileView view
       | value              |
       | Task 1             |
       | cFirst cLast       |
@@ -281,7 +281,7 @@ Feature: Tile View feature
       | 05/10/2020 02:00pm |
 
     # Change Task Status
-    When I select *T1 in #TasksPipelineView
+    When I select *T1 in #TasksTileView
     When I click Edit button on #T1Record header
     When I provide input for #T1Record.RecordView view
       | *  | priority | status      | parent_name       | date_due           |
@@ -290,13 +290,13 @@ Feature: Tile View feature
     When I close alert
 
     When I choose Tasks in modules menu
-    When I select VisualPipeline in #TasksList.FilterView
+    When I select TileView in #TasksList.FilterView
 
     # Verify column the case tile appears under
-    Then I verify the [*T1] records are under "In Progress" column in #TasksPipelineView view
+    Then I verify the [*T1] records are under "In Progress" column in #TasksTileView view
 
     # Verify record's information displayed in the tile
-    Then I verify *T1 tile field values in #TasksPipelineView view
+    Then I verify *T1 tile field values in #TasksTileView view
       | value              |
       | Task 1             |
       | cFirst cLast       |
@@ -312,11 +312,11 @@ Feature: Tile View feature
 
     # Navigate to List > Tile View
     When I choose Leads in modules menu
-    When I select VisualPipeline in #LeadsList.FilterView
+    When I select TileView in #LeadsList.FilterView
     Then I should be redirected to "Leads/pipeline" route
 
-    # Verify column headers in Pipeline By Stage tab
-    Then I verify pipeline column headers in #LeadsPipelineView view
+    # Verify column headers in Opportunities By Stage tab
+    Then I verify tile view column headers in #LeadsTileView view
       | value      | position |
       | New        | 1        |
       | Assigned   | 2        |
@@ -326,7 +326,7 @@ Feature: Tile View feature
       | Dead       | 6        |
 
     # Create New Lead while in Tile View
-    When I click pipelineCreate button on #LeadsList header
+    When I click tileViewCreate button on #LeadsList header
     When I click show more button on #LeadsDrawer view
     When I provide input for #LeadsDrawer.HeaderView view
       | *   | first_name | last_name |
@@ -339,10 +339,10 @@ Feature: Tile View feature
     When I close alert
 
     # Verify column the task tile appears under
-    Then I verify the [*L_1, *L_2, *L_3, *L_4] records are under "New" column in #LeadsPipelineView view
+    Then I verify the [*L_1, *L_2, *L_3, *L_4] records are under "New" column in #LeadsTileView view
 
     # Verify record's information displayed in the tile
-    Then I verify *L_4 tile field values in #LeadsPipelineView view
+    Then I verify *L_4 tile field values in #LeadsTileView view
       | value                   |
       | Lead4 Lead4             |
       | lead4.sugar@example.org |
@@ -350,7 +350,7 @@ Feature: Tile View feature
       | (639) 881-8398          |
 
     # Change Lead Status
-    When I select *L_1 in #LeadsPipelineView
+    When I select *L_1 in #LeadsTileView
     When I click Edit button on #L_1Record header
     When I provide input for #L_1Record.RecordView view
       | *   | title             | phone_work     | website      | account_name | status   | email                    |
@@ -358,14 +358,15 @@ Feature: Tile View feature
     When I click Save button on #L_1Record header
     When I close alert
 
+    # Navigate to Leads > Tile View
     When I choose Leads in modules menu
-    When I select VisualPipeline in #LeadsList.FilterView
+    When I select TileView in #LeadsList.FilterView
 
     # Verify column the case tile appears under
-    Then I verify the [*L_1] records are under "Assigned" column in #LeadsPipelineView view
+    Then I verify the [*L_1] records are under "Assigned" column in #LeadsTileView view
 
     # Verify record's information displayed in the tile
-    Then I verify *L_1 tile field values in #LeadsPipelineView view
+    Then I verify *L_1 tile field values in #LeadsTileView view
       | value                    |
       | Lead1 Lead1              |
       | lead4.sweets@example.org |
@@ -373,15 +374,15 @@ Feature: Tile View feature
       | (936) 188-8398           |
 
     # Move tiles
-    When I drag *L_2 tile to "In Process" column in #LeadsPipelineView view
-    When I drag *L_3 tile to "Recycled" column in #LeadsPipelineView view
-    When I drag *L_4 tile to "Dead" column in #LeadsPipelineView view
+    When I drag *L_2 tile to "In Process" column in #LeadsTileView view
+    When I drag *L_3 tile to "Recycled" column in #LeadsTileView view
+    When I drag *L_4 tile to "Dead" column in #LeadsTileView view
 
     # Verify that tiles are moved successfully
-    Then I verify the [*L_2, *L_3, *L_4] records are not under "New" column in #LeadsPipelineView view
-    Then I verify the [*L_2] records are under "In Process" column in #LeadsPipelineView view
-    Then I verify the [*L_3] records are under "Recycled" column in #LeadsPipelineView view
-    Then I verify the [*L_4] records are under "Dead" column in #LeadsPipelineView view
+    Then I verify the [*L_2, *L_3, *L_4] records are not under "New" column in #LeadsTileView view
+    Then I verify the [*L_2] records are under "In Process" column in #LeadsTileView view
+    Then I verify the [*L_3] records are under "Recycled" column in #LeadsTileView view
+    Then I verify the [*L_4] records are under "Dead" column in #LeadsTileView view
 
 
   @leads_tileView_convert_lead @pr
@@ -392,11 +393,11 @@ Feature: Tile View feature
 
     # Navigate to List > Tile View
     When I choose Leads in modules menu
-    When I select VisualPipeline in #LeadsList.FilterView
+    When I select TileView in #LeadsList.FilterView
     Then I should be redirected to "Leads/pipeline" route
 
       # Move tile to Converted column > Cancel
-    When I drag *L_1 tile to "Converted" column in #LeadsPipelineView view
+    When I drag *L_1 tile to "Converted" column in #LeadsTileView view
 
     # Generate ID for Contact record
     When I provide input for #L_1LeadConversionDrawer.ContactContent view
@@ -418,10 +419,10 @@ Feature: Tile View feature
     When I click Cancel button on #LeadConversionDrawer header
 
     # Verify that conversion process is successfully completed
-    Then I verify the [*L_1] records are under "New" column in #LeadsPipelineView view
+    Then I verify the [*L_1] records are under "New" column in #LeadsTileView view
 
     # Move tile to Converted column > Save
-    When I drag *L_1 tile to "Converted" column in #LeadsPipelineView view
+    When I drag *L_1 tile to "Converted" column in #LeadsTileView view
 
     # Generate ID for Contact record
     When I provide input for #L_1LeadConversionDrawer.ContactContent view
@@ -444,15 +445,15 @@ Feature: Tile View feature
     When I close alert
 
     # Verify that conversion process is successfully completed
-    Then I verify the [*L_1] records are under "Converted" column in #LeadsPipelineView view
+    Then I verify the [*L_1] records are under "Converted" column in #LeadsTileView view
 
     # Move tile from Converted column
-    When I drag *L_1 tile to "New" column in #LeadsPipelineView view
+    When I drag *L_1 tile to "New" column in #LeadsTileView view
 
     # Verify that tile is not moved from the Converted column
-    Then I verify the [*L_1] records are under "Converted" column in #LeadsPipelineView view
+    Then I verify the [*L_1] records are under "Converted" column in #LeadsTileView view
 
-    When I select *L_1 in #LeadsPipelineView
+    When I select *L_1 in #LeadsTileView
     # Verify that label in the lead's header says 'Converted'
     Then I verify fields on #L_1Record.HeaderView
       | fieldName | value     |
@@ -497,16 +498,16 @@ Feature: Tile View feature
       | lead_source | is any of       | Cold Call, Direct Mail |
 
     # Navigate to Opportunities > Tile View
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     Then I should be redirected to "Opportunities/pipeline" route
 
     # Switch to Opportunities by Sales Stage tab
-    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+    When I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify that custom filter is applied in Opportunities -> Tile View
-    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesTileView view
 
     # Navigate to Opportunities > List View
     When I select ListView in #OpportunitiesList.FilterView
@@ -519,12 +520,12 @@ Feature: Tile View feature
     When I delete custom filter 'New Filter 1' on the Opportunities list view
 
     # Navigate to Opportunities > Tile View
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
 
     # Verify that custom filter is removed in Opportunities -> Tile View
-    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesTileView view
 
     # Navigate to Opportunities > List View
     When I select ListView in #OpportunitiesList.FilterView
@@ -573,47 +574,47 @@ Feature: Tile View feature
       | account_name | Account_1 |
 
     # Navigate to Opportunities > Tile View
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
 
     # Switch to Opportunities by Time tab
-    When I select pipelineByTime tab in #OpportunitiesPipelineView view
+    When I select opportunitiesByTime tab in #OpportunitiesTileView view
 
     # Verify that records appear in the tile view
-    Then I verify the [*Opp_1] records are under "now + 30d" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are under "now" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3, *Opp_3_1] records are under "now + 90d" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "now + 30d" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are under "now" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3, *Opp_3_1] records are under "now + 90d" column in #OpportunitiesTileView view
 
     # Search for 'Opp_2' string in tile view
     When I search for "Opp_2" in #OpportunitiesList.FilterView view
 
     # Verify that search is applied
-    Then I verify the [*Opp_1] records are not under "now + 30d" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are under "now" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3, *Opp_3_1] records are not under "now + 90d" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are not under "now + 30d" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are under "now" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3, *Opp_3_1] records are not under "now + 90d" column in #OpportunitiesTileView view
 
     # Switch to Opportunities by Sales Stage tab
-    When I select pipelineByStage tab in #OpportunitiesPipelineView view
+    When I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify that search is applied in Opportunities by Sales Stage tab
-    Then I verify the [*Opp_1] records are not under "Qualification" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are not under "Qualification" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesTileView view
 
     # Search for 'Opp_3' string in tile view
     When I search for "Opp_3" in #OpportunitiesList.FilterView view
 
     # Verify that search is applied in Opportunities by Sales Stage tab
-    Then I verify the [*Opp_1] records are not under "Qualification" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3, *Opp_3_1] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are not under "Qualification" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3, *Opp_3_1] records are under "Needs Analysis" column in #OpportunitiesTileView view
 
     # Switch to Opportunities by Time tab
-    When I select pipelineByTime tab in #OpportunitiesPipelineView view
+    When I select opportunitiesByTime tab in #OpportunitiesTileView view
 
     # Verify that search is applied in Opportunities by Time tab
-    Then I verify the [*Opp_1] records are not under "now + 30d" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are not under "now" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3, *Opp_3_1] records are under "now + 90d" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are not under "now + 30d" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are not under "now" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3, *Opp_3_1] records are under "now + 90d" column in #OpportunitiesTileView view
 
     # Switch back to list view
     When I select ListView in #OpportunitiesList.FilterView
@@ -633,28 +634,28 @@ Feature: Tile View feature
 
     # Navigate to Tasks > Tile View
     When I choose Tasks in modules menu
-    When I select VisualPipeline in #TasksList.FilterView
+    When I select TileView in #TasksList.FilterView
 
     # Verify column the task tile appears under 'Not Started' column
-    Then I verify the [*T1, *T2, *T3] records are under "Not Started" column in #TasksPipelineView view
+    Then I verify the [*T1, *T2, *T3] records are under "Not Started" column in #TasksTileView view
 
     # Move tiles
-    When I drag *T1 tile to "In Progress" column in #TasksPipelineView view
-    When I drag *T2 tile to "Completed" column in #TasksPipelineView view
-    When I drag *T3 tile to "Pending Input" column in #TasksPipelineView view
+    When I drag *T1 tile to "In Progress" column in #TasksTileView view
+    When I drag *T2 tile to "Completed" column in #TasksTileView view
+    When I drag *T3 tile to "Pending Input" column in #TasksTileView view
 
     # Verify that tiles are moved successfully
-    Then I verify the [*T1, *T2, *T3] records are not under "Not Started" column in #TasksPipelineView view
-    Then I verify the [*T1] records are under "In Progress" column in #TasksPipelineView view
-    Then I verify the [*T2] records are under "Completed" column in #TasksPipelineView view
-    Then I verify the [*T3] records are under "Pending Input" column in #TasksPipelineView view
+    Then I verify the [*T1, *T2, *T3] records are not under "Not Started" column in #TasksTileView view
+    Then I verify the [*T1] records are under "In Progress" column in #TasksTileView view
+    Then I verify the [*T2] records are under "Completed" column in #TasksTileView view
+    Then I verify the [*T3] records are under "Pending Input" column in #TasksTileView view
 
     # Move tiles
-    When I drag *T1 tile to "Pending Input" column in #TasksPipelineView view
-    When I drag *T2 tile to "Pending Input" column in #TasksPipelineView view
+    When I drag *T1 tile to "Pending Input" column in #TasksTileView view
+    When I drag *T2 tile to "Pending Input" column in #TasksTileView view
 
     # Verify that tiles are moved successfully
-    Then I verify the [*T3, *T2, *T1] records are under "Pending Input" column in #TasksPipelineView view
+    Then I verify the [*T3, *T2, *T1] records are under "Pending Input" column in #TasksTileView view
 
 
   @cases_tileView_move_plus_validation @SS-194 @SS-195 @SS-196 @AT-340
@@ -668,13 +669,13 @@ Feature: Tile View feature
 
     # Navigate to Cases > Tile View
     When I choose Cases in modules menu
-    When I select VisualPipeline in #CasesList.FilterView
+    When I select TileView in #CasesList.FilterView
 
     # Verify that the tile appears under correct column
-    Then I verify the [*C_1] records are under "New" column in #CasesPipelineView view
+    Then I verify the [*C_1] records are under "New" column in #CasesTileView view
 
     # Move the tile to another column to trigger record validation
-    When I drag *C_1 tile to "Assigned" column in #CasesPipelineView view
+    When I drag *C_1 tile to "Assigned" column in #CasesTileView view
     When I provide input for #C_1Drawer.RecordView view
       | account_name | priority | type           | source   | description |
       | Acc_1        | High     | Administration | Internal | My Case     |
@@ -682,10 +683,10 @@ Feature: Tile View feature
     When I click Cancel button on #C_1Drawer header
 
     # Verify the tile is returned to the original column
-    Then I verify the [*C_1] records are under "New" column in #CasesPipelineView view
+    Then I verify the [*C_1] records are under "New" column in #CasesTileView view
 
     # Move case tile to another column to trigger record validation
-    When I drag *C_1 tile to "Assigned" column in #CasesPipelineView view
+    When I drag *C_1 tile to "Assigned" column in #CasesTileView view
     When I provide input for #C_1Drawer.RecordView view
       | account_name | priority | type           | source   | description |
       | Acc_1        | High     | Administration | Internal | My Case     |
@@ -694,20 +695,20 @@ Feature: Tile View feature
     When I close alert
 
     # Verify the case tile appears under correct column
-    Then I verify the [*C_1] records are under "Assigned" column in #CasesPipelineView view
+    Then I verify the [*C_1] records are under "Assigned" column in #CasesTileView view
 
     # Verify tile contains correct information
-    Then I verify *C_1 tile field values in #CasesPipelineView view
+    Then I verify *C_1 tile field values in #CasesTileView view
       | value       |
       | My New Case |
       | Acc_1       |
       | High        |
 
     # Move case tile to another column
-    When I drag *C_1 tile to "Rejected" column in #CasesPipelineView view
+    When I drag *C_1 tile to "Rejected" column in #CasesTileView view
 
     # Verify the case tile appears under correct column & no drawer opens
-    Then I verify the [*C_1] records are under "Rejected" column in #CasesPipelineView view
+    Then I verify the [*C_1] records are under "Rejected" column in #CasesTileView view
 
 
   @tileView_not_saved_filter @SS-324 @AT-344
@@ -751,14 +752,14 @@ Feature: Tile View feature
       | account_name | Account_1 |
 
     # Navigate to Opportunities > Tile View
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Stage tab
-    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+    And I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify that tiles are displayed in the tile view
-    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesTileView view
 
     # Build custom filter in Opportunities List View but Do NOT save it
     When I add but do not save custom filter 'New Filter 1' on the Opportunities list view with the following values:
@@ -767,14 +768,14 @@ Feature: Tile View feature
       | opportunity_type | is any of       | Existing Business      |
 
     # Navigate to Opportunities > Tile View
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Stage tab
-    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+    And I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify that tiles are filtered properly
-    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesTileView view
 
     # Build custom filter in Leads Tile View but do NOT save it
     When I add but do not save custom filter 'New Filter 2' on the Leads tile view with the following values:
@@ -783,9 +784,9 @@ Feature: Tile View feature
       | first_name  | starts with     | Alex         |
 
     # Verify that tiles are filtered properly in Leads Tile View
-    Then I verify the [*Lead_3] records are under "In Process" column in #LeadsPipelineView view
-    Then I verify the [*Lead_1] records are not under "New" column in #LeadsPipelineView view
-    Then I verify the [*Lead_2] records are not under "Assigned" column in #LeadsPipelineView view
+    Then I verify the [*Lead_3] records are under "In Process" column in #LeadsTileView view
+    Then I verify the [*Lead_1] records are not under "New" column in #LeadsTileView view
+    Then I verify the [*Lead_2] records are not under "Assigned" column in #LeadsTileView view
 
     # Return to Opportunities List view
     When I choose Opportunities in modules menu
@@ -795,54 +796,54 @@ Feature: Tile View feature
     And I should not see [*Opp_2, *Opp_3] on Opportunities list view
 
     # Switch to Opportunities > Tile View > Opportunities by Stage tab
-    When I select VisualPipeline in #OpportunitiesList.FilterView
-    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+    When I select TileView in #OpportunitiesList.FilterView
+    And I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify that tiles are filtered properly
-    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesTileView view
 
     # Verify Leads list view content
     Then I should see [*Lead_3] on Leads list view
     And I should not see [*Lead_1, *Lead_2] on Leads list view
 
     # Switch to Tile View > Leads
-    When I select VisualPipeline in #LeadsList.FilterView
+    When I select TileView in #LeadsList.FilterView
 
     # Verify that tiles are filtered properly in Leads Tile View
-    Then I verify the [*Lead_3] records are under "In Process" column in #LeadsPipelineView view
-    Then I verify the [*Lead_1] records are not under "New" column in #LeadsPipelineView view
-    Then I verify the [*Lead_2] records are not under "Assigned" column in #LeadsPipelineView view
+    Then I verify the [*Lead_3] records are under "In Process" column in #LeadsTileView view
+    Then I verify the [*Lead_1] records are not under "New" column in #LeadsTileView view
+    Then I verify the [*Lead_2] records are not under "Assigned" column in #LeadsTileView view
 
     When I cancel custom filter on the Leads tile view
 
     # Verify that tiles are no longer filtered in Leads Tile View
-    Then I verify the [*Lead_3] records are under "In Process" column in #LeadsPipelineView view
-    Then I verify the [*Lead_1] records are under "New" column in #LeadsPipelineView view
-    Then I verify the [*Lead_2] records are under "Assigned" column in #LeadsPipelineView view
+    Then I verify the [*Lead_3] records are under "In Process" column in #LeadsTileView view
+    Then I verify the [*Lead_1] records are under "New" column in #LeadsTileView view
+    Then I verify the [*Lead_2] records are under "Assigned" column in #LeadsTileView view
 
     When I choose Opportunities in modules menu
     # Navigate to Opportunities > Tile View
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Stage tab
-    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+    And I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Save previously unsaved filter
     When I save custom filter on the Opportunities tile view
 
     # Verify that tiles are filtered properly
-    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are not under "Prospecting" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3] records are not under "Needs Analysis" column in #OpportunitiesTileView view
 
     # Delete custom filter
     When I delete custom filter 'New Filter 1' on the Opportunities tile view
 
     # Verify that tiles are no longer filtered
-    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are under "Prospecting" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_3] records are under "Needs Analysis" column in #OpportunitiesTileView view
 
 
   @tileView_closedRLIs @SS-312 @AT-346 @pr
@@ -863,19 +864,19 @@ Feature: Tile View feature
     # Navigate to Opportunities module
     When I choose Opportunities in modules menu
     # Navigate to Opportunities > Tile View
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Stage tab
-    And I select pipelineByTime tab in #OpportunitiesPipelineView view
+    And I select opportunitiesByTime tab in #OpportunitiesTileView view
 
     # Verify tile is located in the correct column
-    Then I verify the [*Opp_1] records are under "now" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "now" column in #OpportunitiesTileView view
     # Move tile from current month to the next month
-    When I drag *Opp_1 tile to "now + 30d" column in #OpportunitiesPipelineView view
+    When I drag *Opp_1 tile to "now + 30d" column in #OpportunitiesTileView view
     # Verify that tile is moved successfully
-    Then I verify the [*Opp_1] records are under "now + 30d" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "now + 30d" column in #OpportunitiesTileView view
 
     # Open RLI subpanel in the opportunity record view and verify Expected Close Date of each RLI
-    When I select *Opp_1 in #OpportunitiesPipelineView
+    When I select *Opp_1 in #OpportunitiesTileView
     When I open the revenuelineitems subpanel on #Opp_1Record view
     Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
       | fieldName   | value |
@@ -892,19 +893,19 @@ Feature: Tile View feature
     # Navigate to Opportunities module
     When I choose Opportunities in modules menu
     # Navigate to Opportunities > Tile View
-    When I select VisualPipeline in #OpportunitiesList.FilterView
+    When I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Stage tab
-    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+    And I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify tile is located in the correct column
-    Then I verify the [*Opp_1] records are under "Prospecting" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Prospecting" column in #OpportunitiesTileView view
     # Move tile from one sales stage to another
-    When I drag *Opp_1 tile to "Qualification" column in #OpportunitiesPipelineView view
+    When I drag *Opp_1 tile to "Qualification" column in #OpportunitiesTileView view
     # Verify that tile is moved successfully
-    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
 
     # Open RLI subpanel in the opportunity record view and verify Sales Stage of each RLI
-    When I select *Opp_1 in #OpportunitiesPipelineView
+    When I select *Opp_1 in #OpportunitiesTileView
     Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
       | fieldName   | value      |
       | name        | RLI_1      |
@@ -950,19 +951,19 @@ Feature: Tile View feature
     # Navigate to Opportunities module
     When I choose Opportunities in modules menu
     # Navigate to Opportunities > Tile View
-    And I select VisualPipeline in #OpportunitiesList.FilterView
+    And I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Time tab
-    And I select pipelineByTime tab in #OpportunitiesPipelineView view
+    And I select opportunitiesByTime tab in #OpportunitiesTileView view
 
     # Verify tile is located in the correct column
-    Then I verify the [*Opp_1] records are under "now" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "now" column in #OpportunitiesTileView view
     # Move tile from current month to the next month
-    When I drag *Opp_1 tile to "now + 30d" column in #OpportunitiesPipelineView view
+    When I drag *Opp_1 tile to "now + 30d" column in #OpportunitiesTileView view
     # Verify that tile with all closed RLIs is not moved to a new column
-    Then I verify the [*Opp_1] records are under "now" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "now" column in #OpportunitiesTileView view
 
     # Open RLI subpanel in the opportunity record view and verify Expected Close Date of each RLI
-    When I select *Opp_1 in #OpportunitiesPipelineView
+    When I select *Opp_1 in #OpportunitiesTileView
     When I open the revenuelineitems subpanel on #Opp_1Record view
     Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
       | fieldName   | value |
@@ -976,19 +977,19 @@ Feature: Tile View feature
     # Navigate to Opportunities module
     When I choose Opportunities in modules menu
     # Navigate to Opportunities > Tile View
-    And I select VisualPipeline in #OpportunitiesList.FilterView
+    And I select TileView in #OpportunitiesList.FilterView
     # Switch to Opportunities by Stage tab
-    And I select pipelineByStage tab in #OpportunitiesPipelineView view
+    And I select opportunitiesByStage tab in #OpportunitiesTileView view
 
     # Verify tile is located in the correct column
-    Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are under "Closed Lost" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are under "Closed Lost" column in #OpportunitiesTileView view
     # Move tile from one sales stage to another
-    When I drag *Opp_1 tile to "Qualification" column in #OpportunitiesPipelineView view
-    When I drag *Opp_2 tile to "Qualification" column in #OpportunitiesPipelineView view
+    When I drag *Opp_1 tile to "Qualification" column in #OpportunitiesTileView view
+    When I drag *Opp_2 tile to "Qualification" column in #OpportunitiesTileView view
     # Verify that tile with all closed RLIs is not moved to a new column
-    Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesPipelineView view
-    Then I verify the [*Opp_2] records are under "Closed Lost" column in #OpportunitiesPipelineView view
+    Then I verify the [*Opp_1] records are under "Closed Won" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_2] records are under "Closed Lost" column in #OpportunitiesTileView view
 
     # Disable 'Closed Won' and 'Closed Lost' columns in Opportunities Tile View
     When I drag-n-drop column header items on "Opportunities" module in #TileViewSettings view:

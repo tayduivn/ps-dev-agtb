@@ -63,12 +63,7 @@ Then(/^I should be redirected to \"(.*)\" route/,
         await thenStepsHelper.checkUrlHash(expectedRoute);
     });
 
-Then<
-    string,
-    string
-    >(/^I verify that (#\S+) still looks like (.*)$/, async function(
-    component: any,
-    fileName: any
-): Promise<void> {
+Then<string, string>(/^I verify that (#\S+) still looks like (.*)$/,
+    async function (component: any, fileName: any): Promise<void> {
     await stepsHelper.verifyElementByImage(component, fileName);
 });

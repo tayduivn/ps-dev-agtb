@@ -10,19 +10,19 @@
  */
 
 import {When, seedbed} from '@sugarcrm/seedbed';
-import PipelineView from '../views/pipeline-view';
+import TileView from '../views/tile-view';
 import {closeAlert, closeWarning} from './general_bdd';
 import TileViewSettings from '../views/tile-settings-view';
 import {TableDefinition} from 'cucumber';
 
 /**
- *  Select tab in Opportunities pipeline view
+ *  Select tab in Opportunities tile view
  *
  *  @example
- *  When I select pipelineByStage tab in #OpportunitiesPipelineView view
+ *  When I select opportunitiesByStage tab in #OpportunitiesTileView view
  */
-When(/^I select (pipelineByTime|pipelineByStage) tab in (#\S+) view$/,
-    async function (tabName: string, view: PipelineView): Promise<void> {
+When(/^I select (opportunitiesByTime|opportunitiesByStage) tab in (#\S+) view$/,
+    async function (tabName: string, view: TileView): Promise<void> {
 
         await view.selectTab(tabName);
 
@@ -30,10 +30,10 @@ When(/^I select (pipelineByTime|pipelineByStage) tab in (#\S+) view$/,
 
 
 /**
- *  Delete record in pipeline view
+ *  Delete record in tile view
  *
  *  @example
- *  When I delete *Opp_1 in #OpportunitiesPipelineView
+ *  When I delete *Opp_1 in #OpportunitiesTileView
  */
 When(/^I delete (\*[a-zA-Z](?:\w|\S)*) in (#\S+) view$/,
     async function (record: { id: string }, view: any) {
@@ -258,7 +258,7 @@ When(/^I drag-n-drop column header items on "(Cases|Opportunities|Tasks)" module
  *  Drag and drop tile from column to column in Tile View
  *
  *  @example
- *  When I drag *Opp_1 tile to "Prospecting" column in #OpportunitiesPipelineView view
+ *  When I drag *Opp_1 tile to "Prospecting" column in #OpportunitiesTileView view
  */
 When(/^I drag (\*[a-zA-Z](?:\w|\S)*) tile to "(\w+[\/\s\+]*\w+)" column in (#\S+) view$/,
     async function (record: { id: string }, columnName: string, view: any) {

@@ -38,7 +38,7 @@ import KBViewCategoriesDrawer from './layouts/kb-view-categories-layout';
 import KBSettingsLayout from './layouts/kb-settings-layout';
 import MergeLayout from './layouts/merge-layout';
 import HistoricalSummaryDrawerLayout from './layouts/historical-summary-layout';
-import PipelineView from './views/pipeline-view';
+import TileView from './views/tile-view';
 import ServiceConsoleView from './views/service-console-view';
 import RenewalsConsoleView from './views/renewals-console-view';
 import UserProfileLayout from './layouts/user-profile-layout';
@@ -101,7 +101,7 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`BusinessRulesDesign`, BusinessRulesDesignLayout, {module: moduleName});
                 seedbed.defineComponent(`MergeDrawer`, MergeLayout, {module: moduleName});
                 seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
-                seedbed.defineComponent(`${moduleName}PipelineView`, PipelineView, {module: moduleName});
+                seedbed.defineComponent(`${moduleName}TileView`, TileView, {module: moduleName});
                 seedbed.defineComponent(`TileViewSettings`, TileViewSettings, {module: moduleName});
                 seedbed.defineComponent(`FindDuplicatesDrawer`, FindDuplicates, {module: moduleName});
                 seedbed.defineComponent(`DashableRecordConfig`, DashableRecordDashletConfig, {module: moduleName});
