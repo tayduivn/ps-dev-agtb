@@ -808,6 +808,18 @@ class Opportunity extends SugarBean
     }
 
     /**
+     * Overrides the parent updateCalculatedFields to also include recalculating
+     * non-SugarLogic rollup fields
+     *
+     * @throws SugarQueryException
+     */
+    public function updateCalculatedFields()
+    {
+        $this->updateRLIRollupFields();
+        parent::updateCalculatedFields();
+    }
+
+    /**
      * Updates the non-SugarLogic rollup fields on the Opportunity
      *
      * @return $this
@@ -824,15 +836,10 @@ class Opportunity extends SugarBean
 
             // Update the Opportunity with the calculated rollup values. If any
             // values have changed on the Opportunity, then save it afterward
-            $shouldSave = false;
             foreach ($rollupFields as $field => $calculatedValue) {
                 if ($this->$field !== $calculatedValue) {
                     $this->$field = $calculatedValue;
-                    $shouldSave = true;
                 }
-            }
-            if ($shouldSave) {
-                $this->save();
             }
         }
 

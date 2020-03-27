@@ -217,7 +217,6 @@ class RevenueLineItem extends SugarBean
 
         // Update rollups on parent records
         $this->updateRelatedAccount($this->account_id);
-        $this->updateRelatedOpportunity($this->opportunity_id);
         //END SUGARCRM flav=ent ONLY
 
         return $id;
@@ -291,20 +290,6 @@ class RevenueLineItem extends SugarBean
             }
         }
     }
-
-    /**
-     * Updates rollup fields on related Opportunity
-     *
-     * @param string $opportunityId the ID of the Opportunity to update
-     */
-    protected function updateRelatedOpportunity($opportunityId)
-    {
-        $opportunityBean = BeanFactory::retrieveBean('Opportunities', $opportunityId);
-        if (!empty($opportunityBean->id)) {
-            // Update the rollup values on the Opportunity
-            $opportunityBean->updateRLIRollupFields();
-        }
-    }
     //END SUGARCRM flav=ent ONLY
 
     /**
@@ -341,7 +326,6 @@ class RevenueLineItem extends SugarBean
         // Grab the IDs of the related modules as these fields are removed in the
         // call to the parent mark_deleted
         $accountId = $this->account_id;
-        $opportunityId = $this->opportunity_id;
         //END SUGARCRM flav=ent ONLY
 
         parent::mark_deleted($id);
@@ -352,7 +336,6 @@ class RevenueLineItem extends SugarBean
 
         // Update rollups on parent records
         $this->updateRelatedAccount($accountId);
-        $this->updateRelatedOpportunity($opportunityId);
         //END SUGARCRM flav=ent ONLY
     }
 
