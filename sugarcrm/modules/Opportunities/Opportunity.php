@@ -607,7 +607,7 @@ class Opportunity extends SugarBean
      */
     public function getRliClosedWonStages(): array
     {
-        return Forecast::getSettings()['sales_stage_won'] ?? ['Closed Won'];
+        return Forecast::getSettings()['sales_stage_won'] ?? [self::STAGE_CLOSED_WON];
     }
 
     /**
@@ -617,7 +617,7 @@ class Opportunity extends SugarBean
      */
     public function getRliClosedLostStages(): array
     {
-        return Forecast::getSettings()['sales_stage_lost'] ?? ['Closed Lost'];
+        return Forecast::getSettings()['sales_stage_lost'] ?? [self::STAGE_CLOSED_LOST];
     }
 
     /**
@@ -858,6 +858,7 @@ class Opportunity extends SugarBean
         if (!empty($this->id) && $rliMode) {
             $rollupFields = [
                 'service_start_date' => $this->calculateOpportunityServiceStartDate(),
+                'sales_stage' => $this->calculateOpportunitySalesStage(),
             ];
 
             // Update the Opportunity with the calculated rollup values. If any
@@ -903,6 +904,50 @@ class Opportunity extends SugarBean
         $q->orderByRaw('is_closed', 'ASC');
         $q->orderBy('service_start_date', 'ASC');
         $result = $q->getDBManager()->fromConvert($q->getOne(), 'date');
+
+        return !empty($result) ? $result : '';
+    }
+
+    /**
+     * Runs a DB query to calculate the rollup value for the Sales Stage field
+     * from the related RLIs
+     *
+     * @return string containing the calculated Sales Stage
+     * @throws SugarQueryException
+     */
+    private function calculateOpportunitySalesStage()
+    {
+        // Get the lists of sales stages needed for the query
+        $listStrings = return_app_list_strings_language('en_us');
+        $quotedAllStages = $this->getQuotedStringArray($listStrings['sales_stage_dom']);
+        $quotedClosedWonStages = $this->getQuotedStringArray($this->getRliClosedWonStages());
+        $quotedClosedLostStages = $this->getQuotedStringArray($this->getRliClosedLostStages());
+
+        // Build the case statements. These will be used to order query results
+        // so that the first result will be the correct sales stage
+        $wonStages = implode(',', $quotedClosedWonStages);
+        $lostStages = implode(',', $quotedClosedLostStages);
+        $closedOrderCases = 'CASE WHEN sales_stage IN (' . $wonStages . ') THEN 1 ' .
+            'WHEN sales_stage IN (' . $lostStages . ') THEN 2 ' .
+            'ELSE 0 END';
+        $stageOrderCases = 'CASE ';
+        foreach ($quotedAllStages as $index => $stage) {
+            $stageOrderCases .= 'WHEN sales_stage = ' . $stage . ' THEN ' . $index . ' ';
+        }
+        $stageOrderCases .= 'ELSE ' . count($quotedAllStages) . ' END';
+
+        // Execute the query. If any RLIs are open, we get the latest sales_stage
+        // of the open RLIs. Otherwise, if any are closed-won, the sales_stage is
+        // closed-won. Otherwise, it is closed-lost.
+        $q = new SugarQuery();
+        $q->from(BeanFactory::newBean('RevenueLineItems'));
+        $q->select(['sales_stage'])
+            ->fieldRaw($closedOrderCases, 'closed_order')
+            ->fieldRaw($stageOrderCases, 'stage_order');
+        $q->where()->equals('opportunity_id', $this->id);
+        $q->orderByRaw('closed_order', 'ASC');
+        $q->orderByRaw('stage_order', 'DESC');
+        $result = $q->getOne();
 
         return !empty($result) ? $result : '';
     }

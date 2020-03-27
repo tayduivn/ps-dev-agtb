@@ -460,26 +460,30 @@ class OpportunityTest extends TestCase
      */
     public function testUpdateRLIRollupFields($rliDataArray, $expected)
     {
-        // Create an opportunity
+        // Create an Opportunity
         $opportunity = SugarTestOpportunityUtilities::createOpportunity();
 
-        // Create RLIs related to the opportunity. On save, they should update
-        // the rollup fields of the Opportunity
-        foreach ($rliDataArray as $rliData) {
-            $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-            $opportunity->revenuelineitems->add($rli);
-            $rli->sales_stage = $rliData['sales_stage'];
-            $rli->service = $rliData['service'];
-            $rli->service_start_date = $rliData['service_start_date'];
-            $rli->service_duration_value = 1;
-            $rli->service_duration_unit = 'year';
-            $rli->opportunity_id = $opportunity->id;
-            $rli->save();
+        if (empty($rliDataArray)) {
+            // There aren't any related RLIs, so test the update function directly
+            $opportunity->updateRLIRollupFields();
+        } else {
+            // Create RLIs related to the opportunity. On save, they should update
+            // the rollup fields of the Opportunity
+            foreach ($rliDataArray as $rliData) {
+                $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+                $rli->sales_stage = $rliData['sales_stage'];
+                $rli->service = $rliData['service'];
+                $rli->service_start_date = $rliData['service_start_date'];
+                $rli->service_duration_value = 1;
+                $rli->service_duration_unit = 'year';
+                $rli->opportunity_id = $opportunity->id;
+                $opportunity->revenuelineitems->add($rli);
+            }
         }
 
         // Check that the Opportunity's rollup fields were correctly calculated
-        $opportunity = BeanFactory::retrieveBean('Opportunities', $opportunity->id, ['use_cache' => false]);
         $this->assertEquals($expected['service_start_date'], $opportunity->service_start_date);
+        $this->assertEquals($expected['sales_stage'], $opportunity->sales_stage);
     }
 
     public function providerTestUpdateRLIRollupFields()
@@ -487,35 +491,28 @@ class OpportunityTest extends TestCase
         return array(
             array(
                 array(),
-                array('service_start_date' => ''),
+                array('service_start_date' => '', 'sales_stage' => ''),
             ),
             array(
                 array(
                     array('sales_stage' => 'Prospecting', 'service' => 0, 'service_start_date' => ''),
                 ),
-                array('service_start_date' => ''),
+                array('service_start_date' => '', 'sales_stage' => 'Prospecting'),
             ),
             array(
                 array(
                     array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2019-01-01'),
-                    array('sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2020-01-01'),
+                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2020-01-01'),
                 ),
-                array('service_start_date' => '2020-01-01'),
-            ),
-            array(
-                array(
-                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2019-01-01'),
-                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2020-01-01'),
-                ),
-                array('service_start_date' => '2019-01-01'),
+                array('service_start_date' => '2019-01-01', 'sales_stage' => 'Closed Won'),
             ),
             array(
                 array(
                     array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2020-01-01'),
-                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2018-01-01'),
                     array('sales_stage' => 'Qualification', 'service' => 1, 'service_start_date' => '2019-01-01'),
+                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2018-01-01'),
                 ),
-                array('service_start_date' => '2019-01-01'),
+                array('service_start_date' => '2019-01-01', 'sales_stage' => 'Qualification'),
             ),
         );
     }
@@ -527,43 +524,31 @@ class OpportunityTest extends TestCase
     public function testCascade($sales_stage)
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->load_relationship('revenuelineitems');
 
         $rli1 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli1->opportunity_id = $opp->id;
         $rli1->sales_stage = 'Closed Won';
-        $rli1->save();
         $opp->revenuelineitems->add($rli1);
 
         $rli2 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli2->opportunity_id = $opp->id;
         $rli2->sales_stage = 'Closed Lost';
-        $rli2->save();
         $opp->revenuelineitems->add($rli2);
 
         $rli3 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli3->opportunity_id = $opp->id;
         $rli3->sales_stage = 'Needs Analysis';
-        $rli3->save();
         $opp->revenuelineitems->add($rli3);
-
-        $opp->save();
 
         // sales stage will have been recalculated above, so reset it
         $opp->sales_stage_cascade = $sales_stage;
         SugarTestReflection::callProtectedMethod(
             $opp,
-            'cascade',
+            'cascade'
         );
 
-        $rli1 = BeanFactory::retrieveBean('RevenueLineItems', $rli1->id);
-        $rli2 = BeanFactory::retrieveBean('RevenueLineItems', $rli2->id);
-        $rli3 = BeanFactory::retrieveBean('RevenueLineItems', $rli3->id);
-
         $this->assertSame($rli1->sales_stage, 'Closed Won');
-
         $this->assertSame($rli2->sales_stage, 'Closed Lost');
-
         $this->assertSame($rli3->sales_stage, $sales_stage);
     }
 
@@ -572,8 +557,6 @@ class OpportunityTest extends TestCase
         return [
             ['Prospecting',],
             ['Value Proposition',],
-            ['Negotiation/Review',],
-            ['Qualification',],
         ];
     }
 
@@ -586,17 +569,24 @@ class OpportunityTest extends TestCase
     public function testCalculationDoesNotCascade($stages, $expected)
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->sales_stage = 'Prospecting';
 
+        $rlis = [];
         for ($i = 0; $i < count($stages); $i++) {
+            // Save a new RLI related to the Opportunity with the given sales stage
+            // On save, the Opportunity Sales Stage should be recalculated
             $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-            $opp->revenuelineitems->add($rli);
             $rli->sales_stage = $stages[$i];
-            $opp->updateCalculatedFields();
-            $rli = BeanFactory::retrieveBean('RevenueLineItems', $rli->id);
-            $opp = BeanFactory::retrieveBean('Opportunities', $opp->id);
-            $this->assertEquals($stages[$i], $rli->sales_stage);
+            $opp->revenuelineitems->add($rli);
+            $rlis[] = $rli;
+
+            // Check that the Opportunity Sales Stage was calculated correctly
             $this->assertEquals($expected[$i], $opp->sales_stage);
+        }
+
+        // Check that the changes to the Opportunity did not cascade back down to the RLIs
+        foreach ($stages as $index => $stage) {
+            $rli = $rlis[$index];
+            $this->assertEquals($stage, $rli->sales_stage);
         }
     }
 
@@ -604,16 +594,12 @@ class OpportunityTest extends TestCase
     {
         return [
             [
-                'stages' => ['Prospecting', 'Qualification', 'Needs Analysis', 'Value Proposition',],
-                'expected' => ['Prospecting', 'Qualification', 'Needs Analysis', 'Value Proposition',],
+                'stages' => ['Prospecting', 'Value Proposition', 'Needs Analysis',],
+                'expected' => ['Prospecting', 'Value Proposition', 'Value Proposition',],
             ],
             [
-                'stages' => ['Value Proposition', 'Needs Analysis', 'Qualification', 'Prospecting',],
-                'expected' => ['Value Proposition', 'Value Proposition', 'Value Proposition', 'Value Proposition',],
-            ],
-            [
-                'stages' => ['Closed Lost', 'Closed Lost', 'Closed Won', 'Value Proposition', 'Qualification',],
-                'expected' => ['Closed Lost', 'Closed Lost', 'Closed Won', 'Value Proposition', 'Value Proposition',],
+                'stages' => ['Closed Lost', 'Closed Won', 'Value Proposition',],
+                'expected' => ['Closed Lost', 'Closed Won', 'Value Proposition',],
             ],
         ];
     }
