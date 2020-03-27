@@ -820,7 +820,7 @@ class SugarBean
             $this->auditEnabledRelateFields = array();
             foreach ($this->field_defs as $field => $properties) {
                 if (($field === 'team_id' || !empty($properties['Audited']) || !empty($properties['audited']))
-                    && SugarACL::checkField($this->module_dir, $field, 'access', array('bean' => $this))) {
+                    && $this->ACLFieldAccess($field, 'access', array('bean' => $this))) {
                     $this->audit_enabled_fields[$field] = $properties;
                     if ($properties['type'] === 'relate' && !empty($properties['id_name'])) {
                         // we need this id_field => relate_field mapping for 'view change log'

@@ -133,7 +133,6 @@ class Audit extends SugarBean
         }
 
         $fieldDefs = $this->fieldDefs;
-        $return = array();
 
         $aclCheckContext = array('bean' => $bean);
         $rows = [];
@@ -151,12 +150,12 @@ class Audit extends SugarBean
             $viewName = array_search($row['field_name'], Team::$nameTeamsetMapping);
             if ($viewName) {
                 $row['field_name'] = $viewName;
-                $return[] = $this->handleTeamSetField($row);
+                $rows[] = $this->handleTeamSetField($row);
                 continue;
             }
 
             if ($this->handleRelateField($bean, $row)) {
-                $return[] = $row;
+                $rows[] = $row;
                 continue;
             }
 

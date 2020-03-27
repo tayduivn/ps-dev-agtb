@@ -3357,7 +3357,7 @@ abstract class DBManager implements LoggerAwareInterface
             }
             $fields = $bean->getActivityEnabledFieldDefinitions($excludeType);
         } elseif (!empty($options['for']) && $options['for'] == 'audit') {
-            $fields = $bean->getAuditEnabledFieldDefinitions();
+            $fields = $bean->getAuditEnabledFieldDefinitions(true);
         }
 
         if (isset($options['field_filter']) && is_array($options['field_filter'])) {
