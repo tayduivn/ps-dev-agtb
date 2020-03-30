@@ -2530,6 +2530,49 @@ class SugarBean
     }
 
     /**
+     * Preprocess the email text to replace the variables with actual strings
+     *
+     * @param $templateText
+     * @param $xtpl
+     * @return string|string[]
+     */
+    protected function processText($templateText, $var)
+    {
+        $moduleName = $GLOBALS['app_list_strings']['moduleListSingular'][$this->module_name];
+
+        $replacements = [];
+        if (!empty($var["ASSIGNED_USER"])) {
+            $replacements['$assigned_user'] = $var["ASSIGNED_USER"];
+        } else {
+            $replacements['$assigned_user'] = !empty($var[strtoupper($moduleName) . "_TO"]) ?
+                $var[strtoupper($moduleName) . "_TO"] : '';
+        }
+        $replacements['$assigned_by_user'] = !empty($var["ASSIGNER"]) ? $var["ASSIGNER"] : '';
+        $replacements['$module_name'] = $moduleName;
+        $replacements['$module_link'] = !empty($var["URL"]) ? $var["URL"] : '';
+        $replacements['$event_name'] = !empty($var[strtoupper($moduleName) . "_SUBJECT"]) ?
+            $var[strtoupper($moduleName) . "_SUBJECT"] : '';
+        if (!empty($var["ACCEPT_URL"])) {
+            $replacements['$accept_link'] = $var["ACCEPT_URL"] . "&accept_status=accept";
+            $replacements['$tentative_link'] = $var["ACCEPT_URL"] . "&accept_status=tentative";
+            $replacements['$decline_link'] = $var["ACCEPT_URL"] . "&accept_status=decline";
+        }
+        $replacements['$assigned_by_user'] = !empty($var["ASSIGNER"]) ? $var["ASSIGNER"] : '';
+        $replacements['$start_date'] = !empty($var[strtoupper($moduleName) . "_STARTDATE"]) ?
+            $var[strtoupper($moduleName) . "_STARTDATE"] : '';
+        $replacements['$end_date'] = !empty($var[strtoupper($moduleName) . "_ENDDATE"]) ?
+            $var[strtoupper($moduleName) . "_ENDDATE"] : '';
+        $replacements['$hours'] = !empty($var[strtoupper($moduleName) . "_HOURS"]) ?
+            $var[strtoupper($moduleName) . "_HOURS"] : '';
+        $replacements['$minutes'] = !empty($var[strtoupper($moduleName) . "_MINUTES"]) ?
+            $var[strtoupper($moduleName) . "_MINUTES"] : '';
+        $replacements['$description'] = !empty($var[strtoupper($moduleName) . "_DESCRIPTION"]) ?
+            $var[strtoupper($moduleName) . "_DESCRIPTION"] : '';
+
+        return str_replace(array_keys($replacements), array_values($replacements), $templateText);
+    }
+
+    /**
     * Handles sending out email notifications when items are first assigned to users
     *
     * @param string $notify_user user to notify
@@ -2540,10 +2583,26 @@ class SugarBean
             || (isset($notify_user->receive_notifications) && $notify_user->receive_notifications) ) {
             $this->current_notify_user = $notify_user;
 
+            $emailConfig = SugarConfig::getInstance()->get('emailTemplate');
+            if ($this->object_name == 'Meeting' || $this->object_name == 'Call' || $this->object_name == '‌ReportSchedule') {
+                $templateID = $emailConfig[$this->object_name] ?? '';
+            } else {
+                $templateID = $emailConfig['AssignmentNotification'] ?? '';
+            }
+
             $templateName = $this->getTemplateNameForNotificationEmail();
             $xtpl         = $this->createNotificationEmailTemplate($templateName, $notify_user);
-            $subject      = $xtpl->text($templateName . "_Subject");
-            $textBody     = trim($xtpl->text($templateName));
+
+            // Pull the email template if it exists
+            $emailTemplate = BeanFactory::getBean('EmailTemplates', $templateID);
+
+            if (!empty($emailTemplate) && $emailTemplate->id && !empty($xtpl->VARS)) {
+                $textBody = $this->processText($emailTemplate->body, $xtpl->VARS);
+                $subject = $this->processText($emailTemplate->subject, $xtpl->VARS);
+            } else {
+                $subject      = $xtpl->text($templateName . "_Subject");
+                $textBody     = trim($xtpl->text($templateName));
+            }
 
             $mailTransmissionProtocol = "unknown";
 

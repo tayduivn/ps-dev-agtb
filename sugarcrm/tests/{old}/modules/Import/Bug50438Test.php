@@ -27,6 +27,7 @@ class Bug50438Test extends TestCase
     protected function setUp() : void
     {
         global $currentModule ;
+        SugarTestHelper::setUp('app_list_strings');
         $this->call_id = create_guid();
 		$mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();

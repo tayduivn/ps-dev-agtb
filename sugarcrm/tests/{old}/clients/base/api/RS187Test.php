@@ -31,6 +31,7 @@ class RS187Test extends TestCase
 
     protected function setUp() : void
     {
+        SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user', array(true, true));

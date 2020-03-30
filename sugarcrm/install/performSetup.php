@@ -619,10 +619,10 @@ if (isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::is_array_access(
 require_once('modules/Connectors/InstallDefaultConnectors.php');
 
 ///////////////////////////////////////////////////////////////////////////////
-////    INSTALL PASSWORD TEMPLATES
-include('install/seed_data/Advanced_Password_SeedData.php');
+////    INSTALL Email TEMPLATES
+include 'install/seed_data/Email_Notification_SeedData.php';
+include 'install/seed_data/Advanced_Password_SeedData.php';
 
-///////////////////////////////////////////////////////////////////////////////
 ////    INSTALL PDF TEMPLATES
 include('install/seed_data/PdfManager_SeedData.php');
 

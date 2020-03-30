@@ -55,6 +55,7 @@ class MostActiveUsersApiTest extends TestCase
 
     protected function setUp() : void
     {
+        SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user', array(true, 1));
 
         $this->api = new MostActiveUsersApi();
