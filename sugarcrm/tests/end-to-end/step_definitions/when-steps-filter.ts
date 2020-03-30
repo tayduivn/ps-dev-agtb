@@ -38,7 +38,7 @@ When(/^I choose for (\w+) in (#\S+) view$/,
  *
  * @example When I select ActivityStream in #ContactsList.FilterView
  */
-When(/^I select (ActivityStream|ListView|TileView) in (#\S+)$/,
+When(/^I select (ActivityStream|ListView|TileView|Refresh) in (#\S+)$/,
     async function (mode: string, view: FilterView) {
 
         await view.toggleListViewMode(mode.toLowerCase());

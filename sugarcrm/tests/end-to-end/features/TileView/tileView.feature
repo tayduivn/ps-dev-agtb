@@ -1113,3 +1113,32 @@ Feature: Tile View feature
     Examples:
       | admin         | user           | message_1                    | message_2                                        | message_3                   |
       | Administrator | user userLName | Please update case info ASAP | Case was successfully resolved today! Sugar won! | Congratulation on a big Win |
+
+  @leads_tileView_refesh_button @AT-345
+  Scenario: Leads > Tile View
+  @leads_tileView_refesh_button @AT-345
+  Scenario: Leads > Tile View > Verify Refresh button functionality
+    Given Leads records exist:
+      | *  | first_name  | last_name  | account_name | title             | email                      | status   |
+      | L1 | test firsta | test lastn | Lead Account | Software Engineer | alex@bobber.com (primary)  | New      |
+      | L2 | test firstd | test lastc | Lead Account | Software Engineer | david@bobber.com (primary) | New |
+
+  # Navigate to List > Tile View
+    When I choose Leads in modules menu
+    When I select TileView in #LeadsList.FilterView
+    Then I should be redirected to "Leads/pipeline" route
+
+    # Build custom filter in Leads Tile View
+    When I add but do not save custom filter 'New Filter A' on the Leads tile view with the following values:
+      | fieldName | filter_operator | filter_value |
+      | status    | is any of       | New          |
+
+    # Move tile
+    When I drag *L1 tile to "Assigned" column in #LeadsTileView view
+
+    # Click on new refresh button
+    When I select Refresh in #LeadsList.FilterView
+
+    # Verify that only the tile that was moved successfully shows up after refresh
+    Then I verify the [*L2] records are under "New" column in #LeadsTileView view
+    Then I verify the [*L1] records are not under "Assigned" column in #LeadsTileView view

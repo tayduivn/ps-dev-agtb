@@ -34,6 +34,7 @@ export default class FilterView extends BaseView {
             activitystream: '.fa.fa-clock-o',
             listview: '.fa.fa-table',
             tileview: '.btn.pipeline-view-button',
+            refresh: '.fa.fa-refresh',
             createButton: '.choice-filter',
             closeFilterButton: '.choice-filter-clickable .choice-filter-close',
             editFilterButton: '.choice-filter-clickable .choice-filter-label',
