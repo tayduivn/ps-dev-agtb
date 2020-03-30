@@ -19,8 +19,8 @@ import FilterView from '../views/filter-view';
  *
  *  @example
  *  Then I verify button state in #TasksList.FilterView
- *       | control        | Disabled |
- *       | VisualPipeline | true     |
+ *       | control    | Disabled |
+ *       | TileView   | true     |
  */
 Then(/I verify button state in (#[a-zA-Z](?:\w|\S)*)$/,
     async function( view: FilterView, data: TableDefinition) {

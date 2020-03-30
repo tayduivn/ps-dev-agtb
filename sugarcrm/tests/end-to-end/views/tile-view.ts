@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import TileItemView from './tile-item-view';
+import TileViewItem from './tile-view-item';
 import BaseListView from './baselist-view';
 
 /**
@@ -34,7 +34,7 @@ export default class TileView extends BaseListView {
     }
 
     /**
-     * Select tab by name in Opportunities Pipeline View
+     * Select tab by name in Opportunities Tile View
      *
      * @param tabName
      * @returns {Promise<void>}
@@ -50,7 +50,7 @@ export default class TileView extends BaseListView {
     }
 
     /**
-     * Create Pipeline Item View component
+     * Create TileViewItem component
      *
      * @param conditions
      * @returns {any}
@@ -61,7 +61,7 @@ export default class TileView extends BaseListView {
             return null;
         }
 
-        let tileViewItem = this.createComponent<TileItemView>(TileItemView, {
+        let tileViewItem = this.createComponent<TileViewItem>(TileViewItem, {
             id: conditions.id,
             module: this.module,
         });

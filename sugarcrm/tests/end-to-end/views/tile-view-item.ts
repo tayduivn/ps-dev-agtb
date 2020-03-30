@@ -12,10 +12,10 @@
 import BaseView from './base-view';
 
 /**
- * @class TileItemView
+ * @class TileViewItem
  * @extends BaseView
  */
-export default class TileItemView extends BaseView {
+export default class TileViewItem extends BaseView {
 
     public id: string;
     public index: number;

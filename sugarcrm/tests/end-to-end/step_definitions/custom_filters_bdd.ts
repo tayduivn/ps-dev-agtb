@@ -199,7 +199,7 @@ When(/^I (hide|apply|delete) custom filter '([^"]*)' on the (\w+) (list|tile) vi
 
         if (view === 'tile') {
             // navigate to tile view
-            await filterView.toggleListViewMode('VisualPipeline'.toLowerCase());
+            await filterView.toggleListViewMode('TileView'.toLowerCase());
         }
 
         switch (action) {
