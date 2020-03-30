@@ -730,7 +730,12 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         describe('adding new item with preopulated data', function() {
             var prepopulateModel;
+            var oldUserId;
+            var newUserId = '1234';
+
             beforeEach(function() {
+                oldUserId = app.user.id;
+                app.user.id = newUserId;
                 prepopulateModel = new Backbone.Model({
                     _module: 'RevenueLineItems',
                     account_id: 'newAcctId1',
@@ -744,6 +749,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             });
 
             afterEach(function() {
+                app.user.id = oldUserId;
                 prepopulateModel = null;
             });
 
@@ -758,9 +764,10 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 expect(relatedModel.get('opportunity_name')).toBe('newOppName1');
             });
 
-            it('should populate currency_id and base_rate with passed in data', function() {
+            it('should populate currency_id, base_rate and assigned_user_id with passed in data', function() {
                 expect(relatedModel.get('currency_id')).toBe('prepopulated-data-currency-id');
                 expect(relatedModel.get('base_rate')).toBe('15');
+                expect(relatedModel.get('assigned_user_id')).toBe(newUserId);
             });
         });
 

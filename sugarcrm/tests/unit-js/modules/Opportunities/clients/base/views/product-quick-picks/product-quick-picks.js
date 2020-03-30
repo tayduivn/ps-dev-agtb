@@ -889,6 +889,8 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
     describe('onNameClicked', function() {
         var evt;
         var data;
+        var oldUserId;
+        var newUserId = '1234';
 
         beforeEach(function() {
             evt = {
@@ -912,12 +914,16 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
             sinon.collection.stub(evt, 'preventDefault', function() {});
             sinon.collection.stub(app.controller.context, 'trigger', function() {});
 
+            oldUserId = app.user.id;
+            app.user.id = newUserId;
+
             view.onNameClicked(evt);
         });
 
         afterEach(function() {
             evt = null;
             data = null;
+            app.user.id = oldUserId;
         });
 
         it('should call preventDefault function', function() {
@@ -937,6 +943,7 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
                         created_by: 'testUser',
                         modified_user_id: 'testUser2',
                         currency_id: '-99',
+                        assigned_user_id: newUserId,
                         name: 'asd'
                     });
             }

@@ -311,6 +311,7 @@
             data.created_by = data.created_by && data.created_by.trim();
             data.modified_user_id = data.modified_user_id && data.modified_user_id.trim();
             data.currency_id = data.currency_id && data.currency_id.trim();
+            data.assigned_user_id = app.user.id;
             // remove ID/etc since we dont want Template ID to be the record id
             delete data.id;
             delete data.date_entered;

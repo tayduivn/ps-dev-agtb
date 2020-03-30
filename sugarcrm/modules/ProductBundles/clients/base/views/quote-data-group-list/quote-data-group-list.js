@@ -566,6 +566,7 @@
             position: position,
             currency_id: currencyId,
             base_rate: baseRate,
+            assigned_user_id: app.user.id,
             quote_id: quoteModel.get('id')
         }, prepopulateData);
 

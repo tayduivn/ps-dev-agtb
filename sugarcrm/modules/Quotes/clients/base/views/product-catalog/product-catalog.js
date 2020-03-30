@@ -1606,6 +1606,7 @@
         // copy Template's id and name to where the QLI expects them
         data.product_template_id = data.id;
         data.product_template_name = data.name;
+        data.assigned_user_id = app.user.id;
 
         // remove ID/etc since we dont want Template ID to be the record id
         delete data.id;

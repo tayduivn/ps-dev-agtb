@@ -933,6 +933,9 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
 
     describe('_massageDataBeforeSendingToRecord()', function() {
         var productTemplateData;
+        var oldUserId;
+        var newUserId = '1234';
+
         beforeEach(function() {
             productTemplateData = {
                 id: 'prodTemplateId',
@@ -941,6 +944,9 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
                 date_modified: 'today',
                 pricing_formula: 'ProfitMargin'
             };
+
+            oldUserId = app.user.id;
+            app.user.id = newUserId;
 
             view._massageDataBeforeSendingToRecord(productTemplateData);
         });
@@ -963,6 +969,10 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
 
         it('should add product_template_name as the template name', function() {
             expect(productTemplateData.product_template_name).toBe('prodTemplateName');
+        });
+
+        it('should add assigned_user_id as the assigned_user_id', function() {
+            expect(productTemplateData.assigned_user_id).toBe(newUserId);
         });
 
         it('should remove id', function() {
