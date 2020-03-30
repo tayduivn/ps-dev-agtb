@@ -4432,6 +4432,8 @@ Sincerely, SugarCRM',
     // start of: Quotes related
     'LBL_QLI_SINGLE_TITLE' => 'Quoted Line Item',
     'LBL_DISCOUNT_TOTAL' => 'Discount total',
+    'LBL_DISCOUNT_PERCENT' => '% Percent',
+    'LBL_DISCOUNT_SELECT' => 'Determines if the discount is a percentage or flat amount',
     'LBL_TAX' => 'Tax',
     'LBL_SHIPPING' => 'Shipping',
     'LBL_GRAND_TOTAL' => 'Grand Total',

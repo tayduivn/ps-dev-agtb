@@ -65,6 +65,7 @@ class RevenueLineItem extends SugarBean
     public $currency_name;
     public $default_currency_symbol;
     public $discount_amount;
+    public $discount_select;
     public $best_case;
     public $likely_case;
     public $worst_case;
@@ -117,7 +118,7 @@ class RevenueLineItem extends SugarBean
 
     // This is used to retrieve related fields from form posts.
     public $additional_column_fields = array('quote_id', 'quote_name', 'related_product_id');
-    
+
 
     /**
      * Default Constructor
@@ -203,7 +204,7 @@ class RevenueLineItem extends SugarBean
         if ($this->probability === '') {
             $this->mapProbabilityFromSalesStage();
         }
-        
+
         $this->mapFieldsFromProductTemplate();
         $this->mapFieldsFromOpportunity();
 
@@ -313,7 +314,7 @@ class RevenueLineItem extends SugarBean
         }
     }
 
-    
+
     /**
      * Override the current SugarBean functionality to make sure that when this method is called that it will also
      * take care of any draft worksheets by rolling-up the data, as well as
@@ -506,7 +507,7 @@ class RevenueLineItem extends SugarBean
 
         return $array_assign;
     }
-    
+
     /**
      * Converts (copies) RLI to Products (QuotedLineItem)
      * @return Product

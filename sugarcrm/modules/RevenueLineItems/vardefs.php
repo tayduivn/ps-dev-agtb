@@ -242,15 +242,31 @@ $dictionary['RevenueLineItem'] = array(
         ),
         'discount_amount' => array(
             'name' => 'discount_amount',
-            'vname' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
-            'type' => 'currency',
+            'vname' => 'LBL_DISCOUNT_AMOUNT',
+            'dbType' => 'currency',
+            'type' => 'discount',
             'len' => '26,6',
-            'precision' => 6,
+            'default' => '0',
+            'precision' => '6',
             'comment' => 'Discounted amount',
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
-            )
+                'base_rate',
+                'discount_select',
+            ),
+            'studio' => [
+                'listview' => false,
+                'recordview' => false,
+                'editview' => true,
+            ],
+        ),
+        'discount_select' => array(
+            'name' => 'discount_select',
+            'vname' => 'LBL_DISCOUNT_SELECT',
+            'type' => 'bool',
+            'default' => false,
+            'reportable' => false,
+            'studio' => false,
         ),
         'discount_rate_percent' => array(
             'name' => 'discount_rate_percent',
@@ -277,14 +293,6 @@ $dictionary['RevenueLineItem'] = array(
             'formula' => 'ifElse(isNumeric($discount_amount), currencyDivide($discount_amount, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
-        ),
-        'discount_select' => array(
-            'name' => 'discount_select',
-            'vname' => 'LBL_SELECT_DISCOUNT',
-            'type' => 'bool',
-            'reportable' => false,
-            'importable' => false,
-            'studio' => false,
         ),
         'discount_amount_signed' => array(
             'name' => 'discount_amount_signed',

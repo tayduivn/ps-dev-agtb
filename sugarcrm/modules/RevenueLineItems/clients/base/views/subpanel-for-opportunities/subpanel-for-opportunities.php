@@ -104,6 +104,31 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                 ),
                 'quantity',
                 array(
+                    'name' => 'discount',
+                    'type' => 'fieldset',
+                    'css_class' => 'discount-field',
+                    'label' => 'LBL_DISCOUNT_AMOUNT',
+                    'fields' => array(
+                        array(
+                            'name' => 'discount_amount',
+                            'label' => 'LBL_DISCOUNT_AMOUNT',
+                            'type' => 'discount',
+                            'discountFieldName' => 'discount_select',
+                            'related_fields' => array(
+                                'currency_id',
+                            ),
+                            'convertToBase' => true,
+                            'base_rate_field' => 'base_rate',
+                            'showTransactionalAmount' => true,
+                        ),
+                        array(
+                            'type' => 'discount-select',
+                            'name' => 'discount_select',
+                            'options' => array(),
+                        ),
+                    ),
+                ),
+                array(
                     'name' => 'quote_name',
                     'label' => 'LBL_ASSOCIATED_QUOTE',
                     'related_fields' => array('quote_id'),

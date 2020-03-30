@@ -1,0 +1,56 @@
+[data-type=fieldset] {
+  min-width: 155px;
+  max-width: 100%;
+
+  span[class*="discount-field"]:not(.overflow-visible) {
+    display: inline-flex;
+    justify-content: flex-end;
+
+    .fieldset-field {
+      &:first-child {
+        width: 100%;
+      }
+
+      span {
+        div[class*="currency-field"] {
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+          text-align: right;
+        }
+
+        [name=discount_amount] {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          text-align: right;
+        }
+
+        .discount-select-dropdown {
+          // Make sure we don't break this size. Sometimes the enum doesn't pick up a click event
+          // and we don't want to ruin the field format when the entire label gets rendered.
+          max-width: 28px;
+
+          .select2-choice {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            padding-right: 8px;
+            padding-left: 8px;
+
+            .select2-chosen {
+              margin-right: unset;
+              text-align: center;
+            }
+
+            .select2-arrow {
+              display: none;
+            }
+          }
+
+          .select2-default > span[class*="select2-chosen"] {
+            color: @black;
+          }
+        }
+      }
+    }
+  }
+}
+
