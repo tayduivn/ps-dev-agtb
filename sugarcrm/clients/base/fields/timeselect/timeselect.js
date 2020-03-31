@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.BusinessCenters.TimeselectField
- * @alias SUGAR.App.view.fields.BaseBusinessCentersTimeselectField
+ * @class View.Fields.Base.TimeselectField
+ * @alias SUGAR.App.view.fields.BaseTimeselectField
  * @extends View.Fields.Base.BaseField
  */
 ({

@@ -40,6 +40,7 @@ $moduleList[] = 'pmse_Inbox';
 $moduleList[] = 'pmse_Business_Rules';
 $moduleList[] = 'pmse_Emails_Templates';
 $moduleList[] = 'BusinessCenters';
+$moduleList[] = 'Shifts';
 //END SUGARCRM flav=ent ONLY
 
 $moduleList[] = 'Documents';
@@ -205,6 +206,7 @@ $beanList['pmse_BpmGroup'] = 'pmse_BpmGroup';
 $beanList['pmse_BpmGroupUser'] = 'pmse_BpmGroupUser';
 $beanList['pmse_EmailMessage'] = 'pmse_EmailMessage';
 $beanList['BusinessCenters'] = 'BusinessCenter';
+$beanList['Shifts'] = 'Shift';
 $beanList['ChangeTimers'] = 'ChangeTimer';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
@@ -369,6 +371,7 @@ $beanFiles['pmse_BpmGroup'] = 'modules/pmse_Project/pmse_BpmGroup/pmse_BpmGroup.
 $beanFiles['pmse_BpmGroupUser'] = 'modules/pmse_Project/pmse_BpmGroupUser/pmse_BpmGroupUser.php';
 $beanFiles['pmse_EmailMessage'] = 'modules/pmse_Emails_Templates/pmse_EmailMessage/pmse_EmailMessage.php';
 $beanFiles['BusinessCenter'] = 'modules/BusinessCenters/BusinessCenter.php';
+$beanFiles['Shift'] = 'modules/Shifts/Shift.php';
 $beanFiles['ChangeTimer'] = 'modules/ChangeTimers/ChangeTimer.php';
 //END SUGARCRM flav=ent ONLY
 

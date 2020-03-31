@@ -120,6 +120,8 @@ include "metadata/locked_field_bean_relMetaData.php";
 include 'metadata/business_centers_holidaysMetaData.php';
 //END SUGARCRM flav=ent ONLY
 
+include 'metadata/shifts_usersMetaData.php';
+
 // Commentlog relation field
 include 'metadata/commentlog_relMetaData.php';
 

@@ -1075,6 +1075,17 @@ $dictionary['User'] = array(
             'comment' => 'Date cookie consent received on',
             'duplicate_on_record_copy' => 'no',
         ],
+        'shifts' => [
+            'name' => 'shifts',
+            'type' => 'link',
+            'relationship' => 'shifts_users',
+            'source' => 'non-db',
+            'module' => 'Shifts',
+            'bean_name' => 'Shift',
+            'rel_fields' => [],
+            'vname' => 'LBL_SHIFTS',
+            'populate_list' => []
+        ],
     ) ,
     'name_format_map' => array(
         'f' => 'first_name',
