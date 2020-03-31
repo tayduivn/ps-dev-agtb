@@ -19,7 +19,7 @@ import TileView from '../views/tile-view';
  *  Verify tile content fields value in Pipeline View
  *
  *  @example
- *  Then I verify fields of *Opp_1 tile in #OpportunitiesPipelineView view
+ *  Then I verify fields of *Opp_1 tile in #OpportunitiesTileView view
  *      | value      |
  *      | Acc_1      |
  *      | 04/19/2019 |
@@ -74,7 +74,7 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) tile field values in (#[a-zA-Z](?:\w|\S)*
  *  Verify if record(s) belong to a particular column
  *
  *  @example
- *  Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesPipelineView view
+ *  Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
  */
 Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are (not )?under "(\w+[\/\s\+]*\w+)" column in (#[a-zA-Z](?:\w|\S)*) view$/,
     async function (inputIDs: string, not, columnName: string, view: any) {
@@ -128,7 +128,7 @@ Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are (not )?under "
  *  Verify tile delete button state
  *
  *  @example
- *    Then I verify *Opp_1 tile delete button state in #OpportunitiesPipelineView view
+ *    Then I verify *Opp_1 tile delete button state in #OpportunitiesTileView view
  *      | Disabled |
  *      | false    |
  */
@@ -173,7 +173,7 @@ Then(/I verify (\*[a-zA-Z](?:\w|\S)*) tile delete button state in (#[a-zA-Z](?:\
  *  Verify that the column in present and located in the correct position in Tile View
  *
  *  @example
- *  Then I verify tile view column headers in #LeadsPipelineView view
+ *  Then I verify tile view column headers in #LeadsTileView view
  *      | value      |  position |
  *      | New        |  1        |
  *      | Assigned   |  2        |
