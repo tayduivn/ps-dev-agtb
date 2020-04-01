@@ -352,7 +352,7 @@ YAHOO.util.Event.onDOMReady(function(){
 
     $(window).on("message", function(e) {
         var data = $.parseJSON(e.originalEvent.data);
-        if (data.dataSource !== 'googleOauthRedirect' {
+        if (data.dataSource !== 'googleOauthRedirect') {
             return;
         }
         if (data.result) {
