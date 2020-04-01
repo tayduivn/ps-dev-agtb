@@ -101,7 +101,7 @@
     },
     "require": {
         "doctrine/dbal": "v2.9.2",
-        "etechnika/idna-convert" : "1.0.3",
+        "etechnika/idna-convert" : "^1.2",
         "ext-openssl": "*",
         "google/apiclient": "1.1.4",
         "league/oauth2-client": "2.2.1",
@@ -116,7 +116,7 @@
         "ramsey/uuid": "3.8.0",
         "ruflin/elastica" : "6.0.1",
         "aws/aws-sdk-php": "3.55.3",
-        "sugarcrm/identity-provider": "1.9.0",
+        "sugarcrm/identity-provider": "1.10.0",
         "guzzlehttp/guzzle": "6.3.3",
         "symfony/cache": "v3.4.16",
         "symfony/console": "v3.4.16",
