@@ -54,7 +54,7 @@ Feature: Quotes Configuration
 
     # Click Save
     When I click Save button on #QuotesConfigDrawer header
-    When I wait for 10 seconds
+    When I wait for 13 seconds
 
     # Navigate to quote record view
     When I choose Quotes in modules menu
