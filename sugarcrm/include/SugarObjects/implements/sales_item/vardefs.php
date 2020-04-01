@@ -87,10 +87,6 @@ $vardefs = [
             'type' => 'decimal',
             'len' => 12,
             'precision' => 2,
-            'validation' => [
-                'type' => 'range',
-                'greaterthan' => -1,
-            ],
             'comment' => 'Quantity in use',
             'default' => 1.0,
         ],
