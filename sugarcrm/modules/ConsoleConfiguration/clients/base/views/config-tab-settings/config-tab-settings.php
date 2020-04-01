@@ -68,6 +68,22 @@ $viewdefs['ConsoleConfiguration']['base']['view']['config-tab-settings'] = array
                 ),
             ),
         ),
+        [
+            'fields' => [
+                [
+                    'name' => 'preview-table',
+                    'type' => 'preview-table',
+                ],
+            ],
+        ],
+        [
+            'fields' => [
+                [
+                    'name' => 'edit_detail_drawer_link',
+                    'type' => 'edit-detail-drawer-link',
+                ],
+            ],
+        ],
         array(
             'label' => 'LBL_CONSOLE_DIRECTIONS',
             'fields' => array(

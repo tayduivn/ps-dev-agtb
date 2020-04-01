@@ -27,6 +27,16 @@ $mod_strings = array(
     'LBL_CONSOLE_FILTER' => 'Filter',
     'LBL_CONSOLE_FILTER_RULES' => 'Filter Rules',
 
+    'LBL_CONSOLE_COLUMNS' => 'Columns',
+    'LBL_CONSOLE_MULTI_FIELD_COLUMN' => 'Multi-Field Column',
+    'LBL_CONSOLE_PRIMARY_SORT' => 'Primary Sort',
+    'LBL_CONSOLE_SECONDARY_SORT' => 'Secondary Sort',
+    'LBL_CONSOLE_FIELDS' => 'Fields',
+    'LBL_CONSOLE_SORT_PRIMARY_DIRECTION' => 'Primary Sort Direction',
+    'LBL_CONSOLE_SORTR_SECONDARY_DIRECTION' => 'Secondary Sort Direction',
+    'LBL_CONSOLE_EDIT_DETAIL_DRAWER' => 'Edit Detail Drawer',
+    'LBL_CONSOLE_SEARCH' => 'Search...',
+
     // Directions field strings
     'LBL_CONSOLE_DIRECTIONS' => 'Directions',
     'LBL_CONSOLE_DIRECTIONS_DEFAULT_FILTER' => 'The default Filter is',

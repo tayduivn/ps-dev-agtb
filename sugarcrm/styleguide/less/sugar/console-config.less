@@ -35,9 +35,88 @@
   vertical-align: top;
 }
 
+.console-config-fields .bordered {
+  border: 1px solid @grayLightish;
+  cursor: pointer;
+  padding: 5px;
+  color: #176de5;
+  border-radius: 5px;
+}
+
 .console-config-fields {
   & * .fieldset-field {
     width: 50%;
   }
 }
 
+/* side pane */
+.config-side-pane {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Create two equal columns that sits next to each other */
+.config-side-pane .column {
+  flex: 50%;
+  padding: 10px;
+  background-color: #f6f6f6;
+}
+
+.config-side-pane .border-right {
+  border-right: 1px solid  #ddd;
+  margin-left: 12px;
+}
+
+.config-side-pane nav ul {
+  height: 260px;
+  width: auto;
+  overflow: hidden;
+  overflow-y: scroll;
+  border: 1px solid black;
+  list-style-type: none;
+  padding-inline-start: 3px;
+  margin: 0;
+}
+
+.config-side-pane .columns nav ul {
+  height: 250px;
+  padding-top: 8px;
+}
+
+.config-side-pane .fields nav ul {
+  height: 500px;
+  padding-top: 8px;
+}
+
+.config-side-pane nav li {
+  padding-left: 10px;
+}
+
+.config-side-pane .columns nav .pill {
+  border-radius: 16px;
+  background-color: #555;
+  color: white;
+  margin: 3px;
+}
+
+.config-side-pane .multi-field-label {
+  > .fa {
+    color: black;
+  }
+
+  cursor: pointer;
+}
+
+.console-preview table {
+  border-collapse: collapse;
+  border: 1px solid black;
+}
+
+.console-preview th {
+  border: 1px solid black;
+  background-color: #d5dce0;
+}
+
+.console-preview td {
+  border: 1px solid black;
+}

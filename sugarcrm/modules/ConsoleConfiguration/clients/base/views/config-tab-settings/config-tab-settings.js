@@ -34,7 +34,17 @@
     render: function() {
         this._super('render');
         this.$('#tabs').tabs({
-            active: this.context.get('activeTabIndex')
+            active: this.context.get('activeTabIndex'),
+
+            // when selecting another tab, show/hide the corresponding side [ane div accordingly
+            activate: function(event, ui) {
+                var index = $('#tabs').tabs('option', 'active');
+                var sidePanes = $('.config-side-pane-all .config-side-pane');
+                _.each(sidePanes, function(sidePane) {
+                    $(sidePane).css('display', 'none');
+                });
+                $(sidePanes[index]).css('display', 'flex');
+            }
         });
     }
 })
