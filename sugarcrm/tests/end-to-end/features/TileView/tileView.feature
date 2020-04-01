@@ -1027,10 +1027,10 @@ Feature: Tile View feature
 
     # Navigate to Cases > Tile View
     When I choose Cases in modules menu
-    When I select VisualPipeline in #CasesList.FilterView
+    When I select TileView in #CasesList.FilterView
 
     # Verify value of comment log field in tile view body
-    Then I verify *C_1 tile field values in #CasesPipelineView view
+    Then I verify *C_1 tile field values in #CasesTileView view
       | value                |
       | My New Case          |
       | Acc_1                |
@@ -1054,10 +1054,10 @@ Feature: Tile View feature
 
     # Navigate to Cases > Tile View
     When I choose Cases in modules menu
-    When I select VisualPipeline in #CasesList.FilterView
+    When I select TileView in #CasesList.FilterView
 
     # Verify value of comment log field in tile view body
-    Then I verify *C_1 tile field values in #CasesPipelineView view
+    Then I verify *C_1 tile field values in #CasesTileView view
       | value                                     |
       | My New Case                               |
       | Acc_1                                     |
@@ -1081,10 +1081,10 @@ Feature: Tile View feature
 
     # Navigate to Cases > Tile View
     When I choose Cases in modules menu
-    When I select VisualPipeline in #CasesList.FilterView
+    When I select TileView in #CasesList.FilterView
 
     # Verify value of comment log field in tile view body
-    Then I verify *C_1 tile field values in #CasesPipelineView view
+    Then I verify *C_1 tile field values in #CasesTileView view
       | value                                                           |
       | My New Case                                                     |
       | Acc_1                                                           |
@@ -1098,7 +1098,7 @@ Feature: Tile View feature
       |              |                     | Comment Log~r     |                    |
 
     # Verify value of comment log field in removed from tile body
-    Then I verify *C_1 tile field values in #CasesPipelineView view
+    Then I verify *C_1 tile field values in #CasesTileView view
       | value       |
       | My New Case |
       | Acc_1       |
