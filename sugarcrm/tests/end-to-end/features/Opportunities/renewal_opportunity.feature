@@ -204,11 +204,83 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
     When I filter for the Opportunities record *Opp_2 named "Opportunity 1"
     When I select *Opp_2 in #OpportunitiesList.ListView
     Then I verify fields on #Opp_2Record.RecordView
-      | fieldName | value |
-      | best_case | $200.00   |
-      | amount    | $200.00   |
+      | fieldName | value   |
+      | best_case | $200.00 |
+      | amount    | $200.00 |
     When I open the revenuelineitems subpanel on #Opp_2Record view
     Then I verify number of records in #Opp_2Record.SubpanelsLayout.subpanels.revenuelineitems is 2
+
+
+  @renewal_opportunity @SS-318 @AT-348
+  Scenario: Renewal Opportunity > Verify value of 'Service Start Date' field on opportunity record view
+    Given Accounts records exist:
+      | *   | name      |
+      | A_1 | Account_1 |
+    And Opportunities records exist related via opportunities link to *A_1:
+      | *     | name  |
+      | Opp_1 | Opp_1 |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed | worst_case | likely_case | best_case | sales_stage         | quantity | service | service_start_date | service_duration_value | service_duration_unit | renewable |
+      | RLI_1 | now         | 1000       | 2000        | 3000      | Prospecting         | 1        | true    | 2020-01-05         | 2                      | year                  | true      |
+      | RLI_2 | now         | 1000       | 2000        | 3000      | Closed Lost         | 1        | true    | 2020-01-02         | 2                      | year                  | false     |
+      | RLI_3 | now         | 1000       | 2000        | 3000      | Needs Analysis      | 1        | true    | 2020-01-03         | 2                      | year                  | true      |
+      | RLI_4 | now         | 1000       | 2000        | 3000      | Perception Analysis | 1        | false   |                    |                        |                       |           |
+      | RLI_5 | now         | 1000       | 2000        | 3000      | Closed Won          | 1        | true    | 2020-01-01         | 3                      | month                 | true      |
+
+    # Navigate to opportunity record view
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+
+    # Verify value of service_start_date field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName          | value      |
+      | service_start_date | 01/03/2020 |
+
+    # Change Sales Stage of RLIs to "Close Won"
+    When I perform mass update of RevenueLineItems [*RLI_1, *RLI_3, *RLI_4] with the following values:
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+
+    # Navigate to opportunity record view
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+
+    # Verify value of service_start_date field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName          | value      |
+      | service_start_date | 01/01/2020 |
+
+    # Add new RLI record
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    When I create_new record from revenuelineitems subpanel on #Opp_1Record view
+    When I click show more button on #RevenueLineItemsDrawer view
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
+      | *     | name  |
+      | RLI_6 | RLI_6 |
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
+      | *     | date_closed | likely_case | quantity | service | service_start_date |
+      | RLI_6 | 12/31/2019  | 2000        | 1        | true    | 12/31/2019         |
+    When I click Save button on #RevenueLineItemsDrawer header
+    When I close alert
+
+    # Verify value of service_start_date field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName          | value      |
+      | service_start_date | 12/31/2019 |
+
+    # Edit RLI record in the Revenue Line Items subpanel of opportunity record view
+    When I click on Edit button for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    When I set values for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value          |
+      | sales_stage        | Needs Analysis |
+      | service_start_date | 12/20/2019     |
+    When I click on Save button for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    When I close alert
+
+    # Verify value of service_start_date field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName          | value      |
+      | service_start_date | 12/20/2019 |
 
 
   @multiple_RLI_renewal_oppertunity_cleanup @AT-328
