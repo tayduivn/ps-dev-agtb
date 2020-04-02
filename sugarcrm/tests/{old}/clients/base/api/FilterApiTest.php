@@ -346,7 +346,7 @@ class FilterApiTest extends TestCase
         );
         $this->assertEquals(-1, $reply['next_offset'], 'SimpleJoin: Next offset is not set correctly');
 
-        $reply = $this->filterApi->filterListCount(
+        $reply = $this->filterApi->getFilterListCount(
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
@@ -447,7 +447,7 @@ class FilterApiTest extends TestCase
         $this->assertEquals(-1, $reply['next_offset'], 'Offset-3: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['records']), 'Offset-3: Returned too many results');
 
-        $reply = $this->filterApi->filterListCount(
+        $reply = $this->filterApi->getFilterListCount(
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
@@ -481,7 +481,7 @@ class FilterApiTest extends TestCase
         $this->assertEquals('TEST 7 Account', $reply['records'][1]['name'], 'Or-2: The name is not set correctly');
         $this->assertEquals(-1, $reply['next_offset'], 'Or: Next offset is not set correctly');
         $this->assertEquals(2, count($reply['records']), 'Or: Returned too many results');
-        $reply = $this->filterApi->filterListCount(
+        $reply = $this->filterApi->getFilterListCount(
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
@@ -777,7 +777,7 @@ class FilterApiTest extends TestCase
         );
         $this->assertEquals(-1, $reply['next_offset'], 'FavMulRelated: Next offset is not set correctly');
 
-        $reply = $this->filterApi->filterListCount(
+        $reply = $this->filterApi->getFilterListCount(
             $this->serviceMock,
             array(
                 'module' => 'Accounts',

@@ -466,18 +466,13 @@ class FilterApi extends SugarApi
         $api->action = 'list';
 
         /** @var SugarQuery $q */
-        list(, $q) = $this->filterListSetup($api, $args);
+        [, $q, $options] = $this->filterListSetup($api, $args);
 
-        $q->select->selectReset()->setCountQuery();
-        $q->orderByReset();
-        $q->limit = null;
+        $q = $options['id_query'] ?? $q;
 
-        $stmt = $q->compile()->execute();
-        $count = (int) $stmt->fetchColumn();
-
-        return array(
-            'record_count' => $count,
-        );
+        return [
+            'record_count' => $this->fetchCount($q),
+        ];
     }
 
     /**
@@ -1470,6 +1465,20 @@ class FilterApi extends SugarApi
             }
         }
         return $options;
+    }
+
+    /**
+     * Returns a result of a COUNT query
+     */
+    protected function fetchCount(SugarQuery $q): int
+    {
+        $q->select->selectReset()->setCountQuery();
+        $q->orderByReset();
+        $q->limit = null;
+
+        $stmt = $q->compile()->execute();
+
+        return (int) $stmt->fetchColumn();
     }
 
     /**
