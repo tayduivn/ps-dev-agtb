@@ -771,13 +771,14 @@ class Importer
         {
             $focus->team_id = $current_user->default_team;
         }
-        /*
-        * Bug 34854: Added all conditions besides the empty check on date modified.
-        */
-        if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) ||
-             ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $timedate->to_db($timedate->to_display_date_time($focus->fetched_row['date_modified'])) )
-        )
+
+        // if date_modified is set, non-empty, and mapped for import, set the flag to false so SugarBean
+        // will not overwrite it
+        if (in_array('date_modified', $this->importColumns) &&
+            isset($focus->date_modified) &&
+            !empty(trim($focus->date_modified))) {
             $focus->update_date_modified = false;
+        }
 
         // Bug 53636 - Allow update of "Date Created"
         if (!empty($focus->date_entered)) {
@@ -824,10 +825,14 @@ class Importer
             }
         }
 
-        // if modified_user_id is set, set the flag to false so SugarBEan will not reset it
-        if (isset($focus->modified_user_id) && $focus->modified_user_id && !$hasDataChanges) {
+        // if modified_user_id is set, non-empty, and mapped for import, set the flag to false so SugarBean will not
+        // overwrite it
+        if (in_array('modified_user_id', $this->importColumns) &&
+            isset($focus->modified_user_id) &&
+            !empty(trim($focus->modified_user_id))) {
             $focus->update_modified_by = false;
         }
+
         // if created_by is set, set the flag to false so SugarBEan will not reset it
         if (isset($focus->created_by) && $focus->created_by) {
             $focus->set_created_by = false;
