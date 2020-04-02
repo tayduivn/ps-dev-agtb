@@ -345,6 +345,10 @@ class InitProductDefinition
             "service_duration":["SUGAR_SELL"],
             "service_duration_value":["SUGAR_SELL"],
             "service_duration_unit":["SUGAR_SELL"]
+        },
+        "Users": {
+            "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],
+            "business_center_name":["SUGAR_SERVE","SUGAR_SELL"]
         }
     }
 }

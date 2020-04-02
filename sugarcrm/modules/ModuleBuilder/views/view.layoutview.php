@@ -48,7 +48,7 @@ class ViewLayoutView extends SugarView
 	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
-	    
+
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
     	   ModuleBuilderController::getModuleTitle(),
@@ -62,7 +62,7 @@ class ViewLayoutView extends SugarView
 
     function display ($preview = false)
     {
-        global $mod_strings ;
+        global $mod_strings;
         $params = array();
 // BEGIN SUGARCRM flav=ent ONLY
         $role = $this->request->getValidInputRequest('role', 'Assert\Guid');
@@ -138,7 +138,8 @@ class ViewLayoutView extends SugarView
         $field_defs = $parser->getFieldDefs();
 
         foreach($available_fields as $key => $value) {
-            if(isset($field_defs[$value['name']]['studio']) && $field_defs[$value['name']]['studio'] === false) {
+            if (isset($field_defs[$value['name']]['studio']) && $field_defs[$value['name']]['studio'] === false ||
+                !AccessControlManager::instance()->allowFieldAccess($this->editModule, $value['name'])) {
                 unset($available_fields[$key]);
             }
         }
@@ -147,7 +148,7 @@ class ViewLayoutView extends SugarView
 
         // assign fields and layout
         $smarty->assign ( 'available_fields', $available_fields ) ;
-        
+
         $smarty->assign ( 'disable_layout', $disableLayout) ;
         $smarty->assign ( 'required_fields', $requiredFields) ;
         $smarty->assign ( 'layout', $parser->getLayout () ) ;
