@@ -2532,9 +2532,9 @@ class SugarBean
     /**
      * Preprocess the email text to replace the variables with actual strings
      *
-     * @param $templateText
-     * @param $xtpl
-     * @return string|string[]
+     * @param string $templateText text from email templates
+     * @param array $var array with variable values
+     * @return string|string[] replaced string to display in the email
      */
     protected function processText($templateText, $var)
     {
@@ -2557,7 +2557,6 @@ class SugarBean
             $replacements['$tentative_link'] = $var["ACCEPT_URL"] . "&accept_status=tentative";
             $replacements['$decline_link'] = $var["ACCEPT_URL"] . "&accept_status=decline";
         }
-        $replacements['$assigned_by_user'] = !empty($var["ASSIGNER"]) ? $var["ASSIGNER"] : '';
         $replacements['$start_date'] = !empty($var[strtoupper($moduleName) . "_STARTDATE"]) ?
             $var[strtoupper($moduleName) . "_STARTDATE"] : '';
         $replacements['$end_date'] = !empty($var[strtoupper($moduleName) . "_ENDDATE"]) ?
@@ -2584,7 +2583,7 @@ class SugarBean
             $this->current_notify_user = $notify_user;
 
             $emailConfig = SugarConfig::getInstance()->get('emailTemplate');
-            if ($this->object_name == 'Meeting' || $this->object_name == 'Call' || $this->object_name == '‌ReportSchedule') {
+            if ($this->object_name == 'Meeting' || $this->object_name == 'Call') {
                 $templateID = $emailConfig[$this->object_name] ?? '';
             } else {
                 $templateID = $emailConfig['AssignmentNotification'] ?? '';

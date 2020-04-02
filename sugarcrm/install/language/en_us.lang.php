@@ -667,19 +667,22 @@ You may review this $module_name at:
 
     'scheduled_report_email' => array(
         'name' => 'Scheduled Report Emails',
-        'subject' => 'SugarCRM - Assigned $module_name ',
+        'subject' => 'Scheduled Report: $report_name as of $report_time',
         'description' => 'This template is used when the System sends a scheduled report to a user.',
         'body' => '<div>
-<p>$assigned_by_user has assigned a&nbsp;$module_name to&nbsp;$assigned_user.</p>
-
-<p>You may review this&nbsp;$module_name at:<br/>
-	<<a href="$module_link">$module_link</a>></p>
+<p>Hello $assigned_user,</p>
+<p>Attached is an auto generated report that has been scheduled for you.</p>
+<p>Report Name: $report_name</p>
+<p>Report Run Date and Time: $report_time</p>
 </div>',
         'txt_body' =>
-            '$assigned_by_user has assigned a $module_name to $assigned_user.
+            'Hello $assigned_user,
 
-You may review this $module_name at:
-<$module_link>',
+Attached is an auto generated report that has been scheduled for you.
+
+Report Name: $report_name
+
+Report Run Date and Time: $report_time',
     ),
 
     'advanced_password_new_account_email' => array(
