@@ -69,8 +69,8 @@ describe('Opportunities.Base.Fields.ConditionalFieldsetField', function() {
                     true
                 );
                 expect(field.options.def.fields[1].type).toBe('bool');
-                expect(field.options.def.fields[1].name.includes('_should_cascade'))
-                .toBeTruthy();
+                expect(field.options.def.fields[1].name.indexOf('_should_cascade'))
+                .toBeGreaterThan(-1);
                 expect(app.lang.get).toHaveBeenCalledWith('LBL_UPDATE_OPPORTUNITIES_RLIS', 'Opportunities');
                 expect(app.lang.getModuleName).toHaveBeenCalledWith('RevenueLineItems', {plural: true});
             });
