@@ -133,33 +133,36 @@ class StudioModule
                  );
              }
         } else {
-            $this->sources = array(
-                array(
+            $this->sources = [
+                [
                     'name'  => translate('LBL_RECORDVIEW'),
                     'type'  => MB_RECORDVIEW,
                     'image' => 'RecordView',
                     'path'  => "modules/{$this->module}/clients/base/views/record/record.php",
-                ),
-                array(
+                ],
+                [
                     'name'  => translate('LBL_LISTVIEW'),
                     'type'  => MB_LISTVIEW,
                     'image' => 'ListView',
                     'path'  => "modules/{$this->module}/clients/base/views/list/list.php",
-                ),
-                array(
+                ],
+                //BEGIN SUGARCRM flav=ent ONLY
+                [
                     'name'  => translate('LBL_RECORDDASHLETVIEW'),
                     'type'  => MB_RECORDDASHLETVIEW,
                     'image' => 'RecordDashletView',
                     'path'  => "modules/{$this->module}/clients/base/views/recorddashlet/recorddashlet.php",
-                ),
-                array(
+                    'fallback_path' => "modules/{$this->module}/clients/base/views/record/record.php",
+                ],
+                //END SUGARCRM flav=ent ONLY
+                [
                     'name'  => translate('LBL_PREVIEWVIEW'),
                     'type'  => MB_PREVIEWVIEW,
                     'image' => 'PreviewView',
                     'path'  => "modules/{$this->module}/clients/base/views/preview/preview.php",
                     'fallback_path' => "modules/{$this->module}/clients/base/views/record/record.php",
-                ),
-            );
+                ],
+            ];
         }
     }
 

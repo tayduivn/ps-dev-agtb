@@ -20,9 +20,11 @@ use SugarTestReflection;
 class DeployedMetaDataImplementationTest extends TestCase
 {
     /**
-     * @covers ::getPreviewDefsFromRecord
+     * Check getDefsFromRecord for Preview
+     *
+     * @covers ::getDefsFromRecord
      */
-    public function testGetPreviewDefsFromRecord()
+    public function testGetDefsFromRecordForPreview()
     {
         $fields = array(
             'name',
@@ -49,8 +51,8 @@ class DeployedMetaDataImplementationTest extends TestCase
             ),
         );
         $impl = $this->getMockBuilder('DeployedMetaDataImplementation')
-        ->disableOriginalConstructor()->setMethods(null)->getMock();
-        $defs = SugarTestReflection::callProtectedMethod($impl, 'getPreviewDefsFromRecord', array($defs));
+            ->disableOriginalConstructor()->setMethods(null)->getMock();
+        $defs = SugarTestReflection::callProtectedMethod($impl, 'getDefsFromRecord', [$defs, 'preview']);
         $this->assertArrayHasKey('preview', $defs['base']['view']);
         $this->assertArrayHasKey('templateMeta', $defs['base']['view']['preview']);
         $this->assertArrayHasKey('maxColumns', $defs['base']['view']['preview']['templateMeta']);
@@ -59,4 +61,80 @@ class DeployedMetaDataImplementationTest extends TestCase
         $this->assertArrayHasKey('fields', $defs['base']['view']['preview']['panels'][0]);
         $this->assertEquals($fields, array_values($defs['base']['view']['preview']['panels'][0]['fields']));
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Check getDefsFromRecord for RecordDashlet
+     *
+     * @covers ::getDefsFromRecord
+     */
+    public function testGetDefsFromRecordForRecordDashlet()
+    {
+        $buttons = [
+            [
+                'type' => 'rowaction',
+                'name' => 'edit_button',
+            ],
+        ];
+        $fields = [
+            [
+                'name' => 'picture',
+                'type' => 'avatar',
+            ],
+            'name',
+        ];
+        $defs['base']['view']['record'] = [
+            'buttons' => [
+                [
+                    'name' => 'main_dropdown',
+                    'buttons' => [
+                        [
+                            'type' => 'rowaction',
+                            'name' => 'edit_button',
+                        ],
+                        [
+                            'type' => 'divider',
+                        ],
+                        [
+                            'type' => 'rowaction',
+                            'name' => 'audit_button',
+                        ],
+                    ],
+                ],
+            ],
+            'panels' => [
+                [
+                    'name' => 'panel_header',
+                    'fields' => [
+                        [
+                            'name' => 'picture',
+                            'type' => 'avatar',
+                        ],
+                        'name',
+                        [
+                            'name' => 'favorite',
+                            'type' => 'favorite',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $impl = $this->getMockBuilder('DeployedMetaDataImplementation')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $defs = SugarTestReflection::callProtectedMethod($impl, 'getDefsFromRecord', [$defs, 'recorddashlet']);
+
+        $this->assertArrayHasKey('recorddashlet', $defs['base']['view']);
+
+        $this->assertArrayHasKey('buttons', $defs['base']['view']['recorddashlet']);
+        $this->assertArrayHasKey('buttons', $defs['base']['view']['recorddashlet']['buttons'][0]);
+        $this->assertEquals($buttons, array_values($defs['base']['view']['recorddashlet']['buttons'][0]['buttons']));
+
+        $this->assertArrayHasKey('panels', $defs['base']['view']['recorddashlet']);
+        $this->assertArrayHasKey('fields', $defs['base']['view']['recorddashlet']['panels'][0]);
+        $this->assertEquals($fields, array_values($defs['base']['view']['recorddashlet']['panels'][0]['fields']));
+    }
+    //END SUGARCRM flav=ent ONLY
 }

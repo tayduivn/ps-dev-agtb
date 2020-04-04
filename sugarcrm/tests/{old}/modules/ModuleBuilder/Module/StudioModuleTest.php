@@ -28,7 +28,7 @@ class StudioModuleTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
-    
+
     public static function tearDownAfterClass(): void
     {
         unset($GLOBALS['beanFiles']);
@@ -81,7 +81,7 @@ class StudioModuleTest extends TestCase
             'type' => 'previewview',
             'image' => 'PreviewView',
         ];
-        $this->assertEquals($expectedDef, $defs[2]);
+        $this->assertEquals($expectedDef, $defs[3]);
     }
 
     public function providerGetType()
