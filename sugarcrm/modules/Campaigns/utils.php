@@ -782,49 +782,35 @@ SQL;
 
         //run query for mail boxes of type 'bounce'
         $email_health = 0;
-        $email_components = 2;
         $mbox_qry = "select * from inbound_email where deleted ='0' and mailbox_type = 'bounce'";
         $mbox_res = $focus->db->query($mbox_qry);
 
         $mbox = array();
         while ($mbox_row = $focus->db->fetchByAssoc($mbox_res)){$mbox[] = $mbox_row;}
-        //if the array is not empty, then set "good" message
-        if(isset($mbox) && count($mbox)>0){
-            //everything is ok, do nothing
-
-        }else{
-            //if array is empty, then increment health counter
+        if(!isset($mbox) || count($mbox) <= 0) {
+            // if array is empty, then increment health counter and set error message
             $email_health =$email_health +1;
-            $msg  .=  "<tr><td ><font color='red'><b>". $mod_strings['LBL_MAILBOX_CHECK1_BAD']."</b></font></td></tr>";
+            $msg .= "<tr><td ><font color='red'><b>". $mod_strings['LBL_MAILBOX_CHECK1_BAD']."</b></font>";
+            if (is_admin($current_user)) {
+                $msg .= "&nbsp;<a href='index.php?module=InboundEmail&action=index'>" .
+                        $mod_strings['LBL_INBOUND_EMAIL_SETTINGS'] .
+                        "</a>";
+            }
+            $msg .= "</td></tr>";
         }
 
 
         if (strstr($focus->settings['notify_fromaddress'], 'example.com')){
             //if "from_address" is the default, then set "bad" message and increment health counter
             $email_health =$email_health +1;
-            $msg .= "<tr><td ><font color='red'><b> ".$mod_strings['LBL_MAILBOX_CHECK2_BAD']." </b></font></td></tr>";
-        }else{
-            //do nothing, address has been changed
-        }
-        //if health counter is above 1, then show admin link
-        if($email_health>0){
-            if (is_admin($current_user)){
-                $msg.="<tr><td ><a href='index.php?module=Campaigns&action=WizardEmailSetup";
-                if(isset($_REQUEST['return_module'])){
-                    $msg.="&return_module=".$_REQUEST['return_module'];
-                }
-                if(isset($_REQUEST['return_action'])){
-                    $msg.="&return_action=".$_REQUEST['return_action'];
-                }
-                $msg.="'>".$mod_strings['LBL_EMAIL_SETUP_WIZ']."</a></td></tr>";
-            }else{
-                $msg.="<tr><td >".$mod_strings['LBL_NON_ADMIN_ERROR_MSG']."</td></tr>";
-
+            $msg .= "<tr><td ><font color='red'><b> ".$mod_strings['LBL_MAILBOX_CHECK2_BAD']." </b></font>";
+            if (is_admin($current_user)) {
+                $msg .= "&nbsp;<a href='index.php?module=EmailMan&action=config'>" .
+                        $mod_strings['LBL_SYSTEM_EMAIL_SETTINGS'] .
+                        "</a>";
             }
-
+            $msg .= "</td></tr>";
         }
-
-
         // proceed with scheduler components
 
         //create and run the scheduler queries

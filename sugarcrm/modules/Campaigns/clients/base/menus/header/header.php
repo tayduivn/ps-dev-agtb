@@ -54,13 +54,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-bars',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Campaigns&action=WizardEmailSetup&return_module=Campaigns&return_action=index',
-        'label' =>'LBL_EMAIL_SETUP_WIZARD',
-        'acl_action'=>'admin',
-        'acl_module'=>$module_name,
-        'icon' => 'fa-cog',
-    ),
-    array(
         'route'=>'#bwc/index.php?module=Campaigns&action=CampaignDiagnostic&return_module=Campaigns&return_action=index',
         'label' =>'LBL_DIAGNOSTIC_WIZARD',
         'acl_action'=>'edit',
