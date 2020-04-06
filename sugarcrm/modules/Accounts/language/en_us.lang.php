@@ -30,6 +30,7 @@ $mod_strings = array (
     // BEGIN SUGARCRM flav=ent ONLY
     'LBL_ACCOUNTS_MULTI_LINE_DASHBOARD' => 'Account Details',
     'LBL_NEXT_RENEWAL_DATE' => 'Date of Next Renewal',
+    'LBL_WIDGET_NEXT_RENEWAL_DATE' => 'Date of Next Renewal',
     'LBL_RENEWALS_CONSOLE_ACCOUNT_NAME_INDUSTRY' => 'Account Name/Industry',
     'LBL_RENEWALS_CONSOLE_LOCATION' => 'Location',
     // END SUGARCRM flav=ent ONLY

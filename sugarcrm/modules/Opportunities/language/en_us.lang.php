@@ -153,6 +153,10 @@ $mod_strings = array(
     'LBL_RENEWAL_PARENT' => 'Parent Opportunity',
     'LBL_PARENT_RENEWAL_OPPORTUNITY_ID' => 'Renewal Parent ID',
     'LBL_MONTH_YEAR_RENEWAL' => '{{month}}, {{year}}',
+
+    'LBL_WIDGET_SALES_STAGE' => 'Sales Stage',
+    'LBL_WIDGET_DATE_CLOSED' => 'Expected Close Date',
+    'LBL_WIDGET_AMOUNT' => 'Amount',
     // END SUGARCRM flav=ent ONLY
 
     //BEGIN SUGARCRM flav=ent ONLY

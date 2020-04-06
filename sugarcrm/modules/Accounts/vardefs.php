@@ -383,6 +383,22 @@ $dictionary['Account'] = array(
             'type' => 'date',
             'readonly' => true,
         ),
+        'widget_next_renewal_date' => [
+            'name' => 'widget_next_renewal_date',
+            'vname' => 'LBL_WIDGET_NEXT_RENEWAL_DATE',
+            'type' => 'widget',
+            'multiline' => false,
+            'studio' => false,
+            'workflow' => false,
+            'reportable' => false,
+            'importable' => false,
+            'source' => 'non-db',
+            'console' => [
+                'name' => 'next_renewal_date',
+                'label' => 'LBL_NEXT_RENEWAL_DATE',
+                'type' => 'relative-date',
+            ],
+        ],
         // END SUGARCRM flav=ent ONLY
     ),
     'indices' => array(

@@ -32,7 +32,7 @@ $mod_strings = array (
 	'LBL_CONTACTS_SUBPANEL_TITLE'		=> 'Contacts',
 	'LBL_DEFAULT_SUBPANEL_TITLE'		=> 'Cases',
 	'LBL_DESCRIPTION'					=> 'Description:',
-	'LBL_FILENANE_ATTACHMENT' 			=> 'File Attachment',	
+    'LBL_FILENANE_ATTACHMENT'           => 'File Attachment',
 	'LBL_HISTORY_SUBPANEL_TITLE'		=> 'History',
 	'LBL_INVITEE'						=> 'Contacts',
 	'LBL_MEMBER_OF'						=> 'Account',
@@ -151,5 +151,6 @@ To create a {{module_name}}:
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_SLA_DETAILS' => 'SLA Details',
     'LBL_HOURS' => 'Hours',
+    'LBL_WIDGET_STATUS' => 'Status',
     //END SUGARCRM flav=ent ONLY
 );

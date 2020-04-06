@@ -181,6 +181,22 @@ $dictionary['Case'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_CHANGETIMERS',
         ],
+        'widget_status' => [
+            'name' => 'widget_status',
+            'vname' => 'LBL_WIDGET_STATUS',
+            'type' => 'widget',
+            'multiline' => false,
+            'studio' => false,
+            'workflow' => false,
+            'reportable' => false,
+            'importable' => false,
+            'source' => 'non-db',
+            'console' => [
+                'name' => 'status',
+                'label' => 'LBL_STATUS',
+                'type' => 'case-status',
+            ],
+        ],
 // END SUGARCRM flav=ent ONLY
         'tasks' => array(
             'name' => 'tasks',
