@@ -1114,14 +1114,13 @@ Feature: Tile View feature
       | admin         | user           | message_1                    | message_2                                        | message_3                   |
       | Administrator | user userLName | Please update case info ASAP | Case was successfully resolved today! Sugar won! | Congratulation on a big Win |
 
-  @leads_tileView_refesh_button @AT-345
-  Scenario: Leads > Tile View
+
   @leads_tileView_refesh_button @AT-345
   Scenario: Leads > Tile View > Verify Refresh button functionality
     Given Leads records exist:
-      | *  | first_name  | last_name  | account_name | title             | email                      | status   |
-      | L1 | test firsta | test lastn | Lead Account | Software Engineer | alex@bobber.com (primary)  | New      |
-      | L2 | test firstd | test lastc | Lead Account | Software Engineer | david@bobber.com (primary) | New |
+      | *  | first_name  | last_name  | account_name | title             | email                      | status |
+      | L1 | test firsta | test lastn | Lead Account | Software Engineer | alex@bobber.com (primary)  | New    |
+      | L2 | test firstd | test lastc | Lead Account | Software Engineer | david@bobber.com (primary) | New    |
 
   # Navigate to List > Tile View
     When I choose Leads in modules menu

@@ -182,3 +182,117 @@ Feature: RLI module verification
       | closedSalesStage | otherSalesStage |
       | Closed Won       | Needs Analysis  |
       | Closed Lost      | Prospecting     |
+
+
+  @opportunity_sales_stage @SS-291 @AT-343 @pr
+  Scenario: Opportunities > Record view > Change Opp Sales Stage
+    Given Accounts records exist:
+      | *name     |
+      | Account_1 |
+    # Create opportunity records with linked RLIs
+    And Opportunities records exist related via opportunities link to *Account_1:
+      | *name | lead_source | opportunity_type  |
+      | Opp_1 | Cold Call   | Existing Business |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed | likely_case | sales_stage   |
+      | RLI_1 | now         | 1000        | Prospecting   |
+      | RLI_2 | now         | 2000        | Qualification |
+      | RLI_3 | now         | 1000        | Closed Won    |
+      | RLI_4 | now         | 2000        | Closed Lost   |
+
+    Given I open about view and login
+
+    # Navigate to Opportunities module
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+
+    # Verify value of sales_stage field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName    | value         |
+      | sales_stage  | Qualification |
+      | sales_status | In Progress   |
+
+    # Edit sales_stage field of the opportunity
+    When I click Edit button on #Opp_1Record header
+    When I provide input for #Opp_1Record.RecordView view
+      | sales_stage       |
+      | Value Proposition |
+    When I click Save button on #Opp_1Record header
+    When I close alert
+
+    # Verify value of sales_stage field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName   | value             |
+      | sales_stage | Value Proposition |
+
+    # Verify value of sales_stage field in linked RLI records
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value             |
+      | sales_stage | Value Proposition |
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value             |
+      | sales_stage | Value Proposition |
+    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value       |
+      | sales_stage | Closed Lost |
+
+    # Verify value of sales_stage field and sales_status
+    When I choose Opportunities in modules menu
+    When I click on preview button on *Opp_1 in #OpportunitiesList.ListView
+    Then I verify fields on #Opp_1Preview.PreviewView
+      | fieldName    | value             |
+      | sales_stage  | Value Proposition |
+      | sales_status | In Progress       |
+
+    # Change 'sales_stage' field value in opporunity preview
+    When I click on Edit button in #Opp_1Preview.PreviewHeaderView
+    When I provide input for #Opp_1Preview.PreviewView view
+      | sales_stage |
+      | Closed Won  |
+    When I click on Save button in #Opp_1Preview.PreviewHeaderView
+    When I close alert
+
+    # Navigate to Opportunities module
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+
+    # Verify value of sales_stage field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName    | value      |
+      | sales_stage  | Closed Won |
+      | sales_status | Closed Won |
+
+    # Verify value of sales_stage field in linked RLI records
+    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value       |
+      | sales_stage | Closed Lost |
+
+    # Add another RLI through subpanel
+    When I create_new record from revenuelineitems subpanel on #Opp_1Record view
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
+      | *     | name  |
+      | RLI_5 | RLI_5 |
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
+      | *     | date_closed | likely_case | sales_stage        |
+      | RLI_5 | 12/12/2020  | 3000        | Negotiation/Review |
+    When I click Save button on #RevenueLineItemsDrawer header
+    When I close alert
+
+    # Verify value of sales_stage field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName    | value              |
+      | sales_stage  | Negotiation/Review |
+      | sales_status | In Progress        |
