@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d37ce90c0c8c8848200010cf80ce1e9",
+    "content-hash": "f30de4fb221b41e004890d5e359f3a53",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -6001,17 +6001,17 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.0.1",
+            "version": "9.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c0cef959c143d0affc1805049d88efdad6318fde"
+                "reference": "c9f54b1f82f501f51d03b75c32e74275184a6549"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit/phpunit/phpunit-phpunit-9.0.1-45e44b.tar",
-                "reference": "c0cef959c143d0affc1805049d88efdad6318fde",
-                "shasum": "4b13a0d65caef23c1baa7eba9efb257403a9a7cd"
+                "url": "https://satis.sugardev.team/dist/phpunit/phpunit/phpunit-phpunit-9.1.1-5a53ec.tar",
+                "reference": "c9f54b1f82f501f51d03b75c32e74275184a6549",
+                "shasum": "2dbc4b87e3fc5a685eee997d5266b5a156746295"
             },
             "require": {
                 "doctrine/instantiator": "^1.2.0",
@@ -6026,14 +6026,15 @@
                 "phar-io/version": "^2.0.1",
                 "php": "^7.3",
                 "phpspec/prophecy": "^1.8.1",
-                "phpunit/php-code-coverage": "^8.0",
+                "phpunit/php-code-coverage": "^8.0.1",
                 "phpunit/php-file-iterator": "^3.0",
                 "phpunit/php-invoker": "^3.0",
                 "phpunit/php-text-template": "^2.0",
                 "phpunit/php-timer": "^3.0",
+                "sebastian/code-unit": "^1.0",
                 "sebastian/comparator": "^4.0",
                 "sebastian/diff": "^4.0",
-                "sebastian/environment": "^5.0",
+                "sebastian/environment": "^5.0.1",
                 "sebastian/exporter": "^4.0",
                 "sebastian/global-state": "^4.0",
                 "sebastian/object-enumerator": "^4.0",
@@ -6054,7 +6055,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "9.0-dev"
+                    "dev-master": "9.1-dev"
                 }
             },
             "autoload": {
@@ -6095,7 +6096,63 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues"
             },
-            "time": "2020-02-13T07:30:12+00:00"
+            "time": "2020-04-03T14:40:04+00:00"
+        },
+        {
+            "name": "sebastian/code-unit",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/code-unit.git",
+                "reference": "51440c30fcaba2e745764efe04755b6f5fc4ff02"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/sebastian/code-unit/sebastian-code-unit-1.0.0-8af089.tar",
+                "reference": "51440c30fcaba2e745764efe04755b6f5fc4ff02",
+                "shasum": "1954737f0ca0655aed00100f1f27f3e556387dd8"
+            },
+            "require": {
+                "php": "^7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "autoload-dev": {
+                "classmap": [
+                    "tests/_fixture"
+                ],
+                "files": [
+                    "tests/_fixture/function.php"
+                ]
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "Collection of value objects that represent the PHP code units",
+            "homepage": "https://github.com/sebastianbergmann/code-unit",
+            "support": {
+                "issues": "https://github.com/sebastianbergmann/code-unit/issues"
+            },
+            "time": "2020-03-30T11:59:20+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -6271,17 +6328,17 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "5.0.2",
+            "version": "5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "7d77f8147db0a1abfa63816fdd1f102b1447ec15"
+                "reference": "e217422e2fabd9d6cad3354b0a9830cbcec5b1b3"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian/environment/sebastian-environment-5.0.2-1d9e2d.tar",
-                "reference": "7d77f8147db0a1abfa63816fdd1f102b1447ec15",
-                "shasum": "df328d92112dc0e13fc3e3e2fbd29a94132b7a5c"
+                "url": "https://satis.sugardev.team/dist/sebastian/environment/sebastian-environment-5.1.0-073568.tar",
+                "reference": "e217422e2fabd9d6cad3354b0a9830cbcec5b1b3",
+                "shasum": "93f946a6dca100d4d843ae1a22cccb34615576b9"
             },
             "require": {
                 "php": "^7.3"
@@ -6319,7 +6376,7 @@
                 "hhvm",
                 "xdebug"
             ],
-            "time": "2020-03-31T12:14:15+00:00"
+            "time": "2020-04-14T13:36:52+00:00"
         },
         {
             "name": "sebastian/exporter",
@@ -6852,5 +6909,6 @@
     "platform-dev": [],
     "platform-overrides": {
         "php": "7.3.0"
-    }
+    },
+    "plugin-api-version": "1.1.0"
 }
