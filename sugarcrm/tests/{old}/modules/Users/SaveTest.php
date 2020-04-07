@@ -116,6 +116,7 @@ class SaveTest extends TestCase
 
         $address2 = Uuid::uuid4() . '@example.com';
 
+        SugarTestHelper::setUp('current_user', [true, 1]);
         $current_user = $GLOBALS['current_user'];
         SugarTestEmailAddressUtilities::addAddressToPerson($current_user, $ea);
 

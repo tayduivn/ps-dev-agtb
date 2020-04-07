@@ -112,11 +112,6 @@ class UsersApi extends ModuleApi
             throw new SugarApiExceptionNotAuthorized();
         }
 
-        // This logic is also present in /module/Users/controller.php::action_delete()
-        if ($api->user->id === $args['record']) {
-            throw new SugarApiExceptionInvalidParameter();
-        }
-
         $this->requireArgs($args, array('module', 'record'));
         // loadBean() handles exceptions for bean validation
         $user = $this->loadBean($api, $args, 'delete');

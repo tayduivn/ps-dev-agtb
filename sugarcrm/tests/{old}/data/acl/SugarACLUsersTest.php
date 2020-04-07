@@ -36,6 +36,7 @@ class SugarACLUsersTest extends TestCase
     {
         global $sugar_config;
         $sugar_config = $this->sugarConfigBackup;
+        SugarTestHelper::tearDown();
     }
 
     /**
@@ -90,6 +91,8 @@ class SugarACLUsersTest extends TestCase
     public function testCheckAccess($module, $view, $isAdmin, $context, $config, $expected)
     {
         SugarTestHelper::setUp('current_user', array(true, $isAdmin));
+        global $current_user;
+        $context['bean'] = $current_user;
 
         // Set config parameters
         global $sugar_config;
@@ -97,9 +100,11 @@ class SugarACLUsersTest extends TestCase
             $sugar_config[$key] = $value;
         }
 
-        /** @var SugarACLUsers|MockObject $acl_class */
-        $acl_class = $this->getMockBuilder('SugarACLUsers')->setMethods(null)->getMock();
-        $result = $acl_class->checkAccess($module, $view, $context);
+        /** @var SugarACLUsers|MockObject $acl */
+        $acl = $this->createPartialMock('SugarACLUsers', ['doesSystemHaveOtherActiveAdmins']);
+        $acl->expects($this->any())->method('doesSystemHaveOtherActiveAdmins')->willReturn(true);
+
+        $result = $acl->checkAccess($module, $view, $context);
         $this->assertEquals($expected, $result);
     }
 
@@ -111,16 +116,18 @@ class SugarACLUsersTest extends TestCase
      */
     public static function accessToDeleteDataProvider()
     {
-        return array(
-            // You can not delete yourself even if you admin
-            array(true, array(), true, false),
+        return [
+            // You can not delete yourself even if you are admin and system doesn't have other active admins
+            [true, true, false, false],
+            // You can delete yourself even if you admin and system has other active admins
+            [true, true, true, true],
             // You can delete somebody if you admin
-            array(true, array(), false, true),
+            [true, false, true, true],
             // You can not delete yourself (regular user)
-            array(false, array(), true, false),
+            [false, true, true, false],
             // You can not delete somebody (regular user)
-            array(false, array(), false, false),
-        );
+            [false, false, true, false],
+        ];
     }
 
     /**
@@ -129,22 +136,24 @@ class SugarACLUsersTest extends TestCase
      * @dataProvider accessToDeleteDataProvider
      * @covers SugarACLUsers::CheckAccess
      * @param bool $isAdmin
-     * @param array $context
      * @param bool $isMyself Expected result for myselfCheck method
+     * @param bool $anotherAdmins Does system have another active admins?
      * @param bool $expected Expected result
      */
-    public function testAccessToDelete($isAdmin, $context, $isMyself, $expected)
+    public function testAccessToDelete($isAdmin, $isMyself, $anotherAdmins, $expected)
     {
         SugarTestHelper::setup('current_user', array(true, $isAdmin));
+        global $current_user;
 
-        /** @var SugarACLUsers|MockObject $acl_class */
-        $acl_class = $this->createPartialMock('SugarACLUsers', array('myselfCheck'));
-        $acl_class->expects($this->once())
+        /** @var SugarACLUsers|MockObject $acl */
+        $acl = $this->createPartialMock('SugarACLUsers', ['myselfCheck', 'doesSystemHaveOtherActiveAdmins']);
+        $acl->expects($this->once())
             ->method('myselfCheck')
             ->will($this->returnValue($isMyself));
+        $acl->expects($this->any())->method('doesSystemHaveOtherActiveAdmins')->willReturn($anotherAdmins);
 
         // You can not delete yourself even if you admin
-        $result = $acl_class->checkAccess('Users', 'delete', $context);
+        $result = $acl->checkAccess('Users', 'delete', ['bean' => $current_user]);
         $this->assertEquals($expected, $result);
     }
 
@@ -158,13 +167,13 @@ class SugarACLUsersTest extends TestCase
     {
         return array(
             // You can edit youself
-            array(false, array(), true, true),
+            [false, true, true],
             // You can not edit somebody if you are not admin
-            array(false, array(), false, false),
+            [false, false, false],
             // You can edit user profile if you are admin
-            array(true, array(), false, true),
+            [true, false, true],
             // You can edit user profile if you are admin
-            array(true, array(), true, true),
+            [true, true, true],
         );
     }
 
@@ -174,21 +183,22 @@ class SugarACLUsersTest extends TestCase
      * @dataProvider accessToEditDataProvider
      * @covers SugarACLUsers::CheckAccess
      * @param bool $isAdmin
-     * @param array $context
      * @param bool $isMyself Expected result for myselfCheck method
      * @param bool $expected Expected result
      */
-    public function testAccessToEditYourself($isAdmin, $context, $isMyself, $expected)
+    public function testAccessToEditYourself($isAdmin, $isMyself, $expected)
     {
         SugarTestHelper::setup('current_user', array(true, $isAdmin));
+        global $current_user;
 
-        /** @var SugarACLUsers|MockObject $acl_class */
-        $acl_class = $this->createPartialMock('SugarACLUsers', array('myselfCheck'));
-        $acl_class->expects($this->once())
+        /** @var SugarACLUsers|MockObject $acl */
+        $acl = $this->createPartialMock('SugarACLUsers', ['myselfCheck', 'doesSystemHaveOtherActiveAdmins']);
+        $acl->expects($this->once())
             ->method('myselfCheck')
             ->will($this->returnValue($isMyself));
+        $acl->expects($this->any())->method('doesSystemHaveOtherActiveAdmins')->willReturn(true);
 
-        $result = $acl_class->checkAccess('Users', 'edit', $context);
+        $result = $acl->checkAccess('Users', 'edit', ['bean' => $current_user]);
         $this->assertEquals($expected, $result);
     }
 

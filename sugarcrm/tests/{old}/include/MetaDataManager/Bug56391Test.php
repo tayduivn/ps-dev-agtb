@@ -24,6 +24,9 @@ class Bug56391Test extends TestCase
         $this->accounts = array();
         SugarACL::resetACLs();
         SugarTestHelper::setUp('ACLStatic');
+
+        // Create one more active admin
+        SugarTestUserUtilities::createAnonymousUser(true, 1);
     }
 
     protected function tearDown() : void
@@ -33,6 +36,7 @@ class Bug56391Test extends TestCase
         }
         SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     /**
@@ -138,17 +142,14 @@ class Bug56391Test extends TestCase
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
         $mm = MetaDataManager::getManager();
-        // because the user is not an admin the user should only have view and list access
 
-        $expected_result = array(
-            'delete' => 'no',
-        );
+        // current user can do all action on self because system has another active admins
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user'], $GLOBALS['current_user']);
         unset($acls['_hash']);
         // not checking fields right now
         unset($acls['fields']);
 
-        $this->assertEquals($expected_result, $acls);
+        $this->assertEquals([], $acls);
 
         // remove admin
         $GLOBALS['current_user']->is_admin = 0;
