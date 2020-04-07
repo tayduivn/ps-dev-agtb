@@ -61,21 +61,30 @@ public function testRepairTableParams()
 	
 	    $bean = new Meeting();
 	    $result = $this->getRepairTableParamsResult($bean);
-	    $this->assertRegExp('/ALTER TABLE meetings\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i', $result);
-	    
+        $this->assertMatchesRegularExpression(
+            '/ALTER TABLE meetings\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i',
+            $result
+        );
+
 	    $bean = new Call();
 	    $result = $this->getRepairTableParamsResult($bean);
 	    $this->assertTrue(!empty($result));
-	    $this->assertRegExp('/ALTER TABLE calls\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i', $result);
+        $this->assertMatchesRegularExpression(
+            '/ALTER TABLE calls\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i',
+            $result
+        );
 
 	    $bean = new Task();
 	    $result = $this->getRepairTableParamsResult($bean);
 	    $this->assertTrue(!empty($result));	    
-	    $this->assertRegExp('/ALTER TABLE tasks\s+?modify column status varchar\(100\)  DEFAULT \'Not Started\' NULL/i', $result);
+        $this->assertMatchesRegularExpression(
+            '/ALTER TABLE tasks\s+?modify column status varchar\(100\)  DEFAULT \'Not Started\' NULL/i',
+            $result
+        );
 
         $def = $GLOBALS['dictionary']['email_addr_bean_rel'];
         $result = $this->db->repairTableParams($def['table'], $def['fields'], $def['indices'], false, $defs['engine'] ?? null);
-        $this->assertRegExp('/ALTER TABLE email_addr_bean_rel\s+ADD INDEX idx_email_address_id \(email_address_id\)/i', $result);
+        $this->assertMatchesRegularExpression('/ALTER TABLE email_addr_bean_rel\s+ADD INDEX idx_email_address_id \(email_address_id\)/i', $result);
 }
 
 private function getRepairTableParamsResult($bean)

@@ -40,6 +40,6 @@ class Bug38903Test extends TestCase
         $options = strtolower($bean->get_selector_array(
             'field', null, 'Leads', false, 'normal_trigger', true, 'compare_specific', false));
 
-        $this->assertRegExp('#<option value=\'account_name\'>[^>]+?</option>#', $options);
+        $this->assertMatchesRegularExpression('#<option value=\'account_name\'>[^>]+?</option>#', $options);
     }
 }

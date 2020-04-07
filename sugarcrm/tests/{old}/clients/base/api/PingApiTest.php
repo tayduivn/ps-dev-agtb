@@ -39,6 +39,6 @@ class PingApiTest extends TestCase
         $this->assertEquals('pong', $result);
 
         $result = $api->ping($rest, array('sub_method' => 'whattimeisit'));
-        $this->assertRegExp('/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]{1}\d{2}:\d{2}/', $result);
+        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]{1}\d{2}:\d{2}/', $result);
     }
 }

@@ -122,7 +122,7 @@ class ApplicationTest extends TestCase
 
         // execution with profiling
         $tester->run(array('command' => 'apptest:A', '--profile' => true));
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '/^Success Application Test A\n\nMemory usage: (.*) MB \(peak: (.*) MB\), time: (.*)s\n$/',
             $tester->getDisplay()
         );

@@ -20,7 +20,7 @@ public function testGetJSMock() {
     $mock = new Bug50171ImportViewStep3Mock();
     $required = array("It's A Bug!");
     $output = $mock->_getJSMock($required);
-    $this->assertRegExp('/required\[\'0\'\] = \'It\&\#039\;s A Bug\!/', $output, 'Required string not encoded');
+        $this->assertMatchesRegularExpression('/required\[\'0\'\] = \'It\&\#039\;s A Bug\!/', $output);
 }
 }
 

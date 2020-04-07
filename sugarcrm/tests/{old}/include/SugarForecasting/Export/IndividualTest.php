@@ -130,12 +130,12 @@ class SugarForecasting_Export_IndividualTest extends TestCase
     {
         return array
         (
-            array('show_worksheet_best', '1', 'assertRegExp', '/Best/'),
-            array('show_worksheet_best', '0', 'assertNotRegExp', '/Best/'),
-            array('show_worksheet_likely', '1', 'assertRegExp', '/Likely/'),
-            array('show_worksheet_likely', '0', 'assertNotRegExp', '/Likely/'),
-            array('show_worksheet_worst', '1', 'assertRegExp', '/Worst/'),
-            array('show_worksheet_worst', '0', 'assertNotRegExp', '/Worst/'),
+            array('show_worksheet_best', '1', 'assertMatchesRegularExpression', '/Best/'),
+            array('show_worksheet_best', '0', 'assertDoesNotMatchRegularExpression', '/Best/'),
+            array('show_worksheet_likely', '1', 'assertMatchesRegularExpression', '/Likely/'),
+            array('show_worksheet_likely', '0', 'assertDoesNotMatchRegularExpression', '/Likely/'),
+            array('show_worksheet_worst', '1', 'assertMatchesRegularExpression', '/Worst/'),
+            array('show_worksheet_worst', '0', 'assertDoesNotMatchRegularExpression', '/Worst/'),
         );
     }
 
@@ -183,7 +183,7 @@ class SugarForecasting_Export_IndividualTest extends TestCase
         $args['user_id'] = $this->repData['id'];
         $obj = new SugarForecasting_Export_Individual($args);
 
-        $this->assertRegExp("/\_rep\_forecast$/", $obj->getFilename());
+        $this->assertMatchesRegularExpression("/\_rep\_forecast$/", $obj->getFilename());
     }
 
     /**

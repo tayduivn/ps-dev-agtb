@@ -48,28 +48,28 @@ class UserGeneratePasswordTest extends TestCase
     {
         $GLOBALS['sugar_config']['passwordsetting']['onenumber'] = '1';
         $password = User::generatePassword();
-        $this->assertRegExp('/\d/', $password, 'Assert that we have at least one number in the generated password');
+        $this->assertMatchesRegularExpression('/\d/', $password, 'Assert that we have at least one number in the generated password');
     }
 
     public function testUserGeneratePasswordOneLower()
     {
         $GLOBALS['sugar_config']['passwordsetting']['onelower'] = '1';
         $password = User::generatePassword();
-        $this->assertRegExp('/[a-z]/', $password, 'Assert that we have at least one lower case letter in the generated password');
+        $this->assertMatchesRegularExpression('/[a-z]/', $password, 'Assert that we have at least one lower case letter in the generated password');
     }
 
     public function testUserGeneratePasswordOneUpper()
     {
         $GLOBALS['sugar_config']['passwordsetting']['oneupper'] = '1';
         $password = User::generatePassword();
-        $this->assertRegExp('/[A-Z]/', $password, 'Assert that we have at least one upper case letter in the generated password');
+        $this->assertMatchesRegularExpression('/[A-Z]/', $password, 'Assert that we have at least one upper case letter in the generated password');
     }
 
     public function testUserGeneratePasswordOneSpecial()
     {
         $GLOBALS['sugar_config']['passwordsetting']['onespecial'] = '1';
         $password = User::generatePassword();
-        $this->assertRegExp('/[\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-\{\}\|]/', $password, 'Assert that we have at least one special letter in the generated password');
+        $this->assertMatchesRegularExpression('/[\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-\{\}\|]/', $password, 'Assert that we have at least one special letter in the generated password');
     }
 
     public function testUserGeneratedPasswordMinimumLength()
@@ -94,10 +94,10 @@ class UserGeneratePasswordTest extends TestCase
         );
 
         $password = User::generatePassword();
-        $this->assertRegExp('/\d/', $password, 'Assert that we have at least one number in the generated password');
-        $this->assertRegExp('/[a-z]/', $password, 'Assert that we have at least one lower case letter in the generated password');
-        $this->assertRegExp('/[A-Z]/', $password, 'Assert that we have at least one upper case letter in the generated password');
-        $this->assertRegExp('/[\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-\{\}\|]/', $password, 'Assert that we have at least one special letter in the generated password');
+        $this->assertMatchesRegularExpression('/\d/', $password, 'Assert that we have at least one number in the generated password');
+        $this->assertMatchesRegularExpression('/[a-z]/', $password, 'Assert that we have at least one lower case letter in the generated password');
+        $this->assertMatchesRegularExpression('/[A-Z]/', $password, 'Assert that we have at least one upper case letter in the generated password');
+        $this->assertMatchesRegularExpression('/[\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-\{\}\|]/', $password, 'Assert that we have at least one special letter in the generated password');
         $this->assertTrue(strlen($password) >= 10, 'Assert that the password minimum length of 10 is respected');
     }
 }

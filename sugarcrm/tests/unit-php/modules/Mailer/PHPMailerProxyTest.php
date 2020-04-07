@@ -88,7 +88,7 @@ class PHPMailerProxyTest extends TestCase
         $this->generateUniqueId($mailer);
 
         $mailer->createHeader();
-        $this->assertRegExp('/\<\d+\.[a-fA-F0-9]+@' . $hostname . '\>/', $mailer->getLastMessageId());
+        $this->assertMatchesRegularExpression('/\<\d+\.[a-fA-F0-9]+@' . $hostname . '\>/', $mailer->getLastMessageId());
     }
 
     /**

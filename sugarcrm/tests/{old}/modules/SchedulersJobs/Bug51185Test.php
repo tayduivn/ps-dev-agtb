@@ -47,12 +47,12 @@ class Bug51185Test extends TestCase
         $job = new SchedulersJob(false);
         $job->user = $current_user;
 
-        $this->assertRegExp('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat('now'));
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat('now'));
+        $this->assertMatchesRegularExpression(
             '/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/',
             $job->handleDateFormat('now', $current_user, false)
         );
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '/^\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}\:\d{2}$/',
             $job->handleDateFormat('now', $current_user, true)
         );
@@ -66,7 +66,7 @@ class Bug51185Test extends TestCase
         global $current_user;
         $job = new SchedulersJob(false);
         $job->user = $current_user;
-        $this->assertRegExp('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat());
+        $this->assertMatchesRegularExpression('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat());
     }
 
     /**
@@ -77,8 +77,8 @@ class Bug51185Test extends TestCase
         global $current_user;
         $job = new SchedulersJob(false);
         $job->user = $current_user;
-        $this->assertRegExp('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat('+7 days'));
-        $this->assertRegExp('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat('+7 days', $current_user, false));
-        $this->assertRegExp('/^\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}\:\d{2}$/', $job->handleDateFormat('+7 days', $current_user, true));
+        $this->assertMatchesRegularExpression('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat('+7 days'));
+        $this->assertMatchesRegularExpression('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat('+7 days', $current_user, false));
+        $this->assertMatchesRegularExpression('/^\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}\:\d{2}$/', $job->handleDateFormat('+7 days', $current_user, true));
     }
 }

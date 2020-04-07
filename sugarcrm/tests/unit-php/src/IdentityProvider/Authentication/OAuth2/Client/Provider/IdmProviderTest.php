@@ -752,7 +752,7 @@ class IdmProviderTest extends TestCase
 
         $httpClient = $provider->getHttpClient();
         $this->assertArrayHasKey('handler', $httpClient->getConfig());
-        $this->assertRegexp('/retryDecider.*?Function/', (string)$httpClient->getConfig()['handler']);
+        $this->assertMatchesRegularExpression('/retryDecider.*?Function/', (string)$httpClient->getConfig()['handler']);
     }
 
     /**

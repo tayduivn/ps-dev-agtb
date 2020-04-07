@@ -71,9 +71,9 @@ class DynamicFieldsCurrencyTest extends TestCase
         //END SUGARCRM flav=ent ONLY
         $this->field->len = NULL;
         $dbTypeString = $this->field->get_db_type();
-        $this->assertRegExp('/' . $type . ' *\(/', $dbTypeString);
+        $this->assertMatchesRegularExpression('/' . $type . ' *\(/', $dbTypeString);
         $dbTypeString = $this->field->get_db_type();
         $this->field->len = 20;
-        $this->assertRegExp('/' . $type . ' *\(/', $dbTypeString);
+        $this->assertMatchesRegularExpression('/' . $type . ' *\(/', $dbTypeString);
     }
 }

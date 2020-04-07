@@ -355,7 +355,7 @@ class ListViewDisplayTest extends TestCase
     {
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMassUpdateLink');
         
-        $this->assertRegExp("/.*document\.getElementById\(['\"]massupdate_form['\"]\)\.style\.display\s*=\s*['\"]['\"].*/", $output);
+        $this->assertMatchesRegularExpression("/.*document\.getElementById\(['\"]massupdate_form['\"]\)\.style\.display\s*=\s*['\"]['\"].*/", $output);
     }
 
     public function composeEmailEmptyDataProvider()

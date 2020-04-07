@@ -84,25 +84,25 @@ class Bug44507Test extends TestCase
 
     	get_bean_select_array('true', 'EmailTemplate', 'name');
     	$sql = $localDb->getExpectedSql();
-		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
+        $this->assertMatchesRegularExpression('/email_templates\.id/', $sql);
     	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
 
 		//From Emailmarketing/EditView
 		get_bean_select_array(true, 'EmailTemplate','name','','name');
     	$sql = $localDb->getExpectedSql();
-		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
+        $this->assertMatchesRegularExpression('/email_templates\.id/', $sql);
     	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
 
     	//From Expressions/Expressions.php
     	get_bean_select_array(true, 'ACLRole','name');
     	$sql = $localDb->getExpectedSql();
-		$this->assertRegExp('/acl_roles\.id/', $sql, 'Assert that acl_roles.id is not ambiguous');
+        $this->assertMatchesRegularExpression('/acl_roles\.id/', $sql);
     	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
 
     	//From Contracts/Contract.php
     	get_bean_select_array(true, 'ContractType','name','deleted=0','list_order');
     	$sql = $localDb->getExpectedSql();
-		$this->assertRegExp('/contract_types\.id/', $sql, 'Assert that contract_types.id is not ambiguous');
+        $this->assertMatchesRegularExpression('/contract_types\.id/', $sql);
     	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
     }
 }

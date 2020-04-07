@@ -84,7 +84,7 @@ class RepairCustomFieldsTest extends TestCase
         $this->db->query("ALTER TABLE {$this->table_name} DROP COLUMN {$this->field->name}");
         //Run repair
         $ret = $this->df->repairCustomFields(false);
-        $this->assertRegExp("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
+        $this->assertMatchesRegularExpression("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
         $compareFieldDefs = $this->db->get_columns($this->table_name);
         $this->assertArrayNotHasKey($this->field->name, $compareFieldDefs);
     }
@@ -95,7 +95,7 @@ class RepairCustomFieldsTest extends TestCase
         $this->db->query("ALTER TABLE {$this->table_name} DROP COLUMN {$this->field->name}");
         //Run repair
         $ret = $this->df->repairCustomFields(true);
-        $this->assertRegExp("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
+        $this->assertMatchesRegularExpression("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
         $compareFieldDefs = $this->db->get_columns($this->table_name);
         $this->assertArrayHasKey($this->field->name, $compareFieldDefs);
     }
@@ -107,9 +107,9 @@ class RepairCustomFieldsTest extends TestCase
         //Run repair
         $ret = $this->df->repairCustomFields(false);
         //Test that the table is going to be created.
-        $this->assertRegExp("/Missing Table: {$this->table_name}/", $ret);
+        $this->assertMatchesRegularExpression("/Missing Table: {$this->table_name}/", $ret);
         //Test that the custom field is going to be added.
-        $this->assertRegExp("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
+        $this->assertMatchesRegularExpression("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
         //Assert that the table was NOT created
         $this->assertFalse($this->db->tableExists($this->table_name),
             "Asserting that the custom table is not created when repair is run with execute set false");
@@ -121,11 +121,11 @@ class RepairCustomFieldsTest extends TestCase
         $this->db->dropTableName($this->table_name);
         //Run repair
         $ret = $this->df->repairCustomFields();
-        $this->assertRegExp("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
+        $this->assertMatchesRegularExpression("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
         //Test that the table is going to be created.
-        $this->assertRegExp("/Missing Table: {$this->table_name}/", $ret);
+        $this->assertMatchesRegularExpression("/Missing Table: {$this->table_name}/", $ret);
         //Test that the custom field is going to be added.
-        $this->assertRegExp("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
+        $this->assertMatchesRegularExpression("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
         //Assert that the table was created
         $this->assertTrue($this->db->tableExists($this->table_name),
             "Asserting that the custom table is created when repair is run with execute not set");

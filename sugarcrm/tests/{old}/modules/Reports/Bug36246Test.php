@@ -27,6 +27,6 @@ class Bug36246Test extends TestCase
             ->method('_get_list_value')
             ->will($this->returnValue('sugarcrm.com'));
         $link = $fieldurl->displayList(array());
-        $this->assertRegExp("|<a([^>]*)href=\"sugarcrm.com\"([^>]*)>sugarcrm.com<\/a>|", $link, 'SugarWidgetFieldurl should return a link');
+        $this->assertMatchesRegularExpression("|<a([^>]*)href=\"sugarcrm.com\"([^>]*)>sugarcrm.com<\/a>|", $link, 'SugarWidgetFieldurl should return a link');
 	}
 }

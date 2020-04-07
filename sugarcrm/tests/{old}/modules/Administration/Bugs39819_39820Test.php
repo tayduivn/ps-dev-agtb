@@ -53,7 +53,7 @@ class Bugs39819_39820Test extends TestCase
         unlink("modules/Accounts/language/en_us.help.DetailView.html");
 
         // I expect to get the en_us normal help file....
-        $this->assertRegExp("/.*ENBugs39819\-39820.*/", $tStr);
+        $this->assertMatchesRegularExpression("/.*ENBugs39819\-39820.*/", $tStr);
     }
 
     public function testLoadCustomItHelp()
@@ -86,9 +86,9 @@ class Bugs39819_39820Test extends TestCase
         unset($GLOBALS['sugar_config']['languages']['it_it']);
 
         // I expect to get the it_it custom help....
-        $this->assertRegExp("/.*Bugs39819\-39820.*/", $tStr);
+        $this->assertMatchesRegularExpression("/.*Bugs39819\-39820.*/", $tStr);
 
         // check for encoded URL in mailto body BR-3545. Change done in SupportPortal.tpl
-        $this->assertRegExp("/body=http%3A%2F%2Flocalhost%2Findex\.php%3Fmodule%3DAdministration%26action%3Dindex/", $tStr);
+        $this->assertMatchesRegularExpression("/body=http%3A%2F%2Flocalhost%2Findex\.php%3Fmodule%3DAdministration%26action%3Dindex/", $tStr);
     }
 }

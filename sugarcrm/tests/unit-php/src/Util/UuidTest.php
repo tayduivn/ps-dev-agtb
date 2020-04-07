@@ -38,7 +38,7 @@ class UuidTest extends TestCase
      */
     public function testFormat($method, $format)
     {
-        $this->assertRegexp($format, Uuid::$method());
+        $this->assertMatchesRegularExpression($format, Uuid::$method());
     }
 
     public function providerMethods()

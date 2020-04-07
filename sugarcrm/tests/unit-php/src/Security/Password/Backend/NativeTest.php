@@ -104,7 +104,7 @@ class NativeTest extends TestCase
         $native->setAlgo($algo);
         $native->setOptions($options);
 
-        $this->assertRegExp($pattern, $native->hash($password));
+        $this->assertMatchesRegularExpression($pattern, $native->hash($password));
     }
 
     public function providerTestHash()

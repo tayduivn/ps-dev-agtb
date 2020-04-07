@@ -54,7 +54,7 @@ class EmailReminderTest extends TestCase
         $startDate = $timedate->fromDB($meeting->date_start);
         $meetingStartDate = "/{$timedate->asUser($startDate, $current_user)}/";
 
-        $this->assertRegexp($meetingSubject, $xtpl->text('MeetingReminder_Subject'), 'The subject is not set properly');
-        $this->assertRegexp($meetingSubject, $xtpl->text('MeetingReminder'), 'The body does not contain the start date');
+        $this->assertMatchesRegularExpression($meetingSubject, $xtpl->text('MeetingReminder_Subject'), 'The subject is not set properly');
+        $this->assertMatchesRegularExpression($meetingSubject, $xtpl->text('MeetingReminder'), 'The body does not contain the start date');
     }
 }

@@ -39,7 +39,7 @@ public function testModuleRenameForReportsTree()
         'label' => 'Prospects' //Assume here that Accounts module label was renamed to Prospects
     );
     $node = $mock->_populateNodeItem('Opportunity', 'Accounts', $linked_field);
-    $this->assertRegExp('/\\\'Prospects\\\'/', $node['href']);
+        $this->assertMatchesRegularExpression('/\\\'Prospects\\\'/', $node['href']);
 }
 }
 

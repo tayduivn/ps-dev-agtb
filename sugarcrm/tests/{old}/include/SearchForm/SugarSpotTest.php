@@ -61,7 +61,7 @@ class SugarSpotTest extends TestCase
             
         $returnValue = $sugarSpot->searchAndDisplay('','');
 
-        $this->assertRegExp('/Bar/',$returnValue);
+        $this->assertMatchesRegularExpression('/Bar/', $returnValue);
     }
 
     /**

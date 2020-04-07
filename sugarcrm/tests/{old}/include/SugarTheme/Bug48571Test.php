@@ -69,6 +69,6 @@ class Bug48571Test extends TestCase
     {
         SugarThemeRegistry::buildRegistry();
         $themeObject = SugarThemeRegistry::current();
-        $this->assertRegExp('/Racer X/i', $themeObject->__get('name'), 'Assert that buildRegistry defaults to the Sugar theme');
+        $this->assertMatchesRegularExpression('/Racer X/i', $themeObject->__get('name'), 'Assert that buildRegistry defaults to the Sugar theme');
     }
 }

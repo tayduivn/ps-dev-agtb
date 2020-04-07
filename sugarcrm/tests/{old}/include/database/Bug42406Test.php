@@ -58,6 +58,6 @@ class Bug42406 extends TestCase
         $db = DBManagerFactory::getInstance();
         $result = $db->repairTableParams('contacts', $fieldsdefs,  $indices, false);
 
-        $this->assertRegExp('/\/\* ' . $error . ' IS MISSING IN VARDEF contacts::broken_field \*\//', $result, 'Broken vardef is passed to db');
+        $this->assertMatchesRegularExpression('/\/\* ' . $error . ' IS MISSING IN VARDEF contacts::broken_field \*\//', $result, 'Broken vardef is passed to db');
     }
 }

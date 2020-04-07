@@ -514,7 +514,7 @@ class DBManagerTest extends TestCase
         $this->assertArrayNotHasKey('bar', $cols);
 
         $repair = $this->_db->repairTableParams($tableName, $params, array(), false);
-        $this->assertRegExp('#MISSING IN DATABASE.*bar#i', $repair);
+        $this->assertMatchesRegularExpression('#MISSING IN DATABASE.*bar#i', $repair);
         $repair = $this->_db->repairTableParams($tableName, $params, array(), true);
         $cols = $this->_db->get_columns($tableName);
         $this->assertArrayHasKey('bar', $cols);
@@ -561,9 +561,9 @@ class DBManagerTest extends TestCase
         );
 
         $repair = $this->_db->repairTableParams($tableName, $params, $indices, false);
-        $this->assertRegExp('#MISSING IN DATABASE.*bazz#i', $repair);
-        $this->assertRegExp('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
-        $this->assertRegExp('#MISSING INDEX IN DATABASE.*primary#i', $repair);
+        $this->assertMatchesRegularExpression('#MISSING IN DATABASE.*bazz#i', $repair);
+        $this->assertMatchesRegularExpression('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
+        $this->assertMatchesRegularExpression('#MISSING INDEX IN DATABASE.*primary#i', $repair);
         $this->_db->repairTableParams($tableName, $params, $indices, true);
 
         $idx = $this->_db->get_indices($tableName);
@@ -610,7 +610,7 @@ class DBManagerTest extends TestCase
 		$this->createTableParams($tableName, $params, array());
 
         $repair = $this->_db->repairTableParams($tableName, $params, array($index), false);
-        $this->assertRegExp('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
+        $this->assertMatchesRegularExpression('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
         $repair = $this->_db->repairTableParams($tableName, $params, array($index), true);
         $idx = $this->_db->get_indices($tableName);
         $this->assertArrayHasKey('test_index', $idx);
@@ -2856,7 +2856,7 @@ SQL;
             ->will($this->returnValue(false));
 
         $sql = SugarTestReflection::callProtectedMethod($dbmock, 'repairTableColumns', array("faketable", $vardefs, false));
-        $this->assertRegExp("#quantity.*?decimal\\($result\\)#i", $sql, "Bad length change for $driver");
+        $this->assertMatchesRegularExpression("#quantity.*?decimal\\($result\\)#i", $sql);
     }
 
     public function isNullableProvider()
@@ -3269,7 +3269,7 @@ SQL;
     {
         $sql = $this->_db->createTableSQL(new Contact);
 
-        $this->assertRegExp('/create\s*table\s*contacts/i',$sql);
+        $this->assertMatchesRegularExpression('/create\s*table\s*contacts/i', $sql);
     }
 
     public function testCreateTableSQLParams()
@@ -3281,7 +3281,7 @@ SQL;
             $bean->getFieldDefinitions(),
             $bean->getIndices());
 
-        $this->assertRegExp('/create\s*table\s*contacts/i',$sql);
+        $this->assertMatchesRegularExpression('/create\s*table\s*contacts/i', $sql);
     }
 
     public function testCreateIndexSQL()
@@ -3291,7 +3291,10 @@ SQL;
             array('id' => array('name'=>'id')),
             'idx_id');
 
-        $this->assertRegExp('/create\s*unique\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*\)/i',$sql);
+        $this->assertMatchesRegularExpression(
+            '/create\s*unique\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*\)/i',
+            $sql
+        );
 
         $sql = $this->_db->createIndexSQL(
             new Contact,
@@ -3299,14 +3302,20 @@ SQL;
             'idx_id',
             false);
 
-        $this->assertRegExp('/create\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*\)/i',$sql);
+        $this->assertMatchesRegularExpression(
+            '/create\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*\)/i',
+            $sql
+        );
 
         $sql = $this->_db->createIndexSQL(
             new Contact,
             array('id' => array('name'=>'id'),'deleted' => array('name'=>'deleted')),
             'idx_id');
 
-        $this->assertRegExp('/create\s*unique\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*,\s*deleted\s*\)/i',$sql);
+        $this->assertMatchesRegularExpression(
+            '/create\s*unique\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*,\s*deleted\s*\)/i',
+            $sql
+        );
     }
 
     public function testGetFieldType()
@@ -3349,7 +3358,7 @@ SQL;
         }
 
         $sql = $this->_db->getAutoIncrementSQL('cases', 'case_number');
-        $this->assertRegExp('/cases_case_number_seq\.nextval/i',$sql);
+        $this->assertMatchesRegularExpression('/cases_case_number_seq\.nextval/i', $sql);
     }
 
     //END SUGARCRM flav=ent ONLY
@@ -3382,7 +3391,7 @@ SQL;
             array('foo' => array('name'=>'foo','type'=>'varchar'))
         );
 
-        $this->assertRegExp('/alter\s*table\s*contacts/i',$sql);
+        $this->assertMatchesRegularExpression('/alter\s*table\s*contacts/i', $sql);
     }
 
     public function testAlterColumnSQL()
@@ -3397,7 +3406,7 @@ SQL;
             case 'array':
                 $sql = $sql[0];
             case 'string':
-                $this->assertRegExp('/alter\s*table\s*contacts/i',$sql);
+                $this->assertMatchesRegularExpression('/alter\s*table\s*contacts/i', $sql);
                 break;
         }
     }
@@ -3406,14 +3415,14 @@ SQL;
     {
         $sql = $this->_db->dropTableSQL(new Contact);
 
-        $this->assertRegExp('/drop\s*table.*contacts/i',$sql);
+        $this->assertMatchesRegularExpression('/drop\s*table.*contacts/i', $sql);
     }
 
     public function testDropTableNameSQL()
     {
         $sql = $this->_db->dropTableNameSQL('contacts');
 
-        $this->assertRegExp('/drop\s*table.*contacts/i',$sql);
+        $this->assertMatchesRegularExpression('/drop\s*table.*contacts/i', $sql);
     }
 
     public function testDeleteColumnSQL()
@@ -3422,12 +3431,15 @@ SQL;
             new Contact,
             array('foo' => array('name'=>'foo','type'=>'varchar'))
         );
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->assertRegExp('/alter\s*table\s*contacts\s*drop\s*\(\s*foo\s*\)/i', $sql);
-        else
-            //END SUGARCRM flav=ent ONLY
-            $this->assertRegExp('/alter\s*table\s*contacts\s*drop\s*column\s*foo/i',$sql);
+// BEGIN SUGARCRM flav=ent ONLY
+
+        if ($this->_db->dbType == 'oci8') {
+            $this->assertMatchesRegularExpression('/alter\s*table\s*contacts\s*drop\s*\(\s*foo\s*\)/i', $sql);
+            return;
+        }
+// END SUGARCRM flav=ent ONLY
+
+        $this->assertMatchesRegularExpression('/alter\s*table\s*contacts\s*drop\s*column\s*foo/i', $sql);
     }
 
     public function testDropColumnSQL()
@@ -3567,8 +3579,8 @@ SQL;
             false
         );
 
-        $this->assertRegExp("/idx_foo/i",$sql);
-        $this->assertRegExp("/foo/i",$sql);
+        $this->assertMatchesRegularExpression("/idx_foo/i", $sql);
+        $this->assertMatchesRegularExpression("/foo/i", $sql);
 
         $tablename = 'test' . date("YmdHis");
         $sql = $this->_db->add_drop_constraint(
@@ -3581,9 +3593,9 @@ SQL;
             true
         );
 
-        $this->assertRegExp("/idx_foo/i",$sql);
-        $this->assertRegExp("/foo/i",$sql);
-        $this->assertRegExp("/drop/i",$sql);
+        $this->assertMatchesRegularExpression("/idx_foo/i", $sql);
+        $this->assertMatchesRegularExpression("/foo/i", $sql);
+        $this->assertMatchesRegularExpression("/drop/i", $sql);
     }
 
     public function testNumberOfColumns()
@@ -3642,8 +3654,8 @@ SQL;
             )
         );
 
-        $this->assertNotRegExp('/float\s*\(18,\s*\)/i',$sql);
-        $this->assertRegExp('/float\s*\(18\)/i',$sql);
+        $this->assertDoesNotMatchRegularExpression('/float\s*\(18,\s*\)/i', $sql);
+        $this->assertMatchesRegularExpression('/float\s*\(18\)/i', $sql);
     }
 
     /**
@@ -3679,8 +3691,8 @@ SQL;
             )
         );
 
-        $this->assertNotRegExp('/float\s*\(18,\s*\)/i',$sql);
-        $this->assertRegExp('/float\s*\(18\)/i',$sql);
+        $this->assertDoesNotMatchRegularExpression('/float\s*\(18,\s*\)/i', $sql);
+        $this->assertMatchesRegularExpression('/float\s*\(18\)/i', $sql);
     }
 
     /**
@@ -3716,10 +3728,11 @@ SQL;
             )
         );
 
-        if ( $this->_db->dbType == 'mssql' )
-            $this->assertRegExp('/float\s*\(18\)/i',$sql);
-        else
-            $this->assertRegExp('/float\s*\(18,2\)/i',$sql);
+        if ($this->_db->dbType == 'mssql') {
+            $this->assertMatchesRegularExpression('/float\s*\(18\)/i', $sql);
+        } else {
+            $this->assertMatchesRegularExpression('/float\s*\(18,2\)/i', $sql);
+        }
     }
 
     /**
@@ -3753,10 +3766,12 @@ SQL;
                 ),
             )
         );
-        if ( $this->_db->dbType == 'mssql' )
-            $this->assertRegExp('/float\s*\(18\)/i',$sql);
-        else
-            $this->assertRegExp('/float\s*\(18,2\)/i',$sql);
+
+        if ($this->_db->dbType == 'mssql') {
+            $this->assertMatchesRegularExpression('/float\s*\(18\)/i', $sql);
+        } else {
+            $this->assertMatchesRegularExpression('/float\s*\(18,2\)/i', $sql);
+        }
     }
 
     /**

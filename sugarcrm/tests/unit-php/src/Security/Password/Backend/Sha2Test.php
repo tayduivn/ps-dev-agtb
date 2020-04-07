@@ -98,7 +98,7 @@ class Sha2Test extends TestCase
         $crypt->setSalt(new Salt());
         $crypt->setAlgo($algo);
         $crypt->setOptions($options);
-        $this->assertRegExp($pattern, $crypt->hash($password));
+        $this->assertMatchesRegularExpression($pattern, $crypt->hash($password));
     }
 
     public function providerTestHash()

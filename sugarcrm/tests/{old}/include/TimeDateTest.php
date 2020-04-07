@@ -476,17 +476,17 @@ class TimeDateTest extends TestCase
 		$old_pattern = $GLOBALS['current_user']->getPreference('datef');
 		$GLOBALS['current_user']->setPreference('datef','d-m-Y');
 		$db_date_pattern = '/2007-10-25 [0-9]{2}:[0-9]{2}:[0-9]{2}/';
-		$this->assertRegExp(
-			$db_date_pattern,
-			$this->time_date->to_db('25-10-2007')
-		);
+        $this->assertMatchesRegularExpression(
+            $db_date_pattern,
+            $this->time_date->to_db('25-10-2007')
+        );
 
 		$this->_noUserCache();
 		$GLOBALS['current_user']->setPreference('datef','m-d-Y');
-		$this->assertRegExp(
-			$db_date_pattern,
-			$this->time_date->to_db('10-25-2007')
-		);
+        $this->assertMatchesRegularExpression(
+            $db_date_pattern,
+            $this->time_date->to_db('10-25-2007')
+        );
 		$GLOBALS['current_user']->setPreference('datef',$old_pattern);
 	}
 
@@ -499,10 +499,10 @@ class TimeDateTest extends TestCase
 
 		$GLOBALS['current_user']->setPreference('datef','m-d-Y');
 		$db_date_pattern = '/2007-10-25 [0-9]{2}:[0-9]{2}:[0-9]{2}/';
-		$this->assertRegExp(
-			$db_date_pattern,
-			$this->time_date->to_db('10-25-2007')
-		);
+        $this->assertMatchesRegularExpression(
+            $db_date_pattern,
+            $this->time_date->to_db('10-25-2007')
+        );
 
 		$GLOBALS['current_user']->setPreference('datef',$old_date);
 	}

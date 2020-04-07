@@ -74,7 +74,7 @@ public function testCreatingDuplicateContact($first_name, $last_name, $hasDuplic
         $this->assertTrue(count($rows) > 0, 'Assert that checkForDuplicates returned matches');
         $this->assertEquals($rows[0]['last_name'], $last_name, 'Assert duplicate row entry last_name is ' . $last_name);
         $output = $this->form->buildTableForm($rows);
-        $this->assertRegExp('/\&action\=DetailView\&record/', $output, 'Assert we have the DetailView links to records');
+            $this->assertMatchesRegularExpression('/\&action\=DetailView\&record/', $output);
     } else {
         $this->assertTrue(empty($rows), 'Assert that checkForDuplicates returned no matches');
     }

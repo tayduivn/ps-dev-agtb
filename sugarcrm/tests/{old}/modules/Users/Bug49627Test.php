@@ -65,12 +65,12 @@ class Bug49627Test extends TestCase
         $userViewHelper->setupUserTypeDropdown();
         $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
         $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-        $this->assertRegExp('/RegularUser/', $dropdown);
-        $this->assertRegExp('/RegularUser/', $user_type_readonly);
-        $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
-        $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
-        $this->assertNotRegExp('/GROUP/', $dropdown);
-        $this->assertNotRegExp('/GROUP/', $user_type_readonly);
+        $this->assertMatchesRegularExpression('/RegularUser/', $dropdown);
+        $this->assertMatchesRegularExpression('/RegularUser/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/PORTAL_ONLY/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/GROUP/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/GROUP/', $user_type_readonly);
 
         $this->normalUser->id = '';
         $userViewHelper = new UserViewHelperMock($smarty, $this->normalUser);
@@ -78,12 +78,12 @@ class Bug49627Test extends TestCase
         $userViewHelper->setupUserTypeDropdown();
         $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
         $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-        $this->assertRegExp('/RegularUser/', $dropdown);
-        $this->assertRegExp('/RegularUser/', $user_type_readonly);
-        $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
-        $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
-        $this->assertNotRegExp('/GROUP/', $dropdown);
-        $this->assertNotRegExp('/GROUP/', $user_type_readonly);
+        $this->assertMatchesRegularExpression('/RegularUser/', $dropdown);
+        $this->assertMatchesRegularExpression('/RegularUser/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/PORTAL_ONLY/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/GROUP/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/GROUP/', $user_type_readonly);
     }
 
     public function testSetupUserTypeDropdownGroupUser()
@@ -94,12 +94,12 @@ class Bug49627Test extends TestCase
         $userViewHelper->setupUserTypeDropdown();
         $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
         $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-        $this->assertRegExp('/GROUP/', $dropdown);
-        $this->assertRegExp('/GROUP/', $user_type_readonly);
-        $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
-        $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
-        $this->assertNotRegExp('/RegularUser/', $dropdown);
-        $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
+        $this->assertMatchesRegularExpression('/GROUP/', $dropdown);
+        $this->assertMatchesRegularExpression('/GROUP/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/PORTAL_ONLY/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/RegularUser/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/RegularUser/', $user_type_readonly);
 
         $userViewHelper = new UserViewHelperMock($smarty, $this->groupUser);
         $this->groupUser->id = '';
@@ -107,12 +107,12 @@ class Bug49627Test extends TestCase
         $userViewHelper->setupUserTypeDropdown();
         $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
         $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-        $this->assertRegExp('/GROUP/', $dropdown);
-        $this->assertRegExp('/GROUP/', $user_type_readonly);
-        $this->assertNotRegExp('/PORTAL_ONLY/', $dropdown);
-        $this->assertNotRegExp('/PORTAL_ONLY/', $user_type_readonly);
-        $this->assertNotRegExp('/RegularUser/', $dropdown);
-        $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
+        $this->assertMatchesRegularExpression('/GROUP/', $dropdown);
+        $this->assertMatchesRegularExpression('/GROUP/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/PORTAL_ONLY/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/RegularUser/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/RegularUser/', $user_type_readonly);
     }
 // BEGIN SUGARCRM flav=ent ONLY
 
@@ -124,12 +124,12 @@ class Bug49627Test extends TestCase
         $userViewHelper->setupUserTypeDropdown();
         $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
         $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-        $this->assertRegExp('/PORTAL_ONLY/', $dropdown);
-        $this->assertRegExp('/PORTAL_ONLY/', $user_type_readonly);
-        $this->assertNotRegExp('/RegularUser/', $dropdown);
-        $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
-        $this->assertNotRegExp('/GROUP/', $dropdown);
-        $this->assertNotRegExp('/GROUP/', $user_type_readonly);
+        $this->assertMatchesRegularExpression('/PORTAL_ONLY/', $dropdown);
+        $this->assertMatchesRegularExpression('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/RegularUser/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/RegularUser/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/GROUP/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/GROUP/', $user_type_readonly);
 
         $this->portalUser->id = '';
         $userViewHelper = new UserViewHelperMock($smarty, $this->portalUser);
@@ -137,12 +137,12 @@ class Bug49627Test extends TestCase
         $userViewHelper->setupUserTypeDropdown();
         $dropdown = $userViewHelper->ss->get_template_vars('USER_TYPE_DROPDOWN');
         $user_type_readonly = $userViewHelper->ss->get_template_vars('USER_TYPE_READONLY');
-        $this->assertRegExp('/PORTAL_ONLY/', $dropdown);
-        $this->assertRegExp('/PORTAL_ONLY/', $user_type_readonly);
-        $this->assertNotRegExp('/RegularUser/', $dropdown);
-        $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
-        $this->assertNotRegExp('/GROUP/', $dropdown);
-        $this->assertNotRegExp('/GROUP/', $user_type_readonly);
+        $this->assertMatchesRegularExpression('/PORTAL_ONLY/', $dropdown);
+        $this->assertMatchesRegularExpression('/PORTAL_ONLY/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/RegularUser/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/RegularUser/', $user_type_readonly);
+        $this->assertDoesNotMatchRegularExpression('/GROUP/', $dropdown);
+        $this->assertDoesNotMatchRegularExpression('/GROUP/', $user_type_readonly);
     }
 // END SUGARCRM flav=ent ONLY
 }

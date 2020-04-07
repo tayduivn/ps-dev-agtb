@@ -36,9 +36,9 @@ class Bug49008Test extends TestCase
     public function testExpandDateLosAngeles()
     {
         $start = $this->sugarWidgetField->expandDate('2011-12-17');
-        $this->assertRegExp('/\:00\:00/',  $start->asDb(), 'Assert for expandDate without end set, we use 00:00:00');
+        $this->assertMatchesRegularExpression('/\:00\:00/', $start->asDb());
         $end = $this->sugarWidgetField->expandDate('2011-12-18', true);
-        $this->assertRegExp('/\:59\:59/', $end->asDb(), 'Assert for expandDate with end set to true we use 23:59:59');
+        $this->assertMatchesRegularExpression('/\:59\:59/', $end->asDb());
     }
 }
 

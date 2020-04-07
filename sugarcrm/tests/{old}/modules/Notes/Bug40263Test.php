@@ -54,7 +54,7 @@ class Bug40263Test extends TestCase
 		$fields = $lvd->setupFilterFields();
         $query = $note->create_new_list_query('', 'id="' . $note->id . '"', $fields);
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '/select.* created_by_name.*LEFT JOIN\s*users jt\d ON\s*notes.created_by\s*=\s*jt\d\.id.*/si',
             $query
         );

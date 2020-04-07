@@ -41,8 +41,8 @@ class Bug48623Test extends TestCase
         $sf = new SearchForm2Wrap($seed, 'Opportunities', 'index');
 
         $where = $sf->publicParseDateExpression($operator, 'opportunities.date_closed', $type);
-        $this->assertRegExp($expected1, $where);
-        $this->assertRegExp($expected2, $where);
+        $this->assertMatchesRegularExpression($expected1, $where);
+        $this->assertMatchesRegularExpression($expected2, $where);
     }
 
     public function dateTestProvider() {

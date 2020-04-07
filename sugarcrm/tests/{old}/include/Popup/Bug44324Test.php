@@ -56,6 +56,6 @@ class Bug44324Test extends TestCase
     	$popupSmarty->fieldDefs = array();
     	$popupSmarty->view= 'popup';
     	$popupSmarty->tpl = 'include/Popups/tpls/PopupGeneric.tpl';
-    	$this->assertRegExp('/\"NAME\":\"Ms. Lady Gaga\"/', $popupSmarty->display(), 'Assert that NAME value was set to "Lady Gaga"');
+        $this->assertMatchesRegularExpression('/\"NAME\":\"Ms. Lady Gaga\"/', $popupSmarty->display());
     }
 }

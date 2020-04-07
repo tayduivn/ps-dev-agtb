@@ -88,7 +88,7 @@ class Bug47406Test extends TestCase
         $return = smarty_function_sugar_currency_format($params, $this->smarty);
         if ( $as_regexp )
         {
-            $this->assertRegExp('/'.$expected.'$/', $return);
+            $this->assertMatchesRegularExpression('/'.$expected.'$/', $return);
         }
         else
         {

@@ -228,10 +228,10 @@ class Bug51423Test extends TestCase
         $this->_report = new Report($tmp);
         $this->_report->run_query();
         while (( $row = $this->_report->get_next_row() ) != 0 ) {
-            $this->assertRegExp('/.*' . preg_quote($this->_account_2->name) . '.*/', $row['cells']['0']);
-            $this->assertRegExp('/.*' . preg_quote($this->_contact_2->last_name) . '.*/', $row['cells']['1']);
-            $this->assertRegExp('/.*' . preg_quote($this->_account_1->name) . '.*/', $row['cells']['2']);
-            $this->assertRegExp('/.*' . preg_quote($this->_contact_1->last_name) . '.*/', $row['cells']['3']);
+            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_account_2->name) . '.*/', $row['cells']['0']);
+            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_contact_2->last_name) . '.*/', $row['cells']['1']);
+            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_account_1->name) . '.*/', $row['cells']['2']);
+            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_contact_1->last_name) . '.*/', $row['cells']['3']);
         }
     }
 }

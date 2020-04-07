@@ -54,7 +54,7 @@ class InstallUtilsTest extends TestCase
         $configJSContents = file_get_contents($file);
 
         $this->assertNotEmpty($configJSContents);
-        $this->assertRegExp('/\"platform\"\s*?\:\s*?\"base\"/', $configJSContents);
-        $this->assertRegExp('/\"clientID\"\s*?\:\s*?\"sugar\"/', $configJSContents);
+        $this->assertMatchesRegularExpression('/\"platform\"\s*?\:\s*?\"base\"/', $configJSContents);
+        $this->assertMatchesRegularExpression('/\"clientID\"\s*?\:\s*?\"sugar\"/', $configJSContents);
     }
 }

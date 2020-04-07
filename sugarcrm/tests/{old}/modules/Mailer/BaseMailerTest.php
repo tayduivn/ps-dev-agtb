@@ -42,6 +42,6 @@ class BaseMailerTest extends TestCase
         $mailer->setMessageId($id);
 
         $actual = $mailer->getHeader(EmailHeaders::MessageId);
-        $this->assertRegExp('/\<\d+\.' . $id . '@' . $hostname . '\>/', $actual);
+        $this->assertMatchesRegularExpression('/\<\d+\.' . $id . '@' . $hostname . '\>/', $actual);
     }
 }

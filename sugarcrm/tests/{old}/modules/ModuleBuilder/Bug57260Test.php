@@ -106,6 +106,6 @@ class Bug57260Test extends TestCase
         $this->assertNotEmpty($output->center->content, "Expected output from parsing layout editor not returned");
 
         // Test the actual output
-        $this->assertRegExp("|<span class='panel_name'?.*>\s*Default\s*</span>|", $output->center->content, "'Default' was not found in the rendered view");
+        $this->assertMatchesRegularExpression("|<span class='panel_name'?.*>\s*Default\s*</span>|", $output->center->content, "'Default' was not found in the rendered view");
     }
 }

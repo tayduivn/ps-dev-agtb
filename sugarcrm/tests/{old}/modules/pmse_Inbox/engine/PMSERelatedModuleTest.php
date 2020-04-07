@@ -72,8 +72,8 @@ class PMSERelatedModulesTest extends TestCase
         $this->assertNotEmpty($m);
 
         // Verify that the label decorator was added
-        $this->assertRegexp('/[*:1]/', $o['text']);
-        $this->assertRegexp('/[*:M]/', $m['text']);
+        $this->assertMatchesRegularExpression('/[*:1]/', $o['text']);
+        $this->assertMatchesRegularExpression('/[*:M]/', $m['text']);
     }
 
     /**

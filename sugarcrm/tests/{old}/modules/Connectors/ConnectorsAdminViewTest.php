@@ -38,12 +38,12 @@ class ConnectorsAdminViewTest extends TestCase
 
     protected function withTwitter($output)
     {
-        $this->assertRegExp('/ext_rest_twitter/', $output);
+        $this->assertMatchesRegularExpression('/ext_rest_twitter/', $output);
     }
 
     protected function withoutTwitter($output)
     {
-        $this->assertNotRegExp('/ext_rest_twitter/', $output);
+        $this->assertDoesNotMatchRegularExpression('/ext_rest_twitter/', $output);
     }
 
     public function testMapConnectorFields()

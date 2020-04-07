@@ -34,7 +34,7 @@ class Bug42193Test extends TestCase
         
         $mass->setSugarBean($emailMan);
         $pattern = '/07\/22\/2011 [0-9]{2}:[0-9]{2}/';
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
 			$pattern,
 			$mass->date_to_dateTime('send_date_time', '07/22/2011')
 		);        

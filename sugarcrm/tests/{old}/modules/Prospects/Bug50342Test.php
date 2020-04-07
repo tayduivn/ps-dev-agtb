@@ -135,6 +135,6 @@ class Bug50342Test extends TestCase
             ->method('process_list_query')
             ->will($this->returnArgument(0));
         $select = $mock->retrieveTargetList($sql, array('id', 'first_name', 'last_name'));
-        $this->assertRegExp("/from\s+{$tableName}/i", $select, 'Incorrect from SQL clause: ' . $select);
+        $this->assertMatchesRegularExpression("/from\s+{$tableName}/i", $select, 'Incorrect from SQL clause: ' . $select);
     }
 }

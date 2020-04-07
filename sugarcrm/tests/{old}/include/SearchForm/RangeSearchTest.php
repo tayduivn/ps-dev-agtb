@@ -239,12 +239,12 @@ class RangeSearchTest extends TestCase
     	$_REQUEST['date_closed_advanced'] = '07-03-2009';
 
 		$output = $ss->fetch($this->smartyTestFile);
-        $this->assertRegExp('/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-03\-2009\'/', $output);
+        $this->assertMatchesRegularExpression('/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-03\-2009\'/', $output);
 
     	//Simulate the request with range search value
     	$_REQUEST['range_date_closed_advanced'] = '07-04-2009';
 
 		$output = $ss->fetch($this->smartyTestFile);
-        $this->assertRegExp('/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-04\-2009\'/', $output);
+        $this->assertMatchesRegularExpression('/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-04\-2009\'/', $output);
     }
 }

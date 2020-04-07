@@ -55,7 +55,7 @@ class CSPRNGTest extends TestCase
     {
         $csprng = new CSPRNG();
         $encoded = TestReflection::callProtectedMethod($csprng, 'binaryEncode', array($binary, $size));
-        $this->assertRegExp('#^[A-Za-z0-9+/]+$#D', $encoded);
+        $this->assertMatchesRegularExpression('#^[A-Za-z0-9+/]+$#D', $encoded);
         $this->assertEquals($expected, $encoded);
     }
 

@@ -66,6 +66,6 @@ class Bug48570Test extends TestCase
 
         $currency->mark_deleted($currency->id);
 
-        $this->assertRegExp('/<option value="' . $focus->currency_id . '" selected>/sim', $editView->fieldDefs['currency_id']['value'], 'No selected option here');
+        $this->assertMatchesRegularExpression('/<option value="' . $focus->currency_id . '" selected>/sim', $editView->fieldDefs['currency_id']['value'], 'No selected option here');
     }
 }

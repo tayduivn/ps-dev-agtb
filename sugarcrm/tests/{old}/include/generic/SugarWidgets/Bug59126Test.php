@@ -26,7 +26,7 @@ class Bug59126Test extends TestCase
         );
         $html = $this->getSugarWidgetFieldRelate()->displayInput($layoutDef);
         $regExpPattern =$this->getAssertRegExp($this->contact->id, "{$this->contact->last_name}");
-        $this->assertRegExp($regExpPattern, $html);
+        $this->assertMatchesRegularExpression($regExpPattern, $html);
     }
 
     public function testFirstLastName()
@@ -43,7 +43,7 @@ class Bug59126Test extends TestCase
             $this->contact->id,
             "{$this->contact->first_name}\s+{$this->contact->last_name}"
         );
-        $this->assertRegExp($regExpPattern, $html);
+        $this->assertMatchesRegularExpression($regExpPattern, $html);
     }
 
     public function testCustomField()
@@ -61,7 +61,7 @@ class Bug59126Test extends TestCase
             $this->contact->id,
             "{$this->contact->first_name}\s+{$this->contact->last_name}"
         );
-        $this->assertRegExp($regExpPattern, $html);
+        $this->assertMatchesRegularExpression($regExpPattern, $html);
     }
 
     private function  getAssertRegExp($value, $text)

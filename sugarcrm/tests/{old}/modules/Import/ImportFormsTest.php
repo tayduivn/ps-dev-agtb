@@ -118,18 +118,18 @@ class ImportFormsTest extends TestCase
     {
         $html = getControl('Contacts','assigned_user_id');
 
-        $this->assertRegExp('/name=\'assigned_user_id\'/',$html);
-        $this->assertRegExp('/id=\'assigned_user_id\'/',$html);
-        $this->assertRegExp('/type=\'text\'/',$html);
+        $this->assertMatchesRegularExpression('/name=\'assigned_user_id\'/', $html);
+        $this->assertMatchesRegularExpression('/id=\'assigned_user_id\'/', $html);
+        $this->assertMatchesRegularExpression('/type=\'text\'/', $html);
     }
 
     public function testGetControlEmail()
     {
         $html = getControl('Contacts','email1');
 
-        $this->assertRegExp('/name=\'email1\'/',$html);
-        $this->assertRegExp('/id=\'email1\'/',$html);
-        $this->assertRegExp('/type=\'text\'/',$html);
+        $this->assertMatchesRegularExpression('/name=\'email1\'/', $html);
+        $this->assertMatchesRegularExpression('/id=\'email1\'/', $html);
+        $this->assertMatchesRegularExpression('/type=\'text\'/', $html);
     }
 
     public function testGetControlCurrencyList()
@@ -157,19 +157,19 @@ class ImportFormsTest extends TestCase
 
         $html = getControl('Contacts','assigned_user_id',$vardef);
 
-        $this->assertRegExp('/name=\'assigned_user_id\'/',$html);
-        $this->assertRegExp('/id=\'assigned_user_id\'/',$html);
-        $this->assertRegExp('/type=\'text\'/',$html);
+        $this->assertMatchesRegularExpression('/name=\'assigned_user_id\'/', $html);
+        $this->assertMatchesRegularExpression('/id=\'assigned_user_id\'/', $html);
+        $this->assertMatchesRegularExpression('/type=\'text\'/', $html);
     }
 
     public function testGetControlValue()
     {
         $html = getControl('Contacts','email1',null,'poo');
 
-        $this->assertRegExp('/name=\'email1\'/',$html);
-        $this->assertRegExp('/id=\'email1\'/',$html);
-        $this->assertRegExp('/type=\'text\'/',$html);
-        $this->assertRegExp('/value=\'poo\'/',$html);
+        $this->assertMatchesRegularExpression('/name=\'email1\'/', $html);
+        $this->assertMatchesRegularExpression('/id=\'email1\'/', $html);
+        $this->assertMatchesRegularExpression('/type=\'text\'/', $html);
+        $this->assertMatchesRegularExpression('/value=\'poo\'/', $html);
     }
 
     /**

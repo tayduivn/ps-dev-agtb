@@ -66,7 +66,7 @@ class Bug64669Test extends TestCase
     {
         //query with filter on related field has been created,
         //make sure there is a Left Join with Campaigns in the returned query
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
 			'/LEFT JOIN\s.campaigns/',
 			$this->export_query,
             ' Left Join with Campaigns table was not found, where statement is not being processed correctly'
@@ -126,7 +126,7 @@ class Bug64669Test extends TestCase
 
         //check that there are no traces of campaign ("Campaign Name", "Campaign ID", "campaign_name_mod", "campaign_name_owner")
         //in the returned contents
-        $this->assertNotRegExp(
+        $this->assertDoesNotMatchRegularExpression(
             '/Campaign/i',
             $exportContents,
             "A column with string 'Campaign' ('Campaign Name', 'Campaign ID', 'campaign_name_mod', 'campaign_name_owner') was found, exclusion logic is not working as expected "

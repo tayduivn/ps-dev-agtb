@@ -29,27 +29,26 @@ class Bug45714Test extends TestCase
 	{
 		$GLOBALS['current_user']->is_admin = true;
 		$output = $this->getEmployeeListViewOutput();
+        $this->assertMatchesRegularExpression('/utilsLink/', $output);
 		$output = $this->getEmployeeListViewOutput();
-		$this->assertRegExp('/utilsLink/', $output, 'Assert that the links are shown for admin user');		
-		$output = $this->getEmployeeListViewOutput();
-		$this->assertRegExp('/utilsLink/', $output, 'Assert that the links are shown for module admin user');
+        $this->assertMatchesRegularExpression('/utilsLink/', $output);
 	}
 	
 	public function testViewAsNonAdminUser()
 	{
 		$output = $this->getEmployeeListViewOutput();
-		$this->assertNotRegExp('/utilsLink/', $output, 'Assert that the links are not shown for normal user');
+        $this->assertDoesNotMatchRegularExpression('/utilsLink/', $output);
 		$output = $this->getEmployeeDetailViewOutput();
-		$this->assertNotRegExp('/utilsLink/', $output, 'Assert that the links are not shown for normal user');
+        $this->assertDoesNotMatchRegularExpression('/utilsLink/', $output);
 	}
 	
 	public function testViewAsModuleAdmin()
 	{
 		$GLOBALS['current_user'] = new Bug45714UserMock();
 		$output = $this->getEmployeeListViewOutput();
-		$this->assertRegExp('/utilsLink/', $output, 'Assert that the links are shown for module admin user');
+        $this->assertMatchesRegularExpression('/utilsLink/', $output);
 		$output = $this->getEmployeeDetailViewOutput();
-		$this->assertRegExp('/utilsLink/', $output, 'Assert that the links are shown for module admin user');	
+        $this->assertMatchesRegularExpression('/utilsLink/', $output);
 	}
 	
 	private function getEmployeeListViewOutput()

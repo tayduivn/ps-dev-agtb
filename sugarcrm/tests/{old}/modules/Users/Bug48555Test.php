@@ -65,7 +65,7 @@ class Bug48555Test extends TestCase
         
         $pattern = "/.*\"to_email_addrs\":\"LAST-NAME FIRST-NAME \\\\u003Ctest@test.test\\\\u003E\".*/";
         
-        $this->assertRegExp($pattern,$test);
+        $this->assertMatchesRegularExpression($pattern, $test);
     }
     
     public function testgetEmailLink()
@@ -84,6 +84,6 @@ class Bug48555Test extends TestCase
         
         $pattern = "/.*\"to_email_addrs\":\"LAST-NAME FIRST-NAME \\\\u003Ctest@test.test\\\\u003E\".*/";
         
-        $this->assertRegExp($pattern,$test);
+        $this->assertMatchesRegularExpression($pattern, $test);
     }
 }

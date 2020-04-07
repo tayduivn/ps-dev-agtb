@@ -54,7 +54,7 @@ class Bug40911 extends TestCase
         ob_end_clean();
         $meta = json_decode($jsonOutput);
 
-        $this->assertRegExp("/.*cc@domain.eu.*/", $meta->meta->email->cc);
+        $this->assertMatchesRegularExpression("/.*cc@domain.eu.*/", $meta->meta->email->cc);
     }
     
 }

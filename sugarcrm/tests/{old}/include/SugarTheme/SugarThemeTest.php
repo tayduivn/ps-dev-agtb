@@ -129,13 +129,25 @@ class SugarThemeTest extends TestCase
         $matches = array();
         preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS(),$matches);
         $i = 0;
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/yui.css/',$matches[1][$i++]);
-        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',$matches[1][$i++]);
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/style.css/',$matches[1][$i++]);
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/css\/yui.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/css\/deprecated.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/css\/style.css/',
+            $matches[1][$i++]
+        );
 
         $output = file_get_contents(sugar_cached('themes/').$this->_themeObject->__toString().'/css/style.css');
-        $this->assertRegExp('/h2\{display:inline\}/',$output);
+        $this->assertMatchesRegularExpression('/h2\{display:inline\}/', $output);
     }
 
     public function testGetCSSWithParams()
@@ -143,13 +155,25 @@ class SugarThemeTest extends TestCase
         $matches = array();
         preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS('blue','small'),$matches);
         $i = 0;
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/yui.css/',$matches[1][$i++]);
-        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',$matches[1][$i++]);
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/style.css/',$matches[1][$i++]);
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/css\/yui.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/css\/deprecated.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/css\/style.css/',
+            $matches[1][$i++]
+        );
 
         $output = file_get_contents(sugar_cached('themes/').$this->_themeObject->__toString().'/css/style.css');
-        $this->assertRegExp('/h2\{display:inline\}/',$output);
+        $this->assertMatchesRegularExpression('/h2\{display:inline\}/', $output);
     }
 
     public function testGetCSSWithCustomStyleCSS()
@@ -161,13 +185,25 @@ class SugarThemeTest extends TestCase
         preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS(),$matches);
         $i = 0;
 
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/yui.css/',$matches[1][$i++]);
-        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',$matches[1][$i++]);
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/style.css/',$matches[1][$i++]);
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/css\/yui.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/css\/deprecated.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/css\/style.css/',
+            $matches[1][$i++]
+        );
 
         $output = file_get_contents(sugar_cached('themes/').$this->_themeObject->__toString().'/css/style.css');
-        $this->assertRegExp('/h2\{display:inline\}h3\{color:red\}/',$output);
+        $this->assertMatchesRegularExpression('/h2\{display:inline\}h3\{color:red\}/', $output);
     }
 
     public function testGetCSSWithParentTheme()
@@ -176,13 +212,25 @@ class SugarThemeTest extends TestCase
         preg_match_all('/href="([^"]+)"/',$this->_themeObjectChild->getCSS(),$matches);
         $i = 0;
 
-        $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/css\/yui.css/',$matches[1][$i++]);
-        $this->assertRegExp('/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',$matches[1][$i++]);
-        $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
-        $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/css\/style.css/',$matches[1][$i++]);
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObjectChild->__toString() . '\/css\/yui.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/include\/javascript\/jquery\/themes\/base\/jquery-ui-min\.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObjectChild->__toString() . '\/css\/deprecated.css/',
+            $matches[1][$i++]
+        );
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObjectChild->__toString() . '\/css\/style.css/',
+            $matches[1][$i++]
+        );
 
         $output = file_get_contents(sugar_cached('themes/').$this->_themeObjectChild->__toString().'/css/style.css');
-        $this->assertRegExp('/h2\{display:inline\}h3\{display:inline\}/',$output);
+        $this->assertMatchesRegularExpression('/h2\{display:inline\}h3\{display:inline\}/', $output);
     }
 
     public function testGetCSSURLWithInvalidFileSpecifed()
@@ -193,9 +241,17 @@ class SugarThemeTest extends TestCase
     public function testGetCSSURLAddsJsPathIfSpecified()
     {
         // check one may not hit cache
-        $this->assertRegExp('/style\.css\?/',$this->_themeObject->getCSSURL('style.css'));
+        $this->assertMatchesRegularExpression(
+            '/style\.css\?/',
+            $this->_themeObject->getCSSURL('style.css')
+        );
+
         // check two definitely should hit cache
-        $this->assertRegExp('/style\.css\?/',$this->_themeObject->getCSSURL('style.css'));
+        $this->assertMatchesRegularExpression(
+            '/style\.css\?/',
+            $this->_themeObject->getCSSURL('style.css')
+        );
+
         // check three for the jspath not being added
         $this->assertStringNotContainsString(
             '?',
@@ -209,10 +265,13 @@ class SugarThemeTest extends TestCase
         preg_match_all('/src="([^"]+)"/',$this->_themeObject->getJS(),$matches);
         $i = 0;
 
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/js\/style-min.js/',$matches[1][$i++]);
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/js\/style-min.js/',
+            $matches[1][$i++]
+        );
 
         $output = file_get_contents(sugar_cached('themes/').$this->_themeObject->__toString().'/js/style-min.js');
-        $this->assertRegExp('/var dog="cat";/',$output);
+        $this->assertMatchesRegularExpression('/var dog="cat";/', $output);
     }
 
     public function testGetJSCustom()
@@ -224,11 +283,14 @@ class SugarThemeTest extends TestCase
         preg_match_all('/src="([^"]+)"/',$this->_themeObject->getJS(),$matches);
         $i = 0;
 
-        $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/js\/style-min.js/',$matches[1][$i++]);
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObject->__toString() . '\/js\/style-min.js/',
+            $matches[1][$i++]
+        );
 
         $output = file_get_contents(sugar_cached('themes/').$this->_themeObject->__toString().'/js/style-min.js');
-        $this->assertRegExp('/var dog="cat";/',$output);
-        $this->assertRegExp('/var x=1;/',$output);
+        $this->assertMatchesRegularExpression('/var dog="cat";/', $output);
+        $this->assertMatchesRegularExpression('/var x=1;/', $output);
     }
 
     public function testGetJSWithParentTheme()
@@ -237,10 +299,13 @@ class SugarThemeTest extends TestCase
         preg_match_all('/src="([^"]+)"/',$this->_themeObjectChild->getJS(),$matches);
         $i = 0;
 
-        $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/js\/style-min.js/',$matches[1][$i++]);
+        $this->assertMatchesRegularExpression(
+            '/themes\/' . $this->_themeObjectChild->__toString() . '\/js\/style-min.js/',
+            $matches[1][$i++]
+        );
 
         $output = file_get_contents(sugar_cached('themes/').$this->_themeObjectChild->__toString().'/js/style-min.js');
-        $this->assertRegExp('/var dog="cat";var bird="frog";/',$output);
+        $this->assertMatchesRegularExpression('/var dog="cat";var bird="frog";/', $output);
     }
 
     public function testGetJSURLWithInvalidFileSpecifed()
@@ -251,9 +316,17 @@ class SugarThemeTest extends TestCase
     public function testGetJSURLAddsJsPathIfSpecified()
     {
         // check one may not hit cache
-        $this->assertRegExp('/style-min\.js\?/',$this->_themeObject->getJSURL('style.js'));
+        $this->assertMatchesRegularExpression(
+            '/style-min\.js\?/',
+            $this->_themeObject->getJSURL('style.js')
+        );
+
         // check two definitely should hit cache
-        $this->assertRegExp('/style-min\.js\?/',$this->_themeObject->getJSURL('style.js'));
+        $this->assertMatchesRegularExpression(
+            '/style-min\.js\?/',
+            $this->_themeObject->getJSURL('style.js')
+        );
+
         // check three for the jspath not being added
         $this->assertStringNotContainsString(
             '?',
@@ -313,9 +386,17 @@ class SugarThemeTest extends TestCase
     public function testGetImageURLAddsJsPathIfSpecified()
     {
         // check one may not hit cache
-        $this->assertRegExp('/Accounts\.gif\?/',$this->_themeObject->getImageURL('Accounts.gif'));
+        $this->assertMatchesRegularExpression(
+            '/Accounts\.gif\?/',
+            $this->_themeObject->getImageURL('Accounts.gif')
+        );
+
         // check two definitely should hit cache
-        $this->assertRegExp('/Accounts\.gif\?/',$this->_themeObject->getImageURL('Accounts.gif'));
+        $this->assertMatchesRegularExpression(
+            '/Accounts\.gif\?/',
+            $this->_themeObject->getImageURL('Accounts.gif')
+        );
+
         // check three for the jspath not being added
         $this->assertStringNotContainsString(
             '?',
@@ -401,13 +482,6 @@ class SugarThemeTest extends TestCase
             $this->_themeObject->getImage('Emails','',30,40,'.gif',"Emails"),
             "<img src=\"". $this->_themeObject->getImageURL('Emails.gif') ."\"  width=\"30\" height=\"40\"  alt=\"Emails\" />"
             );
-    }
-
-    public function testGetImageDetectingImageHeightAndWidth()
-    {
-        $this->markTestIncomplete("Sprites have been turned off for now, so skipping test");
-        $size = getimagesize($this->_themeObject->getImageURL('Contacts.gif',false));
-        $this->assertRegExp('/<span\s+?class[^>]+?><\/span>/', $this->_themeObject->getImage('Contacts','',null,null,'.gif',"Contacts"));
     }
 
     public function testGetImageWithInvalidImage()
