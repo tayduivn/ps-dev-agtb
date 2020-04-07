@@ -1705,6 +1705,7 @@ class ModuleInstaller
                 $this->modulesInPackage = $installed_modules;
                 $this->uninstall_beans($installed_modules);
                 $this->uninstall_customizations($installed_modules);
+                WorkFlow::deleteWorkFlowsByModule($installed_modules);
                 if(!$this->silent){
                     $current_step++;
                     update_progress_bar('install', $total_steps, $total_steps);

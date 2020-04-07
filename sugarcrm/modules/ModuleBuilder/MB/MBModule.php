@@ -928,6 +928,9 @@ class MBModule
             }
         }
 
+        // remove associated legacy workflows
+        WorkFlow::deleteWorkFlowsByModule([$this->key_name]);
+
         // remove the module itself
         return rmdir_recursive($this->getModuleDir());
     }

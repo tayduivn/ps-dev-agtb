@@ -21,6 +21,7 @@ class WorkFlowTest extends TestCase
     private static $has_workflow_directory;
     private static $has_logic_hooks_file;
     private static $wf_files = array('actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php');
+    private $createdIds;
 
     public static function setUpBeforeClass() : void
     {
@@ -65,14 +66,19 @@ class WorkFlowTest extends TestCase
     	$this->wf->fire_order = "alerts_actions";
     	$this->wf->record_type = "All";
     	$this->wf->save();
+        $this->createdIds = [$this->wf->id];
 	}
 
     protected function tearDown() : void
 	{
+        $db = $GLOBALS['db'];
 	    $this->wf->deleted = true;
 	    $this->wf->mark_deleted($this->wf->id);
-	    $sql = "DELETE FROM workflow WHERE id='{$this->wf->id}'";
-        $GLOBALS['db']->query($sql);
+        foreach ($this->createdIds as &$id) {
+            $id = $db->quoted($id);
+        }
+        $sql = "DELETE FROM workflow WHERE id IN (" . implode(",", $this->createdIds) . ")";
+        $db->query($sql);
 	}
 
     public static function tearDownAfterClass(): void
@@ -109,6 +115,34 @@ class WorkFlowTest extends TestCase
         $count = 0;
         while ( $row = $this->wf->db->fetchByAssoc($result) ) $count++;
         $this->assertEquals(1, $count);
+    }
+
+    public function testDeleteWorkFlowsByModule()
+    {
+        $ids = [];
+        foreach (['Contacts', 'Accounts', 'Meetings'] as $moduleName) {
+            $ids[$moduleName] = [];
+            for ($i = 0; $i < 5; $i++) {
+                $wf = new WorkFlow();
+                $wf->name = $this->testWFName;
+                $wf->base_module = $moduleName;
+                $wf->type = "Normal";
+                $wf->save();
+                $ids[$moduleName][] = $wf->id;
+                $this->createdIds[] = $wf->id;
+            }
+        }
+        WorkFlow::deleteWorkFlowsByModule(['Contacts', 'Meetings']);
+        foreach (['Contacts', 'Meetings'] as $moduleName) {
+            foreach ($ids[$moduleName] as $id) {
+                $wf = BeanFactory::retrieveBean('WorkFlow', $id, [], false);
+                $this->assertEquals(1, $wf->deleted);
+            }
+        }
+        foreach ($ids['Accounts'] as $id) {
+            $wf = BeanFactory::retrieveBean('WorkFlow', $id);
+            $this->assertEquals(0, $wf->deleted);
+        }
     }
 
     /* Non-functional test.
