@@ -672,23 +672,19 @@ describe('Opportunities.Base.Views.RecentUsedProduct', function() {
             });
         });
 
-        it('should set longName and shortName in the view.recentCollection.models', function() {
+        it('should set name in the view.recentCollection.models', function() {
             view.onProductFetchSuccess(result);
 
             expect(view.recentCollection.get(1).toJSON()).toEqual(
                 {
                     id: 1,
                     name: 'asd',
-                    longName: 'asd',
-                    shortName: 'asd'
                 }
             );
             expect(view.recentCollection.get(2).toJSON()).toEqual(
                 {
                     id: 2,
                     name: 'asdasdasdasdasdasdasdasdasd',
-                    longName: 'asdasdasdasdasdasdasdasdasd',
-                    shortName: 'asdasdasdasdasdasdasdasda...'
                 }
             );
         });

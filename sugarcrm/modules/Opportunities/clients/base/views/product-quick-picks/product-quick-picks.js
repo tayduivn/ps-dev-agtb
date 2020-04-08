@@ -245,14 +245,6 @@
 
             this.recentCollection.reset(favRecords);
         }
-        _.each(this.recentCollection.models, function(model) {
-            var name = model.get('name');
-            var shortName = name.length > 25 ? name.substr(0, 25) + '...' : name;
-            model.set({
-                longName: name,
-                shortName: shortName
-            });
-        }, this);
         this.toggleLoading(false);
         this.render();
     },

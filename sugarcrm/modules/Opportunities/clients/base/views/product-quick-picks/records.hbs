@@ -17,7 +17,10 @@
                 <ul class="unstyled listed recent-records-list">
                     {{#each recentCollection.models}}
                         <li class="recent-records">
-                            <a data-record-id="{{fieldValue this "id"}}" href="javascript:void(0)"><i class="fa fa-list-alt"></i><span class="recent-link" rel="tooltip" data-original-title="{{fieldValue this "longName"}}">{{fieldValue this "shortName"}}</span></a>
+                            <a data-record-id="{{fieldValue this "id"}}" href="javascript:void(0)">
+                                <i class="fa fa-list-alt"></i>
+                                <span class="recent-link" rel="tooltip" data-original-title="{{fieldValue this "name"}}">{{fieldValue this "name"}}</span>
+                            </a>
                         </li>
                     {{/each}}
                 </ul>
@@ -25,7 +28,10 @@
                 <ul class="unstyled listed recent-records-list">
                     {{#each recentCollection.models}}
                         <li class="recent-records">
-                            <a data-record-id="{{fieldValue this "id"}}" href="javascript:void(0)"><i class="fa fa-list-alt"></i><span class="recent-link" rel="tooltip" data-original-title="{{fieldValue this "longName"}}">{{fieldValue this "shortName"}}</span></a>
+                            <a data-record-id="{{fieldValue this "id"}}" href="javascript:void(0)">
+                                <i class="fa fa-list-alt"></i>
+                                <span class="recent-link" rel="tooltip" data-original-title="{{fieldValue this "name"}}">{{fieldValue this "name"}}</span>
+                            </a>
                         </li>
                     {{/each}}
                 </ul>
