@@ -14,6 +14,7 @@ $viewdefs['Shifts']['base']['layout']['subpanels'] = [
         [
             'layout' => 'subpanel',
             'label' => 'LBL_USERS_SUBPANEL_TITLE',
+            'override_subpanel_list_view' => 'subpanel-for-shifts',
             'context' => [
                 'link' => 'shifts_users',
             ],
