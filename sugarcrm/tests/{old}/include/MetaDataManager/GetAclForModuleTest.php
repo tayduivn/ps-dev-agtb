@@ -208,6 +208,21 @@ class GetAclForModuleTest extends TestCase
                     'write' => 'no',
                     'create' => 'no',
                 ),
+                'business_center_name' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'business_center_id' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'next_renewal_date' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
             ),
             'admin' => 'no',
             'developer' => 'no',
@@ -234,8 +249,23 @@ class GetAclForModuleTest extends TestCase
         $modules = array('Accounts');
         // user can view, list, delete, and export
         $expected_result = array(
-            'fields' =>
-            array(),
+            'fields' => array(
+                'business_center_name' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'business_center_id' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'next_renewal_date' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+            ),
             'admin' => 'no',
             'developer' => 'no',
         );
@@ -260,12 +290,27 @@ class GetAclForModuleTest extends TestCase
     {
         $modules = array('Accounts');
         // user can view, list, delete, and export
-        $expected_result = array(
-            'fields' =>
-            array(),
+        $expected_result = [
+            'fields' => [
+                'business_center_name' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'business_center_id' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'next_renewal_date' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+            ],
             'admin' => 'no',
             'developer' => 'no',
-        );
+        ];
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
             'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));

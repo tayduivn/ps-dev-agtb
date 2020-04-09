@@ -76,27 +76,27 @@ class Bug56391Test extends TestCase
         $mm = MetaDataManager::getManager();
         // because the user is not an admin the user should only have view and list access
         $expected_result = array(
-                                    'user_name' => array('write' => 'no', 'create' => 'no'),
-                                    'user_hash' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-                                    'system_generated_password' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
-                                    'pwd_last_changed' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
-                                    'authenticate_id' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-                                    'sugar_login' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-                                    'external_auth_only' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-                                    'status' => array('write' => 'no', 'create' => 'no'),
-                                    'show_on_employees' => array('read' => 'no', 'write' => 'no', 'create' => 'no'),
-                                    'portal_only' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
-                                    'employee_status' => array('write' => 'no', 'create' => 'no'),
-                                    'is_group' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-                                    'title' => array( 'write' => 'no', 'create' => 'no', ),
-                                    'department' => array( 'write' => 'no', 'create' => 'no', ),
-                                    'reports_to_id' => array( 'write' => 'no', 'create' => 'no', ),
-                                    'reports_to_name' => array( 'write' => 'no', 'create' => 'no', ),
-                                    'reports_to_link' => array( 'write' => 'no', 'create' => 'no', ),
-                                    'is_admin' => array('write' => 'no', 'create' => 'no',  ),
-                                    'last_login' => array( 'read' => 'no', 'write' => 'no', 'create' => 'no',  ),
+            'user_name' => array('write' => 'no', 'create' => 'no'),
+            'user_hash' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
+            'system_generated_password' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
+            'pwd_last_changed' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
+            'authenticate_id' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
+            'sugar_login' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
+            'external_auth_only' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
+            'status' => array('write' => 'no', 'create' => 'no'),
+            'show_on_employees' => array('read' => 'no', 'write' => 'no', 'create' => 'no'),
+            'portal_only' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
+            'employee_status' => array('write' => 'no', 'create' => 'no'),
+            'is_group' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
+            'title' => array( 'write' => 'no', 'create' => 'no', ),
+            'department' => array( 'write' => 'no', 'create' => 'no', ),
+            'reports_to_id' => array( 'write' => 'no', 'create' => 'no', ),
+            'reports_to_name' => array( 'write' => 'no', 'create' => 'no', ),
+            'reports_to_link' => array( 'write' => 'no', 'create' => 'no', ),
+            'is_admin' => array('write' => 'no', 'create' => 'no',  ),
+            'last_login' => array( 'read' => 'no', 'write' => 'no', 'create' => 'no',  ),
             'license_type' => array('write' => 'no', 'create' => 'no'),
-                                );
+        );
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);
         // not checking fields right now
@@ -211,6 +211,21 @@ class Bug56391Test extends TestCase
                     'write' => 'no',
                     'create' => 'no',
                 ),
+                'business_center_name' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'business_center_id' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'next_renewal_date' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
             ),
             'admin' => 'no',
             'developer' => 'no',
@@ -396,9 +411,23 @@ class Bug56391Test extends TestCase
     {
         $modules = array('Accounts');
 
-        $expected_bean_result['field_access'] = array();
-
-
+        $expected_bean_result['field_access'] = [
+            'business_center_name' => [
+                'write' => 'no',
+                'create' => 'no',
+                'license' => 'no',
+            ],
+            'business_center_id' => [
+                'write' => 'no',
+                'create' => 'no',
+                'license' => 'no',
+            ],
+            'next_renewal_date' => [
+                'write' => 'no',
+                'create' => 'no',
+                'license' => 'no',
+            ],
+        ];
 
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Unit Test ' . create_guid();

@@ -279,6 +279,27 @@ describe('Sugar7 field extensions', function () {
             field._setErasedFieldAction();
             expect(field.action).toEqual('erased');
         });
+
+        it('should mark a field with no license access', function() {
+            var def = {
+                'name': 'business_center_name',
+                'type': 'relate',
+                'module': 'Contacts',
+            };
+            var acls = {
+                fields: {
+                    'business_center_name': {
+                        'license': 'no'
+                    }
+                }
+            };
+
+            var model = app.data.createBean('Contacts');
+            model.set('_acl', acls);
+            field = SugarTest.createField('base', 'business_center_name', 'relate', 'list', def, 'Contacts', model);
+            field._markFieldLackingAccess();
+            expect(field.action).toEqual('nolicense');
+        });
     });
 
     describe('isFieldEmpty', function() {

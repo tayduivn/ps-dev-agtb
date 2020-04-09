@@ -153,6 +153,18 @@
             },
 
             /**
+             * Returns true if the user has license access to the field.
+             *
+             * @return {boolean} true if the field can be accessed with the user's license.
+             */
+            _hasLicenseAccess: function() {
+                if (!this.model) {
+                    return true;
+                }
+                return app.acl.hasAccessToModel('license', this.model, this.name);
+            },
+
+            /**
              * @inheritdoc
              * Checks fallback actions first and then follows ACLs checking
              * after that.
@@ -194,14 +206,14 @@
                 'edit': 'detail',
                 'detail': 'noaccess',
                 'erased': 'noaccess',
-                'noaccess' : 'nodata'
+                'noaccess': 'nodata'
             },
             /**
              * List of view names that directly fallback to base template
              * instead of 'detail'.
              */
             fallbackActions: [
-                'noaccess', 'nodata', 'erased'
+                'nolicense', 'noaccess', 'nodata', 'erased'
             ],
 
             /**
@@ -228,13 +240,27 @@
             },
 
             /**
+             * Set the action and viewName to `nolicense`, if there is no access to the field
+             * due to the lack of proper license.
+             * Note that both action and viewName need to be set in order to
+             * be able to select the necessary template.
+             */
+            _markFieldLackingAccess: function() {
+                if (!this._hasLicenseAccess()) {
+                    this.action = 'nolicense';
+                    this.options.viewName = 'nolicense';
+                }
+            },
+
+            /**
              * Override _render to redecorate fields if field is on error state
              * and to add view action CSS class.
              */
-            _render: function () {
+            _render: function() {
                 this.clearErrorDecoration();
                 this._processHelp();
                 this._setErasedFieldAction();
+                this._markFieldLackingAccess();
 
                 _fieldProto._render.call(this);
 

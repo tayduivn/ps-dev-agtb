@@ -1169,6 +1169,12 @@ class MetaDataManager implements LoggerAwareInterface
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
                     }
+                    $licenseAccess = AccessControlManager::instance()->allowFieldAccess($module, $field);
+                    if ($licenseAccess === false) {
+                        $outputAcl['fields'][$field]['create'] = 'no';
+                        $outputAcl['fields'][$field]['write'] = 'no';
+                        $outputAcl['fields'][$field]['license'] = 'no';
+                    }
                 }
             }
         }

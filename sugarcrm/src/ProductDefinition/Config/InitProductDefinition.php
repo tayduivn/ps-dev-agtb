@@ -278,6 +278,15 @@ class InitProductDefinition
         }
     },
     "FIELDS": {
+        "Accounts": {
+            "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],
+            "business_center_name":["SUGAR_SERVE","SUGAR_SELL"],
+            "next_renewal_date":["SUGAR_SELL"]
+        },
+        "Bugs": {
+            "hours_to_resolution":["SUGAR_SERVE"],
+            "business_hours_to_resolution":["SUGAR_SERVE"]
+        },
         "Cases": {
             "business_center_id":["SUGAR_SERVE"],
             "business_center_name":["SUGAR_SERVE"],
@@ -294,17 +303,48 @@ class InitProductDefinition
             "hours_to_resolution":["SUGAR_SERVE"],
             "business_hours_to_resolution":["SUGAR_SERVE"]
         },
-        "Bugs": {
-            "hours_to_resolution":["SUGAR_SERVE"],
-            "business_hours_to_resolution":["SUGAR_SERVE"]
+        "Contacts": {
+            "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],
+            "business_center_name":["SUGAR_SERVE","SUGAR_SELL"]
         },
         "DataPrivacy": {
             "hours_to_resolution":["SUGAR_SERVE","SUGAR_SELL"],
             "business_hours_to_resolution":["SUGAR_SERVE","SUGAR_SELL"]
         },
-        "Accounts": {
-            "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],
-            "business_center_name":["SUGAR_SERVE","SUGAR_SELL"]
+        "KBContents": {
+            "kbscase_name":["SUGAR_SELL"]
+        },
+        "Leads": {
+            "business_center_id":["SUGAR_SELL"],
+            "business_center_name":["SUGAR_SELL"]
+        },
+        "Opportunities": {
+            "renewal":["SUGAR_SELL"]
+        },
+        "Products": {
+            "service":["SUGAR_SELL"],
+            "service_start_date":["SUGAR_SELL"],
+            "service_end_date":["SUGAR_SELL"],
+            "renewable":["SUGAR_SELL"],
+            "service_duration":["SUGAR_SELL"],
+            "service_duration_value":["SUGAR_SELL"],
+            "service_duration_unit":["SUGAR_SELL"]
+        },
+        "ProductTemplates": {
+            "service":["SUGAR_SELL"],
+            "renewable":["SUGAR_SELL"],
+            "service_duration":["SUGAR_SELL"],
+            "service_duration_value":["SUGAR_SELL"],
+            "service_duration_unit":["SUGAR_SELL"]
+        },
+        "RevenueLineItems": {
+            "service":["SUGAR_SELL"],
+            "service_start_date":["SUGAR_SELL"],
+            "service_end_date":["SUGAR_SELL"],
+            "renewable":["SUGAR_SELL"],
+            "service_duration":["SUGAR_SELL"],
+            "service_duration_value":["SUGAR_SELL"],
+            "service_duration_unit":["SUGAR_SELL"]
         }
     }
 }
