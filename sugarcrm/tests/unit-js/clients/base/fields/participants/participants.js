@@ -841,6 +841,16 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 module: 'Users',
                 id: '123'
             });
+            expect(field.parseModuleAndIdFromUrl('/v10_8/Users/123/freebusy')).toEqual({
+                module: 'Users',
+                id: '123'
+            });
+            expect(field.parseModuleAndIdFromUrl(
+                '/v11_8/Users/1/freebusy?start=2020-04-09T06%3A00%3A00-04%3A00&end=2020-04-09T15%3A00%3A00-04%3A00'
+            )).toEqual({
+                module: 'Users',
+                id: '1'
+            });
         });
 
         it('should return an empty object if module and id has not been found', function() {

@@ -37,7 +37,7 @@
     // Number of hours to display on free/busy schedule timeline.
     timelineLength: 9,
     // Regular Expression that parses module and ID from url
-    moduleAndIdParserRegExp: new RegExp('/v\\d+/([^/]+)/([^/]+)/freebusy'),
+    moduleAndIdParserRegExp: new RegExp('/v\\d+_?\\d+/([^/]+)/([^/]+)/freebusy'),
 
     /**
      * @inheritdoc
