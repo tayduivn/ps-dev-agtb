@@ -375,7 +375,7 @@ function get_sugar_config_defaults()
     'asp', 'cfm', 'js', 'vbs', 'html', 'htm' ),
     'upload_maxsize' => 30000000,
     'import_max_execution_time' => 3600,
-    'verify_client_ip' => true,
+    'verify_client_ip' => false,
     'js_custom_version' => '',
     'js_lang_version' => 1,
         'lead_conv_activity_opt' => 'donothing',
