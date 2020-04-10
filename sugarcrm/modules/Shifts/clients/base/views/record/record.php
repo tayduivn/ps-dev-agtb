@@ -55,6 +55,20 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                 ],
                 [
                     'type' => 'rowaction',
+                    'event' => 'button:find_duplicates_button:click',
+                    'name' => 'find_duplicates_button',
+                    'label' => 'LBL_DUP_MERGE',
+                    'acl_action' => 'edit',
+                ],
+                [
+                    'type' => 'rowaction',
+                    'event' => 'button:duplicate_button:click',
+                    'name' => 'duplicate_button',
+                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'acl_action' => 'create',
+                ],
+                [
+                    'type' => 'rowaction',
                     'event' => 'button:audit_button:click',
                     'name' => 'audit_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
@@ -103,13 +117,25 @@ $viewdefs['Shifts']['base']['view']['record'] = [
         ],
         [
             'name' => 'panel_body',
-            'label' => 'LBL_RECORD_BODY',
+            'label' => 'LBL_RECORD_SHIFT_CARD_PANEL_HEADER',
             'columns' => 2,
             'placeholders' => true,
             'fields' => [
                 [
+                    'name' => 'description',
+                    'span' => 6,
+                ],
+                [
                     'name' => 'timezone',
-                    'span' => 12,
+                    'span' => 6,
+                ],
+                [
+                    'name' => 'date_start',
+                    'span' => 6,
+                ],
+                [
+                    'name' => 'date_end',
+                    'span' => 6,
                 ],
             ],
         ],
@@ -117,12 +143,12 @@ $viewdefs['Shifts']['base']['view']['record'] = [
             'name' => 'shift_hours',
             'columns' => 3,
             'placeholders' => true,
-            'label' => 'LBL_RECORD_BODY',
+            'label' => 'LBL_RECORD_SHIFT_HOURS_PANEL_HEADER',
             'fields' => [
                 [
                     'name' => 'is_open_sunday',
                     'type' => 'bool',
-                    'label' => 'LBL_SUNDAY_HOURS',
+                    'label' => 'LBL_SUNDAY',
                 ],
                 [
                     'name' => 'sunday_open',
@@ -131,7 +157,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'sunday_open_hour',
                         'sunday_open_minutes',
                     ],
-                    'label' => 'LBL_SUNDAY_OPEN_TIME',
+                    'label' => 'LBL_START_TIME',
                     'default_times' => [
                         'hour' => 12,
                         'minute' => 0,
@@ -144,7 +170,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'sunday_close_hour',
                         'sunday_close_minutes',
                     ],
-                    'label' => 'LBL_SUNDAY_CLOSE_TIME',
+                    'label' => 'LBL_END_TIME',
                     'default_times' => [
                         'hour' => 12,
                         'minute' => 0,
@@ -154,7 +180,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                 [
                     'name' => 'is_open_monday',
                     'type' => 'bool',
-                    'label' => 'LBL_MONDAY_HOURS',
+                    'label' => 'LBL_MONDAY',
                 ],
                 [
                     'name' => 'monday_open',
@@ -163,7 +189,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'monday_open_hour',
                         'monday_open_minutes',
                     ],
-                    'label' => 'LBL_MONDAY_OPEN_TIME',
+                    'label' => 'LBL_START_TIME',
                     'default_times' => [
                         'hour' => 8,
                         'minute' => 0,
@@ -176,7 +202,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'monday_close_hour',
                         'monday_close_minutes',
                     ],
-                    'label' => 'LBL_MONDAY_CLOSE_TIME',
+                    'label' => 'LBL_END_TIME',
                     'default_times' => [
                         'hour' => 17,
                         'minute' => 0,
@@ -186,7 +212,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                 [
                     'name' => 'is_open_tuesday',
                     'type' => 'bool',
-                    'label' => 'LBL_TUESDAY_HOURS',
+                    'label' => 'LBL_TUESDAY',
                 ],
                 [
                     'name' => 'tuesday_open',
@@ -195,7 +221,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'tuesday_open_hour',
                         'tuesday_open_minutes',
                     ],
-                    'label' => 'LBL_TUESDAY_OPEN_TIME',
+                    'label' => 'LBL_START_TIME',
                     'default_times' => [
                         'hour' => 8,
                         'minute' => 0,
@@ -208,7 +234,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'tuesday_close_hour',
                         'tuesday_close_minutes',
                     ],
-                    'label' => 'LBL_TUESDAY_CLOSE_TIME',
+                    'label' => 'LBL_END_TIME',
                     'default_times' => [
                         'hour' => 17,
                         'minute' => 0,
@@ -218,7 +244,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                 [
                     'name' => 'is_open_wednesday',
                     'type' => 'bool',
-                    'label' => 'LBL_WEDNESDAY_HOURS',
+                    'label' => 'LBL_WEDNESDAY',
                 ],
                 [
                     'name' => 'wednesday_open',
@@ -227,7 +253,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'wednesday_open_hour',
                         'wednesday_open_minutes',
                     ],
-                    'label' => 'LBL_WEDNESDAY_OPEN_TIME',
+                    'label' => 'LBL_START_TIME',
                     'default_times' => [
                         'hour' => 8,
                         'minute' => 0,
@@ -240,7 +266,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'wednesday_close_hour',
                         'wednesday_close_minutes',
                     ],
-                    'label' => 'LBL_WEDNESDAY_CLOSE_TIME',
+                    'label' => 'LBL_END_TIME',
                     'default_times' => [
                         'hour' => 17,
                         'minute' => 0,
@@ -250,7 +276,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                 [
                     'name' => 'is_open_thursday',
                     'type' => 'bool',
-                    'label' => 'LBL_THURSDAY_HOURS',
+                    'label' => 'LBL_THURSDAY',
                 ],
                 [
                     'name' => 'thursday_open',
@@ -259,7 +285,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'thursday_open_hour',
                         'thursday_open_minutes',
                     ],
-                    'label' => 'LBL_THURSDAY_OPEN_TIME',
+                    'label' => 'LBL_START_TIME',
                     'default_times' => [
                         'hour' => 8,
                         'minute' => 0,
@@ -272,7 +298,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'thursday_close_hour',
                         'thursday_close_minutes',
                     ],
-                    'label' => 'LBL_THURSDAY_CLOSE_TIME',
+                    'label' => 'LBL_END_TIME',
                     'default_times' => [
                         'hour' => 17,
                         'minute' => 0,
@@ -282,7 +308,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                 [
                     'name' => 'is_open_friday',
                     'type' => 'bool',
-                    'label' => 'LBL_FRIDAY_HOURS',
+                    'label' => 'LBL_FRIDAY',
                 ],
                 [
                     'name' => 'friday_open',
@@ -291,7 +317,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'friday_open_hour',
                         'friday_open_minutes',
                     ],
-                    'label' => 'LBL_FRIDAY_OPEN_TIME',
+                    'label' => 'LBL_START_TIME',
                     'default_times' => [
                         'hour' => 8,
                         'minute' => 0,
@@ -304,7 +330,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'friday_close_hour',
                         'friday_close_minutes',
                     ],
-                    'label' => 'LBL_FRIDAY_CLOSE_TIME',
+                    'label' => 'LBL_END_TIME',
                     'default_times' => [
                         'hour' => 17,
                         'minute' => 0,
@@ -314,7 +340,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                 [
                     'name' => 'is_open_saturday',
                     'type' => 'bool',
-                    'label' => 'LBL_SATURDAY_HOURS',
+                    'label' => 'LBL_SATURDAY',
                 ],
                 [
                     'name' => 'saturday_open',
@@ -323,7 +349,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'saturday_open_hour',
                         'saturday_open_minutes',
                     ],
-                    'label' => 'LBL_SATURDAY_OPEN_TIME',
+                    'label' => 'LBL_START_TIME',
                     'default_times' => [
                         'hour' => 12,
                         'minute' => 0,
@@ -336,7 +362,7 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                         'saturday_close_hour',
                         'saturday_close_minutes',
                     ],
-                    'label' => 'LBL_SATURDAY_CLOSE_TIME',
+                    'label' => 'LBL_END_TIME',
                     'default_times' => [
                         'hour' => 12,
                         'minute' => 0,
@@ -355,10 +381,6 @@ $viewdefs['Shifts']['base']['view']['record'] = [
                 'assigned_user_name',
                 [
                     'name' => 'tag',
-                    'span' => 12,
-                ],
-                [
-                    'name' => 'description',
                     'span' => 12,
                 ],
                 [

@@ -24,6 +24,10 @@ class Shift extends Basic {
     public $description;
 
     public $timezone;
+
+    public $date_start;
+    public $date_end;
+
     public $is_open_sunday;
     public $sunday_open_hour;
     public $sunday_open_minutes;
