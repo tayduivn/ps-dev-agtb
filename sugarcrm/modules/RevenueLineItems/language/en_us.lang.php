@@ -140,6 +140,7 @@ $mod_strings = array(
     'LBL_CONTACT' => 'Contact',
     'LBL_DISCOUNT_TOTAL' => 'Discount Total',
     'LBL_DISCOUNT_AMOUNT' => 'Discount Amount',
+    'LBL_DISCOUNT_AMOUNT_SIGNED' => 'Signed Discount Amount',
     'LBL_TOTAL_DISCOUNT_AMOUNT' => 'Total Discount Amount',
     'LBL_EXT_PRICE' => 'Ext. Price',
     'LBL_CURRENCY_SYMBOL_NAME' => 'Currency Symbol Name',

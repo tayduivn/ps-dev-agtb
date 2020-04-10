@@ -183,6 +183,7 @@ describe('Reports.DataAccuracy.Radio.Runtime', function() {
                                     'deleted': false,
                                     'discount_price': '150.000000',
                                     'discount_amount': '5',
+                                    'discount_amount_signed': '5',
                                     'discount_amount_usdollar': '5.000000',
                                     'discount_select': true,
                                     'name': 'DataAccuracyQLI1'
@@ -218,6 +219,7 @@ describe('Reports.DataAccuracy.Radio.Runtime', function() {
                                     'deleted': false,
                                     'discount_price': '150.000000',
                                     'discount_amount': '5',
+                                    'discount_amount_signed': '5',
                                     'discount_amount_usdollar': '5.000000',
                                     'discount_select': true,
                                     'name': 'DataAccuracyQLI2'
@@ -253,6 +255,7 @@ describe('Reports.DataAccuracy.Radio.Runtime', function() {
                                     'deleted': false,
                                     'discount_price': '150.000000',
                                     'discount_amount': '10',
+                                    'discount_amount_signed': '10',
                                     'discount_amount_usdollar': '10.000000',
                                     'discount_select': true,
                                     'name': 'DataAccuracyQLI3'

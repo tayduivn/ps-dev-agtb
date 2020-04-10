@@ -75,6 +75,7 @@ class Product extends SugarBean
     public $commit_stage;
     public $opportunity_id;
     public $product_type;
+    public $discount_amount_signed;
 
     // These are for related fields
     public $assigned_user_id;

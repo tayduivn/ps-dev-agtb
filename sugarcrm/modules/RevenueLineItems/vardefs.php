@@ -286,6 +286,18 @@ $dictionary['RevenueLineItem'] = array(
             'importable' => false,
             'studio' => false,
         ),
+        'discount_amount_signed' => array(
+            'name' => 'discount_amount_signed',
+            'vname' => 'LBL_DISCOUNT_AMOUNT_SIGNED',
+            'type' => 'currency',
+            'len' => '26,6',
+            'default' => '0',
+            'audited' => true,
+            'comment' => 'Discounted Amount Signed',
+            'formula' => 'subtract(multiply($quantity, $discount_price), $total_amount)',
+            'calculated' => true,
+            'studio' => false,
+        ),
         'deal_calc' => array(
             'name' => 'deal_calc',
             'vname' => 'LBL_DISCOUNT_TOTAL',
@@ -297,7 +309,7 @@ $dictionary['RevenueLineItem'] = array(
             'enforced' => true,
             'formula' => 'ifElse(equal($discount_select, "1"),
                             currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
-                            ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                            ifElse(isNumeric($discount_amount_signed), $discount_amount_signed, 0)
                         )',
             'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
             'related_fields' => array(

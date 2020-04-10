@@ -74,6 +74,7 @@ class RevenueLineItem extends SugarBean
     public $date_closed_timestamp;
     public $commit_stage;
     public $product_type;
+    public $discount_amount_signed;
 
     /**
      * @public String      The Current Sales Stage

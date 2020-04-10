@@ -25,6 +25,7 @@ class ProductTest extends TestCase
 
     public static function tearDownAfterClass(): void
     {
+        SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestHelper::tearDown();
     }
 
@@ -173,6 +174,50 @@ class ProductTest extends TestCase
             array('Closed Accepted', false),
             array('Closed Lost', false),
             array('Closed Dead', false)
+        );
+    }
+
+    /**
+     * @param String $quantity
+     * @param String $discount_price
+     * @param String $discount_amount
+     * @param String $discount_select
+     * @param String $total_amount
+     * @dataProvider totalAmountDataProvider
+     */
+    public function testCalculateTotalAmount(
+        $quantity,
+        $discount_price,
+        $discount_amount,
+        $discount_select,
+        $total_amount
+    ) {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->quantity = $quantity;
+        $product->discount_price = $discount_price;
+        $product->discount_amount = $discount_amount;
+        $product->discount_select = $discount_select;
+        $product->save();
+
+        // lets make sure the totals are correct
+        $this->assertEquals(
+            $total_amount,
+            $product->total_amount,
+            'Total amount Is Wrong'
+        );
+    }
+
+    /**
+     * totalAmountDataProvider
+     */
+    public function totalAmountDataProvider()
+    {
+        // $quantity, $discount_price, $discount_amount, $discount_select, $total_amount
+        return array(
+            array('-2', '100.000000', '10.000000', '0', '-190.000000'),
+            array('-2', '100.000000', '10.000000', '1', '-180.000000'),
+            array('2', '100.000000', '10.000000', '0', '190.000000'),
+            array('2', '100.000000', '10.000000', '1', '180.000000'),
         );
     }
 

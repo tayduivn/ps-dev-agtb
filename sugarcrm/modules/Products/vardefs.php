@@ -157,7 +157,8 @@ $dictionary['Product'] = array(
                         ),
                         ifElse(equal($discount_select, "1"),
                             currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
-                            ifElse(isNumeric(toString($discount_amount)), $discount_amount, 0)
+                            ifElse(greaterThan($quantity, 0), ifElse(isNumeric(toString($discount_amount)), $discount_amount, 0),
+                            ifElse(isNumeric(toString($discount_amount)), negate($discount_amount), 0))
                         )
                     ),
                     ""
@@ -303,6 +304,18 @@ $dictionary['Product'] = array(
                 'base_rate'
             ),
         ),
+        'discount_amount_signed' => array(
+            'name' => 'discount_amount_signed',
+            'vname' => 'LBL_DISCOUNT_AMOUNT_SIGNED',
+            'type' => 'currency',
+            'len' => '26,6',
+            'default' => '0',
+            'audited' => true,
+            'comment' => 'Discounted Amount Signed',
+            'formula' => 'subtract($subtotal, $total_amount)',
+            'calculated' => true,
+            'studio' => false,
+        ),
         'discount_price' => array(
             'name' => 'discount_price',
             'vname' => 'LBL_DISCOUNT_PRICE',
@@ -372,7 +385,7 @@ $dictionary['Product'] = array(
             'comment' => 'deal_calc',
             'formula' => 'ifElse(equal($discount_select, "1"),
                             currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
-                            ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                            ifElse(isNumeric($discount_amount_signed), $discount_amount_signed, 0)
                         )',
             'calculated' => true,
             'enforced' => true,
