@@ -939,7 +939,9 @@ WHERE TABLE_NAME = ?
                 if(!empty($additional_parameters) && isset($this->date_formats[$additional_parameters[0]])) {
                     $parameters = $this->date_formats[$additional_parameters[0]];
                     if (is_array($parameters) && isset($parameters['format']) && isset($parameters['function'])) {
-                        return "{$parameters['function']}({$parameters['format']}, $string)";
+                        // because unlike other DBs, MsSql returns single digit response `1-9` for first 9 weeks
+                        // instead of 2 digits `01-09`, need to format it `00` means format to 2 digits
+                        return "FORMAT({$parameters['function']}({$parameters['format']}, $string), '00')";
                     } elseif (!empty($parameters['format']) && $parameters['format'] === 'isoyear') {
                         // SQL Server doesn't support date_format ISO Year code like other DBs
                         // but ISO Week is supported (use isoww or isowk)

@@ -127,7 +127,7 @@ abstract class MssqlManagerTest extends TestCase
                 ),
                 array(
                     array('date_created', 'date_format', array('%v')),
-                    "datepart(isoww, date_created)"
+                    "FORMAT(datepart(isoww, date_created), '00')",
                 )
         );
         return $returnArray;
