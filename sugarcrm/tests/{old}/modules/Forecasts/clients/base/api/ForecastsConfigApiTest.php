@@ -67,7 +67,13 @@ class ForecastsConfigApiTest extends TestCase
             'show_worksheet_worst' => 0
         );
         /* @var ForecastsConfigApi $apiClass */
-        $apiClass = $this->createPartialMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'refreshForecastByMetadata', 'rebuildExtensions'));
+        $apiClass = $this->createPartialMock('ForecastsConfigApi', [
+            'timePeriodSettingsChanged',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'refreshForecastByMetadata',
+            'rebuildExtensions',
+            //END SUGARCRM flav=ent ONLY
+        ]);
 
         $apiClass->expects($this->once())
             ->method('timePeriodSettingsChanged')
@@ -207,7 +213,13 @@ class ForecastsConfigApiTest extends TestCase
             'show_worksheet_best' => 1,
             'show_worksheet_worst' => 0
         );
-        $apiClass = $this->createPartialMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'refreshForecastByMetadata', 'rebuildExtensions'));
+        $apiClass = $this->createPartialMock('ForecastsConfigApi', [
+            'timePeriodSettingsChanged',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'refreshForecastByMetadata',
+            'rebuildExtensions',
+            //END SUGARCRM flav=ent ONLY
+        ]);
         $apiClass->expects($this->once())
             ->method('timePeriodSettingsChanged')
             ->will($this->returnValue(false));
@@ -242,7 +254,14 @@ class ForecastsConfigApiTest extends TestCase
             'show_worksheet_best' => 1,
             'show_worksheet_worst' => 0
         );
-        $apiClass = $this->createPartialMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'refreshForecastByMetadata', 'rebuildExtensions', 'setWorksheetColumns'));
+        $apiClass = $this->createPartialMock('ForecastsConfigApi', [
+            'timePeriodSettingsChanged',
+            'setWorksheetColumns',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'refreshForecastByMetadata',
+            'rebuildExtensions',
+            //END SUGARCRM flav=ent ONLY
+        ]);
         $apiClass->expects($this->once())
             ->method('timePeriodSettingsChanged')
             ->will($this->returnValue(false));
@@ -274,7 +293,12 @@ class ForecastsConfigApiTest extends TestCase
             "module" => "Forecasts",
             "testSetting" => "testValue",
         );
-        $apiClass = $this->createPartialMock('ForecastsConfigApi', array('refreshForecastByMetadata', 'rebuildExtensions'));
+        $apiClass = $this->createPartialMock('ForecastsConfigApi', [
+            //BEGIN SUGARCRM flav=ent ONLY
+            'refreshForecastByMetadata',
+            'rebuildExtensions',
+            //END SUGARCRM flav=ent ONLY
+        ]);
 
         $this->expectException(\SugarApiExceptionNotAuthorized::class);
         $apiClass->forecastsConfigSave($api, $args);
@@ -311,7 +335,13 @@ class ForecastsConfigApiTest extends TestCase
 
         $args = array_merge($args, $priorSettings);
 
-        $apiClass = $this->createPartialMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'refreshForecastByMetadata', 'rebuildExtensions'));
+        $apiClass = $this->createPartialMock('ForecastsConfigApi', [
+            'timePeriodSettingsChanged',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'refreshForecastByMetadata',
+            'rebuildExtensions',
+            //END SUGARCRM flav=ent ONLY
+        ]);
 
         if(empty($priorSettings['is_setup'])) {
             $priorSettings['timeperiod_shown_forward'] = 0;
