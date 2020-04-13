@@ -504,6 +504,7 @@ $enabled_tabs[] = 'pmse_Business_Rules';
 $enabled_tabs[] = 'pmse_Emails_Templates';
 $enabled_tabs[] = 'BusinessCenters';
 $enabled_tabs[] = 'Shifts';
+$enabled_tabs[] = 'PurchasedLineItems';
 
 if ($_SESSION['demoData'] != 'no') {
     $enabled_tabs[] = 'Bugs';

@@ -217,26 +217,25 @@ $dictionary['Product'] = array(
             'massupdate' => false,
             'comment' => 'Manufacturer of product'
         ),
-        'manufacturer_name' =>
-            array(
+        'manufacturer_name' => array(
                 'name' => 'manufacturer_name',
-                'rname' => 'name',
-                'id_name' => 'manufacturer_id',
-                'type' => 'relate',
-                'vname' => 'LBL_MANUFACTURER_NAME',
-                'join_name' => 'manufacturers',
-                'link' => 'manufacturers',
-                'table' => 'manufacturers',
-                'isnull' => 'true',
-                'source' => 'non-db',
-                'module' => 'Manufacturers',
-                'dbType' => 'varchar',
-                'len' => '255',
-                'massupdate' => false,
-                'related_fields' => array(
-                    'manufacturer_id'
-                )
+            'rname' => 'name',
+            'id_name' => 'manufacturer_id',
+            'type' => 'relate',
+            'vname' => 'LBL_MANUFACTURER_NAME',
+            'join_name' => 'manufacturers',
+            'link' => 'manufacturers',
+            'table' => 'manufacturers',
+            'isnull' => 'true',
+            'source' => 'non-db',
+            'module' => 'Manufacturers',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'massupdate' => false,
+            'related_fields' => array(
+                'manufacturer_id',
             ),
+        ),
         'category_id' => array(
             'name' => 'category_id',
             'vname' => 'LBL_CATEGORY',
@@ -489,15 +488,6 @@ $dictionary['Product'] = array(
                 'enabled' => true,
                 'searchable' => false,
             ),
-        ),
-        'tax_class' => array(
-            'name' => 'tax_class',
-            'vname' => 'LBL_TAX_CLASS',
-            'type' => 'enum',
-            'options' => 'tax_class_dom',
-            'len' => 100,
-            'comment' => 'Tax classification (ex: Taxable, Non-taxable)',
-            'default' => 'Taxable',
         ),
         'book_value_usdollar' => array(
             'name' => 'book_value_usdollar',

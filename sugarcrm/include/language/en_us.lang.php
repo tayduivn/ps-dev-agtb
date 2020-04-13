@@ -83,6 +83,7 @@ $app_list_strings = array (
     'BusinessCenters' => 'Business Centers',
     'Shifts' => 'Shifts',
     'ShiftExceptions' => 'Shift Exceptions',
+    'PurchasedLineItems' => 'Purchased Line Items',
 //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
@@ -218,6 +219,7 @@ $app_list_strings = array (
     'BusinessCenters' => 'Business Center',
     'Shifts' => 'Shift',
     'ShiftExceptions' => 'Shift Exceptions',
+    'PurchasedLineItems' => 'Purchased Line Item',
     //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow',
     'EAPM' => 'External Account',
@@ -730,6 +732,9 @@ $app_list_strings = array (
     'Meetings' => 'Meeting',
     'Calls' => 'Call',
       'KBContents' => 'Knowledge Base',
+      //BEGIN SUGARCRM flav=ent ONLY
+      'PurchasedLineItems' => 'Purchased Line Item',
+      //END SUGARCRM flav=ent ONLY
   ),
     'record_type_display_emailparticipants' => array(
         'Accounts' => 'Account',
@@ -759,6 +764,9 @@ $app_list_strings = array (
     'Prospects' => 'Target',
       'KBContents' => 'Knowledge Base',
       'Notes' => 'Note',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'PurchasedLineItems' => 'Purchased Line Item',
+    //END SUGARCRM flav=ent ONLY
   ),
 
   'changetimer_parent_type' => [

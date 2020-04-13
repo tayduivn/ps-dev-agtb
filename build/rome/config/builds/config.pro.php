@@ -148,4 +148,9 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/ShiftExceptions' => 1,
 'sugarcrm/tests/unit-js/modules/ShiftExceptions' => 1,
 'sugarcrm/tests/{old}/modules/Shifts' => 1,
+
+// Purchases and PLIs
+'sugarcrm/modules/PurchasedLineItems' => 1,
+'sugarcrm/tests/{old}/modules/PurchasedLineItems' => 1,
+'sugarcrm/tests/{old}/SugarTestPurchasedLineItemUtilities.php' => 1,
 );

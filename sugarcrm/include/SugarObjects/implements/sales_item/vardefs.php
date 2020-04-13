@@ -197,6 +197,15 @@ $vardefs = [
             'len' => 100,
             'comment' => 'Term (length) of support contract',
         ],
+        'tax_class' => [
+            'name' => 'tax_class',
+            'vname' => 'LBL_TAX_CLASS',
+            'type' => 'enum',
+            'options' => 'tax_class_dom',
+            'len' => 100,
+            'comment' => 'Tax classification (ex: Taxable, Non-taxable)',
+            'default' => 'Taxable',
+        ],
         'vendor_part_num' => [
             'name' => 'vendor_part_num',
             'vname' => 'LBL_VENDOR_PART_NUM',

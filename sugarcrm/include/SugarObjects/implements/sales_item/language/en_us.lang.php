@@ -29,8 +29,9 @@ $mod_strings = [
     'LBL_SUPPORT_DESCRIPTION' => 'Support Description',
     'LBL_SUPPORT_NAME' => 'Support Title',
     'LBL_SUPPORT_TERM' => 'Support Term',
-    'LBL_VENDOR_PART_NUM' => 'Vendor Part Number',
+    'LBL_TAX_CLASS' => 'Tax Class',
     'LBL_URL' => 'Product URL',
+    'LBL_VENDOR_PART_NUM' => 'Vendor Part Number',
     'LBL_WEIGHT' => 'Weight',
     'LBL_SERVICE' => 'Service',
 ];

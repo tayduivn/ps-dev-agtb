@@ -148,8 +148,7 @@ $dictionary['RevenueLineItem'] = array(
             'massupdate' => false,
             'comment' => 'Manufacturer of product'
         ),
-        'manufacturer_name' =>
-        array (
+        'manufacturer_name' => array (
             'name' => 'manufacturer_name',
             'rname'=> 'name',
             'id_name'=> 'manufacturer_id',
@@ -470,14 +469,6 @@ $dictionary['RevenueLineItem'] = array(
             'audited' => true,
             'comment' => 'Product status (ex: Quoted, Ordered, Shipped)'
         ),
-        'tax_class' => array(
-            'name' => 'tax_class',
-            'vname' => 'LBL_TAX_CLASS',
-            'type' => 'enum',
-            'options' => 'tax_class_dom',
-            'len' => 100,
-            'comment' => 'Tax classification (ex: Taxable, Non-taxable)'
-        ),
         'book_value_usdollar' => array(
             'name' => 'book_value_usdollar',
             'vname' => 'LBL_BOOK_VALUE_USDOLLAR',
@@ -506,6 +497,39 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_QUOTE',
             'source' => 'non-db',
         ),
+        'purchasedlineitem' => [
+            'name' => 'purchasedlineitem',
+            'type' => 'link',
+            'relationship' => 'purchasedlineitem_revenuelineitem',
+            'module' => 'PurchasedLineItems',
+            'source' => 'non-db',
+            'vname' => 'LBL_PURCHASED_LINE_ITEM',
+        ],
+        'purchasedlineitem_id' => [
+            'name' => 'purchasedlineitem_id',
+            'type' => 'id',
+            'vname' => 'LBL_PLI_ID',
+            'required' => false,
+            'reportable' => false,
+            'comment' => 'If PLI was created from this RLI, this is that PLIs ID',
+        ],
+        'purchasedlineitem_name' => [
+            'name' => 'purchasedlineitem_name',
+            'rname' => 'name',
+            'id_name' => 'purchasedlineitem_id',
+            'join_name' => 'purchasedlineitem',
+            'type' => 'relate',
+            'link' => 'purchasedlineitem',
+            'table' => 'purchased_line_items',
+            'isnull' => true,
+            'required' => false,
+            'module' => 'PurchasedLineItems',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'vname' => 'LBL_PLI_NAME',
+            'source' => 'non-db',
+            'comment' => 'PLI Name',
+        ],
         'best_case' => array(
             'formula' => 'ifElse(equal($best_case, ""), string($total_amount), $best_case)',
             'calculated' => true,

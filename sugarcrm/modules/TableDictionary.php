@@ -125,6 +125,8 @@ include 'metadata/shift_exceptions_usersMetaData.php';
 // Users to Shifts  relationship
 include 'metadata/shifts_usersMetaData.php';
 
+// Purchased Line Items to Documents relationship
+include 'metadata/purchasedlineitems_documentsMetaData.php';
 //END SUGARCRM flav=ent ONLY
 
 // Commentlog relation field

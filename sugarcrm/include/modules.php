@@ -41,6 +41,7 @@ $moduleList[] = 'pmse_Business_Rules';
 $moduleList[] = 'pmse_Emails_Templates';
 $moduleList[] = 'BusinessCenters';
 $moduleList[] = 'Shifts';
+$moduleList[] = 'PurchasedLineItems';
 //END SUGARCRM flav=ent ONLY
 
 $moduleList[] = 'Documents';
@@ -209,6 +210,7 @@ $beanList['BusinessCenters'] = 'BusinessCenter';
 $beanList['Shifts'] = 'Shift';
 $beanList['ShiftExceptions'] = 'ShiftException';
 $beanList['ChangeTimers'] = 'ChangeTimer';
+$beanList['PurchasedLineItems'] = 'PurchasedLineItem';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
 $beanList['UpgradeHistory'] = 'UpgradeHistory';
@@ -375,6 +377,7 @@ $beanFiles['BusinessCenter'] = 'modules/BusinessCenters/BusinessCenter.php';
 $beanFiles['Shift'] = 'modules/Shifts/Shift.php';
 $beanFiles['ShiftException'] = 'modules/ShiftExceptions/ShiftException.php';
 $beanFiles['ChangeTimer'] = 'modules/ChangeTimers/ChangeTimer.php';
+$beanFiles['PurchasedLineItem'] = 'modules/PurchasedLineItems/PurchasedLineItem.php';
 //END SUGARCRM flav=ent ONLY
 
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
