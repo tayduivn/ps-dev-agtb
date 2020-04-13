@@ -2161,15 +2161,16 @@
      * when the DOM is ready
      */
     focusFirstInput: function() {
-        $(() => {
-            let $element = (app.drawer && (app.drawer.count() > 0)) ?
+        var self = this;
+        $(function() {
+            var $element = (app.drawer && (app.drawer.count() > 0)) ?
                 app.drawer._components[app.drawer.count() - 1].$el
                 : app.$contentEl;
-            let $firstInput = $element.find('input[type=text]').first();
+            var $firstInput = $element.find('input[type=text]').first();
 
             if (($firstInput.length > 0) && $firstInput.is(':visible')) {
                 $firstInput.focus();
-                this.setCaretToEnd($firstInput);
+                self.setCaretToEnd($firstInput);
             }
         });
     },
@@ -2181,7 +2182,7 @@
      */
     setCaretToEnd: function($element) {
         if ($element.val().length > 0) {
-            let elementVal = $element.val();
+            var elementVal = $element.val();
             $element.val('').val(elementVal);
         }
     }

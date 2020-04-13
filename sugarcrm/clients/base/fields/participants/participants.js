@@ -1036,8 +1036,8 @@
      */
     focusFirstInput: function() {
         if (app.drawer && (app.drawer.count() > 0)) {
-            $(() => {
-                let $firstInput = app.drawer._components[app.drawer.count() - 1].$el
+            $(function() {
+                var $firstInput = app.drawer._components[app.drawer.count() - 1].$el
                     .find('input[type=text]')
                     .first();
 
