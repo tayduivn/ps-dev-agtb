@@ -32,7 +32,7 @@ class SessionListener
 
         $sugarUser = $user->getSugarUser();
         $sugarConfig = $this->getSugarConfig();
-        $sessionId = hash('sha256', $token->getCredentials());
+        $sessionId = hash('sha256', $token->getCredentials() . $sugarConfig->get('unique_key'));
 
         if (session_id() != $sessionId) {
             if (session_id()) {
