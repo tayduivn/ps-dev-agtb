@@ -17,4 +17,6 @@ $mod_strings = [
     'LNK_NEW_SHIFT' => 'Create Shift',
     'LNK_VIEW_SHIFTS' => 'View Shifts',
     'LBL_USERS_SUBPANEL_TITLE' => 'Users in the current shift',
+    'LBL_SHIFT_USERS_TITLE' => 'Users',
+    'LBL_SHIFT_EXCEPTION' => 'Shift Exceptions',
 ];

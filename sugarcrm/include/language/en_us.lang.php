@@ -82,6 +82,7 @@ $app_list_strings = array (
     'pmse_Emails_Templates' => 'Process Email Templates',
     'BusinessCenters' => 'Business Centers',
     'Shifts' => 'Shifts',
+    'ShiftExceptions' => 'Shift Exceptions',
 //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
@@ -216,6 +217,7 @@ $app_list_strings = array (
     'pmse_Emails_Templates' => 'Process Email Template',
     'BusinessCenters' => 'Business Center',
     'Shifts' => 'Shift',
+    'ShiftExceptions' => 'Shift Exceptions',
     //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow',
     'EAPM' => 'External Account',
@@ -2212,6 +2214,11 @@ $app_list_strings = array (
             'month' => 'Month(s)',
             'day' => 'Day(s)',
         ),
+        'shift_exception_type_dom' => [
+            'time_off' => 'Time Off',
+            'event' => 'Event',
+            'other' => 'Other',
+        ],
 //END SUGARCRM flav=ent ONLY
 );
 

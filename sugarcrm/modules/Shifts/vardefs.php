@@ -38,19 +38,18 @@ $dictionary['Shift'] = [
             'module' => 'Users',
             'bean_name' => 'User',
         ],
-        'users' => [
-            'name' => 'users',
-            'type' => 'link',
-            'relationship' => 'shifts_users',
-            'source' => 'non-db',
-            'module' => 'Users',
-            'bean_name' => 'Users',
-            'rel_fields' => [],
-            'vname' => 'LBL_USERS',
-            'populate_list' => []
+    ],
+    'relationships' => [
+        'shifts_shift_exceptions' => [
+            'lhs_module' => 'Shifts',
+            'lhs_table' => 'shifts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'ShiftExceptions',
+            'rhs_table' => 'shiftexceptions',
+            'rhs_key' => 'shift_id',
+            'relationship_type' => 'one-to-many',
         ],
     ],
-    'relationships' => [],
     'acls' => [
         'SugarACLAdminOnly' => [
             'allowUserRead' => true,

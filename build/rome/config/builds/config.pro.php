@@ -137,4 +137,8 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/ConsoleConfiguration' => 1,
 'sugarcrm/tests/unit-js/modules/ConsoleConfiguration' => 1,
 'sugarcrm/tests/{old}/modules/ConsoleConfiguration' => 1,
+
+// Workforce Management
+'sugarcrm/modules/Shifts' => 1,
+'sugarcrm/modules/ShiftExceptions' => 1,
 );

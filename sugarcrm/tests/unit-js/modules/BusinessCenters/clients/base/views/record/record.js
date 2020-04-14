@@ -29,7 +29,7 @@ describe('BusinessCenters.Views.Record', function() {
         SugarTest.loadComponent('base', 'field', 'base');
         SugarTest.loadComponent('base', 'field', 'enum');
         SugarTest.loadComponent('base', 'field', 'business-day-status', moduleName);
-        SugarTest.loadComponent('base', 'field', 'timeselect', moduleName);
+        SugarTest.loadComponent('base', 'field', 'timeselect');
         SugarTest.loadComponent('base', 'field', 'record-decor');
 
         app = SugarTest.app;

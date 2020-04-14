@@ -1084,7 +1084,18 @@ $dictionary['User'] = array(
             'bean_name' => 'Shift',
             'rel_fields' => [],
             'vname' => 'LBL_SHIFTS',
-            'populate_list' => []
+            'populate_list' => [],
+        ],
+        'shift_exceptions' => [
+            'name' => 'shift_exceptions',
+            'type' => 'link',
+            'relationship' => 'shift_exceptions_users',
+            'source' => 'non-db',
+            'module' => 'ShiftExceptions',
+            'bean_name' => 'ShiftException',
+            'rel_fields' => [],
+            'vname' => 'LBL_SHIFT_EXCEPTIONS',
+            'populate_list' => [],
         ],
     ) ,
     'name_format_map' => array(

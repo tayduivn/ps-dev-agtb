@@ -118,6 +118,9 @@ include "metadata/locked_field_bean_relMetaData.php";
 
 // Holidays to Business Centers relationship
 include 'metadata/business_centers_holidaysMetaData.php';
+
+// Users to Shift Exceptions relationship
+include 'metadata/shift_exceptions_usersMetaData.php';
 //END SUGARCRM flav=ent ONLY
 
 include 'metadata/shifts_usersMetaData.php';

@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Base.Field.BusinessCenters.Timeselect', function() {
+describe('Base.Field.Timeselect', function() {
     var app;
     var field;
     var fieldName = 'sunday_open';
@@ -24,8 +24,8 @@ describe('Base.Field.BusinessCenters.Timeselect', function() {
     beforeEach(function() {
         app = SugarTest.app;
 
-        SugarTest.loadHandlebarsTemplate(typeName, 'field', 'base', 'edit', module);
-        SugarTest.loadHandlebarsTemplate(typeName, 'field', 'base', 'disabled', module);
+        SugarTest.loadHandlebarsTemplate(typeName, 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate(typeName, 'field', 'base', 'disabled');
 
         model = app.data.createBean(module, {id: '5'});
 
@@ -38,7 +38,7 @@ describe('Base.Field.BusinessCenters.Timeselect', function() {
             module,
             model,
             null,
-            true
+            false
         );
         timeFormat = 'hh:mma';
         timeFormatStub = sinon.collection.stub(app.date, 'getUserTimeFormat').returns(timeFormat);
