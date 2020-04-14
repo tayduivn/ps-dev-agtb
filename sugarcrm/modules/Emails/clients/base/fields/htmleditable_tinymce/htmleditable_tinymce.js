@@ -240,10 +240,9 @@
         this._super('setViewContent', [value]);
 
         // Only set this field height if it is in the preview or delail pane
-        if (!['preview', 'detail'].includes(this.tplName)) {
+        if (!_.contains(['preview', 'detail'], this.tplName)) {
             return;
         }
-
         contentHeight = this._getContentHeight() + padding;
 
         // Only resize the editor when the content is fully loaded
