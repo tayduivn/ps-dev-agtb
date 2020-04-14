@@ -299,8 +299,8 @@ class InitProductDefinition
             "business_hours_to_resolution":["SUGAR_SERVE"]
         },
         "DataPrivacy": {
-            "hours_to_resolution":["SUGAR_SERVE"],
-            "business_hours_to_resolution":["SUGAR_SERVE"]
+            "hours_to_resolution":["SUGAR_SERVE","SUGAR_SELL"],
+            "business_hours_to_resolution":["SUGAR_SERVE","SUGAR_SELL"]
         },
         "Accounts": {
             "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],
