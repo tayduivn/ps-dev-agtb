@@ -155,7 +155,7 @@ class EmailsApiIntegrationTestCase extends TestCase
                     "upload://{$attachment['upload_id']}",
                     "The file {$attachment['upload_id']} should exist"
                 );
-                $this->assertFileNotExists(
+                $this->assertFileDoesNotExist(
                     "upload://{$attachment['id']}",
                     "The file {$attachment['id']} should not exist"
                 );

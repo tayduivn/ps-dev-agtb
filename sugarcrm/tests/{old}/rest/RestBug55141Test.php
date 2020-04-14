@@ -50,6 +50,6 @@ class RestBug55141Test extends RestTestBase {
         $GLOBALS['current_user'] = $old_user;
         
         // verify the cache file for this platform and visibility no longer exists
-        $this->assertFileNotExists('cache/api/metadata/metadata_base_private.php', "Didn't really clear the cache");
+        $this->assertFileDoesNotExist('cache/api/metadata/metadata_base_private.php', "Didn't really clear the cache");
     }
 }

@@ -111,7 +111,7 @@ class AutoLoaderTests extends TestCase
         SugarAutoLoader::saveClassMap();
 
         // Make sure it didn't actually save the class map
-        $this->assertFileNotExists(sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE), "Saved the class map cache when it didn't need to");
+        $this->assertFileDoesNotExist(sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE), "Saved the class map cache when it didn't need to");
 
         // Now actually save it
         SugarAutoLoader::$classMapDirty = true;

@@ -144,7 +144,7 @@ class Bug41058Test extends TestCase
     public function testGlobalPreferenceForLocaleNameFormatUpgrade($name_format) {
         global $sugar_config, $sugar_version;
 
-        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         $this->assertNotSame($name_format, $sugar_config['default_locale_name_format']);
         $sugar_config['default_locale_name_format'] = $name_format;
         if(!rebuildConfigFile($sugar_config, $sugar_version)) {
@@ -154,7 +154,7 @@ class Bug41058Test extends TestCase
         upgradeUserPreferences();
         require ('config.php');
         $this->assertSame($name_format, $sugar_config['default_locale_name_format']);
-        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
     }
 
     /**
@@ -166,7 +166,7 @@ class Bug41058Test extends TestCase
     public function testInvalidGlobalPreferenceForLocaleNameFormatUpgrade($name_format) {
         global $sugar_config, $sugar_version;
 
-        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         $this->assertNotSame($name_format, $sugar_config['default_locale_name_format']);
         $sugar_config['default_locale_name_format'] = $name_format;
         if(!rebuildConfigFile($sugar_config, $sugar_version)) {
@@ -192,7 +192,7 @@ class Bug41058Test extends TestCase
 
         require('modules/Administration/language/en_us.lang.php');
 
-        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         $sugar_config['default_locale_name_format'] = $name_format;
         upgradeUserPreferences();
         $this->assertFileExists($this->loc->invalidNameFormatUpgradeFilename);
@@ -214,10 +214,10 @@ class Bug41058Test extends TestCase
 
         require 'modules/Administration/language/en_us.lang.php';
 
-        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         $sugar_config['default_locale_name_format'] = $name_format;
         upgradeUserPreferences();
-        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
 
         $this->setOutputCallback(function ($output) use ($mod_strings) {
             $this->assertStringNotContainsString($mod_strings['ERR_INVALID_LOCALE_NAME_FORMAT_UPGRADE'], $output);
@@ -236,7 +236,7 @@ class Bug41058Test extends TestCase
         global $sugar_config, $locale, $app_strings, $app_list_strings;
         require('modules/Administration/language/en_us.lang.php');
 
-        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         $sugar_config['default_locale_name_format'] = $name_format;
         upgradeUserPreferences();
         $this->assertFileExists($this->loc->invalidNameFormatUpgradeFilename);
@@ -244,7 +244,7 @@ class Bug41058Test extends TestCase
             $_REQUEST['process'] = 'true';
             require('modules/Administration/Locale.php');
         } catch (Exception $e) {
-            $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+            $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         }
         // this is just to suppress output... remove when this is a proper test
         $this->expectOutputRegex('/Locale/');

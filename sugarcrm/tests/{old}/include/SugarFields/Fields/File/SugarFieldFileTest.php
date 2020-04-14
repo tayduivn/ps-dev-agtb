@@ -86,6 +86,6 @@ class SugarFieldFileTest extends TestCase
         $field->apiSave($this->newNote, $submittedData, 'filename', $this->newNote->field_defs['filename']);
 
         $this->assertEquals($this->origNote->id, $this->newNote->getUploadId());
-        $this->assertFileNotExists("upload://{$this->newNote->id}");
+        $this->assertFileDoesNotExist("upload://{$this->newNote->id}");
     }
 }

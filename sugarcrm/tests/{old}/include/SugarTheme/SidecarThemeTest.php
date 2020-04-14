@@ -49,8 +49,8 @@ class SidecarThemeTest extends TestCase
 
         // Make sure our environment is clean. The FileNotExists assertion works
         // on directories as well.
-        $this->assertFileNotExists($themePaths['cache']);
-        $this->assertFileNotExists($defaultPaths['cache']);
+        $this->assertFileDoesNotExist($themePaths['cache']);
+        $this->assertFileDoesNotExist($defaultPaths['cache']);
         $this->assertNull(sugar_cache_retrieve($themePaths['hashKey']));
         $this->assertNull(sugar_cache_retrieve($defaultPaths['hashKey']));
 
@@ -79,7 +79,7 @@ class SidecarThemeTest extends TestCase
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $themePaths = $theme->getPaths();
 
-        $this->assertFileNotExists($themePaths['cache']);
+        $this->assertFileDoesNotExist($themePaths['cache']);
         $files = $theme->compileTheme();
 
         $this->assertArrayHasKey('sugar', $files);
@@ -96,10 +96,10 @@ class SidecarThemeTest extends TestCase
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $themePaths = $theme->getPaths();
 
-        $this->assertFileNotExists($themePaths['cache']);
+        $this->assertFileDoesNotExist($themePaths['cache']);
         $css = $theme->previewCss();
         $this->assertIsString($css);
-        $this->assertFileNotExists($themePaths['cache']);
+        $this->assertFileDoesNotExist($themePaths['cache']);
     }
 
     /**
@@ -112,7 +112,7 @@ class SidecarThemeTest extends TestCase
         $files = glob($themePaths['cache'] . '*.css');
         $this->assertEquals(sizeof($files), 0, 'There should be 0 css file');
 
-        $this->assertFileNotExists($themePaths['cache'] . 'sugar');
+        $this->assertFileDoesNotExist($themePaths['cache'] . 'sugar');
         $hash = $theme->compileFile('sugar');
 
         $this->assertFileExists($themePaths['cache'] . 'sugar_' . $hash .'.css', 'The css file should have been created.');
@@ -297,7 +297,7 @@ class SidecarThemeTest extends TestCase
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $paths = $theme->getPaths();
 
-        $this->assertFileNotExists($paths['custom'] . 'variables.php');
+        $this->assertFileDoesNotExist($paths['custom'] . 'variables.php');
 
         //Write a sample variables.php to temporary put in /custom/
         $this->testLoadVariables();
@@ -326,7 +326,7 @@ class SidecarThemeTest extends TestCase
         $variables = $theme->getThemeVariables();
 
         // TEST variables.php has been removed
-        $this->assertFileNotExists($paths['custom'] . 'variables.php', 'Variables.less has not been removed');
+        $this->assertFileDoesNotExist($paths['custom'] . 'variables.php', 'Variables.less has not been removed');
 
         // TEST Result
         $this->assertNotEquals($expectedArray, $variables, 'It should reset base default theme variables');

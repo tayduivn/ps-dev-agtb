@@ -34,7 +34,7 @@ class EnsureJSCacheFilesExistTest extends TestCase
     public function testEnsureJSCacheFilesExistSingle()
     {
         // Sanity check
-        $this->assertFileNotExists($this->testFile, "Test file was not removed during setup");
+        $this->assertFileDoesNotExist($this->testFile, "Test file was not removed during setup");
 
         // Run the new method and ensure it was run
         $actual = ensureJSCacheFilesExist();
@@ -48,7 +48,7 @@ class EnsureJSCacheFilesExistTest extends TestCase
     public function testEnsureJSCacheFilesExistArray()
     {
         // Sanity check
-        $this->assertFileNotExists($this->testFile, "Test file was not removed during setup");
+        $this->assertFileDoesNotExist($this->testFile, "Test file was not removed during setup");
 
         // Run the new method and ensure it was run against an array of files
         $actual = ensureJSCacheFilesExist($this->testFiles, '.', false);

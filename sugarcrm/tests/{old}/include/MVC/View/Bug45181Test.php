@@ -87,7 +87,7 @@ class Bug45181 extends TestCase
         $sugar_config['log_memory_usage'] = false;
         $output = $this->sugarView->logMemoryStatisticsTest("\n");
         $this->assertEmpty($output, "Failed to recognize log_memory_usage = false setting");
-        $this->assertFileNotExists('memory_usage.log');
+        $this->assertFileDoesNotExist('memory_usage.log');
     }
 }
 

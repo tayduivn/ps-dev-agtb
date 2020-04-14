@@ -49,6 +49,6 @@ class SugarJobRemoveFilesTest extends TestCase
         $job->run(null);
 
         $this->assertFileExists($freshFile, 'Fresh file should not have been removed');
-        $this->assertFileNotExists($staleFile, 'Stale file should have been removed');
+        $this->assertFileDoesNotExist($staleFile, 'Stale file should have been removed');
     }
 }

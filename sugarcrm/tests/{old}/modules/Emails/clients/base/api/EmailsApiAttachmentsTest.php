@@ -60,7 +60,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         );
         $record = $this->createRecord($args);
 
-        $this->assertFileNotExists("upload://tmp/{$uploadId}", 'The file should have been moved');
+        $this->assertFileDoesNotExist("upload://tmp/{$uploadId}", 'The file should have been moved');
 
         $attachments = $this->getRelatedRecords($record['id'], 'attachments');
         $this->assertCount(2, $attachments['records']);
@@ -135,7 +135,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
             return $attachment['id'] === $attachment2->id;
         });
         $this->assertCount(0, $found, "{$attachment2->id} should not have been returned");
-        $this->assertFileNotExists(
+        $this->assertFileDoesNotExist(
             "upload://{$attachment2->id}",
             "The file {$attachment2->id} should have been deleted"
         );

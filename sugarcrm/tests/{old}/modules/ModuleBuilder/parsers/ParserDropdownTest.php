@@ -218,7 +218,7 @@ class ParserDropdownTest extends TestCase
 
             $this->assertSame($expected, $app_list_strings, 'Save Dropdown not working properly.');
         } else {
-            $this->assertFileNotExists($this->customFile);
+            $this->assertFileDoesNotExist($this->customFile);
         }
     }
 

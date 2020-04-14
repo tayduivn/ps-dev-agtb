@@ -94,7 +94,7 @@ class Bug56675Test extends TestCase
         //BEGIN SUGARCRM flav=ent ONLY
         // Modified this test for Bug 57259 to test NOT exists for portal viewdefs
         $dir = $this->dirname . 'portal';
-        $this->assertFileNotExists($dir, "$dir directory was created when the module was saved but should not have been");
+        $this->assertFileDoesNotExist($dir, "$dir directory was created when the module was saved but should not have been");
         //END SUGARCRM flav=ent ONLY
     }
     

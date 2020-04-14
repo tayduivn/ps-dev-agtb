@@ -48,8 +48,11 @@ class SilentUpgradeSessionVarsTest extends TestCase
     	
     	removeSilentUpgradeVarsCache();
     	$this->assertEmpty($silent_upgrade_vars_loaded, "Silent upgrade vars variable should have been unset in removeSilentUpgradeVarsCache() call");
-    	$this->assertFileNotExists($this->varsCacheFileName, "Cache file exists after call to removeSilentUpgradeVarsCache()");
-    	
+        $this->assertFileDoesNotExist(
+            $this->varsCacheFileName,
+            'Cache file exists after call to removeSilentUpgradeVarsCache()'
+        );
+
     	$get = getSilentUpgradeVar('SDizzle');
     	$this->assertNotEquals('BSnizzle', $get, "Unexpected value when getting silent upgrade var after resetting");
     }
