@@ -81,7 +81,7 @@ class StudioModuleTest extends TestCase
             'type' => 'previewview',
             'image' => 'PreviewView',
         ];
-        $this->assertEquals($expectedDef, $defs[3]);
+        $this->assertContains($expectedDef, $defs);
     }
 
     public function providerGetType()
