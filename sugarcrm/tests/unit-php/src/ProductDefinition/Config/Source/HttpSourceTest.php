@@ -82,7 +82,7 @@ class HttpSourceTest extends TestCase
 
         $this->httpClient->expects($this->exactly(2))
             ->method('request')
-            ->withConsecutive(['GET', '/9.2.0'], ['GET', '/9.0.0'])
+            ->withConsecutive(['GET', '9.2.0'], ['GET', '9.0.0'])
             ->willThrowException(new \Exception('test'));
 
         $this->response->expects($this->never())
@@ -101,7 +101,7 @@ class HttpSourceTest extends TestCase
 
         $this->httpClient->expects($this->exactly(2))
             ->method('request')
-            ->withConsecutive(['GET', '/9.2.0'], ['GET', '/9.0.0'])
+            ->withConsecutive(['GET', '9.2.0'], ['GET', '9.0.0'])
             ->willReturn($this->response);
 
         $this->response->expects($this->exactly(2))
@@ -121,7 +121,7 @@ class HttpSourceTest extends TestCase
 
         $this->httpClient->expects($this->exactly(2))
             ->method('request')
-            ->withConsecutive(['GET', '/9.2.0'], ['GET', '/9.0.0'])
+            ->withConsecutive(['GET', '9.2.0'], ['GET', '9.0.0'])
             ->willReturn($this->response);
 
         $this->response->expects($this->exactly(2))

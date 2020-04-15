@@ -26,7 +26,7 @@ class HttpSource implements SourceInterface
     /**
      * Default server uri
      */
-    const DEFAULT_BASE_URI = 'https://updates.sugarcrm.com/spds';
+    const DEFAULT_BASE_URI = 'https://updates.sugarcrm.com/spds/';
 
     /**
      * Default fallback version
@@ -56,8 +56,9 @@ class HttpSource implements SourceInterface
             throw new \InvalidArgumentException('base URL should not be empty');
         }
 
+        $base_uri = rtrim($options['base_uri'], " \t\n\r\0\x0B/") . '/';
         $this->setHttpClient(new HttpClient([
-            'base_uri' => $options['base_uri'],
+            'base_uri' => $base_uri,
             'http_errors' => false,
             'timeout' => static::HTTP_CLIENT_TIMEOUT,
         ]));
@@ -108,7 +109,7 @@ class HttpSource implements SourceInterface
     protected function makeRequest(string $version):? string
     {
         try {
-            $response = $this->client->request('GET', '/' . $version);
+            $response = $this->client->request('GET', $version);
         } catch (\Exception $e) {
             $this->getLogger()->error('Can\'t download product definition for version: ' . $version);
             return null;
