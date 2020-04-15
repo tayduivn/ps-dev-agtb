@@ -58,21 +58,6 @@ class FieldListTest extends TestCase
 
     /**
      * @test
-     * @covers ::createEmailField()
-     */
-    public function createEmailFieldFailure()
-    {
-        $this->markTestSkipped('Re-enabled once Audit/Erase Email Addresses is completed');
-        $this->expectException(InvalidArgumentException::class);
-        FieldList::fromArray([
-            [
-                'field_name' => 'email',
-            ],
-        ]);
-    }
-
-    /**
-     * @test
      * @covers ::__construct()
      * @covers ::jsonSerialize()
      */

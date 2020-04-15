@@ -106,13 +106,11 @@ class InboundEmailTest extends TestCase
      *
      * @dataProvider convertToUtf8Provider
      * @covers ::convertToUtf8
+     *
+     * @requires extension mbstring
      */
     public function testConvertToUtf8($inputText, $expected)
     {
-        if (!function_exists('mb_convert_encoding')) {
-            $this->markTestSkipped('Need multibyte encoding support');
-        }
-
         $ie = $this->createPartialMock('\\InboundEmail', []);
         $inputText = base64_decode($inputText);
         $actual = $ie->convertToUtf8($inputText);
