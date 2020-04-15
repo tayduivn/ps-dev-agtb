@@ -55,6 +55,7 @@ Feature: Quotes module verification
       | shipping                   | $0.00               |
       | total                      | $784.00             |
 
+
   @list-search
   Scenario: Quotes > List View > Filter > Search main input
     Given Quotes records exist:
@@ -73,6 +74,7 @@ Feature: Quotes module verification
       | fieldName                  | value      |
       | name                       | Quote_2    |
       | date_quote_expected_closed | 11/19/2020 |
+
 
   @delete
   Scenario: Quotes > Record View > Delete > Cancel/Confirm
@@ -100,6 +102,7 @@ Feature: Quotes module verification
     When I Confirm confirmation alert
     Then I should see #QuotesList.ListView view
     Then I should not see *Quote_2 in #QuotesList.ListView
+
 
   @edit-cancel
   Scenario: Quotes > Record View > Edit > Cancel
@@ -136,6 +139,7 @@ Feature: Quotes module verification
       | quote_stage                | Negotiation |
       | date_quote_expected_closed | 10/19/2017  |
       | billing_account_name       | Acc_1       |
+
 
   @edit-save
   Scenario: Quotes > Record View > Edit > Save
@@ -368,4 +372,71 @@ Feature: Quotes module verification
       | name      |
       | New Group |
     When I click on save button on Group #Quote_3Record.QliTable.GroupRecord record
+
+
+  @quote @add_QLI_with_negative_quantity @SS-391 @SS-392 @AT-354
+  Scenario: Quotes > Record View > QLI Table > Add QLI with negative quantity
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | *name |
+      | Acc_1 |
+    # Generate Tax Rate
+    Given TaxRates records exist:
+      | *name | list_order | status | value |
+      | Tax_1 | 4          | Active | 10.00 |
+
+    Given I open about view and login
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+
+    # Add first line item with negative quantity and 10% discount
+    When I choose createLineItem on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.QliRecord view
+      | *     | quantity | product_template_name | discount_price | discount_amount | discount_select |
+      | QLI_1 | -2.00    | QLI_111               | 100            | 10.00           | % Percent       |
+    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I close alert
+
+    Then I verify fields on #QLI_1QLIRecord
+      | fieldName    | value    |
+      | total_amount | $-180.00 |
+
+    # Add second line item with negative quantity and $10.00 discount
+    When I choose createLineItem on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.QliRecord view
+      | *     | quantity | product_template_name | discount_price | discount_amount | discount_select |
+      | QLI_2 | -2.00    | QLI_222               | 100            | 10.00           | $ US Dollar     |
+    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I close alert
+
+    Then I verify fields on #QLI_2QLIRecord
+      | fieldName    | value    |
+      | total_amount | $-190.00 |
+
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value         |
+      | deal_tot  | 7.50% $-30.00 |
+      | new_sub   | $-370.00      |
+      | tax       | $0.00         |
+      | shipping  | $0.00         |
+      | total     | $-370.00      |
+
+    When I click Edit button on #Quote_3Record header
+    When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
+    When I provide input for #Quote_3Record.RecordView view
+      | taxrate_name |
+      | Tax_1        |
+    When I click Save button on #QuotesRecord header
+    When I close alert
+
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value         |
+      | deal_tot  | 7.50% $-30.00 |
+      | new_sub   | $-370.00      |
+      | tax       | $-37.00       |
+      | shipping  | $0.00         |
+      | total     | $-407.00      |
 

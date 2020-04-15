@@ -727,7 +727,7 @@ Feature: Quotes module E2E testing
     # 9. Verify that amounts and currency symbols in QLI Table footer are updated to EUR
 
   @SFA-5245 @ZT-284 @T_33439
-  Scenario: Quotes record view -> Change record curency > Cancel/Save
+  Scenario: Quotes record view -> Change record currency > Cancel/Save
     # 1. Generate quote record with one group and 2 QLIs linked to the account
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
@@ -1527,6 +1527,7 @@ Feature: Quotes module E2E testing
       | discount_price  | €90.00 ¥50.00 |
       | discount_amount | 10.00%        |
       | total_amount    | €81.00 ¥45.00 |
+
 
   @quote_delete_group @quote_currency @job5
   Scenario: Quotes > Verify there is no JS error when quote currency is changed after group is deleted
