@@ -25,6 +25,15 @@ $dictionary['OutboundEmail'] = [
             'reportable' => false,
             'mandatory_fetch' => true,
         ],
+        'eapm_id' => [
+            'name' => 'eapm_id',
+            'vname' => 'LBL_EAPM_ID',
+            'type' => 'id',
+            'required' => false,
+            'reportable' => false,
+            'mandatory_fetch' => true,
+            'readonly' => true,
+        ],
         'name' => [
             'name' => 'name',
             'vname' => 'LBL_NAME',

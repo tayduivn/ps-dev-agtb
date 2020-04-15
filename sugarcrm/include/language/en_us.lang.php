@@ -3462,6 +3462,7 @@ $app_strings = array (
     'LBL_SUBJECT' => 'Subject',
 
     'LBL_INBOUNDEMAIL_ID' => 'Inbound Email ID',
+    'LBL_EAMP_ID' => 'Authentication Token ID',
 
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
