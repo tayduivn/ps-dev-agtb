@@ -723,7 +723,7 @@ class PackageManager{
              * replace upload://upgrades to upload/upgrades to support old package manager behavior(getStagedPackages)
              * @TODO must be delete when all package CRUD is moved to DB
              */
-            $manifestFilePath = str_replace('upload://upgrades', 'upload/upgrades', $manifestFilePath);
+            $manifestFilePath = str_replace('upload://upgrades', $this->baseUpgradeDir, $manifestFilePath);
             $manifestFilePath = FileLoader::validateFilePath($manifestFilePath, true);
         } catch (\RuntimeException $e) {
             throw $this->getSugarException('ERR_UW_NO_MANIFEST');
