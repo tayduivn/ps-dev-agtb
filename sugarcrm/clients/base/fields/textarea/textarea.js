@@ -133,7 +133,7 @@
         if (this.tplName !== 'edit') {
             let max = this._settings.max_display_chars;
             value = {
-                long: this.getDescription(value),
+                long: this.getDescription(value, false),
                 defaultValue: value,
                 short: ''
             };
@@ -153,7 +153,8 @@
      * @param {boolean} short Need a short value of the comment.
      * @return {string} The entry with html for any links.
      */
-    getDescription: function(description, short = false) {
+    getDescription: function(description, short) {
+        short = !!short;
         description = Handlebars.Utils.escapeExpression(description);
         description = short ? this.getShortComment(description) : description;
         description = this.insertHtmlLinks(description);

@@ -33,7 +33,7 @@
                 let shortComment = value;
                 var max = this.tplName === 'quote-data-grand-totals-header' ? 20 : this._settings.max_display_chars;
                 value = {
-                    long: this.getDescription(value),
+                    long: this.getDescription(value, false),
                     defaultValue: value,
                 };
 
@@ -57,5 +57,5 @@
         }
 
         return value.toString();
-    },
+    }
 })
