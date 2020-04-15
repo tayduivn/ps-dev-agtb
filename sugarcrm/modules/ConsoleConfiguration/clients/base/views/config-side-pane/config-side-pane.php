@@ -34,12 +34,12 @@ $viewdefs['ConsoleConfiguration']['base']['view']['config-side-pane'] = [
     ],
     'right-panels' => [
         [
-            'label' => 'LBL_CONSOLE_FIELDS',
+            'label' => 'LBL_CONSOLE_AVAILABLE_FIELDS',
             'fields' => [
                 [
                     'name' => 'available-fields',
-                    'vname' => 'LBL_CONSOLE_FIELDS',
-                    'type' => 'field-list',
+                    'vname' => 'LBL_CONSOLE_AVAILABLE_FIELDS',
+                    'type' => 'available-field-list',
                     'css_class' => 'fields',
                 ],
             ],
