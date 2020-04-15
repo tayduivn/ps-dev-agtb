@@ -49,12 +49,14 @@ class ProductTest extends TestCase
             ->will($this->returnValue(true));
 
         $discount_amount = $discount;
+
         if ($discount_select === 1) {
-            $discount_amount = SugarMath::init()->exp('(?*?)*(?/100)', array($amount, $quantity, $discount))->result();
+            $product->total_amount = SugarMath::init()->exp('(?*?)-((?*?)*(?/100))', array($amount, $quantity, $amount, $quantity, $discount_amount))->result();
+        } else {
+            $product->total_amount = SugarMath::init()->exp('((?*?)-?)', array($amount, $quantity, $discount_amount))->result();
         }
 
         $product->name = 'Hello World';
-        $product->total_amount = SugarMath::init()->exp('((?*?)-?)', array($amount, $quantity, $discount_amount))->result();
         $product->discount_price = $amount;
         $product->quantity = $quantity;
         $product->discount_amount = $discount;

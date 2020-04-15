@@ -549,17 +549,6 @@ class Product extends SugarBean
         }
         // END SUGARCRM flav=ent ONLY
 
-        if ($this->discount_select == 1) {
-            // we have a percentage discount, but we don't allow the use of percentages on
-            // the RevenueLineItem module yet, so we need to set discount_select to 0
-            // and calculate out the correct discount_amount.
-            $rli->discount_select = 0;
-            $rli->discount_amount = SugarMath::init()->
-                exp('(?*?)*(?/100)', array($this->discount_price, $this->quantity, $this->discount_amount))->
-                result();
-        }
-
-
         // since we don't have a likely_case on products,
         if ($rli->likely_case == '0.00' || empty($rli->likely_case)) {
             //undo bad math from quotes.
@@ -589,7 +578,7 @@ class Product extends SugarBean
         }
 
         $template = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
-        
+
         foreach ($this->template_fields as $template_field) {
             // do not copy from template if field is:  Not empty, or has an int value equal to zero, or a string value equal to '0' or '0.0'
             if (!empty($this->$template_field)

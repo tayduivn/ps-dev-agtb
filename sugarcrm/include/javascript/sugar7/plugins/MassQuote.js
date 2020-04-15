@@ -117,13 +117,6 @@
                             rliObj.discount_price = rliObj.likely_case;
                         }
 
-                        rliObj.discount_select = false;
-                        if (_.isEmpty(rliObj.discount_amount)) {
-                            rliObj.discount_amount = 0.00;
-                            // if discount_amount is '0' or '', set discount_select true
-                            rliObj.discount_select = true;
-                        }
-
                         qliModels.push(app.data.createBean('Products', rliObj));
                     }, this);
 
