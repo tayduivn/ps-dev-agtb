@@ -20,6 +20,15 @@ $dictionary['InboundEmail'] = array('table' => 'inbound_email', 'comment' => 'In
 			'reportable'=>false,
 			'comment' => 'Unique identifier'
 		),
+        'eapm_id' => [
+            'name' => 'eapm_id',
+            'vname' => 'LBL_EAPM_ID',
+            'type' => 'id',
+            'required' => false,
+            'reportable' => false,
+            'mandatory_fetch' => true,
+            'readonly' => true,
+        ],
 		'deleted' => array (
 			'name' => 'deleted',
 			'vname' => 'LBL_DELETED',
