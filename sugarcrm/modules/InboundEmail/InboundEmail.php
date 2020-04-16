@@ -1442,9 +1442,9 @@ class InboundEmail extends SugarBean {
                 $GLOBALS['log']->info("INBOUNDEMAIL: Done fetching emails for mailbox [{$mailbox}] for user [{$current_user->user_name}]");
             }
             $status = ($total > $start + sizeof($searchResults)) ? 'continue' : 'done';
-            $ret = array('status' => $status, 'count' => $start + sizeof($searchResults), 'mbox' => $mailbox, 'totalcount' => $total);
-            $GLOBALS['log']->info("INBOUNDEMAIL: $status : Downloaded " . $start + sizeof($searchResults) . "messages of $total");
-
+            $count = $start + sizeof($searchResults);
+            $ret = array('status' => $status, 'count' => $count, 'mbox' => $mailbox, 'totalcount' => $total);
+            $GLOBALS['log']->info("INBOUNDEMAIL: $status : Downloaded $count messages of $total");
         } else {
             $GLOBALS['log']->info("INBOUNDEMAIL: no results for mailbox [ {$mailbox} ]");
             $ret = array('status' =>'done');
