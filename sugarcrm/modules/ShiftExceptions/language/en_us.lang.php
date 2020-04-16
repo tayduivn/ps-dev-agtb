@@ -28,6 +28,7 @@ $mod_strings = [
     'LNK_NEW_SHIFT_EXCEPTION' => 'Create Shift Exception',
     'LNK_VIEW_SHIFT_EXCEPTIONS' => 'View Shift Exceptions',
 
+    'LBL_USERS_SUBPANEL_TITLE' => 'Users',
     'LBL_SHIFT_EXCEPTION_USERS_TITLE' => 'Users',
     'LBL_SHIFTS' => 'Shifts',
 ];
