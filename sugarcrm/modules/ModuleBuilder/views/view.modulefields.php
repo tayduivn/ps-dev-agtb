@@ -69,10 +69,6 @@ class ViewModulefields extends SugarView
         $fieldTypes['datetime'] = $fieldTypes['datetimecombo'];
 
         if(!isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
-            //$this->loadPackageHelp($module_name);
-            $studioClass = new stdClass;
-            $studioClass->name = $module_name;
-
             $objectName = BeanFactory::getObjectName($module_name);
 
             VardefManager::loadVardef($module_name, $objectName, true);
@@ -107,8 +103,15 @@ class ViewModulefields extends SugarView
                 $fieldsData[] = $def;
                 $customFieldsData[$def['name']] = $def['custom'];
             }
-            $studioClass->mbvardefs->vardefs['fields'] = $f;
-            $smarty->assign('module', $studioClass);
+
+            $smarty->assign('module', [
+                'name' => $module_name,
+                'mbvardefs' => [
+                    'vardefs' => [
+                        'fields' => $f,
+                    ],
+                ],
+            ]);
 
             $package = new stdClass;
             $package->name = '';
