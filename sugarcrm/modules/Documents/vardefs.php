@@ -338,6 +338,13 @@ $dictionary['Document'] = array('table' => 'documents',
             'source' => 'non-db',
             'vname' => 'LBL_PURCHASES_SUBPANEL_TITLE',
         ],
+        'purchasedlineitems' => [
+            'name' => 'purchasedlineitems',
+            'type' => 'link',
+            'relationship' => 'documents_purchasedlineitems',
+            'source' => 'non-db',
+            'vname' => 'LBL_PLIS_SUBPANEL_TITLE',
+        ],
         //END SUGARCRM flav=ent ONLY
         'related_doc_id' =>
         array(

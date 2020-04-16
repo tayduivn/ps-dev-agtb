@@ -132,7 +132,7 @@ include 'metadata/cases_purchasesMetaData.php';
 include 'metadata/accounts_purchasesMetaData.php';
 
 // Purchased Line Items to Documents relationship
-include 'metadata/purchasedlineitems_documentsMetaData.php';
+include 'metadata/documents_purchasedlineitemsMetaData.php';
 //END SUGARCRM flav=ent ONLY
 
 // Commentlog relation field

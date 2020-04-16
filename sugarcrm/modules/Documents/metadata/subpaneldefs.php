@@ -192,6 +192,23 @@ $layout_defs['Documents'] = array(
                         ),
                 ),
         ),
+        'purchasedlineitems' => array(
+            'order' => 90,
+            'module' => 'PurchasedLineItems',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_PLIS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'purchasedlineitems',
+            'top_buttons' =>
+                array (
+                    0 =>
+                        array (
+                            'widget_class' => 'SubPanelTopSelectButton',
+                            'mode' => 'MultiSelect',
+                        ),
+                ),
+        ),
         //END SUGARCRM flav=ent ONLY
 	),
 );

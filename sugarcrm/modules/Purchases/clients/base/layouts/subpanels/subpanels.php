@@ -14,6 +14,13 @@ $viewdefs['Purchases']['base']['layout']['subpanels'] = [
     'components' => [
         [
             'layout' => 'subpanel',
+            'label' => 'LBL_PLIS_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'purchasedlineitems',
+            ],
+        ],
+        [
+            'layout' => 'subpanel',
             'label' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
             'context' => [
                 'link' => 'documents',

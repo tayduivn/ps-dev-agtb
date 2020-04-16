@@ -32,11 +32,13 @@ $mod_strings = [
     'LBL_CATEGORY_ID' => 'Product Category ID',
     'LBL_CATEGORY_NAME' => 'Product Category',
     'LBL_PRODUCT_CATEGORIES' => 'Product Categories',
+    'LBL_PURCHASED_LINE_ITEMS', 'Purchased Line Items',
 
     // Subpanels
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
     'LBL_CASES_SUBPANEL_TITLE' => 'Cases',
+    'LBL_PLIS_SUBPANEL_TITLE' => 'Purchased Line Items',
 
     // MENU
     'LNK_PURCHASE_LIST' => 'View Purchases',

@@ -146,6 +146,7 @@ $app_list_strings = array (
         'DataPrivacy' => 'DP',
         //BEGIN SUGARCRM flav=ent ONLY
         'BusinessCenters' => 'BC',
+        'PurchasedLineItems' => 'PL',
         //END SUGARCRM flav=ent ONLY
     ),
 
@@ -5636,6 +5637,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_BUSINESS_CENTER' => 'Business Center',
     'LBL_BUSINESS_CENTER_ID' => 'Business Center ID',
     'LBL_BUSINESS_CENTER_NAME' => 'Business Center Name',
+
+    'LBL_PLIS_ACTIVITIES' => 'Purchased Line Items Activities',
 //END SUGARCRM flav=ent ONLY
 
     //Tag Strings

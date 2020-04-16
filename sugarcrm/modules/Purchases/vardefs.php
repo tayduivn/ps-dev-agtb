@@ -161,6 +161,14 @@ $dictionary['Purchase'] = [
             ],
         ],
         // Links
+        'purchasedlineitems' => array(
+            'name' => 'purchasedlineitems',
+            'type' => 'link',
+            'vname' => 'LBL_PURCHASED_LINE_ITEMS',
+            'relationship' => 'purchase_purchasedlineitems',
+            'source' => 'non-db',
+            'workflow' => false
+        ),
         'product_templates' => [
             'name' => 'product_templates',
             'type' => 'link',
@@ -275,6 +283,15 @@ $dictionary['Purchase'] = [
         ],
     ],
     'relationships' => [
+        'purchase_purchasedlineitems' => [
+            'lhs_module' => 'Purchases',
+            'lhs_table' => 'purchases',
+            'lhs_key' => 'id',
+            'rhs_module' => 'PurchasedLineItems',
+            'rhs_table' => 'purchased_line_items',
+            'rhs_key' => 'purchase_id',
+            'relationship_type' => 'one-to-many',
+        ],
         'purchases_producttemplates' => [
             'lhs_module' => 'Purchases',
             'lhs_table' => 'purchases',
