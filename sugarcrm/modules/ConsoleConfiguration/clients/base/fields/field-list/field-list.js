@@ -43,6 +43,7 @@
         this._super('initialize', [options]);
 
         this.mappedFields = this.getMappedFields();
+        this.previewEvent = 'consoleconfig:preview:' + this.model.get('enabled_module');
     },
 
     /**
@@ -88,6 +89,10 @@
     _render: function() {
         this._super('_render');
         this.handleDragAndDrop();
+        if (this.options.def.type == 'field-list') {
+            var domFieldList = this.$el.find('#columns-sortable');
+            this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
+        }
     },
 
     /**
@@ -199,6 +204,8 @@
                 }
 
                 this.handleColumnsChanging();
+                var domFieldList = this.$el.find('#columns-sortable');
+                this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
             }, this),
             receive: _.bind(function(event, ui) {
                 // prevents dropping from a multi-field-column into another multi-field-column
@@ -218,8 +225,8 @@
 
         _.each(this.$('#columns-sortable').find('#multi-field-sortable.multi-field.connectedSortable'),
             function(multiField) {
-            this.getSortable($(multiField));
-        }, this);
+                this.getSortable($(multiField));
+            }, this);
     },
 
     /**
@@ -293,6 +300,8 @@
                         }
                     }, this);
                 }
+                var domFieldList = this.$el.parent().parent().parent().find('#columns-sortable');
+                this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
             }, this),
             receive: _.bind(function(event, ui) {
                 var moduleName = this.model.get('enabled_module');
@@ -340,6 +349,8 @@
                         ui.item.append(this.removeFldIcon);
                     }
                 }
+                var domFieldList = this.$el.parent().parent().parent().find('#columns-sortable');
+                this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
             }, this)
         });
     },
@@ -400,6 +411,8 @@
             selectedField.remove();
 
             this.handleColumnsChanging();
+            var domFieldList = this.$el.find('#columns-sortable');
+            this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
         }
     },
 
@@ -427,6 +440,41 @@
             }, this);
             miltiFieldColumn.remove();
             this.handleColumnsChanging();
+            var domFieldList = this.$el.find('#columns-sortable');
+            this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
         }
+    },
+
+    /**
+     * Taking the dom list of fields, creates an accurate mapping of fields.
+     *
+     * @param {jQuery} node The DOM representation of the selected fields.
+     * @return {Array}
+     */
+    getSelectedFieldList: function(node) {
+        var subFields;
+        var fieldList = [];
+
+        node.children().each(function(index, field) {
+            if ($(field).hasClass('multi-field-block')) {
+                subFields = [];
+                $(field).find('.pill').each(function(index, subField) {
+                    subFields.push({
+                        name: $(subField).attr('fieldname'),
+                        label: $(subField).attr('fieldlabel')
+                    });
+                });
+                if (subFields.length) {
+                    fieldList.push(subFields);
+                }
+            } else {
+                fieldList.push([{
+                    name: $(field).attr('fieldname'),
+                    label: $(field).attr('fieldlabel')
+                }]);
+            }
+        });
+
+        return fieldList;
     },
 })

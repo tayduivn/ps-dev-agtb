@@ -10,23 +10,37 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="console-preview">
-    <table>
-        <th>column one</th>
-        <tr>
-            <td style="text-align:center"> Row 1 </td>
-        </tr>
-        <tr>
-            <td style="text-align:center"> Row 2 </td>
-        </tr>
-        <tr>
-            <td style="text-align:center"> Row 3 </td>
-        </tr>
-        <tr>
-            <td style="text-align:center"> Row 4 </td>
-        </tr>
-        <tr>
-            <td style="text-align:center"> Row 5 </td>
-        </tr>
-    </table>
-</div>
+
+{{#if fieldList}}
+    <div class='record-label pipeline-record-label'>
+        <h5>{{str 'LBL_PREVIEW'}}</h5>
+    </div>
+    <div class='console-preview multi-line-list-view'>
+        <table class='table table-striped dataTable multi-line-table'>
+            <thead>
+                <tr>
+                    {{#each fieldList}}
+                        <th class='cell-medium'>
+                            {{#each this}}
+                                {{#unless @first}} / {{/unless}}{{str label ../../moduleName}}
+                            {{/each}}
+                        </th>
+                    {{/each}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#each rowDesign}}
+                    <tr class='multi-line-row'>
+                        {{#each this}}
+                            <td class='subfields'>
+                                {{#each this}}
+                                    <div class='{{this}}'></div>
+                                {{/each}}
+                            </td>
+                        {{/each}}
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+{{/if}}
