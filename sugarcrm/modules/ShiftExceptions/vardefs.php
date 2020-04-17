@@ -47,7 +47,6 @@ $dictionary['ShiftException'] = [
             'default' => '1',
             'duplicate_on_record_copy' => 'always',
             'comment' => 'The Shift Exception is all day or not',
-            'required' => true,
             'audited' => true,
         ],
         'start_date' => [
@@ -55,6 +54,7 @@ $dictionary['ShiftException'] = [
             'vname' => 'LBL_START_DATE',
             'type' => 'date',
             'comment' => 'The start date of the shift exception',
+            'validation' => ['type' => 'isbefore', 'compareto' => 'end_date', 'blank' => false],
             'required' => true,
             'audited' => true,
         ],
@@ -68,6 +68,7 @@ $dictionary['ShiftException'] = [
             'group' => 'star_hours',
             'comment' => 'The hour portion of the time this shift exception starts',
             'merge_filter' => 'enabled',
+            'required' => true,
             'audited' => true,
         ],
         'start_minutes' => [
@@ -80,6 +81,7 @@ $dictionary['ShiftException'] = [
             'group' => 'start_hours',
             'comment' => 'The minute portion of the time this shift exception starts',
             'merge_filter' => 'enabled',
+            'required' => true,
             'audited' => true,
         ],
         'end_date' => [
@@ -100,6 +102,7 @@ $dictionary['ShiftException'] = [
             'group' => 'end_hours',
             'comment' => 'The hour portion of the time this shift exception ends',
             'merge_filter' => 'enabled',
+            'required' => true,
             'audited' => true,
         ],
         'end_minutes' => [
@@ -112,6 +115,7 @@ $dictionary['ShiftException'] = [
             'group' => 'end_hours',
             'comment' => 'The minute portion of the time this shift exception ends',
             'merge_filter' => 'enabled',
+            'required' => true,
             'audited' => true,
         ],
         'enabled' => [
