@@ -80,11 +80,11 @@ class Config
         $raw = $this->getCache()->getCurrentDefinition();
         if (!$raw) {
             $raw = $this->getSource()->getDefinition();
-            if ($raw) {
-                $this->getCache()->set($raw);
-            } else {
+            if (!$raw) {
                 $raw = $this->getCache()->getPreviousDefinition();
             }
+            // reset time stamp product_definition.date_created
+            $this->getCache()->set($raw);
         }
         return (array) json_decode($raw, true);
     }

@@ -150,7 +150,7 @@ class ConfigTest extends TestCase
             ->method('isInstallInProgress')
             ->willReturn(false);
 
-        $this->config->expects($this->exactly(2))
+        $this->config->expects($this->exactly(3))
             ->method('getCache')
             ->willReturn($this->cache);
 
@@ -158,7 +158,7 @@ class ConfigTest extends TestCase
             ->method('getCurrentDefinition')
             ->willReturn(null);
 
-        $this->cache->expects($this->never())
+        $this->cache->expects($this->once())
             ->method('set');
 
         $this->cache->expects($this->once())

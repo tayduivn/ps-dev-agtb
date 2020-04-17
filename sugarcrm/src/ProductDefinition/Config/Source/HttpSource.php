@@ -63,7 +63,7 @@ class HttpSource implements SourceInterface
             'timeout' => static::HTTP_CLIENT_TIMEOUT,
         ]));
 
-        if (!empty($options['fallback_version'])) {
+        if (!empty($options['fallback_version']) && $this->getSugarVersion() !== $options['fallback_version']) {
             $this->fallbackVersion = $options['fallback_version'];
         }
     }
@@ -88,13 +88,14 @@ class HttpSource implements SourceInterface
     public function getDefinition():? string
     {
         $raw = $this->makeRequest($this->getSugarVersion());
-        if (is_null($raw) && !empty($this->fallbackVersion)) {
+        if (is_null($raw)) {
             $this->getLogger()->warn(sprintf(
-                'Can\'t download product definition for version %s. Trying download it for fall back version %s.',
-                $this->getSugarVersion(),
-                $this->fallbackVersion
+                'Can\'t download product definition for version %s.',
+                $this->getSugarVersion()
             ));
-            $raw = $this->makeRequest($this->fallbackVersion);
+            if (!empty($this->fallbackVersion)) {
+                $raw = $this->makeRequest($this->fallbackVersion);
+            }
         }
 
         return $raw;
