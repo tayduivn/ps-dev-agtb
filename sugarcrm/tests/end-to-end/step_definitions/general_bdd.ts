@@ -370,6 +370,7 @@ Then(/^(\w+) \*(\w+) should have the following values in the (list view|preview)
 
             let preview = await seedbed.components[`${name}Preview`];
             await listItem.clickPreviewButton();
+            await this.driver.waitForApp(1000);
             await preview.showMore('show more');
             await this.driver.waitForApp();
             await checkValues(preview.PreviewView, table);
