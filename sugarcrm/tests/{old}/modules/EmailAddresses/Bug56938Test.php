@@ -18,7 +18,8 @@ use PHPUnit\Framework\TestCase;
 class Bug56938Test extends TestCase
 {
     /** @var User */
-    private $user, $duplicate;
+    private $user;
+    private $duplicate;
 
     /**
      * Sets up the fixture, for example, open a network connection.

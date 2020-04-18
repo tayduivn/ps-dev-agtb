@@ -18,8 +18,8 @@ use PHPUnit\Framework\TestCase;
  */
 class DuplicateCheckApiTest extends TestCase
 {
-    private $copyOfLeadsDuplicateCheckVarDef,
-            $mockLeadsDuplicateCheckVarDef = array(
+    private $copyOfLeadsDuplicateCheckVarDef;
+    private $mockLeadsDuplicateCheckVarDef = array(
         'enabled' => true,
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
@@ -83,15 +83,19 @@ class DuplicateCheckApiTest extends TestCase
         ),
     );
 
-    private $api,
-            $duplicateCheckApi,
-            $convertedLead,
-            $newLead,
-            $newLead2,
-            $newLeadFirstName  = "SugarLeadNewFirst",
-            $newLeadLastName   = "SugarLeadLast",
-            $newLead2FirstName = "SugarLeadNewFirst2", // different first name
-            $newLead2LastName  = "SugarLeadLast"; // same last name
+    private $api;
+    private $duplicateCheckApi;
+    private $convertedLead;
+    private $newLead;
+    private $newLead2;
+    private $newLeadFirstName = "SugarLeadNewFirst";
+    private $newLeadLastName = "SugarLeadLast";
+
+    // different first name
+    private $newLead2FirstName = "SugarLeadNewFirst2";
+
+    // same last name
+    private $newLead2LastName = "SugarLeadLast";
 
     protected function setUp() : void
     {

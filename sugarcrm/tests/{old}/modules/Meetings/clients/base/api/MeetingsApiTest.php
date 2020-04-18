@@ -18,8 +18,8 @@ use PHPUnit\Framework\TestCase;
  */
 class MeetingsApiTest extends TestCase
 {
-    private $api,
-        $meetingsApi;
+    private $api;
+    private $meetingsApi;
 
     protected function setUp() : void
     {

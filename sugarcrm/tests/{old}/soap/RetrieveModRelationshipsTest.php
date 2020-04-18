@@ -15,7 +15,12 @@ use PHPUnit\Framework\TestCase;
 require_once('soap/SoapRelationshipHelper.php');
 class RetrieveModRelationshipsTest extends TestCase
 {
-    protected static $call, $call2, $contact, $contact2, $meeting, $meeting2;
+    protected static $call;
+    protected static $call2;
+    protected static $contact;
+    protected static $contact2;
+    protected static $meeting;
+    protected static $meeting2;
 
     public static function setUpBeforeClass() : void
     {

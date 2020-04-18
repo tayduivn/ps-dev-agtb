@@ -24,8 +24,8 @@ use Sugarcrm\Sugarcrm\Security\Subject\User;
  */
 class ModuleApiTest extends TestCase
 {
-    public $accounts, $account_ids;
-    public $roles;
+    public $accounts;
+
     /**
      * @var ModuleApi
      */

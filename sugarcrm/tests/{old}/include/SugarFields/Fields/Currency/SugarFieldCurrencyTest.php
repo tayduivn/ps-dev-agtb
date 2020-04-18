@@ -14,7 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldCurrencyTest extends TestCase
 {
-    static $currency, $currency2, $currency3;
+    private static $currency;
+    private static $currency2;
+    private static $currency3;
 
     public static function setUpBeforeClass() : void
     {

@@ -19,8 +19,8 @@ use PHPUnit\Framework\TestCase;
  */
 class EmailRecipientsServiceTest extends TestCase
 {
-    private $emailRecipientsService,
-            $salt;
+    private $emailRecipientsService;
+    private $salt;
 
     protected function setUp() : void
     {

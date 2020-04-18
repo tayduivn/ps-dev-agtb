@@ -22,7 +22,8 @@ use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
  */
 class CalendarApiTest extends TestCase
 {
-    private $api, $calendarApi;
+    private $api;
+    private $calendarApi;
     private $dp;
 
     protected function setUp() : void

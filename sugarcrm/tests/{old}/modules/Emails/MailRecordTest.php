@@ -17,8 +17,8 @@ use PHPUnit\Framework\TestCase;
  */
 class MailRecordTest extends TestCase
 {
-    private $mailRecord,
-            $mockEmail;
+    private $mailRecord;
+    private $mockEmail;
 
     protected function setUp() : void
     {

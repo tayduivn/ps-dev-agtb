@@ -20,15 +20,15 @@ class Bug51596Test extends TestCase
     /**
     * @var Contact
     */
-    protected $contact1,
-        $contact2;
+    protected $contact1;
+    protected $contact2;
 
     /**
      * @var Account
      * @var Account
      */
-    protected $account1,
-        $account2;
+    protected $account1;
+    protected $account2;
 
     protected $field_name = 'bug51596test';
 

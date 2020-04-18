@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -18,8 +18,10 @@ use PHPUnit\Framework\TestCase;
 class FindEmailFromBeanIdsTest extends TestCase
 {
 	private $emailUI;
-	private $beanIds, $beanType, $whereArr;
-	private $resultQuery, $expectedQuery;
+	private $beanIds;
+    private $beanType;
+    private $whereArr;
+	private $expectedQuery;
 
     protected function setUp() : void
 	{
@@ -46,10 +48,10 @@ EOQ;
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 	}
-	
+
 	function testFindEmailFromBeanIdTest()
 	{
-		$this->resultQuery = $this->emailUI->findEmailFromBeanIds($this->beanIds, $this->beanType, $this->whereArr);
-		$this->assertEquals($this->expectedQuery, $this->resultQuery);
+		$resultQuery = $this->emailUI->findEmailFromBeanIds($this->beanIds, $this->beanType, $this->whereArr);
+		$this->assertEquals($this->expectedQuery, $resultQuery);
 	}
 }

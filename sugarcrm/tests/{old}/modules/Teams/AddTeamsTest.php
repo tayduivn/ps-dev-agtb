@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -18,11 +18,12 @@ use PHPUnit\Framework\TestCase;
  */
 class AddTeamsTest extends TestCase
 {
-	private $teamSets, $anotherTeamSets;
+	private $teamSets;
+    private $anotherTeamSets;
 	private $teamIds = array();
 	private $teamSetsId = '';
 	private $teamSetsIdSecondOne = '';
-	
+
     protected function setUp() : void
 	{
 		$this->teamSets = BeanFactory::newBean('TeamSets');
@@ -31,7 +32,7 @@ class AddTeamsTest extends TestCase
 		$this->teamIds[] = '8749a110-1d85-4562-fa23-4ab0a3c65e16';
 		$this->teamIds[] = '874c1242-4645-898d-238a-4ab0a3f7e7c1';
 	}
-	
+
     protected function tearDown() : void
 	{
 		$q = "DELETE from team_sets where id = '$this->teamSetsId'";
@@ -45,7 +46,7 @@ class AddTeamsTest extends TestCase
 		unset($this->teamSets);
 		unset($this->anotherTeamSets);
 	}
-	
+
 	public function testAddTeams()
 	{
 		$this->teamSetsId = $this->teamSets->addTeams($this->teamIds);

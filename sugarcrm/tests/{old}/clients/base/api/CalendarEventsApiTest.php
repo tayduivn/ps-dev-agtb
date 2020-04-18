@@ -19,8 +19,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CalendarEventsApiTest extends TestCase
 {
-    private $api,
-        $calendarEventsApi;
+    private $api;
+    private $calendarEventsApi;
 
     private $meetingIds = array();
 

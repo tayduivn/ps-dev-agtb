@@ -24,11 +24,10 @@ use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
  */
 class MailApiTest extends TestCase
 {
-    private $api,
-        $mailApi,
-        $emailUI,
-        $userCacheDir,
-        $dp;
+    private $api;
+    private $mailApi;
+    private $userCacheDir;
+    private $dp;
 
     protected function setUp() : void
     {
@@ -38,9 +37,9 @@ class MailApiTest extends TestCase
         $this->api     = SugarTestRestUtilities::getRestServiceMock();
         $this->mailApi = $this->createPartialMock('MailApi', array("initMailRecord", "getEmailRecipientsService", "getEmailBean"));
 
-        $this->emailUI = new EmailUI();
-        $this->emailUI->preflightUserCache();
-        $this->userCacheDir = $this->emailUI->userCacheDir;
+        $emailUI = new EmailUI();
+        $emailUI->preflightUserCache();
+        $this->userCacheDir = $emailUI->userCacheDir;
         $this->dp = array();
     }
 

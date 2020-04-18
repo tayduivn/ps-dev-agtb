@@ -23,7 +23,8 @@ require_once('modules/Reports/templates/templates_list_view.php');
  */
 class Bug53360Test extends TestCase
 {
-    private $rowsAndColumnsData, $report;
+    private $rowsAndColumnsData;
+    private $report;
 
     protected function setUp() : void
     {
