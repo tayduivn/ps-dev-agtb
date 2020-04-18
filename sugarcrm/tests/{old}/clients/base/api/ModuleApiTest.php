@@ -878,7 +878,6 @@ class ModuleApiTestMock extends ModuleApi
     }
 }
 
-// @codingStandardsIgnoreStart
 class TestSugarACLEmailAddress extends SugarACLEmailAddress
 {
     /**
@@ -896,4 +895,3 @@ class TestSugarACLEmailAddress extends SugarACLEmailAddress
         return false;
     }
 }
-// @codingStandardsIgnoreEnd
