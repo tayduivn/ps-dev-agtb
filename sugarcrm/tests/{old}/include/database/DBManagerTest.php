@@ -3255,23 +3255,27 @@ SQL;
     public function testMassageValue()
     {
         $this->assertEquals(
-            $this->_db->massageValue(123, array('name' => 'foo', 'type' => 'int')),
-            123
+            123,
+            $this->_db->massageValue(123, array('name' => 'foo', 'type' => 'int'))
         );
-        if (in_array($this->_db->dbType, array('mssql'
-            //BEGIN SUGARCRM flav=ent ONLY
-        ,'oci8', 'ibm_db2'
-            //END SUGARCRM flav=ent ONLY
-        )))
-            $this->assertEquals(
-                $this->_db->massageValue("'dog'",array('name'=>'foo','type'=>'varchar')),
-                "'''dog'''"
-            );
-        else
-            $this->assertEquals(
-                $this->_db->massageValue("'dog'",array('name'=>'foo','type'=>'varchar')),
-                "'\\'dog\\''"
-            );
+
+        switch ($this->_db->dbType) {
+            case 'mssql':
+// BEGIN SUGARCRM flav=ent ONLY
+            case 'oci8':
+            case 'ibm_db2':
+// END SUGARCRM flav=ent ONLY
+                $expected = "'''dog'''";
+                break;
+            default:
+                $expected = "'\\'dog\\''";
+                break;
+        }
+
+        $this->assertEquals(
+            $expected,
+            $this->_db->massageValue("'dog'",array('name'=>'foo','type'=>'varchar'))
+        );
     }
 
     public function testGetColumnType()
