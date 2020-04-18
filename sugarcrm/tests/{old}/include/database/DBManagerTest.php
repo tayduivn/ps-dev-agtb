@@ -3164,6 +3164,7 @@ SQL;
         switch(gettype($sql)){
             case 'array':
                 $sql = $sql[0];
+                // fall-through
             case 'string':
                 $this->assertMatchesRegularExpression('/alter\s*table\s*contacts/i', $sql);
                 break;
