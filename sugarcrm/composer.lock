@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f30de4fb221b41e004890d5e359f3a53",
+    "content-hash": "8f3922e87c516a7cfed3524b119c0bc3",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -550,6 +550,52 @@
                 "lib"
             ],
             "time": "2016-01-28T19:20:39+00:00"
+        },
+        {
+            "name": "ezyang/htmlpurifier",
+            "version": "v4.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ezyang/htmlpurifier.git",
+                "reference": "e014ec07ef0d24a9e75d2d62211260acd4cc6f87"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/ezyang/htmlpurifier/ezyang-htmlpurifier-v4.12.0-f0886f.tar",
+                "reference": "e014ec07ef0d24a9e75d2d62211260acd4cc6f87",
+                "shasum": "274ecb2613bbad4b113bd0548746c7cbe5c3d4ad"
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "require-dev": {
+                "simpletest/simpletest": "dev-master#72de02a7b80c6bb8864ef9bf66d41d2f58f826bd"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "HTMLPurifier": "library/"
+                },
+                "files": [
+                    "library/HTMLPurifier.composer.php"
+                ]
+            },
+            "license": [
+                "LGPL-2.1-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Edward Z. Yang",
+                    "email": "admin@htmlpurifier.org",
+                    "homepage": "http://ezyang.com"
+                }
+            ],
+            "description": "Standards compliant HTML filter written in PHP",
+            "homepage": "http://htmlpurifier.org/",
+            "keywords": [
+                "html"
+            ],
+            "time": "2019-10-28T03:44:26+00:00"
         },
         {
             "name": "fgrosse/phpasn1",

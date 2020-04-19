@@ -24,7 +24,6 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-0": {
-            "HTMLPurifier_": "vendor/HTMLPurifier/standalone",
             "Zend_": "vendor"
         },
         "psr-4": {
@@ -54,7 +53,6 @@
             "src/Dbal/Compat/PDO.php",
             "themes/",
             "upgrade/",
-            "vendor/HTMLPurifier/HTMLPurifier.standalone.php",
             "vendor/nusoap",
             "vendor/Smarty",
             "vendor/XTemplate",
@@ -101,6 +99,7 @@
     },
     "require": {
         "doctrine/dbal": "v2.9.2",
+        "ezyang/htmlpurifier": "^4.12",
         "etechnika/idna-convert" : "^1.2",
         "ext-openssl": "*",
         "google/apiclient": "1.1.4",
