@@ -36,12 +36,12 @@
     </testsuites>
     <filter>
         <whitelist>
-            <directory suffix=".php">../../data/</directory>
-            <directory suffix=".php">../../src/</directory>
-            <directory suffix=".php">../../include/</directory>
-            <directory suffix=".php">../../clients/</directory>
-            <directory suffix=".php">../../modules/</directory>
-            <directory suffix=".php">../../api/</directory>
+            <directory>../../clients</directory>
+            <directory>../../data</directory>
+            <directory>../../include</directory>
+            <directory>../../modules</directory>
+            <directory>../../src</directory>
+            <directory>../../upgrade</directory>
         </whitelist>
     </filter>
     <listeners>

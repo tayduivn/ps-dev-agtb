@@ -219,10 +219,12 @@
     </testsuites>
     <filter>
         <whitelist>
-            <exclude>
-                <directory>./service/</directory>
-                <directory>./rest/</directory>
-            </exclude>
+            <directory>../../clients</directory>
+            <directory>../../data</directory>
+            <directory>../../include</directory>
+            <directory>../../modules</directory>
+            <directory>../../src</directory>
+            <directory>../../upgrade</directory>
         </whitelist>
     </filter>
     <listeners>
