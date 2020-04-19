@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8f3922e87c516a7cfed3524b119c0bc3",
+    "content-hash": "041eb5bc2d2df2c80c1927a360c3f0ac",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1708,72 +1708,6 @@
                 "source": "https://github.com/onelogin/php-saml/"
             },
             "time": "2018-08-06T10:12:02+00:00"
-        },
-        {
-            "name": "oyejorge/less.php",
-            "version": "v1.7.0.14",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/oyejorge/less.php.git",
-                "reference": "42925c5a01a07d67ca7e82dfc8fb31814d557bc9"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/oyejorge/less-php/oyejorge-less-php-v1.7.0.14-b70004.tar",
-                "reference": "42925c5a01a07d67ca7e82dfc8fb31814d557bc9",
-                "shasum": "dd9526c06c0d261874b0d82c81774635cbeb1f92"
-            },
-            "require": {
-                "php": ">=5.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.8.24"
-            },
-            "bin": [
-                "bin/lessc"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Less": "lib/"
-                },
-                "classmap": [
-                    "lessc.inc.php"
-                ]
-            },
-            "scripts": {
-                "test": [
-                    "phpunit"
-                ]
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Josh Schmidt",
-                    "homepage": "https://github.com/oyejorge"
-                },
-                {
-                    "name": "Matt Agar",
-                    "homepage": "https://github.com/agar"
-                },
-                {
-                    "name": "Martin Jantošovič",
-                    "homepage": "https://github.com/Mordred"
-                }
-            ],
-            "description": "PHP port of the Javascript version of LESS http://lesscss.org (Originally maintained by Josh Schmidt)",
-            "homepage": "http://lessphp.gpeasy.com",
-            "keywords": [
-                "css",
-                "less",
-                "less.js",
-                "lesscss",
-                "php",
-                "stylesheet"
-            ],
-            "time": "2017-03-28T22:19:25+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -5262,6 +5196,71 @@
                 "source": "https://github.com/vanderlee/PHP-stable-sort-functions/"
             },
             "time": "2016-01-15T20:19:34+00:00"
+        },
+        {
+            "name": "wikimedia/less.php",
+            "version": "1.8.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wikimedia/less.php.git",
+                "reference": "907e321cc1893505c1ab13b00e6d3488a97d7526"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/wikimedia/less-php/wikimedia-less-php-1.8.2-96c0cc.tar",
+                "reference": "907e321cc1893505c1ab13b00e6d3488a97d7526",
+                "shasum": "68ac056f85e504a0f2975f27c539423a70ccbf45"
+            },
+            "require": {
+                "php": ">=7.2.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "7.5.14"
+            },
+            "bin": [
+                "bin/lessc"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Less": "lib/"
+                },
+                "classmap": [
+                    "lessc.inc.php"
+                ]
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Josh Schmidt",
+                    "homepage": "https://github.com/oyejorge"
+                },
+                {
+                    "name": "Matt Agar",
+                    "homepage": "https://github.com/agar"
+                },
+                {
+                    "name": "Martin Jantošovič",
+                    "homepage": "https://github.com/Mordred"
+                }
+            ],
+            "description": "PHP port of the Javascript version of LESS http://lesscss.org (Originally maintained by Josh Schmidt)",
+            "keywords": [
+                "css",
+                "less",
+                "less.js",
+                "lesscss",
+                "php",
+                "stylesheet"
+            ],
+            "time": "2019-11-06T18:30:11+00:00"
         }
     ],
     "packages-dev": [

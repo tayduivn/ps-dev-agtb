@@ -106,7 +106,7 @@
         "league/oauth2-client": "2.2.1",
         "monolog/monolog": "1.22.0",
         "moontoast/math": "1.1.0",
-        "oyejorge/less.php": "v1.7.0.14",
+        "wikimedia/less.php": "^1.8.2",
         "parsecsv/php-parsecsv": "0.4.5",
         "php": "^7.3",
         "phpmailer/phpmailer" : "v5.2.22",
