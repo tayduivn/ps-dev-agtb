@@ -107,7 +107,7 @@
         "monolog/monolog": "1.22.0",
         "moontoast/math": "1.1.0",
         "wikimedia/less.php": "^1.8.2",
-        "parsecsv/php-parsecsv": "0.4.5",
+        "parsecsv/php-parsecsv": "^1.2",
         "php": "^7.3",
         "phpmailer/phpmailer" : "v5.2.22",
         "psr/log": "1.0.0",

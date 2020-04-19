@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "041eb5bc2d2df2c80c1927a360c3f0ac",
+    "content-hash": "7b180215c3cf370bd563e8b1b764bdcc",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1764,26 +1764,42 @@
         },
         {
             "name": "parsecsv/php-parsecsv",
-            "version": "0.4.5",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/parsecsv/parsecsv-for-php.git",
-                "reference": "0486a4bf3ef80dfa215f38f865ed8685fbb472c7"
+                "reference": "548a9fe551f47c24c15453458df25005df90f23f"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/parsecsv/php-parsecsv/parsecsv-php-parsecsv-0.4.5-c0d74d.tar",
-                "reference": "0486a4bf3ef80dfa215f38f865ed8685fbb472c7",
-                "shasum": "a70393aafc84b7a34d32efd8fea964b5bdd4cc7a"
+                "url": "https://satis.sugardev.team/dist/parsecsv/php-parsecsv/parsecsv-php-parsecsv-1.2.0-93832f.tar",
+                "reference": "548a9fe551f47c24c15453458df25005df90f23f",
+                "shasum": "a40e5a75f9667f3a7820f6c865889caaeb7ed2cb"
+            },
+            "require": {
+                "php": ">=5.5"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.1.*"
             },
+            "suggest": {
+                "illuminate/support": "Fluent array interface for map functions"
+            },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
-                "classmap": [
-                    "."
-                ]
+                "psr-4": {
+                    "ParseCsv\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "ParseCsv\\tests\\": "tests"
+                }
             },
             "license": [
                 "MIT"
@@ -1792,10 +1808,26 @@
                 {
                     "name": "Jim Myhrberg",
                     "email": "contact@jimeh.me"
+                },
+                {
+                    "name": "William Knauss",
+                    "email": "will.knauss@gmail.com"
+                },
+                {
+                    "name": "Susann Sgorzaly",
+                    "homepage": "https://github.com/susgo"
+                },
+                {
+                    "name": "Christian Bläul",
+                    "homepage": "https://github.com/Fonata"
                 }
             ],
             "description": "CSV data parser for PHP",
-            "time": "2014-06-03T00:37:04+00:00"
+            "support": {
+                "issues": "https://github.com/parsecsv/parsecsv-for-php/issues",
+                "source": "https://github.com/parsecsv/parsecsv-for-php"
+            },
+            "time": "2020-01-07T08:32:12+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
