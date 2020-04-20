@@ -71,6 +71,9 @@ if (!$focus->id) {
     $focus->id = create_guid();
     $focus->new_with_id = true;
 }
+if (!$focus->ACLAccess('edit')) {
+    sugar_die(translate('EXCEPTION_NOT_AUTHORIZED'));
+}
 
 //update any ETag seeds that are tied to the user object changing
 $focus->incrementETag('mainMenuETag');
@@ -156,6 +159,11 @@ if (isset($_POST['user_name'])) {
 if (!$focus->is_group && !$focus->portal_only) {
     foreach ($focus->column_fields as $fieldName) {
         $field = $focus->field_defs[$fieldName];
+        $newValue = InputValidation::getService()->getValidInputPost($fieldName);
+        $isFieldChanged = !is_null($newValue) && $focus->$fieldName != $newValue;
+        if ($isFieldChanged && !$focus->ACLFieldAccess($fieldName, 'save', ['newValue' => $newValue])) {
+            sugar_die(translate('EXCEPTION_NOT_AUTHORIZED'));
+        }
         $type = !empty($field['custom_type']) ? $field['custom_type'] : $field['type'];
         $sf = $sfh->getSugarField($type);
         if ($sf != null) {
@@ -166,6 +174,11 @@ if (!$focus->is_group && !$focus->portal_only) {
     }
     foreach ($focus->additional_column_fields as $fieldName) {
         $field = $focus->field_defs[$fieldName];
+        $newValue = InputValidation::getService()->getValidInputPost($fieldName);
+        $isFieldChanged = !is_null($newValue) && $focus->$fieldName != $newValue;
+        if ($isFieldChanged && !$focus->ACLFieldAccess($fieldName, 'save', ['newValue' => $newValue])) {
+            sugar_die(translate('EXCEPTION_NOT_AUTHORIZED'));
+        }
         $type = !empty($field['custom_type']) ? $field['custom_type'] : $field['type'];
         $sf = $sfh->getSugarField($type);
         if ($sf != null) {
