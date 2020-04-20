@@ -118,3 +118,58 @@ Feature: Create Quote From RLI
       | quote_name | RLI_1 |
     When I click quote_name field on #RLI_1Record.RecordView view
     Then I should see #RecordIDRecord view
+
+  @verification_assigned_user_qli @SS-261 @AT-350
+  Scenario: Quotes > Verify Assigned User on QLI is correctly set
+    # Generate Product records in Product Catalog
+    Given ProductTemplates records exist:
+      | *name     | discount_price | cost_price | list_price | quantity | mft_part_num                 |
+      | Prodtemp1 | 0              | 1          | 2          | 2        | B.H. Edwards Inc 72868XYZ987 |
+
+    # Create Quote
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+
+    # Create users sally
+    Given I create custom user "sally"
+
+    # Login as Sally
+    When I use account "sally"
+    When I open about view and login
+
+    # Navigate to Product Catalog list view
+    When I go to "ProductTemplates" url
+
+    # Mark "Prod_1" record as favorite in Product Catalog list view
+    When I toggle favorite for *Prodtemp1 in #ProductTemplatesList.ListView
+
+    # Navigate to quote record view
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+
+    # Select 'Favorites' tab in Product Catalog Quick Picks dashlet
+    When I select Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
+
+    # Add one product from the dashlet
+    When I click *Prodtemp1 on Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
+    When I click Add2Quote button on #Prodtemp1Drawer header
+
+    # Add ID
+    When I provide input for #Quote_3Record.QliTable.QliRecord view
+      | *     |
+      | QLI_1 |
+
+    # Save
+    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I close alert
+
+    # Navigate to record
+    When I click product_template_name field on #QLI_1QLIRecord view
+
+    # Verify Assigned User on QLI record
+    When I click show more button on #QLI_1Record view
+    Then I verify fields on #QLI_1Record.RecordView
+      | fieldName          | value            |
+      | assigned_user_name | sally sallyLName |
