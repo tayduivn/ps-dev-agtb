@@ -41,7 +41,6 @@ $moduleList[] = 'pmse_Business_Rules';
 $moduleList[] = 'pmse_Emails_Templates';
 $moduleList[] = 'BusinessCenters';
 $moduleList[] = 'Shifts';
-$moduleList[] = 'ShiftExceptions';
 //END SUGARCRM flav=ent ONLY
 
 $moduleList[] = 'Documents';

@@ -26,4 +26,18 @@ $viewdefs['Shifts']['base']['menu']['header'] = [
         'acl_module' => 'Shifts',
         'icon' => 'fa-bars',
     ],
+    [
+        'route' => "#ShiftExceptions/create",
+        'label' => 'LNK_NEW_SHIFT_EXCEPTION',
+        'acl_action' => 'create',
+        'acl_module' => 'ShiftExceptions',
+        'icon' => 'fa-plus',
+    ],
+    [
+        'route' => "#ShiftExceptions",
+        'label' => 'LNK_VIEW_SHIFT_EXCEPTIONS',
+        'acl_action' => 'list',
+        'acl_module' => 'ShiftExceptions',
+        'icon' => 'fa-bars',
+    ],
 ];
