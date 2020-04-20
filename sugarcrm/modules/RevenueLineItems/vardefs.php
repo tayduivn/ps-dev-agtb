@@ -91,15 +91,27 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'total_amount',
             'formula' => '
                 ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
-                  ifElse(equal($quantity, 0),
-                    $total_amount,
-                      currencySubtract(
-                        currencyMultiply($discount_price, $quantity),
-                        ifElse(isNumeric($discount_amount), $discount_amount, 0
-                      )
-                  )
-                ), ""
-            )',
+                    ifElse(equal($quantity, 0),
+                        $total_amount,
+                        currencySubtract(
+                            currencyMultiply(
+                                $discount_price,
+                                $quantity
+                            ),
+                            ifElse(equal($discount_select, "1"),
+                                currencyMultiply(
+                                    currencyMultiply($discount_price, $quantity), 
+                                    currencyDivide($discount_amount, 100)
+                                ),
+                                ifElse(greaterThan($quantity, 0), 
+                                    ifElse(isNumeric(toString($discount_amount)), 
+                                    $discount_amount, 0
+                                ),
+                                ifElse(isNumeric(toString($discount_amount)), negate($discount_amount), 0))
+                            )
+                        )
+                    ), ""
+                )',
             'calculated' => true,
             'enforced' => true,
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',

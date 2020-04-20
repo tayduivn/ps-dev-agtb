@@ -138,6 +138,51 @@ class RevenueLineItemTest extends TestCase
         );
     }
 
+    /**
+     * @param String $quantity
+     * @param String $discount_price
+     * @param String $discount_amount
+     * @param String $discount_select
+     * @param String $total_amount
+     * @dataProvider totalAmountDataProvider
+     */
+    public function testCalculateTotalAmount(
+        $quantity,
+        $discount_price,
+        $discount_amount,
+        $discount_select,
+        $total_amount
+    ) {
+        /* @var $rli RevenueLineItem */
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->quantity = $quantity;
+        $rli->discount_price = $discount_price;
+        $rli->discount_amount = $discount_amount;
+        $rli->discount_select = $discount_select;
+        $rli->save();
+
+        // lets make sure the totals are correct
+        $this->assertEquals(
+            $total_amount,
+            $rli->total_amount,
+            'Total amount Is Wrong'
+        );
+    }
+
+    /**
+     * totalAmountDataProvider
+     */
+    public function totalAmountDataProvider()
+    {
+        // $quantity, $discount_price, $discount_amount, $discount_select, $total_amount
+        return array(
+            array('-2', '100.000000', '10.000000', '0', '-190.000000'),
+            array('-2', '100.000000', '10.000000', '1', '-180.000000'),
+            array('2', '100.000000', '10.000000', '0', '190.000000'),
+            array('2', '100.000000', '10.000000', '1', '180.000000'),
+        );
+    }
+
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @covers ::saveProductWorksheet
@@ -391,6 +436,8 @@ class RevenueLineItemTest extends TestCase
             array(0, 0),
             array(1, 1),
             array(42,42),
+            array(-1, -1),
+            array(-42,-42),
         );
     }
 
