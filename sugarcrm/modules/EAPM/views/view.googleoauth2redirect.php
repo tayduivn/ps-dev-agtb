@@ -30,7 +30,7 @@ class EAPMViewGoogleOauth2Redirect extends SugarView
     public function process($params = array())
     {
         global $sugar_config;
-        $this->context = $_GET['context'] ?? '';
+        $this->context = $_GET['state'] ?? '';
 
         $tokenData = $this->authenticate();
         $response = $this->buildResponse($tokenData);

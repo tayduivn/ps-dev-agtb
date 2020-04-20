@@ -128,10 +128,10 @@ class EAPM extends Basic {
         );
     }
 
-    public function save($check_notify = false, $assignIfNotAdmin = true)
+    public function save($check_notify = false)
     {
         $this->fillInName();
-        if ($assignIfNotAdmin && !is_admin($GLOBALS['current_user'])) {
+        if (empty($this->skipReassignment) && !is_admin($GLOBALS['current_user'])) {
            $this->assigned_user_id = $GLOBALS['current_user']->id;
         }
 

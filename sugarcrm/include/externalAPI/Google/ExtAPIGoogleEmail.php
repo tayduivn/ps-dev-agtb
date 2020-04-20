@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'vendor/Zend/Gdata/Contacts.php';
-
 /**
  * ExtAPIGoogleEmail
  */
@@ -58,6 +56,7 @@ class ExtAPIGoogleEmail extends ExternalAPIBase
         $client->setClientId($config['properties']['oauth2_client_id']);
         $client->setClientSecret($config['properties']['oauth2_client_secret']);
         $client->setRedirectUri($config['redirect_uri']);
+        $client->setState('email');
         $client->setScopes($this->scopes);
         $client->setAccessType('offline');
         $client->setApprovalPrompt('force');
@@ -76,7 +75,7 @@ class ExtAPIGoogleEmail extends ExternalAPIBase
         $config = array();
         require SugarAutoLoader::existingCustomOne('modules/Connectors/connectors/sources/ext/eapm/google/config.php');
         $config['redirect_uri'] = rtrim(SugarConfig::getInstance()->get('site_url'), '/')
-            . '/index.php?module=EAPM&action=GoogleOauth2Redirect&context=email';
+            . '/index.php?module=EAPM&action=GoogleOauth2Redirect';
 
         return $config;
     }
@@ -128,7 +127,8 @@ class ExtAPIGoogleEmail extends ExternalAPIBase
             $bean->validated = true;
         }
         $bean->api_data = $accessToken;
-        return $bean->save(false, false);
+        $bean->skipReassignment = true;
+        return $bean->save();
     }
 
     /**
