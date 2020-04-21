@@ -110,8 +110,8 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
     */
     public function canonicalAndInternalForms() {
         // pull in our arrays
-        require 'canonical_panel_test.php';
-        require 'internal_panel_test.php';
+        require __DIR__ . '/canonical_panel_test.php';
+        require __DIR__ . '/internal_panel_test.php';
 
         // this is php shorthand for returning an array( array($a[0],$b[0]), ...)
         return array_map(null,$canonicals,$internals);
