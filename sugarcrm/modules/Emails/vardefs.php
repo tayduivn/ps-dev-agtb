@@ -534,6 +534,17 @@ $dictionary['Email'] = array(
             'bean_name' => 'Opportunity',
             'source' => 'non-db',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
+        'purchases' => [
+            'name' => 'purchases',
+            'vname' => 'LBL_EMAILS_PURCHASES_REL',
+            'type' => 'link',
+            'relationship' => 'emails_purchases_rel',
+            'module' => 'Purchases',
+            'bean_name' => 'Purchase',
+            'source' => 'non-db',
+        ],
+        // END SUGARCRM flav=ent ONLY
         'project' => array(
             'name' => 'project',
             'vname' => 'LBL_EMAILS_PROJECT_REL',
@@ -825,6 +836,21 @@ $dictionary['Email'] = array(
             'relationship_role_column' => 'bean_module',
             'relationship_role_column_value' => 'RevenueLineItems',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
+        'emails_purchases_rel' => [
+            'lhs_module' => 'Emails',
+            'lhs_table' => 'emails',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Purchases',
+            'rhs_table' => 'purchases',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'emails_beans',
+            'join_key_lhs' => 'email_id',
+            'join_key_rhs' => 'bean_id',
+            'relationship_role_column' => 'bean_module',
+            'relationship_role_column_value' => 'Purchases',
+        ],
         'emails_purchasedlineitems_rel' => array(
             'lhs_module' => 'Emails',
             'lhs_table' => 'emails',
@@ -839,6 +865,7 @@ $dictionary['Email'] = array(
             'relationship_role_column' => 'bean_module',
             'relationship_role_column_value' => 'PurchasedLineItems',
         ),
+        // END SUGARCRM flav=ent ONLY
         'emails_products_rel' => array(
             'lhs_module' => 'Emails',
             'lhs_table' => 'emails',

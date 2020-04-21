@@ -315,6 +315,13 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_BUSINESS_CENTER',
         ),
+        'purchases' => [
+            'name' => 'purchases',
+            'type' => 'link',
+            'relationship' => 'contacts_purchases',
+            'source' => 'non-db',
+            'vname' => 'LBL_PURCHASES_SUBPANEL_TITLE',
+        ],
         //END SUGARCRM flav=ent ONLY
         'accounts' => array(
             'name' => 'accounts',

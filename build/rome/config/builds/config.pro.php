@@ -150,6 +150,12 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/{old}/modules/Shifts' => 1,
 
 // Purchases and PLIs
+'sugarcrm/modules/Purchases' => 1,
+'sugarcrm/themes/RacerX/images/icon_Purchases_32.png' => 1,
+'sugarcrm/metadata/accounts_purchasesMetaData.php' => 1,
+'sugarcrm/metadata/cases_purchasesMetaData.php' => 1,
+'sugarcrm/metadata/contacts_purchasesMetaData.php' => 1,
+'sugarcrm/metadata/documents_purchasesMetaData.php' => 1,
 'sugarcrm/modules/PurchasedLineItems' => 1,
 'sugarcrm/tests/{old}/modules/PurchasedLineItems' => 1,
 'sugarcrm/tests/{old}/SugarTestPurchasedLineItemUtilities.php' => 1,

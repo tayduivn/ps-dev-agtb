@@ -399,6 +399,13 @@ $dictionary['Account'] = array(
                 'type' => 'relative-date',
             ],
         ],
+        'purchases' => [
+            'name' => 'purchases',
+            'type' => 'link',
+            'relationship' => 'account_purchases',
+            'source' => 'non-db',
+            'vname' => 'LBL_PURCHASES',
+        ],
         // END SUGARCRM flav=ent ONLY
     ),
     'indices' => array(
@@ -534,7 +541,17 @@ $dictionary['Account'] = array(
             'rhs_key' => 'target_id',
             'relationship_type' => 'one-to-many'
         ),
-
+        // BEGIN SUGARCRM flav=ent ONLY
+        'account_purchases' => [
+            'lhs_module' => 'Accounts',
+            'lhs_table' => 'accounts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Purchases',
+            'rhs_table' => 'purchases',
+            'rhs_key' => 'account_id',
+            'relationship_type' => 'one-to-many',
+        ],
+        // END SUGARCRM flav=ent ONLY
     ),
     'duplicate_check' => array(
         'enabled' => true,

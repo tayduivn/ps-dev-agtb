@@ -68,6 +68,7 @@ class InitProductDefinition
         "ProspectLists":["CURRENT","SUGAR_SELL"],
         "Prospects":["CURRENT","SUGAR_SELL"],
         "PurchasedLineItems":["SUGAR_SERVE","SUGAR_SELL"],
+        "Purchases":["SUGAR_SERVE","SUGAR_SELL"],
         "Quotas":["CURRENT","SUGAR_SELL"],
         "Quotes":["CURRENT","SUGAR_SELL"],
         "Releases":["CURRENT","SUGAR_SERVE"],

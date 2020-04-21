@@ -24,6 +24,7 @@ $mod_strings = array (
     'LBL_QUOTES_SHIPTO' => 'Quotes (Ship To)',
 	'LNK_ACCOUNT_REPORTS' => 'View Account Reports',
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
+    'LBL_PURCHASES_SUBPANEL_TITLE' => 'Purchases',
     // Dashboard Names
     'LBL_ACCOUNTS_LIST_DASHBOARD' => 'Accounts List Dashboard',
     'LBL_ACCOUNTS_RECORD_DASHBOARD' => 'Accounts Record Dashboard',
@@ -33,6 +34,7 @@ $mod_strings = array (
     'LBL_WIDGET_NEXT_RENEWAL_DATE' => 'Date of Next Renewal',
     'LBL_RENEWALS_CONSOLE_ACCOUNT_NAME_INDUSTRY' => 'Account Name/Industry',
     'LBL_RENEWALS_CONSOLE_LOCATION' => 'Location',
+    'LBL_PURCHASES' => 'Purchases',
     // END SUGARCRM flav=ent ONLY
 
 	// Dashlet Categories

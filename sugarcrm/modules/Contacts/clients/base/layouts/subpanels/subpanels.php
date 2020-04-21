@@ -142,5 +142,14 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array(
                 'link' => 'dataprivacy',
             ),
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
+        [
+            'layout' => 'subpanel',
+            'label' => 'LBL_PURCHASES_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'purchases',
+            ],
+        ],
+        // END SUGARCRM flav=ent ONLY
     ),
 );

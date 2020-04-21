@@ -184,6 +184,7 @@ $mod_strings = array (
     'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Opportunities',
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
     'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
+    'LBL_PURCHASES_SUBPANEL_TITLE' => 'Purchases',
     'LBL_QUOTES_SHIP_TO' => 'Quotes (Ship To)',
     'LBL_QUOTES_BILL_TO' => 'Quotes (Bill To)',
     'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',

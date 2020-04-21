@@ -197,6 +197,13 @@ $dictionary['Case'] = array(
                 'type' => 'case-status',
             ],
         ],
+        'purchases' => [
+            'name' => 'purchases',
+            'type' => 'link',
+            'relationship' => 'cases_purchases',
+            'source' => 'non-db',
+            'vname' => 'LBL_PURCHASES_SUBPANEL_TITLE',
+        ],
 // END SUGARCRM flav=ent ONLY
         'tasks' => array(
             'name' => 'tasks',
