@@ -15,7 +15,6 @@ Feature: New fields for sugar sell Service, Renewable, Service Duration, Service
     Given I launch App
 
   # Enable/Change license type to sugar sell
-  @ci-excluded
   Scenario: User Profile > Change license type
     Given I open about view and login
     When I choose Profile in the user actions menu
@@ -27,7 +26,8 @@ Feature: New fields for sugar sell Service, Renewable, Service Duration, Service
       | value                        |
       | Sugar Enterprise, Sugar Sell |
 
-  Scenario: Revenue Line Items > Record View > New Fields
+
+  Scenario: Revenue Line Items > Record View > Verify new Service related fields
     Given I open about view and login
 
     Given Accounts records exist:
@@ -278,7 +278,6 @@ Feature: New fields for sugar sell Service, Renewable, Service Duration, Service
       | service_duration_unit  | Day(s)    |
 
   # Disable/Change license type from sugar sell
-  @ci-excluded
   Scenario: User Profile > Change license type
     Given I open about view and login
     When I choose Profile in the user actions menu
@@ -289,4 +288,3 @@ Feature: New fields for sugar sell Service, Renewable, Service Duration, Service
     Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
       | value            |
       | Sugar Enterprise |
-

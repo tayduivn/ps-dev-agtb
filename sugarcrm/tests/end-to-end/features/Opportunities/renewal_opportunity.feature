@@ -117,17 +117,6 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
     When I delete *OppRenewal record in Opportunities list view
     Then I should not see [*OppRenewal] on Opportunities list view
 
-  @user_profile
-  Scenario: User Profile > Change license type
-    When I choose Profile in the user actions menu
-    # Change the value of License Type field
-    When I change "LicenseTypes[]" enum-user-pref with "Sugar Sell" value in #UserProfile
-    When I click on Save button on #UserProfile
-    # Verify current value(s) of License Type field
-    Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
-      | value            |
-      | Sugar Enterprise |
-    When I click on Cancel button on #UserProfile
 
   @multiple_RLI_renewal_oppertunity @SS-198
   Scenario: Opportunities >  Add in multiple RLI's with the same product catalog id's on a renewal opportunity
@@ -221,6 +210,7 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
     When I open the revenuelineitems subpanel on #Opp_2Record view
     Then I verify number of records in #Opp_2Record.SubpanelsLayout.subpanels.revenuelineitems is 2
 
+
   @multiple_RLI_renewal_oppertunity_cleanup @AT-328
   Scenario: Opportunities >  Select all records > Mass Delete
     # Issue with seedbed not cleaning up created rewable opportunities and RLIs operation below handles the clean up. remove when fixed.
@@ -229,3 +219,16 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
     When I select "Delete Selected" action in #OpportunitiesList.ListView
     When I Confirm confirmation alert
     When I close alert
+
+
+  @user_profile
+  Scenario: User Profile > Change license type
+    When I choose Profile in the user actions menu
+    # Change the value of License Type field
+    When I change "LicenseTypes[]" enum-user-pref with "Sugar Sell" value in #UserProfile
+    When I click on Save button on #UserProfile
+    # Verify current value(s) of License Type field
+    Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
+      | value            |
+      | Sugar Enterprise |
+    When I click on Cancel button on #UserProfile

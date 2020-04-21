@@ -35,6 +35,7 @@ Feature: Knowledge Base module verification
       | revision    | 1         |
       | is_external | false     |
 
+
   @list-search @job1
   Scenario: Knowledge Base > List View > Filter
     Given KBContents records exist:
@@ -57,6 +58,7 @@ Feature: Knowledge Base module verification
       | name      | Article 2 |
       | status    | Draft     |
       | language  | English   |
+
 
   @list-edit @job2
   Scenario: Knowledge Base > List View > Inline Edit
@@ -85,6 +87,7 @@ Feature: Knowledge Base module verification
       | name      | KB_1 edited |
       | status    | In Review   |
 
+
   @list-delete @job2
   Scenario: Knowledge Base > List View > Delete
     Given KBContents records exist:
@@ -99,6 +102,7 @@ Feature: Knowledge Base module verification
     When I Confirm confirmation alert
     Then I should see #KBContentsList view
     Then I should not see *KB_1 in #KBContentsList.ListView
+
 
   @delete @job3
   Scenario: Knowledge Base > Record View > Delete
@@ -124,6 +128,7 @@ Feature: Knowledge Base module verification
     Then I should see #KBContentsList.ListView view
     Then I should not see *KB_1 in #KBContentsList.ListView
 
+
   @copy_cancel @job3
   Scenario:  Knowledge Base > Record View > Copy > Cancel
     Given KBContents records exist:
@@ -146,6 +151,7 @@ Feature: Knowledge Base module verification
     Then I verify fields on #KB_1Record.RecordView
       | fieldName       | value        |
       | kbdocument_body | Hello World! |
+
 
   @copy_save @job4
   Scenario:  Knowledge Base > Record View > Copy > Save
@@ -198,8 +204,8 @@ Feature: Knowledge Base module verification
       | *    | name | status    |
       | KB_1 | KB_1 | In Review |
     When I provide input for #KBContentsDrawer.RecordView view
-      | *    | kbdocument_body | tag          | active_date | exp_date   | kbsapprover_name | kbscase_name | category_name |
-      | KB_1 | New Article     | kb, article1 | 12/20/2020  | 12/20/2021 | uFirst_1 uLast_1 | Case0        | Category 123  |
+      | *    | kbdocument_body | tag          | active_date | exp_date   | kbsapprover_name | category_name |
+      | KB_1 | New Article     | kb, article1 | 12/20/2020  | 12/20/2021 | uFirst_1 uLast_1 | Category 123  |
     When I click Save button on #KBContentsDrawer header
     When I close alert
     Then I should see *KB_1 in #KBContentsList.ListView
@@ -215,10 +221,10 @@ Feature: Knowledge Base module verification
       | category_name    | Category 123     |
       | is_external      | false            |
       | kbsapprover_name | uFirst_1 uLast_1 |
-      | kbscase_name     | Case0            |
       | exp_date         | 12/20/2021       |
       | active_date      | 12/20/2020       |
       | tag              | article1,kb      |
+
 
   @record_localization @job6
   Scenario: Knowledge Base > Localization
@@ -231,6 +237,7 @@ Feature: Knowledge Base module verification
       | type    | message                                                                                           |
       | warning | Unable to create a new localization as a localization version exists for all available languages. |
     When I close alert
+
 
   @record_revision @job6
   Scenario: Knowledge Base > Revisions
@@ -284,6 +291,7 @@ Feature: Knowledge Base module verification
       | KBC_1 |
     Then I should see *KBC_1 in #KBViewCategoriesDrawer.KBCategoriesList
 
+
   @list @job5
   Scenario: Knowledge Base Templates > List View > Review
     Given KBContentTemplates records exist:
@@ -302,6 +310,7 @@ Feature: Knowledge Base module verification
       | fieldName | value         |
       | name      | Template 1    |
       | body      | My Template 1 |
+
 
   @kbTemplates_use_existing @job1
   Scenario: Knowledge Base > Use Templates
@@ -339,6 +348,7 @@ Feature: Knowledge Base module verification
       | kbdocument_body | My Template 2 |
       | language        | English       |
       | revision        | 1             |
+
 
   @kbTemplates_createNew @job1
   Scenario: Knowledge Base > Create New Template on the fly
@@ -382,6 +392,7 @@ Feature: Knowledge Base module verification
       | kbdocument_body | New Template |
       | language        | English      |
       | revision        | 1            |
+
 
   @kbSettings @job1 @ci-excluded
   Scenario: Knowledge Base > Settings
@@ -435,3 +446,4 @@ Feature: Knowledge Base module verification
     When I wait for 2 seconds
 #    When I moveDown *KBCategory_2 on #KBViewCategoriesDrawer.KBCategoriesList view
 #    When I wait for 2 seconds
+
