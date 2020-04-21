@@ -542,7 +542,6 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
-                    'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
                 array(
                     'name' => 'favorite',
