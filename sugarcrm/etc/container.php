@@ -66,16 +66,16 @@ return new Container([
 
         $channel = LoggerFactory::getLogger('db');
 
-        $logger = new LoggerChain();
-        $logger->addLogger(new DebugLogger($channel));
+        $logger = new DebugLogger($channel);
 
         if ($config->get('dump_slow_queries')) {
-            $logger->addLogger(
+            $logger = new LoggerChain([
+                $logger,
                 new SlowQueryLogger(
                     $channel,
                     $config->get('slow_query_time_msec', 5000)
                 )
-            );
+            ]);
         }
 
         DbalFormatter::wrapLogger($channel);
