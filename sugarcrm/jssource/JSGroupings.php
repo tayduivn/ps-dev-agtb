@@ -280,6 +280,7 @@
                     'modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js'  => 'include/javascript/sugar_sidecar.min.js',
                     //BEGIN SUGARCRM flav=ent ONLY
                     'modules/pmse_Inbox/clients/base/plugins/ProcessActions.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'modules/Opportunities/clients/base/plugins/Cascade.js'  => 'include/javascript/sugar_sidecar.min.js',
                     //END SUGARCRM flav=ent ONLY
                     'include/javascript/sugar7/plugins/HistoricalSummary.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/MetadataEventDriven.js' =>

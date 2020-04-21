@@ -65,7 +65,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'readonly' => true,
             'audited' => false,
             'required' => false,
-            'studio' => ['fields' => true],
             'massupdate' => false,
             'reportable' => false,
             'workflow' => false,

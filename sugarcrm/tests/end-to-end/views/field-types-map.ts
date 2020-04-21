@@ -58,6 +58,7 @@ export const FIELD_TYPES__MAP = {
     'change-password': PasswordField,
     textarea: TextareaField,
     enum: EnumField,
+    'enum-cascade': EnumField,
     'enum-user-pref': EnumUserPrefField,
     'enum-config': EnumField,
     tag: TagField,

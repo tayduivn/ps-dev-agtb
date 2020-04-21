@@ -184,12 +184,9 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 // END SUGARCRM flav!=ent && flav!=ult ONLY
                 // BEGIN SUGARCRM flav=ent || flav=ult ONLY
                 [
-                    'name' => 'conditional_sales_stage',
-                    'type' => 'opportunities-conditional-fieldset',
+                    'name' => 'sales_stage',
+                    'type' => 'enum-cascade',
                     'label' => 'LBL_SALES_STAGE',
-                    'fields' => [
-                        'sales_stage',
-                    ],
                 ],
                 // END SUGARCRM flav=ent || flav=ult ONLY
                 'probability',
