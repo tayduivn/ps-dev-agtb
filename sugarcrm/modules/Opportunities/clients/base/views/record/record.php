@@ -189,6 +189,13 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'label' => 'LBL_SALES_STAGE',
                 ],
                 // END SUGARCRM flav=ent || flav=ult ONLY
+                // BEGIN SUGARCRM flav=ent ONLY
+                array(
+                    'name' => 'service_start_date',
+                    'type' => 'date-cascade',
+                    'label' => 'LBL_SERVICE_START_DATE',
+                ),
+                // END SUGARCRM flav=ent ONLY
                 'probability',
                 array(
                     'name' => 'commit_stage',

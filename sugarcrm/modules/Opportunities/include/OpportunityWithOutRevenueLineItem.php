@@ -87,6 +87,9 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'massupdate' => false,
             'importable' => false,
         ),
+        'service_start_date' => array(
+            'studio' => false,
+        ),
         'total_revenue_line_items' => array(
             'reportable' => false,
             'workflow' => false
@@ -177,7 +180,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
 \$dictionary['Opportunity']['fields']['renewal'] = null;
 \$dictionary['Opportunity']['fields']['renewal_parent_name'] = null;
 \$dictionary['Opportunity']['fields']['renewal_parent_id'] = null;
-\$dictionary['Opportunity']['fields']['service_start_date'] = null;
 EOL;
         sugar_file_put_contents($this->moduleExtFolder . '/Vardefs/' . $this->dupeCheckExtFile, $file_contents);
 

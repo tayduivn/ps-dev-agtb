@@ -77,6 +77,8 @@ class RevenueLineItem extends SugarBean
     public $product_type;
     public $discount_amount_signed;
     public $total_amount;
+    public $service_start_date;
+    public $service;
 
     /**
      * @public String      The Current Sales Stage

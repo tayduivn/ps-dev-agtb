@@ -50,6 +50,7 @@ class Opportunity extends SugarBean
     public $team_name;
     public $team_id;
     public $quote_id;
+    public $service_start_date;
 
     // These are related
     public $account_name;
@@ -87,6 +88,7 @@ class Opportunity extends SugarBean
     public const CASCADE_FIELD_CONDITIONS = [
         'date_closed' => 'cascadeWhenOpen',
         'sales_stage' => 'cascadeWhenOpen',
+        'service_start_date' => 'cascadeWhenServiceOpen',
     ];
     private const OPERATION_CASCADE = 'cascading_opportunity_';
 
@@ -1066,6 +1068,17 @@ class Opportunity extends SugarBean
     public function cascadeWhenOpen($rli)
     {
         return !in_array($rli->sales_stage, $this->getClosedStages());
+    }
+
+    /**
+     * Returns true when RLI is open and marked as a service.
+     *
+     * @param RevenueLineItem $rli
+     * @return bool True if RLI is marked 'service' and is open
+     */
+    public function cascadeWhenServiceOpen($rli)
+    {
+        return (isTruthy($rli->service) && $this->cascadeWhenOpen($rli));
     }
 
     /**

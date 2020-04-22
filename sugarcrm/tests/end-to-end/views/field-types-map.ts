@@ -65,6 +65,7 @@ export const FIELD_TYPES__MAP = {
     int: IntField,
     date: DateField,
     'relative-date': RelativeDateField,
+    'date-cascade': DateField,
     float: FloatField,
     relate: RelateField,
     taxrate: RelateField,

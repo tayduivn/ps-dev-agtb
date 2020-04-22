@@ -312,8 +312,17 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_SERVICE_START_DATE',
             'type' => 'date',
             'comment' => 'Service start date field.',
-            'readonly' => true,
         ),
+        'service_start_date_cascade' => [
+            'name' => 'service_start_date_cascade',
+            'type' => 'date',
+            'source' => 'non-db',
+            'required' => false,
+            'reportable' => false,
+            'audited' => false,
+            'studio' => false,
+            'importable' => false,
+        ],
         'total_revenue_line_items' => array(
             'name' => 'total_revenue_line_items',
             'vname' => 'LBL_TOTAL_RLIS',

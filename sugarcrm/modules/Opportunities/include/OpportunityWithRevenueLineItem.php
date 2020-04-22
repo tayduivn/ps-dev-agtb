@@ -84,6 +84,9 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'massupdate' => true,
             'importable' => true,
         ),
+        'service_start_date' => array(
+            'studio' => true,
+        ),
         'total_revenue_line_items' => array(
             'reportable' => true,
             'workflow' => true
