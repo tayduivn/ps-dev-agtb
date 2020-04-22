@@ -297,7 +297,7 @@ class ListViewDisplayTest extends TestCase
     public function testBuildSelectLink()
     {
         $output = $this->_lvd->buildSelectLink();
-        $output = implode($output['buttons'],"");
+        $output = implode('', $output['buttons']);
         $this->assertStringContainsString("<a id='select_link'", $output);
         $this->assertStringContainsString(
             'sListView.check_all(document.MassUpdate, "mass[]", true, 0)',
@@ -312,7 +312,7 @@ class ListViewDisplayTest extends TestCase
     public function testBuildSelectLinkWithParameters()
     {
         $output = $this->_lvd->buildSelectLink('testtest',1,2);
-        $output = implode($output['buttons'],"");
+        $output = implode('', $output['buttons']);
         $this->assertStringContainsString("<a id='testtest'", $output);
         $this->assertStringContainsString(
             'sListView.check_all(document.MassUpdate, "mass[]", true, 2)',
@@ -327,7 +327,7 @@ class ListViewDisplayTest extends TestCase
     public function testBuildSelectLinkWithPageTotalLessThanZero()
     {
         $output = $this->_lvd->buildSelectLink('testtest',1,-1);
-        $output = implode($output['buttons'],"");
+        $output = implode('', $output['buttons']);
         $this->assertStringContainsString("<a id='testtest'", $output);
         $this->assertStringContainsString(
             'sListView.check_all(document.MassUpdate, "mass[]", true, 1)',
