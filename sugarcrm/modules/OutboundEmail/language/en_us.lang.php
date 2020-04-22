@@ -12,6 +12,13 @@
 $mod_strings = array(
     'LBL_MODULE_NAME' => 'Outgoing Email Accounts',
     'LBL_MODULE_NAME_SINGULAR' => 'Outgoing Email Account',
+    'LBL_AUTHORIZE' => 'Authorize',
+    'LBL_AUTHORIZED' => 'Authorized',
+    'LBL_NOT_AUTHORIZED' => 'Not Authorized',
+    'LBL_STATUS' => 'Status',
+    'LBL_GOOGLE_AUTH_WARNING' => 'An administrator must configure the Google Connector via Admin > Connectors before you can set up this account. For more information, refer to the Emails documentation.',
+    'LBL_AUTH_FAILURE' => 'Authorization failure.',
+    'LBL_PLEASE_AUTHORIZE' => 'Please authorize the account before saving.',
     'LBL_MAIL_SENDTYPE' => 'Mail Transfer Agent',
     'LBL_MAIL_SMTPSERVER' => 'Server',
     'LBL_MAIL_SMTPPORT' => 'Port',

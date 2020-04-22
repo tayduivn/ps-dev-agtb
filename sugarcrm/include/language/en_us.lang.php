@@ -2017,9 +2017,10 @@ $app_list_strings = array (
         '2' => 'TLS',
     ),
     'mail_smtptype_options' => array(
-        'google' => 'Google',
+        'google_oauth2' => 'Google',
         'exchange' => 'Exchange',
         'outlook' => 'Outlook',
+        'google' => 'Google Less Secure Apps',
         'other' => 'Other',
     ),
     'import_enclosure_options' =>

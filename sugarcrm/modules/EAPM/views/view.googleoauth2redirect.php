@@ -122,6 +122,13 @@ class EAPMViewGoogleOauth2Redirect extends SugarView
         if (!empty($response['result'])) {
             $response['eapmId'] = $authResult['eapmId'];
             $response['emailAddress'] = $this->api->getEmailAddress($authResult['eapmId']);
+            $client = new EmailAddressesApi();
+            $emailAddressBean = $client->createBean(new RestService(), [
+                'email_address' => $response['emailAddress'],
+                'module' => 'EmailAddresses',
+            ]);
+            $response['emailAddressId'] = $emailAddressBean->id;
+            $response['dataSource'] = 'googleEmailRedirect';
         }
         return $response;
     }
