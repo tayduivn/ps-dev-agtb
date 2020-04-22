@@ -62,8 +62,12 @@ export default class extends BaseView {
                     'View Categories': 'a[data-navbar-menu-item="LNK_LIST_KBCATEGORIES"]',
                     'Settings': 'a[data-navbar-menu-item="LNK_KNOWLEDGE_BASE_ADMIN_MENU"]',
 
-                    // Contacts
+                    // Contacts Module menu selectors
                     'Create Contact': 'a[data-navbar-menu-item="LNK_NEW_CONTACT"]',
+                    'Create Contact From vCard': 'a[data-navbar-menu-item="LNK_IMPORT_VCARD"]',
+                    'View Contacts': 'a[data-navbar-menu-item="LNK_CONTACT_LIST"]',
+                    'View Contact Reports': 'a[data-navbar-menu-item="LNK_CONTACT_REPORTS"]',
+                    'Import Contacts': 'a[data-navbar-menu-item="LNK_IMPORT_CONTACTS"]',
 
                     // Prospects (Targets)
                     'Create Target': 'a[data-navbar-menu-item="LNK_NEW_PROSPECT"]',
