@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//BEGIN SUGARCRM flav!=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 // PRO/CORP only fields
 $fields = array(
     array(
@@ -164,7 +164,7 @@ $fieldsHidden = array(
         ),
     ),
 );
-//END SUGARCRM flav!=ent ONLY
+//END SUGARCRM flav=pro ONLY
 
 //BEGIN SUGARCRM flav=ent ONLY
 // ENT/ULT only fields
@@ -212,17 +212,31 @@ $fields = array(
         'base_rate_field' => 'base_rate',
     ),
     array(
-        'name' => 'discount_amount',
-        'type' => 'currency',
-        'related_fields' => array(
-            'discount_amount',
-            'currency_id',
-            'base_rate',
+        'name' => 'discount_field',
+        'type' => 'fieldset',
+        'css_class' => 'discount-field',
+        'label' => 'LBL_DISCOUNT_AMOUNT',
+        'show_child_labels' => false,
+        'sortable' => false,
+        'fields' => array(
+            array(
+                'name' => 'discount_amount',
+                'label' => 'LBL_DISCOUNT_AMOUNT',
+                'type' => 'discount-amount',
+                'discountFieldName' => 'discount_select',
+                'related_fields' => array(
+                    'currency_id',
+                ),
+                'convertToBase' => true,
+                'base_rate_field' => 'base_rate',
+                'showTransactionalAmount' => true,
+            ),
+            array(
+                'type' => 'discount-select',
+                'name' => 'discount_select',
+                'options' => array(),
+            ),
         ),
-        'convertToBase' => true,
-        'showTransactionalAmount' => true,
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
     ),
     array(
         'name' => 'total_amount',

@@ -25,7 +25,11 @@
         this._super('initialize', [options]);
 
         this.discountFieldName = options.def.discountFieldName;
-        this.lastCurrencyId = this.model.get('currency_id');
+
+        // Store values for views that don't render twice.
+        if (this.model.has('currency_id')) {
+            this.lastCurrencyId = this.model.get('currency_id');
+        }
 
         var numericValidationTaskName = 'isNumeric_validator_' + this.cid;
 
@@ -79,7 +83,6 @@
                 );
                 model.set(this.name, convertedDiscountAmount);
             }
-
             this.lastCurrencyId = currencyId;
         }
     },
@@ -91,7 +94,7 @@
      * otherwise get the templates from the currency field.
      */
     _loadTemplate: function() {
-        if (app.utils.isTruthy(this.model.get('discount_select'))) {
+        if (app.utils.isTruthy(this.model.get(this.discountFieldName))) {
             this._super('_loadTemplate');
         } else {
             this.template = app.template.getField(
@@ -110,7 +113,7 @@
      * use the format according to the currency field
      */
     format: function(value) {
-        if (app.utils.isTruthy(this.model.get('discount_select'))) {
+        if (app.utils.isTruthy(this.model.get(this.discountFieldName))) {
             return app.utils.formatNumberLocale(value);
         } else {
             //In edit mode hide the currency dropdown for the discount field
@@ -126,7 +129,7 @@
      * otherwise use the format according to the currency field
      */
     unformat: function(value) {
-        if (app.utils.isTruthy(this.model.get('discount_select'))) {
+        if (app.utils.isTruthy(this.model.get(this.discountFieldName))) {
             var unformattedValue = app.utils.unformatNumberStringLocale(value, true);
             // if unformat failed, return original value
             return _.isFinite(unformattedValue) ? unformattedValue : value;

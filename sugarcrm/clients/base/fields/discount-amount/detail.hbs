@@ -10,10 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="currency-field"{{#if dir}} dir="{{dir}}"{{/if}}>
-    {{#if transactionValue}}
-        <label class="original">{{transactionValue}}</label><div class="converted">{{value}}</div>
-    {{else}}
-        {{value}}
-    {{/if}}
+<div class="discount-amount-field" data-placement="bottom" data-original-title="{{value}}%">
+    {{value}}%
 </div>

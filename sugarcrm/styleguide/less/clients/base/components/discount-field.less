@@ -1,10 +1,21 @@
+@currencyFieldElement: ~'div[class*="currency-field"]';
+@discountFieldElement: ~'div[class*="discount-amount-field"]';
+
 [data-type=fieldset] {
   min-width: 155px;
-  max-width: 100%;
 
   span[class*="discount-field"]:not(.overflow-visible) {
     display: inline-flex;
+    flex-direction: row;
     justify-content: flex-end;
+    align-items: center;
+
+    &.detail > .fieldset-field > span {
+      @{currencyFieldElement},
+      @{discountFieldElement} {
+        text-align: left;
+      }
+    }
 
     .fieldset-field {
       &:first-child {
@@ -12,13 +23,13 @@
       }
 
       span {
-        div[class*="currency-field"] {
+        @{currencyFieldElement} {
           overflow-x: hidden;
           text-overflow: ellipsis;
           text-align: right;
         }
 
-        [name=discount_amount] {
+        &.edit [name=discount_amount] {
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
           text-align: right;
@@ -32,6 +43,7 @@
           .select2-choice {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
+            border-left-style: none;
             padding-right: 8px;
             padding-left: 8px;
 
@@ -53,4 +65,3 @@
     }
   }
 }
-

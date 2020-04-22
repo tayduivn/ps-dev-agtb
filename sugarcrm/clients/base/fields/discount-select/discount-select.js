@@ -48,15 +48,19 @@
         this._super('initialize', [options]);
 
         this.lastDiscountSelectValue = this.model.get(this.name);
-        this.lastCurrencyId = this.model.get('currency_id');
 
         if (this.view && this.view.layout) {
             this.view.layout.on('headerpane:adjust_fields', this.repositionDropdown, this);
         }
 
-        this.fetchCurrency();
-        this.updateDropdownSymbol(this.model.get(this.name));
-        this.loadEnumOptions();
+        // Need to call these for the times where the model is fully populated and we don't need
+        // to wait for a second render to display the correct data.
+        if (this.model.has('currency_id')) {
+            this.fetchCurrency();
+            this.loadEnumOptions();
+            this.updateDropdownSymbol(this.model.get(this.name));
+            this.updateDropdownText(this.currentDropdownSymbol);
+        }
     },
 
     /**
@@ -114,8 +118,10 @@
 
             this.$(this.fieldTag).select2('val', updatedValue);
 
-            this.updateDropdownSymbol(updatedValue);
-            this.updateDropdownText(this.currentDropdownSymbol);
+            if (this.currentCurrency) {
+                this.updateDropdownSymbol(updatedValue);
+                this.updateDropdownText(this.currentDropdownSymbol);
+            }
         }
     },
 
@@ -136,7 +142,7 @@
             return;
         }
 
-        if (this.currentCurrency.id !== currencyId) {
+        if (this.currentCurrency && this.currentCurrency.id !== currencyId) {
             this.fetchCurrency();
             this.loadEnumOptions();
 
@@ -160,6 +166,16 @@
         $el.on('select2-close', _.bind(function() {
             this.updateDropdownText(this.currentDropdownSymbol);
         }, this));
+
+        // We need this redundant update when we transition into record view from subpanel for
+        // example and on initialize the model doesn't have all the data. Needed because of
+        // the differences in rendering record vs subpanel views.
+        if (this.model.has('currency_id')) {
+            this.fetchCurrency();
+            this.loadEnumOptions();
+            this.updateDropdownSymbol(this.model.get(this.name));
+            this.updateDropdownText(this.currentDropdownSymbol);
+        }
 
         // On the first time rendering, update the dropdown symbol.
         this.updateDropdownText(this.currentDropdownSymbol);
@@ -225,10 +241,12 @@
     buildCurrencyString: function() {
         var currentCurrencyLabel;
 
-        if (app.lang.direction !== 'ltr') {
-            currentCurrencyLabel = this.currentCurrency.name + ' ' + this.currentCurrency.symbol;
-        } else {
-            currentCurrencyLabel = this.currentCurrency.symbol + ' ' + this.currentCurrency.name;
+        if (this.currentCurrency) {
+            if (app.lang.direction !== 'ltr') {
+                currentCurrencyLabel = this.currentCurrency.name + ' ' + this.currentCurrency.symbol;
+            } else {
+                currentCurrencyLabel = this.currentCurrency.symbol + ' ' + this.currentCurrency.name;
+            }
         }
 
         return currentCurrencyLabel;
@@ -254,5 +272,13 @@
         var elementQueryString = '.' + this.containerCssClass + ' > .select2-choice > .select2-chosen';
         var $dropdownButton = this.$(elementQueryString);
         $dropdownButton.text(value);
+    },
+
+    /**
+     * @inheritDoc
+     * @private
+     */
+    _dispose: function() {
+        this._super('_dispose');
     },
 })

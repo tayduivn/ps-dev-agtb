@@ -57,10 +57,11 @@ describe('Base.Field.DiscountSelect', function() {
     });
 
     afterEach(function() {
+        sinon.collection.restore();
+        field.dispose();
+        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
-
-        sinon.collection.restore();
 
         field = null;
         fieldDef = null;
@@ -103,19 +104,22 @@ describe('Base.Field.DiscountSelect', function() {
     describe('_render()', function() {
         var onStub;
         var findStub;
-        var textStub;
 
         beforeEach(function() {
+            field.model.set('currency_id', '-99', {silent: true});
+
             onStub = sinon.collection.stub();
-            textStub = sinon.collection.stub();
 
             sinon.collection.stub(field, '_super', function() {});
             sinon.collection.stub(field, '$', function() {
                 return {
                     on: onStub,
-                    text: textStub
                 };
             });
+            sinon.collection.stub(field, 'fetchCurrency', function() {});
+            sinon.collection.stub(field, 'loadEnumOptions', function() {});
+            sinon.collection.stub(field, 'updateDropdownSymbol', function() {});
+            sinon.collection.stub(field, 'updateDropdownText', function() {});
 
             field.currentDropdownSymbol = '$';
 
@@ -124,7 +128,6 @@ describe('Base.Field.DiscountSelect', function() {
 
         afterEach(function() {
             onStub = null;
-            textStub = null;
         });
 
         it('should call on', function() {
@@ -132,7 +135,20 @@ describe('Base.Field.DiscountSelect', function() {
         });
 
         it('should call updateDropDownText and update the dropdown symbol', function() {
-            expect(textStub).toHaveBeenCalledWith('$');
+            expect(field.updateDropdownText).toHaveBeenCalledWith('$');
+        });
+
+        it('should call fetchCurrency and set currentCurrency', function() {
+            expect(field.currentCurrency.name).toBe('US Dollar');
+            expect(field.currentCurrency.symbol).toBe('$');
+        });
+
+        it('should call updateDropdownSymbol and set currentDropdownSymbol', function() {
+            expect(field.currentDropdownSymbol).toBe('$');
+        });
+
+        it('should call loadEnumOptions and set items', function() {
+            expect(field.items).not.toBeEmpty();
         });
     });
 

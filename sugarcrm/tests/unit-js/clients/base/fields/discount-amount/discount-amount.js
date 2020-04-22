@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Base.Field.Discount', function() {
+describe('Base.Field.DiscountAmount', function() {
     var app;
     var field;
     var fieldDef;
@@ -26,7 +26,7 @@ describe('Base.Field.Discount', function() {
 
         SugarTest.loadComponent('base', 'field', 'base');
         SugarTest.loadComponent('base', 'field', 'currency');
-        SugarTest.loadComponent('base', 'field', 'discount');
+        SugarTest.loadComponent('base', 'field', 'discount-amount');
 
         var testModel = app.data.createBean(moduleName, {
             jasmin_test: 123456789.12,
@@ -44,11 +44,11 @@ describe('Base.Field.Discount', function() {
 
         var fieldComponent = {
             name: 'jasmin_test',
-            type: 'discount',
+            type: 'discount-amount',
             viewName: 'detail',
             fieldDef: {
                 name: 'jasmin_test',
-                type: 'discount'
+                type: 'discount-amount',
             },
             model: testModel,
             context: null,
@@ -61,16 +61,15 @@ describe('Base.Field.Discount', function() {
     });
 
     afterEach(function() {
+        field.dispose();
+        SugarTest.testMetadata.dispose();
+        sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
-
-        sandbox.restore();
 
         field = null;
         fieldDef = null;
         app = null;
-
-        SugarTest.testMetadata.dispose();
     });
 
     describe('handleCurrencyFieldChange()', function() {
@@ -118,6 +117,8 @@ describe('Base.Field.Discount', function() {
 
     describe('format()', function() {
         beforeEach(function() {
+            field.discountFieldName = 'discount_select';
+
             sandbox.stub(field, '_super', function() {
                 return true;
             });
@@ -174,6 +175,8 @@ describe('Base.Field.Discount', function() {
 
     describe('unformat()', function() {
         beforeEach(function() {
+            field.discountFieldName = 'discount_select';
+
             sandbox.stub(field, '_super', function() {
                 return true;
             });
@@ -230,6 +233,8 @@ describe('Base.Field.Discount', function() {
 
     describe('_loadTemplate()', function() {
         beforeEach(function() {
+            field.discountFieldName = 'discount_select';
+
             sandbox.stub(field, '_super', function() {
                 return true;
             });

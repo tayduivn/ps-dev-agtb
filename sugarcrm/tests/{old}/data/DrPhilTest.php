@@ -297,7 +297,8 @@ class DrPhilTest extends TestCase
 
         if (isset($def['fields'])) {
             foreach ($def['fields'] as $subField) {
-                $this->assertArrayHasKey($subField, $defs, "Sub field $subField for $table/$key points to an invalid field.");
+                $fieldName = is_array($subField) ? $subField['name'] : $subField;
+                $this->assertArrayHasKey($key, $defs, "Sub field $fieldName for $table/$key points to an invalid field.");
             }
         }
 

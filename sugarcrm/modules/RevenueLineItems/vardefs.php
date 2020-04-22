@@ -256,7 +256,7 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'discount_amount',
             'vname' => 'LBL_DISCOUNT_AMOUNT',
             'dbType' => 'currency',
-            'type' => 'discount',
+            'type' => 'discount-amount',
             'len' => '26,6',
             'default' => '0',
             'precision' => '6',
@@ -266,11 +266,7 @@ $dictionary['RevenueLineItem'] = array(
                 'base_rate',
                 'discount_select',
             ),
-            'studio' => [
-                'listview' => false,
-                'recordview' => false,
-                'editview' => true,
-            ],
+            'studio' => false,
         ),
         'discount_select' => array(
             'name' => 'discount_select',
@@ -279,6 +275,42 @@ $dictionary['RevenueLineItem'] = array(
             'default' => false,
             'reportable' => false,
             'studio' => false,
+        ),
+        // From SS-337: This field allows us to use the discount_field in subpanels without it
+        // disappearing on save. Currently on subpanels config in Studio, when a field is moved
+        // from the "default" column to "hidden" and is _not_ defined in the module's vardefs
+        // it just goes poof! Adding this will allow the field to be present when the
+        // ModuleBuilder pulls from vardefs. This is all possible because of the 'non-db' source.
+        'discount_field' => array(
+            'name' => 'discount_field',
+            'type' => 'fieldset',
+            'css_class' => 'discount-field',
+            'label' => 'LBL_DISCOUNT_AMOUNT',
+            'source' => 'non-db',
+            'fields' => array(
+                array(
+                    'name' => 'discount_amount',
+                    'label' => 'LBL_DISCOUNT_AMOUNT',
+                    'type' => 'discount-amount',
+                    'discountFieldName' => 'discount_select',
+                    'related_fields' => array(
+                        'currency_id',
+                    ),
+                    'convertToBase' => true,
+                    'base_rate_field' => 'base_rate',
+                    'showTransactionalAmount' => true,
+                ),
+                array(
+                    'type' => 'discount-select',
+                    'name' => 'discount_select',
+                    'options' => array(),
+                ),
+            ),
+            'studio' => [
+                'editview' => true,
+                'listview' => true,
+                'recordview' => true,
+            ]
         ),
         'discount_rate_percent' => array(
             'name' => 'discount_rate_percent',
