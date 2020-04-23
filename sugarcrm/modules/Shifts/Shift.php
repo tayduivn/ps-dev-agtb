@@ -86,6 +86,74 @@ class Shift extends Basic {
     public $team_name;
     public $acl_team_names;
 
+    /**
+     * Gets the time prop for a day. This will be either open or close for a day
+     * of the week, so something like `wednesday_open` or `sunday_close`.
+     *
+     * This method expects that `$day` has already been normalized.
+     *
+     * @param string $day Day of the week
+     * @param string $type `open` or `close`
+     * @return string
+     */
+    protected function getTimeProp(string $day, string $type)
+    {
+        return sprintf('%s_%s', $day, $type);
+    }
+
+    /**
+     * Checks if this shift is open on a given day of the week
+     * @param string $day the string name of a day
+     * @return boolean
+     */
+    public function isOpen(string $day)
+    {
+        $field = 'is_open_' . $day;
+        return (bool) $this->$field;
+    }
+
+    /**
+     * Gets the open time for a day for this shift
+     * @param string $day Day of the week
+     * @return string|null
+     */
+    public function getOpenTime(string $day)
+    {
+        return $this->getTimeForTypeOnDay($day, 'open');
+    }
+
+    /**
+     * Gets the close time for a day for this shift
+     * @param string $day Day of the week
+     * @return string|null
+     */
+    public function getCloseTime(string $day)
+    {
+        return $this->getTimeForTypeOnDay($day, 'close');
+    }
+
+    /**
+     * Gets the open or close time for a day for this shift
+     * @param string $day Day of the week
+     * @param string $type `open` or `close`
+     * @return array
+     */
+    public function getTimeForTypeOnDay(string $day, string $type)
+    {
+        $type = trim(strtolower($type));
+        if ($type !== 'open' && $type !== 'close') {
+            return null;
+        }
+
+        $prop = $this->getTimeProp($day, $type);
+
+        return
+            [
+                'hour' => (int) $this->{$prop . '_hour'},
+                'minutes' => (int) $this->{$prop . '_minutes'},
+            ];
+    }
+
     public function bean_implements($interface){
         switch($interface){
             case 'ACL': return true;

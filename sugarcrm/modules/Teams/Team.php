@@ -771,6 +771,15 @@ AND team_id = ?';
         return $id;
 	}
 
+    /**
+     * Return the team id for the Global team.
+     *
+     * @return string
+     */
+    public function getGlobalTeamID()
+    {
+        return $this->retrieve_team_id('Global');
+    }
 
 	/**
 	 * has_records_in_modules

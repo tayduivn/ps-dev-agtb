@@ -615,12 +615,228 @@ class PMSEUserAssignmentHandler
     }
 
     /**
+     * Get the next user assigned to a task if the assignment is of type Round Robin,
+     * which is a form of availibility required inside a user group or team.
+     *
+     * @param $bpmnElement BPM element
+     * @param $bean bean of target module
+     * @param $flowData the flow data
+     * @return int
+     */
+    public function getNextAvailableUser($bpmnElement, $bean, $flowData)
+    {
+        // Set "Assigned To" by Availability is unchecked. We use old Round Robin logic to assign users.
+        if (empty($bpmnElement['act_set_by_avl'])) {
+            return $this->getNextUserUsingRoundRobin($bpmnElement['id']);
+        }
+
+        //getting record from bpm_activity_definition
+        $beanBpmActivity = $this->retrieveBean('pmse_BpmActivityDefinition', $bpmnElement['id']);
+        $assign_team = $beanBpmActivity->act_assign_team;
+        $last_assigned = $beanBpmActivity->act_last_user_assigned;
+
+        if (empty($assign_team)) {
+            //set default team to global
+            $assign_team = BeanFactory::getBean('Teams')->getGlobalTeamID();
+        }
+
+        $q = $this->prepareTeamUserIdsQuery($assign_team, true);
+        // ids greater than the last assigned user id
+        // ordered by id ascending
+        $q->where()->gt('id', $last_assigned);
+        $gtRows = $q->execute();
+
+        $q = $this->prepareTeamUserIdsQuery($assign_team, true);
+        // ids less than or equal to the last assigned user id
+        // ordered by id ascending
+        $q->where()->lte('id', $last_assigned);
+        $ltRows = $q->execute();
+
+        // maintains the ascending order on user ids like the old behavior
+        // this array starts from the next user of the last assigned user in the ascending list,
+        // continues iterating the list one by one and checking, when reaches the end of the list,
+        // iterates from the beginning until the last assigned user
+        $orderedUsers = array_column(array_merge($gtRows, $ltRows), 'id');
+
+        $checkTime = null;
+        if (!empty($bpmnElement['act_avl_count']) &&
+            !empty($bpmnElement['act_avl_before_type']) &&
+            !empty($bean->{$bpmnElement['act_avl_before_type']})) {
+            $checkTime = new \SugarDateTime($bean->{$bpmnElement['act_avl_before_type']});
+            $checkTime->modify("-{$bpmnElement['act_avl_count']} {$bpmnElement['act_avl_type']}");
+        } else {
+            // Required shift availability has count value set to 0 or blank.
+            // Or other availability criteria is not set, we want to set the availability datetime to current time.
+            $checkTime = new \SugarDateTime(TimeDate::getInstance()->nowDb());
+        }
+        $nextUserId = null;
+        foreach ($orderedUsers as $userId) {
+            $user = BeanFactory::retrieveBean('Users', $userId);
+            if (isset($user) &&
+                !$this->userHasShiftExceptions($user, $checkTime) &&
+                !$this->userHasHoliday($user, $checkTime) &&
+                $this->userAvailableInShifts($user, $checkTime)) {
+                $nextUserId = $user->id;
+                break;
+            }
+        }
+        if (!$nextUserId) {
+            // uses selected pre-defined user
+            if (isset($bpmnElement['act_reserve_user'])) {
+                switch ($bpmnElement['act_reserve_user']) {
+                    case 'owner':
+                        $nextUserId = $this->getRecordOwnerId(
+                            $flowData['cas_user_id'],
+                            $flowData['cas_sugar_module']
+                        );
+                        break;
+                    case 'supervisor':
+                        $nextUserId = $this->getSupervisorId(
+                            $flowData['cas_user_id']
+                        );
+                        break;
+                    case 'currentuser':
+                        $nextUserId = $flowData['cas_user_id'];
+                        break;
+                    default:
+                        // user id from search and select
+                        $nextUserId = $bpmnElement['act_reserve_user'];
+                        break;
+                }
+            } else {
+                // no pre-defined user is set
+                $nextUserId = '';
+                $this->logger->info("[{$flowData['cas_id']}][{$flowData['cas_index']}] no default user is defined " .
+                "from Round Robin action");
+            }
+        }
+
+        //updating last user selected
+        $beanBpmActivity->act_last_user_assigned = $nextUserId;
+        $beanBpmActivity->save();
+
+        return $nextUserId;
+    }
+
+    /**
+     * Checks the user has Holiday set or not
+     *
+     * @param SugarBean $user the user bean
+     * @param SugarDateTime $checkTime the datetime to be checked
+     * @return Bool
+     */
+    protected function userHasHoliday(SugarBean $user, \SugarDateTime $checkTime)
+    {
+        if (!$user->load_relationship('holidays')) {
+            return false;
+        }
+
+        $holidays = $user->holidays->getBeans();
+        foreach ($holidays as $holiday) {
+            if (!empty($holiday['holiday_date'])) {
+                $timezone = $user->getPreference('timezone');
+                $holidayStart = new \SugarDateTime($holiday['holiday_date'], new DateTimeZone($timezone));
+                $holidayStart = $holidayStart->setTimezone(new DateTimeZone("UTC"));
+                $holidayEnd = new \SugarDateTime($holiday['holiday_date'], new DateTimeZone($timezone));
+                $holidayEnd = $holidayEnd->setTime('23', '59', '59');
+                $holidayEnd = $holidayEnd->setTimezone(new DateTimeZone("UTC"));
+                if ($checkTime >= $holidayStart && $checkTime <= $holidayEnd) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks the user has Shift Exceptions or not
+     *
+     * @param SugarBean $user the user bean
+     * @param SugarDateTime $checkTime the datetime to be checked for availablility
+     * @return Bool
+     */
+    protected function userHasShiftExceptions(SugarBean $user, \SugarDateTime $checkTime)
+    {
+        if (!$user->load_relationship('shift_exceptions')) {
+            return false;
+        }
+
+        $shiftExceptionBeans = $user->shift_exceptions->getBeans();
+        foreach ($shiftExceptionBeans as $shiftExceptionBean) {
+            if ($shiftExceptionBean->enabled) {
+                $start_date = new \SugarDateTime(
+                    $shiftExceptionBean->start_date,
+                    new DateTimeZone($shiftExceptionBean->timezone)
+                );
+                $end_date = new \SugarDateTime(
+                    $shiftExceptionBean->end_date,
+                    new DateTimeZone($shiftExceptionBean->timezone)
+                );
+                $start_date->setTime($shiftExceptionBean->start_hour, $shiftExceptionBean->start_minutes);
+                $start_date = $start_date->setTimezone(new DateTimeZone("UTC"));
+                $end_date->setTime($shiftExceptionBean->end_hour, $shiftExceptionBean->end_minutes);
+                $end_date = $end_date->setTimezone(new DateTimeZone("UTC"));
+                if ($checkTime >= $start_date && $checkTime <= $end_date) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks the user's availability in Shifts
+     *
+     * @param SugarBean $user the user bean
+     * @param SugarDateTime $checkTime the datetime to be checked for availablility
+     * @return bool
+     */
+    protected function userAvailableInShifts(SugarBean $user, \SugarDateTime $checkTime)
+    {
+        if (!$user->load_relationship('shifts')) {
+            return false;
+        }
+
+        $shiftBeans = $user->shifts->getBeans();
+        foreach ($shiftBeans as $shiftBean) {
+            $date_start = new \SugarDateTime(
+                $shiftBean->date_start,
+                new DateTimeZone($shiftBean->timezone)
+            );
+            $date_start = $date_start->setTimezone(new DateTimeZone("UTC"));
+            $date_end = new \SugarDateTime(
+                $shiftBean->date_end,
+                new DateTimeZone($shiftBean->timezone)
+            );
+            $date_end->setTime('23', '59', '59');
+            $date_end = $date_end->setTimezone(new DateTimeZone("UTC"));
+            if ($checkTime >= $date_start && $checkTime <= $date_end) {
+                $checkTime = $checkTime->setTimezone(new DateTimeZone($shiftBean->timezone));
+                $weekDay = strtolower($checkTime->format("l"));
+                if ($shiftBean->isOpen($weekDay)) {
+                    $openTime = $shiftBean->getOpenTime($weekDay);
+                    $start_time = clone $checkTime;
+                    $start_time->setTime($openTime['hour'], $openTime['minutes']);
+                    $closeTime = $shiftBean->getCloseTime($weekDay);
+                    $end_time = clone $checkTime;
+                    $end_time->setTime($closeTime['hour'], $closeTime['minutes']);
+                    if ($checkTime >= $start_time && $checkTime <= $end_time) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Gets all members of a team who are both active users and active employees
      *
-     * @param $teamId
+     * @param string $teamId the team id
+     * @param bool $shiftAvailable user has shift defined if true
      * @return SugarQuery
      */
-    protected function prepareTeamUserIdsQuery($teamId)
+    protected function prepareTeamUserIdsQuery($teamId, $shiftAvailable = false)
     {
         $q = new SugarQuery();
         $q->select(array('id'));
@@ -631,6 +847,12 @@ class PMSEUserAssignmentHandler
             ->equalsField('membership.user_id', 'id')
             ->equals('membership.explicit_assign', 1)
             ->equals('membership.deleted', 0);
+
+        if ($shiftAvailable) {
+            $q->joinTable('shifts_users', array('alias' => 'shift'))->on()
+                ->equalsField('shift.user_id', 'id')
+                ->equals('shift.deleted', 0);
+        }
 
         $q->where()
             ->equals('status', 'Active')
@@ -747,7 +969,7 @@ class PMSEUserAssignmentHandler
             ->starts('users.last_name', $args['filter'] . '%');
 
         $q->select($fields);
-        
+
         $q->limit($options['limit'] + 1);
         $q->offset($options['offset']);
 
